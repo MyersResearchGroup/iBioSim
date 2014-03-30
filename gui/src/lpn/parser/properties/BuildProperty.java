@@ -10,7 +10,6 @@ import lpn.parser.LhpnFile;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
-
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -104,7 +103,7 @@ public class BuildProperty {
 			e.printStackTrace();
 		}
 		try {
-			lpnFinal = generateLPN(r0, lpn, false);
+			lpnFinal = generateLPN(r0, lpn, false, null);
 			if(loop){
 			lpnFinal.addTransition("t" + numTransitions);
 			numTransitions++;
@@ -133,7 +132,7 @@ public class BuildProperty {
 		}
 	} 
 
-	public static LhpnFile generateLPN(CommonTree t, LhpnFile lpn2, boolean recursiveCall) throws IOException {
+	public static LhpnFile generateLPN(CommonTree t, LhpnFile lpn2, boolean recursiveCall, String stayConditions) throws IOException {
 		String enablingCond="";
 		String delay="";
 		String varType = " ";
@@ -168,25 +167,189 @@ public class BuildProperty {
 				switch(switchCaseTree.getType())
 				{
 				
+				case lpn.parser.properties.PropertyLexer.SENALWAYS :
+					
+					int senalways_pFirst;
+					if (numPlaces == 0) {
+						senalways_pFirst = 0;
+					}
+					else{
+						senalways_pFirst = (numPlaces-1);
+					}
+					
+					// Create a variable for the sensitivity list.
+					String[] sensitivityList = null;
+					String[] sensitivityVariables = null;
+					
+					// Check if senalways has any children.
+					if(switchCaseTree.getChildCount() > 0){
+						
+						// Check if the zero-th child is a sensitivity list.
+						CommonTree theList = (CommonTree) switchCaseTree.getChild(0);
+						if(theList.getType() ==
+								lpn.parser.properties.PropertyLexer.LPARA){
+							
+							sensitivityList = new String[theList.getChildCount()];
+							sensitivityVariables = new String[theList.getChildCount()];
+							
+							// Loop through the list gathering the elements.
+							int elementCount = 0;
+							for(Object obj : theList.getChildren()){
+
+								CommonTree listElement = (CommonTree) obj;
+
+								sensitivityList[elementCount] = 
+										generateExpression(listElement);
+								
+								String storedVariableType = lpnObj.getVariable(
+										sensitivityList[elementCount]).getType();
+								
+								String storedVariable = "_" + sensitivityList[elementCount];
+								
+								// Add the stay condition.
+								if(stayConditions != null & elementCount > 0){
+									stayConditions += "&";
+								}else{
+									stayConditions = "";
+								}
+									stayConditions += "(" + sensitivityList[elementCount] + "="
+											+ storedVariable + ")";
+								
+								sensitivityVariables[elementCount] = storedVariable;
+								
+								if(storedVariableType == "boolean"){
+//									lpnObj.addBoolean(sensitivityVariables[elementCount], "0");
+									lpnObj.addInput(sensitivityVariables[elementCount], storedVariableType);
+								}
+								else if (storedVariableType == "int"){
+									lpnObj.addInteger(sensitivityVariables[elementCount], "0");
+								}
+								else if (storedVariableType == "discrete"){
+									lpnObj.addInteger(sensitivityVariables[elementCount], "0");
+								}
+								
+								elementCount++;
+							}
+							
+							// Remove the sensitivity list.
+							switchCaseTree.deleteChild(0);
+							
+							if(numPlaces == 0){
+								lpnObj.addPlace("p" + 0, true);
+								numPlaces++;
+							}
+							
+							// Create the transition that stores the variables in the the list.
+							lpnObj.addTransition("t" + numTransitions);
+							numTransitions++;
+							lpnObj.addPlace("p" + numPlaces, false);
+							numPlaces++;
+							lpnObj.addMovement("p" + senalways_pFirst, "t" + (numTransitions-1));
+							lpnObj.addMovement("t" + (numTransitions-1), "p" + (numPlaces-1));
+							
+							for(int k=0; k<sensitivityVariables.length; k++){
+								lpnObj.addIntAssign("t" + (numTransitions-1),
+										sensitivityVariables[k], sensitivityList[k]);
+							}
+							senalways_pFirst = (numPlaces-1);
+						}
+					}
+					
+					
+//					System.out.println("senalways child count is: " + senalways_count);
+					
+					lpnObj = generateLPN(switchCaseTree, lpnObj, false, stayConditions);
+					
+//					String senalways_pLast = "p" + (numPlaces-1);
+					int senalways_pLast = (numPlaces -1);
+					
+//					loop=true;
+					
+//					if(loop){
+					lpnObj.addTransition("t" + numTransitions);
+					if(stayConditions != null){
+						lpnObj.addEnabling("t" + numTransitions, stayConditions);
+					}
+					numTransitions++;
+//						lpnObj.addMovement(pLast,"t" +(numTransitions-1));
+					lpnObj.addMovement("p" + senalways_pLast,"t" +(numTransitions-1));
+//						lpnObj.addMovement("t" +(numTransitions-1), pFirst); 
+					lpnObj.addMovement("t" +(numTransitions-1), "p" + senalways_pFirst); 
+//					    loop=false;
+//						}
+					
+					
+					pLast = "p" + (numPlaces);
+					lpnObj.addPlace("p"+numPlaces, false);
+					numPlaces++;
+					
+					if(sensitivityList != null && sensitivityList != null){
+					
+						// Create the enabling condition.
+						enablingCond = "~(" + sensitivityVariables[0]
+								+ " = " + sensitivityList[0] + ")";
+						
+						for(int k=1; k<sensitivityVariables.length; k++){
+							enablingCond += "& ~(" + sensitivityVariables[k]
+									+ " = " + sensitivityList[k] + ")";
+						}
+						
+						for(int k=0; k <= senalways_pLast - senalways_pFirst; k++){
+							lpnObj.addTransition("t" + numTransitions);
+//							lpnObj.addEnabling("t" + numTransitions,
+//									"~("  + sensitivityVariables[0] +
+//									"=" + sensitivityList[0] + ")");
+//							enablingCond = "~( " + sensitivityVariables[0] + " = " + sensitivityList[0] + " )";
+//							enablingCond = "senalways2a1";
+//							enablingCond = sensitivityVariables[0];
+							lpnObj.addEnabling("t" + numTransitions, enablingCond);
+							
+							lpnObj.addMovement("p" + (senalways_pFirst+k), "t" + numTransitions);
+							lpnObj.addMovement("t" + numTransitions, pLast);
+							
+							numTransitions++;
+						}
+					}
+				break;
+				
 				case lpn.parser.properties.PropertyLexer.ALWAYS : 
 					//System.out.println("child count of always : "+switchCaseTree.getChildCount());
-					if(numPlaces==0) pFirst="p0";
-					else pFirst = "p"+(numPlaces-1);
+//					if(numPlaces==0) pFirst="p0";
+//					else pFirst = "p"+(numPlaces-1);
+					
+					String always_pFirst;
+					if (numPlaces == 0){
+						always_pFirst = "p0";
+					}
+					else{
+						always_pFirst = "p"+(numPlaces-1);
+					}
 					
 					//System.out.println("pFirst is :"+pFirst);
 					//for(int q=0; q<switchCaseTree.getChildCount();q++){
-					lpnObj = generateLPN(switchCaseTree, lpnObj, false);
+					lpnObj = generateLPN(switchCaseTree, lpnObj, false, stayConditions);
 				//	}
-					pLast="p"+(numPlaces-1);
+					
+					String always_pLast = "p"+(numPlaces-1);
+					
+//					pLast="p"+(numPlaces-1);
 					loop=true;
 					
 					if(loop){
 						lpnObj.addTransition("t" + numTransitions);
 						numTransitions++;
-						lpnObj.addMovement(pLast,"t" +(numTransitions-1));
-						lpnObj.addMovement("t" +(numTransitions-1), pFirst); 
+//						lpnObj.addMovement(pLast,"t" +(numTransitions-1));
+						lpnObj.addMovement(always_pLast,"t" +(numTransitions-1));
+//						lpnObj.addMovement("t" +(numTransitions-1), pFirst); 
+						lpnObj.addMovement("t" +(numTransitions-1), always_pFirst); 
 						loop=false;
-						} 
+					}
+					
+					
+					pLast = "p" + (numPlaces);
+					lpnObj.addPlace("p"+numPlaces, false);
+					numPlaces++;
+					
 				break; 
 				case lpn.parser.properties.PropertyLexer.RCURL :
 					pLast= "p"+(numPlaces-1);
@@ -219,14 +382,24 @@ public class BuildProperty {
 						numPlaces++;
 					}
 					lpnObj.addTransition("t" + numTransitions);
-					lpnObj.addEnabling("t" +numTransitions, enablingCond);
+					if(stayConditions != null){
+						lpnObj.addEnabling("t" +numTransitions, 
+								"(" + enablingCond + ")&" + stayConditions);
+					}else{
+						lpnObj.addEnabling("t" +numTransitions, enablingCond);
+					}
 					lpnObj.changeDelay("t" +numTransitions, delay);
 					numTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
 					lpnObj.addTransition("tFail" + numFailTransitions);
 					lpnObj.getTransition("tFail" + numFailTransitions).setFail(true);
-					lpnObj.addEnabling("tFail" +numFailTransitions, "~("+enablingCond+")");
-
+					if(stayConditions != null){
+						lpnObj.addEnabling("tFail" +numFailTransitions, 
+								"~("+enablingCond+")&" + stayConditions);
+					}else{
+						lpnObj.addEnabling("tFail" +numFailTransitions, "~("+enablingCond+")");
+					}
+					
 					numFailTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1), "tFail" +(numFailTransitions-1));
 					lpnObj.addPlace("pFail"+numFailPlaces, false);
@@ -336,7 +509,12 @@ public class BuildProperty {
 								numPlaces++;
 							}
 							lpnObj.addTransition("t" + numTransitions);
-							lpnObj.addEnabling("t" +numTransitions, enablingCond);
+							if(stayConditions != null){
+								lpnObj.addEnabling("t" +numTransitions,
+										"(" + enablingCond + ")&" + stayConditions);
+							}else{
+								lpnObj.addEnabling("t" +numTransitions, enablingCond);
+							}
 							numTransitions++;
 							lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
 							
@@ -355,12 +533,22 @@ public class BuildProperty {
 							numPlaces++;
 						}
 						lpnObj.addTransition("t" + numTransitions);
-						lpnObj.addEnabling("t" +numTransitions, enablingCond);
+						if(stayConditions != null){
+							lpnObj.addEnabling("t" +numTransitions,
+									"(" + enablingCond + ")&" + stayConditions);
+						}else{
+							lpnObj.addEnabling("t" +numTransitions, enablingCond);
+						}
 						numTransitions++;
 						lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
 						lpnObj.addTransition("tFail" + numFailTransitions);
 						lpnObj.getTransition("tFail" + numFailTransitions).setFail(true);
-						lpnObj.addEnabling("tFail" +numFailTransitions, "~("+enablingCond+")");
+						if(stayConditions != null){
+							lpnObj.addEnabling("tFail" +numFailTransitions,
+									"~("+enablingCond+")&" + stayConditions);
+						}else{
+							lpnObj.addEnabling("tFail" +numFailTransitions, "~("+enablingCond+")");
+						}
 						lpnObj.changeDelay("tFail" +numFailTransitions, delay);
 						
 						numFailTransitions++;
@@ -376,6 +564,27 @@ public class BuildProperty {
 
 					break;
 
+				case lpn.parser.properties.PropertyLexer.WAIT_DELAY:
+					enablingCond = "t";
+					delay = generateExpression((CommonTree)switchCaseTree.getChild(0));
+					
+					if(numPlaces==0){
+						lpnObj.addPlace("p"+numPlaces, true);
+						numPlaces++;
+					}
+					
+					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.addEnabling("t" +numTransitions, enablingCond);
+					lpnObj.changeDelay("t" +numTransitions, delay);
+					numTransitions++;
+					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
+					
+					lpnObj.addPlace("p"+numPlaces, false);
+					numPlaces++;
+					lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
+					
+					break;
+					
 				case lpn.parser.properties.PropertyLexer.IF :
 					boolean elsePartExists = false;
 					System.out.println("IF statement");
@@ -464,7 +673,7 @@ public class BuildProperty {
 						}
 
 						else if(!(switchCaseTree.getChild(j).getType()==lpn.parser.properties.PropertyLexer.ELSEIF) & !(switchCaseTree.getChild(j).getType()==lpn.parser.properties.PropertyLexer.ELSE)){
-							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true);
+							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true, stayConditions);
 
 
 						}
@@ -476,14 +685,14 @@ public class BuildProperty {
 					lpnObj.addMovement("t" +(numTransitions-1), "pEnd"+(numEndPlaces-1));
 					for(int j=0;j<switchCaseTree.getChildCount();j++){
 						if(switchCaseTree.getChild(j).getType()==lpn.parser.properties.PropertyLexer.ELSEIF){
-							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true);
+							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true, stayConditions);
 							}
 					}
 					
 					for(int j=0;j<switchCaseTree.getChildCount();j++){
 						if(switchCaseTree.getChild(j).getType()==lpn.parser.properties.PropertyLexer.ELSE){
 							elsePartExists = true;
-							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true);
+							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true, stayConditions);
 							}
 					}
 			
@@ -577,11 +786,11 @@ public class BuildProperty {
 							lpnObj.addMovement("t" +(numTransitions-1), "p"+(numPlaces-1));
 						}
 						else if(switchCaseTree.getChild(j).getType()==lpn.parser.properties.PropertyLexer.IF){
-							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true);
+							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true, stayConditions);
 						}
 						else{
 
-							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true);
+							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true, stayConditions);
 						}
 
 					}
@@ -620,7 +829,7 @@ public class BuildProperty {
 					lpnObj.addMovement("t" +(numTransitions-1), "p"+(numPlaces-1));
 					for(int j=0;j<switchCaseTree.getChildCount();j++){
 
-						lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true);
+						lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true, stayConditions);
 							//enablingCond=  generateExpression((CommonTree)switchCaseTree.getChild(0));
 							if(numPlaces==0){
 								lpnObj.addPlace("p"+numPlaces, true);
@@ -644,7 +853,7 @@ public class BuildProperty {
 						numPlaces++;
 					}
 					lpnObj.addTransition("t" + numTransitions);
-					lpnObj.addEnabling("t" +numTransitions, "~("+enablingCond+")");
+					lpnObj.addEnabling("t" +numTransitions, "~("+enablingCond+")" + "&" + stayConditions);
 					numTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
 					
@@ -652,7 +861,7 @@ public class BuildProperty {
 					numPlaces++;
 					lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
 					lpnObj.addTransition("t" + numTransitions);
-					lpnObj.addEnabling("t" +numTransitions, enablingCond);
+					lpnObj.addEnabling("t" +numTransitions, "(" + enablingCond + ")" + "&" + stayConditions);
 					numTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
 					

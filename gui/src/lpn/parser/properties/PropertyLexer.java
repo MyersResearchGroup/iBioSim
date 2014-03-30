@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g 2013-05-21 14:15:03
+// $ANTLR 3.4 /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g 2014-02-07 20:27:54
  
   package lpn.parser.properties;
   //package antlrPackage;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class PropertyLexer extends Lexer {
     public static final int EOF=-1;
-    public static final int T__52=52;
+    public static final int T__54=54;
     public static final int ALWAYS=4;
     public static final int AND=5;
     public static final int ASSERT=6;
@@ -54,13 +54,15 @@ public class PropertyLexer extends Lexer {
     public static final int RPARA=42;
     public static final int SAMEAS=43;
     public static final int SEMICOL=44;
-    public static final int STRING=45;
-    public static final int UNICODE_ESC=46;
-    public static final int UNIFORM=47;
-    public static final int WAIT=48;
-    public static final int WAIT_POSEDGE=49;
-    public static final int WAIT_STABLE=50;
-    public static final int WS=51;
+    public static final int SENALWAYS=45;
+    public static final int STRING=46;
+    public static final int UNICODE_ESC=47;
+    public static final int UNIFORM=48;
+    public static final int WAIT=49;
+    public static final int WAIT_DELAY=50;
+    public static final int WAIT_POSEDGE=51;
+    public static final int WAIT_STABLE=52;
+    public static final int WS=53;
 
     // delegates
     // delegators
@@ -75,15 +77,15 @@ public class PropertyLexer extends Lexer {
     public PropertyLexer(CharStream input, RecognizerSharedState state) {
         super(input,state);
     }
-    public String getGrammarFileName() { return "/home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g"; }
+    public String getGrammarFileName() { return "/home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g"; }
 
-    // $ANTLR start "T__52"
-    public final void mT__52() throws RecognitionException {
+    // $ANTLR start "T__54"
+    public final void mT__54() throws RecognitionException {
         try {
-            int _type = T__52;
+            int _type = T__54;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:12:7: ( 'property' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:12:9: 'property'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:12:7: ( 'property' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:12:9: 'property'
             {
             match("property"); 
 
@@ -98,15 +100,38 @@ public class PropertyLexer extends Lexer {
         	// do for sure before leaving
         }
     }
-    // $ANTLR end "T__52"
+    // $ANTLR end "T__54"
+
+    // $ANTLR start "SENALWAYS"
+    public final void mSENALWAYS() throws RecognitionException {
+        try {
+            int _type = SENALWAYS;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:39:3: ( 'senalways' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:39:5: 'senalways'
+            {
+            match("senalways"); 
+
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "SENALWAYS"
 
     // $ANTLR start "ALWAYS"
     public final void mALWAYS() throws RecognitionException {
         try {
             int _type = ALWAYS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:39:3: ( 'always' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:39:3: 'always'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:43:3: ( 'always' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:43:3: 'always'
             {
             match("always"); 
 
@@ -128,8 +153,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = BOOLEAN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:43:2: ( 'boolean' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:43:2: 'boolean'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:47:2: ( 'boolean' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:47:2: 'boolean'
             {
             match("boolean"); 
 
@@ -151,8 +176,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = REAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:47:2: ( 'real' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:47:2: 'real'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:51:2: ( 'real' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:51:2: 'real'
             {
             match("real"); 
 
@@ -174,8 +199,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = INTEGER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:51:2: ( 'int' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:51:2: 'int'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:55:2: ( 'int' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:55:2: 'int'
             {
             match("int"); 
 
@@ -197,8 +222,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = WAIT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:56:2: ( 'wait' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:56:2: 'wait'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:60:2: ( 'wait' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:60:2: 'wait'
             {
             match("wait"); 
 
@@ -215,13 +240,36 @@ public class PropertyLexer extends Lexer {
     }
     // $ANTLR end "WAIT"
 
+    // $ANTLR start "WAIT_DELAY"
+    public final void mWAIT_DELAY() throws RecognitionException {
+        try {
+            int _type = WAIT_DELAY;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:64:2: ( 'waitDelay' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:64:2: 'waitDelay'
+            {
+            match("waitDelay"); 
+
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "WAIT_DELAY"
+
     // $ANTLR start "NOT"
     public final void mNOT() throws RecognitionException {
         try {
             int _type = NOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:61:3: ( '~' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:61:3: '~'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:68:3: ( '~' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:68:3: '~'
             {
             match('~'); 
 
@@ -241,8 +289,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = MOD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:65:2: ( '%' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:65:2: '%'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:72:2: ( '%' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:72:2: '%'
             {
             match('%'); 
 
@@ -262,8 +310,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:70:2: ( '&' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:70:2: '&'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:77:2: ( '&' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:77:2: '&'
             {
             match('&'); 
 
@@ -283,8 +331,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:74:2: ( '|' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:74:2: '|'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:81:2: ( '|' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:81:2: '|'
             {
             match('|'); 
 
@@ -304,8 +352,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = ASSERT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:79:2: ( 'assert' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:79:2: 'assert'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:86:2: ( 'assert' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:86:2: 'assert'
             {
             match("assert"); 
 
@@ -327,8 +375,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = IF;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:84:2: ( 'if' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:84:2: 'if'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:91:2: ( 'if' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:91:2: 'if'
             {
             match("if"); 
 
@@ -350,8 +398,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = END;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:89:2: ( 'end' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:89:2: 'end'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:96:2: ( 'end' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:96:2: 'end'
             {
             match("end"); 
 
@@ -373,8 +421,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = ELSEIF;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:94:2: ( 'else if' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:94:2: 'else if'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:101:2: ( 'else if' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:101:2: 'else if'
             {
             match("else if"); 
 
@@ -396,8 +444,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = ELSE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:98:2: ( 'else' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:98:2: 'else'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:105:2: ( 'else' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:105:2: 'else'
             {
             match("else"); 
 
@@ -419,8 +467,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = WAIT_STABLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:102:2: ( 'waitStable' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:102:2: 'waitStable'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:109:2: ( 'waitStable' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:109:2: 'waitStable'
             {
             match("waitStable"); 
 
@@ -442,8 +490,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = ASSERT_STABLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:106:2: ( 'assertStable' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:106:2: 'assertStable'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:113:2: ( 'assertStable' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:113:2: 'assertStable'
             {
             match("assertStable"); 
 
@@ -465,8 +513,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = ASSERT_UNTIL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:110:2: ( 'assertUntil' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:110:2: 'assertUntil'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:117:2: ( 'assertUntil' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:117:2: 'assertUntil'
             {
             match("assertUntil"); 
 
@@ -488,8 +536,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = WAIT_POSEDGE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:115:3: ( 'waitPosedge' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:115:3: 'waitPosedge'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:122:3: ( 'waitPosedge' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:122:3: 'waitPosedge'
             {
             match("waitPosedge"); 
 
@@ -511,8 +559,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:119:5: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:119:7: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:5: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:7: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
@@ -524,7 +572,7 @@ public class PropertyLexer extends Lexer {
             }
 
 
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:119:31: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:31: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             loop1:
             do {
                 int alt1=2;
@@ -537,7 +585,7 @@ public class PropertyLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
+            	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
             	    {
             	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
             	        input.consume();
@@ -574,10 +622,10 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:122:5: ( ( '0' .. '9' )+ )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:122:7: ( '0' .. '9' )+
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:129:5: ( ( '0' .. '9' )+ )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:129:7: ( '0' .. '9' )+
             {
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:122:7: ( '0' .. '9' )+
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:129:7: ( '0' .. '9' )+
             int cnt2=0;
             loop2:
             do {
@@ -591,7 +639,7 @@ public class PropertyLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
+            	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
             	    {
             	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
             	        input.consume();
@@ -632,14 +680,14 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = FLOAT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:5: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:133:5: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT )
             int alt9=3;
             alt9 = dfa9.predict(input);
             switch (alt9) {
                 case 1 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:9: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )?
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:133:9: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )?
                     {
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:9: ( '0' .. '9' )+
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:133:9: ( '0' .. '9' )+
                     int cnt3=0;
                     loop3:
                     do {
@@ -653,7 +701,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt3) {
                     	case 1 :
-                    	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
+                    	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     	    {
                     	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
                     	        input.consume();
@@ -680,7 +728,7 @@ public class PropertyLexer extends Lexer {
 
                     match('.'); 
 
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:25: ( '0' .. '9' )*
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:133:25: ( '0' .. '9' )*
                     loop4:
                     do {
                         int alt4=2;
@@ -693,7 +741,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt4) {
                     	case 1 :
-                    	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
+                    	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     	    {
                     	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
                     	        input.consume();
@@ -714,7 +762,7 @@ public class PropertyLexer extends Lexer {
                     } while (true);
 
 
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:37: ( EXPONENT )?
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:133:37: ( EXPONENT )?
                     int alt5=2;
                     int LA5_0 = input.LA(1);
 
@@ -723,7 +771,7 @@ public class PropertyLexer extends Lexer {
                     }
                     switch (alt5) {
                         case 1 :
-                            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:37: EXPONENT
+                            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:133:37: EXPONENT
                             {
                             mEXPONENT(); 
 
@@ -737,11 +785,11 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:127:9: '.' ( '0' .. '9' )+ ( EXPONENT )?
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:134:9: '.' ( '0' .. '9' )+ ( EXPONENT )?
                     {
                     match('.'); 
 
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:127:13: ( '0' .. '9' )+
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:134:13: ( '0' .. '9' )+
                     int cnt6=0;
                     loop6:
                     do {
@@ -755,7 +803,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt6) {
                     	case 1 :
-                    	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
+                    	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     	    {
                     	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
                     	        input.consume();
@@ -780,7 +828,7 @@ public class PropertyLexer extends Lexer {
                     } while (true);
 
 
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:127:25: ( EXPONENT )?
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:134:25: ( EXPONENT )?
                     int alt7=2;
                     int LA7_0 = input.LA(1);
 
@@ -789,7 +837,7 @@ public class PropertyLexer extends Lexer {
                     }
                     switch (alt7) {
                         case 1 :
-                            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:127:25: EXPONENT
+                            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:134:25: EXPONENT
                             {
                             mEXPONENT(); 
 
@@ -803,9 +851,9 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:128:9: ( '0' .. '9' )+ EXPONENT
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:135:9: ( '0' .. '9' )+ EXPONENT
                     {
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:128:9: ( '0' .. '9' )+
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:135:9: ( '0' .. '9' )+
                     int cnt8=0;
                     loop8:
                     do {
@@ -819,7 +867,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
+                    	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     	    {
                     	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
                     	        input.consume();
@@ -865,7 +913,7 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:132:5: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '/*' ( options {greedy=false; } : . )* '*/' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:139:5: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '/*' ( options {greedy=false; } : . )* '*/' )
             int alt13=2;
             int LA13_0 = input.LA(1);
 
@@ -895,13 +943,13 @@ public class PropertyLexer extends Lexer {
             }
             switch (alt13) {
                 case 1 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:132:9: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:139:9: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
                     {
                     match("//"); 
 
 
 
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:132:14: (~ ( '\\n' | '\\r' ) )*
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:139:14: (~ ( '\\n' | '\\r' ) )*
                     loop10:
                     do {
                         int alt10=2;
@@ -914,7 +962,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt10) {
                     	case 1 :
-                    	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
+                    	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     	    {
                     	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\t')||(input.LA(1) >= '\u000B' && input.LA(1) <= '\f')||(input.LA(1) >= '\u000E' && input.LA(1) <= '\uFFFF') ) {
                     	        input.consume();
@@ -935,7 +983,7 @@ public class PropertyLexer extends Lexer {
                     } while (true);
 
 
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:132:28: ( '\\r' )?
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:139:28: ( '\\r' )?
                     int alt11=2;
                     int LA11_0 = input.LA(1);
 
@@ -944,7 +992,7 @@ public class PropertyLexer extends Lexer {
                     }
                     switch (alt11) {
                         case 1 :
-                            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:132:28: '\\r'
+                            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:139:28: '\\r'
                             {
                             match('\r'); 
 
@@ -961,13 +1009,13 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:133:9: '/*' ( options {greedy=false; } : . )* '*/'
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:140:9: '/*' ( options {greedy=false; } : . )* '*/'
                     {
                     match("/*"); 
 
 
 
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:133:14: ( options {greedy=false; } : . )*
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:140:14: ( options {greedy=false; } : . )*
                     loop12:
                     do {
                         int alt12=2;
@@ -992,7 +1040,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt12) {
                     	case 1 :
-                    	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:133:42: .
+                    	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:140:42: .
                     	    {
                     	    matchAny(); 
 
@@ -1029,10 +1077,10 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:136:5: ( ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' ) )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:136:9: ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:143:5: ( ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' ) )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:143:9: ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' )
             {
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:136:9: ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:143:9: ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' )
             int alt14=5;
             switch ( input.LA(1) ) {
             case ' ':
@@ -1072,35 +1120,35 @@ public class PropertyLexer extends Lexer {
 
             switch (alt14) {
                 case 1 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:136:11: ' '
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:143:11: ' '
                     {
                     match(' '); 
 
                     }
                     break;
                 case 2 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:137:11: '\\t'
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:144:11: '\\t'
                     {
                     match('\t'); 
 
                     }
                     break;
                 case 3 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:138:11: '\\r'
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:145:11: '\\r'
                     {
                     match('\r'); 
 
                     }
                     break;
                 case 4 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:139:11: '\\n'
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:146:11: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 5 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:140:10: '\\r\\n'
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:147:10: '\\r\\n'
                     {
                     match("\r\n"); 
 
@@ -1130,12 +1178,12 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:147:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\'' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:147:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\''
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:154:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\'' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:154:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\''
             {
             match('\''); 
 
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:147:13: ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )*
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:154:13: ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )*
             loop15:
             do {
                 int alt15=3;
@@ -1151,7 +1199,7 @@ public class PropertyLexer extends Lexer {
 
                 switch (alt15) {
             	case 1 :
-            	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:147:15: ESC_SEQ
+            	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:154:15: ESC_SEQ
             	    {
             	    mESC_SEQ(); 
 
@@ -1159,7 +1207,7 @@ public class PropertyLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:147:25: ~ ( '\\\\' | '\\'' )
+            	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:154:25: ~ ( '\\\\' | '\\'' )
             	    {
             	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '&')||(input.LA(1) >= '(' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
             	        input.consume();
@@ -1196,8 +1244,8 @@ public class PropertyLexer extends Lexer {
     // $ANTLR start "EXPONENT"
     public final void mEXPONENT() throws RecognitionException {
         try {
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:153:10: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:153:12: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:160:10: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:160:12: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
             {
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
@@ -1209,7 +1257,7 @@ public class PropertyLexer extends Lexer {
             }
 
 
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:153:22: ( '+' | '-' )?
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:160:22: ( '+' | '-' )?
             int alt16=2;
             int LA16_0 = input.LA(1);
 
@@ -1218,7 +1266,7 @@ public class PropertyLexer extends Lexer {
             }
             switch (alt16) {
                 case 1 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     {
                     if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                         input.consume();
@@ -1236,7 +1284,7 @@ public class PropertyLexer extends Lexer {
             }
 
 
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:153:33: ( '0' .. '9' )+
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:160:33: ( '0' .. '9' )+
             int cnt17=0;
             loop17:
             do {
@@ -1250,7 +1298,7 @@ public class PropertyLexer extends Lexer {
 
                 switch (alt17) {
             	case 1 :
-            	    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
+            	    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
             	    {
             	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
             	        input.consume();
@@ -1288,8 +1336,8 @@ public class PropertyLexer extends Lexer {
     // $ANTLR start "HEX_DIGIT"
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:156:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:163:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
             {
             if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'F')||(input.LA(1) >= 'a' && input.LA(1) <= 'f') ) {
                 input.consume();
@@ -1314,7 +1362,7 @@ public class PropertyLexer extends Lexer {
     // $ANTLR start "ESC_SEQ"
     public final void mESC_SEQ() throws RecognitionException {
         try {
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:160:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:167:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
             int alt18=3;
             int LA18_0 = input.LA(1);
 
@@ -1367,7 +1415,7 @@ public class PropertyLexer extends Lexer {
             }
             switch (alt18) {
                 case 1 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:160:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:167:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
                     {
                     match('\\'); 
 
@@ -1384,7 +1432,7 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:161:9: UNICODE_ESC
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:168:9: UNICODE_ESC
                     {
                     mUNICODE_ESC(); 
 
@@ -1392,7 +1440,7 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:162:9: OCTAL_ESC
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:169:9: OCTAL_ESC
                     {
                     mOCTAL_ESC(); 
 
@@ -1412,7 +1460,7 @@ public class PropertyLexer extends Lexer {
     // $ANTLR start "OCTAL_ESC"
     public final void mOCTAL_ESC() throws RecognitionException {
         try {
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:167:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:174:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
             int alt19=3;
             int LA19_0 = input.LA(1);
 
@@ -1463,7 +1511,7 @@ public class PropertyLexer extends Lexer {
             }
             switch (alt19) {
                 case 1 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:167:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:174:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -1500,7 +1548,7 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:168:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:175:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -1527,7 +1575,7 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:169:9: '\\\\' ( '0' .. '7' )
+                    // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:176:9: '\\\\' ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -1556,8 +1604,8 @@ public class PropertyLexer extends Lexer {
     // $ANTLR start "UNICODE_ESC"
     public final void mUNICODE_ESC() throws RecognitionException {
         try {
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:174:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:174:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:181:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:181:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
             {
             match('\\'); 
 
@@ -1590,8 +1638,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = PLUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:180:2: ( '+' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:180:2: '+'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:187:2: ( '+' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:187:2: '+'
             {
             match('+'); 
 
@@ -1611,8 +1659,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = MINUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:184:3: ( '-' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:184:3: '-'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:191:3: ( '-' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:191:3: '-'
             {
             match('-'); 
 
@@ -1632,8 +1680,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = MULT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:189:2: ( '*' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:189:2: '*'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:196:2: ( '*' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:196:2: '*'
             {
             match('*'); 
 
@@ -1653,8 +1701,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = DIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:193:2: ( '/' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:193:2: '/'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:200:2: ( '/' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:200:2: '/'
             {
             match('/'); 
 
@@ -1674,8 +1722,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = DASH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:197:2: ( '***' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:197:2: '***'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:204:2: ( '***' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:204:2: '***'
             {
             match("***"); 
 
@@ -1697,8 +1745,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:200:2: ( '=' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:200:2: '='
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:207:2: ( '=' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:207:2: '='
             {
             match('='); 
 
@@ -1718,8 +1766,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = NOT_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:205:2: ( '!=' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:205:2: '!='
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:212:2: ( '!=' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:212:2: '!='
             {
             match("!="); 
 
@@ -1741,8 +1789,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = GET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:209:2: ( '>' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:209:2: '>'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:216:2: ( '>' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:216:2: '>'
             {
             match('>'); 
 
@@ -1762,8 +1810,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = LET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:213:2: ( '<' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:213:2: '<'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:220:2: ( '<' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:220:2: '<'
             {
             match('<'); 
 
@@ -1783,8 +1831,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = GETEQ;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:217:2: ( '>=' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:217:2: '>='
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:224:2: ( '>=' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:224:2: '>='
             {
             match(">="); 
 
@@ -1806,8 +1854,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = LETEQ;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:220:2: ( '<=' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:220:2: '<='
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:227:2: ( '<=' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:227:2: '<='
             {
             match("<="); 
 
@@ -1829,8 +1877,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = SAMEAS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:225:2: ( '==' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:225:2: '=='
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:232:2: ( '==' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:232:2: '=='
             {
             match("=="); 
 
@@ -1852,8 +1900,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = LPARA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:231:2: ( '(' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:231:2: '('
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:238:2: ( '(' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:238:2: '('
             {
             match('('); 
 
@@ -1873,8 +1921,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = RPARA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:235:2: ( ')' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:235:2: ')'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:242:2: ( ')' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:242:2: ')'
             {
             match(')'); 
 
@@ -1894,8 +1942,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = LCURL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:239:2: ( '{' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:239:2: '{'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:246:2: ( '{' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:246:2: '{'
             {
             match('{'); 
 
@@ -1915,8 +1963,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = RCURL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:243:2: ( '}' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:243:2: '}'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:250:2: ( '}' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:250:2: '}'
             {
             match('}'); 
 
@@ -1936,8 +1984,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = SEMICOL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:249:2: ( ';' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:249:2: ';'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:256:2: ( ';' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:256:2: ';'
             {
             match(';'); 
 
@@ -1957,8 +2005,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:253:2: ( ',' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:253:2: ','
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:260:2: ( ',' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:260:2: ','
             {
             match(','); 
 
@@ -1978,8 +2026,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = UNIFORM;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:256:2: ( 'uniform(' INT ',' INT ')' )
-            // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:256:2: 'uniform(' INT ',' INT ')'
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:263:2: ( 'uniform(' INT ',' INT ')' )
+            // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:263:2: 'uniform(' INT ',' INT ')'
             {
             match("uniform("); 
 
@@ -2007,356 +2055,372 @@ public class PropertyLexer extends Lexer {
     // $ANTLR end "UNIFORM"
 
     public void mTokens() throws RecognitionException {
-        // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:8: ( T__52 | ALWAYS | BOOLEAN | REAL | INTEGER | WAIT | NOT | MOD | AND | OR | ASSERT | IF | END | ELSEIF | ELSE | WAIT_STABLE | ASSERT_STABLE | ASSERT_UNTIL | WAIT_POSEDGE | ID | INT | FLOAT | COMMENT | WS | STRING | PLUS | MINUS | MULT | DIV | DASH | EQUAL | NOT_EQUAL | GET | LET | GETEQ | LETEQ | SAMEAS | LPARA | RPARA | LCURL | RCURL | SEMICOL | COMMA | UNIFORM )
-        int alt20=44;
+        // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:8: ( T__54 | SENALWAYS | ALWAYS | BOOLEAN | REAL | INTEGER | WAIT | WAIT_DELAY | NOT | MOD | AND | OR | ASSERT | IF | END | ELSEIF | ELSE | WAIT_STABLE | ASSERT_STABLE | ASSERT_UNTIL | WAIT_POSEDGE | ID | INT | FLOAT | COMMENT | WS | STRING | PLUS | MINUS | MULT | DIV | DASH | EQUAL | NOT_EQUAL | GET | LET | GETEQ | LETEQ | SAMEAS | LPARA | RPARA | LCURL | RCURL | SEMICOL | COMMA | UNIFORM )
+        int alt20=46;
         alt20 = dfa20.predict(input);
         switch (alt20) {
             case 1 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:10: T__52
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:10: T__54
                 {
-                mT__52(); 
+                mT__54(); 
 
 
                 }
                 break;
             case 2 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:16: ALWAYS
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:16: SENALWAYS
+                {
+                mSENALWAYS(); 
+
+
+                }
+                break;
+            case 3 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:26: ALWAYS
                 {
                 mALWAYS(); 
 
 
                 }
                 break;
-            case 3 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:23: BOOLEAN
+            case 4 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:33: BOOLEAN
                 {
                 mBOOLEAN(); 
 
 
                 }
                 break;
-            case 4 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:31: REAL
+            case 5 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:41: REAL
                 {
                 mREAL(); 
 
 
                 }
                 break;
-            case 5 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:36: INTEGER
+            case 6 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:46: INTEGER
                 {
                 mINTEGER(); 
 
 
                 }
                 break;
-            case 6 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:44: WAIT
+            case 7 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:54: WAIT
                 {
                 mWAIT(); 
 
 
                 }
                 break;
-            case 7 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:49: NOT
+            case 8 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:59: WAIT_DELAY
+                {
+                mWAIT_DELAY(); 
+
+
+                }
+                break;
+            case 9 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:70: NOT
                 {
                 mNOT(); 
 
 
                 }
                 break;
-            case 8 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:53: MOD
+            case 10 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:74: MOD
                 {
                 mMOD(); 
 
 
                 }
                 break;
-            case 9 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:57: AND
+            case 11 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:78: AND
                 {
                 mAND(); 
 
 
                 }
                 break;
-            case 10 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:61: OR
+            case 12 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:82: OR
                 {
                 mOR(); 
 
 
                 }
                 break;
-            case 11 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:64: ASSERT
+            case 13 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:85: ASSERT
                 {
                 mASSERT(); 
 
 
                 }
                 break;
-            case 12 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:71: IF
+            case 14 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:92: IF
                 {
                 mIF(); 
 
 
                 }
                 break;
-            case 13 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:74: END
+            case 15 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:95: END
                 {
                 mEND(); 
 
 
                 }
                 break;
-            case 14 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:78: ELSEIF
+            case 16 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:99: ELSEIF
                 {
                 mELSEIF(); 
 
 
                 }
                 break;
-            case 15 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:85: ELSE
+            case 17 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:106: ELSE
                 {
                 mELSE(); 
 
 
                 }
                 break;
-            case 16 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:90: WAIT_STABLE
+            case 18 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:111: WAIT_STABLE
                 {
                 mWAIT_STABLE(); 
 
 
                 }
                 break;
-            case 17 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:102: ASSERT_STABLE
+            case 19 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:123: ASSERT_STABLE
                 {
                 mASSERT_STABLE(); 
 
 
                 }
                 break;
-            case 18 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:116: ASSERT_UNTIL
+            case 20 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:137: ASSERT_UNTIL
                 {
                 mASSERT_UNTIL(); 
 
 
                 }
                 break;
-            case 19 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:129: WAIT_POSEDGE
+            case 21 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:150: WAIT_POSEDGE
                 {
                 mWAIT_POSEDGE(); 
 
 
                 }
                 break;
-            case 20 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:142: ID
+            case 22 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:163: ID
                 {
                 mID(); 
 
 
                 }
                 break;
-            case 21 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:145: INT
+            case 23 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:166: INT
                 {
                 mINT(); 
 
 
                 }
                 break;
-            case 22 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:149: FLOAT
+            case 24 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:170: FLOAT
                 {
                 mFLOAT(); 
 
 
                 }
                 break;
-            case 23 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:155: COMMENT
+            case 25 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:176: COMMENT
                 {
                 mCOMMENT(); 
 
 
                 }
                 break;
-            case 24 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:163: WS
+            case 26 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:184: WS
                 {
                 mWS(); 
 
 
                 }
                 break;
-            case 25 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:166: STRING
+            case 27 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:187: STRING
                 {
                 mSTRING(); 
 
 
                 }
                 break;
-            case 26 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:173: PLUS
+            case 28 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:194: PLUS
                 {
                 mPLUS(); 
 
 
                 }
                 break;
-            case 27 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:178: MINUS
+            case 29 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:199: MINUS
                 {
                 mMINUS(); 
 
 
                 }
                 break;
-            case 28 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:184: MULT
+            case 30 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:205: MULT
                 {
                 mMULT(); 
 
 
                 }
                 break;
-            case 29 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:189: DIV
+            case 31 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:210: DIV
                 {
                 mDIV(); 
 
 
                 }
                 break;
-            case 30 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:193: DASH
+            case 32 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:214: DASH
                 {
                 mDASH(); 
 
 
                 }
                 break;
-            case 31 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:198: EQUAL
+            case 33 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:219: EQUAL
                 {
                 mEQUAL(); 
 
 
                 }
                 break;
-            case 32 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:204: NOT_EQUAL
+            case 34 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:225: NOT_EQUAL
                 {
                 mNOT_EQUAL(); 
 
 
                 }
                 break;
-            case 33 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:214: GET
+            case 35 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:235: GET
                 {
                 mGET(); 
 
 
                 }
                 break;
-            case 34 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:218: LET
+            case 36 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:239: LET
                 {
                 mLET(); 
 
 
                 }
                 break;
-            case 35 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:222: GETEQ
+            case 37 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:243: GETEQ
                 {
                 mGETEQ(); 
 
 
                 }
                 break;
-            case 36 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:228: LETEQ
+            case 38 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:249: LETEQ
                 {
                 mLETEQ(); 
 
 
                 }
                 break;
-            case 37 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:234: SAMEAS
+            case 39 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:255: SAMEAS
                 {
                 mSAMEAS(); 
 
 
                 }
                 break;
-            case 38 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:241: LPARA
+            case 40 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:262: LPARA
                 {
                 mLPARA(); 
 
 
                 }
                 break;
-            case 39 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:247: RPARA
+            case 41 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:268: RPARA
                 {
                 mRPARA(); 
 
 
                 }
                 break;
-            case 40 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:253: LCURL
+            case 42 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:274: LCURL
                 {
                 mLCURL(); 
 
 
                 }
                 break;
-            case 41 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:259: RCURL
+            case 43 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:280: RCURL
                 {
                 mRCURL(); 
 
 
                 }
                 break;
-            case 42 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:265: SEMICOL
+            case 44 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:286: SEMICOL
                 {
                 mSEMICOL(); 
 
 
                 }
                 break;
-            case 43 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:273: COMMA
+            case 45 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:294: COMMA
                 {
                 mCOMMA(); 
 
 
                 }
                 break;
-            case 44 :
-                // /home/chou/dhanashree/nobackup/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:279: UNIFORM
+            case 46 :
+                // /home/fedoralaptop/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:300: UNIFORM
                 {
                 mUNIFORM(); 
 
@@ -2421,179 +2485,199 @@ public class PropertyLexer extends Lexer {
             this.transition = DFA9_transition;
         }
         public String getDescription() {
-            return "125:1: FLOAT : ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT );";
+            return "132:1: FLOAT : ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT );";
         }
     }
     static final String DFA20_eotS =
-        "\1\uffff\6\37\4\uffff\2\37\1\53\1\uffff\1\55\4\uffff\1\57\1\61\1"+
-        "\uffff\1\63\1\65\7\uffff\6\37\1\74\4\37\13\uffff\5\37\1\106\1\uffff"+
-        "\1\37\1\110\6\37\1\117\1\uffff\1\122\1\uffff\1\124\5\37\1\uffff"+
-        "\2\37\3\uffff\2\37\1\136\1\141\5\37\1\uffff\2\37\1\uffff\1\151\3"+
-        "\37\1\155\2\37\1\uffff\2\37\2\uffff\6\37\1\170\2\37\1\173\1\uffff"+
-        "\1\174\1\175\3\uffff";
+        "\1\uffff\7\40\4\uffff\2\40\1\55\1\uffff\1\57\4\uffff\1\61\1\63\1"+
+        "\uffff\1\65\1\67\7\uffff\7\40\1\77\4\40\13\uffff\6\40\1\112\1\uffff"+
+        "\1\40\1\114\7\40\1\124\1\uffff\1\130\1\uffff\1\132\6\40\1\uffff"+
+        "\3\40\3\uffff\3\40\1\147\1\152\7\40\1\uffff\2\40\1\uffff\1\164\4"+
+        "\40\1\171\3\40\1\uffff\3\40\2\uffff\1\u0080\2\40\1\u0083\2\40\1"+
+        "\uffff\2\40\1\uffff\1\u0088\2\40\1\u008b\1\uffff\1\u008c\1\u008d"+
+        "\3\uffff";
     static final String DFA20_eofS =
-        "\176\uffff";
+        "\u008e\uffff";
     static final String DFA20_minS =
-        "\1\11\1\162\1\154\1\157\1\145\1\146\1\141\4\uffff\1\154\1\156\1"+
-        "\56\1\uffff\1\52\4\uffff\1\52\1\75\1\uffff\2\75\7\uffff\1\157\1"+
-        "\167\1\163\1\157\1\141\1\164\1\60\1\151\1\144\1\163\1\151\13\uffff"+
-        "\1\160\1\141\1\145\2\154\1\60\1\uffff\1\164\1\60\1\145\1\146\1\145"+
-        "\1\171\1\162\1\145\1\60\1\uffff\1\60\1\uffff\1\40\1\157\1\162\1"+
-        "\163\1\164\1\141\1\uffff\1\164\1\157\3\uffff\1\162\1\164\2\60\1"+
-        "\156\1\141\1\163\1\155\1\171\1\uffff\1\164\1\156\1\uffff\1\60\1"+
-        "\142\1\145\1\50\1\60\1\141\1\164\1\uffff\1\154\1\144\2\uffff\1\142"+
-        "\1\151\1\145\1\147\2\154\1\60\2\145\1\60\1\uffff\2\60\3\uffff";
+        "\1\11\1\162\1\145\1\154\1\157\1\145\1\146\1\141\4\uffff\1\154\1"+
+        "\156\1\56\1\uffff\1\52\4\uffff\1\52\1\75\1\uffff\2\75\7\uffff\1"+
+        "\157\1\156\1\167\1\163\1\157\1\141\1\164\1\60\1\151\1\144\1\163"+
+        "\1\151\13\uffff\1\160\2\141\1\145\2\154\1\60\1\uffff\1\164\1\60"+
+        "\1\145\1\146\1\145\1\154\1\171\1\162\1\145\1\60\1\uffff\1\60\1\uffff"+
+        "\1\40\1\157\1\162\1\167\1\163\1\164\1\141\1\uffff\1\145\1\164\1"+
+        "\157\3\uffff\1\162\1\164\1\141\2\60\1\156\1\154\1\141\1\163\1\155"+
+        "\2\171\1\uffff\1\164\1\156\1\uffff\1\60\1\141\1\142\1\145\1\50\1"+
+        "\60\1\163\1\141\1\164\1\uffff\1\171\1\154\1\144\2\uffff\1\60\1\142"+
+        "\1\151\1\60\1\145\1\147\1\uffff\2\154\1\uffff\1\60\2\145\1\60\1"+
+        "\uffff\2\60\3\uffff";
     static final String DFA20_maxS =
-        "\1\176\1\162\1\163\1\157\1\145\1\156\1\141\4\uffff\2\156\1\145\1"+
-        "\uffff\1\57\4\uffff\1\52\1\75\1\uffff\2\75\7\uffff\1\157\1\167\1"+
-        "\163\1\157\1\141\1\164\1\172\1\151\1\144\1\163\1\151\13\uffff\1"+
-        "\160\1\141\1\145\2\154\1\172\1\uffff\1\164\1\172\1\145\1\146\1\145"+
-        "\1\171\1\162\1\145\1\172\1\uffff\1\172\1\uffff\1\172\1\157\1\162"+
-        "\1\163\1\164\1\141\1\uffff\1\164\1\157\3\uffff\1\162\1\164\2\172"+
-        "\1\156\1\141\1\163\1\155\1\171\1\uffff\1\164\1\156\1\uffff\1\172"+
-        "\1\142\1\145\1\50\1\172\1\141\1\164\1\uffff\1\154\1\144\2\uffff"+
-        "\1\142\1\151\1\145\1\147\2\154\1\172\2\145\1\172\1\uffff\2\172\3"+
-        "\uffff";
+        "\1\176\1\162\1\145\1\163\1\157\1\145\1\156\1\141\4\uffff\2\156\1"+
+        "\145\1\uffff\1\57\4\uffff\1\52\1\75\1\uffff\2\75\7\uffff\1\157\1"+
+        "\156\1\167\1\163\1\157\1\141\1\164\1\172\1\151\1\144\1\163\1\151"+
+        "\13\uffff\1\160\2\141\1\145\2\154\1\172\1\uffff\1\164\1\172\1\145"+
+        "\1\146\1\145\1\154\1\171\1\162\1\145\1\172\1\uffff\1\172\1\uffff"+
+        "\1\172\1\157\1\162\1\167\1\163\1\164\1\141\1\uffff\1\145\1\164\1"+
+        "\157\3\uffff\1\162\1\164\1\141\2\172\1\156\1\154\1\141\1\163\1\155"+
+        "\2\171\1\uffff\1\164\1\156\1\uffff\1\172\1\141\1\142\1\145\1\50"+
+        "\1\172\1\163\1\141\1\164\1\uffff\1\171\1\154\1\144\2\uffff\1\172"+
+        "\1\142\1\151\1\172\1\145\1\147\1\uffff\2\154\1\uffff\1\172\2\145"+
+        "\1\172\1\uffff\2\172\3\uffff";
     static final String DFA20_acceptS =
-        "\7\uffff\1\7\1\10\1\11\1\12\3\uffff\1\26\1\uffff\1\30\1\31\1\32"+
-        "\1\33\2\uffff\1\40\2\uffff\1\46\1\47\1\50\1\51\1\52\1\53\1\24\13"+
-        "\uffff\1\25\1\27\1\35\1\36\1\34\1\45\1\37\1\43\1\41\1\44\1\42\6"+
-        "\uffff\1\14\11\uffff\1\5\1\uffff\1\15\6\uffff\1\4\2\uffff\1\6\1"+
-        "\16\1\17\11\uffff\1\2\2\uffff\1\13\7\uffff\1\3\2\uffff\1\54\1\1"+
-        "\12\uffff\1\20\2\uffff\1\22\1\23\1\21";
+        "\10\uffff\1\11\1\12\1\13\1\14\3\uffff\1\30\1\uffff\1\32\1\33\1\34"+
+        "\1\35\2\uffff\1\42\2\uffff\1\50\1\51\1\52\1\53\1\54\1\55\1\26\14"+
+        "\uffff\1\27\1\31\1\37\1\40\1\36\1\47\1\41\1\45\1\43\1\46\1\44\7"+
+        "\uffff\1\16\12\uffff\1\6\1\uffff\1\17\7\uffff\1\5\3\uffff\1\7\1"+
+        "\20\1\21\14\uffff\1\3\2\uffff\1\15\11\uffff\1\4\3\uffff\1\56\1\1"+
+        "\6\uffff\1\2\2\uffff\1\10\4\uffff\1\22\2\uffff\1\24\1\25\1\23";
     static final String DFA20_specialS =
-        "\176\uffff}>";
+        "\u008e\uffff}>";
     static final String[] DFA20_transitionS = {
-            "\2\20\2\uffff\1\20\22\uffff\1\20\1\26\3\uffff\1\10\1\11\1\21"+
-            "\1\31\1\32\1\24\1\22\1\36\1\23\1\16\1\17\12\15\1\uffff\1\35"+
-            "\1\30\1\25\1\27\2\uffff\32\37\4\uffff\1\37\1\uffff\1\2\1\3\2"+
-            "\37\1\13\3\37\1\5\6\37\1\1\1\37\1\4\2\37\1\14\1\37\1\6\3\37"+
-            "\1\33\1\12\1\34\1\7",
-            "\1\40",
-            "\1\41\6\uffff\1\42",
-            "\1\43",
-            "\1\44",
-            "\1\46\7\uffff\1\45",
-            "\1\47",
+            "\2\21\2\uffff\1\21\22\uffff\1\21\1\27\3\uffff\1\11\1\12\1\22"+
+            "\1\32\1\33\1\25\1\23\1\37\1\24\1\17\1\20\12\16\1\uffff\1\36"+
+            "\1\31\1\26\1\30\2\uffff\32\40\4\uffff\1\40\1\uffff\1\3\1\4\2"+
+            "\40\1\14\3\40\1\6\6\40\1\1\1\40\1\5\1\2\1\40\1\15\1\40\1\7\3"+
+            "\40\1\34\1\13\1\35\1\10",
+            "\1\41",
+            "\1\42",
+            "\1\43\6\uffff\1\44",
+            "\1\45",
+            "\1\46",
+            "\1\50\7\uffff\1\47",
+            "\1\51",
             "",
             "",
             "",
             "",
-            "\1\51\1\uffff\1\50",
-            "\1\52",
-            "\1\16\1\uffff\12\15\13\uffff\1\16\37\uffff\1\16",
+            "\1\53\1\uffff\1\52",
+            "\1\54",
+            "\1\17\1\uffff\12\16\13\uffff\1\17\37\uffff\1\17",
             "",
-            "\1\54\4\uffff\1\54",
-            "",
-            "",
+            "\1\56\4\uffff\1\56",
             "",
             "",
-            "\1\56",
+            "",
+            "",
             "\1\60",
-            "",
             "\1\62",
+            "",
             "\1\64",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "\1\66",
-            "\1\67",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\70",
             "\1\71",
             "\1\72",
             "\1\73",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\74",
             "\1\75",
             "\1\76",
-            "\1\77",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
             "\1\100",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "\1\101",
             "\1\102",
             "\1\103",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\104",
             "\1\105",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
-            "",
+            "\1\106",
             "\1\107",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\110",
             "\1\111",
-            "\1\112",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
+            "",
             "\1\113",
-            "\1\114",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
             "\1\115",
             "\1\116",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\117",
+            "\1\120",
+            "\1\121",
+            "\1\122",
+            "\1\123",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
             "",
-            "\12\37\7\uffff\17\37\1\121\2\37\1\120\7\37\4\uffff\1\37\1\uffff"+
-            "\32\37",
+            "\12\40\7\uffff\3\40\1\125\13\40\1\127\2\40\1\126\7\40\4\uffff"+
+            "\1\40\1\uffff\32\40",
             "",
-            "\1\123\17\uffff\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32"+
-            "\37",
-            "\1\125",
-            "\1\126",
-            "\1\127",
-            "\1\130",
-            "\1\131",
-            "",
-            "\1\132",
+            "\1\131\17\uffff\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32"+
+            "\40",
             "\1\133",
-            "",
-            "",
-            "",
             "\1\134",
             "\1\135",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
-            "\12\37\7\uffff\22\37\1\137\1\37\1\140\5\37\4\uffff\1\37\1\uffff"+
-            "\32\37",
+            "\1\136",
+            "\1\137",
+            "\1\140",
+            "",
+            "\1\141",
             "\1\142",
             "\1\143",
+            "",
+            "",
+            "",
             "\1\144",
             "\1\145",
             "\1\146",
-            "",
-            "\1\147",
-            "\1\150",
-            "",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
-            "\1\152",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
+            "\12\40\7\uffff\22\40\1\150\1\40\1\151\5\40\4\uffff\1\40\1\uffff"+
+            "\32\40",
             "\1\153",
             "\1\154",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\155",
             "\1\156",
             "\1\157",
-            "",
             "\1\160",
             "\1\161",
             "",
-            "",
             "\1\162",
             "\1\163",
-            "\1\164",
+            "",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
             "\1\165",
             "\1\166",
             "\1\167",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
-            "\1\171",
+            "\1\170",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
             "\1\172",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\173",
+            "\1\174",
             "",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\175",
+            "\1\176",
+            "\1\177",
+            "",
+            "",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
+            "\1\u0081",
+            "\1\u0082",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
+            "\1\u0084",
+            "\1\u0085",
+            "",
+            "\1\u0086",
+            "\1\u0087",
+            "",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
+            "\1\u0089",
+            "\1\u008a",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
+            "",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
+            "\12\40\7\uffff\32\40\4\uffff\1\40\1\uffff\32\40",
             "",
             "",
             ""
@@ -2629,7 +2713,7 @@ public class PropertyLexer extends Lexer {
             this.transition = DFA20_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T__52 | ALWAYS | BOOLEAN | REAL | INTEGER | WAIT | NOT | MOD | AND | OR | ASSERT | IF | END | ELSEIF | ELSE | WAIT_STABLE | ASSERT_STABLE | ASSERT_UNTIL | WAIT_POSEDGE | ID | INT | FLOAT | COMMENT | WS | STRING | PLUS | MINUS | MULT | DIV | DASH | EQUAL | NOT_EQUAL | GET | LET | GETEQ | LETEQ | SAMEAS | LPARA | RPARA | LCURL | RCURL | SEMICOL | COMMA | UNIFORM );";
+            return "1:1: Tokens : ( T__54 | SENALWAYS | ALWAYS | BOOLEAN | REAL | INTEGER | WAIT | WAIT_DELAY | NOT | MOD | AND | OR | ASSERT | IF | END | ELSEIF | ELSE | WAIT_STABLE | ASSERT_STABLE | ASSERT_UNTIL | WAIT_POSEDGE | ID | INT | FLOAT | COMMENT | WS | STRING | PLUS | MINUS | MULT | DIV | DASH | EQUAL | NOT_EQUAL | GET | LET | GETEQ | LETEQ | SAMEAS | LPARA | RPARA | LCURL | RCURL | SEMICOL | COMMA | UNIFORM );";
         }
     }
  
