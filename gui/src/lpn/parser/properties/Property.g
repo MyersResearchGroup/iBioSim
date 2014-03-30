@@ -35,6 +35,10 @@ declaration
   | INT^ ID (COMMA! ID)* SEMICOL!
   ;
   
+SENALWAYS
+  : 'senalways'
+  ;
+
 ALWAYS
 : 'always'
 ;
@@ -56,6 +60,9 @@ WAIT
 :'wait'
 ;
 
+WAIT_DELAY
+:'waitDelay'
+;
     
 NOT
 : '~'
@@ -262,8 +269,17 @@ booleanNegationExpression
 ;
   
 always_statement
-: ALWAYS^  LCURL! (statement)* RCURL!  //SEMICOL!
-;
+  : ALWAYS^ LCURL! (statement)* RCURL!  //SEMICOL!
+  ;
+
+senalways_statement
+  : SENALWAYS^ (sensitivityList)? LCURL! (statement)* RCURL!
+  ;
+
+sensitivityList
+  : (LPARA^ ID (COMMA! ID)* RPARA!)
+  ;
+
 signExpression
 :(PLUS^|MINUS^)*  booleanNegationExpression
 //:(PLUS^|MINUS^)* constantValue
@@ -321,7 +337,9 @@ wait_statement
   | WAIT^ LPARA! expression COMMA!  expression RPARA! SEMICOL!
 	;
 		
-	
+wait_delay_statement
+  : WAIT_DELAY^ LPARA! expression RPARA! SEMICOL!
+  ;
 
 assert_statement
 	: ASSERT^ LPARA! expression COMMA! expression RPARA! SEMICOL!
@@ -364,6 +382,7 @@ assertStable_statement
 
 statement
 	:wait_statement
+	|wait_delay_statement
 	|assert_statement
 	|if_statement
 	|waitStable_statement
@@ -371,6 +390,7 @@ statement
 	|always_statement
 	|assertStable_statement
 	|edge_statement
+	|senalways_statement
 	; 
 	
 
