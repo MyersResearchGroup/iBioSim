@@ -59,6 +59,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	
 	private JComboBox dimensionType, dimensionX, dimensionY;
 	
+	private JLabel dimensionTypeLabel, dimensionSizeLabel;
+	
 	private JTextField iIndex, jIndex;
 
 	private BioModel bioModel;
@@ -144,9 +146,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		ArrayList<String> presetPlaces = new ArrayList<String>();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel evPanel = new JPanel(new GridLayout(12, 2));
+		JPanel evPanel = new JPanel(new GridLayout(13, 2));
 		if (isTransition) {
-			evPanel.setLayout(new GridLayout(10, 2));
+			evPanel.setLayout(new GridLayout(11, 2));
 		}
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
@@ -208,6 +210,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		jIndex = new JTextField(10);
 		iIndex.setEnabled(false);
 		jIndex.setEnabled(false);
+		dimensionTypeLabel = new JLabel("Array Dimension");
+		dimensionSizeLabel = new JLabel("Array Size");
 		
 		if (bioModel != null && bioModel.IsWithinCompartment() == false) {
 			dynamicProcess.setEnabled(false);
@@ -241,7 +245,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				if (event.getId().equals(selected)) {
 					isTransition = SBMLutilities.isTransition(event);
 					if (isTransition) {
-						evPanel.setLayout(new GridLayout(10, 2));
+						evPanel.setLayout(new GridLayout(11, 2));
 					}
 					Eindex = i;
 					eventID.setText(event.getId());
@@ -445,33 +449,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		Utility.sort(assign);
 		eventAssign.setListData(assign);
-		if(eventAssign.getModel().getSize()==0){
-			dimensionType.setEnabled(true);	
-			int index = dimensionType.getSelectedIndex();
-			if (index == 0) {
-				dimensionX.setEnabled(false);
-				dimensionY.setEnabled(false);
-				iIndex.setEnabled(false);
-				jIndex.setEnabled(false);
-			}
-			else if (index == 1) {
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(false);
-				iIndex.setEnabled(true);
-				jIndex.setEnabled(false);
-			}
-			else if (index == 2) {
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(true);
-				iIndex.setEnabled(true);
-				jIndex.setEnabled(true);
-			}
-		}
-		else{
-			dimensionType.setEnabled(false);
-			dimensionX.setEnabled(false);
-			dimensionY.setEnabled(false);
-		}
 		eventAssign.setSelectedIndex(0);
 		eventAssign.addMouseListener(this);
 		eventAssignPanel.add(eventAssignLabel, "North");
@@ -481,6 +458,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		evPanel.add(eventID);
 		evPanel.add(NameLabel);
 		evPanel.add(eventName);
+		evPanel.add(dimensionTypeLabel);
+		evPanel.add(dimensionType);
+		evPanel.add(dimensionSizeLabel);
+		evPanel.add(dimensionX);
+		evPanel.add(new JLabel());
+		evPanel.add(dimensionY);
 		evPanel.add(triggerLabel);
 		evPanel.add(eventTrigger);
 		evPanel.add(delayLabel);
@@ -488,25 +471,20 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		evPanel.add(priorityLabel);
 		evPanel.add(eventPriority);
 		if (!isTransition) {
+			evPanel.add(dynamicProcessLabel);
+			evPanel.add(dynamicProcess);
+			evPanel.add(initialTriggerLabel);
+			evPanel.add(initialTrigger);
+		} else {
+			evPanel.add(failTransitionLabel);
+			evPanel.add(failTransition);
+		}
+		if (!isTransition) {
 			evPanel.add(assignTimeLabel);
 			evPanel.add(assignTime);
 		}
 		evPanel.add(persistentTriggerLabel);
 		evPanel.add(persistentTrigger);
-		if (!isTransition) {
-			evPanel.add(initialTriggerLabel);
-			evPanel.add(initialTrigger);
-			evPanel.add(dynamicProcessLabel);
-			evPanel.add(dynamicProcess);
-		} else {
-			evPanel.add(failTransitionLabel);
-			evPanel.add(failTransition);
-		}
-		
-		evPanel.add(dimensionType);
-		evPanel.add(dimensionX);
-		evPanel.add(new JLabel());
-		evPanel.add(dimensionY);
 		evPanel.add(onPortLabel);
 		evPanel.add(onPort);
 		eventPanel.add(evPanel, "North");
@@ -1633,90 +1611,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == addAssignment) {
 		//else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
 			eventAssignEditor(bioModel, eventAssign, "Add");
-			if(eventAssign.getModel().getSize()==0){
-				dimensionType.setEnabled(true);
-				int index = dimensionType.getSelectedIndex();
-				if (index == 0) {
-					dimensionX.setEnabled(false);
-					dimensionY.setEnabled(false);
-					iIndex.setEnabled(false);
-					jIndex.setEnabled(false);
-				}
-				else if (index == 1) {
-					dimensionX.setEnabled(true);
-					dimensionY.setEnabled(false);
-					iIndex.setEnabled(true);
-					jIndex.setEnabled(false);
-				}
-				else if (index == 2) {
-					dimensionX.setEnabled(true);
-					dimensionY.setEnabled(true);
-					iIndex.setEnabled(true);
-					jIndex.setEnabled(true);
-				}
-			}
-			else{
-				dimensionType.setEnabled(false);
-				dimensionX.setEnabled(false);
-				dimensionY.setEnabled(false);
-			}
 		}
 		// if the edit event assignment button is clicked
 		else if (e.getSource() == editAssignment) {
 			eventAssignEditor(bioModel, eventAssign, "OK");
-			if(eventAssign.getModel().getSize()==0){
-				dimensionType.setEnabled(true);	
-				int index = dimensionType.getSelectedIndex();
-				if (index == 0) {
-					dimensionX.setEnabled(false);
-					dimensionY.setEnabled(false);
-					iIndex.setEnabled(false);
-					jIndex.setEnabled(false);
-				}
-				else if (index == 1) {
-					dimensionX.setEnabled(true);
-					dimensionY.setEnabled(false);
-					iIndex.setEnabled(true);
-					jIndex.setEnabled(false);
-				}
-				else if (index == 2) {
-					dimensionX.setEnabled(true);
-					dimensionY.setEnabled(true);
-					iIndex.setEnabled(true);
-					jIndex.setEnabled(true);
-				}
-			}
-			else{
-				dimensionType.setEnabled(false);
-				dimensionX.setEnabled(false);
-				dimensionY.setEnabled(false);
-			}
 		}
 		// if the remove event assignment button is clicked
 		else if (e.getSource() == removeAssignment) {
 			removeAssignment(eventAssign);
-			if(eventAssign.getModel().getSize()==0){
-				dimensionType.setEnabled(true);
-				int index = dimensionType.getSelectedIndex();
-				if (index == 0) {
-					dimensionX.setEnabled(false);
-					dimensionY.setEnabled(false);
-					iIndex.setEnabled(false);
-					jIndex.setEnabled(false);
-				}
-				else if (index == 1) {
-					dimensionX.setEnabled(true);
-					dimensionY.setEnabled(false);
-					iIndex.setEnabled(true);
-					jIndex.setEnabled(false);
-				}
-				else if (index == 2) {
-					dimensionX.setEnabled(true);
-					dimensionY.setEnabled(true);
-					iIndex.setEnabled(true);
-					jIndex.setEnabled(true);
-				}
-			}
 		}
 	}
 
