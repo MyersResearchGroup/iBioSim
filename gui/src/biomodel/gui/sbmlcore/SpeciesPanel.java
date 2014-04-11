@@ -855,6 +855,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					else {
 						species.setUnits(unit);
 					}
+					// TODO: set dimensions for species here
 					
 					String convFactor = null;
 					
