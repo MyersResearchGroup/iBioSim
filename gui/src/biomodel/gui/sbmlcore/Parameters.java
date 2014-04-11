@@ -65,11 +65,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	
 	private JComboBox portDir;
 	
-	private JComboBox dimensionType;
+	private JComboBox dimensionType, dimensionX, dimensionY;
 	
-	private JComboBox dimensionX;
-	
-	private JComboBox dimensionY;
+	private JLabel dimensionTypeLabel, dimensionSizeLabel;
 
 	private BioModel bioModel;
 
@@ -266,16 +264,16 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JPanel parametersPanel;
 		if (paramsOnly) {
 			if (isBoolean || isPlace) {
-				parametersPanel = new JPanel(new GridLayout(8, 2));
-			} else {
 				parametersPanel = new JPanel(new GridLayout(10, 2));
+			} else {
+				parametersPanel = new JPanel(new GridLayout(12, 2));
 			}
 		}
 		else {
 			if (isBoolean || isPlace) {
-				parametersPanel = new JPanel(new GridLayout(6, 2));
-			} else {
 				parametersPanel = new JPanel(new GridLayout(8, 2));
+			} else {
+				parametersPanel = new JPanel(new GridLayout(10, 2));
 			}
 		}
 		JLabel idLabel = new JLabel("ID:");
@@ -307,6 +305,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
+		dimensionTypeLabel = new JLabel("Array Dimension");
+		dimensionSizeLabel = new JLabel("Array Size");
 		
 		paramID = new JTextField();
 		paramName = new JTextField();
@@ -614,7 +614,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		parametersPanel.add(onPortLabel);
 		parametersPanel.add(portDir);
 		
+		parametersPanel.add(dimensionTypeLabel);
 		parametersPanel.add(dimensionType);
+		parametersPanel.add(dimensionSizeLabel);
 		parametersPanel.add(dimensionX);
 		parametersPanel.add(new JLabel());
 		parametersPanel.add(dimensionY);

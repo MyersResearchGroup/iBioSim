@@ -144,35 +144,42 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		if (!paramsOnly) grid.add(tempPanel);
 		
-		//diffusible/constitutive checkboxes		
-		tempPanel = new JPanel(new GridLayout(1,2));
-		tempPanel.add(new JLabel(""));
-
-		diffusion = BioModel.getDiffusionReaction(selected,bioModel.getSBMLDocument().getModel());
-		constitutive = bioModel.getConstitutiveReaction(selected);
-		degradation = bioModel.getDegradationReaction(selected);
-		complex = bioModel.getComplexReaction(selected);
-		
-		JPanel constDiff = new JPanel(new GridLayout(1,3));
-		specDiffusible = new JCheckBox("diffusible");
-		specDiffusible.setSelected(diffusion != null);
-		specDiffusible.addActionListener(this);
-		specDiffusible.setActionCommand("constdiffChanged");
-		specConstitutive = new JCheckBox("constitutive");
-		specConstitutive.setSelected(constitutive != null);
-		specConstitutive.addActionListener(this);
-		specConstitutive.setActionCommand("constdiffChanged");
-		specDegradable = new JCheckBox("degrades");
-		specDegradable.setSelected(degradation != null);
-		specDegradable.addActionListener(this);
-		specDegradable.setActionCommand("constdiffChanged");
-		
-		constDiff.add(specConstitutive);
-		constDiff.add(specDegradable);
-		constDiff.add(specDiffusible);
-
-		tempPanel.add(constDiff);
-		
+		// Dimension field
+		tempPanel = new JPanel();
+		dimensionType = new JComboBox();
+		dimensionType.addItem("Scalar");
+		dimensionType.addItem("Vector");
+		dimensionType.addItem("Matrix");
+		dimensionType.addActionListener(this);
+		dimensionX = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionX.addItem(param.getId());
+			}
+		}
+		dimensionY = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionY.addItem(param.getId());
+			}
+		}
+		dimensionX.setEnabled(false);
+		dimensionY.setEnabled(false);
+		dimensionTypeLabel = new JLabel("Array Dimension");
+		dimensionSizeLabel = new JLabel("Array Size");
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(dimensionTypeLabel);
+		tempPanel.add(dimensionType);
+		if (!paramsOnly) grid.add(tempPanel);
+		tempPanel = new JPanel(new GridLayout(1, 2));
+		tempPanel.add(dimensionSizeLabel);
+		tempPanel.add(dimensionX);
+		if (!paramsOnly) grid.add(tempPanel);
+		tempPanel = new JPanel(new GridLayout(1, 2));
+		tempPanel.add(new JLabel());
+		tempPanel.add(dimensionY);
 		if (!paramsOnly) grid.add(tempPanel);
 		
 		// compartment field
@@ -190,148 +197,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel = new JPanel(new GridLayout(1, 4));
 		iIndex = new JTextField(10);
 		jIndex = new JTextField(10);
-		tempPanel.add(new JLabel("Compartment Indecies"));
+		tempPanel.add(new JLabel("Compartment Indices"));
 		tempPanel.add(new JLabel());
 		tempPanel.add(iIndex);
 		tempPanel.add(jIndex);
 			
 		if (!paramsOnly) grid.add(tempPanel);
 		
-		String[] optionsTF = { "true", "false" };
-
-		// Boundary condition field
-		tempPanel = new JPanel();
-		tempLabel = new JLabel("Boundary Condition");
-		specBoundary = new JComboBox(optionsTF);
-		
-		if (species.getBoundaryCondition()) {
-			specBoundary.setSelectedItem("true");
-		} 
-		else {
-			specBoundary.setSelectedItem("false");
-		}
-		
-		tempPanel.setLayout(new GridLayout(1, 2));
-		tempPanel.add(tempLabel);
-		tempPanel.add(specBoundary);
-
-		if (!paramsOnly) grid.add(tempPanel);
-
-		// Constant field
-		tempPanel = new JPanel();
-		tempLabel = new JLabel("Constant");
-		specConstant = new JComboBox(optionsTF);
-		
-		if (species.getConstant()) {
-			specConstant.setSelectedItem("true");
-		} 
-		else {
-			specConstant.setSelectedItem("false");
-		}
-		
-		tempPanel.setLayout(new GridLayout(1, 2));
-		tempPanel.add(tempLabel);
-		tempPanel.add(specConstant);
-
-		if (!paramsOnly) grid.add(tempPanel);
-
-		// Has only substance units field
-		tempPanel = new JPanel();
-		tempLabel = new JLabel("Has Only Substance Units");
-		specHasOnly = new JComboBox(optionsTF);
-		
-		if (species.getHasOnlySubstanceUnits()) {
-			specHasOnly.setSelectedItem("true");
-		} 
-		else {
-			specHasOnly.setSelectedItem("false");
-		}
-		
-		tempPanel.setLayout(new GridLayout(1, 2));
-		tempPanel.add(tempLabel);
-		tempPanel.add(specHasOnly);
-
-		if (!paramsOnly) grid.add(tempPanel);
-		
-		// Units field
-		tempPanel = new JPanel();
-		tempLabel = new JLabel("Units");
-		unitsBox = MySpecies.createUnitsChoices(bioModel);
-		
-		if (species.isSetUnits()) {
-			
-			unitsBox.setSelectedItem(species.getUnits());
-		}
-		
-		tempPanel.setLayout(new GridLayout(1, 2));
-		tempPanel.add(tempLabel);
-		tempPanel.add(unitsBox);
-
-		if (!paramsOnly) grid.add(tempPanel);
-		
-		// Conversion factor field
-		if (bioModel.getSBMLDocument().getLevel() > 2) {
-			
-			tempPanel = new JPanel();
-			tempLabel = new JLabel("Conversion Factor");
-			convBox = MySpecies.createConversionFactorChoices(bioModel);
-			
-			if (species.isSetConversionFactor()) {
-				convBox.setSelectedItem(species.getConversionFactor());
-			}
-			
-			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(tempLabel);
-			tempPanel.add(convBox);
-
-			if (!paramsOnly) grid.add(tempPanel);
-			
-			tempPanel = new JPanel(new GridLayout(1, 4));
-			conviIndex = new JTextField(10);
-			convjIndex = new JTextField(10);
-			tempPanel.add(new JLabel("Conversion Factor Indecies"));
-			tempPanel.add(new JLabel());
-			tempPanel.add(conviIndex);
-			tempPanel.add(convjIndex);
-				
-			if (!paramsOnly) grid.add(tempPanel);
-		}
-		
-		//mark as interesting field
-		if (paramsOnly) {
-			
-			String thresholdText = "";
-			boolean speciesMarked = false;
-			
-			ArrayList<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();				
-			
-			//look for the selected species among the already-interesting
-			//if it is interesting, populate the field with its data
-			for (String speciesInfo : interestingSpecies) {
-				if (speciesInfo.split(" ")[0].equals(selected)) {
-					speciesMarked = true;
-					thresholdText = speciesInfo.replace(selected, "").trim();
-					break;
-				}
-			}			
-			
-			tempPanel = new JPanel(new GridLayout(1, 2));
-			specInteresting = new JCheckBox("Mark as Interesting");
-			specInteresting.addActionListener(this);
-			specInteresting.setSelected(speciesMarked);
-			tempPanel.add(specInteresting);
-			thresholdTextField = new JTextField(thresholdText);
-			
-			/*if (!bioModel.isInput(selected) &&
-					(modelEditor.getBioModel().getBiochemicalSpecies() != null &&
-					!modelEditor.getBioModel().getBiochemicalSpecies().contains(selected))) { */
-			tempPanel.add(thresholdTextField);
-			specInteresting.setText("Mark as Interesting (Enter comma-separated thresholds)");
-			//}
-			
-			grid.add(tempPanel);
-		}		
-			
 		// Initial field
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.INITIAL_STRING);
@@ -374,6 +246,129 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(initialField);
 			grid.add(tempPanel);
 		}
+		
+		// Units field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Units");
+		unitsBox = MySpecies.createUnitsChoices(bioModel);
+		
+		if (species.isSetUnits()) {
+			
+			unitsBox.setSelectedItem(species.getUnits());
+		}
+		
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(unitsBox);
+
+		if (!paramsOnly) grid.add(tempPanel);
+		
+		// Conversion factor field
+		if (bioModel.getSBMLDocument().getLevel() > 2) {
+			
+			tempPanel = new JPanel();
+			tempLabel = new JLabel("Conversion Factor");
+			convBox = MySpecies.createConversionFactorChoices(bioModel);
+			
+			if (species.isSetConversionFactor()) {
+				convBox.setSelectedItem(species.getConversionFactor());
+			}
+			
+			tempPanel.setLayout(new GridLayout(1, 2));
+			tempPanel.add(tempLabel);
+			tempPanel.add(convBox);
+
+			if (!paramsOnly) grid.add(tempPanel);
+			
+			tempPanel = new JPanel(new GridLayout(1, 4));
+			conviIndex = new JTextField(10);
+			convjIndex = new JTextField(10);
+			tempPanel.add(new JLabel("Conversion Factor Indices"));
+			tempPanel.add(new JLabel());
+			tempPanel.add(conviIndex);
+			tempPanel.add(convjIndex);
+				
+			if (!paramsOnly) grid.add(tempPanel);
+		}
+		
+		// Boundary condition field
+		tempPanel = new JPanel(new GridLayout(1,3));
+		specBoundary = new JCheckBox("Boundary Condition");
+		specBoundary.setSelected(species.getBoundaryCondition());
+		tempPanel.add(specBoundary);
+
+		// Constant field
+		specConstant = new JCheckBox("Constant");
+		specConstant.setSelected(species.getConstant());
+		tempPanel.add(specConstant);
+
+		// Has only substance units field
+		specHasOnly = new JCheckBox("Has Only Substance Units");
+		specHasOnly.setSelected(species.getHasOnlySubstanceUnits());
+		tempPanel.add(specHasOnly);
+
+		if (!paramsOnly) grid.add(tempPanel);
+		
+		//diffusible/constitutive checkboxes
+		diffusion = BioModel.getDiffusionReaction(selected,bioModel.getSBMLDocument().getModel());
+		constitutive = bioModel.getConstitutiveReaction(selected);
+		degradation = bioModel.getDegradationReaction(selected);
+		complex = bioModel.getComplexReaction(selected);
+		
+		tempPanel = new JPanel(new GridLayout(1,3));
+		specDiffusible = new JCheckBox("Diffusible");
+		specDiffusible.setSelected(diffusion != null);
+		specDiffusible.addActionListener(this);
+		specDiffusible.setActionCommand("constdiffChanged");
+		specConstitutive = new JCheckBox("Constitutive");
+		specConstitutive.setSelected(constitutive != null);
+		specConstitutive.addActionListener(this);
+		specConstitutive.setActionCommand("constdiffChanged");
+		specDegradable = new JCheckBox("Degrades");
+		specDegradable.setSelected(degradation != null);
+		specDegradable.addActionListener(this);
+		specDegradable.setActionCommand("constdiffChanged");
+		
+		tempPanel.add(specConstitutive);
+		tempPanel.add(specDegradable);
+		tempPanel.add(specDiffusible);
+		
+		if (!paramsOnly) grid.add(tempPanel);
+		
+		//mark as interesting field
+		if (paramsOnly) {
+			
+			String thresholdText = "";
+			boolean speciesMarked = false;
+			
+			ArrayList<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();				
+			
+			//look for the selected species among the already-interesting
+			//if it is interesting, populate the field with its data
+			for (String speciesInfo : interestingSpecies) {
+				if (speciesInfo.split(" ")[0].equals(selected)) {
+					speciesMarked = true;
+					thresholdText = speciesInfo.replace(selected, "").trim();
+					break;
+				}
+			}			
+			
+			tempPanel = new JPanel(new GridLayout(1, 2));
+			specInteresting = new JCheckBox("Mark as Interesting");
+			specInteresting.addActionListener(this);
+			specInteresting.setSelected(speciesMarked);
+			tempPanel.add(specInteresting);
+			thresholdTextField = new JTextField(thresholdText);
+			
+			/*if (!bioModel.isInput(selected) &&
+					(modelEditor.getBioModel().getBiochemicalSpecies() != null &&
+					!modelEditor.getBioModel().getBiochemicalSpecies().contains(selected))) { */
+			tempPanel.add(thresholdTextField);
+			specInteresting.setText("Mark as Interesting (Enter comma-separated thresholds)");
+			//}
+			
+			grid.add(tempPanel);
+		}		
 		
 		// kocr
 		origString = "default";
@@ -625,34 +620,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 		}
 		
-		// Dimension field
-		tempPanel = new JPanel();
-		dimensionType = new JComboBox();
-		dimensionType.addItem("Scalar");
-		dimensionType.addItem("Vector");
-		dimensionType.addItem("Matrix");
-		dimensionType.addActionListener(this);
-		dimensionX = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimensionX.addItem(param.getId());
-			}
-		}
-		dimensionY = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimensionY.addItem(param.getId());
-			}
-		}
-		dimensionX.setEnabled(false);
-		dimensionY.setEnabled(false);
-		tempPanel.setLayout(new GridLayout(1, 3));
-		tempPanel.add(dimensionType);
-		tempPanel.add(dimensionX);
-		tempPanel.add(dimensionY);
-		if (!paramsOnly) grid.add(tempPanel);
+
 		
 		setFieldEnablings();
 		
@@ -824,28 +792,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					
-					if (specBoundary.getSelectedItem().equals("true")) {
-						species.setBoundaryCondition(true);
-					}
-					else {
-						species.setBoundaryCondition(false);
-					}
-					
-					if (specConstant.getSelectedItem().equals("true")) {
-						species.setConstant(true);
-					}
-					else {
-						species.setConstant(false);
-					}
-					
+					species.setBoundaryCondition(specBoundary.isSelected());
+					species.setConstant(specConstant.isSelected());
 					species.setCompartment((String)compartBox.getSelectedItem());
-
-					if (specHasOnly.getSelectedItem().equals("true")) {
-						species.setHasOnlySubstanceUnits(true);
-					}
-					else {
-						species.setHasOnlySubstanceUnits(false);
-					}
+					species.setHasOnlySubstanceUnits(specHasOnly.isSelected());
 					
 					String unit = (String) unitsBox.getSelectedItem();
 					
@@ -1113,7 +1063,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			//disallow constant == true if diffusible or constitutive are selected
 			if (specConstitutive.isSelected() || specDiffusible.isSelected() || specDegradable.isSelected()) {
 				specConstant.setEnabled(false);
-				specConstant.setSelectedItem("false");
+				specConstant.setSelected(false);
 			}
 			else {
 				specConstant.setEnabled(true);
@@ -1192,14 +1142,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private JComboBox compartBox = null;
 	private JComboBox convBox = null;
 	private JComboBox unitsBox = null;
-	private JComboBox specBoundary = null;
-	private JComboBox specConstant = null;
-	private JComboBox specHasOnly = null;
+	private JCheckBox specBoundary, specConstant, specHasOnly = null;
 	private JTextField initialField = null;
 	
-	private JComboBox dimensionType = null;
-	private JComboBox dimensionX = null;
-	private JComboBox dimensionY = null;
+	private JComboBox dimensionType, dimensionX, dimensionY = null;
+	private JLabel dimensionTypeLabel, dimensionSizeLabel = null;
 	private JTextField iIndex, jIndex = null;
 	private JTextField conviIndex, convjIndex = null;
 	

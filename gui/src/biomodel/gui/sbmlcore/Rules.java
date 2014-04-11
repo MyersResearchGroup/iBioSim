@@ -74,6 +74,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	
 	private JComboBox dimensionType, dimensionX, dimensionY;
 	
+	private JLabel dimensionTypeLabel, dimensionSizeLabel;
+	
 	private JTextField iIndex, jIndex;
 	
 	private ModelEditor modelEditor;
@@ -182,10 +184,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 */
 	public String ruleEditor(String option,String metaId) {
 		JPanel rulePanel = new JPanel(new BorderLayout());
-		JPanel IDPanel = new JPanel();
+		JPanel firstLine = new JPanel();
+		JPanel secondLine = new JPanel();
+		JPanel thirdLine = new JPanel();
+		JPanel topPanel = new JPanel(new GridLayout(3,1));
 		JPanel mathPanel = new JPanel();
-		JPanel dimensionPanel = new JPanel(new GridLayout(2,3));
-		JPanel southPanel = new JPanel(new BorderLayout());
+		JPanel SBOLPanel = new JPanel(new BorderLayout());
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel typeLabel = new JLabel("Type:");
 		JLabel varLabel = new JLabel("Variable:");
@@ -217,13 +221,14 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				dimensionY.addItem(param.getId());
 			}
 		}
-		// TODO: added default
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
 		iIndex = new JTextField(10);
 		jIndex = new JTextField(10);
 		iIndex.setEnabled(false);
 		jIndex.setEnabled(false);
+		dimensionTypeLabel = new JLabel("Array Dimension");
+		dimensionSizeLabel = new JLabel("Array Size");
 		
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
@@ -356,29 +361,32 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		});
-		IDPanel.add(IDLabel);
-		IDPanel.add(id);
-		IDPanel.add(typeLabel);
-		IDPanel.add(ruleType);
-		IDPanel.add(varLabel);
-		IDPanel.add(ruleVar);
+		firstLine.add(IDLabel);
+		firstLine.add(id);
+		firstLine.add(typeLabel);
+		firstLine.add(ruleType);
+		firstLine.add(dimensionTypeLabel);
+		firstLine.add(dimensionType);
+		secondLine.add(onPortLabel);
+		secondLine.add(onPort);
+		secondLine.add(dimensionSizeLabel);
+		secondLine.add(dimensionX);
+		secondLine.add(dimensionY);
+		thirdLine.add(varLabel);
+		thirdLine.add(ruleVar);
+		thirdLine.add(new JLabel("Indices"));
+		thirdLine.add(iIndex);
+		thirdLine.add(jIndex);
+		topPanel.add(firstLine);
+		topPanel.add(secondLine);
+		topPanel.add(thirdLine);
 		mathPanel.add(ruleLabel);
 		mathPanel.add(ruleMath);
-		mathPanel.add(onPortLabel);
-		mathPanel.add(onPort);
-		rulePanel.add(IDPanel,"North");
+		rulePanel.add(topPanel,"North");
 		rulePanel.add(mathPanel,"Center");
-		dimensionPanel.add(dimensionType);
-		dimensionPanel.add(dimensionX);
-		dimensionPanel.add(iIndex);
-		dimensionPanel.add(new JLabel());
-		dimensionPanel.add(dimensionY);
-		dimensionPanel.add(jIndex);
-		
 		if (!modelEditor.isParamsOnly())
-			southPanel.add(sbolField,"North");
-		southPanel.add(dimensionPanel, "South");
-		rulePanel.add(southPanel, "South");
+			SBOLPanel.add(sbolField,"North");
+		rulePanel.add(SBOLPanel, "South");
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
