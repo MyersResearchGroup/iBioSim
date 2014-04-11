@@ -446,10 +446,31 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		Utility.sort(assign);
 		eventAssign.setListData(assign);
 		if(eventAssign.getModel().getSize()==0){
-			dimensionType.setEnabled(true);
+			dimensionType.setEnabled(true);	
+			int index = dimensionType.getSelectedIndex();
+			if (index == 0) {
+				dimensionX.setEnabled(false);
+				dimensionY.setEnabled(false);
+				iIndex.setEnabled(false);
+				jIndex.setEnabled(false);
+			}
+			else if (index == 1) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(false);
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(false);
+			}
+			else if (index == 2) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(true);
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(true);
+			}
 		}
 		else{
-			dimensionType.setEnabled(false);					
+			dimensionType.setEnabled(false);
+			dimensionX.setEnabled(false);
+			dimensionY.setEnabled(false);
 		}
 		eventAssign.setSelectedIndex(0);
 		eventAssign.addMouseListener(this);

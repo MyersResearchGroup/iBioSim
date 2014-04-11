@@ -304,7 +304,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			if(indecies[0]!=null){
 				indecies[1] = AnnotationUtility.parseColIndexAnnotation(rule);
 				if(indecies[1]==null){
-					iIndex.setText("");
+					iIndex.setText(indecies[0]);
 					jIndex.setText("");
 				}
 				else{
@@ -313,7 +313,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			else{
-				iIndex.setText(indecies[0]);
+				iIndex.setText("");
 				jIndex.setText("");
 			}
 		}
