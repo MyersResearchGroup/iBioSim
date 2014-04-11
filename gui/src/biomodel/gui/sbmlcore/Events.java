@@ -188,12 +188,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		dimensionType.addItem("Vector");
 		dimensionType.addItem("Matrix");
 		dimensionType.addActionListener(this);
-		if(eventAssign.getModel().getSize()==0){
-			dimensionType.setEnabled(true);					
-		}
-		else{
-			dimensionType.setEnabled(false);					
-		}
 		dimensionX = new JComboBox();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
@@ -454,6 +448,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		Utility.sort(assign);
 		eventAssign.setListData(assign);
+		if(eventAssign.getModel().getSize()==0){
+			dimensionType.setEnabled(true);
+		}
+		else{
+			dimensionType.setEnabled(false);					
+		}
 		eventAssign.setSelectedIndex(0);
 		eventAssign.addMouseListener(this);
 		eventAssignPanel.add(eventAssignLabel, "North");
