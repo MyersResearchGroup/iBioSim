@@ -178,9 +178,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
 //		JLabel compTypeLabel = new JLabel("Type:");
-		JLabel dimLabel = new JLabel("Dimensions:");
+		JLabel dimLabel = new JLabel("Spatial Dimensions:");
 		JLabel constLabel = new JLabel("Constant:");
-		JLabel sizeLabel = new JLabel("Size:");
+		JLabel sizeLabel = new JLabel("Spatial Size:");
 		JLabel compUnitsLabel = new JLabel("Units:");
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		compID = new JTextField(12);
