@@ -264,16 +264,16 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JPanel parametersPanel;
 		if (paramsOnly) {
 			if (isBoolean || isPlace) {
-				parametersPanel = new JPanel(new GridLayout(10, 2));
+				parametersPanel = new JPanel(new GridLayout(9, 2));
 			} else {
-				parametersPanel = new JPanel(new GridLayout(12, 2));
+				parametersPanel = new JPanel(new GridLayout(11, 2));
 			}
 		}
 		else {
 			if (isBoolean || isPlace) {
-				parametersPanel = new JPanel(new GridLayout(8, 2));
+				parametersPanel = new JPanel(new GridLayout(7, 2));
 			} else {
-				parametersPanel = new JPanel(new GridLayout(10, 2));
+				parametersPanel = new JPanel(new GridLayout(9, 2));
 			}
 		}
 		JLabel idLabel = new JLabel("ID:");
@@ -422,9 +422,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						isPlace = true;
 					}
 					if (paramsOnly) {
-						parametersPanel.setLayout(new GridLayout(8, 2));
+						parametersPanel.setLayout(new GridLayout(9, 2));
 					} else {
-						parametersPanel.setLayout(new GridLayout(6, 2));
+						parametersPanel.setLayout(new GridLayout(7, 2));
 					}
 					if (paramet.getValue()==0) {
 						placeMarking.setSelectedIndex(0);
@@ -435,9 +435,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					rateParam = bioModel.getSBMLDocument().getModel().getParameter(selected + "_" + GlobalConstants.RATE);
 					if (rateParam!=null) {
 						if (paramsOnly) {
-							parametersPanel = new JPanel(new GridLayout(10, 2));
+							parametersPanel = new JPanel(new GridLayout(11, 2));
 						} else {
-							parametersPanel = new JPanel(new GridLayout(8, 2));
+							parametersPanel = new JPanel(new GridLayout(9, 2));
 						}
 						if (paramsOnly) {
 							if (rateParam.isSetValue()) {
