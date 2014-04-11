@@ -64,6 +64,10 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private JTextField ID, init, Name; // species text fields
 	
 	private JComboBox dimensionType, dimensionX, dimensionY;
+	
+	private JTextField iIndex, jIndex;
+	
+	private JTextField conviIndex, convjIndex;
 
 //	SpeciesType not supported in Level 3
 //	private JComboBox specTypeBox; // species
@@ -429,6 +433,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				String[] sizes = new String[2];
+				String[] indecies = new String[2];
+				String[] convIndecies = new String[2];
 				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(specie);
 				if(sizes[0]==null){
 					sizes = AnnotationUtility.parseMatrixSizeAnnotation(specie);
@@ -450,6 +456,38 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					dimensionX.setEnabled(true);
 					dimensionX.setSelectedItem(sizes[0]);
 					dimensionY.setEnabled(false);
+				}
+				indecies[0] = AnnotationUtility.parseRowIndexAnnotation(specie);
+				if(indecies[0]!=null){
+					indecies[1] = AnnotationUtility.parseColIndexAnnotation(specie);
+					if(indecies[1]==null){
+						iIndex.setText("");
+						jIndex.setText("");
+					}
+					else{
+						iIndex.setText(indecies[0]);
+						jIndex.setText(indecies[1]);
+					}
+				}
+				else{
+					iIndex.setText(indecies[0]);
+					jIndex.setText("");
+				}
+				convIndecies[0] = AnnotationUtility.parseConversionRowIndexAnnotation(specie);
+				if(convIndecies[0]!=null){
+					convIndecies[1] = AnnotationUtility.parseConversionColIndexAnnotation(specie);
+					if(convIndecies[1]==null){
+						conviIndex.setText("");
+						convjIndex.setText("");
+					}
+					else{
+						conviIndex.setText(convIndecies[0]);
+						convjIndex.setText(convIndecies[1]);
+					}
+				}
+				else{
+					conviIndex.setText(convIndecies[0]);
+					convjIndex.setText("");
 				}
 			}
 			catch (Exception e) {
@@ -704,20 +742,32 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							SBMLutilities.updateVarId(bioModel.getSBMLDocument(), true, speciesName, specie.getId());
 						}
-						if (dimensionType.getSelectedIndex() == 1){
-							AnnotationUtility.removeMatrixSizeAnnotation(specie);
-							AnnotationUtility.setVectorSizeAnnotation(specie,(String) dimensionX.getSelectedItem());
-							}
-						else if (dimensionType.getSelectedIndex() == 2){
-							AnnotationUtility.removeVectorSizeAnnotation(specie);
-
-							AnnotationUtility.setMatrixSizeAnnotation(specie,(String) dimensionX.getSelectedItem(), 
-									(String) dimensionY.getSelectedItem());
-						}
-						else{
-							AnnotationUtility.removeVectorSizeAnnotation(specie);
-							AnnotationUtility.removeMatrixSizeAnnotation(specie);
-						}
+						//TODO: Figure out the parsing issue. See also SpeciesPanel
+//						if (dimensionType.getSelectedIndex() == 1){
+//							AnnotationUtility.removeMatrixSizeAnnotation(specie);
+//							AnnotationUtility.setVectorSizeAnnotation(specie,(String) dimensionX.getSelectedItem());
+//							AnnotationUtility.removeColIndexAnnotation(specie);
+//							AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
+//							AnnotationUtility.removeConversionColIndexAnnotation(specie);
+//							AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
+//						}
+//						else if (dimensionType.getSelectedIndex() == 2){
+//							AnnotationUtility.removeVectorSizeAnnotation(specie);
+//							AnnotationUtility.setMatrixSizeAnnotation(specie,(String) dimensionX.getSelectedItem(), 
+//									(String) dimensionY.getSelectedItem());
+//							AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
+//							AnnotationUtility.setColIndexAnnotation(specie,jIndex.getText());
+//							AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
+//							AnnotationUtility.setConversionColIndexAnnotation(specie,convjIndex.getText());
+//						}
+//						else{
+//							AnnotationUtility.removeVectorSizeAnnotation(specie);
+//							AnnotationUtility.removeMatrixSizeAnnotation(specie);
+//							AnnotationUtility.removeRowIndexAnnotation(specie);
+//							AnnotationUtility.removeColIndexAnnotation(specie);
+//							AnnotationUtility.removeConversionRowIndexAnnotation(specie);
+//							AnnotationUtility.removeConversionColIndexAnnotation(specie);
+//						}
 					}
 					else {
 						String[] specs = new String[species.getModel().getSize()];
@@ -788,6 +838,32 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							species.setSelectedIndex(index1);
 						}
+						//TODO: Figure out the parsing issue.
+//						if (dimensionType.getSelectedIndex() == 1){
+//							AnnotationUtility.removeMatrixSizeAnnotation(specie);
+//							AnnotationUtility.setVectorSizeAnnotation(specie,(String) dimensionX.getSelectedItem());
+//							AnnotationUtility.removeColIndexAnnotation(specie);
+//							AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
+//							AnnotationUtility.removeConversionColIndexAnnotation(specie);
+//							AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
+//						}
+//						else if (dimensionType.getSelectedIndex() == 2){
+//							AnnotationUtility.removeVectorSizeAnnotation(specie);
+//							AnnotationUtility.setMatrixSizeAnnotation(specie,(String) dimensionX.getSelectedItem(), 
+//									(String) dimensionY.getSelectedItem());
+//							AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
+//							AnnotationUtility.setColIndexAnnotation(specie,jIndex.getText());
+//							AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
+//							AnnotationUtility.setConversionColIndexAnnotation(specie,convjIndex.getText());
+//						}
+//						else{
+//							AnnotationUtility.removeVectorSizeAnnotation(specie);
+//							AnnotationUtility.removeMatrixSizeAnnotation(specie);
+//							AnnotationUtility.removeRowIndexAnnotation(specie);
+//							AnnotationUtility.removeColIndexAnnotation(specie);
+//							AnnotationUtility.removeConversionRowIndexAnnotation(specie);
+//							AnnotationUtility.removeConversionColIndexAnnotation(specie);
+//						}
 					}
 					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();

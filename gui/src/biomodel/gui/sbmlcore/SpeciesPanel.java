@@ -89,14 +89,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		//if this is in analysis mode, only show the sweepable/changeable values
 		if (paramsOnly)
-			grid = new JPanel(new GridLayout(8,1));
+			grid = new JPanel(new GridLayout(10,1));
 		else {
 			
 			if (bioModel.getSBMLDocument().getLevel() > 2) {
-				grid = new JPanel(new GridLayout(18,1));
+				grid = new JPanel(new GridLayout(20,1));
 			} 
 			else {
-				grid = new JPanel(new GridLayout(17,1));
+				grid = new JPanel(new GridLayout(19,1));
 			}
 		}
 		
@@ -184,6 +184,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(compartBox);
+		
+		if (!paramsOnly) grid.add(tempPanel);
+		
+		tempPanel = new JPanel(new GridLayout(1, 4));
+		iIndex = new JTextField(10);
+		jIndex = new JTextField(10);
+		tempPanel.add(new JLabel("Compartment Indecies"));
+		tempPanel.add(new JLabel());
+		tempPanel.add(iIndex);
+		tempPanel.add(jIndex);
 			
 		if (!paramsOnly) grid.add(tempPanel);
 		
@@ -274,6 +284,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(tempLabel);
 			tempPanel.add(convBox);
 
+			if (!paramsOnly) grid.add(tempPanel);
+			
+			tempPanel = new JPanel(new GridLayout(1, 4));
+			conviIndex = new JTextField(10);
+			convjIndex = new JTextField(10);
+			tempPanel.add(new JLabel("Conversion Factor Indecies"));
+			tempPanel.add(new JLabel());
+			tempPanel.add(conviIndex);
+			tempPanel.add(convjIndex);
+				
 			if (!paramsOnly) grid.add(tempPanel);
 		}
 		
@@ -848,6 +868,32 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							species.setConversionFactor(convFactor);
 						}
 					}
+					//TODO: Figure out the parsing issue.
+//					if (dimensionType.getSelectedIndex() == 1){
+//						AnnotationUtility.removeMatrixSizeAnnotation(specie);
+//						AnnotationUtility.setVectorSizeAnnotation(specie,(String) dimensionX.getSelectedItem());
+//						AnnotationUtility.removeColIndexAnnotation(specie);
+//						AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
+//						AnnotationUtility.removeConversionColIndexAnnotation(specie);
+//						AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
+//					}
+//					else if (dimensionType.getSelectedIndex() == 2){
+//						AnnotationUtility.removeVectorSizeAnnotation(specie);
+//						AnnotationUtility.setMatrixSizeAnnotation(specie,(String) dimensionX.getSelectedItem(), 
+//								(String) dimensionY.getSelectedItem());
+//						AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
+//						AnnotationUtility.setColIndexAnnotation(specie,jIndex.getText());
+//						AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
+//						AnnotationUtility.setConversionColIndexAnnotation(specie,convjIndex.getText());
+//					}
+//					else{
+//						AnnotationUtility.removeVectorSizeAnnotation(specie);
+//						AnnotationUtility.removeMatrixSizeAnnotation(specie);
+//						AnnotationUtility.removeRowIndexAnnotation(specie);
+//						AnnotationUtility.removeColIndexAnnotation(specie);
+//						AnnotationUtility.removeConversionRowIndexAnnotation(specie);
+//						AnnotationUtility.removeConversionColIndexAnnotation(specie);
+//					}
 				} else {
 					PropertyField f = fields.get(GlobalConstants.INITIAL_STRING);
 					if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
@@ -1153,6 +1199,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private JComboBox dimensionType = null;
 	private JComboBox dimensionX = null;
 	private JComboBox dimensionY = null;
+	private JTextField iIndex, jIndex = null;
+	private JTextField conviIndex, convjIndex = null;
 	
 	private JCheckBox specInteresting = null;
 	private JCheckBox specDiffusible = null;

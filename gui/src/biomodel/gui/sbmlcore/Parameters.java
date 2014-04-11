@@ -747,7 +747,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							else if (dimensionType.getSelectedIndex() == 2){
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
-
 								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
 										(String) dimensionY.getSelectedItem());
 							}
@@ -884,6 +883,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							else if (dimensionType.getSelectedIndex() == 2){
 								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
 										(String) dimensionY.getSelectedItem());
+							}
+							else{
+								AnnotationUtility.removeVectorSizeAnnotation(paramet);
+								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 							}
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);

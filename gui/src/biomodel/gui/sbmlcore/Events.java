@@ -188,6 +188,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		dimensionType.addItem("Vector");
 		dimensionType.addItem("Matrix");
 		dimensionType.addActionListener(this);
+		if(eventAssign.getModel().getSize()==0){
+			dimensionType.setEnabled(true);					
+		}
+		else{
+			dimensionType.setEnabled(false);					
+		}
 		dimensionX = new JComboBox();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
@@ -362,21 +368,20 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
 						// TODO: add the index in the field
-						indecies[0] = AnnotationUtility.parseRowIndexAnnotation(ea);
 						String assignIndex = " [";
 						indecies[0] = AnnotationUtility.parseRowIndexAnnotation(ea);
-						if(indecies[0]==null){
+						if(indecies[0]!=null){
 							indecies[1] = AnnotationUtility.parseColIndexAnnotation(ea);
-							if(indecies[1]==null){
-								assignIndex = "";
-							}
-							else{
+							if(indecies[1]!=null){
 								assignIndex += (indecies[0] + ",");
 								assignIndex += (indecies[1] + "]");
 							}
+							else{
+								assignIndex += (indecies[0] + "]");
+							}
 						}
 						else{
-							assignIndex += (indecies[0] + "]");
+							assignIndex = "";
 						}
 						// TODO: update assign with index in the string
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
@@ -479,12 +484,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			evPanel.add(failTransitionLabel);
 			evPanel.add(failTransition);
 		}
-		evPanel.add(onPortLabel);
-		evPanel.add(onPort);
+		
 		evPanel.add(dimensionType);
 		evPanel.add(dimensionX);
 		evPanel.add(new JLabel());
 		evPanel.add(dimensionY);
+		evPanel.add(onPortLabel);
+		evPanel.add(onPort);
 		eventPanel.add(evPanel, "North");
 		if (!modelEditor.isParamsOnly())
 			eventPanel.add(sbolField, "Center");
@@ -662,19 +668,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							else{
 								AnnotationUtility.setRowIndexAnnotation(ea,ind.split(",")[0]);
 								AnnotationUtility.setColIndexAnnotation(ea,ind.split(",")[1].replace("]", ""));
-							}
-							if (dimensionType.getSelectedIndex() == 1){
-								AnnotationUtility.removeColIndexAnnotation(ea);
-								AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
-							}
-							else if (dimensionType.getSelectedIndex() == 2){
-								AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
-								AnnotationUtility.setColIndexAnnotation(ea,(String) jIndex.getText());
-							}
-							else{
-								AnnotationUtility.removeRowIndexAnnotation(ea);
-								AnnotationUtility.removeColIndexAnnotation(ea);
-							}
+							}							
+						}
+						else{
+							AnnotationUtility.removeRowIndexAnnotation(ea);
+							AnnotationUtility.removeColIndexAnnotation(ea);
 						}
 						Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
 						if (p != null && SBMLutilities.isBoolean(p)) {
@@ -907,7 +905,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
 						AnnotationUtility.removeVectorSizeAnnotation(e);
-
 						AnnotationUtility.setMatrixSizeAnnotation(e,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
 					}
@@ -1006,23 +1003,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								String ind = left.split("\\[")[1].trim();
 								if(!ind.contains(",")){
 									AnnotationUtility.setRowIndexAnnotation(ea, ind.replace("]", ""));
+									AnnotationUtility.removeColIndexAnnotation(ea);
 								}
 								else{
 									AnnotationUtility.setRowIndexAnnotation(ea,ind.split(",")[0]);
 									AnnotationUtility.setColIndexAnnotation(ea, ind.split(",")[1].replace("]", ""));
 								}
-								if (!iIndex.getText().isEmpty() && jIndex.getText().isEmpty()){
-									AnnotationUtility.removeColIndexAnnotation(ea);
-									AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
-								}
-								else if (!iIndex.getText().isEmpty() && !jIndex.getText().isEmpty()){
-									AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
-									AnnotationUtility.setColIndexAnnotation(ea,(String) jIndex.getText());
-								}
-								else{
-									AnnotationUtility.removeRowIndexAnnotation(ea);
-									AnnotationUtility.removeColIndexAnnotation(ea);
-								}
+							}
+							else{
+								AnnotationUtility.removeRowIndexAnnotation(ea);
+								AnnotationUtility.removeColIndexAnnotation(ea);
+								
 							}
 							if (var.endsWith("\'")) {
 								var = "rate_" + var.replace("\'","");
@@ -1460,18 +1451,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 					}
-					if (!iIndex.getText().isEmpty() && jIndex.getText().isEmpty()){
-						AnnotationUtility.removeColIndexAnnotation(p);
-						AnnotationUtility.setRowIndexAnnotation(p,iIndex.getText());
-					}
-					else if (!iIndex.getText().isEmpty() && !jIndex.getText().isEmpty()){
-						AnnotationUtility.setRowIndexAnnotation(p,iIndex.getText());
-						AnnotationUtility.setColIndexAnnotation(p,jIndex.getText());
-					}
-					else{
-						AnnotationUtility.removeRowIndexAnnotation(p);
-						AnnotationUtility.removeColIndexAnnotation(p);
-					}
 				}
 			}
 			if (!error) {
@@ -1637,14 +1616,90 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == addAssignment) {
 		//else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
 			eventAssignEditor(bioModel, eventAssign, "Add");
+			if(eventAssign.getModel().getSize()==0){
+				dimensionType.setEnabled(true);
+				int index = dimensionType.getSelectedIndex();
+				if (index == 0) {
+					dimensionX.setEnabled(false);
+					dimensionY.setEnabled(false);
+					iIndex.setEnabled(false);
+					jIndex.setEnabled(false);
+				}
+				else if (index == 1) {
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(false);
+					iIndex.setEnabled(true);
+					jIndex.setEnabled(false);
+				}
+				else if (index == 2) {
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(true);
+					iIndex.setEnabled(true);
+					jIndex.setEnabled(true);
+				}
+			}
+			else{
+				dimensionType.setEnabled(false);
+				dimensionX.setEnabled(false);
+				dimensionY.setEnabled(false);
+			}
 		}
 		// if the edit event assignment button is clicked
 		else if (e.getSource() == editAssignment) {
 			eventAssignEditor(bioModel, eventAssign, "OK");
+			if(eventAssign.getModel().getSize()==0){
+				dimensionType.setEnabled(true);	
+				int index = dimensionType.getSelectedIndex();
+				if (index == 0) {
+					dimensionX.setEnabled(false);
+					dimensionY.setEnabled(false);
+					iIndex.setEnabled(false);
+					jIndex.setEnabled(false);
+				}
+				else if (index == 1) {
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(false);
+					iIndex.setEnabled(true);
+					jIndex.setEnabled(false);
+				}
+				else if (index == 2) {
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(true);
+					iIndex.setEnabled(true);
+					jIndex.setEnabled(true);
+				}
+			}
+			else{
+				dimensionType.setEnabled(false);
+				dimensionX.setEnabled(false);
+				dimensionY.setEnabled(false);
+			}
 		}
 		// if the remove event assignment button is clicked
 		else if (e.getSource() == removeAssignment) {
 			removeAssignment(eventAssign);
+			if(eventAssign.getModel().getSize()==0){
+				dimensionType.setEnabled(true);
+				int index = dimensionType.getSelectedIndex();
+				if (index == 0) {
+					dimensionX.setEnabled(false);
+					dimensionY.setEnabled(false);
+					iIndex.setEnabled(false);
+					jIndex.setEnabled(false);
+				}
+				else if (index == 1) {
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(false);
+					iIndex.setEnabled(true);
+					jIndex.setEnabled(false);
+				}
+				else if (index == 2) {
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(true);
+					iIndex.setEnabled(true);
+					jIndex.setEnabled(true);
+				}
+			}
 		}
 	}
 

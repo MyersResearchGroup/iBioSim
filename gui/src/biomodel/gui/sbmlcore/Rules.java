@@ -528,14 +528,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					bioModel.makeUndoPoint();
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(r);
-
 						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
 						AnnotationUtility.removeColIndexAnnotation(r);
 						AnnotationUtility.setRowIndexAnnotation(r,iIndex.getText());
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
 						AnnotationUtility.removeVectorSizeAnnotation(r);
-
 						AnnotationUtility.setMatrixSizeAnnotation(r,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
 						AnnotationUtility.setRowIndexAnnotation(r,iIndex.getText());
@@ -637,7 +635,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
 						AnnotationUtility.removeVectorSizeAnnotation(r);
-
 						AnnotationUtility.setMatrixSizeAnnotation(r,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
 						AnnotationUtility.setRowIndexAnnotation(r,iIndex.getText());

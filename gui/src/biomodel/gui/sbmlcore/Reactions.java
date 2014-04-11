@@ -34,6 +34,7 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
@@ -157,6 +158,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private JTextField productStoichiometry; // text field for editing products
 
 	private JComboBox reactantSpecies; // ComboBox for reactant editing
+	
+	//ComboBoxes for array dimensions
+	
+	private JComboBox dimensionType;
+	
+	private JComboBox dimensionX;
+	
+	private JComboBox dimensionY;
 
 	/*
 	 * text field for editing reactants
@@ -300,6 +309,28 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JLabel fast = new JLabel("Fast:");
 		reacFast = new JComboBox(options);
 		reacFast.setSelectedItem("false");
+		
+		dimensionType = new JComboBox();
+		dimensionType.addItem("Scalar");
+		dimensionType.addItem("Vector");
+		dimensionType.addItem("Matrix");
+		dimensionType.addActionListener(this);
+		dimensionX = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionX.addItem(param.getId());
+			}
+		}
+		dimensionY = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionY.addItem(param.getId());
+			}
+		}
+		dimensionX.setEnabled(false);
+		dimensionY.setEnabled(false);
 
 
 		String selectedID = "";
@@ -565,6 +596,39 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1.add(reacName);
 			reactionPanelNorth1.add(onPortLabel);
 			reactionPanelNorth1.add(onPort);
+			
+			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
+			String[] sizes = new String[2];
+			if(paramsOnly){
+				dimensionType.setEnabled(false);
+			}
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(reac);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(reac);
+				if(sizes==null){
+					dimensionType.setSelectedIndex(0);
+					dimensionX.setEnabled(false);
+					dimensionY.setEnabled(false);
+				}
+				else{
+					dimensionType.setSelectedIndex(2);
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(true);
+					dimensionX.setSelectedItem(sizes[0]);
+					dimensionY.setSelectedItem(sizes[1]);
+				}
+			}
+			else{
+				dimensionType.setSelectedIndex(1);
+				dimensionX.setEnabled(true);
+				dimensionX.setSelectedItem(sizes[0]);
+				dimensionY.setEnabled(false);
+			}
+			
+			reactionPanelNorth1.add(dimensionType);
+			reactionPanelNorth1.add(dimensionX);
+			reactionPanelNorth1.add(dimensionY);
+			
 			if (gcm.getSBMLDocument().getLevel() > 2) {
 				reactionPanelNorth1b.add(reactionCompLabel);
 				reactionPanelNorth1b.add(reactionComp);
@@ -577,7 +641,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			// Parse out SBOL annotations and add to SBOL field
 			if (!paramsOnly) {
 				// Field for annotating reaction with SBOL DNA components
-				Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
+				reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 				List<URI> sbolURIs = new LinkedList<URI>();
 				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(reac, sbolURIs);
 				sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
@@ -611,6 +675,38 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1b.add(reacReverse);
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
+			
+			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
+			String[] sizes = new String[2];
+			if(paramsOnly){
+				dimensionType.setEnabled(false);
+			}
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(reac);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(reac);
+				if(sizes==null){
+					dimensionType.setSelectedIndex(0);
+					dimensionX.setEnabled(false);
+					dimensionY.setEnabled(false);
+				}
+				else{
+					dimensionType.setSelectedIndex(2);
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(true);
+					dimensionX.setSelectedItem(sizes[0]);
+					dimensionY.setSelectedItem(sizes[1]);
+				}
+			}
+			else{
+				dimensionType.setSelectedIndex(1);
+				dimensionX.setEnabled(true);
+				dimensionX.setSelectedItem(sizes[0]);
+				dimensionY.setEnabled(false);
+			}
+			
+			reactionPanelNorth1b.add(dimensionType);
+			reactionPanelNorth1b.add(dimensionX);
+			reactionPanelNorth1b.add(dimensionY);
 
 			reactionPanelNorth2.add(reactionPanelNorth1);
 			reactionPanelNorth2.add(reactionPanelNorth1b);
@@ -809,7 +905,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					else {
-						// TODO: see method
 						error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
 					}
 				}
@@ -1077,6 +1172,19 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								AnnotationUtility.removeSBOLAnnotation(react);
 						}
 					}
+					if (dimensionType.getSelectedIndex() == 1){
+						AnnotationUtility.removeMatrixSizeAnnotation(react);
+						AnnotationUtility.setVectorSizeAnnotation(react,(String) dimensionX.getSelectedItem());
+						}
+					else if (dimensionType.getSelectedIndex() == 2){
+						AnnotationUtility.removeVectorSizeAnnotation(react);
+						AnnotationUtility.setMatrixSizeAnnotation(react,(String) dimensionX.getSelectedItem(), 
+								(String) dimensionY.getSelectedItem());
+					}
+					else{
+						AnnotationUtility.removeVectorSizeAnnotation(react);
+						AnnotationUtility.removeMatrixSizeAnnotation(react);
+					}
 				}
 				else {
 					Reaction react = gcm.getSBMLDocument().getModel().createReaction();
@@ -1162,6 +1270,19 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else {
 						removeTheReaction(gcm, reac);
+					}
+					if (dimensionType.getSelectedIndex() == 1){
+						AnnotationUtility.removeMatrixSizeAnnotation(react);
+						AnnotationUtility.setVectorSizeAnnotation(react,(String) dimensionX.getSelectedItem());
+						}
+					else if (dimensionType.getSelectedIndex() == 2){
+						AnnotationUtility.removeVectorSizeAnnotation(react);
+						AnnotationUtility.setMatrixSizeAnnotation(react,(String) dimensionX.getSelectedItem(), 
+								(String) dimensionY.getSelectedItem());
+					}
+					else{
+						AnnotationUtility.removeVectorSizeAnnotation(react);
+						AnnotationUtility.removeMatrixSizeAnnotation(react);
 					}
 				}
 				modelEditor.setDirty(true);
@@ -3358,6 +3479,22 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		// if the use mass action button is clicked
 		else if (e.getSource() == useMassAction) {
 			useMassAction();
+		}
+		// if the dimension type is changed
+		else if (e.getSource() == dimensionType) {
+			int index = dimensionType.getSelectedIndex();
+			if (index == 0) {
+				dimensionX.setEnabled(false);
+				dimensionY.setEnabled(false);
+			}
+			else if (index == 1) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(false);
+			}
+			else if (index == 2) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(true);
+			}
 		}
 	}
 

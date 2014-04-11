@@ -258,7 +258,6 @@ public class AnnotationUtility {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return ret;
 	}
 	
@@ -295,7 +294,6 @@ public class AnnotationUtility {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public static String parseRowIndexAnnotation(SBase sbmlObject) {
@@ -316,7 +314,6 @@ public class AnnotationUtility {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
 		return null;
 	}
 	
@@ -353,7 +350,6 @@ public class AnnotationUtility {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
 	}
 	
 	public static String parseColIndexAnnotation(SBase sbmlObject) {
@@ -376,8 +372,121 @@ public class AnnotationUtility {
 		}
 
 		return null;
-	
 	}
+	
+	public static void setConversionRowIndexAnnotation(SBase sbmlObject, String i) {
+		if (sbmlObject.isSetAnnotation())
+			removeConversionRowIndexAnnotation(sbmlObject);
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:rowConvIndex", "http://www.fakeuri.com");
+		attr.add("rowConvIndex:eqn", ""+i);
+		XMLNode node = new XMLNode(new XMLTriple("rowConvIndex","http://www.fakeuri.com ","rowConvIndex"), attr);
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ SBMLutilities.getId(sbmlObject)); 
+	}
+
+	public static void removeConversionRowIndexAnnotation(SBase sbmlObject) {
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern rowConvIndexPattern = Pattern.compile(CONV_ROW_INDEX_ANNOTATION);
+			Matcher rowConvIndexMatcher = rowConvIndexPattern.matcher(annotation);
+			if (rowConvIndexMatcher.find()) {
+				String rowIndexAnnotation = rowConvIndexMatcher.group(0);
+				annotation = annotation.replace(rowIndexAnnotation, "");
+			}
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				annotation = "<annotation>\n"+annotation+"\n</annotation>";
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+			//}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static String parseConversionRowIndexAnnotation(SBase sbmlObject) {
+		if (sbmlObject==null)
+			return null;
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern rowConvIndexPattern = Pattern.compile(CONV_ROW_INDEX_ANNOTATION);
+			Matcher rowConvIndexMatcher = rowConvIndexPattern.matcher(annotation);
+			if (rowConvIndexMatcher.find() && rowConvIndexMatcher.groupCount()==2) {
+				if (rowConvIndexMatcher.group(1)!=null) {
+					return rowConvIndexMatcher.group(1);
+				}
+				return rowConvIndexMatcher.group(2);
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static void setConversionColIndexAnnotation(SBase sbmlObject, String j) {
+		if (sbmlObject.isSetAnnotation())
+			removeConversionColIndexAnnotation(sbmlObject);
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:colConvIndex", "http://www.fakeuri.com");
+		attr.add("colConvIndex:eqn", ""+j);
+		XMLNode node = new XMLNode(new XMLTriple("colConvIndex","http://www.fakeuri.com ","colConvIndex"), attr);
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ SBMLutilities.getId(sbmlObject)); 
+	}
+
+	public static void removeConversionColIndexAnnotation(SBase sbmlObject) {
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern colConvIndexPattern = Pattern.compile(CONV_COL_INDEX_ANNOTATION);
+			Matcher colConvIndexMatcher = colConvIndexPattern.matcher(annotation);
+			if (colConvIndexMatcher.find()) {
+				String colIndexAnnotation = colConvIndexMatcher.group(0);
+				annotation = annotation.replace(colIndexAnnotation, "");
+			}
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				annotation = "<annotation>\n"+annotation+"\n</annotation>";
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+			//}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static String parseConversionColIndexAnnotation(SBase sbmlObject) {
+		if (sbmlObject==null)
+			return null;
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern colConvIndexPattern = Pattern.compile(CONV_COL_INDEX_ANNOTATION);
+			Matcher colConvIndexMatcher = colConvIndexPattern.matcher(annotation);
+			if (colConvIndexMatcher.find() && colConvIndexMatcher.groupCount()==2) {
+				if (colConvIndexMatcher.group(1)!=null) {
+					return colConvIndexMatcher.group(1);
+				}
+				return colConvIndexMatcher.group(2);
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	
 	public static void setArraySizeAnnotation(SBase sbmlObject, int size) {
 		if (sbmlObject.isSetAnnotation())
@@ -774,6 +883,14 @@ public class AnnotationUtility {
 	private static final String COL_INDEX_ANNOTATION =
 			"<colIndex:colIndex xmlns:colIndex=\"http://www\\.fakeuri\\.com\" colIndex:eqn=\"(.)\"/>" + "|" +
 					"<colIndex:colIndex colIndex:eqn=\"(.)\" xmlns:colIndex=\"http://www\\.fakeuri\\.com\"/>";
+	
+	private static final String CONV_ROW_INDEX_ANNOTATION =
+			"<rowConvIndex:rowConvIndex xmlns:rowConvIndex=\"http://www\\.fakeuri\\.com\" rowConvIndex:eqn=\"(.)\"/>" + "|" +
+					"<rowConvIndex:rowConvIndex rowConvIndex:eqn=\"(.)\" xmlns:rowConvIndex=\"http://www\\.fakeuri\\.com\"/>";
+	
+	private static final String CONV_COL_INDEX_ANNOTATION =
+			"<colConvIndex:colConvIndex xmlns:colConvIndex=\"http://www\\.fakeuri\\.com\" colConvIndex:eqn=\"(.)\"/>" + "|" +
+					"<colConvIndex:colConvIndex colConvIndex:eqn=\"(.)\" xmlns:colConvIndex=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
 	
