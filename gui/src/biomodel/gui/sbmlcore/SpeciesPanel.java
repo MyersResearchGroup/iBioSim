@@ -182,6 +182,34 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel.add(dimensionY);
 		if (!paramsOnly) grid.add(tempPanel);
 		
+		// Set dimension type and size parameter
+		String[] sizes = new String[2];
+		if(paramsOnly){
+			dimensionType.setEnabled(false);
+		}
+		sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(species);
+		if(sizes[0]==null){
+			sizes = AnnotationUtility.parseMatrixSizeAnnotation(species);
+			if(sizes==null){
+				dimensionType.setSelectedIndex(0);
+				dimensionX.setEnabled(false);
+				dimensionY.setEnabled(false);
+			}
+			else{
+				dimensionType.setSelectedIndex(2);
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(true);
+				dimensionX.setSelectedItem(sizes[0]);
+				dimensionY.setSelectedItem(sizes[1]);
+			}
+		}
+		else{
+			dimensionType.setSelectedIndex(1);
+			dimensionX.setEnabled(true);
+			dimensionX.setSelectedItem(sizes[0]);
+			dimensionY.setEnabled(false);
+		}
+		
 		// compartment field
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Compartment");
@@ -201,6 +229,24 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel.add(new JLabel());
 		tempPanel.add(iIndex);
 		tempPanel.add(jIndex);
+		
+		String[] indecies = new String[2];
+		indecies[0] = AnnotationUtility.parseRowIndexAnnotation(species);
+		if(indecies[0]!=null){
+			indecies[1] = AnnotationUtility.parseColIndexAnnotation(species);
+			if(indecies[1]==null){
+				iIndex.setText(indecies[0]);
+				jIndex.setText("");
+			}
+			else{
+				iIndex.setText(indecies[0]);
+				jIndex.setText(indecies[1]);
+			}
+		}
+		else{
+			iIndex.setText("");
+			jIndex.setText("");
+		}
 			
 		if (!paramsOnly) grid.add(tempPanel);
 		
@@ -287,6 +333,23 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(new JLabel());
 			tempPanel.add(conviIndex);
 			tempPanel.add(convjIndex);
+			
+			indecies[0] = AnnotationUtility.parseRowIndexAnnotation(species);
+			if(indecies[0]!=null){
+				indecies[1] = AnnotationUtility.parseColIndexAnnotation(species);
+				if(indecies[1]==null){
+					conviIndex.setText(indecies[0]);
+					convjIndex.setText("");
+				}
+				else{
+					conviIndex.setText(indecies[0]);
+					convjIndex.setText(indecies[1]);
+				}
+			}
+			else{
+				conviIndex.setText("");
+				convjIndex.setText("");
+			}
 				
 			if (!paramsOnly) grid.add(tempPanel);
 		}
@@ -767,7 +830,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					else if (Utility.isValid(initialField.getText(), Utility.CONCstring)) {
 						species.setInitialConcentration(Double.parseDouble(initialField.getText().substring(1,initialField.getText().length()-1)));
 					} else {
-						boolean error = InitialAssignments.addInitialAssignment(bioModel, species.getId(), initialField.getText().trim());
+						boolean error;
+						if (dimensionType.getSelectedIndex()==0) {
+							error = InitialAssignments.addInitialAssignment(bioModel, species.getId(), initialField.getText().trim(),"","");
+						} else if (dimensionType.getSelectedIndex()==1) {
+							error = InitialAssignments.addInitialAssignment(bioModel, species.getId(), initialField.getText().trim(),
+									(String)dimensionX.getSelectedItem(),"");
+						} else {
+							error = InitialAssignments.addInitialAssignment(bioModel, species.getId(), initialField.getText().trim(),
+									(String)dimensionX.getSelectedItem(),(String)dimensionY.getSelectedItem());
+						}
 						if (error) return false;
 						species.setInitialAmount(Double.parseDouble("0.0"));
 					}
@@ -805,7 +877,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					else {
 						species.setUnits(unit);
 					}
-					// TODO: set dimensions for species here
 					
 					String convFactor = null;
 					
@@ -819,32 +890,39 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							species.setConversionFactor(convFactor);
 						}
 					}
-					//TODO: Figure out the parsing issue.
-//					if (dimensionType.getSelectedIndex() == 1){
-//						AnnotationUtility.removeMatrixSizeAnnotation(specie);
-//						AnnotationUtility.setVectorSizeAnnotation(specie,(String) dimensionX.getSelectedItem());
-//						AnnotationUtility.removeColIndexAnnotation(specie);
-//						AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
-//						AnnotationUtility.removeConversionColIndexAnnotation(specie);
-//						AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
-//					}
-//					else if (dimensionType.getSelectedIndex() == 2){
-//						AnnotationUtility.removeVectorSizeAnnotation(specie);
-//						AnnotationUtility.setMatrixSizeAnnotation(specie,(String) dimensionX.getSelectedItem(), 
-//								(String) dimensionY.getSelectedItem());
-//						AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
-//						AnnotationUtility.setColIndexAnnotation(specie,jIndex.getText());
-//						AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
-//						AnnotationUtility.setConversionColIndexAnnotation(specie,convjIndex.getText());
-//					}
-//					else{
-//						AnnotationUtility.removeVectorSizeAnnotation(specie);
-//						AnnotationUtility.removeMatrixSizeAnnotation(specie);
-//						AnnotationUtility.removeRowIndexAnnotation(specie);
-//						AnnotationUtility.removeColIndexAnnotation(specie);
-//						AnnotationUtility.removeConversionRowIndexAnnotation(specie);
-//						AnnotationUtility.removeConversionColIndexAnnotation(specie);
-//					}
+					if (dimensionType.getSelectedIndex() == 1){
+						AnnotationUtility.removeMatrixSizeAnnotation(species);
+						AnnotationUtility.setVectorSizeAnnotation(species,(String) dimensionX.getSelectedItem());
+					}
+					else if (dimensionType.getSelectedIndex() == 2){
+						AnnotationUtility.removeVectorSizeAnnotation(species);
+						AnnotationUtility.setMatrixSizeAnnotation(species,(String) dimensionX.getSelectedItem(), 
+								(String) dimensionY.getSelectedItem());
+					}
+					else{
+						AnnotationUtility.removeVectorSizeAnnotation(species);
+						AnnotationUtility.removeMatrixSizeAnnotation(species);
+					}
+					if (!iIndex.getText().equals("")) {
+						AnnotationUtility.setRowIndexAnnotation(species,iIndex.getText());
+					} else {
+						AnnotationUtility.removeRowIndexAnnotation(species);
+					}
+					if (!jIndex.getText().equals("")) {
+						AnnotationUtility.setColIndexAnnotation(species,jIndex.getText());
+					} else {
+						AnnotationUtility.removeColIndexAnnotation(species);
+					} 
+					if (!conviIndex.getText().equals("")) {
+						AnnotationUtility.setConversionRowIndexAnnotation(species,conviIndex.getText());
+					} else {
+						AnnotationUtility.removeConversionRowIndexAnnotation(species);
+					} 
+					if (!convjIndex.getText().equals("")) {
+						AnnotationUtility.setConversionColIndexAnnotation(species,convjIndex.getText());
+					} else {						
+						AnnotationUtility.removeConversionColIndexAnnotation(species);
+					}
 				} else {
 					PropertyField f = fields.get(GlobalConstants.INITIAL_STRING);
 					if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
@@ -1057,8 +1135,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		if (e.getActionCommand().equals("comboBoxChanged") || 
-				e.getActionCommand().equals("constdiffChanged")) {
+		if (e.getActionCommand().equals("constdiffChanged")) {
 			
 			//disallow constant == true if diffusible or constitutive are selected
 			if (specConstitutive.isSelected() || specDiffusible.isSelected() || specDegradable.isSelected()) {

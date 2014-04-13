@@ -63,6 +63,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 
 	private JComboBox compUnits, CompConstants; // compartment units
 	
+	private JLabel dimensionTypeLabel, dimensionSizeLabel;
+	
 	private JComboBox dimensionType;
 	
 	private JComboBox dimensionX;
@@ -161,18 +163,18 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		JPanel compPanel;
 		if (paramsOnly) {
 			if (bioModel.getSBMLDocument().getLevel() < 3) {
-				compPanel = new JPanel(new GridLayout(13, 2));
+				compPanel = new JPanel(new GridLayout(14, 2));
 			}
 			else {
-				compPanel = new JPanel(new GridLayout(11, 2));
+				compPanel = new JPanel(new GridLayout(12, 2));
 			}
 		}
 		else {
 			if (bioModel.getSBMLDocument().getLevel() < 3) {
-				compPanel = new JPanel(new GridLayout(11, 2));
+				compPanel = new JPanel(new GridLayout(12, 2));
 			}
 			else {
-				compPanel = new JPanel(new GridLayout(9, 2));
+				compPanel = new JPanel(new GridLayout(10, 2));
 			}
 		}
 		JLabel idLabel = new JLabel("ID:");
@@ -206,6 +208,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		}
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
+		dimensionTypeLabel = new JLabel("Array Dimension");
+		dimensionSizeLabel = new JLabel("Array Size");
 		
 //		CompartmentType not supported in Level 3
 //		ListOf listOfCompTypes = bioModel.getSBMLDocument().getModel().getListOfCompartmentTypes();
@@ -404,8 +408,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 //		}
 		compPanel.add(dimLabel);
 		compPanel.add(dimText);
-		compPanel.add(constLabel);
-		compPanel.add(CompConstants);
 		if (paramsOnly) {
 			JLabel typeLabel = new JLabel("Value Type:");
 			type.addActionListener(new ActionListener() {
@@ -436,10 +438,14 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		}
 		compPanel.add(compUnitsLabel);
 		compPanel.add(compUnits);
+		compPanel.add(constLabel);
+		compPanel.add(CompConstants);
 		compartPanel.add(compPanel);
 		compPanel.add(onPortLabel);
 		compPanel.add(onPort);
+		compPanel.add(dimensionTypeLabel);
 		compPanel.add(dimensionType);
+		compPanel.add(dimensionSizeLabel);
 		compPanel.add(dimensionX);
 		compPanel.add(new JLabel());
 		compPanel.add(dimensionY);
@@ -477,7 +483,17 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						addCompSize = Double.parseDouble(compSize.getText().trim());
 					}
 					catch (Exception e1) {
-						error = InitialAssignments.addInitialAssignment(bioModel, compID.getText().trim(), compSize.getText().trim());
+						if (dimensionType.getSelectedIndex()==0) {
+							error = InitialAssignments.addInitialAssignment(bioModel, compID.getText().trim(), 
+									compSize.getText().trim(),"","");
+						} else if (dimensionType.getSelectedIndex()==1) {
+							error = InitialAssignments.addInitialAssignment(bioModel, compID.getText().trim(), 
+									compSize.getText().trim(),(String)dimensionX.getSelectedItem(),"");
+						} else {
+							error = InitialAssignments.addInitialAssignment(bioModel, compID.getText().trim(), 
+									compSize.getText().trim(),(String)dimensionX.getSelectedItem(),
+									(String)dimensionY.getSelectedItem());
+						}
 						addCompSize = 1.0;
 						/*
 						JOptionPane.showMessageDialog(Gui.frame, "The compartment size must be a real number.", "Enter a Valid Size",

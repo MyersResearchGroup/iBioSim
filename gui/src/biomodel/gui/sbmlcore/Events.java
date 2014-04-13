@@ -360,22 +360,22 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					origAssign = new String[event.getEventAssignmentCount()];
 					int k=0;
 					int l=0;
-					String[] indecies = new String[2];
+					String[] indices = new String[2];
 					for (int j = 0; j < event.getEventAssignmentCount(); j++) {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
 						// TODO: add the index in the field
 						String assignIndex = "";
-						indecies[0] = AnnotationUtility.parseRowIndexAnnotation(ea);
-						if(indecies[0]!=null){
-							indecies[1] = AnnotationUtility.parseColIndexAnnotation(ea);
-							if(indecies[1]==null){
-								assignIndex = " [" + indecies[0] + "]";
+						indices[0] = AnnotationUtility.parseRowIndexAnnotation(ea);
+						if(indices[0]!=null){
+							indices[1] = AnnotationUtility.parseColIndexAnnotation(ea);
+							if(indices[1]==null){
+								assignIndex = " [" + indices[0] + "]";
 							}
 							else{
-								assignIndex = "[" + indecies[0] + ",";
-								assignIndex += (indecies[1] + "]");
+								assignIndex = " [" + indices[0] + ",";
+								assignIndex += (indices[1] + "]");
 							}
 						}
 						// TODO: update assign with index in the string
@@ -1292,7 +1292,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JPanel northEAPanel = new JPanel();
 		JPanel southEAPanel = new JPanel();
 		JLabel idLabel = new JLabel("Variable:");
-		JLabel indexLabel = new JLabel("Indecies:");
+		JLabel indexLabel = new JLabel("Indices:");
 		JLabel eqnLabel = new JLabel("Assignment:");
 		JComboBox eaID = new JComboBox();
 		iIndex = new JTextField(10);

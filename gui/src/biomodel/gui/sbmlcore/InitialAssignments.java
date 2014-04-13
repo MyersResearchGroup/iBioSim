@@ -31,6 +31,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SpeciesReference;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -177,7 +178,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	/**
 	 * Try to add or edit initial assignments
 	 */
-	public static boolean addInitialAssignment(BioModel bioModel, String variable, String assignment) {
+	public static boolean addInitialAssignment(BioModel bioModel, String variable, String assignment, String dimX, String dimY) {
 		if (assignment.trim().equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is empty.", "Enter Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
@@ -225,13 +226,21 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			return true;
 		}
 		boolean error = false;
-		InitialAssignment r = bioModel.getSBMLDocument().getModel().createInitialAssignment();
+		InitialAssignment ia = bioModel.getSBMLDocument().getModel().createInitialAssignment();
 		// TODO: add dimensions and index
 		String initialId = "init__"+variable;
-		SBMLutilities.setMetaId(r, initialId);
-		r.setVariable(variable);
-		r.setMath(bioModel.addBooleans(assignment.trim()));
-		if (checkInitialAssignmentUnits(bioModel, r)) {
+		SBMLutilities.setMetaId(ia, initialId);
+		ia.setVariable(variable);
+		ia.setMath(bioModel.addBooleans(assignment.trim()));
+		if (!dimX.equals("") && dimY.equals("")) {
+			AnnotationUtility.setVectorSizeAnnotation(ia, dimX);
+			AnnotationUtility.setRowIndexAnnotation(ia, "i");
+		} else if (!dimX.equals("") && !dimY.equals("")) {
+			AnnotationUtility.setMatrixSizeAnnotation(ia, dimX, dimY);
+			AnnotationUtility.setRowIndexAnnotation(ia, "i");
+			AnnotationUtility.setColIndexAnnotation(ia, "j");
+		} 
+		if (checkInitialAssignmentUnits(bioModel, ia)) {
 			error = true;
 		}
 		if (!error && SBMLutilities.checkCycles(bioModel.getSBMLDocument())) {

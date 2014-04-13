@@ -238,15 +238,15 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		mathPanel.add(scroll,"Center");
 		messagePanel.add(messageLabel,"North");
 		messagePanel.add(scroll2,"Center");
-		consPanel.add(IDPanel,"North");
-		consPanel.add(mathPanel,"Center");
-		consPanel.add(messagePanel,"South");
 		dimensionPanel.add(dimensionType);
 		dimensionPanel.add(dimensionX);
 		dimensionPanel.add(new JLabel());
 		dimensionPanel.add(dimensionY);
+		consPanel.add(IDPanel,"North");
+		consPanel.add(dimensionPanel,"South");
 		southPanel.add(consPanel,"North");
-		southPanel.add(dimensionPanel,"South");
+		southPanel.add(mathPanel,"Center");
+		southPanel.add(messagePanel,"South");
 		constraintPanel.add(southPanel);
 		
 		Object[] options = { option, "Cancel" };
