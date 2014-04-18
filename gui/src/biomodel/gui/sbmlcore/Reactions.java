@@ -598,6 +598,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		kineticPanel.add(scroll4, "Center");
 		kineticPanel.add(kineticButtons, "South");
 		JPanel reactionPanel = new JPanel(new BorderLayout());
+		// TODO: Can refactor this code to pull common part out
 		if (inSchematic) {
 			JPanel reactionPanelNorth = new JPanel();
 			if (gcm.getSBMLDocument().getLevel() > 2) {
