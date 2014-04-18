@@ -334,9 +334,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(conviIndex);
 			tempPanel.add(convjIndex);
 			
-			indecies[0] = AnnotationUtility.parseRowIndexAnnotation(species);
+			indecies[0] = AnnotationUtility.parseConversionRowIndexAnnotation(species);
 			if(indecies[0]!=null){
-				indecies[1] = AnnotationUtility.parseColIndexAnnotation(species);
+				indecies[1] = AnnotationUtility.parseConversionColIndexAnnotation(species);
 				if(indecies[1]==null){
 					conviIndex.setText(indecies[0]);
 					convjIndex.setText("");

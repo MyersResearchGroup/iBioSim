@@ -42,6 +42,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 
 	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
 	
+	private JTextField conviIndex, convjIndex;
+
 	private SBOLField sbolField;
 	
 	private BioModel bioModel;
@@ -69,8 +71,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	 */
 	private void modelEditor(String option) {
 		JPanel modelEditorPanel;
-		// TODO: SCOTT increase vertical size by 1
-		modelEditorPanel = new JPanel(new GridLayout(11, 2));
+		modelEditorPanel = new JPanel(new GridLayout(12, 2));
 		Model model = bioModel.getSBMLDocument().getModel();
 		modelName = new JTextField(model.getName(), 50);
 		modelID = new JTextField(model.getId(), 16);
@@ -144,6 +145,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			extentUnits.addItem("item");
 			extentUnits.addItem("kilogram");
 			extentUnits.addItem("mole");
+			conviIndex = new JTextField(10);
+			convjIndex = new JTextField(10);
 			
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlModel, sbolURIs);
@@ -164,6 +167,24 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				lengthUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getLengthUnits());
 				extentUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getExtentUnits());
 				conversionFactor.setSelectedItem(bioModel.getSBMLDocument().getModel().getConversionFactor());
+				
+				String[] indices= new String[2];
+				indices[0] = AnnotationUtility.parseConversionRowIndexAnnotation(model);
+				if(indices[0]!=null){
+					indices[1] = AnnotationUtility.parseConversionColIndexAnnotation(model);
+					if(indices[1]==null){
+						conviIndex.setText(indices[0]);
+						convjIndex.setText("");
+					}
+					else{
+						conviIndex.setText(indices[0]);
+						convjIndex.setText(indices[1]);
+					}
+				}
+				else{
+					conviIndex.setText("");
+					convjIndex.setText("");
+				}
 			}
 			// TODO: create a jlabel and jbutton for the Flux Balance Objective and add it to the window
 			// TODO: create a new class similar to SBOLField.java and SBOLAssoicationPanel.java that opens a panel when the button is pushed
@@ -172,6 +193,10 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			fbaoButton = new JButton("Edit Objectives");
 			fbaoButton.setActionCommand("fluxObjective");
 			fbaoButton.addActionListener(this);
+			
+			JPanel conversionFactorIndices = new JPanel(new GridLayout(1,2));
+			conversionFactorIndices.add(conviIndex);
+			conversionFactorIndices.add(convjIndex);
 			
 			modelEditorPanel.add(substanceUnitsLabel);
 			modelEditorPanel.add(substanceUnits);
@@ -187,6 +212,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(extentUnits);
 			modelEditorPanel.add(conversionFactorLabel);
 			modelEditorPanel.add(conversionFactor);
+			modelEditorPanel.add(new JLabel("Conversion Factor Indices"));
+			modelEditorPanel.add(conversionFactorIndices);
 			modelEditorPanel.add(new JLabel("SBOL DNA Component:"));
 			modelEditorPanel.add(sbolField);
 			modelEditorPanel.add(new JLabel("Flux Objective: "));
@@ -263,6 +290,16 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 
 					}
 					bioModel.getSBMLDocument().getModel().setName(modelName.getText());
+					if (!conviIndex.getText().equals("")) {
+						AnnotationUtility.setConversionRowIndexAnnotation(model,conviIndex.getText());
+					} else {
+						AnnotationUtility.removeConversionRowIndexAnnotation(model);
+					} 
+					if (!convjIndex.getText().equals("")) {
+						AnnotationUtility.setConversionColIndexAnnotation(model,convjIndex.getText());
+					} else {						
+						AnnotationUtility.removeConversionColIndexAnnotation(model);
+					}
 				}
 				dirty.setValue(true);
 				bioModel.makeUndoPoint();

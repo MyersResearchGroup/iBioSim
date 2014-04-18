@@ -167,6 +167,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private JComboBox dimensionY;
 	
+	//TODO: Whats up with new variables?
+	
 	private JComboBox RdimensionType, RdimensionX, RdimensionY;
 	
 	private JComboBox PdimensionType, PdimensionX, PdimensionY;
@@ -174,6 +176,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private JTextField RiIndex, RjIndex;
 
 	private JTextField PiIndex, PjIndex;
+	
+	private JTextField CiIndex, CjIndex;
 	
 	/*
 	 * text field for editing reactants
@@ -595,9 +599,19 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		kineticPanel.add(kineticButtons, "South");
 		JPanel reactionPanel = new JPanel(new BorderLayout());
 		if (inSchematic) {
-			JPanel reactionPanelNorth = new JPanel(new GridLayout(2, 1));
+			JPanel reactionPanelNorth = new JPanel();
+			if (gcm.getSBMLDocument().getLevel() > 2) {
+				reactionPanelNorth.setLayout(new GridLayout(4, 1));
+			}
+			else{
+				reactionPanelNorth.setLayout(new GridLayout(3, 1));
+			}
 			JPanel reactionPanelNorth1 = new JPanel();
-			JPanel reactionPanelNorth1b = new JPanel();
+			JPanel reactionPanelNorth2 = new JPanel();
+			JPanel reactionPanelNorth3 = new JPanel();
+			JPanel reactionPanelNorth4 = new JPanel();
+			CiIndex = new JTextField(10);
+			CjIndex = new JTextField(10);
 			reactionPanelNorth1.add(id);
 			reactionPanelNorth1.add(reacID);
 			reactionPanelNorth1.add(name);
@@ -633,18 +647,22 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				dimensionY.setEnabled(false);
 			}
 			
-			reactionPanelNorth1.add(dimensionType);
-			reactionPanelNorth1.add(dimensionX);
-			reactionPanelNorth1.add(dimensionY);
+			reactionPanelNorth2.add(new JLabel("Array Dimension"));
+			reactionPanelNorth2.add(dimensionType);
+			reactionPanelNorth2.add(new JLabel("Array Size"));
+			reactionPanelNorth2.add(dimensionX);
+			reactionPanelNorth2.add(dimensionY);
 			
-			if (gcm.getSBMLDocument().getLevel() > 2) {
-				reactionPanelNorth1b.add(reactionCompLabel);
-				reactionPanelNorth1b.add(reactionComp);
-			}			
-			reactionPanelNorth1b.add(reverse);
-			reactionPanelNorth1b.add(reacReverse);
-			reactionPanelNorth1b.add(fast);
-			reactionPanelNorth1b.add(reacFast);
+			reactionPanelNorth3.add(reactionCompLabel);
+			reactionPanelNorth3.add(reactionComp);
+			reactionPanelNorth3.add(new JLabel("Compartment Indices"));
+			reactionPanelNorth3.add(CiIndex);
+			reactionPanelNorth3.add(CjIndex);
+			
+			reactionPanelNorth4.add(reverse);
+			reactionPanelNorth4.add(reacReverse);
+			reactionPanelNorth4.add(fast);
+			reactionPanelNorth4.add(reacFast);
 
 			// Parse out SBOL annotations and add to SBOL field
 			if (!paramsOnly) {
@@ -654,10 +672,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(reac, sbolURIs);
 				sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
 						2, false);
-				reactionPanelNorth1b.add(sbolField);
+				reactionPanelNorth4.add(sbolField);
 			}
 			reactionPanelNorth.add(reactionPanelNorth1);
-			reactionPanelNorth.add(reactionPanelNorth1b);
+			reactionPanelNorth.add(reactionPanelNorth2);
+			if (gcm.getSBMLDocument().getLevel() > 2) {
+				reactionPanelNorth.add(reactionPanelNorth3);
+			}
+			reactionPanelNorth.add(reactionPanelNorth4);
 
 			reactionPanel.add(reactionPanelNorth, "North");
 			reactionPanel.add(param, "Center");
