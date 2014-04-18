@@ -84,6 +84,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	
 	private JTextField ruleMath;
 
+	private String metaID;
+	
 	/* Create rule panel */
 	public Rules(BioModel gcm, ModelEditor modelEditor) {
 		super(new BorderLayout());
@@ -183,6 +185,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 * Creates a frame used to edit rules or create new ones.
 	 */
 	public String ruleEditor(String option,String metaId) {
+		this.metaID = metaId;
 		JPanel rulePanel = new JPanel(new BorderLayout());
 		JPanel firstLine = new JPanel();
 		JPanel secondLine = new JPanel();
@@ -201,6 +204,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		JTextField id = new JTextField(12);
 		ruleMath = new JTextField(30);
 		ruleVar.setEnabled(false);
+		ruleVar.addActionListener(this);
 		JCheckBox onPort = new JCheckBox();
 		dimensionType = new JComboBox();
 		dimensionType.addItem("Scalar");
@@ -1163,6 +1167,29 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			else if (index == 2) {
 				dimensionX.setEnabled(true);
 				dimensionY.setEnabled(true);
+			}
+		}
+		// if the variable is changed
+		else if (e.getSource() == ruleVar) {
+			//TODO: Check the variable and enable/disable indices accordingly.
+			Rule rule = (Rule)SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaID);
+			Parameter variable = (Parameter) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), SBMLutilities.getVariable(rule));
+			String[] sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					iIndex.setEnabled(false);
+					jIndex.setEnabled(false);
+				}
+				else{
+					iIndex.setEnabled(true);
+					jIndex.setEnabled(true);
+				}
+			}
+			else{
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(false);
 			}
 		}
 	}
