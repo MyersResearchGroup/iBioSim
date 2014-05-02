@@ -1172,7 +1172,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		// if the variable is changed
 		else if (e.getSource() == ruleVar) {
 			//TODO: Check the variable and enable/disable indices accordingly.
-			Parameter variable = (Parameter) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
+			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
 			String[] sizes = new String[2];
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
