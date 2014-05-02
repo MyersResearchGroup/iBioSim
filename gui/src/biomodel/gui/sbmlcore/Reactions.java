@@ -167,8 +167,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private JComboBox dimensionY;
 	
-	//TODO: Whats up with new variables?
-	
 	private JComboBox RdimensionType, RdimensionX, RdimensionY;
 	
 	private JComboBox PdimensionType, PdimensionX, PdimensionY;
@@ -314,6 +312,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			addC[i] = listOfCompartments.get(i).getId();
 		}
 		reactionComp = new JComboBox(addC);
+		reactionComp.addActionListener(this);
 		JLabel reverse = new JLabel("Reversible:");
 		String[] options = { "true", "false" };
 		reacReverse = new JComboBox(options);
@@ -1314,6 +1313,25 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else{
 						AnnotationUtility.removeVectorSizeAnnotation(react);
 						AnnotationUtility.removeMatrixSizeAnnotation(react);
+					}
+					//TODO: Scott usually uses read to check dimension, what about writing?
+					Parameter variable = (Parameter) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
+					String[] sizes = new String[2];
+					sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+					if(sizes[0]==null){
+						sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+						if(sizes==null){
+							CiIndex.setEnabled(false);
+							CjIndex.setEnabled(false);
+						}
+						else{
+							CiIndex.setEnabled(true);
+							CjIndex.setEnabled(true);
+						}
+					}
+					else{
+						CiIndex.setEnabled(true);
+						CjIndex.setEnabled(false);
 					}
 				}
 				modelEditor.setDirty(true);
@@ -3787,6 +3805,27 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else if (index == 2) {
 				PdimensionX.setEnabled(true);
 				PdimensionY.setEnabled(true);
+			}
+		}
+		// if the variable is changed
+		else if (e.getSource() == reactionComp) {
+			Compartment variable = (Compartment) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
+			String[] sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					CiIndex.setEnabled(false);
+					CjIndex.setEnabled(false);
+				}
+				else{
+					CiIndex.setEnabled(true);
+					CjIndex.setEnabled(true);
+				}
+			}
+			else{
+				CiIndex.setEnabled(true);
+				CjIndex.setEnabled(false);
 			}
 		}
 	}

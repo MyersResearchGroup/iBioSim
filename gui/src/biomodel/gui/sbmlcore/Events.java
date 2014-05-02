@@ -62,6 +62,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private JLabel dimensionTypeLabel, dimensionSizeLabel;
 	
 	private JTextField iIndex, jIndex;
+	
+	private JComboBox eaID;
 
 	private BioModel bioModel;
 
@@ -1294,7 +1296,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JLabel idLabel = new JLabel("Variable:");
 		JLabel indexLabel = new JLabel("Indices:");
 		JLabel eqnLabel = new JLabel("Assignment:");
-		JComboBox eaID = new JComboBox();
+		eaID = new JComboBox();
+		eaID.addActionListener(this);
 		iIndex = new JTextField(10);
 		jIndex = new JTextField(10);
 		String selected;
@@ -1591,20 +1594,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			if (index == 0) {
 				dimensionX.setEnabled(false);
 				dimensionY.setEnabled(false);
-				iIndex.setEnabled(false);
-				jIndex.setEnabled(false);
 			}
 			else if (index == 1) {
 				dimensionX.setEnabled(true);
 				dimensionY.setEnabled(false);
-				iIndex.setEnabled(true);
-				jIndex.setEnabled(false);
 			}
 			else if (index == 2) {
 				dimensionX.setEnabled(true);
 				dimensionY.setEnabled(true);
-				iIndex.setEnabled(true);
-				jIndex.setEnabled(true);
 			}
 		}
 		// if the add event assignment button is clicked
@@ -1619,6 +1616,27 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		// if the remove event assignment button is clicked
 		else if (e.getSource() == removeAssignment) {
 			removeAssignment(eventAssign);
+		}
+		// if the variable is changed
+		else if (e.getSource() == eaID) {
+			Parameter variable = (Parameter) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
+			String[] sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					iIndex.setEnabled(false);
+					jIndex.setEnabled(false);
+				}
+				else{
+					iIndex.setEnabled(true);
+					jIndex.setEnabled(true);
+				}
+			}
+			else{
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(false);
+			}
 		}
 	}
 
