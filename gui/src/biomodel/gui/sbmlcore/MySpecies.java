@@ -742,32 +742,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							SBMLutilities.updateVarId(bioModel.getSBMLDocument(), true, speciesName, specie.getId());
 						}
-						//TODO: Figure out the parsing issue. See also SpeciesPanel
-//						if (dimensionType.getSelectedIndex() == 1){
-//							AnnotationUtility.removeMatrixSizeAnnotation(specie);
-//							AnnotationUtility.setVectorSizeAnnotation(specie,(String) dimensionX.getSelectedItem());
-//							AnnotationUtility.removeColIndexAnnotation(specie);
-//							AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
-//							AnnotationUtility.removeConversionColIndexAnnotation(specie);
-//							AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
-//						}
-//						else if (dimensionType.getSelectedIndex() == 2){
-//							AnnotationUtility.removeVectorSizeAnnotation(specie);
-//							AnnotationUtility.setMatrixSizeAnnotation(specie,(String) dimensionX.getSelectedItem(), 
-//									(String) dimensionY.getSelectedItem());
-//							AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
-//							AnnotationUtility.setColIndexAnnotation(specie,jIndex.getText());
-//							AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
-//							AnnotationUtility.setConversionColIndexAnnotation(specie,convjIndex.getText());
-//						}
-//						else{
-//							AnnotationUtility.removeVectorSizeAnnotation(specie);
-//							AnnotationUtility.removeMatrixSizeAnnotation(specie);
-//							AnnotationUtility.removeRowIndexAnnotation(specie);
-//							AnnotationUtility.removeColIndexAnnotation(specie);
-//							AnnotationUtility.removeConversionRowIndexAnnotation(specie);
-//							AnnotationUtility.removeConversionColIndexAnnotation(specie);
-//						}
 					}
 					else {
 						String[] specs = new String[species.getModel().getSize()];
@@ -838,32 +812,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							species.setSelectedIndex(index1);
 						}
-						//TODO: Figure out the parsing issue.
-//						if (dimensionType.getSelectedIndex() == 1){
-//							AnnotationUtility.removeMatrixSizeAnnotation(specie);
-//							AnnotationUtility.setVectorSizeAnnotation(specie,(String) dimensionX.getSelectedItem());
-//							AnnotationUtility.removeColIndexAnnotation(specie);
-//							AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
-//							AnnotationUtility.removeConversionColIndexAnnotation(specie);
-//							AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
-//						}
-//						else if (dimensionType.getSelectedIndex() == 2){
-//							AnnotationUtility.removeVectorSizeAnnotation(specie);
-//							AnnotationUtility.setMatrixSizeAnnotation(specie,(String) dimensionX.getSelectedItem(), 
-//									(String) dimensionY.getSelectedItem());
-//							AnnotationUtility.setRowIndexAnnotation(specie,iIndex.getText());
-//							AnnotationUtility.setColIndexAnnotation(specie,jIndex.getText());
-//							AnnotationUtility.setConversionRowIndexAnnotation(specie,conviIndex.getText());
-//							AnnotationUtility.setConversionColIndexAnnotation(specie,convjIndex.getText());
-//						}
-//						else{
-//							AnnotationUtility.removeVectorSizeAnnotation(specie);
-//							AnnotationUtility.removeMatrixSizeAnnotation(specie);
-//							AnnotationUtility.removeRowIndexAnnotation(specie);
-//							AnnotationUtility.removeColIndexAnnotation(specie);
-//							AnnotationUtility.removeConversionRowIndexAnnotation(specie);
-//							AnnotationUtility.removeConversionColIndexAnnotation(specie);
-//						}
 					}
 					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
