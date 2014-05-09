@@ -37,6 +37,7 @@ import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
@@ -640,6 +641,41 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				dimensionY.setEnabled(false);
 			}
 			// TODO: Scott should load compartment indices here, make sure to enable index boxes based on selected compartment
+			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
+			sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					CiIndex.setEnabled(false);
+					CjIndex.setEnabled(false);
+				}
+				else{
+					CiIndex.setEnabled(true);
+					CjIndex.setEnabled(true);
+				}
+			}
+			else{
+				CiIndex.setEnabled(true);
+				CjIndex.setEnabled(false);
+			}
+			String[] indecies = new String[2];
+			indecies[0] = AnnotationUtility.parseConversionRowIndexAnnotation(reac);
+			if(indecies[0]!=null){
+				indecies[1] = AnnotationUtility.parseConversionColIndexAnnotation(reac);
+				if(indecies[1]==null){
+					CiIndex.setText(indecies[0]);
+					CjIndex.setText("");
+				}
+				else{
+					CiIndex.setText(indecies[0]);
+					CjIndex.setText(indecies[1]);
+				}
+			}
+			else{
+				CiIndex.setText("");
+				CjIndex.setText("");
+			}
 		}
 		
 		reactionPanelNorth2.add(new JLabel("Array Dimension"));
@@ -1145,6 +1181,24 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						AnnotationUtility.removeMatrixSizeAnnotation(react);
 					}
 					// TODO: Scott need to save compartment indices here
+					SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
+					String[] sizes = new String[2];
+					sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+					if(sizes[0]==null){
+						sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+						if(sizes!=null){
+							AnnotationUtility.setConversionRowIndexAnnotation(react, CiIndex.getText());
+							AnnotationUtility.setConversionColIndexAnnotation(react, CjIndex.getText());
+						}
+						else{
+							AnnotationUtility.removeConversionRowIndexAnnotation(react);
+							AnnotationUtility.removeConversionColIndexAnnotation(react);
+						}
+					}
+					else{
+						AnnotationUtility.setConversionRowIndexAnnotation(react, CiIndex.getText());
+						AnnotationUtility.removeConversionColIndexAnnotation(react);
+					}
 				}
 				else {
 					Reaction react = bioModel.getSBMLDocument().getModel().createReaction();
@@ -1245,6 +1299,24 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						AnnotationUtility.removeMatrixSizeAnnotation(react);
 					}
 					// TODO: Scott need to save compartment indices here
+					SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
+					String[] sizes = new String[2];
+					sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+					if(sizes[0]==null){
+						sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+						if(sizes!=null){
+							AnnotationUtility.setConversionRowIndexAnnotation(react, CiIndex.getText());
+							AnnotationUtility.setConversionColIndexAnnotation(react, CjIndex.getText());
+						}
+						else{
+							AnnotationUtility.removeConversionRowIndexAnnotation(react);
+							AnnotationUtility.removeConversionColIndexAnnotation(react);
+						}
+					}
+					else{
+						AnnotationUtility.setConversionRowIndexAnnotation(react, CiIndex.getText());
+						AnnotationUtility.removeConversionColIndexAnnotation(react);
+					}
 				}
 				modelEditor.setDirty(true);
 				bioModel.makeUndoPoint();

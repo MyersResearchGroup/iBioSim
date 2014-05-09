@@ -20,6 +20,7 @@ import main.util.MutableBoolean;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.UnitDefinition;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -330,7 +331,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		// if the variable is changed
 		else if (e.getSource() == conversionFactor) {
 			//TODO: Check the variable and enable/disable indices accordingly.
-			Parameter variable = (Parameter) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)conversionFactor.getSelectedItem());
+			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)conversionFactor.getSelectedItem());
 			String[] sizes = new String[2];
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
