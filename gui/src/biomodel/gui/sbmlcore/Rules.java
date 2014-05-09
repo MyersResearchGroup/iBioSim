@@ -208,8 +208,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		JCheckBox onPort = new JCheckBox();
 		dimensionType = new JComboBox();
 		dimensionType.addItem("Scalar");
-		dimensionType.addItem("Vector");
-		dimensionType.addItem("Matrix");
+		dimensionType.addItem("1-D Array");
+		dimensionType.addItem("2-D Array");
 		dimensionType.addActionListener(this);
 		dimensionX = new JComboBox();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
