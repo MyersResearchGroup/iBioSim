@@ -73,8 +73,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		initAssigns = new JList();
 		dimensionType = new JComboBox();
 		dimensionType.addItem("Scalar");
-		dimensionType.addItem("Vector");
-		dimensionType.addItem("Matrix");
+		dimensionType.addItem("1-D Array");
+		dimensionType.addItem("2-D Array");
 		dimensionType.addActionListener(this);
 		dimensionX = new JComboBox();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
