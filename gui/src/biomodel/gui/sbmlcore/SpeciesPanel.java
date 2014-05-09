@@ -25,6 +25,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.comp.Submodel;
 
@@ -36,6 +37,7 @@ import biomodel.gui.util.PropertyField;
 import biomodel.gui.util.PropertyList;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
 
 
@@ -225,6 +227,26 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel = new JPanel(new GridLayout(1, 4));
 		iIndex = new JTextField(10);
 		jIndex = new JTextField(10);
+		conviIndex = new JTextField(10);
+		convjIndex = new JTextField(10);
+		SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
+		sizes = new String[2];
+		sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+		if(sizes[0]==null){
+			sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+			if(sizes==null){
+				iIndex.setEnabled(false);
+				jIndex.setEnabled(false);
+			}
+			else{
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(true);
+			}
+		}
+		else{
+			iIndex.setEnabled(true);
+			jIndex.setEnabled(false);
+		}
 		tempPanel.add(new JLabel("Compartment Indices"));
 		tempPanel.add(new JLabel());
 		tempPanel.add(iIndex);
@@ -315,6 +337,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel = new JPanel();
 			tempLabel = new JLabel("Conversion Factor");
 			convBox = MySpecies.createConversionFactorChoices(bioModel);
+			convBox.addActionListener(this);
 			
 			if (species.isSetConversionFactor()) {
 				convBox.setSelectedItem(species.getConversionFactor());
@@ -327,8 +350,24 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			if (!paramsOnly) grid.add(tempPanel);
 			
 			tempPanel = new JPanel(new GridLayout(1, 4));
-			conviIndex = new JTextField(10);
-			convjIndex = new JTextField(10);
+			variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
+			sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					conviIndex.setEnabled(false);
+					convjIndex.setEnabled(false);
+				}
+				else{
+					conviIndex.setEnabled(true);
+					convjIndex.setEnabled(true);
+				}
+			}
+			else{
+				conviIndex.setEnabled(true);
+				convjIndex.setEnabled(false);
+			}
 			tempPanel.add(new JLabel("Conversion Factor Indices"));
 			tempPanel.add(new JLabel());
 			tempPanel.add(conviIndex);
@@ -1166,6 +1205,50 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			else if (index == 2) {
 				dimensionX.setEnabled(true);
 				dimensionY.setEnabled(true);
+			}
+		}
+		// if the variable is changed
+		else if (e.getSource() == compartBox) {
+			//TODO: Check the variable and enable/disable indices accordingly.
+			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
+			String[] sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					iIndex.setEnabled(false);
+					jIndex.setEnabled(false);
+				}
+				else{
+					iIndex.setEnabled(true);
+					jIndex.setEnabled(true);
+				}
+			}
+			else{
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(false);
+			}
+		}
+		// if the variable is changed
+		else if (e.getSource() == convBox) {
+			//TODO: Check the variable and enable/disable indices accordingly.
+			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
+			String[] sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					conviIndex.setEnabled(false);
+					convjIndex.setEnabled(false);
+				}
+				else{
+					conviIndex.setEnabled(true);
+					convjIndex.setEnabled(true);
+				}
+			}
+			else{
+				conviIndex.setEnabled(true);
+				convjIndex.setEnabled(false);
 			}
 		}
 	}
