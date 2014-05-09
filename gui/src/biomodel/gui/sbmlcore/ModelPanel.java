@@ -85,6 +85,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		modelEditorPanel.add(modelID);
 		modelEditorPanel.add(modelNameLabel);
 		modelEditorPanel.add(modelName);
+		conviIndex = new JTextField(10);
+		convjIndex = new JTextField(10);
 		if (bioModel.getSBMLDocument().getLevel() > 2) {
 			JLabel substanceUnitsLabel = new JLabel("Substance Units:");
 			JLabel timeUnitsLabel = new JLabel("Time Units:");
@@ -148,8 +150,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			extentUnits.addItem("item");
 			extentUnits.addItem("kilogram");
 			extentUnits.addItem("mole");
-			conviIndex = new JTextField(10);
-			convjIndex = new JTextField(10);
 			
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlModel, sbolURIs);
@@ -189,9 +189,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					convjIndex.setText("");
 				}
 			}
-			// TODO: create a jlabel and jbutton for the Flux Balance Objective and add it to the window
-			// TODO: create a new class similar to SBOLField.java and SBOLAssoicationPanel.java that opens a panel when the button is pushed
-			// TODO: this panel should include a list of all objectives, add, remove, edit, ok, cancel buttons.
 			
 			fbaoButton = new JButton("Edit Objectives");
 			fbaoButton.setActionCommand("fluxObjective");
