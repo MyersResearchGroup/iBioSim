@@ -28,6 +28,7 @@ import biomodel.gui.sbol.SBOLField;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 
 
 public class ModelPanel extends JButton implements ActionListener, MouseListener {
@@ -104,6 +105,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			extentUnits = new JComboBox();
 			extentUnits.addItem("( none )");
 			conversionFactor = new JComboBox();
+			conversionFactor.addActionListener(this);
 			conversionFactor.addItem("( none )");
 
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
@@ -324,6 +326,28 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		else if (e.getActionCommand().equals("fluxObjective")){
 			FBAObjective fbaObjective = new FBAObjective(bioModel);
 			fbaObjective.openGui();
+		}
+		// if the variable is changed
+		else if (e.getSource() == conversionFactor) {
+			//TODO: Check the variable and enable/disable indices accordingly.
+			Parameter variable = (Parameter) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)conversionFactor.getSelectedItem());
+			String[] sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					conviIndex.setEnabled(false);
+					convjIndex.setEnabled(false);
+				}
+				else{
+					conviIndex.setEnabled(true);
+					convjIndex.setEnabled(true);
+				}
+			}
+			else{
+				conviIndex.setEnabled(true);
+				convjIndex.setEnabled(false);
+			}
 		}
 
 	}
