@@ -17,7 +17,6 @@ import org.sbml.jsbml.SpeciesReference;
 import biomodel.util.SBMLutilities;
 
 import com.joptimizer.optimizers.*;
-import com.joptimizer.functions.*;
 
 public class FluxBalanceAnalysis {
 	
@@ -78,37 +77,37 @@ public class FluxBalanceAnalysis {
 						objective [reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
 					}
 				}
-				LinearMultivariateRealFunction objectiveFunction = new LinearMultivariateRealFunction(objective, 0);
-//				System.out.println("Minimize: " + vectorToString(objective,reactionIndex));
-//				System.out.println("Subject to:");
-
-				int numEquals = 0;
-				for (int j = 0; j < fbc.getListOfFluxBounds().size(); j++) {
-					if (fbc.getFluxBound(j).getOperation().equals(FluxBound.Operation.EQUAL)) {
-						numEquals++;
-					}
-				}
+				//System.out.println("Minimize: " + vectorToString(objective,reactionIndex));
+				//System.out.println("Subject to:");
 				
-				ConvexMultivariateRealFunction[] inequalities = new ConvexMultivariateRealFunction[(fbc.getListOfFluxBounds().size())-numEquals];
+				double [] lowerBounds = new double[sbml.getModel().getReactionCount()];
+				double [] upperBounds = new double[sbml.getModel().getReactionCount()];
+				double minLb = LPPrimalDualMethod.DEFAULT_MIN_LOWER_BOUND;
+				double maxUb = LPPrimalDualMethod.DEFAULT_MAX_UPPER_BOUND;
 				int m = 0;
 				for (int j = 0; j < fbc.getListOfFluxBounds().size(); j++) {
 					FluxBound bound = fbc.getFluxBound(j);
-					double R [] = new double [reactionIndex.size()];
+					//double R [] = new double [reactionIndex.size()];
 					double boundVal = bound.getValue();
+					if (Double.isInfinite(boundVal) && boundVal > 0) boundVal = 10;
 					if(bound.getOperation().equals(FluxBound.Operation.GREATER_EQUAL)){
-						R[reactionIndex.get(bound.getReaction())]=-1;
-						inequalities[m] = new LinearMultivariateRealFunction(R, boundVal);
-						m++;
-						if (boundVal!=0) boundVal=(-1)*boundVal;
-//						System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
+						if (Double.isInfinite(boundVal)) boundVal = minLb;
+						lowerBounds[reactionIndex.get(bound.getReaction())] = boundVal;
+						//R[reactionIndex.get(bound.getReaction())]=1;
+						//System.out.println("  " + vectorToString(R,reactionIndex) + " >= " + boundVal);
 					}
 					else if(bound.getOperation().equals(FluxBound.Operation.LESS_EQUAL)){
-						R[reactionIndex.get(bound.getReaction())]=1;
-//						System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
-						if (boundVal!=0) boundVal=(-1)*boundVal;
-						inequalities[m] = new LinearMultivariateRealFunction(R, boundVal);
-						m++;
+						if (Double.isInfinite(boundVal)) boundVal = maxUb;
+						upperBounds[reactionIndex.get(bound.getReaction())] = boundVal;
+						//R[reactionIndex.get(bound.getReaction())]=1;
+						//System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
 					} 
+					else if(bound.getOperation().equals(FluxBound.Operation.EQUAL)){
+						lowerBounds[reactionIndex.get(bound.getReaction())] = boundVal; 
+						upperBounds[reactionIndex.get(bound.getReaction())] = boundVal; 
+						//R[reactionIndex.get(bound.getReaction())]=1;
+						//System.out.println("  " + vectorToString(R,reactionIndex) + " == " + boundVal);
+					}
 				}
 
 				m = 0;
@@ -116,8 +115,8 @@ public class FluxBalanceAnalysis {
 				for (int j = 0; j < sbml.getModel().getSpeciesCount(); j++) {
 					if (!sbml.getModel().getSpecies(j).getBoundaryCondition()) nonBoundarySpeciesCount++;
 				}
-				double[][] stoch = new double [nonBoundarySpeciesCount+numEquals][(sbml.getModel().getReactionCount())];
-				double[] zero = new double [nonBoundarySpeciesCount+numEquals];
+				double[][] stoch = new double [nonBoundarySpeciesCount][(sbml.getModel().getReactionCount())];
+				double[] zero = new double [nonBoundarySpeciesCount];
 				for (int j = 0; j < sbml.getModel().getSpeciesCount(); j++) {
 					Species species = sbml.getModel().getSpecies(j);
 					if (species.getBoundaryCondition()) continue;
@@ -139,40 +138,27 @@ public class FluxBalanceAnalysis {
 					}
 					m++;
 				}
-				for (int j = 0; j < fbc.getListOfFluxBounds().size(); j++) {
-					FluxBound bound = fbc.getFluxBound(j);
-					if (bound.getOperation().equals(FluxBound.Operation.EQUAL)) {
-						stoch[m][(reactionIndex.get(bound.getReaction()))] = 1.0;
-						zero[m] = bound.getValue();
-//						System.out.println("  " + vectorToString(stoch[m],reactionIndex) + " = " + zero[m]);
-						m++;
-					}
-				}
-
+				
 				//optimization problem
-				OptimizationRequest or = new OptimizationRequest();
-				or.setF0(objectiveFunction);
+				LPOptimizationRequest or = new LPOptimizationRequest();
+				//or.setDumpProblem(true);
+				or.setC(objective);
 				or.setA(stoch);
 				or.setB(zero);
-				or.setFi(inequalities);
+				or.setLb(lowerBounds);
+				or.setUb(upperBounds);
 				or.setTolerance(absError);
 				or.setToleranceFeas(absError);
-				//double[] ip = new double[reactionIndex.size()];
-				//for (int j = 0; j < reactionIndex.size(); j++) {
-				//	ip[j] = 0;
-				//}
-				//or.setInitialPoint(ip);//initial feasible point, not mandatory
-				//or.setNotFeasibleInitialPoint(ip);
 
 				//optimization
-				JOptimizer opt = new JOptimizer();
-				opt.setOptimizationRequest(or);
+				LPPrimalDualMethod opt = new LPPrimalDualMethod();
+				opt.setLPOptimizationRequest(or);
 				try {
 					int error = opt.optimize();
 					File f = new File(root + "sim-rep.txt");
 					FileWriter fw = new FileWriter(f);
 					BufferedWriter bw = new BufferedWriter(fw);
-					double [] sol = opt.getOptimizationResponse().getSolution();
+					double [] sol = opt.getLPOptimizationResponse().getSolution();
 					double objkVal = 0;
 					double objkCo = 0;
 					for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) { 
@@ -201,9 +187,8 @@ public class FluxBalanceAnalysis {
 					if (f.exists()) {
 						f.delete();
 					}
-					// TODO: SCOTT - return different code based on the message
 					if (e.getMessage().equals("initial point must be strictly feasible")) return -2;
-					else if (e.getMessage().equals("Infeasible problem")) return -3;
+					else if (e.getMessage().equals("infeasible problem")) return -3;
 					else if (e.getMessage().equals("singular KKT system")) return -4;
 					else if (e.getMessage().equals("matrix must have at least one row")) return -5;
 					else if (e.getMessage().equals("matrix is singular")) return -6;
