@@ -176,6 +176,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField PiIndex, PjIndex;
 	
+	private JTextField MiIndex, MjIndex;
+	
 	private JTextField CiIndex, CjIndex;
 	
 	/*
@@ -1922,6 +1924,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		Utility.sort(speciesList);
 		productSpecies = new JComboBox();
+		PiIndex = new JTextField(10);
+		PjIndex = new JTextField(10);
+		productSpecies.addActionListener(this);
 		if (inSchematic) {
 			productSpecies.setEnabled(false);
 		} else {
@@ -1942,8 +1947,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		productStoichiometry = new JTextField("1");
 		PdimensionType = new JComboBox();
 		PdimensionType.addItem("Scalar");
-		PdimensionType.addItem("Vector");
-		PdimensionType.addItem("Matrix");
+		PdimensionType.addItem("1-D Array");
+		PdimensionType.addItem("2-D Array");
 		PdimensionType.addActionListener(this);
 		PdimensionX = new JComboBox();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
@@ -1961,8 +1966,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		PdimensionX.setEnabled(false);
 		PdimensionY.setEnabled(false);
-		PiIndex = new JTextField(10);
-		PjIndex = new JTextField(10);
 		PiIndex.setEnabled(true);
 		PjIndex.setEnabled(true);
 		String selectedID = "";
@@ -2327,6 +2330,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	public void modifiersEditor(BioModel bioModel,String option,String selectedModifierId, ModifierSpeciesReference modifier,
 			boolean inSchematic) {
 		JPanel modifiersPanel;
+		MiIndex = new JTextField(10);
+		MjIndex = new JTextField(10);
 		JLabel speciesLabel = new JLabel("Species:");
 		ListOf<Species> listOfSpecies = bioModel.getSBMLDocument().getModel().getListOfSpecies();
 		String[] speciesList = new String[bioModel.getSBMLDocument().getModel().getSpeciesCount()];
@@ -2340,6 +2345,23 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			modifierSpecies.setEnabled(false);
 		} else {
 			modifierSpecies.setEnabled(true);
+		}
+		String[] indices = new String[2];
+		indices[0] = AnnotationUtility.parseRowIndexAnnotation(modifier);
+		if(indices[0]!=null){
+			indices[1] = AnnotationUtility.parseColIndexAnnotation(modifier);
+			if(indices[1]==null){
+				MiIndex.setText(indices[0]);
+				MjIndex.setText("");
+			}
+			else{
+				MiIndex.setText(indices[0]);
+				MjIndex.setText(indices[1]);
+			}
+		}
+		else{
+			MiIndex.setText("");
+			MjIndex.setText("");
 		}
 		JLabel SBOTermsLabel = new JLabel("Type");
 		JLabel RepStoichiometryLabel = new JLabel("Stoichiometry of repression (nc)");
@@ -2390,16 +2412,20 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			SBOTerms = new JComboBox(sboTerms);			
 		}
 		if (production==null) {
-			modifiersPanel = new JPanel(new GridLayout(1, 2));
+			modifiersPanel = new JPanel(new GridLayout(3, 2));
 		} else {
 			if (SBOTerms.getSelectedItem().equals("Promoter")) {
-				modifiersPanel = new JPanel(new GridLayout(2, 2));
+				modifiersPanel = new JPanel(new GridLayout(4, 2));
 			} else {
-				modifiersPanel = new JPanel(new GridLayout(6, 2));
+				modifiersPanel = new JPanel(new GridLayout(8, 2));
 			}
 		}
 		modifiersPanel.add(speciesLabel);
 		modifiersPanel.add(modifierSpecies);
+		modifiersPanel.add(new JLabel("Indices:"));
+		modifiersPanel.add(MiIndex);
+		modifiersPanel.add(new JLabel(""));
+		modifiersPanel.add(MjIndex);
 		if (production!=null) {
 			modifiersPanel.add(SBOTermsLabel);
 			modifiersPanel.add(SBOTerms);
@@ -2608,6 +2634,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						modifiers.setListData(modifierArray);
 						modifiers.setSelectedIndex(index);
 					}
+					if (!MiIndex.getText().equals("")) {
+						AnnotationUtility.setRowIndexAnnotation(modifier,MiIndex.getText());
+					} else {
+						AnnotationUtility.removeRowIndexAnnotation(modifier);
+					}
+					if (!MjIndex.getText().equals("")) {
+						AnnotationUtility.setColIndexAnnotation(modifier,MjIndex.getText());
+					} else {
+						AnnotationUtility.removeColIndexAnnotation(modifier);
+					}
 				}
 				else {
 					modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -2677,6 +2713,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							addLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + mod + "_"),actBindr);
 						}
 					}
+					if (!MiIndex.getText().equals("")) {
+						AnnotationUtility.setRowIndexAnnotation(modifier,MiIndex.getText());
+					} else {
+						AnnotationUtility.removeRowIndexAnnotation(modifier);
+					}
+					if (!MjIndex.getText().equals("")) {
+						AnnotationUtility.setColIndexAnnotation(modifier,MjIndex.getText());
+					} else {
+						AnnotationUtility.removeColIndexAnnotation(modifier);
+					} 
 					JList add = new JList();
 					Object[] adding = { mod };
 					add.setListData(adding);
@@ -2742,7 +2788,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			speciesList[i] = listOfSpecies.get(i).getId();
 		}
 		Utility.sort(speciesList);
+		RiIndex = new JTextField(10);
+		RjIndex = new JTextField(10);
 		reactantSpecies = new JComboBox();
+		reactantSpecies.addActionListener(this);
 		if (inSchematic) {
 			reactantSpecies.setEnabled(false);
 		} else {
@@ -2759,8 +2808,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactantStoichiometry = new JTextField("1");
 		RdimensionType = new JComboBox();
 		RdimensionType.addItem("Scalar");
-		RdimensionType.addItem("Vector");
-		RdimensionType.addItem("Matrix");
+		RdimensionType.addItem("1-D Array");
+		RdimensionType.addItem("2-D Array");
 		RdimensionType.addActionListener(this);
 		RdimensionX = new JComboBox();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
@@ -2778,8 +2827,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		RdimensionX.setEnabled(false);
 		RdimensionY.setEnabled(false);
-		RiIndex = new JTextField(10);
-		RjIndex = new JTextField(10);
 		RiIndex.setEnabled(true);
 		RjIndex.setEnabled(true);
 		String selectedID = "";
@@ -3808,7 +3855,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the variable is changed
 		else if (e.getSource() == reactionComp) {
-			Compartment variable = (Compartment) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
+			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
 			String[] sizes = new String[2];
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
@@ -3825,6 +3872,48 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else{
 				CiIndex.setEnabled(true);
 				CjIndex.setEnabled(false);
+			}
+		}
+		// if the product variable is changed
+		else if (e.getSource() == productSpecies) {
+			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)productSpecies.getSelectedItem());
+			String[] sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					PiIndex.setEnabled(false);
+					PjIndex.setEnabled(false);
+				}
+				else{
+					PiIndex.setEnabled(true);
+					PjIndex.setEnabled(true);
+				}
+			}
+			else{
+				PiIndex.setEnabled(true);
+				PjIndex.setEnabled(false);
+			}
+		}
+		// if the reactant variable is changed
+		else if (e.getSource() == reactantSpecies) {
+			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactantSpecies.getSelectedItem());
+			String[] sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					RiIndex.setEnabled(false);
+					RjIndex.setEnabled(false);
+				}
+				else{
+					RiIndex.setEnabled(true);
+					RjIndex.setEnabled(true);
+				}
+			}
+			else{
+				RiIndex.setEnabled(true);
+				RjIndex.setEnabled(false);
 			}
 		}
 	}
