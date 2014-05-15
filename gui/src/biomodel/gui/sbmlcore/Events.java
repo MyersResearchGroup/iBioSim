@@ -59,6 +59,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	
 	private JComboBox dimensionType, dimensionX, dimensionY;
 	
+	private JComboBox EAdimensionType, EAdimensionX, EAdimensionY;
+	
 	private JLabel dimensionTypeLabel, dimensionSizeLabel;
 	
 	private JTextField iIndex, jIndex;
@@ -1290,7 +1292,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			JOptionPane.showMessageDialog(Gui.frame, "No event assignment selected.", "Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		JPanel eventAssignPanel = new JPanel(new GridLayout(2,1));
+		JPanel eventAssignPanel = new JPanel(new GridLayout(3,1));
+		JPanel topEAPanel = new JPanel();
 		JPanel northEAPanel = new JPanel();
 		JPanel southEAPanel = new JPanel();
 		JLabel idLabel = new JLabel("Variable:");
@@ -1300,6 +1303,27 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		eaID.addActionListener(this);
 		iIndex = new JTextField(10);
 		jIndex = new JTextField(10);
+		EAdimensionType = new JComboBox();
+		EAdimensionType.addItem("Scalar");
+		EAdimensionType.addItem("1-D Array");
+		EAdimensionType.addItem("2-D Array");
+		EAdimensionType.addActionListener(this);
+		EAdimensionX = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				EAdimensionX.addItem(param.getId());
+			}
+		}
+		EAdimensionY = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				EAdimensionY.addItem(param.getId());
+			}
+		}
+		EAdimensionX.setEnabled(false);
+		EAdimensionY.setEnabled(false);
 		String selected;
 		String[] assign = new String[eventAssign.getModel().getSize()];
 		for (int i = 0; i < eventAssign.getModel().getSize(); i++) {

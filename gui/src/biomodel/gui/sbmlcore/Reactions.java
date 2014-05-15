@@ -2346,23 +2346,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		} else {
 			modifierSpecies.setEnabled(true);
 		}
-		String[] indices = new String[2];
-		indices[0] = AnnotationUtility.parseRowIndexAnnotation(modifier);
-		if(indices[0]!=null){
-			indices[1] = AnnotationUtility.parseColIndexAnnotation(modifier);
-			if(indices[1]==null){
-				MiIndex.setText(indices[0]);
-				MjIndex.setText("");
-			}
-			else{
-				MiIndex.setText(indices[0]);
-				MjIndex.setText(indices[1]);
-			}
-		}
-		else{
-			MiIndex.setText("");
-			MjIndex.setText("");
-		}
 		JLabel SBOTermsLabel = new JLabel("Type");
 		JLabel RepStoichiometryLabel = new JLabel("Stoichiometry of repression (nc)");
 		JLabel RepBindingLabel = new JLabel("Repression binding equilibrium (Kr)");
@@ -2376,6 +2359,23 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						modifier = p;
 					}
 				}
+			}
+			String[] indices = new String[2];
+			indices[0] = AnnotationUtility.parseRowIndexAnnotation(modifier);
+			if(indices[0]!=null){
+				indices[1] = AnnotationUtility.parseColIndexAnnotation(modifier);
+				if(indices[1]==null){
+					MiIndex.setText(indices[0]);
+					MjIndex.setText("");
+				}
+				else{
+					MiIndex.setText(indices[0]);
+					MjIndex.setText(indices[1]);
+				}
+			}
+			else{
+				MiIndex.setText("");
+				MjIndex.setText("");
 			}
 			if (modifier==null) return;
 			modifierSpecies.setSelectedItem(modifier.getSpecies());
@@ -2713,16 +2713,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							addLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + mod + "_"),actBindr);
 						}
 					}
-					if (!MiIndex.getText().equals("")) {
-						AnnotationUtility.setRowIndexAnnotation(modifier,MiIndex.getText());
-					} else {
-						AnnotationUtility.removeRowIndexAnnotation(modifier);
-					}
-					if (!MjIndex.getText().equals("")) {
-						AnnotationUtility.setColIndexAnnotation(modifier,MjIndex.getText());
-					} else {
-						AnnotationUtility.removeColIndexAnnotation(modifier);
-					} 
+//					if (!MiIndex.getText().equals("")) {
+//						AnnotationUtility.setRowIndexAnnotation(modifier,MiIndex.getText());
+//					} else {
+//						AnnotationUtility.removeRowIndexAnnotation(modifier);
+//					}
+//					if (!MjIndex.getText().equals("")) {
+//						AnnotationUtility.setColIndexAnnotation(modifier,MjIndex.getText());
+//					} else {
+//						AnnotationUtility.removeColIndexAnnotation(modifier);
+//					} 
 					JList add = new JList();
 					Object[] adding = { mod };
 					add.setListData(adding);
@@ -3914,6 +3914,27 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else{
 				RiIndex.setEnabled(true);
 				RjIndex.setEnabled(false);
+			}
+		}
+		// if the modifier variable is changed
+		else if (e.getSource() == modifierSpecies) {
+			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)modifierSpecies.getSelectedItem());
+			String[] sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
+				if(sizes==null){
+					MiIndex.setEnabled(false);
+					MjIndex.setEnabled(false);
+				}
+				else{
+					MiIndex.setEnabled(true);
+					MjIndex.setEnabled(true);
+				}
+			}
+			else{
+				MiIndex.setEnabled(true);
+				MjIndex.setEnabled(false);
 			}
 		}
 	}
