@@ -2341,6 +2341,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		Utility.sort(speciesList);
 		Object[] choices = speciesList;
 		modifierSpecies = new JComboBox(choices);
+		modifierSpecies.addActionListener(this);
 		if (inSchematic) {
 			modifierSpecies.setEnabled(false);
 		} else {
