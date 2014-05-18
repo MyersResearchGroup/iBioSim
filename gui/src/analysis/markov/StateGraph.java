@@ -1338,13 +1338,9 @@ public class StateGraph implements Runnable {
 					return false;
 				}
 			}
-			if (stop) {
-				return false;
-			}
-			// }
 			resetColors();
 			HashMap<String, Double> output = new HashMap<String, Double>();
-			if (!stop) {
+			if (conditions != null && !stop) {
 				for (Property cond : conditions) {
 					String prop = cond.getProperty();
 					if (prop.startsWith("St")) {
@@ -1681,15 +1677,15 @@ public class StateGraph implements Runnable {
 			return property;
 		}
 
-		@SuppressWarnings("unused")
-		private void setLabel(String label) {
-			this.label = label;
-		}
-
-		@SuppressWarnings("unused")
-		private void setProperty(String property) {
-			this.property = property;
-		}
+//		@SuppressWarnings("unused")
+//		private void setLabel(String label) {
+//			this.label = label;
+//		}
+//
+//		@SuppressWarnings("unused")
+//		private void setProperty(String property) {
+//			this.property = property;
+//		}
 	}
 
 	private class Transition {
@@ -2001,16 +1997,16 @@ public class StateGraph implements Runnable {
 			newPrevStates[newPrevStates.length - 1] = new StateTransitionPair(prevState, transition, transitionName);
 			prevStates = newPrevStates;
 		}
-
-		@SuppressWarnings("unused")
-		private void setNextStatesWithTrans(StateTransitionPair[] trans) {
-			nextStates = trans;
-		}
-
-		@SuppressWarnings("unused")
-		private void setPrevStatesWithTrans(StateTransitionPair[] trans) {
-			prevStates = trans;
-		}
+		
+//		@SuppressWarnings("unused")
+//		private void setNextStatesWithTrans(StateTransitionPair[] trans) {
+//			nextStates = trans;
+//		}
+//
+//		@SuppressWarnings("unused")
+//		private void setPrevStatesWithTrans(StateTransitionPair[] trans) {
+//			prevStates = trans;
+//		}
 	}
 
 	@Override
