@@ -222,7 +222,7 @@ public class PrjState {
 	public String getLabel() {
 		String prjStateLabel = "";
 		for (State localSt : this.toStateArray()) {
-			prjStateLabel += localSt.getFullLabel() + "_";
+			prjStateLabel += localSt.getLabel() + "_";
 		}
 		return prjStateLabel.substring(0, prjStateLabel.lastIndexOf("_"));		
 	}
