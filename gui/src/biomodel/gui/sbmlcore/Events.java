@@ -61,7 +61,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	
 	private JComboBox EAdimensionType, EAdimensionX, EAdimensionY;
 	
-	private JLabel dimensionTypeLabel, dimensionSizeLabel;
+	private JLabel dimensionTypeLabel, dimensionSizeLabel, EAdimensionTypeLabel, EAdimensionSizeLabel;
 	
 	private JTextField iIndex, jIndex;
 	
@@ -1324,6 +1324,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		EAdimensionX.setEnabled(false);
 		EAdimensionY.setEnabled(false);
+		EAdimensionTypeLabel = new JLabel("Array Dimension");
+		EAdimensionSizeLabel = new JLabel("Array Size");
+		
 		String selected;
 		String[] assign = new String[eventAssign.getModel().getSize()];
 		for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
@@ -1389,6 +1392,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		JTextField eqn = new JTextField(30);
+		// From the event assignments list to the event assignment window
+		// The listed string is: X[<first index>][<second index>] := <math>, Dim0 = <first dimension>, Dim1 = 
+		// <second dimension>
 		if (option.equals("OK")) {
 			String selectAssign = ((String) eventAssign.getSelectedValue());
 			eaID.setSelectedItem(selectAssign.split(" ")[0]);
@@ -1403,8 +1409,29 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					jIndex.setText(ind.split("\\,")[1].replace("]", ""));
 				}
 			}
-			eqn.setText(selectAssign.split(":=")[1].trim());
+			String[] rightSide = selectAssign.split(":=")[1].split(",");
+			eqn.setText(rightSide[0].trim());
+			// If the EA is a 1-D Array...
+			if(rightSide.length==2){
+				EAdimensionType.setSelectedIndex(1);
+				EAdimensionX.setSelectedItem(rightSide[1].split("=")[1].trim());				
+			}
+			// a 2-D Array...
+			else if(rightSide.length==3){
+				EAdimensionType.setSelectedIndex(2);
+				EAdimensionX.setSelectedItem(rightSide[1].split("=")[1].trim());
+				EAdimensionY.setSelectedItem(rightSide[2].split("=")[1].trim());
+			}
+			// or a Scalar
+			else{
+				EAdimensionType.setSelectedIndex(1);
+			}
 		}
+		topEAPanel.add(EAdimensionTypeLabel);
+		topEAPanel.add(EAdimensionType);
+		topEAPanel.add(EAdimensionSizeLabel);
+		topEAPanel.add(EAdimensionX);
+		topEAPanel.add(EAdimensionY);
 		northEAPanel.add(idLabel);
 		northEAPanel.add(eaID);
 		northEAPanel.add(indexLabel);
@@ -1412,8 +1439,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		northEAPanel.add(jIndex);
 		southEAPanel.add(eqnLabel);
 		southEAPanel.add(eqn);
-		eventAssignPanel.add(northEAPanel,"North");
-		eventAssignPanel.add(southEAPanel,"South");
+		eventAssignPanel.add(topEAPanel);
+		eventAssignPanel.add(northEAPanel);
+		eventAssignPanel.add(southEAPanel);
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, eventAssignPanel, "Event Asssignment Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -1483,7 +1511,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					assign = Utility.getList(assign, eventAssign);
 					eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					// TODO: add the index into the assign[index] string
+					// String for the indices
 					String assignIndex = " [";
 					if(iIndex.getText().equals("")) {
 						assignIndex = "";
@@ -1495,7 +1523,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					else {
 						assignIndex += (iIndex.getText() + "]");
 					}
-					assign[index] = eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim();
+					// String for the dimensions
+					String dimens = "";
+					if(EAdimensionType.getSelectedIndex()==1){
+						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem();
+					}
+					else{
+						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem() 
+								+ " , Dim1 = " + EAdimensionY.getSelectedItem();
+					}
+					assign[index] = eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim() 
+							+ dimens;
 					Utility.sort(assign);
 					eventAssign.setListData(assign);
 					eventAssign.setSelectedIndex(index);
@@ -1503,7 +1541,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				else {
 					JList add = new JList();
 					int index = eventAssign.getSelectedIndex();
-					// TODO: add the index into the assign[index] string
+					// String for the indices
 					String assignIndex = " [";
 					if(iIndex.getText().equals("")) {
 						assignIndex = "";
@@ -1515,7 +1553,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					else {
 						assignIndex += (iIndex.getText() + "]");
 					}
-					Object[] adding = { eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim() };
+					// String for the dimensions
+					String dimens = "";
+					if(EAdimensionType.getSelectedIndex()==1){
+						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem();
+					}
+					else{
+						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem() 
+								+ " , Dim1 = " + EAdimensionY.getSelectedItem();
+					}
+					Object[] adding = { eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim()
+							+ dimens };
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -1660,6 +1708,22 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			else{
 				iIndex.setEnabled(true);
 				jIndex.setEnabled(false);
+			}
+		}
+		// if the event assignment dimension type is changed
+		else if (e.getSource() == EAdimensionType) {
+			int index = EAdimensionType.getSelectedIndex();
+			if (index == 0) {
+				EAdimensionX.setEnabled(false);
+				EAdimensionY.setEnabled(false);
+			}
+			else if (index == 1) {
+				EAdimensionX.setEnabled(true);
+				EAdimensionY.setEnabled(false);
+			}
+			else if (index == 2) {
+				EAdimensionX.setEnabled(true);
+				EAdimensionY.setEnabled(true);
 			}
 		}
 	}
