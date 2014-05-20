@@ -1424,7 +1424,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			// or a Scalar
 			else{
-				EAdimensionType.setSelectedIndex(1);
+				EAdimensionType.setSelectedIndex(0);
 			}
 		}
 		topEAPanel.add(EAdimensionTypeLabel);
@@ -1528,7 +1528,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if(EAdimensionType.getSelectedIndex()==1){
 						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem();
 					}
-					else{
+					if(EAdimensionType.getSelectedIndex()==2){
 						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem() 
 								+ " , Dim1 = " + EAdimensionY.getSelectedItem();
 					}
@@ -1558,7 +1558,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if(EAdimensionType.getSelectedIndex()==1){
 						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem();
 					}
-					else{
+					if(EAdimensionType.getSelectedIndex()==2){
 						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem() 
 								+ " , Dim1 = " + EAdimensionY.getSelectedItem();
 					}
