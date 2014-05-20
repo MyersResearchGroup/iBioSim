@@ -1414,13 +1414,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			// If the EA is a 1-D Array...
 			if(rightSide.length==2){
 				EAdimensionType.setSelectedIndex(1);
-				EAdimensionX.setSelectedItem(rightSide[1].split("=")[1].trim());				
+				EAdimensionX.setSelectedItem(rightSide[1].split("<")[2].trim());				
 			}
 			// a 2-D Array...
 			else if(rightSide.length==3){
 				EAdimensionType.setSelectedIndex(2);
-				EAdimensionX.setSelectedItem(rightSide[1].split("=")[1].trim());
-				EAdimensionY.setSelectedItem(rightSide[2].split("=")[1].trim());
+				EAdimensionX.setSelectedItem(rightSide[1].split("<")[2].trim());
+				EAdimensionY.setSelectedItem(rightSide[2].split("<")[2].trim());
 			}
 			// or a Scalar
 			else{
@@ -1513,10 +1513,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					// String for the indices
 					String assignIndex = " [";
-					if(iIndex.getText().equals("")) {
+					if(!iIndex.isEnabled()) {
 						assignIndex = "";
 					}
-					else if (!iIndex.getText().equals("") && !jIndex.getText().equals("")) {
+					else if (iIndex.isEnabled() && jIndex.isEnabled()) {
 						assignIndex += (iIndex.getText() + ",");
 						assignIndex += (jIndex.getText() + "]");
 					}
@@ -1526,11 +1526,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					// String for the dimensions
 					String dimens = "";
 					if(EAdimensionType.getSelectedIndex()==1){
-						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem();
+						dimens = " , 0 <= u < " + EAdimensionX.getSelectedItem();
 					}
 					if(EAdimensionType.getSelectedIndex()==2){
-						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem() 
-								+ " , Dim1 = " + EAdimensionY.getSelectedItem();
+						dimens = " , 0 <= u < " + EAdimensionX.getSelectedItem() 
+								+ " , 0 <= v < " + EAdimensionY.getSelectedItem();
 					}
 					assign[index] = eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim() 
 							+ dimens;
@@ -1543,10 +1543,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					int index = eventAssign.getSelectedIndex();
 					// String for the indices
 					String assignIndex = " [";
-					if(iIndex.getText().equals("")) {
+					if(!iIndex.isEnabled()) {
 						assignIndex = "";
 					}
-					else if (!iIndex.getText().equals("") && !jIndex.getText().equals("")) {
+					else if (iIndex.isEnabled() && jIndex.isEnabled()) {
 						assignIndex += (iIndex.getText() + ",");
 						assignIndex += (jIndex.getText() + "]");
 					}
@@ -1556,11 +1556,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					// String for the dimensions
 					String dimens = "";
 					if(EAdimensionType.getSelectedIndex()==1){
-						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem();
+						dimens = " , 0 <= u < " + EAdimensionX.getSelectedItem();
 					}
 					if(EAdimensionType.getSelectedIndex()==2){
-						dimens = " , Dim0 = " + EAdimensionX.getSelectedItem() 
-								+ " , Dim1 = " + EAdimensionY.getSelectedItem();
+						dimens = " , 0 <= u < " + EAdimensionX.getSelectedItem() 
+								+ " , 0 <= v < " + EAdimensionY.getSelectedItem();
 					}
 					Object[] adding = { eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim()
 							+ dimens };
