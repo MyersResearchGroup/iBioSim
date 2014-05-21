@@ -55,6 +55,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	private JList constraints; // JList of initial assignments
 	
 	private JComboBox dimensionType, dimensionX, dimensionY;
+	
+	private JLabel dimensionTypeLabel, dimensionSizeLabel;
 
 	private BioModel bioModel;
 
@@ -112,7 +114,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	public String constraintEditor(String option,String selected) {
 		JPanel constraintPanel = new JPanel();
 		JPanel consPanel = new JPanel(new BorderLayout());
-		JPanel dimensionPanel = new JPanel(new GridLayout(2,2));
+		JPanel dimensionPanel = new JPanel(new GridLayout(3,2));
 		JPanel southPanel = new JPanel(new BorderLayout());
 		JPanel IDPanel = new JPanel();
 		JPanel mathPanel = new JPanel(new BorderLayout());
@@ -142,9 +144,10 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				dimensionY.addItem(param.getId());
 			}
 		}
-		// TODO: added default
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
+		dimensionTypeLabel = new JLabel("Array Dimension:");
+		dimensionSizeLabel = new JLabel("Array Size:");
 		
 		JTextArea consMath = new JTextArea(3,30);
 		consMath.setLineWrap(true);
@@ -238,7 +241,9 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		mathPanel.add(scroll,"Center");
 		messagePanel.add(messageLabel,"North");
 		messagePanel.add(scroll2,"Center");
+		dimensionPanel.add(dimensionTypeLabel);
 		dimensionPanel.add(dimensionType);
+		dimensionPanel.add(dimensionSizeLabel);
 		dimensionPanel.add(dimensionX);
 		dimensionPanel.add(new JLabel());
 		dimensionPanel.add(dimensionY);
