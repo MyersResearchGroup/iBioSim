@@ -277,11 +277,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
+		JLabel onPortLabel = new JLabel("Port Type:");
 		JLabel valueLabel = new JLabel("Initial Value:");
 		JLabel rateLabel = new JLabel("Initial Rate:");
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel constLabel = new JLabel("Constant:");
-		JLabel onPortLabel = new JLabel("Port Type:");
 		
 		dimensionType = new JComboBox();
 		dimensionType.addItem("Scalar");
@@ -590,6 +590,16 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			parametersPanel.add(typeLabel);
 			parametersPanel.add(type);
 		}
+		parametersPanel.add(onPortLabel);
+		parametersPanel.add(portDir);
+		
+		parametersPanel.add(dimensionTypeLabel);
+		parametersPanel.add(dimensionType);
+		parametersPanel.add(dimensionSizeLabel);
+		parametersPanel.add(dimensionX);
+		parametersPanel.add(new JLabel());
+		parametersPanel.add(dimensionY);
+		
 		parametersPanel.add(valueLabel);
 		if (isPlace || isBoolean) {
 			parametersPanel.add(placeMarking);
@@ -610,15 +620,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			parametersPanel.add(constLabel);
 			parametersPanel.add(paramConst);
 		}
-		parametersPanel.add(onPortLabel);
-		parametersPanel.add(portDir);
-		
-		parametersPanel.add(dimensionTypeLabel);
-		parametersPanel.add(dimensionType);
-		parametersPanel.add(dimensionSizeLabel);
-		parametersPanel.add(dimensionX);
-		parametersPanel.add(new JLabel());
-		parametersPanel.add(dimensionY);
 		
 		Object[] options = { option, "Cancel" };
 		String editorTitle = "Parameter Editor";
