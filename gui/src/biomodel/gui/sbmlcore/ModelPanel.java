@@ -212,7 +212,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(extentUnits);
 			modelEditorPanel.add(conversionFactorLabel);
 			modelEditorPanel.add(conversionFactor);
-			modelEditorPanel.add(new JLabel("Conversion Factor Indices"));
+			modelEditorPanel.add(new JLabel("Conversion Factor Indices:"));
 			modelEditorPanel.add(conversionFactorIndices);
 			modelEditorPanel.add(new JLabel("SBOL DNA Component:"));
 			modelEditorPanel.add(sbolField);

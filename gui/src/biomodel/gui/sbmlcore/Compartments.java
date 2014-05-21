@@ -208,8 +208,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		}
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
-		dimensionTypeLabel = new JLabel("Array Dimension");
-		dimensionSizeLabel = new JLabel("Array Size");
+		dimensionTypeLabel = new JLabel("Array Dimension:");
+		dimensionSizeLabel = new JLabel("Array Size:");
 		
 //		CompartmentType not supported in Level 3
 //		ListOf listOfCompTypes = bioModel.getSBMLDocument().getModel().getListOfCompartmentTypes();

@@ -231,8 +231,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		jIndex = new JTextField(10);
 		iIndex.setEnabled(true);
 		jIndex.setEnabled(true);
-		dimensionTypeLabel = new JLabel("Array Dimension");
-		dimensionSizeLabel = new JLabel("Array Size");
+		dimensionTypeLabel = new JLabel("Array Dimension:");
+		dimensionSizeLabel = new JLabel("Array Size:");
 		
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);

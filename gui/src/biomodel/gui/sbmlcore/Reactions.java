@@ -680,15 +680,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		
-		reactionPanelNorth2.add(new JLabel("Array Dimension"));
+		reactionPanelNorth2.add(new JLabel("Array Dimension:"));
 		reactionPanelNorth2.add(dimensionType);
-		reactionPanelNorth2.add(new JLabel("Array Size"));
+		reactionPanelNorth2.add(new JLabel("Array Size:"));
 		reactionPanelNorth2.add(dimensionX);
 		reactionPanelNorth2.add(dimensionY);
 		
 		reactionPanelNorth3.add(reactionCompLabel);
 		reactionPanelNorth3.add(reactionComp);
-		reactionPanelNorth3.add(new JLabel("Compartment Indices"));
+		reactionPanelNorth3.add(new JLabel("Compartment Indices:"));
 		reactionPanelNorth3.add(CiIndex);
 		reactionPanelNorth3.add(CjIndex);
 		
@@ -2050,7 +2050,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		productsPanel.add(productName);
 		productsPanel.add(new JLabel("Array Dimension:"));
 		productsPanel.add(PdimensionType);
-		productsPanel.add(new JLabel("Array Size"));
+		productsPanel.add(new JLabel("Array Size:"));
 		productsPanel.add(PdimensionX);
 		productsPanel.add(new JLabel());
 		productsPanel.add(PdimensionY);
@@ -2913,7 +2913,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactantsPanel.add(reactantName);
 		reactantsPanel.add(new JLabel("Array Dimension:"));
 		reactantsPanel.add(RdimensionType);
-		reactantsPanel.add(new JLabel("Array Size"));
+		reactantsPanel.add(new JLabel("Array Size:"));
 		reactantsPanel.add(RdimensionX);
 		reactantsPanel.add(new JLabel());
 		reactantsPanel.add(RdimensionY);
