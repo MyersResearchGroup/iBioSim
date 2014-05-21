@@ -501,6 +501,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		evPanel.add(eventID);
 		evPanel.add(NameLabel);
 		evPanel.add(eventName);
+		evPanel.add(onPortLabel);
+		evPanel.add(onPort);
 		evPanel.add(dimensionTypeLabel);
 		evPanel.add(dimensionType);
 		evPanel.add(dimensionSizeLabel);
@@ -528,8 +530,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		evPanel.add(persistentTriggerLabel);
 		evPanel.add(persistentTrigger);
-		evPanel.add(onPortLabel);
-		evPanel.add(onPort);
 		eventPanel.add(evPanel, "North");
 		if (!modelEditor.isParamsOnly())
 			eventPanel.add(sbolField, "Center");
