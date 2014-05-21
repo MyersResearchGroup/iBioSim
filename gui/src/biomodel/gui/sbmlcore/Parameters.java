@@ -304,8 +304,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
-		dimensionTypeLabel = new JLabel("Array Dimension");
-		dimensionSizeLabel = new JLabel("Array Size");
+		dimensionTypeLabel = new JLabel("Array Dimension:");
+		dimensionSizeLabel = new JLabel("Array Size:");
 		
 		paramID = new JTextField();
 		paramName = new JTextField();
@@ -415,7 +415,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				if (SBMLutilities.isPlace(paramet) || SBMLutilities.isBoolean(paramet)) {
 					valueLabel.setText("Initial marking");
 					if (SBMLutilities.isBoolean(paramet)) {
-						valueLabel.setText("Initial value");
+						valueLabel.setText("Initial value:");
 						isBoolean = true;
 					} else {
 						isPlace = true;

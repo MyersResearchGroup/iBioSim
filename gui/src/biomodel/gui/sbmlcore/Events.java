@@ -210,8 +210,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		EAdimensionX.setEnabled(false);
 		EAdimensionY.setEnabled(false);
-		EAdimensionTypeLabel = new JLabel("Array Dimension");
-		EAdimensionSizeLabel = new JLabel("Array Size");
+		EAdimensionTypeLabel = new JLabel("Array Dimension:");
+		EAdimensionSizeLabel = new JLabel("Array Size:");
 		
 		dimensionType = new JComboBox();
 		dimensionType.addItem("Scalar");
@@ -238,8 +238,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		jIndex = new JTextField(10);
 		iIndex.setEnabled(false);
 		jIndex.setEnabled(false);
-		dimensionTypeLabel = new JLabel("Array Dimension");
-		dimensionSizeLabel = new JLabel("Array Size");
+		dimensionTypeLabel = new JLabel("Array Dimension:");
+		dimensionSizeLabel = new JLabel("Array Size:");
 		
 		if (bioModel != null && bioModel.IsWithinCompartment() == false) {
 			dynamicProcess.setEnabled(false);
