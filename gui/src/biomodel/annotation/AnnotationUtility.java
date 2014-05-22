@@ -877,20 +877,20 @@ public class AnnotationUtility {
 					"<matrix:matrix matrix:size=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\" xmlns:matrix=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String ROW_INDEX_ANNOTATION =
-			"<rowIndex:rowIndex xmlns:rowIndex=\"http://www\\.fakeuri\\.com\" rowIndex:eqn=\"(.)\"/>" + "|" +
-					"<rowIndex:rowIndex rowIndex:eqn=\"(.)\" xmlns:rowIndex=\"http://www\\.fakeuri\\.com\"/>";
+			"<rowIndex:rowIndex xmlns:rowIndex=\"http://www\\.fakeuri\\.com\" rowIndex:eqn=\"([^:]+)\"/>" + "|" +
+					"<rowIndex:rowIndex rowIndex:eqn=\"([^:]+)\" xmlns:rowIndex=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String COL_INDEX_ANNOTATION =
-			"<colIndex:colIndex xmlns:colIndex=\"http://www\\.fakeuri\\.com\" colIndex:eqn=\"(.)\"/>" + "|" +
-					"<colIndex:colIndex colIndex:eqn=\"(.)\" xmlns:colIndex=\"http://www\\.fakeuri\\.com\"/>";
+			"<colIndex:colIndex xmlns:colIndex=\"http://www\\.fakeuri\\.com\" colIndex:eqn=\"([^:]+)\"/>" + "|" +
+					"<colIndex:colIndex colIndex:eqn=\"([^:]+)\" xmlns:colIndex=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String CONV_ROW_INDEX_ANNOTATION =
-			"<rowConvIndex:rowConvIndex xmlns:rowConvIndex=\"http://www\\.fakeuri\\.com\" rowConvIndex:eqn=\"(.)\"/>" + "|" +
-					"<rowConvIndex:rowConvIndex rowConvIndex:eqn=\"(.)\" xmlns:rowConvIndex=\"http://www\\.fakeuri\\.com\"/>";
+			"<rowConvIndex:rowConvIndex xmlns:rowConvIndex=\"http://www\\.fakeuri\\.com\" rowConvIndex:eqn=\"([^:]+)\"/>" + "|" +
+					"<rowConvIndex:rowConvIndex rowConvIndex:eqn=\"([^:]+)\" xmlns:rowConvIndex=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String CONV_COL_INDEX_ANNOTATION =
-			"<colConvIndex:colConvIndex xmlns:colConvIndex=\"http://www\\.fakeuri\\.com\" colConvIndex:eqn=\"(.)\"/>" + "|" +
-					"<colConvIndex:colConvIndex colConvIndex:eqn=\"(.)\" xmlns:colConvIndex=\"http://www\\.fakeuri\\.com\"/>";
+			"<colConvIndex:colConvIndex xmlns:colConvIndex=\"http://www\\.fakeuri\\.com\" colConvIndex:eqn=\"([^:]+)\"/>" + "|" +
+					"<colConvIndex:colConvIndex colConvIndex:eqn=\"([^:]+)\" xmlns:colConvIndex=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
 	
