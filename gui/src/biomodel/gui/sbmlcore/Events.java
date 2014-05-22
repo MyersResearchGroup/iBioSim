@@ -402,7 +402,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								assignIndex = " [" + indices[0] + "]";
 							}
 							else{
-								assignIndex = " [" + indices[0] + ",";
+								assignIndex = " [" + indices[0] + "][";
 								assignIndex += (indices[1] + "]");
 							}
 						}
@@ -701,14 +701,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						String left = assign[i].split(":=")[0].trim();
 						String[] rightSide = assign[i].split(":=")[1].split(",");
 						if(left.contains("[")){
-							String ind = left.split("\\[")[1].trim();
-							if(!ind.contains(",")){
+							String[] ind = left.split("\\[");
+							if(ind.length==2){
 								AnnotationUtility.removeColIndexAnnotation(ea);
-								AnnotationUtility.setRowIndexAnnotation(ea, ind.replace("]", ""));
+								AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
 							}
 							else{
-								AnnotationUtility.setRowIndexAnnotation(ea,ind.split(",")[0]);
-								AnnotationUtility.setColIndexAnnotation(ea,ind.split(",")[1].replace("]", ""));
+								AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
+								AnnotationUtility.setColIndexAnnotation(ea, ind[2].replace("]", "").trim());
 							}
 						}
 						else{
@@ -756,14 +756,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						String left = placeAssign[i].split(":=")[0].trim();
 						String[] rightSide = placeAssign[i].split(":=")[1].split(",");
 						if(left.contains("[")){
-							String ind = left.split("\\[")[1].trim();
-							if(!ind.contains(",")){
+							String[] ind = left.split("\\[");
+							if(ind.length==2){
 								AnnotationUtility.removeColIndexAnnotation(ea);
-								AnnotationUtility.setRowIndexAnnotation(ea, ind.replace("]", ""));
+								AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
 							}
 							else{
-								AnnotationUtility.setRowIndexAnnotation(ea,ind.split(",")[0]);
-								AnnotationUtility.setColIndexAnnotation(ea,ind.split(",")[1].replace("]", ""));
+								AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
+								AnnotationUtility.setColIndexAnnotation(ea, ind[2].replace("]", "").trim());
 							}
 						}
 						else{
@@ -1081,14 +1081,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							String left = assign[i].split(":=")[0].trim();
 							String[] rightSide = assign[i].split(":=")[1].split(",");
 							if(left.contains("[")){
-								String ind = left.split("\\[")[1].trim();
-								if(!ind.contains(",")){
+								String[] ind = left.split("\\[");
+								if(ind.length==2){
 									AnnotationUtility.removeColIndexAnnotation(ea);
-									AnnotationUtility.setRowIndexAnnotation(ea, ind.replace("]", ""));
+									AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
 								}
 								else{
-									AnnotationUtility.setRowIndexAnnotation(ea,ind.split(",")[0]);
-									AnnotationUtility.setColIndexAnnotation(ea,ind.split(",")[1].replace("]", ""));
+									AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
+									AnnotationUtility.setColIndexAnnotation(ea, ind[2].replace("]", "").trim());
 								}
 							}
 							else{
@@ -1472,13 +1472,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			eaID.setSelectedItem(selectAssign.split(" ")[0]);
 			String left = selectAssign.split(":=")[0].trim();
 			if(left.contains("[")){
-				String ind = left.split("\\[")[1].trim();
-				if(!ind.contains(",")){
-					iIndex.setText(ind.replace("]", ""));
+				String[] ind = left.split("\\[");
+				if(ind.length==2){
+					iIndex.setText(ind[1].replace("]", "").trim());
 				}
 				else{
-					iIndex.setText(ind.split("\\,")[0]);
-					jIndex.setText(ind.split("\\,")[1].replace("]", ""));
+					iIndex.setText(ind[1].replace("]", "").trim());
+					jIndex.setText(ind[2].replace("]", "").trim());
 				}
 			}
 			String[] rightSide = selectAssign.split(":=")[1].split(",");
@@ -1589,7 +1589,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						assignIndex = "";
 					}
 					else if (iIndex.isEnabled() && jIndex.isEnabled()) {
-						assignIndex += (iIndex.getText() + ",");
+						assignIndex += (iIndex.getText() + "][");
 						assignIndex += (jIndex.getText() + "]");
 					}
 					else {
@@ -1619,7 +1619,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						assignIndex = "";
 					}
 					else if (iIndex.isEnabled() && jIndex.isEnabled()) {
-						assignIndex += (iIndex.getText() + ",");
+						assignIndex += (iIndex.getText() + "][");
 						assignIndex += (jIndex.getText() + "]");
 					}
 					else {
