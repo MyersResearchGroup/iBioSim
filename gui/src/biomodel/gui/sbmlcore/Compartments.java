@@ -402,6 +402,14 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		compPanel.add(compID);
 		compPanel.add(nameLabel);
 		compPanel.add(compName);
+		compPanel.add(onPortLabel);
+		compPanel.add(onPort);
+		compPanel.add(dimensionTypeLabel);
+		compPanel.add(dimensionType);
+		compPanel.add(dimensionSizeLabel);
+		compPanel.add(dimensionX);
+		compPanel.add(new JLabel());
+		compPanel.add(dimensionY);
 //		if (bioModel.getSBMLDocument().getLevel() < 3) {
 //			compPanel.add(compTypeLabel);
 //			compPanel.add(compTypeBox);
@@ -441,14 +449,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		compPanel.add(constLabel);
 		compPanel.add(CompConstants);
 		compartPanel.add(compPanel);
-		compPanel.add(onPortLabel);
-		compPanel.add(onPort);
-		compPanel.add(dimensionTypeLabel);
-		compPanel.add(dimensionType);
-		compPanel.add(dimensionSizeLabel);
-		compPanel.add(dimensionX);
-		compPanel.add(new JLabel());
-		compPanel.add(dimensionY);
+
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, compartPanel, "Compartment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options, options[0]);
