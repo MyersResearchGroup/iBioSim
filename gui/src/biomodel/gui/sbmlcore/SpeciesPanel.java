@@ -229,7 +229,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		jIndex = new JTextField(10);
 		conviIndex = new JTextField(10);
 		convjIndex = new JTextField(10);
-		SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
+		SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
 		sizes = new String[2];
 		sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 		if(sizes[0]==null){

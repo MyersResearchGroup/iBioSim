@@ -1841,6 +1841,19 @@ public class BioGraph extends mxGraph {
 					y = speciesGlyph.getBoundingBox().getPosition().getY();
 					width = speciesGlyph.getBoundingBox().getDimensions().getWidth();
 					height = speciesGlyph.getBoundingBox().getDimensions().getHeight();
+					if (bioModel.getSBMLDocument().getModel().getSpecies(cell.getId())!=null) {
+						String compartment = bioModel.getSBMLDocument().getModel().getSpecies(cell.getId()).getCompartment();
+						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
+							if (compartmentGlyph!=null) {
+								x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
+								if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+									x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
+								}
+								bioModel.placeSpecies(cell.getId(), x, y, height, width);
+							}
+						}
+					}
 				} else {
 					unpositionedElementCount += 1;
 					needsPositioning = true;
@@ -1878,18 +1891,6 @@ public class BioGraph extends mxGraph {
 					needsPositioning = true;
 					x = (unpositionedElementCount%50) * 20;
 					y = (unpositionedElementCount%10) * (height + 10);
-					if (bioModel.getSBMLDocument().getModel().getSpecies(cell.getId())!=null) {
-						String compartment = bioModel.getSBMLDocument().getModel().getSpecies(cell.getId()).getCompartment();
-						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
-							if (compartmentGlyph!=null) {
-								x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
-								if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-									x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
-								}
-							}
-						}
-					}
 					bioModel.placeGeneral(cell.getId(), x, y, height, width, null);
 				}
 			} 
@@ -1902,6 +1903,19 @@ public class BioGraph extends mxGraph {
 					y = reactionGlyph.getBoundingBox().getPosition().getY();
 					width = reactionGlyph.getBoundingBox().getDimensions().getWidth();
 					height = reactionGlyph.getBoundingBox().getDimensions().getHeight();
+					if (bioModel.getSBMLDocument().getModel().getReaction(cell.getId())!=null) {
+						String compartment = bioModel.getSBMLDocument().getModel().getReaction(cell.getId()).getCompartment();
+						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
+							if (compartmentGlyph!=null) {
+								x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
+								if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+									x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
+								}
+								bioModel.placeReaction(cell.getId(), x, y, height, width);
+							}
+						}
+					}
 				} else {
 					unpositionedElementCount += 1;
 					needsPositioning = true;
@@ -1940,18 +1954,6 @@ public class BioGraph extends mxGraph {
 					needsPositioning = true;
 					x = (unpositionedElementCount%50) * 20;
 					y = (unpositionedElementCount%10) * (height + 10);
-					if (bioModel.getSBMLDocument().getModel().getReaction(cell.getId())!=null) {
-						String compartment = bioModel.getSBMLDocument().getModel().getReaction(cell.getId()).getCompartment();
-						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
-							if (compartmentGlyph!=null) {
-								x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
-								if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-									x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
-								}
-							}
-						}
-					}
 					if ((getCellType(cell).equals(GlobalConstants.RULE) ||
 							getCellType(cell).equals(GlobalConstants.CONSTRAINT))) {
 						bioModel.placeGeneral(cell.getId(), x, y, height, width, cell.getId());
@@ -2382,14 +2384,9 @@ public class BioGraph extends mxGraph {
 	private boolean createGraphSpeciesFromModel(String sp){
 		
 		if (BioModel.isMRNASpecies(bioModel.getSBMLDocument().getModel().getSpecies(sp))) return false; 
+
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), sp);
 		
-		String truncID = "";
-		
-		if (sp.length() > 12)
-			truncID = sp.substring(0, 11) + "...";
-		else truncID = sp;
-		
-		String label = truncID;
 		if (BioModel.getDiffusionReaction(sp,bioModel.getSBMLDocument().getModel())!=null) label += " (D)";
 		if (bioModel.isSpeciesConstitutive(sp)) label += " (C)";
 		if (bioModel.isInput(sp)) {
@@ -2418,7 +2415,8 @@ public class BioGraph extends mxGraph {
 	 * @return: A bool, true if the reaction had to be positioned.
 	 */
 	private boolean createGraphReactionFromModel(String id){
-		CellValueObject cvo = new CellValueObject(id, "Reaction", null);
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		CellValueObject cvo = new CellValueObject(label, "Reaction", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
 		this.reactionsToMxCellMap.put(id, insertedVertex);
@@ -2430,7 +2428,8 @@ public class BioGraph extends mxGraph {
 	}
 	
 	private boolean createGraphCompartmentFromModel(String id){
-		CellValueObject cvo = new CellValueObject(id, "Compartment", null);
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		CellValueObject cvo = new CellValueObject(label, "Compartment", null);
 		mxCell cell = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		cell.setId(id);
 		cell.setConnectable(false);
@@ -2447,7 +2446,8 @@ public class BioGraph extends mxGraph {
 	}
 	
 	private boolean createGraphRuleFromModel(String id){
-		CellValueObject cvo = new CellValueObject(id, "Rule", null);
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		CellValueObject cvo = new CellValueObject(label, "Rule", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
 		this.rulesToMxCellMap.put(id, insertedVertex);
@@ -2459,7 +2459,8 @@ public class BioGraph extends mxGraph {
 	}
 	
 	private boolean createGraphConstraintFromModel(String id){
-		CellValueObject cvo = new CellValueObject(id, "Constraint", null);
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		CellValueObject cvo = new CellValueObject(label, "Constraint", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
 		this.constraintsToMxCellMap.put(id, insertedVertex);
@@ -2471,7 +2472,8 @@ public class BioGraph extends mxGraph {
 	}
 	
 	private boolean createGraphEventFromModel(String id){
-		CellValueObject cvo = new CellValueObject(id, "Event", null);
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		CellValueObject cvo = new CellValueObject(label, "Event", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
 		this.eventsToMxCellMap.put(id, insertedVertex);
@@ -2483,7 +2485,8 @@ public class BioGraph extends mxGraph {
 	}
 	
 	private boolean createGraphTransitionFromModel(String id){
-		CellValueObject cvo = new CellValueObject(id, "Transition", null);
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		CellValueObject cvo = new CellValueObject(label, "Transition", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
 		this.eventsToMxCellMap.put(id, insertedVertex);
@@ -2525,13 +2528,8 @@ public class BioGraph extends mxGraph {
 	 */
 	private boolean createGraphVariableFromModel(String id){
 		
-		String truncID;
-		
-		if (id.length() > 8)
-			truncID = id.substring(0, 7) + "...";
-		else truncID = id;
-
-		CellValueObject cvo = new CellValueObject(truncID, "Variable", null);
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		CellValueObject cvo = new CellValueObject(label, "Variable", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
 		this.variableToMxCellMap.put(id, insertedVertex);
@@ -2548,14 +2546,8 @@ public class BioGraph extends mxGraph {
 	 * @return
 	 */
 	private boolean createGraphPlaceFromModel(String id,boolean marked){
-		
-		String truncID;
-		
-		if (id.length() > 8)
-			truncID = id.substring(0, 7) + "...";
-		else truncID = id;
-
-		CellValueObject cvo = new CellValueObject(truncID, "Place", null);
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		CellValueObject cvo = new CellValueObject(label, "Place", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
 		this.variableToMxCellMap.put(id, insertedVertex);
@@ -2576,14 +2568,9 @@ public class BioGraph extends mxGraph {
 	 * @return
 	 */
 	private boolean createGraphBooleanFromModel(String id,boolean initial){
-		
-		String truncID;
-		
-		if (id.length() > 8)
-			truncID = id.substring(0, 7) + "...";
-		else truncID = id;
 
-		CellValueObject cvo = new CellValueObject(truncID, "Boolean", null);
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		CellValueObject cvo = new CellValueObject(label, "Boolean", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
 		this.variableToMxCellMap.put(id, insertedVertex);

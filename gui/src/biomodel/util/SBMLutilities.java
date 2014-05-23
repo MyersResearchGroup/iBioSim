@@ -82,6 +82,7 @@ import org.sbml.libsbml.libsbmlConstants;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
+import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
 
 
@@ -3610,6 +3611,28 @@ public class SBMLutilities {
 		if (!asb.getMetaId().equals(newId)){
 			asb.setMetaId(newId);
 		}
+	}
+	
+	public static String getArrayId(SBMLDocument document,String id) {
+		String arrayId = id;
+		SBase sBase = getElementBySId(document,id);
+		if (sBase == null) {
+			sBase = getElementByMetaId(document,id);
+			if (sBase == null) {
+				return arrayId;
+			}
+		}
+		String[] sizes = new String[2];
+		sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(sBase);
+		if(sizes[0]==null){
+			sizes = AnnotationUtility.parseMatrixSizeAnnotation(sBase);
+			if(sizes!=null){
+				arrayId = id + "[" + sizes[0] + "][" + sizes[1] + "]";
+			} 
+		} else {
+			arrayId = id + "[" + sizes[0] + "]";
+		}
+		return arrayId;
 	}
 	
 	public static ModifierSpeciesReference removeModifier(Reaction r, String species) {
