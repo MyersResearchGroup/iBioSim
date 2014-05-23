@@ -4785,7 +4785,7 @@ public class BioModel {
 				layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+name);
 			}
 			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+name) != null) {
-				layout.getListOfTextGlyphs().get(GlobalConstants.TEXT_GLYPH+"__"+name);
+				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+name);
 			}
 		}
 	}
