@@ -150,9 +150,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		ArrayList<String> presetPlaces = new ArrayList<String>();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel evPanel = new JPanel(new GridLayout(13, 2));
+		JPanel evPanel = new JPanel(new GridLayout(12, 2));
 		if (isTransition) {
-			evPanel.setLayout(new GridLayout(11, 2));
+			evPanel.setLayout(new GridLayout(10, 2));
 		}
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
@@ -511,6 +511,26 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		evPanel.add(dimensionY);
 		evPanel.add(triggerLabel);
 		evPanel.add(eventTrigger);
+		JPanel persistPanel = new JPanel();
+		persistPanel.add(persistentTriggerLabel);
+		persistPanel.add(persistentTrigger);
+		evPanel.add(persistPanel);
+		if (!isTransition) {
+			JPanel initTrigPanel = new JPanel();
+			initTrigPanel.add(initialTriggerLabel);
+			initTrigPanel.add(initialTrigger);
+			evPanel.add(initTrigPanel);
+			JPanel assignTimePanel = new JPanel();
+			assignTimePanel.add(assignTimeLabel);
+			assignTimePanel.add(assignTime);
+			evPanel.add(new JLabel(""));
+			evPanel.add(assignTimePanel);
+		} else {
+			JPanel failTransPanel = new JPanel();
+			failTransPanel.add(failTransitionLabel);
+			failTransPanel.add(failTransition);
+			evPanel.add(failTransPanel);
+		}
 		evPanel.add(delayLabel);
 		evPanel.add(eventDelay);
 		evPanel.add(priorityLabel);
@@ -518,18 +538,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		if (!isTransition) {
 			evPanel.add(dynamicProcessLabel);
 			evPanel.add(dynamicProcess);
-			evPanel.add(initialTriggerLabel);
-			evPanel.add(initialTrigger);
-		} else {
-			evPanel.add(failTransitionLabel);
-			evPanel.add(failTransition);
 		}
-		if (!isTransition) {
-			evPanel.add(assignTimeLabel);
-			evPanel.add(assignTime);
-		}
-		evPanel.add(persistentTriggerLabel);
-		evPanel.add(persistentTrigger);
 		eventPanel.add(evPanel, "North");
 		if (!modelEditor.isParamsOnly())
 			eventPanel.add(sbolField, "Center");
