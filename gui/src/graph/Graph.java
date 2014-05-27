@@ -307,7 +307,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			probGraphed = new LinkedList<GraphProbs>();
 			selected = "";
 			lastSelected = "";
-			probGraph(label);
+			if (!time.equals("Flux")) time = "Percent";
+			probGraph(label, time);
 			if (open != null) {
 				open(open);
 			}
@@ -6671,6 +6672,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		lock2.unlock();
 	}
+	
+	public void setYLabel(String yLabel) {
+		chart.getCategoryPlot().getRangeAxis().setLabel(yLabel);
+	}
 
 	private class ShapeAndPaint {
 		private Shape shape;
@@ -6846,8 +6851,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		return change;
 	}
 
-	private void probGraph(String label) {
-		chart = ChartFactory.createBarChart(label, "", "Percent", new DefaultCategoryDataset(), PlotOrientation.VERTICAL, true, true, false);
+	private void probGraph(String label,String yLabel) {
+		chart = ChartFactory.createBarChart(label, "", yLabel, new DefaultCategoryDataset(), PlotOrientation.VERTICAL, true, true, false);
 		applyChartTheme(chart);
 		((BarRenderer) chart.getCategoryPlot().getRenderer()).setBarPainter(new StandardBarPainter());
 		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
