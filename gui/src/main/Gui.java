@@ -1161,6 +1161,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else {
 			importMenu.add(importVhdl);
+			importMenu.add(importSbml);
 			importMenu.add(importS);
 			importMenu.add(importInst);
 			importMenu.add(importLpn);
