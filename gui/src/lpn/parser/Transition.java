@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import verification.platu.main.Options;
+
 public class Transition {
 
 	private String label;
@@ -871,23 +873,49 @@ public class Transition {
 	}
 
 	/**
-	 * If a variable is written by this transition, and it appears in the variable list of curLPN, 
+	 * If this transition's assignment can cause curTran's enabling condition to become FALSE, 
+	 * or it appears at either the right or left hand side of curTran's assignment,
 	 * then it is added to the dstLpnList for this transition.
 	 * @param curLPN
 	 */
-	public void setDstLpnList(LhpnFile curLPN) {
-		String[] allVars = curLPN.getVariables();		
-		if (this.getAssignments() != null) {
-			Set<String> assignedVars = this.getAssignments().keySet();  
-			for (String curVar : assignedVars) {
-				for (int i=0; i<allVars.length; i++) {
-					if (curVar.equals(allVars[i]) && !this.dstLpnList.contains(curLPN)) {
+	public void setDstLpnList(LhpnFile curLPN) {	
+		for (Transition curTran : curLPN.getAllTransitions()) {
+			ExprTree curTranEnablingTree = curTran.getEnablingTree();
+			if (curTranEnablingTree != null
+					&& (curTranEnablingTree.getChange(this.getAssignments())=='F'
+					|| curTranEnablingTree.getChange(this.getAssignments())=='f'
+					|| curTranEnablingTree.getChange(this.getAssignments())=='X')) {
+				this.dstLpnList.add(curLPN);						
+				return;
+			}									
+			for (String v : this.getAssignTrees().keySet()) {
+				for (ExprTree curTranAssignTree : curTran.getAssignTrees().values()) {
+					if (curTranAssignTree != null && curTranAssignTree.containsVar(v)) {
 						this.dstLpnList.add(curLPN);						
-						return;
+						return;	
+					}					
+				}
+			}			
+			for (String v1 : this.getAssignTrees().keySet()) {
+				for (String v2 : curTran.getAssignTrees().keySet()) {
+					if (v1.equals(v2) && !this.getAssignTree(v1).equals(curTran.getAssignTree(v2))) {
+						this.dstLpnList.add(curLPN);						
+						return;						
+					}					
+				}
+			}
+			if (Options.getMarkovianModelFlag()) { // && !Options.getTranRatePorDef().toLowerCase().equals("none")) {
+				ExprTree curTranDelayTree = curTran.getDelayTree();
+				if (curTranDelayTree != null) {
+					for (String var : this.getAssignments().keySet()) {
+						if (curTranDelayTree.containsVar(var)) {
+							this.dstLpnList.add(curLPN);						
+							return;	
+						}							
 					}
 				}
 			}
-		}		
+		}
 	}
 
 	/**
