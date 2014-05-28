@@ -139,9 +139,14 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
+import org.sbml.jsbml.*;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ext.comp.*;
+import org.sbml.jsbml.ext.fbc.FBCConstants;
+import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.jlibsedml.Curve;
+import org.jlibsedml.*;
 import org.jlibsedml.Libsedml;
-import org.jlibsedml.Model;
 import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
 import org.jlibsedml.SEDMLDocument;
@@ -149,10 +154,6 @@ import org.jlibsedml.SedML;
 import org.jlibsedml.SedMLError;
 import org.jlibsedml.Task;
 //import org.antlr.runtime.TokenStream;
-import org.sbml.jsbml.*;
-import org.sbml.jsbml.ext.comp.*;
-import org.sbml.jsbml.ext.fbc.FBCConstants;
-import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
@@ -4695,10 +4696,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					f.setVisible(true);
 				}
 				SedML sedml = sedmlDoc.getSedMLModel();
-				List<Model> models = sedml.getModels();
+				List<org.jlibsedml.Model> models = sedml.getModels();
 				HashMap<String,String> modelMap = new HashMap<String,String>();
 				for (int i = 0; i < models.size(); i++) {
-					Model model = models.get(i);
+					org.jlibsedml.Model model = models.get(i);
 					String sbmlFile = filename.substring(0,filename.lastIndexOf(separator)) + model.getSource();
 					String newFile = importSBML(sbmlFile);
 					model.setSource(newFile);
@@ -10371,15 +10372,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			ModelDefinition md = sbmlComp.getListOfModelDefinitions().get(i);
 			String extId = md.getId();
 			if (overwrite(root + separator + extId + ".xml",extId + ".xml")) {
-				org.sbml.jsbml.Model model = new org.sbml.jsbml.Model(md);
-				model.getDeclaredNamespaces().clear();
+				Model model = new Model(md);
+				model.unsetNamespace();
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 				document.enablePackage(LayoutConstants.namespaceURI);
 				document.enablePackage(CompConstants.namespaceURI);
 				document.enablePackage(FBCConstants.namespaceURI);
 				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
-				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
 				document.setModel(model);
+				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
 				ArrayList<String> comps = new ArrayList<String>();
 				for (int j=0; j < documentCompModel.getListOfSubmodels().size(); j++) {
 					String subModelType = documentCompModel.getListOfSubmodels().get(j).getModelRef();
@@ -10391,6 +10392,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				// Make compartment enclosing
+				/*
 				if (document.getModel().getCompartmentCount()==0) {
 					Compartment c = document.getModel().createCompartment();
 					c.setId("default");
@@ -10398,6 +10400,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					c.setSpatialDimensions(3);
 					c.setConstant(true);
 				}
+				*/
 				updateReplacementsDeletions(document, documentComp, documentCompModel);
 				SBMLWriter writer = new SBMLWriter();
 				try {

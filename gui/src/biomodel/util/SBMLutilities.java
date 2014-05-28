@@ -3750,16 +3750,6 @@ public class SBMLutilities {
 		SBMLDocument document = null;
 		try {
 			document = SBMLReader.read(new File(filename));
-			// TODO: This is a hack to remove duplicate units
-			int i = 0; 
-			while (i < document.getModel().getUnitDefinitionCount()) {
-				UnitDefinition unitDef = document.getModel().getUnitDefinition(i);
-				if (!unitDef.isSetId()) {
-					document.getModel().removeUnitDefinition(i);
-				} else {
-					i++;
-				}
-			}
 		} catch (XMLStreamException e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
 			return null;
