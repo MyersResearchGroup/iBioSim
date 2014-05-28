@@ -6541,6 +6541,10 @@ public class BioModel {
 					SBMLDocument subDocument = SBMLutilities.readSBML(path + separator + extModel);
 					CompModelPlugin subDocumentCompModel = SBMLutilities.getCompModelPlugin(subDocument.getModel());
 					String id = subDocument.getModel().getId();
+					// TODO: hack to avoid jsbml scope bug
+					LayoutModelPlugin subDocumentLayoutModel = SBMLutilities.getLayoutModelPlugin(subDocument.getModel());
+					Layout layout = subDocumentLayoutModel.getListOfLayouts().get("iBioSim");
+					layout.setId(id+"__iBioSim");
 					ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(subDocument);
 					for (int j = 0; j < elements.size(); j++) {
 						SBase sbase = elements.get(j);
