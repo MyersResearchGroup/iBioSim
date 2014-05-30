@@ -13,6 +13,7 @@ import graph.Graph;
 
 
 
+
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -141,22 +142,16 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.comp.*;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
-import org.jlibsedml.Curve;
 import org.jlibsedml.*;
-import org.jlibsedml.Libsedml;
-import org.jlibsedml.Output;
-import org.jlibsedml.Plot2D;
-import org.jlibsedml.SEDMLDocument;
-import org.jlibsedml.SedML;
-import org.jlibsedml.SedMLError;
-import org.jlibsedml.Task;
 //import org.antlr.runtime.TokenStream;
 import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
+
 
 
 
@@ -3991,6 +3986,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							document.enablePackage(LayoutConstants.namespaceURI);
 							document.enablePackage(CompConstants.namespaceURI);
 							document.enablePackage(FBCConstants.namespaceURI);
+							document.enablePackage(ArraysConstants.namespaceURI);
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -4551,6 +4547,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							document.enablePackage(LayoutConstants.namespaceURI);
 							document.enablePackage(CompConstants.namespaceURI);
 							document.enablePackage(FBCConstants.namespaceURI);
+							document.enablePackage(ArraysConstants.namespaceURI);
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -10378,6 +10375,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				document.enablePackage(LayoutConstants.namespaceURI);
 				document.enablePackage(CompConstants.namespaceURI);
 				document.enablePackage(FBCConstants.namespaceURI);
+				document.enablePackage(ArraysConstants.namespaceURI);
 				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 				document.setModel(model);
 				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);

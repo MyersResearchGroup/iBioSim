@@ -18,6 +18,7 @@ import java.util.PriorityQueue;
 //import java.util.regex.Matcher;
 //import java.util.regex.Pattern;
 
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -26,6 +27,7 @@ import javax.xml.stream.XMLStreamException;
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 
+import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.comp.Deletion;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.Constraint;
@@ -795,7 +797,8 @@ public abstract class HierarchicalSimulator {
 		newDoc.enablePackage(LayoutConstants.namespaceURI);
 		newDoc.enablePackage(CompConstants.namespaceURI);
 		newDoc.enablePackage(FBCConstants.namespaceURI);
-
+		newDoc.enablePackage(ArraysConstants.namespaceURI);
+		
 		CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(newDoc);
 		CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
 		newDoc.setModel(model);
