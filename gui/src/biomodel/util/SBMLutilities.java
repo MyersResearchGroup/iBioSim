@@ -30,6 +30,8 @@ import main.util.Utility;
 import odk.lang.FastMath;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.ext.arrays.ArraysConstants;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompConstants;
@@ -3218,6 +3220,15 @@ public class SBMLutilities {
 		return comp;
 	}
 
+	public static ArraysSBasePlugin getArraysSBasePlugin(SBase sb) {
+		if (sb.getExtension(ArraysConstants.namespaceURI) != null) {
+			return (ArraysSBasePlugin)sb.getExtension(ArraysConstants.namespaceURI);
+		}
+		ArraysSBasePlugin arrays = new ArraysSBasePlugin(sb);
+		sb.addExtension(ArraysConstants.namespaceURI, arrays);
+		return arrays;
+	}
+	
 	public static void setNamespaces(SBMLDocument document, Map<String,String> namespaces) {
 		document.getSBMLDocumentNamespaces().clear();
 		for (String key : namespaces.keySet()) {
