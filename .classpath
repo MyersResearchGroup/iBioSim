@@ -69,9 +69,9 @@
 	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.7.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="gui/lib/JParts-1.0-SNAPSHOT-withDependencies.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xerces_2_11_0.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-b1-with-dependencies-rv1678.jar"/>
 	<classpathentry kind="lib" path="gui/lib/joptimizer-3.3.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/csparsej-1.1.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-b1-with-dependencies-rev1766.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
