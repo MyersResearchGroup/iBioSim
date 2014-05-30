@@ -1492,13 +1492,6 @@ public class BioModel {
 		}
 	}
 	
-	public void createArraysPlugin() {
-		if (sbmlSBaseArrays==null) {
-			sbml.enablePackage(ArraysConstants.namespaceURI);
-			sbmlSBaseArrays = SBMLutilities.getArraysSBasePlugin(sbml);
-		}
-	}
-	
 	public static void updateComplexParameters(Reaction r,String KcStr) {
 		if (KcStr != null && KcStr.startsWith("(")) {
 			KineticLaw k = r.getKineticLaw();
@@ -6539,9 +6532,10 @@ public class BioModel {
 		if (sbmlFBC.getListOfObjectives().size() > 0 || sbmlFBC.getListOfFluxBounds().size() > 0) {
 			document.enablePackage(FBCConstants.namespaceURI);
 		}
-		if (sbmlSBaseArrays.getListOfDimensions().size() > 0 || sbmlSBaseArrays.getListOfIndices().size() > 0) {
-			document.enablePackage(ArraysConstants.namespaceURI);
-		}
+		
+		//TODO: loop through each SBase and see if any has the plugin
+		document.enablePackage(ArraysConstants.namespaceURI);
+
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {
 			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 			for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
@@ -7759,8 +7753,6 @@ public class BioModel {
 	private CompModelPlugin sbmlCompModel = null;
 	
 	private FBCModelPlugin sbmlFBC = null;
-	
-	private ArraysSBasePlugin sbmlSBaseArrays = null;
 	
 	private MySpecies speciesPanel = null;
 	
