@@ -6523,7 +6523,8 @@ public class BioModel {
 	public void exportSingleFile(String exportFile) {
 		ArrayList<String> comps = new ArrayList<String>();
 		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-		document.setModel(sbml.getModel());
+		Model model = new Model(sbml.getModel());
+		document.setModel(model);
 		document.enablePackage(LayoutConstants.namespaceURI);
 		SBMLutilities.getLayoutModelPlugin(document.getModel());
 		if (sbmlCompModel.getListOfPorts().size() > 0 || sbmlCompModel.getListOfSubmodels().size() > 0) {
