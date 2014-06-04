@@ -8898,7 +8898,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				System.loadLibrary("sbmlj");
 				// For extra safety, check that the jar file is in the
 				// classpath.
-				Class.forName("org.sbml.jsbml.libsbml");
+				Class.forName("org.sbml.libsbml.libsbml");
 			}
 			catch (UnsatisfiedLinkError e) {
 				libsbmlFound = false;
