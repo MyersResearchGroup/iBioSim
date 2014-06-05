@@ -2848,6 +2848,36 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Transition", "50")));
 		stylesheet.putCellStyle("TRANSITION", style);
 		
+		//fail transitions
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Transition", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Transition", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Transition", "#FFFFFF"));
+		style.put(mxConstants.STYLE_STROKECOLOR, "#FF0000");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#FF0000");
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Transition", "50")));
+		stylesheet.putCellStyle("FAILTRANSITION", style);
+		
+		//persistent transitions
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Transition", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Transition", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Transition", "#FFFFFF"));
+		style.put(mxConstants.STYLE_STROKECOLOR, "#0000FF");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#0000FF");
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Transition", "50")));
+		stylesheet.putCellStyle("PERSTRANSITION", style);
+		
+		//fail/persistent transitions
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Transition", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Transition", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Transition", "#FFFFFF"));
+		style.put(mxConstants.STYLE_STROKECOLOR, "#FF00FF");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#FF00FF");
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Transition", "50")));
+		stylesheet.putCellStyle("FAILPERSTRANSITION", style);
+		
 		//components
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.subComponent", mxConstants.SHAPE_RECTANGLE));
@@ -3100,6 +3130,15 @@ public class BioGraph extends mxGraph {
 
 	private void setTransitionStyles(String id){
 		String style="TRANSITION;";
+		if (SBMLutilities.isFailTransition(bioModel.getSBMLDocument().getModel().getEvent(id))) {
+			if (bioModel.getSBMLDocument().getModel().getEvent(id).getTrigger().isPersistent()) {
+				style="FAILPERSTRANSITION;";
+			} else {
+				style="FAILTRANSITION;";
+			}
+		} else if (bioModel.getSBMLDocument().getModel().getEvent(id).getTrigger().isPersistent()) {
+			style="PERSTRANSITION;";
+		}
 		
 		mxCell cell = this.getEventsCell(id);
 		cell.setStyle(style);

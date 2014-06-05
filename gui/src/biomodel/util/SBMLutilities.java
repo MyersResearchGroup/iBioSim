@@ -2251,6 +2251,16 @@ public class SBMLutilities {
 		return false;
 	}
 	
+	public static boolean isFailTransition(Event event) {
+		for (int j = 0; j < event.getEventAssignmentCount(); j++) {
+			EventAssignment ea = event.getListOfEventAssignments().get(j);
+			if (ea.getVariable().equals(GlobalConstants.FAIL)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static ASTNode addPreset(ASTNode math,String place) {
 		return myParseFormula("and("+myFormulaToString(math)+",eq("+place+","+"1))");
 	}
@@ -3085,6 +3095,16 @@ public class SBMLutilities {
 			elements.addAll(getListOfAllElements(node.getChildAt(i)));
 		}
 		return elements;
+	}
+	
+	public static EventAssignment getEventAssignmentByVariable(Event event,String variable) {
+		for (int i = 0; i < event.getEventAssignmentCount(); i++) {	
+			EventAssignment ea = event.getListOfEventAssignments().get(i);
+			if (ea.getVariable().equals(variable)) {
+				return ea;
+			}
+		}
+		return null;
 	}
 	
 //	public static ListOf<SBase> getListOfAllElements(Model m) {
