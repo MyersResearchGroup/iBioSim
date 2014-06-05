@@ -1662,13 +1662,13 @@ public class Schematic extends JPanel implements ActionListener {
 						Event e = bioModel.getSBMLDocument().getModel().getEvent(target.getId());
 						Trigger t = e.getTrigger();
 						t.setMath(SBMLutilities.removePreset(t.getMath(),source.getId()));
-						EventAssignment ea = e.getListOfEventAssignments().get(source.getId());
+						EventAssignment ea = SBMLutilities.getEventAssignmentByVariable(e, source.getId());
 						if (ea!=null) {
 							SBMLutilities.removeFromParentAndDelete(ea);
 						}
 					} else if (graph.getCellType(target) == GlobalConstants.PLACE) {
 						Event e = bioModel.getSBMLDocument().getModel().getEvent(source.getId());
-						EventAssignment ea = e.getListOfEventAssignments().get(target.getId());
+						EventAssignment ea = SBMLutilities.getEventAssignmentByVariable(e, target.getId());
 						if (ea!=null) {
 							SBMLutilities.removeFromParentAndDelete(ea);
 						}
@@ -1915,7 +1915,7 @@ public class Schematic extends JPanel implements ActionListener {
 			Event e = bioModel.getSBMLDocument().getModel().getEvent(targetID);
 			Trigger trigger = e.getTrigger();
 			trigger.setMath(SBMLutilities.addPreset(trigger.getMath(),sourceID));
-			EventAssignment ea = e.getListOfEventAssignments().get(sourceID);
+			EventAssignment ea = SBMLutilities.getEventAssignmentByVariable(e, sourceID);
 			if (ea == null) {
 				ea = e.createEventAssignment();
 				ea.setVariable(sourceID);
@@ -1934,7 +1934,7 @@ public class Schematic extends JPanel implements ActionListener {
 		if (graph.getCellType(target) == GlobalConstants.PLACE) {
 
 			Event e = bioModel.getSBMLDocument().getModel().getEvent(sourceID);
-			EventAssignment ea = e.getListOfEventAssignments().get(targetID);
+			EventAssignment ea = SBMLutilities.getEventAssignmentByVariable(e, targetID);
 			if (ea == null) {
 				ea = e.createEventAssignment();
 				ea.setVariable(targetID);
@@ -2121,6 +2121,7 @@ public class Schematic extends JPanel implements ActionListener {
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);
 		ArrayList<String> ports;
+		// TODO: WHAT ABOUT PLACES?
 		if (SBMLutilities.isBoolean(p)) {
 			ports = compBioModel.getOutputPorts(GlobalConstants.BOOLEAN);
 		} else {
