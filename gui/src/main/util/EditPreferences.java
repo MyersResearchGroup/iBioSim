@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 
@@ -462,9 +463,11 @@ public class EditPreferences {
 		colorButtons.add(new JLabel("Font",SwingConstants.CENTER));
 		colorButtons.add(new JLabel("Opacity",SwingConstants.CENTER));
 		colors.add(colorButtons);
-		for (String element:schematicElements.keySet()) {
+		Object[] keys = schematicElements.keySet().toArray();
+		Arrays.sort(keys);
+		for (Object element:keys) {
 			colorButtons = new JPanel(new GridLayout(1, 4));
-			labels.add(new JLabel(element));
+			labels.add(new JLabel((String) element));
 			if (async) {
 				if (!biosimrc.get("lema.schematic.shape."+element, "").equals("")) {
 					String shape = biosimrc.get("lema.schematic.shape."+element, "");
@@ -1300,9 +1303,9 @@ public class EditPreferences {
 		JTabbedPane prefTabs = new JTabbedPane();
 		prefTabs.addTab("General Preferences", generalPrefs);
 		prefTabs.addTab("Schematic Preferences", schematicPrefs);
-		if (!async) prefTabs.addTab("SBOL Assembly Preferences", assemblyPrefs);
 		prefTabs.addTab("Model Preferences", modelPrefs);
 		prefTabs.addTab("Analysis Preferences", analysisPrefs);
+		if (!async) prefTabs.addTab("SBOL Assembly Preferences", assemblyPrefs);
 		if (!async) prefTabs.addTab("Learn Preferences", learnPrefs);
 
 		boolean problem;

@@ -2396,7 +2396,8 @@ public class BioModel {
 	public void save(String filename) {
 		//gcm2sbml.convertGCM2SBML(filename);
 		//updateCompartmentReplacements();
-		updatePorts();
+		// TODO: REMOVE FOR NOW UNTIL JSBML FIXED
+		//updatePorts();
 		setGridSize(grid.getNumRows(),grid.getNumCols());
 		setLayoutSize();
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
@@ -6276,7 +6277,7 @@ public class BioModel {
 	
 	private void updatePorts() {
 		int j = 0;
-		while (j < sbmlCompModel.getListOfPorts().size()) {
+		while (j < sbmlCompModel.getPortCount()) {
 			Port port = sbmlCompModel.getListOfPorts().get(j);
 			if (port.isSetSBaseRef()) {
 				SBMLutilities.removeFromParentAndDelete(port);
@@ -6463,7 +6464,8 @@ public class BioModel {
 		//updateCompartmentReplacements();
 		SBMLutilities.fillBlankMetaIDs(sbml);
 		loadGridSize();
-		updatePorts();
+		// TODO: HACK REMVOE FOR NOW TILL JSBML FIXED
+		//updatePorts();
 		removeStaleLayout();
 		
 		for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
