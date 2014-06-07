@@ -509,28 +509,35 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(paramet);
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
-				int size = sBasePlugin.getDimensionCount();
+//				int size = sBasePlugin.getDimensionCount();
 				//TODO: Make sure it reads correctly
 				// If the array that is being read is a 1-D array...
-				if(size==1){
-					dimensionType.setSelectedIndex(0);
-					dimensionX.setEnabled(false);
-					dimensionY.setEnabled(false);
-				}
-				// a 2-D array...
-				else if(size==2){
-					dimensionType.setSelectedIndex(2);
-					dimensionX.setEnabled(true);
-					dimensionY.setEnabled(true);
-					dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
-					dimensionY.setSelectedItem(sBasePlugin.getDimension(1).getSize());
+				if(sizes[0]!=null){
+					sizes = AnnotationUtility.parseMatrixSizeAnnotation(paramet);
+					if(sizes!=null){
+						dimensionType.setSelectedIndex(2);
+						dimensionX.setEnabled(true);
+						dimensionY.setEnabled(true);
+//						dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
+//						dimensionY.setSelectedItem(sBasePlugin.getDimension(1).getSize());
+						
+						dimensionX.setSelectedItem(sizes[0]);
+						dimensionY.setSelectedItem(sizes[1]);
+					}
+					else{
+						dimensionType.setSelectedIndex(0);
+						dimensionX.setEnabled(false);
+						dimensionY.setEnabled(false);
+					}
 				}
 				// or a scalar.
 				else{
 					dimensionType.setSelectedIndex(1);
 					dimensionX.setEnabled(true);
-					dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
+//					dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
 					dimensionY.setEnabled(false);
+					
+					dimensionX.setSelectedItem(sizes[0]);				
 				}
 				if (paramsOnly && parameters.getSelectedValue()!=null) {
 					if (((String) parameters.getSelectedValue()).contains("Modified")
@@ -789,28 +796,28 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							// TODO: Make sure it writes correctly here and...
 							// If the array to be stored is a 1-D array...
 							if (dimensionType.getSelectedIndex() == 1){
-								sBasePlugin.removeDimension(0);
-								sBasePlugin.removeDimension(1);
-								Dimension dimX = new Dimension("i");
-								dimX.setSize((String) dimensionX.getSelectedItem());
-								dimX.setArrayDimension(0);
-								sBasePlugin.addDimension(dimX);
+//								sBasePlugin.removeDimension(0);
+//								sBasePlugin.removeDimension(1);
+//								Dimension dimX = new Dimension("i");
+//								dimX.setSize((String) dimensionX.getSelectedItem());
+//								dimX.setArrayDimension(0);
+//								sBasePlugin.addDimension(dimX);
 								
 								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
 								}
 							// a 2-D array...
 							else if (dimensionType.getSelectedIndex() == 2){
-								sBasePlugin.removeDimension(0);
-								sBasePlugin.removeDimension(1);
-								Dimension dimX = new Dimension("i");
-								dimX.setSize((String) dimensionX.getSelectedItem());
-								dimX.setArrayDimension(0);
-								sBasePlugin.addDimension(dimX);
-								Dimension dimY = new Dimension("j");
-								dimY.setSize((String) dimensionY.getSelectedItem());
-								dimY.setArrayDimension(1);
-								sBasePlugin.addDimension(dimY);
+//								sBasePlugin.removeDimension(0);
+//								sBasePlugin.removeDimension(1);
+//								Dimension dimX = new Dimension("i");
+//								dimX.setSize((String) dimensionX.getSelectedItem());
+//								dimX.setArrayDimension(0);
+//								sBasePlugin.addDimension(dimX);
+//								Dimension dimY = new Dimension("j");
+//								dimY.setSize((String) dimensionY.getSelectedItem());
+//								dimY.setArrayDimension(1);
+//								sBasePlugin.addDimension(dimY);
 								
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
 								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
@@ -818,8 +825,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							// or a scalar.
 							else{
-								sBasePlugin.removeDimension(0);
-								sBasePlugin.removeDimension(1);
+//								sBasePlugin.removeDimension(0);
+//								sBasePlugin.removeDimension(1);
 								
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
 								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
@@ -951,28 +958,28 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							//TODO: ...here.
 							// If the array to be stored is a 1-D array...
 							if (dimensionType.getSelectedIndex() == 1){
-								sBasePlugin.removeDimension(0);
-								sBasePlugin.removeDimension(1);
-								Dimension dimX = new Dimension("i");
-								dimX.setSize((String) dimensionX.getSelectedItem());
-								dimX.setArrayDimension(0);
-								sBasePlugin.addDimension(dimX);
+//								sBasePlugin.removeDimension(0);
+//								sBasePlugin.removeDimension(1);
+//								Dimension dimX = new Dimension("i");
+//								dimX.setSize((String) dimensionX.getSelectedItem());
+//								dimX.setArrayDimension(0);
+//								sBasePlugin.addDimension(dimX);
 								
 								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
 								}
 							// a 2-D array...
 							else if (dimensionType.getSelectedIndex() == 2){
-								sBasePlugin.removeDimension(0);
-								sBasePlugin.removeDimension(1);
-								Dimension dimX = new Dimension("i");
-								dimX.setSize((String) dimensionX.getSelectedItem());
-								dimX.setArrayDimension(0);
-								sBasePlugin.addDimension(dimX);
-								Dimension dimY = new Dimension("j");
-								dimY.setSize((String) dimensionY.getSelectedItem());
-								dimY.setArrayDimension(1);
-								sBasePlugin.addDimension(dimY);
+//								sBasePlugin.removeDimension(0);
+//								sBasePlugin.removeDimension(1);
+//								Dimension dimX = new Dimension("i");
+//								dimX.setSize((String) dimensionX.getSelectedItem());
+//								dimX.setArrayDimension(0);
+//								sBasePlugin.addDimension(dimX);
+//								Dimension dimY = new Dimension("j");
+//								dimY.setSize((String) dimensionY.getSelectedItem());
+//								dimY.setArrayDimension(1);
+//								sBasePlugin.addDimension(dimY);
 								
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
 								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
@@ -980,8 +987,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							// or a scalar.
 							else{
-								sBasePlugin.removeDimension(0);
-								sBasePlugin.removeDimension(1);
+//								sBasePlugin.removeDimension(0);
+//								sBasePlugin.removeDimension(1);
 								
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
 								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
