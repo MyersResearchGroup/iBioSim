@@ -232,6 +232,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		SBMLutilities.setMetaId(ia, initialId);
 		ia.setVariable(variable);
 		ia.setMath(bioModel.addBooleans(assignment.trim()));
+		// TODO: Scott - change for Plugin writing
 		if (!dimX.equals("") && dimY.equals("")) {
 			AnnotationUtility.setVectorSizeAnnotation(ia, dimX);
 			AnnotationUtility.setRowIndexAnnotation(ia, "i");

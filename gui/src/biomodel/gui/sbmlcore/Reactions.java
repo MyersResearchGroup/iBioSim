@@ -620,6 +620,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if(paramsOnly){
 				dimensionType.setEnabled(false);
 			}
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(reac);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(reac);
@@ -642,7 +643,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				dimensionX.setSelectedItem(sizes[0]);
 				dimensionY.setEnabled(false);
 			}
-			// TODO: Scott should load compartment indices here, make sure to enable index boxes based on selected compartment
+			// TODO: Scott - change for Plugin reading
 			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
 			sizes = new String[2];
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
@@ -1169,6 +1170,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								AnnotationUtility.removeSBOLAnnotation(react);
 						}
 					}
+					// TODO: Scott - change for Plugin writing
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(react);
 						AnnotationUtility.setVectorSizeAnnotation(react,(String) dimensionX.getSelectedItem());
@@ -1182,7 +1184,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						AnnotationUtility.removeVectorSizeAnnotation(react);
 						AnnotationUtility.removeMatrixSizeAnnotation(react);
 					}
-					// TODO: Scott need to save compartment indices here
+					// TODO: Scott - change for Plugin writing
 					SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
 					String[] sizes = new String[2];
 					sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
@@ -1287,6 +1289,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						removeTheReaction(bioModel, reactId);
 					}
+					// TODO: Scott - change for Plugin writing
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(react);
 						AnnotationUtility.setVectorSizeAnnotation(react,(String) dimensionX.getSelectedItem());
@@ -1300,7 +1303,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						AnnotationUtility.removeVectorSizeAnnotation(react);
 						AnnotationUtility.removeMatrixSizeAnnotation(react);
 					}
-					// TODO: Scott need to save compartment indices here
+					// TODO: Scott - change for Plugin writing
 					SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
 					String[] sizes = new String[2];
 					sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
@@ -1997,6 +2000,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			String[] sizes = new String[2];
 			String[] indices = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(product);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(product);
@@ -2223,6 +2227,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						produ.setConstant(false);
 					}
+					// TODO: Scott - change for Plugin writing
 					if (PdimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(produ);
 						AnnotationUtility.setVectorSizeAnnotation(produ,(String) PdimensionX.getSelectedItem());
@@ -2362,6 +2367,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			String[] indices = new String[2];
+			// TODO: Scott - change for Plugin reading
 			indices[0] = AnnotationUtility.parseRowIndexAnnotation(modifier);
 			if(indices[0]!=null){
 				indices[1] = AnnotationUtility.parseColIndexAnnotation(modifier);
@@ -2635,6 +2641,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						modifiers.setListData(modifierArray);
 						modifiers.setSelectedIndex(index);
 					}
+					// TODO: Scott - change for Plugin writing
 					if (!MiIndex.getText().equals("")) {
 						AnnotationUtility.setRowIndexAnnotation(modifier,MiIndex.getText());
 					} else {
@@ -2713,17 +2720,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							addLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + mod + "_"),actBindf);
 							addLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + mod + "_"),actBindr);
 						}
-					}
-//					if (!MiIndex.getText().equals("")) {
-//						AnnotationUtility.setRowIndexAnnotation(modifier,MiIndex.getText());
-//					} else {
-//						AnnotationUtility.removeRowIndexAnnotation(modifier);
-//					}
-//					if (!MjIndex.getText().equals("")) {
-//						AnnotationUtility.setColIndexAnnotation(modifier,MjIndex.getText());
-//					} else {
-//						AnnotationUtility.removeColIndexAnnotation(modifier);
-//					} 
+					} 
 					JList add = new JList();
 					Object[] adding = { mod };
 					add.setListData(adding);
@@ -2862,6 +2859,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			String[] sizes = new String[2];
 			String[] indices = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(reactant);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(reactant);
@@ -3108,6 +3106,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						reactan.setConstant(false);
 					}
+					// TODO: Scott - change for Plugin writing
 					if (RdimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(reactan);
 						AnnotationUtility.setVectorSizeAnnotation(reactan,(String) RdimensionX.getSelectedItem());
@@ -3181,6 +3180,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						reactan.setConstant(false);
 					}
+					// TODO: Scott - change for Plugin writing
 					if (RdimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.setVectorSizeAnnotation(reactan,(String) RdimensionX.getSelectedItem());
 					
@@ -3822,7 +3822,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				dimensionY.setEnabled(true);
 			}
 		}
-		// if the dimension type is changed
+		// if the dimension type for reactant is changed
 		else if (e.getSource() == RdimensionType) {
 			int index = RdimensionType.getSelectedIndex();
 			if (index == 0) {
@@ -3838,7 +3838,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				RdimensionY.setEnabled(true);
 			}
 		}
-		// if the dimension type is changed
+		// if the dimension type for product is changed
 		else if (e.getSource() == PdimensionType) {
 			int index = PdimensionType.getSelectedIndex();
 			if (index == 0) {
@@ -3858,6 +3858,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == reactionComp) {
 			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
 			String[] sizes = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
@@ -3879,6 +3880,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == productSpecies) {
 			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)productSpecies.getSelectedItem());
 			String[] sizes = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
@@ -3900,6 +3902,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == reactantSpecies) {
 			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactantSpecies.getSelectedItem());
 			String[] sizes = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
@@ -3921,6 +3924,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == modifierSpecies) {
 			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)modifierSpecies.getSelectedItem());
 			String[] sizes = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);

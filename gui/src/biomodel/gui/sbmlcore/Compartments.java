@@ -372,6 +372,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				if(paramsOnly){
 					dimensionType.setEnabled(false);
 				}
+				// TODO: Scott - change for Plugin reading
 				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(compartment);
 				if(sizes[0]==null){
 					sizes = AnnotationUtility.parseMatrixSizeAnnotation(compartment);
@@ -580,19 +581,18 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 //						else {
 //							c.unsetCompartmentType();
 //						}
+						// TODO: Scott - change for Plugin writing
 						if (dimensionType.getSelectedIndex() == 1){
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
 							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
 							}
 						else if (dimensionType.getSelectedIndex() == 2){
 							AnnotationUtility.removeVectorSizeAnnotation(c);
-
 							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
 									(String) dimensionY.getSelectedItem());
 						}
 						else{
 							AnnotationUtility.removeVectorSizeAnnotation(c);
-
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
 						}
 						if (bioModel.getSBMLDocument().getLevel() < 3) {
@@ -681,19 +681,18 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 //						if (!selCompType.equals("( none )")) {
 //							c.setCompartmentType(selCompType);
 //						}
+						// TODO: Scott - change for Plugin writing
 						if (dimensionType.getSelectedIndex() == 1){
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
 							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
 							}
 						else if (dimensionType.getSelectedIndex() == 2){
 							AnnotationUtility.removeVectorSizeAnnotation(c);
-
 							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
 									(String) dimensionY.getSelectedItem());
 						}
 						else{
 							AnnotationUtility.removeVectorSizeAnnotation(c);
-
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
 						}
 						if (bioModel.getSBMLDocument().getLevel() < 3) {

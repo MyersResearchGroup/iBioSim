@@ -184,6 +184,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel.add(dimensionY);
 		if (!paramsOnly) grid.add(tempPanel);
 		
+		//TODO: Scott - Change for Plugin reading
 		// Set dimension type and size parameter
 		String[] sizes = new String[2];
 		if(paramsOnly){
@@ -231,6 +232,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		convjIndex = new JTextField(10);
 		SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
 		sizes = new String[2];
+		// TODO: Scott - change for Plugin reading
 		sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 		if(sizes[0]==null){
 			sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
@@ -253,6 +255,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel.add(jIndex);
 		
 		String[] indecies = new String[2];
+		// TODO: Scott - change for Plugin writing
 		indecies[0] = AnnotationUtility.parseRowIndexAnnotation(species);
 		if(indecies[0]!=null){
 			indecies[1] = AnnotationUtility.parseColIndexAnnotation(species);
@@ -352,6 +355,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel = new JPanel(new GridLayout(1, 4));
 			variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
 			sizes = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
@@ -373,6 +377,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(conviIndex);
 			tempPanel.add(convjIndex);
 			
+			// TODO: Scott - change for Plugin writing
 			indecies[0] = AnnotationUtility.parseConversionRowIndexAnnotation(species);
 			if(indecies[0]!=null){
 				indecies[1] = AnnotationUtility.parseConversionColIndexAnnotation(species);
@@ -929,6 +934,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							species.setConversionFactor(convFactor);
 						}
 					}
+					//TODO: Scott - Change for Plugin writing
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(species);
 						AnnotationUtility.setVectorSizeAnnotation(species,(String) dimensionX.getSelectedItem());
@@ -942,6 +948,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						AnnotationUtility.removeVectorSizeAnnotation(species);
 						AnnotationUtility.removeMatrixSizeAnnotation(species);
 					}
+					//TODO Scott - Check that all four equations for the indices only contain constants and/or
+					//...dimension ids.
 					if (!iIndex.getText().equals("")) {
 						AnnotationUtility.setRowIndexAnnotation(species,iIndex.getText());
 					} else {
@@ -1209,9 +1217,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 		// if the variable is changed
 		else if (e.getSource() == compartBox) {
-			//TODO: Check the variable and enable/disable indices accordingly.
 			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
 			String[] sizes = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
@@ -1231,9 +1239,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 		// if the variable is changed
 		else if (e.getSource() == convBox) {
-			//TODO: Check the variable and enable/disable indices accordingly.
 			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
 			String[] sizes = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);

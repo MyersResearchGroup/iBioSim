@@ -201,6 +201,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			String[] sizes = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(c.get(Cindex));
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(c.get(Cindex));
@@ -347,21 +348,18 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						constraints.setListData(cons);
 						constraints.setSelectedIndex(index);
 						bioModel.makeUndoPoint();
-						
+						// TODO: Scott - change for Plugin writing
 						if (dimensionType.getSelectedIndex() == 1){
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
-
 							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
 						}
 						else if (dimensionType.getSelectedIndex() == 2){
 							AnnotationUtility.removeVectorSizeAnnotation(c);
-
 							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
 									(String) dimensionY.getSelectedItem());
 						}
 						else{
 							AnnotationUtility.removeVectorSizeAnnotation(c);
-
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
 						}
 					}
@@ -410,20 +408,18 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						else {
 							constraints.setSelectedIndex(index);
 						}
+						// TODO: Scott - change for Plugin writing
 						if (dimensionType.getSelectedIndex() == 1){
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
-
 							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
 						}
 						else if (dimensionType.getSelectedIndex() == 2){
 							AnnotationUtility.removeVectorSizeAnnotation(c);
-
 							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
 									(String) dimensionY.getSelectedItem());
 						}
 						else{
 							AnnotationUtility.removeVectorSizeAnnotation(c);
-
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
 						}
 					}

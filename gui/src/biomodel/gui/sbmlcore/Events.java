@@ -393,8 +393,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
-						// TODO: add the index in the field
 						String assignIndex = "";
+						// TODO: Scott - change for Plugin reading
 						indices[0] = AnnotationUtility.parseRowIndexAnnotation(ea);
 						if(indices[0]!=null){
 							indices[1] = AnnotationUtility.parseColIndexAnnotation(ea);
@@ -418,7 +418,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						else{
 							dimens = " , 0 <= u < " + sizes[0];
 						}
-						// TODO: update assign with index in the string
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (isTextual) {
 								assign[l] = ea.getVariable() + assignIndex + " := " 
@@ -452,6 +451,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				String[] sizes = new String[2];
+				// TODO: Scott - change for Plugin reading
 				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(event);
 				if(sizes[0]==null){
 					sizes = AnnotationUtility.parseMatrixSizeAnnotation(event);
@@ -705,10 +705,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						EventAssignment ea = e.createEventAssignment();
 						String var = assign[i].split(" ")[0];
 						ea.setVariable(var);
-						// TODO: extract the index, if one exists and add annotations for them
-						// look at assign[i]
 						String left = assign[i].split(":=")[0].trim();
 						String[] rightSide = assign[i].split(":=")[1].split(",");
+						// TODO: Scott - change for Plugin writing
 						if(left.contains("[")){
 							String[] ind = left.split("\\[");
 							if(ind.length==2){
@@ -764,6 +763,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ea.setVariable(placeAssign[i].split(" ")[0]);
 						String left = placeAssign[i].split(":=")[0].trim();
 						String[] rightSide = placeAssign[i].split(":=")[1].split(",");
+						// TODO: Scott - change for Plugin writing
 						if(left.contains("[")){
 							String[] ind = left.split("\\[");
 							if(ind.length==2){
@@ -988,6 +988,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							ea.setMath(SBMLutilities.myParseFormula(rightSide[0].trim()));
 						}
 					}
+					// TODO: Scott - change for Plugin writing
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(e);
 						AnnotationUtility.setVectorSizeAnnotation(e,(String) dimensionX.getSelectedItem());
@@ -1085,10 +1086,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < assign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
 							String var = assign[i].split(" ")[0];
-							// TODO: extract the index, if one exists and add annotations for them
-							// look at assign[i]
 							String left = assign[i].split(":=")[0].trim();
 							String[] rightSide = assign[i].split(":=")[1].split(",");
+							// TODO: Scott - change for Plugin writing
 							if(left.contains("[")){
 								String[] ind = left.split("\\[");
 								if(ind.length==2){
@@ -1211,6 +1211,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (error) {
 						removeTheEvent(bioModel, SBMLutilities.myFormulaToString(e.getTrigger().getMath()));
 					}
+					// TODO: Scott - change for Plugin reading
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(e);
 						AnnotationUtility.setVectorSizeAnnotation(e,(String) dimensionX.getSelectedItem());
@@ -1774,6 +1775,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == eaID) {
 			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
 			String[] sizes = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);

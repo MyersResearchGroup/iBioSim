@@ -26,6 +26,8 @@ import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -500,30 +502,34 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				} else {
 					portDir.setSelectedItem(GlobalConstants.INTERNAL);
 				}
+				SBMLutilities.getArraysSBasePlugin(paramet);
 				String[] sizes = new String[2];
 				if(paramsOnly){
 					dimensionType.setEnabled(false);
 				}
 				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(paramet);
-				if(sizes[0]==null){
-					sizes = AnnotationUtility.parseMatrixSizeAnnotation(paramet);
-					if(sizes==null){
-						dimensionType.setSelectedIndex(0);
-						dimensionX.setEnabled(false);
-						dimensionY.setEnabled(false);
-					}
-					else{
-						dimensionType.setSelectedIndex(2);
-						dimensionX.setEnabled(true);
-						dimensionY.setEnabled(true);
-						dimensionX.setSelectedItem(sizes[0]);
-						dimensionY.setSelectedItem(sizes[1]);
-					}
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
+				int size = sBasePlugin.getDimensionCount();
+				//TODO: Make sure it reads correctly
+				// If the array that is being read is a 1-D array...
+				if(size==1){
+					dimensionType.setSelectedIndex(0);
+					dimensionX.setEnabled(false);
+					dimensionY.setEnabled(false);
 				}
+				// a 2-D array...
+				else if(size==2){
+					dimensionType.setSelectedIndex(2);
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(true);
+					dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
+					dimensionY.setSelectedItem(sBasePlugin.getDimension(1).getSize());
+				}
+				// or a scalar.
 				else{
 					dimensionType.setSelectedIndex(1);
 					dimensionX.setEnabled(true);
-					dimensionX.setSelectedItem(sizes[0]);
+					dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
 					dimensionY.setEnabled(false);
 				}
 				if (paramsOnly && parameters.getSelectedValue()!=null) {
@@ -779,16 +785,42 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
+							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
+							// TODO: Make sure it writes correctly here and...
+							// If the array to be stored is a 1-D array...
 							if (dimensionType.getSelectedIndex() == 1){
+								sBasePlugin.removeDimension(0);
+								sBasePlugin.removeDimension(1);
+								Dimension dimX = new Dimension("i");
+								dimX.setSize((String) dimensionX.getSelectedItem());
+								dimX.setArrayDimension(0);
+								sBasePlugin.addDimension(dimX);
+								
 								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
 								}
+							// a 2-D array...
 							else if (dimensionType.getSelectedIndex() == 2){
+								sBasePlugin.removeDimension(0);
+								sBasePlugin.removeDimension(1);
+								Dimension dimX = new Dimension("i");
+								dimX.setSize((String) dimensionX.getSelectedItem());
+								dimX.setArrayDimension(0);
+								sBasePlugin.addDimension(dimX);
+								Dimension dimY = new Dimension("j");
+								dimY.setSize((String) dimensionY.getSelectedItem());
+								dimY.setArrayDimension(1);
+								sBasePlugin.addDimension(dimY);
+								
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
 								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
 										(String) dimensionY.getSelectedItem());
 							}
+							// or a scalar.
 							else{
+								sBasePlugin.removeDimension(0);
+								sBasePlugin.removeDimension(1);
+								
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
 								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 							}
@@ -915,14 +947,42 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Parameter paramet = bioModel.getSBMLDocument().getModel().createParameter();
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
+							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
+							//TODO: ...here.
+							// If the array to be stored is a 1-D array...
 							if (dimensionType.getSelectedIndex() == 1){
+								sBasePlugin.removeDimension(0);
+								sBasePlugin.removeDimension(1);
+								Dimension dimX = new Dimension("i");
+								dimX.setSize((String) dimensionX.getSelectedItem());
+								dimX.setArrayDimension(0);
+								sBasePlugin.addDimension(dimX);
+								
+								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
-							}
+								}
+							// a 2-D array...
 							else if (dimensionType.getSelectedIndex() == 2){
+								sBasePlugin.removeDimension(0);
+								sBasePlugin.removeDimension(1);
+								Dimension dimX = new Dimension("i");
+								dimX.setSize((String) dimensionX.getSelectedItem());
+								dimX.setArrayDimension(0);
+								sBasePlugin.addDimension(dimX);
+								Dimension dimY = new Dimension("j");
+								dimY.setSize((String) dimensionY.getSelectedItem());
+								dimY.setArrayDimension(1);
+								sBasePlugin.addDimension(dimY);
+								
+								AnnotationUtility.removeVectorSizeAnnotation(paramet);
 								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
 										(String) dimensionY.getSelectedItem());
 							}
+							// or a scalar.
 							else{
+								sBasePlugin.removeDimension(0);
+								sBasePlugin.removeDimension(1);
+								
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
 								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 							}

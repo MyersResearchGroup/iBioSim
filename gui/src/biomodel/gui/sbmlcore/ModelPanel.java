@@ -172,6 +172,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				conversionFactor.setSelectedItem(bioModel.getSBMLDocument().getModel().getConversionFactor());
 				
 				String[] indices= new String[2];
+				// TODO: Scott - change for Plugin reading
 				indices[0] = AnnotationUtility.parseConversionRowIndexAnnotation(model);
 				if(indices[0]!=null){
 					indices[1] = AnnotationUtility.parseConversionColIndexAnnotation(model);
@@ -290,6 +291,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 
 					}
 					bioModel.getSBMLDocument().getModel().setName(modelName.getText());
+					// TODO: Scott - change for Plugin writing
 					if (!conviIndex.getText().equals("")) {
 						AnnotationUtility.setConversionRowIndexAnnotation(model,conviIndex.getText());
 					} else {
@@ -327,9 +329,9 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		}
 		// if the variable is changed
 		else if (e.getSource() == conversionFactor) {
-			//TODO: Check the variable and enable/disable indices accordingly.
 			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)conversionFactor.getSelectedItem());
 			String[] sizes = new String[2];
+			// TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
