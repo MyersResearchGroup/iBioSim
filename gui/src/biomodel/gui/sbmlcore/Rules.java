@@ -287,6 +287,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			String[] sizes = new String[2];
 			String[] indecies = new String[2];
+			//TODO: Scott - change for Plugin reading
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(rule);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(rule);
@@ -538,6 +539,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					rules.setListData(rul);
 					rules.setSelectedIndex(index);
 					bioModel.makeUndoPoint();
+					//TODO: Scott - change for Plugin writing
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(r);
 						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
@@ -642,6 +644,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							port.setMetaIdRef(r.getMetaId());
 						}
 					}
+					//TODO: Scott - change for Plugin writing
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(r);
 						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
@@ -1171,7 +1174,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the variable is changed
 		else if (e.getSource() == ruleVar) {
-			//TODO: Check the variable and enable/disable indices accordingly.
+			//TODO: Scott - change for Plugin reading
 			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
 			String[] sizes = new String[2];
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
