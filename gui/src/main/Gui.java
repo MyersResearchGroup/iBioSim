@@ -3458,7 +3458,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				deleteFromTree(dirName);
 			}
 			else {
-				String[] views = canDelete(fullPath.split(separator)[fullPath.split(separator).length - 1]);
+				String filename = fullPath.split(separator)[fullPath.split(separator).length - 1];
+				String[] views = canDelete(filename);
 				if (views.length != 0) {
 					String view = "";
 					String gcms = "";
@@ -3487,6 +3488,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					Object[] options = { "Yes", "No" };
 					value = JOptionPane.showOptionDialog(frame, scroll, "Unable to Delete File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 							null, options, options[1]);
+				} else {
+					Preferences biosimrc = Preferences.userRoot();
+					if (biosimrc.get("biosim.general.delete", "").equals("confirm")) {
+						Object[] options = { "Yes", "No" };
+						value = JOptionPane.showOptionDialog(frame, "Are you sure you want to delete " + filename + "?", 
+								"Confirm Delete",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					}
 				}
 				if (value == JOptionPane.YES_OPTION) {
 					for (int i = 0; i < views.length; i++) {

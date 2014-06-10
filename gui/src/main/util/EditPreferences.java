@@ -46,6 +46,7 @@ public class EditPreferences {
 	
 	private JCheckBox dialog;
 	private JCheckBox icons;
+	private JCheckBox delete;
 	private JCheckBox libsbmlFlatten;
 	private JCheckBox infix;
 	private JTextField verCmd;
@@ -153,6 +154,7 @@ public class EditPreferences {
 		// general preferences
 		dialog = new JCheckBox("Use File Dialog");
 		icons = new JCheckBox("Use Plus/Minus For Expanding/Collapsing File Tree");
+		delete = new JCheckBox("Must Confirm File Deletions");
 		libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models");
 		infix = new JCheckBox("Use Infix Expression Parser");
 		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
@@ -166,6 +168,12 @@ public class EditPreferences {
 		}
 		else {
 			icons.setSelected(true);
+		}
+		if (biosimrc.get("biosim.general.delete", "").equals("confirm")) {
+			delete.setSelected(true);
+		}
+		else {
+			delete.setSelected(false);
 		}
 		if (biosimrc.get("biosim.general.flatten", "").equals("default")) {
 			libsbmlFlatten.setSelected(false);
@@ -190,6 +198,7 @@ public class EditPreferences {
 			public void actionPerformed(ActionEvent e) {
 				dialog.setSelected(false);
 				icons.setSelected(false);
+				delete.setSelected(true);
 				libsbmlFlatten.setSelected(false);
 				infix.setSelected(true);
 				verCmd.setText("");
@@ -200,12 +209,13 @@ public class EditPreferences {
 		// create general preferences panel
 		JPanel generalPrefsBordered;
 		if (async) {
-			generalPrefsBordered = new JPanel(new GridLayout(7,1));
+			generalPrefsBordered = new JPanel(new GridLayout(8,1));
 		} else {
-			generalPrefsBordered = new JPanel(new GridLayout(5,1));
+			generalPrefsBordered = new JPanel(new GridLayout(6,1));
 		}
 		generalPrefsBordered.add(dialog);
 		generalPrefsBordered.add(icons);
+		generalPrefsBordered.add(delete);
 		generalPrefsBordered.add(libsbmlFlatten);
 		generalPrefsBordered.add(infix);
 		if (async) {
@@ -1040,6 +1050,11 @@ public class EditPreferences {
 			biosimrc.put("biosim.general.tree_icons", "default");
 			tree.setExpandibleIcons(true);
 		}
+		if (delete.isSelected()) {
+			biosimrc.put("biosim.general.delete", "confirm");
+		} else {
+			biosimrc.put("biosim.general.delete", "noconfirm");
+		}
 		if (libsbmlFlatten.isSelected()) {
 			biosimrc.put("biosim.general.flatten", "libsbml");
 		} else {
@@ -1491,6 +1506,9 @@ public class EditPreferences {
 		}
 		else if (biosimrc.get("biosim.general.tree_icons", "").equals("plus_minus")) {
 			tree.setExpandibleIcons(false);
+		}
+		if (biosimrc.get("biosim.general.delete", "").equals("")) {
+			biosimrc.put("biosim.general.delete", "confirm");
 		}
 	}
 }
