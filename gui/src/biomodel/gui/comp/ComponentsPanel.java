@@ -1,6 +1,7 @@
 package biomodel.gui.comp;
 
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -94,6 +95,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		this.oldPort = oldPort;
 		this.paramsOnly = paramsOnly;
 		this.subBioModel = subBioModel;
+		//this.setPreferredSize(new Dimension(800, 600));
 
 		fields = new HashMap<String, PropertyField>();
 		portIds = new ArrayList<String>();
@@ -854,9 +856,24 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 									replacement.setConversionFactor((String)convBox.get(i).getSelectedItem());
 								}
 							} else {
-								ReplacedBy replacement = sbmlSBase.createReplacedBy();
-								replacement.setSubmodelRef(subId);
-								replacement.setPortRef(portId);
+								boolean skip = false;
+								if (sbmlSBase.isSetReplacedBy()) {
+									ReplacedBy replacement = sbmlSBase.getReplacedBy();
+									if (!replacement.getSubmodelRef().equals(subId) ||
+											!replacement.getPortRef().equals(portId)) {	
+										Utility.createErrorMessage("Error", portmapId + " is already replaced by " +
+											replacement.getPortRef().replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
+											" from subModel " + replacement.getSubmodelRef() + "\nCannot also replace with " + 
+											portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
+											" from subModel " + subId);
+										skip = true;
+									}
+								}
+								if (!skip) {
+									ReplacedBy replacement = sbmlSBase.createReplacedBy();
+									replacement.setSubmodelRef(subId);
+									replacement.setPortRef(portId);
+								}
 							}
 						}
 					} else {
