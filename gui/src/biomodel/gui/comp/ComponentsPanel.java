@@ -741,12 +741,14 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	
 	private boolean removePortMaps(CompSBasePlugin sbmlSBase) {
 		int j = 0;
+		boolean result = false;
 		while (j < sbmlSBase.getListOfReplacedElements().size()) {
 			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
 			if (replacement.getSubmodelRef().equals(subModelId) && 
 					((replacement.isSetPortRef())||(replacement.isSetDeletion()))) { 
+				sbmlSBase.removeReplacedElement(replacement);
 				SBMLutilities.removeFromParentAndDelete(replacement);
-				return true;
+				result = true;
 			}
 			j++;
 		}
@@ -754,10 +756,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			ReplacedBy replacement = sbmlSBase.getReplacedBy();
 			if (replacement.getSubmodelRef().equals(subModelId) && (replacement.isSetPortRef())) {
 				SBMLutilities.removeFromParentAndDelete(replacement);
-				return true;
+				result = true;
 			}
 		}
-		return false;
+		return result;
 	}
 
 	private boolean openGui(String oldName) {
