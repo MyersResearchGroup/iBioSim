@@ -2397,7 +2397,7 @@ public class BioModel {
 		//gcm2sbml.convertGCM2SBML(filename);
 		//updateCompartmentReplacements();
 		// TODO: REMOVE FOR NOW UNTIL JSBML FIXED
-		updatePorts();
+		//updatePorts();
 		setGridSize(grid.getNumRows(),grid.getNumCols());
 		setLayoutSize();
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
@@ -6465,7 +6465,7 @@ public class BioModel {
 		SBMLutilities.fillBlankMetaIDs(sbml);
 		loadGridSize();
 		// TODO: HACK REMVOE FOR NOW TILL JSBML FIXED
-		updatePorts();
+		//updatePorts();
 		removeStaleLayout();
 		
 		for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
