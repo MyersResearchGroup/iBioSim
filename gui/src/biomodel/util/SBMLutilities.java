@@ -3057,10 +3057,6 @@ public class SBMLutilities {
 		return new ASTNode(original);
 	}
 	
-	public static void removeFromParentAndDelete(SBase element) {
-		element.removeFromParent();
-	}
-	
 	public static SBase getElementByMetaId(SBMLDocument document, String metaId) {
 		return document.findSBase(metaId);
 	}

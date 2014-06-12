@@ -1664,13 +1664,13 @@ public class Schematic extends JPanel implements ActionListener {
 						t.setMath(SBMLutilities.removePreset(t.getMath(),source.getId()));
 						EventAssignment ea = SBMLutilities.getEventAssignmentByVariable(e, source.getId());
 						if (ea!=null) {
-							SBMLutilities.removeFromParentAndDelete(ea);
+							ea.removeFromParent();
 						}
 					} else if (graph.getCellType(target) == GlobalConstants.PLACE) {
 						Event e = bioModel.getSBMLDocument().getModel().getEvent(source.getId());
 						EventAssignment ea = SBMLutilities.getEventAssignmentByVariable(e, target.getId());
 						if (ea!=null) {
-							SBMLutilities.removeFromParentAndDelete(ea);
+							ea.removeFromParent();
 						}
 					}
 				}

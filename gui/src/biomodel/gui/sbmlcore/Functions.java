@@ -358,7 +358,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.FUNCTION+"__"+f.getId());
 							port.setIdRef(f.getId());
 						} else {
-							SBMLutilities.removeFromParentAndDelete(port);
+							bioModel.getSBMLCompModel().removePort(port);
 						}
 					} else {
 						if (onPort.isSelected()) {

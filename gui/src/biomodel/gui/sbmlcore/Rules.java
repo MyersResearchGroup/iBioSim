@@ -517,7 +517,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 								port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
 								port.setMetaIdRef(r.getMetaId());
 							} else {
-								SBMLutilities.removeFromParentAndDelete(port);
+								bioModel.getSBMLCompModel().removePort(port);
 							}
 						} else {
 							if (onPort.isSelected()) {
@@ -724,9 +724,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	}
 
 	public void removeRuleByMetaId(String metaId) {
-		SBase rule = SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId);
+		Rule rule = (Rule)SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId);
 		if (rule != null) {
-			SBMLutilities.removeFromParentAndDelete(rule);
+			bioModel.getSBMLDocument().getModel().removeRule(rule);
 			for (int j = 0; j < bioModel.getSBMLCompModel().getListOfPorts().size(); j++) {
 				Port port = bioModel.getSBMLCompModel().getListOfPorts().get(j);
 				if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(metaId)) {

@@ -351,7 +351,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 									port.setId(GlobalConstants.UNIT+"__"+u.getId());
 									port.setUnitRef(u.getId());
 								} else {
-									SBMLutilities.removeFromParentAndDelete(port);
+									bioModel.getSBMLCompModel().removePort(port);
 								}
 							} else {
 								if (onPort.isSelected()) {
