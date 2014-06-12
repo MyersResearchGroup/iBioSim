@@ -845,11 +845,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							if (isTransition) {
 								Rule r = bioModel.getSBMLDocument().getModel().getRule(GlobalConstants.TRIGGER + "_" + e.getId());
 								if (r != null) {
-									SBMLutilities.removeFromParentAndDelete(r);
+									r.removeFromParent();
 								}
 								Parameter p = bioModel.getSBMLDocument().getModel().getParameter(GlobalConstants.TRIGGER + "_" + e.getId());
 								if (p != null) {
-									SBMLutilities.removeFromParentAndDelete(p);
+									p.removeFromParent();
 								}
 							}
 						}
@@ -943,7 +943,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						} else {
 							EventAssignment ea = e.getListOfEventAssignments().get(GlobalConstants.FAIL);
 							if (ea != null) {
-								SBMLutilities.removeFromParentAndDelete(ea);
+								ea.removeFromParent();
 							}
 						}
 						Port port = bioModel.getPortByIdRef(selectedID);
@@ -952,7 +952,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								port.setId(GlobalConstants.EVENT+"__"+e.getId());
 								port.setIdRef(e.getId());
 							} else {
-								SBMLutilities.removeFromParentAndDelete(port);
+								bioModel.getSBMLCompModel().removePort(port);
 							}
 						} else {
 							if (onPort.isSelected()) {
@@ -1173,7 +1173,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						} else {
 							EventAssignment ea = e.getListOfEventAssignments().get(GlobalConstants.FAIL);
 							if (ea != null) {
-								SBMLutilities.removeFromParentAndDelete(ea);
+								ea.removeFromParent();
 							}
 						}
 						if (onPort.isSelected()) {

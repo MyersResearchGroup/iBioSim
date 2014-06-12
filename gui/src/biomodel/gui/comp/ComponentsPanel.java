@@ -747,7 +747,6 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			if (replacement.getSubmodelRef().equals(subModelId) && 
 					((replacement.isSetPortRef())||(replacement.isSetDeletion()))) { 
 				sbmlSBase.removeReplacedElement(replacement);
-				SBMLutilities.removeFromParentAndDelete(replacement);
 				result = true;
 			}
 			j++;
@@ -755,7 +754,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		if (sbmlSBase.isSetReplacedBy()) {
 			ReplacedBy replacement = sbmlSBase.getReplacedBy();
 			if (replacement.getSubmodelRef().equals(subModelId) && (replacement.isSetPortRef())) {
-				SBMLutilities.removeFromParentAndDelete(replacement);
+				sbmlSBase.unsetReplacedBy();
 				result = true;
 			}
 		}
@@ -806,7 +805,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				//long k = 0;
 				while (instance.getListOfDeletions().size()>0) {
 					Deletion deletion = instance.getListOfDeletions().get(0);
-					SBMLutilities.removeFromParentAndDelete(deletion);
+					instance.removeDeletion(deletion);
 					/*
 					if (deletion.isSetPortRef() && portIds.contains(deletion.getPortRef())) {
 					} else {

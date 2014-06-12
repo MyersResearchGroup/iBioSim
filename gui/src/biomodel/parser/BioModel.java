@@ -1552,7 +1552,7 @@ public class BioModel {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
 			} else {
-				SBMLutilities.removeFromParentAndDelete(port);
+				sbmlCompModel.removePort(port);
 			}
 		} else {
 			if (onPort) {
@@ -1952,7 +1952,7 @@ public class BioModel {
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
 			} else {
-				SBMLutilities.removeFromParentAndDelete(port);
+				sbmlCompModel.removePort(port);
 			}
 		} else {
 			if (onPort) {
@@ -2025,7 +2025,7 @@ public class BioModel {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
 			} else {
-				SBMLutilities.removeFromParentAndDelete(port);
+				sbmlCompModel.removePort(port);
 			}
 		} else {
 			if (onPort) {
@@ -2068,7 +2068,7 @@ public class BioModel {
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
 			} else {
-				SBMLutilities.removeFromParentAndDelete(port);
+				sbmlCompModel.removePort(port);
 			}
 		} else {
 			if (onPort) {
@@ -2222,7 +2222,7 @@ public class BioModel {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
 			} else {
-				SBMLutilities.removeFromParentAndDelete(port);
+				sbmlCompModel.removePort(port);
 			}
 		} else {
 			if (onPort) {
@@ -2397,7 +2397,7 @@ public class BioModel {
 		//gcm2sbml.convertGCM2SBML(filename);
 		//updateCompartmentReplacements();
 		// TODO: REMOVE FOR NOW UNTIL JSBML FIXED
-		//updatePorts();
+		updatePorts();
 		setGridSize(grid.getNumRows(),grid.getNumCols());
 		setLayoutSize();
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
@@ -3406,7 +3406,7 @@ public class BioModel {
 			for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
 				Port port = sbmlCompModel.getListOfPorts().get(i);
 				if (port.isSetIdRef() && port.getIdRef().equals(id)) {
-					SBMLutilities.removeFromParentAndDelete(port);
+					sbmlCompModel.removePort(port);
 				}
 			}
 			speciesPanel.refreshSpeciesPanel(this);
@@ -3444,7 +3444,7 @@ public class BioModel {
 	public void removeByMetaId(String metaId) {
 		SBase sbase = SBMLutilities.getElementByMetaId(sbml.getModel(), metaId);
 		if (sbase != null) {
-			SBMLutilities.removeFromParentAndDelete(sbase);
+			sbase.removeFromParent();
 			for (int j = 0; j < sbmlCompModel.getListOfPorts().size(); j++) {
 				Port port = sbmlCompModel.getListOfPorts().get(j);
 				if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(metaId)) {
@@ -3473,7 +3473,7 @@ public class BioModel {
 			}
 		}
 		if (sbase != null) {
-			SBMLutilities.removeFromParentAndDelete(sbase);
+			sbase.removeFromParent();
 			for (int j = 0; j < sbmlCompModel.getListOfPorts().size(); j++) {
 				Port port = sbmlCompModel.getListOfPorts().get(j);
 				if (port.isSetIdRef() && port.getIdRef().equals(id)) {
@@ -3905,7 +3905,7 @@ public class BioModel {
 					String IdRef = replacement.getIdRef();
 					Port port = compBioModel.getPortByIdRef(IdRef);
 					if (port==null) {
-						SBMLutilities.removeFromParentAndDelete(replacement);
+						sbmlSBase.removeReplacedElement(replacement);
 						continue;
 					}
 					if (BioModel.isInputPort(port)) {
@@ -3917,7 +3917,7 @@ public class BioModel {
 				} else if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
 					Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 					if (port==null) {
-						SBMLutilities.removeFromParentAndDelete(replacement);
+						sbmlSBase.removeReplacedElement(replacement);
 						continue;
 					}
 					if (BioModel.isInputPort(port)) {
@@ -3930,7 +3930,7 @@ public class BioModel {
 				if (replacement.getSubmodelRef().equals(compId) && (replacement.isSetPortRef())) {
 					Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 					if (port==null) {
-						SBMLutilities.removeFromParentAndDelete(replacement);
+						sbmlSBase.unsetReplacedBy();
 						continue;
 					}
 					if (BioModel.isInputPort(port)) {
@@ -3953,7 +3953,7 @@ public class BioModel {
 					String IdRef = replacement.getIdRef();
 					Port port = compBioModel.getPortByIdRef(IdRef);
 					if (port==null) {
-						SBMLutilities.removeFromParentAndDelete(replacement);
+						sbmlSBase.removeReplacedElement(replacement);
 						continue;
 					}
 					if (BioModel.isOutputPort(port)) {
@@ -3965,7 +3965,7 @@ public class BioModel {
 				} else if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
 					Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 					if (port==null) {
-						SBMLutilities.removeFromParentAndDelete(replacement);
+						sbmlSBase.removeReplacedElement(replacement);
 						continue;
 					}
 					if (BioModel.isOutputPort(port)) {
@@ -3978,7 +3978,7 @@ public class BioModel {
 				if (replacement.getSubmodelRef().equals(compId) && (replacement.isSetPortRef())) {
 					Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 					if (port==null) {
-						SBMLutilities.removeFromParentAndDelete(replacement);
+						sbmlSBase.unsetReplacedBy();
 						continue;
 					}
 					if (BioModel.isOutputPort(port)) {
@@ -4001,7 +4001,7 @@ public class BioModel {
 					if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
 						Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 						if (port==null) {
-							SBMLutilities.removeFromParentAndDelete(replacement);
+							sbmlSBase.removeReplacedElement(replacement);
 							continue;
 						}
 						if (BioModel.isInputPort(port)) {
@@ -4015,7 +4015,7 @@ public class BioModel {
 					if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
 						Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 						if (port==null) {
-							SBMLutilities.removeFromParentAndDelete(replacement);
+							sbmlSBase.unsetReplacedBy();
 							continue;
 						}
 						if (BioModel.isInputPort(port)) {
@@ -4040,7 +4040,7 @@ public class BioModel {
 					if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
 						Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 						if (port==null) {
-							SBMLutilities.removeFromParentAndDelete(replacement);
+							sbmlSBase.removeReplacedElement(replacement);
 							continue;
 						}
 						if (BioModel.isOutputPort(port)) {
@@ -4054,7 +4054,7 @@ public class BioModel {
 					if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
 						Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 						if (port==null) {
-							SBMLutilities.removeFromParentAndDelete(replacement);
+							sbmlSBase.unsetReplacedBy();
 							continue;
 						}
 						if (BioModel.isOutputPort(port)) {
@@ -4238,7 +4238,7 @@ public class BioModel {
 			port.setIdRef(SId);
 			port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
 		} else if (port != null) {
-			SBMLutilities.removeFromParentAndDelete(port);
+			sbmlCompModel.removePort(port);
 		}
 	}
 	
@@ -4806,7 +4806,7 @@ public class BioModel {
 			if (sbmlSBase.isSetReplacedBy()) {
 				ReplacedBy replacement = sbmlSBase.getReplacedBy();
 				if (replacement.getSubmodelRef().equals(componentId) && replacement.getPortRef().equals(portId)) {
-					SBMLutilities.removeFromParentAndDelete(replacement);
+					sbmlSBase.unsetReplacedBy();
 				}				
 			}
 		}
@@ -6062,7 +6062,7 @@ public class BioModel {
 			}
 			Port port = sbmlCompModel.getListOfPorts().get(GlobalConstants.ENCLOSING_COMPARTMENT);
 			if (port!=null) {
-				SBMLutilities.removeFromParentAndDelete(port);
+				sbmlCompModel.removePort(port);
 				return;
 			} 
 			port = sbmlCompModel.getListOfPorts().get(GlobalConstants.DEFAULT_COMPARTMENT);
@@ -6241,7 +6241,7 @@ public class BioModel {
 			Deletion deletion = submodel.getListOfDeletions().get(i);
 			if (deletion.isSetPortRef()) {
 				if (subCompModel.getListOfPorts().get(deletion.getPortRef())==null) {
-					SBMLutilities.removeFromParentAndDelete(deletion);
+					submodel.removeDeletion(deletion);
 					i--;
 				} 
 			} 
@@ -6255,7 +6255,7 @@ public class BioModel {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
 					if (replacement.getSubmodelRef().equals(submodel.getId()) && replacement.isSetPortRef()) {
 						if (subCompModel.getListOfPorts().get(replacement.getPortRef())==null) {
-							SBMLutilities.removeFromParentAndDelete(replacement);
+							sbmlSBase.removeReplacedElement(replacement);
 							elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 							i--;
 						}
@@ -6265,7 +6265,7 @@ public class BioModel {
 					ReplacedBy replacement = sbmlSBase.getReplacedBy();
 					if (replacement.getSubmodelRef().equals(submodel.getId()) && replacement.isSetPortRef()) {
 						if (subCompModel.getListOfPorts().get(replacement.getPortRef())==null) {
-							SBMLutilities.removeFromParentAndDelete(replacement);
+							sbmlSBase.unsetReplacedBy();
 							elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 							i--;
 						}
@@ -6280,11 +6280,11 @@ public class BioModel {
 		while (j < sbmlCompModel.getPortCount()) {
 			Port port = sbmlCompModel.getListOfPorts().get(j);
 			if (port.isSetSBaseRef()) {
-				SBMLutilities.removeFromParentAndDelete(port);
+				sbmlCompModel.removePort(port);
 			} else if (port.isSetIdRef() && SBMLutilities.getElementBySId(sbml, port.getIdRef()) == null) {
-				SBMLutilities.removeFromParentAndDelete(port);
+				sbmlCompModel.removePort(port);
 			} else if (port.isSetMetaIdRef() && SBMLutilities.getElementByMetaId(sbml, port.getMetaIdRef()) == null) {
-				SBMLutilities.removeFromParentAndDelete(port);
+				sbmlCompModel.removePort(port);
 			} else {
 				/* TODO: temporary to restore SBO terms */
 				isInputPort(port);
@@ -6386,7 +6386,7 @@ public class BioModel {
 			while (i < layout.getListOfSpeciesGlyphs().size()) {
 				SpeciesGlyph sg = layout.getSpeciesGlyph(i);
 				if (sg.getSpecies() == null || model.getSpecies(sg.getSpecies())==null) {
-					SBMLutilities.removeFromParentAndDelete(sg);
+					layout.removeSpeciesGlyph(sg);
 				} else {
 					i++;
 				}
@@ -6395,7 +6395,7 @@ public class BioModel {
 			while (i < layout.getListOfCompartmentGlyphs().size()) {
 				CompartmentGlyph cg = layout.getCompartmentGlyph(i);
 				if (cg.getCompartment() == null || model.getCompartment(cg.getCompartment())==null) {
-					SBMLutilities.removeFromParentAndDelete(cg);
+					layout.removeCompartmentGlyph(cg);
 				} else {
 					i++;
 				}
@@ -6404,7 +6404,7 @@ public class BioModel {
 			while (i < layout.getListOfReactionGlyphs().size()) {
 				ReactionGlyph rg = layout.getReactionGlyph(i);
 				if (rg.getReaction() == null || model.getReaction(rg.getReaction())==null) {
-					SBMLutilities.removeFromParentAndDelete(rg);
+					layout.removeReactionGlyph(rg);
 				} else {
 					i++;
 				}
@@ -6414,16 +6414,16 @@ public class BioModel {
 				while (i < layout.getListOfAdditionalGraphicalObjects().size()) {
 					GeneralGlyph g = (GeneralGlyph) layout.getListOfAdditionalGraphicalObjects().get(i);
 					if (g.getReference() == null && g.getMetaidRef() == null) {
-						SBMLutilities.removeFromParentAndDelete(g);
+						g.removeFromParent();
 					} else if (g.isSetReference() && SBMLutilities.getElementBySId(model, g.getReference())==null) {
 						if (SBMLutilities.getElementByMetaId(model, g.getReference())==null) { 
-							SBMLutilities.removeFromParentAndDelete(g);
+							g.removeFromParent();
 						} else {
 							g.setMetaidRef(g.getReference());
 							g.unsetReference();
 						}
 					} else if (g.isSetMetaidRef() && SBMLutilities.getElementByMetaId(model, g.getMetaidRef())==null) {
-						SBMLutilities.removeFromParentAndDelete(g);
+						g.removeFromParent();
 					} else {
 						i++;
 					}
@@ -6439,7 +6439,7 @@ public class BioModel {
 						layout.getListOfAdditionalGraphicalObjects().get(tg.getGraphicalObject())==null &&
 						SBMLutilities.getElementBySId(model, tg.getGraphicalObject())==null && 
 						SBMLutilities.getElementByMetaId(model, tg.getGraphicalObject())==null)) {
-					SBMLutilities.removeFromParentAndDelete(tg);
+					layout.removeTextGlyph(tg);
 				} else {
 					i++;
 				}
@@ -6465,7 +6465,7 @@ public class BioModel {
 		SBMLutilities.fillBlankMetaIDs(sbml);
 		loadGridSize();
 		// TODO: HACK REMVOE FOR NOW TILL JSBML FIXED
-		//updatePorts();
+		updatePorts();
 		removeStaleLayout();
 		
 		for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
@@ -6966,34 +6966,34 @@ public class BioModel {
 					if (port.isSetIdRef()) {
 						if (SBMLutilities.getElementBySId(subModel, port.getIdRef())!=null) {
 							SBase sbase =  SBMLutilities.getElementBySId(subModel, port.getIdRef());
-							SBMLutilities.removeFromParentAndDelete(sbase);
+							sbase.removeFromParent();
 						}
 					} else if (port.isSetMetaIdRef()) {
 						if (SBMLutilities.getElementByMetaId(subModel, port.getMetaIdRef())!=null) {
 							SBase sbase =  SBMLutilities.getElementByMetaId(subModel, port.getMetaIdRef());
-							SBMLutilities.removeFromParentAndDelete(sbase);
+							sbase.removeFromParent();
 						}
 					} else if (port.isSetUnitRef()) {
 						if (subModel.getUnitDefinition(port.getUnitRef())!=null) {
 							SBase sbase = subModel.getUnitDefinition(port.getUnitRef());
-							SBMLutilities.removeFromParentAndDelete(sbase);
+							sbase.removeFromParent();
 						}
 					}
 				}
 			} else if (deletion.isSetIdRef()) {
 				if (SBMLutilities.getElementBySId(subModel, deletion.getIdRef())!=null) {
 					SBase sbase =  SBMLutilities.getElementBySId(subModel, deletion.getIdRef());
-					SBMLutilities.removeFromParentAndDelete(sbase);
+					sbase.removeFromParent();
 				}
 			} else if (deletion.isSetMetaIdRef()) {
 				if (SBMLutilities.getElementByMetaId(subModel, deletion.getMetaIdRef())!=null) {
 					SBase sbase =  SBMLutilities.getElementByMetaId(subModel, deletion.getMetaIdRef());
-					SBMLutilities.removeFromParentAndDelete(sbase);
+					sbase.removeFromParent();
 				}
 			} else if (deletion.isSetUnitRef()) {
 				if (subModel.getUnitDefinition(deletion.getUnitRef())!=null) {
 					SBase sbase = subModel.getUnitDefinition(deletion.getUnitRef());
-					SBMLutilities.removeFromParentAndDelete(sbase);
+					sbase.removeFromParent();
 				}
 			}
 		}

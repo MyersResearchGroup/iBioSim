@@ -334,7 +334,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 								port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
 								port.setMetaIdRef(c.getMetaId());
 							} else {
-								SBMLutilities.removeFromParentAndDelete(port);
+								bioModel.getSBMLCompModel().removePort(port);
 							}
 						} else {
 							if (onPort.isSelected()) {

@@ -995,7 +995,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 							port.setIdRef(react.getId());
 						} else {
-							SBMLutilities.removeFromParentAndDelete(port);
+							bioModel.getSBMLCompModel().removePort(port);
 						}
 					} else {
 						if (onPort.isSelected()) {
@@ -1455,7 +1455,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit reactions parameters or create new ones.
 	 */
-	private void reacParametersEditor(BioModel gcm,String option) {
+	private void reacParametersEditor(BioModel bioModel,String option) {
 		if (option.equals("OK") && reacParameters.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No parameter selected.", "Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -1576,7 +1576,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (paramet.isSetUnits()) {
 				reacParamUnits.setSelectedItem(paramet.getUnits());
 			}
-			if (gcm.getPortByMetaIdRef(paramet.getMetaId())!=null) {
+			if (bioModel.getPortByMetaIdRef(paramet.getMetaId())!=null) {
 				paramOnPort.setSelected(true);
 			} else {
 				paramOnPort.setSelected(false);
@@ -1797,17 +1797,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						else {
 							kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), v, reacParamID.getText().trim()));
 						}
-						Port port = gcm.getPortByMetaIdRef(paramet.getMetaId());
+						Port port = bioModel.getPortByMetaIdRef(paramet.getMetaId());
 						if (port!=null) {
 							if (paramOnPort.isSelected()) {
 								port.setId(GlobalConstants.LOCALPARAMETER+"__"+paramet.getMetaId());
 								port.setMetaIdRef(paramet.getMetaId());
 							} else {
-								SBMLutilities.removeFromParentAndDelete(port);
+								bioModel.getSBMLCompModel().removePort(port);
 							}
 						} else {
 							if (paramOnPort.isSelected()) {
-								port = gcm.getSBMLCompModel().createPort();
+								port = bioModel.getSBMLCompModel().createPort();
 								port.setId(GlobalConstants.LOCALPARAMETER+"__"+paramet.getMetaId());
 								port.setMetaIdRef(paramet.getMetaId());
 							}
@@ -1828,7 +1828,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							paramet.setUnits(unit);
 						}
 						if (paramOnPort.isSelected()) {
-							Port port = gcm.getSBMLCompModel().createPort();
+							Port port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.LOCALPARAMETER+"__"+paramet.getMetaId());
 							port.setMetaIdRef(paramet.getMetaId());
 						}

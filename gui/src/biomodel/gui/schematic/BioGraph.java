@@ -169,7 +169,7 @@ public class BioGraph extends mxGraph {
 	
 	private void createLayoutConnection(Layout layout,String reactant,String product,String type) {
 		ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
-		if (reactionGlyph!=null) SBMLutilities.removeFromParentAndDelete(reactionGlyph);
+		if (reactionGlyph!=null) layout.removeReactionGlyph(reactionGlyph);
 		reactionGlyph = layout.createReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
 		reactionGlyph.createBoundingBox();
 		reactionGlyph.getBoundingBox().createDimensions();

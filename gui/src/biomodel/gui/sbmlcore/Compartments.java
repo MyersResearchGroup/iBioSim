@@ -625,7 +625,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 								port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
 								port.setIdRef(c.getId());
 							} else {
-								SBMLutilities.removeFromParentAndDelete(port);
+								bioModel.getSBMLCompModel().removePort(port);
 							}
 						} else {
 							if (onPort.isSelected()) {
