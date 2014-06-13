@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
@@ -87,6 +88,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			ArrayList<String> ports, String selectedComponent, String oldPort, boolean paramsOnly, ModelEditor gcmEditor) {
 		
 		super(new GridLayout(ports.size() + 6, 1));
+		//JScrollPane scroll = new JScrollPane(this);
+		
 		this.selected = selected;
 		this.componentsList = componentsList;
 		this.bioModel = bioModel;
