@@ -6786,6 +6786,8 @@ public class BioModel {
 
 				/* add an option to leave ports if the user has requested this */
 				props.addOption("leavePorts", false, "unused ports should be listed in the flattened model");
+				
+				props.addOption("abortIfUnflattenable", "none");
 
 				/* perform the conversion */
 				if (document.convert(props) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS) {
@@ -6880,6 +6882,21 @@ public class BioModel {
 	}
 	
 	public SBMLDocument flattenBioModel() {
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
+			SBMLDocument result = null;
+			try {
+				result = newFlattenModel();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (result!=null) {
+				result.getModel().setName("Created by libsbml flatten routine");
+				return result;
+			}
+		}
+
 		ArrayList<String> modelList = new ArrayList<String>();
 		modelList.add(filename);
 		ArrayList<String> comps = getListOfSubmodels();
@@ -6910,7 +6927,7 @@ public class BioModel {
 			}
 		}
 		//checkModelConsistency(this.getSBMLDocument());
-		SBMLutilities.check(this.getFilename(), this.getSBMLDocument(),false,false);
+		//SBMLutilities.check(this.getFilename(), this.getSBMLDocument(),false,false);
 		return this.getSBMLDocument();
 	}
 	
