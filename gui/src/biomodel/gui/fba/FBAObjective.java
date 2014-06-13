@@ -160,9 +160,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 							fluxObjective.setCoefficient(1.0);
 							fluxObjective.setReaction(coefficeintReaction[0].trim());
 						}
-						
 					}
-
 				}
 			}
 			if (error) {
