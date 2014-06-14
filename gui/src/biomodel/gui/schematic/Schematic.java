@@ -1743,6 +1743,11 @@ public class Schematic extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(Gui.frame, "A Boolean variable can only be explicitly connected to components.");
 			graph.buildGraph();
 			return;
+		} else if((numComponents==0) && (graph.getCellType(source)==GlobalConstants.PLACE ||
+				graph.getCellType(target)==GlobalConstants.PLACE)) {
+			JOptionPane.showMessageDialog(Gui.frame, "A place variable can only be explicitly connected to components.");
+			graph.buildGraph();
+			return;
 		} else if(graph.getCellType(source)==GlobalConstants.COMPARTMENT ||
 				graph.getCellType(target)==GlobalConstants.COMPARTMENT) {
 			JOptionPane.showMessageDialog(Gui.frame, "A compartment cannot be connected to other objects.");
@@ -1764,12 +1769,14 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.buildGraph();
 			return;
 		} else if(graph.getCellType(source)==GlobalConstants.PLACE &&
-				!(graph.getCellType(target)==GlobalConstants.TRANSITION)) {
+				!(graph.getCellType(target)==GlobalConstants.TRANSITION ||
+				  graph.getCellType(target) == GlobalConstants.COMPONENT)) {
 			JOptionPane.showMessageDialog(Gui.frame, "A place can only be connected to transitions.");
 			graph.buildGraph();
 			return;
 		} else if(graph.getCellType(target)==GlobalConstants.PLACE &&
-				!(graph.getCellType(source)==GlobalConstants.TRANSITION)) {
+				!(graph.getCellType(source)==GlobalConstants.TRANSITION ||
+				  graph.getCellType(source) == GlobalConstants.COMPONENT)) {
 			JOptionPane.showMessageDialog(Gui.frame, "A place can only be connected to transitions.");
 			graph.buildGraph();
 			return;
@@ -1847,6 +1854,15 @@ public class Schematic extends JPanel implements ActionListener {
 						graph.buildGraph();
 						return;
 					}
+				} else if(graph.getCellType(target) == GlobalConstants.PLACE){
+					try{
+						port = connectComponentToVariable(sourceID, targetID);
+					}
+					catch(ListChooser.EmptyListException e){
+						JOptionPane.showMessageDialog(Gui.frame, "This component has no place output ports.");
+						graph.buildGraph();
+						return;
+					}
 				} else if(graph.getCellType(target) == GlobalConstants.BOOLEAN){
 					try{
 						port = connectComponentToVariable(sourceID, targetID);
@@ -1878,6 +1894,15 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 					catch(ListChooser.EmptyListException e){
 						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable input ports.");
+						graph.buildGraph();
+						return;
+					}
+				} else if(graph.getCellType(source) == GlobalConstants.PLACE){
+					try{
+						port = connectVariableToComponent(sourceID, targetID);
+					}
+					catch(ListChooser.EmptyListException e){
+						JOptionPane.showMessageDialog(Gui.frame, "This component has no place input ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -2124,6 +2149,8 @@ public class Schematic extends JPanel implements ActionListener {
 		// TODO: WHAT ABOUT PLACES?
 		if (SBMLutilities.isBoolean(p)) {
 			ports = compBioModel.getOutputPorts(GlobalConstants.BOOLEAN);
+		} else if (SBMLutilities.isPlace(p)) {
+			ports = compBioModel.getOutputPorts(GlobalConstants.PLACE);
 		} else {
 			ports = compBioModel.getOutputPorts(GlobalConstants.VARIABLE);
 		}
@@ -2149,6 +2176,8 @@ public class Schematic extends JPanel implements ActionListener {
 		// TODO: what about places
 		if (SBMLutilities.isBoolean(p)) {
 			ports = compBioModel.getInputPorts(GlobalConstants.BOOLEAN);
+		} else if (SBMLutilities.isPlace(p)) {
+			ports = compBioModel.getInputPorts(GlobalConstants.PLACE);
 		} else {
 			ports = compBioModel.getInputPorts(GlobalConstants.VARIABLE);
 		}
