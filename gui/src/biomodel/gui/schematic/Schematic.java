@@ -2146,10 +2146,11 @@ public class Schematic extends JPanel implements ActionListener {
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);	
 		ArrayList<String> ports;
+		// TODO: what about places
 		if (SBMLutilities.isBoolean(p)) {
-			ports = compBioModel.getOutputPorts(GlobalConstants.BOOLEAN);
+			ports = compBioModel.getInputPorts(GlobalConstants.BOOLEAN);
 		} else {
-			ports = compBioModel.getOutputPorts(GlobalConstants.VARIABLE);
+			ports = compBioModel.getInputPorts(GlobalConstants.VARIABLE);
 		}
 		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Input Port");
 		if(port == null)
