@@ -4182,6 +4182,10 @@ public class BioModel {
 							if (!SBMLutilities.isBoolean(p) && !SBMLutilities.isPlace(p)) {
 								ports.add(idRef);
 							}
+						} else if (type.equals(GlobalConstants.PLACE)) {
+							if (SBMLutilities.isPlace(p)) {
+								ports.add(idRef);
+							}
 						}
 					}
 				}
@@ -4211,6 +4215,10 @@ public class BioModel {
 							}
 						} else if (type.equals(GlobalConstants.VARIABLE)) {
 							if (!SBMLutilities.isBoolean(p) && !SBMLutilities.isPlace(p)) {
+								ports.add(idRef);
+							}
+						} else if (type.equals(GlobalConstants.PLACE)) {
+							if (SBMLutilities.isPlace(p)) {
 								ports.add(idRef);
 							}
 						}
