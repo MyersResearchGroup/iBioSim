@@ -6771,6 +6771,8 @@ public class BioModel {
 			new File(tempFile).delete();
 			
 			document.enablePackage(org.sbml.libsbml.LayoutExtension.getXmlnsL3V1V1(), "layout", false);
+			// TODO: Hack to allow flatten to work as it crashes with arrays namespace
+			document.enablePackage(org.sbml.libsbml.ArraysExtension.getXmlnsL3V1V1(), "arrays", false);
 			document.enablePackage(org.sbml.libsbml.CompExtension.getXmlnsL3V1V1(), "comp", true);
 			document.setPackageRequired("comp", true); 
 			// following line causes unsatisfied link error with libsbml when attempting to save hierarchical models on windows machine
@@ -6782,7 +6784,7 @@ public class BioModel {
 				expandListOfSubmodels(sbmlCompModel, document);
 			}
 			if (document.getErrorLog().getNumFailsWithSeverity(libsbmlConstants.LIBSBML_SEV_ERROR) > 0) {
-				// document.printErrors();
+				document.printErrors();
 				return null;
 			}
 			else if (numSubModels > 0) {
@@ -6796,6 +6798,13 @@ public class BioModel {
 				props.addOption("leavePorts", false, "unused ports should be listed in the flattened model");
 				
 				props.addOption("abortIfUnflattenable", "none");
+				
+				props.addOption("performValidation", "false");
+				
+				props.addOption("basePath", path);
+
+				//org.sbml.libsbml.SBMLWriter writer = new org.sbml.libsbml.SBMLWriter();
+				//writer.writeSBMLToFile(document, tempFile);
 
 				/* perform the conversion */
 				if (document.convert(props) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS) {
@@ -6872,17 +6881,16 @@ public class BioModel {
 			}
 		}
 		
-		model.getSBMLDocument().getModel().getExtensionPackages().remove(LayoutConstants.namespaceURI);
+		model.getSBMLDocument().disablePackage(ArraysConstants.namespaceURI);
+		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
 		if(removeComp)
 		{
-			model.getSBMLDocument().getModel().getExtensionPackages().remove(CompConstants.namespaceURI);
-			model.getSBMLDocument().getExtensionPackages().remove(CompConstants.namespaceURI);
-			for (SBase sb : SBMLutilities.getListOfAllElements(model.getSBMLDocument().getModel())) {
-				sb.getExtensionPackages().remove(CompConstants.namespaceURI);
-			}
+			model.getSBMLDocument().disablePackage(CompConstants.namespaceURI);
 		}
-//		model.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
-//		model.getSBMLDocument().enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
+		if (model.getSBMLFBC().getObjectiveCount()==0 && 
+				model.getSBMLFBC().getFluxBoundCount()==0) {
+			model.getSBMLDocument().disablePackage(FBCConstants.namespaceURI);
+		}
 		model.getSBMLDocument().getModel().setName("Created by iBioSim flatten routine");
 //		checkModelConsistency(model.getSBMLDocument());
 		new File(tempFile).delete();
