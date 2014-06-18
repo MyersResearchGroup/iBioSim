@@ -6772,7 +6772,7 @@ public class BioModel {
 			
 			document.enablePackage(org.sbml.libsbml.LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 			// TODO: Hack to allow flatten to work as it crashes with arrays namespace
-			document.enablePackage(org.sbml.libsbml.ArraysExtension.getXmlnsL3V1V1(), "arrays", false);
+			//document.enablePackage(org.sbml.libsbml.ArraysExtension.getXmlnsL3V1V1(), "arrays", false);
 			document.enablePackage(org.sbml.libsbml.CompExtension.getXmlnsL3V1V1(), "comp", true);
 			document.setPackageRequired("comp", true); 
 			// following line causes unsatisfied link error with libsbml when attempting to save hierarchical models on windows machine
