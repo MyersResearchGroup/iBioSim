@@ -69,6 +69,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private JComboBox dimensionType, dimensionX, dimensionY;
 	
 	private JLabel dimensionTypeLabel, dimensionSizeLabel;
+	
+	private JButton dimensionButton;
 
 	private BioModel bioModel;
 
@@ -266,20 +268,20 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JPanel parametersPanel;
 		if (paramsOnly) {
 			if (isPlace) {
-				parametersPanel = new JPanel(new GridLayout(10, 2));
-			} else if (isBoolean){
-				parametersPanel = new JPanel(new GridLayout(11, 2));
-			} else {
-				parametersPanel = new JPanel(new GridLayout(12, 2));
-			}
-		}
-		else {
-			if (isPlace) {
 				parametersPanel = new JPanel(new GridLayout(7, 2));
 			} else if (isBoolean){
 				parametersPanel = new JPanel(new GridLayout(8, 2));
 			} else {
 				parametersPanel = new JPanel(new GridLayout(9, 2));
+			}
+		}
+		else {
+			if (isPlace) {
+				parametersPanel = new JPanel(new GridLayout(4, 2));
+			} else if (isBoolean){
+				parametersPanel = new JPanel(new GridLayout(5, 2));
+			} else {
+				parametersPanel = new JPanel(new GridLayout(6, 2));
 			}
 		}
 		JLabel idLabel = new JLabel("ID:");
@@ -289,6 +291,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JLabel rateLabel = new JLabel("Initial Rate:");
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel constLabel = new JLabel("Constant:");
+		
+		dimensionButton = new JButton();
+		dimensionButton.setText("Dimension");
+		dimensionButton.setActionCommand("dimensionPress");
+		dimensionButton.addActionListener(this);
 		
 		dimensionType = new JComboBox();
 		dimensionType.addItem("Scalar");
@@ -429,15 +436,15 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 					if (paramsOnly) {
 						if (isPlace) {
-							parametersPanel.setLayout(new GridLayout(10, 2));
-						} else {
-							parametersPanel.setLayout(new GridLayout(11, 2));
-						}
-					} else {
-						if (isPlace) {
 							parametersPanel.setLayout(new GridLayout(7, 2));
 						} else {
 							parametersPanel.setLayout(new GridLayout(8, 2));
+						}
+					} else {
+						if (isPlace) {
+							parametersPanel.setLayout(new GridLayout(4, 2));
+						} else {
+							parametersPanel.setLayout(new GridLayout(5, 2));
 						}
 					}
 					if (paramet.getValue()==0) {
@@ -449,9 +456,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					rateParam = bioModel.getSBMLDocument().getModel().getParameter(selected + "_" + GlobalConstants.RATE);
 					if (rateParam!=null) {
 						if (paramsOnly) {
-							parametersPanel = new JPanel(new GridLayout(11, 2));
+							parametersPanel = new JPanel(new GridLayout(8, 2));
 						} else {
-							parametersPanel = new JPanel(new GridLayout(9, 2));
+							parametersPanel = new JPanel(new GridLayout(6, 2));
 						}
 						if (paramsOnly) {
 							if (rateParam.isSetValue()) {
@@ -468,7 +475,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						}			
 					}
 				}
-				paramID.setText(paramet.getId());
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
+				String dimInID = "";
+				for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+					Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
+					dimInID += "[" + dimX.getSize() + "]";
+				}
+				
+				paramID.setText(paramet.getId() + dimInID);
 				selectedID = paramet.getId();
 				paramName.setText(paramet.getName());
 				if (paramet.getConstant()) {
@@ -508,30 +522,29 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					dimensionType.setEnabled(false);
 				}
 				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(paramet);
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 				int size = sBasePlugin.getDimensionCount();
-				//TODO: Make sure it reads correctly
-				// If the array that is being read is a 1-D array...
-				if(size==1){
-					dimensionType.setSelectedIndex(1);
-					dimensionX.setEnabled(true);
-					dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
-					dimensionY.setEnabled(false);
-				}
-				// a 2-D array...
-				else if(size==2){
-						dimensionType.setSelectedIndex(2);
-						dimensionX.setEnabled(true);
-						dimensionY.setEnabled(true);
-						dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
-						dimensionY.setSelectedItem(sBasePlugin.getDimension(1).getSize());
-				}
-				// or a scalar.
-				else{
-						dimensionType.setSelectedIndex(0);
-						dimensionX.setEnabled(false);
-						dimensionY.setEnabled(false);				
-				}
+//				//TODO: Make sure it reads correctly
+//				// If the array that is being read is a 1-D array...
+//				if(size==1){
+//					dimensionType.setSelectedIndex(1);
+//					dimensionX.setEnabled(true);
+//					dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
+//					dimensionY.setEnabled(false);
+//				}
+//				// a 2-D array...
+//				else if(size==2){
+//						dimensionType.setSelectedIndex(2);
+//						dimensionX.setEnabled(true);
+//						dimensionY.setEnabled(true);
+//						dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
+//						dimensionY.setSelectedItem(sBasePlugin.getDimension(1).getSize());
+//				}
+//				// or a scalar.
+//				else{
+//						dimensionType.setSelectedIndex(0);
+//						dimensionX.setEnabled(false);
+//						dimensionY.setEnabled(false);				
+//				}
 				
 				if (paramsOnly && parameters.getSelectedValue()!=null) {
 					if (((String) parameters.getSelectedValue()).contains("Modified")
@@ -613,12 +626,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		parametersPanel.add(onPortLabel);
 		parametersPanel.add(portDir);
 		
-		parametersPanel.add(dimensionTypeLabel);
-		parametersPanel.add(dimensionType);
-		parametersPanel.add(dimensionSizeLabel);
-		parametersPanel.add(dimensionX);
-		parametersPanel.add(new JLabel());
-		parametersPanel.add(dimensionY);
+//		parametersPanel.add(dimensionButton);
+		
+//		parametersPanel.add(dimensionTypeLabel);
+//		parametersPanel.add(dimensionType);
+//		parametersPanel.add(dimensionSizeLabel);
+//		parametersPanel.add(dimensionX);
+//		parametersPanel.add(new JLabel());
+//		parametersPanel.add(dimensionY);
 		
 		parametersPanel.add(valueLabel);
 		if (isPlace || isBoolean) {
@@ -653,8 +668,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, editorTitle, JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
+		String[] dimID = paramID.getText().split("\\[");
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), paramID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 			if (!error) {
 				if (isPlace | isBoolean) {
 					if (placeMarking.getSelectedIndex()==0) {
@@ -689,13 +705,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 					catch (Exception e1) {
 						if (dimensionType.getSelectedIndex()==0) {
-							error = InitialAssignments.addInitialAssignment(bioModel, paramID.getText().trim(), 
+							error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
 									paramValue.getText().trim(),"","");
 						} else if (dimensionType.getSelectedIndex()==1) {
-							error = InitialAssignments.addInitialAssignment(bioModel, paramID.getText().trim(), 
+							error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
 									paramValue.getText().trim(),(String)dimensionX.getSelectedItem(),"");
 						} else {
-							error = InitialAssignments.addInitialAssignment(bioModel, paramID.getText().trim(), 
+							error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
 									paramValue.getText().trim(),(String)dimensionX.getSelectedItem(),
 									(String)dimensionY.getSelectedItem());
 						}
@@ -708,14 +724,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						catch (Exception e1) {
 							if (dimensionType.getSelectedIndex()==0) {
 								error = InitialAssignments.addInitialAssignment(bioModel, 
-										paramID.getText().trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),"","");
+										dimID[0].trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),"","");
 							} else if (dimensionType.getSelectedIndex()==0) {
 								error = InitialAssignments.addInitialAssignment(bioModel, 
-										paramID.getText().trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),
+										dimID[0].trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),
 										(String)dimensionX.getSelectedItem(),"");
 							} else{
 								error = InitialAssignments.addInitialAssignment(bioModel, 
-										paramID.getText().trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),
+										dimID[0].trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),
 										(String)dimensionX.getSelectedItem(),(String)dimensionY.getSelectedItem());
 							}
 							rateVal = 0.0;
@@ -752,7 +768,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						}
 					}
 					else {
-						param = paramID.getText().trim(); // + " " + val;
+						param = dimID[0].trim(); // + " " + val;
 						if (paramsOnly)
 							param += " " + val;
 						else {
@@ -766,7 +782,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						}
 						/*
 						 * if (!unit.equals("( none )")) { param =
-						 * paramID.getText().trim() + " " + val + " " + unit; }
+						 * dimID[0].trim() + " " + val + " " + unit; }
 						 */
 					}
 					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("true")) {
@@ -784,47 +800,48 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								if (params[i].split(" ")[0].equals(selected)) index = i;
 							}
 							Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
-							paramet.setId(paramID.getText().trim());
-							paramet.setName(paramName.getText().trim());
+							
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
-							// TODO: Make sure it writes correctly here and...
-							// If the array to be stored is a 1-D array...
-							if (dimensionType.getSelectedIndex() == 1){
-								sBasePlugin.removeDimensionByArrayDimension(0);
-								sBasePlugin.removeDimensionByArrayDimension(1);
-								Dimension dimX = new Dimension("i");
-								dimX.setSize((String) dimensionX.getSelectedItem());
-								dimX.setArrayDimension(0);
+							paramet.setId(dimID[0].trim());
+							for(int i = 0; i<dimID.length-1; i++){
+								sBasePlugin.removeDimensionByArrayDimension(i);
+								Dimension dimX = new Dimension("d"+i);
+								dimX.setSize(dimID[i+1].replace("]", "").trim());
+								dimX.setArrayDimension(i);
 								sBasePlugin.addDimension(dimX);
-								
-//								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
-//								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
-								}
-							// a 2-D array...
-							else if (dimensionType.getSelectedIndex() == 2){
-								sBasePlugin.removeDimensionByArrayDimension(0);
-								sBasePlugin.removeDimensionByArrayDimension(1);
-								Dimension dimX = new Dimension("i");
-								dimX.setSize((String) dimensionX.getSelectedItem());
-								dimX.setArrayDimension(0);
-								sBasePlugin.addDimension(dimX);
-								Dimension dimY = new Dimension("j");
-								dimY.setSize((String) dimensionY.getSelectedItem());
-								dimY.setArrayDimension(1);
-								sBasePlugin.addDimension(dimY);
-								
-//								AnnotationUtility.removeVectorSizeAnnotation(paramet);
-//								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
-//										(String) dimensionY.getSelectedItem());
 							}
-							// or a scalar.
-							else{
-								sBasePlugin.removeDimensionByArrayDimension(0);
-								sBasePlugin.removeDimensionByArrayDimension(1);
-								
-//								AnnotationUtility.removeVectorSizeAnnotation(paramet);
-//								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
-							}
+							
+//							paramet.setId(paramID.getText().trim());
+							paramet.setName(paramName.getText().trim());
+//							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
+//							// TODO: Make sure it writes correctly here and...
+//							// If the array to be stored is a 1-D array...
+//							if (dimensionType.getSelectedIndex() == 1){
+//								sBasePlugin.removeDimensionByArrayDimension(0);
+//								sBasePlugin.removeDimensionByArrayDimension(1);
+//								Dimension dimX = new Dimension("a");
+//								dimX.setSize((String) dimensionX.getSelectedItem());
+//								dimX.setArrayDimension(0);
+//								sBasePlugin.addDimension(dimX);
+//								}
+//							// a 2-D array...
+//							else if (dimensionType.getSelectedIndex() == 2){
+//								sBasePlugin.removeDimensionByArrayDimension(0);
+//								sBasePlugin.removeDimensionByArrayDimension(1);
+//								Dimension dimX = new Dimension("a");
+//								dimX.setSize((String) dimensionX.getSelectedItem());
+//								dimX.setArrayDimension(0);
+//								sBasePlugin.addDimension(dimX);
+//								Dimension dimY = new Dimension("b");
+//								dimY.setSize((String) dimensionY.getSelectedItem());
+//								dimY.setArrayDimension(1);
+//								sBasePlugin.addDimension(dimY);
+//							}
+//							// or a scalar.
+//							else{
+//								sBasePlugin.removeDimensionByArrayDimension(0);
+//								sBasePlugin.removeDimensionByArrayDimension(1);
+//							}
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}
@@ -834,7 +851,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							bioModel.createDirPort(paramet.getId(),(String)portDir.getSelectedItem());
 							paramet.setValue(val);
 							if (rateParam!=null) {
-								rateParam.setId(paramID.getText().trim()+"_"+GlobalConstants.RATE);
+								rateParam.setId(dimID[0].trim()+"_"+GlobalConstants.RATE);
 								rateParam.setValue(rateVal);
 							}
 							if (unit.equals("( none )")) {
@@ -895,7 +912,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							if (paramsOnly) {
 								int remove = -1;
 								for (int i = 0; i < parameterChanges.size(); i++) {
-									if (parameterChanges.get(i).split(" ")[0].equals(paramID.getText().trim())) {
+									if (parameterChanges.get(i).split(" ")[0].equals(dimID[0].trim())) {
 										remove = i;
 									}
 								}
@@ -907,10 +924,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							}
 							else {
-								SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected, paramID.getText().trim());
+								SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected, dimID[0].trim());
 								if (rateParam!=null) {
 									SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected+"_"+GlobalConstants.RATE, 
-											paramID.getText().trim()+"_"+GlobalConstants.RATE);
+											dimID[0].trim()+"_"+GlobalConstants.RATE);
 								}
 							}
 							if (paramet.getId().equals(GlobalConstants.STOICHIOMETRY_STRING)) {
@@ -946,47 +963,46 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								if (params[i].equals(selected)) index = i;
 							}
 							Parameter paramet = bioModel.getSBMLDocument().getModel().createParameter();
-							paramet.setId(paramID.getText().trim());
+							paramet.setId(dimID[0].trim());
 							paramet.setName(paramName.getText().trim());
+
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
-							//TODO: ...here.
-							// If the array to be stored is a 1-D array...
-							if (dimensionType.getSelectedIndex() == 1){
-								sBasePlugin.removeDimensionByArrayDimension(0);
-								sBasePlugin.removeDimensionByArrayDimension(1);
-								Dimension dimX = new Dimension("i");
-								dimX.setSize((String) dimensionX.getSelectedItem());
-								dimX.setArrayDimension(0);
+							paramet.setId(dimID[0].trim());
+							for(int i = 0; i<dimID.length-1; i++){
+								sBasePlugin.removeDimensionByArrayDimension(i);
+								Dimension dimX = new Dimension("d"+i);
+								dimX.setSize(dimID[i+1].replace("]", "").trim());
+								dimX.setArrayDimension(i);
 								sBasePlugin.addDimension(dimX);
-								
-//								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
-//								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
-								}
-							// a 2-D array...
-							else if (dimensionType.getSelectedIndex() == 2){
-								sBasePlugin.removeDimensionByArrayDimension(0);
-								sBasePlugin.removeDimensionByArrayDimension(1);
-								Dimension dimX = new Dimension("i");
-								dimX.setSize((String) dimensionX.getSelectedItem());
-								dimX.setArrayDimension(0);
-								sBasePlugin.addDimension(dimX);
-								Dimension dimY = new Dimension("j");
-								dimY.setSize((String) dimensionY.getSelectedItem());
-								dimY.setArrayDimension(1);
-								sBasePlugin.addDimension(dimY);
-								
-//								AnnotationUtility.removeVectorSizeAnnotation(paramet);
-//								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
-//										(String) dimensionY.getSelectedItem());
 							}
-							// or a scalar.
-							else{
-								sBasePlugin.removeDimensionByArrayDimension(0);
-								sBasePlugin.removeDimensionByArrayDimension(1);
-								
-//								AnnotationUtility.removeVectorSizeAnnotation(paramet);
-//								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
-							}
+//							//TODO: ...here.
+//							// If the array to be stored is a 1-D array...
+//							if (dimensionType.getSelectedIndex() == 1){
+//								sBasePlugin.removeDimensionByArrayDimension(0);
+//								sBasePlugin.removeDimensionByArrayDimension(1);
+//								Dimension dimX = new Dimension("a");
+//								dimX.setSize((String) dimensionX.getSelectedItem());
+//								dimX.setArrayDimension(0);
+//								sBasePlugin.addDimension(dimX);
+//								}
+//							// a 2-D array...
+//							else if (dimensionType.getSelectedIndex() == 2){
+//								sBasePlugin.removeDimensionByArrayDimension(0);
+//								sBasePlugin.removeDimensionByArrayDimension(1);
+//								Dimension dimX = new Dimension("a");
+//								dimX.setSize((String) dimensionX.getSelectedItem());
+//								dimX.setArrayDimension(0);
+//								sBasePlugin.addDimension(dimX);
+//								Dimension dimY = new Dimension("b");
+//								dimY.setSize((String) dimensionY.getSelectedItem());
+//								dimY.setArrayDimension(1);
+//								sBasePlugin.addDimension(dimY);
+//							}
+//							// or a scalar.
+//							else{
+//								sBasePlugin.removeDimensionByArrayDimension(0);
+//								sBasePlugin.removeDimensionByArrayDimension(1);
+//							}
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}
@@ -1040,7 +1056,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		if (value == JOptionPane.NO_OPTION) {
 			return selected;
 		}
-		return paramID.getText().trim();
+		return dimID[0].trim();
 	}
 
 	/**
@@ -1153,6 +1169,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				dimensionY.setEnabled(true);
 			}
 		}
+		// if the dimension type is changed
+//		else if (e.getActionCommand().equals("dimensionPress")) {
+//			DimensionWindow dimWin = new DimensionWindow(bioModel);
+//			dimWin.openGui();			
+//		}
 	}
 
 	@Override
