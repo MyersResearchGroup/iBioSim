@@ -131,6 +131,49 @@ public class SBMLutilities {
 		}
 		return false;
 	}
+	
+	/**
+	 * Checks the validity of a parameter
+	 * @param document The document to get the list of parameters
+	 * @param parameter The parameter that is being tested
+	 * @return If the parameter is on the list and is scalar
+	 */
+	public static boolean checkParameter(SBMLDocument document, String parameter){
+		Parameter p = (Parameter) getElementBySId(document, parameter);
+		ArraysSBasePlugin ABP = getArraysSBasePlugin(p);
+		if(ABP.getDimensionCount()!=0){
+			JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not a scalar.", "Invalid Parameter", JOptionPane.ERROR_MESSAGE);
+			return true;
+		}
+		if(p.getValue()%1!=0){
+			JOptionPane.showMessageDialog(Gui.frame, p.getId() + " does not have an integer value.", "Invalid Parameter", JOptionPane.ERROR_MESSAGE);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks the validity of a set of indices
+	 * @param index The indices that are being tested
+	 * @param variable The variable that dictates how many indices there should be based on its number of dimensions
+	 * @return If the number of indices matches the dimension count of the variable
+	 */
+	public static boolean checkIndices(String index, SBase variable){
+		String[] indices = index.split("\\[");
+		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
+		if(ABV.getDimensionCount()!=indices.length-1){
+			if(ABV.getDimensionCount()>indices.length-1){
+				JOptionPane.showMessageDialog(Gui.frame, "Too few indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			else{
+				JOptionPane.showMessageDialog(Gui.frame, "Too many indies.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+		}
+		//TODO Check index math
+		return false;
+	}
 
 	/**
 	 * Find invalid reaction variables in a formula
