@@ -668,9 +668,17 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, editorTitle, JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
-		String[] dimID = paramID.getText().split("\\[");
+		String[] dimID = new String[]{""};
 		while (error && value == JOptionPane.YES_OPTION) {
+			dimID = paramID.getText().split("\\[");
+			for(int i = 0; i<dimID.length-1;i++){
+				dimID[i+1]=dimID[i+1].replace("]", "");
+			}
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+			//TODO check dimensions if they are constant here.
+			for(int i = 0; i<dimID.length-1; i++){
+				error = SBMLutilities.checkParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
+			}
 			if (!error) {
 				if (isPlace | isBoolean) {
 					if (placeMarking.getSelectedIndex()==0) {
@@ -803,12 +811,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							paramet.setId(dimID[0].trim());
+							sBasePlugin.unsetListOfDimensions();
 							for(int i = 0; i<dimID.length-1; i++){
-								sBasePlugin.removeDimensionByArrayDimension(i);
-								Dimension dimX = new Dimension("d"+i);
+								Dimension dimX = sBasePlugin.createDimension("d"+i);
 								dimX.setSize(dimID[i+1].replace("]", "").trim());
 								dimX.setArrayDimension(i);
-								sBasePlugin.addDimension(dimX);
 							}
 							
 //							paramet.setId(paramID.getText().trim());
@@ -969,11 +976,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							paramet.setId(dimID[0].trim());
 							for(int i = 0; i<dimID.length-1; i++){
-								sBasePlugin.removeDimensionByArrayDimension(i);
-								Dimension dimX = new Dimension("d"+i);
+								Dimension dimX = sBasePlugin.createDimension("d"+i);
 								dimX.setSize(dimID[i+1].replace("]", "").trim());
 								dimX.setArrayDimension(i);
-								sBasePlugin.addDimension(dimX);
 							}
 //							//TODO: ...here.
 //							// If the array to be stored is a 1-D array...

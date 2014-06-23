@@ -426,14 +426,30 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
+		String[] dimID = new String[]{""};
 		boolean error = true;
-		String[] dimID = id.getText().split("\\[");
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
+			dimID = id.getText().split("\\[");
+			for(int i = 0; i<dimID.length-1;i++){
+				dimID[i+1]=dimID[i+1].replace("]", "");
+			}
+			String[] dex = iIndex.getText().split("\\[");
+			for(int i = 1; i<dex.length;i++){
+				dex[i]=dex[i].replace("]", "");
+			}
 			String addVar = "";
 			addVar = (String) ruleVar.getSelectedItem();
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), metaId, false);
-			
+			for(int i = 0; i<dimID.length-1; i++){
+				error = SBMLutilities.checkParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
+			}
+			if(ruleVar.isEnabled()){
+				SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
+				error = SBMLutilities.checkIndices(iIndex.getText(), variable);
+			}
+			//TODO check dimensions & indices count matches variable dimension count if variable is enabled
+			//the error messages will come from SBMLutilities. JOptionPane.showMessageDialog
 			if (ruleMath.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "Rule must have formula.", "Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -485,6 +501,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
+			//TODO: if(!error) Index checking, create for loop that checks math to be valid(use myParseFormula
 			if (!error) {
 				Rule r = (Rule) (SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId));
 				if (option.equals("OK")) {
@@ -573,12 +590,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					bioModel.makeUndoPoint();
 					
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+					sBasePlugin.unsetListOfDimensions();
 					for(int i = 0; i<dimID.length-1; i++){
-						sBasePlugin.removeDimensionByArrayDimension(i);
-						org.sbml.jsbml.ext.arrays.Dimension dimX = new org.sbml.jsbml.ext.arrays.Dimension("d"+i);
+						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension("d"+i);
 						dimX.setSize(dimID[i+1].replace("]", "").trim());
 						dimX.setArrayDimension(i);
-						sBasePlugin.addDimension(dimX);
 					}
 //					//TODO: Scott - change for Plugin writing
 //					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
@@ -610,13 +626,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 //						sBasePlugin.removeDimensionByArrayDimension(1);
 //					}
 					// Add the indices
-					String[] dex = iIndex.getText().split("\\[");
+					sBasePlugin.unsetListOfIndices();
 					for(int i = 0; i<dex.length-1; i++){
-						sBasePlugin.removeIndexByArrayDimension(i);
 						Index indexRule = new Index();
 					    indexRule.setArrayDimension(i);
 					    indexRule.setReferencedAttribute("variable");
-					    ASTNode indexMath = new ASTNode(dex[i+1].replace("]", "").trim());
+					    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1].replace("]", "").trim());
 					    indexRule.setMath(indexMath);
 					    sBasePlugin.addIndex(indexRule);
 					}
@@ -732,11 +747,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
 					for(int i = 0; i<dimID.length-1; i++){
-						sBasePlugin.removeDimensionByArrayDimension(i);
-						org.sbml.jsbml.ext.arrays.Dimension dimX = new org.sbml.jsbml.ext.arrays.Dimension("d"+i);
+						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension("d"+i);
 						dimX.setSize(dimID[i+1].replace("]", "").trim());
 						dimX.setArrayDimension(i);
-						sBasePlugin.addDimension(dimX);
 					}
 //					//TODO: Scott - change for Plugin writing
 //					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
@@ -769,13 +782,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 //					}
 					
 					// Add the indices
-					String[] dex = iIndex.getText().split("\\[");
 					for(int i = 0; i<dex.length-1; i++){
-						sBasePlugin.removeIndexByArrayDimension(i);
 						Index indexRule = new Index();
 					    indexRule.setArrayDimension(i);
 					    indexRule.setReferencedAttribute("variable");
-					    ASTNode indexMath = new ASTNode(dex[i+1].replace("]", "").trim());
+					    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1].replace("]", "").trim());
 					    indexRule.setMath(indexMath);
 					    sBasePlugin.addIndex(indexRule);
 					}
@@ -1310,29 +1321,16 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 //				dimensionY.setEnabled(true);
 //			}
 //		}
-//		// if the variable is changed
-//		else if (e.getSource() == ruleVar) {
-//			//TODO: Scott - change for Plugin reading
-//			
-//			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
-//			String[] sizes = new String[2];
-//			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
-//			if(sizes[0]==null){
-//				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
-//				if(sizes==null){
-//					iIndex.setEnabled(false);
-////					jIndex.setEnabled(false);
-//				}
-//				else{
-//					iIndex.setEnabled(true);
-////					jIndex.setEnabled(true);
-//				}
-//			}
-//			else{
-//				iIndex.setEnabled(true);
-////				jIndex.setEnabled(false);
-//			}
-//		}
+		// if the variable is changed
+		else if (e.getSource() == ruleVar) {
+			//TODO: Scott - change for Plugin reading
+			if(ruleVar.isEnabled()){
+				iIndex.setEnabled(true);
+			}
+			else{
+				iIndex.setEnabled(false);
+			}
+		}
 	}
 
 	@Override
