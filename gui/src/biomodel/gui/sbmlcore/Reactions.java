@@ -2113,7 +2113,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						} else {
 							// TODO: this needs to send product dimension when it exists
 							error = InitialAssignments.addInitialAssignment(bioModel, productId.getText().trim(), 
-									productStoichiometry.getText().trim(),"","");
+									productStoichiometry.getText().trim(),null);
 							val = 1.0;
 						}
 					}
@@ -2970,7 +2970,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						} else {
 							// TODO: need sot use reactant dimension when it exists
 							error = InitialAssignments.addInitialAssignment(bioModel, reactantId.getText().trim(), 
-									reactantStoichiometry.getText().trim(),"","");
+									reactantStoichiometry.getText().trim(),null);
 							val = 1.0;
 						}
 					}

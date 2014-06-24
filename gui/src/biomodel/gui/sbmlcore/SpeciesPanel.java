@@ -875,15 +875,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						species.setInitialConcentration(Double.parseDouble(initialField.getText().substring(1,initialField.getText().length()-1)));
 					} else {
 						boolean error;
-						if (dimensionType.getSelectedIndex()==0) {
-							error = InitialAssignments.addInitialAssignment(bioModel, species.getId(), initialField.getText().trim(),"","");
-						} else if (dimensionType.getSelectedIndex()==1) {
-							error = InitialAssignments.addInitialAssignment(bioModel, species.getId(), initialField.getText().trim(),
-									(String)dimensionX.getSelectedItem(),"");
-						} else {
-							error = InitialAssignments.addInitialAssignment(bioModel, species.getId(), initialField.getText().trim(),
-									(String)dimensionX.getSelectedItem(),(String)dimensionY.getSelectedItem());
-						}
+						error = InitialAssignments.addInitialAssignment(bioModel, species.getId(), initialField.getText().trim(),null);
 						if (error) return false;
 						species.setInitialAmount(Double.parseDouble("0.0"));
 					}
