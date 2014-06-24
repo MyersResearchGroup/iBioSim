@@ -485,23 +485,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						addCompSize = Double.parseDouble(compSize.getText().trim());
 					}
 					catch (Exception e1) {
-						if (dimensionType.getSelectedIndex()==0) {
-							error = InitialAssignments.addInitialAssignment(bioModel, compID.getText().trim(), 
-									compSize.getText().trim(),"","");
-						} else if (dimensionType.getSelectedIndex()==1) {
-							error = InitialAssignments.addInitialAssignment(bioModel, compID.getText().trim(), 
-									compSize.getText().trim(),(String)dimensionX.getSelectedItem(),"");
-						} else {
-							error = InitialAssignments.addInitialAssignment(bioModel, compID.getText().trim(), 
-									compSize.getText().trim(),(String)dimensionX.getSelectedItem(),
-									(String)dimensionY.getSelectedItem());
-						}
+						error = InitialAssignments.addInitialAssignment(bioModel, compID.getText().trim(), 
+								compSize.getText().trim(),null);
 						addCompSize = 1.0;
-						/*
-						JOptionPane.showMessageDialog(Gui.frame, "The compartment size must be a real number.", "Enter a Valid Size",
-								JOptionPane.ERROR_MESSAGE);
-						error = true;
-						*/
 					}
 				}
 			}

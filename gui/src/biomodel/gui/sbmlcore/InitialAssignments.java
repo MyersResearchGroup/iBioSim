@@ -26,6 +26,7 @@ import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
@@ -178,7 +179,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	/**
 	 * Try to add or edit initial assignments
 	 */
-	public static boolean addInitialAssignment(BioModel bioModel, String variable, String assignment, String dimX, String dimY) {
+	public static boolean addInitialAssignment(BioModel bioModel, String variable, String assignment, String[] dimensions) {
 		if (assignment.trim().equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is empty.", "Enter Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
@@ -194,7 +195,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 					"Multiple Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, assignment.trim(), "", false);
+		String [] dimIds = SBMLutilities.getDimensionIds(dimensions.length-1);
+		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), dimIds, assignment.trim(), "", false);
 		if (invalidVars.size() > 0) {
 			String invalid = "";
 			for (int i = 0; i < invalidVars.size(); i++) {
@@ -233,14 +235,13 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		ia.setVariable(variable);
 		ia.setMath(bioModel.addBooleans(assignment.trim()));
 		// TODO: Scott - change for Plugin writing
-		if (!dimX.equals("") && dimY.equals("")) {
-			AnnotationUtility.setVectorSizeAnnotation(ia, dimX);
-			AnnotationUtility.setRowIndexAnnotation(ia, "i");
-		} else if (!dimX.equals("") && !dimY.equals("")) {
-			AnnotationUtility.setMatrixSizeAnnotation(ia, dimX, dimY);
-			AnnotationUtility.setRowIndexAnnotation(ia, "i");
-			AnnotationUtility.setColIndexAnnotation(ia, "j");
-		} 
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ia);
+		sBasePlugin.unsetListOfDimensions();
+		for (int i = 1; i < dimensions.length; i++) {
+			org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
+			dim.setSize(dimensions[i]);
+			dim.setArrayDimension(i-1);
+		}
 		if (checkInitialAssignmentUnits(bioModel, ia)) {
 			error = true;
 		}

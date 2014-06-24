@@ -66,12 +66,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	
 	private JComboBox portDir;
 	
-	private JComboBox dimensionType, dimensionX, dimensionY;
-	
-	private JLabel dimensionTypeLabel, dimensionSizeLabel;
-	
-	private JButton dimensionButton;
-
 	private BioModel bioModel;
 
 	private Boolean paramsOnly;
@@ -292,35 +286,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel constLabel = new JLabel("Constant:");
 		
-		dimensionButton = new JButton();
-		dimensionButton.setText("Dimension");
-		dimensionButton.setActionCommand("dimensionPress");
-		dimensionButton.addActionListener(this);
-		
-		dimensionType = new JComboBox();
-		dimensionType.addItem("Scalar");
-		dimensionType.addItem("1-D Array");
-		dimensionType.addItem("2-D Array");
-		dimensionType.addActionListener(this);
-		dimensionX = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimensionX.addItem(param.getId());
-			}
-		}
-		dimensionY = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimensionY.addItem(param.getId());
-			}
-		}
-		dimensionX.setEnabled(false);
-		dimensionY.setEnabled(false);
-		dimensionTypeLabel = new JLabel("Array Dimension:");
-		dimensionSizeLabel = new JLabel("Array Size:");
-		
 		paramID = new JTextField();
 		paramName = new JTextField();
 		paramValue = new JTextField();
@@ -518,33 +483,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 				SBMLutilities.getArraysSBasePlugin(paramet);
 				String[] sizes = new String[2];
-				if(paramsOnly){
-					dimensionType.setEnabled(false);
-				}
 				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(paramet);
 				int size = sBasePlugin.getDimensionCount();
-//				//TODO: Make sure it reads correctly
-//				// If the array that is being read is a 1-D array...
-//				if(size==1){
-//					dimensionType.setSelectedIndex(1);
-//					dimensionX.setEnabled(true);
-//					dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
-//					dimensionY.setEnabled(false);
-//				}
-//				// a 2-D array...
-//				else if(size==2){
-//						dimensionType.setSelectedIndex(2);
-//						dimensionX.setEnabled(true);
-//						dimensionY.setEnabled(true);
-//						dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
-//						dimensionY.setSelectedItem(sBasePlugin.getDimension(1).getSize());
-//				}
-//				// or a scalar.
-//				else{
-//						dimensionType.setSelectedIndex(0);
-//						dimensionX.setEnabled(false);
-//						dimensionY.setEnabled(false);				
-//				}
 				
 				if (paramsOnly && parameters.getSelectedValue()!=null) {
 					if (((String) parameters.getSelectedValue()).contains("Modified")
@@ -712,17 +652,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						val = Double.parseDouble(paramValue.getText().trim());
 					}
 					catch (Exception e1) {
-						if (dimensionType.getSelectedIndex()==0) {
-							error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
-									paramValue.getText().trim(),"","");
-						} else if (dimensionType.getSelectedIndex()==1) {
-							error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
-									paramValue.getText().trim(),(String)dimensionX.getSelectedItem(),"");
-						} else {
-							error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
-									paramValue.getText().trim(),(String)dimensionX.getSelectedItem(),
-									(String)dimensionY.getSelectedItem());
-						}
+						error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
+								paramValue.getText().trim(),dimID);
 						val = 0.0;
 					}
 					if (rateParam!=null) {
@@ -730,18 +661,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							rateVal = Double.parseDouble(rateValue.getText().trim());
 						}
 						catch (Exception e1) {
-							if (dimensionType.getSelectedIndex()==0) {
-								error = InitialAssignments.addInitialAssignment(bioModel, 
-										dimID[0].trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),"","");
-							} else if (dimensionType.getSelectedIndex()==0) {
-								error = InitialAssignments.addInitialAssignment(bioModel, 
-										dimID[0].trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),
-										(String)dimensionX.getSelectedItem(),"");
-							} else{
-								error = InitialAssignments.addInitialAssignment(bioModel, 
-										dimID[0].trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),
-										(String)dimensionX.getSelectedItem(),(String)dimensionY.getSelectedItem());
-							}
+							error = InitialAssignments.addInitialAssignment(bioModel, 
+									dimID[0].trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),dimID);
 							rateVal = 0.0;
 						}
 					}
@@ -1158,27 +1079,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 			}
 		}
-		// if the dimension type is changed
-		else if (e.getSource() == dimensionType) {
-			int index = dimensionType.getSelectedIndex();
-			if (index == 0) {
-				dimensionX.setEnabled(false);
-				dimensionY.setEnabled(false);
-			}
-			else if (index == 1) {
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(false);
-			}
-			else if (index == 2) {
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(true);
-			}
-		}
-		// if the dimension type is changed
-//		else if (e.getActionCommand().equals("dimensionPress")) {
-//			DimensionWindow dimWin = new DimensionWindow(bioModel);
-//			dimWin.openGui();			
-//		}
 	}
 
 	@Override
