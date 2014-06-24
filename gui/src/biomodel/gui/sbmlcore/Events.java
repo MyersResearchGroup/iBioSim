@@ -584,7 +584,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				error = true;
 			}
 			else {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), eventTrigger.getText().trim(), "", false);
+				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, eventTrigger.getText().trim(), "", false);
 				if (invalidVars.size() > 0) {
 					String invalid = "";
 					for (int i = 0; i < invalidVars.size(); i++) {
@@ -609,7 +609,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					error = true;
 				}
 				if (!error) {
-					invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), eventDelay.getText().trim(), "", false);
+					invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, eventDelay.getText().trim(), "", false);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
 						for (int i = 0; i < invalidVars.size(); i++) {
@@ -635,7 +635,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				if (!error) {
-					invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), eventPriority.getText().trim(), "", false);
+					invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, eventPriority.getText().trim(), "", false);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
 						for (int i = 0; i < invalidVars.size(); i++) {
@@ -1539,7 +1539,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				error = true;
 			}
 			else {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(gcm.getSBMLDocument(), eqn.getText().trim(), "", false);
+				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(gcm.getSBMLDocument(), null, eqn.getText().trim(), "", false);
 				if (invalidVars.size() > 0) {
 					String invalid = "";
 					for (int i = 0; i < invalidVars.size(); i++) {

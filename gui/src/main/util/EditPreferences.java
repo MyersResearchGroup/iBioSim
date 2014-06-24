@@ -217,7 +217,7 @@ public class EditPreferences {
 		generalPrefsBordered.add(icons);
 		generalPrefsBordered.add(delete);
 		generalPrefsBordered.add(libsbmlFlatten);
-		generalPrefsBordered.add(infix);
+		//generalPrefsBordered.add(infix);
 		if (async) {
 			JPanel verCmdPanel = new JPanel(new GridLayout(1,2));
 			verCmdPanel.add(verCmdLabel);

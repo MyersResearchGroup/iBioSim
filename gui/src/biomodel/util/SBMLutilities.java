@@ -138,15 +138,19 @@ public class SBMLutilities {
 	 * @param parameter The parameter that is being tested
 	 * @return If the parameter is on the list and is scalar
 	 */
-	public static boolean checkParameter(SBMLDocument document, String parameter){
+	public static boolean checkSizeParameter(SBMLDocument document, String parameter){
 		Parameter p = (Parameter) getElementBySId(document, parameter);
 		ArraysSBasePlugin ABP = getArraysSBasePlugin(p);
-		if(ABP.getDimensionCount()!=0){
-			JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not a scalar.", "Invalid Parameter", JOptionPane.ERROR_MESSAGE);
+		if(!p.isConstant()){
+			JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not constant.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 		if(p.getValue()%1!=0){
-			JOptionPane.showMessageDialog(Gui.frame, p.getId() + " does not have an integer value.", "Invalid Parameter", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, p.getId() + " does not have an integer value.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
+			return true;
+		}
+		if(ABP.getDimensionCount()!=0){
+			JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not a scalar.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 		return false;
@@ -166,29 +170,36 @@ public class SBMLutilities {
 				JOptionPane.showMessageDialog(Gui.frame, "Too few indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
-			else{
-				JOptionPane.showMessageDialog(Gui.frame, "Too many indies.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
+			JOptionPane.showMessageDialog(Gui.frame, "Too many indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+			return true;
 		}
-		//TODO Check index math
+		//TODO Check index math - to do this, simply use myParseFormula and make sure does not return null
+		// This check is very important because otherwise invalid formulas will attempt to be added.
+		//TODO Must also check variables in math are constant OR a dimension id.
+		//TODO Math should evaluate within bounds of dimension of the object being indexed. 
+		//TODO Leandro may have some functions to help with this.
 		return false;
+	}
+	
+	public static String[] getDimensionIds(int count) {
+		String[] dimensionIds = new String[count];
+		for (int i = 0; i < count; i++) {
+			dimensionIds[i] = "d" + i;
+			// TODO: need to check here is this dimension id is safe to use, should not already be in use
+		}
+		return dimensionIds;
 	}
 
 	/**
 	 * Find invalid reaction variables in a formula
 	 */
-	public static ArrayList<String> getInvalidVariables(SBMLDocument document, String formula, String arguments, boolean isFunction) {
+	public static ArrayList<String> getInvalidVariables(SBMLDocument document, String[] dimensionIds, String formula, 
+			String arguments, boolean isFunction) {
 		ArrayList<String> validVars = new ArrayList<String>();
 		ArrayList<String> invalidVars = new ArrayList<String>();
 		Model model = document.getModel();
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			validVars.add(model.getFunctionDefinition(i).getId());
-		}
-		if (!isFunction) {
-			for (int i = 0; i < model.getSpeciesCount(); i++) {
-				validVars.add(model.getSpecies(i).getId());
-			}
 		}
 		if (isFunction) {
 			String[] args = arguments.split(" |\\,");
@@ -201,6 +212,9 @@ public class SBMLutilities {
 				if (document.getLevel() > 2 || model.getCompartment(i).getSpatialDimensions() != 0) {
 					validVars.add(model.getCompartment(i).getId());
 				}
+			}
+			for (int i = 0; i < model.getSpeciesCount(); i++) {
+				validVars.add(model.getSpecies(i).getId());
 			}
 			for (int i = 0; i < model.getParameterCount(); i++) {
 				validVars.add(model.getParameter(i).getId());
@@ -230,8 +244,13 @@ public class SBMLutilities {
 			for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
 				validVars.add(model.getListOfUnitDefinitions().get(i).getId());
 			}
+			if (dimensionIds != null) {
+				for (int i = 0; i < dimensionIds.length; i++) {
+					validVars.add(dimensionIds[i]);
+				}
+			}
 		}
-		String[] splitLaw = formula.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-|>|=|<|\\^|%|&|\\||!");
+		String[] splitLaw = formula.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-|>|=|<|\\^|%|&|\\||!|\\[|\\]");
 		for (int i = 0; i < splitLaw.length; i++) {
 			if (splitLaw[i].equals("abs") || splitLaw[i].equals("arccos") || splitLaw[i].equals("arccosh") || splitLaw[i].equals("arcsin")
 					|| splitLaw[i].equals("arcsinh") || splitLaw[i].equals("arctan") || splitLaw[i].equals("arctanh") || splitLaw[i].equals("arccot")
@@ -546,7 +565,8 @@ public class SBMLutilities {
 		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
 			formula = JSBML.formulaToString(mathFormula);
 		} else {
-			formula = myFormulaToStringInfix(mathFormula);
+			formula = JSBML.formulaToString(mathFormula);
+			//formula = myFormulaToStringInfix(mathFormula);
 		}
 		formula = formula.replaceAll("arccot", "acot");
 		formula = formula.replaceAll("arccoth", "acoth");
@@ -2604,6 +2624,25 @@ public class SBMLutilities {
 			}
 			returnVal += ")";
 			return returnVal;
+		} else if (math.getType() == ASTNode.Type.FUNCTION_SELECTOR) {
+			String returnVal = myFormulaToStringInfix(math.getChild(0));
+			for (int i=1; i < math.getChildCount(); i++) {
+				returnVal += "[" + myFormulaToStringInfix(math.getChild(i)) + "]";
+			}
+			return returnVal;			
+		} else if (math.getType() == ASTNode.Type.VECTOR) {
+			String returnVal = "{";
+			boolean first = true;
+			for (int i=0; i < math.getChildCount(); i++) {
+				if (first) {
+					first = false;
+				} else {
+					returnVal += ", ";
+				}
+				returnVal += myFormulaToStringInfix(math.getChild(i));
+			}
+			returnVal += "}";
+			return returnVal;			
 		} else {
 			if (math.isOperator()) {
 				System.out.println("Operator " + math.getName() + " is not currently supported.");
@@ -2744,6 +2783,10 @@ public class SBMLutilities {
 		} else if (math.getType() == ASTNode.Type.RELATIONAL_NEQ) {
 			return true;
 		} else if (math.getType() == ASTNode.Type.TIMES) {
+			return false;
+		} else if (math.getType() == ASTNode.Type.FUNCTION_SELECTOR) {
+			return false;
+		} else if (math.getType() == ASTNode.Type.VECTOR) {
 			return false;
 		} else {
 			if (math.isOperator()) {

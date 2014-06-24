@@ -7,13 +7,6 @@ import lpn.parser.Translator;
 import graph.Graph;
 //import lpn.parser.properties.BuildProperty;
 
-
-
-
-
-
-
-
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -151,13 +144,6 @@ import org.jlibsedml.*;
 import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
-
-
-
-
-
-
-
 
 import sbol.browser.SBOLBrowser;
 import sbol.util.SBOLUtility;

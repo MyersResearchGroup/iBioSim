@@ -23,7 +23,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.util.Utility;
@@ -75,11 +74,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 
 	private JComboBox ruleType, ruleVar;
 	
-	private JComboBox dimensionType, dimensionX, dimensionY;
-	
-	private JLabel dimensionTypeLabel, dimensionSizeLabel;
-	
-	private JTextField iIndex, jIndex;
+	private JTextField iIndex;
 	
 	private ModelEditor modelEditor;
 	
@@ -87,8 +82,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	
 	private JTextField ruleMath;
 
-	private String metaID;
-	
 	/* Create rule panel */
 	public Rules(BioModel gcm, ModelEditor modelEditor) {
 		super(new BorderLayout());
@@ -188,7 +181,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 * Creates a frame used to edit rules or create new ones.
 	 */
 	public String ruleEditor(String option,String metaId) {
-		this.metaID = metaId;
 		JPanel rulePanel = new JPanel(new BorderLayout());
 		JPanel firstLine = new JPanel();
 //		JPanel secondLine = new JPanel();
@@ -294,8 +286,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			} else {
 				onPort.setSelected(false);
 			}
-			String[] indecies = new String[2];
-			int size = sBasePlugin.getDimensionCount();
+//			String[] indecies = new String[2];
+//			int size = sBasePlugin.getDimensionCount();
 //			//TODO: Make sure it reads correctly
 //			// If the array that is being read is a 1-D array...
 //			if(size==1){
@@ -322,7 +314,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			String freshIndex = "";
 			for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
 				Index indie = sBasePlugin.getIndex(i);
-				freshIndex += "[" + indie.getMath() + "]";
+				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
 			iIndex.setText(freshIndex);
 //			indecies[0] = AnnotationUtility.parseRowIndexAnnotation(rule);
@@ -438,14 +430,15 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			for(int i = 1; i<dex.length;i++){
 				dex[i]=dex[i].replace("]", "");
 			}
+			String[] dimensionIds = SBMLutilities.getDimensionIds(dex.length-1);
 			String addVar = "";
 			addVar = (String) ruleVar.getSelectedItem();
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), metaId, false);
 			for(int i = 0; i<dimID.length-1; i++){
-				error = SBMLutilities.checkParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
+				error = SBMLutilities.checkSizeParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
 			}
 			if(ruleVar.isEnabled()){
-				SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
+				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
 				error = SBMLutilities.checkIndices(iIndex.getText(), variable);
 			}
 			//TODO check dimensions & indices count matches variable dimension count if variable is enabled
@@ -459,7 +452,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				error = true;
 			}
 			else {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), ruleMath.getText().trim(), "", false);
+				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), dimensionIds, ruleMath.getText().trim(), "", false);
 				if (invalidVars.size() > 0) {
 					String invalid = "";
 					for (int i = 0; i < invalidVars.size(); i++) {
@@ -592,7 +585,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
 					sBasePlugin.unsetListOfDimensions();
 					for(int i = 0; i<dimID.length-1; i++){
-						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension("d"+i);
+						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 						dimX.setSize(dimID[i+1].replace("]", "").trim());
 						dimX.setArrayDimension(i);
 					}
@@ -747,7 +740,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
 					for(int i = 0; i<dimID.length-1; i++){
-						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension("d"+i);
+						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 						dimX.setSize(dimID[i+1].replace("]", "").trim());
 						dimX.setArrayDimension(i);
 					}
