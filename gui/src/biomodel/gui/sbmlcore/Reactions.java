@@ -889,7 +889,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					else if (complex==null && production==null){
-						ArrayList<String> invalidKineticVars = getInvalidVariablesInReaction(kineticLaw.getText().trim(), true, "", false);
+						ArrayList<String> invalidKineticVars = getInvalidVariablesInReaction(kineticLaw.getText().trim(), null, true, "", false);
 						if (invalidKineticVars.size() > 0) {
 							String invalid = "";
 							for (int i = 0; i < invalidKineticVars.size(); i++) {
@@ -1344,7 +1344,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Find invalid reaction variables in a formula
 	 */
-	private ArrayList<String> getInvalidVariablesInReaction(String formula, boolean isReaction, String arguments, boolean isFunction) {
+	private ArrayList<String> getInvalidVariablesInReaction(String formula, String[] dimensionIds, boolean isReaction, String arguments, boolean isFunction) {
 		ArrayList<String> validVars = new ArrayList<String>();
 		ArrayList<String> invalidVars = new ArrayList<String>();
 		Model model = bioModel.getSBMLDocument().getModel();
@@ -1365,6 +1365,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			for (int i = 0; i < changedModifiers.size(); i++) {
 				validVars.add(changedModifiers.get(i).getSpecies());
+			}
+			if (dimensionIds != null) {
+				for (int i = 0; i < dimensionIds.length; i++) {
+					validVars.add(dimensionIds[i]);
+				}
 			}
 		}
 		else if (!isFunction) {
@@ -1413,7 +1418,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				validVars.add(model.getUnitDefinition(i).getId());
 			}
 		}
-		String[] splitLaw = formula.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-|>|=|<|\\^|%|&|\\||!");
+		String[] splitLaw = formula.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-|>|=|<|\\^|%|&|\\||!|\\[|\\]|\\{|\\}");
 		for (int i = 0; i < splitLaw.length; i++) {
 			if (splitLaw[i].equals("abs") || splitLaw[i].equals("arccos") || splitLaw[i].equals("arccosh") || splitLaw[i].equals("arcsin")
 					|| splitLaw[i].equals("arcsinh") || splitLaw[i].equals("arctan") || splitLaw[i].equals("arctanh") || splitLaw[i].equals("arccot")
@@ -2160,7 +2165,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					else {
-						ArrayList<String> invalidVars = getInvalidVariablesInReaction(productStoichiometry.getText().trim(), true, "", false);
+						ArrayList<String> invalidVars = getInvalidVariablesInReaction(productStoichiometry.getText().trim(), null, true, "", false);
 						if (invalidVars.size() > 0) {
 							String invalid = "";
 							for (int i = 0; i < invalidVars.size(); i++) {
@@ -3017,7 +3022,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					else {
-						ArrayList<String> invalidVars = getInvalidVariablesInReaction(reactantStoichiometry.getText().trim(), true, "", false);
+						ArrayList<String> invalidVars = getInvalidVariablesInReaction(reactantStoichiometry.getText().trim(), null, true, "", false);
 						if (invalidVars.size() > 0) {
 							String invalid = "";
 							for (int i = 0; i < invalidVars.size(); i++) {
