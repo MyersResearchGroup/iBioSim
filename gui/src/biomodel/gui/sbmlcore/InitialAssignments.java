@@ -194,7 +194,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 					"Multiple Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), assignment.trim(), "", false);
+		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, assignment.trim(), "", false);
 		if (invalidVars.size() > 0) {
 			String invalid = "";
 			for (int i = 0; i < invalidVars.size(); i++) {
@@ -341,7 +341,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is not valid.", "Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), assignment, "", false);
+		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, assignment, "", false);
 		if (invalidVars.size() > 0) {
 			String invalid = "";
 			for (int i = 0; i < invalidVars.size(); i++) {

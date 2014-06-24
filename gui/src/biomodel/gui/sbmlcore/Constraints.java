@@ -262,7 +262,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), consID.getText().trim(), selectedID, false);
 			if (!error) {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), consMath.getText().trim(), "", false);
+				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, consMath.getText().trim(), "", false);
 				if (consMath.getText().trim().equals("") || SBMLutilities.myParseFormula(consMath.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;

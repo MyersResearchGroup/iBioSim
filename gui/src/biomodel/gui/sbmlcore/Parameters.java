@@ -677,7 +677,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 			//TODO check dimensions if they are constant here.
 			for(int i = 0; i<dimID.length-1; i++){
-				error = SBMLutilities.checkParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
+				error = SBMLutilities.checkSizeParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
 			}
 			if (!error) {
 				if (isPlace | isBoolean) {

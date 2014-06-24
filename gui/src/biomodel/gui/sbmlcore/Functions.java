@@ -272,7 +272,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							error = true;
 						}
 						else {
-							ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), eqn.getText().trim(), args.getText().trim(), true);
+							ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, eqn.getText().trim(), args.getText().trim(), true);
 							if (invalidVars.size() > 0) {
 								String invalid = "";
 								for (int i = 0; i < invalidVars.size(); i++) {
