@@ -88,7 +88,6 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			ArrayList<String> ports, String selectedComponent, String oldPort, boolean paramsOnly, ModelEditor gcmEditor) {
 		
 		super(new GridLayout(ports.size() + 6, 1));
-		//JScrollPane scroll = new JScrollPane(this);
 		
 		this.selected = selected;
 		this.componentsList = componentsList;
