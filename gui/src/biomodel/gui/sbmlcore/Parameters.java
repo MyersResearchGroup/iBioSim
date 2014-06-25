@@ -564,17 +564,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			parametersPanel.add(type);
 		}
 		parametersPanel.add(onPortLabel);
-		parametersPanel.add(portDir);
-		
-//		parametersPanel.add(dimensionButton);
-		
-//		parametersPanel.add(dimensionTypeLabel);
-//		parametersPanel.add(dimensionType);
-//		parametersPanel.add(dimensionSizeLabel);
-//		parametersPanel.add(dimensionX);
-//		parametersPanel.add(new JLabel());
-//		parametersPanel.add(dimensionY);
-		
+		parametersPanel.add(portDir);		
 		parametersPanel.add(valueLabel);
 		if (isPlace || isBoolean) {
 			parametersPanel.add(placeMarking);
@@ -743,37 +733,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								dimX.setArrayDimension(i);
 							}
 							
-//							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
-//							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
-//							// TODO: Make sure it writes correctly here and...
-//							// If the array to be stored is a 1-D array...
-//							if (dimensionType.getSelectedIndex() == 1){
-//								sBasePlugin.removeDimensionByArrayDimension(0);
-//								sBasePlugin.removeDimensionByArrayDimension(1);
-//								Dimension dimX = new Dimension("a");
-//								dimX.setSize((String) dimensionX.getSelectedItem());
-//								dimX.setArrayDimension(0);
-//								sBasePlugin.addDimension(dimX);
-//								}
-//							// a 2-D array...
-//							else if (dimensionType.getSelectedIndex() == 2){
-//								sBasePlugin.removeDimensionByArrayDimension(0);
-//								sBasePlugin.removeDimensionByArrayDimension(1);
-//								Dimension dimX = new Dimension("a");
-//								dimX.setSize((String) dimensionX.getSelectedItem());
-//								dimX.setArrayDimension(0);
-//								sBasePlugin.addDimension(dimX);
-//								Dimension dimY = new Dimension("b");
-//								dimY.setSize((String) dimensionY.getSelectedItem());
-//								dimY.setArrayDimension(1);
-//								sBasePlugin.addDimension(dimY);
-//							}
-//							// or a scalar.
-//							else{
-//								sBasePlugin.removeDimensionByArrayDimension(0);
-//								sBasePlugin.removeDimensionByArrayDimension(1);
-//							}
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}
@@ -905,34 +865,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								dimX.setSize(dimID[i+1].replace("]", "").trim());
 								dimX.setArrayDimension(i);
 							}
-//							//TODO: ...here.
-//							// If the array to be stored is a 1-D array...
-//							if (dimensionType.getSelectedIndex() == 1){
-//								sBasePlugin.removeDimensionByArrayDimension(0);
-//								sBasePlugin.removeDimensionByArrayDimension(1);
-//								Dimension dimX = new Dimension("a");
-//								dimX.setSize((String) dimensionX.getSelectedItem());
-//								dimX.setArrayDimension(0);
-//								sBasePlugin.addDimension(dimX);
-//								}
-//							// a 2-D array...
-//							else if (dimensionType.getSelectedIndex() == 2){
-//								sBasePlugin.removeDimensionByArrayDimension(0);
-//								sBasePlugin.removeDimensionByArrayDimension(1);
-//								Dimension dimX = new Dimension("a");
-//								dimX.setSize((String) dimensionX.getSelectedItem());
-//								dimX.setArrayDimension(0);
-//								sBasePlugin.addDimension(dimX);
-//								Dimension dimY = new Dimension("b");
-//								dimY.setSize((String) dimensionY.getSelectedItem());
-//								dimY.setArrayDimension(1);
-//								sBasePlugin.addDimension(dimY);
-//							}
-//							// or a scalar.
-//							else{
-//								sBasePlugin.removeDimensionByArrayDimension(0);
-//								sBasePlugin.removeDimensionByArrayDimension(1);
-//							}
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}
