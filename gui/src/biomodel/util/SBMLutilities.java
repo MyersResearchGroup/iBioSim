@@ -165,6 +165,18 @@ public class SBMLutilities {
 	public static boolean checkIndices(String index, SBase variable){
 		String[] indices = index.split("\\[");
 		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
+		for(int i=0;i<indices.length-1;i++){
+			if(!indices[i+1].contains("]")){
+				JOptionPane.showMessageDialog(Gui.frame, "Need closing braket.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			//This creates a String[] with an undesirable extra element at the end of the list.
+			indices[i]=indices[i+1].replace("]", "");
+			if(indices[i].isEmpty()){
+				JOptionPane.showMessageDialog(Gui.frame, "Empty field.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+		}
 		if(ABV.getDimensionCount()!=indices.length-1){
 			if(ABV.getDimensionCount()>indices.length-1){
 				JOptionPane.showMessageDialog(Gui.frame, "Too few indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
@@ -172,6 +184,12 @@ public class SBMLutilities {
 			}
 			JOptionPane.showMessageDialog(Gui.frame, "Too many indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 			return true;
+		}
+		for(int i=0;i<indices.length-1;i++){
+			if(myParseFormula(indices[i])==null){
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
 		}
 		//TODO Check index math - to do this, simply use myParseFormula and make sure does not return null
 		// This check is very important because otherwise invalid formulas will attempt to be added.

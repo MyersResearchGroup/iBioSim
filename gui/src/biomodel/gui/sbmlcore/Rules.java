@@ -430,14 +430,17 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			for(int i = 1; i<dex.length;i++){
 				dex[i]=dex[i].replace("]", "");
 			}
-			String[] dimensionIds = SBMLutilities.getDimensionIds(dex.length-1);
+			String[] dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
 			String addVar = "";
 			addVar = (String) ruleVar.getSelectedItem();
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), metaId, false);
-			for(int i = 0; i<dimID.length-1; i++){
-				error = SBMLutilities.checkSizeParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
+			if(!error){
+				for(int i = 0; i<dimID.length-1; i++){
+					error = SBMLutilities.checkSizeParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
+					if(error)break;
+				}
 			}
-			if(ruleVar.isEnabled()){
+			if(ruleVar.isEnabled() && !error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
 				error = SBMLutilities.checkIndices(iIndex.getText(), variable);
 			}
