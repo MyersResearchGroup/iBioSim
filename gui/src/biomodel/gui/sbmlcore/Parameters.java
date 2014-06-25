@@ -614,10 +614,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			for(int i = 0; i<dimID.length-1;i++){
 				dimID[i+1]=dimID[i+1].replace("]", "");
 			}
+			String[] dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 			//TODO check dimensions if they are constant here.
-			for(int i = 0; i<dimID.length-1; i++){
-				error = SBMLutilities.checkSizeParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
+			if(!error){
+				for(int i = 0; i<dimID.length-1; i++){
+					error = SBMLutilities.checkSizeParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
+					if(error)break;
+				}
 			}
 			if (!error) {
 				if (isPlace | isBoolean) {
@@ -734,7 +738,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							paramet.setId(dimID[0].trim());
 							sBasePlugin.unsetListOfDimensions();
 							for(int i = 0; i<dimID.length-1; i++){
-								Dimension dimX = sBasePlugin.createDimension("d"+i);
+								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 								dimX.setSize(dimID[i+1].replace("]", "").trim());
 								dimX.setArrayDimension(i);
 							}
@@ -897,7 +901,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							paramet.setId(dimID[0].trim());
 							for(int i = 0; i<dimID.length-1; i++){
-								Dimension dimX = sBasePlugin.createDimension("d"+i);
+								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 								dimX.setSize(dimID[i+1].replace("]", "").trim());
 								dimX.setArrayDimension(i);
 							}
