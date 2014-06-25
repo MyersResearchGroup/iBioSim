@@ -485,6 +485,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						addCompSize = Double.parseDouble(compSize.getText().trim());
 					}
 					catch (Exception e1) {
+						// TODO: do not forget to send dimID as last parameter to this function
 						error = InitialAssignments.addInitialAssignment(bioModel, compID.getText().trim(), 
 								compSize.getText().trim(),null);
 						addCompSize = 1.0;
