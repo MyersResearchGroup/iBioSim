@@ -51,7 +51,6 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		this.bioModel = bioModel;
 		fbc = bioModel.getSBMLFBC();
 		
-		
 		bigPanel = new JPanel(new BorderLayout());
 		objectiveStringArray = new String[fbc.getListOfObjectives().size()];
 		activeObjective = fbc.getListOfObjectives().getActiveObjective();
