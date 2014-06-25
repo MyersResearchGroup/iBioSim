@@ -139,6 +139,10 @@ public class SBMLutilities {
 	 * @return If the parameter is on the list and is scalar
 	 */
 	public static boolean checkSizeParameter(SBMLDocument document, String parameter){
+		// TDDO: check size parameters
+		// TODO: have this take the dimension string parse it and make sure of form: <id>[<id>][<id>] etc.
+		// TODO: this function should retern the String[] of dimensions including 0 entry which is id of the object.
+		//document.getModel().getParameter(parameter);
 		Parameter p = (Parameter) getElementBySId(document, parameter);
 		ArraysSBasePlugin ABP = getArraysSBasePlugin(p);
 		if(!p.isConstant()){
@@ -166,6 +170,7 @@ public class SBMLutilities {
 		String[] indices = index.split("\\[");
 		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
 		for(int i=0;i<indices.length-1;i++){
+			// TODO: should end with "]" and not contain any other brackets.
 			if(!indices[i+1].contains("]")){
 				JOptionPane.showMessageDialog(Gui.frame, "Need closing braket.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -191,11 +196,10 @@ public class SBMLutilities {
 				return true;
 			}
 		}
-		//TODO Check index math - to do this, simply use myParseFormula and make sure does not return null
-		// This check is very important because otherwise invalid formulas will attempt to be added.
-		//TODO Must also check variables in math are constant OR a dimension id.
-		//TODO Math should evaluate within bounds of dimension of the object being indexed. 
-		//TODO Leandro may have some functions to help with this.
+		//TODO: check for invalid variables in the index 
+		
+		//TODO Must also check variables in math are constant OR a dimension id (Leandro will help)
+		//TODO Math should evaluate within bounds of dimension of the object being indexed. (Leandro will help)
 		return false;
 	}
 	
@@ -209,6 +213,8 @@ public class SBMLutilities {
 		return dimensionIds;
 	}
 
+	// TODO: create a new function, called displayInvalidVariables(String object, <match getInvalidVariables> )
+	
 	/**
 	 * Find invalid reaction variables in a formula
 	 */
