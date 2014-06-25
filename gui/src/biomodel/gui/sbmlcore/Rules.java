@@ -372,23 +372,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			id.setText(ruleId);
 		}
-		ruleType.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (((String) ruleType.getSelectedItem()).equals("Assignment")) {
-					assignRuleVar("");
-					ruleVar.setEnabled(true);
-				}
-				else if (((String) ruleType.getSelectedItem()).equals("Rate")) {
-					rateRuleVar("");
-					ruleVar.setEnabled(true);
-				}
-				else {
-					ruleVar.removeAllItems();
-					ruleVar.setEnabled(false);
-				}
-			}
-		});
+		ruleType.addActionListener(this);
 		firstLine.add(IDLabel);
 		firstLine.add(id);
 		firstLine.add(typeLabel);
@@ -1318,8 +1302,27 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 //			}
 //		}
 		// if the variable is changed
+		else if (e.getSource() == ruleType) {
+			if (((String) ruleType.getSelectedItem()).equals("Assignment")) {
+				assignRuleVar("");
+				ruleVar.setEnabled(true);
+			}
+			else if (((String) ruleType.getSelectedItem()).equals("Rate")) {
+				rateRuleVar("");
+				ruleVar.setEnabled(true);
+			}
+			else {
+				ruleVar.removeAllItems();
+				ruleVar.setEnabled(false);
+			}
+			if(ruleVar.isEnabled()){
+				iIndex.setEnabled(true);
+			}
+			else{
+				iIndex.setEnabled(false);
+			}
+		}
 		else if (e.getSource() == ruleVar) {
-			//TODO: Scott - change for Plugin reading
 			if(ruleVar.isEnabled()){
 				iIndex.setEnabled(true);
 			}
