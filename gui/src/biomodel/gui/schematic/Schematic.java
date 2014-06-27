@@ -1743,12 +1743,12 @@ public class Schematic extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(Gui.frame, "A Boolean variable can only be explicitly connected to components.");
 			graph.buildGraph();
 			return;
-		} else if((numComponents==0) && (graph.getCellType(source)==GlobalConstants.PLACE ||
+		} /* else if((numComponents==0) && (graph.getCellType(source)==GlobalConstants.PLACE ||
 				graph.getCellType(target)==GlobalConstants.PLACE)) {
 			JOptionPane.showMessageDialog(Gui.frame, "A place variable can only be explicitly connected to components.");
 			graph.buildGraph();
 			return;
-		} else if(graph.getCellType(source)==GlobalConstants.COMPARTMENT ||
+		} */ else if(graph.getCellType(source)==GlobalConstants.COMPARTMENT ||
 				graph.getCellType(target)==GlobalConstants.COMPARTMENT) {
 			JOptionPane.showMessageDialog(Gui.frame, "A compartment cannot be connected to other objects.");
 			graph.buildGraph();
