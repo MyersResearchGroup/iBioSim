@@ -133,31 +133,59 @@ public class SBMLutilities {
 	}
 	
 	/**
-	 * Checks the validity of a parameter
+	 * Checks the validity of parameters
 	 * @param document The document to get the list of parameters
-	 * @param parameter The parameter that is being tested
-	 * @return If the parameter is on the list and is scalar
+	 * @param entryText The parameters that are being tested
+	 * @return If the parameters are on the list, scalar, and constant.
 	 */
-	public static boolean checkSizeParameter(SBMLDocument document, String parameter){
+	public static String[] checkSizeParameters(SBMLDocument document, String entryText){
 		// TDDO: check size parameters
 		// TODO: have this take the dimension string parse it and make sure of form: <id>[<id>][<id>] etc.
-		// TODO: this function should retern the String[] of dimensions including 0 entry which is id of the object.
+		// TODO: this function should return the String[] of dimensions including 0 entry which is id of the object.
 		//document.getModel().getParameter(parameter);
-		Parameter p = (Parameter) getElementBySId(document, parameter);
-		ArraysSBasePlugin ABP = getArraysSBasePlugin(p);
-		if(!p.isConstant()){
-			JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not constant.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
-			return true;
+		if(!entryText.endsWith("]")){
+			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
-		if(p.getValue()%1!=0){
-			JOptionPane.showMessageDialog(Gui.frame, p.getId() + " does not have an integer value.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
-			return true;
+		String [] retText = entryText.split("\\[");
+		if(retText[0].isEmpty()){
+			JOptionPane.showMessageDialog(Gui.frame, "Need ID.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
-		if(ABP.getDimensionCount()!=0){
-			JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not a scalar.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
-			return true;
+		for(int i = 1; i<retText.length;i++){
+			if(!retText[i].contains("]")){
+				JOptionPane.showMessageDialog(Gui.frame, "Too many open brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			if(retText[i].length()-1 != retText[i].indexOf("]")){
+				JOptionPane.showMessageDialog(Gui.frame, "Too many closing brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			retText[i] = retText[i].replace("]", "");
+			if(retText[i].isEmpty()){
+				JOptionPane.showMessageDialog(Gui.frame, "A pair of brakets are blank.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			if(getElementBySId(document, retText[i].trim()) == null){
+				JOptionPane.showMessageDialog(Gui.frame, retText[i].trim()+ " is not a parameter.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			Parameter p = (Parameter) getElementBySId(document, retText[i].trim());
+			ArraysSBasePlugin ABP = getArraysSBasePlugin(p);
+			if(!p.isConstant()){
+				JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not constant.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			if(p.getValue()%1!=0){
+				JOptionPane.showMessageDialog(Gui.frame, p.getId() + " does not have an integer value.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			if(ABP.getDimensionCount()!=0){
+				JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not a scalar.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 		}
-		return false;
+		return retText;
 	}
 	
 	/**
@@ -166,41 +194,48 @@ public class SBMLutilities {
 	 * @param variable The variable that dictates how many indices there should be based on its number of dimensions
 	 * @return If the number of indices matches the dimension count of the variable
 	 */
-	public static boolean checkIndices(String index, SBase variable){
+	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds){
+		if(!index.endsWith("]")){
+			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
 		String[] indices = index.split("\\[");
 		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
-		for(int i=0;i<indices.length-1;i++){
-			// TODO: should end with "]" and not contain any other brackets.
-			if(!indices[i+1].contains("]")){
-				JOptionPane.showMessageDialog(Gui.frame, "Need closing braket.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
-				return true;
+		for(int i=1;i<indices.length;i++){
+			if(!indices[i].contains("]")){
+				JOptionPane.showMessageDialog(Gui.frame, "Too many open brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			if(indices[i].length()-1 != indices[i].indexOf("]")){
+				JOptionPane.showMessageDialog(Gui.frame, "Too many closing brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+				return null;
 			}
 			//This creates a String[] with an undesirable extra element at the end of the list.
-			indices[i]=indices[i+1].replace("]", "");
+			indices[i]=indices[i].replace("]", "");
 			if(indices[i].isEmpty()){
-				JOptionPane.showMessageDialog(Gui.frame, "Empty field.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
-				return true;
+				JOptionPane.showMessageDialog(Gui.frame, "A pair of brakets are blank.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			if(myParseFormula(indices[i])==null){
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			if(displayinvalidVariables("Indices", document, dimensionIds, indices[i], "", false)){
+				return null;
 			}
 		}
 		if(ABV.getDimensionCount()!=indices.length-1){
 			if(ABV.getDimensionCount()>indices.length-1){
 				JOptionPane.showMessageDialog(Gui.frame, "Too few indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
-				return true;
+				return null;
 			}
 			JOptionPane.showMessageDialog(Gui.frame, "Too many indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
-			return true;
-		}
-		for(int i=0;i<indices.length-1;i++){
-			if(myParseFormula(indices[i])==null){
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
+			return null;
 		}
 		//TODO: check for invalid variables in the index 
-		
 		//TODO Must also check variables in math are constant OR a dimension id (Leandro will help)
 		//TODO Math should evaluate within bounds of dimension of the object being indexed. (Leandro will help)
-		return false;
+		return indices;
 	}
 	
 	public static String[] getDimensionIds(int count) {
@@ -212,8 +247,67 @@ public class SBMLutilities {
 		}
 		return dimensionIds;
 	}
-
 	// TODO: create a new function, called displayInvalidVariables(String object, <match getInvalidVariables> )
+	/**
+	 * Displays the invalid variables
+	 * @param object This is the prefix of the string if it is not a function
+	 */
+	public static boolean displayinvalidVariables(String object, SBMLDocument document, String[] dimensionIds, String formula, 
+			String arguments, boolean isFunction){
+		if(!isFunction){
+			ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, dimensionIds, formula, arguments, isFunction);
+			if (invalidVars.size() > 0) {
+				String invalid = "";
+				for (int i = 0; i < invalidVars.size(); i++) {
+					if (i == invalidVars.size() - 1) {
+						invalid += invalidVars.get(i);
+					}
+					else {
+						invalid += invalidVars.get(i) + "\n";
+					}
+				}
+				String message;
+				message = object + " contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
+				JTextArea messageArea = new JTextArea(message);
+				messageArea.setLineWrap(true);
+				messageArea.setWrapStyleWord(true);
+				messageArea.setEditable(false);
+				JScrollPane scrolls = new JScrollPane();
+				scrolls.setMinimumSize(new Dimension(300, 300));
+				scrolls.setPreferredSize(new Dimension(300, 300));
+				scrolls.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+		}
+		else{
+			ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, dimensionIds, formula, arguments, isFunction);
+			if (invalidVars.size() > 0) {
+				String invalid = "";
+				for (int i = 0; i < invalidVars.size(); i++) {
+					if (i == invalidVars.size() - 1) {
+						invalid += invalidVars.get(i);
+					}
+					else {
+						invalid += invalidVars.get(i) + "\n";
+					}
+				}
+				String message;
+				message = "Function can only contain the arguments or other function calls.\n\n" + "Illegal variables:\n" + invalid;
+				JTextArea messageArea = new JTextArea(message);
+				messageArea.setLineWrap(true);
+				messageArea.setWrapStyleWord(true);
+				messageArea.setEditable(false);
+				JScrollPane scrolls = new JScrollPane();
+				scrolls.setMinimumSize(new Dimension(300, 300));
+				scrolls.setPreferredSize(new Dimension(300, 300));
+				scrolls.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(Gui.frame, scrolls, "Illegal Variables", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * Find invalid reaction variables in a formula

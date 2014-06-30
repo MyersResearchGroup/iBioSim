@@ -440,6 +440,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						}			
 					}
 				}
+				//TODO reading?
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 				String dimInID = "";
 				for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
@@ -481,10 +482,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				} else {
 					portDir.setSelectedItem(GlobalConstants.INTERNAL);
 				}
-				SBMLutilities.getArraysSBasePlugin(paramet);
-				String[] sizes = new String[2];
-				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(paramet);
-				int size = sBasePlugin.getDimensionCount();
 				
 				if (paramsOnly && parameters.getSelectedValue()!=null) {
 					if (((String) parameters.getSelectedValue()).contains("Modified")
@@ -599,19 +596,16 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		String[] dimID = new String[]{""};
+		String[] dimensionIds = new String[]{""};
 		while (error && value == JOptionPane.YES_OPTION) {
-			dimID = paramID.getText().split("\\[");
-			for(int i = 0; i<dimID.length-1;i++){
-				dimID[i+1]=dimID[i+1].replace("]", "");
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), paramID.getText());
+			error = (dimID == null);
+			if(!error){
+				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
 			}
-			String[] dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 			//TODO check dimensions if they are constant here.
 			if(!error){
-				for(int i = 0; i<dimID.length-1; i++){
-					error = SBMLutilities.checkSizeParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
-					if(error)break;
-				}
+				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 			}
 			if (!error) {
 				if (isPlace | isBoolean) {
@@ -724,6 +718,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 							
+							//TODO edit?
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							paramet.setId(dimID[0].trim());
 							sBasePlugin.unsetListOfDimensions();
@@ -857,9 +852,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Parameter paramet = bioModel.getSBMLDocument().getModel().createParameter();
 							paramet.setId(dimID[0].trim());
 							paramet.setName(paramName.getText().trim());
-
+							//TODO add?
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
-							paramet.setId(dimID[0].trim());
 							for(int i = 0; i<dimID.length-1; i++){
 								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 								dimX.setSize(dimID[i+1].replace("]", "").trim());
@@ -918,7 +912,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		if (value == JOptionPane.NO_OPTION) {
 			return selected;
 		}
-		return dimID[0].trim();
+		return paramID.getText().split("\\[")[0].trim();
 	}
 
 	/**
