@@ -602,9 +602,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			error = (dimID == null);
 			if(!error){
 				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
-			}
-			//TODO check dimensions if they are constant here.
-			if(!error){
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 			}
 			if (!error) {
