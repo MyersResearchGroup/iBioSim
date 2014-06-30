@@ -18,10 +18,14 @@ import javax.swing.JTextField;
 import main.Gui;
 import main.util.MutableBoolean;
 
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Index;
+
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.fba.FBAObjective;
@@ -44,7 +48,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 
 	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
 	
-	private JTextField conviIndex, convjIndex;
+	private JTextField conviIndex;
 
 	private SBOLField sbolField;
 	
@@ -85,8 +89,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		modelEditorPanel.add(modelID);
 		modelEditorPanel.add(modelNameLabel);
 		modelEditorPanel.add(modelName);
-		conviIndex = new JTextField(10);
-		convjIndex = new JTextField(10);
+		conviIndex = new JTextField(20);
 		if (bioModel.getSBMLDocument().getLevel() > 2) {
 			JLabel substanceUnitsLabel = new JLabel("Substance Units:");
 			JLabel timeUnitsLabel = new JLabel("Time Units:");
@@ -171,33 +174,19 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				extentUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getExtentUnits());
 				conversionFactor.setSelectedItem(bioModel.getSBMLDocument().getModel().getConversionFactor());
 				
-				String[] indices= new String[2];
 				// TODO: Scott - change for Plugin reading
-				indices[0] = AnnotationUtility.parseConversionRowIndexAnnotation(model);
-				if(indices[0]!=null){
-					indices[1] = AnnotationUtility.parseConversionColIndexAnnotation(model);
-					if(indices[1]==null){
-						conviIndex.setText(indices[0]);
-						convjIndex.setText("");
-					}
-					else{
-						conviIndex.setText(indices[0]);
-						convjIndex.setText(indices[1]);
-					}
+				String freshIndex = "";
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
+				for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+					Index indie = sBasePlugin.getIndex(i);
+					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 				}
-				else{
-					conviIndex.setText("");
-					convjIndex.setText("");
-				}
+				conviIndex.setText(freshIndex);
 			}
 			
 			fbaoButton = new JButton("Edit Objectives");
 			fbaoButton.setActionCommand("fluxObjective");
 			fbaoButton.addActionListener(this);
-			
-			JPanel conversionFactorIndices = new JPanel(new GridLayout(1,2));
-			conversionFactorIndices.add(conviIndex);
-			conversionFactorIndices.add(convjIndex);
 			
 			modelEditorPanel.add(substanceUnitsLabel);
 			modelEditorPanel.add(substanceUnits);
@@ -214,7 +203,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(conversionFactorLabel);
 			modelEditorPanel.add(conversionFactor);
 			modelEditorPanel.add(new JLabel("Conversion Factor Indices:"));
-			modelEditorPanel.add(conversionFactorIndices);
+			modelEditorPanel.add(conviIndex);
 			modelEditorPanel.add(new JLabel("SBOL DNA Component:"));
 			modelEditorPanel.add(sbolField);
 			modelEditorPanel.add(new JLabel("Flux Objective: "));
@@ -225,9 +214,16 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value != JOptionPane.YES_OPTION)
 			sbolField.resetRemovedBioSimURI();
+		String[] dex = new String[]{""};
+		String[] dimensionIds = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
+			if(!error&&!conversionFactor.getSelectedItem().equals("( none )")){
+				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)conversionFactor.getSelectedItem());
+				dex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds);
+				error = (dex==null);
+			}
 			// Add SBOL annotation to SBML model itself
 			if (!error) {
 				if (sbolField.getSBOLURIs().size() > 0) {
@@ -283,25 +279,26 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					else {
 						bioModel.getSBMLDocument().getModel().setExtentUnits((String) extentUnits.getSelectedItem());
 					}
+					//TODO indices writing here
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
 					if (conversionFactor.getSelectedItem().equals("( none )")) {
 						bioModel.getSBMLDocument().getModel().unsetConversionFactor();
+						sBasePlugin.unsetListOfIndices();
 					}
 					else {
 						bioModel.getSBMLDocument().getModel().setConversionFactor((String) conversionFactor.getSelectedItem());
-
+						sBasePlugin.unsetListOfIndices();
+						for(int i = 0; i<dex.length-1; i++){
+							Index indexRule = new Index();
+						    indexRule.setArrayDimension(i);
+						    indexRule.setReferencedAttribute("variable");
+						    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1].replace("]", "").trim());
+						    indexRule.setMath(indexMath);
+						    sBasePlugin.addIndex(indexRule);
+						}
 					}
 					bioModel.getSBMLDocument().getModel().setName(modelName.getText());
-					// TODO: Scott - change for Plugin writing
-					if (!conviIndex.getText().equals("")) {
-						AnnotationUtility.setConversionRowIndexAnnotation(model,conviIndex.getText());
-					} else {
-						AnnotationUtility.removeConversionRowIndexAnnotation(model);
-					} 
-					if (!convjIndex.getText().equals("")) {
-						AnnotationUtility.setConversionColIndexAnnotation(model,convjIndex.getText());
-					} else {						
-						AnnotationUtility.removeConversionColIndexAnnotation(model);
-					}
+					
 				}
 				dirty.setValue(true);
 				bioModel.makeUndoPoint();
@@ -327,29 +324,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			FBAObjective fbaObjective = new FBAObjective(bioModel);
 			fbaObjective.openGui();
 		}
-		// if the variable is changed
-		else if (e.getSource() == conversionFactor) {
-			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)conversionFactor.getSelectedItem());
-			String[] sizes = new String[2];
-			// TODO: Scott - change for Plugin reading
-			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
-			if(sizes[0]==null){
-				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
-				if(sizes==null){
-					conviIndex.setEnabled(false);
-					convjIndex.setEnabled(false);
-				}
-				else{
-					conviIndex.setEnabled(true);
-					convjIndex.setEnabled(true);
-				}
-			}
-			else{
-				conviIndex.setEnabled(true);
-				convjIndex.setEnabled(false);
-			}
-		}
-
 	}
 
 	@Override
