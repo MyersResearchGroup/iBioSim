@@ -196,28 +196,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			return true;
 		}
 		String [] dimIds = SBMLutilities.getDimensionIds(dimensions.length-1);
-		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), dimIds, assignment.trim(), "", false);
-		if (invalidVars.size() > 0) {
-			String invalid = "";
-			for (int i = 0; i < invalidVars.size(); i++) {
-				if (i == invalidVars.size() - 1) {
-					invalid += invalidVars.get(i);
-				}
-				else {
-					invalid += invalidVars.get(i) + "\n";
-				}
-			}
-			String message;
-			message = "Rule contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
-			JTextArea messageArea = new JTextArea(message);
-			messageArea.setLineWrap(true);
-			messageArea.setWrapStyleWord(true);
-			messageArea.setEditable(false);
-			JScrollPane scrolls = new JScrollPane();
-			scrolls.setMinimumSize(new Dimension(300, 300));
-			scrolls.setPreferredSize(new Dimension(300, 300));
-			scrolls.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
+		if(SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimIds, assignment.trim(), "", false)){
 			return true;
 		}
 		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(assignment.trim()))) {
@@ -342,28 +321,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is not valid.", "Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, assignment, "", false);
-		if (invalidVars.size() > 0) {
-			String invalid = "";
-			for (int i = 0; i < invalidVars.size(); i++) {
-				if (i == invalidVars.size() - 1) {
-					invalid += invalidVars.get(i);
-				}
-				else {
-					invalid += invalidVars.get(i) + "\n";
-				}
-			}
-			String message;
-			message = "Rule contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
-			JTextArea messageArea = new JTextArea(message);
-			messageArea.setLineWrap(true);
-			messageArea.setWrapStyleWord(true);
-			messageArea.setEditable(false);
-			JScrollPane scrolls = new JScrollPane();
-			scrolls.setMinimumSize(new Dimension(300, 300));
-			scrolls.setPreferredSize(new Dimension(300, 300));
-			scrolls.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
+		if(SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), null, assignment, "", false)){
 			return true;
 		}
 		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment))) {
