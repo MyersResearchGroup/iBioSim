@@ -201,37 +201,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		ruleVar.setEnabled(false);
 		ruleVar.addActionListener(this);
 		JCheckBox onPort = new JCheckBox();
-//		dimensionType = new JComboBox();
-//		dimensionType.addItem("Scalar");
-//		dimensionType.addItem("1-D Array");
-//		dimensionType.addItem("2-D Array");
-//		dimensionType.addActionListener(this);
-//		dimensionX = new JComboBox();
-//		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-//			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-//			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-//				dimensionX.addItem(param.getId());
-//			}
-//		}
-//		dimensionY = new JComboBox();
-//		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-//			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-//			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-//				dimensionY.addItem(param.getId());
-//			}
-//		}
-//		dimensionX.setEnabled(false);
-//		dimensionY.setEnabled(false);
 		iIndex = new JTextField(20);
-//		jIndex = new JTextField(10);
 		iIndex.setEnabled(true);
-//		jIndex.setEnabled(true);
-//		dimensionTypeLabel = new JLabel("Array Dimension:");
-//		dimensionSizeLabel = new JLabel("Array Size:");
 		
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
 			Rule rule = (Rule)SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId);			
+			//TODO dimensionID size reading
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(rule);
 			String dimInID = "";
 			for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
@@ -286,30 +262,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			} else {
 				onPort.setSelected(false);
 			}
-//			String[] indecies = new String[2];
-//			int size = sBasePlugin.getDimensionCount();
-//			//TODO: Make sure it reads correctly
-//			// If the array that is being read is a 1-D array...
-//			if(size==1){
-//				dimensionType.setSelectedIndex(1);
-//				dimensionX.setEnabled(true);
-//				dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
-//				dimensionY.setEnabled(false);
-//			}
-//			// a 2-D array...
-//			else if(size==2){
-//					dimensionType.setSelectedIndex(2);
-//					dimensionX.setEnabled(true);
-//					dimensionY.setEnabled(true);
-//					dimensionX.setSelectedItem(sBasePlugin.getDimension(0).getSize());
-//					dimensionY.setSelectedItem(sBasePlugin.getDimension(1).getSize());
-//			}
-//			// or a scalar.
-//			else{
-//					dimensionType.setSelectedIndex(0);
-//					dimensionX.setEnabled(false);
-//					dimensionY.setEnabled(false);				
-//			}
 			// TODO: Scott - work indicies
 			String freshIndex = "";
 			for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
@@ -317,38 +269,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
 			iIndex.setText(freshIndex);
-//			indecies[0] = AnnotationUtility.parseRowIndexAnnotation(rule);
-//			if(indecies[0]!=null){
-//				indecies[1] = AnnotationUtility.parseColIndexAnnotation(rule);
-//				if(indecies[1]==null){
-//					iIndex.setText(indecies[0]);
-//					jIndex.setText("");
-//				}
-//				else{
-//					iIndex.setText(indecies[0]);
-//					jIndex.setText(indecies[1]);
-//				}
-//			}
-//			else{
-//				iIndex.setText("");
-//				jIndex.setText("");
-//			}
-//			int indexSize = sBasePlugin.getIndexCount();
-//			// If the array that is being read is a 1-D array...
-//			if(indexSize == 1){
-//				iIndex.setText(sBasePlugin.getIndex(0).toString());
-//				jIndex.setText("");
-//			}
-//			// a 2-D array...
-//			else if (indexSize == 2){
-//				iIndex.setText(sBasePlugin.getIndex(0).toString());
-//				jIndex.setText(sBasePlugin.getIndex(1).toString());
-//			}
-//			// or a scalar.
-//			else{
-//				iIndex.setText("");
-//				jIndex.setText("");
-//			}
 		}
 		else {
 			// Field for annotating rules with SBOL DNA components
@@ -379,18 +299,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		firstLine.add(ruleType);
 		firstLine.add(onPortLabel);
 		firstLine.add(onPort);
-//		secondLine.add(dimensionTypeLabel);
-//		secondLine.add(dimensionType);
-//		secondLine.add(dimensionSizeLabel);
-//		secondLine.add(dimensionX);
-//		secondLine.add(dimensionY);
 		thirdLine.add(varLabel);
 		thirdLine.add(ruleVar);
 		thirdLine.add(new JLabel("Indices:"));
 		thirdLine.add(iIndex);
-//		thirdLine.add(jIndex);
 		topPanel.add(firstLine);
-//		topPanel.add(secondLine);
 		topPanel.add(thirdLine);
 		mathPanel.add(ruleLabel);
 		mathPanel.add(ruleMath);
@@ -402,31 +315,27 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
+		//TODO don't forget the whiles
 		String[] dimID = new String[]{""};
+		String[] dex = new String[]{""};
+		String[] dimensionIds = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
-			dimID = id.getText().split("\\[");
-			for(int i = 0; i<dimID.length-1;i++){
-				dimID[i+1]=dimID[i+1].replace("]", "");
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), id.getText());
+			if(dimID!=null){
+				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), metaId, false);
 			}
-			String[] dex = iIndex.getText().split("\\[");
-			for(int i = 1; i<dex.length;i++){
-				dex[i]=dex[i].replace("]", "");
+			else{
+				error = true;
 			}
-			String[] dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
 			String addVar = "";
 			addVar = (String) ruleVar.getSelectedItem();
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), metaId, false);
-			if(!error){
-				for(int i = 0; i<dimID.length-1; i++){
-					error = SBMLutilities.checkSizeParameter(bioModel.getSBMLDocument(), dimID[i+1].trim());
-					if(error)break;
-				}
-			}
 			if(ruleVar.isEnabled() && !error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
-				error = SBMLutilities.checkIndices(iIndex.getText(), variable);
+				dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds);
+				error = (dex==null);
 			}
 			//TODO check dimensions & indices count matches variable dimension count if variable is enabled
 			//the error messages will come from SBMLutilities. JOptionPane.showMessageDialog
@@ -439,30 +348,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				error = true;
 			}
 			else {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), dimensionIds, ruleMath.getText().trim(), "", false);
-				if (invalidVars.size() > 0) {
-					String invalid = "";
-					for (int i = 0; i < invalidVars.size(); i++) {
-						if (i == invalidVars.size() - 1) {
-							invalid += invalidVars.get(i);
-						}
-						else {
-							invalid += invalidVars.get(i) + "\n";
-						}
-					}
-					String message;
-					message = "Rule contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
-					JTextArea messageArea = new JTextArea(message);
-					messageArea.setLineWrap(true);
-					messageArea.setWrapStyleWord(true);
-					messageArea.setEditable(false);
-					JScrollPane scrolls = new JScrollPane();
-					scrolls.setMinimumSize(new Dimension(300, 300));
-					scrolls.setPreferredSize(new Dimension(300, 300));
-					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
-					error = true;
-				}
+				error = SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimensionIds, ruleMath.getText().trim(), "", false);
 				if (!error) {
 					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(ruleMath.getText().trim()));
 				}
@@ -521,6 +407,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						error = checkAssignmentRuleUnits(r);
 						addStr = addVar + " = " + bioModel.removeBooleans(r.getMath());
 					}
+					if(!error){
+						error = (dimID==null || dex==null);
+					}
 //					String oldVal = rul[index];
 					rul[index] = addStr;
 					if (!error) {
@@ -569,80 +458,26 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					rules.setSelectedIndex(index);
 					bioModel.makeUndoPoint();
 					
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-					sBasePlugin.unsetListOfDimensions();
-					for(int i = 0; i<dimID.length-1; i++){
-						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-						dimX.setSize(dimID[i+1].replace("]", "").trim());
-						dimX.setArrayDimension(i);
+					//TODO edit things
+					if(!error){
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+						sBasePlugin.unsetListOfDimensions();
+						for(int i = 0; i<dimID.length-1; i++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+							dimX.setSize(dimID[i+1].replace("]", "").trim());
+							dimX.setArrayDimension(i);
+						}
+						// Add the indices
+						sBasePlugin.unsetListOfIndices();
+						for(int i = 0; i<dex.length-1; i++){
+							Index indexRule = new Index();
+							indexRule.setArrayDimension(i);
+							indexRule.setReferencedAttribute("variable");
+							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1].replace("]", "").trim());
+							indexRule.setMath(indexMath);
+							sBasePlugin.addIndex(indexRule);
+						}
 					}
-//					//TODO: Scott - change for Plugin writing
-//					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-//					// If the array to be stored is a 1-D array...
-//					if (dimensionType.getSelectedIndex() == 1){
-//						sBasePlugin.removeDimensionByArrayDimension(0);
-//						sBasePlugin.removeDimensionByArrayDimension(1);
-//						org.sbml.jsbml.ext.arrays.Dimension dimX = new org.sbml.jsbml.ext.arrays.Dimension("i");
-//						dimX.setSize((String) dimensionX.getSelectedItem());
-//						dimX.setArrayDimension(0);
-//						sBasePlugin.addDimension(dimX);
-//						}
-//					// a 2-D array...
-//					else if (dimensionType.getSelectedIndex() == 2){
-//						sBasePlugin.removeDimensionByArrayDimension(0);
-//						sBasePlugin.removeDimensionByArrayDimension(1);
-//						org.sbml.jsbml.ext.arrays.Dimension dimX = new org.sbml.jsbml.ext.arrays.Dimension("i");
-//						dimX.setSize((String) dimensionX.getSelectedItem());
-//						dimX.setArrayDimension(0);
-//						sBasePlugin.addDimension(dimX);
-//						org.sbml.jsbml.ext.arrays.Dimension dimY = new org.sbml.jsbml.ext.arrays.Dimension("j");
-//						dimY.setSize((String) dimensionY.getSelectedItem());
-//						dimY.setArrayDimension(1);
-//						sBasePlugin.addDimension(dimY);
-//					}
-//					// or a scalar.
-//					else{
-//						sBasePlugin.removeDimensionByArrayDimension(0);
-//						sBasePlugin.removeDimensionByArrayDimension(1);
-//					}
-					// Add the indices
-					sBasePlugin.unsetListOfIndices();
-					for(int i = 0; i<dex.length-1; i++){
-						Index indexRule = new Index();
-					    indexRule.setArrayDimension(i);
-					    indexRule.setReferencedAttribute("variable");
-					    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1].replace("]", "").trim());
-					    indexRule.setMath(indexMath);
-					    sBasePlugin.addIndex(indexRule);
-					}
-//					if (!iIndex.getText().equals("")) {
-//						AnnotationUtility.setRowIndexAnnotation(r,iIndex.getText());
-//					} else {
-//						AnnotationUtility.removeRowIndexAnnotation(r);
-//					}
-//					if (!jIndex.getText().equals("")) {
-//						AnnotationUtility.setColIndexAnnotation(r,jIndex.getText());
-//					} else {
-//						AnnotationUtility.removeColIndexAnnotation(r);
-//					}
-//					sBasePlugin.removeIndexByArrayDimension(0);
-//					sBasePlugin.removeIndexByArrayDimension(1);
-//					if(iIndex.isEnabled()){
-//						Index xdex = new Index();
-//						xdex.setReferencedAttribute("variable");
-//						xdex.setArrayDimension(0);
-//						ASTNode xdexMath = new ASTNode(iIndex.getText());
-//						xdex.setMath(xdexMath);
-//						sBasePlugin.addIndex(xdex);
-//					}
-//					if(jIndex.isEnabled()){
-//						Index ydex = new Index();
-//						ydex.setReferencedAttribute("variable");
-//						ydex.setArrayDimension(1);
-//						ASTNode xdexMath = new ASTNode(jIndex.getText());
-//						ydex.setMath(xdexMath);
-//						sBasePlugin.addIndex(ydex);
-//					}
 				}
 				else {
 					String[] rul = new String[rules.getModel().getSize()];
@@ -724,81 +559,26 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							port.setMetaIdRef(r.getMetaId());
 						}
 					}
-					
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-					for(int i = 0; i<dimID.length-1; i++){
-						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-						dimX.setSize(dimID[i+1].replace("]", "").trim());
-						dimX.setArrayDimension(i);
+					//TODO adding
+					if(!error){
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+						for(int i = 0; i<dimID.length-1; i++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+							dimX.setSize(dimID[i+1].replace("]", "").trim());
+							dimX.setArrayDimension(i);
+						}
+
+						// Add the indices
+						for(int i = 0; i<dex.length-1; i++){
+							Index indexRule = new Index();
+							indexRule.setArrayDimension(i);
+							indexRule.setReferencedAttribute("variable");
+							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1].replace("]", "").trim());
+							indexRule.setMath(indexMath);
+							sBasePlugin.addIndex(indexRule);
+						}
 					}
-//					//TODO: Scott - change for Plugin writing
-//					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-//					// If the array to be stored is a 1-D array...
-//					if (dimensionType.getSelectedIndex() == 1){
-//						sBasePlugin.removeDimensionByArrayDimension(0);
-//						sBasePlugin.removeDimensionByArrayDimension(1);
-//						org.sbml.jsbml.ext.arrays.Dimension dimX = new org.sbml.jsbml.ext.arrays.Dimension("i");
-//						dimX.setSize((String) dimensionX.getSelectedItem());
-//						dimX.setArrayDimension(0);
-//						sBasePlugin.addDimension(dimX);
-//						}
-//					// a 2-D array...
-//					else if (dimensionType.getSelectedIndex() == 2){
-//						sBasePlugin.removeDimensionByArrayDimension(0);
-//						sBasePlugin.removeDimensionByArrayDimension(1);
-//						org.sbml.jsbml.ext.arrays.Dimension dimX = new org.sbml.jsbml.ext.arrays.Dimension("i");
-//						dimX.setSize((String) dimensionX.getSelectedItem());
-//						dimX.setArrayDimension(0);
-//						sBasePlugin.addDimension(dimX);
-//						org.sbml.jsbml.ext.arrays.Dimension dimY = new org.sbml.jsbml.ext.arrays.Dimension("j");
-//						dimY.setSize((String) dimensionY.getSelectedItem());
-//						dimY.setArrayDimension(1);
-//						sBasePlugin.addDimension(dimY);
-//					}
-//					// or a scalar.
-//					else{
-//						sBasePlugin.removeDimensionByArrayDimension(0);
-//						sBasePlugin.removeDimensionByArrayDimension(1);
-//					}
-					
-					// Add the indices
-					for(int i = 0; i<dex.length-1; i++){
-						Index indexRule = new Index();
-					    indexRule.setArrayDimension(i);
-					    indexRule.setReferencedAttribute("variable");
-					    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1].replace("]", "").trim());
-					    indexRule.setMath(indexMath);
-					    sBasePlugin.addIndex(indexRule);
-					}
-//					if (!iIndex.getText().equals("")) {
-//						AnnotationUtility.setRowIndexAnnotation(r,iIndex.getText());
-//					} else {
-//						AnnotationUtility.removeRowIndexAnnotation(r);
-//					}
-//					if (!jIndex.getText().equals("")) {
-//						AnnotationUtility.setColIndexAnnotation(r,jIndex.getText());
-//					} else {
-//						AnnotationUtility.removeColIndexAnnotation(r);
-//					}
-//					sBasePlugin.removeIndexByArrayDimension(0);
-//					sBasePlugin.removeIndexByArrayDimension(1);
-//					if(iIndex.isEnabled()){
-//						Index xdex = new Index();
-//						xdex.setReferencedAttribute("variable");
-//						xdex.setArrayDimension(0);
-//						ASTNode xdexMath = new ASTNode(iIndex.getText());
-//						xdex.setMath(xdexMath);
-//						sBasePlugin.addIndex(xdex);
-//					}
-//					if(jIndex.isEnabled()){
-//						Index ydex = new Index();
-//						ydex.setReferencedAttribute("variable");
-//						ydex.setArrayDimension(1);
-//						ASTNode xdexMath = new ASTNode(jIndex.getText());
-//						ydex.setMath(xdexMath);
-//						sBasePlugin.addIndex(ydex);
-//					}
-					//					updateRules(rul);
+//					updateRules(rul);
 					rules.setListData(rul);
 					rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (bioModel.getSBMLDocument().getModel().getRuleCount() == 1) {
@@ -827,7 +607,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		if (value == JOptionPane.NO_OPTION) {
 			return metaId;
 		}
-		return dimID[0].trim();
+		return id.getText().split("\\[")[0].trim();
 	}
 	
 	/**
@@ -1285,22 +1065,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == removeRule) {
 			removeRule();
 		}
-//		// if the dimension type is changed
-//		else if (e.getSource() == dimensionType) {
-//			int index = dimensionType.getSelectedIndex();
-//			if (index == 0) {
-//				dimensionX.setEnabled(false);
-//				dimensionY.setEnabled(false);
-//			}
-//			else if (index == 1) {
-//				dimensionX.setEnabled(true);
-//				dimensionY.setEnabled(false);
-//			}
-//			else if (index == 2) {
-//				dimensionX.setEnabled(true);
-//				dimensionY.setEnabled(true);
-//			}
-//		}
 		// if the variable is changed
 		else if (e.getSource() == ruleType) {
 			if (((String) ruleType.getSelectedItem()).equals("Assignment")) {
