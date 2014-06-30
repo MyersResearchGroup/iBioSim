@@ -143,7 +143,7 @@ public class SBMLutilities {
 		// TODO: have this take the dimension string parse it and make sure of form: <id>[<id>][<id>] etc.
 		// TODO: this function should return the String[] of dimensions including 0 entry which is id of the object.
 		//document.getModel().getParameter(parameter);
-		if(!entryText.endsWith("]")){
+		if(!entryText.endsWith("]")&&entryText.contains("[")){
 			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
@@ -195,7 +195,7 @@ public class SBMLutilities {
 	 * @return If the number of indices matches the dimension count of the variable
 	 */
 	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds){
-		if(!index.endsWith("]")){
+		if(!index.endsWith("]")&&index.contains("[")){
 			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
