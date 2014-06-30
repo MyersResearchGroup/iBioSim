@@ -594,9 +594,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, editorTitle, JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		boolean error = true;
 		String[] dimID = new String[]{""};
 		String[] dimensionIds = new String[]{""};
+		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), paramID.getText());
 			error = (dimID == null);
