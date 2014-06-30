@@ -272,30 +272,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							error = true;
 						}
 						else {
-							ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, eqn.getText().trim(), args.getText().trim(), true);
-							if (invalidVars.size() > 0) {
-								String invalid = "";
-								for (int i = 0; i < invalidVars.size(); i++) {
-									if (i == invalidVars.size() - 1) {
-										invalid += invalidVars.get(i);
-									}
-									else {
-										invalid += invalidVars.get(i) + "\n";
-									}
-								}
-								String message;
-								message = "Function can only contain the arguments or other function calls.\n\n" + "Illegal variables:\n" + invalid;
-								JTextArea messageArea = new JTextArea(message);
-								messageArea.setLineWrap(true);
-								messageArea.setWrapStyleWord(true);
-								messageArea.setEditable(false);
-								JScrollPane scrolls = new JScrollPane();
-								scrolls.setMinimumSize(new Dimension(300, 300));
-								scrolls.setPreferredSize(new Dimension(300, 300));
-								scrolls.setViewportView(messageArea);
-								JOptionPane.showMessageDialog(Gui.frame, scrolls, "Illegal Variables", JOptionPane.ERROR_MESSAGE);
-								error = true;
-							}
+							error = SBMLutilities.displayinvalidVariables("Event delay", bioModel.getSBMLDocument(), null, eqn.getText().trim(), args.getText().trim(), true);
 						}
 					} catch (HeadlessException e) {
 						// TODO Auto-generated catch block
