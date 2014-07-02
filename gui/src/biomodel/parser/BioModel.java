@@ -6422,16 +6422,16 @@ public class BioModel {
 				while (i < layout.getListOfAdditionalGraphicalObjects().size()) {
 					GeneralGlyph g = (GeneralGlyph) layout.getListOfAdditionalGraphicalObjects().get(i);
 					if (g.getReference() == null && g.getMetaidRef() == null) {
-						g.removeFromParent();
+						layout.removeGeneralGlyph(g);
 					} else if (g.isSetReference() && SBMLutilities.getElementBySId(model, g.getReference())==null) {
 						if (SBMLutilities.getElementByMetaId(model, g.getReference())==null) { 
-							g.removeFromParent();
+							layout.removeGeneralGlyph(g);
 						} else {
 							g.setMetaidRef(g.getReference());
 							g.unsetReference();
 						}
 					} else if (g.isSetMetaidRef() && SBMLutilities.getElementByMetaId(model, g.getMetaidRef())==null) {
-						g.removeFromParent();
+						layout.removeGeneralGlyph(g);
 					} else {
 						i++;
 					}
@@ -6772,7 +6772,7 @@ public class BioModel {
 			
 			document.enablePackage(org.sbml.libsbml.LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 			// TODO: Hack to allow flatten to work as it crashes with arrays namespace
-			//document.enablePackage(org.sbml.libsbml.ArraysExtension.getXmlnsL3V1V1(), "arrays", false);
+			document.enablePackage(org.sbml.libsbml.ArraysExtension.getXmlnsL3V1V1(), "arrays", false);
 			document.enablePackage(org.sbml.libsbml.CompExtension.getXmlnsL3V1V1(), "comp", true);
 			document.setPackageRequired("comp", true); 
 			// following line causes unsatisfied link error with libsbml when attempting to save hierarchical models on windows machine

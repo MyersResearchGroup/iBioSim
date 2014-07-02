@@ -30,6 +30,7 @@ import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.xml.XMLNode;
 
