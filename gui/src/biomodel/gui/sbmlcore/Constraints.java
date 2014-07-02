@@ -54,10 +54,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	private JButton addConstraint, removeConstraint, editConstraint;
 
 	private JList constraints; // JList of initial assignments
-	
-	private JComboBox dimensionType, dimensionX, dimensionY;
-	
-	private JLabel dimensionTypeLabel, dimensionSizeLabel;
 
 	private BioModel bioModel;
 
@@ -115,7 +111,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	public String constraintEditor(String option,String selected) {
 		JPanel constraintPanel = new JPanel();
 		JPanel consPanel = new JPanel(new BorderLayout());
-		JPanel dimensionPanel = new JPanel(new GridLayout(3,2));
 		JPanel southPanel = new JPanel(new BorderLayout());
 		JPanel IDPanel = new JPanel();
 		JPanel mathPanel = new JPanel(new BorderLayout());
@@ -124,32 +119,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		JLabel mathLabel = new JLabel("Constraint:");
 		JLabel messageLabel = new JLabel("Messsage:");
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
-		JTextField consID = new JTextField(12);
-		
-		dimensionType = new JComboBox();
-		dimensionType.addItem("Scalar");
-		dimensionType.addItem("1-D Array");
-		dimensionType.addItem("2-D Array");
-		dimensionType.addActionListener(this);
-		dimensionX = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimensionX.addItem(param.getId());
-			}
-		}
-		dimensionY = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimensionY.addItem(param.getId());
-			}
-		}
-		dimensionX.setEnabled(false);
-		dimensionY.setEnabled(false);
-		dimensionTypeLabel = new JLabel("Array Dimension:");
-		dimensionSizeLabel = new JLabel("Array Size:");
-		
+		JTextField consID = new JTextField(12);		
 		JTextArea consMath = new JTextArea(3,30);
 		consMath.setLineWrap(true);
 		consMath.setWrapStyleWord(true);
@@ -178,7 +148,13 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 					consMath.setText(bioModel.removeBooleans(c.get(i).getMath()));
 					if (c.get(i).isSetMetaId()) {
 						selectedID = c.get(i).getMetaId();
-						consID.setText(selectedID);
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c.get(Cindex));
+						String dimInID = "";
+						for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
+							dimInID += "[" + dimX.getSize() + "]";
+						}
+						consID.setText(selectedID+dimInID);
 					}
 					if (c.get(i).isSetMessage()) {
 						String message;
@@ -199,31 +175,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 					} else {
 						onPort.setSelected(false);
 					}
+					break;
 				}
-			}
-			String[] sizes = new String[2];
-			// TODO: Scott - change for Plugin reading
-			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(c.get(Cindex));
-			if(sizes[0]==null){
-				sizes = AnnotationUtility.parseMatrixSizeAnnotation(c.get(Cindex));
-				if(sizes==null){
-					dimensionType.setSelectedIndex(0);
-					dimensionX.setEnabled(false);
-					dimensionY.setEnabled(false);
-				}
-				else{
-					dimensionType.setSelectedIndex(2);
-					dimensionX.setEnabled(true);
-					dimensionY.setEnabled(true);
-					dimensionX.setSelectedItem(sizes[0]);
-					dimensionY.setSelectedItem(sizes[1]);
-				}
-			}
-			else{
-				dimensionType.setSelectedIndex(1);
-				dimensionX.setEnabled(true);
-				dimensionX.setSelectedItem(sizes[0]);
-				dimensionY.setEnabled(false);
 			}
 		}
 		else {
@@ -243,14 +196,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		mathPanel.add(scroll,"Center");
 		messagePanel.add(messageLabel,"North");
 		messagePanel.add(scroll2,"Center");
-		dimensionPanel.add(dimensionTypeLabel);
-		dimensionPanel.add(dimensionType);
-		dimensionPanel.add(dimensionSizeLabel);
-		dimensionPanel.add(dimensionX);
-		dimensionPanel.add(new JLabel());
-		dimensionPanel.add(dimensionY);
 		consPanel.add(IDPanel,"North");
-		consPanel.add(dimensionPanel,"South");
 		southPanel.add(consPanel,"North");
 		southPanel.add(mathPanel,"Center");
 		southPanel.add(messagePanel,"South");
@@ -260,10 +206,16 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		int value = JOptionPane.showOptionDialog(Gui.frame, constraintPanel, "Constraint Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
+		String[] dimID = new String[]{""};
+		String[] dimensionIds = new String[]{""};
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), consID.getText().trim(), selectedID, false);
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), consID.getText());
+			error = (dimID == null);
+			if(!error){
+				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+			}
 			if (!error) {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, consMath.getText().trim(), "", false);
 				if (consMath.getText().trim().equals("") || SBMLutilities.myParseFormula(consMath.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
@@ -277,29 +229,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 					error = true;
 				}
 				else {
-					if (invalidVars.size() > 0) {
-						String invalid = "";
-						for (int i = 0; i < invalidVars.size(); i++) {
-							if (i == invalidVars.size() - 1) {
-								invalid += invalidVars.get(i);
-							}
-							else {
-								invalid += invalidVars.get(i) + "\n";
-							}
-						}
-						String message;
-						message = "Constraint contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
-						JTextArea messageArea = new JTextArea(message);
-						messageArea.setLineWrap(true);
-						messageArea.setWrapStyleWord(true);
-						messageArea.setEditable(false);
-						JScrollPane scrolls = new JScrollPane();
-						scrolls.setMinimumSize(new Dimension(300, 300));
-						scrolls.setPreferredSize(new Dimension(300, 300));
-						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
-						error = true;
-					}
+					error = SBMLutilities.displayinvalidVariables("Constraint", bioModel.getSBMLDocument(), dimensionIds, consMath.getText().trim(), "", false);
 				}
 				if (!error) {
 					if (option.equals("OK")) {
@@ -350,18 +280,12 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						constraints.setSelectedIndex(index);
 						bioModel.makeUndoPoint();
 						// TODO: Scott - change for Plugin writing
-						if (dimensionType.getSelectedIndex() == 1){
-							AnnotationUtility.removeMatrixSizeAnnotation(c);
-							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
-						}
-						else if (dimensionType.getSelectedIndex() == 2){
-							AnnotationUtility.removeVectorSizeAnnotation(c);
-							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
-									(String) dimensionY.getSelectedItem());
-						}
-						else{
-							AnnotationUtility.removeVectorSizeAnnotation(c);
-							AnnotationUtility.removeMatrixSizeAnnotation(c);
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
+						sBasePlugin.unsetListOfDimensions();
+						for(int i = 0; i<dimID.length-1; i++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+							dimX.setSize(dimID[i+1]);
+							dimX.setArrayDimension(i);
 						}
 					}
 					else {
@@ -410,18 +334,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							constraints.setSelectedIndex(index);
 						}
 						// TODO: Scott - change for Plugin writing
-						if (dimensionType.getSelectedIndex() == 1){
-							AnnotationUtility.removeMatrixSizeAnnotation(c);
-							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
-						}
-						else if (dimensionType.getSelectedIndex() == 2){
-							AnnotationUtility.removeVectorSizeAnnotation(c);
-							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
-									(String) dimensionY.getSelectedItem());
-						}
-						else{
-							AnnotationUtility.removeVectorSizeAnnotation(c);
-							AnnotationUtility.removeMatrixSizeAnnotation(c);
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
+						for(int i = 0; i<dimID.length-1; i++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+							dimX.setSize(dimID[i+1]);
+							dimX.setArrayDimension(i);
 						}
 					}
 					modelEditor.setDirty(true);
@@ -525,22 +442,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				else {
 					constraints.setSelectedIndex(index - 1);
 				}
-			}
-		}
-		// if the dimension type is changed
-		else if (e.getSource() == dimensionType) {
-			int index = dimensionType.getSelectedIndex();
-			if (index == 0) {
-				dimensionX.setEnabled(false);
-				dimensionY.setEnabled(false);
-			}
-			else if (index == 1) {
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(false);
-			}
-			else if (index == 2) {
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(true);
 			}
 		}
 	}
