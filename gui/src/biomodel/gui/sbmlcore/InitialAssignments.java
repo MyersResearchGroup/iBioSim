@@ -27,6 +27,7 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
@@ -220,6 +221,10 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
 			dim.setSize(dimensions[i]);
 			dim.setArrayDimension(i-1);
+			Index index = sBasePlugin.createIndex();
+			index.setReferencedAttribute("symbol");
+			index.setArrayDimension(i-1);
+			index.setMath(SBMLutilities.myParseFormula(dimIds[i-1]));
 		}
 		if (checkInitialAssignmentUnits(bioModel, ia)) {
 			error = true;

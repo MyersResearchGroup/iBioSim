@@ -337,32 +337,32 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds);
 				error = (dex==null);
 			}
-			//TODO check dimensions & indices count matches variable dimension count if variable is enabled
-			//the error messages will come from SBMLutilities. JOptionPane.showMessageDialog
-			if (ruleMath.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Rule must have formula.", "Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			else if (SBMLutilities.myParseFormula(ruleMath.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "Rule formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			else {
-				error = SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimensionIds, ruleMath.getText().trim(), "", false);
-				if (!error) {
-					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(ruleMath.getText().trim()));
+			if (!error) {
+				if (ruleMath.getText().trim().equals("")) {
+					JOptionPane.showMessageDialog(Gui.frame, "Rule must have formula.", "Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
+					error = true;
 				}
-				if (!error) {
-					if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
-							SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
-						if (!SBMLutilities.returnsBoolean(bioModel.addBooleans(ruleMath.getText().trim()), bioModel.getSBMLDocument().getModel())) {
-							JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a Boolean.", "Boolean Expected", JOptionPane.ERROR_MESSAGE);
-							error = true;
-						}
-					} else {
-						if (SBMLutilities.returnsBoolean(bioModel.addBooleans(ruleMath.getText().trim()), bioModel.getSBMLDocument().getModel())) {
-							JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
-							error = true;
+				else if (SBMLutilities.myParseFormula(ruleMath.getText().trim()) == null) {
+					JOptionPane.showMessageDialog(Gui.frame, "Rule formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+					error = true;
+				}
+				else {
+					error = SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimensionIds, ruleMath.getText().trim(), "", false);
+					if (!error) {
+						error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(ruleMath.getText().trim()));
+					}
+					if (!error) {
+						if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
+								SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
+							if (!SBMLutilities.returnsBoolean(bioModel.addBooleans(ruleMath.getText().trim()), bioModel.getSBMLDocument().getModel())) {
+								JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a Boolean.", "Boolean Expected", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
+						} else {
+							if (SBMLutilities.returnsBoolean(bioModel.addBooleans(ruleMath.getText().trim()), bioModel.getSBMLDocument().getModel())) {
+								JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
 						}
 					}
 				}
