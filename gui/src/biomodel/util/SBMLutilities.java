@@ -2245,7 +2245,7 @@ public class SBMLutilities {
 		else {
 			unitDefVar = parameter.getDerivedUnitDefinition();
 		}
-		if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
+		if (unitDef != null && unitDefVar != null && !UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
 			return true;
 		}
 		return false;
@@ -2483,6 +2483,7 @@ public class SBMLutilities {
 	}
 	
 	public static ASTNode removeBoolean(ASTNode math,String boolVar) {
+		if (math==null) return null;
 		if (math.getType() == ASTNode.Type.RELATIONAL_EQ) {
 			if (math.getLeftChild().getName()!=null && math.getLeftChild().getName().equals(boolVar)) {
 				return deepCopy(math.getLeftChild());
