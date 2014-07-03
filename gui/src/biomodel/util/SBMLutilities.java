@@ -682,10 +682,11 @@ public class SBMLutilities {
 		String formula;
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
-			formula = JSBML.formulaToString(mathFormula);
+			//formula = JSBML.formulaToString(mathFormula);
+			formula = myFormulaToStringInfix(mathFormula);
 		} else {
-			formula = JSBML.formulaToString(mathFormula);
-			//formula = myFormulaToStringInfix(mathFormula);
+			//formula = JSBML.formulaToString(mathFormula);
+			formula = myFormulaToStringInfix(mathFormula);
 		}
 		formula = formula.replaceAll("arccot", "acot");
 		formula = formula.replaceAll("arccoth", "acoth");
@@ -2463,21 +2464,21 @@ public class SBMLutilities {
 	}
 	
 	public static String addBoolean(String formula,String boolVar) {
-		formula = formula.replace(" "+boolVar+" ", " eq("+boolVar+",1) ");
-		formula = formula.replace(","+boolVar+",",",eq("+boolVar+",1),");
-		formula = formula.replace("("+boolVar+",", "(eq("+boolVar+",1),");
-		formula = formula.replace(","+boolVar+")", ",eq("+boolVar+",1))");
-		formula = formula.replace("("+boolVar+" ", "(eq("+boolVar+",1) ");
-		formula = formula.replace(" "+boolVar+")", " eq("+boolVar+",1))");
-		formula = formula.replace("("+boolVar+")", " eq("+boolVar+",1)");
+		formula = formula.replace(" "+boolVar+" ", " (eq("+boolVar+",1)) ");
+		formula = formula.replace(","+boolVar+",",",(eq("+boolVar+",1)),");
+		formula = formula.replace("("+boolVar+",", "((eq("+boolVar+",1)),");
+		formula = formula.replace(","+boolVar+")", ",(eq("+boolVar+",1)))");
+		formula = formula.replace("("+boolVar+" ", "((eq("+boolVar+",1)) ");
+		formula = formula.replace(" "+boolVar+")", " (eq("+boolVar+",1)))");
+		formula = formula.replace("("+boolVar+")", " (eq("+boolVar+",1))");
 		if (formula.startsWith(boolVar+" ")) {
-			formula = formula.replaceFirst(boolVar+" ", "eq(" + boolVar + ",1)");
+			formula = formula.replaceFirst(boolVar+" ", "(eq(" + boolVar + ",1))");
 		}
 		if (formula.endsWith(" " + boolVar)) {
-			formula = formula.replaceFirst(" " + boolVar, "eq(" + boolVar + ",1)");
+			formula = formula.replaceFirst(" " + boolVar, "(eq(" + boolVar + ",1))");
 		}
 		if (formula.equals(boolVar)) {
-			formula = formula.replace(boolVar, "eq(" + boolVar + ",1)");
+			formula = formula.replace(boolVar, "(eq(" + boolVar + ",1))");
 		}
 		return formula;
 	}
