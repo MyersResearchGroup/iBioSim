@@ -706,7 +706,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						String var = assign[i].split(" ")[0];
 						ea.setVariable(var);
 						String left = assign[i].split(":=")[0].trim();
-						String[] rightSide = assign[i].split(":=")[1].split(",");
+						String[] rightSide = assign[i].split(":=")[1].split(";");
 						// TODO: Scott - change for Plugin writing
 						if(left.contains("[")){
 							String[] ind = left.split("\\[");
@@ -762,7 +762,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						EventAssignment ea = e.createEventAssignment();
 						ea.setVariable(placeAssign[i].split(" ")[0]);
 						String left = placeAssign[i].split(":=")[0].trim();
-						String[] rightSide = placeAssign[i].split(":=")[1].split(",");
+						String[] rightSide = placeAssign[i].split(":=")[1].split(";");
 						// TODO: Scott - change for Plugin writing
 						if(left.contains("[")){
 							String[] ind = left.split("\\[");
@@ -1087,7 +1087,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							EventAssignment ea = e.createEventAssignment();
 							String var = assign[i].split(" ")[0];
 							String left = assign[i].split(":=")[0].trim();
-							String[] rightSide = assign[i].split(":=")[1].split(",");
+							String[] rightSide = assign[i].split(":=")[1].split(";");
 							// TODO: Scott - change for Plugin writing
 							if(left.contains("[")){
 								String[] ind = left.split("\\[");
@@ -1491,7 +1491,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					jIndex.setText(ind[2].replace("]", "").trim());
 				}
 			}
-			String[] rightSide = selectAssign.split(":=")[1].split(",");
+			String[] rightSide = selectAssign.split(":=")[1].split(";");
 			eqn.setText(rightSide[0].trim());
 			// If the EA is a 1-D Array...
 			if(rightSide.length==2){
@@ -1608,11 +1608,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					// String for the dimensions
 					String dimens = "";
 					if(EAdimensionType.getSelectedIndex()==1){
-						dimens = " , 0 <= u < " + EAdimensionX.getSelectedItem();
+						dimens = " ; 0 <= u < " + EAdimensionX.getSelectedItem();
 					}
 					if(EAdimensionType.getSelectedIndex()==2){
-						dimens = " , 0 <= u < " + EAdimensionX.getSelectedItem() 
-								+ " , 0 <= v < " + EAdimensionY.getSelectedItem();
+						dimens = " ; 0 <= u < " + EAdimensionX.getSelectedItem() 
+								+ " ; 0 <= v < " + EAdimensionY.getSelectedItem();
 					}
 					assign[index] = eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim() 
 							+ dimens;
@@ -1638,11 +1638,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					// String for the dimensions
 					String dimens = "";
 					if(EAdimensionType.getSelectedIndex()==1){
-						dimens = " , 0 <= u < " + EAdimensionX.getSelectedItem();
+						dimens = " ; 0 <= u < " + EAdimensionX.getSelectedItem();
 					}
 					if(EAdimensionType.getSelectedIndex()==2){
-						dimens = " , 0 <= u < " + EAdimensionX.getSelectedItem() 
-								+ " , 0 <= v < " + EAdimensionY.getSelectedItem();
+						dimens = " ; 0 <= u < " + EAdimensionX.getSelectedItem() 
+								+ " ; 0 <= v < " + EAdimensionY.getSelectedItem();
 					}
 					Object[] adding = { eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim()
 							+ dimens };
