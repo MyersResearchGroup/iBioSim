@@ -4388,7 +4388,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		int realSize = 0;
 		if (startsWith!=null) realSize = 1;
 		for (int i = 0; i < graphSpecies.size(); i++) {
-			if (startsWith!=null && !graphSpecies.get(i).startsWith(startsWith+"__")) continue;
+			if (startsWith!=null && !graphSpecies.get(i).startsWith(startsWith+"__") && 
+					!graphSpecies.get(i).equals("time")) continue;
 			String variable = graphSpecies.get(i);
 			XVariable.addItem(variable);
 			if (variable.contains("__")) {
@@ -4446,16 +4447,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		use.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				String startsWith = null;
+				if (!specs.getSelectedItem().equals("All Variables")) {
+					startsWith = (String)specs.getSelectedItem();
+				}
 				if (use.isSelected()) {
+					int i = 0;
 					for (JCheckBox box : boxes) {
+						i++;
 						if (!box.isSelected()) {
+							if (startsWith!=null && !graphSpecies.get(i).startsWith(startsWith+"__")) continue;
 							box.doClick();
 						}
 					}
 				}
 				else {
+					int i = 0;
 					for (JCheckBox box : boxes) {
+						i++;
 						if (box.isSelected()) {
+							if (startsWith!=null && !graphSpecies.get(i).startsWith(startsWith+"__")) continue;
 							box.doClick();
 						}
 					}
