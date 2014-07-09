@@ -143,7 +143,7 @@ public class SBMLutilities {
 		// TODO: have this take the dimension string parse it and make sure of form: <id>[<id>][<id>] etc.
 		// TODO: this function should return the String[] of dimensions including 0 entry which is id of the object.
 		//document.getModel().getParameter(parameter);
-		if(!entryText.endsWith("]")&&entryText.contains("[")){
+		if(!entryText.trim().endsWith("]") && entryText.contains("[")){
 			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
@@ -161,7 +161,7 @@ public class SBMLutilities {
 				JOptionPane.showMessageDialog(Gui.frame, "Too many closing brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			retText[i] = retText[i].replace("]", "");
+			retText[i] = retText[i].replace("]", "").trim();
 			if(retText[i].isEmpty()){
 				JOptionPane.showMessageDialog(Gui.frame, "A pair of brakets are blank.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
 				return null;
@@ -211,7 +211,7 @@ public class SBMLutilities {
 				return null;
 			}
 			//This creates a String[] with an undesirable extra element at the end of the list.
-			indices[i]=indices[i].replace("]", "");
+			indices[i]=indices[i].replace("]", "").trim();
 			if(indices[i].isEmpty()){
 				JOptionPane.showMessageDialog(Gui.frame, "A pair of brakets are blank.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
@@ -3847,6 +3847,9 @@ public class SBMLutilities {
 		}
 	}
 	
+	
+	//TODO Scott make adaptations for arrayplugin
+	// on-screen schematic display
 	public static String getArrayId(SBMLDocument document,String id) {
 		String arrayId = id;
 		SBase sBase = getElementBySId(document,id);
