@@ -461,7 +461,8 @@ public class Utility {
 	public static final String SLASHSWEEPstring = "(\\((" + NUMstring + "/)?" + NUMstring + ",[[\\s]*]?(" + NUMstring + "/)?" + 
 		NUMstring + ",[[\\s]*]?(" + NUMstring + "/)?" + NUMstring + ",[[\\s]*]?[12]\\))|(" + NUMstring + "/)?" + NUMstring;
 	public static final String PROPstring = "([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*";
-	public static final String IDstring = "([a-zA-Z])([a-zA-Z]|[0-9]|(_[a-zA-Z0-9]))*";
+	public static final String IDstring = "([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*";
+	public static final String IDDimString = IDstring + "(\\[" + IDstring + "])*";
 	public static final String FILEstring = "([a-zA-Z]|[0-9])([a-zA-Z]|[0-9]|(_[a-zA-Z0-9]))*(\\.)([a-zA-Z])+";
 	//public static final String IDstring = "([a-zA-Z])([a-zA-Z]|[0-9]|_)*";
 	public static final String ATACSIDstring = "([a-zA-Z]|_|\\?|!)([a-zA-Z]|[0-9]|_|\\?|!|\\.)*";
