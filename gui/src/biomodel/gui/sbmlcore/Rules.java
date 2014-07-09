@@ -367,7 +367,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
-			//TODO: if(!error) Index checking, create for loop that checks math to be valid(use myParseFormula
 			if (!error) {
 				Rule r = (Rule) (SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId));
 				if (option.equals("OK")) {
@@ -464,7 +463,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						sBasePlugin.unsetListOfDimensions();
 						for(int i = 0; i<dimID.length-1; i++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1].replace("]", "").trim());
+							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
 						// Add the indices
@@ -473,7 +472,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
 							indexRule.setReferencedAttribute("variable");
-							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1].replace("]", "").trim());
+							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 							indexRule.setMath(indexMath);
 							sBasePlugin.addIndex(indexRule);
 						}
@@ -564,7 +563,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
 						for(int i = 0; i<dimID.length-1; i++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1].replace("]", "").trim());
+							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
 
@@ -573,7 +572,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
 							indexRule.setReferencedAttribute("variable");
-							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1].replace("]", "").trim());
+							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 							indexRule.setMath(indexMath);
 							sBasePlugin.addIndex(indexRule);
 						}

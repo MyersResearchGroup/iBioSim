@@ -174,7 +174,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				extentUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getExtentUnits());
 				conversionFactor.setSelectedItem(bioModel.getSBMLDocument().getModel().getConversionFactor());
 				
-				// TODO: Scott - change for Plugin reading
 				String freshIndex = "";
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
 				for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
@@ -279,7 +278,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					else {
 						bioModel.getSBMLDocument().getModel().setExtentUnits((String) extentUnits.getSelectedItem());
 					}
-					//TODO indices writing here
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
 					if (conversionFactor.getSelectedItem().equals("( none )")) {
 						bioModel.getSBMLDocument().getModel().unsetConversionFactor();
@@ -291,8 +289,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 						for(int i = 0; i<dex.length-1; i++){
 							Index indexRule = new Index();
 						    indexRule.setArrayDimension(i);
-						    indexRule.setReferencedAttribute("variable");
-						    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1].replace("]", "").trim());
+						    indexRule.setReferencedAttribute("conversionFactor");
+						    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 						    indexRule.setMath(indexMath);
 						    sBasePlugin.addIndex(indexRule);
 						}

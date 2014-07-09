@@ -721,7 +721,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							sBasePlugin.unsetListOfDimensions();
 							for(int i = 0; i<dimID.length-1; i++){
 								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-								dimX.setSize(dimID[i+1].replace("]", "").trim());
+								dimX.setSize(dimID[i+1]);
 								dimX.setArrayDimension(i);
 							}
 							
@@ -853,7 +853,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							for(int i = 0; i<dimID.length-1; i++){
 								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-								dimX.setSize(dimID[i+1].replace("]", "").trim());
+								dimX.setSize(dimID[i+1]);
 								dimX.setArrayDimension(i);
 							}
 							if (paramConst.getSelectedItem().equals("true")) {
