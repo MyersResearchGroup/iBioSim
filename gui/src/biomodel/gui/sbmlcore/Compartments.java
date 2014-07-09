@@ -525,7 +525,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						sBasePlugin.unsetListOfDimensions();
 						for(int i = 0; i<dimID.length-1; i++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1].replace("]", "").trim());
+							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
 						if (bioModel.getSBMLDocument().getLevel() < 3) {
@@ -618,7 +618,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
 						for(int i = 0; i<dimID.length-1; i++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1].replace("]", "").trim());
+							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
 						if (bioModel.getSBMLDocument().getLevel() < 3) {
