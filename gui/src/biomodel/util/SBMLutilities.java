@@ -1333,7 +1333,8 @@ public class SBMLutilities {
 	 * Checks consistency of the sbml file.
 	 */
 	public static void checkOverDetermined(SBMLDocument document) {
-		if (Gui.isLibsbmlFound()) {
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Gui.isLibsbmlFound()) {
 			try {
 				org.sbml.libsbml.SBMLDocument doc = new org.sbml.libsbml.SBMLReader().readSBMLFromString(new SBMLWriter().writeSBMLToString(document));
 				doc.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_GENERAL_CONSISTENCY, false);
@@ -1999,7 +2000,9 @@ public class SBMLutilities {
 	public static boolean check(String file,SBMLDocument doc,boolean warnings,boolean overdetermined) {
 		String message = "";
 		long numErrors = 0;
-		if (Gui.isLibsbmlFound()) {
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Gui.isLibsbmlFound()) {
+			message += "Validation Problems Found by libsbml\n";
 			org.sbml.libsbml.SBMLDocument document = null;
 			if (doc == null) {
 				document = new org.sbml.libsbml.SBMLReader().readSBML(file);
@@ -2046,6 +2049,7 @@ public class SBMLutilities {
 			}
 		}
 		else {
+			message += "Validation Problems Found by Webservice\n";
 			SBMLDocument document = doc;
 			if (document==null) {
 				document = SBMLutilities.readSBML(file);

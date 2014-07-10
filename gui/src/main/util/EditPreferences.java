@@ -48,6 +48,7 @@ public class EditPreferences {
 	private JCheckBox icons;
 	private JCheckBox delete;
 	private JCheckBox libsbmlFlatten;
+	private JCheckBox libsbmlValidate;
 	private JCheckBox infix;
 	private JTextField verCmd;
 	private JTextField viewerField;
@@ -156,6 +157,7 @@ public class EditPreferences {
 		icons = new JCheckBox("Use Plus/Minus For Expanding/Collapsing File Tree");
 		delete = new JCheckBox("Must Confirm File Deletions");
 		libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models");
+		libsbmlValidate = new JCheckBox("Use libsbml to Validate Models");
 		infix = new JCheckBox("Use Infix Expression Parser");
 		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
 			dialog.setSelected(true);
@@ -175,11 +177,17 @@ public class EditPreferences {
 		else {
 			delete.setSelected(false);
 		}
-		if (biosimrc.get("biosim.general.flatten", "").equals("default")) {
-			libsbmlFlatten.setSelected(false);
+		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
+			libsbmlFlatten.setSelected(true);
 		}
 		else {
-			libsbmlFlatten.setSelected(true);
+			libsbmlFlatten.setSelected(false);
+		}
+		if (biosimrc.get("biosim.general.validate", "").equals("libsbml")) {
+			libsbmlValidate.setSelected(true);
+		}
+		else {
+			libsbmlValidate.setSelected(false);
 		}
 		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
 			infix.setSelected(false);
@@ -200,6 +208,7 @@ public class EditPreferences {
 				icons.setSelected(false);
 				delete.setSelected(true);
 				libsbmlFlatten.setSelected(false);
+				libsbmlValidate.setSelected(false);
 				infix.setSelected(true);
 				verCmd.setText("");
 				viewerField.setText("");
@@ -217,6 +226,7 @@ public class EditPreferences {
 		generalPrefsBordered.add(icons);
 		generalPrefsBordered.add(delete);
 		generalPrefsBordered.add(libsbmlFlatten);
+		generalPrefsBordered.add(libsbmlValidate);
 		//generalPrefsBordered.add(infix);
 		if (async) {
 			JPanel verCmdPanel = new JPanel(new GridLayout(1,2));
@@ -1059,6 +1069,11 @@ public class EditPreferences {
 			biosimrc.put("biosim.general.flatten", "libsbml");
 		} else {
 			biosimrc.put("biosim.general.flatten", "default");
+		}
+		if (libsbmlValidate.isSelected()) {
+			biosimrc.put("biosim.general.validate", "libsbml");
+		} else {
+			biosimrc.put("biosim.general.validate", "default");
 		}
 		if (infix.isSelected()) {
 			biosimrc.put("biosim.general.infix", "infix");

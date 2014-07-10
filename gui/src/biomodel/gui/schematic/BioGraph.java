@@ -2154,7 +2154,7 @@ public class BioGraph extends mxGraph {
 	}
 	
 	public String getModelFileName(String compId) {
-		return bioModel.getModelFileName(compId).replace(".xml", ".gcm");
+		return bioModel.getModelFileName(compId);
 	}
 	
 	/**
