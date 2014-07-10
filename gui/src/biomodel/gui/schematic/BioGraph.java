@@ -3131,12 +3131,14 @@ public class BioGraph extends mxGraph {
 	private void setTransitionStyles(String id){
 		String style="TRANSITION;";
 		if (SBMLutilities.isFailTransition(bioModel.getSBMLDocument().getModel().getEvent(id))) {
-			if (bioModel.getSBMLDocument().getModel().getEvent(id).getTrigger().isPersistent()) {
+			if (SBMLutilities.isPersistentTransition(bioModel.getSBMLDocument(),
+					bioModel.getSBMLDocument().getModel().getEvent(id))) {
 				style="FAILPERSTRANSITION;";
 			} else {
 				style="FAILTRANSITION;";
 			}
-		} else if (bioModel.getSBMLDocument().getModel().getEvent(id).getTrigger().isPersistent()) {
+		} else if (SBMLutilities.isPersistentTransition(bioModel.getSBMLDocument(),
+				bioModel.getSBMLDocument().getModel().getEvent(id))) {
 			style="PERSTRANSITION;";
 		}
 		
