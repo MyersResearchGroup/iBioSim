@@ -2438,6 +2438,25 @@ public class SBMLutilities {
 		return false;
 	}
 	
+
+	public static boolean isPersistentTransition(SBMLDocument document,Event event) {
+		if (event.isSetSBOTerm()) {
+			if (event.getSBOTerm()==GlobalConstants.SBO_TRANSITION) {
+				event.setSBOTerm(GlobalConstants.SBO_PETRI_NET_TRANSITION);
+				Rule r = document.getModel().getRule(GlobalConstants.TRIGGER + "_" + event.getId());
+				if (r != null) {
+					return true;
+				}
+			} else if (event.getSBOTerm()==GlobalConstants.SBO_PETRI_NET_TRANSITION) {
+				Rule r = document.getModel().getRule(GlobalConstants.TRIGGER + "_" + event.getId());
+				if (r != null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public static boolean isFailTransition(Event event) {
 		for (int j = 0; j < event.getEventAssignmentCount(); j++) {
 			EventAssignment ea = event.getListOfEventAssignments().get(j);
