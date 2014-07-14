@@ -32,6 +32,8 @@ import odk.lang.FastMath;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Index;
+import org.sbml.jsbml.ext.arrays.util.ArraysMath;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompConstants;
@@ -194,7 +196,7 @@ public class SBMLutilities {
 	 * @param variable The variable that dictates how many indices there should be based on its number of dimensions
 	 * @return If the number of indices matches the dimension count of the variable
 	 */
-	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds){
+	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds, String attribute){
 		if(!index.endsWith("]")&&index.contains("[")){
 			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
 			return null;
@@ -220,6 +222,20 @@ public class SBMLutilities {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
+//			Index indie = new Index();
+//			indie.setMath(myParseFormula(indices[i]));
+//			indie.setArrayDimension(i-1);
+//			indie.setReferencedAttribute(attribute);
+//			if(ArraysMath.isStaticallyComputable(document.getModel(), indie) == false){
+//				JOptionPane.showMessageDialog(Gui.frame, "Index math must consist of constants and valid dimension size ids only.", 
+//						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
+//				return null;
+//			}
+//			if(ArraysMath.evaluateIndexBounds(document.getModel(), indie) == false){
+//				JOptionPane.showMessageDialog(Gui.frame, "Index math must evaluate to values within possible bounds.", 
+//						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
+//				return null;
+//			}
 			if(displayinvalidVariables("Indices", document, dimensionIds, indices[i], "", false)){
 				return null;
 			}

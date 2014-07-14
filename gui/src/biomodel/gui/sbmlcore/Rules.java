@@ -334,7 +334,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			addVar = (String) ruleVar.getSelectedItem();
 			if(ruleVar.isEnabled() && !error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
-				dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds);
+				dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 				error = (dex==null);
 			}
 			if (!error) {
