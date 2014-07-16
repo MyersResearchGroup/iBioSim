@@ -29,6 +29,8 @@ import main.Gui;
 import main.util.Utility;
 
 import org.sbml.jsbml.*;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.layout.Layout;
 
@@ -57,13 +59,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 
 	private JList eventAssign; // JList of event assignments
 	
-	private JComboBox dimensionType, dimensionX, dimensionY;
-	
-	private JComboBox EAdimensionType, EAdimensionX, EAdimensionY;
-	
-	private JLabel dimensionTypeLabel, dimensionSizeLabel, EAdimensionTypeLabel, EAdimensionSizeLabel;
-	
-	private JTextField iIndex, jIndex;
+	private JTextField iIndex, EAdimensions;
 	
 	private JComboBox eaID;
 
@@ -150,9 +146,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		ArrayList<String> presetPlaces = new ArrayList<String>();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel evPanel = new JPanel(new GridLayout(12, 2));
+		JPanel evPanel = new JPanel(new GridLayout(9, 2));
 		if (isTransition) {
-			evPanel.setLayout(new GridLayout(10, 2));
+			evPanel.setLayout(new GridLayout(7, 2));
 		}
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
@@ -188,59 +184,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JComboBox dynamicProcess = new JComboBox(new String[] {"none",
 				"Symmetric Division","Asymmetric Division","Death", "Move Random", "Move Left", "Move Right", "Move Above", "Move Below"});
 		JCheckBox onPort = new JCheckBox();
-		
-		EAdimensionType = new JComboBox();
-		EAdimensionType.addItem("Scalar");
-		EAdimensionType.addItem("1-D Array");
-		EAdimensionType.addItem("2-D Array");
-		EAdimensionType.addActionListener(this);
-		EAdimensionX = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				EAdimensionX.addItem(param.getId());
-			}
-		}
-		EAdimensionY = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				EAdimensionY.addItem(param.getId());
-			}
-		}
-		EAdimensionX.setEnabled(false);
-		EAdimensionY.setEnabled(false);
-		EAdimensionTypeLabel = new JLabel("Array Dimension:");
-		EAdimensionSizeLabel = new JLabel("Array Size:");
-		
-		dimensionType = new JComboBox();
-		dimensionType.addItem("Scalar");
-		dimensionType.addItem("1-D Array");
-		dimensionType.addItem("2-D Array");
-		dimensionType.addActionListener(this);
-		dimensionX = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimensionX.addItem(param.getId());
-			}
-		}
-		dimensionY = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimensionY.addItem(param.getId());
-			}
-		}
-		dimensionX.setEnabled(false);
-		dimensionY.setEnabled(false);
-		iIndex = new JTextField(10);
-		jIndex = new JTextField(10);
-		iIndex.setEnabled(false);
-		jIndex.setEnabled(false);
-		dimensionTypeLabel = new JLabel("Array Dimension:");
-		dimensionSizeLabel = new JLabel("Array Size:");
-		
+		iIndex = new JTextField(20);
+		EAdimensions = new JTextField(20);
 		if (bioModel != null && bioModel.IsWithinCompartment() == false) {
 			dynamicProcess.setEnabled(false);
 			dynamicProcess.setSelectedItem("none");
@@ -273,7 +218,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				if (event.getId().equals(selected)) {
 					isTransition = SBMLutilities.isTransition(event);
 					if (isTransition) {
-						evPanel.setLayout(new GridLayout(11, 2));
+						evPanel.setLayout(new GridLayout(8, 2));
 					}
 					Eindex = i;
 					eventID.setText(event.getId());
@@ -393,39 +338,26 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
-						String assignIndex = "";
 						// TODO: Scott - change for Plugin reading
-						indices[0] = AnnotationUtility.parseRowIndexAnnotation(ea);
-						if(indices[0]!=null){
-							indices[1] = AnnotationUtility.parseColIndexAnnotation(ea);
-							if(indices[1]==null){
-								assignIndex = " [" + indices[0] + "]";
-							}
-							else{
-								assignIndex = " [" + indices[0] + "][";
-								assignIndex += (indices[1] + "]");
-							}
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
+						String freshIndex = "; ";
+						for(int i1 = 0; i1<sBasePlugin.getIndexCount(); i1++){
+							Index indie = sBasePlugin.getIndex(i1);
+							freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 						}
-						String[] sizes = new String[2];
 						String dimens = "";
-						sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(ea);
-						if(sizes[0]==null){
-							sizes = AnnotationUtility.parseMatrixSizeAnnotation(ea);
-							if(sizes!=null){
-								dimens = " , 0 <= u < " + sizes[0] + " , 0 <= v < " + sizes[1];
-							}
-						}
-						else{
-							dimens = " , 0 <= u < " + sizes[0];
+						for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
+							dimens += "[" + dimX.getSize() + "]";							
 						}
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (isTextual) {
-								assign[l] = ea.getVariable() + assignIndex + " := " 
-										+ SBMLutilities.myFormulaToString(ea.getMath()) + dimens;
+								assign[l] = ea.getVariable() + dimens + " := " 
+										+ SBMLutilities.myFormulaToString(ea.getMath()) + freshIndex;
 								l++;
 							} else {
-								placeAssign[k] = ea.getVariable() + assignIndex + " := " 
-										+ SBMLutilities.myFormulaToString(ea.getMath())	+ dimens;
+								placeAssign[k] = ea.getVariable() + dimens + " := " 
+										+ SBMLutilities.myFormulaToString(ea.getMath())	+ freshIndex;
 								k++;
 							}
 						} else if (ea.getVariable().equals(GlobalConstants.FAIL)){
@@ -435,11 +367,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							if (parameter!=null && SBMLutilities.isBoolean(parameter)) {
 								assignMath = bioModel.removeBooleanAssign(event.getListOfEventAssignments().get(j).getMath());
 							} 
-							assign[l] = ea.getVariable() + assignIndex + " := " + assignMath + dimens;
+							assign[l] = ea.getVariable() + dimens + " := " + assignMath + freshIndex;
 							l++;
 						}
-						origAssign[j] = ea.getVariable() + assignIndex + " := " 
-								+ SBMLutilities.myFormulaToString(ea.getMath()) + dimens;
+						origAssign[j] = ea.getVariable() + dimens + " := " 
+								+ SBMLutilities.myFormulaToString(ea.getMath()) + freshIndex;
 					}
 					if (!modelEditor.isParamsOnly()) {
 						//Parse out SBOL annotations and add to SBOL field
@@ -450,30 +382,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								2, false);
 					}
 				}
-				String[] sizes = new String[2];
 				// TODO: Scott - change for Plugin reading
-				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(event);
-				if(sizes[0]==null){
-					sizes = AnnotationUtility.parseMatrixSizeAnnotation(event);
-					if(sizes==null){
-						dimensionType.setSelectedIndex(0);
-						dimensionX.setEnabled(false);
-						dimensionY.setEnabled(false);
-					}
-					else{
-						dimensionType.setSelectedIndex(2);
-						dimensionX.setEnabled(true);
-						dimensionY.setEnabled(true);
-						dimensionX.setSelectedItem(sizes[0]);
-						dimensionY.setSelectedItem(sizes[1]);
-					}
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
+				String dimInID = "";
+				for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
+					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
+					dimInID += "[" + dimX.getSize() + "]";
 				}
-				else{
-					dimensionType.setSelectedIndex(1);
-					dimensionX.setEnabled(true);
-					dimensionX.setSelectedItem(sizes[0]);
-					dimensionY.setEnabled(false);
-				}
+				eventID.setText(eventID.getText()+dimInID);
 			}
 		}
 		else {
@@ -488,7 +404,19 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				if (isTransition) eventId = "t" + en;
 				else eventId = "event" + en;
 			}
-			eventID.setText(eventId);
+			ListOf<Event> e = bioModel.getSBMLDocument().getModel().getListOfEvents();
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getEventCount(); i++) {
+				org.sbml.jsbml.Event event = e.get(i);
+				if (event.getId().equals(selected)) {
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
+					String dimInID = "";
+					for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
+						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
+						dimInID += "[" + dimX.getSize() + "]";
+					}
+					eventID.setText(eventId+dimInID);
+				}
+			}
 		}
 		Utility.sort(assign);
 		eventAssign.setListData(assign);
@@ -503,12 +431,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		evPanel.add(eventName);
 		evPanel.add(onPortLabel);
 		evPanel.add(onPort);
-		evPanel.add(dimensionTypeLabel);
-		evPanel.add(dimensionType);
-		evPanel.add(dimensionSizeLabel);
-		evPanel.add(dimensionX);
-		evPanel.add(new JLabel());
-		evPanel.add(dimensionY);
 		evPanel.add(triggerLabel);
 		evPanel.add(eventTrigger);
 		JPanel persistPanel = new JPanel();
@@ -550,13 +472,22 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		int value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
+		String[] dimID = new String[]{""};
+		String[] dimensionIds = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			assign = new String[eventAssign.getModel().getSize()];
 			for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
 				assign[i] = eventAssign.getModel().getElementAt(i).toString();
 			}
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), eventID.getText().trim(), selectedID, false);
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), eventID.getText());
+			if(dimID!=null){
+				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selected, false);
+			}
+			else{
+				error = true;
+			}
 			if (eventTrigger.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event must have a trigger formula.", "Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -584,81 +515,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				error = true;
 			}
 			else {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, eventTrigger.getText().trim(), "", false);
-				if (invalidVars.size() > 0) {
-					String invalid = "";
-					for (int i = 0; i < invalidVars.size(); i++) {
-						if (i == invalidVars.size() - 1) {
-							invalid += invalidVars.get(i);
-						}
-						else {
-							invalid += invalidVars.get(i) + "\n";
-						}
-					}
-					String message;
-					message = "Event trigger contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
-					JTextArea messageArea = new JTextArea(message);
-					messageArea.setLineWrap(true);
-					messageArea.setWrapStyleWord(true);
-					messageArea.setEditable(false);
-					JScrollPane scrolls = new JScrollPane();
-					scrolls.setMinimumSize(new Dimension(300, 300));
-					scrolls.setPreferredSize(new Dimension(300, 300));
-					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
-					error = true;
+				error = SBMLutilities.displayinvalidVariables("Event trigger", bioModel.getSBMLDocument(), null, eventTrigger.getText().trim(), "", false);
+				if (!error) {
+					error = SBMLutilities.displayinvalidVariables("Event delay", bioModel.getSBMLDocument(), null, eventDelay.getText().trim(), "", false);
 				}
 				if (!error) {
-					invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, eventDelay.getText().trim(), "", false);
-					if (invalidVars.size() > 0) {
-						String invalid = "";
-						for (int i = 0; i < invalidVars.size(); i++) {
-							if (i == invalidVars.size() - 1) {
-								invalid += invalidVars.get(i);
-							}
-							else {
-								invalid += invalidVars.get(i) + "\n";
-							}
-						}
-						String message;
-						message = "Event delay contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
-						JTextArea messageArea = new JTextArea(message);
-						messageArea.setLineWrap(true);
-						messageArea.setWrapStyleWord(true);
-						messageArea.setEditable(false);
-						JScrollPane scrolls = new JScrollPane();
-						scrolls.setMinimumSize(new Dimension(300, 300));
-						scrolls.setPreferredSize(new Dimension(300, 300));
-						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
-						error = true;
-					}
-				}
-				if (!error) {
-					invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), null, eventPriority.getText().trim(), "", false);
-					if (invalidVars.size() > 0) {
-						String invalid = "";
-						for (int i = 0; i < invalidVars.size(); i++) {
-							if (i == invalidVars.size() - 1) {
-								invalid += invalidVars.get(i);
-							}
-							else {
-								invalid += invalidVars.get(i) + "\n";
-							}
-						}
-						String message;
-						message = "Event priority contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
-						JTextArea messageArea = new JTextArea(message);
-						messageArea.setLineWrap(true);
-						messageArea.setWrapStyleWord(true);
-						messageArea.setEditable(false);
-						JScrollPane scrolls = new JScrollPane();
-						scrolls.setMinimumSize(new Dimension(300, 300));
-						scrolls.setPreferredSize(new Dimension(300, 300));
-						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
-						error = true;
-					}
+					error = SBMLutilities.displayinvalidVariables("Event priority", bioModel.getSBMLDocument(), null, eventPriority.getText().trim(), "", false);
 				}
 				if (!error) {
 					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
@@ -701,49 +563,50 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					while (e.getEventAssignmentCount() > 0) {
 						e.getListOfEventAssignments().remove(0);
 					}
+					String[] EAdimID = new String[]{""};
+					String[] EAdex = new String[]{""};
+					String[] EAdimensionIds = new String[]{""};
 					for (int i = 0; i < assign.length; i++) {
 						EventAssignment ea = e.createEventAssignment();
 						String var = assign[i].split(" ")[0];
 						ea.setVariable(var);
 						String left = assign[i].split(":=")[0].trim();
-						String[] rightSide = assign[i].split(":=")[1].split(";");
+						String rightSide = assign[i].split(":=")[1].split(";")[1].trim();
 						// TODO: Scott - change for Plugin writing
-						if(left.contains("[")){
-							String[] ind = left.split("\\[");
-							if(ind.length==2){
-								AnnotationUtility.removeColIndexAnnotation(ea);
-								AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
-							}
-							else{
-								AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
-								AnnotationUtility.setColIndexAnnotation(ea, ind[2].replace("]", "").trim());
-							}
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
+						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left);
+						if(EAdimID!=null){
+							EAdimensionIds = SBMLutilities.getDimensionIds(EAdimID.length-1);
 						}
 						else{
-							AnnotationUtility.removeRowIndexAnnotation(ea);
-							AnnotationUtility.removeColIndexAnnotation(ea);
+							error = true;
 						}
-						// If the EA is a 1-D Array...
-						if(rightSide.length==2){
-							AnnotationUtility.removeMatrixSizeAnnotation(ea);
-							AnnotationUtility.setVectorSizeAnnotation(ea,(String) EAdimensionX.getSelectedItem());			
+						if(eaID.isEnabled() && !error){
+							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
+							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
+							error = (EAdex==null);
 						}
-						// a 2-D Array...
-						else if(rightSide.length==3){
-							AnnotationUtility.removeVectorSizeAnnotation(ea);
-							AnnotationUtility.setMatrixSizeAnnotation(ea,(String) EAdimensionX.getSelectedItem(), 
-									(String) EAdimensionY.getSelectedItem());
+						if(error)break;
+						sBasePlugin.unsetListOfDimensions();
+						for(int i1 = 0; i1<EAdimID.length-1; i1++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
+							dimX.setSize(EAdimID[i1+1]);
+							dimX.setArrayDimension(i1);
 						}
-						// or a Scalar
-						else{
-							AnnotationUtility.removeVectorSizeAnnotation(ea);
-							AnnotationUtility.removeMatrixSizeAnnotation(ea);
+						sBasePlugin.unsetListOfIndices();
+						for(int i1 = 0; i1<EAdex.length-1; i1++){
+							Index indexRule = new Index();
+							indexRule.setArrayDimension(i1);
+							indexRule.setReferencedAttribute("variable");
+							ASTNode indexMath = SBMLutilities.myParseFormula(EAdex[i1+1]);
+							indexRule.setMath(indexMath);
+							sBasePlugin.addIndex(indexRule);
 						}
 						Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
 						if (p != null && SBMLutilities.isBoolean(p)) {
-							ea.setMath(bioModel.addBooleanAssign(rightSide[0].trim()));
+							ea.setMath(bioModel.addBooleanAssign(assign[i].split(":=")[1].split(";")[0].trim()));
 						} else {
-							ea.setMath(SBMLutilities.myParseFormula(rightSide[0].trim()));
+							ea.setMath(SBMLutilities.myParseFormula(assign[i].split(":=")[1].split(";")[0].trim()));
 						}
 						if (p == null && var.endsWith("_"+GlobalConstants.RATE)) {
 							p = bioModel.getSBMLDocument().getModel().createParameter();
@@ -758,44 +621,45 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						error = checkEventAssignmentUnits(ea);
 						if (error) break;
 					}
+					EAdimID = new String[]{""};
+					EAdex = new String[]{""};
+					EAdimensionIds = new String[]{""};
 					for (int i = 0; i < placeAssign.length; i++) {
 						EventAssignment ea = e.createEventAssignment();
 						ea.setVariable(placeAssign[i].split(" ")[0]);
 						String left = placeAssign[i].split(":=")[0].trim();
-						String[] rightSide = placeAssign[i].split(":=")[1].split(";");
+						String rightSide = placeAssign[i].split(":=")[1].split(";")[1];
 						// TODO: Scott - change for Plugin writing
-						if(left.contains("[")){
-							String[] ind = left.split("\\[");
-							if(ind.length==2){
-								AnnotationUtility.removeColIndexAnnotation(ea);
-								AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
-							}
-							else{
-								AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
-								AnnotationUtility.setColIndexAnnotation(ea, ind[2].replace("]", "").trim());
-							}
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
+						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left);
+						if(EAdimID!=null){
+							EAdimensionIds = SBMLutilities.getDimensionIds(EAdimID.length-1);
 						}
 						else{
-							AnnotationUtility.removeRowIndexAnnotation(ea);
-							AnnotationUtility.removeColIndexAnnotation(ea);
+							error = true;
 						}
-						// If the EA is a 1-D Array...
-						if(rightSide.length==2){
-							AnnotationUtility.removeMatrixSizeAnnotation(ea);
-							AnnotationUtility.setVectorSizeAnnotation(ea,(String) EAdimensionX.getSelectedItem());			
+						if(eaID.isEnabled() && !error){
+							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
+							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
+							error = (EAdex==null);
 						}
-						// a 2-D Array...
-						else if(rightSide.length==3){
-							AnnotationUtility.removeVectorSizeAnnotation(ea);
-							AnnotationUtility.setMatrixSizeAnnotation(ea,(String) EAdimensionX.getSelectedItem(), 
-									(String) EAdimensionY.getSelectedItem());
+						if(error)break;
+						sBasePlugin.unsetListOfDimensions();
+						for(int i1 = 0; i1<EAdimID.length-1; i1++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
+							dimX.setSize(EAdimID[i1+1]);
+							dimX.setArrayDimension(i1);
 						}
-						// or a Scalar
-						else{
-							AnnotationUtility.removeVectorSizeAnnotation(ea);
-							AnnotationUtility.removeMatrixSizeAnnotation(ea);
+						sBasePlugin.unsetListOfIndices();
+						for(int i1 = 0; i1<EAdex.length-1; i1++){
+							Index indexRule = new Index();
+							indexRule.setArrayDimension(i1);
+							indexRule.setReferencedAttribute("variable");
+							ASTNode indexMath = SBMLutilities.myParseFormula(EAdex[i1+1]);
+							indexRule.setMath(indexMath);
+							sBasePlugin.addIndex(indexRule);
 						}
-						ea.setMath(SBMLutilities.myParseFormula(rightSide[0].trim()));
+						ea.setMath(SBMLutilities.myParseFormula(placeAssign[i].split(":=")[1].split(";")[0].trim()));
 						error = checkEventAssignmentUnits(ea);
 						if (error) break;
 					}
@@ -908,11 +772,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						else {
 							e.getTrigger().setInitialValue(true);
 						}
-						if (eventID.getText().trim().equals("")) {
+						if (dimID[0].trim().equals("")) {
 							e.unsetId();
 						}
 						else {
-							e.setId(eventID.getText().trim());
+							e.setId(dimID[0].trim());
 						}
 						if (eventName.getText().trim().equals("")) {
 							e.unsetName();
@@ -989,18 +853,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					// TODO: Scott - change for Plugin writing
-					if (dimensionType.getSelectedIndex() == 1){
-						AnnotationUtility.removeMatrixSizeAnnotation(e);
-						AnnotationUtility.setVectorSizeAnnotation(e,(String) dimensionX.getSelectedItem());
-					}
-					else if (dimensionType.getSelectedIndex() == 2){
-						AnnotationUtility.removeVectorSizeAnnotation(e);
-						AnnotationUtility.setMatrixSizeAnnotation(e,(String) dimensionX.getSelectedItem(), 
-								(String) dimensionY.getSelectedItem());
-					}
-					else{
-						AnnotationUtility.removeVectorSizeAnnotation(e);
-						AnnotationUtility.removeMatrixSizeAnnotation(e);
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
+					sBasePlugin.unsetListOfDimensions();
+					for(int i1 = 0; i1<dimID.length-1; i1++){
+						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i1]);
+						dimX.setSize(dimID[i1+1]);
+						dimX.setArrayDimension(i1);
 					}
 				} //end if option is "ok"
 				//add event
@@ -1012,8 +870,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					e.setUseValuesFromTriggerTime(assignTime.isSelected());
 					e.createTrigger();
-					if (!eventID.getText().trim().equals("")) {
-						e.setId(eventID.getText().trim());
+					if (!dimID[0].trim().equals("")) {
+						e.setId(dimID[0].trim());
 					}
 					bioModel.setMetaIDIndex(
 							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), e, bioModel.getMetaIDIndex()));
@@ -1083,42 +941,44 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						error = checkEventDelayUnits(e.getDelay());
 					}
 					if (!error) {
+						String[] EAdimID = new String[]{""};
+						String[] EAdex = new String[]{""};
+						String[] EAdimensionIds = new String[]{""};
 						for (int i = 0; i < assign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
 							String var = assign[i].split(" ")[0];
+							ea.setVariable(var);
 							String left = assign[i].split(":=")[0].trim();
-							String[] rightSide = assign[i].split(":=")[1].split(";");
+							String rightSide = assign[i].split(":=")[1].split(";")[1].trim();
 							// TODO: Scott - change for Plugin writing
-							if(left.contains("[")){
-								String[] ind = left.split("\\[");
-								if(ind.length==2){
-									AnnotationUtility.removeColIndexAnnotation(ea);
-									AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
-								}
-								else{
-									AnnotationUtility.setRowIndexAnnotation(ea, ind[1].replace("]", "").trim());
-									AnnotationUtility.setColIndexAnnotation(ea, ind[2].replace("]", "").trim());
-								}
+							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
+							EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left);
+							if(EAdimID!=null){
+								EAdimensionIds = SBMLutilities.getDimensionIds(EAdimID.length-1);
 							}
 							else{
-								AnnotationUtility.removeRowIndexAnnotation(ea);
-								AnnotationUtility.removeColIndexAnnotation(ea);
+								error = true;
 							}
-							// If the EA is a 1-D Array...
-							if(rightSide.length==2){
-								AnnotationUtility.removeMatrixSizeAnnotation(ea);
-								AnnotationUtility.setVectorSizeAnnotation(ea,(String) EAdimensionX.getSelectedItem());			
+							if(eaID.isEnabled() && !error){
+								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
+								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
+								error = (EAdex==null);
 							}
-							// a 2-D Array...
-							else if(rightSide.length==3){
-								AnnotationUtility.removeVectorSizeAnnotation(ea);
-								AnnotationUtility.setMatrixSizeAnnotation(ea,(String) EAdimensionX.getSelectedItem(), 
-										(String) EAdimensionY.getSelectedItem());
+							if(error)break;
+							sBasePlugin.unsetListOfDimensions();
+							for(int i1 = 0; i1<EAdimID.length-1; i1++){
+								org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
+								dimX.setSize(EAdimID[i1+1]);
+								dimX.setArrayDimension(i1);
 							}
-							// or a Scalar
-							else{
-								AnnotationUtility.removeVectorSizeAnnotation(ea);
-								AnnotationUtility.removeMatrixSizeAnnotation(ea);
+							sBasePlugin.unsetListOfIndices();
+							for(int i1 = 0; i1<EAdex.length-1; i1++){
+								Index indexRule = new Index();
+								indexRule.setArrayDimension(i1);
+								indexRule.setReferencedAttribute("variable");
+								ASTNode indexMath = SBMLutilities.myParseFormula(EAdex[i1+1]);
+								indexRule.setMath(indexMath);
+								sBasePlugin.addIndex(indexRule);
 							}
 							if (var.endsWith("\'")) {
 								var = "rate_" + var.replace("\'","");
@@ -1126,9 +986,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							ea.setVariable(var);
 							Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
 							if (p != null && SBMLutilities.isBoolean(p)) {
-								ea.setMath(bioModel.addBooleanAssign(rightSide[0].trim()));
+								ea.setMath(bioModel.addBooleanAssign(assign[i].split(":=")[1].split(";")[0].trim()));
 							} else {
-								ea.setMath(SBMLutilities.myParseFormula(rightSide[0].trim()));
+								ea.setMath(SBMLutilities.myParseFormula(assign[i].split(":=")[1].split(";")[0].trim()));
 							}
 							if (p == null && var.endsWith("_" + GlobalConstants.RATE)) {
 								p = bioModel.getSBMLDocument().getModel().createParameter();
@@ -1212,19 +1072,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						removeTheEvent(bioModel, SBMLutilities.myFormulaToString(e.getTrigger().getMath()));
 					}
 					// TODO: Scott - change for Plugin reading
-					if (dimensionType.getSelectedIndex() == 1){
-						AnnotationUtility.removeMatrixSizeAnnotation(e);
-						AnnotationUtility.setVectorSizeAnnotation(e,(String) dimensionX.getSelectedItem());
-						
-					}
-					else if (dimensionType.getSelectedIndex() == 2){
-						AnnotationUtility.removeVectorSizeAnnotation(e);
-						AnnotationUtility.setMatrixSizeAnnotation(e,(String) dimensionX.getSelectedItem(), 
-								(String) dimensionY.getSelectedItem());
-					}
-					else{
-						AnnotationUtility.removeVectorSizeAnnotation(e);
-						AnnotationUtility.removeMatrixSizeAnnotation(e);
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
+					for(int i1 = 0; i1<dimID.length-1; i1++){
+						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i1]);
+						dimX.setSize(dimID[i1+1]);
+						dimX.setArrayDimension(i1);
 					}
 				}
 				if (!error && !modelEditor.isParamsOnly()) {
@@ -1246,7 +1098,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			return selected;
 		}
 		modelEditor.setDirty(true);
-		return eventID.getText().trim();
+		return dimID[0].trim();
 	}
 
 	/**
@@ -1406,8 +1258,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JLabel eqnLabel = new JLabel("Assignment:");
 		eaID = new JComboBox();
 		eaID.addActionListener(this);
-		iIndex = new JTextField(10);
-		jIndex = new JTextField(10);
+		iIndex = new JTextField(20);
 		
 		String selected;
 		String[] assign = new String[eventAssign.getModel().getSize()];
@@ -1481,44 +1332,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			String selectAssign = ((String) eventAssign.getSelectedValue());
 			eaID.setSelectedItem(selectAssign.split(" ")[0]);
 			String left = selectAssign.split(":=")[0].trim();
-			if(left.contains("[")){
-				String[] ind = left.split("\\[");
-				if(ind.length==2){
-					iIndex.setText(ind[1].replace("]", "").trim());
-				}
-				else{
-					iIndex.setText(ind[1].replace("]", "").trim());
-					jIndex.setText(ind[2].replace("]", "").trim());
-				}
-			}
-			String[] rightSide = selectAssign.split(":=")[1].split(";");
-			eqn.setText(rightSide[0].trim());
-			// If the EA is a 1-D Array...
-			if(rightSide.length==2){
-				EAdimensionType.setSelectedIndex(1);
-				EAdimensionX.setSelectedItem(rightSide[1].split("<")[2].trim());				
-			}
-			// a 2-D Array...
-			else if(rightSide.length==3){
-				EAdimensionType.setSelectedIndex(2);
-				EAdimensionX.setSelectedItem(rightSide[1].split("<")[2].trim());
-				EAdimensionY.setSelectedItem(rightSide[2].split("<")[2].trim());
-			}
-			// or a Scalar
-			else{
-				EAdimensionType.setSelectedIndex(0);
-			}
+			EAdimensions.setText(left.substring(selectAssign.split(" ")[0].length()).trim());
+			String rightSide = selectAssign.split(":=")[1].split(";")[1];
+			eqn.setText(selectAssign.split(":=")[1].split(";")[0].trim());
+			iIndex.setText(rightSide.trim());
 		}
-		topEAPanel.add(EAdimensionTypeLabel);
-		topEAPanel.add(EAdimensionType);
-		topEAPanel.add(EAdimensionSizeLabel);
-		topEAPanel.add(EAdimensionX);
-		topEAPanel.add(EAdimensionY);
+		topEAPanel.add(new JLabel("Dimension Size Ids:"));
+		topEAPanel.add(EAdimensions);
 		northEAPanel.add(idLabel);
 		northEAPanel.add(eaID);
 		northEAPanel.add(indexLabel);
 		northEAPanel.add(iIndex);
-		northEAPanel.add(jIndex);
 		southEAPanel.add(eqnLabel);
 		southEAPanel.add(eqn);
 		eventAssignPanel.add(topEAPanel);
@@ -1539,30 +1363,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				error = true;
 			}
 			else {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(gcm.getSBMLDocument(), null, eqn.getText().trim(), "", false);
-				if (invalidVars.size() > 0) {
-					String invalid = "";
-					for (int i = 0; i < invalidVars.size(); i++) {
-						if (i == invalidVars.size() - 1) {
-							invalid += invalidVars.get(i);
-						}
-						else {
-							invalid += invalidVars.get(i) + "\n";
-						}
-					}
-					String message;
-					message = "Event assignment contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
-					JTextArea messageArea = new JTextArea(message);
-					messageArea.setLineWrap(true);
-					messageArea.setWrapStyleWord(true);
-					messageArea.setEditable(false);
-					JScrollPane scrolls = new JScrollPane();
-					scrolls.setMinimumSize(new Dimension(300, 300));
-					scrolls.setPreferredSize(new Dimension(300, 300));
-					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
-					error = true;
-				}
+				error = SBMLutilities.displayinvalidVariables("Event assignment", gcm.getSBMLDocument(), null, eqn.getText().trim(), "", false);
 				if (!error) {
 					Parameter p = bioModel.getSBMLDocument().getModel().getParameter((String)eaID.getSelectedItem());
 					ASTNode assignMath = SBMLutilities.myParseFormula(eqn.getText().trim());
@@ -1594,28 +1395,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					assign = Utility.getList(assign, eventAssign);
 					eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					// String for the indices
-					String assignIndex = " [";
-					if(!iIndex.isEnabled()) {
-						assignIndex = "";
-					}
-					else if (iIndex.isEnabled() && jIndex.isEnabled()) {
-						assignIndex += (iIndex.getText() + "][");
-						assignIndex += (jIndex.getText() + "]");
-					}
-					else {
-						assignIndex += (iIndex.getText() + "]");
-					}
+					String assignIndex = "; " + iIndex.getText();
 					// String for the dimensions
-					String dimens = "";
-					if(EAdimensionType.getSelectedIndex()==1){
-						dimens = " ; 0 <= u < " + EAdimensionX.getSelectedItem();
-					}
-					if(EAdimensionType.getSelectedIndex()==2){
-						dimens = " ; 0 <= u < " + EAdimensionX.getSelectedItem() 
-								+ " ; 0 <= v < " + EAdimensionY.getSelectedItem();
-					}
-					assign[index] = eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim() 
-							+ dimens;
+					String dimens = EAdimensions.getText();
+					assign[index] = eaID.getSelectedItem() + dimens + " := " + eqn.getText().trim() 
+							+ assignIndex;
 					Utility.sort(assign);
 					eventAssign.setListData(assign);
 					eventAssign.setSelectedIndex(index);
@@ -1624,28 +1408,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					JList add = new JList();
 					int index = eventAssign.getSelectedIndex();
 					// String for the indices
-					String assignIndex = " [";
-					if(!iIndex.isEnabled()) {
-						assignIndex = "";
-					}
-					else if (iIndex.isEnabled() && jIndex.isEnabled()) {
-						assignIndex += (iIndex.getText() + "][");
-						assignIndex += (jIndex.getText() + "]");
-					}
-					else {
-						assignIndex += (iIndex.getText() + "]");
-					}
+					String assignIndex = "; " + iIndex.getText();
 					// String for the dimensions
-					String dimens = "";
-					if(EAdimensionType.getSelectedIndex()==1){
-						dimens = " ; 0 <= u < " + EAdimensionX.getSelectedItem();
-					}
-					if(EAdimensionType.getSelectedIndex()==2){
-						dimens = " ; 0 <= u < " + EAdimensionX.getSelectedItem() 
-								+ " ; 0 <= v < " + EAdimensionY.getSelectedItem();
-					}
-					Object[] adding = { eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim()
-							+ dimens };
+					String dimens = EAdimensions.getText();
+					Object[] adding = { eaID.getSelectedItem() + dimens + " := " + eqn.getText().trim()
+							+ assignIndex };
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -1742,22 +1509,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == removeEvent) {
 			removeEvent(events, bioModel);
 		}
-		// if the dimension type is changed
-		else if (e.getSource() == dimensionType) {
-			int index = dimensionType.getSelectedIndex();
-			if (index == 0) {
-				dimensionX.setEnabled(false);
-				dimensionY.setEnabled(false);
-			}
-			else if (index == 1) {
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(false);
-			}
-			else if (index == 2) {
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(true);
-			}
-		}
 		// if the add event assignment button is clicked
 		else if (e.getSource() == addAssignment) {
 		//else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
@@ -1770,44 +1521,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		// if the remove event assignment button is clicked
 		else if (e.getSource() == removeAssignment) {
 			removeAssignment(eventAssign);
-		}
-		// if the variable is changed
-		else if (e.getSource() == eaID) {
-			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
-			String[] sizes = new String[2];
-			// TODO: Scott - change for Plugin reading
-			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
-			if(sizes[0]==null){
-				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
-				if(sizes==null){
-					iIndex.setEnabled(false);
-					jIndex.setEnabled(false);
-				}
-				else{
-					iIndex.setEnabled(true);
-					jIndex.setEnabled(true);
-				}
-			}
-			else{
-				iIndex.setEnabled(true);
-				jIndex.setEnabled(false);
-			}
-		}
-		// if the event assignment dimension type is changed
-		else if (e.getSource() == EAdimensionType) {
-			int index = EAdimensionType.getSelectedIndex();
-			if (index == 0) {
-				EAdimensionX.setEnabled(false);
-				EAdimensionY.setEnabled(false);
-			}
-			else if (index == 1) {
-				EAdimensionX.setEnabled(true);
-				EAdimensionY.setEnabled(false);
-			}
-			else if (index == 2) {
-				EAdimensionX.setEnabled(true);
-				EAdimensionY.setEnabled(true);
-			}
 		}
 	}
 
