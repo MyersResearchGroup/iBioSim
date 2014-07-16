@@ -3898,17 +3898,13 @@ public class SBMLutilities {
 				return arrayId;
 			}
 		}
-		String[] sizes = new String[2];
-		sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(sBase);
-		if(sizes[0]==null){
-			sizes = AnnotationUtility.parseMatrixSizeAnnotation(sBase);
-			if(sizes!=null){
-				arrayId = id + "[" + sizes[0] + "][" + sizes[1] + "]";
-			} 
-		} else {
-			arrayId = id + "[" + sizes[0] + "]";
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
+		String dimInID = "";
+		for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
+			dimInID += "[" + dimX.getSize() + "]";
 		}
-		return arrayId;
+		return arrayId + dimInID;
 	}
 	
 	public static ModifierSpeciesReference removeModifier(Reaction r, String species) {
