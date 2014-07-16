@@ -222,15 +222,15 @@ public class SBMLutilities {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-//			Index indie = new Index();
-//			indie.setMath(myParseFormula(indices[i]));
-//			indie.setArrayDimension(i-1);
-//			indie.setReferencedAttribute(attribute);
-//			if(ArraysMath.isStaticallyComputable(document.getModel(), indie) == false){
-//				JOptionPane.showMessageDialog(Gui.frame, "Index math must consist of constants and valid dimension size ids only.", 
-//						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
-//				return null;
-//			}
+			Index indie = new Index();
+			indie.setMath(myParseFormula(indices[i]));
+			indie.setArrayDimension(i-1);
+			indie.setReferencedAttribute(attribute);
+			if(ArraysMath.isStaticallyComputable(document.getModel(), indie) == false){
+				JOptionPane.showMessageDialog(Gui.frame, "Index math must consist of constants and valid dimension size ids only.", 
+						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 //			if(ArraysMath.evaluateIndexBounds(document.getModel(), indie) == false){
 //				JOptionPane.showMessageDialog(Gui.frame, "Index math must evaluate to values within possible bounds.", 
 //						"Invalid Indices", JOptionPane.ERROR_MESSAGE);

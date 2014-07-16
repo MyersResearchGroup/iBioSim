@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
@@ -27,6 +28,8 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Submodel;
 
 import biomodel.annotation.AnnotationUtility;
@@ -91,14 +94,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		//if this is in analysis mode, only show the sweepable/changeable values
 		if (paramsOnly)
-			grid = new JPanel(new GridLayout(10,1));
+			grid = new JPanel(new GridLayout(7,1));
 		else {
 			
 			if (bioModel.getSBMLDocument().getLevel() > 2) {
-				grid = new JPanel(new GridLayout(20,1));
+				grid = new JPanel(new GridLayout(17,1));
 			} 
 			else {
-				grid = new JPanel(new GridLayout(19,1));
+				grid = new JPanel(new GridLayout(16,1));
 			}
 		}
 		
@@ -123,7 +126,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		PropertyField field = null;		
 		
 		// ID field
-		field = new PropertyField(GlobalConstants.ID, species.getId(), null, null, Utility.IDstring, paramsOnly, "default", false);
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
+		String dimInID = "";
+		for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
+			dimInID += "[" + dimX.getSize() + "]";
+		}
+		field = new PropertyField(GlobalConstants.ID, species.getId() + dimInID, null, null, Utility.IDDimString, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
 		
 		if (!paramsOnly) grid.add(field);
@@ -146,73 +155,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		if (!paramsOnly) grid.add(tempPanel);
 		
-		// Dimension field
-		tempPanel = new JPanel();
-		dimensionType = new JComboBox();
-		dimensionType.addItem("Scalar");
-		dimensionType.addItem("1-D Array");
-		dimensionType.addItem("2-D Array");
-		dimensionType.addActionListener(this);
-		dimensionX = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimensionX.addItem(param.getId());
-			}
-		}
-		dimensionY = new JComboBox();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimensionY.addItem(param.getId());
-			}
-		}
-		dimensionX.setEnabled(false);
-		dimensionY.setEnabled(false);
-		dimensionTypeLabel = new JLabel("Array Dimension");
-		dimensionSizeLabel = new JLabel("Array Size");
-		tempPanel.setLayout(new GridLayout(1, 2));
-		tempPanel.add(dimensionTypeLabel);
-		tempPanel.add(dimensionType);
-		if (!paramsOnly) grid.add(tempPanel);
-		tempPanel = new JPanel(new GridLayout(1, 2));
-		tempPanel.add(dimensionSizeLabel);
-		tempPanel.add(dimensionX);
-		if (!paramsOnly) grid.add(tempPanel);
-		tempPanel = new JPanel(new GridLayout(1, 2));
-		tempPanel.add(new JLabel());
-		tempPanel.add(dimensionY);
-		if (!paramsOnly) grid.add(tempPanel);
-		
-		//TODO: Scott - Change for Plugin reading
-		// Set dimension type and size parameter
-		String[] sizes = new String[2];
-		if(paramsOnly){
-			dimensionType.setEnabled(false);
-		}
-		sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(species);
-		if(sizes[0]==null){
-			sizes = AnnotationUtility.parseMatrixSizeAnnotation(species);
-			if(sizes==null){
-				dimensionType.setSelectedIndex(0);
-				dimensionX.setEnabled(false);
-				dimensionY.setEnabled(false);
-			}
-			else{
-				dimensionType.setSelectedIndex(2);
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(true);
-				dimensionX.setSelectedItem(sizes[0]);
-				dimensionY.setSelectedItem(sizes[1]);
-			}
-		}
-		else{
-			dimensionType.setSelectedIndex(1);
-			dimensionX.setEnabled(true);
-			dimensionX.setSelectedItem(sizes[0]);
-			dimensionY.setEnabled(false);
-		}
-		
 		// compartment field
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Compartment");
@@ -225,53 +167,20 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		if (!paramsOnly) grid.add(tempPanel);
 		
-		tempPanel = new JPanel(new GridLayout(1, 4));
-		iIndex = new JTextField(10);
-		jIndex = new JTextField(10);
-		conviIndex = new JTextField(10);
-		convjIndex = new JTextField(10);
-		SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
-		sizes = new String[2];
-		// TODO: Scott - change for Plugin reading
-		sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
-		if(sizes[0]==null){
-			sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
-			if(sizes==null){
-				iIndex.setEnabled(false);
-				jIndex.setEnabled(false);
-			}
-			else{
-				iIndex.setEnabled(true);
-				jIndex.setEnabled(true);
+		// indices field
+		tempPanel = new JPanel(new GridLayout(1, 2));
+		iIndex = new JTextField(20);
+		conviIndex = new JTextField(20);
+		String freshIndex = "";
+		for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+			Index indie = sBasePlugin.getIndex(i);
+			if(indie.getReferencedAttribute().equals("compartment")){
+				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
 		}
-		else{
-			iIndex.setEnabled(true);
-			jIndex.setEnabled(false);
-		}
+		iIndex.setText(freshIndex);
 		tempPanel.add(new JLabel("Compartment Indices"));
-		tempPanel.add(new JLabel());
 		tempPanel.add(iIndex);
-		tempPanel.add(jIndex);
-		
-		String[] indecies = new String[2];
-		// TODO: Scott - change for Plugin writing
-		indecies[0] = AnnotationUtility.parseRowIndexAnnotation(species);
-		if(indecies[0]!=null){
-			indecies[1] = AnnotationUtility.parseColIndexAnnotation(species);
-			if(indecies[1]==null){
-				iIndex.setText(indecies[0]);
-				jIndex.setText("");
-			}
-			else{
-				iIndex.setText(indecies[0]);
-				jIndex.setText(indecies[1]);
-			}
-		}
-		else{
-			iIndex.setText("");
-			jIndex.setText("");
-		}
 			
 		if (!paramsOnly) grid.add(tempPanel);
 		
@@ -352,48 +261,22 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 			if (!paramsOnly) grid.add(tempPanel);
 			
-			tempPanel = new JPanel(new GridLayout(1, 4));
-			variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
-			sizes = new String[2];
-			// TODO: Scott - change for Plugin reading
-			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
-			if(sizes[0]==null){
-				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
-				if(sizes==null){
-					conviIndex.setEnabled(false);
-					convjIndex.setEnabled(false);
-				}
-				else{
-					conviIndex.setEnabled(true);
-					convjIndex.setEnabled(true);
+			tempPanel = new JPanel(new GridLayout(1, 2));
+			
+			String cfreshIndex = "";
+			//This needs to be fixed for 2 different indices
+			for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+				Index indie = sBasePlugin.getIndex(i);
+				if(indie.getReferencedAttribute().equals("conversionFactor")){
+					cfreshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 				}
 			}
-			else{
-				conviIndex.setEnabled(true);
-				convjIndex.setEnabled(false);
-			}
+			conviIndex.setText(cfreshIndex);
+			
 			tempPanel.add(new JLabel("Conversion Factor Indices"));
-			tempPanel.add(new JLabel());
 			tempPanel.add(conviIndex);
-			tempPanel.add(convjIndex);
 			
 			// TODO: Scott - change for Plugin writing
-			indecies[0] = AnnotationUtility.parseConversionRowIndexAnnotation(species);
-			if(indecies[0]!=null){
-				indecies[1] = AnnotationUtility.parseConversionColIndexAnnotation(species);
-				if(indecies[1]==null){
-					conviIndex.setText(indecies[0]);
-					convjIndex.setText("");
-				}
-				else{
-					conviIndex.setText(indecies[0]);
-					convjIndex.setText(indecies[1]);
-				}
-			}
-			else{
-				conviIndex.setText("");
-				convjIndex.setText("");
-			}
 				
 			if (!paramsOnly) grid.add(tempPanel);
 		}
@@ -822,40 +705,44 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		// if the value is -1 (user hit escape) then set it equal to the cancel value
 		if(value == -1) {
-			
 			for(int i=0; i<options.length; i++) {
-				
 				if(options[i] == options[1])
 					value = i;
 			}
 		}
-		
+		String[] dimID = new String[]{""};
+		String[] dex = new String[]{""};
+		String[] cdex = new String[]{""};
+		String[] dimensionIds = new String[]{""};
 		// "OK"
 		if (options[value].equals(options[0])) {
-			
-			boolean valueCheck = checkValues();
-			
+			boolean valueCheck = checkValues();			
 			if (!valueCheck) {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-			
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+					fields.get(GlobalConstants.ID).getValue());
+			if(dimID==null)return false;
+			dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+			//TODO Here parse out ID into the dimension size ID. And the two indices boxes
+			// replace fields.get(GlobalConstants.ID).getValue() with dimID[0]
+			// if(dex==null) return false
 			if (selected == null) {
-				if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse(dimID[0])) {
 					Utility.createErrorMessage("Error", "ID already exists.");
 					return false;
 				}
 			}
-			else if (!selected.equals(fields.get(GlobalConstants.ID).getValue())) {
+			else if (!selected.equals(dimID[0])) {
 				
-				if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse(dimID[0])) {
 					
 					Utility.createErrorMessage("Error", "ID already exists.");
 					return false;
 				}
 			}
-			
-			newSpeciesID = fields.get(GlobalConstants.ID).getValue();
+			newSpeciesID = dimID[0];
 
 			if (selected != null) {			
 				
@@ -866,7 +753,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 				
 				if (!paramsOnly) {
-					
 					InitialAssignments.removeInitialAssignment(bioModel, selected);
 					if (Utility.isValid(initialField.getText(), Utility.NUMstring)) {
 						species.setInitialAmount(Double.parseDouble(initialField.getText()));
@@ -897,7 +783,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 //							return false;
 //						}
 //					}
-					
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
+					sBasePlugin.unsetListOfDimensions();
+					for(int i = 0; i<dimID.length-1; i++){
+						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+						dimX.setSize(dimID[i+1].replace("]", "").trim());
+						dimX.setArrayDimension(i);
+					}
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					
 					species.setBoundaryCondition(specBoundary.isSelected());
@@ -913,54 +805,65 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					else {
 						species.setUnits(unit);
 					}
-					
 					String convFactor = null;
-					
 					if (bioModel.getSBMLDocument().getLevel() > 2) {
 						convFactor = (String) convBox.getSelectedItem();
 						
 						if (convFactor.equals("( none )")) {
 							species.unsetConversionFactor();
+							int limit = sBasePlugin.getIndexCount();
+							for(int i = limit-1; i>-1; i--){
+						        Index indie = sBasePlugin.getIndex(i);
+						        if(indie.isSetReferencedAttribute() && indie.getReferencedAttribute().equals("conversionFactor"))
+						           sBasePlugin.removeIndex(indie);
+						       }
 						}
 						else {
 							species.setConversionFactor(convFactor);
+							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
+							cdex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "conversionFactor");
+							if(cdex==null)return false;
+							int limit = sBasePlugin.getIndexCount();
+							for(int i = limit-1; i>-1; i--){
+						        Index indie = sBasePlugin.getIndex(i);
+						        if(indie.isSetReferencedAttribute() && indie.getReferencedAttribute().equals("conversionFactor"))
+						           sBasePlugin.removeIndex(indie);
+						       }
+							for(int i = 0; i<cdex.length-1; i++){
+								Index indexRule = new Index();
+							    indexRule.setArrayDimension(i);
+							    indexRule.setReferencedAttribute("conversionFactor");
+							    ASTNode indexMath = SBMLutilities.myParseFormula(cdex[i+1]);
+							    indexRule.setMath(indexMath);
+							    sBasePlugin.addIndex(indexRule);
+							}
 						}
-					}
-					//TODO: Scott - Change for Plugin writing
-					if (dimensionType.getSelectedIndex() == 1){
-						AnnotationUtility.removeMatrixSizeAnnotation(species);
-						AnnotationUtility.setVectorSizeAnnotation(species,(String) dimensionX.getSelectedItem());
-					}
-					else if (dimensionType.getSelectedIndex() == 2){
-						AnnotationUtility.removeVectorSizeAnnotation(species);
-						AnnotationUtility.setMatrixSizeAnnotation(species,(String) dimensionX.getSelectedItem(), 
-								(String) dimensionY.getSelectedItem());
-					}
-					else{
-						AnnotationUtility.removeVectorSizeAnnotation(species);
-						AnnotationUtility.removeMatrixSizeAnnotation(species);
-					}
-					//TODO Scott - Check that all four equations for the indices only contain constants and/or
-					//...dimension ids.
-					if (!iIndex.getText().equals("")) {
-						AnnotationUtility.setRowIndexAnnotation(species,iIndex.getText());
-					} else {
-						AnnotationUtility.removeRowIndexAnnotation(species);
-					}
-					if (!jIndex.getText().equals("")) {
-						AnnotationUtility.setColIndexAnnotation(species,jIndex.getText());
-					} else {
-						AnnotationUtility.removeColIndexAnnotation(species);
-					} 
-					if (!conviIndex.getText().equals("")) {
-						AnnotationUtility.setConversionRowIndexAnnotation(species,conviIndex.getText());
-					} else {
-						AnnotationUtility.removeConversionRowIndexAnnotation(species);
-					} 
-					if (!convjIndex.getText().equals("")) {
-						AnnotationUtility.setConversionColIndexAnnotation(species,convjIndex.getText());
-					} else {						
-						AnnotationUtility.removeConversionColIndexAnnotation(species);
+						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
+						dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment");
+						if(dex==null)return false;
+						int limit = sBasePlugin.getIndexCount();
+						for(int i = limit-1; i>-1; i--){
+					        Index indie = sBasePlugin.getIndex(i);
+					        if(indie.isSetReferencedAttribute() && indie.getReferencedAttribute().equals("compartment"))
+					           sBasePlugin.removeIndex(indie);
+					       }
+//						for(Index indie : sBasePlugin.getListOfIndices()) {
+//							if(indie.isSetReferencedAttribute() && indie.getReferencedAttribute().equals("compartment"))
+//								sBasePlugin.removeIndex(indie);
+//						}
+//						for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+//							Index indie = new Index();
+//							indie.setReferencedAttribute("compartment");
+//							sBasePlugin.removeIndex(indie);
+//						}
+						for(int i = 0; i<dex.length-1; i++){
+							Index indexRule = new Index();
+						    indexRule.setArrayDimension(i);
+						    indexRule.setReferencedAttribute("compartment");
+						    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
+						    indexRule.setMath(indexMath);
+						    sBasePlugin.addIndex(indexRule);
+						}
 					}
 				} else {
 					PropertyField f = fields.get(GlobalConstants.INITIAL_STRING);
@@ -1095,77 +998,62 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	public String updates() {
 		
 		String updates = "";
-		
+		String[] dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+				fields.get(GlobalConstants.ID).getValue());
 		if (paramsOnly) {
-
 			if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
 					fields.get(GlobalConstants.INITIAL_STRING).getStates()[1])) {
-				
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				updates += dimID[0] + "/"
 						+ GlobalConstants.INITIAL_STRING + " "
 						+ fields.get(GlobalConstants.INITIAL_STRING).getValue();
 			}
-
 			if (fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
 					fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])) {
-				
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				updates += dimID[0] + "/"
 						+ GlobalConstants.KDECAY_STRING + " "
 						+ fields.get(GlobalConstants.KDECAY_STRING).getValue();
 			}
-
 			if (fields.get(GlobalConstants.OCR_STRING).getState().equals(
 					fields.get(GlobalConstants.OCR_STRING).getStates()[1])) {
-				
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				updates += dimID[0] + "/"
 						+ GlobalConstants.OCR_STRING + " "
 						+ fields.get(GlobalConstants.OCR_STRING).getValue();
 			}
-
 			if (fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(
 					fields.get(GlobalConstants.STOICHIOMETRY_STRING).getStates()[1])) {
-				
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				updates += dimID[0] + "/"
 						+ GlobalConstants.STOICHIOMETRY_STRING + " "
 						+ fields.get(GlobalConstants.STOICHIOMETRY_STRING).getValue();
 			}
-			
 			if (fields.get(GlobalConstants.KCOMPLEX_STRING).getState().equals(
 					fields.get(GlobalConstants.KCOMPLEX_STRING).getStates()[1])) {
-				
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				updates += dimID[0] + "/"
 						+ GlobalConstants.KCOMPLEX_STRING + " "
 						+ fields.get(GlobalConstants.KCOMPLEX_STRING).getValue();
 			}
-			
 			if (fields.get(GlobalConstants.MEMDIFF_STRING).getState().equals(
 					fields.get(GlobalConstants.MEMDIFF_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				updates += dimID[0] + "/"
 						+ GlobalConstants.MEMDIFF_STRING + " "
 						+ fields.get(GlobalConstants.MEMDIFF_STRING).getValue();
 			}
-			
 			if (updates.equals("")) {
-				updates += fields.get(GlobalConstants.ID).getValue() + "/";
+				updates += dimID[0] + "/";
 			}
 		}
 		return updates;
@@ -1189,68 +1077,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		if (paramsOnly)
 			thresholdTextField.setEnabled(specInteresting.isSelected());
-		
-
-		// if the dimension type is changed
-		else if (e.getSource() == dimensionType) {
-			int index = dimensionType.getSelectedIndex();
-			if (index == 0) {
-				dimensionX.setEnabled(false);
-				dimensionY.setEnabled(false);
-			}
-			else if (index == 1) {
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(false);
-			}
-			else if (index == 2) {
-				dimensionX.setEnabled(true);
-				dimensionY.setEnabled(true);
-			}
-		}
-		// if the variable is changed
-		else if (e.getSource() == compartBox) {
-			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
-			String[] sizes = new String[2];
-			// TODO: Scott - change for Plugin reading
-			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
-			if(sizes[0]==null){
-				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
-				if(sizes==null){
-					iIndex.setEnabled(false);
-					jIndex.setEnabled(false);
-				}
-				else{
-					iIndex.setEnabled(true);
-					jIndex.setEnabled(true);
-				}
-			}
-			else{
-				iIndex.setEnabled(true);
-				jIndex.setEnabled(false);
-			}
-		}
-		// if the variable is changed
-		else if (e.getSource() == convBox) {
-			SBase variable = (SBase) SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
-			String[] sizes = new String[2];
-			// TODO: Scott - change for Plugin reading
-			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(variable);
-			if(sizes[0]==null){
-				sizes = AnnotationUtility.parseMatrixSizeAnnotation(variable);
-				if(sizes==null){
-					conviIndex.setEnabled(false);
-					convjIndex.setEnabled(false);
-				}
-				else{
-					conviIndex.setEnabled(true);
-					convjIndex.setEnabled(true);
-				}
-			}
-			else{
-				conviIndex.setEnabled(true);
-				convjIndex.setEnabled(false);
-			}
-		}
 	}
 
 	/**
@@ -1305,10 +1131,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private JCheckBox specBoundary, specConstant, specHasOnly = null;
 	private JTextField initialField = null;
 	
-	private JComboBox dimensionType, dimensionX, dimensionY = null;
-	private JLabel dimensionTypeLabel, dimensionSizeLabel = null;
-	private JTextField iIndex, jIndex = null;
-	private JTextField conviIndex, convjIndex = null;
+	private JTextField iIndex = null;
+	private JTextField conviIndex = null;
 	
 	private JCheckBox specInteresting = null;
 	private JCheckBox specDiffusible = null;
