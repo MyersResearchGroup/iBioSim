@@ -1808,10 +1808,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			boolean inSchematic) {
 		JPanel productsPanel;
 		if (bioModel.getSBMLDocument().getLevel() < 3) {
-			productsPanel = new JPanel(new GridLayout(9, 2));
+			productsPanel = new JPanel(new GridLayout(5, 2));
 		}
 		else {
-			productsPanel = new JPanel(new GridLayout(10, 2));
+			productsPanel = new JPanel(new GridLayout(6, 2));
 		}
 		JLabel productIdLabel = new JLabel("Id:");
 		JLabel productNameLabel = new JLabel("Name:");
@@ -1969,7 +1969,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						} else {
 							// TODO: this needs to send product dimension when it exists
 							error = InitialAssignments.addInitialAssignment(bioModel, dimID[0], 
-									productStoichiometry.getText().trim(),null);
+									productStoichiometry.getText().trim(),dimID);
 							val = 1.0;
 						}
 					}
@@ -2628,10 +2628,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			boolean inSchematic) {
 		JPanel reactantsPanel;
 		if (gcm.getSBMLDocument().getLevel() < 3) {
-			reactantsPanel = new JPanel(new GridLayout(9, 2));
+			reactantsPanel = new JPanel(new GridLayout(5, 2));
 		}
 		else {
-			reactantsPanel = new JPanel(new GridLayout(10, 2));
+			reactantsPanel = new JPanel(new GridLayout(6, 2));
 		}
 		JLabel reactantIdLabel = new JLabel("Id:");
 		JLabel reactantNameLabel = new JLabel("Name:");
@@ -2785,7 +2785,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						} else {
 							// TODO: need sot use reactant dimension when it exists
 							error = InitialAssignments.addInitialAssignment(bioModel, reactantId.getText().trim(), 
-									reactantStoichiometry.getText().trim(), dimensionIds);
+									reactantStoichiometry.getText().trim(), dimID);
 							val = 1.0;
 						}
 					}

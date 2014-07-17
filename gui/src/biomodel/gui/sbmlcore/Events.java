@@ -515,12 +515,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				error = true;
 			}
 			else {
-				error = SBMLutilities.displayinvalidVariables("Event trigger", bioModel.getSBMLDocument(), null, eventTrigger.getText().trim(), "", false);
+				error = SBMLutilities.displayinvalidVariables("Event trigger", bioModel.getSBMLDocument(), dimensionIds, eventTrigger.getText().trim(), "", false);
 				if (!error) {
-					error = SBMLutilities.displayinvalidVariables("Event delay", bioModel.getSBMLDocument(), null, eventDelay.getText().trim(), "", false);
+					error = SBMLutilities.displayinvalidVariables("Event delay", bioModel.getSBMLDocument(), dimensionIds, eventDelay.getText().trim(), "", false);
 				}
 				if (!error) {
-					error = SBMLutilities.displayinvalidVariables("Event priority", bioModel.getSBMLDocument(), null, eventPriority.getText().trim(), "", false);
+					error = SBMLutilities.displayinvalidVariables("Event priority", bioModel.getSBMLDocument(), dimensionIds, eventPriority.getText().trim(), "", false);
 				}
 				if (!error) {
 					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
@@ -1351,6 +1351,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, eventAssignPanel, "Event Asssignment Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		String[] dimID = new String[]{""};
+		String[] dimensionIds = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
@@ -1363,7 +1365,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				error = true;
 			}
 			else {
-				error = SBMLutilities.displayinvalidVariables("Event assignment", gcm.getSBMLDocument(), null, eqn.getText().trim(), "", false);
+				dimID = EAdimensions.getText().split("\\[");
+				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				error = SBMLutilities.displayinvalidVariables("Event assignment", gcm.getSBMLDocument(), dimensionIds, eqn.getText().trim(), "", false);
 				if (!error) {
 					Parameter p = bioModel.getSBMLDocument().getModel().getParameter((String)eaID.getSelectedItem());
 					ASTNode assignMath = SBMLutilities.myParseFormula(eqn.getText().trim());
