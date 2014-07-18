@@ -241,8 +241,9 @@ public class Project {
 			}				
 			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
 				CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
-				CompositionalAnalysis.compositionalFindSG(sgArray);			
-				dfsStateExploration.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
+				CompositionalAnalysis.compositionalFindSG(sgArray);
+				// TODO: temporarily commented out POR with behavioral analysis
+				//dfsStateExploration.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
 			}			
 			long elapsedTimeMillis = System.currentTimeMillis() - startReachability; 
 			float elapsedTimeSec = elapsedTimeMillis/1000F;
@@ -295,22 +296,22 @@ public class Project {
 			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);
 			
 
-//			// --- toggle_switch ---
-//			double timeLimit = 5000.0;
-//			double printInterval = 100.0;			
-//			double timeStep = 100.0;
-//			double absError = 1.0e-9;		
-//			String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
+			// --- toggle_switch ---
+			double timeLimit = 5000.0;
+			double printInterval = 100.0;			
+			double timeStep = 100.0;
+			double absError = 1.0e-9;		
+			String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
 			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
 			// --- end of toggle_switch ---
 		
 			// === C-element circuits ===
-			double timeLimit = 2100.0;
-			double printInterval = 100.0;			
-			double timeStep = 100.0;
-			double absError = 1.0e-9;
-			// --- majority ---
-			String prop = "Pr=?{PF[<=2100]((E>40)&(C<20))}";
+//			double timeLimit = 2100.0;
+//			double printInterval = 100.0;			
+//			double timeStep = 100.0;
+//			double absError = 1.0e-9;
+//			// --- majority ---
+//			String prop = "Pr=?{PF[<=2100]((E>40)&(C<20))}";
 			// --- end of majority ---
 ////////			
 ////////			// --- speedInd ---
