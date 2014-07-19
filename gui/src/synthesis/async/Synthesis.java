@@ -1081,6 +1081,9 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		if (expandRate.isSelected()) {
 			options = options + "cE";
 		}
+		if (circuitFile.endsWith(".g")) {
+			options = options + "lgsg";
+		}
 		// Synthesis Methods
 		if (singleCube.isSelected()) {
 			options = options + "ys";
