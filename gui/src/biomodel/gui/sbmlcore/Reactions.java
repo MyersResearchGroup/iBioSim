@@ -171,6 +171,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private JTextField CiIndex;
 	
+	private int dimensionCounter;
+	
 	/*
 	 * text field for editing reactants
 	 */
@@ -573,6 +575,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JPanel reactionPanelNorth3 = new JPanel();
 		JPanel reactionPanelNorth4 = new JPanel();
 		CiIndex = new JTextField(20);
+		dimensionCounter = 0;
 		reactionPanelNorth1.add(id);
 		reactionPanelNorth1.add(reacID);
 		reactionPanelNorth1.add(name);
@@ -785,7 +788,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			error = false;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText());
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
+				dimensionCounter += dimID.length-1;
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), reactionId.trim(), false);
 			}
 			else{
@@ -1938,7 +1942,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			double val = 1.0;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), productId.getText());
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
+				dimensionCounter += dimID.length-1;
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedProductId, false);
 			}
 			else{
@@ -1949,11 +1954,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 				error = (dex==null);
 			}
-			if (dimID[0].equals("")) {
-				error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
-			}
-			else {
-				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0], selectedID, false);
+			if(!error){
+				if (dimID[0].equals("")) {
+					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
+				}
+				else {
+					error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0], selectedID, false);
+				}
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -2754,7 +2761,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			double val = 1.0;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reactantId.getText());
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
+				dimensionCounter += dimID.length-1;
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedReactantId, false);
 			}
 			else{
@@ -2765,11 +2773,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				dex = SBMLutilities.checkIndices(RiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 				error = (dex==null);
 			}
-			if (reactantId.getText().trim().equals("")) {
-				error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
-			}
-			else {
-				error = SBMLutilities.checkID(gcm.getSBMLDocument(), reactantId.getText().trim(), selectedID, false);
+			if(!error){
+				if (reactantId.getText().trim().equals("")) {
+					error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
+				}
+				else {
+					error = SBMLutilities.checkID(gcm.getSBMLDocument(), reactantId.getText().trim(), selectedID, false);
+				}
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {

@@ -212,7 +212,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), consID.getText());
 			error = (dimID == null);
 			if(!error){
-				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				dimensionIds = SBMLutilities.getDimensionIds(0,dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 			}
 			if (!error) {
@@ -243,7 +243,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						Constraint c = (bioModel.getSBMLDocument().getModel().getListOfConstraints()).get(Cindex);
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
-						SBMLutilities.setMetaId(c, consID.getText().trim());
+						SBMLutilities.setMetaId(c, dimID[0].trim());
 						if (!consMessage.getText().trim().equals("")) {
 							XMLNode xmlNode;
 							try {
@@ -297,7 +297,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						int index = constraints.getSelectedIndex();
 						Constraint c = bioModel.getSBMLDocument().getModel().createConstraint();
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
-						SBMLutilities.setMetaId(c, consID.getText().trim());
+						SBMLutilities.setMetaId(c, dimID[0].trim());
 						if (!consMessage.getText().trim().equals("")) {
 							XMLNode xmlNode;
 							try {
@@ -352,7 +352,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		if (value == JOptionPane.NO_OPTION) {
 			return selected;
 		}
-		return consID.getText().trim();
+		return dimID[0].trim();
 	}
 	
 	/**

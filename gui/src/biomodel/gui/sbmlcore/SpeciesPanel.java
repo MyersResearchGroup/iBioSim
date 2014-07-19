@@ -724,7 +724,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
 					fields.get(GlobalConstants.ID).getValue());
 			if(dimID==null)return false;
-			dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+			dimensionIds = SBMLutilities.getDimensionIds(0,dimID.length-1);
 			//TODO Here parse out ID into the dimension size ID. And the two indices boxes
 			// replace fields.get(GlobalConstants.ID).getValue() with dimID[0]
 			// if(dex==null) return false
