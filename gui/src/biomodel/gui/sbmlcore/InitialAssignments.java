@@ -196,7 +196,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 					"Multiple Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		String [] dimIds = SBMLutilities.getDimensionIds(dimensions.length-1);
+		String [] dimIds = SBMLutilities.getDimensionIds(0,dimensions.length-1);
 		if(SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimIds, assignment.trim(), "", false)){
 			return true;
 		}

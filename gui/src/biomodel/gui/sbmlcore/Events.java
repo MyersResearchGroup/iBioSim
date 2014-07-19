@@ -61,6 +61,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	
 	private JTextField iIndex, EAdimensions;
 	
+	private int dimensionCounter;
+	
 	private JComboBox eaID;
 
 	private BioModel bioModel;
@@ -100,7 +102,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					en++;
 					eventId = "event" + en;
 				}
-				event.setId(eventId);
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
+				String dimens = " ";
+				for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
+					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
+					dimens += "[" + dimX.getSize() + "]";							
+				}
+				event.setId(eventId+dimens);
 			}
 			ev[i] = event.getId();
 		}
@@ -333,7 +341,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					origAssign = new String[event.getEventAssignmentCount()];
 					int k=0;
 					int l=0;
-					String[] indices = new String[2];
 					for (int j = 0; j < event.getEventAssignmentCount(); j++) {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
@@ -345,7 +352,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							Index indie = sBasePlugin.getIndex(i1);
 							freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 						}
-						String dimens = "";
+						String dimens = " ";
 						for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
 							dimens += "[" + dimX.getSize() + "]";							
@@ -482,69 +489,72 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), eventID.getText());
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
+				dimensionCounter += dimID.length-1;
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selected, false);
 			}
 			else{
 				error = true;
 			}
-			if (eventTrigger.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Event must have a trigger formula.", "Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			else if (SBMLutilities.myParseFormula(eventTrigger.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "Trigger formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			else if (!SBMLutilities.returnsBoolean(bioModel.addBooleans(eventTrigger.getText().trim()), bioModel.getSBMLDocument().getModel())) {
-				JOptionPane.showMessageDialog(Gui.frame, "Trigger formula must be of type Boolean.", 
-						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			else if (!eventDelay.getText().trim().equals("") && SBMLutilities.myParseFormula(eventDelay.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "Delay formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			else if (!eventPriority.getText().trim().equals("") && SBMLutilities.myParseFormula(eventPriority.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "Priority formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			else if (bioModel.getSBMLDocument().getLevel() < 3 && assign.length == 0) {
-				JOptionPane.showMessageDialog(Gui.frame, "Event must have at least one event assignment.", "Event Assignment Needed",
-						JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			else {
-				error = SBMLutilities.displayinvalidVariables("Event trigger", bioModel.getSBMLDocument(), dimensionIds, eventTrigger.getText().trim(), "", false);
-				if (!error) {
-					error = SBMLutilities.displayinvalidVariables("Event delay", bioModel.getSBMLDocument(), dimensionIds, eventDelay.getText().trim(), "", false);
+			if(!error){
+				if (eventTrigger.getText().trim().equals("")) {
+					JOptionPane.showMessageDialog(Gui.frame, "Event must have a trigger formula.", "Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
+					error = true;
 				}
-				if (!error) {
-					error = SBMLutilities.displayinvalidVariables("Event priority", bioModel.getSBMLDocument(), dimensionIds, eventPriority.getText().trim(), "", false);
+				else if (SBMLutilities.myParseFormula(eventTrigger.getText().trim()) == null) {
+					JOptionPane.showMessageDialog(Gui.frame, "Trigger formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+					error = true;
 				}
-				if (!error) {
-					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
-							bioModel.addBooleans(eventTrigger.getText().trim()));
+				else if (!SBMLutilities.returnsBoolean(bioModel.addBooleans(eventTrigger.getText().trim()), bioModel.getSBMLDocument().getModel())) {
+					JOptionPane.showMessageDialog(Gui.frame, "Trigger formula must be of type Boolean.", 
+							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+					error = true;
 				}
-				if ((!error) && (!eventDelay.getText().trim().equals(""))) {
-					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
-							bioModel.addBooleans(eventDelay.getText().trim()));
+				else if (!eventDelay.getText().trim().equals("") && SBMLutilities.myParseFormula(eventDelay.getText().trim()) == null) {
+					JOptionPane.showMessageDialog(Gui.frame, "Delay formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+					error = true;
+				}
+				else if (!eventPriority.getText().trim().equals("") && SBMLutilities.myParseFormula(eventPriority.getText().trim()) == null) {
+					JOptionPane.showMessageDialog(Gui.frame, "Priority formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+					error = true;
+				}
+				else if (bioModel.getSBMLDocument().getLevel() < 3 && assign.length == 0) {
+					JOptionPane.showMessageDialog(Gui.frame, "Event must have at least one event assignment.", "Event Assignment Needed",
+							JOptionPane.ERROR_MESSAGE);
+					error = true;
+				}
+				else {
+					error = SBMLutilities.displayinvalidVariables("Event trigger", bioModel.getSBMLDocument(), dimensionIds, eventTrigger.getText().trim(), "", false);
 					if (!error) {
-						if (SBMLutilities.returnsBoolean(bioModel.addBooleans(eventDelay.getText().trim()), bioModel.getSBMLDocument().getModel())) {
-							JOptionPane.showMessageDialog(Gui.frame, "Event delay must evaluate to a number.", "Number Expected",
-									JOptionPane.ERROR_MESSAGE);
-							error = true;
+						error = SBMLutilities.displayinvalidVariables("Event delay", bioModel.getSBMLDocument(), dimensionIds, eventDelay.getText().trim(), "", false);
+					}
+					if (!error) {
+						error = SBMLutilities.displayinvalidVariables("Event priority", bioModel.getSBMLDocument(), dimensionIds, eventPriority.getText().trim(), "", false);
+					}
+					if (!error) {
+						error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
+								bioModel.addBooleans(eventTrigger.getText().trim()));
+					}
+					if ((!error) && (!eventDelay.getText().trim().equals(""))) {
+						error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
+								bioModel.addBooleans(eventDelay.getText().trim()));
+						if (!error) {
+							if (SBMLutilities.returnsBoolean(bioModel.addBooleans(eventDelay.getText().trim()), bioModel.getSBMLDocument().getModel())) {
+								JOptionPane.showMessageDialog(Gui.frame, "Event delay must evaluate to a number.", "Number Expected",
+										JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
 						}
 					}
-				}
-				if ((!error) && (!eventPriority.getText().trim().equals(""))) {
-					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
-							bioModel.addBooleans(eventPriority.getText().trim()));
-					if (!error) {
-						if (SBMLutilities.returnsBoolean(bioModel.addBooleans(eventPriority.getText().trim()), bioModel.getSBMLDocument().getModel())) {
-							JOptionPane.showMessageDialog(Gui.frame, "Event priority must evaluate to a number.", "Number Expected",
-									JOptionPane.ERROR_MESSAGE);
-							error = true;
+					if ((!error) && (!eventPriority.getText().trim().equals(""))) {
+						error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
+								bioModel.addBooleans(eventPriority.getText().trim()));
+						if (!error) {
+							if (SBMLutilities.returnsBoolean(bioModel.addBooleans(eventPriority.getText().trim()), bioModel.getSBMLDocument().getModel())) {
+								JOptionPane.showMessageDialog(Gui.frame, "Event priority must evaluate to a number.", "Number Expected",
+										JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
 						}
 					}
 				}
@@ -576,13 +586,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left);
 						if(EAdimID!=null){
-							EAdimensionIds = SBMLutilities.getDimensionIds(EAdimID.length-1);
+							EAdimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,EAdimID.length-1);
+							dimensionCounter += EAdimID.length-1;
 						}
 						else{
 							error = true;
 						}
-						if(eaID.isEnabled() && !error){
-							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
+						if(!error){
+							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
 							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 							error = (EAdex==null);
 						}
@@ -633,7 +644,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left);
 						if(EAdimID!=null){
-							EAdimensionIds = SBMLutilities.getDimensionIds(EAdimID.length-1);
+							EAdimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,EAdimID.length-1);
+							dimensionCounter += EAdimID.length-1;
 						}
 						else{
 							error = true;
@@ -954,7 +966,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 							EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left);
 							if(EAdimID!=null){
-								EAdimensionIds = SBMLutilities.getDimensionIds(EAdimID.length-1);
+								EAdimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,EAdimID.length-1);
+								dimensionCounter += EAdimID.length-1;
 							}
 							else{
 								error = true;
@@ -964,45 +977,46 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 								error = (EAdex==null);
 							}
-							if(error)break;
-							sBasePlugin.unsetListOfDimensions();
-							for(int i1 = 0; i1<EAdimID.length-1; i1++){
-								org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
-								dimX.setSize(EAdimID[i1+1]);
-								dimX.setArrayDimension(i1);
+							if(!error){
+								sBasePlugin.unsetListOfDimensions();
+								for(int i1 = 0; i1<EAdimID.length-1; i1++){
+									org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
+									dimX.setSize(EAdimID[i1+1]);
+									dimX.setArrayDimension(i1);
+								}
+								sBasePlugin.unsetListOfIndices();
+								for(int i1 = 0; i1<EAdex.length-1; i1++){
+									Index indexRule = new Index();
+									indexRule.setArrayDimension(i1);
+									indexRule.setReferencedAttribute("variable");
+									ASTNode indexMath = SBMLutilities.myParseFormula(EAdex[i1+1]);
+									indexRule.setMath(indexMath);
+									sBasePlugin.addIndex(indexRule);
+								}
+								if (var.endsWith("\'")) {
+									var = "rate_" + var.replace("\'","");
+								}
+								ea.setVariable(var);
+								Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
+								if (p != null && SBMLutilities.isBoolean(p)) {
+									ea.setMath(bioModel.addBooleanAssign(assign[i].split(":=")[1].split(";")[0].trim()));
+								} else {
+									ea.setMath(SBMLutilities.myParseFormula(assign[i].split(":=")[1].split(";")[0].trim()));
+								}
+								if (p == null && var.endsWith("_" + GlobalConstants.RATE)) {
+									p = bioModel.getSBMLDocument().getModel().createParameter();
+									p.setId(var);
+									p.setConstant(false);
+									p.setValue(0);
+									RateRule r = bioModel.getSBMLDocument().getModel().createRateRule();
+									SBMLutilities.setMetaId(r, GlobalConstants.RULE+"_" + var);
+									r.setVariable(var.replace("_"+GlobalConstants.RATE,""));
+									r.setMath(SBMLutilities.myParseFormula(var));
+								}
+								error = checkEventAssignmentUnits(ea);
+								if (error)
+									break;
 							}
-							sBasePlugin.unsetListOfIndices();
-							for(int i1 = 0; i1<EAdex.length-1; i1++){
-								Index indexRule = new Index();
-								indexRule.setArrayDimension(i1);
-								indexRule.setReferencedAttribute("variable");
-								ASTNode indexMath = SBMLutilities.myParseFormula(EAdex[i1+1]);
-								indexRule.setMath(indexMath);
-								sBasePlugin.addIndex(indexRule);
-							}
-							if (var.endsWith("\'")) {
-								var = "rate_" + var.replace("\'","");
-							}
-							ea.setVariable(var);
-							Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
-							if (p != null && SBMLutilities.isBoolean(p)) {
-								ea.setMath(bioModel.addBooleanAssign(assign[i].split(":=")[1].split(";")[0].trim()));
-							} else {
-								ea.setMath(SBMLutilities.myParseFormula(assign[i].split(":=")[1].split(";")[0].trim()));
-							}
-							if (p == null && var.endsWith("_" + GlobalConstants.RATE)) {
-								p = bioModel.getSBMLDocument().getModel().createParameter();
-								p.setId(var);
-								p.setConstant(false);
-								p.setValue(0);
-								RateRule r = bioModel.getSBMLDocument().getModel().createRateRule();
-								SBMLutilities.setMetaId(r, GlobalConstants.RULE+"_" + var);
-								r.setVariable(var.replace("_"+GlobalConstants.RATE,""));
-								r.setMath(SBMLutilities.myParseFormula(var));
-							}
-							error = checkEventAssignmentUnits(ea);
-							if (error)
-								break;
 						}
 					}
 					//add dynamic process
@@ -1166,7 +1180,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					en++;
 					eventId = "event" + en;
 				}
-				event.setId(eventId);
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
+				String dimens = " ";
+				for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
+					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
+					dimens += "[" + dimX.getSize() + "]";							
+				}
+				event.setId(eventId+dimens);
 			}
 			ev[i] = event.getId();
 		}
@@ -1366,7 +1386,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			else {
 				dimID = EAdimensions.getText().split("\\[");
-				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter, dimID.length-1);
+				dimensionCounter += dimID.length-1;
 				error = SBMLutilities.displayinvalidVariables("Event assignment", gcm.getSBMLDocument(), dimensionIds, eqn.getText().trim(), "", false);
 				if (!error) {
 					Parameter p = bioModel.getSBMLDocument().getModel().getParameter((String)eaID.getSelectedItem());
@@ -1401,7 +1422,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					// String for the indices
 					String assignIndex = "; " + iIndex.getText();
 					// String for the dimensions
-					String dimens = EAdimensions.getText();
+					String dimens = " " + EAdimensions.getText();
 					assign[index] = eaID.getSelectedItem() + dimens + " := " + eqn.getText().trim() 
 							+ assignIndex;
 					Utility.sort(assign);

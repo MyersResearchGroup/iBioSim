@@ -406,7 +406,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), compID.getText());
 			error = (dimID == null);
 			if(!error){
-				dimensionIds = SBMLutilities.getDimensionIds(dimID.length-1);
+				dimensionIds = SBMLutilities.getDimensionIds(0,dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 			}
 			if (!error && option.equals("OK") && CompConstants.getSelectedItem().equals("true")) {

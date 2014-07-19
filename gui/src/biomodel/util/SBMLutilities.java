@@ -150,7 +150,7 @@ public class SBMLutilities {
 			return null;
 		}
 		String [] retText = entryText.split("\\[");
-		if(retText[0].isEmpty()){
+		if(retText[0].trim().isEmpty()){
 			JOptionPane.showMessageDialog(Gui.frame, "Need ID.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
@@ -254,11 +254,11 @@ public class SBMLutilities {
 		return indices;
 	}
 	
-	public static String[] getDimensionIds(int count) {
+	public static String[] getDimensionIds(int old, int count) {
 		if (count==0) return null;
 		String[] dimensionIds = new String[count];
-		for (int i = 0; i < count; i++) {
-			dimensionIds[i] = "d" + i;
+		for (int i = old; i < count+old; i++) {
+			dimensionIds[i-old] = "d" + (i);
 			// TODO: need to check here is this dimension id is safe to use, should not already be in use
 		}
 		return dimensionIds;
