@@ -86,6 +86,16 @@ public class Utility {
 						}
 					});
 				}
+				else if (approve.equals("Export SBOL")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
+									|| name.endsWith(GlobalConstants.RDF_FILE_EXTENSION);
+						}
+					});
+				}
 //				else if (approve.equals("Export DNA Component")) {
 //					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 //					fd.setFilenameFilter(new FilenameFilter() {

@@ -48,8 +48,8 @@ public class AssemblyGraph {
 		SBMLDocument sbmlDoc = biomodel.getSBMLDocument();
 		HashMap<String, AssemblyNode> idToNode = new HashMap<String, AssemblyNode>();
 //		 Creates assembly nodes for submodels and connect them to nodes for species
-		if (sbmlDoc.getExtensionPackages().containsKey(CompConstants.namespaceURI)
-				&& parseSubModelSBOL(sbmlDoc, biomodel.getPath(), idToNode)) {
+		if (/*sbmlDoc.getExtensionPackages().containsKey(CompConstants.namespaceURI)
+				&& */parseSubModelSBOL(sbmlDoc, biomodel.getPath(), idToNode)) {
 			// Creates flattened assembly graph in case hierarchy of SBOL can't be preserved
 			SBMLDocument flatDoc = biomodel.flattenModel(true);
 			flatAssemblyGraph = new AssemblyGraph(flatDoc);
