@@ -598,7 +598,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		String[] dimensionIds = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), paramID.getText());
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), paramID.getText(), false);
 			error = (dimID == null);
 			if(!error){
 				dimensionIds = SBMLutilities.getDimensionIds(0,dimID.length-1);

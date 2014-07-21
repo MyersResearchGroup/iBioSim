@@ -786,7 +786,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText());
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
 			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
 				dimensionCounter += dimID.length-1;
@@ -797,7 +797,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(reactionComp.isEnabled() && !error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
-				dex = SBMLutilities.checkIndices(CiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment");
+				dex = SBMLutilities.checkIndices(CiIndex.getText().trim(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment");
 				error = (dex==null);
 			}
 			if (!error) {
@@ -1940,11 +1940,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			error = false;
 			String prod = "";
 			double val = 1.0;
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), productId.getText());
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), productId.getText(), true);
 			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
 				dimensionCounter += dimID.length-1;
-				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedProductId, false);
+				if (dimID[0].equals("")) {
+					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
+				}
+				else {
+					error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0], selectedID, false);
+				}
 			}
 			else{
 				error = true;
@@ -1953,14 +1958,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)productSpecies.getSelectedItem());
 				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 				error = (dex==null);
-			}
-			if(!error){
-				if (dimID[0].equals("")) {
-					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
-				}
-				else {
-					error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0], selectedID, false);
-				}
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -2759,11 +2756,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			error = false;
 			String react = "";
 			double val = 1.0;
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reactantId.getText());
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reactantId.getText(), true);
 			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
 				dimensionCounter += dimID.length-1;
-				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedReactantId, false);
+				if (dimID[0].trim().equals("")) {
+					error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
+				}
+				else {
+					error = SBMLutilities.checkID(gcm.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+				}
 			}
 			else{
 				error = true;
@@ -2772,14 +2774,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactantSpecies.getSelectedItem());
 				dex = SBMLutilities.checkIndices(RiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 				error = (dex==null);
-			}
-			if(!error){
-				if (reactantId.getText().trim().equals("")) {
-					error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
-				}
-				else {
-					error = SBMLutilities.checkID(gcm.getSBMLDocument(), reactantId.getText().trim(), selectedID, false);
-				}
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -2794,7 +2788,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							error = true;
 						} else {
 							// TODO: need sot use reactant dimension when it exists
-							error = InitialAssignments.addInitialAssignment(bioModel, reactantId.getText().trim(), 
+							error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
 									reactantStoichiometry.getText().trim(), dimID);
 							val = 1.0;
 						}
@@ -2904,7 +2898,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					}
 					if (reactan==null) return;
-					reactan.setId(reactantId.getText().trim());
+					reactan.setId(dimID[0].trim());
 					reactan.setName(reactantName.getText().trim());
 					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
 					reactan.setStoichiometry(val);
@@ -2962,16 +2956,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactants.setListData(reacta);
 						reactants.setSelectedIndex(index);
 					}
-					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, selectedID, reactantId.getText().trim());
+					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, selectedID, dimID[0].trim());
 					if (reactant == null || !inSchematic) {
-						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID, reactantId.getText().trim()));
+						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID, dimID[0].trim()));
 					}
 				}
 				else {
 					// SpeciesReference reactan = new
 					// SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 					SpeciesReference reactan = new SpeciesReference(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
-					reactan.setId(reactantId.getText().trim());
+					reactan.setId(dimID[0].trim());
 					reactan.setName(reactantName.getText().trim());
 					reactan.setConstant(true);
 					changedReactants.add(reactan);

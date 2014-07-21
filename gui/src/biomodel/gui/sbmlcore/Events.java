@@ -487,7 +487,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
 				assign[i] = eventAssign.getModel().getElementAt(i).toString();
 			}
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), eventID.getText());
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), eventID.getText(), false);
 			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
 				dimensionCounter += dimID.length-1;
@@ -584,7 +584,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						String rightSide = assign[i].split(":=")[1].split(";")[1].trim();
 						// TODO: Scott - change for Plugin writing
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
-						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left);
+						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 						if(EAdimID!=null){
 							EAdimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,EAdimID.length-1);
 							dimensionCounter += EAdimID.length-1;
@@ -642,7 +642,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						String rightSide = placeAssign[i].split(":=")[1].split(";")[1];
 						// TODO: Scott - change for Plugin writing
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
-						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left);
+						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 						if(EAdimID!=null){
 							EAdimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,EAdimID.length-1);
 							dimensionCounter += EAdimID.length-1;
@@ -964,7 +964,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							String rightSide = assign[i].split(":=")[1].split(";")[1].trim();
 							// TODO: Scott - change for Plugin writing
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
-							EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left);
+							EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 							if(EAdimID!=null){
 								EAdimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,EAdimID.length-1);
 								dimensionCounter += EAdimID.length-1;

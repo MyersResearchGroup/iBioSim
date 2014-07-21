@@ -97,7 +97,7 @@ public class SBMLutilities {
 	 */
 	public static boolean checkID(SBMLDocument document, String ID, String selectedID, boolean isReacParam) {
 		Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
-		if (ID.equals("")) {
+		if (ID.equals("")&&!isReacParam) {
 			JOptionPane.showMessageDialog(Gui.frame, "An ID is required.", "Enter an ID", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
@@ -140,7 +140,7 @@ public class SBMLutilities {
 	 * @param entryText The parameters that are being tested
 	 * @return If the parameters are on the list, scalar, and constant.
 	 */
-	public static String[] checkSizeParameters(SBMLDocument document, String entryText){
+	public static String[] checkSizeParameters(SBMLDocument document, String entryText, boolean isReacParam){
 		// TDDO: check size parameters
 		// TODO: have this take the dimension string parse it and make sure of form: <id>[<id>][<id>] etc.
 		// TODO: this function should return the String[] of dimensions including 0 entry which is id of the object.
@@ -150,9 +150,12 @@ public class SBMLutilities {
 			return null;
 		}
 		String [] retText = entryText.split("\\[");
-		if(retText[0].trim().isEmpty()){
-			JOptionPane.showMessageDialog(Gui.frame, "Need ID.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
-			return null;
+		// If this function is not called on reaction reactant or product
+		if(!isReacParam){
+			if(retText[0].trim().isEmpty()){
+				JOptionPane.showMessageDialog(Gui.frame, "Need ID.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 		}
 		for(int i = 1; i<retText.length;i++){
 			if(!retText[i].contains("]")){
@@ -226,11 +229,11 @@ public class SBMLutilities {
 			indie.setMath(myParseFormula(indices[i]));
 			indie.setArrayDimension(i-1);
 			indie.setReferencedAttribute(attribute);
-			if(ArraysMath.isStaticallyComputable(document.getModel(), indie) == false){
-				JOptionPane.showMessageDialog(Gui.frame, "Index math must consist of constants and valid dimension size ids only.", 
-						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
-				return null;
-			}
+//			if(ArraysMath.isStaticallyComputable(document.getModel(), indie, dimensionIds) == false){
+//				JOptionPane.showMessageDialog(Gui.frame, "Index math must consist of constants and valid dimension size ids only.", 
+//						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
+//				return null;
+//			}
 //			if(ArraysMath.evaluateIndexBounds(document.getModel(), indie) == false){
 //				JOptionPane.showMessageDialog(Gui.frame, "Index math must evaluate to values within possible bounds.", 
 //						"Invalid Indices", JOptionPane.ERROR_MESSAGE);

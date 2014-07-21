@@ -722,7 +722,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
-					fields.get(GlobalConstants.ID).getValue());
+					fields.get(GlobalConstants.ID).getValue(), false);
 			if(dimID==null)return false;
 			dimensionIds = SBMLutilities.getDimensionIds(0,dimID.length-1);
 			//TODO Here parse out ID into the dimension size ID. And the two indices boxes
@@ -999,7 +999,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		String updates = "";
 		String[] dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
-				fields.get(GlobalConstants.ID).getValue());
+				fields.get(GlobalConstants.ID).getValue(), false);
 		if (paramsOnly) {
 			if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
 					fields.get(GlobalConstants.INITIAL_STRING).getStates()[1])) {
