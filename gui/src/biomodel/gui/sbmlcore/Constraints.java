@@ -209,7 +209,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		String[] dimID = new String[]{""};
 		String[] dimensionIds = new String[]{""};
 		while (error && value == JOptionPane.YES_OPTION) {
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), consID.getText());
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), consID.getText(), false);
 			error = (dimID == null);
 			if(!error){
 				dimensionIds = SBMLutilities.getDimensionIds(0,dimID.length-1);

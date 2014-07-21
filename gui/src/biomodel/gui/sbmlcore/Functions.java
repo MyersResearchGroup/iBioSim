@@ -272,7 +272,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							error = true;
 						}
 						else {
-							String [] dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), funcID.getText());
+							String [] dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), funcID.getText(), false);
 							String [] dimensionIds = SBMLutilities.getDimensionIds(0,dimID.length-1);
 							error = SBMLutilities.displayinvalidVariables("Event delay", bioModel.getSBMLDocument(), dimensionIds, 
 										eqn.getText().trim(), args.getText().trim(), true);

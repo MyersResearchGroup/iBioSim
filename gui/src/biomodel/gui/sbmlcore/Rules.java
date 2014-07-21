@@ -322,7 +322,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), id.getText());
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), id.getText(), false);
 			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds(0,dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), metaId, false);
