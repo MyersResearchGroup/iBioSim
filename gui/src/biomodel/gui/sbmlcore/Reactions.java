@@ -816,7 +816,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					else if (complex==null && production==null){
-						ArrayList<String> invalidKineticVars = getInvalidVariablesInReaction(kineticLaw.getText().trim(), null, true, "", false);
+						ArrayList<String> invalidKineticVars = getInvalidVariablesInReaction(kineticLaw.getText().trim(), dimensionIds, true, "", false);
 						if (invalidKineticVars.size() > 0) {
 							String invalid = "";
 							for (int i = 0; i < invalidKineticVars.size(); i++) {
@@ -2025,7 +2025,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					else {
-						ArrayList<String> invalidVars = getInvalidVariablesInReaction(productStoichiometry.getText().trim(), null, true, "", false);
+						ArrayList<String> invalidVars = getInvalidVariablesInReaction(productStoichiometry.getText().trim(), dimensionIds, true, "", false);
 						if (invalidVars.size() > 0) {
 							String invalid = "";
 							for (int i = 0; i < invalidVars.size(); i++) {
@@ -2841,7 +2841,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					else {
-						ArrayList<String> invalidVars = getInvalidVariablesInReaction(reactantStoichiometry.getText().trim(), null, true, "", false);
+						ArrayList<String> invalidVars = getInvalidVariablesInReaction(reactantStoichiometry.getText().trim(), dimensionIds, true, "", false);
 						if (invalidVars.size() > 0) {
 							String invalid = "";
 							for (int i = 0; i < invalidVars.size(); i++) {
