@@ -810,7 +810,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				else if(kineticFluxLabel.getSelectedItem().equals("Kinteic Law:")){
+				else if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 					if (complex==null && production==null && SBMLutilities.myParseFormula(kineticLaw.getText().trim()) == null) {
 						JOptionPane.showMessageDialog(Gui.frame, "Unable to parse kinetic law.", "Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
 						error = true;
