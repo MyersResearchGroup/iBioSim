@@ -2071,7 +2071,6 @@ public class BioGraph extends mxGraph {
 	public String getCellType(mxCell cell){
 		
 		if(cell != null && cell.isEdge()){
-			
 			String sourceType = getCellType(cell.getSource());
 			String targetType = getCellType(cell.getTarget());
 			
@@ -2090,6 +2089,9 @@ public class BioGraph extends mxGraph {
 				return GlobalConstants.REACTION_EDGE;
 			}
 			else if (sourceType == GlobalConstants.REACTION || targetType == GlobalConstants.REACTION) {
+				if (cell.getStyle().equals("MODIFIER_REACTION_EDGE")) {
+					return GlobalConstants.MODIFIER_REACTION_EDGE;
+				}
 				return GlobalConstants.REACTION_EDGE;
 			}
 			else if (sourceType == GlobalConstants.RULE || targetType == GlobalConstants.RULE) {

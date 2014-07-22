@@ -71,6 +71,7 @@ public class GlobalConstants {
 	public static final String REACTION = "Reaction";
 	public static final String MODIFIER = "Modifier";
 	public static final String REACTION_EDGE = "Reaction_Edge";
+	public static final String MODIFIER_REACTION_EDGE = "Modifier_Reaction_Edge";
 	public static final String RULE_EDGE = "Rule_Edge";
 	public static final String CONSTRAINT_EDGE = "Constraint_Edge";
 	public static final String EVENT_EDGE = "Event_Edge";
