@@ -74,11 +74,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < model.getConstraintCount(); i++) {
 			Constraint constraint = listOfConstraints.get(i);
 			if (!constraint.isSetMetaId()) {
-				String constraintId = "constraint0";
+				String constraintId = "c0";
 				int cn = 0;
 				while (bioModel.isSIdInUse(constraintId)) {
 					cn++;
-					constraintId = "constraint" + cn;
+					constraintId = "c" + cn;
 				}
 				SBMLutilities.setMetaId(constraint, constraintId);
 			}
@@ -180,11 +180,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		else {
-			String constraintId = "constraint0";
+			String constraintId = "c0";
 			int cn = 0;
 			while (SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument(), constraintId)!=null) {
 				cn++;
-				constraintId = "constraint" + cn;
+				constraintId = "c" + cn;
 			}
 			consID.setText(constraintId);
 		}
@@ -365,11 +365,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < model.getConstraintCount(); i++) {
 			Constraint constraint = listOfConstraints.get(i);
 			if (!constraint.isSetMetaId()) {
-				String constraintId = "constraint0";
+				String constraintId = "c0";
 				int cn = 0;
 				while (bioModel.isSIdInUse(constraintId)) {
 					cn++;
-					constraintId = "constraint" + cn;
+					constraintId = "c" + cn;
 				}
 				SBMLutilities.setMetaId(constraint, constraintId);
 			}
