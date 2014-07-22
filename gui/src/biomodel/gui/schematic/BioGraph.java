@@ -731,7 +731,7 @@ public class BioGraph extends mxGraph {
 				
 				if (r.isSetKineticLaw()) { 
 					String initStr = SBMLutilities.myFormulaToString(r.getKineticLaw().getMath());
-					String[] vars = initStr.split(" |\\(|\\)|\\,");
+					String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
 					for (int j = 0; j < vars.length; j++) {
 						Parameter parameter = m.getParameter(vars[j]);
 						if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
@@ -786,7 +786,7 @@ public class BioGraph extends mxGraph {
 				while (generalGlyph.getListOfReferenceGlyphs().size() > 0) 
 					generalGlyph.getListOfReferenceGlyphs().remove(0);
 				String initStr = SBMLutilities.myFormulaToString(r.getMath());
-				String[] vars = initStr.split(" |\\(|\\)|\\,");
+				String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
 				for (int j = 0; j < vars.length; j++) {
 					Species species = m.getSpecies(vars[j]);
 					if (species != null) {
@@ -843,7 +843,7 @@ public class BioGraph extends mxGraph {
 				while (generalGlyph.getListOfReferenceGlyphs().size() > 0) 
 					generalGlyph.getListOfReferenceGlyphs().remove(0);
 				String initStr = SBMLutilities.myFormulaToString(c.getMath());
-				String[] vars = initStr.split(" |\\(|\\)|\\,");
+				String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
 				HashSet<String> variables = new HashSet<String>();
 				for (String var: vars) {
 					variables.add(var);
@@ -883,7 +883,7 @@ public class BioGraph extends mxGraph {
 					generalGlyph.getListOfReferenceGlyphs().remove(0);
 				if (!isTransition && e.isSetTrigger()) {
 					String initStr = SBMLutilities.myFormulaToString(e.getTrigger().getMath());
-					String[] vars = initStr.split(" |\\(|\\)|\\,");
+					String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
 					for (int j = 0; j < vars.length; j++) {
 						Species species = m.getSpecies(vars[j]);
 						if (species != null) {
@@ -908,7 +908,7 @@ public class BioGraph extends mxGraph {
 				}
 				if (!isTransition && e.isSetDelay()) {
 					String initStr = SBMLutilities.myFormulaToString(e.getDelay().getMath());
-					String [] vars = initStr.split(" |\\(|\\)|\\,");
+					String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
 					for (int j = 0; j < vars.length; j++) {
 						Species species = m.getSpecies(vars[j]);
 						if (species != null) {
@@ -933,7 +933,7 @@ public class BioGraph extends mxGraph {
 				}
 				if (!isTransition && e.isSetPriority()) {
 					String initStr = SBMLutilities.myFormulaToString(e.getPriority().getMath());
-					String [] vars = initStr.split(" |\\(|\\)|\\,");
+					String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
 					for (int j = 0; j < vars.length; j++) {
 						Species species = m.getSpecies(vars[j]);
 						if (species != null) {
@@ -961,7 +961,7 @@ public class BioGraph extends mxGraph {
 					EventAssignment ea = e.getListOfEventAssignments().get(k);
 					String initStr = SBMLutilities.myFormulaToString(ea.getMath());
 					if (!isTransition) {
-						String [] vars = initStr.split(" |\\(|\\)|\\,");
+						String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
 						for (int j = 0; j < vars.length; j++) {
 							Species species = m.getSpecies(vars[j]);
 							if (species != null) {
