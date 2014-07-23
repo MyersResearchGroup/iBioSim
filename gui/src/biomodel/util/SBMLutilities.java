@@ -185,6 +185,10 @@ public class SBMLutilities {
 				JOptionPane.showMessageDialog(Gui.frame, p.getId() + " does not have an integer value.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
+			if(p.getValue()<0){
+				JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is negative.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 			if(ABP.getDimensionCount()!=0){
 				JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not a scalar.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
 				return null;
@@ -229,11 +233,11 @@ public class SBMLutilities {
 			indie.setMath(myParseFormula(indices[i]));
 			indie.setArrayDimension(i-1);
 			indie.setReferencedAttribute(attribute);
-//			if(ArraysMath.isStaticallyComputable(document.getModel(), indie, dimensionIds) == false){
-//				JOptionPane.showMessageDialog(Gui.frame, "Index math must consist of constants and valid dimension size ids only.", 
-//						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
-//				return null;
-//			}
+			if(ArraysMath.isStaticallyComputable(document.getModel(), indie, dimensionIds) == false){
+				JOptionPane.showMessageDialog(Gui.frame, "Index math must consist of constants and valid dimension size ids only.", 
+						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 //			if(ArraysMath.evaluateIndexBounds(document.getModel(), indie) == false){
 //				JOptionPane.showMessageDialog(Gui.frame, "Index math must evaluate to values within possible bounds.", 
 //						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
