@@ -257,11 +257,11 @@ public class SBMLutilities {
 		return indices;
 	}
 	
-	public static String[] getDimensionIds(int old, int count) {
+	public static String[] getDimensionIds(String prefix, int count) {
 		if (count==0) return null;
 		String[] dimensionIds = new String[count];
-		for (int i = old; i < count+old; i++) {
-			dimensionIds[i-old] = "d" + (i);
+		for (int i = 0; i < count; i++) {
+			dimensionIds[i] = prefix + "d" + i;
 			// TODO: need to check here is this dimension id is safe to use, should not already be in use
 		}
 		return dimensionIds;

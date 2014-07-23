@@ -61,8 +61,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	
 	private JTextField iIndex, EAdimensions;
 	
-	private int dimensionCounter;
-	
 	private JComboBox eaID;
 
 	private BioModel bioModel;
@@ -489,8 +487,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), eventID.getText(), false);
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
-				dimensionCounter += dimID.length-1;
+				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selected, false);
 			}
 			else{
@@ -586,8 +583,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 						if(EAdimID!=null){
-							EAdimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,EAdimID.length-1);
-							dimensionCounter += EAdimID.length-1;
+							EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
 						}
 						else{
 							error = true;
@@ -644,8 +640,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 						if(EAdimID!=null){
-							EAdimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,EAdimID.length-1);
-							dimensionCounter += EAdimID.length-1;
+							EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
 						}
 						else{
 							error = true;
@@ -966,8 +961,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 							EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 							if(EAdimID!=null){
-								EAdimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,EAdimID.length-1);
-								dimensionCounter += EAdimID.length-1;
+								EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
 							}
 							else{
 								error = true;
@@ -1386,8 +1380,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			else {
 				dimID = EAdimensions.getText().split("\\[");
-				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter, dimID.length-1);
-				dimensionCounter += dimID.length-1;
+				dimensionIds = SBMLutilities.getDimensionIds("e", dimID.length-1);
 				error = SBMLutilities.displayinvalidVariables("Event assignment", gcm.getSBMLDocument(), dimensionIds, eqn.getText().trim(), "", false);
 				if (!error) {
 					Parameter p = bioModel.getSBMLDocument().getModel().getParameter((String)eaID.getSelectedItem());
