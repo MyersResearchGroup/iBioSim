@@ -324,7 +324,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			error = false;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), id.getText(), false);
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds(0,dimID.length-1);
+				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), metaId, false);
 			}
 			else{

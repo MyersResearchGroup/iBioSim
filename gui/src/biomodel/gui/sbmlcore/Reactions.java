@@ -171,8 +171,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private JTextField CiIndex;
 	
-	private int dimensionCounter;
-	
 	/*
 	 * text field for editing reactants
 	 */
@@ -575,7 +573,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JPanel reactionPanelNorth3 = new JPanel();
 		JPanel reactionPanelNorth4 = new JPanel();
 		CiIndex = new JTextField(20);
-		dimensionCounter = 0;
 		reactionPanelNorth1.add(id);
 		reactionPanelNorth1.add(reacID);
 		reactionPanelNorth1.add(name);
@@ -788,8 +785,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			error = false;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
-				dimensionCounter += dimID.length-1;
+				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), reactionId.trim(), false);
 			}
 			else{
@@ -1942,8 +1938,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			double val = 1.0;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), productId.getText(), true);
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
-				dimensionCounter += dimID.length-1;
+				dimensionIds = SBMLutilities.getDimensionIds("p",dimID.length-1);
 				if (dimID[0].equals("")) {
 					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
 				}
@@ -1954,7 +1949,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else{
 				error = true;
 			}
-			if(productSpecies.isEnabled() && !error){
+			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)productSpecies.getSelectedItem());
 				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 				error = (dex==null);
@@ -2345,7 +2340,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			int index = -1;
-			if(modifierSpecies.isEnabled() && !error){
+			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)modifierSpecies.getSelectedItem());
 				dex = SBMLutilities.checkIndices(MiIndex.getText(), variable, bioModel.getSBMLDocument(), null, "variable");
 				error = (dex==null);
@@ -2758,8 +2753,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			double val = 1.0;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reactantId.getText(), true);
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds(dimensionCounter,dimID.length-1);
-				dimensionCounter += dimID.length-1;
+				dimensionIds = SBMLutilities.getDimensionIds("r",dimID.length-1);
 				if (dimID[0].trim().equals("")) {
 					error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
 				}
@@ -2770,8 +2764,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else{
 				error = true;
 			}
-			if(reactantSpecies.isEnabled() && !error){
+			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactantSpecies.getSelectedItem());
+				String test = RiIndex.getText();
 				dex = SBMLutilities.checkIndices(RiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 				error = (dex==null);
 			}
