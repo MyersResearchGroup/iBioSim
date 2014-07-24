@@ -645,12 +645,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						else{
 							error = true;
 						}
-						if(eaID.isEnabled() && !error){
-							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
+						if(!error){
+							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
 							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 							error = (EAdex==null);
 						}
-						if(error)break;
+						if (error) break;
 						sBasePlugin.unsetListOfDimensions();
 						for(int i1 = 0; i1<EAdimID.length-1; i1++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
@@ -966,8 +966,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							else{
 								error = true;
 							}
-							if(eaID.isEnabled() && !error){
-								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
+							if(!error){
+								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
 								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
 								error = (EAdex==null);
 							}
