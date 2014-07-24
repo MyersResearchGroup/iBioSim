@@ -204,33 +204,54 @@ public class SBMLutilities {
 	 * @return If the number of indices matches the dimension count of the variable
 	 */
 	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds, String attribute){
-		if(!index.endsWith("]")&&index.contains("[")){
+		if(!index.trim().endsWith("]")){
 			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
+		if(!index.trim().startsWith("[")){
+			JOptionPane.showMessageDialog(Gui.frame, "String must start with an opening braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
 		String[] indices = index.split("\\[");
-		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
-		for(int i=1;i<indices.length;i++){
-			if(!indices[i].contains("]")){
-				JOptionPane.showMessageDialog(Gui.frame, "Too many open brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
-				return null;
+		// This creates a String[] with an undesirable extra element at the end of the list.
+		String tester = index+";";
+		String[] cloSplit = tester.split("]");
+		// Used to count closing brackets vs opening brackets.
+		if(indices.length > cloSplit.length){
+			JOptionPane.showMessageDialog(Gui.frame, "Too many open brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		if(indices.length < cloSplit.length){
+			JOptionPane.showMessageDialog(Gui.frame, "Too many closing brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		int pendingOpens = 0;
+		int numIndices =0;
+		char[] pieces = index.toCharArray();
+		String forRet = ";";
+		tester = "";
+		for(int i=0;i<pieces.length;i++){
+			if(pieces[i]=='['){
+				pendingOpens++;
 			}
-			if(indices[i].length()-1 != indices[i].indexOf("]")){
-				JOptionPane.showMessageDialog(Gui.frame, "Too many closing brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
-				return null;
+			if(pieces[i]==']'){
+				pendingOpens--;
 			}
-			//This creates a String[] with an undesirable extra element at the end of the list.
-			indices[i]=indices[i].replace("]", "").trim();
-			if(indices[i].isEmpty()){
+			if(pendingOpens != 0){
+				tester+=pieces[i];
+				continue;
+			}
+			tester = tester.substring(1);
+			if(tester.isEmpty()){
 				JOptionPane.showMessageDialog(Gui.frame, "A pair of brakets are blank.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			if(myParseFormula(indices[i])==null){
+			if(myParseFormula(tester)==null){
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			Index indie = new Index();
-			indie.setMath(myParseFormula(indices[i]));
+			indie.setMath(myParseFormula(tester));
 			indie.setArrayDimension(i-1);
 			indie.setReferencedAttribute(attribute);
 			if(ArraysMath.isStaticallyComputable(document.getModel(), indie, dimensionIds) == false){
@@ -243,22 +264,27 @@ public class SBMLutilities {
 //						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
 //				return null;
 //			}
-			if(displayinvalidVariables("Indices", document, dimensionIds, indices[i], "", false)){
+			if(displayinvalidVariables("Indices", document, dimensionIds, tester, "", false)){
 				return null;
 			}
+			forRet += tester + ";";
+			tester="";
+			numIndices++;
 		}
-		if(ABV.getDimensionCount()!=indices.length-1){
-			if(ABV.getDimensionCount()>indices.length-1){
-				JOptionPane.showMessageDialog(Gui.frame, "Too few indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
+		if(ABV.getDimensionCount()!=numIndices){
+			if(ABV.getDimensionCount()>numIndices){
+				JOptionPane.showMessageDialog(Gui.frame, "Too few indices for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			JOptionPane.showMessageDialog(Gui.frame, "Too many indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Too many indices for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		//TODO: check for invalid variables in the index 
 		//TODO Must also check variables in math are constant OR a dimension id (Leandro will help)
 		//TODO Math should evaluate within bounds of dimension of the object being indexed. (Leandro will help)
-		return indices;
+		
+		return forRet.split(";");
 	}
 	
 	public static String[] getDimensionIds(String prefix, int count) {
