@@ -39,6 +39,7 @@ import org.sbml.jsbml.ext.layout.GraphicalObject;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.flattening.ArraysFlattening;
 import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
@@ -6880,6 +6881,7 @@ public class BioModel {
 				return null;
 			}
 		}
+		model.sbml  = ArraysFlattening.convert(model.getSBMLDocument());
 		
 		model.getSBMLDocument().disablePackage(ArraysConstants.namespaceURI);
 		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
