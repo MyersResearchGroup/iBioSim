@@ -38,7 +38,6 @@ import org.sbml.jsbml.ext.layout.BoundingBox;
 import org.sbml.jsbml.ext.layout.GraphicalObject;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.flattening.ArraysFlattening;
 import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
@@ -1118,7 +1117,7 @@ public class BioModel {
 		}
 		return layout;
 	}
-	
+		
 	public void placeSpecies(String s,Double x,Double y,Double h,Double w) {
 		Layout layout = sbmlLayout.getListOfLayouts().get("iBioSim");
 		SpeciesGlyph speciesGlyph;
@@ -6882,6 +6881,7 @@ public class BioModel {
 			}
 		}
 		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
+		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
 		model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
 		model.getSBMLDocument().disablePackage(ArraysConstants.namespaceURI);
 		if(removeComp)
