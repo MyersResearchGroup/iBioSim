@@ -4385,10 +4385,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		XVariable.removeAllItems();
 		ArrayList <String> components = new ArrayList<String>();
 		components.add("All Variables");
+		components.add("Top-level Variables");
 		int realSize = 0;
-		if (startsWith!=null) realSize = 1;
 		for (int i = 0; i < graphSpecies.size(); i++) {
-			if (startsWith!=null && !graphSpecies.get(i).startsWith(startsWith+"__") && 
+			if (startsWith!=null && ((startsWith.equals("") && graphSpecies.get(i).contains("__")) ||
+					(!startsWith.equals("") && !graphSpecies.get(i).startsWith(startsWith+"__"))) && 
 					!graphSpecies.get(i).equals("time")) continue;
 			String variable = graphSpecies.get(i);
 			XVariable.addItem(variable);
@@ -4416,15 +4417,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		use = new JCheckBox("Use");
 		specs = new JComboBox(components.toArray());
 		if (startsWith!=null) {
-			specs.setSelectedItem(startsWith);
+			if (startsWith.equals("")) { 
+				specs.setSelectedItem("Top-level Variables");
+			} else {
+				specs.setSelectedItem(startsWith);
+			}
 		}
 		specs.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String startsWith = null;
-				if (!specs.getSelectedItem().equals("All Variables")) {
+				if (specs.getSelectedItem().equals("Top-level Variables")) {
+					startsWith = "";
+				} else if (!specs.getSelectedItem().equals("All Variables")) {
 					startsWith = (String)specs.getSelectedItem();
-				}
+				} 
 				updateVariableChoices(node,startsWith);
 			}
 		});
@@ -4448,15 +4455,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String startsWith = null;
-				if (!specs.getSelectedItem().equals("All Variables")) {
+				if (specs.getSelectedItem().equals("Top-level Variables")) {
+					startsWith = "";
+				} else if (!specs.getSelectedItem().equals("All Variables")) {
 					startsWith = (String)specs.getSelectedItem();
-				}
+				} 
 				if (use.isSelected()) {
 					int i = 0;
 					for (JCheckBox box : boxes) {
 						i++;
 						if (!box.isSelected()) {
-							if (startsWith!=null && !graphSpecies.get(i).startsWith(startsWith+"__")) continue;
+							if (startsWith!=null && ((startsWith.equals("") && graphSpecies.get(i).contains("__")) ||
+									(!startsWith.equals("") &&!graphSpecies.get(i).startsWith(startsWith+"__")))) continue;
 							box.doClick();
 						}
 					}
@@ -4466,7 +4476,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					for (JCheckBox box : boxes) {
 						i++;
 						if (box.isSelected()) {
-							if (startsWith!=null && !graphSpecies.get(i).startsWith(startsWith+"__")) continue;
+							if (startsWith!=null && ((startsWith.equals("") && graphSpecies.get(i).contains("__")) ||
+									(!startsWith.equals("") &&!graphSpecies.get(i).startsWith(startsWith+"__")))) continue;
 							box.doClick();
 						}
 					}
@@ -4834,7 +4845,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorPanel.add(colorsCombo.get(i), "Center");
 			colorPanel.add(colorsButtons.get(i), "East");
 			shapesCombo.add(shapBox);
-			if (startsWith!=null && !graphSpecies.get(i+1).startsWith(startsWith+"__")) continue;
+			if (startsWith!=null && ((startsWith.equals("") && graphSpecies.get(i+1).contains("__")) ||
+					(!startsWith.equals("") && !graphSpecies.get(i+1).startsWith(startsWith+"__")))) continue;
 			speciesPanel1.add(boxes.get(i));
 			speciesPanel2.add(series.get(i));
 			speciesPanel2.add(colorPanel);
