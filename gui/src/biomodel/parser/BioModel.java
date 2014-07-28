@@ -1656,7 +1656,20 @@ public class BioModel {
 		return false;
 	}
 	
-	public static boolean isMRNASpecies(Species species) {
+	public static boolean isMRNASpecies(SBMLDocument doc,Species species) {
+		for (int i = 0; i < doc.getModel().getReactionCount(); i++) {
+			Reaction r = doc.getModel().getReaction(i);
+			if (isProductionReaction(r)) continue;
+			for (int j = 0; j < r.getReactantCount(); j++) {
+				if (r.getReactant(j).getSpecies().equals(species.getId())) return false;
+			}
+			for (int j = 0; j < r.getModifierCount(); j++) {
+				if (r.getModifier(j).getSpecies().equals(species.getId())) return false;
+			}
+			for (int j = 0; j < r.getProductCount(); j++) {
+				if (r.getProduct(j).getSpecies().equals(species.getId())) return false;
+			}
+		}
 		if (species.isSetSBOTerm()) {
 			if (species.getSBOTerm()==GlobalConstants.SBO_MRNA || species.getSBOTerm()==GlobalConstants.SBO_MRNA_OLD) {
 				species.setSBOTerm(GlobalConstants.SBO_MRNA);
@@ -3687,7 +3700,7 @@ public class BioModel {
 		if (sbml!=null) {
 			for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
 				Species species = sbml.getModel().getSpecies(i);
-				if (!isPromoterSpecies(species) && !isMRNASpecies(species)) {
+				if (!isPromoterSpecies(species) && !isMRNASpecies(sbml,species)) {
 					speciesSet.add(species.getId());
 				}
 			}
@@ -4248,43 +4261,6 @@ public class BioModel {
 		} else if (port != null) {
 			sbmlCompModel.removePort(port);
 		}
-	}
-	
-	public static String getSpeciesType(SBMLDocument sbml,String speciesId) {
-		Species species = sbml.getModel().getSpecies(speciesId);
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstants.namespaceURI);
-		if (sbmlCompModel!=null) {
-			Port port = getPortByIdRef(sbmlCompModel,speciesId);
-			if (port != null) {
-				if (BioModel.isInputPort(port)) return GlobalConstants.INPUT;
-				return GlobalConstants.OUTPUT;
-			}
-			if (AnnotationUtility.checkObsoleteAnnotation(species, GlobalConstants.INPUT)) {
-				port = sbmlCompModel.createPort();
-				port.setId(speciesId);
-				port.setIdRef(speciesId);
-				port.setSBOTerm(GlobalConstants.SBO_INPUT_PORT);
-				AnnotationUtility.removeObsoleteAnnotation(species);
-				return GlobalConstants.INPUT;
-			} else if (AnnotationUtility.checkObsoleteAnnotation(species, GlobalConstants.OUTPUT)) {
-				port = sbmlCompModel.createPort();
-				port.setId(speciesId);
-				port.setIdRef(speciesId);
-				port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
-				AnnotationUtility.removeObsoleteAnnotation(species);
-				return GlobalConstants.OUTPUT;
-			} else if (AnnotationUtility.checkObsoleteAnnotation(species, GlobalConstants.INTERNAL)) {
-				AnnotationUtility.removeObsoleteAnnotation(species);
-				return GlobalConstants.INTERNAL;
-			}
-		}
-		if (isMRNASpecies(species)) {
-			return GlobalConstants.MRNA; 
-		}
-		if (isPromoterSpecies(species)) {
-			return GlobalConstants.PROMOTER; 
-		}
-		return GlobalConstants.INTERNAL;
 	}
 
 	public boolean isSpeciesConstitutive(String speciesId) {

@@ -2385,7 +2385,8 @@ public class BioGraph extends mxGraph {
 	 */
 	private boolean createGraphSpeciesFromModel(String sp){
 		
-		if (BioModel.isMRNASpecies(bioModel.getSBMLDocument().getModel().getSpecies(sp))) return false; 
+		if (BioModel.isMRNASpecies(bioModel.getSBMLDocument(),
+				bioModel.getSBMLDocument().getModel().getSpecies(sp))) return false; 
 
 		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), sp);
 		
