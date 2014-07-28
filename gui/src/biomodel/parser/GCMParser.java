@@ -187,7 +187,7 @@ public class GCMParser {
 			}
 			for (int j = 0; j < production.getProductCount(); j++) {
 				SpeciesReference product = production.getProduct(j);
-				if (!BioModel.isMRNASpecies(sbml.getModel().getSpecies(product.getSpecies())))
+				if (!BioModel.isMRNASpecies(sbml,sbml.getModel().getSpecies(product.getSpecies())))
 					p.addOutput(product.getSpecies(),speciesList.get(product.getSpecies()));
 			}
 			for (int i = 0; i < production.getModifierCount(); i++) {
@@ -199,7 +199,7 @@ public class GCMParser {
 						infl.generateName();
 						infl.setType("tee");
 						infl.setInput(modifier.getSpecies());
-						if (BioModel.isMRNASpecies(sbml.getModel().getSpecies(product.getSpecies()))) {
+						if (BioModel.isMRNASpecies(sbml,sbml.getModel().getSpecies(product.getSpecies()))) {
 							infl.setOutput("none");
 						} else {
 							infl.setOutput(product.getSpecies());
@@ -235,7 +235,7 @@ public class GCMParser {
 						infl.generateName();
 						infl.setType("vee");
 						infl.setInput(modifier.getSpecies());
-						if (BioModel.isMRNASpecies(sbml.getModel().getSpecies(product.getSpecies()))) {
+						if (BioModel.isMRNASpecies(sbml,sbml.getModel().getSpecies(product.getSpecies()))) {
 							infl.setOutput("none");
 						} else {
 							infl.setOutput(product.getSpecies());
