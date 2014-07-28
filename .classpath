@@ -72,6 +72,6 @@
 	<classpathentry kind="lib" path="gui/lib/joptimizer-3.3.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/csparsej-1.1.1.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-b1-with-dependencies-rev1900.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-b1-with-dependencies-rev1901.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
