@@ -204,11 +204,11 @@ public class SBMLutilities {
 	 * @return If the number of indices matches the dimension count of the variable
 	 */
 	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds, String attribute){
-		if(!index.trim().endsWith("]")){
+		if(!index.trim().equals("") && !index.trim().endsWith("]")){
 			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-		if(!index.trim().startsWith("[")){
+		if(!index.trim().equals("") && !index.trim().startsWith("[")){
 			JOptionPane.showMessageDialog(Gui.frame, "String must start with an opening braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
