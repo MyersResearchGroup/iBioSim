@@ -2352,7 +2352,8 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				SpeciesReference reactant = bioModel.getSBMLDocument().getModel().getReaction(target.getId()).
 					getReactantForSpecies(source.getId());
-				reactions.reactantsEditor(bioModel,"OK",source.getId(),reactant, true);
+				reactions.reactantsEditor(bioModel,"OK",source.getId(),reactant, true, 
+						bioModel.getSBMLDocument().getModel().getReaction(target.getId()));
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
 				(graph.getCellType(target) == GlobalConstants.SPECIES)) {

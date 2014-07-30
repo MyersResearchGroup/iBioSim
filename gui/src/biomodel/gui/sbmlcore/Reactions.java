@@ -2624,7 +2624,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	 * Creates a frame used to edit reactants or create new ones.
 	 */
 	public void reactantsEditor(BioModel gcm, String option, String selectedReactantId, SpeciesReference reactant, 
-			boolean inSchematic) {
+			boolean inSchematic, Reaction reaction) {
 		JPanel reactantsPanel;
 		if (gcm.getSBMLDocument().getLevel() < 3) {
 			reactantsPanel = new JPanel(new GridLayout(5, 2));
@@ -2656,6 +2656,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		} else {
 			reactantSpecies.setEnabled(true);
 		}
+		// TODO: Scott: if (inSchematic) extract dimensions from reaction else from reaction id field
 		for (int i = 0; i < speciesList.length; i++) {
 			Species species = gcm.getSBMLDocument().getModel().getSpecies(speciesList[i]);
 			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(gcm, "", speciesList[i]))) {
@@ -3563,7 +3564,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the add reactants button is clicked
 		else if (e.getSource() == addReactant) {
-			reactantsEditor(bioModel, "Add", "", null, false);
+			reactantsEditor(bioModel, "Add", "", null, false, null);
 		}
 		// if the edit reactants button is clicked
 		else if (e.getSource() == editReactant) {
@@ -3571,7 +3572,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.", "Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null, false);
+			reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null, false, null);
 			initialsPanel.refreshInitialAssignmentPanel(bioModel);
 			rulesPanel.refreshRulesPanel();
 		}
@@ -3646,7 +3647,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.", "Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null, false);
+					reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null, false, null);
 					initialsPanel.refreshInitialAssignmentPanel(bioModel);
 					rulesPanel.refreshRulesPanel();
 				}
