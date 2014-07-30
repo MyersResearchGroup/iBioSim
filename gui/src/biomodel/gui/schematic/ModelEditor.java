@@ -216,17 +216,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		filename = newName + ".xml";
 		modelId = newName;
 		biomodel.load(path + separator + newName + ".xml");
-		if (paramsOnly) {
-			/*
-			GCMFile refGCM = new GCMFile(path);
-			refGCM.load(path + separator + refFile);
-			HashMap<String, String> params = refGCM.getGlobalParameters();
-			for (String key : params.keySet()) {
-				gcm.setDefaultParameter(key, params.get(key));
-			}
-			 */
-		}
-		//GCMNameTextField.setText(newName);
 	}
 	
 	public void renameComponents(String oldname, String newName) {

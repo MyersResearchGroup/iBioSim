@@ -523,7 +523,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		parametersPanel.add(nameLabel);
 		parametersPanel.add(paramName);
 		if (paramsOnly) {
-			JLabel typeLabel = new JLabel("Type:");
+			JLabel typeLabel = new JLabel("Value Type:");
 			type.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

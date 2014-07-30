@@ -1471,25 +1471,19 @@ public class BioModel {
 	}
 
 	public void createLayoutPlugin() {
-		if (sbmlLayout==null) {
-			sbml.enablePackage(LayoutConstants.namespaceURI);
-			sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
-		}
+		sbml.enablePackage(LayoutConstants.namespaceURI);
+		sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
 	}
 
 	public void createFBCPlugin() {
-		if (sbmlFBC==null) {
-			sbml.enablePackage(FBCConstants.namespaceURI);
-			sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel());
-		}
+		sbml.enablePackage(FBCConstants.namespaceURI);
+		sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel());
 	}
 
 	public void createCompPlugin() {
-		if (sbmlComp==null) {
-			sbml.enablePackage(CompConstants.namespaceURI);
-			sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbml);
-			sbmlCompModel = SBMLutilities.getCompModelPlugin(sbml.getModel());
-		}
+		sbml.enablePackage(CompConstants.namespaceURI);
+		sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbml);
+		sbmlCompModel = SBMLutilities.getCompModelPlugin(sbml.getModel());
 	}
 	
 	public static void updateComplexParameters(Reaction r,String KcStr) {
