@@ -1515,7 +1515,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		parametersPanel.add(nameLabel);
 		parametersPanel.add(reacParamName);
 		if (paramsOnly) {
-			JLabel typeLabel = new JLabel("Type:");
+			JLabel typeLabel = new JLabel("Value Type:");
 			type.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
