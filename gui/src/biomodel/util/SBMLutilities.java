@@ -204,6 +204,13 @@ public class SBMLutilities {
 	 * @return If the number of indices matches the dimension count of the variable
 	 */
 	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds, String attribute){
+		// TODO: check if index string empty, and if so, test dimension count.  If 0, return empty array
+		// else report an error and return null
+		
+		// TODO: fix messages to say which index properly
+		// Spell brackets like this
+		// Make sure message fon Conversion Factor is so
+		// Send a map of dimension ids with their size variables
 		if(!index.trim().equals("") && !index.trim().endsWith("]")){
 			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
 			return null;
@@ -233,9 +240,10 @@ public class SBMLutilities {
 		for(int i=0;i<pieces.length;i++){
 			if(pieces[i]=='['){
 				pendingOpens++;
-			}
-			if(pieces[i]==']'){
+			} else if(pieces[i]==']'){
 				pendingOpens--;
+			} else if(pendingOpens==0) {
+				// TODO: error text outside brackets
 			}
 			if(pendingOpens != 0){
 				tester+=pieces[i];
@@ -248,6 +256,9 @@ public class SBMLutilities {
 			}
 			if(myParseFormula(tester)==null){
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			if(displayinvalidVariables("Indices", document, dimensionIds, tester, "", false)){
 				return null;
 			}
 			Index indie = new Index();
@@ -264,9 +275,6 @@ public class SBMLutilities {
 //						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
 //				return null;
 //			}
-			if(displayinvalidVariables("Indices", document, dimensionIds, tester, "", false)){
-				return null;
-			}
 			forRet += tester + ";";
 			tester="";
 			numIndices++;
