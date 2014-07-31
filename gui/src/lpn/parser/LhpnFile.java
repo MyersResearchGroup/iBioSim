@@ -2250,11 +2250,13 @@ public class LhpnFile {
 				}
 			}
 		}
+		/*
 		for (Transition t : transitions.values()) {
 			if (t.getDelay() == null) {
 				t.addDelay("0");
 			}
 		}
+		*/
 		return error;
 	}
 
