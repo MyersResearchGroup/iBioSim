@@ -795,7 +795,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(reactionComp.isEnabled() && !error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
-				dex = SBMLutilities.checkIndices(CiIndex.getText().trim(), variable, bioModel.getSBMLDocument(), reactDimensionIds, "compartment");
+				dex = SBMLutilities.checkIndices(CiIndex.getText().trim(), variable, bioModel.getSBMLDocument(), reactDimensionIds, "compartment", dimID);
 				error = (dex==null);
 			}
 			if (!error) {
@@ -1954,7 +1954,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)productSpecies.getSelectedItem());
 				String[] passin = addReactionDimensions(dimensionIds);
-				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), passin, "variable");
+				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), passin, "variable", dimID);
 				error = (dex==null);
 			}
 			if (!error) {
@@ -2345,7 +2345,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			int index = -1;
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)modifierSpecies.getSelectedItem());
-				dex = SBMLutilities.checkIndices(MiIndex.getText(), variable, bioModel.getSBMLDocument(), null, "variable");
+				dex = SBMLutilities.checkIndices(MiIndex.getText(), variable, bioModel.getSBMLDocument(), null, "variable", null);
 				error = (dex==null);
 			}
 			if (modifier == null || !inSchematic) {
@@ -2771,7 +2771,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactantSpecies.getSelectedItem());
 				String test = RiIndex.getText();
-				dex = SBMLutilities.checkIndices(RiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
+				dex = SBMLutilities.checkIndices(RiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID);
 				error = (dex==null);
 			}
 			if (!error) {

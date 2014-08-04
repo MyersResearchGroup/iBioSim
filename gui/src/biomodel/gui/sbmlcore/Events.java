@@ -590,7 +590,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						if(!error){
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
+							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID);
 							error = (EAdex==null);
 						}
 						if(error)break;
@@ -647,7 +647,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						if(!error){
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
+							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID);
 							error = (EAdex==null);
 						}
 						if (error) break;
@@ -968,7 +968,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 							if(!error){
 								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
+								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID);
 								error = (EAdex==null);
 							}
 							if(!error){
