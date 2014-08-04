@@ -6852,7 +6852,8 @@ public class BioModel {
 		}
 		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
 		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
-		model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
+		if(model.getSBMLDocument().isPackageEnabled(ArraysConstants.shortLabel))
+			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
 		model.getSBMLDocument().disablePackage(ArraysConstants.namespaceURI);
 		if(removeComp)
 		{
