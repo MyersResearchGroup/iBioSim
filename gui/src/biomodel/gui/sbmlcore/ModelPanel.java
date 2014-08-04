@@ -214,13 +214,12 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		if (value != JOptionPane.YES_OPTION)
 			sbolField.resetRemovedBioSimURI();
 		String[] dex = new String[]{""};
-		String[] dimensionIds = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			if(!error&&!conversionFactor.getSelectedItem().equals("( none )")){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)conversionFactor.getSelectedItem());
-				dex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "conversionFactor");
+				dex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), null, "conversionFactor", null);
 				error = (dex==null);
 			}
 			// Add SBOL annotation to SBML model itself
