@@ -98,6 +98,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private JComboBox reacParamUnits;
 
 	private JTextField reacID, reacName; // reaction name and id text
+	
+	private String[] reactDimensionIds;
 
 	private JCheckBox onPort, paramOnPort;
 
@@ -779,13 +781,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				null, options1, options1[0]);
 		String[] dimID = new String[]{""};
 		String[] dex = new String[]{""};
-		String[] dimensionIds = new String[]{""};
+		reactDimensionIds = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
+				reactDimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), reactionId.trim(), false);
 			}
 			else{
@@ -793,7 +795,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(reactionComp.isEnabled() && !error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
-				dex = SBMLutilities.checkIndices(CiIndex.getText().trim(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment");
+				dex = SBMLutilities.checkIndices(CiIndex.getText().trim(), variable, bioModel.getSBMLDocument(), reactDimensionIds, "compartment");
 				error = (dex==null);
 			}
 			if (!error) {
@@ -812,7 +814,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					else if (complex==null && production==null){
-						ArrayList<String> invalidKineticVars = getInvalidVariablesInReaction(kineticLaw.getText().trim(), dimensionIds, true, "", false);
+						ArrayList<String> invalidKineticVars = getInvalidVariablesInReaction(kineticLaw.getText().trim(), reactDimensionIds, true, "", false);
 						if (invalidKineticVars.size() > 0) {
 							String invalid = "";
 							for (int i = 0; i < invalidKineticVars.size(); i++) {
@@ -1098,7 +1100,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
 						sBasePlugin.unsetListOfDimensions();
 						for(int i = 0; i<dimID.length-1; i++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(reactDimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
@@ -1204,7 +1206,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
 						sBasePlugin.unsetListOfDimensions();
 						for(int i = 0; i<dimID.length-1; i++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(reactDimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
@@ -1951,7 +1953,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)productSpecies.getSelectedItem());
-				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable");
+				String[] passin = addReactionDimensions(dimensionIds);
+				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), passin, "variable");
 				error = (dex==null);
 			}
 			if (!error) {
@@ -3751,6 +3754,26 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	 */
 	@Override
 	public void mouseReleased(MouseEvent e) {
+	}
+	
+	public String[] addReactionDimensions(String[] adder){
+		int g;
+		if(adder==null){
+			g = 0;
+		}
+		else{
+			g = adder.length;
+		}
+		String[] retText = new String[g+reactDimensionIds.length];
+		for(int i=0; i<retText.length;i++){
+			if(i<adder.length){
+				retText[i] = adder[i];
+			}
+			else{
+				retText[i] = reactDimensionIds[i-adder.length];
+			}
+		}			
+		return retText;
 	}
 
 }

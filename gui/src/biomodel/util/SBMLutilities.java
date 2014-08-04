@@ -146,29 +146,29 @@ public class SBMLutilities {
 		// TODO: this function should return the String[] of dimensions including 0 entry which is id of the object.
 		//document.getModel().getParameter(parameter);
 		if(!entryText.trim().endsWith("]") && entryText.contains("[")){
-			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing bracket.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		String [] retText = entryText.split("\\[");
 		// If this function is not called on reaction reactant or product
 		if(!isReacParam){
 			if(retText[0].trim().isEmpty()){
-				JOptionPane.showMessageDialog(Gui.frame, "Need ID.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Need ID.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 		}
 		for(int i = 1; i<retText.length;i++){
 			if(!retText[i].contains("]")){
-				JOptionPane.showMessageDialog(Gui.frame, "Too many open brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Too many open brackets.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			if(retText[i].length()-1 != retText[i].indexOf("]")){
-				JOptionPane.showMessageDialog(Gui.frame, "Too many closing brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Too many closing brackets.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			retText[i] = retText[i].replace("]", "").trim();
 			if(retText[i].isEmpty()){
-				JOptionPane.showMessageDialog(Gui.frame, "A pair of brakets are blank.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "A pair of brackets are blank.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			if(getElementBySId(document, retText[i].trim()) == null){
@@ -204,6 +204,19 @@ public class SBMLutilities {
 	 * @return If the number of indices matches the dimension count of the variable
 	 */
 	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds, String attribute){
+		if(attribute.equals("conversionFactor")){
+			attribute = "conversion factor";
+		}
+		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
+		if(index.trim().equals("")){
+			if(ABV.getDimensionCount()==0){
+				return new String[]{""};
+			}
+			else{
+				JOptionPane.showMessageDialog(Gui.frame, "The " + attribute + " needs indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+		}
 		// TODO: check if index string empty, and if so, test dimension count.  If 0, return empty array
 		// else report an error and return null
 		
@@ -211,39 +224,31 @@ public class SBMLutilities {
 		// Spell brackets like this
 		// Make sure message fon Conversion Factor is so
 		// Send a map of dimension ids with their size variables
-		if(!index.trim().equals("") && !index.trim().endsWith("]")){
-			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+		if(!index.trim().endsWith("]")){
+			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing bracket for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-		if(!index.trim().equals("") && !index.trim().startsWith("[")){
-			JOptionPane.showMessageDialog(Gui.frame, "String must start with an opening braket.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-		String[] indices = index.split("\\[");
-		// This creates a String[] with an undesirable extra element at the end of the list.
-		String tester = index+";";
-		String[] cloSplit = tester.split("]");
-		// Used to count closing brackets vs opening brackets.
-		if(indices.length > cloSplit.length){
-			JOptionPane.showMessageDialog(Gui.frame, "Too many open brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-		if(indices.length < cloSplit.length){
-			JOptionPane.showMessageDialog(Gui.frame, "Too many closing brakets.", "Mismatching Brakets", JOptionPane.ERROR_MESSAGE);
+		if(!index.trim().startsWith("[")){
+			JOptionPane.showMessageDialog(Gui.frame, "String must start with an opening bracket for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		int pendingOpens = 0;
 		int numIndices =0;
 		char[] pieces = index.toCharArray();
 		String forRet = ";";
-		tester = "";
+		String tester = "";
 		for(int i=0;i<pieces.length;i++){
 			if(pieces[i]=='['){
 				pendingOpens++;
 			} else if(pieces[i]==']'){
 				pendingOpens--;
+				if(pendingOpens < 0){
+					JOptionPane.showMessageDialog(Gui.frame, "Too many closing brackets for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+					return null;
+				}
 			} else if(pendingOpens==0) {
-				// TODO: error text outside brackets
+				JOptionPane.showMessageDialog(Gui.frame, "There is text outside brackets for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+				return null;
 			}
 			if(pendingOpens != 0){
 				tester+=pieces[i];
@@ -251,11 +256,11 @@ public class SBMLutilities {
 			}
 			tester = tester.substring(1);
 			if(tester.isEmpty()){
-				JOptionPane.showMessageDialog(Gui.frame, "A pair of brakets are blank.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "A pair of brackets are blank for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			if(myParseFormula(tester)==null){
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			if(displayinvalidVariables("Indices", document, dimensionIds, tester, "", false)){
@@ -279,7 +284,10 @@ public class SBMLutilities {
 			tester="";
 			numIndices++;
 		}
-		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
+		if(pendingOpens > 0){
+			JOptionPane.showMessageDialog(Gui.frame, "Too many open brackets for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
 		if(ABV.getDimensionCount()!=numIndices){
 			if(ABV.getDimensionCount()>numIndices){
 				JOptionPane.showMessageDialog(Gui.frame, "Too few indices for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
