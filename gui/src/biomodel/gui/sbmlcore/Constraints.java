@@ -150,7 +150,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						selectedID = c.get(i).getMetaId();
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c.get(Cindex));
 						String dimInID = "";
-						for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
+						for(int i1 = sBasePlugin.getDimensionCount()-1; i1>=0; i1--){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
 							dimInID += "[" + dimX.getSize() + "]";
 						}

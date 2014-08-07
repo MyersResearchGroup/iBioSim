@@ -443,7 +443,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				//TODO reading?
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 				String dimInID = "";
-				for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+				for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
 					Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
 					dimInID += "[" + dimX.getSize() + "]";
 				}

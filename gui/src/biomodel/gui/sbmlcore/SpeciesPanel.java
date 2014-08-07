@@ -172,7 +172,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		iIndex = new JTextField(20);
 		conviIndex = new JTextField(20);
 		String freshIndex = "";
-		for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 			Index indie = sBasePlugin.getIndex(i);
 			if(indie.getReferencedAttribute().equals("compartment")){
 				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
@@ -265,7 +265,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			String cfreshIndex = "";
 			//This needs to be fixed for 2 different indices
-			for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 				Index indie = sBasePlugin.getIndex(i);
 				if(indie.getReferencedAttribute().equals("conversionFactor")){
 					cfreshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
