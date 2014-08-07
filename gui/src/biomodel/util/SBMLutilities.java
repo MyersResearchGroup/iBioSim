@@ -145,37 +145,62 @@ public class SBMLutilities {
 		// TODO: have this take the dimension string parse it and make sure of form: <id>[<id>][<id>] etc.
 		// TODO: this function should return the String[] of dimensions including 0 entry which is id of the object.
 		//document.getModel().getParameter(parameter);
-		if(!entryText.trim().endsWith("]") && entryText.contains("[")){
-			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing bracket.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
-			return null;
+		String id = "";
+		String dims = "";
+		if(entryText.contains("[")){
+			 id = entryText.substring(0, entryText.indexOf('['));
+			 dims = entryText.substring(entryText.indexOf('['));
 		}
-		String [] retText = entryText.split("\\[");
-		// If this function is not called on reaction reactant or product
+		else{
+			id = entryText;
+			dims = "";
+		}
+		// If this function is not called on reaction reactant, product, or modifier
 		if(!isReacParam){
-			if(retText[0].trim().isEmpty()){
+			if(id.isEmpty()){
 				JOptionPane.showMessageDialog(Gui.frame, "Need ID.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 		}
-		for(int i = 1; i<retText.length;i++){
-			if(!retText[i].contains("]")){
-				JOptionPane.showMessageDialog(Gui.frame, "Too many open brackets.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+		else{
+			if(entryText.isEmpty()){
+				return new String[]{""};
+			}
+		}
+		int pendingOpens = 0;
+		int numDims =0;
+		char[] pieces = dims.toCharArray();
+		String forRet = ";";
+		String tester = "";
+		for(int i=0;i<pieces.length;i++){
+			if(pieces[i]=='['){
+				pendingOpens++;
+			} 
+			else if(pieces[i]==']'){
+				pendingOpens--;
+				if(pendingOpens < 0){
+					JOptionPane.showMessageDialog(Gui.frame, "Too many closing brackets.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+					return null;
+				}
+			} 
+			else if(pendingOpens==0) {
+				JOptionPane.showMessageDialog(Gui.frame, "There is text outside brackets.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			if(retText[i].length()-1 != retText[i].indexOf("]")){
-				JOptionPane.showMessageDialog(Gui.frame, "Too many closing brackets.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+			if(pendingOpens != 0){
+				tester+=pieces[i];
+				continue;
+			}
+			tester = tester.substring(1);
+			if(tester.isEmpty()){
+				JOptionPane.showMessageDialog(Gui.frame, "A pair of brackets are blank.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			retText[i] = retText[i].replace("]", "").trim();
-			if(retText[i].isEmpty()){
-				JOptionPane.showMessageDialog(Gui.frame, "A pair of brackets are blank.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
+			if(getElementBySId(document, tester) == null){
+				JOptionPane.showMessageDialog(Gui.frame, tester + " is not a parameter.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			if(getElementBySId(document, retText[i].trim()) == null){
-				JOptionPane.showMessageDialog(Gui.frame, retText[i].trim()+ " is not a parameter.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
-				return null;
-			}
-			Parameter p = (Parameter) getElementBySId(document, retText[i].trim());
+			Parameter p = (Parameter) getElementBySId(document, tester);
 			ArraysSBasePlugin ABP = getArraysSBasePlugin(p);
 			if(!p.isConstant()){
 				JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not constant.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
@@ -193,6 +218,19 @@ public class SBMLutilities {
 				JOptionPane.showMessageDialog(Gui.frame, p.getId() + " is not a scalar.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
+			forRet += tester + ";";
+			tester="";
+			numDims++;
+		}
+		if(pendingOpens > 0){
+			JOptionPane.showMessageDialog(Gui.frame, "Too many open brackets.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		String[] retText = new String[numDims+1];
+		String[] extract = forRet.split(";");
+		retText[0] = id;
+		for(int i=1;i<numDims+1;i++){
+			retText[i] = extract[i];
 		}
 		return retText;
 	}
@@ -208,8 +246,10 @@ public class SBMLutilities {
 			attribute = "conversion factor";
 		}
 		HashMap<String, String> dimNSize = new HashMap<String, String>();
-		for(int i=0;i<dimensionIds.length;i++){
-			dimNSize.put(dimensionIds[i], dimSizeIds[i+1]);
+		if(!(dimensionIds==null)){
+			for(int i=0;i<dimensionIds.length;i++){
+				dimNSize.put(dimensionIds[i], dimSizeIds[i+1]);
+			}
 		}
 		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
 		if(index.trim().equals("")){

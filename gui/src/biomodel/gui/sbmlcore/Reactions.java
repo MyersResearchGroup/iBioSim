@@ -98,8 +98,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private JComboBox reacParamUnits;
 
 	private JTextField reacID, reacName; // reaction name and id text
-	
-	private String[] reactDimensionIds;
 
 	private JCheckBox onPort, paramOnPort;
 
@@ -169,7 +167,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField PiIndex;
 	
-	private JTextField MiIndex;
+	private JTextField MiIndex, modifierDims;
 	
 	private JTextField CiIndex;
 	
@@ -781,13 +779,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				null, options1, options1[0]);
 		String[] dimID = new String[]{""};
 		String[] dex = new String[]{""};
-		reactDimensionIds = new String[]{""};
+		String[] dimensionIds = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
 			if(dimID!=null){
-				reactDimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
+				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), reactionId.trim(), false);
 			}
 			else{
@@ -795,7 +793,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(reactionComp.isEnabled() && !error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
-				dex = SBMLutilities.checkIndices(CiIndex.getText().trim(), variable, bioModel.getSBMLDocument(), reactDimensionIds, "compartment", dimID);
+				dex = SBMLutilities.checkIndices(CiIndex.getText().trim(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", dimID);
 				error = (dex==null);
 			}
 			if (!error) {
@@ -814,7 +812,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					else if (complex==null && production==null){
-						ArrayList<String> invalidKineticVars = getInvalidVariablesInReaction(kineticLaw.getText().trim(), reactDimensionIds, true, "", false);
+						ArrayList<String> invalidKineticVars = getInvalidVariablesInReaction(kineticLaw.getText().trim(), dimensionIds, true, "", false);
 						if (invalidKineticVars.size() > 0) {
 							String invalid = "";
 							for (int i = 0; i < invalidKineticVars.size(); i++) {
@@ -1100,7 +1098,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
 						sBasePlugin.unsetListOfDimensions();
 						for(int i = 0; i<dimID.length-1; i++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(reactDimensionIds[i]);
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
@@ -1206,7 +1204,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
 						sBasePlugin.unsetListOfDimensions();
 						for(int i = 0; i<dimID.length-1; i++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(reactDimensionIds[i]);
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
@@ -1953,8 +1951,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)productSpecies.getSelectedItem());
-				String[] passin = addReactionDimensions(dimensionIds);
-				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), passin, "variable", dimID);
+				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID);
 				error = (dex==null);
 			}
 			if (!error) {
@@ -2198,6 +2195,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			boolean inSchematic) {
 		JPanel modifiersPanel;
 		MiIndex = new JTextField(10);
+		modifierDims = new JTextField(10);
 		JLabel speciesLabel = new JLabel("Species:");
 		ListOf<Species> listOfSpecies = bioModel.getSBMLDocument().getModel().getListOfSpecies();
 		String[] speciesList = new String[bioModel.getSBMLDocument().getModel().getSpeciesCount()];
@@ -2229,6 +2227,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			// TODO: Scott - change for Plugin reading
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
+			String dimInID = "";
+			for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
+				dimInID += "[" + dimX.getSize() + "]";
+			}
+			modifierDims.setText(dimInID);
 			String freshIndex = "";
 			for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
 				Index indie = sBasePlugin.getIndex(i);
@@ -2278,6 +2282,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				modifiersPanel = new JPanel(new GridLayout(8, 2));
 			}
 		}
+		modifiersPanel.add(new JLabel("Dimensions:"));
+		modifiersPanel.add(modifierDims);
 		modifiersPanel.add(speciesLabel);
 		modifiersPanel.add(modifierSpecies);
 		modifiersPanel.add(new JLabel("Indices:"));
@@ -2339,13 +2345,39 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		int value = JOptionPane.showOptionDialog(Gui.frame, modifiersPanel, "Modifiers Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options, options[0]);
 		String[] dex = new String[]{""};
+		String[] dimensionIds = new String[]{""};
+		String[] dimID = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			int index = -1;
+			if(!modifierDims.getText().isEmpty()){
+				if(!modifierDims.getText().trim().endsWith("]")){
+					JOptionPane.showMessageDialog(Gui.frame, "Dimensions must end with a closing bracket.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+					error = true;
+					dimID = null;
+				}
+				else if(!modifierDims.getText().trim().startsWith("[")){
+					JOptionPane.showMessageDialog(Gui.frame, "Dimensions must start with an opening bracket.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+					error = true;
+					dimID = null;
+				}
+				else{
+					dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), modifierDims.getText(), true);
+				}
+			}
+			else{
+				dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), modifierDims.getText(), true);
+			}
+			if(dimID!=null){
+				dimensionIds = SBMLutilities.getDimensionIds("m",dimID.length-1);
+			}
+			else{
+				error = true;
+			}
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)modifierSpecies.getSelectedItem());
-				dex = SBMLutilities.checkIndices(MiIndex.getText(), variable, bioModel.getSBMLDocument(), null, "variable", null);
+				dex = SBMLutilities.checkIndices(MiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID);
 				error = (dex==null);
 			}
 			if (modifier == null || !inSchematic) {
@@ -2498,6 +2530,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					// TODO: Scott - change for Plugin writing
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
+					sBasePlugin.unsetListOfDimensions();
+					for(int i = 0; i<dimID.length-1; i++){
+						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+						dimX.setSize(dimID[i+1]);
+						dimX.setArrayDimension(i);
+					}
 					sBasePlugin.unsetListOfIndices();
 					for(int i = 0; i<dex.length-1; i++){
 						Index indexRule = new Index();
@@ -2601,6 +2639,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						modifiers.setSelectedIndex(0);
 					}
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
+					for(int i = 0; i<dimID.length-1; i++){
+						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+						dimX.setSize(dimID[i]);
+						dimX.setArrayDimension(i);
+					}
 					for(int i = 0; i<dex.length-1; i++){
 						Index indexRule = new Index();
 						indexRule.setArrayDimension(i);
@@ -3754,26 +3797,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	 */
 	@Override
 	public void mouseReleased(MouseEvent e) {
-	}
-	
-	public String[] addReactionDimensions(String[] adder){
-		int g;
-		if(adder==null){
-			g = 0;
-		}
-		else{
-			g = adder.length;
-		}
-		String[] retText = new String[g+reactDimensionIds.length];
-		for(int i=0; i<retText.length;i++){
-			if(i<adder.length){
-				retText[i] = adder[i];
-			}
-			else{
-				retText[i] = reactDimensionIds[i-adder.length];
-			}
-		}			
-		return retText;
 	}
 
 }
