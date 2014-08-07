@@ -628,12 +628,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			copyReact = reac.clone();
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reac);
 			String dimInID = "";
-			for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
 				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
 				dimInID += "[" + dimX.getSize() + "]";
 			}
 			String freshIndex = "";
-			for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 				Index indie = sBasePlugin.getIndex(i);
 				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
@@ -1880,14 +1880,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(product);
 			//TODO: Make sure it reads correctly
 			String dimInID = "";
-			for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
 				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
 				dimInID += "[" + dimX.getSize() + "]";
 			}
 			productId.setText(productId.getText()+dimInID);
 			// TODO: Scott - change for Plugin reading
 			String freshIndex = "";
-			for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 				Index indie = sBasePlugin.getIndex(i);
 				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
@@ -2228,13 +2228,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			// TODO: Scott - change for Plugin reading
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
 			String dimInID = "";
-			for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
 				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
 				dimInID += "[" + dimX.getSize() + "]";
 			}
 			modifierDims.setText(dimInID);
 			String freshIndex = "";
-			for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 				Index indie = sBasePlugin.getIndex(i);
 				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
@@ -2745,13 +2745,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			// TODO: Scott - change for Plugin reading
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
 			String dimInID = "";
-			for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
 				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
 				dimInID += "[" + dimX.getSize() + "]";
 			}
 			reactantId.setText(reactantId.getText()+dimInID);
 			String freshIndex = "";
-			for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 				Index indie = sBasePlugin.getIndex(i);
 				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}

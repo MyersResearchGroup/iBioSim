@@ -346,12 +346,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						// TODO: Scott - change for Plugin reading
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						String freshIndex = "; ";
-						for(int i1 = 0; i1<sBasePlugin.getIndexCount(); i1++){
+						for(int i1 = sBasePlugin.getIndexCount()-1; i1>=0; i1--){
 							Index indie = sBasePlugin.getIndex(i1);
 							freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 						}
 						String dimens = " ";
-						for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
+						for(int i1 = sBasePlugin.getDimensionCount()-1; i1>=0; i1--){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
 							dimens += "[" + dimX.getSize() + "]";							
 						}
@@ -390,7 +390,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				// TODO: Scott - change for Plugin reading
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
 				String dimInID = "";
-				for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
+				for(int i1 = sBasePlugin.getDimensionCount()-1; i1>=0; i1--){
 					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
 					dimInID += "[" + dimX.getSize() + "]";
 				}
@@ -415,7 +415,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				if (event.getId().equals(selected)) {
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
 					String dimInID = "";
-					for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
+					for(int i1 = sBasePlugin.getDimensionCount()-1; i1>=0; i1--){
 						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
 						dimInID += "[" + dimX.getSize() + "]";
 					}

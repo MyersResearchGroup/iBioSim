@@ -232,7 +232,12 @@ public class SBMLutilities {
 		for(int i=1;i<numDims+1;i++){
 			retText[i] = extract[i];
 		}
-		return retText;
+		String [] reverseRet = new String[retText.length];
+		reverseRet[0] = retText[0];
+		for(int i=1; i<reverseRet.length;i++){
+			reverseRet[i] = retText[reverseRet.length-i];
+		}
+		return reverseRet;
 	}
 	
 	/**
@@ -344,7 +349,11 @@ public class SBMLutilities {
 		//TODO Must also check variables in math are constant OR a dimension id (Leandro will help)
 		//TODO Math should evaluate within bounds of dimension of the object being indexed. (Leandro will help)
 		
-		return forRet.split(";");
+		String [] reverseRet = new String[forRet.split(";").length];
+		for(int i=1; i<reverseRet.length;i++){
+			reverseRet[i] = forRet.split(";")[reverseRet.length-i];
+		}
+		return reverseRet;
 	}
 	
 	public static String[] getDimensionIds(String prefix, int count) {

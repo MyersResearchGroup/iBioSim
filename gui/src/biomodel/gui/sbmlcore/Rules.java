@@ -210,7 +210,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			//TODO dimensionID size reading
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(rule);
 			String dimInID = "";
-			for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
 				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
 				dimInID += "[" + dimX.getSize() + "]";
 			}
@@ -264,7 +264,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			// TODO: Scott - work indicies
 			String freshIndex = "";
-			for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
+			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 				Index indie = sBasePlugin.getIndex(i);
 				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}

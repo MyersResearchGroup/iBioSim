@@ -340,7 +340,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				// TODO: Scott - change for Plugin reading
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(compartment);
 				String dimInID = "";
-				for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+				for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
 					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
 					dimInID += "[" + dimX.getSize() + "]";
 				}
