@@ -4002,8 +4002,8 @@ public class SBMLutilities {
 		}
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
 		String dimInID = "";
-		for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
-			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
+		for(int i = sBasePlugin.getDimensionCount(); i>0; i--){
+			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i-1);
 			dimInID += "[" + dimX.getSize() + "]";
 		}
 		return arrayId + dimInID;
