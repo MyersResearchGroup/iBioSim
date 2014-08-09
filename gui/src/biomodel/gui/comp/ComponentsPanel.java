@@ -540,7 +540,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		Submodel instance = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId);
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
-				Utility.IDstring, paramsOnly, "default", false);
+				Utility.IDDimString, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 
@@ -772,14 +772,16 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
+			// TODO: extract id plus dimensios using checkSizeParameters
+			String id = fields.get(GlobalConstants.ID).getValue();
 			if (oldName == null) {
-				if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse(id)) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
 			}
-			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
+			else if (!oldName.equals(id)) {
+				if (bioModel.isSIdInUse(id)) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
@@ -800,10 +802,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 //					return false;
 //			}
 			
-			String id = fields.get(GlobalConstants.ID).getValue();
 			Submodel instance = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId);
 			if (instance != null) {
 				instance.setName(fields.get(GlobalConstants.NAME).getValue());
+				// TODO: add/remove dimensions from the instance
 				//long k = 0;
 				while (instance.getListOfDeletions().size()>0) {
 					Deletion deletion = instance.getListOfDeletions().get(0);
