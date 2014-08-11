@@ -308,27 +308,31 @@ public class SBMLutilities {
 				JOptionPane.showMessageDialog(Gui.frame, "A pair of brackets are blank for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			if(myParseFormula(tester)==null){
+			ASTNode math = myParseFormula(tester);
+			if(math==null){
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			if(displayinvalidVariables("Indices", document, dimensionIds, tester, "", false)){
 				return null;
 			}
-			Index indie = new Index();
-			indie.setMath(myParseFormula(tester));
-			indie.setArrayDimension(i-1);
-			indie.setReferencedAttribute(attribute);
-			if(ArraysMath.isStaticallyComputable(document.getModel(), indie, dimensionIds) == false){
+			if(ArraysMath.isStaticallyComputable(document.getModel(), math, dimensionIds) == false){
 				JOptionPane.showMessageDialog(Gui.frame, "Index math must consist of constants and valid dimension size ids only.", 
 						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-//			if(ArraysMath.evaluateIndexBounds(document.getModel(), indie) == false){
-//				JOptionPane.showMessageDialog(Gui.frame, "Index math must evaluate to values within possible bounds.", 
-//						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
-//				return null;
-//			}
+			Map<String, Double> dimSize = getDimensionSize(document.getModel(), dimNSize);
+			if(dimSize == null) {
+				JOptionPane.showMessageDialog(Gui.frame, "Dimension objects should have size of type SIdRef and point to a valid Parameter.", 
+						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			//TODO: array dimension is not getting in the correct order using numIndices.
+			if(ArraysMath.evaluateIndexBounds(document.getModel(), variable, numIndices, math, dimSize) == false){
+				JOptionPane.showMessageDialog(Gui.frame, "Index math must evaluate to values within possible bounds.", 
+						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 			forRet += tester + ";";
 			tester="";
 			numIndices++;
@@ -364,6 +368,19 @@ public class SBMLutilities {
 			// TODO: need to check here is this dimension id is safe to use, should not already be in use
 		}
 		return dimensionIds;
+	}
+	
+	private static Map<String, Double> getDimensionSize(Model model, Map<String, String> dimNSize) {
+		Map<String, Double> dimensionSizes = new HashMap<String, Double>();
+		for(String dimId : dimNSize.keySet()) {
+			String parameterId = dimNSize.get(dimId);
+			Parameter param = model.getParameter(parameterId);
+			if(param == null) {
+				return null;
+			}
+			dimensionSizes.put(dimId, param.getValue());
+		}
+		return dimensionSizes;
 	}
 	// TODO: create a new function, called displayInvalidVariables(String object, <match getInvalidVariables> )
 	/**
