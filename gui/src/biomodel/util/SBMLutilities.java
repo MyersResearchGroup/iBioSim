@@ -257,8 +257,9 @@ public class SBMLutilities {
 			}
 		}
 		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
+		int varDimCount = ABV.getDimensionCount();
 		if(index.trim().equals("")){
-			if(ABV.getDimensionCount()==0){
+			if(varDimCount==0){
 				return new String[]{""};
 			}
 			else{
@@ -328,7 +329,7 @@ public class SBMLutilities {
 				return null;
 			}
 			//TODO: array dimension is not getting in the correct order using numIndices.
-			if(ArraysMath.evaluateIndexBounds(document.getModel(), variable, numIndices, math, dimSize) == false){
+			if(ArraysMath.evaluateIndexBounds(document.getModel(), variable, (varDimCount-1)-numIndices, math, dimSize) == false){
 				JOptionPane.showMessageDialog(Gui.frame, "Index math must evaluate to values within possible bounds.", 
 						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
