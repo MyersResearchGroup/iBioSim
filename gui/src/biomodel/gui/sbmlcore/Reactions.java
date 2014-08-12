@@ -159,6 +159,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField productName;
 
+	private JTextField modifierName;
+
 	private JTextField productStoichiometry; // text field for editing products
 
 	private JComboBox reactantSpecies; // ComboBox for reactant editing
@@ -167,7 +169,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField PiIndex;
 	
-	private JTextField MiIndex, modifierDims;
+	private JTextField MiIndex, modifierId;
 	
 	private JTextField CiIndex;
 	
@@ -2195,7 +2197,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			boolean inSchematic) {
 		JPanel modifiersPanel;
 		MiIndex = new JTextField(10);
-		modifierDims = new JTextField(10);
+		modifierId = new JTextField(10);
+		modifierName = new JTextField(10);
 		JLabel speciesLabel = new JLabel("Species:");
 		ListOf<Species> listOfSpecies = bioModel.getSBMLDocument().getModel().getListOfSpecies();
 		String[] speciesList = new String[bioModel.getSBMLDocument().getModel().getSpeciesCount()];
@@ -2216,6 +2219,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JLabel RepBindingLabel = new JLabel("Repression binding equilibrium (Kr)");
 		JLabel ActStoichiometryLabel = new JLabel("Stoichiometry of activation (nc)");
 		JLabel ActBindingLabel = new JLabel("Activation binding equilibrium (Ka)");
+		
+		String selectedID = "";			
 		if (option.equals("OK")) {
 			String v = selectedModifierId;
 			if (modifier == null || !inSchematic) {
@@ -2225,6 +2230,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
+			if (modifier==null) return;
+			if (modifier.isSetName()) {
+				modifierName.setText(modifier.getName());
+			}
+			if (modifier.isSetId()) {
+				selectedID = modifier.getId();
+				modifierId.setText(modifier.getId());
+			}
+
 			// TODO: Scott - change for Plugin reading
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
 			String dimInID = "";
@@ -2232,14 +2246,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
 				dimInID += "[" + dimX.getSize() + "]";
 			}
-			modifierDims.setText(dimInID);
+			modifierId.setText(modifierId.getText()+dimInID);
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 				Index indie = sBasePlugin.getIndex(i);
 				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
 			MiIndex.setText(freshIndex);
-			if (modifier==null) return;
 			modifierSpecies.setSelectedItem(modifier.getSpecies());
 			if (production!=null) {
 				if (BioModel.isPromoter(modifier)) {
@@ -2274,16 +2287,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			SBOTerms = new JComboBox(sboTerms);			
 		}
 		if (production==null) {
-			modifiersPanel = new JPanel(new GridLayout(3, 2));
+			modifiersPanel = new JPanel(new GridLayout(4, 2));
 		} else {
 			if (SBOTerms.getSelectedItem().equals("Promoter")) {
-				modifiersPanel = new JPanel(new GridLayout(4, 2));
+				modifiersPanel = new JPanel(new GridLayout(5, 2));
 			} else {
-				modifiersPanel = new JPanel(new GridLayout(8, 2));
+				modifiersPanel = new JPanel(new GridLayout(9, 2));
 			}
 		}
-		modifiersPanel.add(new JLabel("Dimensions:"));
-		modifiersPanel.add(modifierDims);
+		modifiersPanel.add(new JLabel("Id:"));
+		modifiersPanel.add(modifierId);
+		modifiersPanel.add(new JLabel("Name:"));
+		modifiersPanel.add(modifierName);
 		modifiersPanel.add(speciesLabel);
 		modifiersPanel.add(modifierSpecies);
 		modifiersPanel.add(new JLabel("Indices:"));
@@ -2295,13 +2310,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				modifierSpecies.setEnabled(false);
 				SBOTerms.setEnabled(false);
 			} else {
-				String selectedID = (String)modifierSpecies.getSelectedItem();
+				String selectedSpecies = (String)modifierSpecies.getSelectedItem();
 
 				modifiersPanel.add(RepStoichiometryLabel);
 				repCooperativity = new JTextField();
 				double nc = bioModel.getSBMLDocument().getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue();
 				repCooperativity.setText(""+nc);
-				LocalParameter p = getChangedParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+selectedID+"_r");
+				LocalParameter p = getChangedParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+selectedSpecies+"_r");
 				if (p!=null) {
 					repCooperativity.setText(""+p.getValue());
 				}
@@ -2309,8 +2324,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				modifiersPanel.add(RepBindingLabel);
 				repBinding = new JTextField(bioModel.getParameter(GlobalConstants.FORWARD_KREP_STRING) + "/" + 
 						bioModel.getParameter(GlobalConstants.REVERSE_KREP_STRING));
-				LocalParameter kr_f = getChangedParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + selectedID + "_"));
-				LocalParameter kr_r = getChangedParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + selectedID + "_"));
+				LocalParameter kr_f = getChangedParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + selectedSpecies + "_"));
+				LocalParameter kr_r = getChangedParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + selectedSpecies + "_"));
 				if (kr_f!=null && kr_r!=null) {
 					repBinding.setText(""+kr_f.getValue()+"/"+kr_r.getValue());
 				}
@@ -2320,7 +2335,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				actCooperativity = new JTextField();
 				nc = bioModel.getSBMLDocument().getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue();
 				actCooperativity.setText(""+nc);
-				p = getChangedParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+selectedID+"_a");
+				p = getChangedParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+selectedSpecies+"_a");
 				if (p!=null) {
 					actCooperativity.setText(""+p.getValue());
 				}
@@ -2328,8 +2343,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				modifiersPanel.add(ActBindingLabel);
 				actBinding = new JTextField(bioModel.getParameter(GlobalConstants.FORWARD_KACT_STRING) + "/" + 
 						bioModel.getParameter(GlobalConstants.REVERSE_KACT_STRING));
-				LocalParameter ka_f = getChangedParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + selectedID + "_"));
-				LocalParameter ka_r = getChangedParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + selectedID + "_"));
+				LocalParameter ka_f = getChangedParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + selectedSpecies + "_"));
+				LocalParameter ka_r = getChangedParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + selectedSpecies + "_"));
 				if (ka_f!=null && ka_r!=null) {
 					actBinding.setText(""+ka_f.getValue()+"/"+ka_r.getValue());
 				}
@@ -2351,26 +2366,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			int index = -1;
-			if(!modifierDims.getText().isEmpty()){
-				if(!modifierDims.getText().trim().endsWith("]")){
-					JOptionPane.showMessageDialog(Gui.frame, "Dimensions must end with a closing bracket.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
-					error = true;
-					dimID = null;
-				}
-				else if(!modifierDims.getText().trim().startsWith("[")){
-					JOptionPane.showMessageDialog(Gui.frame, "Dimensions must start with an opening bracket.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
-					error = true;
-					dimID = null;
-				}
-				else{
-					dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), modifierDims.getText(), true);
-				}
-			}
-			else{
-				dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), modifierDims.getText(), true);
-			}
+			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), modifierId.getText(), true);
 			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds("m",dimID.length-1);
+				if (dimID[0].trim().equals("")) {
+					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
+				}
+				else {
+					error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+				}
 			}
 			else{
 				error = true;
@@ -2449,6 +2453,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				if (option.equals("OK")) {
 					String v = selectedModifierId;
 					ModifierSpeciesReference modi = modifier;
+					modi.setId(dimID[0]);
+					modi.setName(modifierName.getText());
 					if (modifier == null || !inSchematic) {
 						for (ModifierSpeciesReference p : changedModifiers) {
 							if (p.getSpecies().equals(mod)) {
@@ -2460,7 +2466,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						//modifiers.setSelectedIndex(index);
 					}
-					if (modi==null) return;
 					modi.setSpecies((String) modifierSpecies.getSelectedItem());
 					if (production!=null) {
 						if (SBOTerms.getSelectedItem().equals("Repression")) {
@@ -2552,6 +2557,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					modifiers.setSelectedIndex(index);
 					ModifierSpeciesReference modi = new ModifierSpeciesReference(bioModel.getSBMLDocument().getLevel(), bioModel.getSBMLDocument().getVersion());
+					modi.setId(dimID[0]);
+					modi.setName(modifierName.getText());
 					changedModifiers.add(modi);
 					modi.setSpecies(mod);
 					if (production!=null) {
