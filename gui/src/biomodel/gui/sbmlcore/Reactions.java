@@ -39,6 +39,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
@@ -3218,6 +3219,26 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			bioModel.makeUndoPoint();
 		}
 	}
+	
+	private static String indexedSpeciesRef(SimpleSpeciesReference reference) {
+		String result = reference.getSpecies();
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reference);
+		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
+			Index index = sBasePlugin.getIndex(i);
+			result += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+		}
+		return result;
+	}
+		
+	private static String indexedSpeciesRefId(SimpleSpeciesReference reference) {
+		String result = reference.getId();
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reference);
+		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
+			Index index = sBasePlugin.getIndex(i);
+			result += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+		}
+		return result;
+	}
 
 	/**
 	 * Remove a function if not in use
@@ -3230,8 +3251,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					+ "Requires at least one local parameter.", "Unable to Create Kinetic Law",
 					JOptionPane.ERROR_MESSAGE);
 			return;
-			//kf = "kf";
-			//kr = "kr";
 		}
 		else if (changedParameters.size() == 1) {
 			kf = changedParameters.get(0).getId();
@@ -3242,71 +3261,85 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			kr = changedParameters.get(1).getId();
 		}
 		String kinetic = kf;
-		if (bioModel.getSBMLDocument().getLevel() > 2) {
-			boolean addEquil = false;
-			String equilExpr = "";
-			for (SpeciesReference s : changedReactants) {
+		boolean addEquil = false;
+		String equilExpr = "";
+		for (SpeciesReference s : changedReactants) {
+			if (SBMLutilities.getArraysSBasePlugin(s).getDimensionCount()>0) {
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
+						+ "Dimensions on species references not currently supported for use mass action button.", "Unable to Create Kinetic Law",
+						JOptionPane.ERROR_MESSAGE);
+				return;				
+			}
+			if (s.isSetId()) {
+				addEquil = true;
+				equilExpr += indexedSpeciesRefId(s);
+			}
+			else {
+				equilExpr += s.getStoichiometry();
+			}
+		}
+		if (addEquil) {
+			kinetic += " * pow(" + kf + "/" + kr + "," + equilExpr + "-2)";
+		}
+		for (SpeciesReference s : changedReactants) {
+			if (s.isSetId()) {
+				kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + indexedSpeciesRefId(s) + ")";
+			}
+			else {
+				if (s.getStoichiometry() == 1) {
+					kinetic += " * " + indexedSpeciesRef(s);
+				}
+				else {
+					kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + s.getStoichiometry() + ")";
+				}
+			}
+		}
+		for (ModifierSpeciesReference s : changedModifiers) {
+			if (SBMLutilities.getArraysSBasePlugin(s).getDimensionCount()>0) {
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
+						+ "Dimensions on species references not currently supported for use mass action button.", "Unable to Create Kinetic Law",
+						JOptionPane.ERROR_MESSAGE);
+				return;				
+			}
+			kinetic += " * " + indexedSpeciesRef(s);
+		}
+		if (reacReverse.getSelectedItem().equals("true")) {
+			kinetic += " - " + kr;
+			addEquil = false;
+			equilExpr = "";
+			for (SpeciesReference s : changedProducts) {
+				if (SBMLutilities.getArraysSBasePlugin(s).getDimensionCount()>0) {
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
+							+ "Dimensions on species references not currently supported for use mass action button.", "Unable to Create Kinetic Law",
+							JOptionPane.ERROR_MESSAGE);
+					return;				
+				}
 				if (s.isSetId()) {
 					addEquil = true;
-					equilExpr += s.getId();
+					equilExpr += indexedSpeciesRefId(s);
 				}
 				else {
 					equilExpr += s.getStoichiometry();
 				}
 			}
 			if (addEquil) {
-				kinetic += " * pow(" + kf + "/" + kr + "," + equilExpr + "-2)";
-			}
-		}
-		for (SpeciesReference s : changedReactants) {
-			if ((bioModel.getSBMLDocument().getLevel() > 2) && (s.isSetId())) {
-				kinetic += " * pow(" + s.getSpecies() + ", " + s.getId() + ")";
-			}
-			else {
-				if (s.getStoichiometry() == 1) {
-					kinetic += " * " + s.getSpecies();
-				}
-				else {
-					kinetic += " * pow(" + s.getSpecies() + ", " + s.getStoichiometry() + ")";
-				}
-			}
-		}
-		for (ModifierSpeciesReference s : changedModifiers) {
-			kinetic += " * " + s.getSpecies();
-		}
-		if (reacReverse.getSelectedItem().equals("true")) {
-			kinetic += " - " + kr;
-			if (bioModel.getSBMLDocument().getLevel() > 2) {
-				boolean addEquil = false;
-				String equilExpr = "";
-				for (SpeciesReference s : changedProducts) {
-					if (s.isSetId()) {
-						addEquil = true;
-						equilExpr += s.getId();
-					}
-					else {
-						equilExpr += s.getStoichiometry();
-					}
-				}
-				if (addEquil) {
-					kinetic += " * pow(" + kf + "/" + kr + "," + equilExpr + "-1)";
-				}
+				kinetic += " * pow(" + kf + "/" + kr + "," + equilExpr + "-1)";
 			}
 			for (SpeciesReference s : changedProducts) {
-				if ((bioModel.getSBMLDocument().getLevel() > 2) && (s.isSetId())) {
-					kinetic += " * pow(" + s.getSpecies() + ", " + s.getId() + ")";
+				if (s.isSetId()) {
+					kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + indexedSpeciesRefId(s) + ")";
 				}
 				else {
 					if (s.getStoichiometry() == 1) {
-						kinetic += " * " + s.getSpecies();
+						kinetic += " * " + indexedSpeciesRef(s);
 					}
 					else {
-						kinetic += " * pow(" + s.getSpecies() + ", " + s.getStoichiometry() + ")";
+						kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + s.getStoichiometry() + ")";
 					}
 				}
 			}
 			for (ModifierSpeciesReference s : changedModifiers) {
-				kinetic += " * " + s.getSpecies();
+				kinetic += " * " + indexedSpeciesRef(s);
 			}
 		}
 		kineticLaw.setText(kinetic);
