@@ -818,11 +818,11 @@ public class SBMLutilities {
 		String formula;
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
-			//formula = JSBML.formulaToString(mathFormula);
-			formula = myFormulaToStringInfix(mathFormula);
+			formula = JSBML.formulaToString(mathFormula);
+			//formula = myFormulaToStringInfix(mathFormula);
 		} else {
-			//formula = JSBML.formulaToString(mathFormula);
-			formula = myFormulaToStringInfix(mathFormula);
+			formula = JSBML.formulaToString(mathFormula);
+			//formula = myFormulaToStringInfix(mathFormula);
 		}
 		formula = formula.replaceAll("arccot", "acot");
 		formula = formula.replaceAll("arccoth", "acoth");
