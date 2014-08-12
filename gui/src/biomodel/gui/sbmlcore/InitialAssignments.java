@@ -215,8 +215,6 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		ia.setMath(bioModel.addBooleans(assignment.trim()));
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ia);
 		sBasePlugin.unsetListOfDimensions();
-		// TODO: check the math to see if dimensions and indices are needed or not.  Namely, if the math returns a scalar, then add them, otherwise not.
-		// TODO: if not a scalar, then we need to ensure the number and size of dimensions match what the math returns.
 		for (int i = 1; i < dimensions.length; i++) {
 			org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
 			dim.setSize(dimensions[i]);
