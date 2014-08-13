@@ -590,7 +590,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						if(!error){
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID);
+							// TODO: add the dimensionIds and dimIDs to the new parameters
+							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID);
 							error = (EAdex==null);
 						}
 						if(error)break;
