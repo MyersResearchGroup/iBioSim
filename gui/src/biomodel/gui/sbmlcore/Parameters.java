@@ -6,7 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -36,6 +39,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
 
 import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.sbol.SBOLField;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -65,6 +70,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private JComboBox placeMarking;
 	
 	private JComboBox portDir;
+	
+	private SBOLField sbolField;
 	
 	private BioModel bioModel;
 
@@ -275,7 +282,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			} else if (isBoolean){
 				parametersPanel = new JPanel(new GridLayout(5, 2));
 			} else {
-				parametersPanel = new JPanel(new GridLayout(6, 2));
+				parametersPanel = new JPanel(new GridLayout(7, 2));
 			}
 		}
 		JLabel idLabel = new JLabel("ID:");
@@ -457,6 +464,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				else {
 					paramConst.setSelectedItem("false");
 				}
+				if (!paramsOnly && !isPlace && !isBoolean) {
+					//Parse out SBOL annotations and add to SBOL field
+					List<URI> sbolURIs = new LinkedList<URI>();
+					String sbolStrand = AnnotationUtility.parseSBOLAnnotation(paramet, sbolURIs);
+					// Field for annotating rules with SBOL DNA components
+					sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+							1, false);
+				}
 				if (paramsOnly) {
 					if (paramet.isSetValue()) {
 						paramValue.setText("" + paramet.getValue());
@@ -584,7 +599,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			parametersPanel.add(constLabel);
 			parametersPanel.add(paramConst);
 		}
-		
+		if (!paramsOnly && !isPlace && !isBoolean) {
+			parametersPanel.add(new JLabel("SBOL DNA Component:  "));
+			parametersPanel.add(sbolField);
+		}
 		Object[] options = { option, "Cancel" };
 		String editorTitle = "Parameter Editor";
 		if (isPlace) {
@@ -714,7 +732,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								if (params[i].split(" ")[0].equals(selected)) index = i;
 							}
 							Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
-							
+
 							//TODO edit?
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							paramet.setId(dimID[0].trim());
@@ -838,6 +856,15 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									}
 								}
 							}
+							if (!error && !paramsOnly & !isPlace & !isBoolean) {
+								// Add SBOL annotation to species
+								if (sbolField.getSBOLURIs().size() > 0) {
+									SBOLAnnotation sbolAnnot = new SBOLAnnotation(paramet.getMetaId(), 
+											sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+									AnnotationUtility.setSBOLAnnotation(paramet, sbolAnnot);
+								} else 
+									AnnotationUtility.removeSBOLAnnotation(paramet);
+							}
 						}
 						else {
 							String[] params = new String[parameters.getModel().getSize()];
@@ -849,6 +876,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Parameter paramet = bioModel.getSBMLDocument().getModel().createParameter();
 							paramet.setId(dimID[0].trim());
 							paramet.setName(paramName.getText().trim());
+							
 							//TODO add?
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							for(int i = 0; i<dimID.length-1; i++){
