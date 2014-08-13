@@ -3230,12 +3230,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		return result;
 	}
 		
-	private static String indexedSpeciesRefId(SimpleSpeciesReference reference) {
+	private static String indexedSpeciesRefId(SBMLDocument document,String reactionId,SimpleSpeciesReference reference) {
+		String[] dimID = new String[]{""};
+		String[] dimensionIds = new String[]{""};
+		dimID = SBMLutilities.checkSizeParameters(document, reactionId, false);
+		if (dimID==null) return null;
+		dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 		String result = reference.getId();
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reference);
-		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-			Index index = sBasePlugin.getIndex(i);
-			result += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+		for(int i = dimensionIds.length-1; i >=0; i--){
+			result += "[" + dimensionIds[i] + "]";
 		}
 		return result;
 	}
@@ -3246,6 +3249,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private void useMassAction() {
 		String kf;
 		String kr;
+		SBMLDocument doc = bioModel.getSBMLDocument();
 		if (changedParameters.size() == 0) {
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
 					+ "Requires at least one local parameter.", "Unable to Create Kinetic Law",
@@ -3272,7 +3276,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if (s.isSetId()) {
 				addEquil = true;
-				equilExpr += indexedSpeciesRefId(s);
+				String stoichiometry = indexedSpeciesRefId(doc,reacID.getText(),s);
+				if (stoichiometry==null) return;
+				equilExpr += stoichiometry;
 			}
 			else {
 				equilExpr += s.getStoichiometry();
@@ -3283,7 +3289,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		for (SpeciesReference s : changedReactants) {
 			if (s.isSetId()) {
-				kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + indexedSpeciesRefId(s) + ")";
+				String stoichiometry = indexedSpeciesRefId(doc,reacID.getText(),s);
+				if (stoichiometry==null) return;
+				kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + stoichiometry + ")";
 			}
 			else {
 				if (s.getStoichiometry() == 1) {
@@ -3316,7 +3324,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 				if (s.isSetId()) {
 					addEquil = true;
-					equilExpr += indexedSpeciesRefId(s);
+					String stoichiometry = indexedSpeciesRefId(doc,reacID.getText(),s);
+					if (stoichiometry==null) return;
+					equilExpr += stoichiometry;
 				}
 				else {
 					equilExpr += s.getStoichiometry();
@@ -3327,7 +3337,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			for (SpeciesReference s : changedProducts) {
 				if (s.isSetId()) {
-					kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + indexedSpeciesRefId(s) + ")";
+					String stoichiometry = indexedSpeciesRefId(doc,reacID.getText(),s);
+					if (stoichiometry==null) return;
+					kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + stoichiometry + ")";
 				}
 				else {
 					if (s.getStoichiometry() == 1) {

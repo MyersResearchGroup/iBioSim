@@ -266,6 +266,11 @@ public class SBMLutilities {
 				JOptionPane.showMessageDialog(Gui.frame, "The " + attribute + " needs indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
+		} else {
+			if(varDimCount==0) {
+				JOptionPane.showMessageDialog(Gui.frame, "The " + attribute + " does not need indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 		}
 		// TODO: check if index string empty, and if so, test dimension count.  If 0, return empty array
 		// else report an error and return null
