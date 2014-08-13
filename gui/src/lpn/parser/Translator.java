@@ -1435,27 +1435,29 @@ public class Translator {
 	public static String convertProperty(ASTNode prop) {
 		String property = "Pr=?{";
 		String operator = "";
-		if (prop.getName().equals("G")) {
-			operator += "PG";
-		}
-		else if (prop.getName().equals("F")) {
-			operator += "PF";
-		}
-		else if (prop.getName().equals("U")) {
-			operator += "PU";
-		}
-		else if (prop.getName().equals("St")) {
-			property = "St=?{" + convertHelper(prop.getChild(0)) + "}";
-			return property;
+		if (prop.getType()==ASTNode.Type.FUNCTION) {
+			if (prop.getName().equals("G")) {
+				operator += "PG";
+			}
+			else if (prop.getName().equals("F")) {
+				operator += "PF";
+			}
+			else if (prop.getName().equals("U")) {
+				operator += "PU";
+			}
+			else if (prop.getName().equals("St")) {
+				property = "St=?{" + convertHelper(prop.getChild(0)) + "}";
+				return property;
+			}
 		}
 		ASTNode node = prop.getChild(0);
-		if (node.getName().equals("and")) {
+		if (node.getType() == ASTNode.Type.LOGICAL_AND) {
 			String min = "0";
 			String max = "inf";
 			ASTNode child;
 			for (int i = 0; i < node.getChildCount(); i++) {
 				child = node.getChild(i);
-				if (child.getName().equals("lt")) {
+				if (child.getType() == ASTNode.Type.RELATIONAL_LT) {
 					if (child.getChild(0).isNumber()) {
 						max = SBMLutilities.myFormulaToString(child.getChild(0));
 					}
@@ -1463,7 +1465,7 @@ public class Translator {
 						min = SBMLutilities.myFormulaToString(child.getChild(1));
 					}
 				}
-				else if (child.getName().equals("leq")) {
+				else if (child.getType() == ASTNode.Type.RELATIONAL_LEQ) {
 					if (child.getChild(0).isNumber()) {
 						max = SBMLutilities.myFormulaToString(child.getChild(0));
 					}
@@ -1471,7 +1473,7 @@ public class Translator {
 						min = SBMLutilities.myFormulaToString(child.getChild(1));
 					}
 				}
-				else if (child.getName().equals("gt")) {
+				else if (child.getType() == ASTNode.Type.RELATIONAL_GT) {
 					if (child.getChild(0).isNumber()) {
 						min = SBMLutilities.myFormulaToString(child.getChild(0));
 					}
@@ -1479,7 +1481,7 @@ public class Translator {
 						max = SBMLutilities.myFormulaToString(child.getChild(1));
 					}
 				}
-				else if (child.getName().equals("geq")) {
+				else if (child.getType() == ASTNode.Type.RELATIONAL_GEQ) {
 					if (child.getChild(0).isNumber()) {
 						min = SBMLutilities.myFormulaToString(child.getChild(0));
 					}
@@ -1490,7 +1492,7 @@ public class Translator {
 			}
 			operator += "[" + min + "," + max + "]";
 		}
-		else if (node.getName().equals("lt")) {
+		else if (node.getType() == ASTNode.Type.RELATIONAL_LT) {
 			if (node.getChild(0).isNumber()) {
 				operator += "[>" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
 			}
@@ -1498,7 +1500,7 @@ public class Translator {
 				operator += "[<" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
 			}
 		}
-		else if (node.getName().equals("leq")) {
+		else if (node.getType() == ASTNode.Type.RELATIONAL_LEQ) {
 			if (node.getChild(0).isNumber()) {
 				operator += "[>=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
 			}
@@ -1506,7 +1508,7 @@ public class Translator {
 				operator += "[<=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
 			}
 		}
-		else if (node.getName().equals("gt")) {
+		else if (node.getType() == ASTNode.Type.RELATIONAL_GT) {
 			if (node.getChild(0).isNumber()) {
 				operator += "[<" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
 			}
@@ -1514,7 +1516,7 @@ public class Translator {
 				operator += "[>" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
 			}
 		}
-		else if (node.getName().equals("geq")) {
+		else if (node.getType() == ASTNode.Type.RELATIONAL_GEQ) {
 			if (node.getChild(0).isNumber()) {
 				operator += "[<=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
 			}
@@ -1522,7 +1524,7 @@ public class Translator {
 				operator += "[>=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
 			}
 		}
-		else if (node.getName().equals("eq")) {
+		else if (node.getType() == ASTNode.Type.RELATIONAL_EQ) {
 			if (node.getChild(0).isNumber()) {
 				operator += "[=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
 			}
@@ -1533,11 +1535,13 @@ public class Translator {
 		else {
 			operator += "[0,inf]";
 		}
-		if (prop.getName().equals("G") || prop.getName().equals("F")) {
-			property += operator + convertHelper(prop.getChild(1));
-		}
-		else if (prop.getName().equals("U")) {
-			property += convertHelper(prop.getChild(1)) + operator + convertHelper(prop.getChild(2));
+		if (prop.getType()==ASTNode.Type.FUNCTION) {
+			if (prop.getName().equals("G") || prop.getName().equals("F")) {
+				property += operator + convertHelper(prop.getChild(1));
+			}
+			else if (prop.getName().equals("U")) {
+				property += convertHelper(prop.getChild(1)) + operator + convertHelper(prop.getChild(2));
+			}
 		}
 		property += "}";
 		return property;

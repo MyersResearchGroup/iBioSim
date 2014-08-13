@@ -246,7 +246,10 @@ public class SBMLutilities {
 	 * @param variable The variable that dictates how many indices there should be based on its number of dimensions
 	 * @return If the number of indices matches the dimension count of the variable
 	 */
-	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds, String attribute, String[] dimSizeIds){
+	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds, String attribute, String[] dimSizeIds //,
+			//String[] topDimensionIds, String[] topDimSizeIds
+			){
+		// TODO: merge the top with bottom array for each and use that merged version below
 		if(attribute.equals("conversionFactor")){
 			attribute = "conversion factor";
 		}
