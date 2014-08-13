@@ -161,7 +161,7 @@ public class GCMParser {
 			} else if (sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING) != null) {
 				p.setStoich(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
 			} else {
-				p.setKact(Double.parseDouble(biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", "")));
+				p.setStoich(Double.parseDouble(biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", "")));
 			}
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING)!=null &&
 				production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING)!=null) {
