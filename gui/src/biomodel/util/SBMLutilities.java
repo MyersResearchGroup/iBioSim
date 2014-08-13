@@ -252,7 +252,7 @@ public class SBMLutilities {
 		}
 		HashMap<String, String> dimNSize = new HashMap<String, String>();
 		if(!(dimensionIds==null)){
-			for(int i=0;i<dimensionIds.length;i++){
+			for(int i=0;i<dimSizeIds.length-2;i++){
 				dimNSize.put(dimensionIds[i], dimSizeIds[i+1]);
 			}
 		}
