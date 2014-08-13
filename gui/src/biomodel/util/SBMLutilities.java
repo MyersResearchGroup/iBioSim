@@ -265,18 +265,13 @@ public class SBMLutilities {
 			if(varDimCount==0){
 				return new String[]{""};
 			}
-			else{
-				JOptionPane.showMessageDialog(Gui.frame, "The " + attribute + " needs indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
-				return null;
-			}
-		} else {
-			if(varDimCount==0) {
-				JOptionPane.showMessageDialog(Gui.frame, "The " + attribute + " does not need indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
-				return null;
-			}
+			JOptionPane.showMessageDialog(Gui.frame, "The " + attribute + " needs indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
-		// TODO: check if index string empty, and if so, test dimension count.  If 0, return empty array
-		// else report an error and return null
+		if(varDimCount==0) {
+			JOptionPane.showMessageDialog(Gui.frame, "The " + attribute + " does not need indices.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
 		
 		// TODO: fix messages to say which index properly
 		// Spell brackets like this
