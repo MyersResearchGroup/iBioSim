@@ -1549,177 +1549,177 @@ public class Translator {
 
 	private static String convertHelper(ASTNode op) {
 		String convert = "";
-		if (op.getName() != null) {
-			if (op.getName().equals("and")) {
-				convert = "(" + convertHelper(op.getChild(0));
-				for (int i = 1; i < op.getChildCount(); i++) {
-					convert += "&" + convertHelper(op.getChild(i));
-				}
-				convert += ")";
-				return convert;
+		if (op.getType()==ASTNode.Type.LOGICAL_AND) {
+			convert = "(" + convertHelper(op.getChild(0));
+			for (int i = 1; i < op.getChildCount(); i++) {
+				convert += "&" + convertHelper(op.getChild(i));
 			}
-			else if (op.getName().equals("or")) {
-				convert = "(" + convertHelper(op.getChild(0));
-				for (int i = 1; i < op.getChildCount(); i++) {
-					convert += "|" + convertHelper(op.getChild(i));
-				}
-				convert += ")";
-				return convert;
+			convert += ")";
+			return convert;
+		}
+		else if (op.getType()==ASTNode.Type.LOGICAL_OR) {
+			convert = "(" + convertHelper(op.getChild(0));
+			for (int i = 1; i < op.getChildCount(); i++) {
+				convert += "|" + convertHelper(op.getChild(i));
 			}
-			else if (op.getName().equals("not")) {
-				convert = "~(" + convertHelper(op.getChild(0)) + ")";
-				return convert;
+			convert += ")";
+			return convert;
+		}
+		else if (op.getType()==ASTNode.Type.LOGICAL_NOT) {
+			convert = "~(" + convertHelper(op.getChild(0)) + ")";
+			return convert;
+		}
+		else if (op.getType()==ASTNode.Type.RELATIONAL_LT) {
+			convert = "(" + convertHelper(op.getChild(0)) + "<" + convertHelper(op.getChild(1)) + ")";
+			return convert;
+		}
+		else if (op.getType()==ASTNode.Type.RELATIONAL_LEQ) {
+			convert = "(" + convertHelper(op.getChild(0)) + "<=" + convertHelper(op.getChild(1)) + ")";
+			return convert;
+		}
+		else if (op.getType()==ASTNode.Type.RELATIONAL_GT) {
+			convert = "(" + convertHelper(op.getChild(0)) + ">" + convertHelper(op.getChild(1)) + ")";
+			return convert;
+		}
+		else if (op.getType()==ASTNode.Type.RELATIONAL_GEQ) {
+			convert = "(" + convertHelper(op.getChild(0)) + ">=" + convertHelper(op.getChild(1)) + ")";
+			return convert;
+		}
+		else if (op.getType()==ASTNode.Type.RELATIONAL_GEQ) {
+			convert = "(" + convertHelper(op.getChild(0)) + "=" + convertHelper(op.getChild(1)) + ")";
+			return convert;
+		}
+		else if (op.getName()!=null && op.getName().equals("PSt")) {
+			return "St=?{" + convertHelper(op.getChild(0)) + "}";
+		}
+		else if (op.getName()!=null && 
+				(op.getName().equals("PG") || op.getName().equals("PF") || op.getName().equals("PU"))) {
+			String operator = "";
+			if (op.getName()!=null && op.getName().equals("PG")) {
+				operator += "G";
 			}
-			else if (op.getName().equals("lt")) {
-				convert = "(" + convertHelper(op.getChild(0)) + "<" + convertHelper(op.getChild(1)) + ")";
-				return convert;
-			}
-			else if (op.getName().equals("leq")) {
-				convert = "(" + convertHelper(op.getChild(0)) + "<=" + convertHelper(op.getChild(1)) + ")";
-				return convert;
-			}
-			else if (op.getName().equals("gt")) {
-				convert = "(" + convertHelper(op.getChild(0)) + ">" + convertHelper(op.getChild(1)) + ")";
-				return convert;
-			}
-			else if (op.getName().equals("geq")) {
-				convert = "(" + convertHelper(op.getChild(0)) + ">=" + convertHelper(op.getChild(1)) + ")";
-				return convert;
-			}
-			else if (op.getName().equals("eq")) {
-				convert = "(" + convertHelper(op.getChild(0)) + "=" + convertHelper(op.getChild(1)) + ")";
-				return convert;
-			}
-			else if (op.getName().equals("PSt")) {
-				return "St=?{" + convertHelper(op.getChild(0)) + "}";
-			}
-			else if (op.getName().equals("PG") || op.getName().equals("PF") || op.getName().equals("PU")) {
-				String operator = "";
-				if (op.getName().equals("PG")) {
-					operator += "G";
-				}
-				else if (op.getName().equals("PF")) {
-					operator += "F";
-				}
-				else {
-					operator += "U";
-				}
-				ASTNode node = op.getChild(0);
-				if (node.getName().equals("and")) {
-					String min = "0";
-					String max = "inf";
-					ASTNode child;
-					for (int i = 0; i < node.getChildCount(); i++) {
-						child = node.getChild(i);
-						if (child.getName().equals("lt")) {
-							if (child.getChild(0).isNumber()) {
-								max = SBMLutilities.myFormulaToString(child.getChild(0));
-							}
-							else if (child.getChild(1).isNumber()) {
-								min = SBMLutilities.myFormulaToString(child.getChild(1));
-							}
-						}
-						else if (child.getName().equals("leq")) {
-							if (child.getChild(0).isNumber()) {
-								max = SBMLutilities.myFormulaToString(child.getChild(0));
-							}
-							else if (child.getChild(1).isNumber()) {
-								min = SBMLutilities.myFormulaToString(child.getChild(1));
-							}
-						}
-						else if (child.getName().equals("gt")) {
-							if (child.getChild(0).isNumber()) {
-								min = SBMLutilities.myFormulaToString(child.getChild(0));
-							}
-							else if (child.getChild(1).isNumber()) {
-								max = SBMLutilities.myFormulaToString(child.getChild(1));
-							}
-						}
-						else if (child.getName().equals("geq")) {
-							if (child.getChild(0).isNumber()) {
-								min = SBMLutilities.myFormulaToString(child.getChild(0));
-							}
-							else if (child.getChild(1).isNumber()) {
-								max = SBMLutilities.myFormulaToString(child.getChild(1));
-							}
-						}
-					}
-					operator += "[" + min + "," + max + "]";
-				}
-				else if (node.getName().equals("lt")) {
-					if (node.getChild(0).isNumber()) {
-						operator += "[>" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
-					}
-					else if (node.getChild(1).isNumber()) {
-						operator += "[<" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
-					}
-				}
-				else if (node.getName().equals("leq")) {
-					if (node.getChild(0).isNumber()) {
-						operator += "[>=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
-					}
-					else if (node.getChild(1).isNumber()) {
-						operator += "[<=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
-					}
-				}
-				else if (node.getName().equals("gt")) {
-					if (node.getChild(0).isNumber()) {
-						operator += "[<" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
-					}
-					else if (node.getChild(1).isNumber()) {
-						operator += "[>" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
-					}
-				}
-				else if (node.getName().equals("geq")) {
-					if (node.getChild(0).isNumber()) {
-						operator += "[<=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
-					}
-					else if (node.getChild(1).isNumber()) {
-						operator += "[>=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
-					}
-				}
-				else if (node.getName().equals("eq")) {
-					if (node.getChild(0).isNumber()) {
-						operator += "[=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
-					}
-					else if (node.getChild(1).isNumber()) {
-						operator += "[=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
-					}
-				}
-				else {
-					operator += "[0,inf]";
-				}
-				if (op.getName().equals("PG") || op.getName().equals("PF")) {
-					return "Pr=?{" + operator + convertHelper(op.getChild(1)) + "}";
-				}
-				return "Pr=?{" + convertHelper(op.getChild(1)) + operator + convertHelper(op.getChild(2)) + "}";
+			else if (op.getName()!=null && op.getName().equals("PF")) {
+				operator += "F";
 			}
 			else {
-				String finalString = SBMLutilities.myFormulaToString(op);
-				String[] opers = new String[] { "and(", "or(", "not(", "lt(", "leq(", "gt(", "geq(", "eq(", "PG(", "PF(", "PU(" };
-				for (String o : opers) {
-					while (finalString.contains(o)) {
-						String temp = finalString.substring(finalString.indexOf(o) + o.length());
-						String formula = "o";
-						int paren = 1;
-						while (paren != 0) {
-							char c = temp.charAt(0);
-							if (c == '(') {
-								paren++;
-							}
-							else if (c == ')') {
-								paren--;
-							}
-							formula += c;
-							temp.substring(1);
+				operator += "U";
+			}
+			ASTNode node = op.getChild(0);
+			if (node.getType()==ASTNode.Type.LOGICAL_AND) {
+				String min = "0";
+				String max = "inf";
+				ASTNode child;
+				for (int i = 0; i < node.getChildCount(); i++) {
+					child = node.getChild(i);
+					if (child.getType()==ASTNode.Type.RELATIONAL_LT) {
+						if (child.getChild(0).isNumber()) {
+							max = SBMLutilities.myFormulaToString(child.getChild(0));
 						}
-						finalString = finalString.substring(0, finalString.indexOf(o))
-								+ convertHelper(SBMLutilities.myParseFormula(formula)) + temp;
+						else if (child.getChild(1).isNumber()) {
+							min = SBMLutilities.myFormulaToString(child.getChild(1));
+						}
+					}
+					else if (child.getType()==ASTNode.Type.RELATIONAL_LEQ) {
+						if (child.getChild(0).isNumber()) {
+							max = SBMLutilities.myFormulaToString(child.getChild(0));
+						}
+						else if (child.getChild(1).isNumber()) {
+							min = SBMLutilities.myFormulaToString(child.getChild(1));
+						}
+					}
+					else if (child.getType()==ASTNode.Type.RELATIONAL_GT) {
+						if (child.getChild(0).isNumber()) {
+							min = SBMLutilities.myFormulaToString(child.getChild(0));
+						}
+						else if (child.getChild(1).isNumber()) {
+							max = SBMLutilities.myFormulaToString(child.getChild(1));
+						}
+					}
+					else if (child.getType()==ASTNode.Type.RELATIONAL_GEQ) {
+						if (child.getChild(0).isNumber()) {
+							min = SBMLutilities.myFormulaToString(child.getChild(0));
+						}
+						else if (child.getChild(1).isNumber()) {
+							max = SBMLutilities.myFormulaToString(child.getChild(1));
+						}
 					}
 				}
-				return finalString;
+				operator += "[" + min + "," + max + "]";
 			}
+			else if (node.getType()==ASTNode.Type.RELATIONAL_LT) {
+				if (node.getChild(0).isNumber()) {
+					operator += "[>" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
+				}
+				else if (node.getChild(1).isNumber()) {
+					operator += "[<" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
+				}
+			}
+			else if (node.getType()==ASTNode.Type.RELATIONAL_LEQ) {
+				if (node.getChild(0).isNumber()) {
+					operator += "[>=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
+				}
+				else if (node.getChild(1).isNumber()) {
+					operator += "[<=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
+				}
+			}
+			else if (node.getType()==ASTNode.Type.RELATIONAL_GT) {
+				if (node.getChild(0).isNumber()) {
+					operator += "[<" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
+				}
+				else if (node.getChild(1).isNumber()) {
+					operator += "[>" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
+				}
+			}
+			else if (node.getType()==ASTNode.Type.RELATIONAL_GEQ) {
+				if (node.getChild(0).isNumber()) {
+					operator += "[<=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
+				}
+				else if (node.getChild(1).isNumber()) {
+					operator += "[>=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
+				}
+			}
+			else if (node.getType()==ASTNode.Type.RELATIONAL_EQ) {
+				if (node.getChild(0).isNumber()) {
+					operator += "[=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
+				}
+				else if (node.getChild(1).isNumber()) {
+					operator += "[=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
+				}
+			}
+			else {
+				operator += "[0,inf]";
+			}
+			if (op.getName()!=null && (op.getName().equals("PG") || op.getName().equals("PF"))) {
+				return "Pr=?{" + operator + convertHelper(op.getChild(1)) + "}";
+			}
+			return "Pr=?{" + convertHelper(op.getChild(1)) + operator + convertHelper(op.getChild(2)) + "}";
 		}
+		else {
+			String finalString = SBMLutilities.myFormulaToString(op);
+			String[] opers = new String[] { "and(", "or(", "not(", "lt(", "leq(", "gt(", "geq(", "eq(", "PG(", "PF(", "PU(" };
+			for (String o : opers) {
+				while (finalString.contains(o)) {
+					String temp = finalString.substring(finalString.indexOf(o) + o.length());
+					String formula = "o";
+					int paren = 1;
+					while (paren != 0) {
+						char c = temp.charAt(0);
+						if (c == '(') {
+							paren++;
+						}
+						else if (c == ')') {
+							paren--;
+						}
+						formula += c;
+						temp.substring(1);
+					}
+					finalString = finalString.substring(0, finalString.indexOf(o))
+							+ convertHelper(SBMLutilities.myParseFormula(formula)) + temp;
+				}
+			}
+			return finalString;
+		}
+		/*
 		String finalString = SBMLutilities.myFormulaToString(op);
 		String[] opers = new String[] { "and(", "or(", "not(", "lt(", "leq(", "gt(", "geq(", "eq(", "PG(", "PF(", "PU(" };
 		for (String o : opers) {
@@ -1743,6 +1743,7 @@ public class Translator {
 			}
 		}
 		return finalString;
+		*/
 	}
 	
 	// getProbpropParts extracts the expressions before and after the PU (after PG and PF)
