@@ -1110,7 +1110,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for(int i = 0; i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("variable");
+							indexRule.setReferencedAttribute("species");
 							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 							indexRule.setMath(indexMath);
 							sBasePlugin.addIndex(indexRule);
@@ -1216,7 +1216,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for(int i = 0; i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("variable");
+							indexRule.setReferencedAttribute("species");
 							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 							indexRule.setMath(indexMath);
 							sBasePlugin.addIndex(indexRule);
@@ -1963,7 +1963,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)productSpecies.getSelectedItem());
-				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID, reactdimIDs, reactdimIDSizes);
+				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "species", dimID, reactdimIDs, reactdimIDSizes);
 				error = (dex==null);
 			}
 			if (!error) {
@@ -2113,7 +2113,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for(int i = 0; i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("variable");
+							indexRule.setReferencedAttribute("species");
 							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 							indexRule.setMath(indexMath);
 							sBasePlugin.addIndex(indexRule);
@@ -2157,7 +2157,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for(int i = 0; i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("variable");
+							indexRule.setReferencedAttribute("species");
 							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 							indexRule.setMath(indexMath);
 							sBasePlugin.addIndex(indexRule);
@@ -2400,7 +2400,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)modifierSpecies.getSelectedItem());
-				dex = SBMLutilities.checkIndices(MiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID, reactdimIDs, reactdimIDSizes);
+				dex = SBMLutilities.checkIndices(MiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "species", dimID, reactdimIDs, reactdimIDSizes);
 				error = (dex==null);
 			}
 			if (modifier == null || !inSchematic) {
@@ -2564,7 +2564,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for(int i = 0; i<dex.length-1; i++){
 						Index indexRule = new Index();
 						indexRule.setArrayDimension(i);
-						indexRule.setReferencedAttribute("variable");
+						indexRule.setReferencedAttribute("species");
 						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 						indexRule.setMath(indexMath);
 						sBasePlugin.addIndex(indexRule);
@@ -2673,7 +2673,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for(int i = 0; i<dex.length-1; i++){
 						Index indexRule = new Index();
 						indexRule.setArrayDimension(i);
-						indexRule.setReferencedAttribute("variable");
+						indexRule.setReferencedAttribute("species");
 						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 						indexRule.setMath(indexMath);
 						sBasePlugin.addIndex(indexRule);
@@ -2848,7 +2848,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactantSpecies.getSelectedItem());
-				dex = SBMLutilities.checkIndices(RiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID, reactdimIDs, reactdimIDSizes);
+				dex = SBMLutilities.checkIndices(RiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "species", dimID, reactdimIDs, reactdimIDSizes);
 				error = (dex==null);
 			}
 			if (!error) {
@@ -3020,7 +3020,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for(int i = 0; i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("variable");
+							indexRule.setReferencedAttribute("species");
 							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 							indexRule.setMath(indexMath);
 							sBasePlugin.addIndex(indexRule);
@@ -3087,7 +3087,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for(int i = 0; i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("variable");
+							indexRule.setReferencedAttribute("species");
 							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 							indexRule.setMath(indexMath);
 							sBasePlugin.addIndex(indexRule);
