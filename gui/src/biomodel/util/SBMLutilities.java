@@ -278,11 +278,11 @@ public class SBMLutilities {
 		// Make sure message fon Conversion Factor is so
 		// Send a map of dimension ids with their size variables
 		if(!index.trim().endsWith("]")){
-			JOptionPane.showMessageDialog(Gui.frame, "String must end with a closing bracket for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Index must end with a closing bracket for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		if(!index.trim().startsWith("[")){
-			JOptionPane.showMessageDialog(Gui.frame, "String must start with an opening bracket for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Index must start with an opening bracket for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		int pendingOpens = 0;
