@@ -796,7 +796,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(reactionComp.isEnabled() && !error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactionComp.getSelectedItem());
-				dex = SBMLutilities.checkIndices(CiIndex.getText().trim(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", dimID);
+				dex = SBMLutilities.checkIndices(CiIndex.getText().trim(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", dimID, null, null);
 				error = (dex==null);
 			}
 			if (!error) {
@@ -1906,9 +1906,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
 		String[] reactdimIDs = new String[reactPlugin.getDimensionCount()];
+		String[] reactdimIDSizes = new String[reactPlugin.getDimensionCount()];
 		for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
 			org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
 			reactdimIDs[i] =  dimX.getId();
+			reactdimIDSizes[i] = dimX.getSize();
 		}
 		
 		productsPanel.add(productIdLabel);
@@ -1948,10 +1950,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			double val = 1.0;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), productId.getText(), true);
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds("p",dimID.length-1 + reactdimIDs.length);
-				for(int i=dimID.length-1;i<dimensionIds.length;i++){
-					dimensionIds[i] = reactdimIDs[i-dimID.length+1];
-				}
+				dimensionIds = SBMLutilities.getDimensionIds("p",dimID.length-1);
 				if (dimID[0].equals("")) {
 					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
 				}
@@ -1964,7 +1963,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)productSpecies.getSelectedItem());
-				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID);
+				dex = SBMLutilities.checkIndices(PiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID, reactdimIDs, reactdimIDSizes);
 				error = (dex==null);
 			}
 			if (!error) {
@@ -2308,9 +2307,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
 		String[] reactdimIDs = new String[reactPlugin.getDimensionCount()];
+		String[] reactdimIDSizes = new String[reactPlugin.getDimensionCount()];
 		for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
 			org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
 			reactdimIDs[i] =  dimX.getId();
+			reactdimIDSizes[i] = dimX.getSize();
 		}
 		
 		modifiersPanel.add(new JLabel("Id:"));
@@ -2386,10 +2387,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			int index = -1;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), modifierId.getText(), true);
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds("m",dimID.length-1 + reactdimIDs.length);
-				for(int i=dimID.length-1;i<dimensionIds.length;i++){
-					dimensionIds[i] = reactdimIDs[i-dimID.length+1];
-				}
+				dimensionIds = SBMLutilities.getDimensionIds("m",dimID.length-1);
 				if (dimID[0].trim().equals("")) {
 					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
 				}
@@ -2402,7 +2400,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)modifierSpecies.getSelectedItem());
-				dex = SBMLutilities.checkIndices(MiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID);
+				dex = SBMLutilities.checkIndices(MiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID, reactdimIDs, reactdimIDSizes);
 				error = (dex==null);
 			}
 			if (modifier == null || !inSchematic) {
@@ -2793,9 +2791,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
 		String[] reactdimIDs = new String[reactPlugin.getDimensionCount()];
+		String[] reactdimIDSizes = new String[reactPlugin.getDimensionCount()];
 		for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
 			org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
 			reactdimIDs[i] =  dimX.getId();
+			reactdimIDSizes[i] = dimX.getSize();
 		}
 		
 		reactantsPanel.add(reactantIdLabel);
@@ -2835,10 +2835,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			double val = 1.0;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reactantId.getText(), true);
 			if(dimID!=null){
-				dimensionIds = SBMLutilities.getDimensionIds("r",dimID.length-1 + reactdimIDs.length);
-				for(int i=dimID.length-1;i<dimensionIds.length;i++){
-					dimensionIds[i] = reactdimIDs[i-dimID.length+1];
-				}
+				dimensionIds = SBMLutilities.getDimensionIds("r",dimID.length-1);
 				if (dimID[0].trim().equals("")) {
 					error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
 				}
@@ -2851,7 +2848,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if(!error){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)reactantSpecies.getSelectedItem());
-				dex = SBMLutilities.checkIndices(RiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID);
+				dex = SBMLutilities.checkIndices(RiIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID, reactdimIDs, reactdimIDSizes);
 				error = (dex==null);
 			}
 			if (!error) {

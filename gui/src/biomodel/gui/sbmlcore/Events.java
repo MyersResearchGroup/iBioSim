@@ -591,7 +591,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						if(!error){
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
 							// TODO: add the dimensionIds and dimIDs to the new parameters
-							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID);
+							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, null, null);
 							error = (EAdex==null);
 						}
 						if(error)break;
@@ -648,7 +648,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						if(!error){
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID);
+							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID, null, null);
 							error = (EAdex==null);
 						}
 						if (error) break;
@@ -969,7 +969,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 							if(!error){
 								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID);
+								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID, null, null);
 								error = (EAdex==null);
 							}
 							if(!error){

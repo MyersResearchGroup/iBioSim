@@ -821,7 +821,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						else {
 							species.setConversionFactor(convFactor);
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
-							cdex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "conversionFactor", dimID);
+							cdex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "conversionFactor", dimID, null, null);
 							if(cdex==null)return false;
 							int limit = sBasePlugin.getIndexCount();
 							for(int i = limit-1; i>-1; i--){
@@ -839,7 +839,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							}
 						}
 						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
-						dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", dimID);
+						dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", dimID, null, null);
 						if(dex==null)return false;
 						int limit = sBasePlugin.getIndexCount();
 						for(int i = limit-1; i>-1; i--){
