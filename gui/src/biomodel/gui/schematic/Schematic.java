@@ -2347,7 +2347,7 @@ public class Schematic extends JPanel implements ActionListener {
 				SpeciesReference product = bioModel.getSBMLDocument().getModel().getReaction(source.getId()).
 					getProductForSpecies(target.getId());
 				reactions.productsEditor(bioModel,"OK",target.getId(),product, true, 
-						bioModel.getSBMLDocument().getModel().getReaction(target.getId()));
+						bioModel.getSBMLDocument().getModel().getReaction(source.getId()));
 			}
 		}
 		else if(cellType == GlobalConstants.MODIFIER_REACTION_EDGE){

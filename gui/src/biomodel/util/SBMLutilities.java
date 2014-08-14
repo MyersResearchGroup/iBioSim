@@ -179,12 +179,12 @@ public class SBMLutilities {
 			else if(pieces[i]==']'){
 				pendingOpens--;
 				if(pendingOpens < 0){
-					JOptionPane.showMessageDialog(Gui.frame, "Too many closing brackets.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Too many closing brackets in the dimensions.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 					return null;
 				}
 			} 
 			else if(pendingOpens==0) {
-				JOptionPane.showMessageDialog(Gui.frame, "There is text outside brackets.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "There is text outside brackets in the dimensions.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			if(pendingOpens != 0){
@@ -193,7 +193,7 @@ public class SBMLutilities {
 			}
 			tester = tester.substring(1);
 			if(tester.isEmpty()){
-				JOptionPane.showMessageDialog(Gui.frame, "A pair of brackets are blank.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "A pair of brackets are blank in the dimensions.", "Invalid Size Parameter", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			if(getElementBySId(document, tester) == null){
@@ -223,7 +223,7 @@ public class SBMLutilities {
 			numDims++;
 		}
 		if(pendingOpens > 0){
-			JOptionPane.showMessageDialog(Gui.frame, "Too many open brackets.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Too many open brackets in the dimensions.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		String[] retText = new String[numDims+1];
@@ -246,17 +246,43 @@ public class SBMLutilities {
 	 * @param variable The variable that dictates how many indices there should be based on its number of dimensions
 	 * @return If the number of indices matches the dimension count of the variable
 	 */
-	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds, String attribute, String[] dimSizeIds //,
-			//String[] topDimensionIds, String[] topDimSizeIds
-			){
+	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds, String attribute, String[] dimSizeIds,
+			String[] topDimensionIds, String[] topDimSizeIds){
 		// TODO: merge the top with bottom array for each and use that merged version below
 		if(attribute.equals("conversionFactor")){
 			attribute = "conversion factor";
 		}
+		//topDimensionIdLength...
+		int TDIL = 0;
+		int TDSIL = 0;
+		if(topDimensionIds!=null){
+			TDIL = topDimensionIds.length;
+		}
+		if(topDimSizeIds!=null){
+			TDSIL = topDimSizeIds.length;
+		}
+		String[] meshDimensionIds = new String[dimensionIds.length + TDIL];
+		for(int i=0;i<meshDimensionIds.length;i++){
+			if(i<dimensionIds.length){
+				meshDimensionIds[i] = dimensionIds[i];
+			}
+			else{
+				meshDimensionIds[i] = topDimensionIds[i-dimensionIds.length];
+			}
+		}
+		String[] meshDimSizeIds = new String[dimSizeIds.length-1 + TDSIL];
+		for(int i=0;i<meshDimSizeIds.length;i++){
+			if(i<dimensionIds.length){
+				meshDimSizeIds[i] = dimSizeIds[i+1];
+			}
+			else{
+				meshDimSizeIds[i] = topDimSizeIds[i-(dimSizeIds.length-1)];
+			}
+		}
 		HashMap<String, String> dimNSize = new HashMap<String, String>();
-		if(!(dimensionIds==null)){
-			for(int i=0;i<dimSizeIds.length-2;i++){
-				dimNSize.put(dimensionIds[i], dimSizeIds[i+1]);
+		if(!(meshDimensionIds==null)){
+			for(int i=0;i<meshDimSizeIds.length;i++){
+				dimNSize.put(meshDimensionIds[i], meshDimSizeIds[i]);
 			}
 		}
 		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
@@ -296,11 +322,11 @@ public class SBMLutilities {
 			} else if(pieces[i]==']'){
 				pendingOpens--;
 				if(pendingOpens < 0){
-					JOptionPane.showMessageDialog(Gui.frame, "Too many closing brackets for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Too many closing brackets for the " + attribute + " index.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 					return null;
 				}
 			} else if(pendingOpens==0) {
-				JOptionPane.showMessageDialog(Gui.frame, "There is text outside brackets for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "There is text outside brackets for the " + attribute + " index.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			if(pendingOpens != 0){
@@ -309,7 +335,7 @@ public class SBMLutilities {
 			}
 			tester = tester.substring(1);
 			if(tester.isEmpty()){
-				JOptionPane.showMessageDialog(Gui.frame, "A pair of brackets are blank for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "A pair of brackets are blank for the " + attribute + " index.", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 			ASTNode math = myParseFormula(tester);
@@ -317,10 +343,10 @@ public class SBMLutilities {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			if(displayinvalidVariables("Indices", document, dimensionIds, tester, "", false)){
+			if(displayinvalidVariables("Indices", document, meshDimensionIds, tester, "", false)){
 				return null;
 			}
-			if(ArraysMath.isStaticallyComputable(document.getModel(), math, dimensionIds) == false){
+			if(ArraysMath.isStaticallyComputable(document.getModel(), math, meshDimensionIds) == false){
 				JOptionPane.showMessageDialog(Gui.frame, "Index math must consist of constants and valid dimension size ids only.", 
 						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
@@ -342,7 +368,7 @@ public class SBMLutilities {
 			numIndices++;
 		}
 		if(pendingOpens > 0){
-			JOptionPane.showMessageDialog(Gui.frame, "Too many open brackets for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Too many open brackets for the " + attribute + " index.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		if(ABV.getDimensionCount()!=numIndices){

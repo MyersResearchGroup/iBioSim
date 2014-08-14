@@ -219,7 +219,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			error = false;
 			if(!error&&!conversionFactor.getSelectedItem().equals("( none )")){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)conversionFactor.getSelectedItem());
-				dex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), null, "conversionFactor", null);
+				dex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), null, "conversionFactor", 
+						null, null, null);
 				error = (dex==null);
 			}
 			// Add SBOL annotation to SBML model itself
