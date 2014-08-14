@@ -391,7 +391,7 @@ public class SBMLutilities {
 	}
 	
 	public static String[] getDimensionIds(String prefix, int count) {
-		if (count==0) return null;
+		//if (count==0) return null;
 		String[] dimensionIds = new String[count];
 		for (int i = 0; i < count; i++) {
 			dimensionIds[i] = prefix + "d" + i;
