@@ -1,6 +1,8 @@
 package biomodel.gui.sbol;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -11,9 +13,11 @@ import org.sbolstandard.core.impl.AggregatingResolver;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 
+import biomodel.gui.schematic.ModelEditor;
 import biomodel.util.GlobalConstants;
-
 import sbol.browser.SBOLBrowser;
+import sbol.util.SBOLFileManager;
+import sbol.util.SBOLIdentityManager;
 import sbol.util.SBOLUtility;
 
 import java.net.URI;
@@ -23,28 +27,30 @@ import java.util.List;
 
 import javax.swing.JCheckBox;
 
-public class SBOLAssociationPanel extends JPanel {
+public class SBOLAssociationPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private HashSet<String> sbolFilePaths;
-//	private HashMap<String, SBOLDocument> sbolFileDocMap = new HashMap<String, SBOLDocument>();
 	private List<URI> compURIs;
 	private List<URI> defaultCompURIs;
 	private boolean defaultMinusBoxState;
 	private Set<String> soTypes;
-	private String modelID;
+	private ModelEditor modelEditor;
 	private UseFirstFound<DnaComponent, URI> aggregateCompResolver;
 	private JList compList = new JList();
 	private JCheckBox minusBox = new JCheckBox();
 	private String[] options;
 	private boolean iBioSimURIPresent;
 	private URI removedBioSimURI;
+	private JButton addMove = new JButton("Add/Move Composite");
+	private JButton editDescriptors = new JButton("Edit Composite Descriptors");
 	
-	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, String defaultCompStrand, Set<String> soTypes, String modelID) {
+	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, 
+			String defaultCompStrand, Set<String> soTypes, ModelEditor modelEditor) {
 		super(new BorderLayout());
 		
 		this.sbolFilePaths = sbolFilePaths;
-		
+		this.modelEditor = modelEditor;
 		if (defaultCompURIs.size() == 0) {
 			compURIs = new LinkedList<URI>();
 			insertPlaceHolder();
@@ -54,14 +60,13 @@ public class SBOLAssociationPanel extends JPanel {
 		minusBox.setSelected(defaultCompStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND));
 		defaultMinusBoxState = minusBox.isSelected();
 		this.soTypes = soTypes;
-		this.modelID = modelID;
 		
-		
-		options = new String[]{"Add/Move Composite", "Add", "Remove", "Ok", "Cancel"};
+		options = new String[]{"Add", "Remove", "Ok", "Cancel"};
 		constructPanel();
 	}
 	
-	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, String defaultCompStrand, Set<String> soTypes) {
+	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, 
+			String defaultCompStrand, Set<String> soTypes) {
 		super(new BorderLayout());
 		
 		this.sbolFilePaths = sbolFilePaths;
@@ -78,20 +83,30 @@ public class SBOLAssociationPanel extends JPanel {
 	
 	public void constructPanel() {
 		JLabel associationLabel = new JLabel("Associated DNA Components:");
-		
 		JScrollPane componentScroll = new JScrollPane();
 		componentScroll.setMinimumSize(new Dimension(260, 200));
 		componentScroll.setPreferredSize(new Dimension(276, 132));
 		componentScroll.setViewportView(compList);
+		this.add(associationLabel, "North");
+		this.add(componentScroll, "Center");
 		
 		JPanel minusPanel = new JPanel();
 		JLabel minusLabel = new JLabel("Minus Strand");
 		minusPanel.add(minusBox);
 		minusPanel.add(minusLabel);
-		
-		this.add(associationLabel, "North");
-		this.add(componentScroll, "Center");
-		this.add(minusPanel, "South");
+		if (modelEditor == null) {
+			this.add(minusPanel, "South");
+		} else {
+			JPanel metaPanel = new JPanel(new GridLayout(2, 1));
+			JPanel compositePanel = new JPanel(new GridLayout(1, 2));
+			addMove.addActionListener(this);
+			editDescriptors.addActionListener(this);
+			compositePanel.add(addMove);
+			compositePanel.add(editDescriptors);
+			metaPanel.add(minusPanel);
+			metaPanel.add(compositePanel);
+			this.add(metaPanel, "South");
+		}
 		
 		if (loadSBOLFiles(sbolFilePaths)) {
 			boolean display = setComponentIDList();
@@ -104,7 +119,6 @@ public class SBOLAssociationPanel extends JPanel {
 		LinkedList<Resolver<DnaComponent, URI>> compResolvers = new LinkedList<Resolver<DnaComponent, URI>>();
 		for (String filePath : sbolFilePaths) {
 			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
-//			sbolFileDocMap.put(filePath, sbolDoc);
 			if (sbolDoc != null) {
 				SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
 				compResolvers.add(flattenedDoc.getComponentUriResolver());
@@ -130,6 +144,7 @@ public class SBOLAssociationPanel extends JPanel {
 			String compIdName = "";
 			if (uri.toString().endsWith("iBioSimPlaceHolder")) {
 				iBioSimURIPresent = true;
+				String modelID = modelEditor.getBioModel().getSBMLDocument().getModel().getId();
 				compIdName = modelID + " (Placeholder for iBioSim Composite DNA Component)";
 			} else {
 				DnaComponent resolvedComp = null;
@@ -174,26 +189,17 @@ public class SBOLAssociationPanel extends JPanel {
 	}
 	
 	private boolean panelOpen() {
-		int mode = 5 - options.length;
 		int choice = JOptionPane.showOptionDialog(Gui.frame, this,
 				"SBOL Association", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		if (choice >= 0)
-			choice += mode;
 		if (choice == 0) {
-			if (iBioSimURIPresent) {
-				moveIBioSimURI();
-			} else 
-				insertPlaceHolder();
-			return true;
-		} else if (choice == 1) {
 			SBOLBrowser browser = new SBOLBrowser(sbolFilePaths, soTypes);
 			insertComponentURIs(browser.getSelection());
 			return true;
-		} else if (choice == 2) {
+		} else if (choice == 1) {
 			removeSelectedURIs();
 			return true;
-		} else if (choice == 3) 
+		} else if (choice == 2) 
 			return false;
 		else {
 			compURIs = defaultCompURIs;
@@ -292,6 +298,23 @@ public class SBOLAssociationPanel extends JPanel {
 		if (minusBox.isSelected())
 			return GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
 		return GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == addMove) {
+			if (iBioSimURIPresent)
+				moveIBioSimURI();
+			else 
+				insertPlaceHolder();
+		} else if (e.getSource() == editDescriptors) {
+			Gui gui = modelEditor.getGui();
+			SBOLFileManager fileManager = new SBOLFileManager(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
+			if (fileManager.sbolFilesAreLoaded()) {
+				SBOLIdentityManager identityManager = new SBOLIdentityManager(modelEditor.getBioModel());
+				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
+			}
+		}
 	}
 
 }

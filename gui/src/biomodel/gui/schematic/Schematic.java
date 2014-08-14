@@ -152,7 +152,6 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton noInfluenceButton;
 	private AbstractButton zoomButton;
 	private AbstractButton panButton;
-	private JButton sbolDescriptorsButton;
 	
 	private JPopupMenu layoutPopup;
 	
@@ -722,11 +721,6 @@ public class Schematic extends JPanel implements ActionListener {
 		modelPanel = new ModelPanel(bioModel, modelEditor);
 		toolBar.add(modelPanel);
 		
-		sbolDescriptorsButton = new JButton("SBOL");
-		sbolDescriptorsButton.setToolTipText("Edit Composite SBOL Descriptors");
-		sbolDescriptorsButton.setActionCommand("editSBOLDescriptors");
-		sbolDescriptorsButton.addActionListener(this);
-		toolBar.add(sbolDescriptorsButton);
 //		if (bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag())
 //			sbolDescriptorsButton.setEnabled(false);
 
@@ -899,15 +893,6 @@ public class Schematic extends JPanel implements ActionListener {
 		else if (command.equals("unZoom")) {
 			
 			graph.getView().setScale(1.0);
-		}
-		else if (command.equals("editSBOLDescriptors")) {
-			Gui gui = modelEditor.getGui();
-			SBOLFileManager fileManager = new SBOLFileManager(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
-			if (fileManager.sbolFilesAreLoaded()) {
-				SBOLIdentityManager identityManager = new SBOLIdentityManager(bioModel);
-				// TODO: descriptorPanel not used
-				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
-			}
 		}
 		else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
@@ -1682,6 +1667,7 @@ public class Schematic extends JPanel implements ActionListener {
 						Trigger t = e.getTrigger();
 						t.setMath(SBMLutilities.removePreset(t.getMath(),source.getId()));
 						EventAssignment ea = SBMLutilities.getEventAssignmentByVariable(e, source.getId());
+
 						if (ea!=null) {
 							ea.removeFromParent();
 						}
@@ -2922,10 +2908,6 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	public void setMovieMode(boolean mode) {
 		movieMode = mode;
-	}
-	
-	public JButton getSBOLDescriptorsButton() {
-		return sbolDescriptorsButton;
 	}
 	
 	public ModelPanel getModelPanel() {

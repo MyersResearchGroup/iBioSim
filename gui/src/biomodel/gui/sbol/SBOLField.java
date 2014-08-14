@@ -36,25 +36,25 @@ public class SBOLField extends JPanel implements ActionListener {
 	private List<URI> sbolURIs = new LinkedList<URI>();
 	private String sbolStrand;
 	private JButton sbolButton = new JButton("Associate SBOL");
-	private ModelEditor gcmEditor;
+	private ModelEditor modelEditor;
 	private boolean isModelPanelField;
 	private URI removedBioSimURI;
 	
-	public SBOLField(List<URI> sbolURIs, String sbolStrand, String sbolType, ModelEditor gcmEditor, 
+	public SBOLField(List<URI> sbolURIs, String sbolStrand, String sbolType, ModelEditor modelEditor, 
 			int styleOption, boolean isModelPanelField) {
 		super(new GridLayout(1, styleOption));
 		this.sbolURIs.addAll(sbolURIs);
 		this.sbolStrand = sbolStrand;
-		constructField(sbolType, gcmEditor, styleOption, isModelPanelField);
+		constructField(sbolType, modelEditor, styleOption, isModelPanelField);
 	}
 	
-	public SBOLField(String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
+	public SBOLField(String sbolType, ModelEditor modelEditor, int styleOption, boolean isModelPanelField) {
 		super(new GridLayout(1, styleOption));
 		sbolStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
-		constructField(sbolType, gcmEditor, styleOption, isModelPanelField);
+		constructField(sbolType, modelEditor, styleOption, isModelPanelField);
 	}
 	
-	public void constructField(String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
+	public void constructField(String sbolType, ModelEditor modelEditor, int styleOption, boolean isModelPanelField) {
 		this.sbolType = sbolType;
 		this.styleOption = styleOption;
 		if (styleOption == 2 || styleOption  == 3) {
@@ -68,7 +68,7 @@ public class SBOLField extends JPanel implements ActionListener {
 			this.add(sbolText);
 		sbolText.setVisible(false);
 		
-		this.gcmEditor = gcmEditor;
+		this.modelEditor = modelEditor;
 		this.isModelPanelField = isModelPanelField;
 	}
 	
@@ -117,7 +117,7 @@ public class SBOLField extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Invalid URI", "SBOL association text could not be parsed as URI.");
 				return false;
 			}
-			for (String filePath : gcmEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
+			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
 				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 				if (sbolDoc != null) {
 					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
@@ -141,11 +141,11 @@ public class SBOLField extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
-			HashSet<String> sbolFilePaths = gcmEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
+			HashSet<String> sbolFilePaths = modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
 			SBOLAssociationPanel  associationPanel;
 			if (isModelPanelField) {
 				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, sbolStrand, 
-						SBOLUtility.soSynonyms(sbolType), gcmEditor.getBioModel().getSBMLDocument().getModel().getId());
+						SBOLUtility.soSynonyms(sbolType), modelEditor);
 				removedBioSimURI = associationPanel.getRemovedBioSimURI();
 			} else
 				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, sbolStrand,
@@ -174,7 +174,7 @@ public class SBOLField extends JPanel implements ActionListener {
 	// Deletes from local SBOL files any iBioSim composite component that had its URI removed from the SBOLAssociationPanel
 	public void deleteRemovedBioSimComponent() {
 		if (removedBioSimURI != null) {
-			for (String filePath : gcmEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
+			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
 				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 				SBOLUtility.deleteDNAComponent(removedBioSimURI, sbolDoc);
 				SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
