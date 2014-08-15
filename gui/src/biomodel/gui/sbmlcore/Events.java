@@ -565,6 +565,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < events.getModel().getSize(); i++) {
 						ev[i] = events.getModel().getElementAt(i).toString();
 					}
+					
+					ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(e);
+					String[] eventdimIDs = new String[reactPlugin.getDimensionCount()];
+					String[] eventdimIDSizes = new String[reactPlugin.getDimensionCount()];
+					for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
+						org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
+						eventdimIDs[i] =  dimX.getId();
+						eventdimIDSizes[i] = dimX.getSize();
+					}
+					
 					events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					e.setUseValuesFromTriggerTime(assignTime.isSelected());
 					while (e.getEventAssignmentCount() > 0) {
@@ -591,7 +601,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						if(!error){
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
 							// TODO: add the dimensionIds and dimIDs to the new parameters
-							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, null, null);
+							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, eventdimIDs, eventdimIDSizes);
 							error = (EAdex==null);
 						}
 						if(error)break;
@@ -648,7 +658,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						if(!error){
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID, null, null);
+							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID, eventdimIDs, eventdimIDSizes);
 							error = (EAdex==null);
 						}
 						if (error) break;
@@ -873,6 +883,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				else {
 					JList add = new JList();
 					e = bioModel.getSBMLDocument().getModel().createEvent();
+					ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(e);
+					String[] eventdimIDs = new String[reactPlugin.getDimensionCount()];
+					String[] eventdimIDSizes = new String[reactPlugin.getDimensionCount()];
+					for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
+						org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
+						eventdimIDs[i] =  dimX.getId();
+						eventdimIDSizes[i] = dimX.getSize();
+					}
 					if (isTransition) {
 						e.setSBOTerm(GlobalConstants.SBO_PETRI_NET_TRANSITION);
 					}
@@ -969,7 +987,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 							if(!error){
 								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID, null, null);
+								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID, eventdimIDs, eventdimIDSizes);
 								error = (EAdex==null);
 							}
 							if(!error){
