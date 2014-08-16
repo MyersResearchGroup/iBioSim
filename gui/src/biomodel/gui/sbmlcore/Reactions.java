@@ -746,14 +746,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				i++;
 				NEWreactionId = "r" + i;
 			}
-			Reaction reac = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reac);
-			String dimInID = "";
-			for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
-				dimInID += "[" + dimX.getSize() + "]";
-			}
-			reacID.setText(NEWreactionId+dimInID);
+			reacID.setText(NEWreactionId);
 		}
 		if (paramsOnly) {
 			reacID.setEditable(false);
@@ -1915,7 +1908,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reactdimIDSizes[i+1] = dimX.getSize();
 			}
 		} else {
-			// Need to get from reaction panel, use checkSizeParameters, getDimensionIds
+			reactdimIDs = new String[]{""};
+			reactdimIDSizes = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
+			if(reactdimIDSizes!=null){
+				reactdimIDs = SBMLutilities.getDimensionIds("",reactdimIDSizes.length-1);
+			}
 		}
 		
 		productsPanel.add(productIdLabel);
@@ -2327,7 +2324,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reactdimIDSizes[i+1] = dimX.getSize();
 			}
 		} else {
-			// Need to get from reaction panel, use checkSizeParameters, getDimensionIds
+			reactdimIDs = new String[]{""};
+			reactdimIDSizes = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
+			if(reactdimIDSizes!=null){
+				reactdimIDs = SBMLutilities.getDimensionIds("",reactdimIDSizes.length-1);
+			}
 		}
 		
 		modifiersPanel.add(new JLabel("Id:"));
@@ -2818,7 +2819,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reactdimIDSizes[i+1] = dimX.getSize();
 			}
 		} else {
-			// Need to get from reaction panel, use checkSizeParameters, getDimensionIds
+			reactdimIDs = new String[]{""};
+			reactdimIDSizes = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
+			if(reactdimIDSizes!=null){
+				reactdimIDs = SBMLutilities.getDimensionIds("",reactdimIDSizes.length-1);
+			}
 		}
 		
 		reactantsPanel.add(reactantIdLabel);
