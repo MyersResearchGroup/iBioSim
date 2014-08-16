@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -252,38 +253,26 @@ public class SBMLutilities {
 		if(attribute.equals("conversionFactor")){
 			attribute = "conversion factor";
 		}
-		//topDimensionIdLength...
-		int TDIL = 0;
-		int TDSIL = 0;
-		if(topDimensionIds!=null){
-			TDIL = topDimensionIds.length;
+		ArrayList<String> meshDimensionIds = new ArrayList();
+		if (dimensionIds!=null) {
+			meshDimensionIds.addAll(Arrays.asList(dimensionIds));
 		}
-		if(topDimSizeIds!=null){
-			TDSIL = topDimSizeIds.length;
+		if (topDimensionIds!=null) {
+			meshDimensionIds.addAll(Arrays.asList(topDimensionIds));
 		}
-		String[] meshDimensionIds = new String[dimensionIds.length + TDIL];
-		for(int i=0;i<meshDimensionIds.length;i++){
-			if(i<dimensionIds.length){
-				meshDimensionIds[i] = dimensionIds[i];
-			}
-			else{
-				meshDimensionIds[i] = topDimensionIds[i-dimensionIds.length];
-			}
+		ArrayList<String> meshDimSizeIds = new ArrayList();
+		if (dimSizeIds!=null) {
+			ArrayList<String> dimSizeIdsList = new ArrayList<String>(Arrays.asList(dimSizeIds));
+			dimSizeIdsList.remove(0);
+			meshDimSizeIds.addAll(dimSizeIdsList);
 		}
-		String[] meshDimSizeIds = new String[dimSizeIds.length-1 + TDSIL];
-		for(int i=0;i<meshDimSizeIds.length;i++){
-			if(i<dimensionIds.length){
-				meshDimSizeIds[i] = dimSizeIds[i+1];
-			}
-			else{
-				meshDimSizeIds[i] = topDimSizeIds[i-(dimSizeIds.length-1)];
-			}
+		if (topDimSizeIds!=null) {
+			ArrayList<String> topDimSizeIdsList = new ArrayList<String>(Arrays.asList(topDimSizeIds));
+			meshDimSizeIds.addAll(topDimSizeIdsList);
 		}
 		HashMap<String, String> dimNSize = new HashMap<String, String>();
-		if(!(meshDimensionIds==null)){
-			for(int i=0;i<meshDimSizeIds.length;i++){
-				dimNSize.put(meshDimensionIds[i], meshDimSizeIds[i]);
-			}
+		for(int i=0;i<meshDimSizeIds.size();i++){
+			dimNSize.put(meshDimensionIds.get(i), meshDimSizeIds.get(i));
 		}
 		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
 		int varDimCount = ABV.getDimensionCount();
@@ -343,10 +332,10 @@ public class SBMLutilities {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid index math for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			if(displayinvalidVariables("Indices", document, meshDimensionIds, tester, "", false)){
+			if(displayinvalidVariables("Indices", document, meshDimensionIds.toArray(new String[meshDimensionIds.size()]), tester, "", false)){
 				return null;
 			}
-			if(ArraysMath.isStaticallyComputable(document.getModel(), math, meshDimensionIds) == false){
+			if(ArraysMath.isStaticallyComputable(document.getModel(), math, meshDimensionIds.toArray(new String[meshDimensionIds.size()])) == false){
 				JOptionPane.showMessageDialog(Gui.frame, "Index math must consist of constants and valid dimension size ids only.", 
 						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;

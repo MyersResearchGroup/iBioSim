@@ -42,8 +42,6 @@ import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
-
-
 import main.Gui;
 
 public class SpeciesPanel extends JPanel implements ActionListener {
@@ -1074,7 +1072,22 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			setFieldEnablings();
 		}
-
+		else if (e.getActionCommand().equals("comboBoxChanged")){
+			if (convBox.getSelectedItem().equals("( none )")) {
+				conviIndex.setText("");
+				conviIndex.setEnabled(false);
+			} else {
+				SBase variable = bioModel.getSBMLDocument().getModel().getParameter((String)convBox.getSelectedItem());
+				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
+				int varDimCount = ABV.getDimensionCount();
+				if (varDimCount > 0) {
+					conviIndex.setEnabled(true);
+				} else {
+					conviIndex.setText("");
+					conviIndex.setEnabled(false);
+				}
+			}
+		}
 		if (paramsOnly)
 			thresholdTextField.setEnabled(specInteresting.isSelected());
 	}
