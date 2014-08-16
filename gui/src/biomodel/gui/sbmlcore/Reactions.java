@@ -1813,12 +1813,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	public void productsEditor(BioModel bioModel, String option, String selectedProductId, SpeciesReference product,
 			boolean inSchematic, Reaction reaction) {
 		JPanel productsPanel;
-		if (bioModel.getSBMLDocument().getLevel() < 3) {
-			productsPanel = new JPanel(new GridLayout(5, 2));
-		}
-		else {
-			productsPanel = new JPanel(new GridLayout(6, 2));
-		}
+		productsPanel = new JPanel(new GridLayout(6, 2));
 		JLabel productIdLabel = new JLabel("Id:");
 		JLabel productNameLabel = new JLabel("Name:");
 		JLabel speciesLabel = new JLabel("Species:");
@@ -1907,13 +1902,20 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			productStoichiometry.setText(""+np);
 			productStoichiometry.setEnabled(false);
 		}
-		ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-		String[] reactdimIDs = new String[reactPlugin.getDimensionCount()];
-		String[] reactdimIDSizes = new String[reactPlugin.getDimensionCount()];
-		for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
-			org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
-			reactdimIDs[i] =  dimX.getId();
-			reactdimIDSizes[i] = dimX.getSize();
+		String[] reactdimIDs = null; 
+		String[] reactdimIDSizes = null;
+		if (reaction!=null) {
+			ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
+			reactdimIDs = new String[reactPlugin.getDimensionCount()];
+			reactdimIDSizes = new String[reactPlugin.getDimensionCount()+1];
+			reactdimIDSizes[0] = reaction.getId();
+			for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
+				reactdimIDs[i] =  dimX.getId();
+				reactdimIDSizes[i+1] = dimX.getSize();
+			}
+		} else {
+			// Need to get from reaction panel, use checkSizeParameters, getDimensionIds
 		}
 		
 		productsPanel.add(productIdLabel);
@@ -2312,13 +2314,20 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				modifiersPanel = new JPanel(new GridLayout(9, 2));
 			}
 		}
-		ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-		String[] reactdimIDs = new String[reactPlugin.getDimensionCount()];
-		String[] reactdimIDSizes = new String[reactPlugin.getDimensionCount()];
-		for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
-			org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
-			reactdimIDs[i] =  dimX.getId();
-			reactdimIDSizes[i] = dimX.getSize();
+		String[] reactdimIDs = null; 
+		String[] reactdimIDSizes = null;
+		if (reaction!=null) {
+			ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
+			reactdimIDs = new String[reactPlugin.getDimensionCount()];
+			reactdimIDSizes = new String[reactPlugin.getDimensionCount()+1];
+			reactdimIDSizes[0] = reaction.getId();
+			for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
+				reactdimIDs[i] =  dimX.getId();
+				reactdimIDSizes[i+1] = dimX.getSize();
+			}
+		} else {
+			// Need to get from reaction panel, use checkSizeParameters, getDimensionIds
 		}
 		
 		modifiersPanel.add(new JLabel("Id:"));
@@ -2796,13 +2805,20 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-		String[] reactdimIDs = new String[reactPlugin.getDimensionCount()];
-		String[] reactdimIDSizes = new String[reactPlugin.getDimensionCount()];
-		for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
-			org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
-			reactdimIDs[i] =  dimX.getId();
-			reactdimIDSizes[i] = dimX.getSize();
+		String[] reactdimIDs = null; 
+		String[] reactdimIDSizes = null;
+		if (reaction!=null) {
+			ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
+			reactdimIDs = new String[reactPlugin.getDimensionCount()];
+			reactdimIDSizes = new String[reactPlugin.getDimensionCount()+1];
+			reactdimIDSizes[0] = reaction.getId();
+			for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
+				reactdimIDs[i] =  dimX.getId();
+				reactdimIDSizes[i+1] = dimX.getSize();
+			}
+		} else {
+			// Need to get from reaction panel, use checkSizeParameters, getDimensionIds
 		}
 		
 		reactantsPanel.add(reactantIdLabel);

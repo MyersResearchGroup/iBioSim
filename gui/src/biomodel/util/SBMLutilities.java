@@ -268,6 +268,7 @@ public class SBMLutilities {
 		}
 		if (topDimSizeIds!=null) {
 			ArrayList<String> topDimSizeIdsList = new ArrayList<String>(Arrays.asList(topDimSizeIds));
+			topDimSizeIdsList.remove(0);
 			meshDimSizeIds.addAll(topDimSizeIdsList);
 		}
 		HashMap<String, String> dimNSize = new HashMap<String, String>();
