@@ -225,7 +225,10 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				else if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(consMath.getText().trim()))) {
+				else if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(consMath.getText().trim()))) {
+					error = true;
+				}
+				else if (SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), bioModel.addBooleans(consMath.getText().trim()))) {
 					error = true;
 				}
 				else {

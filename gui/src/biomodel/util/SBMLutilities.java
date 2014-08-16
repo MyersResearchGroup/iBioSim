@@ -1004,22 +1004,163 @@ public class SBMLutilities {
 		case FUNCTION_FLOOR:
 		case FUNCTION_LN:
 			if (node.getChildCount() != 1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + node.getName() + " but found " + node.getChildCount() + ".",
+				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + myFormulaToString(node) + " but found " + node.getChildCount() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
-			if (node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(Gui.frame, "Argument for " + node.getName() + " function must evaluate to a number.",
-						"Number Expected", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			break;
 		case LOGICAL_NOT:
 			if (node.getChildCount() != 1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + node.getName() + " but found " + node.getChildCount() + ".",
+				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + myFormulaToString(node) + " but found " + node.getChildCount() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
+			break;
+		case LOGICAL_AND:
+		case LOGICAL_OR:
+		case LOGICAL_XOR:
+		case PLUS:
+		case MINUS:
+		case TIMES:
+		case DIVIDE:
+		case POWER:
+			break;
+		case FUNCTION_DELAY:
+		case FUNCTION_POWER:
+		case FUNCTION_ROOT:
+		case RELATIONAL_GEQ:
+		case RELATIONAL_LEQ:
+		case RELATIONAL_LT:
+		case RELATIONAL_GT:
+		case FUNCTION_LOG:
+			if (node.getChildCount() != 2) {
+				JOptionPane.showMessageDialog(Gui.frame, "Expected 2 arguments for " + myFormulaToString(node) + " but found " + node.getChildCount() + ".",
+						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			break;
+		case RELATIONAL_EQ:
+		case RELATIONAL_NEQ:
+			if (node.getChildCount() != 2) {
+				JOptionPane.showMessageDialog(Gui.frame, "Expected 2 arguments for " + myFormulaToString(node) + " but found " + node.getChildCount() + ".",
+						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			break;
+		case FUNCTION_PIECEWISE:
+			if (node.getChildCount() < 1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Piecewise function requires at least 1 argument.", "Number of Arguments Incorrect",
+						JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			break;
+		case FUNCTION:
+			for (int i = 0; i < document.getModel().getFunctionDefinitionCount(); i++) {
+				if (sbml.get(i).getId().equals(node.getName())) {
+					long numArgs = sbml.get(i).getArgumentCount();
+					if (numArgs != node.getChildCount()) {
+						JOptionPane.showMessageDialog(Gui.frame,
+								"Expected " + numArgs + " argument(s) for " + myFormulaToString(node) + " but found " + node.getChildCount() + ".",
+								"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
+						return true;
+					}
+					break;
+				}
+			}
+			break;
+		case NAME:
+			if (node.getName().equals("abs") || node.getName().equals("arccos") || node.getName().equals("arccosh")
+					|| node.getName().equals("arcsin") || node.getName().equals("arcsinh") || node.getName().equals("arctan")
+					|| node.getName().equals("arctanh") || node.getName().equals("arccot") || node.getName().equals("arccoth")
+					|| node.getName().equals("arccsc") || node.getName().equals("arccsch") || node.getName().equals("arcsec")
+					|| node.getName().equals("arcsech") || node.getName().equals("acos") || node.getName().equals("acosh")
+					|| node.getName().equals("asin") || node.getName().equals("asinh") || node.getName().equals("atan")
+					|| node.getName().equals("atanh") || node.getName().equals("acot") || node.getName().equals("acoth")
+					|| node.getName().equals("acsc") || node.getName().equals("acsch") || node.getName().equals("asec")
+					|| node.getName().equals("asech") || node.getName().equals("cos") || node.getName().equals("cosh")
+					|| node.getName().equals("cot") || node.getName().equals("coth") || node.getName().equals("csc") || node.getName().equals("csch")
+					|| node.getName().equals("ceil") || node.getName().equals("factorial") || node.getName().equals("exp")
+					|| node.getName().equals("floor") || node.getName().equals("ln") || node.getName().equals("log") || node.getName().equals("sqr")
+					|| node.getName().equals("log10") || node.getName().equals("sqrt") || node.getName().equals("sec")
+					|| node.getName().equals("sech") || node.getName().equals("sin") || node.getName().equals("sinh") || node.getName().equals("tan")
+					|| node.getName().equals("tanh") || node.getName().equals("not")) {
+				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + node.getName() + " but found 0.",
+						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			if (node.getName().equals("and") || node.getName().equals("or") || node.getName().equals("xor") || node.getName().equals("pow")
+					|| node.getName().equals("eq") || node.getName().equals("geq") || node.getName().equals("leq") || node.getName().equals("gt")
+					|| node.getName().equals("neq") || node.getName().equals("lt") || node.getName().equals("delay") || node.getName().equals("root")) {
+				JOptionPane.showMessageDialog(Gui.frame, "Expected 2 arguments for " + node.getName() + " but found 0.",
+						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			if (node.getName().equals("piecewise")) {
+				JOptionPane.showMessageDialog(Gui.frame, "Piecewise function requires at least 1 argument.", "Number of Arguments Incorrect",
+						JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			for (int i = 0; i < document.getModel().getFunctionDefinitionCount(); i++) {
+				if (sbml.get(i).getId().equals(node.getName())) {
+					long numArgs = sbml.get(i).getArgumentCount();
+					JOptionPane.showMessageDialog(Gui.frame, "Expected " + numArgs + " argument(s) for " + myFormulaToString(node) + " but found 0.",
+							"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
+					return true;
+				}
+			}
+			break;
+		default: 
+		}
+		for (int c = 0; c < node.getChildCount(); c++) {
+			if (checkNumFunctionArguments(document, node.getChild(c))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check the types of the arguments to a function
+	 */
+	public static boolean checkFunctionArgumentTypes(SBMLDocument document, ASTNode node) {
+		switch (node.getType()) {
+		case FUNCTION_ABS:
+		case FUNCTION_ARCCOS:
+		case FUNCTION_ARCCOSH:
+		case FUNCTION_ARCSIN:
+		case FUNCTION_ARCSINH:
+		case FUNCTION_ARCTAN:
+		case FUNCTION_ARCTANH:
+		case FUNCTION_ARCCOT:
+		case FUNCTION_ARCCOTH:
+		case FUNCTION_ARCCSC:
+		case FUNCTION_ARCCSCH:
+		case FUNCTION_ARCSEC:
+		case FUNCTION_ARCSECH:
+		case FUNCTION_COS:
+		case FUNCTION_COSH:
+		case FUNCTION_SIN:
+		case FUNCTION_SINH:
+		case FUNCTION_TAN:
+		case FUNCTION_TANH:
+		case FUNCTION_COT:
+		case FUNCTION_COTH:
+		case FUNCTION_CSC:
+		case FUNCTION_CSCH:
+		case FUNCTION_SEC:
+		case FUNCTION_SECH:
+		case FUNCTION_CEILING:
+		case FUNCTION_FACTORIAL:
+		case FUNCTION_EXP:
+		case FUNCTION_FLOOR:
+		case FUNCTION_LN:
+			if (node.getChild(0).isBoolean()) {
+				JOptionPane.showMessageDialog(Gui.frame, "Argument for " + myFormulaToString(node) + " function must evaluate to a number.",
+						"Number Expected", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			break;
+		case LOGICAL_NOT:
 			if (!node.getChild(0).isBoolean()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Argument for not function must be of type Boolean.", "Boolean Expected",
 						JOptionPane.ERROR_MESSAGE);
@@ -1031,7 +1172,7 @@ public class SBMLutilities {
 		case LOGICAL_XOR:
 			for (int i = 0; i < node.getChildCount(); i++) {
 				if (!node.getChild(i).isBoolean()) {
-					JOptionPane.showMessageDialog(Gui.frame, "Argument " + i + " for " + node.getName() + " function is not of type Boolean.",
+					JOptionPane.showMessageDialog(Gui.frame, "Argument " + i + " for " + myFormulaToString(node) + " function is not of type Boolean.",
 							"Boolean Expected", JOptionPane.ERROR_MESSAGE);
 					return true;
 				}
@@ -1105,41 +1246,26 @@ public class SBMLutilities {
 		case RELATIONAL_LT:
 		case RELATIONAL_GT:
 		case FUNCTION_LOG:
-			if (node.getChildCount() != 2) {
-				JOptionPane.showMessageDialog(Gui.frame, "Expected 2 arguments for " + node.getName() + " but found " + node.getChildCount() + ".",
-						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
 			if (node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(Gui.frame, "Argument 1 for " + node.getName() + " function must evaluate to a number.",
+				JOptionPane.showMessageDialog(Gui.frame, "Argument 1 for " + myFormulaToString(node) + " function must evaluate to a number.",
 						"Number Expected", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if (node.getChild(1).isBoolean()) {
-				JOptionPane.showMessageDialog(Gui.frame, "Argument 2 for " + node.getName() + " function must evaluate to a number.",
+				JOptionPane.showMessageDialog(Gui.frame, "Argument 2 for " + myFormulaToString(node) + " function must evaluate to a number.",
 						"Number Expected", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			break;
 		case RELATIONAL_EQ:
 		case RELATIONAL_NEQ:
-			if (node.getChildCount() != 2) {
-				JOptionPane.showMessageDialog(Gui.frame, "Expected 2 arguments for " + node.getName() + " but found " + node.getChildCount() + ".",
-						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
 			if ((node.getChild(0).isBoolean() && !node.getChild(1).isBoolean()) || (!node.getChild(0).isBoolean() && node.getChild(1).isBoolean())) {
-				JOptionPane.showMessageDialog(Gui.frame, "Arguments for " + node.getName() + " function must either both be numbers or Booleans.",
+				JOptionPane.showMessageDialog(Gui.frame, "Arguments for " + myFormulaToString(node) + " function must either both be numbers or Booleans.",
 						"Argument Mismatch", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			break;
 		case FUNCTION_PIECEWISE:
-			if (node.getChildCount() < 1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Piecewise function requires at least 1 argument.", "Number of Arguments Incorrect",
-						JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
 			for (int i = 1; i < node.getChildCount(); i += 2) {
 				if (!node.getChild(i).isBoolean()) {
 					JOptionPane.showMessageDialog(Gui.frame, "Even arguments of piecewise function must be of type Boolean.", "Boolean Expected",
@@ -1168,64 +1294,13 @@ public class SBMLutilities {
 			}
 			break;
 		case FUNCTION:
-			for (int i = 0; i < document.getModel().getFunctionDefinitionCount(); i++) {
-				if (sbml.get(i).getId().equals(node.getName())) {
-					long numArgs = sbml.get(i).getArgumentCount();
-					if (numArgs != node.getChildCount()) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"Expected " + numArgs + " argument(s) for " + node.getName() + " but found " + node.getChildCount() + ".",
-								"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
-						return true;
-					}
-					break;
-				}
-			}
 			break;
 		case NAME:
-			if (node.getName().equals("abs") || node.getName().equals("arccos") || node.getName().equals("arccosh")
-					|| node.getName().equals("arcsin") || node.getName().equals("arcsinh") || node.getName().equals("arctan")
-					|| node.getName().equals("arctanh") || node.getName().equals("arccot") || node.getName().equals("arccoth")
-					|| node.getName().equals("arccsc") || node.getName().equals("arccsch") || node.getName().equals("arcsec")
-					|| node.getName().equals("arcsech") || node.getName().equals("acos") || node.getName().equals("acosh")
-					|| node.getName().equals("asin") || node.getName().equals("asinh") || node.getName().equals("atan")
-					|| node.getName().equals("atanh") || node.getName().equals("acot") || node.getName().equals("acoth")
-					|| node.getName().equals("acsc") || node.getName().equals("acsch") || node.getName().equals("asec")
-					|| node.getName().equals("asech") || node.getName().equals("cos") || node.getName().equals("cosh")
-					|| node.getName().equals("cot") || node.getName().equals("coth") || node.getName().equals("csc") || node.getName().equals("csch")
-					|| node.getName().equals("ceil") || node.getName().equals("factorial") || node.getName().equals("exp")
-					|| node.getName().equals("floor") || node.getName().equals("ln") || node.getName().equals("log") || node.getName().equals("sqr")
-					|| node.getName().equals("log10") || node.getName().equals("sqrt") || node.getName().equals("sec")
-					|| node.getName().equals("sech") || node.getName().equals("sin") || node.getName().equals("sinh") || node.getName().equals("tan")
-					|| node.getName().equals("tanh") || node.getName().equals("not")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + node.getName() + " but found 0.",
-						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
-			if (node.getName().equals("and") || node.getName().equals("or") || node.getName().equals("xor") || node.getName().equals("pow")
-					|| node.getName().equals("eq") || node.getName().equals("geq") || node.getName().equals("leq") || node.getName().equals("gt")
-					|| node.getName().equals("neq") || node.getName().equals("lt") || node.getName().equals("delay") || node.getName().equals("root")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Expected 2 arguments for " + node.getName() + " but found 0.",
-						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
-			if (node.getName().equals("piecewise")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Piecewise function requires at least 1 argument.", "Number of Arguments Incorrect",
-						JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
-			for (int i = 0; i < document.getModel().getFunctionDefinitionCount(); i++) {
-				if (sbml.get(i).getId().equals(node.getName())) {
-					long numArgs = sbml.get(i).getArgumentCount();
-					JOptionPane.showMessageDialog(Gui.frame, "Expected " + numArgs + " argument(s) for " + node.getName() + " but found 0.",
-							"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
-					return true;
-				}
-			}
 			break;
 		default: 
 		}
 		for (int c = 0; c < node.getChildCount(); c++) {
-			if (checkNumFunctionArguments(document, node.getChild(c))) {
+			if (checkFunctionArgumentTypes(document, node.getChild(c))) {
 				return true;
 			}
 		}

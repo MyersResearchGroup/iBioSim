@@ -842,6 +842,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						if (!error) {
 							error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 						}
+						if (!error) {
+							error = SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
+						}
 					}
 					else {
 						error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
@@ -2061,6 +2064,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									SBMLutilities.myParseFormula(productStoichiometry.getText().trim()));
 						}
 						if (!error) {
+							error = SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(),
+									SBMLutilities.myParseFormula(productStoichiometry.getText().trim()));
+						}
+						if (!error) {
 							if (SBMLutilities.returnsBoolean(SBMLutilities.myParseFormula(productStoichiometry.getText().trim()), bioModel.getSBMLDocument().getModel())) {
 								JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry math must evaluate to a number.", "Number Expected",
 										JOptionPane.ERROR_MESSAGE);
@@ -2943,6 +2950,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 						if (!error) {
 							error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(),
+									SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()));
+						}
+						if (!error) {
+							error = SBMLutilities.checkFunctionArgumentTypes(gcm.getSBMLDocument(),
 									SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()));
 						}
 						if (!error) {

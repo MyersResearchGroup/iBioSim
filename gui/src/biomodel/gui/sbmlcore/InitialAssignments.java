@@ -200,7 +200,10 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		if(SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimIds, assignment.trim(), "", false)){
 			return true;
 		}
-		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(assignment.trim()))) {
+		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment.trim()))) {
+			return true;
+		}
+		if (SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), bioModel.addBooleans(assignment.trim()))) {
 			return true;
 		}
 		if (SBMLutilities.returnsBoolean(bioModel.addBooleans(assignment.trim()), bioModel.getSBMLDocument().getModel())) {
@@ -328,6 +331,9 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			return true;
 		}
 		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment))) {
+			return true;
+		}
+		if (SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment))) {
 			return true;
 		}
 		if (SBMLutilities.returnsBoolean(SBMLutilities.myParseFormula(assignment), bioModel.getSBMLDocument().getModel())) {

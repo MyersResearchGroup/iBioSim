@@ -395,6 +395,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		String selectedID = "";
 		Parameter rateParam = null;
+		List<URI> sbolURIs = new LinkedList<URI>();
+		sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+				1, false);
 		if (option.equals("OK")) {
 			try {
 				Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
@@ -466,7 +469,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 				if (!paramsOnly && !isPlace && !isBoolean) {
 					//Parse out SBOL annotations and add to SBOL field
-					List<URI> sbolURIs = new LinkedList<URI>();
 					String sbolStrand = AnnotationUtility.parseSBOLAnnotation(paramet, sbolURIs);
 					// Field for annotating rules with SBOL DNA components
 					sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
