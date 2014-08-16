@@ -349,7 +349,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				else {
 					error = SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimensionIds, ruleMath.getText().trim(), "", false);
 					if (!error) {
-						error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(ruleMath.getText().trim()));
+						error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(ruleMath.getText().trim()));
+					}
+					if (!error) {
+						error = SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), bioModel.addBooleans(ruleMath.getText().trim()));
 					}
 					if (!error) {
 						if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&

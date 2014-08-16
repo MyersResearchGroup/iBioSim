@@ -293,6 +293,9 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(eqn.getText().trim()));
 			}
 			if (!error) {
+				error = SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(eqn.getText().trim()));
+			}
+			if (!error) {
 				if (option.equals("OK")) {
 					String[] funcs = new String[functions.getModel().getSize()];
 					for (int i = 0; i < functions.getModel().getSize(); i++) {

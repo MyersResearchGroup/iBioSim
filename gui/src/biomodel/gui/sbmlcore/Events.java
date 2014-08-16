@@ -530,6 +530,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					if (!error) {
 						error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
+								SBMLutilities.myParseFormula(eventTrigger.getText().trim()));
+					}
+					if (!error) {
+						error = SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), 
 								bioModel.addBooleans(eventTrigger.getText().trim()));
 					}
 					if ((!error) && (!eventDelay.getText().trim().equals(""))) {
@@ -1407,7 +1411,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (p != null && SBMLutilities.isBoolean(p)) {
 						assignMath = bioModel.addBooleanAssign(eqn.getText().trim());
 					} 
-					error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), assignMath);
+					error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), 
+							SBMLutilities.myParseFormula(eqn.getText().trim()));
+					if (!error) {
+						error = SBMLutilities.checkFunctionArgumentTypes(gcm.getSBMLDocument(), assignMath);
+					}
 					if (!error) {
 						if (p != null && SBMLutilities.isBoolean(p)) {
 							if (!SBMLutilities.returnsBoolean(SBMLutilities.myParseFormula(eqn.getText().trim()), bioModel.getSBMLDocument().getModel())) {
