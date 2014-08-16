@@ -322,6 +322,22 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			FBAObjective fbaObjective = new FBAObjective(bioModel);
 			fbaObjective.openGui();
 		}
+		else if (e.getActionCommand().equals("comboBoxChanged")){
+			if (conversionFactor.getSelectedItem().equals("( none )")) {
+				conviIndex.setText("");
+				conviIndex.setEnabled(false);
+			} else {
+				SBase variable = bioModel.getSBMLDocument().getModel().getParameter((String)conversionFactor.getSelectedItem());
+				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
+				int varDimCount = ABV.getDimensionCount();
+				if (varDimCount > 0) {
+					conviIndex.setEnabled(true);
+				} else {
+					conviIndex.setText("");
+					conviIndex.setEnabled(false);
+				}
+			}
+		}
 	}
 
 	@Override
