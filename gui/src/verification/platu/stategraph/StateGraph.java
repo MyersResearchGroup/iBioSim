@@ -407,7 +407,7 @@ public class StateGraph {
         return this.getEnabled(curState);
     }
     /**
-     * Return the set of all LPN transitions that are enabled in 'state'.
+     * Return the set of all LPN transitions that are enabled in the given state.
      * @param curState
      * @return
      */
@@ -417,6 +417,7 @@ public class StateGraph {
         }
     	
     	if(enabledSetTbl.containsKey(curState) == true){
+    		// TODO: need to return a clone?
     		return enabledSetTbl.get(curState).clone();
     	}
     	
@@ -532,10 +533,12 @@ public class StateGraph {
 		return isStateOnStack;
 	}
 	
-    /*
+    /**
      * Add the module state mState to the local cache, and also add its local portion to
      * the local portion cache, and build the mapping between the mState and lState for fast lookup
      * in the future.
+     * @param mState
+     * @return State
      */
     public State addState(State mState) {
     	State cachedState = this.stateCache.add(mState);
@@ -621,11 +624,29 @@ public class StateGraph {
     		int val = this.lpn.getInitVariableVector(var);
     		initVariableVector[i] = val;
     	}
-		this.init = new State(this.lpn, this.lpn.getInitialMarkingsArray(), initVariableVector, genInitTranVector(initVariableVector));
-		return this.init;
+    	// Initial state can contain immediate transitions.
+    	this.init = new State(this.lpn, this.lpn.getInitialMarkingsArray(), initVariableVector, genInitTranVector(initVariableVector));
+    	return this.init;
     }
-    
-    /**
+
+	/**
+	 * If an immediate transition is enabled in the current state, 
+	 * returns the first enabled immediate transition of curState, otherwise return null. 
+	 * @param curState
+	 * @return
+	 */
+	public Transition getEnabledImmediateTran(State curState) {
+		Transition enabledImmTran = null;
+		for (Transition enabledTran : curState.getEnabledTransitions()) {
+			if (enabledTran.getDelay() == null) {
+				enabledImmTran = enabledTran;
+				break;
+			}
+		}		
+		return enabledImmTran;
+	}
+
+	/**
      * Fire a transition on a state array, find new local states, and return the new state array formed by the new local states.
      * @param firedTran 
      * @param curLpnArray
@@ -690,7 +711,6 @@ public class StateGraph {
 //			firedTran.getDstLpnList().add(this.lpn);
 		for(LhpnFile curLPN : firedTran.getDstLpnList()) {
         	int curIdx = curLPN.getLpnIndex();
-//			System.out.println("Checking " + curLPN.getLabel() + " " + curIdx);
     		State newState = curSgArray[curIdx].getNextState(curStateArray[curIdx], firedTran);
     		if(newState != null) {
     			nextStateArray[curIdx] = newState;
@@ -717,7 +737,14 @@ public class StateGraph {
         return nextStateArray;
     }
     
-    // TODO: (original) add transition that fires to parameters
+    
+    /**
+     * This method is used by untimed search_dfs(StateGraph[], State[]).
+     * @param thisSg
+     * @param curState
+     * @param firedTran
+     * @return
+     */
     public State fire(final StateGraph thisSg, final State curState, Transition firedTran){ 
 //    		HashMap<LPNContinuousPair, IntervalPair> continuousValues, Zone z) {
 //    public State fire(final StateGraph thisSg, final State curState, Transition firedTran, 
@@ -1187,10 +1214,12 @@ public class StateGraph {
 		try {
 			String graphFileName = null;
 			if ( Options.getTimingAnalysisType() == "off") {
-				if (Options.getPOR() == null)
-					graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_local_sg.dot";
-				else
-					graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+				if (Options.getPOR().toLowerCase().equals("off")) {
+					graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_local_full_sg.dot";
+				}					
+				else {
+					graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+				}					
 			} else {
 				graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_sg.dot";
 			}
