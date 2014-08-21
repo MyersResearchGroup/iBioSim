@@ -341,13 +341,17 @@ public class GCMParser {
 		if (constitutive != null) {
 			if (constitutive.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING)!=null) {
 				speciesIF.setKo(constitutive.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING).getValue());
-			} else {
+			} else if (sbml.getModel().getParameter(GlobalConstants.OCR_STRING)!=null){
 				speciesIF.setKo(sbml.getModel().getParameter(GlobalConstants.OCR_STRING).getValue());
+			} else {
+				speciesIF.setKo(Double.parseDouble(biosimrc.get("biosim.gcm.OCR_VALUE", "")));
 			}
 			if (constitutive.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING)!=null) {
 				speciesIF.setnp(constitutive.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
-			} else {
+			} else if (sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING)!=null) {
 				speciesIF.setnp(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
+			} else {
+				speciesIF.setnp(Double.parseDouble(biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", "")));
 			}
 			sbml.getModel().removeReaction(constitutive.getId());
 		} else {
