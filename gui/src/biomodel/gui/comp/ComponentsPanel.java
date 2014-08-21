@@ -744,14 +744,15 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	private boolean removePortMaps(CompSBasePlugin sbmlSBase) {
 		int j = 0;
 		boolean result = false;
-		while (j < sbmlSBase.getListOfReplacedElements().size()) {
-			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
+		// TODO: reverse direction in for loop
+		for (j=sbmlSBase.getListOfReplacedElements().size(); j>0; j--) {
+			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j-1);
 			if (replacement.getSubmodelRef().equals(subModelId) && 
 					((replacement.isSetPortRef())||(replacement.isSetDeletion()))) { 
-				sbmlSBase.removeReplacedElement(replacement);
+				sbmlSBase.getListOfReplacedElements().remove(j-1);
+				//sbmlSBase.removeReplacedElement(replacement);
 				result = true;
 			}
-			j++;
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
 			ReplacedBy replacement = sbmlSBase.getReplacedBy();
@@ -851,7 +852,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					CompSBasePlugin sbmlSBase = null;
 					SBase sbase = SBMLutilities.getElementBySId(bioModel.getSBMLDocument().getModel(), portmapId);
 					if (sbase!=null) {
-						sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
+						sbmlSBase = SBMLutilities.getCompSBasePlugin(sbase);
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
@@ -883,7 +884,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 						}
 					} else {
 						sbase = SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), portmapId);
-						sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
+						sbmlSBase = SBMLutilities.getCompSBasePlugin(sbase);
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
 								/* TODO: Code below uses just a replacement */

@@ -3912,7 +3912,7 @@ public class BioModel {
 					String IdRef = replacement.getIdRef();
 					Port port = compBioModel.getPortByIdRef(IdRef);
 					if (port==null) {
-						sbmlSBase.removeReplacedElement(replacement);
+						sbmlSBase.getListOfReplacedElements().remove(j);
 						continue;
 					}
 					if (BioModel.isInputPort(port)) {
@@ -3924,7 +3924,7 @@ public class BioModel {
 				} else if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
 					Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 					if (port==null) {
-						sbmlSBase.removeReplacedElement(replacement);
+						sbmlSBase.getListOfReplacedElements().remove(j);
 						continue;
 					}
 					if (BioModel.isInputPort(port)) {
@@ -3960,7 +3960,7 @@ public class BioModel {
 					String IdRef = replacement.getIdRef();
 					Port port = compBioModel.getPortByIdRef(IdRef);
 					if (port==null) {
-						sbmlSBase.removeReplacedElement(replacement);
+						sbmlSBase.getListOfReplacedElements().remove(j);
 						continue;
 					}
 					if (BioModel.isOutputPort(port)) {
@@ -3972,7 +3972,7 @@ public class BioModel {
 				} else if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
 					Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 					if (port==null) {
-						sbmlSBase.removeReplacedElement(replacement);
+						sbmlSBase.getListOfReplacedElements().remove(j);
 						continue;
 					}
 					if (BioModel.isOutputPort(port)) {
@@ -4008,7 +4008,7 @@ public class BioModel {
 					if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
 						Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 						if (port==null) {
-							sbmlSBase.removeReplacedElement(replacement);
+							sbmlSBase.getListOfReplacedElements().remove(j);
 							continue;
 						}
 						if (BioModel.isInputPort(port)) {
@@ -4047,7 +4047,7 @@ public class BioModel {
 					if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
 						Port port = compBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
 						if (port==null) {
-							sbmlSBase.removeReplacedElement(replacement);
+							sbmlSBase.getListOfReplacedElements().remove(j);
 							continue;
 						}
 						if (BioModel.isOutputPort(port)) {
@@ -6157,7 +6157,7 @@ public class BioModel {
 		if (r!=null) {
 			if (subCompModel.getListOfPorts().get(prefix+"_"+speciesId)!=null && 
 					getDeletionByPortRef(submodel,prefix+"_"+speciesId)==null) {
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)r.getExtension(CompConstants.namespaceURI);
+				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(r);
 				if (sbmlSBase != null) {
 					ReplacedBy replacement = sbmlSBase.createReplacedBy();
 					replacement.setSubmodelRef(submodel.getId());
@@ -6188,7 +6188,7 @@ public class BioModel {
 		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 		for (int i = 0; i < elements.size(); i++) {
 			SBase sbase = elements.get(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
+			CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbase);
 			if (sbmlSBase!=null) {
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -6233,7 +6233,7 @@ public class BioModel {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
 					if (replacement.getSubmodelRef().equals(submodel.getId()) && replacement.isSetPortRef()) {
 						if (subCompModel.getListOfPorts().get(replacement.getPortRef())==null) {
-							sbmlSBase.removeReplacedElement(replacement);
+							sbmlSBase.getListOfReplacedElements().remove(j);
 							elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 							i--;
 						}
@@ -6742,7 +6742,7 @@ public class BioModel {
 			
 			document.enablePackage(org.sbml.libsbml.LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 			// TODO: Hack to allow flatten to work as it crashes with arrays namespace
-			//document.enablePackage(org.sbml.libsbml.ArraysExtension.getXmlnsL3V1V1(), "arrays", false);
+			document.enablePackage(org.sbml.libsbml.ArraysExtension.getXmlnsL3V1V1(), "arrays", false);
 			document.enablePackage(org.sbml.libsbml.CompExtension.getXmlnsL3V1V1(), "comp", true);
 			document.setPackageRequired("comp", true); 
 			// following line causes unsatisfied link error with libsbml when attempting to save hierarchical models on windows machine
@@ -6939,7 +6939,9 @@ public class BioModel {
 				return null;
 			}
 			modelListCopy.add(subModel.getFilename());
-			unionSBML(model, flattenModelRecurse(subModel, modelListCopy), s, subModel.getParameter(GlobalConstants.RNAP_STRING));
+			//String subModelId = model.getSBMLDocument().getModel().getId();
+			unionSBML(model, flattenModelRecurse(subModel, modelListCopy), /*subModelId+"__"+*/s, 
+					subModel.getParameter(GlobalConstants.RNAP_STRING));
 		}
 		return model;
 	}
@@ -7043,7 +7045,6 @@ public class BioModel {
 	}
 	
 	private BioModel unionSBML(BioModel bioModel, BioModel subBioModel, String subModelId, String RNAPamount) {
-		
 		SBMLDocument document = bioModel.getSBMLDocument();
 		SBMLDocument subDocument = subBioModel.getSBMLDocument();
 		SBMLutilities.setNamespaces(subDocument, document.getSBMLDocumentNamespaces());
@@ -7103,6 +7104,7 @@ public class BioModel {
 //		}
 		// Rename compartments
 		for (int i = 0; i < subModel.getCompartmentCount(); i++) {
+			// TODO: problem is rename happens in non-ideal order
 			Compartment c = subModel.getCompartment(i);
 			String newName = subModelId + "__" + c.getId();
 			for (int j = 0; j < model.getCompartmentCount(); j++) {
