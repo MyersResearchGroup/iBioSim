@@ -231,73 +231,62 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
 				} else 
 					AnnotationUtility.removeSBOLAnnotation(sbmlModel);
-				// Deletes iBioSim composite components that have been removed from association panel
-//				URI deletionURI = sbolField.getDeletionURI();
-//				if (deletionURI != null)
-//					for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
-//						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
-//						SBOLUtility.deleteDNAComponent(deletionURI, sbolDoc);
-//						SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
-//					}
 			}
 			if (!error) {
-				if (bioModel.getSBMLDocument().getLevel() > 2) {
-					if (substanceUnits.getSelectedItem().equals("( none )")) {
-						bioModel.getSBMLDocument().getModel().unsetSubstanceUnits();
-					}
-					else {
-						bioModel.getSBMLDocument().getModel().setSubstanceUnits((String) substanceUnits.getSelectedItem());
-					}
-					if (timeUnits.getSelectedItem().equals("( none )")) {
-						bioModel.getSBMLDocument().getModel().unsetTimeUnits();
-					}
-					else {
-						bioModel.getSBMLDocument().getModel().setTimeUnits((String) timeUnits.getSelectedItem());
-					}
-					if (volumeUnits.getSelectedItem().equals("( none )")) {
-						bioModel.getSBMLDocument().getModel().unsetVolumeUnits();
-					}
-					else {
-						bioModel.getSBMLDocument().getModel().setVolumeUnits((String) volumeUnits.getSelectedItem());
-					}
-					if (areaUnits.getSelectedItem().equals("( none )")) {
-						bioModel.getSBMLDocument().getModel().unsetAreaUnits();
-					}
-					else {
-						bioModel.getSBMLDocument().getModel().setAreaUnits((String) areaUnits.getSelectedItem());
-					}
-					if (lengthUnits.getSelectedItem().equals("( none )")) {
-						bioModel.getSBMLDocument().getModel().unsetLengthUnits();
-					}
-					else {
-						bioModel.getSBMLDocument().getModel().setLengthUnits((String) lengthUnits.getSelectedItem());
-					}
-					if (extentUnits.getSelectedItem().equals("( none )")) {
-						bioModel.getSBMLDocument().getModel().unsetExtentUnits();
-					}
-					else {
-						bioModel.getSBMLDocument().getModel().setExtentUnits((String) extentUnits.getSelectedItem());
-					}
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
-					if (conversionFactor.getSelectedItem().equals("( none )")) {
-						bioModel.getSBMLDocument().getModel().unsetConversionFactor();
-						sBasePlugin.unsetListOfIndices();
-					}
-					else {
-						bioModel.getSBMLDocument().getModel().setConversionFactor((String) conversionFactor.getSelectedItem());
-						sBasePlugin.unsetListOfIndices();
-						for(int i = 0; i<dex.length-1; i++){
-							Index indexRule = new Index();
-						    indexRule.setArrayDimension(i);
-						    indexRule.setReferencedAttribute("conversionFactor");
-						    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-						    indexRule.setMath(indexMath);
-						    sBasePlugin.addIndex(indexRule);
-						}
-					}
-					bioModel.getSBMLDocument().getModel().setName(modelName.getText());
-					
+				if (substanceUnits.getSelectedItem().equals("( none )")) {
+					bioModel.getSBMLDocument().getModel().unsetSubstanceUnits();
 				}
+				else {
+					bioModel.getSBMLDocument().getModel().setSubstanceUnits((String) substanceUnits.getSelectedItem());
+				}
+				if (timeUnits.getSelectedItem().equals("( none )")) {
+					bioModel.getSBMLDocument().getModel().unsetTimeUnits();
+				}
+				else {
+					bioModel.getSBMLDocument().getModel().setTimeUnits((String) timeUnits.getSelectedItem());
+				}
+				if (volumeUnits.getSelectedItem().equals("( none )")) {
+					bioModel.getSBMLDocument().getModel().unsetVolumeUnits();
+				}
+				else {
+					bioModel.getSBMLDocument().getModel().setVolumeUnits((String) volumeUnits.getSelectedItem());
+				}
+				if (areaUnits.getSelectedItem().equals("( none )")) {
+					bioModel.getSBMLDocument().getModel().unsetAreaUnits();
+				}
+				else {
+					bioModel.getSBMLDocument().getModel().setAreaUnits((String) areaUnits.getSelectedItem());
+				}
+				if (lengthUnits.getSelectedItem().equals("( none )")) {
+					bioModel.getSBMLDocument().getModel().unsetLengthUnits();
+				}
+				else {
+					bioModel.getSBMLDocument().getModel().setLengthUnits((String) lengthUnits.getSelectedItem());
+				}
+				if (extentUnits.getSelectedItem().equals("( none )")) {
+					bioModel.getSBMLDocument().getModel().unsetExtentUnits();
+				}
+				else {
+					bioModel.getSBMLDocument().getModel().setExtentUnits((String) extentUnits.getSelectedItem());
+				}
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
+				if (conversionFactor.getSelectedItem().equals("( none )")) {
+					bioModel.getSBMLDocument().getModel().unsetConversionFactor();
+					sBasePlugin.unsetListOfIndices();
+				}
+				else {
+					bioModel.getSBMLDocument().getModel().setConversionFactor((String) conversionFactor.getSelectedItem());
+					sBasePlugin.unsetListOfIndices();
+					for(int i = 0; dex!=null && i<dex.length-1; i++){
+						Index indexRule = new Index();
+						indexRule.setArrayDimension(i);
+						indexRule.setReferencedAttribute("conversionFactor");
+						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
+						indexRule.setMath(indexMath);
+						sBasePlugin.addIndex(indexRule);
+					}
+				}
+				bioModel.getSBMLDocument().getModel().setName(modelName.getText());
 				dirty.setValue(true);
 				bioModel.makeUndoPoint();
 			}

@@ -578,7 +578,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				else {
 					if (initLabel.getSelectedItem().equals("Initial Assignment")) {
 						InitialAssignments.removeInitialAssignment(bioModel, selectedID);
-						error = InitialAssignments.addInitialAssignment(bioModel, ID.getText().trim(), init.getText().trim(),null);
+						String [] dimID = new String[1];
+						dimID[0] = ID.getText().trim();
+						error = InitialAssignments.addInitialAssignment(bioModel, init.getText().trim(), dimID);
 						initial = 0.0;
 					}
 					else {
@@ -825,7 +827,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (value == JOptionPane.NO_OPTION) {
 			if (!origAssign.equals("")) {
 				InitialAssignments.removeInitialAssignment(bioModel, selectedID);
-				error = InitialAssignments.addInitialAssignment(bioModel, selectedID, origAssign,null);
+				String [] dimID = new String[1];
+				dimID[0] = selectedID;
+				error = InitialAssignments.addInitialAssignment(bioModel, origAssign, dimID);
 			}
 			return;
 		}

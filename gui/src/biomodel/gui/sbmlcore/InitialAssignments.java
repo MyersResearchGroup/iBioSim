@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -15,7 +14,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
@@ -33,7 +31,6 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SpeciesReference;
 
-import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -177,10 +174,20 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		}
 	}
 
+	public static boolean addInitialAssignment(BioModel bioModel, String assignment, String[] dimensions) {
+		String variable = dimensions[0].trim();
+		return addInitialAssignment(bioModel,assignment,dimensions,variable);
+	}
+
+	public static boolean addInitialRateAssignment(BioModel bioModel, String assignment, String[] dimensions) {
+		String variable = dimensions[0].trim() + "_" + GlobalConstants.RATE;
+		return addInitialAssignment(bioModel,assignment,dimensions,variable);
+	}
+	
 	/**
 	 * Try to add or edit initial assignments
 	 */
-	public static boolean addInitialAssignment(BioModel bioModel, String variable, String assignment, String[] dimensions) {
+	public static boolean addInitialAssignment(BioModel bioModel, String assignment, String[] dimensions, String variable) {
 		if (assignment.trim().equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is empty.", "Enter Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;

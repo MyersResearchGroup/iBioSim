@@ -158,9 +158,11 @@ public class GeneticNetwork {
 				p.print(writer.writeSBMLToString(document));
 			} catch (XMLStreamException e1) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+				p.close();
 				return;
 			} catch (SBMLException e1) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid SBML when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+				p.close();
 				return;
 			}
 			p.close();

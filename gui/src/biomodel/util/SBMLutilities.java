@@ -33,7 +33,6 @@ import odk.lang.FastMath;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.arrays.util.ArraysMath;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
@@ -61,7 +60,6 @@ import org.sbml.jsbml.validator.SBMLValidator;
 import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.jsbml.AbstractNamedSBase;
 import org.sbml.jsbml.AbstractSBase;
-import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.ExplicitRule;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
@@ -87,7 +85,6 @@ import org.sbml.libsbml.libsbmlConstants;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
-import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
 
 

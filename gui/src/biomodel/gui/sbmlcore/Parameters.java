@@ -619,10 +619,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), paramID.getText(), false);
-			error = (dimID == null);
-			if(!error){
+			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+			} else {
+				error = true;
 			}
 			if (!error) {
 				if (isPlace | isBoolean) {
@@ -657,8 +658,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						val = Double.parseDouble(paramValue.getText().trim());
 					}
 					catch (Exception e1) {
-						error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
-								paramValue.getText().trim(),dimID);
+						error = InitialAssignments.addInitialAssignment(bioModel, paramValue.getText().trim(), dimID);
 						val = 0.0;
 					}
 					if (rateParam!=null) {
@@ -666,8 +666,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							rateVal = Double.parseDouble(rateValue.getText().trim());
 						}
 						catch (Exception e1) {
-							error = InitialAssignments.addInitialAssignment(bioModel, 
-									dimID[0].trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim(),dimID);
+							error = InitialAssignments.addInitialRateAssignment(bioModel, 
+									rateValue.getText().trim(), dimID);
 							rateVal = 0.0;
 						}
 					}
@@ -702,7 +702,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						}
 					}
 					else {
-						param = dimID[0].trim(); // + " " + val;
+						if (dimID!=null) {
+							param = dimID[0].trim(); // + " " + val;
+						}
 						if (paramsOnly)
 							param += " " + val;
 						else {
