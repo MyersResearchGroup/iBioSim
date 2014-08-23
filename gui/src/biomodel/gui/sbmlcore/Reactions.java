@@ -1103,7 +1103,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 						// Add the indices
 						sBasePlugin.unsetListOfIndices();
-						for(int i = 0; i<dex.length-1; i++){
+						for(int i = 0; dex!=null && i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
 							indexRule.setReferencedAttribute("species");
@@ -1209,7 +1209,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 						// Add the indices
 						sBasePlugin.unsetListOfIndices();
-						for(int i = 0; i<dex.length-1; i++){
+						for(int i = 0; dex!=null && i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
 							indexRule.setReferencedAttribute("species");
@@ -1981,8 +1981,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							error = true;
 						} else {
 							// TODO: this needs to send product dimension when it exists
-							error = InitialAssignments.addInitialAssignment(bioModel, dimID[0], 
-									productStoichiometry.getText().trim(),dimID);
+							error = InitialAssignments.addInitialAssignment(bioModel, productStoichiometry.getText().trim(), dimID);
 							val = 1.0;
 						}
 					}
@@ -2116,7 +2115,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 						// Add the indices
 						sBasePlugin.unsetListOfIndices();
-						for(int i = 0; i<dex.length-1; i++){
+						for(int i = 0; dex!=null && i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
 							indexRule.setReferencedAttribute("species");
@@ -2160,7 +2159,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 
 						// Add the indices
-						for(int i = 0; i<dex.length-1; i++){
+						for(int i = 0; dex!=null && i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
 							indexRule.setReferencedAttribute("species");
@@ -2578,7 +2577,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						dimX.setArrayDimension(i);
 					}
 					sBasePlugin.unsetListOfIndices();
-					for(int i = 0; i<dex.length-1; i++){
+					for(int i = 0; dex!=null && i<dex.length-1; i++){
 						Index indexRule = new Index();
 						indexRule.setArrayDimension(i);
 						indexRule.setReferencedAttribute("species");
@@ -2687,7 +2686,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						dimX.setSize(dimID[i]);
 						dimX.setArrayDimension(i);
 					}
-					for(int i = 0; i<dex.length-1; i++){
+					for(int i = 0; dex!=null && i<dex.length-1; i++){
 						Index indexRule = new Index();
 						indexRule.setArrayDimension(i);
 						indexRule.setReferencedAttribute("species");
@@ -2892,8 +2891,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							error = true;
 						} else {
 							// TODO: need sot use reactant dimension when it exists
-							error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
-									reactantStoichiometry.getText().trim(), dimID);
+							error = InitialAssignments.addInitialAssignment(bioModel, reactantStoichiometry.getText().trim(), dimID);
 							val = 1.0;
 						}
 					}
@@ -3049,7 +3047,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 						// Add the indices
 						sBasePlugin.unsetListOfIndices();
-						for(int i = 0; i<dex.length-1; i++){
+						for(int i = 0; dex!=null && i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
 							indexRule.setReferencedAttribute("species");
@@ -3116,7 +3114,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							dimX.setArrayDimension(i);
 						}
 						// Add the indices
-						for(int i = 0; i<dex.length-1; i++){
+						for(int i = 0; dex!=null && i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
 							indexRule.setReferencedAttribute("species");

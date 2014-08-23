@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +19,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
@@ -431,7 +429,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					if (!error && !modelEditor.isParamsOnly()) {
 
 						Port port = bioModel.getPortByMetaIdRef(r.getMetaId());
-						SBMLutilities.setMetaId(r, dimID[0].trim());
+						if (dimID!=null) {
+							SBMLutilities.setMetaId(r, dimID[0].trim());
+						}
 						if (port!=null) {
 							if (onPort.isSelected()) {
 								port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
@@ -464,14 +464,14 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					if(!error){
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
 						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; i<dimID.length-1; i++){
+						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
 						// Add the indices
 						sBasePlugin.unsetListOfIndices();
-						for(int i = 0; i<dex.length-1; i++){
+						for(int i = 0; dex!=null && i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
 							indexRule.setReferencedAttribute("variable");
@@ -518,23 +518,25 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 //						rul = oldRul;
 					}
 					if (!error) {
+						String ruleId = "";
+						if (dimID!=null) ruleId = dimID[0].trim();
 						SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 						if (ruleType.getSelectedItem().equals("Algebraic")) {
 							r = sbmlDoc.getModel().createAlgebraicRule();
-							SBMLutilities.setMetaId(r, dimID[0].trim());
+							SBMLutilities.setMetaId(r, ruleId);
 							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 							error = !SBMLutilities.check("",bioModel.getSBMLDocument(),false,true);
 						}
 						else if (ruleType.getSelectedItem().equals("Rate")) {
 							r = sbmlDoc.getModel().createRateRule();
-							SBMLutilities.setMetaId(r, dimID[0].trim());
+							SBMLutilities.setMetaId(r, ruleId);
 							((RateRule) r).setVariable(addVar);
 							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 							error = checkRateRuleUnits(r);
 						}
 						else {
 							r = sbmlDoc.getModel().createAssignmentRule();
-							SBMLutilities.setMetaId(r, dimID[0].trim());
+							SBMLutilities.setMetaId(r, ruleId);
 							((AssignmentRule) r).setVariable(addVar);
 							if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
 									SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
@@ -564,14 +566,14 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					//TODO adding
 					if(!error){
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-						for(int i = 0; i<dimID.length-1; i++){
+						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
 
 						// Add the indices
-						for(int i = 0; i<dex.length-1; i++){
+						for(int i = 0; dex!=null && i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
 							indexRule.setReferencedAttribute("variable");

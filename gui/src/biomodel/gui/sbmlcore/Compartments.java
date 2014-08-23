@@ -33,13 +33,11 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.Port;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.UnitDefinition;
 
-import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -404,10 +402,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		String[] dimensionIds = new String[]{""};
 		while (error && value == JOptionPane.YES_OPTION) {
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), compID.getText(), false);
-			error = (dimID == null);
-			if(!error){
+			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+			} else {
+				error = true;
 			}
 			if (!error && option.equals("OK") && CompConstants.getSelectedItem().equals("true")) {
 				String val = selected;
@@ -438,8 +437,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					}
 					catch (Exception e1) {
 						// TODO: do not forget to send dimID as last parameter to this function
-						error = InitialAssignments.addInitialAssignment(bioModel, dimID[0].trim(), 
-								compSize.getText().trim(),dimID);
+						error = InitialAssignments.addInitialAssignment(bioModel, compSize.getText().trim(), dimID);
 						addCompSize = 1.0;
 					}
 				}

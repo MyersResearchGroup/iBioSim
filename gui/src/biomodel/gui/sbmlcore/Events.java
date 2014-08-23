@@ -20,10 +20,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.util.Utility;
@@ -588,25 +586,24 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 						if(EAdimID!=null){
 							EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-						}
-						else{
-							error = true;
-						}
-						if(!error){
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
 							// TODO: add the dimensionIds and dimIDs to the new parameters
 							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 							error = (EAdex==null);
 						}
+						else{
+							error = true;
+						}
+						// TODO: THIS BREAK IS A PROBLEM CREATES PARTIAL EVENT
 						if(error)break;
 						sBasePlugin.unsetListOfDimensions();
-						for(int i1 = 0; i1<EAdimID.length-1; i1++){
+						for(int i1 = 0; EAdimID!=null && i1<EAdimID.length-1; i1++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
 							dimX.setSize(EAdimID[i1+1]);
 							dimX.setArrayDimension(i1);
 						}
 						sBasePlugin.unsetListOfIndices();
-						for(int i1 = 0; i1<EAdex.length-1; i1++){
+						for(int i1 = 0; EAdex!=null && i1<EAdex.length-1; i1++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i1);
 							indexRule.setReferencedAttribute("variable");
@@ -657,13 +654,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						if (error) break;
 						sBasePlugin.unsetListOfDimensions();
-						for(int i1 = 0; i1<EAdimID.length-1; i1++){
+						for(int i1 = 0; EAdimID!=null && i1<EAdimID.length-1; i1++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
 							dimX.setSize(EAdimID[i1+1]);
 							dimX.setArrayDimension(i1);
 						}
 						sBasePlugin.unsetListOfIndices();
-						for(int i1 = 0; i1<EAdex.length-1; i1++){
+						for(int i1 = 0; EAdex!=null && i1<EAdex.length-1; i1++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i1);
 							indexRule.setReferencedAttribute("variable");
@@ -978,13 +975,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 							if(!error){
 								sBasePlugin.unsetListOfDimensions();
-								for(int i1 = 0; i1<EAdimID.length-1; i1++){
+								for(int i1 = 0; EAdimID!=null && i1<EAdimID.length-1; i1++){
 									org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
 									dimX.setSize(EAdimID[i1+1]);
 									dimX.setArrayDimension(i1);
 								}
 								sBasePlugin.unsetListOfIndices();
-								for(int i1 = 0; i1<EAdex.length-1; i1++){
+								for(int i1 = 0; EAdex!=null && i1<EAdex.length-1; i1++){
 									Index indexRule = new Index();
 									indexRule.setArrayDimension(i1);
 									indexRule.setReferencedAttribute("variable");

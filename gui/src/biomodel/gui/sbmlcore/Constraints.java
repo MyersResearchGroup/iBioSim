@@ -2,16 +2,13 @@ package biomodel.gui.sbmlcore;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -29,12 +26,10 @@ import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.xml.XMLNode;
 
-import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -165,7 +160,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							message = message.substring(message.indexOf("xhtml\">") + 7, message.indexOf("</p>"));
 							consMessage.setText(message);
 						} catch (XMLStreamException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						
@@ -208,12 +202,15 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		boolean error = true;
 		String[] dimID = new String[]{""};
 		String[] dimensionIds = new String[]{""};
+		String constraintId = "";
 		while (error && value == JOptionPane.YES_OPTION) {
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), consID.getText(), false);
-			error = (dimID == null);
-			if(!error){
+			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+				constraintId = dimID[0].trim();
+			} else {
+				error = true;
 			}
 			if (!error) {
 				if (consMath.getText().trim().equals("") || SBMLutilities.myParseFormula(consMath.getText().trim()) == null) {
@@ -246,7 +243,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						Constraint c = (bioModel.getSBMLDocument().getModel().getListOfConstraints()).get(Cindex);
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
-						SBMLutilities.setMetaId(c, dimID[0].trim());
+						SBMLutilities.setMetaId(c, constraintId);
 						if (!consMessage.getText().trim().equals("")) {
 							XMLNode xmlNode;
 							try {
@@ -254,7 +251,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 										+ consMessage.getText().trim() + "</p></message>");
 								c.setMessage(xmlNode);
 							} catch (XMLStreamException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 							
@@ -282,10 +278,9 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						constraints.setListData(cons);
 						constraints.setSelectedIndex(index);
 						bioModel.makeUndoPoint();
-						// TODO: Scott - change for Plugin writing
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
 						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; i<dimID.length-1; i++){
+						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
@@ -300,7 +295,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						int index = constraints.getSelectedIndex();
 						Constraint c = bioModel.getSBMLDocument().getModel().createConstraint();
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
-						SBMLutilities.setMetaId(c, dimID[0].trim());
+						SBMLutilities.setMetaId(c, constraintId);
 						if (!consMessage.getText().trim().equals("")) {
 							XMLNode xmlNode;
 							try {
@@ -309,7 +304,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 
 								c.setMessage(xmlNode);
 							} catch (XMLStreamException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -336,9 +330,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						else {
 							constraints.setSelectedIndex(index);
 						}
-						// TODO: Scott - change for Plugin writing
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
-						for(int i = 0; i<dimID.length-1; i++){
+						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
@@ -355,7 +348,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		if (value == JOptionPane.NO_OPTION) {
 			return selected;
 		}
-		return dimID[0].trim();
+		return constraintId;
 	}
 	
 	/**
