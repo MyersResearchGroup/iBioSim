@@ -3988,7 +3988,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								documentComp.getListOfExternalModelDefinitions().size() > 0) {
 								if (!extractModelDefinitions(documentComp,documentCompModel))
 									JOptionPane.showMessageDialog(frame, "Unable to extract model definitions from the model.", "Unable to Extract Model Definitions",
-											JOptionPane.ERROR_MESSAGE);;
+											JOptionPane.ERROR_MESSAGE);
 							}
 							updateReplacementsDeletions(document, documentComp, documentCompModel);
 							if (document.getModel().getId()==null||document.getModel().getId().equals("")) {
@@ -4092,7 +4092,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										documentComp.getListOfExternalModelDefinitions().size() > 0) {
 										if (!extractModelDefinitions(documentComp,documentCompModel))
 											JOptionPane.showMessageDialog(frame, "Unable to extract model definitions from the model.", "Unable to Extract Model Definitions",
-													JOptionPane.ERROR_MESSAGE);;
+													JOptionPane.ERROR_MESSAGE);
 									}
 									updateReplacementsDeletions(document, documentComp, documentCompModel);
 									if (document.getModel().getId()==null||document.getModel().getId().equals("")) {

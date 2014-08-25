@@ -3375,7 +3375,7 @@ public class Analysis {
 		
 		boolean failure = false;
 		int tranFiringCnt = 0;
-		int arraySize = lpnList.length;;
+		int arraySize = lpnList.length;
 
 		HashSet<PrjState> stateStack = new HashSet<PrjState>();
 		Stack<LpnTranList> lpnTranStack = new Stack<LpnTranList>();
@@ -3762,7 +3762,7 @@ public class Analysis {
 		
 		boolean failure = false;
 		int tranFiringCnt = 0;
-		int arraySize = sgList.length;;
+		int arraySize = sgList.length;
 
 		HashSet<PrjState> stateStack = new HashSet<PrjState>();
 		Stack<LpnTranList> lpnTranStack = new Stack<LpnTranList>();
