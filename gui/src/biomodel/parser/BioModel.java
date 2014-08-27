@@ -6835,15 +6835,16 @@ public class BioModel {
 
 			// recursively add this component's sbml (and its inside components'
 			// sbml, etc.) to the overall sbml
-			unionSBML(model, flattenModelRecurse(subModel, modelListCopy), subModelId, 
-					subModel.getParameter(GlobalConstants.RNAP_STRING));
-			if (model.getSBMLDocument() == null && modelListCopy.isEmpty()) {
+			BioModel flatSubModel = flattenModelRecurse(subModel, modelListCopy);
+			if (flatSubModel!=null) {
+				unionSBML(model, flatSubModel, subModelId, subModel.getParameter(GlobalConstants.RNAP_STRING));
+			} else if (modelListCopy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
 				load(tempFile);
 				new File(tempFile).delete();
 				return null;
 			}
-			else if (model.getSBMLDocument() == null) {
+			else {
 				Utility.createErrorMessage("Cannot Flatten Model", "Unable to flatten sbml files from components.");
 				load(tempFile);
 				new File(tempFile).delete();
@@ -6903,13 +6904,14 @@ public class BioModel {
 
 			// recursively add this component's sbml (and its inside components'
 			// sbml, etc.) to the overall sbml
-			unionSBML(this, flattenModelRecurse(subModel, modelListCopy), subModelId, 
-					subModel.getParameter(GlobalConstants.RNAP_STRING));
-			if (this.getSBMLDocument() == null && modelListCopy.isEmpty()) {
+			BioModel flatSubModel = flattenModelRecurse(subModel, modelListCopy);
+			if (flatSubModel!=null) {
+				unionSBML(this, flatSubModel, subModelId, subModel.getParameter(GlobalConstants.RNAP_STRING));
+			} else if (modelListCopy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
 				return null;
 			}
-			else if (this.getSBMLDocument() == null) {
+			else {
 				Utility.createErrorMessage("Cannot Flatten Model", "Unable to flatten sbml files from components.");
 				return null;
 			}
@@ -6940,8 +6942,12 @@ public class BioModel {
 			}
 			modelListCopy.add(subModel.getFilename());
 			//String subModelId = model.getSBMLDocument().getModel().getId();
-			unionSBML(model, flattenModelRecurse(subModel, modelListCopy), /*subModelId+"__"+*/s, 
-					subModel.getParameter(GlobalConstants.RNAP_STRING));
+			BioModel flatSubModel = flattenModelRecurse(subModel, modelListCopy);
+			if (flatSubModel!=null) {
+				unionSBML(model, flatSubModel, /*subModelId+"__"+*/s, subModel.getParameter(GlobalConstants.RNAP_STRING));
+			} else {
+				return null;
+			}
 		}
 		return model;
 	}
@@ -7074,39 +7080,10 @@ public class BioModel {
 		
 		performDeletions(bioModel,subBioModel,replacementModelId);
 		
-//		CompartmentType not supported in Level 3
-		// Rename compartment types
-//		for (int i = 0; i < subModel.getNumCompartmentTypes(); i++) {
-//			CompartmentType c = subModel.getCompartmentType(i);
-//			String newName = subModelId + "__" + c.getId();
-//			updateVarId(false, c.getId(), newName, subBioModel);
-//			c.setId(newName);
-//			if (c.isSetMetaId()) c.setMetaId(subModelId + "__" + c.getMetaId());
-//			if (model.getCompartmentType(c.getId())==null) {
-//				model.addCompartmentType(c);
-//			} else {
-//				// TODO: compartment type not unique
-//			}
-//		}
-//		SpeciesType not supported in Level 3
-		// Rename species types
-//		for (int i = 0; i < subModel.getSpeciesTypeCount(); i++) {
-//			SpeciesType s = subModel.getSpeciesType(i);
-//			String newName = subModelId + "__" + s.getId();
-//			updateVarId(false, s.getId(), newName, subBioModel);
-//			s.setId(newName);
-//			if (s.isSetMetaId()) s.setMetaId(subModelId + "__" + s.getMetaId());
-//			if (model.getSpeciesType(s.getId())==null) {
-//				model.addSpeciesType(s);
-//			} else {
-//				// TODO: species type not unique
-//			}
-//		}
 		// Rename compartments
 		for (int i = 0; i < subModel.getCompartmentCount(); i++) {
-			// TODO: problem is rename happens in non-ideal order
 			Compartment c = subModel.getCompartment(i);
-			String newName = subModelId + "__" + c.getId();
+			String newName = subModelId + "___" + c.getId();
 			for (int j = 0; j < model.getCompartmentCount(); j++) {
 				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(model.getCompartment(j));
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,c.getId(),
@@ -7115,7 +7092,7 @@ public class BioModel {
 			updateVarId(false, c.getId(), newName, subBioModel);
 			compartments.remove(c.getId());
 			c.setId(newName);
-			if (c.isSetMetaId()) SBMLutilities.setMetaId(c, subModelId + "__" + c.getMetaId());
+			if (c.isSetMetaId()) SBMLutilities.setMetaId(c, subModelId + "___" + c.getMetaId());
 		}
 		for (int i = 0; i < subModel.getCompartmentCount(); i++) {
 			Compartment c = subModel.getCompartment(i).clone();
@@ -7140,6 +7117,9 @@ public class BioModel {
 					SbmlSBase.addReplacedElement(r);
 				}
 			} else {
+				updateVarId(false, c.getId(), c.getId().replace("___", "__"), subBioModel);
+				c.setId(c.getId().replace("___", "__"));
+				if (c.isSetMetaId()) SBMLutilities.setMetaId(c, c.getMetaId().replace("___","__"));
 				if (model.getCompartment(c.getId())==null) {
 					model.addCompartment(c);
 					if (!compartments.containsKey(c.getId())) {
@@ -7155,44 +7135,23 @@ public class BioModel {
 		// Rename species 
 		for (int i = 0; i < subModel.getSpeciesCount(); i++) {
 			Species spec = subModel.getSpecies(i);
-			String newName = subModelId + "__" + spec.getId();
+			String newName = subModelId + "___" + spec.getId();
 			for (int j = 0; j < model.getSpeciesCount(); j++) {
 				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(model.getSpecies(j));
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,spec.getId(),
 						model.getSpecies(j).getId());
 			}
-			/*
-			if (subBioModel.getPromoters().contains(spec.getId())) {
-				subBioModel.changePromoterId(spec.getId(), newName);
-			} else {
-				subBioModel.changeSpeciesId(spec.getId(), newName);
-			}
-			*/
 			updateVarId(true, spec.getId(), newName, subBioModel);
 			spec.setId(newName);
-			if (spec.isSetMetaId()) SBMLutilities.setMetaId(spec, subModelId + "__" + spec.getMetaId());
+			if (spec.isSetMetaId()) SBMLutilities.setMetaId(spec, subModelId + "___" + spec.getMetaId());
 		}
 		for (int i = 0; i < subModel.getSpeciesCount(); i++) {
 			Species spec = subModel.getSpecies(i).clone();
 			if (spec.getId().startsWith("_" + subModelId + "__")) {
-				/*
-				if (subBioModel.getPromoters().contains(spec.getId())) {
-					subBioModel.changePromoterId(spec.getId(), spec.getId().substring(3 + subModelId.length()));
-				} else {
-					subBioModel.changeSpeciesId(spec.getId(), spec.getId().substring(3 + subModelId.length()));
-				}
-				*/
 				updateVarId(true, spec.getId(), spec.getId().substring(3 + subModelId.length()), subBioModel);
 				spec.setId(spec.getId().substring(3 + subModelId.length()));
 			} else if (spec.getId().startsWith("__" + subModelId + "__")) {
 				String topId = spec.getId().substring(4 + subModelId.length());
-				/*
-				if (subBioModel.getPromoters().contains(spec.getId())) {
-					subBioModel.changePromoterId(spec.getId(), topId);
-				} else {
-					subBioModel.changeSpeciesId(spec.getId(), topId);
-				}
-				*/
 				updateVarId(true, spec.getId(), topId, subBioModel);
 				spec.setId(topId);
 				CompSBasePlugin SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getSpecies(topId));
@@ -7207,6 +7166,9 @@ public class BioModel {
 					SbmlSBase.addReplacedElement(r);
 				}
 			} else {
+				updateVarId(true, spec.getId(), spec.getId().replace("___", "__"), subBioModel);
+				spec.setId(spec.getId().replace("___","__"));
+				if (spec.isSetMetaId()) SBMLutilities.setMetaId(spec, spec.getMetaId().replace("___","__"));
 				if (model.getSpecies(spec.getId())==null) {
 					model.addSpecies(spec);
 				} else {
@@ -7217,7 +7179,7 @@ public class BioModel {
 		// Rename parameters
 		for (int i = 0; i < subModel.getParameterCount(); i++) {
 			Parameter p = subModel.getParameter(i);
-			String newName = subModelId + "__" + p.getId();
+			String newName = subModelId + "___" + p.getId();
 			for (int j = 0; j < model.getParameterCount(); j++) {
 				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(model.getParameter(j));
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,p.getId(),
@@ -7225,7 +7187,7 @@ public class BioModel {
 			}
 			updateVarId(false, p.getId(), newName, subBioModel);
 			p.setId(newName);
-			if (p.isSetMetaId()) SBMLutilities.setMetaId(p, subModelId + "__" + p.getMetaId());
+			if (p.isSetMetaId()) SBMLutilities.setMetaId(p, subModelId + "___" + p.getMetaId());
 		}
 		for (int i = 0; i < subModel.getParameterCount(); i++) {
 			Parameter p = subModel.getParameter(i).clone();
@@ -7248,6 +7210,9 @@ public class BioModel {
 					SbmlSBase.addReplacedElement(r);
 				}
 			} else {
+				updateVarId(false, p.getId(), p.getId().replace("___", "__"), subBioModel);
+				p.setId(p.getId().replace("___","__"));
+				if (p.isSetMetaId()) SBMLutilities.setMetaId(p, p.getMetaId().replace("___","__"));
 				if (model.getParameter(p.getId())==null) {
 					model.addParameter(p);
 				} else {
@@ -7255,11 +7220,11 @@ public class BioModel {
 				}
 			}
 		}
-
+		// Rename reactions
 		for (int i = 0; i < subModel.getReactionCount(); i++) {
 			Reaction r = subModel.getReaction(i);
 			if (r.getId().contains("MembraneDiffusion")) continue;
-			String newName = subModelId + "__" + r.getId();
+			String newName = subModelId + "___" + r.getId();
 			for (int j = 0; j < model.getReactionCount(); j++) {
 				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(model.getReaction(j));
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,r.getId(),
@@ -7267,11 +7232,11 @@ public class BioModel {
 			}
 			updateVarId(false, r.getId(), newName, subBioModel);
 			r.setId(newName);
-			if (r.isSetMetaId()) SBMLutilities.setMetaId(r, subModelId + "__" + r.getMetaId());
+			if (r.isSetMetaId()) SBMLutilities.setMetaId(r, subModelId + "___" + r.getMetaId());
 			if (!r.isSetKineticLaw()) continue;
 			for (int j = 0; j < r.getKineticLaw().getLocalParameterCount(); j++) {
 				LocalParameter l = r.getKineticLaw().getLocalParameter(j);
-				if (l.isSetMetaId()) SBMLutilities.setMetaId(l, subModelId + "__" + l.getMetaId());
+				if (l.isSetMetaId()) SBMLutilities.setMetaId(l, subModelId + "___" + l.getMetaId());
 			}
 		}
 		for (int i = 0; i < subModel.getReactionCount(); i++) {
@@ -7295,6 +7260,13 @@ public class BioModel {
 					SbmlSBase.addReplacedElement(repl);
 				}
 			} else {
+				updateVarId(false, r.getId(), r.getId().replace("___", "__"), subBioModel);
+				r.setId(r.getId().replace("___","__"));
+				if (r.isSetMetaId()) SBMLutilities.setMetaId(r, r.getMetaId().replace("___","__"));
+				for (int j = 0; j < r.getKineticLaw().getLocalParameterCount(); j++) {
+					LocalParameter l = r.getKineticLaw().getLocalParameter(j);
+					if (l.isSetMetaId()) SBMLutilities.setMetaId(l, l.getMetaId().replace("___", "__"));
+				}
 				if (model.getReaction(r.getId())==null) {
 					model.addReaction(r);
 				} else {
@@ -7302,6 +7274,8 @@ public class BioModel {
 				}
 			}
 		}
+
+		// TODO: no ___ trick, ok?
 		for (int i = 0; i < subModel.getInitialAssignmentCount(); i++) {
 			InitialAssignment init = subModel.getListOfInitialAssignments().get(i).clone();
 			if (init.isSetMetaId()) {
@@ -7309,6 +7283,8 @@ public class BioModel {
 			}
 			model.addInitialAssignment(init);
 		}
+
+		// TODO: no ___ trick, ok?
 		for (int i = 0; i < subModel.getRuleCount(); i++) {
 			org.sbml.jsbml.Rule r = subModel.getRule(i).clone();
 			if (r.isSetMetaId()) {
@@ -7316,6 +7292,8 @@ public class BioModel {
 			}
 			model.addRule(r);
 		}
+		
+		// TODO: no ___ trick, ok?
 		for (int i = 0; i < subModel.getConstraintCount(); i++) {
 			Constraint constraint = subModel.getListOfConstraints().get(i).clone();
 			String newName = subModelId + "__" + constraint.getMetaId();
@@ -7339,70 +7317,27 @@ public class BioModel {
 			model.addConstraint(constraint);
 		}
 		
+		// TODO: no ___ trick, ok?
 		for (int i = 0; i < subModel.getEventCount(); i++) {
 			org.sbml.jsbml.Event event = subModel.getListOfEvents().get(i).clone();
-			
-			/*
-			if (event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().length() > 0 && (
-					event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().contains("Division") ||
-					event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().contains("Death") ||
-					event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().contains("Move")))
-				continue;
-			*/
-			
 			String newName = subModelId + "__" + event.getId();
 			updateVarId(false, event.getId(), newName, subBioModel);
 			event.setId(newName);
 			if (event.isSetMetaId()) {
 				SBMLutilities.setMetaId(event, subModelId + "__" + event.getMetaId());
 			}
-			for (int j = 0; j < model.getEventCount(); j++) {
-				if (model.getEvent(j).getId().equals(event.getId())) {
-					org.sbml.jsbml.Event e = model.getEvent(j);
-					if (!e.getName().equals(event.getName())) {
-						return null;
-					}
-					if (e.getUseValuesFromTriggerTime() != event.getUseValuesFromTriggerTime()) {
-						return null;
-					}
-					if (!e.getDelay().equals(event.getDelay())) {
-						return null;
-					}
-					if (!e.getTrigger().equals(event.getTrigger())) {
-						return null;
-					}
-					for (int k = 0; k < e.getEventAssignmentCount(); k++) {
-						EventAssignment a = e.getListOfEventAssignments().get(k);
-						boolean found = false;
-						for (int l = 0; l < event.getEventAssignmentCount(); l++) {
-							EventAssignment assign = event.getListOfEventAssignments().get(l);
-							if (a.getVariable().equals(assign.getVariable())) {
-								found = true;
-								if (!a.getMath().equals(assign.getMath())) {
-									return null;
-								}
-							}
-						}
-						if (!found) {
-							return null;
-						}
-					}
-				}
-			}
 			model.addEvent(event);
 		}
 		
+		// TODO: Replacements?  Update unit ids?
 		for (int i = 0; i < subModel.getUnitDefinitionCount(); i++) {
 			UnitDefinition u = subModel.getUnitDefinition(i).clone();
-			String newName = u.getId();
+			String newName = subModelId + "__" + u.getId();
 			boolean add = true;
 			for (int j = 0; j < model.getUnitDefinitionCount(); j++) {
 				if (model.getUnitDefinition(j).getId().equals(u.getId())) {
 					if (UnitDefinition.areIdentical(model.getUnitDefinition(j), u)) {
 						add = false;
-					}
-					else {
-						newName = subModelId + "__" + u.getId();
 					}
 				}
 			}
@@ -7411,11 +7346,12 @@ public class BioModel {
 				if (u.isSetMetaId()) {
 					SBMLutilities.setMetaId(u, subModelId + "__" + u.getMetaId());
 				}
-				model.addUnitDefinition(u);
+				if (model.getUnitDefinition(u.getId())==null) {
+					model.addUnitDefinition(u);
+				} 
 			}
 		}
-		
-
+		// TODO: functions not flattened right
 		for (int i = 0; i < subModel.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition f = subModel.getFunctionDefinition(i).clone();
 			boolean add = true;
@@ -7434,38 +7370,6 @@ public class BioModel {
 		
 		return bioModel;
 	}
-
-	/*
-	private String myFormulaToString(ASTNode mathFormula) {
-		String formula = libsbml.formulaToString(mathFormula);
-		formula = formula.replaceAll("arccot", "acot");
-		formula = formula.replaceAll("arccoth", "acoth");
-		formula = formula.replaceAll("arccsc", "acsc");
-		formula = formula.replaceAll("arccsch", "acsch");
-		formula = formula.replaceAll("arcsec", "asec");
-		formula = formula.replaceAll("arcsech", "asech");
-		formula = formula.replaceAll("arccosh", "acosh");
-		formula = formula.replaceAll("arcsinh", "asinh");
-		formula = formula.replaceAll("arctanh", "atanh");
-		String newformula = formula.replaceFirst("00e", "0e");
-		while (!(newformula.equals(formula))) {
-			formula = newformula;
-			newformula = formula.replaceFirst("0e\\+", "e+");
-			newformula = newformula.replaceFirst("0e-", "e-");
-		}
-		formula = formula.replaceFirst("\\.e\\+", ".0e+");
-		formula = formula.replaceFirst("\\.e-", ".0e-");
-		return formula;
-	}
-
-	private ASTNode myParseFormula(String formula) {
-		ASTNode mathFormula = libsbml.parseFormula(formula);
-		if (mathFormula == null)
-			return null;
-		setTimeAndTrigVar(mathFormula);
-		return mathFormula;
-	}
-	*/
 
 	private static String updateFormulaVar(String s, String origVar, String newVar) {
 		s = " " + s + " ";
