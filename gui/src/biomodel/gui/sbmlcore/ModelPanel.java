@@ -226,7 +226,10 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			// Add SBOL annotation to SBML model itself
 			if (!error) {
 				if (sbolField.getSBOLURIs().size() > 0) {
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolField.getSBOLURIs(), 
+					if (!sbmlModel.isSetMetaId() || sbmlModel.getMetaId().equals(""))
+						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), sbmlModel, 
+								bioModel.getMetaIDIndex());
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolField.getSBOLURIs(),
 							sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
 				} else 

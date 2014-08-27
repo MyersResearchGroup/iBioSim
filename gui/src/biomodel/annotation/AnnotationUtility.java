@@ -16,6 +16,7 @@ import org.sbml.jsbml.xml.XMLToken;
 import org.sbml.jsbml.xml.XMLTriple;
 import org.sbml.jsbml.JSBML;
 
+import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
@@ -31,9 +32,8 @@ public class AnnotationUtility {
 	}
 	
 	public static void removeSBOLAnnotation(SBase sbmlObject) {
-		String annotation;
 		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 			Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
 			Matcher sbolMatcher = sbolPattern.matcher(annotation);
 			while (sbolMatcher.find()) {

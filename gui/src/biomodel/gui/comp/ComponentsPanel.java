@@ -742,15 +742,12 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	}
 	
 	private boolean removePortMaps(CompSBasePlugin sbmlSBase) {
-		int j = 0;
 		boolean result = false;
-		// TODO: reverse direction in for loop
-		for (j=sbmlSBase.getListOfReplacedElements().size(); j>0; j--) {
-			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j-1);
+		for (int j = sbmlSBase.getListOfReplacedElements().size(); j > 0; j--) {
+			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j - 1);
 			if (replacement.getSubmodelRef().equals(subModelId) && 
-					((replacement.isSetPortRef())||(replacement.isSetDeletion()))) { 
-				sbmlSBase.getListOfReplacedElements().remove(j-1);
-				//sbmlSBase.removeReplacedElement(replacement);
+					(replacement.isSetPortRef()|| replacement.isSetDeletion())) { 
+				sbmlSBase.getListOfReplacedElements().remove(j - 1);
 				result = true;
 			}
 		}
@@ -894,10 +891,9 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 								if (!convBox.get(i).getSelectedItem().equals("(none)")) {
 									replacement.setConversionFactor((String)convBox.get(i).getSelectedItem());
 								}
-								String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
-								CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
+								String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-								BioModel.addImplicitDeletions(subCompModel, submodel, speciesId);
+								bioModel.addImplicitDeletions(submodel, subBioModel, subSpeciesId);
 								/* Code below using replacement and deletion */
 								/*
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
@@ -912,20 +908,17 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 								ReplacedBy replacement = sbmlSBase.createReplacedBy();
 								replacement.setSubmodelRef(subId);
 								replacement.setPortRef(portId);
-								String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
-								CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
+								String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-								bioModel.addImplicitReplacedBys(subCompModel,submodel,speciesId,SBMLutilities.getId(sbase));
+								bioModel.addImplicitReplacedBys(submodel, subBioModel, SBMLutilities.getId(sbase), subSpeciesId);
 							}
 						}
 					}
 				} else if (portmapId.equals("--delete--")) {
 					Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-					Deletion deletion = submodel.createDeletion();
-					deletion.setPortRef(portId);
-					String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
-					CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
-					BioModel.addImplicitDeletions(subCompModel, submodel, speciesId);
+					bioModel.addDeletion(submodel, portId);
+					String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
+					bioModel.addImplicitDeletions(submodel, subBioModel, subSpeciesId);
 				}
 			}
 			if (selected != null && oldName != null && !oldName.equals(id)) {
@@ -939,8 +932,11 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				// Add SBOL annotation to submodel
 				if (sbolField.getSBOLURIs().size() > 0 || 
 						sbolField.getSBOLStrand().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND)) {
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(instance.getMetaId(), 
-							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+					if (!instance.isSetMetaId() || instance.getMetaId().equals(""))
+							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), instance, 
+									bioModel.getMetaIDIndex());
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(instance.getMetaId(), sbolField.getSBOLURIs(),
+							sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(instance, sbolAnnot);
 
 				} else

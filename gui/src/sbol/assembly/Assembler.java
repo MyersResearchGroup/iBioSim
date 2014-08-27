@@ -399,7 +399,8 @@ public class Assembler {
 						nextTypes = loadAssemblyTypes(anno.getSubComponent(), 
 								GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND);
 					else 
-						nextTypes = loadAssemblyTypes(anno.getSubComponent(), strand);
+						nextTypes = loadAssemblyTypes(anno.getSubComponent(), 
+								GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND);
 				else
 					nextTypes = loadAssemblyTypes(anno.getSubComponent(), subStrand);
 				if (subStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND)) {

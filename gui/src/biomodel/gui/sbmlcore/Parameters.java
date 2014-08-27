@@ -395,9 +395,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		String selectedID = "";
 		Parameter rateParam = null;
-		List<URI> sbolURIs = new LinkedList<URI>();
-		sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
-				1, false);
 		if (option.equals("OK")) {
 			try {
 				Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
@@ -468,6 +465,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					paramConst.setSelectedItem("false");
 				}
 				if (!paramsOnly && !isPlace && !isBoolean) {
+					List<URI> sbolURIs = new LinkedList<URI>();
 					//Parse out SBOL annotations and add to SBOL field
 					String sbolStrand = AnnotationUtility.parseSBOLAnnotation(paramet, sbolURIs);
 					// Field for annotating rules with SBOL DNA components
@@ -534,6 +532,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			catch (Exception e) {
 				e.printStackTrace();
 			}
+		} else {
+			List<URI> sbolURIs = new LinkedList<URI>();
+			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
+					GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 1, false);
 		}
 		parametersPanel.add(idLabel);
 		parametersPanel.add(paramID);
@@ -728,6 +730,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						error = checkNotConstant(selected);
 					}
 					if (!error) {
+						Parameter paramet;
 						if (option.equals("OK")) {
 							int index = -1;
 							String[] params = new String[parameters.getModel().getSize()];
@@ -735,7 +738,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								params[i] = parameters.getModel().getElementAt(i).toString();
 								if (params[i].split(" ")[0].equals(selected)) index = i;
 							}
-							Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
+							paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 
 							//TODO edit?
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
@@ -860,15 +863,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									}
 								}
 							}
-							if (!error && !paramsOnly & !isPlace & !isBoolean) {
-								// Add SBOL annotation to species
-								if (sbolField.getSBOLURIs().size() > 0) {
-									SBOLAnnotation sbolAnnot = new SBOLAnnotation(paramet.getMetaId(), 
-											sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
-									AnnotationUtility.setSBOLAnnotation(paramet, sbolAnnot);
-								} else 
-									AnnotationUtility.removeSBOLAnnotation(paramet);
-							}
 						}
 						else {
 							String[] params = new String[parameters.getModel().getSize()];
@@ -877,7 +871,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								params[i] = parameters.getModel().getElementAt(i).toString();
 								if (params[i].equals(selected)) index = i;
 							}
-							Parameter paramet = bioModel.getSBMLDocument().getModel().createParameter();
+							paramet = bioModel.getSBMLDocument().getModel().createParameter();
 							paramet.setId(dimID[0].trim());
 							paramet.setName(paramName.getText().trim());
 							
@@ -927,6 +921,18 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									parameters.setSelectedIndex(index);
 								}
 							}
+						}
+						if (!error && !paramsOnly & !isPlace & !isBoolean) {
+							// Add SBOL annotation to species
+							if (sbolField.getSBOLURIs().size() > 0) {
+								if (!paramet.isSetMetaId() || paramet.getMetaId().equals(""))
+									SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), paramet, 
+											bioModel.getMetaIDIndex());
+								SBOLAnnotation sbolAnnot = new SBOLAnnotation(paramet.getMetaId(), sbolField.getSBOLURIs(),
+										sbolField.getSBOLStrand());
+								AnnotationUtility.setSBOLAnnotation(paramet, sbolAnnot);
+							} else 
+								AnnotationUtility.removeSBOLAnnotation(paramet);
 						}
 						modelEditor.setDirty(true);
 						bioModel.makeUndoPoint();

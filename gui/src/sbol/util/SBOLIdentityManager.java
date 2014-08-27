@@ -21,6 +21,7 @@ import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 
 public class SBOLIdentityManager {
 
@@ -230,6 +231,9 @@ public class SBOLIdentityManager {
 	public void annotateBioModel() {
 		Model sbmlModel = biomodel.getSBMLDocument().getModel();
 		if (modelURIs.size() > 0) {
+			if (!sbmlModel.isSetMetaId() || sbmlModel.getMetaId().equals(""))
+				SBMLutilities.setDefaultMetaID(biomodel.getSBMLDocument(), sbmlModel, 
+						biomodel.getMetaIDIndex());
 			SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), modelURIs, modelStrand);
 			AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
 		} else

@@ -3982,8 +3982,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							document.enablePackage(CompConstants.namespaceURI);
 							document.enablePackage(FBCConstants.namespaceURI);
 							document.enablePackage(ArraysConstants.namespaceURI);
+							
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
+							
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
 								documentComp.getListOfExternalModelDefinitions().size() > 0) {
 								if (!extractModelDefinitions(documentComp,documentCompModel))
@@ -4542,9 +4544,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							document.enablePackage(LayoutConstants.namespaceURI);
 							document.enablePackage(CompConstants.namespaceURI);
 							document.enablePackage(FBCConstants.namespaceURI);
+
 							document.enablePackage(ArraysConstants.namespaceURI);
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
+
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
 								documentComp.getListOfExternalModelDefinitions().size() > 0) {
 								if (!extractModelDefinitions(documentComp,documentCompModel)) return null;
@@ -10370,10 +10374,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				document.enablePackage(LayoutConstants.namespaceURI);
 				document.enablePackage(CompConstants.namespaceURI);
 				document.enablePackage(FBCConstants.namespaceURI);
+				
 				document.enablePackage(ArraysConstants.namespaceURI);
 				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 				document.setModel(model);
 				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
+
 				ArrayList<String> comps = new ArrayList<String>();
 				for (int j=0; j < documentCompModel.getListOfSubmodels().size(); j++) {
 					String subModelType = documentCompModel.getListOfSubmodels().get(j).getModelRef();

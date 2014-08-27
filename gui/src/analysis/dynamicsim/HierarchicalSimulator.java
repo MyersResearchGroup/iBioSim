@@ -797,10 +797,12 @@ public abstract class HierarchicalSimulator {
 		newDoc.enablePackage(LayoutConstants.namespaceURI);
 		newDoc.enablePackage(CompConstants.namespaceURI);
 		newDoc.enablePackage(FBCConstants.namespaceURI);
+
 		newDoc.enablePackage(ArraysConstants.namespaceURI);
 		
 		CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(newDoc);
 		CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
+		
 		newDoc.setModel(model);
 		ArrayList<String> comps = new ArrayList<String>();
 		for (int j=0; j < documentCompModel.getListOfSubmodels().size(); j++) {
