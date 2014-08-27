@@ -170,6 +170,7 @@ public class BioGraph extends mxGraph {
 	private void createLayoutConnection(Layout layout,String reactant,String product,String type) {
 		ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
 		if (reactionGlyph!=null) layout.removeReactionGlyph(reactionGlyph);
+
 		reactionGlyph = layout.createReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
 		reactionGlyph.createBoundingBox();
 		reactionGlyph.getBoundingBox().createDimensions();
@@ -525,7 +526,7 @@ public class BioGraph extends mxGraph {
 					createLayoutConnection(layout,reactant,product,GlobalConstants.COMPLEX);
 				}
 			} else if (BioModel.isProductionReaction(r)) {
-				String promoterId = r.getId().replace("Production_","");
+				String promoterId = SBMLutilities.getPromoterId(r);
 				if (bioModel.isPromoterExplicit(promoterId)) {
 					for (int j = 0; j < r.getProductCount(); j++) {
 						if (r.getProduct(j).getSpecies().endsWith("_mRNA")) continue;
@@ -1076,7 +1077,7 @@ public class BioGraph extends mxGraph {
 					edgeHash.get(key).add(cell);
 				}
 			} else if (BioModel.isProductionReaction(r)) {
-				String promoterId = r.getId().replace("Production_","");
+				String promoterId = SBMLutilities.getPromoterId(r);
 				if (!bioModel.isPromoterExplicit(promoterId)) {
 					for (int j = 0; j < r.getModifierCount(); j++) {
 						for (int k = 0; k < r.getProductCount(); k++) {
@@ -2384,13 +2385,12 @@ public class BioGraph extends mxGraph {
 	 * @return: A bool, true if the species had to be positioned.
 	 */
 	private boolean createGraphSpeciesFromModel(String sp){
-		
 		if (BioModel.isMRNASpecies(bioModel.getSBMLDocument(),
 				bioModel.getSBMLDocument().getModel().getSpecies(sp))) return false; 
-
+		
 		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), sp);
 		
-		if (BioModel.getDiffusionReaction(sp,bioModel.getSBMLDocument().getModel())!=null) label += " (D)";
+		if (bioModel.getDiffusionReaction(sp) != null) label += " (D)";
 		if (bioModel.isSpeciesConstitutive(sp)) label += " (C)";
 		if (bioModel.isInput(sp)) {
 			label += '\n' + GlobalConstants.INPUT;

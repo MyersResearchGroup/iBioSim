@@ -25,6 +25,7 @@ import biomodel.network.SpasticSpecies;
 import biomodel.network.SpeciesInterface;
 //import biomodel.network.SynthesisNode;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 
 /**
  * This class parses a genetic circuit model.
@@ -126,13 +127,7 @@ public class GCMParser {
 		p.setId(promoter.getId());
 		promoterList.put(promoter.getId(), p);
 		p.setInitialAmount(promoter.getInitialAmount());
-		String component = "";
-		String promoterId = promoter.getId();
-		if (promoter.getId().contains("__")) {
-			component = promoter.getId().substring(0,promoter.getId().lastIndexOf("__")+2);
-			promoterId = promoterId.substring(promoterId.lastIndexOf("__")+2);
-		}
-		Reaction production = sbml.getModel().getReaction(component+"Production_"+promoterId);
+		Reaction production = BioModel.getProductionReaction(promoter.getId(), sbml.getModel());
 		if (production != null) {
 			p.setCompartment(production.getCompartment());
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING) != null) {

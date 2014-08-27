@@ -582,6 +582,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactionPanelNorth1.add(reacName);
 		reactionPanelNorth1.add(onPortLabel);
 		reactionPanelNorth1.add(onPort);
+
 		reactionPanelNorth3.add(reactionCompLabel);
 		reactionPanelNorth3.add(reactionComp);
 		reactionPanelNorth3.add(new JLabel("Compartment Indices:"));
@@ -1085,6 +1086,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						if (!error) {
 							// Add SBOL annotation to reaction
 							if (sbolField.getSBOLURIs().size() > 0) {
+								if (!react.isSetMetaId() || react.getMetaId().equals(""))
+									SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), react, 
+											bioModel.getMetaIDIndex());
 								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolField.getSBOLURIs(),
 										sbolField.getSBOLStrand());
 								AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
@@ -1199,6 +1203,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						removeTheReaction(bioModel, dimID[0]);
 					}
 					// TODO: Scott - change for Plugin writing
+
 					if(!error){
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
 						sBasePlugin.unsetListOfDimensions();
@@ -3160,7 +3165,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			String selected = ((String) reactions.getSelectedValue()).split(" ")[0];
 			Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(selected);
 			if (BioModel.isProductionReaction(reaction)) {
-				bioModel.removePromoter(selected.replace("Production_", ""));
+				bioModel.removePromoter(SBMLutilities.getPromoterId(reaction));
 			} else {
 				bioModel.removeReaction(selected);
 				reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

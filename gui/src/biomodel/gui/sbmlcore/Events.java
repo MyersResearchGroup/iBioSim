@@ -1092,6 +1092,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				if (!error && !modelEditor.isParamsOnly()) {
 					// Add SBOL annotation to event
 					if (sbolField.getSBOLURIs().size() > 0) {
+						if (!e.isSetMetaId() || e.getMetaId().equals(""))
+							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), e, 
+									bioModel.getMetaIDIndex());
 						SBOLAnnotation sbolAnnot = new SBOLAnnotation(e.getMetaId(), sbolField.getSBOLURIs(), 
 								sbolField.getSBOLStrand());
 						AnnotationUtility.setSBOLAnnotation(e, sbolAnnot);

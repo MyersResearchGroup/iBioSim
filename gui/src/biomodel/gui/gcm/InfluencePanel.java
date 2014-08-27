@@ -358,7 +358,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 							BioModel.isActivator(modifier)) {
 						modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
 					} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION) && 
-								BioModel.isRepressor(modifier)) {
+							BioModel.isRepressor(modifier)) {
 							modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
 					}
 				}

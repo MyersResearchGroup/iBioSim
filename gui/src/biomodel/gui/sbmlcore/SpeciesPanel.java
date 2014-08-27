@@ -298,7 +298,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (!paramsOnly) grid.add(tempPanel);
 		
 		//diffusible/constitutive checkboxes
-		diffusion = BioModel.getDiffusionReaction(selected,bioModel.getSBMLDocument().getModel());
+		diffusion = bioModel.getDiffusionReaction(selected);
 		constitutive = bioModel.getConstitutiveReaction(selected);
 		degradation = bioModel.getDegradationReaction(selected);
 		complex = bioModel.getComplexReaction(selected);
@@ -940,6 +940,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			if (!paramsOnly) {
 				// Add SBOL annotation to species
 				if (sbolField.getSBOLURIs().size() > 0) {
+					if (!species.isSetMetaId() || species.getMetaId().equals(""))
+						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
+								bioModel.getMetaIDIndex());
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
 							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(species, sbolAnnot);

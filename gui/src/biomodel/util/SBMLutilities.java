@@ -38,6 +38,7 @@ import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
+import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
@@ -85,6 +86,7 @@ import org.sbml.libsbml.libsbmlConstants;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
+import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
 
 
@@ -1321,36 +1323,51 @@ public class SBMLutilities {
 		int metaIDIndex = 1;
 		Model model = document.getModel();
 		setDefaultMetaID(document, model, metaIDIndex);
-		for (int i = 0; i < model.getParameterCount(); i++) 
-			metaIDIndex = setDefaultMetaID(document, model.getParameter(i), metaIDIndex);
-		for (int i = 0; i < model.getSpeciesCount(); i++) 
-			metaIDIndex = setDefaultMetaID(document, model.getSpecies(i), metaIDIndex);
-		for (int i = 0; i < model.getReactionCount(); i++) 
-			metaIDIndex = setDefaultMetaID(document, model.getReaction(i), metaIDIndex);
-		for (int i = 0; i < model.getRuleCount(); i++) 
-			metaIDIndex = setDefaultMetaID(document, model.getRule(i), metaIDIndex);
-		for (int i = 0; i < model.getEventCount(); i++)
-			metaIDIndex = setDefaultMetaID(document, model.getEvent(i), metaIDIndex);
+		for (int i = 0; i < model.getParameterCount(); i++) {
+			Parameter p = model.getParameter(i);
+			if (p.isSetMetaId() || p.getMetaId().equals(""))
+				metaIDIndex = setDefaultMetaID(document, p, metaIDIndex);
+		}
+		for (int i = 0; i < model.getSpeciesCount(); i++) {
+			Species s = model.getSpecies(i);
+			if (s.isSetMetaId() || s.getMetaId().equals(""))
+				metaIDIndex = setDefaultMetaID(document, s, metaIDIndex);
+		}
+		for (int i = 0; i < model.getReactionCount(); i++) {
+			Reaction r = model.getReaction(i);
+			if (r.isSetMetaId() || r.getMetaId().equals(""))
+				metaIDIndex = setDefaultMetaID(document, r, metaIDIndex);
+		}
+		for (int i = 0; i < model.getRuleCount(); i++) {
+			Rule r = model.getRule(i);
+			if (r.isSetMetaId() || r.getMetaId().equals(""))
+				metaIDIndex = setDefaultMetaID(document, r, metaIDIndex);
+		}
+		for (int i = 0; i < model.getEventCount(); i++) {
+			Event e = model.getEvent(i);
+			if (e.isSetMetaId() || e.getMetaId().equals(""))
+				metaIDIndex = setDefaultMetaID(document, model.getEvent(i), metaIDIndex);
+		}
 		CompModelPlugin compModel = (CompModelPlugin) document.getModel().getExtension(CompConstants.namespaceURI);
 		if (compModel != null && compModel.isSetListOfSubmodels()) {
-			for (int i = 0; i < compModel.getListOfSubmodels().size(); i++)
-				metaIDIndex = setDefaultMetaID(document, compModel.getListOfSubmodels().get(i), metaIDIndex);
+			for (int i = 0; i < compModel.getListOfSubmodels().size(); i++) {
+				Submodel s = compModel.getListOfSubmodels().get(i);
+				if (s.isSetMetaId() || s.getMetaId().equals(""))
+					metaIDIndex = setDefaultMetaID(document, s, metaIDIndex);
+			}
 		}
 	}
-	
+
 	public static int setDefaultMetaID(SBMLDocument document, SBase sbmlObject, int metaIDIndex) {
 		CompSBMLDocumentPlugin compDocument = (CompSBMLDocumentPlugin) document.getExtension(CompConstants.namespaceURI);
-		String metaID = sbmlObject.getMetaId();
-		if (metaID == null || metaID.equals("")) {
-			metaID = "iBioSim" + metaIDIndex;
-			while (getElementByMetaId(document, metaID) != null
-					|| (compDocument != null && getElementByMetaId(compDocument, metaID) != null)) {
-				metaIDIndex++;
-				metaID = "iBioSim" + metaIDIndex;
-			}
-			setMetaId(sbmlObject, metaID);
+		String metaID = "iBioSim" + metaIDIndex;
+		while (getElementByMetaId(document, metaID) != null
+				|| (compDocument != null && getElementByMetaId(compDocument, metaID) != null)) {
 			metaIDIndex++;
+			metaID = "iBioSim" + metaIDIndex;
 		}
+		setMetaId(sbmlObject, metaID);
+		metaIDIndex++;
 		return metaIDIndex;
 	}
 
@@ -2664,7 +2681,6 @@ public class SBMLutilities {
 		}
 		return false;
 	}
-	
 
 	public static boolean isPersistentTransition(SBMLDocument document,Event event) {
 		if (event.isSetSBOTerm()) {
@@ -3488,6 +3504,15 @@ public class SBMLutilities {
 		for (int i = 0; i < document.getModel().getListOfInitialAssignments().size(); i ++) {
 			document.getModel().getListOfInitialAssignments().remove(i);
 		}
+	}
+	
+	public static String getPromoterId(Reaction productionReaction) {
+		for (int i = 0; i < productionReaction.getModifierCount(); i++) {
+			ModifierSpeciesReference modifier = productionReaction.getModifier(i);
+			if (BioModel.isPromoter(modifier))
+				return modifier.getSpecies();
+		}
+		return null;
 	}
 	
 	public static String getVariable(Rule r) {

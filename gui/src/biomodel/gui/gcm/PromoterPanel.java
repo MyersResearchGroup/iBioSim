@@ -25,8 +25,8 @@ import biomodel.gui.util.PropertyField;
 import biomodel.gui.util.PropertyList;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
-
 import main.Gui;
 
 
@@ -447,8 +447,11 @@ public class PromoterPanel extends JPanel {
 			if (!paramsOnly) {
 				// Add SBOL annotation to promoter
 				if (sbolField.getSBOLURIs().size() > 0) {
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(production.getMetaId(), 
-							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+					if (!production.isSetMetaId() || production.getMetaId().equals(""))
+						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), production, 
+								bioModel.getMetaIDIndex());
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(production.getMetaId(), sbolField.getSBOLURIs(),
+							sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(production, sbolAnnot);
 				} else
 					AnnotationUtility.removeSBOLAnnotation(production);

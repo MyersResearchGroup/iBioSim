@@ -427,7 +427,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					if (!error && !modelEditor.isParamsOnly()) {
-
+						SBMLutilities.setMetaId(r, dimID[0].trim());
 						Port port = bioModel.getPortByMetaIdRef(r.getMetaId());
 						if (dimID!=null) {
 							SBMLutilities.setMetaId(r, dimID[0].trim());
@@ -596,6 +596,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				if (!error && !modelEditor.isParamsOnly()) {
 					// Add SBOL annotation to rule
 					if (sbolField.getSBOLURIs().size() > 0) {
+						if (!r.isSetMetaId() || r.getMetaId().equals(""))
+							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), r, 
+									bioModel.getMetaIDIndex());
 						SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolField.getSBOLURIs(), 
 								sbolField.getSBOLStrand());
 						AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);
