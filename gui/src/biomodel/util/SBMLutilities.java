@@ -275,6 +275,7 @@ public class SBMLutilities {
 			dimNSize.put(meshDimensionIds.get(i), meshDimSizeIds.get(i));
 		}
 		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
+		// TODO: need to also check parent dimensions in case of species reference
 		int varDimCount = ABV.getDimensionCount();
 		if(index.trim().equals("")){
 			if(varDimCount==0){

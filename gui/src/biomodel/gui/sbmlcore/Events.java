@@ -505,14 +505,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
+				// TODO: Scott: check that trigger dimensions consistent with event dimensions
 				else if (!eventDelay.getText().trim().equals("") && SBMLutilities.myParseFormula(eventDelay.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Delay formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
+				// TODO: Scott check delay dimensions
 				else if (!eventPriority.getText().trim().equals("") && SBMLutilities.myParseFormula(eventPriority.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Priority formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
+				// TODO: Scott check priority dimensions
 				else if (bioModel.getSBMLDocument().getLevel() < 3 && assign.length == 0) {
 					JOptionPane.showMessageDialog(Gui.frame, "Event must have at least one event assignment.", "Event Assignment Needed",
 							JOptionPane.ERROR_MESSAGE);
@@ -559,6 +562,26 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			if (!error) {
+				String[] EAdimID = new String[]{""};
+				String[] EAdex = new String[]{""};
+				String[] EAdimensionIds = new String[]{""};
+				for (int i = 0; i < assign.length; i++) {
+					String left = assign[i].split(":=")[0].trim();
+					String rightSide = assign[i].split(":=")[1].split(";")[1].trim();
+					EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
+					if(EAdimID!=null){
+						EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
+						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
+						// TODO: add the dimensionIds and dimIDs to the new parameters
+						EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
+						error = (EAdex==null);
+					}
+					else{
+						error = true;
+					}
+				}
+			}
+			if (!error) {
 				//edit event
 				org.sbml.jsbml.Event e = (bioModel.getSBMLDocument().getModel().getListOfEvents()).get(Eindex);
 				if (option.equals("OK")) {
@@ -579,23 +602,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						EventAssignment ea = e.createEventAssignment();
 						String var = assign[i].split(" ")[0];
 						ea.setVariable(var);
-						String left = assign[i].split(":=")[0].trim();
-						String rightSide = assign[i].split(":=")[1].split(";")[1].trim();
 						// TODO: Scott - change for Plugin writing
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
-						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
-						if(EAdimID!=null){
-							EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-							// TODO: add the dimensionIds and dimIDs to the new parameters
-							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
-							error = (EAdex==null);
-						}
-						else{
-							error = true;
-						}
-						// TODO: THIS BREAK IS A PROBLEM CREATES PARTIAL EVENT
-						if(error)break;
 						sBasePlugin.unsetListOfDimensions();
 						for(int i1 = 0; EAdimID!=null && i1<EAdimID.length-1; i1++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
@@ -957,22 +965,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							EventAssignment ea = e.createEventAssignment();
 							String var = assign[i].split(" ")[0];
 							ea.setVariable(var);
-							String left = assign[i].split(":=")[0].trim();
-							String rightSide = assign[i].split(":=")[1].split(";")[1].trim();
-							// TODO: Scott - change for Plugin writing
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
-							EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
-							if(EAdimID!=null){
-								EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-							}
-							else{
-								error = true;
-							}
-							if(!error){
-								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
-								error = (EAdex==null);
-							}
 							if(!error){
 								sBasePlugin.unsetListOfDimensions();
 								for(int i1 = 0; EAdimID!=null && i1<EAdimID.length-1; i1++){
