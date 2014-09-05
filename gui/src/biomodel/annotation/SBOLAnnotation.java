@@ -3,7 +3,11 @@ package biomodel.annotation;
 import java.net.URI;
 import java.util.List;
 
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBase;
+
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 
 public class SBOLAnnotation {
 	

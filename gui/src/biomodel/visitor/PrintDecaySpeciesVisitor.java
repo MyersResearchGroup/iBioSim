@@ -57,7 +57,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		loadValues(specie);
 		if (!complexAbstraction || (!specie.isAbstractable() && !specie.isSequesterAbstractable())) {	
 			String compartment = checkCompartments(specie.getId());
-			r = Utility.Reaction("Degradation_"+specie.getId());
+			r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 			r.setCompartment(compartment);
 			r.setReversible(false);
 			r.setFast(false);
@@ -90,7 +90,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		
 		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
-		r = Utility.Reaction("Degradation_"+specie.getId());
+		r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 		r.setCompartment(compartment);
 		r.setReversible(false);
 		r.setFast(false);
@@ -121,7 +121,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
-		r = Utility.Reaction("Degradation_"+specie.getId());
+		r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 		r.setCompartment(compartment);
 		r.setReversible(false);
 		r.setFast(false);
@@ -182,7 +182,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		
 		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
-		r = Utility.Reaction("Degradation_"+specie.getId());
+		r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 		r.setCompartment(compartment);
 		r.setReversible(false);
 		r.setFast(false);
