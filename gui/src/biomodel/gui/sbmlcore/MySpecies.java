@@ -927,7 +927,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (diffusion!=null) {
 			kecdiff.setText(String.valueOf(diffusion.getKineticLaw().getLocalParameter("kecdiff").getValue()));
 		}
-		Reaction degradation = bioModel.getSBMLDocument().getModel().getReaction("Degradation_" + selectedSpecies.getId());
+		Reaction degradation = bioModel.getDegradationReaction(selectedSpecies.getId());
 		if (degradation!=null) {
 			kecd.setText(String.valueOf(degradation.getKineticLaw().getLocalParameter("kecd").getValue()));			
 		}

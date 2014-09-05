@@ -19,6 +19,7 @@ import java.util.PriorityQueue;
 //import java.util.regex.Pattern;
 
 
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -70,6 +71,7 @@ import org.sbml.jsbml.SBMLReader;
 import main.Gui;
 import odk.lang.FastMath;
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 
 public abstract class HierarchicalSimulator {
@@ -4016,9 +4018,9 @@ public abstract class HierarchicalSimulator {
 
 			String reactionID = reaction.getId();
 
-			String species = reactionID.replace("Degradation_", "");
+			String species = reactionID.replace(GlobalConstants.DEGRADATION + "_", "");
 
-			if(reactionID.contains("Degradation") && replacements.containsKey(species))
+			if(reactionID.contains(GlobalConstants.DEGRADATION) && replacements.containsKey(species))
 				if(modelstate.isHierarchical.contains(species) && !modelstate.ID.equals("topmodel"))
 					continue;
 

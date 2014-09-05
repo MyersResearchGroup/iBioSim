@@ -1971,7 +1971,7 @@ public abstract class Simulator {
 							newReaction.getKineticLaw().getListOfLocalParameters().remove("j");
 						
 						//this isn't a reversible reaction; only take the left side
-						if (newReaction.getId().contains("Degradation") == false) {
+						if (newReaction.getId().contains(GlobalConstants.DEGRADATION) == false) {
 							newReaction.getKineticLaw().setMath(newReaction.getKineticLaw().getMath().getLeftChild());
 						}						
 						
@@ -3005,7 +3005,7 @@ public abstract class Simulator {
 				
 				String reactionID = reactionAndFormula.getKey();
 				
-				if (reactionID.contains("Degradation_" + underlyingSpeciesID)) {
+				if (reactionID.contains(GlobalConstants.DEGRADATION + "_" + underlyingSpeciesID)) {
 					
 					degradationNode = reactionAndFormula.getValue().clone();					
 					degradationNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));
@@ -3016,7 +3016,7 @@ public abstract class Simulator {
 			
 			if (isDegradable) {
 			
-				String newDegReactionID = "ROW" + row + "_COL" + col + "_Degradation_" + underlyingSpeciesID;
+				String newDegReactionID = "ROW" + row + "_COL" + col + "_" + GlobalConstants.DEGRADATION + "_" + underlyingSpeciesID;
 				
 				if (row < 0)
 					newDegReactionID = newDegReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
@@ -4167,7 +4167,7 @@ public abstract class Simulator {
 							newReaction.getKineticLaw().getListOfLocalParameters().remove("j");
 						
 						//this isn't a reversible reaction; only take the left side
-						if (newReaction.getId().contains("Degradation") == false) {
+						if (newReaction.getId().contains(GlobalConstants.DEGRADATION) == false) {
 							newReaction.getKineticLaw().setMath(newReaction.getKineticLaw().getMath().getLeftChild());
 						}						
 						

@@ -41,7 +41,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
-		r = Utility.Reaction("Complex_formation_" + specie.getId());
+		r = Utility.Reaction(GlobalConstants.COMPLEXATION + "_" + specie.getId());
 		r.setCompartment(compartment);
 		r.setReversible(true);
 		r.setFast(false);

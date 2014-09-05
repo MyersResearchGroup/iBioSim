@@ -861,7 +861,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.KDECAY_STRING)) {
-						Reaction reaction = biomodel.getSBMLDocument().getModel().getReaction("Degradation_"+id);
+						Reaction reaction = biomodel.getDegradationReaction(id);
 						if (reaction != null) {
 							LocalParameter kd = reaction.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING);
 							if (kd == null) {
@@ -1368,7 +1368,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					} else if (paramId.equals(GlobalConstants.COOPERATIVITY_STRING)&&type==null) {
 						Reaction complex = BioModel.getComplexReaction(id, d.getModel());
 						if (complex!=null && complex.getKineticLaw()!=null) {
-							BioModel.updateComplexCooperativity(d.getModel(), factor, id, value);
+							BioModel.updateComplexCooperativity(factor, complex, value, d.getModel());
 						}
 					} else if (paramId.equals(GlobalConstants.MEMDIFF_STRING)) {
 						Reaction diffusion = BioModel.getDiffusionReaction(id, d.getModel());

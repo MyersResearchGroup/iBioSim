@@ -283,7 +283,7 @@ public class GCMParser {
 			component = species.getId().substring(0,species.getId().lastIndexOf("__")+2);
 			speciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
 		}
-		Reaction degradation = sbml.getModel().getReaction(component+"Degradation_"+speciesId);
+		Reaction degradation = BioModel.getDegradationReaction(species.getId(), sbml.getModel());
 		Reaction diffusion = sbml.getModel().getReaction(component+"MembraneDiffusion_"+speciesId);
 		Reaction constitutive = sbml.getModel().getReaction(component+"Constitutive_"+speciesId);
 		Reaction complex = sbml.getModel().getReaction(component+"Complex_"+speciesId);

@@ -68,6 +68,8 @@ public class GlobalConstants {
 	public static final String INFLUENCE = "Influence";
 	public static final String COMPONENT_CONNECTION = "Component Connection";
 	public static final String PRODUCTION = "Production";
+	public static final String DEGRADATION = "Degradation";
+	public static final String COMPLEXATION = "Complex";
 	public static final String REACTION = "Reaction";
 	public static final String MODIFIER = "Modifier";
 	public static final String REACTION_EDGE = "Reaction_Edge";
