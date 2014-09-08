@@ -704,7 +704,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
 					fileStemLabel, preAbs, loopAbs, postAbs,
 					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
+					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, abstraction, nary);
 			if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
 				markov.setEnabled(true);
 				lhpn.setEnabled(true);
@@ -737,7 +737,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
 					fileStemLabel, preAbs, loopAbs, postAbs,
 					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
+					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, abstraction, nary);
 			if (modelFile.contains(".lpn")) {
 				markov.setEnabled(true);
 				lhpn.setEnabled(true);
@@ -769,7 +769,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					simulators, simulatorsLabel, explanation, description, rapid1, rapid2, qssa, maxCon, rapidLabel1,
 					rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
 					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, modelEditor);
+					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, modelEditor, abstraction, nary);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
@@ -794,7 +794,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == ODE) {
 			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
 					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs);
+					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
 			append.setEnabled(true);
 			concentrations.setEnabled(true);
 			genRuns.setEnabled(true);
@@ -814,7 +814,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == monteCarlo) {
 			Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
 					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs, nary);
+					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
 			if (runFiles) {
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
@@ -848,7 +848,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == markov) {
 			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
 					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, modelEditor, postAbs, modelFile);
+					explanation, description, fileStem, fileStemLabel, modelEditor, postAbs, modelFile, abstraction, nary);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -888,7 +888,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == sbml) {
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
 					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs);
+					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -909,7 +909,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == dot) {
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
 					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs);
+					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -930,7 +930,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == xhtml) {
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
 					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs);
+					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -951,7 +951,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == lhpn) {
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
 					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs);
+					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -3214,7 +3214,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
 							fileStemLabel, preAbs, loopAbs, postAbs,
 							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-							editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
+							editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, abstraction, nary);
 					if (modelFile.contains(".lpn")) {
 						markov.setEnabled(true);
 						lhpn.setEnabled(true);
@@ -3228,7 +3228,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
 							fileStemLabel, preAbs, loopAbs, postAbs,
 							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-							editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
+							editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, abstraction, nary);
 					if (modelFile.contains(".lpn")) {
 						markov.setEnabled(true);
 						lhpn.setEnabled(true);
@@ -3241,7 +3241,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							simulators, simulatorsLabel, explanation, description, rapid1, rapid2, qssa, maxCon,
 							rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs,
 							postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs,
-							addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, modelEditor);
+							addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, modelEditor, 
+							abstraction, nary);
 				}
 				if (load.containsKey("ode.simulation.absolute.error")) {
 					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
@@ -3339,7 +3340,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						}
 						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
 								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
-								simulatorsLabel, explanation, description, fileStem, fileStemLabel, postAbs);
+								simulatorsLabel, explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
 						if (load.containsKey("selected.simulator")) {
 							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
@@ -3357,7 +3358,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
 								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
 								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs, nary);
+								postAbs, abstraction, nary);
 						if (load.containsKey("selected.simulator")) {
 							String simId = load.getProperty("selected.simulator");
 							if (simId.equals("mpde")) {
@@ -3439,7 +3440,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
 								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
 								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								modelEditor, postAbs, modelFile);
+								modelEditor, postAbs, modelFile, abstraction, nary);
 						if (load.containsKey("selected.simulator")) {
 							selectedMarkovSim = load.getProperty("selected.simulator");
 							simulators.setSelectedItem(selectedMarkovSim);
@@ -3458,7 +3459,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
 								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
 								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs);
+								postAbs, abstraction, nary);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Network")) {
@@ -3466,7 +3467,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
 								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
 								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs);
+								postAbs, abstraction, nary);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Browser")) {
@@ -3474,7 +3475,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
 								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
 								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs);
+								postAbs, abstraction, nary);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("LPN")) {
@@ -3482,7 +3483,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
 								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
 								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs);
+								postAbs, abstraction, nary);
 						absErr.setEnabled(false);
 					}
 				}
@@ -3717,8 +3718,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			simulators.addItem("steady-state-markov-chain-analysis");
 			simulators.addItem("transient-markov-chain-analysis");
 			simulators.addItem("reachability-analysis");
-			simulators.addItem("atacs");
-			simulators.addItem("ctmc-transient");
+			if (Gui.isReb2sacFound()) {
+				simulators.addItem("atacs");
+				simulators.addItem("ctmc-transient");
+			}
 			if (selectedMarkovSim != null) {
 				simulators.setSelectedItem(selectedMarkovSim);
 			}

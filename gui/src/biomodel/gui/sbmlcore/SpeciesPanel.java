@@ -555,38 +555,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		fields.put(GlobalConstants.MEMDIFF_STRING, field);
 		grid.add(field);
 		
-		//extracellular diffusion field
-		/*
-		origString = "default";
-		if (paramsOnly) {
-			
-			String defaultValue = refGCM.getParameter(GlobalConstants.KECDIFF_STRING);
-			
-			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KECDIFF_STRING)) {
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(
-						GlobalConstants.KECDIFF_STRING);
-				origString = "custom";
-			}
-			else { 
-				defaultValue = gcm.getParameter(GlobalConstants.KECDIFF_STRING);
-			}
-			
-			field = new PropertyField(GlobalConstants.KECDIFF_STRING, gcm
-					.getParameter(GlobalConstants.KECDIFF_STRING), origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString, false);
-		}
-		else {
-			
-			field = new PropertyField(GlobalConstants.KECDIFF_STRING, gcm
-					.getParameter(GlobalConstants.KECDIFF_STRING), origString, gcm
-					.getParameter(GlobalConstants.KECDIFF_STRING), Utility.NUMstring, paramsOnly,
-					origString, false);
-		}
-		
-		fields.put(GlobalConstants.KECDIFF_STRING, field);
-		grid.add(field);
-		*/
-		
 		// Parse out GCM and SBOL annotations and add to respective fields
 		if (!paramsOnly) {
 			// Field for annotating species with SBOL DNA components
@@ -763,24 +731,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						if (error) return false;
 						species.setInitialAmount(Double.parseDouble("0.0"));
 					}
-					// Checks whether SBOL annotation on model needs to be deleted later when annotating species with SBOL
-//					if (sbolField.getSBOLURIs().size() > 0 && 
-//							bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag()) {
-//						Object[] options = { "OK", "Cancel" };
-//						int choice = JOptionPane.showOptionDialog(null, 
-//								"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
-//								" the latter was previously generated from the former.  Remove SBOL associated to model?", 
-//								"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-//						if (choice == JOptionPane.OK_OPTION)
-//							removeModelSBOLAnnotationFlag = true;
-//						else {
-//							if (species.isSetInitialAmount())
-//								species.unsetInitialAmount();
-//							else if (species.isSetInitialConcentration())
-//								species.unsetInitialConcentration();
-//							return false;
-//						}
-//					}
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
 					sBasePlugin.unsetListOfDimensions();
 					for(int i = 0; i<dimID.length-1; i++){
@@ -844,16 +794,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					        Index indie = sBasePlugin.getIndex(i);
 					        if(indie.isSetReferencedAttribute() && indie.getReferencedAttribute().equals("compartment"))
 					           sBasePlugin.removeIndex(indie);
-					       }
-//						for(Index indie : sBasePlugin.getListOfIndices()) {
-//							if(indie.isSetReferencedAttribute() && indie.getReferencedAttribute().equals("compartment"))
-//								sBasePlugin.removeIndex(indie);
-//						}
-//						for(int i = 0; i<sBasePlugin.getIndexCount(); i++){
-//							Index indie = new Index();
-//							indie.setReferencedAttribute("compartment");
-//							sBasePlugin.removeIndex(indie);
-//						}
+						}
 						for(int i = 0; i<dex.length-1; i++){
 							Index indexRule = new Index();
 						    indexRule.setArrayDimension(i);

@@ -364,7 +364,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							Utility.sort(units);
 							unitDefs.setListData(units);
 							unitDefs.setSelectedIndex(index);
-							updateUnitId(val, unitID.getText().trim());
+							updateUnitId(bioModel.getSBMLDocument().getModel(), val, unitID.getText().trim());
 						}
 						else {
 							u = uCopy;
@@ -1025,43 +1025,40 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Update unit Id
 	 */
-	private void updateUnitId(String origId, String newId) {
+	public static void updateUnitId(Model model, String origId, String newId) {
 		
 		//System.err.println("update unit id");
 		
 		if (origId.equals(newId))
 			return;
-		Model model = bioModel.getSBMLDocument().getModel();
-		if (bioModel.getSBMLDocument().getLevel() > 2) {
-			if (model.isSetSubstanceUnits()) {
-				if (model.getSubstanceUnits().equals(origId)) {
-					model.setSubstanceUnits(newId);
-				}
+		if (model.isSetSubstanceUnits()) {
+			if (model.getSubstanceUnits().equals(origId)) {
+				model.setSubstanceUnits(newId);
 			}
-			if (model.isSetTimeUnits()) {
-				if (model.getTimeUnits().equals(origId)) {
-					model.setTimeUnits(newId);
-				}
+		}
+		if (model.isSetTimeUnits()) {
+			if (model.getTimeUnits().equals(origId)) {
+				model.setTimeUnits(newId);
 			}
-			if (model.isSetVolumeUnits()) {
-				if (model.getVolumeUnits().equals(origId)) {
-					model.setVolumeUnits(newId);
-				}
+		}
+		if (model.isSetVolumeUnits()) {
+			if (model.getVolumeUnits().equals(origId)) {
+				model.setVolumeUnits(newId);
 			}
-			if (model.isSetAreaUnits()) {
-				if (model.getAreaUnits().equals(origId)) {
-					model.setAreaUnits(newId);
-				}
+		}
+		if (model.isSetAreaUnits()) {
+			if (model.getAreaUnits().equals(origId)) {
+				model.setAreaUnits(newId);
 			}
-			if (model.isSetLengthUnits()) {
-				if (model.getLengthUnits().equals(origId)) {
-					model.setLengthUnits(newId);
-				}
+		}
+		if (model.isSetLengthUnits()) {
+			if (model.getLengthUnits().equals(origId)) {
+				model.setLengthUnits(newId);
 			}
-			if (model.isSetExtentUnits()) {
-				if (model.getExtentUnits().equals(origId)) {
-					model.setExtentUnits(newId);
-				}
+		}
+		if (model.isSetExtentUnits()) {
+			if (model.getExtentUnits().equals(origId)) {
+				model.setExtentUnits(newId);
 			}
 		}
 		if (model.getCompartmentCount() > 0) {
@@ -1072,10 +1069,6 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					compartment.setUnits(newId);
 				}
 				comps[i] = compartment.getId();
-//				CompartmentType not supported in Level 3
-//				if (compartment.isSetCompartmentType()) {
-//					comps[i] += " " + compartment.getCompartmentType();
-//				}
 				if (compartment.isSetSize()) {
 					comps[i] += " " + compartment.getSize();
 				}
@@ -1092,10 +1085,6 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				if (species.getUnits().equals(origId)) {
 					species.setUnits(newId);
 				}
-//				SpeciesType not supported in Level 3
-//				if (species.isSetSpeciesType()) {
-//					specs[i] = species.getId() + " " + species.getSpeciesType() + " " + species.getCompartment();
-//				}
 				else {
 					specs[i] = species.getId() + " " + species.getCompartment();
 				}

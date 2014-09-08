@@ -1537,6 +1537,14 @@ public class BioModel {
 			product.setStoichiometry(1);
 			product.setConstant(true);		
 			r.createKineticLaw();
+		} else {
+			KineticLaw k = r.getKineticLaw();
+			if (k.getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING)!=null) {
+				k.getListOfLocalParameters().remove(GlobalConstants.FORWARD_KCOMPLEX_STRING);
+			}
+			if (k.getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING)!=null) {
+				k.getListOfLocalParameters().remove(GlobalConstants.REVERSE_KCOMPLEX_STRING);
+			}
 		}
 		updateComplexParameters(r,KcStr);
 		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(r)));
@@ -2431,7 +2439,7 @@ public class BioModel {
 		//gcm2sbml.convertGCM2SBML(filename);
 		//updateCompartmentReplacements();
 		// TODO: REMOVE FOR NOW UNTIL JSBML FIXED
-		//updatePorts();
+		updatePorts();
 		setGridSize(grid.getNumRows(),grid.getNumCols());
 		setLayoutSize();
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
@@ -6330,7 +6338,11 @@ public class BioModel {
 			for (j = 0; j < subBioModel.getSBMLCompModel().getListOfPorts().size(); j++) {
 				Port subPort = subBioModel.getSBMLCompModel().getListOfPorts().get(j);
 				if (!isPortRemoved(submodel,subPort.getId())) {
-					Port port = sbmlCompModel.createPort();
+					Port port = sbmlCompModel.getPort(subPort.getId()+"__"+submodel.getId());
+					if (port!=null) {
+						sbmlCompModel.removePort(port);
+					}
+					port = sbmlCompModel.createPort();
 					port.setId(subPort.getId()+"__"+submodel.getId());
 					port.setIdRef(submodel.getId());
 					if (subPort.isSetSBOTerm()) {
@@ -6471,7 +6483,7 @@ public class BioModel {
 		SBMLutilities.fillBlankMetaIDs(sbml);
 		loadGridSize();
 		// TODO: HACK REMVOE FOR NOW TILL JSBML FIXED
-		//updatePorts();
+		updatePorts();
 		removeStaleLayout();
 		
 		for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
@@ -7305,8 +7317,9 @@ public class BioModel {
 				}
 			}
 		}
+		// TODO: Species references?
 
-		// TODO: no ___ trick, ok?
+		// TODO: no ___ trick, ok? Replacements?
 		for (int i = 0; i < subModel.getInitialAssignmentCount(); i++) {
 			InitialAssignment init = subModel.getListOfInitialAssignments().get(i).clone();
 			if (init.isSetMetaId()) {
@@ -7315,7 +7328,7 @@ public class BioModel {
 			model.addInitialAssignment(init);
 		}
 
-		// TODO: no ___ trick, ok?
+		// TODO: no ___ trick, ok? Replacements?
 		for (int i = 0; i < subModel.getRuleCount(); i++) {
 			org.sbml.jsbml.Rule r = subModel.getRule(i).clone();
 			if (r.isSetMetaId()) {
@@ -7324,7 +7337,7 @@ public class BioModel {
 			model.addRule(r);
 		}
 		
-		// TODO: no ___ trick, ok?
+		// TODO: no ___ trick, ok? Replacements?
 		for (int i = 0; i < subModel.getConstraintCount(); i++) {
 			Constraint constraint = subModel.getListOfConstraints().get(i).clone();
 			String newName = subModelId + "__" + constraint.getMetaId();
@@ -7348,7 +7361,7 @@ public class BioModel {
 			model.addConstraint(constraint);
 		}
 		
-		// TODO: no ___ trick, ok?
+		// TODO: no ___ trick, ok?  Replacements?
 		for (int i = 0; i < subModel.getEventCount(); i++) {
 			org.sbml.jsbml.Event event = subModel.getListOfEvents().get(i).clone();
 			String newName = subModelId + "__" + event.getId();
@@ -7360,7 +7373,7 @@ public class BioModel {
 			model.addEvent(event);
 		}
 		
-		// TODO: Replacements?  Update unit ids?
+		// TODO: Replacements?  
 		for (int i = 0; i < subModel.getUnitDefinitionCount(); i++) {
 			UnitDefinition u = subModel.getUnitDefinition(i).clone();
 			String newName = subModelId + "__" + u.getId();
@@ -7373,6 +7386,7 @@ public class BioModel {
 				}
 			}
 			if (add) {
+				String oldName = u.getId();
 				u.setId(newName);
 				if (u.isSetMetaId()) {
 					SBMLutilities.setMetaId(u, subModelId + "__" + u.getMetaId());
@@ -7380,9 +7394,10 @@ public class BioModel {
 				if (model.getUnitDefinition(u.getId())==null) {
 					model.addUnitDefinition(u);
 				} 
+				biomodel.gui.sbmlcore.Units.updateUnitId(model, oldName, newName);
 			}
 		}
-		// TODO: functions not flattened right
+		// TODO: functions not flattened right, no replacements
 		for (int i = 0; i < subModel.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition f = subModel.getFunctionDefinition(i).clone();
 			boolean add = true;

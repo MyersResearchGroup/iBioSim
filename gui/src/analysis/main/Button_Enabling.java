@@ -4,6 +4,7 @@ import java.util.*;
 
 import javax.swing.*;
 
+import main.Gui;
 import biomodel.gui.schematic.ModelEditor;
 
 /**
@@ -29,12 +30,15 @@ public class Button_Enabling {
 			JLabel qssaLabel, JLabel maxConLabel, JLabel diffStoichAmpLabel, JTextField fileStem, JLabel fileStemLabel, JList preAbs,
 			JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs,
 			JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs,
-			JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn) {
+			JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn,
+			JRadioButton abstraction, JRadioButton nary) {
 		ODE.setEnabled(true);
 		monteCarlo.setEnabled(true);
 		fba.setEnabled(true);
 		markov.setEnabled(false);
 		lhpn.setEnabled(false);
+		abstraction.setEnabled(true);
+		nary.setEnabled(true);
 		if (none.isSelected()) {
 			preAbs.setEnabled(false);
 			loopAbs.setEnabled(false);
@@ -175,13 +179,18 @@ public class Button_Enabling {
 			explanation.setEnabled(true);
 			description.setEnabled(true);
 			simulators.removeAllItems();
-			simulators.addItem("euler");
-			simulators.addItem("gear1");
-			simulators.addItem("gear2");
-			simulators.addItem("rk4imp");
-			simulators.addItem("rk8pd");
-			simulators.addItem("rkf45");
-			simulators.setSelectedItem("rkf45");
+			simulators.addItem("Runge-Kutta-Fehlberg");
+			simulators.addItem("Hierarchical-RK");
+			simulators.setSelectedItem("Runge-Kutta-Fehlberg");
+			if (Gui.isReb2sacFound()) {
+				simulators.addItem("euler");
+				simulators.addItem("gear1");
+				simulators.addItem("gear2");
+				simulators.addItem("rk4imp");
+				simulators.addItem("rk8pd");
+				simulators.addItem("rkf45");
+				simulators.setSelectedItem("rkf45");
+			}
 		}
 	}
 
@@ -200,7 +209,8 @@ public class Button_Enabling {
 			JLabel maxConLabel, JTextField fileStem, JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs,
 			JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs, JButton rmPreAbs,
 			JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs, JButton addPostAbs,
-			JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn, ModelEditor gcmEditor) {
+			JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn, ModelEditor gcmEditor,
+			JRadioButton abstraction, JRadioButton nary) {
 		ODE.setEnabled(false);
 		fba.setEnabled(false);
 		monteCarlo.setEnabled(true);
@@ -223,6 +233,8 @@ public class Button_Enabling {
 		addPostAbs.setEnabled(false);
 		rmPostAbs.setEnabled(false);
 		editPostAbs.setEnabled(false);
+		abstraction.setEnabled(true);
+		nary.setEnabled(true);
 		/*
 		 * for (ArrayList<Component> comp : speciesInt) {
 		 * comp.get(0).setEnabled(true); comp.get(1).setEnabled(true); if
@@ -268,16 +280,20 @@ public class Button_Enabling {
 			explanation.setEnabled(true);
 			description.setEnabled(true);
 			simulators.removeAllItems();
-			simulators.addItem("gillespie");
-			simulators.addItem("SSA-Hierarchical");
-			simulators.addItem("Hybrid-Hierarchical");
 			simulators.addItem("SSA-Direct");
 			simulators.addItem("SSA-CR");
-			simulators.addItem("iSSA");
-			simulators.addItem("interactive");
-			simulators.addItem("emc-sim");
-			simulators.addItem("bunker");
-			simulators.addItem("nmc");
+			simulators.addItem("SSA-Hierarchical");
+			simulators.addItem("Hybrid-Hierarchical");
+			simulators.setSelectedItem("SSA-Direct");
+			if (Gui.isReb2sacFound()) {
+				simulators.addItem("gillespie");
+				simulators.addItem("iSSA");
+				simulators.addItem("interactive");
+				simulators.addItem("emc-sim");
+				simulators.addItem("bunker");
+				simulators.addItem("nmc");
+				simulators.setSelectedItem("gillespie");
+			}
 		}
 		ArrayList<String> getLists = new ArrayList<String>();
 		getLists.add("complex-formation-and-sequestering-abstraction");
@@ -325,7 +341,7 @@ public class Button_Enabling {
 			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
-			JLabel fileStemLabel, JList postAbs) {
+			JLabel fileStemLabel, JList postAbs, JRadioButton abstraction, JRadioButton nary) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -346,16 +362,21 @@ public class Button_Enabling {
 		simulatorsLabel.setEnabled(true);
 		explanation.setEnabled(true);
 		description.setEnabled(true);
+		abstraction.setEnabled(true);
+		nary.setEnabled(true);
 		simulators.removeAllItems();
-		simulators.addItem("euler");
-		simulators.addItem("gear1");
-		simulators.addItem("gear2");
-		simulators.addItem("rk4imp");
-		simulators.addItem("rk8pd");
-		simulators.addItem("rkf45");
 		simulators.addItem("Runge-Kutta-Fehlberg");
 		simulators.addItem("Hierarchical-RK");
-		simulators.setSelectedItem("rkf45");
+		simulators.setSelectedItem("Runge-Kutta-Fehlberg");
+		if (Gui.isReb2sacFound()) {
+			simulators.addItem("euler");
+			simulators.addItem("gear1");
+			simulators.addItem("gear2");
+			simulators.addItem("rk4imp");
+			simulators.addItem("rk8pd");
+			simulators.addItem("rkf45");
+			simulators.setSelectedItem("rkf45");
+		}	
 		ArrayList<String> getLists = new ArrayList<String>();
 		getLists.add("kinetic-law-constants-simplifier");
 		Object[] objects = getLists.toArray();
@@ -372,7 +393,7 @@ public class Button_Enabling {
 			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
-			JLabel fileStemLabel, JList postAbs, JRadioButton nary) {
+			JLabel fileStemLabel, JList postAbs, JRadioButton abstraction, JRadioButton nary) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -392,17 +413,23 @@ public class Button_Enabling {
 		simulatorsLabel.setEnabled(true);
 		explanation.setEnabled(true);
 		description.setEnabled(true);
+		abstraction.setEnabled(true);
+		nary.setEnabled(true);
 		simulators.removeAllItems();
-		simulators.addItem("gillespie");
-		simulators.addItem("SSA-Hierarchical");
-		simulators.addItem("Hybrid-Hierarchical");
 		simulators.addItem("SSA-Direct");
 		simulators.addItem("SSA-CR");
-		simulators.addItem("iSSA");
-		simulators.addItem("interactive");
-		simulators.addItem("emc-sim");
-		simulators.addItem("bunker");
-		simulators.addItem("nmc");
+		simulators.addItem("SSA-Hierarchical");
+		simulators.addItem("Hybrid-Hierarchical");
+		simulators.setSelectedItem("SSA-Direct");
+		if (Gui.isReb2sacFound()) {
+			simulators.addItem("gillespie");
+			simulators.addItem("iSSA");
+			simulators.addItem("interactive");
+			simulators.addItem("emc-sim");
+			simulators.addItem("bunker");
+			simulators.addItem("nmc");
+			simulators.setSelectedItem("gillespie");
+		}
 		absErr.setEnabled(false);
 		if (!nary.isSelected()) {
 			ArrayList<String> getLists = new ArrayList<String>();
@@ -423,7 +450,8 @@ public class Button_Enabling {
 			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
-			JLabel fileStemLabel, ModelEditor gcmEditor, JList postAbs, String modelFile) {
+			JLabel fileStemLabel, ModelEditor gcmEditor, JList postAbs, String modelFile, JRadioButton abstraction,
+			JRadioButton nary) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -445,13 +473,17 @@ public class Button_Enabling {
 		explanation.setEnabled(true);
 		description.setEnabled(true);
 		simulators.removeAllItems();
+		abstraction.setEnabled(true);
+		nary.setEnabled(true);
 		if (gcmEditor != null || modelFile.contains(".lpn")) {
 			simulators.addItem("steady-state-markov-chain-analysis");
 			simulators.addItem("transient-markov-chain-analysis");
 			simulators.addItem("reachability-analysis");
 		}
-		simulators.addItem("atacs");
-		simulators.addItem("ctmc-transient");
+		if (Gui.isReb2sacFound()) {
+			simulators.addItem("atacs");
+			simulators.addItem("ctmc-transient");
+		}
 		ArrayList<String> getLists = new ArrayList<String>();
 		// getLists.add("kinetic-law-constants-simplifier");
 		Object[] objects = getLists.toArray();
@@ -466,7 +498,7 @@ public class Button_Enabling {
 			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
-			JLabel fileStemLabel, JList postAbs) {
+			JLabel fileStemLabel, JList postAbs, JRadioButton abstraction, JRadioButton nary) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -487,6 +519,8 @@ public class Button_Enabling {
 		simulatorsLabel.setEnabled(false);
 		explanation.setEnabled(false);
 		description.setEnabled(false);
+		abstraction.setEnabled(true);
+		nary.setEnabled(true);
 		fileStem.setText("");
 		ArrayList<String> getLists = new ArrayList<String>();
 		// getLists.add("kinetic-law-constants-simplifier");
