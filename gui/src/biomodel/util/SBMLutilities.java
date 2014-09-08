@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -4123,8 +4124,17 @@ public class SBMLutilities {
 		}
 	}
 	
+	/*
+	public static LocalParameter getLocalParameter(KineticLaw k,String id) {
+		for (int i = 0; i < k.getLocalParameterCount(); i++) {
+			if (k.getLocalParameter(i).getId().equals(id)) {
+				return k.getLocalParameter(i);
+			}
+		}
+		return null;
+	}
+	*/
 	
-	//TODO Scott make adaptations for arrayplugin
 	// on-screen schematic display
 	public static String getArrayId(SBMLDocument document,String id) {
 		String arrayId = id;
@@ -4271,9 +4281,22 @@ public class SBMLutilities {
 		}
 		if (document.getLevel() < Gui.SBML_LEVEL || document.getVersion() < Gui.SBML_VERSION) {
 			if (!Gui.libsbmlFound) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable convert model to Level "+Gui.SBML_LEVEL+" Version " + Gui.SBML_VERSION,
-						"Error Opening File", JOptionPane.ERROR_MESSAGE);
-				return null;
+				document.setLevelAndVersion(Gui.SBML_LEVEL, Gui.SBML_VERSION, false);
+				SBMLWriter Xwriter = new SBMLWriter();
+				try {
+					Xwriter.writeSBMLToFile(document, filename);
+					return document;
+				}
+				catch (FileNotFoundException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Unable convert model to Level "+Gui.SBML_LEVEL+" Version " + Gui.SBML_VERSION,
+							"Error Opening File", JOptionPane.ERROR_MESSAGE);
+					return null;
+				}
+				catch (XMLStreamException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Unable convert model to Level "+Gui.SBML_LEVEL+" Version " + Gui.SBML_VERSION,
+							"Error Opening File", JOptionPane.ERROR_MESSAGE);
+					return null;
+				} 
 			} 
 			long numErrors = 0;
 			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
@@ -4347,6 +4370,14 @@ public class SBMLutilities {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+		}
+		// TODO: HACK TO CREATE LOCAL PARAMETER MAP DUE TO JSBML BUG
+		for (int i = 0; i < document.getModel().getReactionCount(); i++) {
+			Reaction r = document.getModel().getReaction(i);
+			KineticLaw k = r.getKineticLaw();
+			for (int j = 0; j < k.getLocalParameterCount(); j++) {
+				k.getLocalParameter(j).setId(k.getLocalParameter(j).getId());
 			}
 		}
 		return document;

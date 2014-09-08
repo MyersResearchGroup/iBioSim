@@ -7,6 +7,8 @@ import lpn.parser.Translator;
 import graph.Graph;
 //import lpn.parser.properties.BuildProperty;
 
+
+
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -145,6 +147,8 @@ import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
 
+
+
 import sbol.browser.SBOLBrowser;
 import sbol.util.SBOLUtility;
 
@@ -239,6 +243,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JSplitPane mainSplit;
 	
 	public static Boolean libsbmlFound = true;
+	
+	public static Boolean reb2sacFound = true;
 
 	public Log log; // the log
 
@@ -7319,9 +7325,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (atacs) {
 					popup.add(createSynthesis);
 				}
-				if (libsbmlFound) {
-					popup.add(createAnalysis);
-				}
+				popup.add(createAnalysis);
 				popup.add(createVerification);
 				if (lema) {
 					popup.add(createLearn);
@@ -8848,72 +8852,46 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 		}
-		if (!lemaFlag && !atacsFlag) {
-			/*
-			String varname;
-			if (System.getProperty("mrj.version") != null)
-				varname = "DYLD_LIBRARY_PATH"; // We're on a Mac.
-			else
-				varname = "LD_LIBRARY_PATH"; // We're not on a Mac.
-				*/
-			try {
-				System.loadLibrary("sbmlj");
-				// For extra safety, check that the jar file is in the
-				// classpath.
-				Class.forName("org.sbml.libsbml.libsbml");
-			}
-			catch (UnsatisfiedLinkError e) {
-				libsbmlFound = false;
-			}
-			catch (ClassNotFoundException e) {
-				libsbmlFound = false;
-			}
-			catch (SecurityException e) {
-				libsbmlFound = false;
-			}
-//			catch (UnsatisfiedLinkError e) {
-//				e.printStackTrace();
-//				System.err.println("Error: could not link with the libSBML library." + "  It is likely\nyour " + varname
-//						+ " environment variable does not include\nthe" + " directory containing the libsbml library file.");
-//				System.exit(1);
-//			}
-//			catch (ClassNotFoundException e) {
-//				System.err.println("Error: unable to load the file libsbmlj.jar." + "  It is likely\nyour " + varname + " environment"
-//						+ " variable or CLASSPATH variable\ndoes not include" + " the directory containing the libsbmlj.jar file.");
-//				System.exit(1);
-//			}
-//			catch (SecurityException e) {
-//				System.err.println("Could not load the libSBML library files due to a" + " security exception.");
-//				System.exit(1);
-//			}
+		try {
+			System.loadLibrary("sbmlj");
+			// For extra safety, check that the jar file is in the classpath.
+			Class.forName("org.sbml.libsbml.libsbml");
 		}
-		else {
-			/*
-			 * String varname; if (System.getProperty("mrj.version") != null)
-			 * varname = "DYLD_LIBRARY_PATH"; // We're on a Mac. else varname =
-			 * "LD_LIBRARY_PATH"; // We're not on a Mac.
-			 */
-			try {
-				System.loadLibrary("sbmlj");
-				// For extra safety, check that the jar file is in the
-				// classpath.
-				Class.forName("org.sbml.libsbml.libsbml");
+		catch (UnsatisfiedLinkError e) {
+			libsbmlFound = false;
+		}
+		catch (ClassNotFoundException e) {
+			libsbmlFound = false;
+		}
+		catch (SecurityException e) {
+			libsbmlFound = false;
+		}
+		Runtime exec = Runtime.getRuntime();
+		int exitValue = 1;
+		try {
+			Process reb2sac = exec.exec("reb2sac", null);
+			if (reb2sac != null) {
+				exitValue = reb2sac.waitFor();
 			}
-			catch (UnsatisfiedLinkError e) {
-				libsbmlFound = false;
+			if (exitValue!=255) {
+				reb2sacFound=false;
 			}
-			catch (ClassNotFoundException e) {
-				libsbmlFound = false;
-			}
-			catch (SecurityException e) {
-				libsbmlFound = false;
-			}
+		}
+		catch (IOException e) {
+			reb2sacFound=false;
+		}
+		catch (InterruptedException e) {
+			reb2sacFound=false;
 		}
 		Gui gui = new Gui(lemaFlag, atacsFlag, libsbmlFound);
 	}
 	
 	public static boolean isLibsbmlFound() {
 		return libsbmlFound;
+	}
+	
+	public static boolean isReb2sacFound() {
+		return reb2sacFound;
 	}
 
 	public void copySim(String newSim) {

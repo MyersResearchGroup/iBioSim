@@ -309,24 +309,6 @@ public class GCMParser {
 			speciesIF.setDiffusible(false);
 		}
 		speciesList.put(species.getId(), speciesIF);
-		
-//		SpeciesType not supported in Level 3
-//		speciesIF.setType(BioModel.getSpeciesType(sbml,species.getId()));
-//		String annotation = species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().replace("<annotation>","").replace("</annotation>","");
-//		String [] annotations = annotation.split(",");
-//		for (int i=0;i<annotations.length;i++) 
-//			if (annotations[i].startsWith(GlobalConstants.TYPE)) {
-//				String [] type = annotations[i].split("=");
-//				speciesIF.setType(type[1]);
-//			}
-//			} else if (annotations[i].startsWith(GlobalConstants.SBOL_RBS)) {
-//				String [] type = annotations[i].split("=");
-//				speciesIF.setRBS(type[1]);
-//			} else if (annotations[i].startsWith(GlobalConstants.SBOL_ORF)) {
-//				String [] type = annotations[i].split("=");
-//				speciesIF.setORF(type[1]);
-//			}  
-//		}
 		if (species.isSetInitialAmount()) {
 			speciesIF.setInitialAmount(species.getInitialAmount());
 		} else if (species.isSetInitialConcentration()) {
@@ -374,12 +356,12 @@ public class GCMParser {
 					complex.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING)!=null) {
 				speciesIF.setKc(complex.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue(),
 						complex.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue());
-			} else {
-				//Model model = sbml.getModel();
-				//double kf = model.getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue();
-				//double kr = model.getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue();
+			} else if (sbml.getModel().getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING)!=null &&
+						sbml.getModel().getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING)!=null){
 				speciesIF.setKc(sbml.getModel().getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue(),
 						sbml.getModel().getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue());
+			} else {
+				speciesIF.setKc(Double.parseDouble(biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", "")),1.0);
 			}
 		} else {
 			speciesIF.setKc(0.0,1.0);
@@ -390,9 +372,13 @@ public class GCMParser {
 				diffusion.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING)!=null) {
 				speciesIF.setKmdiff(diffusion.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING).getValue(),
 						diffusion.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING).getValue());
-			} else {
+			} else if (sbml.getModel().getParameter(GlobalConstants.FORWARD_MEMDIFF_STRING)!=null &&
+					sbml.getModel().getParameter(GlobalConstants.REVERSE_MEMDIFF_STRING)!=null) {
 				speciesIF.setKmdiff(sbml.getModel().getParameter(GlobalConstants.FORWARD_MEMDIFF_STRING).getValue(),
 						sbml.getModel().getParameter(GlobalConstants.REVERSE_MEMDIFF_STRING).getValue());
+			} else {
+				speciesIF.setKmdiff(Double.parseDouble(biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", "")),
+						Double.parseDouble(biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", "")));
 			}
 			//sbml.getModel().removeReaction(diffusion.getId());
 		} else {
