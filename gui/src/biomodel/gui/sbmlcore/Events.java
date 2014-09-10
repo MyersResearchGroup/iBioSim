@@ -602,6 +602,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						EventAssignment ea = e.createEventAssignment();
 						String var = assign[i].split(" ")[0];
 						ea.setVariable(var);
+						String left = assign[i].split(":=")[0].trim();
+						String rightSide = assign[i].split(":=")[1].split(";")[1].trim();
+						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
+						if(EAdimID!=null){
+							EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
+							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
+							// TODO: add the dimensionIds and dimIDs to the new parameters
+							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
+						}
 						// TODO: Scott - change for Plugin writing
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						sBasePlugin.unsetListOfDimensions();
@@ -965,6 +974,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							EventAssignment ea = e.createEventAssignment();
 							String var = assign[i].split(" ")[0];
 							ea.setVariable(var);
+							String left = assign[i].split(":=")[0].trim();
+							String rightSide = assign[i].split(":=")[1].split(";")[1].trim();
+							EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
+							if(EAdimID!=null){
+								EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
+								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
+								// TODO: add the dimensionIds and dimIDs to the new parameters
+								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
+							}
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 							if(!error){
 								sBasePlugin.unsetListOfDimensions();
