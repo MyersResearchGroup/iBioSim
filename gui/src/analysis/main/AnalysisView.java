@@ -2668,23 +2668,31 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				SedML sedml = sedmlDoc.getSedMLModel();
 				List<Simulation> simulations = sedml.getSimulations();
 				if (simulations.size() > 0) {
-					UniformTimeCourse simulation = (UniformTimeCourse) simulations.get(0);
-					//KisaoTerm kisaoTerm = KisaoOntology.getInstance().getTermById(simulation.getAlgorithm().getKisaoID());
-					Annotation annotation = getSEDBaseAnnotation(simulation,"printInterval");
-					if (annotation==null) {
-						intervalLabel.setSelectedItem("Number Of Steps");
-						interval.setText(""+simulation.getNumberOfPoints());
-					} else {
-						Element element = annotation.getAnnotationElementsList().get(0);
-						if (element.getAttribute("Print_Interval")!=null) {
-							intervalLabel.setSelectedItem("Print Interval");
-							interval.setText(element.getAttributeValue("Print_Interval"));
+					if (simulations.get(0).getAlgorithm().getKisaoID().equals("KISAO:0000019")) {
+						UniformTimeCourse simulation = (UniformTimeCourse) simulations.get(0);
+						//KisaoTerm kisaoTerm = KisaoOntology.getInstance().getTermById(simulation.getAlgorithm().getKisaoID());
+						Annotation annotation = getSEDBaseAnnotation(simulation,"printInterval");
+						if (annotation==null) {
+							intervalLabel.setSelectedItem("Number Of Steps");
+							interval.setText(""+simulation.getNumberOfPoints());
 						} else {
-							intervalLabel.setSelectedItem("Minimum Print Interval");
-							interval.setText(element.getAttributeValue("Minimum_Print_Interval"));
+							Element element = annotation.getAnnotationElementsList().get(0);
+							if (element.getAttribute("Print_Interval")!=null) {
+								intervalLabel.setSelectedItem("Print Interval");
+								interval.setText(element.getAttributeValue("Print_Interval"));
+							} else {
+								intervalLabel.setSelectedItem("Minimum Print Interval");
+								interval.setText(element.getAttributeValue("Minimum_Print_Interval"));
+							}
 						}
+						limit.setText(""+simulation.getOutputEndTime());
+					} else if (simulations.get(0).getAlgorithm().getKisaoID().equals("KISAO:0000437")) {
+						fba.setSelected(true);
+						Button_Enabling.enableFBA(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
+								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+								explanation, description, fileStem, fileStemLabel, abstraction, nary, postAbs);
+						absErr.setText("1e-4");
 					}
-					limit.setText(""+simulation.getOutputEndTime());
 				}
 			} catch (XMLException e) {
 				JOptionPane.showMessageDialog(Gui.frame, "Unable to load SED-ML file!", "Error Loading SED-ML File",
