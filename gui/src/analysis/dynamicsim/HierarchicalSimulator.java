@@ -67,6 +67,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.Symbol;
 
 import main.Gui;
 import odk.lang.FastMath;
@@ -82,42 +83,29 @@ public abstract class HierarchicalSimulator {
 	protected HashMap<String, ModelState> submodels; 
 	// Associates species, parameters with a value
 	protected HashMap<String, Double> replacements; 
-	// Keeps track which submodels are involved in a replacement
-	//protected HashMap<String, HashSet<String>> replacementSubModels;
 	// Initial replacement state for multiple runs
 	protected HashMap<String, Double> initReplacementState;
 	// Keeps track which model contains the replacing values
-	//protected HashMap<String, String> replacingModel; 
 	// Number of submodel states
 	protected int numSubmodels;
 	// Total propensity including all model states
-	//protected double totalPropensity;
 	protected boolean isGrid = false;
-
 	//SBML Info.
 	final protected int SBML_LEVEL = 3;
 	final protected int SBML_VERSION = 1;
-
-
 	//generates random numbers based on the xorshift method
 	protected XORShiftRandom randomNumberGenerator = null;
-
-
 	//file writing variables
 	protected FileWriter TSDWriter = null;
 	protected BufferedWriter bufferedTSDWriter = null;
-
 	//compares two events based on fire time and priority
 	protected EventComparator eventComparator = new EventComparator();
-
 	//boolean flags
 	protected boolean cancelFlag = false;
 	protected boolean constraintFailureFlag = false;
 	protected boolean sbmlHasErrorsFlag = false;
-	//protected boolean noConstraintsFlag = true;
-	//	protected boolean noRuleFlag = true;
 	protected boolean constraintFlag = true;
-
+	// Simulation info
 	protected double currentTime;
 	protected String SBMLFileName;
 	protected double timeLimit;
@@ -128,21 +116,18 @@ public abstract class HierarchicalSimulator {
 	protected int currentRun;
 	protected String outputDirectory;
 	protected String separator;
-
-	protected boolean stoichAmpBoolean = false;
-	protected double stoichAmpGridValue = 1.0;
-
 	protected boolean printConcentrations = false;
 	protected HashSet<String> printConcentrationSpecies = new HashSet<String>();
 	protected JFrame running = new JFrame();
 	protected String[] interestingSpecies;
 	PsRandom prng = new PsRandom();
-
-
-	HashMap<String, Model> models;
-
-
+	// Helper fields
+	protected boolean stoichAmpBoolean = false;
+	protected double stoichAmpGridValue = 1.0;
+	// 
+	private HashMap<String, Model> models;
 	protected ArrayList<String> filesCreated = new ArrayList<String>();
+
 	/**
 	 * does lots of initialization
 	 */
@@ -162,8 +147,6 @@ public abstract class HierarchicalSimulator {
 
 		replacements = new HashMap<String,Double>();
 		initReplacementState = new HashMap<String, Double>();
-		//replacementSubModels = new HashMap<String, HashSet<String>>();
-		//replacingModel = new HashMap<String,String>();
 		models = new HashMap<String, Model>();
 
 		this.interestingSpecies = interestingSpecies;
@@ -218,10 +201,7 @@ public abstract class HierarchicalSimulator {
 
 		numSubmodels = (int)setupSubmodels(document);
 		getComponentPortMap(document);
-
-
-
-
+			
 			}
 
 	/**
@@ -253,15 +233,6 @@ public abstract class HierarchicalSimulator {
 
 		StringBuilder temp = new StringBuilder();
 		String[] subPaths = path.split(separator);
-		//		if (File.separator.equals("\\")) 
-		//		{
-		//			separator = "\\\\";
-		//
-		//		}
-		//		else 
-		//		{
-		//			separator = File.separator;
-		//		}
 
 		temp.append(subPaths[0]);
 
@@ -450,10 +421,8 @@ public abstract class HierarchicalSimulator {
 	{
 		String path = getPath(outputDirectory);
 		String alternativePath = getPath(SBMLFileName);
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getExtension(CompConstants.namespaceURI);
-		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getExtension(CompConstants.namespaceURI);
-
-		//submodels = new ModelState[(int)sbmlCompModel.getListOfSubmodels().size()];
+		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getExtension(CompConstants.namespaceURI);
+		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document.getExtension(CompConstants.namespaceURI);
 
 		if(sbmlCompModel == null)
 		{
@@ -465,7 +434,7 @@ public abstract class HierarchicalSimulator {
 
 
 		int index = 0;
-
+		//HierarchicalUtilities.extractModelDefinitions(sbmlComp, sbmlCompModel, alternativePath, separator);
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
 
 
@@ -481,8 +450,6 @@ public abstract class HierarchicalSimulator {
 					try {
 						if(checkFileExists(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()))
 						{
-							//copyFile(new File(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()), new File(filename));
-
 							extDoc = SBMLReader.read(new File(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()));
 
 						}
@@ -493,10 +460,8 @@ public abstract class HierarchicalSimulator {
 
 					}
 					catch (XMLStreamException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(extDoc.getModel());
@@ -535,6 +500,7 @@ public abstract class HierarchicalSimulator {
 						}
 					}
 					SBMLWriter writer = new SBMLWriter();
+
 					//updateReplacementsDeletions(extDoc, documentComp, documentCompModel, path);
 					filename = path+separator+submodel.getModelRef()+"_new.xml";
 					try {
@@ -556,7 +522,7 @@ public abstract class HierarchicalSimulator {
 					extractModelDefintion(path,  document,  submodel,  sbmlComp);
 				}
 
-				Model flattenModel = flattenModel(path, filename);
+				Model flattenModel = HierarchicalUtilities.flattenModel(path, filename);
 
 				models.put(submodel.getModelRef(), flattenModel);
 
@@ -603,188 +569,6 @@ public abstract class HierarchicalSimulator {
 		return index;
 	}
 
-	/*
-	private String changeIdToPortRef(SBaseRef sbaseRef,BioModel bioModel, String path) {
-		String id = "";
-		if (sbaseRef.isSetSBaseRef()) {
-			BioModel subModel = new BioModel(path);
-			Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(sbaseRef.getIdRef());
-			String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(submodel.getModelRef())
-					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			subModel.load(path + separator + extModel);
-			id += changeIdToPortRef(sbaseRef.getSBaseRef(),subModel, path);
-			subModel.save(path + separator + extModel);
-		}
-		if (sbaseRef.isSetIdRef()) {
-			Port port = bioModel.getPortBySBaseRef(sbaseRef);
-			SBase sbase = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), sbaseRef.getIdRef());
-			if (sbase!=null) {
-				if (id.equals("")) {
-					id = sbase.getElementName() + "__" + sbaseRef.getIdRef();
-				} else {
-					id = id + "__" + sbaseRef.getIdRef();
-				}
-				if (port == null) {
-					port = bioModel.getSBMLCompModel().createPort();
-					port.setId(id);
-					port.setIdRef(sbaseRef.getIdRef());
-					port.setSBaseRef(sbaseRef.getSBaseRef());
-				} 
-				sbaseRef.unsetIdRef();
-				sbaseRef.unsetSBaseRef();
-				sbaseRef.setPortRef(port.getId());
-				return id;
-			}
-			return "";
-		} 
-		if (sbaseRef.isSetMetaIdRef()) {
-			Port port = bioModel.getPortBySBaseRef(sbaseRef);
-			SBase sbase = SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument(), sbaseRef.getMetaIdRef());
-			if (id.equals("")) {
-				id = sbase.getElementName() + "__" + sbaseRef.getMetaIdRef();
-			} else {
-				id = id + "__" + sbaseRef.getMetaIdRef();
-			}
-			if (sbase!=null) { 
-				if (port == null) {
-					port = bioModel.getSBMLCompModel().createPort();
-					port.setId(id);
-					port.setMetaIdRef(sbaseRef.getMetaIdRef());
-					port.setSBaseRef(sbaseRef.getSBaseRef());
-				}
-				sbaseRef.unsetMetaIdRef();
-				sbaseRef.unsetSBaseRef();
-				sbaseRef.setPortRef(port.getId());
-				return id;
-			}
-		} 
-		return "";
-	}
-
-	private boolean updatePortMap(CompSBasePlugin sbmlSBase,BioModel subModel,String subModelId, String path) {
-		boolean updated = false;
-		if (sbmlSBase.isSetListOfReplacedElements()) {
-			for (int k = 0; k < sbmlSBase.getListOfReplacedElements().size(); k++) {
-				ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(k);
-				if (replacement.getSubmodelRef().equals(subModelId)) {
-					changeIdToPortRef(replacement,subModel, path);
-					updated = true;
-				}
-			}
-		}
-		if (sbmlSBase.isSetReplacedBy()) {
-			ReplacedBy replacement = sbmlSBase.getReplacedBy();
-			if (replacement.getSubmodelRef().equals(subModelId)) {
-				changeIdToPortRef(replacement,subModel, path);
-				updated = true;
-			}
-		}
-		return updated;
-	}
-
-	private boolean updateReplacementsDeletions(SBMLDocument document, CompSBMLDocumentPlugin sbmlComp, 
-			CompModelPlugin sbmlCompModel, String path) {
-		for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
-			BioModel subModel = new BioModel(path);
-			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
-			String extModel = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef())
-					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			subModel.load(path + separator + extModel);
-			ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(document.getModel());
-			for (int j = 0; j < elements.size(); j++) {
-				SBase sbase = elements.get(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
-				if (sbmlSBase!=null) {
-					if (updatePortMap(sbmlSBase,subModel,submodel.getId(), path)) {
-						elements = SBMLutilities.getListOfAllElements(document.getModel());
-					}
-				}
-			}
-			for (int j = 0; j < submodel.getListOfDeletions().size(); j++) {
-				Deletion deletion = submodel.getListOfDeletions().get(j);
-				changeIdToPortRef(deletion,subModel, path);
-			}
-			subModel.save(path + separator + extModel);
-		}
-
-		return true;
-	}
-
-	private boolean extractModelDefinitions(String path, SBMLDocument document, Submodel submodel, CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel) {
-			ModelDefinition md = sbmlComp.getListOfModelDefinitions().get(submodel.getModelRef());
-			String extId = md.getId();
-			Model model = new Model(md);
-			model.getNamespaces().clear();
-			SBMLDocument newDoc = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-			newDoc.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
-			newDoc.addPackageDeclaration(CompConstants.shortLabel, CompConstants.namespaceURI, true);
-			newDoc.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
-			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(newDoc);
-			CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
-			newDoc.setModel(model);
-			ArrayList<String> comps = new ArrayList<String>();
-			for (int j=0; j < documentCompModel.getListOfSubmodels().size(); j++) {
-				String subModelType = documentCompModel.getListOfSubmodels().get(j).getModelRef();
-				if (!comps.contains(subModelType)) {
-					ExternalModelDefinition extModel = documentComp.createExternalModelDefinition();
-					extModel.setId(subModelType);
-					extModel.setSource("file:" + subModelType + ".xml");
-					comps.add(subModelType);
-				}
-			}
-			// Make compartment enclosing
-			if (document.getModel().getCompartmentCount()==0) {
-				Compartment c = document.getModel().createCompartment();
-				c.setId("default");
-				c.setSize(1);
-				c.setSpatialDimensions(3);
-				c.setConstant(true);
-			}
-			updateReplacementsDeletions(document, documentComp, documentCompModel, path);
-			SBMLWriter writer = new SBMLWriter();
-			try {
-				writer.writeSBMLToFile(document, path + separator + extId + ".xml");
-			} catch (SBMLException e) {
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (XMLStreamException e) {
-				e.printStackTrace();
-			}
-			if (sbmlComp.getListOfExternalModelDefinitions().get(extId) == null) {
-				for (int j=0; j < sbmlCompModel.getListOfSubmodels().size(); j++) {
-					Submodel subm = sbmlCompModel.getListOfSubmodels().get(j);
-					if (subm.getModelRef().equals(extId)) {
-						ExternalModelDefinition extModel = sbmlComp.createExternalModelDefinition();
-						extModel.setSource("file:" + extId + ".xml");
-						extModel.setId(extId);
-						break;
-					}
-				}
-			}
-
-
-		while (sbmlComp.getListOfModelDefinitions().size() > 0) {
-			sbmlComp.removeModelDefinition(0);
-		}
-		for (int i = 0; i < sbmlComp.getListOfExternalModelDefinitions().size(); i++) {
-			ExternalModelDefinition extModel = sbmlComp.getListOfExternalModelDefinitions().get(i);
-			if (extModel.isSetModelRef()) {
-				String oldId = extModel.getId();
-				extModel.setSource("file:" + extModel.getModelRef() + ".xml");
-				extModel.setId(extModel.getModelRef());
-				extModel.unsetModelRef();
-				for (int j=0; j < sbmlCompModel.getListOfSubmodels().size(); j++) {
-					Submodel sub = sbmlCompModel.getListOfSubmodels().get(j);
-					if (sub.getModelRef().equals(oldId)) {
-						sub.setModelRef(extModel.getId());
-					}
-				}
-			}
-		}
-		return true;
-	}*/
-
 	private void extractModelDefintion(String path, SBMLDocument document, Submodel submodel, CompSBMLDocumentPlugin sbmlComp)
 	{
 		ModelDefinition md = sbmlComp.getListOfModelDefinitions().get(submodel.getModelRef());
@@ -793,19 +577,25 @@ public abstract class HierarchicalSimulator {
 			return;
 
 		String extId = md.getId();
-		Model model = new Model(md);
+		org.sbml.jsbml.Model model = new org.sbml.jsbml.Model(md);
+
 		model.getDeclaredNamespaces().clear();
+
 		SBMLDocument newDoc = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+
+		newDoc.setModel(model);
 		newDoc.enablePackage(LayoutConstants.namespaceURI);
 		newDoc.enablePackage(CompConstants.namespaceURI);
 		newDoc.enablePackage(FBCConstants.namespaceURI);
 
 		newDoc.enablePackage(ArraysConstants.namespaceURI);
-		
+
 		CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(newDoc);
 		CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
-		
+
+		model.unsetNamespace();
 		newDoc.setModel(model);
+
 		ArrayList<String> comps = new ArrayList<String>();
 		for (int j=0; j < documentCompModel.getListOfSubmodels().size(); j++) {
 			String subModelType = documentCompModel.getListOfSubmodels().get(j).getModelRef();
@@ -841,76 +631,7 @@ public abstract class HierarchicalSimulator {
 
 
 	}
-
-	private static Model flattenModel(String path, String filename)
-	{
-
-		BioModel biomodel = new BioModel(path);
-
-		biomodel.load(filename);
-		//SBMLDocument sbml = biomodel.getSBMLDocument();
-		SBMLDocument sbml = biomodel.flattenModel(false);		
-		//GCMParser parser = new GCMParser(biomodel);
-		//GeneticNetwork network = parser.buildNetwork(sbml);
-		//sbml = network.getSBML();
-		//network.mergeSBML(filename, sbml);
-
-		return sbml.getModel();
-	}
-
-
-	/**
-	 * Helper method to strip annotation and get size of array.
-	 * 
-	 * @param annotation
-	 * @return size of array
-	 */
-	/*	private static int getArraySize(String annotation)
-	{
-
-		//biomodel.annotation.AnnotationUtility.
-		String size = "";
-
-		Pattern pattern = Pattern.compile("size=\"[1-9][0-9]*\"");
-
-		Matcher matcher = pattern.matcher(annotation);
-
-		if(matcher.find())
-			size = matcher.group();
-
-		size = size.replace("size=", "").replace("\"", "");
-
-
-		return Integer.parseInt(size);
-
-
-	}
-	 */
-	/**
-	 * Helper method to strip annotation and get size of array.
-	 * 
-	 * @param annotation
-	 * @return size of array
-	 */
-	/*private static LinkedList<String> getArrayIDs(String annotation)
-	{
-		LinkedList<String> id = new LinkedList<String>();
-
-		Pattern pattern = Pattern.compile("array:C[1-9][0-9]*");
-
-		Matcher matcher = pattern.matcher(annotation);
-
-		while(matcher.find())
-			id.add(matcher.group().replace("array:", ""));
-
-
-		return id;
-
-
-	}*/
-
-
-
+	
 	/**
 	 * Stores replacing values in a global map
 	 */
@@ -1024,9 +745,7 @@ public abstract class HierarchicalSimulator {
 			}
 		}
 	}
-
-
-
+	
 	private void setupParameterReplacement(SBMLDocument sbml, CompModelPlugin sbmlCompModel)
 	{
 
@@ -1091,7 +810,8 @@ public abstract class HierarchicalSimulator {
 					{
 						String subParameter = replacement.getIdRef();
 						ModelState temp = getModel(submodel);
-						replacements.put(p, models.get(temp.model).getModel().getParameter(subParameter).getValue());
+						Model sub = models.get(temp.model).getModel();
+						replacements.put(p, sub.getParameter(subParameter).getValue());
 						initReplacementState.put(p, models.get(temp.model).getModel().getParameter(subParameter).getValue());
 						topmodel.isHierarchical.add(p);
 						topmodel.replacementDependency.put(p, p);
@@ -1206,91 +926,6 @@ public abstract class HierarchicalSimulator {
 			}
 		}
 	}
-
-
-	//	private void setupLocalParameterReplacement(KineticLaw k, SBMLDocument sbml, CompModelPlugin sbmlCompModel)
-	//	{
-	//
-	//		for (LocalParameter parameter : k.getListOfLocalParameters()) {
-	//			
-	//			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getExtension(CompConstants.namespaceURI);
-	//
-	//			String p = parameter.getId();
-	//			if(sbmlSBase != null)
-	//			{
-	//				if(sbmlSBase.getListOfReplacedElements() != null)
-	//				{
-	//					replacements.put(p, parameter.getValue());	
-	//					initReplacementState.put(p, parameter.getValue());
-	//
-	//
-	//					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
-	//					{
-	//						String submodel = element.getSubmodelRef();
-	//						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
-	//						if(element.isSetIdRef())
-	//						{
-	//							String subParameter = element.getIdRef();
-	//							topmodel.isHierarchical.add(p);
-	//							topmodel.replacementDependency.put(p, p);
-	//							getModel(submodel).isHierarchical.add(subParameter);
-	//							getModel(submodel).replacementDependency.put(subParameter, p);
-	//						}
-	//						else if(element.isSetPortRef())
-	//						{
-	//							Port port = sbmlCompModel.getListOfPorts().get(element.getPortRef());
-	//							String subParameter = port.getIdRef();
-	//
-	//							topmodel.isHierarchical.add(p);
-	//							topmodel.replacementDependency.put(p, p);
-	//							getModel(submodel).isHierarchical.add(subParameter);
-	//							getModel(submodel).replacementDependency.put(subParameter, p);
-	//						}
-	//						else
-	//						{
-	//							continue;
-	//						}
-	//					}
-	//				}
-	//
-	//
-	//				if(sbmlSBase.isSetReplacedBy())
-	//				{
-	//					ReplacedBy replacement = sbmlSBase.getReplacedBy();
-	//					String submodel = replacement.getSubmodelRef();
-	//					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
-	//					if(replacement.isSetIdRef())
-	//					{
-	//						String subParameter = replacement.getIdRef();
-	//						ModelState temp = getModel(submodel);
-	//						replacements.put(p, models.get(temp.model).getModel().getParameter(subParameter).getValue());
-	//						initReplacementState.put(p, models.get(temp.model).getModel().getParameter(subParameter).getValue());
-	//						topmodel.isHierarchical.add(p);
-	//						topmodel.replacementDependency.put(p, p);
-	//						getModel(submodel).isHierarchical.add(subParameter);
-	//						getModel(submodel).replacementDependency.put(subParameter, p);
-	//					}
-	//					else if(replacement.isSetPortRef())
-	//					{
-	//						Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
-	//						String subParameter = port.getIdRef();
-	//						ModelState temp = getModel(submodel);
-	//						replacements.put(p, models.get(temp.model).getModel().getParameter(subParameter).getValue());
-	//						initReplacementState.put(p, models.get(temp.model).getParameter(subParameter).getValue());
-	//						topmodel.isHierarchical.add(p);
-	//						topmodel.replacementDependency.put(p, p);
-	//						getModel(submodel).isHierarchical.add(subParameter);
-	//						getModel(submodel).replacementDependency.put(subParameter, p);
-	//					}
-	//					else
-	//					{
-	//						continue;
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-
 
 	private void setupReactionReplacement(SBMLDocument sbml, CompModelPlugin sbmlCompModel)
 	{
@@ -1563,6 +1198,10 @@ public abstract class HierarchicalSimulator {
 	}
 
 
+	/**
+	 * 
+	 * @param sbml
+	 */
 	protected void getComponentPortMap(SBMLDocument sbml) 
 	{
 		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstants.namespaceURI);
@@ -1629,7 +1268,7 @@ public abstract class HierarchicalSimulator {
 					}
 					else if (port.isSetMetaIdRef()) 
 					{
-						modelstate.deletedElementsByMetaId.add(port.getIdRef());
+						modelstate.deletedElementsByMetaId.add(port.getMetaIdRef());
 					}
 					else if (port.isSetUnitRef())
 					{
@@ -1714,9 +1353,6 @@ public abstract class HierarchicalSimulator {
 
 			case RELATIONAL_GEQ:
 			{
-				//System.out.println("Node: " + libsbml.formulaToString(node.getRightChild()) + " " + evaluateExpressionRecursive(modelstate, node.getRightChild()));
-				//System.out.println("Node: " + evaluateExpressionRecursive(modelstate, node.getLeftChild()) + " " + evaluateExpressionRecursive(modelstate, node.getRightChild()));
-
 				return getDoubleFromBoolean(
 						evaluateExpressionRecursive(modelstate, node.getLeftChild()) >= evaluateExpressionRecursive(modelstate, node.getRightChild()));
 			}
@@ -1816,7 +1452,7 @@ public abstract class HierarchicalSimulator {
 				ASTNode leftChild = node.getLeftChild();
 				double sum = evaluateExpressionRecursive(modelstate, leftChild);
 
-				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
+				for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
 					sum -= evaluateExpressionRecursive(modelstate, node.getChild(childIter));					
 
 				return sum;
@@ -2273,26 +1909,6 @@ public abstract class HierarchicalSimulator {
 	 */
 	protected void updateRules()
 	{
-		//		ModelState model;
-		//		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
-		//		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
-		//		
-		//		for(String species : replacementSubModels.keySet())
-		//			for(String submodel : replacementSubModels.get(species))
-		//			{
-		//				model = getModel(submodel);
-		//
-		//
-		//				if (model.noRuleFlag == false && model.variableToIsInAssignmentRuleMap.get(species) == true)
-		//					affectedAssignmentRuleSet.addAll(model.variableToAffectedAssignmentRuleSetMap.get(species));
-		//				if (affectedAssignmentRuleSet.size() > 0)
-		//					performAssignmentRules(model, affectedAssignmentRuleSet);
-		//				if (model.noConstraintsFlag == false && model.variableToIsInConstraintMap.get(species) == true)
-		//					affectedConstraintSet.addAll(model.variableToAffectedConstraintSetMap.get(species));
-		//				if (affectedConstraintSet.size() > 0) 
-		//					constraintFlag = testConstraints(model, affectedConstraintSet);
-		//			}
-
 		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
 		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
 
@@ -2975,7 +2591,8 @@ public abstract class HierarchicalSimulator {
 				affectedReactionSet.addAll(modelstate.eventToAffectedReactionSetMap.get(eventToFireID));
 
 			firedEvents.add(eventToFireID);
-			modelstate.eventToPreviousTriggerValueMap.put(eventToFireID, true);
+			//modelstate.eventToPreviousTriggerValueMap.put(eventToFireID, true);
+			modelstate.eventToPreviousTriggerValueMap.put(eventToFireID, getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(eventToFireID))) == false);
 
 
 			//execute all assignments for this event
@@ -3116,6 +2733,7 @@ public abstract class HierarchicalSimulator {
 	 * @param speciesID
 	 */
 	private void setupSingleSpecies(ModelState modelstate, Species species, String speciesID) {
+		double initValue = 0;
 		if (modelstate.speciesIDSet.contains(speciesID))
 			return;
 
@@ -3124,29 +2742,23 @@ public abstract class HierarchicalSimulator {
 
 		if (species.isSetInitialAmount())
 		{
+			initValue = species.getInitialAmount();
 			modelstate.setvariableToValueMap(speciesID, species.getInitialAmount());
 		}
 
 		else if (species.isSetInitialConcentration()) 
 		{
-
-			//double s = models.get(modelstate.model).getCompartment(species.getCompartment()).getSize();
-			modelstate.variableToValueMap.put(speciesID, species.getInitialConcentration() 
-					* models.get(modelstate.model).getCompartment(species.getCompartment()).getSize());
+			initValue = species.getInitialConcentration() 
+					* models.get(modelstate.model).getCompartment(species.getCompartment()).getSize();
+			modelstate.variableToValueMap.put(speciesID, initValue);
 		}
-
 		else
 		{
-			modelstate.variableToValueMap.put(speciesID, 0.0);
+			modelstate.variableToValueMap.put(speciesID, initValue);
 		}
 
 		if (species.getHasOnlySubstanceUnits() == false) {
-
-			//modelstate.speciesToCompartmentSizeMap.put(speciesID, models.get(modelstate.model).getCompartment(species.getCompartment()).getSize());
 			modelstate.speciesToCompartmentNameMap.put(speciesID, species.getCompartment());
-			//double size =
-			//if (Double.isNaN(models.get(modelstate.model).getCompartment(species.getCompartment()).getSize()))
-			//modelstate.speciesToCompartmentSizeMap.put(speciesID, 1.0);
 		}	
 		if (modelstate.numRules > 0)
 			modelstate.variableToIsInAssignmentRuleMap.put(speciesID, false);
@@ -3159,7 +2771,7 @@ public abstract class HierarchicalSimulator {
 		modelstate.variableToIsConstantMap.put(speciesID, species.getConstant());
 		modelstate.speciesToHasOnlySubstanceUnitsMap.put(speciesID, species.getHasOnlySubstanceUnits());
 		modelstate.speciesIDSet.add(speciesID);
-
+		//SpeciesWrapper spec = new SpeciesWrapper(species.getBoundaryCondition(), species.getConstant(), species.getHasOnlySubstanceUnits(), initValue);
 
 	}
 
@@ -3171,21 +2783,7 @@ public abstract class HierarchicalSimulator {
 	 */
 	protected void setupReplacingSpecies() 
 	{
-
-		//		for(String speciesID : replacingModel.keySet())
-		//		{
-		//			String ID = replacingModel.get(speciesID);
-		//			ModelState replacingModelState = getModel(ID);
-		//			ModelState replacedModelState;
-		//			for(String modelID : replacementSubModels.get(speciesID))
-		//			{
-		//				replacedModelState = getModel(modelID);
-		//				replacedModelState.speciesToIsBoundaryConditionMap.put(speciesID, replacingModelState.speciesToIsBoundaryConditionMap.get(speciesID));
-		//				replacedModelState.variableToIsConstantMap.put(speciesID, replacingModelState.variableToIsConstantMap.get(speciesID));
-		//				replacedModelState.speciesToHasOnlySubstanceUnitsMap.put(speciesID, replacingModelState.speciesToHasOnlySubstanceUnitsMap.get(speciesID));
-		//				replacedModelState.speciesIDSet.add(speciesID);
-		//			}
-		//		}
+		
 	}
 
 	/**
@@ -3775,7 +3373,7 @@ public abstract class HierarchicalSimulator {
 			{
 				if(reactantsList.getChildCount() > 0)
 				{
-					modelstate.reactionToFormulaMap.put(reactionID, inlineFormula(modelstate, reactionFormula));
+					modelstate.reactionToFormulaMap.put(reactionID+"_fd", inlineFormula(modelstate, reactionFormula));
 					//calculate reverse reaction propensity
 					if (notEnoughMoleculesFlagRv == true)
 						propensity = 0.0;
@@ -3797,7 +3395,7 @@ public abstract class HierarchicalSimulator {
 						//totalPropensity += propensity;
 					}
 
-					modelstate.reactionToPropensityMap.put(reactionID, propensity);
+					modelstate.reactionToPropensityMap.put(reactionID+"_fd", propensity);
 				}
 				else if(productsList.getChildCount() > 0)
 				{
@@ -4226,9 +3824,18 @@ public abstract class HierarchicalSimulator {
 				oldResult = 1.0;
 
 			modelstate.setvariableToValueMap(variable, newResult);
+			if (modelstate.numRules > 0) 
+			{
+				HashSet<AssignmentRule> rules = modelstate.variableToAffectedAssignmentRuleSetMap.get(variable);
 
+				performAssignmentRules(modelstate, rules);
+			}
+			//TODO: NEED TO FIX THIS
+			/*
 			for(String species : modelstate.speciesIDSet)
 			{
+
+
 				if(modelstate.speciesToCompartmentNameMap.get(species).equals(variable))
 					if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(species) &&
 							modelstate.speciesToHasOnlySubstanceUnitsMap.get(species) == false) {
@@ -4242,7 +3849,7 @@ public abstract class HierarchicalSimulator {
 						modelstate.setvariableToValueMap(species, newResult);
 					}
 			}
-
+			 */
 			return true;
 		}
 
@@ -4551,14 +4158,7 @@ public abstract class HierarchicalSimulator {
 		protected boolean noConstraintsFlag = true;
 		protected boolean noRuleFlag = true;
 
-		//protected FileWriter TSDWriter = null;
-		//protected BufferedWriter bufferedTSDWriter = null;
-		//protected boolean printConcentrations = false;
-		//protected JFrame running = new JFrame();
-		//PsRandom prng = new PsRandom();
-
 		//stores events in order of fire time and priority
-		//protected LinkedList<EventToFire> triggeredEventQueue = null;
 		protected PriorityQueue<EventToFire> triggeredEventQueue;
 		protected HashSet<String> untriggeredEventSet = null;
 
@@ -4593,7 +4193,7 @@ public abstract class HierarchicalSimulator {
 		protected HashSet<String> deletedElementsById; 
 		protected HashSet<String> deletedElementsByMetaId; 
 		protected HashSet<String> deletedElementsByUId; 
-		//public ModelState(Model bioModel, String submodelID)
+
 		public ModelState(String bioModel, String submodelID)
 		{
 			this.model = bioModel;
@@ -4618,7 +4218,6 @@ public abstract class HierarchicalSimulator {
 			speciesToIsBoundaryConditionMap = new HashMap<String, Boolean>((int) numSpecies);
 			variableToIsConstantMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 			speciesToHasOnlySubstanceUnitsMap = new HashMap<String, Boolean>((int) numSpecies);
-			//speciesToCompartmentSizeMap = new TObjectDoubleHashMap<String>((int) numSpecies);
 			speciesToCompartmentNameMap = new HashMap<String, String>((int) numSpecies);
 			speciesIDSet = new LinkedHashSet<String>((int) numSpecies);
 			variableToValueMap = new TObjectDoubleHashMap<String>((int) numSpecies + (int) numParameters);
@@ -4719,9 +4318,6 @@ public abstract class HierarchicalSimulator {
 
 		protected void setvariableToValueMap(String variable, double value)
 		{
-			//if(replacements.containsKey(variable) && replacementSubModels.get(variable).contains(this.ID))
-			//	replacements.put(variable, value);
-			//else
 			if(isHierarchical.contains(variable))
 			{
 				String dep = replacementDependency.get(variable);
@@ -4755,6 +4351,7 @@ public abstract class HierarchicalSimulator {
 				return false;
 		}
 	}
+	
 }
 
 
