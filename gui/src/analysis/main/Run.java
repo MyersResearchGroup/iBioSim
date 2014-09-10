@@ -1318,6 +1318,7 @@ public class Run implements ActionListener {
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
+						logFile.close();
 						return exitValue;
 					}
 				else if (sim.equals("Hybrid-Hierarchical")) {
@@ -1339,6 +1340,7 @@ public class Run implements ActionListener {
 							stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, log);						
 					exitValue = 0;
 					new File(directory + separator + "running").delete();
+					logFile.close();
 					return exitValue;
 				}
 					else if (sim.equals("Runge-Kutta-Fehlberg")) {
@@ -1354,7 +1356,7 @@ public class Run implements ActionListener {
 						}
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, log);				
+								stoichAmpValue, intSpecies, (int)Math.floor(timeLimit/printInterval), 0, absError, printer_track_quantity, genStats, simTab, log);				
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
 						logFile.close();

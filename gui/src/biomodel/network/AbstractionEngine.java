@@ -70,28 +70,44 @@ public class AbstractionEngine {
 			String kdecayId = decayString + "__" + complexId;
 			double kdecay = species.get(complexId).getDecay();
 			if (kdecay > 0) {
-				kl.addLocalParameter(Utility.Parameter(kcompIdf, kcomp[0], GeneticNetwork.getMoleTimeParameter(2)));
-				kl.addLocalParameter(Utility.Parameter(kdecayId, kdecay, GeneticNetwork.getMoleTimeParameter(1)));
+				if (kl.getLocalParameter(kcompIdf)==null) {
+					kl.addLocalParameter(Utility.Parameter(kcompIdf, kcomp[0], GeneticNetwork.getMoleTimeParameter(2)));
+				}
+				if (kl.getLocalParameter(kdecayId)==null) {
+					kl.addLocalParameter(Utility.Parameter(kdecayId, kdecay, GeneticNetwork.getMoleTimeParameter(1)));
+				}
 			}
 			// Checks if binding parameters are specified as forward and reverse rate constants
 			//  or as equilibrium binding constants before adding to kinetic law
 			if (kcomp.length == 2) {
-				if (kdecay > 0)
-					kl.addLocalParameter(Utility.Parameter(kcompIdr, kcomp[1], GeneticNetwork.getMoleTimeParameter(1)));
-				else
-					kl.addLocalParameter(Utility.Parameter(kcompId, kcomp[0] / kcomp[1], GeneticNetwork.getMoleParameter(2)));
+				if (kdecay > 0) {
+					if (kl.getLocalParameter(kcompIdr)==null) {
+						kl.addLocalParameter(Utility.Parameter(kcompIdr, kcomp[1], GeneticNetwork.getMoleTimeParameter(1)));
+					}
+				} else {
+					if (kl.getLocalParameter(kcompId)==null) {
+						kl.addLocalParameter(Utility.Parameter(kcompId, kcomp[0] / kcomp[1], GeneticNetwork.getMoleParameter(2)));
+					}
+				}
 			} else {
-				if (kdecay > 0)
-					kl.addLocalParameter(Utility.Parameter(kcompIdr, 1, GeneticNetwork.getMoleTimeParameter(1)));
-				else
-					kl.addLocalParameter(Utility.Parameter(kcompId, kcomp[0], GeneticNetwork.getMoleParameter(2)));
+				if (kdecay > 0) {
+					if (kl.getLocalParameter(kcompIdr)==null) {
+						kl.addLocalParameter(Utility.Parameter(kcompIdr, 1, GeneticNetwork.getMoleTimeParameter(1)));
+					}
+				} else {
+					if (kl.getLocalParameter(kcompId)==null) {
+						kl.addLocalParameter(Utility.Parameter(kcompId, kcomp[0], GeneticNetwork.getMoleParameter(2)));
+					}
+				}
 			}
 			String ncSum = "";
 			for (Influence infl : complexMap.get(complexId)) {
 				String partId = infl.getInput();
 				double n = infl.getCoop();
 				String nId = coopString + "__" + partId + "_" + complexId;
-				kl.addLocalParameter(Utility.Parameter(nId, n, "dimensionless"));
+				if (kl.getLocalParameter(nId)==null) {	
+					kl.addLocalParameter(Utility.Parameter(nId, n, "dimensionless"));
+				}
 				ncSum = ncSum + nId + "+";
 				if (!partId.equals(sequesterRoot)) {
 					compExpression = compExpression + "*" + "(";
