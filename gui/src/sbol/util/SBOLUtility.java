@@ -19,7 +19,6 @@ import javax.swing.JOptionPane;
 import main.Gui;
 
 import org.sbolstandard.core.*;
-
 import org.sbolstandard.core.impl.DnaSequenceImpl;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 import org.sbolstandard.core.util.*;
@@ -116,6 +115,12 @@ public class SBOLUtility {
 		DnaComponent resolvedDnac = flattenedResolver.resolve(dnac.getURI());
 		if (resolvedDnac != null)
 			return resolvedDnac;
+		// TODO: Added to avoid duplicate display ids.
+		DisplayIdResolver<DnaComponent> flattenedIdResolver = flattenedDoc.getComponentDisplayIdResolver();
+		resolvedDnac = flattenedIdResolver.resolve(dnac.getDisplayId());
+		if (resolvedDnac != null)
+			return resolvedDnac;
+		
 		List<SequenceAnnotation> annos = dnac.getAnnotations();
 		if (annos != null && annos.size() > 0)
 			replaceSubComponents(annos, flattenedResolver);
