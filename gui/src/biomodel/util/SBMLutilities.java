@@ -4372,14 +4372,6 @@ public class SBMLutilities {
 				e.printStackTrace();
 			}
 		}
-		// TODO: HACK TO CREATE LOCAL PARAMETER MAP DUE TO JSBML BUG
-		for (int i = 0; i < document.getModel().getReactionCount(); i++) {
-			Reaction r = document.getModel().getReaction(i);
-			KineticLaw k = r.getKineticLaw();
-			for (int j = 0; j < k.getLocalParameterCount(); j++) {
-				k.getLocalParameter(j).setId(k.getLocalParameter(j).getId());
-			}
-		}
 		return document;
 	}
 }
