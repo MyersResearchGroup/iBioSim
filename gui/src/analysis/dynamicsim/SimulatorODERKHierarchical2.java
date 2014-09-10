@@ -61,9 +61,9 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		setupParameters(topmodel);	
 
 		setupConstraints(topmodel);
-
 		setupRules(topmodel);
 		setupInitialAssignments(topmodel);
+
 
 		setupReactions(topmodel);
 		setupEvents(topmodel);
@@ -81,6 +81,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			setupConstraints(model);
 			setupRules(model);
 			setupInitialAssignments(model);
+
 
 			setupReactions(model);	
 			setupEvents(model);
@@ -173,7 +174,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 		//odecalc.setMaxEvaluations(numSteps);
 		//add events to queue if they trigger
-		odecalc.addEventHandler(new EventHandlerObject(), maxTimeStep, 1e-18, 1000);
+		odecalc.addEventHandler(new EventHandlerObject(), maxTimeStep, 1e-18, 1000000);
 		//nextEventTime = Double.POSITIVE_INFINITY;
 
 		nextEventTime = handleEvents();
@@ -533,7 +534,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 					revaluateVariables.add(affectedVariable);
 
 				}
-
+				/*
 				//for (String variable : revaluateVariables) {
 				//int i = state.variableToIndexMap.get(variable);
 				for (int i = 0; i < currValueChanges.length - 1; i++) {
@@ -548,7 +549,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 						currValueChanges[i] = evaluateExpressionRecursive(state.modelstate, state.dvariablesdtime[i]);
 					}
 				}
-
+				 */
 			}
 
 
@@ -597,10 +598,11 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 						if(index > currValueChanges.length)
 							continue;
 
+						//double oldValue = modelstate.getVariableToValue(variable);
 						double value = (evaluateExpressionRecursive(modelstate, formula) *
 								modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable)));
 						currValueChanges[index] = value;
-						//modelstate.setvariableToValueMap(variable, value);
+						//modelstate.setvariableToValueMap(variable, oldValue + value);
 
 					}
 					else {
@@ -609,9 +611,10 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 						int index = variableToIndexMap.get(variable);
 						if(index > currValueChanges.length)
 							continue;
+						//double oldValue = modelstate.getVariableToValue(variable);
 						double value = evaluateExpressionRecursive(modelstate, formula);
 						currValueChanges[index] = value;
-						//modelstate.setvariableToValueMap(variable, modelstate.getVariableToValue(variable) + value);
+						//modelstate.setvariableToValueMap(variable, oldValue + value);
 					}
 
 					affectedVariables.add(variable);
