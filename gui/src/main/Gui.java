@@ -4618,7 +4618,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
 		//simTab.addTab("SBML Elements", elementsPanel);
 		//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-		modelEditor.createSBML("",".", null);
+		modelEditor.createSBML("",".", "rkf45");
 		reb2sac.run(".", true);
 		Graph tsdGraph;
 		tsdGraph = reb2sac.createGraph(root + separator + simName + separator + simName + ".grf");
@@ -4707,9 +4707,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					model.setSource(newFile);
 					modelMap.put(model.getId(), newFile);
 				}
-				List<Task> tasks = sedml.getTasks();
+				List<AbstractTask> tasks = sedml.getTasks();
 				for (int i = 0; i < tasks.size(); i++) {
-					Task task = tasks.get(i);
+					AbstractTask task = tasks.get(i);
 					if (modelMap.containsKey(task.getModelReference())) {
 						String modelId = modelMap.get(task.getModelReference()).replace(".xml", "");
 						String analysisId = modelId;

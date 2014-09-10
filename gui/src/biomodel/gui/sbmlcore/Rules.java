@@ -193,10 +193,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		String[] list = { "Algebraic", "Assignment", "Rate" };
 		ruleType = new JComboBox(list);
+		ruleType.setSelectedItem("Assignment");
 		ruleVar = new JComboBox();
+		assignRuleVar("");
 		JTextField id = new JTextField(12);
 		ruleMath = new JTextField(30);
-		ruleVar.setEnabled(false);
+		ruleVar.setEnabled(true);
 		ruleVar.addActionListener(this);
 		JCheckBox onPort = new JCheckBox();
 		iIndex = new JTextField(20);
