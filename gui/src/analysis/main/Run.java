@@ -1269,7 +1269,7 @@ public class Run implements ActionListener {
 							outDir = outDir + separator + direct;
 						}
 
-						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+						dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
 						exitValue = 0;
@@ -1291,7 +1291,7 @@ public class Run implements ActionListener {
 						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+						dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
 						exitValue = 0;
@@ -1313,7 +1313,7 @@ public class Run implements ActionListener {
 						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+						dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
 						exitValue = 0;
@@ -1335,7 +1335,7 @@ public class Run implements ActionListener {
 					if (direct != null && !direct.equals(".")) {
 						outDir = outDir + separator + direct;
 					}
-					dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+					dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
 							timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 							stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, log);						
 					exitValue = 0;
@@ -1354,7 +1354,7 @@ public class Run implements ActionListener {
 						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+						dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
 								timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, (int)Math.floor(timeLimit/printInterval), 0, absError, printer_track_quantity, genStats, simTab, log);				
 						exitValue = 0;
@@ -1373,7 +1373,7 @@ public class Run implements ActionListener {
 						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+						dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
 								timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, log);				
 						exitValue = 0;

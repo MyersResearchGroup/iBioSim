@@ -4766,6 +4766,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								catch (Exception except) {
 									JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
 								}
+							} else if (outputs.size() > 0 && outputs.get(0).isReport()) {
+								Report report = (Report)outputs.get(0);
+								List<DataSet> dataSets = report.getListOfDataSets();
+								for (int j = 0; j < dataSets.size(); j++) {
+									System.out.println(dataSets.get(j).getLabel());
+								}
 							}
 							performAnalysis(modelId,analysisId,sedmlDoc);
 						}

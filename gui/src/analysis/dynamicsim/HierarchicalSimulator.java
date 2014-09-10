@@ -114,6 +114,7 @@ public abstract class HierarchicalSimulator {
 	protected JProgressBar progress;
 	protected double printInterval;
 	protected int currentRun;
+	protected String rootDirectory;
 	protected String outputDirectory;
 	protected String separator;
 	protected boolean printConcentrations = false;
@@ -131,7 +132,7 @@ public abstract class HierarchicalSimulator {
 	/**
 	 * does lots of initialization
 	 */
-	public HierarchicalSimulator(String SBMLFileName, String outputDirectory, double timeLimit, 
+	public HierarchicalSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, 
 			JFrame running, String[] interestingSpecies, String quantityType) throws IOException, XMLStreamException 
 			{
@@ -142,6 +143,7 @@ public abstract class HierarchicalSimulator {
 		this.minTimeStep = minTimeStep;
 		this.progress = progress;
 		this.printInterval = printInterval;
+		this.rootDirectory = rootDirectory;
 		this.outputDirectory = outputDirectory;
 		this.running = running;
 
@@ -419,7 +421,7 @@ public abstract class HierarchicalSimulator {
 	 */
 	protected long setupSubmodels(SBMLDocument document)
 	{
-		String path = getPath(outputDirectory);
+		String path = rootDirectory;
 		String alternativePath = getPath(SBMLFileName);
 		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getExtension(CompConstants.namespaceURI);
 		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document.getExtension(CompConstants.namespaceURI);

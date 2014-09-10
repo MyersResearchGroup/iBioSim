@@ -134,7 +134,7 @@ public class DynSim {
 			GeneticNetwork network = parser.buildNetwork(sbml);
 			sbml = network.getSBML();
 			network.mergeSBML(filename, sbml);
-			simulator.simulate(filename, outputDirectory, timeLimit, maxTimeStep, minTimeStep, 
+			simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, 
 					randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, 
 					intSpecies, numSteps, relativeError, absoluteError, quantityType, genStats, null, null);
 			

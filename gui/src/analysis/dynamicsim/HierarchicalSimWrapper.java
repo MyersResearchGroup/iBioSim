@@ -144,7 +144,7 @@ public class HierarchicalSimWrapper {
 
 		try {
 
-			simulator.simulate(filename, outputDirectory, timeLimit, maxTimeStep, minTimeStep, 
+			simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, 
 					randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, 
 					intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null);
 

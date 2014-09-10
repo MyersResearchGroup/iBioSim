@@ -19,12 +19,12 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	private boolean updateRateRule;
 
 
-	public SimulatorSSADirectHierarchical(String SBMLFileName, String outputDirectory, double timeLimit, 
+	public SimulatorSSADirectHierarchical(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
 					throws IOException, XMLStreamException {
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, progress,
+		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, progress,
 				printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
 
 		initialize(randomSeed, 1);
