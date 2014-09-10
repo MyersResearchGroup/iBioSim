@@ -30,13 +30,13 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 
 	DiffEquations[] functions;
 
-	public SimulatorHybridHierarchical(String SBMLFileName, String outputDirectory, double timeLimit, 
+	public SimulatorHybridHierarchical(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			double stoichAmpValue, JFrame running, String[] interestingSpecies, int numSteps, double relError, 
 			double absError, String quantityType)
 					throws IOException, XMLStreamException {	
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
+		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
 				progress, printInterval, stoichAmpValue, running,
 				interestingSpecies, quantityType);
 

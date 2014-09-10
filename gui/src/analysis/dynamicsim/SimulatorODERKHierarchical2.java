@@ -32,12 +32,12 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 	double nextTriggerTime;
 	DiffEquations[] functions;
 
-	public SimulatorODERKHierarchical2(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed,
+	public SimulatorODERKHierarchical2(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed,
 			JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
 			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType)  throws IOException, XMLStreamException {	
 
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, progress,
+		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, 0.0, progress,
 				printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
 
 

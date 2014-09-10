@@ -35,7 +35,7 @@ public class DynamicSimulation {
 		simulatorType = type;
 	}	
 	
-	public void simulate(String SBMLFileName, String outputDirectory, double timeLimit, 
+	public void simulate(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			int runs, JLabel progressLabel, JFrame running, double stoichAmpValue, 
 			String[] interestingSpecies, int numSteps, double relError, double absError, 
@@ -63,15 +63,15 @@ public class DynamicSimulation {
 						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, numSteps, relError, absError, quantityType);
 			else if (simulatorType.equals("hierarchical-direct"))
-				hSimulator = new SimulatorSSADirectHierarchical(SBMLFileName, outputDirectory, timeLimit, 
+				hSimulator = new SimulatorSSADirectHierarchical(SBMLFileName, rootDirectory, outputDirectory, timeLimit, 
 						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, quantityType);
 			else if (simulatorType.equals("hierarchical-hybrid"))
-				hSimulator = new SimulatorHybridHierarchical(SBMLFileName, outputDirectory, timeLimit, 
+				hSimulator = new SimulatorHybridHierarchical(SBMLFileName, rootDirectory, outputDirectory, timeLimit, 
 						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, numSteps, relError, absError, quantityType);
 			else if (simulatorType.equals("hierarchical-rk"))
-				hSimulator = new SimulatorODERKHierarchical2(SBMLFileName, outputDirectory, timeLimit, 
+				hSimulator = new SimulatorODERKHierarchical2(SBMLFileName, rootDirectory, outputDirectory, timeLimit, 
 						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, numSteps, relError, absError, quantityType);
 		}
