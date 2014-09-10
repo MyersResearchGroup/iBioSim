@@ -42,8 +42,10 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 	private String[] options;
 	private boolean iBioSimURIPresent;
 	private URI removedBioSimURI;
+	private JButton add = new JButton("Add");
+	private JButton remove = new JButton("Remove");
+	private JButton editDescriptors = new JButton("Edit Composite");
 	private JButton addMove = new JButton("Add/Move Composite");
-	private JButton editDescriptors = new JButton("Edit Composite Descriptors");
 	
 	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, 
 			String defaultCompStrand, Set<String> soTypes, ModelEditor modelEditor) {
@@ -61,7 +63,7 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 		defaultMinusBoxState = minusBox.isSelected();
 		this.soTypes = soTypes;
 		
-		options = new String[]{"Add", "Remove", "Ok", "Cancel"};
+		options = new String[]{"Ok", "Cancel"};
 		constructPanel();
 	}
 	
@@ -77,7 +79,7 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 		defaultMinusBoxState = minusBox.isSelected();
 		this.soTypes = soTypes;
 		
-		options = new String[]{"Add", "Remove", "Ok", "Cancel"};
+		options = new String[]{"Ok", "Cancel"};
 		constructPanel();
 	}
 	
@@ -94,24 +96,27 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 		JLabel minusLabel = new JLabel("Minus Strand");
 		minusPanel.add(minusBox);
 		minusPanel.add(minusLabel);
+		JPanel metaPanel = new JPanel(new GridLayout(2, 1));
+		JPanel compositePanel = new JPanel(new GridLayout(1, 2));
+		add.addActionListener(this);
+		remove.addActionListener(this);
+		addMove.addActionListener(this);
+		editDescriptors.addActionListener(this);
+		compositePanel.add(add);
+		compositePanel.add(remove);
 		if (modelEditor == null) {
-			this.add(minusPanel, "South");
+			//compositePanel.add(editDescriptors);
 		} else {
-			JPanel metaPanel = new JPanel(new GridLayout(2, 1));
-			JPanel compositePanel = new JPanel(new GridLayout(1, 2));
-			addMove.addActionListener(this);
-			editDescriptors.addActionListener(this);
-			compositePanel.add(addMove);
 			compositePanel.add(editDescriptors);
-			metaPanel.add(minusPanel);
-			metaPanel.add(compositePanel);
-			this.add(metaPanel, "South");
+			compositePanel.add(addMove);
 		}
+		metaPanel.add(minusPanel);
+		metaPanel.add(compositePanel);
+		this.add(metaPanel, "South");
 		
 		if (loadSBOLFiles(sbolFilePaths)) {
-			boolean display = setComponentIDList();
-			while (display)
-				display = panelOpen();
+			if (setComponentIDList())
+				panelOpen();
 		}
 	}
 	
@@ -188,25 +193,14 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 		return true;
 	}
 	
-	private boolean panelOpen() {
+	private void panelOpen() {
 		int choice = JOptionPane.showOptionDialog(Gui.frame, this,
 				"SBOL Association", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		if (choice == 0) {
-			SBOLBrowser browser = new SBOLBrowser(sbolFilePaths, soTypes);
-			insertComponentURIs(browser.getSelection());
-			return true;
-		} else if (choice == 1) {
-			removeSelectedURIs();
-			return true;
-		} else if (choice == 2) 
-			return false;
-		else {
-			compURIs = defaultCompURIs;
-			minusBox.setSelected(defaultMinusBoxState);
-			removedBioSimURI = null;
-			return false;
-		}
+		if (choice == 0) return;
+		compURIs = defaultCompURIs;
+		minusBox.setSelected(defaultMinusBoxState);
+		removedBioSimURI = null;
 	}
 	
 	private void moveIBioSimURI() {
@@ -273,7 +267,9 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 	private void removeSelectedURIs() {
 		int[] selectedIndices = compList.getSelectedIndices();
 		if (selectedIndices.length == 0) {
-			selectedIndices = new int[]{compURIs.size() - 1};
+			return;
+			// TODO: Removed, not sure purpose of this
+			//selectedIndices = new int[]{compURIs.size() - 1};
 		}
 		for (int i = selectedIndices.length; i > 0; i--) {
 			URI compURI = compURIs.remove(selectedIndices[i - 1]);
@@ -314,6 +310,11 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 				SBOLIdentityManager identityManager = new SBOLIdentityManager(modelEditor.getBioModel());
 				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
 			}
+		} else if (e.getSource() == add) {
+			SBOLBrowser browser = new SBOLBrowser(sbolFilePaths, soTypes);
+			insertComponentURIs(browser.getSelection());
+		} else if (e.getSource() == remove) {
+			removeSelectedURIs();
 		}
 	}
 
