@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
@@ -25,7 +26,6 @@ import javax.swing.SwingConstants;
 import javax.swing.plaf.metal.MetalButtonUI;
 
 import sbol.util.SBOLUtility;
-
 import main.Gui;
 
 import com.mxgraph.util.mxConstants;
@@ -1354,6 +1354,12 @@ public class EditPreferences {
 				if (!problem) problem = saveAnalysisPreferences(biosimrc);
 				if (!problem) problem = saveLearnPreferences(biosimrc);
 				if (!problem) problem = saveAssemblyPreferences(biosimrc);
+				try {
+					biosimrc.sync();
+				}
+				catch (BackingStoreException e) {
+					e.printStackTrace();
+				}
 			}
 		} while (value == JOptionPane.YES_OPTION && problem);
 	}
