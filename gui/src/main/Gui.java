@@ -4621,10 +4621,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		modelEditor.createSBML("",".", "rkf45");
 		reb2sac.run(".", true);
 		Graph tsdGraph;
-		tsdGraph = reb2sac.createGraph(root + separator + simName + separator + simName + ".grf");
+		if (new File(root + separator + simName + separator + simName + ".grf").exists()) {
+			tsdGraph = reb2sac.createGraph(root + separator + simName + separator + simName + ".grf");
+		} else {
+			tsdGraph = reb2sac.createGraph(null);
+		}
 		simTab.addTab("TSD Graph", tsdGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
-		Graph probGraph = reb2sac.createProbGraph(null);
+		Graph probGraph;
+		if (new File(root + separator + simName + separator + simName + ".prb").exists()) {
+			probGraph = reb2sac.createProbGraph(root + separator + simName + separator + simName + ".prb");
+		} else {
+			probGraph = reb2sac.createProbGraph(null);
+		}
 		simTab.addTab("Histogram", probGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 		addTab(simName, simTab, null);
@@ -4647,7 +4656,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				File sedmlFile = new File(filename.trim());
 				SEDMLDocument sedmlDoc = Libsedml.readDocument(sedmlFile);
 				sedmlDoc.validate();
-				if(sedmlDoc.hasErrors()) {
+				// TODO: removed validation for now
+				if(false /*sedmlDoc.hasErrors()*/) {
 					List<SedMLError> errors = sedmlDoc.getErrors();
 					final JFrame f = new JFrame("SED-ML Errors and Warnings");
 					JTextArea messageArea = new JTextArea();
@@ -4707,6 +4717,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					model.setSource(newFile);
 					modelMap.put(model.getId(), newFile);
 				}
+				String[] colors = {"Red", "Blue", "Green", "Yellow", "Magenta", "Cyan", "Tan", "Gray (Dark)", "Red (Dark)", "Blue (Dark)", "Green (Dark)", "Yellow (Dark)",
+						"Magenta (Dark)", "Cyan (Dark)", "Black", "Gray", "Red (Extra Dark)", "Blue (Extra Dark)", "Green (Extra Dark)", "Yellow (Extra Dark)",	"Magenta (Extra Dark)",
+						"Cyan (Extra Dark)", "Red (Light)",	"Blue (Light)", "Green (Light)", "Yellow (Light)", "Magenta (Light)", "Cyan (Light)", "Gray (Light)"};
+				int numColors = colors.length;
 				List<AbstractTask> tasks = sedml.getTasks();
 				for (int i = 0; i < tasks.size(); i++) {
 					AbstractTask task = tasks.get(i);
@@ -4752,7 +4766,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									graph.setProperty("species.name." + j, curve.getName() + " (1)");
 									graph.setProperty("species.id." + j, curve.getName() + " (1)");
 									graph.setProperty("species.visible." + j, "true");
-									graph.setProperty("species.paint." + j, "Black");
+									graph.setProperty("species.paint." + j, colors[j % numColors]);
 									graph.setProperty("species.shape." + j, "Circle");
 									graph.setProperty("species.directory." + j, "");
 								}
@@ -4768,9 +4782,36 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 							} else if (outputs.size() > 0 && outputs.get(0).isReport()) {
 								Report report = (Report)outputs.get(0);
+								Properties graph = new Properties();
+								graph.setProperty("title", report.getName());
+								graph.setProperty("chart.background.paint", "" + new java.awt.Color(238, 238, 238).getRGB());
+								graph.setProperty("plot.background.paint", "" + java.awt.Color.WHITE.getRGB());
+								//graph.setProperty("plot.domain.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
+								graph.setProperty("plot.range.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
+								graph.setProperty("x.axis", "");
+								graph.setProperty("y.axis", "Percent");
+								//graph.setProperty("auto.resize", "true");
+								graph.setProperty("visibleLegend", "true");
+								graph.setProperty("gradient", "false");
+								graph.setProperty("shadow", "false");
 								List<DataSet> dataSets = report.getListOfDataSets();
 								for (int j = 0; j < dataSets.size(); j++) {
-									System.out.println(dataSets.get(j).getLabel());
+									DataSet dataSet = dataSets.get(j);
+									graph.setProperty("species.number." + j, "" + j);
+									graph.setProperty("species.id." + j, dataSet.getLabel());
+									graph.setProperty("species.name." + j, dataSet.getLabel());
+									graph.setProperty("species.paint." + j, colors[j % numColors]);
+									graph.setProperty("species.directory." + j, "");
+								}
+								try {
+									FileOutputStream store = new FileOutputStream(new 
+											File(root + separator + analysisId + separator + analysisId + ".prb"));
+									graph.store(store, "Probability Data");
+									store.close();
+									log.addText("Creating probability file:\n" + root + separator + analysisId + separator + analysisId + ".prb" + "\n");
+								}
+								catch (Exception except) {
+									JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Histogram!", "Error", JOptionPane.ERROR_MESSAGE);
 								}
 							}
 							performAnalysis(modelId,analysisId,sedmlDoc);
