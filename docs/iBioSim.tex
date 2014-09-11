@@ -7,9 +7,9 @@
 
 \usepackage{indentfirst,graphics,alltt,epsfig,color}
 
-\title{iBioSim Version 2.5 \\ User's Manual}
+\title{iBioSim Version 3.0 \\ User's Manual}
 
-\author{Chris J. Myers, Nathan Barker, Kevin Jones, Hiroyuki Kuwahara, Curtis
+\author{Chris J. Myers, Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curtis
   Madsen, \\ Nam Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe} 
 
 \begin{document}
@@ -26,11 +26,11 @@
 \section{Introduction}
 
 \noindent
-{\tt iBioSim} has been developed for the modeling, analysis, and design of genetic circuits.  While {\tt iBioSim} primarily targets models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  Recently, modeling and visualization support has been added for multi-cellular and spatial models as well.
+{\tt iBioSim} has been developed for the modeling, analysis, and design of genetic circuits.  While {\tt iBioSim} primarily targets models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  {\tt iBioSim} also includes modeling and visualization support for multi-cellular and spatial models as well.
 It is capable of importing and exporting models specified using the %%tth:\begin{html}<A HREF="http://www.sbml.org/">\end{html}
 \emph{Systems Biology Markup Language}
 %%tth:\begin{html}</A>\end{html}
-~(SBML).  It can import all levels and versions of SBML and is able to export Level 3 Version 1.  It supports all core SBML modeling constructs except some types of \emph{fast} reactions, and also has support for the hierarchical modeling package and layout package.  It was the first tool to produce correct results for all examples in the SBML benchmark suite.  It has also been tested successfully on the stochastic benchmark suite and the curated models in the 
+~(SBML).  It can import all levels and versions of SBML and is able to export Level 3 Version 1.  It supports all core SBML modeling constructs except some types of \emph{fast} reactions, and also has support for the hierarchical model composition, layout, flux balance constraints, and arrays packages.  It was the first tool to produce correct results for all examples in the SBML benchmark suite.  It has also been tested successfully on the stochastic benchmark suite and the curated models in the 
 %%tth:\begin{html}<A HREF="http://www.ebi.ac.uk/biomodels-main/">\end{html}
 \emph{BioModels database}.
 %%tth:\begin{html}</A>\end{html}
@@ -43,40 +43,24 @@ Finally, it is one of the first tools to also support the
 \begin{itemize}
 \item Model Editor - a tool to create a model of a genetic circuit or other biological system.
 \item SBOL Browser - a tool to view SBOL files and associate DNA components to model elements.
-\item Analysis Tool - an abstraction-based ODE, Monte Carlo, and Markov analysis tool.
+\item Analysis Tool - an abstraction-based ODE, Monte Carlo, Markov, and flux balance analysis tool.
 \item Learn Tool - a tool to learn a model from \emph{time series data} (TSD).
 \item TSD Graph Editor- a tool to visualize TSD files. 
-\item Histogram Graph Editor - a tool to visualize probability data. 
+\item Histogram Graph Editor - a tool to visualize probability data and flux balance results. 
 \end{itemize}
 
 \subsection*{Credits}
 
 \noindent
-The iBioSim tool is being developed at the University of Utah
-by 
+The iBioSim tool is being developed by 
 %%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~myers">\end{html}
-Chris Myers, 
+Chris Myers 
 %%tth:\begin{html}</A>\end{html}
-%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~barkern">\end{html}
-Nathan Barker, 
-%%tth:\begin{html}</A>\end{html}
-%%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~kjones">\end{html}
-Kevin Jones, 
-%%tth:\begin{html}</A>\end{html}
-%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~kuwahara">\end{html}
-Hiroyuki Kuwahara, 
-%%tth:\begin{html}</A>\end{html}
-%%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~cmadsen">\end{html}
-Curtis Madsen, 
-%%tth:\begin{html}</A>\end{html}
-%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~namphuon">\end{html}
-Nam Nguyen, 
-%%tth:\begin{html}</A>\end{html}
-%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~patterson">\end{html}
-Tyler Patterson, 
-%%tth:\begin{html}</A>\end{html}
-Nicholas Roehner, 
-and Jason Stevens.  Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with King Abdullah University of Science and Technology, Nam Nguyen is now with the University of Texas in Austin, and Jason Stevens is now with the University of Washington.
+research group at the University of Utah.
+This project has involved many students including Nathan Barker, Scott Glass, Kevin Jones,
+Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tyler Patterson, Nicholas Roehner, and 
+Jason Stevens.
+Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with King Abdullah University of Science and Technology, Curtis Madsen is now with Newcastle University, Nam Nguyen is now with the University of Texas in Austin, and Jason Stevens is now with the University of Washington.
 
 \clearpage
 
@@ -1322,7 +1306,7 @@ Math formulas appear in many model constructs.  These formulas are expressed as 
 \item Real numbers followed optionally by its units
 \item Built-in constants: exponential, pi, Infinity, NaN, true, and false.
 \item Special variable time or t, which returns the current simulation time.
-\item Mathematical operators including add (+), subtract (-), multiply (*), divide (/), and power (pow(x,y)).
+\item Mathematical operators including add (+), subtract (-), multiply (*), divide (/), power (\^{} or pow(x,y)), and root.
 \item A function defined in the list of function definitions.
 \item Logical functions: and (\&\&), or ($||$), xor, not (!).
 \item Relational functions: eq (==), neq (!=), geq (>=), gt (>), leq (<=), and lt (<).

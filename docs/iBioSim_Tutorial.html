@@ -14,9 +14,9 @@
  
 
 
-<title> iBioSim Version 2.5 \ Tutorial</title>
+<title> iBioSim Version 2.7 \ Tutorial</title>
  
-<h1 align="center">iBioSim Version 2.5 <br />Tutorial </h1>
+<h1 align="center">iBioSim Version 2.7 <br />Tutorial </h1>
 
 <div class="p"><!----></div>
 
@@ -72,9 +72,7 @@
 </ul>
 
 <div class="p"><!----></div>
-This tutorial illustrates each of these features of <tt>iBioSim</tt> using a simple model for the <em>cI</em> and <em>cII</em> genes and the P<sub>R</sub> and P<sub>RE</sub> promoters from the phage &#955; decision circuit.  
-
-<div class="p"><!----></div>
+This tutorial illustrates each of these features of <tt>iBioSim</tt> using a model of the Gardner et al. Genetic Toggle switch.
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc2">
@@ -101,7 +99,7 @@ To create a new project, select New &#8594; Project from the File menu as shown 
 3</a>&nbsp;&nbsp;Model Editor</h2>
 
 <div class="p"><!----></div>
-After you have created a project, you can create a new model to add to the project by selecting New &#8594; Model from the File menu as shown below. You will then be prompted to enter a model ID.  Enter <tt>lambda</tt>.  At this point, a Model editor will open in a new tab.
+After you have created a project, you can create a new model to add to the project by selecting New &#8594; Model from the File menu as shown below. You will then be prompted to enter a model ID.  Enter <tt>ToggleSwitch</tt>.  At this point, a Model editor will open in a new tab.
 
 <div class="p"><!----></div>
 
@@ -129,7 +127,7 @@ Compartments are the membrane-enclosed regions where species can be found and re
 <div class="p"><!----></div>
 To add a chemical species, select the Add Species icon <img src="../gui/icons/modelview/add_species_selected.png" alt="../gui/icons/modelview/add_species_selected.png" /> and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by clicking on the selection icon 
 <img src="../gui/icons/modelview/select_mode_selected.png" alt="../gui/icons/modelview/select_mode_selected.png" />, and
-double-clicking on the species to open the Species Editor.  In this case, let us change the ID to CI, and click on degrades checkbox.  We will leave all other values at their default values.  One thing that is important to note is that when this model is analyzed a default degradation reaction will be created which has a rate of 0.0075.  
+double-clicking on the species to open the Species Editor.  In this case, let us change the ID to LacI, and click on the degrades checkbox.  We will leave all the other values at their default values.  One thing that is important to note is that when this model is analyzed a default degradation reaction will be created which has a rate of 0.0075.  
 
 <div class="p"><!----></div>
 
@@ -137,20 +135,15 @@ double-clicking on the species to open the Species Editor.  In this case, let us
 </center>
 
 <div class="p"><!----></div>
-Add another species for the CI dimer molecule.  The next step is to add a complex-formation reaction to convert CI monomers into CI dimers.  Select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight the CI species, and, while holding the mouse button, stretch the complex formation arc to the S1 species.  Next, edit this species to set its ID to CI2 and select that it degrades.  This species is created using a complex-formation reaction with an equilibrium constant of 0.1.  Change default to custom for the complex formation equilibrium and set it to this value as shown below.
+Repeat the steps above to add TetR and GFP species.  
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/species2.png" alt="screenshots/species2.png" /> 
-</center>
-
 <div class="p"><!----></div>
-If you double-click on the complex formation arc, an influence editor will open which indicates that this is a complex formation arc and the stoichiometry of binding (i.e., the number of molecules of the source species used to construct the sink species) is 2.  The default in this case is correct as it does take two molecules of CI to make CI2.
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/complex.png" alt="screenshots/complex.png" /> 
-</center>
+<div class="p"><!----></div>
 
 <div class="p"><!----></div>
 Next, let's add the PR promoter, which initiates transcription of the gene that produces the protein CII.  To do this, select the promoter icon <img src="../gui/icons/modelview/promoter_mode_selected.png" alt="../gui/icons/modelview/promoter_mode_selected.png" /> and click on the schematic canvas to drop the promoter with a default ID and parameter values.  Double-click on the promoter to bring up the promoter editor.  Change the ID to PR, customize the RNAP binding equilibrium to be 0.69422, and set the open complex production rate to be 0.014. 
@@ -611,5 +604,5 @@ is available in the <tt>docs</tt> directory that comes with the distribution.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On  1 Jun 2013, 15:56.</small>
+version 3.81.<br />On  6 Sep 2014, 09:37.</small>
 </html>
