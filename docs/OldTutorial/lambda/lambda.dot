@@ -1,0 +1,17 @@
+digraph G {
+	size="7.0,15,0";
+	x884148F0 [label="CI", shape=circle];
+	x88414A90 [label="PR", shape=circle];
+	x88414C30 [label="CII", shape=circle];
+	x88414DD0 [label="PRE", shape=circle];
+	x8841B1E0 [label="Degradation_CI\n{Degradation_CI_kd * CI}", shape=box];
+	x884148F0 -> x8841B1E0 [label = "r"];
+	x884228F0 [label="Degradation_CII\n{Degradation_CII_kd * CII}", shape=box];
+	x88414C30 -> x884228F0 [label = "r"];
+	x88422D10 [label="R_abstracted_production_PRE", shape=box];
+	x88422D10 -> x884148F0 [label = "10, p"];
+	x88414C30 -> x88422D10 [label = "m"];
+	x884293A0 [label="R_abstracted_production_PR", shape=box];
+	x884293A0 -> x88414C30 [label = "10, p"];
+	x884148F0 -> x884293A0 [label = "m"];
+}

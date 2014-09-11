@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:RDF xmlns="http://sbols.org/v1#" xmlns:ns2="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_K592101">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>BBa_K592101</displayId>
+        <name>Yellow Fluorescent Protein (YFP)</name>
+        <description>Yellow Fluorescent Protein derived from Aequorea victoria GFP. This sequence is cloned from the pZE12-YFP plasmid used by Elowitz [1]. The original gene was made by the The Yeast Resource Center (YRC) based at the University of Washington in Seattle, Washington.[1] Elowitz, M. B., A. J. Levine, et al. (2002). Stochastic gene expression in a single cell. Science 297(5584): 1183-6.</description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_K592101#Sequence">
+                <nucleotides>atgcgtaaaggagaagaacttttcactggagttgtcccaattcttgttgaattagatggtgatgttaatgggcacaaattttctgtcagtggagagggtgaaggtgatgcaacatacggaaaacttacccttaaatttatttgcactactggaaaactacctgttccatggccaacacttgtcactactttcggttatggtctaaaatgctttgctagatacccagatcatatgaaacggcatgactttttcaagagtgccatgcccgaaggttatgtacaggaaagaactatatttttcaaagatgacgggaactacaagacacgtgctgaagtcaagtttgaaggtgatacccttgttaatagaatcgagttaaaaggtattgattttaaagaagatggaaacattcttggacacaaattggaatacaactataactcacacaatgtatacatcatggcagacaaacaaaagaatggaatcaaagttaacttcaaaattagacacaacattgaagatggaagcgttcaactagcagaccattatcaacaaaatactccaattggcgatggccctgtccttttaccagacaaccattacctgtcctatcaatctgccctttcgaaagatcccaacgaaaagagagaccacatggtccttcttgagtttgtaacagctgctgggattacacatggcatggatgaactatacaaataataa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_R0040">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>BBa_R0040</displayId>
+        <name>TetR repressible promoter</name>
+        <description>Sequence for pTet inverting regulator. Promoter is constitutively ON and repressed by TetR. TetR repression is inhibited by the addition of tetracycline or its analog, aTc.</description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_R0040#Sequence">
+                <nucleotides>tccctatcagtgatagagattgacatccctatcagtgatagagatactgagcac</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_C0012:Design">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>BBa_C0012</displayId>
+        <name>lacI repressor from E. coli (+LVA)</name>
+        <description>Sequence taken from the repressilator of Elowitz and Leibler (2000). The obtained sequence was compared to the wild-type sequence for LacI obtained through a database search. The sequence had been modified from the wild-type in that wild-type GTG start was changed to an ATG start (note, actual ORF in E.coli has several GTG starts it would seem). The LVA tag has been added for quicker degradation. Incompatible with systems containing LacI, lactose, or IPTG.</description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_C0012:Design#Sequence">
+                <nucleotides>atggtgaatgtgaaaccagtaacgttatacgatgtcgcagagtatgccggtgtctcttatcagaccgtttcccgcgtggtgaaccaggccagccacgtttctgcgaaaacgcgggaaaaagtggaagcggcgatggcggagctgaattacattcccaaccgcgtggcacaacaactggcgggcaaacagtcgttgctgattggcgttgccacctccagtctggccctgcacgcgccgtcgcaaattgtcgcggcgattaaatctcgcgccgatcaactgggtgccagcgtggtggtgtcgatggtagaacgaagcggcgtcgaagcctgtaaagcggcggtgcacaatcttctcgcgcaacgcgtcagtgggctgatcattaactatccgctggatgaccaggatgccattgctgtggaagctgcctgcactaatgttccggcgttatttcttgatgtctctgaccagacacccatcaacagtattattttctcccatgaagacggtacgcgactgggcgtggagcatctggtcgcattgggtcaccagcaaatcgcgctgttagcgggcccattaagttctgtctcggcgcgtctgcgtctggctggctggcataaatatctcactcgcaatcaaattcagccgatagcggaacgggaaggcgactggagtgccatgtccggttttcaacaaaccatgcaaatgctgaatgagggcatcgttcccactgcgatgctggttgccaacgatcagatggcgctgggcgcaatgcgcgccattaccgagtccgggctgcgcgttggtgcggatatctcggtagtgggatacgacgataccgaagacagctcatgttatatcccgccgttaaccaccatcaaacaggattttcgcctgctggggcaaaccagcgtggaccgcttgctgcaactctctcagggccaggcggtgaagggcaatcagctgttgcccgtctcactggtgaaaagaaaaaccaccctggcgcccaatacgcaaaccgcctctccccgcgcgttggccgattcattaatgcagctggcacgacaggtttcccgactggaaagcgggcaggctgcaaacgacgaaaactacgctttagtagcttaataa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_R0010">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>BBa_R0010</displayId>
+        <name>promoter (lacI regulated)</name>
+        <description>This part is an inverting regulator sensitive to LacI and CAP. It contains two protein binding sites. The first binds the CAP protein, which is generally present in E.coli and is asocciated with cell health and availability of glucose. The second binds LacI protein. In the absence of LacI protein and CAP protein, this part promotes transcription. In the presence of LacI protein and CAP protein, this part inhibits transcription. LacI can be inhibited by IPTG. LacI is coded by BBa_C0010.</description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_R0010#Sequence">
+                <nucleotides>caatacgcaaaccgcctctccccgcgcgttggccgattcattaatgcagctggcacgacaggtttcccgactggaaagcgggcagtgagcgcaacgcaattaatgtgagttagctcactcattaggcaccccaggctttacactttatgcttccggctcgtatgttgtgtggaattgtgagcggataacaatttcacaca</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_B0015">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000141"/>
+        <displayId>BBa_B0015</displayId>
+        <name>double terminator (B0010-B0012)</name>
+        <description>Double terminator consisting of BBa_B0010 and BBa_B0012.</description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_B0015#Sequence">
+                <nucleotides>ccaggcatcaaataaaacgaaaggctcagtcgaaagactgggcctttcgttttatctgttgtttgtcggtgaacgctctctactagagtcacactggctcaccttcgggtgggcctttctgcgtttata</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_C0040">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>BBa_C0040</displayId>
+        <name>tetracycline repressor from transposon Tn10 (+LVA)</name>
+        <description>Coding region for the TetR protein without the Ribosome Binding Site. Modified with an LVA tail for rapid degradation of the protein and faster fall time for the emission. TetR binds to the pTet regulator (Part:BBa_R0040). aTc (anhydrotetracycline) binds to TetR and inhibits its operation.</description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_C0040#Sequence">
+                <nucleotides>atgtccagattagataaaagtaaagtgattaacagcgcattagagctgcttaatgaggtcggaatcgaaggtttaacaacccgtaaactcgcccagaagctaggtgtagagcagcctacattgtattggcatgtaaaaaataagcgggctttgctcgacgccttagccattgagatgttagataggcaccatactcacttttgccctttagaaggggaaagctggcaagattttttacgtaataacgctaaaagttttagatgtgctttactaagtcatcgcgatggagcaaaagtacatttaggtacacggcctacagaaaaacagtatgaaactctcgaaaatcaattagcctttttatgccaacaaggtttttcactagagaatgcattatatgcactcagcgctgtggggcattttactttaggttgcgtattggaagatcaagagcatcaagtcgctaaagaagaaagggaaacacctactactgatagtatgccgccattattacgacaagctatcgaattatttgatcaccaaggtgcagagccagccttcttattcggccttgaattgatcatatgcggattagaaaaacaacttaaatgtgaaagtgggtccgctgcaaacgacgaaaactacgctttagtagcttaataa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_B0034">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000139"/>
+        <displayId>BBa_B0034</displayId>
+        <name>RBS (Elowitz 1999)</name>
+        <description>RBS based on Elowitz repressilator.</description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_B0034#Sequence">
+                <nucleotides>aaagaggagaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_C0051">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>BBa_C0051</displayId>
+        <name>cI repressor from E. coli phage lambda (+LVA)</name>
+        <description>Coding region for the cI repressor based on cI repressor from bacteriophage lambda modified with an LVA tail for rapid degradation of the protein. cI repressor binds to the cI regulator (BBa_R0051).</description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_C0051#Sequence">
+                <nucleotides>atgagcacaaaaaagaaaccattaacacaagagcagcttgaggacgcacgtcgccttaaagcaatttatgaaaaaaagaaaaatgaacttggcttatcccaggaatctgtcgcagacaagatggggatggggcagtcaggcgttggtgctttatttaatggcatcaatgcattaaatgcttataacgccgcattgcttgcaaaaattctcaaagttagcgttgaagaatttagcccttcaatcgccagagaaatctacgagatgtatgaagcggttagtatgcagccgtcacttagaagtgagtatgagtaccctgttttttctcatgttcaggcagggatgttctcacctgagcttagaacctttaccaaaggtgatgcggagagatgggtaagcacaaccaaaaaagccagtgattctgcattctggcttgaggttgaaggtaattccatgaccgcaccaacaggctccaagccaagctttcctgacggaatgttaattctcgttgaccctgagcaggctgttgagccaggtgatttctgcatagccagacttgggggtgatgagtttaccttcaagaaactgatcagggatagcggtcaggtgtttttacaaccactaaacccacagtacccaatgatcccatgcaatgagagttgttccgttgtggggaaagttatcgctagtcagtggcctgaagagacgtttggcgctgcaaacgacgaaaactacgctttagtagcttaataa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_R0051">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>BBa_R0051</displayId>
+        <name>promoter (lambda cI regulated)</name>
+        <description>The cI regulated promoter is based on the pR promoter from bacteriophage lambda. The promoter has two DNA binding sites for lambda cI repressor BBa_C0051. cI binding results in repression of transcription. The specific sequence used here is based on the cI repressible promoter used in the Elowitz repressilator (and references therein). </description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_R0051#Sequence">
+                <nucleotides>taacaccgtgcgtgttgactattttacctctggcggtgataatggttgc</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.ncbi.nlm.nih.gov/gene/2703494">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NC_001416</displayId>
+        <name>cII (Enterobacteria phage lambda)</name>
+        <description>Coding region for cII protein from enterobacteria phage lambda.</description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.ncbi.nlm.nih.gov/gene/2703494#Sequence">
+                <nucleotides>atggttcgtgcaaacaaacgcaacgaggctctacgaatcgagagtgcgttgcttaacaaaatcgcaatgcttggaactgagaagacagcggaagctgtgggcgttgataagtcgcagatcagcaggtggaagagggactggattccaaagttctcaatgctgcttgctgttcttgaatggggggtcgttgacgacgacatggctcgattggcgcgacaagttgctgcgattctcaccaataaaaaacgcccggcggcaaccgagcgttctgaacaaatccagatggagttctga</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.genetics.org/content/115/4/591">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>pRE</displayId>
+        <name>promoter pRE (Enterobacteria phage lambda)</name>
+        <description>Promoter pRE from enterobacteria phage lambda.  Source is M. Mahoney and D. Wulff, 1987 Mutations that improve the pRE promoter of coliphage lambda. Genetics 115: 591-595.</description>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.genetics.org/content/115/4/591#Sequence">
+                <nucleotides>agcctcgttgcgtttgtttgcacgaaccatatgtaagtatttccttagataa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#comp_9_31_2013_17_14_57_346_iBioSim">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000804"/>
+        <displayId>lambda</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#seq_9_31_2013_17_14_57_346_iBioSim">
+                <nucleotides>taacaccgtgcgtgttgactattttacctctggcggtgataatggttgcaaagaggagaaaatgagcacaaaaaagaaaccattaacacaagagcagcttgaggacgcacgtcgccttaaagcaatttatgaaaaaaagaaaaatgaacttggcttatcccaggaatctgtcgcagacaagatggggatggggcagtcaggcgttggtgctttatttaatggcatcaatgcattaaatgcttataacgccgcattgcttgcaaaaattctcaaagttagcgttgaagaatttagcccttcaatcgccagagaaatctacgagatgtatgaagcggttagtatgcagccgtcacttagaagtgagtatgagtaccctgttttttctcatgttcaggcagggatgttctcacctgagcttagaacctttaccaaaggtgatgcggagagatgggtaagcacaaccaaaaaagccagtgattctgcattctggcttgaggttgaaggtaattccatgaccgcaccaacaggctccaagccaagctttcctgacggaatgttaattctcgttgaccctgagcaggctgttgagccaggtgatttctgcatagccagacttgggggtgatgagtttaccttcaagaaactgatcagggatagcggtcaggtgtttttacaaccactaaacccacagtacccaatgatcccatgcaatgagagttgttccgttgtggggaaagttatcgctagtcagtggcctgaagagacgtttggcgctgcaaacgacgaaaactacgctttagtagcttaataaccaggcatcaaataaaacgaaaggctcagtcgaaagactgggcctttcgttttatctgttgtttgtcggtgaacgctctctactagagtcacactggctcaccttcgggtgggcctttctgcgtttataccaggcatcaaataaaacgaaaggctcagtcgaaagactgggcctttcgttttatctgttgtttgtcggtgaacgctctctactagagtcacactggctcaccttcgggtgggcctttctgcgtttata</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+        <annotation>
+            <SequenceAnnotation ns2:about="http://www.async.ece.utah.edu#anno0_9_31_2013_17_14_57_346_iBioSim">
+                <bioStart>1</bioStart>
+                <bioEnd>49</bioEnd>
+                <strand>+</strand>
+                <subComponent>
+                    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_R0051">
+                        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+                        <displayId>BBa_R0051</displayId>
+                        <name>promoter (lambda cI regulated)</name>
+                        <description>The cI regulated promoter is based on the pR promoter from bacteriophage lambda. The promoter has two DNA binding sites for lambda cI repressor BBa_C0051. cI binding results in repression of transcription. The specific sequence used here is based on the cI repressible promoter used in the Elowitz repressilator (and references therein). </description>
+                        <dnaSequence>
+                            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_R0051#Sequence">
+<nucleotides>taacaccgtgcgtgttgactattttacctctggcggtgataatggttgc</nucleotides>
+                            </DnaSequence>
+                        </dnaSequence>
+                    </DnaComponent>
+                </subComponent>
+            </SequenceAnnotation>
+        </annotation>
+        <annotation>
+            <SequenceAnnotation ns2:about="http://www.async.ece.utah.edu#anno1_9_31_2013_17_14_57_346_iBioSim">
+                <bioStart>50</bioStart>
+                <bioEnd>61</bioEnd>
+                <strand>+</strand>
+                <subComponent>
+                    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_B0034">
+                        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000139"/>
+                        <displayId>BBa_B0034</displayId>
+                        <name>RBS (Elowitz 1999)</name>
+                        <description>RBS based on Elowitz repressilator.</description>
+                        <dnaSequence>
+                            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_B0034#Sequence">
+<nucleotides>aaagaggagaaa</nucleotides>
+                            </DnaSequence>
+                        </dnaSequence>
+                    </DnaComponent>
+                </subComponent>
+            </SequenceAnnotation>
+        </annotation>
+        <annotation>
+            <SequenceAnnotation ns2:about="http://www.async.ece.utah.edu#anno2_9_31_2013_17_14_57_346_iBioSim">
+                <bioStart>62</bioStart>
+                <bioEnd>811</bioEnd>
+                <strand>+</strand>
+                <subComponent>
+                    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_C0051">
+                        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+                        <displayId>BBa_C0051</displayId>
+                        <name>cI repressor from E. coli phage lambda (+LVA)</name>
+                        <description>Coding region for the cI repressor based on cI repressor from bacteriophage lambda modified with an LVA tail for rapid degradation of the protein. cI repressor binds to the cI regulator (BBa_R0051).</description>
+                        <dnaSequence>
+                            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_C0051#Sequence">
+<nucleotides>atgagcacaaaaaagaaaccattaacacaagagcagcttgaggacgcacgtcgccttaaagcaatttatgaaaaaaagaaaaatgaacttggcttatcccaggaatctgtcgcagacaagatggggatggggcagtcaggcgttggtgctttatttaatggcatcaatgcattaaatgcttataacgccgcattgcttgcaaaaattctcaaagttagcgttgaagaatttagcccttcaatcgccagagaaatctacgagatgtatgaagcggttagtatgcagccgtcacttagaagtgagtatgagtaccctgttttttctcatgttcaggcagggatgttctcacctgagcttagaacctttaccaaaggtgatgcggagagatgggtaagcacaaccaaaaaagccagtgattctgcattctggcttgaggttgaaggtaattccatgaccgcaccaacaggctccaagccaagctttcctgacggaatgttaattctcgttgaccctgagcaggctgttgagccaggtgatttctgcatagccagacttgggggtgatgagtttaccttcaagaaactgatcagggatagcggtcaggtgtttttacaaccactaaacccacagtacccaatgatcccatgcaatgagagttgttccgttgtggggaaagttatcgctagtcagtggcctgaagagacgtttggcgctgcaaacgacgaaaactacgctttagtagcttaataa</nucleotides>
+                            </DnaSequence>
+                        </dnaSequence>
+                    </DnaComponent>
+                </subComponent>
+            </SequenceAnnotation>
+        </annotation>
+        <annotation>
+            <SequenceAnnotation ns2:about="http://www.async.ece.utah.edu#anno3_9_31_2013_17_14_57_346_iBioSim">
+                <bioStart>812</bioStart>
+                <bioEnd>940</bioEnd>
+                <strand>+</strand>
+                <subComponent>
+                    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_B0015">
+                        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000141"/>
+                        <displayId>BBa_B0015</displayId>
+                        <name>double terminator (B0010-B0012)</name>
+                        <description>Double terminator consisting of BBa_B0010 and BBa_B0012.</description>
+                        <dnaSequence>
+                            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_B0015#Sequence">
+<nucleotides>ccaggcatcaaataaaacgaaaggctcagtcgaaagactgggcctttcgttttatctgttgtttgtcggtgaacgctctctactagagtcacactggctcaccttcgggtgggcctttctgcgtttata</nucleotides>
+                            </DnaSequence>
+                        </dnaSequence>
+                    </DnaComponent>
+                </subComponent>
+            </SequenceAnnotation>
+        </annotation>
+        <annotation>
+            <SequenceAnnotation ns2:about="http://www.async.ece.utah.edu#anno4_9_31_2013_17_14_57_346_iBioSim">
+                <bioStart>941</bioStart>
+                <bioEnd>1069</bioEnd>
+                <strand>+</strand>
+                <subComponent>
+                    <DnaComponent ns2:about="http://partsregistry.org/Part:BBa_B0015">
+                        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000141"/>
+                        <displayId>BBa_B0015</displayId>
+                        <name>double terminator (B0010-B0012)</name>
+                        <description>Double terminator consisting of BBa_B0010 and BBa_B0012.</description>
+                        <dnaSequence>
+                            <DnaSequence ns2:about="http://partsregistry.org/Part:BBa_B0015#Sequence">
+<nucleotides>ccaggcatcaaataaaacgaaaggctcagtcgaaagactgggcctttcgttttatctgttgtttgtcggtgaacgctctctactagagtcacactggctcaccttcgggtgggcctttctgcgtttata</nucleotides>
+                            </DnaSequence>
+                        </dnaSequence>
+                    </DnaComponent>
+                </subComponent>
+            </SequenceAnnotation>
+        </annotation>
+    </DnaComponent>
+</ns2:RDF>

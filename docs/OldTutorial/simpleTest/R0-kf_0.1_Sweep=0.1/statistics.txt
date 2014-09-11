@@ -1,0 +1,19 @@
+Parameter Values:
+R0_kf = 0.000000
+t = 0.000000
+time = 0.000000
+
+Initial State Vector:
+S0 = 100.000000
+
+Initial Reaction Rate Array:
+0.000000
+
+Reaction Rate Equation Array:
+R0_kf
+
+Reactant Matrix:
+1.000000 
+
+Delta Matrix:
+-1.000000 

@@ -1,0 +1,19 @@
+#Graph Data
+#Mon Jun 17 15:21:31 MDT 2013
+visibleLegend=true
+x.axis=time
+auto.resize=true
+y.max=
+plot.domain.grid.line.paint=-4144960
+x.max=
+plot.background.paint=-1
+y.axis=amount
+chart.background.paint=-1118482
+x.scale=
+LogY=false
+LogX=false
+title=MODEL_01196 simulation results
+plot.range.grid.line.paint=-4144960
+y.min=
+y.scale=
+x.min=

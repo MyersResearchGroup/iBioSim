@@ -1,0 +1,1238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body>
+
+
+<table border="2"><tr><th>Model ID</th><td>Population</td></tr><tr><th>Model Name</th><td>Created by libsbml flatten routine</td></tr><tr><th>Model Substance Units</th><td>mole</td></tr><tr><th>Model Volume Units</th><td>litre</td></tr></table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Functions</th></tr>
+<tr><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mi> C1__uniform ( a, b ) = </mi>            <mfrac>
+                <mrow>
+                    <mrow>
+                        <mi>a</mi>
+                    </mrow>
+                    <mo>+</mo>
+                    <mrow>
+                        <mi>b</mi>
+                    </mrow>
+                </mrow>
+                <mrow>
+                    <mi>2</mi>
+                </mrow>
+            </mfrac>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mi> C2__uniform ( a, b ) = </mi>            <mfrac>
+                <mrow>
+                    <mrow>
+                        <mi>a</mi>
+                    </mrow>
+                    <mo>+</mo>
+                    <mrow>
+                        <mi>b</mi>
+                    </mrow>
+                </mrow>
+                <mrow>
+                    <mi>2</mi>
+                </mrow>
+            </mfrac>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mi> C1__total ( x, y ) = </mi>            <mrow>
+                <mi>x</mi>
+            </mrow>
+            <mo>+</mo>
+            <mrow>
+                <mi>2</mi>
+                <mo>*</mo>
+                <mi>y</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mi> C2__total ( x, y ) = </mi>            <mrow>
+                <mi>x</mi>
+            </mrow>
+            <mo>+</mo>
+            <mrow>
+                <mi>2</mi>
+                <mo>*</mo>
+                <mi>y</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mi> get2DArrayElement ( a, b, c ) = </mi>            <mi>a</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Unit ID</th><th>Definition</th></tr>
+<tr><td>u_1_mole_n1</td><td><mo>(</mo>mole <mo>)</mo><sup>-1</sup></td></tr>
+
+<tr><td>C1__microLitre</td><td>10<sup>-3</sup><mo>&bull;</mo>litre </td></tr>
+
+<tr><td>C2__microLitre</td><td>10<sup>-3</sup><mo>&bull;</mo>litre </td></tr>
+
+<tr><td>u_1_second_n1</td><td><mo>(</mo>second <mo>)</mo><sup>-1</sup></td></tr>
+
+<tr><td>C1__nanoMole</td><td>10<sup>-9</sup><mo>&bull;</mo>mole </td></tr>
+
+<tr><td>C2__nanoMole</td><td>10<sup>-9</sup><mo>&bull;</mo>mole </td></tr>
+
+<tr><td>u_1_mole_n1_1_second_n1</td><td><mo>(</mo>mole <mo>)</mo><sup>-1</sup><mo>&bull;</mo><mo>(</mo>second <mo>)</mo><sup>-1</sup></td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Compartment ID</th><th>Dimensions</th><th>Initial Size</th><th>Units</th><th>Constant</th></tr>
+<tr><td>Grid</td><td><center>3</center></td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__Cell</td><td><center>3</center></td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__Cell</td><td><center>3</center></td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Species ID</th><th>Compartment</th><th>Initial Value</th><th>Units</th><th>Conversion Factor</th><th>Boundary</th><th>Constant</th><th>HasOnlySubstanceUnits</th></tr>
+<tr><td>C1__CI</td><td>C1__Cell</td><td><center>10 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C1__CI2</td><td>C1__Cell</td><td><center>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>C1__CI</mi>
+        </mrow>
+    </math>
+</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C1__PR</td><td>C1__Cell</td><td><center>2 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C1__CII</td><td>C1__Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C1__PRE</td><td>C1__Cell</td><td><center>2 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C2__CI</td><td>C2__Cell</td><td><center>10 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C2__CI2</td><td>C2__Cell</td><td><center>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>C2__CI</mi>
+        </mrow>
+    </math>
+</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C2__PR</td><td>C2__Cell</td><td><center>2 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C2__CII</td><td>C2__Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C2__PRE</td><td>C2__Cell</td><td><center>2 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C2__PRE_RNAP</td><td>C2__Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C2__PRE_CII_RNAP</td><td>C2__Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C1__PRE_RNAP</td><td>C1__Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C1__PRE_CII_RNAP</td><td>C1__Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C1__PR_RNAP</td><td>C1__Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C1__PR_CI2_bound</td><td>C1__Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C2__PR_RNAP</td><td>C2__Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C2__PR_CI2_bound</td><td>C2__Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>RNAP</td><td>Grid</td><td><center>30 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>Grid__RNAP</td><td>Grid</td><td><center>30 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C1__Cell__RNAP</td><td>C1__Cell</td><td><center>30 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>C2__Cell__RNAP</td><td>C2__Cell</td><td><center>30 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>ROW0_COL0__CII</td><td>Grid</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>ROW0_COL1__CII</td><td>Grid</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Parameter ID</th><th>Initial Value</th><th>Units</th><th>Constant</th></tr>
+<tr><td>kao_f</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>nr</td><td><center>30</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__kr_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__np</td><td><center>10</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__ka_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kb</td><td><center>0.0001</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>Degradation_C2__CI2_kd</td><td><center>0.0075</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_C2__PR_RNAP_ko_r</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>Complex_formation_C1__CI2_nc__C1__CI_C1__CI2</td><td><center>3</center></td><td>dimensionless</td><td>True</td></tr>
+
+<tr><td>Complex_formation_C1__CI2_nc__C1__CI_C1__CI2_001</td><td><center>3</center></td><td>dimensionless</td><td>True</td></tr>
+
+<tr><td>ROW0_COL0_Degradation_CII_kecd</td><td><center>0.005</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>ka_f</td><td><center>0.0033</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>nc</td><td><center>2</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__kd</td><td><center>0.0075</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__kc_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__ko_f</td><td><center>0.033</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__CI_total</td><td><center>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mi>C1__CI</mi>
+            </mrow>
+            <mo>+</mo>
+            <mrow>
+                <mi>2</mi>
+                <mo>*</mo>
+                <mi>C1__CI2</mi>
+            </mrow>
+        </mrow>
+    </math>
+</center></td><td>C1__nanoMole</td><td>False</td></tr>
+
+<tr><td>C2__kr_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__np</td><td><center>10</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>R_repression_binding_C1__PR_CI2_Kr</td><td><center>0.5</center></td><td>u_1_mole_n1</td><td>True</td></tr>
+
+<tr><td>ROW0_COL1_Degradation_CII_kecd</td><td><center>0.005</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>kr_f</td><td><center>0.5</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kmdiff_r</td><td><center>0.01</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__kao_f</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__nr</td><td><center>30</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kd</td><td><center>0.0075</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kc_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__ko_f</td><td><center>0.033</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__CI_total</td><td><center>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mi>C2__CI</mi>
+            </mrow>
+            <mo>+</mo>
+            <mrow>
+                <mi>2</mi>
+                <mo>*</mo>
+                <mi>C2__CI2</mi>
+            </mrow>
+        </mrow>
+    </math>
+</center></td><td>C2__nanoMole</td><td>False</td></tr>
+
+<tr><td>R_repression_binding_C1__PR_CI2_kr_r</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_repression_binding_C2__PR_CI2_Kr</td><td><center>0.5</center></td><td>u_1_mole_n1</td><td>True</td></tr>
+
+<tr><td>Complex_formation_C1__CI2_Kc</td><td><center>0.15</center></td><td>u_1_mole_n1</td><td>True</td></tr>
+
+<tr><td>kc_f</td><td><center>0.05</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__nc</td><td><center>2</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__ka_f</td><td><center>0.0033</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kao_f</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__nr</td><td><center>30</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>R_RNAP_binding_C1__PRE_CII_Ka</td><td><center>0.0033</center></td><td>u_1_mole_n1</td><td>True</td></tr>
+
+<tr><td>R_RNAP_binding_C1__PRE_CII_kao_r</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_C1__PR_RNAP_ko_f</td><td><center>0.69422</center></td><td>u_1_mole_n1_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_repression_binding_C2__PR_CI2_kr_r</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>Complex_formation_C1__CI2_kr_c</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>Complex_formation_C2__CI2_Kc</td><td><center>0.15</center></td><td>u_1_mole_n1</td><td>True</td></tr>
+
+<tr><td>Complex_formation_C2__CI2_nc__C2__CI_C2__CI2</td><td><center>3</center></td><td>dimensionless</td><td>True</td></tr>
+
+<tr><td>Complex_formation_C2__CI2_nc__C2__CI_C2__CI2_001</td><td><center>3</center></td><td>dimensionless</td><td>True</td></tr>
+
+<tr><td>C1__kr_f</td><td><center>0.5</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__kmdiff_r</td><td><center>0.01</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__nc</td><td><center>2</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__ka_f</td><td><center>0.0033</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>R_constitutive_production_C1__PR_ko</td><td><center>0.014</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_RNAP_binding_C2__PRE_CII_Ka</td><td><center>0.0033</center></td><td>u_1_mole_n1</td><td>True</td></tr>
+
+<tr><td>R_RNAP_binding_C2__PRE_CII_kao_r</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_C1__PRE_RNAP_ko_r</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_C2__PR_RNAP_ko_f</td><td><center>0.69422</center></td><td>u_1_mole_n1_1_second_n1</td><td>True</td></tr>
+
+<tr><td>Complex_formation_C2__CI2_kr_c</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>ng</td><td><center>2</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__kc_f</td><td><center>0.05</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kr_f</td><td><center>0.5</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kmdiff_r</td><td><center>0.01</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>R_constitutive_production_C2__PR_ko</td><td><center>0.014</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_C2__PRE_RNAP_ko_r</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_repression_binding_C1__PR_CI2_nc</td><td><center>2</center></td><td>dimensionless</td><td>True</td></tr>
+
+<tr><td>R_repression_binding_C1__PR_CI2_nc_001</td><td><center>2</center></td><td>dimensionless</td><td>True</td></tr>
+
+<tr><td>ROW0_COL1_Diffusion_CII_Left_kecdiff</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>kmdiff_f</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kc_f</td><td><center>0.05</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>R_act_production_C1__PRE_CII_ka</td><td><center>0.015</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_repression_binding_C1__PR_CI2_kr_f</td><td><center>0.5</center></td><td>u_1_mole_n1_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_repression_binding_C2__PR_CI2_nc</td><td><center>2</center></td><td>dimensionless</td><td>True</td></tr>
+
+<tr><td>R_repression_binding_C2__PR_CI2_nc_001</td><td><center>2</center></td><td>dimensionless</td><td>True</td></tr>
+
+<tr><td>kecd</td><td><center>0.005</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__ng</td><td><center>2</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__CII__kmdiff_r</td><td><center>0.01</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>R_act_production_C2__PRE_CII_ka</td><td><center>0.015</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_RNAP_binding_C1__PRE_CII_kao_f</td><td><center>1</center></td><td>u_1_mole_n1_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_repression_binding_C2__PR_CI2_kr_f</td><td><center>0.5</center></td><td>u_1_mole_n1_1_second_n1</td><td>True</td></tr>
+
+<tr><td>Complex_formation_C1__CI2_kf_c</td><td><center>0.15</center></td><td>u_1_mole_n1_1_second_n1</td><td>True</td></tr>
+
+<tr><td>ROW0_COL0_Diffusion_CII_Right_kecdiff</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>C1__kmdiff_f</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__ng</td><td><center>2</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__CII__kmdiff_r</td><td><center>0.01</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>R_RNAP_binding_C2__PRE_CII_kao_f</td><td><center>1</center></td><td>u_1_mole_n1_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_C1__PRE_RNAP_ko_f</td><td><center>0.01</center></td><td>u_1_mole_n1_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_RNAP_binding_C1__PRE_CII_nc</td><td><center>2</center></td><td>dimensionless</td><td>True</td></tr>
+
+<tr><td>Complex_formation_C2__CI2_kf_c</td><td><center>0.15</center></td><td>u_1_mole_n1_1_second_n1</td><td>True</td></tr>
+
+<tr><td>C1__kecd</td><td><center>0.005</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kmdiff_f</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>R_C2__PRE_RNAP_ko_f</td><td><center>0.01</center></td><td>u_1_mole_n1_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_RNAP_binding_C2__PRE_CII_nc</td><td><center>2</center></td><td>dimensionless</td><td>True</td></tr>
+
+<tr><td>ko</td><td><center>0.05</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kecd</td><td><center>0.005</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>ko_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__CII__kmdiff_f</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kao_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>ka</td><td><center>0.25</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kecdiff</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__ko</td><td><center>0.05</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__CII__kmdiff_f</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>ka_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kb</td><td><center>0.0001</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__ko_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__ko</td><td><center>0.05</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>Degradation_C1__CI_kd</td><td><center>0.0075</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>kr_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>np</td><td><center>10</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__kao_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__ka</td><td><center>0.25</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__kecdiff</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__ko_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>Degradation_C2__CI_kd</td><td><center>0.0075</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_basal_production_C1__PRE_kb</td><td><center>4e-05</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>ko_f</td><td><center>0.033</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kc_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kd</td><td><center>0.0075</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__ka_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C1__kb</td><td><center>0.0001</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kao_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__ka</td><td><center>0.25</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>C2__kecdiff</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>Degradation_C1__CI2_kd</td><td><center>0.0075</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_basal_production_C2__PRE_kb</td><td><center>4e-05</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+<tr><td>R_C1__PR_RNAP_ko_r</td><td><center>1</center></td><td>u_1_second_n1</td><td>True</td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Rules</th></tr>
+<tr><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mi>C1__CI_total = </mi>            <mrow>
+                <mi>C1__CI</mi>
+            </mrow>
+            <mo>+</mo>
+            <mrow>
+                <mi>2</mi>
+                <mo>*</mo>
+                <mi>C1__CI2</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mi>C2__CI_total = </mi>            <mrow>
+                <mi>C2__CI</mi>
+            </mrow>
+            <mo>+</mo>
+            <mrow>
+                <mi>2</mi>
+                <mo>*</mo>
+                <mi>C2__CI2</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Constraint ID</th><th>Constraint</th><th>Message</th></tr>
+<tr><td>C1__CI20</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mi>C1__CI</mi>
+            </mrow>
+            <mo>&le;</mo>
+            <mrow>
+                <mi>20</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td><td></td></tr>
+
+<tr><td>C1__CII50</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mi>C1__CII</mi>
+            </mrow>
+            <mo>&le;</mo>
+            <mrow>
+                <mi>50</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td><td></td></tr>
+
+<tr><td>C2__CI20</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mi>C2__CI</mi>
+            </mrow>
+            <mo>&le;</mo>
+            <mrow>
+                <mi>20</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td><td></td></tr>
+
+<tr><td>C2__CII50</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mi>C2__CII</mi>
+            </mrow>
+            <mo>&le;</mo>
+            <mrow>
+                <mi>50</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td><td></td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Reaction ID</th><th>Compartment</th><th>Rev</th><th>Fast</th><th>Reactants</th><th>Products</th><th>Modifiers</th><th>Kinetic Law</th></tr>
+<tr><td>R_basal_production_C1__PRE</td><td>C1__Cell</td><td>False</td><td>False</td><td></td><td>10 C1__CI</td><td>C1__PRE_RNAP</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>R_basal_production_C1__PRE_kb</mi>
+            <mo>*</mo>
+            <mi>C1__PRE_RNAP</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_act_production_C1__PRE_CII</td><td>C1__Cell</td><td>False</td><td>False</td><td></td><td>10 C1__CI</td><td>C1__PRE_CII_RNAP</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>R_act_production_C1__PRE_CII_ka</mi>
+            <mo>*</mo>
+            <mi>C1__PRE_CII_RNAP</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Degradation_C1__CI</td><td>C1__Cell</td><td>False</td><td>False</td><td>C1__CI</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>Degradation_C1__CI_kd</mi>
+            <mo>*</mo>
+            <mi>C1__CI</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Complex_formation_C1__CI2</td><td>C1__Cell</td><td>True</td><td>False</td><td>3 C1__CI</td><td>C1__CI2</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mi>Complex_formation_C1__CI2_kf_c</mi>
+                        <mo>*</mo>
+                        <msup>
+                            <mrow>
+                                <mi>Complex_formation_C1__CI2_Kc</mi>
+                            </mrow>
+                            <mrow>
+                                <mrow>
+                                    <mi>Complex_formation_C1__CI2_nc__C1__CI_C1__CI2</mi>
+                                </mrow>
+                                <mo>-</mo>
+                                <mrow>
+                                    <mi>2</mi>
+                                </mrow>
+                            </mrow>
+                        </msup>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <msup>
+                    <mrow>
+                        <mi>C1__CI</mi>
+                    </mrow>
+                    <mrow>
+                        <mi>Complex_formation_C1__CI2_nc__C1__CI_C1__CI2_001</mi>
+                    </mrow>
+                </msup>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>Complex_formation_C1__CI2_kr_c</mi>
+                <mo>*</mo>
+                <mi>C1__CI2</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Degradation_C1__CI2</td><td>C1__Cell</td><td>False</td><td>False</td><td>C1__CI2</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>Degradation_C1__CI2_kd</mi>
+            <mo>*</mo>
+            <mi>C1__CI2</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_repression_binding_C1__PR_CI2</td><td>C1__Cell</td><td>True</td><td>False</td><td>C1__PR, 2 C1__CI2</td><td>C1__PR_CI2_bound</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mrow>
+                            <mo>(</mo>
+                                <mi>R_repression_binding_C1__PR_CI2_kr_f</mi>
+                                <mo>*</mo>
+                                <msup>
+                                    <mrow>
+                                        <mi>R_repression_binding_C1__PR_CI2_Kr</mi>
+                                    </mrow>
+                                    <mrow>
+                                        <mrow>
+                                            <mi>R_repression_binding_C1__PR_CI2_nc</mi>
+                                        </mrow>
+                                        <mo>-</mo>
+                                        <mrow>
+                                            <mi>1</mi>
+                                        </mrow>
+                                    </mrow>
+                                </msup>
+                            <mo>)</mo>
+                        </mrow>
+                        <mo>*</mo>
+                        <msup>
+                            <mrow>
+                                <mi>C1__CI2</mi>
+                            </mrow>
+                            <mrow>
+                                <mi>R_repression_binding_C1__PR_CI2_nc_001</mi>
+                            </mrow>
+                        </msup>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <mi>C1__PR</mi>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>R_repression_binding_C1__PR_CI2_kr_r</mi>
+                <mo>*</mo>
+                <mi>C1__PR_CI2_bound</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_C1__PR_RNAP</td><td>C1__Cell</td><td>True</td><td>False</td><td>C1__Cell__RNAP, C1__PR</td><td>C1__PR_RNAP</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mi>R_C1__PR_RNAP_ko_f</mi>
+                        <mo>*</mo>
+                        <mi>C1__Cell__RNAP</mi>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <mi>C1__PR</mi>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>R_C1__PR_RNAP_ko_r</mi>
+                <mo>*</mo>
+                <mi>C1__PR_RNAP</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_constitutive_production_C1__PR</td><td>C1__Cell</td><td>False</td><td>False</td><td></td><td>5 C1__CII</td><td>C1__PR_RNAP</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>R_constitutive_production_C1__PR_ko</mi>
+            <mo>*</mo>
+            <mi>C1__PR_RNAP</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_RNAP_binding_C1__PRE_CII</td><td>C1__Cell</td><td>True</td><td>False</td><td>C1__Cell__RNAP, C1__PRE, 2 C1__CII</td><td>C1__PRE_CII_RNAP</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mrow>
+                            <mo>(</mo>
+                                <mi>R_RNAP_binding_C1__PRE_CII_kao_f</mi>
+                                <mo>*</mo>
+                                <msup>
+                                    <mrow>
+                                        <mo>(</mo>
+                                            <mi>R_RNAP_binding_C1__PRE_CII_Ka</mi>
+                                            <mo>*</mo>
+                                            <mi>C1__CII</mi>
+                                        <mo>)</mo>
+                                    </mrow>
+                                    <mrow>
+                                        <mi>R_RNAP_binding_C1__PRE_CII_nc</mi>
+                                    </mrow>
+                                </msup>
+                            <mo>)</mo>
+                        </mrow>
+                        <mo>*</mo>
+                        <mi>C1__Cell__RNAP</mi>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <mi>C1__PRE</mi>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>R_RNAP_binding_C1__PRE_CII_kao_r</mi>
+                <mo>*</mo>
+                <mi>C1__PRE_CII_RNAP</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>C1__MembraneDiffusion_CII</td><td>Grid</td><td>True</td><td>False</td><td>C1__CII</td><td>ROW0_COL0__CII</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mi>C1__CII__kmdiff_f</mi>
+                <mo>*</mo>
+                <mi>C1__CII</mi>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>C1__CII__kmdiff_r</mi>
+                <mo>*</mo>
+                <mi>ROW0_COL0__CII</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_C1__PRE_RNAP</td><td>C1__Cell</td><td>True</td><td>False</td><td>C1__Cell__RNAP, C1__PRE</td><td>C1__PRE_RNAP</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mi>R_C1__PRE_RNAP_ko_f</mi>
+                        <mo>*</mo>
+                        <mi>C1__Cell__RNAP</mi>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <mi>C1__PRE</mi>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>R_C1__PRE_RNAP_ko_r</mi>
+                <mo>*</mo>
+                <mi>C1__PRE_RNAP</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_basal_production_C2__PRE</td><td>C2__Cell</td><td>False</td><td>False</td><td></td><td>10 C2__CI</td><td>C2__PRE_RNAP</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>R_basal_production_C2__PRE_kb</mi>
+            <mo>*</mo>
+            <mi>C2__PRE_RNAP</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_act_production_C2__PRE_CII</td><td>C2__Cell</td><td>False</td><td>False</td><td></td><td>10 C2__CI</td><td>C2__PRE_CII_RNAP</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>R_act_production_C2__PRE_CII_ka</mi>
+            <mo>*</mo>
+            <mi>C2__PRE_CII_RNAP</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Degradation_C2__CI</td><td>C2__Cell</td><td>False</td><td>False</td><td>C2__CI</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>Degradation_C2__CI_kd</mi>
+            <mo>*</mo>
+            <mi>C2__CI</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Complex_formation_C2__CI2</td><td>C2__Cell</td><td>True</td><td>False</td><td>3 C2__CI</td><td>C2__CI2</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mi>Complex_formation_C2__CI2_kf_c</mi>
+                        <mo>*</mo>
+                        <msup>
+                            <mrow>
+                                <mi>Complex_formation_C2__CI2_Kc</mi>
+                            </mrow>
+                            <mrow>
+                                <mrow>
+                                    <mi>Complex_formation_C2__CI2_nc__C2__CI_C2__CI2</mi>
+                                </mrow>
+                                <mo>-</mo>
+                                <mrow>
+                                    <mi>2</mi>
+                                </mrow>
+                            </mrow>
+                        </msup>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <msup>
+                    <mrow>
+                        <mi>C2__CI</mi>
+                    </mrow>
+                    <mrow>
+                        <mi>Complex_formation_C2__CI2_nc__C2__CI_C2__CI2_001</mi>
+                    </mrow>
+                </msup>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>Complex_formation_C2__CI2_kr_c</mi>
+                <mo>*</mo>
+                <mi>C2__CI2</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Degradation_C2__CI2</td><td>C2__Cell</td><td>False</td><td>False</td><td>C2__CI2</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>Degradation_C2__CI2_kd</mi>
+            <mo>*</mo>
+            <mi>C2__CI2</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_repression_binding_C2__PR_CI2</td><td>C2__Cell</td><td>True</td><td>False</td><td>C2__PR, 2 C2__CI2</td><td>C2__PR_CI2_bound</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mrow>
+                            <mo>(</mo>
+                                <mi>R_repression_binding_C2__PR_CI2_kr_f</mi>
+                                <mo>*</mo>
+                                <msup>
+                                    <mrow>
+                                        <mi>R_repression_binding_C2__PR_CI2_Kr</mi>
+                                    </mrow>
+                                    <mrow>
+                                        <mrow>
+                                            <mi>R_repression_binding_C2__PR_CI2_nc</mi>
+                                        </mrow>
+                                        <mo>-</mo>
+                                        <mrow>
+                                            <mi>1</mi>
+                                        </mrow>
+                                    </mrow>
+                                </msup>
+                            <mo>)</mo>
+                        </mrow>
+                        <mo>*</mo>
+                        <msup>
+                            <mrow>
+                                <mi>C2__CI2</mi>
+                            </mrow>
+                            <mrow>
+                                <mi>R_repression_binding_C2__PR_CI2_nc_001</mi>
+                            </mrow>
+                        </msup>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <mi>C2__PR</mi>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>R_repression_binding_C2__PR_CI2_kr_r</mi>
+                <mo>*</mo>
+                <mi>C2__PR_CI2_bound</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_C2__PR_RNAP</td><td>C2__Cell</td><td>True</td><td>False</td><td>C2__Cell__RNAP, C2__PR</td><td>C2__PR_RNAP</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mi>R_C2__PR_RNAP_ko_f</mi>
+                        <mo>*</mo>
+                        <mi>C2__Cell__RNAP</mi>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <mi>C2__PR</mi>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>R_C2__PR_RNAP_ko_r</mi>
+                <mo>*</mo>
+                <mi>C2__PR_RNAP</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_constitutive_production_C2__PR</td><td>C2__Cell</td><td>False</td><td>False</td><td></td><td>5 C2__CII</td><td>C2__PR_RNAP</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>R_constitutive_production_C2__PR_ko</mi>
+            <mo>*</mo>
+            <mi>C2__PR_RNAP</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_RNAP_binding_C2__PRE_CII</td><td>C2__Cell</td><td>True</td><td>False</td><td>C2__Cell__RNAP, C2__PRE, 2 C2__CII</td><td>C2__PRE_CII_RNAP</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mrow>
+                            <mo>(</mo>
+                                <mi>R_RNAP_binding_C2__PRE_CII_kao_f</mi>
+                                <mo>*</mo>
+                                <msup>
+                                    <mrow>
+                                        <mo>(</mo>
+                                            <mi>R_RNAP_binding_C2__PRE_CII_Ka</mi>
+                                            <mo>*</mo>
+                                            <mi>C2__CII</mi>
+                                        <mo>)</mo>
+                                    </mrow>
+                                    <mrow>
+                                        <mi>R_RNAP_binding_C2__PRE_CII_nc</mi>
+                                    </mrow>
+                                </msup>
+                            <mo>)</mo>
+                        </mrow>
+                        <mo>*</mo>
+                        <mi>C2__Cell__RNAP</mi>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <mi>C2__PRE</mi>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>R_RNAP_binding_C2__PRE_CII_kao_r</mi>
+                <mo>*</mo>
+                <mi>C2__PRE_CII_RNAP</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>C2__MembraneDiffusion_CII</td><td>Grid</td><td>True</td><td>False</td><td>C2__CII</td><td>ROW0_COL1__CII</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mi>C2__CII__kmdiff_f</mi>
+                <mo>*</mo>
+                <mi>C2__CII</mi>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>C2__CII__kmdiff_r</mi>
+                <mo>*</mo>
+                <mi>ROW0_COL1__CII</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>R_C2__PRE_RNAP</td><td>C2__Cell</td><td>True</td><td>False</td><td>C2__Cell__RNAP, C2__PRE</td><td>C2__PRE_RNAP</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mi>R_C2__PRE_RNAP_ko_f</mi>
+                        <mo>*</mo>
+                        <mi>C2__Cell__RNAP</mi>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <mi>C2__PRE</mi>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>R_C2__PRE_RNAP_ko_r</mi>
+                <mo>*</mo>
+                <mi>C2__PRE_RNAP</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>ROW0_COL1_Diffusion_CII_Left</td><td>Grid</td><td>False</td><td>False</td><td>ROW0_COL1__CII</td><td>ROW0_COL0__CII</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>ROW0_COL1_Diffusion_CII_Left_kecdiff</mi>
+            <mo>*</mo>
+            <mi>ROW0_COL1__CII</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>ROW0_COL0_Degradation_CII</td><td>Grid</td><td>False</td><td>False</td><td>ROW0_COL0__CII</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>ROW0_COL0_Degradation_CII_kecd</mi>
+            <mo>*</mo>
+            <mi>ROW0_COL0__CII</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>ROW0_COL0_Diffusion_CII_Right</td><td>Grid</td><td>False</td><td>False</td><td>ROW0_COL0__CII</td><td>ROW0_COL1__CII</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>ROW0_COL0_Diffusion_CII_Right_kecdiff</mi>
+            <mo>*</mo>
+            <mi>ROW0_COL0__CII</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>ROW0_COL1_Degradation_CII</td><td>Grid</td><td>False</td><td>False</td><td>ROW0_COL1__CII</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>ROW0_COL1_Degradation_CII_kecd</mi>
+            <mo>*</mo>
+            <mi>ROW0_COL1__CII</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Event ID</th><th>Trigger</th><th>Delay</th><th>Priority</th><th>Use Values From Trigger Time</th><th>Persistent</th><th>Initial Value</th><th>Assignments</th></tr>
+<tr><td>C1__SymmetricDivision__CellDivision</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>1</mi>
+        </mrow>
+    </math>
+</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>2100</mi>
+        </mrow>
+    </math>
+</td><td></td><td>False</td><td>False</td><td>False</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mo>C1__CI=</mo>            <mfrac>
+                <mrow>
+                    <mi>C1__CI</mi>
+                </mrow>
+                <mrow>
+                    <mfrac>
+                        <mrow>
+                            <mrow>
+                                <mi>1</mi>
+                            </mrow>
+                            <mo>+</mo>
+                            <mrow>
+                                <mi>2</mi>
+                            </mrow>
+                        </mrow>
+                        <mrow>
+                            <mi>2</mi>
+                        </mrow>
+                    </mfrac>
+                </mrow>
+            </mfrac>
+<mo>,</mo><mo>C1__CI2=</mo>            <mfrac>
+                <mrow>
+                    <mi>C1__CI2</mi>
+                </mrow>
+                <mrow>
+                    <mfrac>
+                        <mrow>
+                            <mrow>
+                                <mi>1</mi>
+                            </mrow>
+                            <mo>+</mo>
+                            <mrow>
+                                <mi>2</mi>
+                            </mrow>
+                        </mrow>
+                        <mrow>
+                            <mi>2</mi>
+                        </mrow>
+                    </mfrac>
+                </mrow>
+            </mfrac>
+<mo>,</mo><mo>C1__CII=</mo>            <mfrac>
+                <mrow>
+                    <mi>C1__CII</mi>
+                </mrow>
+                <mrow>
+                    <mfrac>
+                        <mrow>
+                            <mrow>
+                                <mi>1</mi>
+                            </mrow>
+                            <mo>+</mo>
+                            <mrow>
+                                <mi>2</mi>
+                            </mrow>
+                        </mrow>
+                        <mrow>
+                            <mi>2</mi>
+                        </mrow>
+                    </mfrac>
+                </mrow>
+            </mfrac>
+        </mrow>
+    </math>
+</td></tr>
+<tr><td>C2__SymmetricDivision__CellDivision</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>1</mi>
+        </mrow>
+    </math>
+</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>2100</mi>
+        </mrow>
+    </math>
+</td><td></td><td>False</td><td>False</td><td>False</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mo>C2__CI=</mo>            <mfrac>
+                <mrow>
+                    <mi>C2__CI</mi>
+                </mrow>
+                <mrow>
+                    <mfrac>
+                        <mrow>
+                            <mrow>
+                                <mi>1</mi>
+                            </mrow>
+                            <mo>+</mo>
+                            <mrow>
+                                <mi>2</mi>
+                            </mrow>
+                        </mrow>
+                        <mrow>
+                            <mi>2</mi>
+                        </mrow>
+                    </mfrac>
+                </mrow>
+            </mfrac>
+<mo>,</mo><mo>C2__CI2=</mo>            <mfrac>
+                <mrow>
+                    <mi>C2__CI2</mi>
+                </mrow>
+                <mrow>
+                    <mfrac>
+                        <mrow>
+                            <mrow>
+                                <mi>1</mi>
+                            </mrow>
+                            <mo>+</mo>
+                            <mrow>
+                                <mi>2</mi>
+                            </mrow>
+                        </mrow>
+                        <mrow>
+                            <mi>2</mi>
+                        </mrow>
+                    </mfrac>
+                </mrow>
+            </mfrac>
+<mo>,</mo><mo>C2__CII=</mo>            <mfrac>
+                <mrow>
+                    <mi>C2__CII</mi>
+                </mrow>
+                <mrow>
+                    <mfrac>
+                        <mrow>
+                            <mrow>
+                                <mi>1</mi>
+                            </mrow>
+                            <mo>+</mo>
+                            <mrow>
+                                <mi>2</mi>
+                            </mrow>
+                        </mrow>
+                        <mrow>
+                            <mi>2</mi>
+                        </mrow>
+                    </mfrac>
+                </mrow>
+            </mfrac>
+        </mrow>
+    </math>
+</td></tr>
+</table>
+
+<br/>
+<br/>
+
+</body>
+</html>
+

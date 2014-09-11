@@ -1,0 +1,26 @@
+#Probability Data
+#Fri Jun 07 14:13:34 MDT 2013
+visibleLegend=true
+gradient=false
+species.number.2=2
+species.number.1=1
+species.number.0=0
+species.paint.2=Green
+species.directory.2=prob
+species.paint.1=Blue
+species.directory.1=prob
+species.paint.0=Red
+x.axis=
+species.directory.0=prob
+shadow=false
+y.axis=Percent
+plot.range.grid.line.paint=-4144960
+chart.background.paint=-1118482
+species.id.2=time-limit (prob)
+species.name.2=time-limit (prob)
+species.name.1=CII50 (prob)
+species.id.1=CII50 (prob)
+species.name.0=CI20 (prob)
+species.id.0=CI20 (prob)
+plot.background.paint=-1
+title=Probability Results

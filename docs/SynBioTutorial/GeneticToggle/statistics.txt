@@ -1,0 +1,109 @@
+Parameter Values:
+C1__kr_r = 1.000000
+C1__np = 10.000000
+C2__ka_r = 1.000000
+C2__kb = 0.000100
+R_abstracted_production_C2__P0_ko__C2__P0 = 0.050000
+R_abstracted_production_C2__P0_Ko__C2__P0 = 0.033000
+R_abstracted_production_C2__P0_Ko__C2__P0_001 = 0.033000
+nc = 2.000000
+C1__ko_f = 0.033000
+C2__kr_r = 1.000000
+C2__np = 10.000000
+R_abstracted_production_C1__pLac_kf_c__IPTG_LacI = 0.050000
+R_abstracted_production_C2__P0_Kr__TetR_C2__P0 = 0.500000
+R_abstracted_production_C2__P0_nc__aTc_aTc_TetR = 1.000000
+R_abstracted_production_C2__P0_nc__aTc_aTc_TetR_001 = 1.000000
+kmdiff_r = 0.010000
+C1__kao_f = 1.000000
+C1__nr = 30.000000
+C2__ko_f = 0.033000
+R_abstracted_production_C1__pLac_nc__IPTG_IPTG_LacI = 1.000000
+R_abstracted_production_C1__pLac_nc__IPTG_IPTG_LacI_001 = 1.000000
+kc_f = 0.050000
+C1__ka_f = 0.003300
+C1__nc = 2.000000
+C2__kao_f = 1.000000
+C2__nr = 30.000000
+t = 0.000000
+C1__kr_f = 0.500000
+C2__ka_f = 0.003300
+C2__nc = 2.000000
+C2__kr_f = 0.500000
+R_abstracted_production_C1__pLac_RNAP = 30.000000
+R_abstracted_production_C1__pLac_RNAP_001 = 30.000000
+R_abstracted_production_C2__P0_nc__TetR_C2__P0 = 2.000000
+kmdiff_f = 1.000000
+R_abstracted_production_C2__P0_RNAP = 30.000000
+R_abstracted_production_C2__P0_RNAP_001 = 30.000000
+kecd = 0.005000
+C1__ng = 2.000000
+R_abstracted_production_C1__pLac_nc__LacI_IPTG_LacI = 1.000000
+C2__ng = 2.000000
+Degradation_LacI_kd = 0.007500
+R_abstracted_production_C2__P0_kr_c__aTc_TetR = 1.000000
+R_abstracted_production_C2__P0_kd__aTc_TetR = 0.007500
+R_abstracted_production_C2__P0_nc__TetR_aTc_TetR = 1.000000
+R_abstracted_production_C1__pLac_ng__C1__pLac = 2.000000
+R_abstracted_production_C1__pLac_Kr__LacI_C1__pLac = 0.500000
+R_abstracted_production_C2__P0_ng__C2__P0 = 2.000000
+kecdiff = 1.000000
+C1__ko = 0.050000
+Degradation_GFP_kd = 0.007500
+R_abstracted_production_C2__P0_kf_c__aTc_TetR = 0.050000
+C1__ko_r = 1.000000
+C2__ko = 0.050000
+R_abstracted_production_C1__pLac_kr_c__IPTG_LacI = 1.000000
+R_abstracted_production_C1__pLac_kd__IPTG_LacI = 0.007500
+R_abstracted_production_C1__pLac_nc__LacI_C1__pLac = 2.000000
+C1__kao_r = 1.000000
+C1__ka = 0.250000
+C2__ko_r = 1.000000
+Degradation_TetR_kd = 0.007500
+R_abstracted_production_C1__pLac_ko__C1__pLac = 0.050000
+R_abstracted_production_C1__pLac_Ko__C1__pLac = 0.033000
+R_abstracted_production_C1__pLac_Ko__C1__pLac_001 = 0.033000
+time = 0.000000
+kd = 0.007500
+kc_r = 1.000000
+C1__ka_r = 1.000000
+C1__kb = 0.000100
+C2__kao_r = 1.000000
+C2__ka = 0.250000
+
+Initial State Vector:
+GFP = 0.000000
+LacI = 60.000000
+TetR = 0.000000
+IPTG = 0.000000
+aTc = 0.000000
+C1__pLac = 2.000000
+C2__P0 = 2.000000
+
+Initial Reaction Rate Array:
+0.000000
+0.000000
+0.000000
+0.000000
+0.000000
+
+Reaction Rate Equation Array:
+Degradation_GFP_kd * GFP
+Degradation_LacI_kd * LacI
+Degradation_TetR_kd * TetR
+R_abstracted_production_C1__pLac_ko__C1__pLac * R_abstracted_production_C1__pLac_ng__C1__pLac * R_abstracted_production_C1__pLac_Ko__C1__pLac * R_abstracted_production_C1__pLac_RNAP / ( 1 + R_abstracted_production_C1__pLac_Ko__C1__pLac_001 * R_abstracted_production_C1__pLac_RNAP_001 + ( R_abstracted_production_C1__pLac_Kr__LacI_C1__pLac * LacI / ( 1 + ( R_abstracted_production_C1__pLac_kf_c__IPTG_LacI / ( R_abstracted_production_C1__pLac_kr_c__IPTG_LacI + R_abstracted_production_C1__pLac_kd__IPTG_LacI ) ) ^ ( R_abstracted_production_C1__pLac_nc__IPTG_IPTG_LacI + R_abstracted_production_C1__pLac_nc__LacI_IPTG_LacI - 1 ) * IPTG ^ R_abstracted_production_C1__pLac_nc__IPTG_IPTG_LacI_001 ) ) ^ R_abstracted_production_C1__pLac_nc__LacI_C1__pLac )
+R_abstracted_production_C2__P0_ko__C2__P0 * R_abstracted_production_C2__P0_ng__C2__P0 * R_abstracted_production_C2__P0_Ko__C2__P0 * R_abstracted_production_C2__P0_RNAP / ( 1 + R_abstracted_production_C2__P0_Ko__C2__P0_001 * R_abstracted_production_C2__P0_RNAP_001 + ( R_abstracted_production_C2__P0_Kr__TetR_C2__P0 * TetR / ( 1 + ( R_abstracted_production_C2__P0_kf_c__aTc_TetR / ( R_abstracted_production_C2__P0_kr_c__aTc_TetR + R_abstracted_production_C2__P0_kd__aTc_TetR ) ) ^ ( R_abstracted_production_C2__P0_nc__TetR_aTc_TetR + R_abstracted_production_C2__P0_nc__aTc_aTc_TetR - 1 ) * aTc ^ R_abstracted_production_C2__P0_nc__aTc_aTc_TetR_001 ) ) ^ R_abstracted_production_C2__P0_nc__TetR_C2__P0 )
+
+Reactant Matrix:
+1.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 
+0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 0.000000 
+0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 
+
+Delta Matrix:
+-1.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 
+0.000000 -1.000000 0.000000 0.000000 0.000000 0.000000 0.000000 
+0.000000 0.000000 -1.000000 0.000000 0.000000 0.000000 0.000000 
+10.000000 0.000000 10.000000 0.000000 0.000000 0.000000 0.000000 
+0.000000 10.000000 0.000000 0.000000 0.000000 0.000000 0.000000 

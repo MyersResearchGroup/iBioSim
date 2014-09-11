@@ -1,0 +1,6 @@
+Executing:
+reb2sac --target.encoding=rkf45 /Users/myers/research/nobackup/workspace/BioSim/docs//Tutorial/simpleTest/simpleTest.xml
+
+Total Simulation Time: 0.066141 seconds for simpleTest
+
+

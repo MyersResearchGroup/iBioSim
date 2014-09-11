@@ -1,0 +1,5 @@
+.internal CI CII CI2 
+#@.variables CI CII CI2 
+#@.init_vals {<CI=0.0><CII=0.0><CI2=0.0>}
+#@.continuous 
+.end

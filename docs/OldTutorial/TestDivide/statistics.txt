@@ -1,0 +1,50 @@
+Parameter Values:
+kao_f = 1.000000
+nr = 30.000000
+C1__np = 10.000000
+ka_f = 0.003300
+nc = 2.000000
+C1__kd = 0.007500
+kr_f = 0.500000
+kmdiff_r = 0.010000
+kc_f = 0.050000
+t = 0.000000
+Degradation_C1__S0_kd = 0.007500
+ng = 2.000000
+Constitutive_production_C1__S0_kp = 0.050000
+kmdiff_f = 1.000000
+kecd = 0.005000
+ko = 0.050000
+ko_r = 1.000000
+kao_r = 1.000000
+ka = 0.250000
+kecdiff = 1.000000
+C1__ko = 0.050000
+ka_r = 1.000000
+kb = 0.000100
+kr_r = 1.000000
+np = 10.000000
+time = 0.000000
+ko_f = 0.033000
+kc_r = 1.000000
+kd = 0.007500
+Divide__locations = 0.000000
+
+Initial State Vector:
+C1__S0 = 0.000000
+
+Initial Reaction Rate Array:
+0.050000
+0.000000
+
+Reaction Rate Equation Array:
+Constitutive_production_C1__S0_kp
+Degradation_C1__S0_kd * C1__S0
+
+Reactant Matrix:
+0.000000 
+1.000000 
+
+Delta Matrix:
+10.000000 
+-1.000000 
