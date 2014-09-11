@@ -1,0 +1,26 @@
+#Probability Data
+#Mon Jun 03 14:31:03 MDT 2013
+visibleLegend=true
+gradient=false
+species.number.2=2
+species.number.1=1
+species.number.0=0
+species.paint.2=Green
+species.directory.2=
+species.paint.1=Blue
+species.directory.1=
+species.paint.0=Red
+x.axis=
+species.directory.0=
+shadow=false
+y.axis=Percent
+plot.range.grid.line.paint=-4144960
+chart.background.paint=-1118482
+species.id.2=Timelimit
+species.name.2=Timelimit
+species.name.1=Success
+species.id.1=Success
+species.name.0=Failure
+species.id.0=Failure
+plot.background.paint=-1
+title=markov simulation results

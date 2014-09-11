@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" level="3" version="1" layout:required="false" comp:required="true">
+  <model metaid="iBioSim1" id="Population">
+    <listOfFunctionDefinitions>
+      <functionDefinition id="get2DArrayElement" name="get2DArrayElement">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> a </ci>
+            </bvar>
+            <bvar>
+              <ci> b </ci>
+            </bvar>
+            <bvar>
+              <ci> c </ci>
+            </bvar>
+            <ci> a </ci>
+          </lambda>
+        </math>
+      </functionDefinition>
+    </listOfFunctionDefinitions>
+    <listOfUnitDefinitions>
+      <unitDefinition id="u_1_second_n1">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="Grid" spatialDimensions="3" size="1" constant="true">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:grid="(1,2)"/>
+        </annotation>
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="iBioSim26" id="CII" compartment="Grid" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:grid="(1,2)"/>
+        </annotation>
+      </species>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter metaid="iBioSim2" id="kr_f" name="Forward repression binding rate" value="0.5" constant="true"/>
+      <parameter metaid="iBioSim3" id="kr_r" name="Reverse repression binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim4" id="ka_f" name="Forward activation binding rate" value="0.0033" constant="true"/>
+      <parameter metaid="iBioSim5" id="ka_r" name="Reverse activation binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim6" id="ko_f" name="Forward RNAP binding rate" value="0.033" constant="true"/>
+      <parameter metaid="iBioSim7" id="ko_r" name="Reverse RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim8" id="kao_f" name="Forward activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim9" id="kao_r" name="Reverse activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim10" id="kc_f" name="Forward complex formation rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim11" id="kc_r" name="Reverse complex formation rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim12" id="kmdiff_f" name="Forward membrane diffusion rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim13" id="kmdiff_r" name="Reverse membrane diffusion rate" value="0.01" constant="true"/>
+      <parameter metaid="iBioSim14" id="kd" name="Degradation rate" value="0.0075" constant="true"/>
+      <parameter metaid="iBioSim15" id="kecd" name="Extracellular degradation rate" value="0.005" constant="true"/>
+      <parameter metaid="iBioSim16" id="nc" name="Stoichiometry of binding" value="2" constant="true"/>
+      <parameter metaid="iBioSim17" id="nr" name="Initial RNAP count" value="30" constant="true"/>
+      <parameter metaid="iBioSim18" id="ko" name="Open complex production rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim19" id="kb" name="Basal production rate" value="0.0001" constant="true"/>
+      <parameter metaid="iBioSim20" id="ng" name="Initial promoter count" value="2" constant="true"/>
+      <parameter metaid="iBioSim21" id="np" name="Stoichiometry of production" value="10" constant="true"/>
+      <parameter metaid="iBioSim22" id="ka" name="Activated production rate" value="0.25" constant="true"/>
+      <parameter metaid="iBioSim23" id="kecdiff" name="Extracellular diffusion rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim24" id="lambda__locations" value="0" constant="false">
+        <annotation>
+          <array:array xmlns:array="http://www.fakeuri.com" array:C1="(0,0)"/>
+        </annotation>
+      </parameter>
+      <parameter id="Divide__locations" value="0" constant="false">
+        <annotation>
+          <array:array xmlns:array="http://www.fakeuri.com" array:C2="(0,1)"/>
+        </annotation>
+      </parameter>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction metaid="Degradation_CII" sboTerm="SBO:0000179" id="Degradation_CII" reversible="false" fast="false" compartment="Grid">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:grid="(1,2)"/>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kecd </ci>
+              <apply>
+                <ci> get2DArrayElement </ci>
+                <ci> CII </ci>
+                <ci> i </ci>
+                <ci> j </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="i">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="0"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="j">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="1"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="kecd" value="0.005" units="u_1_second_n1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="Diffusion_CII_Above" id="Diffusion_CII_Above" reversible="true" fast="false" compartment="Grid">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:grid="(1,2)"/>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <ci> kecdiff </ci>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> CII </ci>
+                  <ci> i </ci>
+                  <ci> j </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kecdiff </ci>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> CII </ci>
+                  <apply>
+                    <minus/>
+                    <ci> i </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <ci> j </ci>
+                    <cn type="integer"> 0 </cn>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="i">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="0"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="j">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="1"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="kecdiff" value="1" units="u_1_second_n1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="Diffusion_CII_Below" id="Diffusion_CII_Below" reversible="true" fast="false" compartment="Grid">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:grid="(1,2)"/>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <ci> kecdiff </ci>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> CII </ci>
+                  <ci> i </ci>
+                  <ci> j </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kecdiff </ci>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> CII </ci>
+                  <apply>
+                    <plus/>
+                    <ci> i </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <ci> j </ci>
+                    <cn type="integer"> 0 </cn>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="i">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="0"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="j">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="1"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="kecdiff" value="1" units="u_1_second_n1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="Diffusion_CII_Left" id="Diffusion_CII_Left" reversible="true" fast="false" compartment="Grid">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:grid="(1,2)"/>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <ci> kecdiff </ci>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> CII </ci>
+                  <ci> i </ci>
+                  <ci> j </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kecdiff </ci>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> CII </ci>
+                  <apply>
+                    <plus/>
+                    <ci> i </ci>
+                    <cn type="integer"> 0 </cn>
+                  </apply>
+                  <apply>
+                    <minus/>
+                    <ci> j </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="i">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="0"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="j">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="1"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="kecdiff" value="1" units="u_1_second_n1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="Diffusion_CII_Right" id="Diffusion_CII_Right" reversible="true" fast="false" compartment="Grid">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:grid="(1,2)"/>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <ci> kecdiff </ci>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> CII </ci>
+                  <ci> i </ci>
+                  <ci> j </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kecdiff </ci>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> CII </ci>
+                  <apply>
+                    <plus/>
+                    <ci> i </ci>
+                    <cn type="integer"> 0 </cn>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <ci> j </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="i">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="0"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="j">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="1"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="kecdiff" value="1" units="u_1_second_n1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="MembraneDiffusion_CII" id="MembraneDiffusion_CII" reversible="true" fast="false" compartment="Grid">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:type="grid"/>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="CII" stoichiometry="1" constant="false"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> kmdiff_f </ci>
+                  <ci> i </ci>
+                  <ci> j </ci>
+                </apply>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> CII </ci>
+                  <ci> i </ci>
+                  <ci> j </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> kmdiff_r </ci>
+                  <ci> i </ci>
+                  <ci> j </ci>
+                </apply>
+                <apply>
+                  <ci> get2DArrayElement </ci>
+                  <ci> CII </ci>
+                  <ci> i </ci>
+                  <ci> j </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="i">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="0"/>
+              </annotation>
+            </localParameter>
+            <localParameter id="j">
+              <annotation>
+                <array:array xmlns:array="http://www.fakeuri.com" array:size="1"/>
+              </annotation>
+            </localParameter>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <layout:listOfLayouts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="0" layout:height="0"/>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:id="TextGlyph__C1" layout:text="C1" layout:graphicalObject="Glyph__C1">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C2" layout:text="C2" layout:graphicalObject="Glyph__C2">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:id="Glyph__C1" layout:reference="C1">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C2" layout:reference="C2">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <comp:listOfSubmodels>
+      <comp:submodel metaid="iBioSim25" comp:id="GRID__lambda" comp:modelRef="lambda">
+        <annotation>
+          <array:array xmlns:array="http://www.fakeuri.com" array:size="1"/>
+        </annotation>
+        <comp:listOfDeletions>
+          <comp:deletion comp:portRef="rule__Total"/>
+          <comp:deletion comp:portRef="constraint__CI20"/>
+          <comp:deletion comp:portRef="constraint__CII50"/>
+          <comp:deletion comp:portRef="event__CellDivision"/>
+        </comp:listOfDeletions>
+      </comp:submodel>
+      <comp:submodel comp:id="GRID__Divide" comp:modelRef="Divide">
+        <annotation>
+          <array:array xmlns:array="http://www.fakeuri.com" array:size="1"/>
+        </annotation>
+      </comp:submodel>
+    </comp:listOfSubmodels>
+  </model>
+  <comp:listOfExternalModelDefinitions>
+    <comp:externalModelDefinition comp:id="lambda" comp:source="file:lambda.xml" comp:md5="9fb1f105f55254ab934bf32ed25a0708"/>
+    <comp:externalModelDefinition comp:id="Divide" comp:source="file:Divide.xml" comp:md5="0a417cb64224a4ab9c9b82acab9082d4"/>
+  </comp:listOfExternalModelDefinitions>
+</sbml>

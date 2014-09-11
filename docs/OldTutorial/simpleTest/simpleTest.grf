@@ -1,0 +1,85 @@
+#Graph Data
+#Fri Nov 01 11:43:36 MDT 2013
+species.shape.5=Triangle (Upside Down)
+species.shape.4=Rectangle (Horizontal)
+species.shape.3=Diamond
+species.shape.2=Triangle
+species.shape.1=Circle
+species.shape.0=Square
+visibleLegend=true
+title=simpleTest simulation results
+x.axis=time
+species.run.number.5=Average
+species.run.number.4=Average
+auto.resize=true
+species.run.number.3=Average
+species.run.number.2=Average
+species.run.number.1=Average
+species.run.number.0=Average
+species.name.5=S0 (\u03C7)
+species.name.4=S0 (R0-kf_0.1_Sweep\=0.5, \u03C7)
+species.name.3=S0 (R0-kf_0.1_Sweep\=0.4, \u03C7)
+LogY=false
+species.name.2=S0 (R0-kf_0.1_Sweep\=0.30000000000000004, \u03C7)
+LogX=false
+species.name.1=S0 (R0-kf_0.1_Sweep\=0.2, \u03C7)
+species.name.0=S0 (R0-kf_0.1_Sweep\=0.1, \u03C7)
+y.axis=amount
+species.xnumber.5=0
+y.min=81.0
+species.xnumber.4=0
+species.xnumber.3=0
+species.xnumber.2=0
+species.xnumber.1=0
+species.visible.5=true
+species.xnumber.0=0
+species.visible.4=true
+species.visible.3=true
+species.visible.2=true
+species.visible.1=true
+plot.background.paint=-1
+species.visible.0=true
+y.scale=2.5
+species.paint.5=Cyan
+species.paint.4=Magenta
+species.paint.3=Yellow
+species.paint.2=Green
+species.paint.1=Blue
+species.paint.0=Red
+species.connected.5=true
+species.connected.4=true
+species.connected.3=true
+species.connected.2=true
+species.connected.1=true
+species.connected.0=true
+x.min=0.0
+x.scale=5.0
+species.filled.5=true
+species.filled.4=true
+species.filled.3=true
+y.max=110.0
+species.id.5=S0 (\u03C7)
+species.filled.2=true
+species.id.4=S0 (R0-kf_0.1_Sweep\=0.5, \u03C7)
+species.filled.1=true
+species.id.3=S0 (R0-kf_0.1_Sweep\=0.4, \u03C7)
+species.filled.0=true
+species.id.2=S0 (R0-kf_0.1_Sweep\=0.30000000000000004, \u03C7)
+species.id.1=S0 (R0-kf_0.1_Sweep\=0.2, \u03C7)
+species.id.0=S0 (R0-kf_0.1_Sweep\=0.1, \u03C7)
+chart.background.paint=-1118482
+x.max=100.0
+plot.domain.grid.line.paint=-4144960
+species.number.5=0
+species.number.4=0
+species.number.3=0
+species.number.2=0
+species.number.1=0
+species.number.0=0
+plot.range.grid.line.paint=-4144960
+species.directory.5=
+species.directory.4=R0-kf_0.1_Sweep\=0.5
+species.directory.3=R0-kf_0.1_Sweep\=0.4
+species.directory.2=R0-kf_0.1_Sweep\=0.30000000000000004
+species.directory.1=R0-kf_0.1_Sweep\=0.2
+species.directory.0=R0-kf_0.1_Sweep\=0.1

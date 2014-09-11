@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body>
+
+
+<table border="2"><tr><th>Model ID</th><td>GeneticToggle</td></tr></table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Compartment ID</th><th>Dimensions</th><th>Initial Size</th><th>Units</th><th>Constant</th></tr>
+<tr><td>Cell</td><td><center>3</center></td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Species ID</th><th>Compartment</th><th>Initial Value</th><th>Units</th><th>Conversion Factor</th><th>Boundary</th><th>Constant</th><th>HasOnlySubstanceUnits</th></tr>
+<tr><td>GFP</td><td>Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>LacI</td><td>Cell</td><td><center>60 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>TetR</td><td>Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>IPTG</td><td>Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>True</td><td>False</td><td>True</td></tr>
+
+<tr><td>aTc</td><td>Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>True</td><td>False</td><td>True</td></tr>
+
+<tr><td>IPTG_LacI</td><td>Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+<tr><td>aTc_TetR</td><td>Cell</td><td><center>0 (amount)</center></td><td>none</td><td>none</td><td>False</td><td>False</td><td>True</td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Parameter ID</th><th>Initial Value</th><th>Units</th><th>Constant</th></tr>
+<tr><td>nc</td><td><center>2</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kmdiff_r</td><td><center>0.01</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kc_f</td><td><center>0.05</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>Complex_aTc_TetR_nc_aTc</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kmdiff_f</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>Complex_IPTG_LacI_nc_IPTG</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kecd</td><td><center>0.005</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>Complex_IPTG_LacI_nc_LacI</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>Complex_aTc_TetR_nc_TetR</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kecdiff</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kd</td><td><center>0.0075</center></td><td>none</td><td>True</td></tr>
+
+<tr><td>kc_r</td><td><center>1</center></td><td>none</td><td>True</td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Reaction ID</th><th>Compartment</th><th>Rev</th><th>Fast</th><th>Reactants</th><th>Products</th><th>Modifiers</th><th>Kinetic Law</th></tr>
+<tr><td>Degradation_GFP</td><td>Cell</td><td>False</td><td>False</td><td>GFP</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>kd</mi>
+            <mo>*</mo>
+            <mi>GFP</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Complex_IPTG_LacI</td><td>Cell</td><td>True</td><td>False</td><td>IPTG, LacI</td><td>IPTG_LacI</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mi>kc_f</mi>
+                        <mo>*</mo>
+                        <msup>
+                            <mrow>
+                                <mi>IPTG</mi>
+                            </mrow>
+                            <mrow>
+                                <mi>Complex_IPTG_LacI_nc_IPTG</mi>
+                            </mrow>
+                        </msup>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <msup>
+                    <mrow>
+                        <mi>LacI</mi>
+                    </mrow>
+                    <mrow>
+                        <mi>Complex_IPTG_LacI_nc_LacI</mi>
+                    </mrow>
+                </msup>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>kc_r</mi>
+                <mo>*</mo>
+                <mi>IPTG_LacI</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Degradation_LacI</td><td>Cell</td><td>False</td><td>False</td><td>LacI</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>kd</mi>
+            <mo>*</mo>
+            <mi>LacI</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Degradation_TetR</td><td>Cell</td><td>False</td><td>False</td><td>TetR</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>kd</mi>
+            <mo>*</mo>
+            <mi>TetR</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Complex_aTc_TetR</td><td>Cell</td><td>True</td><td>False</td><td>TetR, aTc</td><td>aTc_TetR</td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mrow>
+                <mrow>
+                    <mo>(</mo>
+                        <mi>kc_f</mi>
+                        <mo>*</mo>
+                        <msup>
+                            <mrow>
+                                <mi>TetR</mi>
+                            </mrow>
+                            <mrow>
+                                <mi>Complex_aTc_TetR_nc_TetR</mi>
+                            </mrow>
+                        </msup>
+                    <mo>)</mo>
+                </mrow>
+                <mo>*</mo>
+                <msup>
+                    <mrow>
+                        <mi>aTc</mi>
+                    </mrow>
+                    <mrow>
+                        <mi>Complex_aTc_TetR_nc_aTc</mi>
+                    </mrow>
+                </msup>
+            </mrow>
+            <mo>-</mo>
+            <mrow>
+                <mi>kc_r</mi>
+                <mo>*</mo>
+                <mi>aTc_TetR</mi>
+            </mrow>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Degradation_IPTG_LacI</td><td>Cell</td><td>False</td><td>False</td><td>IPTG_LacI</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>kd</mi>
+            <mo>*</mo>
+            <mi>IPTG_LacI</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+<tr><td>Degradation_aTc_TetR</td><td>Cell</td><td>False</td><td>False</td><td>aTc_TetR</td><td></td><td></td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>kd</mi>
+            <mo>*</mo>
+            <mi>aTc_TetR</mi>
+        </mrow>
+    </math>
+</td></tr>
+
+</table>
+
+<br/>
+<br/>
+<table border="2"><tr><th>Event ID</th><th>Trigger</th><th>Delay</th><th>Priority</th><th>Use Values From Trigger Time</th><th>Persistent</th><th>Initial Value</th><th>Assignments</th></tr>
+<tr><td>IPTG_High</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>1</mi>
+        </mrow>
+    </math>
+</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>2000</mi>
+        </mrow>
+    </math>
+</td><td></td><td>False</td><td>False</td><td>False</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mo>IPTG=</mo>            <mi>60</mi>
+        </mrow>
+    </math>
+</td></tr>
+<tr><td>IPTG_Low</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>1</mi>
+        </mrow>
+    </math>
+</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>4000</mi>
+        </mrow>
+    </math>
+</td><td></td><td>False</td><td>False</td><td>False</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mo>IPTG=</mo>            <mi>0</mi>
+        </mrow>
+    </math>
+</td></tr>
+<tr><td>aTc_High</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>1</mi>
+        </mrow>
+    </math>
+</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>6000</mi>
+        </mrow>
+    </math>
+</td><td></td><td>False</td><td>False</td><td>False</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mo>aTc=</mo>            <mi>60</mi>
+        </mrow>
+    </math>
+</td></tr>
+<tr><td>aTc_Low</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>1</mi>
+        </mrow>
+    </math>
+</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+            <mi>8000</mi>
+        </mrow>
+    </math>
+</td><td></td><td>False</td><td>False</td><td>False</td><td>    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+<mo>aTc=</mo>            <mi>0</mi>
+        </mrow>
+    </math>
+</td></tr>
+</table>
+
+<br/>
+<br/>
+
+</body>
+</html>
+

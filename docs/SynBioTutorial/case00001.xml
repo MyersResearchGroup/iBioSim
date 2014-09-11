@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" level="3" arrays:required="true" fbc:required="false" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version1" comp:required="true" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" version="1" layout:required="false">
+  <model id="case00001" name="case00001" metaid="_case00001" timeUnits="time">
+    <listOfUnitDefinitions>
+      <unitDefinition id="volume">
+        <listOfUnits>
+          <unit scale="0" exponent="1" multiplier="1" kind="litre"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="substance">
+        <listOfUnits>
+          <unit scale="0" exponent="1" multiplier="1" kind="mole"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="time">
+        <listOfUnits>
+          <unit scale="0" exponent="1" multiplier="1" kind="second"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="compartment" constant="true" spatialDimensions="3" name="compartment" units="volume" size="1"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="S1" constant="false" initialAmount="0.00015" hasOnlySubstanceUnits="false" name="S1" boundaryCondition="false" substanceUnits="substance" compartment="compartment"/>
+      <species id="S2" constant="false" initialAmount="0" hasOnlySubstanceUnits="false" name="S2" boundaryCondition="false" substanceUnits="substance" compartment="compartment"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="k1" constant="true" name="k1" value="1"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="reaction1" name="reaction1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference constant="true" species="S1" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" species="S2" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> compartment </ci>
+              <ci> k1 </ci>
+              <ci> S1 </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

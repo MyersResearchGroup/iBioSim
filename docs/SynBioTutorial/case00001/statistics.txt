@@ -1,0 +1,20 @@
+Parameter Values:
+t = 0.000000
+k1 = 1.000000
+time = 0.000000
+
+Initial State Vector:
+S1 = 0.000150
+S2 = 0.000000
+
+Initial Reaction Rate Array:
+0.000000
+
+Reaction Rate Equation Array:
+compartment * k1 * S1
+
+Reactant Matrix:
+1.000000 0.000000 
+
+Delta Matrix:
+-1.000000 1.000000 

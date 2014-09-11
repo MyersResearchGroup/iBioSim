@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="simpleTest" name="Created by iBioSim flatten routine" metaid="iBioSim1" substanceUnits="mole" volumeUnits="litre">
+    <listOfUnitDefinitions>
+      <unitDefinition id="u_1_second_n1">
+        <listOfUnits>
+          <unit scale="0" exponent="-1" multiplier="1" kind="second"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="Cell" constant="true" spatialDimensions="3" size="1"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="S0" constant="false" initialAmount="100" hasOnlySubstanceUnits="true" metaid="iBioSim2" boundaryCondition="false" compartment="Cell"/>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction id="R0" metaid="iBioSim3" reversible="false" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference constant="true" species="S0" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <ci> kf </ci>
+          </math>
+                  <listOfLocalParameters>
+            <localParameter id="kf" metaid="R0___kf" value="0"/>
+            <localParameter id="kr" value="1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

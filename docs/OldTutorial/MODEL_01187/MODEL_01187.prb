@@ -1,0 +1,26 @@
+#Probability Data
+#Fri Oct 25 16:20:04 MDT 2013
+visibleLegend=true
+gradient=false
+species.number.2=2
+species.number.1=1
+species.number.0=0
+species.paint.2=Green
+species.directory.2=
+species.paint.1=Blue
+species.directory.1=
+species.paint.0=Red
+x.axis=
+species.directory.0=
+shadow=false
+y.axis=Percent
+plot.range.grid.line.paint=-4144960
+chart.background.paint=-1118482
+species.id.2=R02
+species.name.2=R02
+species.name.1=R01
+species.id.1=R01
+species.name.0=Objective
+species.id.0=Objective
+plot.background.paint=-1
+title=MODEL_01187 simulation results

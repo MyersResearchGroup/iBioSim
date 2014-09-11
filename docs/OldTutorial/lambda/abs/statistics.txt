@@ -1,0 +1,81 @@
+Parameter Values:
+kao_f = 1.000000
+nr = 30.000000
+nc = 2.000000
+ka_f = 0.003300
+kr_f = 0.500000
+R_abstracted_production_PR_nc__CI2_PR = 1.000000
+kc_f = 0.050000
+R_abstracted_production_PRE_ng__PRE = 2.000000
+R_abstracted_production_PRE_nc__CII_PRE = 1.000000
+R_abstracted_production_PRE_nc__CII_PRE_001 = 1.000000
+R_abstracted_production_PR_kf_c__CI2 = 0.100000
+t = 0.000000
+Degradation_CII_kd = 0.007500
+ng = 2.000000
+R_abstracted_production_PR_RNAP = 30.000000
+R_abstracted_production_PR_RNAP_001 = 30.000000
+R_abstracted_production_PRE_Ko__PRE = 0.010000
+R_abstracted_production_PRE_Ko__PRE_001 = 0.010000
+R_abstracted_production_PRE_Kao__PRE = 1.000000
+R_abstracted_production_PR_ng__PR = 2.000000
+ko = 0.050000
+R_abstracted_production_PRE_RNAP = 30.000000
+R_abstracted_production_PRE_RNAP_001 = 30.000000
+ko_r = 1.000000
+Degradation_CI_kd = 0.007500
+R_abstracted_production_PRE_kb__PRE = 0.000040
+R_abstracted_production_PRE_RNAP_002 = 30.000000
+kao_r = 1.000000
+ka = 0.250000
+R_abstracted_production_PRE_RNAP_003 = 30.000000
+R_abstracted_production_PR_nc__CI_CI2 = 2.000000
+R_abstracted_production_PR_nc__CI_CI2_001 = 2.000000
+ka_r = 1.000000
+kb = 0.000100
+kr_r = 1.000000
+np = 10.000000
+R_abstracted_production_PRE_ka__CII_PRE = 0.015000
+R_abstracted_production_PRE_Ka__CII_PRE = 0.001610
+R_abstracted_production_PRE_Ka__CII_PRE_001 = 0.001610
+R_abstracted_production_PR_ko__PR = 0.014000
+R_abstracted_production_PR_Ko__PR = 0.694220
+R_abstracted_production_PR_Ko__PR_001 = 0.694220
+R_abstracted_production_PR_Kr__CI2_PR = 0.216500
+time = 0.000000
+kd = 0.007500
+kc_r = 1.000000
+ko_f = 0.033000
+CI_total = 0.000000
+R_abstracted_production_PR_kr_c__CI2 = 1.000000
+R_abstracted_production_PR_kd__CI2 = 0.007500
+
+Initial State Vector:
+CI = 0.000000
+PR = 2.000000
+CII = 0.000000
+PRE = 2.000000
+
+Initial Reaction Rate Array:
+0.000000
+0.000000
+0.000018
+0.026717
+
+Reaction Rate Equation Array:
+Degradation_CI_kd * CI
+Degradation_CII_kd * CII
+R_abstracted_production_PRE_ng__PRE * ( R_abstracted_production_PRE_kb__PRE * R_abstracted_production_PRE_Ko__PRE * R_abstracted_production_PRE_RNAP + R_abstracted_production_PRE_ka__CII_PRE * R_abstracted_production_PRE_RNAP_001 * ( R_abstracted_production_PRE_Ka__CII_PRE * CII ) ^ R_abstracted_production_PRE_nc__CII_PRE ) / ( 1 + R_abstracted_production_PRE_Ko__PRE_001 * R_abstracted_production_PRE_RNAP_002 + R_abstracted_production_PRE_Kao__PRE * R_abstracted_production_PRE_RNAP_003 * ( R_abstracted_production_PRE_Ka__CII_PRE_001 * CII ) ^ R_abstracted_production_PRE_nc__CII_PRE_001 )
+R_abstracted_production_PR_ko__PR * R_abstracted_production_PR_ng__PR * R_abstracted_production_PR_Ko__PR * R_abstracted_production_PR_RNAP / ( 1 + R_abstracted_production_PR_Ko__PR_001 * R_abstracted_production_PR_RNAP_001 + ( R_abstracted_production_PR_Kr__CI2_PR * ( R_abstracted_production_PR_kf_c__CI2 / ( R_abstracted_production_PR_kr_c__CI2 + R_abstracted_production_PR_kd__CI2 ) ) ^ ( R_abstracted_production_PR_nc__CI_CI2 - 1 ) * CI ^ R_abstracted_production_PR_nc__CI_CI2_001 ) ^ R_abstracted_production_PR_nc__CI2_PR )
+
+Reactant Matrix:
+1.000000 0.000000 0.000000 0.000000 
+0.000000 0.000000 1.000000 0.000000 
+0.000000 0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 0.000000 
+
+Delta Matrix:
+-1.000000 0.000000 0.000000 0.000000 
+0.000000 0.000000 -1.000000 0.000000 
+10.000000 0.000000 0.000000 0.000000 
+0.000000 0.000000 10.000000 0.000000 

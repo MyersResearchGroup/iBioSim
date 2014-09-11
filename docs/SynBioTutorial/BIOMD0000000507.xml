@@ -1,0 +1,776 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" level="3" arrays:required="true" metaid="ac23c3f5-8a3d-4977-afb0-05c6d22384be" fbc:required="false" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:render="http://www.sbml.org/sbml/level3/version1/render/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version1" comp:required="true" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" version="1" layout:required="false">
+  <model id="MODEL1401190000" areaUnits="area" name="Gardner2000 - genetic toggle switch in E.coli" metaid="iBioSim1" timeUnits="time" lengthUnits="length" extentUnits="substance" substanceUnits="substance" volumeUnits="volume">
+    <notes>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <div class="dc:title">Gardner2000 - genetic toggle switch in E.coli</div>
+            <div class="dc:description">      <p>The behaviour of the genetic toggle switch and the conditions for bistability has been studies using a synthetic, bistable gene circuit.</p>
+                </div>
+            <div class="dc:bibliographicCitation">      <p>This model is described in the article:</p>
+                <div class="bibo:title">        <a href="http://identifiers.org/pubmed/10659857" title="Access to this publication">Construction of a genetic toggle switch in Escherichia coli.</a>
+                    </div>
+                <div class="bibo:authorList">Gardner TS, Cantor CR, Collins JJ</div>
+                <div class="bibo:Journal">Nature. 2000 Jan 20;403(6767):339-42.</div>
+                <p>Abstract:</p>
+                <div class="bibo:abstract">        <p>It has been proposed' that gene-regulatory circuits with virtually any desired property can be constructed from networks of simple regulatory elements. These properties, which include multistability and oscillations, have been found in specialized gene circuits such as the bacteriophage lambda switch and the Cyanobacteria circadian oscillator. However, these behaviours have not been demonstrated in networks of non-specialized regulatory components. Here we present the construction of a genetic toggle switch-a synthetic, bistable gene-regulatory network-in Escherichia coli and provide a simple theory that predicts the conditions necessary for bistability. The toggle is constructed from any two repressible promoters arranged in a mutually inhibitory network. It is flipped between stable states using transient chemical or thermal induction and exhibits a nearly ideal switching threshold. As a practical device, the toggle switch forms a synthetic, addressable cellular memory unit and has implications for biotechnology, biocomputing and gene therapy.</p>
+                    </div>
+                </div>
+            <div class="dc:publisher">      <p>This model is hosted on        <a href="http://www.ebi.ac.uk/biomodels/">BioModels Database</a>
+            and identified
+by:        <a href="http://identifiers.org/biomodels.db/BIOMD0000000507">BIOMD0000000507</a>
+            .        </p>
+                <p>To cite BioModels Database, please use:        <a href="http://identifiers.org/pubmed/20587024" title="Latest BioModels Database publication">BioModels Database: An enhanced, curated and annotated resource
+for published quantitative kinetic models</a>
+            .        </p>
+                </div>
+            <div class="dc:license">      <p>To the extent possible under law, all copyright and related or
+neighbouring rights to this encoded model have been dedicated to the public
+domain worldwide. Please refer to        <a href="http://creativecommons.org/publicdomain/zero/1.0/" title="Access to: CC0 1.0 Universal (CC0 1.0), Public Domain Dedication">CC0 Public Domain
+Dedication</a>
+            for more information.        </p>
+                </div>
+            </body>
+      
+    </notes>
+    <annotation>
+      <COPASI xmlns="http://www.copasi.org/static/sbml">
+        <rdf:RDF xmlns:CopasiMT="http://www.copasi.org/RDF/MiriamTerms#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#">
+          <rdf:Description rdf:about="#COPASI1">
+            <dcterms:bibliographicCitation>
+              <rdf:Description>
+                <CopasiMT:isDescribedBy rdf:resource="urn:miriam:pubmed:10659857"/>
+              </rdf:Description>
+            </dcterms:bibliographicCitation>
+            <dcterms:created>
+              <rdf:Description>
+                <dcterms:W3CDTF>2014-01-19T17:49:38Z</dcterms:W3CDTF>
+              </rdf:Description>
+            </dcterms:created>
+            <dcterms:creator>
+              <rdf:Description>
+                <vCard:EMAIL>n.lenovere@gmail.com</vCard:EMAIL>
+                <vCard:N>
+                  <rdf:Description>
+                    <vCard:Family>Le Novere</vCard:Family>
+                    <vCard:Given>Nicolas</vCard:Given>
+                  </rdf:Description>
+                </vCard:N>
+                <vCard:ORG>
+                  <rdf:Description>
+                    <vCard:Orgname>Babraham Institute</vCard:Orgname>
+                  </rdf:Description>
+                </vCard:ORG>
+              </rdf:Description>
+            </dcterms:creator>
+          </rdf:Description>
+        </rdf:RDF>
+      </COPASI><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+	<rdf:Description rdf:about="#iBioSim1">
+	<dc:creator>
+	<rdf:Bag>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Chelliah</vCard:Family>
+	<vCard:Given>Vijayalakshmi</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>viji@ebi.ac.uk</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>EMBL-EBI</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Le Novère</vCard:Family>
+	<vCard:Given>Nicolas</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>n.lenovere@gmail.com</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>Babraham Institute</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	</rdf:Bag>
+	</dc:creator>
+	<dcterms:created rdf:parseType="Resource">
+	<dcterms:W3CDTF>2014-01-19T19:51:18Z</dcterms:W3CDTF>
+	</dcterms:created>
+	<dcterms:modified rdf:parseType="Resource">
+	<dcterms:W3CDTF>2014-03-04T12:21:35Z</dcterms:W3CDTF>
+	</dcterms:modified>
+	<bqmodel:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/biomodels.db/MODEL1401190000"/>
+	</rdf:Bag>
+	</bqmodel:is>
+	<bqmodel:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/biomodels.db/BIOMD0000000507"/>
+	</rdf:Bag>
+	</bqmodel:is>
+	<bqmodel:isDescribedBy>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/pubmed/10659857"/>
+	</rdf:Bag>
+	</bqmodel:isDescribedBy>
+	<bqbiol:hasTaxon>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/taxonomy/562"/>
+	</rdf:Bag>
+	</bqbiol:hasTaxon>
+	<bqbiol:hasProperty>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/mamo/MAMO_0000046"/>
+	</rdf:Bag>
+	</bqbiol:hasProperty>
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0010468"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	</rdf:RDF>
+    </annotation>
+      <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="1070" layout:height="425" layout:depth="0"/>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:metaidRef="iBioSim18" layout:id="Glyph__iBioSim18">
+            <layout:boundingBox>
+              <layout:position layout:x="4" layout:y="20"/>
+              <layout:dimensions layout:width="50" layout:height="50"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__iBioSim18__product__parameter_7" layout:role="product" layout:glyph="Glyph__parameter_7">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="29" layout:y="45"/>
+                      <layout:end layout:x="145" layout:y="45"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:reference="parameter_7" layout:id="Glyph__parameter_7">
+            <layout:boundingBox>
+              <layout:position layout:x="130" layout:y="30"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__parameter_7__product__reaction_3" layout:role="product" layout:glyph="Glyph__reaction_3">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="195" layout:y="375"/>
+                      <layout:end layout:x="135" layout:y="255"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:id="Glyph__compartment_1" layout:compartment="compartment_1">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__species_1" layout:species="species_1">
+            <layout:boundingBox>
+              <layout:position layout:x="608" layout:y="1"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__species_2" layout:species="species_2">
+            <layout:boundingBox>
+              <layout:position layout:x="345" layout:y="30"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__species_3" layout:species="species_3">
+            <layout:boundingBox>
+              <layout:position layout:x="60" layout:y="120"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfReactionGlyphs>
+          <layout:reactionGlyph layout:id="Glyph__reaction_1" layout:reaction="reaction_1">
+            <layout:boundingBox>
+              <layout:position layout:x="511.5" layout:y="0"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__reaction_1__modifier__species_2" layout:role="modifier" layout:speciesGlyph="Glyph__species_2">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="395" layout:y="45"/>
+                      <layout:end layout:x="526.5" layout:y="15"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="Glyph__reaction_1__product__species_1" layout:role="product" layout:speciesGlyph="Glyph__species_1">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="526.5" layout:y="15"/>
+                      <layout:end layout:x="658" layout:y="16"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__reaction_2" layout:reaction="reaction_2">
+            <layout:boundingBox>
+              <layout:position layout:x="774.5" layout:y="1"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__reaction_2__substrate__species_1" layout:role="substrate" layout:speciesGlyph="Glyph__species_1">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="658" layout:y="16"/>
+                      <layout:end layout:x="789.5" layout:y="16"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="Glyph__reaction_2__modifier__species_1" layout:role="modifier" layout:speciesGlyph="Glyph__species_1">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="658" layout:y="16"/>
+                      <layout:end layout:x="789.5" layout:y="16"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__reaction_3" layout:reaction="reaction_3">
+            <layout:boundingBox>
+              <layout:position layout:x="248.5" layout:y="30"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__reaction_3__product__species_2" layout:role="product" layout:speciesGlyph="Glyph__species_2">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="263.5" layout:y="45"/>
+                      <layout:end layout:x="395" layout:y="45"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__reaction_4" layout:reaction="reaction_4">
+            <layout:boundingBox>
+              <layout:position layout:x="511.5" layout:y="60"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__reaction_4__substrate__species_2" layout:role="substrate" layout:speciesGlyph="Glyph__species_2">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="395" layout:y="45"/>
+                      <layout:end layout:x="526.5" layout:y="75"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="Glyph__reaction_4__modifier__species_2" layout:role="modifier" layout:speciesGlyph="Glyph__species_2">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="395" layout:y="45"/>
+                      <layout:end layout:x="526.5" layout:y="75"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+        </layout:listOfReactionGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="Glyph__compartment_1" layout:id="TextGlyph__compartment_1" layout:text="compartment_1">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__species_1" layout:id="TextGlyph__species_1" layout:text="species_1">
+            <layout:boundingBox>
+              <layout:position layout:x="608" layout:y="1"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__species_2" layout:id="TextGlyph__species_2" layout:text="species_2">
+            <layout:boundingBox>
+              <layout:position layout:x="345" layout:y="30"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__species_3" layout:id="TextGlyph__species_3" layout:text="species_3">
+            <layout:boundingBox>
+              <layout:position layout:x="60" layout:y="120"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__reaction_1" layout:id="TextGlyph__reaction_1" layout:text="reaction_1">
+            <layout:boundingBox>
+              <layout:position layout:x="511.5" layout:y="0"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__reaction_2" layout:id="TextGlyph__reaction_2" layout:text="reaction_2">
+            <layout:boundingBox>
+              <layout:position layout:x="774.5" layout:y="1"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__reaction_3" layout:id="TextGlyph__reaction_3" layout:text="reaction_3">
+            <layout:boundingBox>
+              <layout:position layout:x="248.5" layout:y="30"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__reaction_4" layout:id="TextGlyph__reaction_4" layout:text="reaction_4">
+            <layout:boundingBox>
+              <layout:position layout:x="511.5" layout:y="60"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__iBioSim18" layout:id="TextGlyph__iBioSim18" layout:text="iBioSim18">
+            <layout:boundingBox>
+              <layout:position layout:x="4" layout:y="20"/>
+              <layout:dimensions layout:width="50" layout:height="50"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__parameter_7" layout:id="TextGlyph__parameter_7" layout:text="parameter_7">
+            <layout:boundingBox>
+              <layout:position layout:x="130" layout:y="30"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfFunctionDefinitions>
+      <functionDefinition id="function_1" name="toggle repressor production" metaid="COPASI17" sboTerm="SBO:0000393">
+        <annotation>
+<COPASI xmlns="http://www.copasi.org/static/sbml">
+            <rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+              <rdf:Description rdf:about="#COPASI17">
+                <dcterms:created>
+                  <rdf:Description>
+                    <dcterms:W3CDTF>2014-01-19T18:12:09Z</dcterms:W3CDTF>
+                  </rdf:Description>
+                </dcterms:created>
+              </rdf:Description>
+            </rdf:RDF>
+          </COPASI>
+                                                                                                </annotation>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <lambda>
+            <bvar>
+              <ci> alpha </ci>
+            </bvar>
+            <bvar>
+              <ci> X </ci>
+            </bvar>
+            <bvar>
+              <ci> n </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <ci> alpha </ci>
+              <apply>
+                <plus/>
+                <cn> 1 </cn>
+                <apply>
+                  <power/>
+                  <ci> X </ci>
+                  <ci> n </ci>
+                </apply>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+            </functionDefinition>
+      <functionDefinition id="function_2" name="toggle repressor production with induction" metaid="COPASI18" sboTerm="SBO:0000393">
+        <annotation>
+<COPASI xmlns="http://www.copasi.org/static/sbml">
+            <rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+              <rdf:Description rdf:about="#COPASI18">
+                <dcterms:created>
+                  <rdf:Description>
+                    <dcterms:W3CDTF>2014-01-19T18:15:30Z</dcterms:W3CDTF>
+                  </rdf:Description>
+                </dcterms:created>
+              </rdf:Description>
+            </rdf:RDF>
+          </COPASI>
+                                                                                                </annotation>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <lambda>
+            <bvar>
+              <ci> alpha </ci>
+            </bvar>
+            <bvar>
+              <ci> X </ci>
+            </bvar>
+            <bvar>
+              <ci> n </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <ci> alpha </ci>
+              <apply>
+                <plus/>
+                <cn> 1 </cn>
+                <apply>
+                  <power/>
+                  <ci> X </ci>
+                  <ci> n </ci>
+                </apply>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+            </functionDefinition>
+    </listOfFunctionDefinitions>
+    <listOfUnitDefinitions>
+      <unitDefinition id="length" name="length" metaid="e29e6a88-1b11-4c5c-9a43-3e3fcdb5bc59">
+        <listOfUnits>
+          <unit scale="0" exponent="1" metaid="_079f7a4d-0e49-4e27-ae4c-ac2a83136669" multiplier="1" kind="metre"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="area" name="area" metaid="_06853e1f-f7fb-44cb-961a-6d28cf93f31d">
+        <listOfUnits>
+          <unit scale="0" exponent="2" metaid="f02cf58b-57c4-4886-8d8d-b77b08829994" multiplier="1" kind="metre"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="volume" name="volume" metaid="_2586f7af-cd85-4134-b6d2-27aaf28f94cc">
+        <listOfUnits>
+          <unit scale="0" exponent="1" metaid="_68b277fb-a723-4930-abfd-61bcf08594d8" multiplier="1" kind="litre"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="time" name="time" metaid="_01f511d1-189a-41b6-9bfb-7c7b586d28d7">
+        <listOfUnits>
+          <unit scale="0" exponent="1" metaid="_3d533cad-d139-445c-9a8d-bdeb3e43507a" multiplier="1" kind="second"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="substance" name="substance" metaid="_96ce8ddf-1689-471d-a738-7fe0deae6648">
+        <listOfUnits>
+          <unit scale="0" exponent="1" metaid="_2bf883e1-b1a7-4c1a-abbb-d267c7f39be5" multiplier="1" kind="mole"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="compartment_1" constant="true" spatialDimensions="3" name="compartment" metaid="COPASI2" sboTerm="SBO:0000290" units="litre" size="1"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="species_1" initialConcentration="0" constant="false" hasOnlySubstanceUnits="false" name="U" metaid="iBioSim11" boundaryCondition="false" substanceUnits="mole" compartment="compartment_1">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">
+        concentration of repressor 1</p>
+          
+        </notes>
+        <annotation>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+	<rdf:Description rdf:about="#iBioSim11">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/uniprot/P03023"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	</rdf:RDF>
+	</annotation>
+            </species>
+      <species id="species_2" initialConcentration="0" constant="false" hasOnlySubstanceUnits="false" name="V" metaid="iBioSim12" boundaryCondition="false" substanceUnits="mole" compartment="compartment_1">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">
+        concentration of repressor 2</p>
+          
+        </notes>
+        <annotation>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+	<rdf:Description rdf:about="#iBioSim12">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/uniprot/P04483"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	</rdf:RDF>
+	</annotation>
+            </species>
+      <species id="species_3" initialConcentration="0" constant="false" hasOnlySubstanceUnits="false" name="IPTG" metaid="iBioSim13" boundaryCondition="false" substanceUnits="mole" compartment="compartment_1">
+        <annotation>
+<COPASI xmlns="http://www.copasi.org/static/sbml">
+            <rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+              <rdf:Description rdf:about="#COPASI5">
+                <dcterms:created>
+                  <rdf:Description>
+                    <dcterms:W3CDTF>2014-01-19T18:07:02Z</dcterms:W3CDTF>
+                  </rdf:Description>
+                </dcterms:created>
+              </rdf:Description>
+            </rdf:RDF>
+          </COPASI>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+	<rdf:Description rdf:about="#iBioSim13">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:61448"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	</rdf:RDF>
+	</annotation>
+            </species>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="parameter_1" constant="true" name="alpha1" metaid="iBioSim2" value="156.25">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">
+        effective rate of synthesis of repressor 1</p>
+          
+        </notes>
+      </parameter>
+      <parameter id="parameter_2" constant="true" name="alpha2" metaid="iBioSim3" value="15.6">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">
+        effective rate of synthesis of repressor 2</p>
+          
+        </notes>
+      </parameter>
+      <parameter id="parameter_3" constant="true" name="beta" metaid="iBioSim4" value="2.5">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">
+        the cooperativity of repression of promoter 2</p>
+          
+        </notes>
+      </parameter>
+      <parameter id="parameter_4" constant="true" name="gamma" metaid="iBioSim5" value="1">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">
+        the cooperativity of repression of promoter 1</p>
+          
+        </notes>
+      </parameter>
+      <parameter id="parameter_5" constant="true" name="K" metaid="iBioSim6" value="2.9618E-5"/>
+      <parameter id="parameter_6" constant="true" name="nu" metaid="iBioSim7" value="2.0015"/>
+      <parameter id="parameter_7" constant="false" name="Umodif" metaid="iBioSim8" value="0">
+        <annotation>
+<COPASI xmlns="http://www.copasi.org/static/sbml">
+            <rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+              <rdf:Description rdf:about="#COPASI12">
+                <dcterms:created>
+                  <rdf:Description>
+                    <dcterms:W3CDTF>2014-01-19T18:01:49Z</dcterms:W3CDTF>
+                  </rdf:Description>
+                </dcterms:created>
+              </rdf:Description>
+            </rdf:RDF>
+          </COPASI>
+                                                                                                </annotation>
+            </parameter>
+      <parameter id="ModelValue_4" constant="true" name="Initial for K" metaid="iBioSim9" value="2.9618E-5">
+        <annotation>
+<initialValue xmlns="http://copasi.org/initialValue" parent="parameter_5"/>
+                                                                                                </annotation>
+            </parameter>
+      <parameter id="ModelValue_5" constant="true" name="Initial for nu" metaid="iBioSim10" value="2.0015">
+        <annotation>
+<initialValue xmlns="http://copasi.org/initialValue" parent="parameter_6"/>
+                                                                                                </annotation>
+            </parameter>
+    </listOfParameters>
+    <listOfInitialAssignments>
+      <initialAssignment symbol="ModelValue_4" metaid="_38b59cbb-2a29-4e3e-9939-0c4f171a5dd1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <ci> parameter_5 </ci>
+        </math>
+            </initialAssignment>
+      <initialAssignment symbol="ModelValue_5" metaid="_1f3f2faf-a02e-4c72-9fdd-4ffd264e70fe">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <ci> parameter_6 </ci>
+        </math>
+            </initialAssignment>
+    </listOfInitialAssignments>
+    <listOfRules>
+      <assignmentRule metaid="iBioSim18" variable="parameter_7">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <apply>
+            <divide/>
+            <ci> species_1 </ci>
+            <apply>
+              <power/>
+              <apply>
+                <plus/>
+                <cn> 1 </cn>
+                <apply>
+                  <divide/>
+                  <ci> species_3 </ci>
+                  <ci> ModelValue_4 </ci>
+                </apply>
+              </apply>
+              <ci> ModelValue_5 </ci>
+            </apply>
+          </apply>
+        </math>
+            </assignmentRule>
+    </listOfRules>
+    <listOfReactions>
+      <reaction id="reaction_1" name="production of U" metaid="iBioSim14" reversible="false" sboTerm="SBO:0000393" fast="false" compartment="compartment_1">
+        <annotation>
+<COPASI xmlns="http://www.copasi.org/static/sbml">
+            <rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+              <rdf:Description rdf:about="#COPASI13">
+                <dcterms:created>
+                  <rdf:Description>
+                    <dcterms:W3CDTF>2014-01-19T17:58:52Z</dcterms:W3CDTF>
+                  </rdf:Description>
+                </dcterms:created>
+              </rdf:Description>
+            </rdf:RDF>
+          </COPASI>
+                                                                                                </annotation>
+              <listOfProducts>
+          <speciesReference constant="true" species="species_1" metaid="_64e71fdc-7991-4bfe-bd0a-4c13c2e4f0c3" stoichiometry="1"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="species_2" metaid="acbed7f8-6d0b-4951-81a2-ec897fdd44ba"/>
+          <modifierSpeciesReference species="species_2" metaid="_017656d7-7aaf-4837-bf31-fa735779d943"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_27d2ece2-79e5-46b9-99f8-39552246957d">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> compartment_1 </ci>
+              <apply>
+                <ci> function_1 </ci>
+                <ci> parameter_1 </ci>
+                <ci> species_2 </ci>
+                <ci> parameter_3 </ci>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction id="reaction_2" name="degradation of U" metaid="iBioSim15" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="compartment_1">
+        <annotation>
+<COPASI xmlns="http://www.copasi.org/static/sbml">
+            <rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+              <rdf:Description rdf:about="#COPASI14">
+                <dcterms:created>
+                  <rdf:Description>
+                    <dcterms:W3CDTF>2014-01-19T17:56:04Z</dcterms:W3CDTF>
+                  </rdf:Description>
+                </dcterms:created>
+              </rdf:Description>
+            </rdf:RDF>
+          </COPASI>
+                                                                                                </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" species="species_1" metaid="d23de569-9174-40f5-ae04-c14d0afeabd1" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfModifiers>
+          <modifierSpeciesReference species="species_1" metaid="_1a2a844b-0533-48a2-9e45-aacfc8f8a7cd"/>
+        </listOfModifiers>
+        <kineticLaw metaid="_6ae4650f-b80c-41cc-bd75-5782b5a18c8b">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> compartment_1 </ci>
+              <ci> k1 </ci>
+              <ci> species_1 </ci>
+            </apply>
+          </math>
+                  <listOfLocalParameters>
+            <localParameter id="k1" name="k1" metaid="c69ec2fa-8185-4094-8368-8bf1ad25ff78" value="1" sboTerm="SBO:0000356"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="reaction_3" name="production of V" metaid="iBioSim16" reversible="false" sboTerm="SBO:0000393" fast="false" compartment="compartment_1">
+        <annotation>
+<COPASI xmlns="http://www.copasi.org/static/sbml">
+            <rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+              <rdf:Description rdf:about="#COPASI15">
+                <dcterms:created>
+                  <rdf:Description>
+                    <dcterms:W3CDTF>2014-01-19T18:11:57Z</dcterms:W3CDTF>
+                  </rdf:Description>
+                </dcterms:created>
+              </rdf:Description>
+            </rdf:RDF>
+          </COPASI>
+                                                                                                </annotation>
+              <listOfProducts>
+          <speciesReference constant="true" species="species_2" metaid="_0862d840-f229-4829-9214-1077917c234a" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw metaid="bce1eec7-5f76-4e55-a47f-6bbc30ee2597">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> compartment_1 </ci>
+              <apply>
+                <ci> function_2 </ci>
+                <ci> parameter_2 </ci>
+                <ci> parameter_7 </ci>
+                <ci> parameter_4 </ci>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction id="reaction_4" name="degration of V" metaid="iBioSim17" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="compartment_1">
+        <annotation>
+<COPASI xmlns="http://www.copasi.org/static/sbml">
+            <rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+              <rdf:Description rdf:about="#COPASI16">
+                <dcterms:created>
+                  <rdf:Description>
+                    <dcterms:W3CDTF>2014-01-19T17:58:36Z</dcterms:W3CDTF>
+                  </rdf:Description>
+                </dcterms:created>
+              </rdf:Description>
+            </rdf:RDF>
+          </COPASI>
+                                                                                                </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" species="species_2" metaid="bde2fac6-efc9-4ac3-9132-4b63bf405b9a" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfModifiers>
+          <modifierSpeciesReference species="species_2" metaid="_565a60f7-3405-482a-b77a-973e7cca2e4e"/>
+        </listOfModifiers>
+        <kineticLaw metaid="e4ffb642-3c9e-46ca-9673-3d9fcb4d54dc">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> compartment_1 </ci>
+              <ci> k1 </ci>
+              <ci> species_2 </ci>
+            </apply>
+          </math>
+                  <listOfLocalParameters>
+            <localParameter id="k1" name="k1" metaid="c872db0e-e362-4e4f-a675-b6f5db9f82ad" value="1" sboTerm="SBO:0000356"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

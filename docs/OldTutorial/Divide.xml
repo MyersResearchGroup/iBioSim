@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" level="3" version="1" layout:required="false" comp:required="true">
+  <model metaid="iBioSim1" id="Divide">
+    <listOfCompartments>
+      <compartment id="Cell" spatialDimensions="3" size="1" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="iBioSim2" id="S0" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter metaid="iBioSim3" id="kd" name="Degradation rate" value="0.0075" constant="true"/>
+      <parameter metaid="iBioSim4" id="np" name="Stoichiometry of production" value="10" constant="true"/>
+      <parameter metaid="iBioSim5" id="ko" name="Open complex production rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim8" id="kmdiff_f" name="Forward membrane diffusion rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim9" id="kmdiff_r" name="Reverse membrane diffusion rate" value="0.01" constant="true"/>
+      <parameter metaid="iBioSim10" id="kecd" name="Extracellular degradation rate" value="0.005" constant="true"/>
+      <parameter metaid="iBioSim11" id="kecdiff" name="Extracellular diffusion rate" value="1" constant="true"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction metaid="iBioSim7" sboTerm="SBO:0000396" id="Constitutive_S0" reversible="false" fast="false" compartment="Cell">
+        <listOfProducts>
+          <speciesReference species="S0" stoichiometry="10" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <ci> ko </ci>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <listOfEvents>
+      <event id="event0" useValuesFromTriggerTime="false">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:type="Symmetric Division"/>
+        </annotation>
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <true/>
+          </math>
+        </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 200 </cn>
+          </math>
+        </delay>
+      </event>
+      <event id="event1" useValuesFromTriggerTime="false">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:type="Death"/>
+        </annotation>
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <gt/>
+              <ci> S0 </ci>
+              <cn type="integer"> 50 </cn>
+            </apply>
+          </math>
+        </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 100 </cn>
+          </math>
+        </delay>
+      </event>
+    </listOfEvents>
+    <layout:listOfLayouts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="0" layout:height="0"/>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:id="Glyph__Cell" layout:compartment="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__S0" layout:species="S0">
+            <layout:boundingBox>
+              <layout:position layout:x="113" layout:y="93"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:id="TextGlyph__Cell" layout:text="Cell" layout:graphicalObject="Glyph__Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__S0" layout:text="S0" layout:graphicalObject="Glyph__S0">
+            <layout:boundingBox>
+              <layout:position layout:x="113" layout:y="93"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__event0" layout:text="event0" layout:graphicalObject="Glyph__event0">
+            <layout:boundingBox>
+              <layout:position layout:x="341" layout:y="113"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__event1" layout:text="event1" layout:graphicalObject="Glyph__event1">
+            <layout:boundingBox>
+              <layout:position layout:x="239" layout:y="203"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:id="Glyph__event0" layout:reference="event0">
+            <layout:boundingBox>
+              <layout:position layout:x="341" layout:y="113"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__event1" layout:reference="event1">
+            <layout:boundingBox>
+              <layout:position layout:x="239" layout:y="203"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__event1__substrate__S0" layout:glyph="Glyph__S0" layout:role="substrate">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="163" layout:y="108"/>
+                      <layout:end layout:x="276.5" layout:y="215.5"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+      </layout:layout>
+    </layout:listOfLayouts>
+  </model>
+</sbml>
