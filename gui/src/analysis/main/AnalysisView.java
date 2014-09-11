@@ -2669,6 +2669,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				List<Simulation> simulations = sedml.getSimulations();
 				if (simulations.size() > 0) {
 					if (simulations.get(0).getAlgorithm().getKisaoID().equals("KISAO:0000019")) {
+						ODE.setSelected(true);
+						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
+								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
+						simulators.setSelectedItem("Runge-Kutta-Fehlberg");
 						UniformTimeCourse simulation = (UniformTimeCourse) simulations.get(0);
 						//KisaoTerm kisaoTerm = KisaoOntology.getInstance().getTermById(simulation.getAlgorithm().getKisaoID());
 						Annotation annotation = getSEDBaseAnnotation(simulation,"printInterval");
