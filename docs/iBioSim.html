@@ -14,13 +14,13 @@
  
 
 
-<title> iBioSim Version 2.5 \ User's Manual</title>
+<title> iBioSim Version 3.0 \ User's Manual</title>
  
-<h1 align="center">iBioSim Version 2.5 <br />User's Manual </h1>
+<h1 align="center">iBioSim Version 3.0 <br />User's Manual </h1>
 
 <div class="p"><!----></div>
 
-<h3 align="center">Chris J. Myers, Nathan Barker, Kevin Jones, Hiroyuki Kuwahara, Curtis
+<h3 align="center">Chris J. Myers, Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curtis
   Madsen, <br />Nam Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe </h3> 
 
 <div class="p"><!----></div>
@@ -86,7 +86,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc5.1"
 >5.1&nbsp; Simulation Options</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc5.2"
->5.2&nbsp; Abstraction Options</a><br />
+>5.2&nbsp; Advanced Options</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc5.3"
 >5.3&nbsp; Schematic</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc5.4"
@@ -116,11 +116,11 @@
 1</a>&nbsp;&nbsp;Introduction</h2>
 
 <div class="p"><!----></div>
-<tt>iBioSim</tt> has been developed for the modeling, analysis, and design of genetic circuits.  While <tt>iBioSim</tt> primarily targets models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  Recently, modeling and visualization support has been added for multi-cellular and spatial models as well.
+<tt>iBioSim</tt> has been developed for the modeling, analysis, and design of genetic circuits.  While <tt>iBioSim</tt> primarily targets models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  <tt>iBioSim</tt> also includes modeling and visualization support for multi-cellular and spatial models as well.
 It is capable of importing and exporting models specified using the <A HREF="http://www.sbml.org/">
 <em>Systems Biology Markup Language</em>
 </A>
-&nbsp;(SBML).  It can import all levels and versions of SBML and is able to export Level 3 Version 1.  It supports all core SBML modeling constructs except some types of <em>fast</em> reactions, and also has support for the hierarchical modeling package and layout package.  It was the first tool to produce correct results for all examples in the SBML benchmark suite.  It has also been tested successfully on the stochastic benchmark suite and the curated models in the 
+&nbsp;(SBML).  It can import all levels and versions of SBML and is able to export Level 3 Version 1.  It supports all core SBML modeling constructs except some types of <em>fast</em> reactions, and also has support for the hierarchical model composition, layout, flux balance constraints, and arrays packages.  It was the first tool to produce correct results for all examples in the SBML benchmark suite.  It has also been tested successfully on the stochastic benchmark suite and the curated models in the 
 <A HREF="http://www.ebi.ac.uk/biomodels-main/">
 <em>BioModels database</em>.
 </A>
@@ -140,7 +140,7 @@ Finally, it is one of the first tools to also support the
 <div class="p"><!----></div>
 </li>
 
-<li> Analysis Tool - an abstraction-based ODE, Monte Carlo, and Markov analysis tool.
+<li> Analysis Tool - an abstraction-based ODE, Monte Carlo, Markov, and flux balance analysis tool.
 <div class="p"><!----></div>
 </li>
 
@@ -152,7 +152,7 @@ Finally, it is one of the first tools to also support the
 <div class="p"><!----></div>
 </li>
 
-<li> Histogram Graph Editor - a tool to visualize probability data.
+<li> Histogram Graph Editor - a tool to visualize probability data and flux balance results.
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -162,31 +162,15 @@ Finally, it is one of the first tools to also support the
 <h3>Credits</h3>
 
 <div class="p"><!----></div>
-The iBioSim tool is being developed at the University of Utah
-by 
+The iBioSim tool is being developed by 
 <A HREF="http://www.async.ece.utah.edu/~myers">
-Chris Myers, 
+Chris Myers 
 </A>
-<A HREF="http://www.cs.utah.edu/~barkern">
-Nathan Barker, 
-</A>
-<A HREF="http://www.async.ece.utah.edu/~kjones">
-Kevin Jones, 
-</A>
-<A HREF="http://www.cs.utah.edu/~kuwahara">
-Hiroyuki Kuwahara, 
-</A>
-<A HREF="http://www.async.ece.utah.edu/~cmadsen">
-Curtis Madsen, 
-</A>
-<A HREF="http://www.cs.utah.edu/~namphuon">
-Nam Nguyen, 
-</A>
-<A HREF="http://www.cs.utah.edu/~patterson">
-Tyler Patterson, 
-</A>
-Nicholas Roehner, 
-and Jason Stevens.  Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with King Abdullah University of Science and Technology, Nam Nguyen is now with the University of Texas in Austin, and Jason Stevens is now with the University of Washington.
+research group at the University of Utah.
+This project has involved many students including Nathan Barker, Scott Glass, Kevin Jones,
+Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tyler Patterson, Nicholas Roehner, and 
+Jason Stevens.
+Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with King Abdullah University of Science and Technology, Curtis Madsen is now with Newcastle University, Nam Nguyen is now with the University of Texas in Austin, and Jason Stevens is now with the University of Washington.
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc2">
@@ -261,7 +245,7 @@ To create a new histogram, select New &#8594; Histogram from the File menu. You 
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/Histogram.png" alt="screenshots/Histogram.png" />
+<center><img src="screenshots/TopHistogram.png" alt="screenshots/TopHistogram.png" />
 </center>
 
 <div class="p"><!----></div>
@@ -1561,9 +1545,11 @@ The next field specifies the simulation method you want to use based on the simu
 <tr><td align="center">ODE  </td><td align="center">rk4imp    </td><td>Implicit 4th order Runge-Kutta at Gaussian points </td></tr>
 <tr><td align="center">ODE  </td><td align="center">rk8pd     </td><td>Embedded Runge-Kutta Prince-Dormand (8,9) method </td></tr>
 <tr><td align="center">ODE  </td><td align="center">rkf45     </td><td>Embedded Runge-Kutta-Fehlberg (4, 5) method </td></tr>
-<tr><td align="center">ODE  </td><td align="center">rkf45 (java) </td><td>Native Java Runge-Kutta-Fehlberg method </td></tr>
-<tr><td align="center">Monte Carlo </td><td align="center">gillespie </td><td>Gillespie's SSA-direct method </td></tr>
-<tr><td align="center">Monte Carlo </td><td align="center">SSA-CR </td><td>SSA composition and rejection method </td></tr>
+<tr><td align="center">ODE  </td><td align="center">Runge-Kutta-Fehlberg </td><td>Runge-Kutta-Fehlberg method (java)</td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">gillespie </td><td>SSA-direct method </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">SSA-Hierarchical </td><td>SSA-direct method on hierarchical models (java) </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">SSA-Direct </td><td>SSA-direct method (java) </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">SSA-CR </td><td>SSA composition and rejection method (java) </td></tr>
 <tr><td align="center">Monte Carlo </td><td align="center">iSSA </td><td>incremental SSA </td></tr>
 <tr><td align="center">Monte Carlo </td><td align="center">interactive </td><td>Interactive SSA-direct method </td></tr>
 <tr><td align="center">Monte Carlo </td><td align="center">emc-sim   </td><td>Uses jump count as next reaction time </td></tr>
@@ -1604,7 +1590,7 @@ The table below specifies these:
 <div class="p"><!----></div>
      <h3><a name="tth_sEc5.2">
 5.2</a>&nbsp;&nbsp;<a name="absOptions">
-</a>Abstraction Options</h3>
+</a>Advanced Options</h3>
 
 <div class="p"><!----></div>
 Abstraction is performed in three steps.  There is a preprocess step, which is a sequence of abstractions performed once on the initial model.  The main loop iterates through a group of abstractions until there is no change in the model.  Finally, there is a postprocess step, which is a sequence of abstractions performed once at the end.  Clicking on the Add button brings up a list of all the possible abstraction methods.  The selected abstraction method is added after the highlighted abstraction method in the list.  If no method is highlighted, it makes it the first abstraction in the list.
@@ -1978,6 +1964,7 @@ After selecting a data set, one can select individual variables (typically speci
 <div class="p"><!----></div>
 </li>
 </ul>
+If multiple data files are selected in the data selection menu on the left when the use check box is selected for a variable, then that variable will be checked for all highlighted data files.
 Note that a checkmark appears on a data set to indicate that some species have been selected in that data set. Also, all species can be deselected by pressing the Deselect All button.
 
 <div class="p"><!----></div>
@@ -2192,7 +2179,7 @@ Math formulas appear in many model constructs.  These formulas are expressed as 
 <div class="p"><!----></div>
 </li>
 
-<li> Mathematical operators including add (+), subtract (-), multiply (*), divide (/), and power (pow(x,y)).
+<li> Mathematical operators including add (+), subtract (-), multiply (*), divide (/), power (^ or pow(x,y)), and root.
 <div class="p"><!----></div>
 </li>
 
@@ -2351,5 +2338,5 @@ mail will be filtered by our spam filters.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 16 Aug 2013, 16:06.</small>
+version 3.81.<br />On  1 Jun 2014, 11:11.</small>
 </html>

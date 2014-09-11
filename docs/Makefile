@@ -6,7 +6,7 @@ DVI2PDF = dvipdf
 DVIFLAGS = -t letter
 PDFLATEX = pdflatex
 
-all: iBioSim.html iBioSim_Tutorial.html iBioSim_Grid_Tutorial.html iBioSim_Install.html LEMA.html ATACS.html
+all: iBioSim.html iBioSim_SynBio_Tutorial.html iBioSim_SysBio_Tutorial.html iBioSim_Grid_Tutorial.html iBioSim_Install.html LEMA.html ATACS.html
 
 iBioSim.pdf: iBioSim.tex
 	$(PDFLATEX) iBioSim
@@ -29,12 +29,19 @@ ATACS.pdf: ATACS.tex
 ATACS.html: ATACS.pdf
 	tth -u -e2 -LATACS < ATACS.tex > ATACS.html
 
-iBioSim_Tutorial.pdf: iBioSim_Tutorial.tex
-	$(PDFLATEX) iBioSim_Tutorial
-	$(PDFLATEX) iBioSim_Tutorial
+iBioSim_SysBio_Tutorial.pdf: iBioSim_SysBio_Tutorial.tex
+	$(PDFLATEX) iBioSim_SysBio_Tutorial
+	$(PDFLATEX) iBioSim_SysBio_Tutorial
 
-iBioSim_Tutorial.html: iBioSim_Tutorial.pdf
-	tth -u -e2 -LiBioSim_Tutorial < iBioSim_Tutorial.tex > iBioSim_Tutorial.html
+iBioSim_SysBio_Tutorial.html: iBioSim_SysBio_Tutorial.pdf
+	tth -u -e2 -LiBioSim_SysBio_Tutorial < iBioSim_SysBio_Tutorial.tex > iBioSim_SysBio_Tutorial.html
+
+iBioSim_SynBio_Tutorial.pdf: iBioSim_SynBio_Tutorial.tex
+	$(PDFLATEX) iBioSim_SynBio_Tutorial
+	$(PDFLATEX) iBioSim_SynBio_Tutorial
+
+iBioSim_SynBio_Tutorial.html: iBioSim_SynBio_Tutorial.pdf
+	tth -u -e2 -LiBioSim_SynBio_Tutorial < iBioSim_SynBio_Tutorial.tex > iBioSim_SynBio_Tutorial.html
 
 iBioSim_Grid_Tutorial.pdf: iBioSim_Grid_Tutorial.tex
 	$(PDFLATEX) iBioSim_Grid_Tutorial
