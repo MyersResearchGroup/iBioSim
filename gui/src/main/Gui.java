@@ -9,6 +9,7 @@ import graph.Graph;
 
 
 
+
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -54,6 +55,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -146,6 +148,7 @@ import org.jlibsedml.*;
 import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
+
 
 
 
@@ -3557,11 +3560,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		final Thread getNamesThread = new Thread(new Runnable() {
 		    @Override
 			public void run() {
+				Preferences biosimrc = Preferences.userRoot();
 		    	for (int i = 0; i < BioModelIds.length && runGetNames; i++) {
 					try {
 						progressBar.setValue(100 * i / BioModelIds.length);
 						if (!BioModelIds[i].contains(" ")) {
-							BioModelIds[i] += " " + client.getModelNameById(BioModelIds[i]);
+							if (!biosimrc.get(BioModelIds[i],"").equals("")) {
+								BioModelIds[i] += " " + biosimrc.get(BioModelIds[i], "");
+							} else {
+								String name = client.getModelNameById(BioModelIds[i]);
+								biosimrc.put(BioModelIds[i], name);
+								BioModelIds[i] += " " + name;
+							}
 							ListOfBioModels.setListData(BioModelIds);
 							ListOfBioModels.revalidate();
 							ListOfBioModels.repaint();
@@ -3569,8 +3579,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					catch (BioModelsWSException e1) {
 						JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error", JOptionPane.ERROR_MESSAGE);
+						runGetNames = false;
 					}
 				}
+		    	progressBar.setValue(100);
 				ListOfBioModels.setListData(BioModelIds);
 				runGetNames = false;
 		    }
