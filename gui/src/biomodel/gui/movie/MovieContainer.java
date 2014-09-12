@@ -7,7 +7,6 @@ import main.util.Utility;
 import main.util.dataparser.DTSDParser;
 import main.util.dataparser.DataParser;
 import main.util.dataparser.TSDParser;
-
 import analysis.main.AnalysisView;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.comp.Grid;
@@ -35,10 +34,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -246,6 +247,17 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 	}
 	
+	private JButton makeToolButton(String iconFilename, String actionCommand, String tooltip, ActionListener listener) {
+		URL icon = null;
+		URL selectedIcon = null;
+		if (!iconFilename.equals("")) {
+			icon = getClass().getResource(File.separator + "icons" + File.separator + "modelview" + File.separator + iconFilename);
+			String selectedPath = iconFilename.replaceAll(".png", "_selected.png");
+			selectedIcon = getClass().getResource(File.separator + "icons" + File.separator + "modelview" + File.separator + selectedPath);
+		}
+		return Utils.makeToolButton(icon, selectedIcon, actionCommand, tooltip, listener);
+	}
+	
 	/**
 	 * adds the toolbar at the bottom
 	 */
@@ -253,21 +265,21 @@ public class MovieContainer extends JPanel implements ActionListener {
 		// Add the bottom menu bar
 		movieToolbar = new JToolBar();
 		
-		fileButton = Utils.makeToolButton("", "choose_simulation_file", "Choose Simulation", this);
+		fileButton = makeToolButton("", "choose_simulation_file", "Choose Simulation", this);
 		movieToolbar.add(fileButton);
 		
-		clearButton = Utils.makeToolButton("", "clearAppearances", "Clear Appearances", this);
+		clearButton = makeToolButton("", "clearAppearances", "Clear Appearances", this);
 		movieToolbar.add(clearButton);
 		
 		movieToolbar.addSeparator();
 		
-		rewindButton = Utils.makeToolButton("movie" + File.separator + "rewind.png", "rewind", "Rewind", this);
+		rewindButton = makeToolButton("movie" + File.separator + "rewind.png", "rewind", "Rewind", this);
 		movieToolbar.add(rewindButton);
 
-		singleStepButton = Utils.makeToolButton("movie" + File.separator + "single_step.png", "singlestep", "Single Step", this);
+		singleStepButton = makeToolButton("movie" + File.separator + "single_step.png", "singlestep", "Single Step", this);
 		movieToolbar.add(singleStepButton);
 		
-		playPauseButton = Utils.makeToolButton("movie" + File.separator + "play.png", "playpause", "Play", this);
+		playPauseButton = makeToolButton("movie" + File.separator + "play.png", "playpause", "Play", this);
 		movieToolbar.add(playPauseButton);
 			
 		slider = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 0);
@@ -367,6 +379,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 	};
 	
+	private void setIcon(AbstractButton button, String iconFileName) {
+		URL icon = getClass().getResource(File.separator + "icons" + File.separator + "modelview" + File.separator + iconFileName);
+		Utils.setIcon(button, icon);
+	}
 	
 	//MOVIE CONTROL METHODS
 	
@@ -384,13 +400,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 				slider.setValue(0);
 			
 			playTimer.setDelay(FRAME_DELAY_MILLISECONDS);
-			Utils.setIcon(playPauseButton, "movie" + File.separator + "pause.png");
+			setIcon(playPauseButton, "movie" + File.separator + "pause.png");
 			playTimer.start();
 			mode = PLAYING;
 		}
 		else{
 			
-			Utils.setIcon(playPauseButton, "movie" + File.separator + "play.png");
+			setIcon(playPauseButton, "movie" + File.separator + "play.png");
 			playTimer.stop();
 			mode = PAUSED;
 		}		

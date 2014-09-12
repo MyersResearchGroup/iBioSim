@@ -2,6 +2,7 @@ package biomodel.gui.schematic;
 
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.URL;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -15,7 +16,7 @@ public class Utils {
 	/**
 	 * Sets up the button passed in.
 	 */
-	private static void setupButton(AbstractButton button, String iconFilename, String actionCommand, String tooltip, ActionListener listener){
+	private static void setupButton(AbstractButton button, URL icon, URL selectedIcon, String actionCommand, String tooltip, ActionListener listener){
 		button.setActionCommand(actionCommand);
 		
 		
@@ -23,16 +24,16 @@ public class Utils {
 		button.addActionListener(listener);
 		
 		
-		if(iconFilename.equals("")){
+		if(icon == null){
 			// No icon, just set the text to the tooltip
 			button.setText(tooltip);
 		}else{
-			String path = Utils.setIcon(button, iconFilename);
-
+			Utils.setIcon(button, icon);
 			// set a selected icon if it exists
-			String selectedPath = path.replaceAll(".png", "_selected.png");
-			if(new File(selectedPath).exists())
-				button.setSelectedIcon(new ImageIcon(selectedPath));
+			//String selectedPath = path.replaceAll(".png", "_selected.png");
+			//if(new File(selectedPath).exists())
+			if(selectedIcon!=null)
+				button.setSelectedIcon(new ImageIcon(selectedIcon));
 		}
 	}
 	
@@ -42,30 +43,16 @@ public class Utils {
 	 * @param icon
 	 * @return
 	 */
-	public static String setIcon(AbstractButton button, String icon){
-		// Use an icon.
-		String ENVVAR = System.getenv("BIOSIM");
-		String separator;
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
-		String path = ENVVAR + separator
-		+ "gui" + separator + "icons" + separator + "modelview" + separator
-		+ icon;
+	public static void setIcon(AbstractButton button, URL icon){
 
 		// set the icon
-		button.setIcon(new ImageIcon(path));
-		
-		return path;
+		button.setIcon(new ImageIcon(icon));
 	}
 	
-	public static JRadioButton makeRadioToolButton(String iconFilename, String actionCommand, String tooltip, ActionListener listener, final ButtonGroup buttonGroup){
+	public static JRadioButton makeRadioToolButton(URL icon, URL selectedIcon, String actionCommand, String tooltip, ActionListener listener, final ButtonGroup buttonGroup){
 		final JRadioButton button = new JRadioButton();
 		buttonGroup.add(button);
-		Utils.setupButton(button, iconFilename, actionCommand, tooltip, listener);
+		Utils.setupButton(button, icon, selectedIcon, actionCommand, tooltip, listener);
 		button.setBorder(BorderFactory.createRaisedBevelBorder());
 		button.setBorderPainted(true);
 		
@@ -73,10 +60,10 @@ public class Utils {
 	}
 	
 	
-	public static JButton makeToolButton(String iconFilename, String actionCommand, String tooltip, ActionListener listener){
+	public static JButton makeToolButton(URL icon, URL selectedIcon, String actionCommand, String tooltip, ActionListener listener){
 		JButton button = new JButton();
 		
-		Utils.setupButton(button, iconFilename, actionCommand, tooltip, listener);
+		Utils.setupButton(button, icon, selectedIcon, actionCommand, tooltip, listener);
 		return button;
 	}
 	

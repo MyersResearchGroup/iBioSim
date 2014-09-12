@@ -165,7 +165,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		closeImgI = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
 		closeB = new JButton();
-		closeB.setIcon(new ImageIcon(biosim.ENVVAR + separator + "gui" + separator + "icons" + separator + "close.gif"));
+		closeB.setIcon(new ImageIcon(getClass().getResource(separator + "icons" + separator + "close.gif")));
 		closeB.setSize(BUTTONSIZE, BUTTONSIZE);
 
 		WindowsIconFactory.createFrameCloseIcon().paintIcon(closeB, closeImgI.createGraphics(), 0, 0);

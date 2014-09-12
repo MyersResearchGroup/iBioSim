@@ -4279,6 +4279,7 @@ public class SBMLutilities {
 		if (document.getModel().isSetId()) {
 			document.getModel().setId(document.getModel().getId().replace(".","_"));
 		}
+		
 		if (document.getLevel() < Gui.SBML_LEVEL || document.getVersion() < Gui.SBML_VERSION) {
 			if (!Gui.libsbmlFound) {
 				document.setLevelAndVersion(Gui.SBML_LEVEL, Gui.SBML_VERSION, false);
@@ -4357,6 +4358,7 @@ public class SBMLutilities {
 				JOptionPane.showOptionDialog(Gui.frame, scroll, "SBML Conversion Errors and Warnings", JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 			}
+			
 			doc.setLevelAndVersion(Gui.SBML_LEVEL, Gui.SBML_VERSION,false);
 			org.sbml.libsbml.SBMLWriter writer = new org.sbml.libsbml.SBMLWriter();
 			try {
@@ -4372,6 +4374,7 @@ public class SBMLutilities {
 				e.printStackTrace();
 			}
 		}
+		
 		/*
 		if (document.getModel().getReaction("R0")!=null) {
 			Reaction r = document.getModel().getReaction("R0");

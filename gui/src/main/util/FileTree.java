@@ -94,47 +94,47 @@ public class FileTree extends JPanel implements MouseListener {
 			separator = File.separator;
 		}
 
-		ICON_VHDL = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconVHDL.png");
+		ICON_VHDL = new ImageIcon(getClass().getResource(separator + "icons" + separator + "iconVHDL.png"));
 
-		ICON_S = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconS.png");
+		ICON_S = new ImageIcon(getClass().getResource(separator + "icons" + separator + "iconS.png"));
 
-		ICON_INST = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconInst.png");
+		ICON_INST = new ImageIcon(getClass().getResource(separator + "icons" + separator + "iconInst.png"));
 
-		ICON_LHPN = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "icon_pnlogo.gif");
+		ICON_LHPN = new ImageIcon(getClass().getResource(separator + "icons" + separator + "icon_pnlogo.gif"));
 
-		ICON_CSP = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconCSP.png");
+		ICON_CSP = new ImageIcon(getClass().getResource(separator + "icons" + separator + "iconCSP.png"));
 
-		ICON_HSE = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconHSE.png");
+		ICON_HSE = new ImageIcon(getClass().getResource(separator + "icons" + separator + "iconHSE.png"));
 
-		ICON_UNC = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconUNC.png");
+		ICON_UNC = new ImageIcon(getClass().getResource(separator + "icons" + separator + "iconUNC.png"));
 
-		ICON_RSG = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconRSG.png");
+		ICON_RSG = new ImageIcon(getClass().getResource(separator + "icons" + separator + "iconRSG.png"));
 
-		ICON_MODEL = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "model.png");
+		ICON_MODEL = new ImageIcon(getClass().getResource(separator + "icons" + separator + "model.png"));
 
-		ICON_DOT = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "dot.jpg");
+		ICON_DOT = new ImageIcon(getClass().getResource(separator + "icons" + separator + "dot.jpg"));
 
-		ICON_SBOL = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "sbol.jpg");
+		ICON_SBOL = new ImageIcon(getClass().getResource(separator + "icons" + separator + "sbol.jpg"));
 
-		ICON_SBML = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "sbml.jpg");
+		ICON_SBML = new ImageIcon(getClass().getResource(separator + "icons" + separator + "sbml.jpg"));
 
-		ICON_SIMULATION = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "simulation.jpg");
+		ICON_SIMULATION = new ImageIcon(getClass().getResource(separator + "icons" + separator + "simulation.jpg"));
 
-		ICON_SYNTHESIS = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "synth.png");
+		ICON_SYNTHESIS = new ImageIcon(getClass().getResource(separator + "icons" + separator + "synth.png"));
 
-		ICON_VERIFY = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "check.png");
+		ICON_VERIFY = new ImageIcon(getClass().getResource(separator + "icons" + separator + "check.png"));
 
-		ICON_PROJECT = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "project.jpg");
+		ICON_PROJECT = new ImageIcon(getClass().getResource(separator + "icons" + separator + "project.jpg"));
 
-		ICON_GRAPH = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "graph.jpg");
+		ICON_GRAPH = new ImageIcon(getClass().getResource(separator + "icons" + separator + "graph.jpg"));
 
-		ICON_PROBGRAPH = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "probability.jpg");
+		ICON_PROBGRAPH = new ImageIcon(getClass().getResource(separator + "icons" + separator + "probability.jpg"));
 
-		ICON_LEARN = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "learn.jpg");
+		ICON_LEARN = new ImageIcon(getClass().getResource(separator + "icons" + separator + "learn.jpg"));
 
-		ICON_MINUS = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "treeMinus.gif");
+		ICON_MINUS = new ImageIcon(getClass().getResource(separator + "icons" + separator + "treeMinus.gif"));
 
-		ICON_PLUS = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "treePlus.gif");
+		ICON_PLUS = new ImageIcon(getClass().getResource(separator + "icons" + separator + "treePlus.gif"));
 
 		setLayout(new BorderLayout());
 
