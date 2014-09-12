@@ -567,15 +567,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// Creates a new frame
 		if (lema) {
 			frame = new JFrame("LEMA");
-			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator + "LEMA.png").getImage());
+			frame.setIconImage(new ImageIcon(getClass().getResource(separator + "icons" + separator + "LEMA.png")).getImage());
 		}
 		else if (atacs) {
 			frame = new JFrame("ATACS");
-			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator + "ATACS.png").getImage());
+			frame.setIconImage(new ImageIcon(getClass().getResource(separator + "icons" + separator + "ATACS.png")).getImage());
 		}
 		else {
 			frame = new JFrame("iBioSim");
-			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator + "iBioSim.png").getImage());
+			frame.setIconImage(new ImageIcon(getClass().getResource(separator + "icons" + separator + "iBioSim.png")).getImage());
 		}
 
 		// Makes it so that clicking the x in the corner closes the program
@@ -618,23 +618,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 		// Sets up the Tool Bar
 		toolbar = new JToolBar();
-		String imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "save.png";
+		String imgName = separator + "icons" + separator + "save.png";
 		saveButton = makeToolButton(imgName, "save", "Save");
 		// toolButton = new JButton("Save");
 		toolbar.add(saveButton);
-		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "saveas.png";
+		imgName = separator + "icons" + separator + "saveas.png";
 		saveasButton = makeToolButton(imgName, "saveas", "Save As");
 		toolbar.add(saveasButton);
-		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "savecheck.png";
+		imgName = separator + "icons" + separator + "savecheck.png";
 		checkButton = makeToolButton(imgName, "check", "Save and Check");
 		toolbar.add(checkButton);
-		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "export.jpg";
+		imgName = separator + "icons" + separator + "export.jpg";
 		exportButton = makeToolButton(imgName, "export", "Export");
 		toolbar.add(exportButton);
-		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "run-icon.jpg";
+		imgName = separator + "icons" + separator + "run-icon.jpg";
 		runButton = makeToolButton(imgName, "run", "Save and Run");
 		toolbar.add(runButton);
-		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "refresh.jpg";
+		imgName = separator + "icons" + separator + "refresh.jpg";
 		refreshButton = makeToolButton(imgName, "refresh", "Refresh");
 		toolbar.add(refreshButton);
 		saveButton.setEnabled(false);
@@ -1424,11 +1424,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public void about() {
 		final JFrame f = new JFrame("About");
-		// frame.setIconImage(new ImageIcon(ENVVAR +
-		// File.separator
-		// + "gui"
-		// + File.separator + "icons" + File.separator +
-		// "iBioSim.png").getImage());
 		JLabel name;
 		JLabel version;
 		final String developers;
@@ -1480,15 +1475,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		uOfUPanel.add(uOfU, "South");
 		if (lema) {
 			aboutPanel.add(new javax.swing.JLabel(
-					new javax.swing.ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator + "LEMA.png")), "North");
+					new javax.swing.ImageIcon(getClass().getResource(separator + "icons" + separator + "LEMA.png"))), "North");
 		}
 		else if (atacs) {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator
-					+ "ATACS.png")), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource(separator + "icons" + separator
+					+ "ATACS.png"))), "North");
 		}
 		else {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator
-					+ "iBioSim.png")), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource(separator + "icons" + separator
+					+ "iBioSim.png"))), "North");
 		}
 		// aboutPanel.add(bioSim, "North");
 		aboutPanel.add(uOfUPanel, "Center");
@@ -2159,15 +2154,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (dot.exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							// directory = ENVVAR + "/docs/";
 							command = "gnome-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							// directory = ENVVAR + "/docs/";
 							command = "open ";
 						}
 						else {
-							// directory = ENVVAR + "\\docs\\";
 							command = "dotty start ";
 						}
 						log.addText(command + root + separator + theFile + "\n");
@@ -2348,15 +2340,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (dot.exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							// directory = ENVVAR + "/docs/";
 							command = "gnome-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							// directory = ENVVAR + "/docs/";
 							command = "open ";
 						}
 						else {
-							// directory = ENVVAR + "\\docs\\";
 							command = "dotty start ";
 						}
 						log.addText(command + root + separator + theFile + "\n");
@@ -5205,15 +5194,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (new File(root + separator + theFile).exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						// directory = ENVVAR + "/docs/";
 						command = "gnome-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						// directory = ENVVAR + "/docs/";
 						command = "open ";
 					}
 					else {
-						// directory = ENVVAR + "\\docs\\";
 						command = "dotty start ";
 					}
 					log.addText(command + root + theFile + "\n");
@@ -5253,15 +5239,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (new File(root + separator + theFile).exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						// directory = ENVVAR + "/docs/";
 						command = "gnome-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						// directory = ENVVAR + "/docs/";
 						command = "open ";
 					}
 					else {
-						// directory = ENVVAR + "\\docs\\";
 						command = "dotty start ";
 					}
 					log.addText(command + root + theFile + "\n");
@@ -5301,15 +5284,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (new File(root + separator + theFile).exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						// directory = ENVVAR + "/docs/";
 						command = "gnome-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						// directory = ENVVAR + "/docs/";
 						command = "open ";
 					}
 					else {
-						// directory = ENVVAR + "\\docs\\";
 						command = "dotty start ";
 					}
 					log.addText(command + root + theFile + "\n");
@@ -5349,15 +5329,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (new File(root + separator + theFile).exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						// directory = ENVVAR + "/docs/";
 						command = "gnome-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						// directory = ENVVAR + "/docs/";
 						command = "open ";
 					}
 					else {
-						// directory = ENVVAR + "\\docs\\";
 						command = "dotty start ";
 					}
 					log.addText(command + root + theFile + "\n");
@@ -10290,7 +10267,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		button.setActionCommand(actionCommand);
 		button.setToolTipText(toolTipText);
 		button.addActionListener(this);
-		button.setIcon(new ImageIcon(imageName));
+		button.setIcon(new ImageIcon(getClass().getResource(imageName)));
 		return button;
 	}
 	
