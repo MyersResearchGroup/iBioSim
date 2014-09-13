@@ -1597,13 +1597,13 @@ public class BioModel {
 		if (AnnotationUtility.checkObsoleteAnnotation(react, GlobalConstants.COMPLEXATION)) {
 			react.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
 			AnnotationUtility.removeObsoleteAnnotation(react);
-			return checkComplexationStructure(react);
+			return true; //checkComplexationStructure(react);
 		} else if (react.isSetSBOTerm()) {
 			if (react.getSBOTerm() == GlobalConstants.SBO_COMPLEX) {
 				react.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
-				return checkComplexationStructure(react);
+				return true; // checkComplexationStructure(react);
 			} else if (react.getSBOTerm() == GlobalConstants.SBO_ASSOCIATION)
-				return checkComplexationStructure(react);
+				return true; //checkComplexationStructure(react);
 		} 
 		return false;
 	}
