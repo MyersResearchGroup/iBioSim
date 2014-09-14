@@ -1597,27 +1597,22 @@ public class BioModel {
 		if (AnnotationUtility.checkObsoleteAnnotation(react, GlobalConstants.COMPLEXATION)) {
 			react.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
 			AnnotationUtility.removeObsoleteAnnotation(react);
-			return true; //checkComplexationStructure(react);
+			return checkComplexationStructure(react);
 		} else if (react.isSetSBOTerm()) {
 			if (react.getSBOTerm() == GlobalConstants.SBO_COMPLEX) {
 				react.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
-				return true; // checkComplexationStructure(react);
+				return checkComplexationStructure(react);
 			} else if (react.getSBOTerm() == GlobalConstants.SBO_ASSOCIATION)
-				return true; //checkComplexationStructure(react);
+				return checkComplexationStructure(react);
 		} 
 		return false;
 	}
-	
-	private static boolean checkComplexationStructure(Reaction complexation) {
-		if (complexation.getNumModifiers() == 0 && complexation.getNumProducts() == 1) {
-			if (complexation.getNumReactants() > 1)
-				return true;
-			else if (complexation.getNumReactants() == 1)
-				return (complexation.getReactant(0).getStoichiometry() > 1);
-		}
-		return false;
+
+	private static boolean checkComplexationStructure(Reaction complexation) {	
+		return (complexation.getNumReactants() >= 1 && complexation.getNumModifiers() == 0 
+				&& complexation.getNumProducts() == 1);
 	}
-	
+
 	public static boolean isConstitutiveReaction(Reaction reaction) {
 		if (reaction.isSetSBOTerm()) {
 			if (reaction.getSBOTerm()==GlobalConstants.SBO_CONSTITUTIVE) return true;
