@@ -10,6 +10,7 @@ import graph.Graph;
 
 
 
+
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -148,6 +149,7 @@ import org.jlibsedml.*;
 import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
+
 
 
 
@@ -4658,7 +4660,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				SEDMLDocument sedmlDoc = Libsedml.readDocument(sedmlFile);
 				sedmlDoc.validate();
 				// TODO: removed validation for now
-				if(false /*sedmlDoc.hasErrors()*/) {
+				if(sedmlDoc.hasErrors()) {
 					List<SedMLError> errors = sedmlDoc.getErrors();
 					final JFrame f = new JFrame("SED-ML Errors and Warnings");
 					JTextArea messageArea = new JTextArea();
@@ -4707,6 +4709,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					int y = screenSize.height / 2 - frameSize.height / 2;
 					f.setLocation(x, y);
 					f.setVisible(true);
+					JOptionPane.showMessageDialog(Gui.frame, scroll, "SED-ML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
 				}
 				SedML sedml = sedmlDoc.getSedMLModel();
 				List<org.jlibsedml.Model> models = sedml.getModels();
@@ -4715,6 +4718,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					org.jlibsedml.Model model = models.get(i);
 					String sbmlFile = filename.substring(0,filename.lastIndexOf(separator)) + model.getSource();
 					String newFile = importSBML(sbmlFile);
+					if (newFile==null) return;
 					model.setSource(newFile);
 					modelMap.put(model.getId(), newFile);
 				}
@@ -4739,7 +4743,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							if (outputs.size() > 0 && outputs.get(0).isPlot2d()) {
 								Plot2D plot = (Plot2D)outputs.get(0);
 								Properties graph = new Properties();
-								graph.setProperty("title", plot.getName());
+								if (plot.getName()!=null) {
+									graph.setProperty("title", plot.getName());
+								} else {
+									graph.setProperty("title", plot.getId());
+								}
 								graph.setProperty("chart.background.paint", "" + new java.awt.Color(238, 238, 238).getRGB());
 								graph.setProperty("plot.background.paint", "" + java.awt.Color.WHITE.getRGB());
 								graph.setProperty("plot.domain.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
@@ -4759,13 +4767,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								List<Curve> curves = plot.getListOfCurves();
 								for (int j = 0; j < curves.size(); j++) {
 									Curve curve = curves.get(j);
+									String name;
+									if (curve.getName()!=null) {
+										name = curve.getName();
+									} else {
+										name = curve.getId();
+									}
 									graph.setProperty("species.connected." + j, "true");
 									graph.setProperty("species.filled." + j, "true");
 									graph.setProperty("species.xnumber." + j, "0");
 									graph.setProperty("species.number." + j, "" + j);
 									graph.setProperty("species.run.number." + j, "run-" + 1);
-									graph.setProperty("species.name." + j, curve.getName() + " (1)");
-									graph.setProperty("species.id." + j, curve.getName() + " (1)");
+									graph.setProperty("species.name." + j, name + " (1)");
+									graph.setProperty("species.id." + j, name + " (1)");
 									graph.setProperty("species.visible." + j, "true");
 									graph.setProperty("species.paint." + j, colors[j % numColors]);
 									graph.setProperty("species.shape." + j, "Circle");
@@ -4784,7 +4798,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							} else if (outputs.size() > 0 && outputs.get(0).isReport()) {
 								Report report = (Report)outputs.get(0);
 								Properties graph = new Properties();
-								graph.setProperty("title", report.getName());
+								String name;
+								if (report.getName()!=null) {
+									name = report.getName();
+								} else {
+									name = report.getId();
+								}
+								graph.setProperty("title", name);
 								graph.setProperty("chart.background.paint", "" + new java.awt.Color(238, 238, 238).getRGB());
 								graph.setProperty("plot.background.paint", "" + java.awt.Color.WHITE.getRGB());
 								//graph.setProperty("plot.domain.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());

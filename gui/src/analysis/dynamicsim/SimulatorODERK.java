@@ -7,7 +7,6 @@ import java.util.HashSet;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
@@ -38,7 +37,7 @@ public class SimulatorODERK extends Simulator {
 	public SimulatorODERK(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed,
 			JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
 			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType) 
-					throws IOException, XMLStreamException {	
+					throws IOException {	
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, randomSeed,
 				progress, printInterval, initializationTime, stoichAmpValue, running,
