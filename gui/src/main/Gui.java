@@ -321,11 +321,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private static final String[] bugReportTypes = new String[] { "BUG", "CHANGE", "FEATURE" };
 	
-	private static final String lemaVersion = "2.7";
+	private static final String lemaVersion = "2.8";
 	
 	private static final String atacsVersion = "6.1";
 	
-	private static final String iBioSimVersion = "2.7";
+	private static final String iBioSimVersion = "2.8";
 		
 	public static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 		
