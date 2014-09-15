@@ -7412,9 +7412,22 @@ public class BioModel {
 		return bioModel;
 	}
 
+	// TODO: This is an ugly hack of a method.  Should be rewritten.
 	private static String updateFormulaVar(String s, String origVar, String newVar) {
 		s = " " + s + " ";
 		String olds;
+		s = s.replace("*"," * ");
+		s = s.replace("+"," + ");
+		s = s.replace("/"," / ");
+		s = s.replace("-"," - ");
+		s = s.replace("%"," % ");
+		s = s.replace("&&"," && ");
+		s = s.replace("||"," || ");
+		s = s.replace(">", " > ").replace("> =",">=");
+		s = s.replace("<", " < ").replace("< =","<=");
+		s = s.replace("=", " = ").replace("> =",">=").replace("< =", "<=");
+		// TODO: Are these needed to be handled?  Or are arrays gone by this point?
+		//formula.split("\\[|\\]|\\{|\\}")
 		do { 
 			olds = s;
 			s = s.replace("," + origVar + ",", "," + newVar + ",");
@@ -7451,18 +7464,7 @@ public class BioModel {
 			if (species.getCompartment().equals(origId)) {
 				species.setCompartment(newId);
 			}
-//			SpeciesType not supported in Level 3
-//			if (species.getSpeciesType().equals(origId)) {
-//				species.setSpeciesType(newId);
-//			}
 		}
-//		CompartmentType not supported in Level 3
-//		for (int i = 0; i < model.getCompartmentCount(); i++) {
-//			Compartment compartment = (Compartment) model.getListOfCompartments().get(i);
-//			if (compartment.getCompartmentType().equals(origId)) {
-//				compartment.setCompartmentType(newId);
-//			}
-//		}
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = model.getListOfReactions().get(i);
 			if (!reaction.isSetCompartment() || reaction.getCompartment().equals(origId)) {
