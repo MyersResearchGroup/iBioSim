@@ -72,6 +72,6 @@
 	<classpathentry kind="lib" path="gui/lib/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/csparsej-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-b1-with-dependencies-rev1960.jar"/>
-	<classpathentry kind="lib" path="/Users/myers/research/nobackup/workspace/BioSim/gui/lib/libsbmlj.jar"/>
+	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
