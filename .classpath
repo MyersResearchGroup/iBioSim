@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="biomodel/gui/textualeditor/SBML_Editor.java" kind="src" path="gui/src"/>
+	<classpathentry excluding="verification/platu/project/DesignUnit.java" kind="src" path="gui/src"/>
 	<classpathentry kind="lib" path="gui/lib/AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-anim.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-awt-util.jar"/>
@@ -34,7 +34,6 @@
 	<classpathentry kind="lib" path="gui/lib/iText-2.1.5.jar"/>
 	<classpathentry kind="lib" path="gui/lib/biomodels-wslib_standalone-1.12.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jgraphx.jar"/>
-	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="lib" path="gui/lib/hadoop-0.20.2-core.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-primitives-20070823.jar"/>
 	<classpathentry kind="lib" path="gui/lib/hppc-0.3.1.jar"/>
@@ -66,12 +65,13 @@
 	<classpathentry kind="lib" path="gui/lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis-1.0.b2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-math3-3.2.jar"/>
-	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.7.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="gui/lib/libSBOLj-core-1.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="gui/lib/JParts-1.0-SNAPSHOT-withDependencies.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xerces_2_11_0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/joptimizer-3.3.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/csparsej-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-b1-with-dependencies-rev1960.jar"/>
+	<classpathentry kind="lib" path="/Users/myers/research/nobackup/workspace/BioSim/gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
