@@ -7150,7 +7150,7 @@ public class BioModel {
 				}
 				model.removeCompartment(topId);
 				model.addCompartment(c);
-				SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getSpecies(c.getId()));
+				SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getCompartment(c.getId()));
 				for (ReplacedElement r : replacements) {
 					SbmlSBase.addReplacedElement(r);
 				}
@@ -7160,6 +7160,9 @@ public class BioModel {
 				if (c.isSetMetaId()) SBMLutilities.setMetaId(c, c.getMetaId().replace("___","__"));
 				if (model.getCompartment(c.getId())==null) {
 					model.addCompartment(c);
+					CompSBasePlugin SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getCompartment(c.getId()));
+					SbmlSBase.unsetListOfReplacedElements();
+					SbmlSBase.unsetReplacedBy();
 					if (!compartments.containsKey(c.getId())) {
 						Properties prop = new Properties();
 						prop.put(GlobalConstants.RNAP_STRING,RNAPamount);
@@ -7209,6 +7212,9 @@ public class BioModel {
 				if (spec.isSetMetaId()) SBMLutilities.setMetaId(spec, spec.getMetaId().replace("___","__"));
 				if (model.getSpecies(spec.getId())==null) {
 					model.addSpecies(spec);
+					CompSBasePlugin SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getSpecies(spec.getId()));
+					SbmlSBase.unsetListOfReplacedElements();
+					SbmlSBase.unsetReplacedBy();
 				} else {
 					// TOOD: species not unique
 				}
@@ -7243,7 +7249,7 @@ public class BioModel {
 				}
 				model.removeParameter(topId);
 				model.addParameter(p);
-				SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getParameter(p.getId()));
+				SbmlSBase = SBMLutilities.getCompSBasePlugin(p);
 				for (ReplacedElement r : replacements) {
 					SbmlSBase.addReplacedElement(r);
 				}
@@ -7253,6 +7259,9 @@ public class BioModel {
 				if (p.isSetMetaId()) SBMLutilities.setMetaId(p, p.getMetaId().replace("___","__"));
 				if (model.getParameter(p.getId())==null) {
 					model.addParameter(p);
+					CompSBasePlugin SbmlSBase = SBMLutilities.getCompSBasePlugin(p);
+					SbmlSBase.unsetListOfReplacedElements();
+					SbmlSBase.unsetReplacedBy();
 				} else {
 					// TOOD: species not unique
 				}
@@ -7307,6 +7316,10 @@ public class BioModel {
 				}
 				if (model.getReaction(r.getId())==null) {
 					model.addReaction(r);
+					CompSBasePlugin SbmlSBase = SBMLutilities.getCompSBasePlugin(r);
+					SbmlSBase.unsetListOfReplacedElements();
+					SbmlSBase.unsetReplacedBy();
+
 				} else {
 					// TOOD: reaction not unique
 				}
