@@ -4374,27 +4374,6 @@ public class SBMLutilities {
 				e.printStackTrace();
 			}
 		}
-		
-		/*
-		if (document.getModel().getReaction("R0")!=null) {
-			Reaction r = document.getModel().getReaction("R0");
-			if (r.getKineticLaw().getLocalParameter("kf")!=null) {
-				System.out.println("Found kf");
-			} else {
-				System.out.println("Did not find kf");
-			}
-		}
-		*/
-		// TODO: HACK TO CREATE LOCAL PARAMETER MAP DUE TO JSBML BUG
-		for (int i = 0; i < document.getModel().getReactionCount(); i++) {
-			Reaction r = document.getModel().getReaction(i);
-			KineticLaw k = r.getKineticLaw();
-			if (k != null) {
-				for (int j = 0; j < k.getLocalParameterCount(); j++) {
-					k.getLocalParameter(j).setId(k.getLocalParameter(j).getId());
-				}
-			}
-		}
 		return document;
 	}
 }
