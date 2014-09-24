@@ -232,6 +232,7 @@ public class BioGraph extends mxGraph {
 		
 		//put the grid cells in first so that they're below the other cells
 		addGridCells();
+		bioModel.removeStaleLayout();
 		
 		Layout layout = bioModel.getLayout();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
@@ -750,12 +751,13 @@ public class BioGraph extends mxGraph {
 			} 
 			else {
 				for (int j = 0; j < r.getReactantCount(); j++) {
-					
 					SpeciesReference s1 = r.getReactant(j);
+					String reactant = s1.getSpecies();
 					
 					for (int k = 0; k < r.getProductCount(); k++) {
 						
 						SpeciesReference s2 = r.getProduct(k);
+						String product = s2.getSpecies();
 						mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
 								s1.getSpecies() + "_" + r.getId() + "_" + s2.getSpecies(), "", 
 								this.getSpeciesCell(s1.getSpecies()), 
@@ -769,6 +771,7 @@ public class BioGraph extends mxGraph {
 						else {
 							cell.setStyle("REACTION_EDGE");
 						}
+						createLayoutConnection(layout,reactant,product,GlobalConstants.REACTION);
 					}
 				}
 			}
