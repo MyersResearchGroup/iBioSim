@@ -168,16 +168,13 @@ public class BioGraph extends mxGraph {
 	}
 	
 	private void createLayoutConnection(Layout layout,String reactant,String product,String type) {
-		return;
-		// TODO: Removed until figure out proper way to connect
-		/*
 		ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
 		if (reactionGlyph!=null) layout.removeReactionGlyph(reactionGlyph);
 		reactionGlyph = layout.createReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
 		reactionGlyph.createBoundingBox();
 		reactionGlyph.getBoundingBox().createDimensions();
 		reactionGlyph.getBoundingBox().createPosition();
-		SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.GLYPH+"__"+reactant+"__product__"+product);
+		SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.REFERENCE_GLYPH+"__"+reactant+"__"+type+"__"+product);
 		speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+product);
 		speciesReferenceGlyph.setRole(SpeciesReferenceRole.PRODUCT);
 		LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
@@ -185,7 +182,6 @@ public class BioGraph extends mxGraph {
 				this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterY()));
 		lineSegment.setEnd(new Point(this.getSpeciesOrPromoterCell(product).getGeometry().getCenterX(),
 				this.getSpeciesOrPromoterCell(product).getGeometry().getCenterY()));
-				*/
 	}
 
 	private static void addSpeciesReferenceGlyph(mxCell cell,ReactionGlyph reactionGlyph,String reactionId,String speciesId, String role) {
