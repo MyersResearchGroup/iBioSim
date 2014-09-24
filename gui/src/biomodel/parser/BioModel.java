@@ -6391,7 +6391,7 @@ public class BioModel {
 		return true;
 	}
 	
-	private void removeStaleLayout() {
+	public void removeStaleLayout() {
 		Layout layout = sbmlLayout.getListOfLayouts().get("iBioSim");
 		Model model = sbml.getSBMLDocument().getModel();
 		if (sbmlLayout.getListOfLayouts().get("iBioSim")!=null) {
