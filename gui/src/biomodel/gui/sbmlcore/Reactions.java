@@ -317,7 +317,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JLabel fast = new JLabel("Fast:");
 		reacFast = new JComboBox(options);
 		reacFast.setSelectedItem("false");
-		String selectedID = "";
 		Reaction copyReact = null;
 		JPanel param = new JPanel(new BorderLayout());
 		JPanel addParams = new JPanel();
@@ -643,7 +642,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			CiIndex.setText(freshIndex);
 			reacID.setText(reac.getId()+dimInID);
-			selectedID = reac.getId();
 			reacName.setText(reac.getName());
 			if (bioModel.getPortByIdRef(reac.getId())!=null) {
 				onPort.setSelected(true);
@@ -3782,6 +3780,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		// if the use mass action button is clicked
 		else if (e.getSource() == useMassAction) {
 			useMassAction();
+		}
+		else if (e.getSource() == reactionComp) {
+			SBase variable = bioModel.getSBMLDocument().getModel().getCompartment((String)reactionComp.getSelectedItem());
+			ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
+			int varDimCount = ABV.getDimensionCount();
+			if (varDimCount > 0) {
+				CiIndex.setEnabled(true);
+			} else {
+				CiIndex.setText("");
+				CiIndex.setEnabled(false);
+			}
 		}
 	}
 
