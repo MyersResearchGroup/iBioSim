@@ -1095,11 +1095,29 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				iIndex.setEnabled(false);
 			}
 		}
+		/*
 		else if (e.getSource() == ruleVar) {
 			if(ruleVar.isEnabled()){
 				iIndex.setEnabled(true);
 			}
 			else{
+				iIndex.setEnabled(false);
+			}
+		}
+		*/
+		else if (e.getSource() == ruleVar){
+			SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(),(String)ruleVar.getSelectedItem());
+			if (variable!=null) {
+				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
+				int varDimCount = ABV.getDimensionCount();
+				if (varDimCount > 0) {
+					iIndex.setEnabled(true);
+				} else {
+					iIndex.setText("");
+					iIndex.setEnabled(false);
+				}
+			} else {
+				iIndex.setText("");
 				iIndex.setEnabled(false);
 			}
 		}

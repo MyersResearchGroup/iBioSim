@@ -24,7 +24,6 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
@@ -1016,7 +1015,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			setFieldEnablings();
 		}
-		else if (e.getActionCommand().equals("comboBoxChanged")){
+		else if (e.getSource() == convBox){
 			if (convBox.getSelectedItem().equals("( none )")) {
 				conviIndex.setText("");
 				conviIndex.setEnabled(false);
@@ -1030,6 +1029,17 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					conviIndex.setText("");
 					conviIndex.setEnabled(false);
 				}
+			}
+		}
+		else if (e.getSource() == compartBox){
+			SBase variable = bioModel.getSBMLDocument().getModel().getCompartment((String)compartBox.getSelectedItem());
+			ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
+			int varDimCount = ABV.getDimensionCount();
+			if (varDimCount > 0) {
+				iIndex.setEnabled(true);
+			} else {
+				iIndex.setText("");
+				iIndex.setEnabled(false);
 			}
 		}
 		if (paramsOnly)
