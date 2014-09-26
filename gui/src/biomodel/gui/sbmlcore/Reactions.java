@@ -3792,6 +3792,54 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				CiIndex.setEnabled(false);
 			}
 		}
+		else if (e.getSource() == reactantSpecies){
+			SBase variable = bioModel.getSBMLDocument().getModel().getSpecies((String)reactantSpecies.getSelectedItem());
+			if (variable!=null) {
+				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
+				int varDimCount = ABV.getDimensionCount();
+				if (varDimCount > 0) {
+					RiIndex.setEnabled(true);
+				} else {
+					RiIndex.setText("");
+					RiIndex.setEnabled(false);
+				}
+			} else {
+				RiIndex.setText("");
+				RiIndex.setEnabled(false);
+			}
+		}
+		else if (e.getSource() == modifierSpecies){
+			SBase variable = bioModel.getSBMLDocument().getModel().getSpecies((String)modifierSpecies.getSelectedItem());
+			if (variable!=null) {
+				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
+				int varDimCount = ABV.getDimensionCount();
+				if (varDimCount > 0) {
+					MiIndex.setEnabled(true);
+				} else {
+					MiIndex.setText("");
+					MiIndex.setEnabled(false);
+				}
+			} else {
+				MiIndex.setText("");
+				MiIndex.setEnabled(false);
+			}
+		}
+		else if (e.getSource() == productSpecies){
+			SBase variable = bioModel.getSBMLDocument().getModel().getSpecies((String)productSpecies.getSelectedItem());
+			if (variable!=null) {
+				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
+				int varDimCount = ABV.getDimensionCount();
+				if (varDimCount > 0) {
+					PiIndex.setEnabled(true);
+				} else {
+					PiIndex.setText("");
+					PiIndex.setEnabled(false);
+				}
+			} else {
+				PiIndex.setText("");
+				PiIndex.setEnabled(false);
+			}
+		}
 	}
 
 	@Override
