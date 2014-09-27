@@ -1561,16 +1561,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			removeAssignment(eventAssign);
 		}
 		else if (e.getSource() == eaID){
-			SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(),(String)eaID.getSelectedItem());
-			if (variable!=null) {
-				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
-				int varDimCount = ABV.getDimensionCount();
-				if (varDimCount > 0) {
-					iIndex.setEnabled(true);
-				} else {
-					iIndex.setText("");
-					iIndex.setEnabled(false);
-				}
+			if (bioModel.isArray((String)eaID.getSelectedItem())) {
+				iIndex.setEnabled(true);
 			} else {
 				iIndex.setText("");
 				iIndex.setEnabled(false);

@@ -38,6 +38,7 @@ import org.sbml.jsbml.ext.layout.BoundingBox;
 import org.sbml.jsbml.ext.layout.GraphicalObject;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.flattening.ArraysFlattening;
 import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
@@ -6349,6 +6350,19 @@ public class BioModel {
 			}
 		}
 		//}
+	}
+	
+	public boolean isArray(String id) {
+		SBase variable = SBMLutilities.getElementBySId(sbml,id);
+		if (variable!=null) {
+			ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
+			int varDimCount = ABV.getDimensionCount();
+			if (varDimCount > 0) {
+				return true;
+			} 
+			return false;
+		} 
+		return false;
 	}
 
 	public boolean isInput(String id) {

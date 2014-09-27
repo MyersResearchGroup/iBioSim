@@ -319,10 +319,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				conviIndex.setText("");
 				conviIndex.setEnabled(false);
 			} else {
-				SBase variable = bioModel.getSBMLDocument().getModel().getParameter((String)conversionFactor.getSelectedItem());
-				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
-				int varDimCount = ABV.getDimensionCount();
-				if (varDimCount > 0) {
+				if (bioModel.isArray((String)conversionFactor.getSelectedItem())) {
 					conviIndex.setEnabled(true);
 				} else {
 					conviIndex.setText("");
