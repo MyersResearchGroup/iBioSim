@@ -2079,10 +2079,22 @@ public class Schematic extends JPanel implements ActionListener {
 			if(numPromoters == 1){
 				if(graph.getCellType(source) == GlobalConstants.PROMOTER){
 					// source is a promoter
+					if (bioModel.isArray(targetID)) {	
+						JOptionPane.showMessageDialog(Gui.frame, "Promoters cannot currently be connected to species arrays.");
+						graph.buildGraph();
+						modelEditor.refresh();
+						return;
+					}
 					bioModel.addActivatorToProductionReaction(sourceID, "none", targetID, null, null, null);
 				}
 				else{
 					// target is a promoter
+					if (bioModel.isArray(sourceID)) {	
+						JOptionPane.showMessageDialog(Gui.frame, "Promoters cannot currently be connected to species arrays.");
+						graph.buildGraph();
+						modelEditor.refresh();
+						return;
+					}
 					if (activationButton.isSelected()) {
 						bioModel.addActivatorToProductionReaction(targetID, sourceID, "none", null, null, null);
 					} else if (inhibitionButton.isSelected()) {
@@ -2102,6 +2114,12 @@ public class Schematic extends JPanel implements ActionListener {
 					String newPromoterName = "";
 
 					if (activationButton.isSelected() || inhibitionButton.isSelected() || noInfluenceButton.isSelected()) {
+						if (bioModel.isArray(sourceID)) {	
+							JOptionPane.showMessageDialog(Gui.frame, "Regulation arcs cannot currently be connected between species arrays.");
+							graph.buildGraph();
+							modelEditor.refresh();
+							return;
+						}
 						mxGeometry geom = target.getGeometry();
 						newPromoterName = bioModel.createPromoter(null, (float)geom.getX(), (float)geom.getY(), false);
 						bioModel.createProductionReaction(newPromoterName,null,null,null,null,null,null,false);
@@ -2114,6 +2132,12 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 					}
 					else if (bioActivationButton.isSelected()) {
+						if (bioModel.isArray(sourceID)) {	
+							JOptionPane.showMessageDialog(Gui.frame, "Complex formation arcs cannot currently be connected between species arrays.");
+							graph.buildGraph();
+							modelEditor.refresh();
+							return;
+						}
 						bioModel.addReactantToComplexReaction(sourceID, targetID, null, null);
 					}
 				}

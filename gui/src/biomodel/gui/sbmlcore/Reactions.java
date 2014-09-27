@@ -3782,10 +3782,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			useMassAction();
 		}
 		else if (e.getSource() == reactionComp) {
-			SBase variable = bioModel.getSBMLDocument().getModel().getCompartment((String)reactionComp.getSelectedItem());
-			ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
-			int varDimCount = ABV.getDimensionCount();
-			if (varDimCount > 0) {
+			if (bioModel.isArray((String)reactionComp.getSelectedItem())) {
 				CiIndex.setEnabled(true);
 			} else {
 				CiIndex.setText("");
@@ -3793,48 +3790,24 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		else if (e.getSource() == reactantSpecies){
-			SBase variable = bioModel.getSBMLDocument().getModel().getSpecies((String)reactantSpecies.getSelectedItem());
-			if (variable!=null) {
-				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
-				int varDimCount = ABV.getDimensionCount();
-				if (varDimCount > 0) {
-					RiIndex.setEnabled(true);
-				} else {
-					RiIndex.setText("");
-					RiIndex.setEnabled(false);
-				}
+			if (bioModel.isArray((String)reactantSpecies.getSelectedItem())) {
+				RiIndex.setEnabled(true);
 			} else {
 				RiIndex.setText("");
 				RiIndex.setEnabled(false);
 			}
 		}
 		else if (e.getSource() == modifierSpecies){
-			SBase variable = bioModel.getSBMLDocument().getModel().getSpecies((String)modifierSpecies.getSelectedItem());
-			if (variable!=null) {
-				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
-				int varDimCount = ABV.getDimensionCount();
-				if (varDimCount > 0) {
-					MiIndex.setEnabled(true);
-				} else {
-					MiIndex.setText("");
-					MiIndex.setEnabled(false);
-				}
+			if (bioModel.isArray((String)modifierSpecies.getSelectedItem())) {
+				MiIndex.setEnabled(true);
 			} else {
 				MiIndex.setText("");
 				MiIndex.setEnabled(false);
 			}
 		}
 		else if (e.getSource() == productSpecies){
-			SBase variable = bioModel.getSBMLDocument().getModel().getSpecies((String)productSpecies.getSelectedItem());
-			if (variable!=null) {
-				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
-				int varDimCount = ABV.getDimensionCount();
-				if (varDimCount > 0) {
-					PiIndex.setEnabled(true);
-				} else {
-					PiIndex.setText("");
-					PiIndex.setEnabled(false);
-				}
+			if (bioModel.isArray((String)productSpecies.getSelectedItem())) {
+				PiIndex.setEnabled(true);
 			} else {
 				PiIndex.setText("");
 				PiIndex.setEnabled(false);

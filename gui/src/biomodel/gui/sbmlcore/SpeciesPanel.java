@@ -1020,10 +1020,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				conviIndex.setText("");
 				conviIndex.setEnabled(false);
 			} else {
-				SBase variable = bioModel.getSBMLDocument().getModel().getParameter((String)convBox.getSelectedItem());
-				ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
-				int varDimCount = ABV.getDimensionCount();
-				if (varDimCount > 0) {
+				if (bioModel.isArray((String)convBox.getSelectedItem())) {
 					conviIndex.setEnabled(true);
 				} else {
 					conviIndex.setText("");
@@ -1032,10 +1029,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 		}
 		else if (e.getSource() == compartBox){
-			SBase variable = bioModel.getSBMLDocument().getModel().getCompartment((String)compartBox.getSelectedItem());
-			ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
-			int varDimCount = ABV.getDimensionCount();
-			if (varDimCount > 0) {
+			if (bioModel.isArray((String)compartBox.getSelectedItem())) {
 				iIndex.setEnabled(true);
 			} else {
 				iIndex.setText("");
