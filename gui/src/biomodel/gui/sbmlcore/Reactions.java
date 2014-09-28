@@ -1829,11 +1829,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		PiIndex = new JTextField(10);
 		PiIndex.setEnabled(true);
 		productSpecies.addActionListener(this);
-		if (inSchematic) {
-			productSpecies.setEnabled(false);
-		} else {
-			productSpecies.setEnabled(true);
-		}
+		productSpecies.setEnabled(true);
 		for (int i = 0; i < speciesList.length; i++) {
 			Species species = bioModel.getSBMLDocument().getModel().getSpecies(speciesList[i]);
 			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(bioModel, "", speciesList[i]))) {
@@ -2227,11 +2223,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		Object[] choices = speciesList;
 		modifierSpecies = new JComboBox(choices);
 		modifierSpecies.addActionListener(this);
-		if (inSchematic) {
-			modifierSpecies.setEnabled(false);
-		} else {
-			modifierSpecies.setEnabled(true);
-		}
+		modifierSpecies.setEnabled(true);
 		JLabel SBOTermsLabel = new JLabel("Type");
 		JLabel RepStoichiometryLabel = new JLabel("Stoichiometry of repression (nc)");
 		JLabel RepBindingLabel = new JLabel("Repression binding equilibrium (Kr)");
@@ -2742,11 +2734,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		RiIndex.setEnabled(true);
 		reactantSpecies = new JComboBox();
 		reactantSpecies.addActionListener(this);
-		if (inSchematic) {
-			reactantSpecies.setEnabled(false);
-		} else {
-			reactantSpecies.setEnabled(true);
-		}
+		reactantSpecies.setEnabled(true);
 		// TODO: Scott: if (inSchematic) extract dimensions from reaction else from reaction id field
 		for (int i = 0; i < speciesList.length; i++) {
 			Species species = gcm.getSBMLDocument().getModel().getSpecies(speciesList[i]);
