@@ -89,16 +89,16 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	
 	private boolean constantsOnly;
 
-	public Parameters(BioModel gcm, ModelEditor modelEditor, Boolean paramsOnly, ArrayList<String> getParams, String file,
+	public Parameters(BioModel bioModel, ModelEditor modelEditor, Boolean paramsOnly, ArrayList<String> getParams, String file,
 			ArrayList<String> parameterChanges, boolean constantsOnly) {
 		super(new BorderLayout());
-		this.bioModel = gcm;
+		this.bioModel = bioModel;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
 		this.modelEditor = modelEditor;
 		this.constantsOnly = constantsOnly;
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		JPanel addParams = new JPanel();
 		if (constantsOnly) {
 			addParam = new JButton("Add Real Constant");

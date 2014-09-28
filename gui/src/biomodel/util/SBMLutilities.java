@@ -141,7 +141,7 @@ public class SBMLutilities {
 	 * @param entryText The parameters that are being tested
 	 * @return If the parameters are on the list, scalar, and constant.
 	 */
-	public static String[] checkSizeParameters(SBMLDocument document, String entryText, boolean isReacParam){
+	public static String[] checkSizeParameters(SBMLDocument document, String entryText, boolean idNotRequired){
 		// TDDO: check size parameters
 		// TODO: have this take the dimension string parse it and make sure of form: <id>[<id>][<id>] etc.
 		// TODO: this function should return the String[] of dimensions including 0 entry which is id of the object.
@@ -157,7 +157,7 @@ public class SBMLutilities {
 			dims = "";
 		}
 		// If this function is not called on reaction reactant, product, or modifier
-		if(!isReacParam){
+		if(!idNotRequired){
 			if(id.isEmpty()){
 				JOptionPane.showMessageDialog(Gui.frame, "Need ID.", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 				return null;
@@ -2648,7 +2648,7 @@ public class SBMLutilities {
 	  return false;
 	}
 
-	public static boolean isBoolean(Parameter parameter) {
+	public static boolean isBoolean(SBase parameter) {
 		if (parameter.isSetSBOTerm()) {
 			if (parameter.getSBOTerm()==GlobalConstants.SBO_BOOLEAN) {
 				parameter.setSBOTerm(GlobalConstants.SBO_LOGICAL);
@@ -2660,7 +2660,7 @@ public class SBMLutilities {
 		return false;
 	}
 
-	public static boolean isPlace(Parameter parameter) {
+	public static boolean isPlace(SBase parameter) {
 		if (parameter.isSetSBOTerm()) {
 			if (parameter.getSBOTerm()==GlobalConstants.SBO_PLACE) {
 				parameter.setSBOTerm(GlobalConstants.SBO_PETRI_NET_PLACE);
