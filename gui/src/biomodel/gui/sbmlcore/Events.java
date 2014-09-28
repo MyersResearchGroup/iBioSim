@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -68,6 +69,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private SBOLField sbolField;
 	
 	private boolean isTextual;
+	
+	private JTextField eventID;
+	
+	private boolean isTransition;
 
 	/* Create event panel */
 	public Events(Gui biosim, BioModel bioModel, ModelEditor modelEditor, boolean isTextual) {
@@ -144,6 +149,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * Creates a frame used to edit events or create new ones.
 	 */
 	public String eventEditor(String option,String selected,boolean isTransition) {
+		this.isTransition = isTransition;
 		String[] origAssign = new String[0];
 		String[] assign = new String[0];
 		String[] placeAssign = new String[0];
@@ -176,7 +182,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		JLabel failTransitionLabel = new JLabel("Fail transition:");
 		
-		JTextField eventID = new JTextField(12);
+		eventID = new JTextField(12);
 		JTextField eventName = new JTextField(12);
 		JTextField eventTrigger = new JTextField(12);
 		JTextField eventDelay = new JTextField(12);
@@ -1313,12 +1319,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter p = model.getParameter(i);
 			if ((!isTextual && SBMLutilities.isPlace(p))||p.getId().endsWith("_"+GlobalConstants.RATE)) continue;
+			if (p.getId().equals(GlobalConstants.FAIL)) continue;
 			String id = p.getId();
 			if (!p.getConstant()) {
 				if (keepVarEvent(gcm, assign, selected, id)) {
 					eaID.addItem(id);
 				}
-				if (!SBMLutilities.isBoolean(p) && !SBMLutilities.isPlace(p)) {
+				if (isTransition && !SBMLutilities.isBoolean(p) && !SBMLutilities.isPlace(p)) {
 					if (keepVarEvent(gcm, assign, selected, id+"_"+GlobalConstants.RATE)) {
 						eaID.addItem(id+"_"+GlobalConstants.RATE);
 					}
@@ -1381,8 +1388,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, eventAssignPanel, "Event Asssignment Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		String[] dimID = new String[]{""};
-		String[] dimensionIds = new String[]{""};
+		String[] EAdimID = new String[]{""};
+		String[] EAdimensionIds = new String[]{""};
+		String[] EAdex = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
@@ -1395,9 +1403,32 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				error = true;
 			}
 			else {
-				dimID = EAdimensions.getText().split("\\[");
-				dimensionIds = SBMLutilities.getDimensionIds("e", dimID.length-1);
-				error = SBMLutilities.displayinvalidVariables("Event assignment", gcm.getSBMLDocument(), dimensionIds, eqn.getText().trim(), "", false);
+				String[] dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), eventID.getText(), false);
+				String[] dimensionIds = null;
+				if(dimID!=null){
+					dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
+				}
+				EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), EAdimensions.getText(), true);
+				if(EAdimID!=null){
+					EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
+					SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
+					EAdex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
+					error = (EAdex==null);
+					if (!error) {	
+						ArrayList<String> meshDimensionIds = new ArrayList();
+						if (dimensionIds!=null) {
+							meshDimensionIds.addAll(Arrays.asList(dimensionIds));
+						}
+						if (EAdimensionIds!=null) {
+							meshDimensionIds.addAll(Arrays.asList(EAdimensionIds));
+						}
+						error = SBMLutilities.displayinvalidVariables("Event assignment", gcm.getSBMLDocument(), 
+								meshDimensionIds.toArray(new String[meshDimensionIds.size()]), eqn.getText().trim(), "", false);
+					}
+				}
+				else{
+					error = true;
+				}
 				if (!error) {
 					Parameter p = bioModel.getSBMLDocument().getModel().getParameter((String)eaID.getSelectedItem());
 					ASTNode assignMath = SBMLutilities.myParseFormula(eqn.getText().trim());
@@ -1448,7 +1479,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					// String for the indices
 					String assignIndex = "; " + iIndex.getText();
 					// String for the dimensions
-					String dimens = EAdimensions.getText();
+					String dimens = " " + EAdimensions.getText();
 					Object[] adding = { eaID.getSelectedItem() + dimens + " := " + eqn.getText().trim()
 							+ assignIndex };
 					add.setListData(adding);
