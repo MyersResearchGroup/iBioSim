@@ -30,7 +30,9 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 
+import biomodel.network.GeneticNetwork;
 import biomodel.parser.BioModel;
+import biomodel.parser.GCMParser;
 import biomodel.util.SBMLutilities;
 
 public class HierarchicalUtilities {
@@ -106,12 +108,21 @@ public class HierarchicalUtilities {
 		biomodel.load(filename);
 		//SBMLDocument sbml = biomodel.getSBMLDocument();
 		SBMLDocument sbml = biomodel.flattenModel(false);		
-		//GCMParser parser = new GCMParser(biomodel);
-		//GeneticNetwork network = parser.buildNetwork(sbml);
-		//sbml = network.getSBML();
-		//network.mergeSBML(filename, sbml);
-
+		GCMParser parser = new GCMParser(biomodel);
+		GeneticNetwork network = parser.buildNetwork(sbml);
+		sbml = network.getSBML();
+		network.mergeSBML(filename, sbml);
 		return sbml.getModel();
+	}
+	
+	public static SBMLDocument getFlattenedRegulations(String path, String filename)
+	{
+		BioModel biomodel = new BioModel(path);
+		biomodel.load(filename);
+		GCMParser parser = new GCMParser(biomodel);
+		GeneticNetwork network = parser.buildNetwork(biomodel.getSBMLDocument());
+		SBMLDocument sbml = network.getSBML();
+		return network.mergeSBML(filename, sbml);
 	}
 
 	private static String changeIdToPortRef(SBaseRef sbaseRef,BioModel bioModel, String root, String separator) {

@@ -709,13 +709,8 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 		boolean notEnoughMoleculesFlagRv = false;
 		boolean notEnoughMoleculesFlag = false;
 
-		// if it's a reversible reaction
-		// split into a forward and reverse reaction (based on the minus sign in
-		// the middle)
-		// and calculate both propensities
-		if (reversible == true) {
-			// distributes the left child across the parentheses
-
+		if (reversible == true) 
+		{
 			if (reactionFormula.getType().equals(ASTNode.Type.TIMES)) {
 
 				ASTNode distributedNode = new ASTNode();
@@ -766,7 +761,6 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				else
 					reactionFormula = distributedNode;
 			}
-
 			else if (reactionFormula.getType().equals(ASTNode.Type.MINUS)) {
 
 				ASTNode distributedNode = new ASTNode();
@@ -814,10 +808,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						"-");
 
 				double reactantStoichiometry;
-
-				// if there was an initial assignment for the reactant
-				// this applies regardless of constancy of the reactant
-
+				
 				if (modelstate.getVariableToValueMap().contains(reactant.getId()))
 					reactantStoichiometry = modelstate
 							.getVariableToValue(getReplacements(),reactant.getId());
@@ -839,15 +830,11 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 							reactionID + "_rv").add(
 							new HierarchicalStringDoublePair(reactantID,
 									reactantStoichiometry));
-
-					// not having a minus sign is intentional as this isn't used
-					// for calculations
 					modelstate.getReactionToReactantStoichiometrySetMap().get(
 							reactionID + "_fd").add(
 							new HierarchicalStringDoublePair(reactantID,
 									reactantStoichiometry));
 				}
-				// if there was not initial assignment for the reactant
 				if (reactant.getConstant() == false
 						&& reactant.getId().length() > 0) {
 
@@ -875,37 +862,8 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						modelstate.setvariableToValueMap(getReplacements(),reactant.getId(),
 								reactantStoichiometry);
 				}
-
-				// else if(modelstate.getVariableToIsConstantMap().get(reactantID) ==
-				// false)
-				// {
-				//
-				// modelstate.getVariableToIsConstantMap().put(reactant.getId(),
-				// false);
-				// if
-				// (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(reactionID)
-				// == false)
-				// modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reactionID,
-				// new HashSet<HierarchicalStringPair>());
-				//
-				// modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reactionID)
-				// .add(new HierarchicalStringPair(reactantID, "-" +
-				// reactant.getId()));
-				//
-				// if(modelstate.getVariableToValueMap().containsKey(reactant.getId())
-				// == false)
-				// modelstate.setvariableToValueMap(getReplacements(),reactant.getId(),
-				// reactantStoichiometry);
-				// }
-
-				// as a reactant, this species affects the reaction's propensity
-				// in the forward direction
 				modelstate.getSpeciesToAffectedReactionSetMap().get(reactantID).add(
 						reactionID + "_fd");
-
-				// make sure there are enough molecules for this species
-				// (in the reverse direction, molecules aren't subtracted, but
-				// added)
 				if (modelstate.getVariableToValue(getReplacements(),reactantID) < reactantStoichiometry)
 					notEnoughMoleculesFlagFd = true;
 			}
@@ -916,8 +874,6 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						"-");
 
 				double productStoichiometry;
-
-				// if there was an initial assignment
 				if (modelstate.getVariableToValueMap().containsKey(product.getId()))
 					productStoichiometry = modelstate
 							.getVariableToValue(getReplacements(),product.getId());
@@ -939,15 +895,11 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 							reactionID + "_rv").add(
 							new HierarchicalStringDoublePair(productID,
 									-productStoichiometry));
-
-					// not having a minus sign is intentional as this isn't used
-					// for calculations
 					modelstate.getReactionToReactantStoichiometrySetMap().get(
 							reactionID + "_rv").add(
 							new HierarchicalStringDoublePair(productID,
 									productStoichiometry));
 				}
-				// if there wasn't an initial assignment
 				if (product.getConstant() == false) {
 
 					if (product.getId().length() > 0) {
@@ -970,33 +922,9 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 									productStoichiometry);
 					}
 				}
-				// else if(modelstate.getVariableToIsConstantMap().get(productID) ==
-				// false)
-				// {
-				//
-				// if
-				// (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(reactionID)
-				// == false)
-				// modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reactionID,
-				// new HashSet<HierarchicalStringPair>());
-				//
-				// modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reactionID)
-				// .add(new HierarchicalStringPair(productID, product.getId()));
-				//
-				// if(modelstate.getVariableToValueMap().containsKey(product.getId())
-				// == false)
-				// modelstate.setvariableToValueMap(getReplacements(),product.getId(),
-				// productStoichiometry);
-				// }
-
-				// as a product, this species affects the reaction's propensity
-				// in the reverse direction
 				modelstate.getSpeciesToAffectedReactionSetMap().get(productID).add(
 						reactionID + "_rv");
 
-				// make sure there are enough molecules for this species
-				// (in the forward direction, molecules aren't subtracted, but
-				// added)
 				if (modelstate.getVariableToValue(getReplacements(),productID) < productStoichiometry)
 					notEnoughMoleculesFlagRv = true;
 			}
@@ -1016,9 +944,6 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				} catch (SBMLException e) {
 					e.printStackTrace();
 				}
-
-				// check the kinetic law to see which direction the modifier
-				// affects the reaction's propensity
 				if (forwardString.contains(modifierID))
 					modelstate.getSpeciesToAffectedReactionSetMap().get(modifierID)
 							.add(reactionID + "_fd");
@@ -1040,18 +965,14 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						reactionID + "_fd",
 						inlineFormula(modelstate,
 								reactionFormula.getLeftChild()));
-
-				// calculate forward reaction propensity
 				if (notEnoughMoleculesFlagFd == true)
 					propensity = 0.0;
 				else {
-					// the left child is what's left of the minus sign
 					propensity = evaluateExpressionRecursive(
 							modelstate,
 							inlineFormula(modelstate,
 									reactionFormula.getLeftChild()));
 
-					// stoichiometry amplification -- alter the propensity
 					if (reactionID.contains("_Diffusion_")
 							&& isStoichAmpBoolean() == true)
 						propensity *= (1.0 / getStoichAmpGridValue());
@@ -1064,17 +985,15 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						modelstate.setMaxPropensity(propensity);
 
 					modelstate.setPropensity(modelstate.getPropensity() + propensity);
-					// totalPropensity += propensity;
 				}
 
 				modelstate.getReactionToPropensityMap().put(reactionID + "_fd",
 						propensity);
 
-				// calculate reverse reaction propensity
 				if (notEnoughMoleculesFlagRv == true)
 					propensity = 0.0;
 				else {
-					// the right child is what's right of the minus sign
+
 					propensity = evaluateExpressionRecursive(
 							modelstate,
 							inlineFormula(modelstate,
@@ -1098,11 +1017,9 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				if (reactantsList.getChildCount() > 0) {
 					modelstate.getReactionToFormulaMap().put(reactionID + "_fd",
 							inlineFormula(modelstate, reactionFormula));
-					// calculate reverse reaction propensity
 					if (notEnoughMoleculesFlagRv == true)
 						propensity = 0.0;
 					else {
-						// the right child is what's right of the minus sign
 						propensity = evaluateExpressionRecursive(modelstate,
 								inlineFormula(modelstate, reactionFormula));
 
@@ -1117,8 +1034,6 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 							modelstate.setMaxPropensity(propensity);
 
 						modelstate.setPropensity(modelstate.getPropensity() + propensity);
-
-						// totalPropensity += propensity;
 					}
 
 					modelstate.getReactionToPropensityMap().put(reactionID + "_fd",
@@ -1126,15 +1041,12 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				} else if (productsList.getChildCount() > 0) {
 					modelstate.getReactionToFormulaMap().put(reactionID + "_fd",
 							inlineFormula(modelstate, reactionFormula));
-					// calculate forward reaction propensity
 					if (notEnoughMoleculesFlagFd == true)
 						propensity = 0.0;
 					else {
-						// the left child is what's left of the minus sign
 						propensity = evaluateExpressionRecursive(modelstate,
 								inlineFormula(modelstate, reactionFormula));
 
-						// stoichiometry amplification -- alter the propensity
 						if (reactionID.contains("_Diffusion_")
 								&& isStoichAmpBoolean() == true)
 							propensity *= (1.0 / getStoichAmpGridValue());
@@ -1156,17 +1068,11 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 
 			}
 		}
-
-		// if it's not a reversible reaction
 		else {
 			modelstate.getReactionToSpeciesAndStoichiometrySetMap().put(reactionID,
 					new HashSet<HierarchicalStringDoublePair>());
 			modelstate.getReactionToReactantStoichiometrySetMap().put(reactionID,
 					new HashSet<HierarchicalStringDoublePair>());
-
-			// if(replacementSubModels.get(reactionID) != null &&
-			// replacementSubModels.get(reactionID).contains(modelstate.ID))
-			// return;
 
 			size = reactantsList.size();
 			for (int i = 0; i < size; i++) {
@@ -1178,7 +1084,6 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 
 				double reactantStoichiometry;
 
-				// if there was an initial assignment for the speciesref id
 				if (modelstate.getVariableToValueMap().containsKey(reactant.getId()))
 					reactantStoichiometry = modelstate
 							.getVariableToValue(getReplacements(),reactant.getId());
@@ -1190,18 +1095,16 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						.add(new HierarchicalStringDoublePair(reactantID,
 								-reactantStoichiometry));
 
-				// as a reactant, this species affects the reaction's propensity
 				modelstate.getSpeciesToAffectedReactionSetMap().get(reactantID).add(
 						reactionID);
 				modelstate.getReactionToReactantStoichiometrySetMap()
 						.get(reactionID).add(
 								new HierarchicalStringDoublePair(reactantID,
 										reactantStoichiometry));
-				// make sure there are enough molecules for this species
+				
 				if (modelstate.getVariableToValue(getReplacements(),reactantID) < reactantStoichiometry)
 					notEnoughMoleculesFlag = true;
 
-				// if there was not initial assignment for the reactant
 				if (reactant.getConstant() == false
 						&& reactant.getId().length() > 0) {
 
@@ -1220,28 +1123,6 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						modelstate.setvariableToValueMap(getReplacements(),reactant.getId(),
 								reactantStoichiometry);
 				}
-
-				// else if(modelstate.getVariableToIsConstantMap().get(reactantID) ==
-				// false)
-				// {
-				//
-				// modelstate.getVariableToIsConstantMap().put(reactant.getId(),
-				// false);
-				// if
-				// (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(reactionID)
-				// == false)
-				// modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reactionID,
-				// new HashSet<HierarchicalStringPair>());
-				//
-				// modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reactionID)
-				// .add(new HierarchicalStringPair(reactantID, "-" +
-				// reactant.getId()));
-				//
-				// if(modelstate.getVariableToValueMap().containsKey(reactant.getId())
-				// == false)
-				// modelstate.setvariableToValueMap(getReplacements(),reactant.getId(),
-				// reactantStoichiometry);
-				// }
 			}
 
 			size = productsList.size();
@@ -1252,7 +1133,6 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						"-");
 				double productStoichiometry;
 
-				// if there was an initial assignment for the speciesref id
 				if (modelstate.getVariableToValueMap().containsKey(product.getId()))
 					productStoichiometry = modelstate
 							.getVariableToValue(getReplacements(),product.getId());
@@ -1263,7 +1143,6 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						reactionID).add(
 						new HierarchicalStringDoublePair(productID, productStoichiometry));
 
-				// if there wasn't an initial assignment
 				if (product.getConstant() == false) {
 
 					if (product.getId().length() > 0) {
@@ -1286,33 +1165,10 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 									productStoichiometry);
 					}
 				}
-				// else if(modelstate.getVariableToIsConstantMap().get(productID) ==
-				// false)
-				// {
-				//
-				// if
-				// (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(reactionID)
-				// == false)
-				// modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reactionID,
-				// new HashSet<HierarchicalStringPair>());
-				//
-				// modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reactionID)
-				// .add(new HierarchicalStringPair(productID, product.getId()));
-				//
-				// if(modelstate.getVariableToValueMap().containsKey(product.getId())
-				// == false)
-				// modelstate.setvariableToValueMap(getReplacements(),product.getId(),
-				// productStoichiometry);
-				// }
-				//
-				// as a product, this species affects the reaction's propensity
-				// in the reverse direction
+
 				modelstate.getSpeciesToAffectedReactionSetMap().get(productID).add(
 						reactionID);
 
-				// make sure there are enough molecules for this species
-				// (in the forward direction, molecules aren't subtracted, but
-				// added)
 				if (modelstate.getVariableToValue(getReplacements(),productID) < productStoichiometry)
 					notEnoughMoleculesFlagRv = true;
 
@@ -1322,7 +1178,6 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				String modifierID = modifier.getSpecies();
 				modifierID = modifierID.replace("_negative_", "-");
 
-				// as a modifier, this species affects the reaction's propensity
 				modelstate.getSpeciesToAffectedReactionSetMap().get(modifierID).add(
 						reactionID);
 			}
@@ -1333,14 +1188,8 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 
 			if (notEnoughMoleculesFlag == true)
 				propensity = 0.0;
-			else {// calculate propensity
-					// System.out.println("Node: " +
-					// libsbml.formulaToString(reactionFormula));
-					// System.out.println("Node: " +
-					// evaluateExpressionRecursive(modelstate,
-					// inlineFormula(modelstate,
-					// reactionFormula).getLeftChild()));
-
+			else {
+				
 				propensity = evaluateExpressionRecursive(modelstate,
 						inlineFormula(modelstate, reactionFormula));
 				if (propensity < 0.0)
@@ -1353,13 +1202,12 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 
 				modelstate.setPropensity(modelstate.getPropensity() + propensity);
 
-				// this.totalPropensity += propensity;
 			}
 
 			modelstate.getReactionToPropensityMap().put(reactionID, propensity);
 		}
 	}
-
+	
 	/**
 	 * sets up a single species
 	 * 
@@ -1367,7 +1215,9 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 	 * @param speciesID
 	 */
 	private void setupSingleSpecies(ModelState modelstate, Species species,
-			String speciesID) {
+			String speciesID) 
+	{
+		
 		double initValue = 0;
 		if (modelstate.getSpeciesIDSet().contains(speciesID))
 			return;
@@ -1375,7 +1225,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 		if (modelstate.getNumConstraints() > 0)
 			modelstate.getVariableToIsInConstraintMap().put(speciesID, false);
 
-		if (species.isSetInitialAmount()) {
+		if (!modelstate.getIsHierarchical().contains(speciesID) && species.isSetInitialAmount()) {
 			initValue = species.getInitialAmount();
 			modelstate.setvariableToValueMap(getReplacements(),speciesID,
 					species.getInitialAmount());
@@ -1407,9 +1257,6 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 		modelstate.getSpeciesToHasOnlySubstanceUnitsMap().put(speciesID,
 				species.getHasOnlySubstanceUnits());
 		modelstate.getSpeciesIDSet().add(speciesID);
-		// SpeciesWrapper spec = new
-		// SpeciesWrapper(species.getBoundaryCondition(), species.getConstant(),
-		// species.getHasOnlySubstanceUnits(), initValue);
 
 	}
 

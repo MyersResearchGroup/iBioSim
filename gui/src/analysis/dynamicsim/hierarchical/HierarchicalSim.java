@@ -22,6 +22,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.SBMLDocument;
 
+import biomodel.parser.BioModel;
 import analysis.dynamicsim.XORShiftRandom;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
@@ -32,17 +33,19 @@ import gnu.trove.map.hash.TObjectDoubleHashMap;
 
 public abstract class HierarchicalSim extends HierarchicalSimState {
 
+
+	private HierarchicalEventComparator eventComparator; 
 	private ArrayList<String> filesCreated; 
-	private HashMap<String, Double> initReplacementState; 
-	private boolean isGrid; 
+	private HashMap<String, Double> initReplacementState;
+	private boolean isGrid;
 	private HashMap<String, Model> models;
 	private int numSubmodels;
 	private PsRandom prng;
+	private XORShiftRandom randomNumberGenerator;
 	private HashMap<String, Double> replacements;
 	private HashMap<String, ModelState> submodels;
 	private ModelState topmodel;
-	private HierarchicalEventComparator eventComparator;
-	private XORShiftRandom randomNumberGenerator;
+	
 	public HierarchicalSim(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, 
 			JFrame running, String[] interestingSpecies, String quantityType) throws IOException, XMLStreamException 
@@ -54,86 +57,16 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		models = new HashMap<String, Model>();
 		SBMLDocument document = getDocument();
 		isGrid = checkGrid(document.getModel());
-		models.put(document.getModel().getId(), document.getModel());
+		models.put(document.getModel().getId(), document.getModel().clone());
 		
 			}
-	protected ModelState getModel(String id)
-	{
-		if(id.equals("topmodel"))
-			return topmodel;
-		return submodels.get(id);
-	}
 	protected static boolean checkGrid(Model model)
 	{
 		if(model.getCompartment("Grid") != null)
 			return true;
 		return false;
-	}
-	/**
-	 * inlines a formula with function definitions
-	 * 
-	 * @param formula
-	 * @return
-	 */
-	protected ASTNode inlineFormula(ModelState modelstate, ASTNode formula) {
-
-		if (formula.isFunction() == false || formula.isLeaf() == false) {
-
-			for (int i = 0; i < formula.getChildCount(); ++i)
-				formula.replaceChild(i,
-						inlineFormula(modelstate, formula.getChild(i)));// .clone()));
-		}
-
-		if (formula.isFunction()
-				&& models.get(modelstate.getModel()).getFunctionDefinition(
-						formula.getName()) != null) {
-
-			if (modelstate.getIbiosimFunctionDefinitions().contains(
-					formula.getName()))
-				return formula;
-
-			ASTNode inlinedFormula = models.get(modelstate.getModel())
-					.getFunctionDefinition(formula.getName()).getBody().clone();
-
-			ASTNode oldFormula = formula.clone();
-
-			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
-			HierarchicalUtilities.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
-
-			if (inlinedChildren.size() == 0)
-				inlinedChildren.add(inlinedFormula);
-
-			HashMap<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
-
-			for (int i = 0; i < models.get(modelstate.getModel())
-					.getFunctionDefinition(formula.getName())
-					.getArgumentCount(); ++i) {
-				inlinedChildToOldIndexMap.put(models.get(modelstate.getModel())
-						.getFunctionDefinition(formula.getName())
-						.getArgument(i).getName(), i);
-			}
-
-			for (int i = 0; i < inlinedChildren.size(); ++i) {
-
-				ASTNode child = inlinedChildren.get(i);
-				// if ((child.getLeftChild() == null && child.getRightChild() ==
-				// null) && child.isName()) {
-				if ((child.getChildCount() == 0) && child.isName()) {
-
-					int index = inlinedChildToOldIndexMap.get(child.getName());
-					HierarchicalUtilities.replaceArgument(inlinedFormula, child.toFormula(),
-							oldFormula.getChild(index));
-
-					if (inlinedFormula.getChildCount() == 0)
-						inlinedFormula = oldFormula.getChild(index);
-				}
-			}
-
-			return inlinedFormula;
-		}
-		return formula;
-	}
-
+	} 
+	
 	protected double evaluateExpressionRecursive(ModelState modelstate, ASTNode node) {
 		if (node.isBoolean()) {
 
@@ -312,7 +245,7 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 				return (evaluateExpressionRecursive(modelstate, leftChild) / evaluateExpressionRecursive(modelstate, rightChild));
 
 			}
-			case FUNCTION_POWER:
+			case POWER:
 			{
 				ASTNode leftChild = node.getLeftChild();
 				ASTNode rightChild = node.getRightChild();
@@ -524,164 +457,6 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 
 		}
 		return 0.0;
-	}
-
-
-	protected HashSet<String> performAssignmentRules(ModelState modelstate, HashSet<AssignmentRule> affectedAssignmentRuleSet) {
-
-
-		HashSet<String> affectedVariables = new HashSet<String>();
-
-		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet) {
-
-			String variable = assignmentRule.getVariable();
-
-			//update the species count (but only if the species isn't constant) (bound cond is fine)
-			if (modelstate.getVariableToIsConstantMap().containsKey(variable) && modelstate.getVariableToIsConstantMap().get(variable) == false
-					|| modelstate.getVariableToIsConstantMap().containsKey(variable) == false) {
-
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable) &&
-						modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false) {
-					modelstate.setvariableToValueMap(replacements, variable, 
-							evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
-							//modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
-							modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable)));
-				}
-				else {
-					modelstate.setvariableToValueMap(replacements, variable, evaluateExpressionRecursive(modelstate, assignmentRule.getMath()));
-				}
-
-				affectedVariables.add(variable);
-			}
-		}
-
-		return affectedVariables;
-	}
-
-
-	protected class HierarchicalEventToFire {
-
-		public String eventID = "";
-		public HashSet<Object> eventAssignmentSet = null;
-		public double fireTime = 0.0;
-		public String modelID;
-
-		public HierarchicalEventToFire(String modelID, String eventID, HashSet<Object> eventAssignmentSet, double fireTime) {
-
-			this.eventID = eventID;
-			this.eventAssignmentSet = eventAssignmentSet;
-			this.fireTime = fireTime;	
-			this.modelID = modelID;
-		}
-
-		/**
-		 * @return the eventID
-		 */
-		public String getEventID() {
-			return eventID;
-		}
-
-		/**
-		 * @return the eventAssignmentSet
-		 */
-		public HashSet<Object> getEventAssignmentSet() {
-			return eventAssignmentSet;
-		}
-
-		/**
-		 * @return the fireTime
-		 */
-		public double getFireTime() {
-			return fireTime;
-		}
-
-		/**
-		 * @return the modelID
-		 */
-		public String getModelID() {
-			return modelID;
-		}
-
-		/**
-		 * @param eventID the eventID to set
-		 */
-		public void setEventID(String eventID) {
-			this.eventID = eventID;
-		}
-
-		/**
-		 * @param eventAssignmentSet the eventAssignmentSet to set
-		 */
-		public void setEventAssignmentSet(HashSet<Object> eventAssignmentSet) {
-			this.eventAssignmentSet = eventAssignmentSet;
-		}
-
-		/**
-		 * @param fireTime the fireTime to set
-		 */
-		public void setFireTime(double fireTime) {
-			this.fireTime = fireTime;
-		}
-
-		/**
-		 * @param modelID the modelID to set
-		 */
-		public void setModelID(String modelID) {
-			this.modelID = modelID;
-		}
-	}
-
-	//EVENT COMPARATOR INNER CLASS
-	/**
-	 * compares two events to see which one should be before the other in the priority queue
-	 */
-	protected class HierarchicalEventComparator implements Comparator<HierarchicalEventToFire> {
-
-		/**
-		 * compares two events based on their fire times and priorities
-		 */
-		@Override
-		public int compare(HierarchicalEventToFire event1, HierarchicalEventToFire event2) {
-
-			if (event1.fireTime > event2.fireTime)
-				return 1;
-			else if (event1.fireTime < event2.fireTime)
-				return -1;
-			else {
-				ModelState state1;
-				ModelState state2;
-				if(event1.modelID.equals("topmodel"))
-					state1 = topmodel;
-				else
-					state1 = submodels.get(event1.modelID);
-				if(event2.modelID.equals("topmodel"))
-					state2 = topmodel;
-				else
-					state2 = submodels.get(event2.modelID);
-
-				if (state1.eventToPriorityMap.get(event1.eventID) == null) {
-					if (state2.eventToPriorityMap.get(event2.eventID) != null)
-						return -1;
-					if ((Math.random() * 100) > 50) {
-						return -1;
-					}
-					return 1;
-				}
-
-				if (evaluateExpressionRecursive(state1, state1.eventToPriorityMap.get(event1.eventID)) >  
-				evaluateExpressionRecursive(state2, state2.eventToPriorityMap.get(event2.eventID)))
-					return -1;
-				else if ( evaluateExpressionRecursive(state1, state1.eventToPriorityMap.get(event1.eventID)) <  
-						evaluateExpressionRecursive(state2, state2.eventToPriorityMap.get(event2.eventID)))
-					return 1;
-				else {
-					if ((Math.random() * 100) > 50) {
-						return -1;
-					}
-					return 1;
-				}
-			}
-		}
 	}
 	protected double evaluateStateExpressionRecursive(ModelState modelstate, ASTNode node, double t, double[] y, HashMap<String, Integer> variableToIndexMap) {
 		if (node.isBoolean()) {
@@ -1050,67 +825,430 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 		return 0.0;
 	}
+
+	/**
+	 * @return the eventComparator
+	 */
+	public HierarchicalEventComparator getEventComparator() {
+		if(eventComparator == null)
+			eventComparator = new HierarchicalEventComparator();
+		return eventComparator;
+	}
+
+
+	/**
+	 * @return the filesCreated
+	 */
+	public ArrayList<String> getFilesCreated() {
+		return filesCreated;
+	}
+
+
+	/**
+	 * @return the initReplacementState
+	 */
+	public HashMap<String, Double> getInitReplacementState() {
+		return initReplacementState;
+	}
+
+	protected ModelState getModel(String id)
+	{
+		if(id.equals("topmodel"))
+			return topmodel;
+		return submodels.get(id);
+	}
+	/**
+	 * @return the models
+	 */
+	public HashMap<String, Model> getModels() {
+		return models;
+	}
+	/**
+	 * @return the numSubmodels
+	 */
+	public int getNumSubmodels() {
+		return numSubmodels;
+	}
+	/**
+	 * @return the prng
+	 */
+	public PsRandom getPrng() {
+		return prng;
+	}
+	/**
+	 * @return the randomNumberGenerator
+	 */
+	public XORShiftRandom getRandomNumberGenerator() {
+		return randomNumberGenerator;
+	}
+	/**
+	 * @return the replacements
+	 */
+	public HashMap<String, Double> getReplacements() {
+		return replacements;
+	}
+	/**
+	 * @return the submodels
+	 */
+	public HashMap<String, ModelState> getSubmodels() {
+		return submodels;
+	}
+	/**
+	 * @return the topmodel
+	 */
+	public ModelState getTopmodel() {
+		return topmodel;
+	}
+	/**
+	 * inlines a formula with function definitions
+	 * 
+	 * @param formula
+	 * @return
+	 */
+	protected ASTNode inlineFormula(ModelState modelstate, ASTNode formula) {
+
+		if (formula.isFunction() == false || formula.isLeaf() == false) {
+
+			for (int i = 0; i < formula.getChildCount(); ++i)
+				formula.replaceChild(i,
+						inlineFormula(modelstate, formula.getChild(i)));// .clone()));
+		}
+
+		if (formula.isFunction()
+				&& models.get(modelstate.getModel()).getFunctionDefinition(
+						formula.getName()) != null) {
+
+			if (modelstate.getIbiosimFunctionDefinitions().contains(
+					formula.getName()))
+				return formula;
+
+			ASTNode inlinedFormula = models.get(modelstate.getModel())
+					.getFunctionDefinition(formula.getName()).getBody().clone();
+
+			ASTNode oldFormula = formula.clone();
+
+			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
+			HierarchicalUtilities.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
+
+			if (inlinedChildren.size() == 0)
+				inlinedChildren.add(inlinedFormula);
+
+			HashMap<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
+
+			for (int i = 0; i < models.get(modelstate.getModel())
+					.getFunctionDefinition(formula.getName())
+					.getArgumentCount(); ++i) {
+				inlinedChildToOldIndexMap.put(models.get(modelstate.getModel())
+						.getFunctionDefinition(formula.getName())
+						.getArgument(i).getName(), i);
+			}
+
+			for (int i = 0; i < inlinedChildren.size(); ++i) {
+
+				ASTNode child = inlinedChildren.get(i);
+				// if ((child.getLeftChild() == null && child.getRightChild() ==
+				// null) && child.isName()) {
+				if ((child.getChildCount() == 0) && child.isName()) {
+
+					int index = inlinedChildToOldIndexMap.get(child.getName());
+					HierarchicalUtilities.replaceArgument(inlinedFormula, child.toFormula(),
+							oldFormula.getChild(index));
+
+					if (inlinedFormula.getChildCount() == 0)
+						inlinedFormula = oldFormula.getChild(index);
+				}
+			}
+
+			return inlinedFormula;
+		}
+		return formula;
+	}
+	/**
+	 * @return the isGrid
+	 */
+	public boolean isGrid() {
+		return isGrid;
+	}
+	protected HashSet<String> performAssignmentRules(ModelState modelstate, HashSet<AssignmentRule> affectedAssignmentRuleSet) {
+
+
+		HashSet<String> affectedVariables = new HashSet<String>();
+
+		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet) {
+
+			String variable = assignmentRule.getVariable();
+
+			//update the species count (but only if the species isn't constant) (bound cond is fine)
+			if (modelstate.getVariableToIsConstantMap().containsKey(variable) && modelstate.getVariableToIsConstantMap().get(variable) == false
+					|| modelstate.getVariableToIsConstantMap().containsKey(variable) == false) {
+
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable) &&
+						modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false) {
+					modelstate.setvariableToValueMap(replacements, variable, 
+							evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
+							//modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
+							modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable)));
+				}
+				else {
+					modelstate.setvariableToValueMap(replacements, variable, evaluateExpressionRecursive(modelstate, assignmentRule.getMath()));
+				}
+
+				affectedVariables.add(variable);
+			}
+		}
+
+		return affectedVariables;
+	}
+	/**
+	 * @param eventComparator the eventComparator to set
+	 */
+	public void setEventComparator(HierarchicalEventComparator eventComparator) {
+		this.eventComparator = eventComparator;
+	}
+	/**
+	 * @param filesCreated the filesCreated to set
+	 */
+	public void setFilesCreated(ArrayList<String> filesCreated) {
+		this.filesCreated = filesCreated;
+	}
+	/**
+	 * @param isGrid the isGrid to set
+	 */
+	public void setGrid(boolean isGrid) {
+		this.isGrid = isGrid;
+	}
+	/**
+	 * @param initReplacementState the initReplacementState to set
+	 */
+	public void setInitReplacementState(HashMap<String, Double> initReplacementState) {
+		this.initReplacementState = initReplacementState;
+	}
+	/**
+	 * @param models the models to set
+	 */
+	public void setModels(HashMap<String, Model> models) {
+		this.models = models;
+	}
+	/**
+	 * @param numSubmodels the numSubmodels to set
+	 */
+	public void setNumSubmodels(int numSubmodels) {
+		this.numSubmodels = numSubmodels;
+	}
+	/**
+	 * @param prng the prng to set
+	 */
+	public void setPrng(PsRandom prng) {
+		this.prng = prng;
+	}
+	/**
+	 * @param randomNumberGenerator the randomNumberGenerator to set
+	 */
+	public void setRandomNumberGenerator(XORShiftRandom randomNumberGenerator) {
+		this.randomNumberGenerator = randomNumberGenerator;
+	}
+	/**
+	 * @param replacements the replacements to set
+	 */
+	public void setReplacements(HashMap<String, Double> replacements) {
+		this.replacements = replacements;
+	}
+	/**
+	 * @param submodels the submodels to set
+	 */
+	public void setSubmodels(HashMap<String, ModelState> submodels) {
+		this.submodels = submodels;
+	}
+	/**
+	 * @param topmodel the topmodel to set
+	 */
+	public void setTopmodel(ModelState topmodel) {
+		this.topmodel = topmodel;
+	}
+	//EVENT COMPARATOR INNER CLASS
+	/**
+	 * compares two events to see which one should be before the other in the priority queue
+	 */
+	protected class HierarchicalEventComparator implements Comparator<HierarchicalEventToFire> {
+
+		/**
+		 * compares two events based on their fire times and priorities
+		 */
+		@Override
+		public int compare(HierarchicalEventToFire event1, HierarchicalEventToFire event2) {
+
+			if (event1.fireTime > event2.fireTime)
+				return 1;
+			else if (event1.fireTime < event2.fireTime)
+				return -1;
+			else {
+				ModelState state1;
+				ModelState state2;
+				if(event1.modelID.equals("topmodel"))
+					state1 = topmodel;
+				else
+					state1 = submodels.get(event1.modelID);
+				if(event2.modelID.equals("topmodel"))
+					state2 = topmodel;
+				else
+					state2 = submodels.get(event2.modelID);
+
+				if (state1.eventToPriorityMap.get(event1.eventID) == null) {
+					if (state2.eventToPriorityMap.get(event2.eventID) != null)
+						return -1;
+					if ((Math.random() * 100) > 50) {
+						return -1;
+					}
+					return 1;
+				}
+
+				if (evaluateExpressionRecursive(state1, state1.eventToPriorityMap.get(event1.eventID)) >  
+				evaluateExpressionRecursive(state2, state2.eventToPriorityMap.get(event2.eventID)))
+					return -1;
+				else if ( evaluateExpressionRecursive(state1, state1.eventToPriorityMap.get(event1.eventID)) <  
+						evaluateExpressionRecursive(state2, state2.eventToPriorityMap.get(event2.eventID)))
+					return 1;
+				else {
+					if ((Math.random() * 100) > 50) {
+						return -1;
+					}
+					return 1;
+				}
+			}
+		}
+	}
+	protected class HierarchicalEventToFire {
+
+		private HashSet<Object> eventAssignmentSet = null;
+		private String eventID = "";
+		private double fireTime = 0.0;
+		private String modelID;
+
+		public HierarchicalEventToFire(String modelID, String eventID, HashSet<Object> eventAssignmentSet, double fireTime) {
+
+			this.eventID = eventID;
+			this.eventAssignmentSet = eventAssignmentSet;
+			this.fireTime = fireTime;	
+			this.modelID = modelID;
+		}
+
+		/**
+		 * @return the eventAssignmentSet
+		 */
+		public HashSet<Object> getEventAssignmentSet() {
+			return eventAssignmentSet;
+		}
+
+		/**
+		 * @return the eventID
+		 */
+		public String getEventID() {
+			return eventID;
+		}
+
+		/**
+		 * @return the fireTime
+		 */
+		public double getFireTime() {
+			return fireTime;
+		}
+
+		/**
+		 * @return the modelID
+		 */
+		public String getModelID() {
+			return modelID;
+		}
+
+		/**
+		 * @param eventAssignmentSet the eventAssignmentSet to set
+		 */
+		public void setEventAssignmentSet(HashSet<Object> eventAssignmentSet) {
+			this.eventAssignmentSet = eventAssignmentSet;
+		}
+
+		/**
+		 * @param eventID the eventID to set
+		 */
+		public void setEventID(String eventID) {
+			this.eventID = eventID;
+		}
+
+		/**
+		 * @param fireTime the fireTime to set
+		 */
+		public void setFireTime(double fireTime) {
+			this.fireTime = fireTime;
+		}
+
+		/**
+		 * @param modelID the modelID to set
+		 */
+		public void setModelID(String modelID) {
+			this.modelID = modelID;
+		}
+	}
 	public class ModelState {
 
-		private String model;
-		private long numSpecies;
-		private long numParameters;
-		private long numReactions;
-		private int numInitialAssignments;
-		private int numRateRules;
-		private long numEvents;
-		private long numConstraints;
-		private long numRules;
-		private long numCompartments;
-		private String ID;
-		private boolean noEventsFlag = true;
+		private LinkedHashSet<String> compartmentIDSet;
+		private HashSet<String> deletedElementsById;
+		private HashSet<String> deletedElementsByMetaId;
+		private HashSet<String> deletedElementsByUId;
 		private HierarchicalEventComparator eventComparator;
-		private TObjectDoubleHashMap<String> reactionToPropensityMap;
-		private HashMap<String, HashSet<HierarchicalStringDoublePair> > reactionToSpeciesAndStoichiometrySetMap;
-		private HashMap<String, HashSet<HierarchicalStringDoublePair> > reactionToReactantStoichiometrySetMap;
-		private HashMap<String, ASTNode> reactionToFormulaMap;
-		private HashMap<String, HashSet<String> > speciesToAffectedReactionSetMap;
-		private HashMap<String, Boolean> speciesToIsBoundaryConditionMap;
-		private HashMap<String, Boolean> speciesToHasOnlySubstanceUnitsMap;
-		private HashMap<String, String> speciesToCompartmentNameMap;
-		private LinkedHashSet<String> speciesIDSet;
-		private TObjectDoubleHashMap<String> variableToValueMap;
-		private HashMap<String, Boolean> variableToIsConstantMap;
-		private HashMap<String, ASTNode> eventToPriorityMap;
+		private HashMap<String, HashSet<String> > eventToAffectedReactionSetMap;
+		private HashMap<String, HashSet<Object> > eventToAssignmentSetMap;
 		private HashMap<String, ASTNode> eventToDelayMap;
 		private HashMap<String, Boolean> eventToHasDelayMap;
+		private HashMap<String, Boolean> eventToPreviousTriggerValueMap;
+		private HashMap<String, ASTNode> eventToPriorityMap;
+		private HashMap<String, Boolean> eventToTriggerInitiallyTrueMap;
+		private HashMap<String, ASTNode> eventToTriggerMap;
 		private HashMap<String, Boolean> eventToTriggerPersistenceMap;
 		private HashMap<String, Boolean> eventToUseValuesFromTriggerTimeMap;
-		private HashMap<String, ASTNode> eventToTriggerMap;
-		private HashMap<String, Boolean> eventToTriggerInitiallyTrueMap;
-		private HashMap<String, Boolean> eventToPreviousTriggerValueMap;
-		private HashMap<String, HashSet<Object> > eventToAssignmentSetMap;
-		private HashMap<String, HashSet<String> > variableToEventSetMap;
-		private HashMap<String, HashSet<String> > eventToAffectedReactionSetMap;
 		private HashSet<String> ibiosimFunctionDefinitions;
-		private double propensity;
-		private double minPropensity;
+		private String ID;
+		private HashSet<String> isHierarchical;
 		private double maxPropensity;
+		private double minPropensity;
+		private String model;
 		private boolean noConstraintsFlag;
+		private boolean noEventsFlag = true;
+		private LinkedHashSet<String> nonconstantParameterIDSet;
+		private HashSet<String> nonConstantStoichiometry;
 		private boolean noRuleFlag;
+		private long numCompartments;
+		private long numConstraints;
+		private long numEvents;
+		private int numInitialAssignments;
+		private long numParameters;
+		private int numRateRules;
+		private long numReactions;
+		private long numRules;
+		private long numSpecies;
+		private double propensity;
+		private List<RateRule> rateRulesList;
+		private HashMap<String, ASTNode> reactionToFormulaMap;
+		private HashMap<String, HashSet<HierarchicalStringPair> > reactionToNonconstantStoichiometriesSetMap;
+		private TObjectDoubleHashMap<String> reactionToPropensityMap;
+		private HashMap<String, HashSet<HierarchicalStringDoublePair> > reactionToReactantStoichiometrySetMap;
+		private HashMap<String, HashSet<HierarchicalStringDoublePair> > reactionToSpeciesAndStoichiometrySetMap;
+		private HashMap<String, String> replacementDependency;
+		private LinkedHashSet<String> speciesIDSet;
+		private HashMap<String, HashSet<String> > speciesToAffectedReactionSetMap;
+		private HashMap<String, String> speciesToCompartmentNameMap;
+		private HashMap<String, Boolean> speciesToHasOnlySubstanceUnitsMap;
+		private HashMap<String, Boolean> speciesToIsBoundaryConditionMap;
 		private PriorityQueue<HierarchicalEventToFire> triggeredEventQueue;
 		private HashSet<String> untriggeredEventSet;
-		private HashMap<String, HashSet<ASTNode> > variableToAffectedConstraintSetMap;
-		private HashMap<String, Boolean> variableToIsInConstraintMap;
-		private HashMap<String, Boolean> variableToIsInAssignmentRuleMap;
-		private HashMap<String, Boolean> variableToIsInRateRuleMap;
+		private HashSet<String> variablesToPrint;
 		private HashMap<String, HashSet<AssignmentRule>> variableToAffectedAssignmentRuleSetMap;
-		private LinkedHashSet<String> nonconstantParameterIDSet;
-		private HashMap<String, HashSet<HierarchicalStringPair> > reactionToNonconstantStoichiometriesSetMap;
-		private LinkedHashSet<String> compartmentIDSet;
-		private List<RateRule> rateRulesList;
-		private HashSet<String> nonConstantStoichiometry;
-		private HashSet<String> isHierarchical;
-		private HashMap<String, String> replacementDependency;
-		private HashSet<String> variablesToPrint; 
-		private HashSet<String> deletedElementsById; 
-		private HashSet<String> deletedElementsByMetaId; 
-		private HashSet<String> deletedElementsByUId; 
+		private HashMap<String, HashSet<ASTNode> > variableToAffectedConstraintSetMap;
+		private HashMap<String, HashSet<String> > variableToEventSetMap;
+		private HashMap<String, Boolean> variableToIsConstantMap;
+		private HashMap<String, Boolean> variableToIsInAssignmentRuleMap; 
+		private HashMap<String, Boolean> variableToIsInConstraintMap; 
+		private HashMap<String, Boolean> variableToIsInRateRuleMap; 
+		private TObjectDoubleHashMap<String> variableToValueMap; 
 
 		public ModelState(HashMap<String, Model> models, String bioModel, String submodelID)
 		{
@@ -1198,6 +1336,13 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 			rateRulesList = new LinkedList<RateRule>();
 		}
 
+		/**
+		 * @return the eventToPreviousTriggerValueMap
+		 */
+		public void addEventToPreviousTriggerValueMap(String id, boolean value) {
+			eventToPreviousTriggerValueMap.put(id, value);
+		}
+		
 		public void clear()
 		{
 			speciesToAffectedReactionSetMap.clear();
@@ -1218,18 +1363,391 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 			maxPropensity = Double.MIN_VALUE / 10.0;
 		}
 
-		public void setCountVariables(Model model)
-		{
-			this.numSpecies = model.getSpeciesCount();
-			this.numParameters = model.getParameterCount();
-			this.numReactions = model.getReactionCount();
-			this.numInitialAssignments = model.getInitialAssignmentCount();
-
-			this.numEvents = model.getEventCount();
-			this.numRules = model.getRuleCount();
-			this.numConstraints= model.getConstraintCount();
-			this.numCompartments = model.getCompartmentCount();
+		/**
+		 * @return the compartmentIDSet
+		 */
+		public LinkedHashSet<String> getCompartmentIDSet() {
+			return compartmentIDSet;
 		}
+		/**
+		 * @return the deletedElementsById
+		 */
+		public HashSet<String> getDeletedElementsById() {
+			return deletedElementsById;
+		}
+
+		/**
+		 * @return the deletedElementsByMetaId
+		 */
+		public HashSet<String> getDeletedElementsByMetaId() {
+			return deletedElementsByMetaId;
+		}
+
+		/**
+		 * @return the deletedElementsByUId
+		 */
+		public HashSet<String> getDeletedElementsByUId() {
+			return deletedElementsByUId;
+		}
+
+
+		/**
+		 * @return the eventComparator
+		 */
+		public HierarchicalEventComparator getEventComparator() {
+			return eventComparator;
+		}
+
+		/**
+		 * @return the eventToAffectedReactionSetMap
+		 */
+		public HashMap<String, HashSet<String>> getEventToAffectedReactionSetMap() {
+			return eventToAffectedReactionSetMap;
+		}
+
+		/**
+		 * @return the eventToAssignmentSetMap
+		 */
+		public HashMap<String, HashSet<Object>> getEventToAssignmentSetMap() {
+			return eventToAssignmentSetMap;
+		}
+
+		/**
+		 * @return the eventToDelayMap
+		 */
+		public HashMap<String, ASTNode> getEventToDelayMap() {
+			return eventToDelayMap;
+		}
+
+		/**
+		 * @return the eventToHasDelayMap
+		 */
+		public HashMap<String, Boolean> getEventToHasDelayMap() {
+			return eventToHasDelayMap;
+		}
+
+		/**
+		 * @return the eventToPreviousTriggerValueMap
+		 */
+		public HashMap<String, Boolean> getEventToPreviousTriggerValueMap() {
+			return eventToPreviousTriggerValueMap;
+		}
+
+		/**
+		 * @return the eventToPriorityMap
+		 */
+		public HashMap<String, ASTNode> getEventToPriorityMap() {
+			return eventToPriorityMap;
+		}
+
+		/**
+		 * @return the eventToTriggerInitiallyTrueMap
+		 */
+		public HashMap<String, Boolean> getEventToTriggerInitiallyTrueMap() {
+			return eventToTriggerInitiallyTrueMap;
+		}
+
+		/**
+		 * @return the eventToTriggerMap
+		 */
+		public HashMap<String, ASTNode> getEventToTriggerMap() {
+			return eventToTriggerMap;
+		}
+
+		/**
+		 * @return the eventToTriggerPersistenceMap
+		 */
+		public HashMap<String, Boolean> getEventToTriggerPersistenceMap() {
+			return eventToTriggerPersistenceMap;
+		}
+
+		/**
+		 * @return the eventToUseValuesFromTriggerTimeMap
+		 */
+		public HashMap<String, Boolean> getEventToUseValuesFromTriggerTimeMap() {
+			return eventToUseValuesFromTriggerTimeMap;
+		}
+
+		/**
+		 * @return the ibiosimFunctionDefinitions
+		 */
+		public HashSet<String> getIbiosimFunctionDefinitions() {
+			return ibiosimFunctionDefinitions;
+		}
+
+		/**
+		 * @return the iD
+		 */
+		public String getID() {
+			return ID;
+		}
+
+		/**
+		 * @return the isHierarchical
+		 */
+		public HashSet<String> getIsHierarchical() {
+			return isHierarchical;
+		}
+
+		/**
+		 * @return the maxPropensity
+		 */
+		public double getMaxPropensity() {
+			return maxPropensity;
+		}
+
+		/**
+		 * @return the minPropensity
+		 */
+		public double getMinPropensity() {
+			return minPropensity;
+		}
+
+		/**
+		 * @return the model
+		 */
+		public String getModel() {
+			return model;
+		}
+
+		/**
+		 * @return the nonconstantParameterIDSet
+		 */
+		public LinkedHashSet<String> getNonconstantParameterIDSet() {
+			return nonconstantParameterIDSet;
+		}
+
+		/**
+		 * @return the nonConstantStoichiometry
+		 */
+		public HashSet<String> getNonConstantStoichiometry() {
+			return nonConstantStoichiometry;
+		}
+
+		/**
+		 * @return the numCompartments
+		 */
+		public long getNumCompartments() {
+			return numCompartments;
+		}
+
+		/**
+		 * @return the numConstraints
+		 */
+		public long getNumConstraints() {
+			return numConstraints;
+		}
+
+		/**
+		 * @return the numEvents
+		 */
+		public long getNumEvents() {
+			return numEvents;
+		}
+
+		/**
+		 * @return the numInitialAssignments
+		 */
+		public int getNumInitialAssignments() {
+			return numInitialAssignments;
+		}
+
+		/**
+		 * @return the numParameters
+		 */
+		public long getNumParameters() {
+			return numParameters;
+		}
+
+		/**
+		 * @return the numRateRules
+		 */
+		public int getNumRateRules() {
+			return numRateRules;
+		}
+
+		/**
+		 * @return the numReactions
+		 */
+		public long getNumReactions() {
+			return numReactions;
+		}
+
+		/**
+		 * @return the numRules
+		 */
+		public long getNumRules() {
+			return numRules;
+		}
+
+		/**
+		 * @return the numSpecies
+		 */
+		public long getNumSpecies() {
+			return numSpecies;
+		}
+
+		/**
+		 * @return the propensity
+		 */
+		public double getPropensity() {
+			return propensity;
+		}
+
+		/**
+		 * @return the rateRulesList
+		 */
+		public List<RateRule> getRateRulesList() {
+			return rateRulesList;
+		}
+
+		/**
+		 * @return the reactionToFormulaMap
+		 */
+		public HashMap<String, ASTNode> getReactionToFormulaMap() {
+			return reactionToFormulaMap;
+		}
+
+		/**
+		 * @return the reactionToNonconstantStoichiometriesSetMap
+		 */
+		public HashMap<String, HashSet<HierarchicalStringPair>> getReactionToNonconstantStoichiometriesSetMap() {
+			return reactionToNonconstantStoichiometriesSetMap;
+		}
+
+		/**
+		 * @return the reactionToPropensityMap
+		 */
+		public TObjectDoubleHashMap<String> getReactionToPropensityMap() {
+			return reactionToPropensityMap;
+		}
+		
+		/**
+		 * @return the reactionToReactantStoichiometrySetMap
+		 */
+		public HashMap<String, HashSet<HierarchicalStringDoublePair>> getReactionToReactantStoichiometrySetMap() {
+			return reactionToReactantStoichiometrySetMap;
+		}
+
+		/**
+		 * @return the reactionToSpeciesAndStoichiometrySetMap
+		 */
+		public HashMap<String, HashSet<HierarchicalStringDoublePair>> getReactionToSpeciesAndStoichiometrySetMap() {
+			return reactionToSpeciesAndStoichiometrySetMap;
+		}
+
+		/**
+		 * @return the replacementDependency
+		 */
+		public HashMap<String, String> getReplacementDependency() {
+			return replacementDependency;
+		}
+
+		/**
+		 * @return the speciesIDSet
+		 */
+		public LinkedHashSet<String> getSpeciesIDSet() {
+			return speciesIDSet;
+		}
+
+		/**
+		 * @return the speciesToAffectedReactionSetMap
+		 */
+		public HashMap<String, HashSet<String>> getSpeciesToAffectedReactionSetMap() {
+			return speciesToAffectedReactionSetMap;
+		}
+
+		/**
+		 * @return the speciesToCompartmentNameMap
+		 */
+		public HashMap<String, String> getSpeciesToCompartmentNameMap() {
+			return speciesToCompartmentNameMap;
+		}
+
+		/**
+		 * @return the speciesToHasOnlySubstanceUnitsMap
+		 */
+		public HashMap<String, Boolean> getSpeciesToHasOnlySubstanceUnitsMap() {
+			return speciesToHasOnlySubstanceUnitsMap;
+		}
+
+		/**
+		 * @return the speciesToIsBoundaryConditionMap
+		 */
+		public HashMap<String, Boolean> getSpeciesToIsBoundaryConditionMap() {
+			return speciesToIsBoundaryConditionMap;
+		}
+
+		/**
+		 * @return the triggeredEventQueue
+		 */
+		public PriorityQueue<HierarchicalEventToFire> getTriggeredEventQueue() {
+			return triggeredEventQueue;
+		}
+
+		/**
+		 * @return the untriggeredEventSet
+		 */
+		public HashSet<String> getUntriggeredEventSet() {
+			return untriggeredEventSet;
+		}
+
+		/**
+		 * @return the variablesToPrint
+		 */
+		public HashSet<String> getVariablesToPrint() {
+			return variablesToPrint;
+		}
+
+		/**
+		 * @return the variableToAffectedAssignmentRuleSetMap
+		 */
+		public HashMap<String, HashSet<AssignmentRule>> getVariableToAffectedAssignmentRuleSetMap() {
+			return variableToAffectedAssignmentRuleSetMap;
+		}
+
+		/**
+		 * @return the variableToAffectedConstraintSetMap
+		 */
+		public HashMap<String, HashSet<ASTNode>> getVariableToAffectedConstraintSetMap() {
+			return variableToAffectedConstraintSetMap;
+		}
+
+		/**
+		 * @return the variableToEventSetMap
+		 */
+		public HashMap<String, HashSet<String>> getVariableToEventSetMap() {
+			return variableToEventSetMap;
+		}
+
+		/**
+		 * @return the variableToIsConstantMap
+		 */
+		public HashMap<String, Boolean> getVariableToIsConstantMap() {
+			return variableToIsConstantMap;
+		}
+
+		/**
+		 * @return the variableToIsInAssignmentRuleMap
+		 */
+		public HashMap<String, Boolean> getVariableToIsInAssignmentRuleMap() {
+			return variableToIsInAssignmentRuleMap;
+		}
+
+		/**
+		 * @return the variableToIsInConstraintMap
+		 */
+		public HashMap<String, Boolean> getVariableToIsInConstraintMap() {
+			return variableToIsInConstraintMap;
+		}
+
+		/**
+		 * @return the variableToIsInRateRuleMap
+		 */
+		public HashMap<String, Boolean> getVariableToIsInRateRuleMap() {
+			return variableToIsInRateRuleMap;
+		}
+
 		public double getVariableToValue(HashMap<String, Double> replacements, String variable)
 		{
 			if(isHierarchical.contains(variable))
@@ -1240,28 +1758,24 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 			return variableToValueMap.get(variable);
 		}
 
-		public void setvariableToValueMap(HashMap<String, Double> replacements, String variable, double value)
-		{
-			if(isHierarchical.contains(variable))
-			{
-				String dep = replacementDependency.get(variable);
-				replacements.put(dep, value);
-			}
-			variableToValueMap.put(variable, value);
+		/**
+		 * @return the variableToValueMap
+		 */
+		public TObjectDoubleHashMap<String> getVariableToValueMap() {
+			return variableToValueMap;
 		}
 
-		public boolean isDeletedBySID(String sid)
+		public boolean isDeletedByMetaID(String metaid)
 		{
-			if(deletedElementsById.contains(sid))
+			if(deletedElementsByMetaId.contains(metaid))
 				return true;
 			else
 				return false;
 		}
 
-
-		public boolean isDeletedByMetaID(String metaid)
+		public boolean isDeletedBySID(String sid)
 		{
-			if(deletedElementsByMetaId.contains(metaid))
+			if(deletedElementsById.contains(sid))
 				return true;
 			else
 				return false;
@@ -1276,157 +1790,10 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 
 		/**
-		 * @return the model
+		 * @return the noConstraintsFlag
 		 */
-		public String getModel() {
-			return model;
-		}
-
-		/**
-		 * @param model the model to set
-		 */
-		public void setModel(String model) {
-			this.model = model;
-		}
-
-		/**
-		 * @return the numSpecies
-		 */
-		public long getNumSpecies() {
-			return numSpecies;
-		}
-
-		/**
-		 * @param numSpecies the numSpecies to set
-		 */
-		public void setNumSpecies(long numSpecies) {
-			this.numSpecies = numSpecies;
-		}
-
-		/**
-		 * @return the numParameters
-		 */
-		public long getNumParameters() {
-			return numParameters;
-		}
-
-		/**
-		 * @param numParameters the numParameters to set
-		 */
-		public void setNumParameters(long numParameters) {
-			this.numParameters = numParameters;
-		}
-
-		/**
-		 * @return the numReactions
-		 */
-		public long getNumReactions() {
-			return numReactions;
-		}
-
-		/**
-		 * @param numReactions the numReactions to set
-		 */
-		public void setNumReactions(long numReactions) {
-			this.numReactions = numReactions;
-		}
-
-		/**
-		 * @return the numInitialAssignments
-		 */
-		public int getNumInitialAssignments() {
-			return numInitialAssignments;
-		}
-
-		/**
-		 * @param numInitialAssignments the numInitialAssignments to set
-		 */
-		public void setNumInitialAssignments(int numInitialAssignments) {
-			this.numInitialAssignments = numInitialAssignments;
-		}
-
-		/**
-		 * @return the numRateRules
-		 */
-		public int getNumRateRules() {
-			return numRateRules;
-		}
-
-		/**
-		 * @param numRateRules the numRateRules to set
-		 */
-		public void setNumRateRules(int numRateRules) {
-			this.numRateRules = numRateRules;
-		}
-
-		/**
-		 * @return the numEvents
-		 */
-		public long getNumEvents() {
-			return numEvents;
-		}
-
-		/**
-		 * @param numEvents the numEvents to set
-		 */
-		public void setNumEvents(long numEvents) {
-			this.numEvents = numEvents;
-		}
-
-		/**
-		 * @return the numConstraints
-		 */
-		public long getNumConstraints() {
-			return numConstraints;
-		}
-
-		/**
-		 * @param numConstraints the numConstraints to set
-		 */
-		public void setNumConstraints(long numConstraints) {
-			this.numConstraints = numConstraints;
-		}
-
-		/**
-		 * @return the numRules
-		 */
-		public long getNumRules() {
-			return numRules;
-		}
-
-		/**
-		 * @param numRules the numRules to set
-		 */
-		public void setNumRules(long numRules) {
-			this.numRules = numRules;
-		}
-
-		/**
-		 * @return the numCompartments
-		 */
-		public long getNumCompartments() {
-			return numCompartments;
-		}
-
-		/**
-		 * @param numCompartments the numCompartments to set
-		 */
-		public void setNumCompartments(long numCompartments) {
-			this.numCompartments = numCompartments;
-		}
-
-		/**
-		 * @return the iD
-		 */
-		public String getID() {
-			return ID;
-		}
-
-		/**
-		 * @param iD the iD to set
-		 */
-		public void setID(String iD) {
-			ID = iD;
+		public boolean isNoConstraintsFlag() {
+			return noConstraintsFlag;
 		}
 
 		/**
@@ -1437,17 +1804,51 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 
 		/**
-		 * @param noEventsFlag the noEventsFlag to set
+		 * @return the noRuleFlag
 		 */
-		public void setNoEventsFlag(boolean noEventsFlag) {
-			this.noEventsFlag = noEventsFlag;
+		public boolean isNoRuleFlag() {
+			return noRuleFlag;
 		}
 
 		/**
-		 * @return the eventComparator
+		 * @param compartmentIDSet the compartmentIDSet to set
 		 */
-		public HierarchicalEventComparator getEventComparator() {
-			return eventComparator;
+		public void setCompartmentIDSet(LinkedHashSet<String> compartmentIDSet) {
+			this.compartmentIDSet = compartmentIDSet;
+		}
+
+		public void setCountVariables(Model model)
+		{
+			this.numSpecies = model.getSpeciesCount();
+			this.numParameters = model.getParameterCount();
+			this.numReactions = model.getReactionCount();
+			this.numInitialAssignments = model.getInitialAssignmentCount();
+
+			this.numEvents = model.getEventCount();
+			this.numRules = model.getRuleCount();
+			this.numConstraints= model.getConstraintCount();
+			this.numCompartments = model.getCompartmentCount();
+		}
+
+		/**
+		 * @param deletedElementsById the deletedElementsById to set
+		 */
+		public void setDeletedElementsById(HashSet<String> deletedElementsById) {
+			this.deletedElementsById = deletedElementsById;
+		}
+
+		/**
+		 * @param deletedElementsByMetaId the deletedElementsByMetaId to set
+		 */
+		public void setDeletedElementsByMetaId(HashSet<String> deletedElementsByMetaId) {
+			this.deletedElementsByMetaId = deletedElementsByMetaId;
+		}
+
+		/**
+		 * @param deletedElementsByUId the deletedElementsByUId to set
+		 */
+		public void setDeletedElementsByUId(HashSet<String> deletedElementsByUId) {
+			this.deletedElementsByUId = deletedElementsByUId;
 		}
 
 		/**
@@ -1455,323 +1856,6 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		 */
 		public void setEventComparator(HierarchicalEventComparator eventComparator) {
 			this.eventComparator = eventComparator;
-		}
-
-		/**
-		 * @return the reactionToPropensityMap
-		 */
-		public TObjectDoubleHashMap<String> getReactionToPropensityMap() {
-			return reactionToPropensityMap;
-		}
-
-		/**
-		 * @param reactionToPropensityMap the reactionToPropensityMap to set
-		 */
-		public void setReactionToPropensityMap(
-				TObjectDoubleHashMap<String> reactionToPropensityMap) {
-			this.reactionToPropensityMap = reactionToPropensityMap;
-		}
-
-		/**
-		 * @return the reactionToSpeciesAndStoichiometrySetMap
-		 */
-		public HashMap<String, HashSet<HierarchicalStringDoublePair>> getReactionToSpeciesAndStoichiometrySetMap() {
-			return reactionToSpeciesAndStoichiometrySetMap;
-		}
-
-		/**
-		 * @param reactionToSpeciesAndStoichiometrySetMap the reactionToSpeciesAndStoichiometrySetMap to set
-		 */
-		public void setReactionToSpeciesAndStoichiometrySetMap(
-				HashMap<String, HashSet<HierarchicalStringDoublePair>> reactionToSpeciesAndStoichiometrySetMap) {
-			this.reactionToSpeciesAndStoichiometrySetMap = reactionToSpeciesAndStoichiometrySetMap;
-		}
-
-		/**
-		 * @return the reactionToReactantStoichiometrySetMap
-		 */
-		public HashMap<String, HashSet<HierarchicalStringDoublePair>> getReactionToReactantStoichiometrySetMap() {
-			return reactionToReactantStoichiometrySetMap;
-		}
-
-		/**
-		 * @param reactionToReactantStoichiometrySetMap the reactionToReactantStoichiometrySetMap to set
-		 */
-		public void setReactionToReactantStoichiometrySetMap(
-				HashMap<String, HashSet<HierarchicalStringDoublePair>> reactionToReactantStoichiometrySetMap) {
-			this.reactionToReactantStoichiometrySetMap = reactionToReactantStoichiometrySetMap;
-		}
-
-		/**
-		 * @return the reactionToFormulaMap
-		 */
-		public HashMap<String, ASTNode> getReactionToFormulaMap() {
-			return reactionToFormulaMap;
-		}
-
-		/**
-		 * @param reactionToFormulaMap the reactionToFormulaMap to set
-		 */
-		public void setReactionToFormulaMap(
-				HashMap<String, ASTNode> reactionToFormulaMap) {
-			this.reactionToFormulaMap = reactionToFormulaMap;
-		}
-
-		/**
-		 * @return the speciesToAffectedReactionSetMap
-		 */
-		public HashMap<String, HashSet<String>> getSpeciesToAffectedReactionSetMap() {
-			return speciesToAffectedReactionSetMap;
-		}
-
-		/**
-		 * @param speciesToAffectedReactionSetMap the speciesToAffectedReactionSetMap to set
-		 */
-		public void setSpeciesToAffectedReactionSetMap(
-				HashMap<String, HashSet<String>> speciesToAffectedReactionSetMap) {
-			this.speciesToAffectedReactionSetMap = speciesToAffectedReactionSetMap;
-		}
-
-		/**
-		 * @return the speciesToIsBoundaryConditionMap
-		 */
-		public HashMap<String, Boolean> getSpeciesToIsBoundaryConditionMap() {
-			return speciesToIsBoundaryConditionMap;
-		}
-
-		/**
-		 * @param speciesToIsBoundaryConditionMap the speciesToIsBoundaryConditionMap to set
-		 */
-		public void setSpeciesToIsBoundaryConditionMap(
-				HashMap<String, Boolean> speciesToIsBoundaryConditionMap) {
-			this.speciesToIsBoundaryConditionMap = speciesToIsBoundaryConditionMap;
-		}
-
-		/**
-		 * @return the speciesToHasOnlySubstanceUnitsMap
-		 */
-		public HashMap<String, Boolean> getSpeciesToHasOnlySubstanceUnitsMap() {
-			return speciesToHasOnlySubstanceUnitsMap;
-		}
-
-		/**
-		 * @param speciesToHasOnlySubstanceUnitsMap the speciesToHasOnlySubstanceUnitsMap to set
-		 */
-		public void setSpeciesToHasOnlySubstanceUnitsMap(
-				HashMap<String, Boolean> speciesToHasOnlySubstanceUnitsMap) {
-			this.speciesToHasOnlySubstanceUnitsMap = speciesToHasOnlySubstanceUnitsMap;
-		}
-
-		/**
-		 * @return the speciesToCompartmentNameMap
-		 */
-		public HashMap<String, String> getSpeciesToCompartmentNameMap() {
-			return speciesToCompartmentNameMap;
-		}
-
-		/**
-		 * @param speciesToCompartmentNameMap the speciesToCompartmentNameMap to set
-		 */
-		public void setSpeciesToCompartmentNameMap(
-				HashMap<String, String> speciesToCompartmentNameMap) {
-			this.speciesToCompartmentNameMap = speciesToCompartmentNameMap;
-		}
-
-		/**
-		 * @return the speciesIDSet
-		 */
-		public LinkedHashSet<String> getSpeciesIDSet() {
-			return speciesIDSet;
-		}
-
-		/**
-		 * @param speciesIDSet the speciesIDSet to set
-		 */
-		public void setSpeciesIDSet(LinkedHashSet<String> speciesIDSet) {
-			this.speciesIDSet = speciesIDSet;
-		}
-
-		/**
-		 * @return the variableToValueMap
-		 */
-		public TObjectDoubleHashMap<String> getVariableToValueMap() {
-			return variableToValueMap;
-		}
-
-		/**
-		 * @param variableToValueMap the variableToValueMap to set
-		 */
-		public void setVariableToValueMap(
-				TObjectDoubleHashMap<String> variableToValueMap) {
-			this.variableToValueMap = variableToValueMap;
-		}
-
-		/**
-		 * @return the variableToIsConstantMap
-		 */
-		public HashMap<String, Boolean> getVariableToIsConstantMap() {
-			return variableToIsConstantMap;
-		}
-
-		/**
-		 * @param variableToIsConstantMap the variableToIsConstantMap to set
-		 */
-		public void setVariableToIsConstantMap(
-				HashMap<String, Boolean> variableToIsConstantMap) {
-			this.variableToIsConstantMap = variableToIsConstantMap;
-		}
-
-		/**
-		 * @return the eventToPriorityMap
-		 */
-		public HashMap<String, ASTNode> getEventToPriorityMap() {
-			return eventToPriorityMap;
-		}
-
-		/**
-		 * @param eventToPriorityMap the eventToPriorityMap to set
-		 */
-		public void setEventToPriorityMap(HashMap<String, ASTNode> eventToPriorityMap) {
-			this.eventToPriorityMap = eventToPriorityMap;
-		}
-
-		/**
-		 * @return the eventToDelayMap
-		 */
-		public HashMap<String, ASTNode> getEventToDelayMap() {
-			return eventToDelayMap;
-		}
-
-		/**
-		 * @param eventToDelayMap the eventToDelayMap to set
-		 */
-		public void setEventToDelayMap(HashMap<String, ASTNode> eventToDelayMap) {
-			this.eventToDelayMap = eventToDelayMap;
-		}
-
-		/**
-		 * @return the eventToHasDelayMap
-		 */
-		public HashMap<String, Boolean> getEventToHasDelayMap() {
-			return eventToHasDelayMap;
-		}
-
-		/**
-		 * @param eventToHasDelayMap the eventToHasDelayMap to set
-		 */
-		public void setEventToHasDelayMap(HashMap<String, Boolean> eventToHasDelayMap) {
-			this.eventToHasDelayMap = eventToHasDelayMap;
-		}
-
-		/**
-		 * @return the eventToTriggerPersistenceMap
-		 */
-		public HashMap<String, Boolean> getEventToTriggerPersistenceMap() {
-			return eventToTriggerPersistenceMap;
-		}
-
-		/**
-		 * @param eventToTriggerPersistenceMap the eventToTriggerPersistenceMap to set
-		 */
-		public void setEventToTriggerPersistenceMap(
-				HashMap<String, Boolean> eventToTriggerPersistenceMap) {
-			this.eventToTriggerPersistenceMap = eventToTriggerPersistenceMap;
-		}
-
-		/**
-		 * @return the eventToUseValuesFromTriggerTimeMap
-		 */
-		public HashMap<String, Boolean> getEventToUseValuesFromTriggerTimeMap() {
-			return eventToUseValuesFromTriggerTimeMap;
-		}
-
-		/**
-		 * @param eventToUseValuesFromTriggerTimeMap the eventToUseValuesFromTriggerTimeMap to set
-		 */
-		public void setEventToUseValuesFromTriggerTimeMap(
-				HashMap<String, Boolean> eventToUseValuesFromTriggerTimeMap) {
-			this.eventToUseValuesFromTriggerTimeMap = eventToUseValuesFromTriggerTimeMap;
-		}
-
-		/**
-		 * @return the eventToTriggerMap
-		 */
-		public HashMap<String, ASTNode> getEventToTriggerMap() {
-			return eventToTriggerMap;
-		}
-
-		/**
-		 * @param eventToTriggerMap the eventToTriggerMap to set
-		 */
-		public void setEventToTriggerMap(HashMap<String, ASTNode> eventToTriggerMap) {
-			this.eventToTriggerMap = eventToTriggerMap;
-		}
-
-		/**
-		 * @return the eventToTriggerInitiallyTrueMap
-		 */
-		public HashMap<String, Boolean> getEventToTriggerInitiallyTrueMap() {
-			return eventToTriggerInitiallyTrueMap;
-		}
-
-		/**
-		 * @param eventToTriggerInitiallyTrueMap the eventToTriggerInitiallyTrueMap to set
-		 */
-		public void setEventToTriggerInitiallyTrueMap(
-				HashMap<String, Boolean> eventToTriggerInitiallyTrueMap) {
-			this.eventToTriggerInitiallyTrueMap = eventToTriggerInitiallyTrueMap;
-		}
-
-		/**
-		 * @return the eventToPreviousTriggerValueMap
-		 */
-		public HashMap<String, Boolean> getEventToPreviousTriggerValueMap() {
-			return eventToPreviousTriggerValueMap;
-		}
-
-		/**
-		 * @param eventToPreviousTriggerValueMap the eventToPreviousTriggerValueMap to set
-		 */
-		public void setEventToPreviousTriggerValueMap(
-				HashMap<String, Boolean> eventToPreviousTriggerValueMap) {
-			this.eventToPreviousTriggerValueMap = eventToPreviousTriggerValueMap;
-		}
-
-		/**
-		 * @return the eventToAssignmentSetMap
-		 */
-		public HashMap<String, HashSet<Object>> getEventToAssignmentSetMap() {
-			return eventToAssignmentSetMap;
-		}
-
-		/**
-		 * @param eventToAssignmentSetMap the eventToAssignmentSetMap to set
-		 */
-		public void setEventToAssignmentSetMap(
-				HashMap<String, HashSet<Object>> eventToAssignmentSetMap) {
-			this.eventToAssignmentSetMap = eventToAssignmentSetMap;
-		}
-
-		/**
-		 * @return the variableToEventSetMap
-		 */
-		public HashMap<String, HashSet<String>> getVariableToEventSetMap() {
-			return variableToEventSetMap;
-		}
-
-		/**
-		 * @param variableToEventSetMap the variableToEventSetMap to set
-		 */
-		public void setVariableToEventSetMap(
-				HashMap<String, HashSet<String>> variableToEventSetMap) {
-			this.variableToEventSetMap = variableToEventSetMap;
-		}
-
-		/**
-		 * @return the eventToAffectedReactionSetMap
-		 */
-		public HashMap<String, HashSet<String>> getEventToAffectedReactionSetMap() {
-			return eventToAffectedReactionSetMap;
 		}
 
 		/**
@@ -1783,10 +1867,71 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 
 		/**
-		 * @return the ibiosimFunctionDefinitions
+		 * @param eventToAssignmentSetMap the eventToAssignmentSetMap to set
 		 */
-		public HashSet<String> getIbiosimFunctionDefinitions() {
-			return ibiosimFunctionDefinitions;
+		public void setEventToAssignmentSetMap(
+				HashMap<String, HashSet<Object>> eventToAssignmentSetMap) {
+			this.eventToAssignmentSetMap = eventToAssignmentSetMap;
+		}
+
+		/**
+		 * @param eventToDelayMap the eventToDelayMap to set
+		 */
+		public void setEventToDelayMap(HashMap<String, ASTNode> eventToDelayMap) {
+			this.eventToDelayMap = eventToDelayMap;
+		}
+
+		/**
+		 * @param eventToHasDelayMap the eventToHasDelayMap to set
+		 */
+		public void setEventToHasDelayMap(HashMap<String, Boolean> eventToHasDelayMap) {
+			this.eventToHasDelayMap = eventToHasDelayMap;
+		}
+
+		/**
+		 * @param eventToPreviousTriggerValueMap the eventToPreviousTriggerValueMap to set
+		 */
+		public void setEventToPreviousTriggerValueMap(
+				HashMap<String, Boolean> eventToPreviousTriggerValueMap) {
+			this.eventToPreviousTriggerValueMap = eventToPreviousTriggerValueMap;
+		}
+
+		/**
+		 * @param eventToPriorityMap the eventToPriorityMap to set
+		 */
+		public void setEventToPriorityMap(HashMap<String, ASTNode> eventToPriorityMap) {
+			this.eventToPriorityMap = eventToPriorityMap;
+		}
+
+		/**
+		 * @param eventToTriggerInitiallyTrueMap the eventToTriggerInitiallyTrueMap to set
+		 */
+		public void setEventToTriggerInitiallyTrueMap(
+				HashMap<String, Boolean> eventToTriggerInitiallyTrueMap) {
+			this.eventToTriggerInitiallyTrueMap = eventToTriggerInitiallyTrueMap;
+		}
+
+		/**
+		 * @param eventToTriggerMap the eventToTriggerMap to set
+		 */
+		public void setEventToTriggerMap(HashMap<String, ASTNode> eventToTriggerMap) {
+			this.eventToTriggerMap = eventToTriggerMap;
+		}
+
+		/**
+		 * @param eventToTriggerPersistenceMap the eventToTriggerPersistenceMap to set
+		 */
+		public void setEventToTriggerPersistenceMap(
+				HashMap<String, Boolean> eventToTriggerPersistenceMap) {
+			this.eventToTriggerPersistenceMap = eventToTriggerPersistenceMap;
+		}
+
+		/**
+		 * @param eventToUseValuesFromTriggerTimeMap the eventToUseValuesFromTriggerTimeMap to set
+		 */
+		public void setEventToUseValuesFromTriggerTimeMap(
+				HashMap<String, Boolean> eventToUseValuesFromTriggerTimeMap) {
+			this.eventToUseValuesFromTriggerTimeMap = eventToUseValuesFromTriggerTimeMap;
 		}
 
 		/**
@@ -1798,38 +1943,17 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 
 		/**
-		 * @return the propensity
+		 * @param iD the iD to set
 		 */
-		public double getPropensity() {
-			return propensity;
+		public void setID(String iD) {
+			ID = iD;
 		}
 
 		/**
-		 * @param propensity the propensity to set
+		 * @param isHierarchical the isHierarchical to set
 		 */
-		public void setPropensity(double propensity) {
-			this.propensity = propensity;
-		}
-
-		/**
-		 * @return the minPropensity
-		 */
-		public double getMinPropensity() {
-			return minPropensity;
-		}
-
-		/**
-		 * @param minPropensity the minPropensity to set
-		 */
-		public void setMinPropensity(double minPropensity) {
-			this.minPropensity = minPropensity;
-		}
-
-		/**
-		 * @return the maxPropensity
-		 */
-		public double getMaxPropensity() {
-			return maxPropensity;
+		public void setIsHierarchical(HashSet<String> isHierarchical) {
+			this.isHierarchical = isHierarchical;
 		}
 
 		/**
@@ -1840,10 +1964,17 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 
 		/**
-		 * @return the noConstraintsFlag
+		 * @param minPropensity the minPropensity to set
 		 */
-		public boolean isNoConstraintsFlag() {
-			return noConstraintsFlag;
+		public void setMinPropensity(double minPropensity) {
+			this.minPropensity = minPropensity;
+		}
+
+		/**
+		 * @param model the model to set
+		 */
+		public void setModel(String model) {
+			this.model = model;
 		}
 
 		/**
@@ -1854,128 +1985,10 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 
 		/**
-		 * @return the noRuleFlag
+		 * @param noEventsFlag the noEventsFlag to set
 		 */
-		public boolean isNoRuleFlag() {
-			return noRuleFlag;
-		}
-
-		/**
-		 * @param noRuleFlag the noRuleFlag to set
-		 */
-		public void setNoRuleFlag(boolean noRuleFlag) {
-			this.noRuleFlag = noRuleFlag;
-		}
-
-		/**
-		 * @return the triggeredEventQueue
-		 */
-		public PriorityQueue<HierarchicalEventToFire> getTriggeredEventQueue() {
-			return triggeredEventQueue;
-		}
-
-		/**
-		 * @param triggeredEventQueue the triggeredEventQueue to set
-		 */
-		public void setTriggeredEventQueue(
-				PriorityQueue<HierarchicalEventToFire> triggeredEventQueue) {
-			this.triggeredEventQueue = triggeredEventQueue;
-		}
-
-		/**
-		 * @return the untriggeredEventSet
-		 */
-		public HashSet<String> getUntriggeredEventSet() {
-			return untriggeredEventSet;
-		}
-
-		/**
-		 * @param untriggeredEventSet the untriggeredEventSet to set
-		 */
-		public void setUntriggeredEventSet(HashSet<String> untriggeredEventSet) {
-			this.untriggeredEventSet = untriggeredEventSet;
-		}
-
-		/**
-		 * @return the variableToAffectedConstraintSetMap
-		 */
-		public HashMap<String, HashSet<ASTNode>> getVariableToAffectedConstraintSetMap() {
-			return variableToAffectedConstraintSetMap;
-		}
-
-		/**
-		 * @param variableToAffectedConstraintSetMap the variableToAffectedConstraintSetMap to set
-		 */
-		public void setVariableToAffectedConstraintSetMap(
-				HashMap<String, HashSet<ASTNode>> variableToAffectedConstraintSetMap) {
-			this.variableToAffectedConstraintSetMap = variableToAffectedConstraintSetMap;
-		}
-
-		/**
-		 * @return the variableToIsInConstraintMap
-		 */
-		public HashMap<String, Boolean> getVariableToIsInConstraintMap() {
-			return variableToIsInConstraintMap;
-		}
-
-		/**
-		 * @param variableToIsInConstraintMap the variableToIsInConstraintMap to set
-		 */
-		public void setVariableToIsInConstraintMap(
-				HashMap<String, Boolean> variableToIsInConstraintMap) {
-			this.variableToIsInConstraintMap = variableToIsInConstraintMap;
-		}
-
-		/**
-		 * @return the variableToIsInAssignmentRuleMap
-		 */
-		public HashMap<String, Boolean> getVariableToIsInAssignmentRuleMap() {
-			return variableToIsInAssignmentRuleMap;
-		}
-
-		/**
-		 * @param variableToIsInAssignmentRuleMap the variableToIsInAssignmentRuleMap to set
-		 */
-		public void setVariableToIsInAssignmentRuleMap(
-				HashMap<String, Boolean> variableToIsInAssignmentRuleMap) {
-			this.variableToIsInAssignmentRuleMap = variableToIsInAssignmentRuleMap;
-		}
-
-		/**
-		 * @return the variableToIsInRateRuleMap
-		 */
-		public HashMap<String, Boolean> getVariableToIsInRateRuleMap() {
-			return variableToIsInRateRuleMap;
-		}
-
-		/**
-		 * @param variableToIsInRateRuleMap the variableToIsInRateRuleMap to set
-		 */
-		public void setVariableToIsInRateRuleMap(
-				HashMap<String, Boolean> variableToIsInRateRuleMap) {
-			this.variableToIsInRateRuleMap = variableToIsInRateRuleMap;
-		}
-
-		/**
-		 * @return the variableToAffectedAssignmentRuleSetMap
-		 */
-		public HashMap<String, HashSet<AssignmentRule>> getVariableToAffectedAssignmentRuleSetMap() {
-			return variableToAffectedAssignmentRuleSetMap;
-		}
-
-		/**
-		 * @param variableToAffectedAssignmentRuleSetMap the variableToAffectedAssignmentRuleSetMap to set
-		 */
-		public void setVariableToAffectedAssignmentRuleSetMap(
-				HashMap<String, HashSet<AssignmentRule>> variableToAffectedAssignmentRuleSetMap) {
-			this.variableToAffectedAssignmentRuleSetMap = variableToAffectedAssignmentRuleSetMap;
-		}
-
-		/**
-		 * @return the nonconstantParameterIDSet
-		 */
-		public LinkedHashSet<String> getNonconstantParameterIDSet() {
-			return nonconstantParameterIDSet;
+		public void setNoEventsFlag(boolean noEventsFlag) {
+			this.noEventsFlag = noEventsFlag;
 		}
 
 		/**
@@ -1987,10 +2000,102 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 
 		/**
-		 * @return the reactionToNonconstantStoichiometriesSetMap
+		 * @param nonConstantStoichiometry the nonConstantStoichiometry to set
 		 */
-		public HashMap<String, HashSet<HierarchicalStringPair>> getReactionToNonconstantStoichiometriesSetMap() {
-			return reactionToNonconstantStoichiometriesSetMap;
+		public void setNonConstantStoichiometry(HashSet<String> nonConstantStoichiometry) {
+			this.nonConstantStoichiometry = nonConstantStoichiometry;
+		}
+
+		/**
+		 * @param noRuleFlag the noRuleFlag to set
+		 */
+		public void setNoRuleFlag(boolean noRuleFlag) {
+			this.noRuleFlag = noRuleFlag;
+		}
+
+		/**
+		 * @param numCompartments the numCompartments to set
+		 */
+		public void setNumCompartments(long numCompartments) {
+			this.numCompartments = numCompartments;
+		}
+
+		/**
+		 * @param numConstraints the numConstraints to set
+		 */
+		public void setNumConstraints(long numConstraints) {
+			this.numConstraints = numConstraints;
+		}
+
+		/**
+		 * @param numEvents the numEvents to set
+		 */
+		public void setNumEvents(long numEvents) {
+			this.numEvents = numEvents;
+		}
+
+		/**
+		 * @param numInitialAssignments the numInitialAssignments to set
+		 */
+		public void setNumInitialAssignments(int numInitialAssignments) {
+			this.numInitialAssignments = numInitialAssignments;
+		}
+
+		/**
+		 * @param numParameters the numParameters to set
+		 */
+		public void setNumParameters(long numParameters) {
+			this.numParameters = numParameters;
+		}
+
+		/**
+		 * @param numRateRules the numRateRules to set
+		 */
+		public void setNumRateRules(int numRateRules) {
+			this.numRateRules = numRateRules;
+		}
+
+		/**
+		 * @param numReactions the numReactions to set
+		 */
+		public void setNumReactions(long numReactions) {
+			this.numReactions = numReactions;
+		}
+
+		/**
+		 * @param numRules the numRules to set
+		 */
+		public void setNumRules(long numRules) {
+			this.numRules = numRules;
+		}
+
+		/**
+		 * @param numSpecies the numSpecies to set
+		 */
+		public void setNumSpecies(long numSpecies) {
+			this.numSpecies = numSpecies;
+		}
+
+		/**
+		 * @param propensity the propensity to set
+		 */
+		public void setPropensity(double propensity) {
+			this.propensity = propensity;
+		}
+
+		/**
+		 * @param rateRulesList the rateRulesList to set
+		 */
+		public void setRateRulesList(List<RateRule> rateRulesList) {
+			this.rateRulesList = rateRulesList;
+		}
+
+		/**
+		 * @param reactionToFormulaMap the reactionToFormulaMap to set
+		 */
+		public void setReactionToFormulaMap(
+				HashMap<String, ASTNode> reactionToFormulaMap) {
+			this.reactionToFormulaMap = reactionToFormulaMap;
 		}
 
 		/**
@@ -2002,66 +2107,27 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 
 		/**
-		 * @return the compartmentIDSet
+		 * @param reactionToPropensityMap the reactionToPropensityMap to set
 		 */
-		public LinkedHashSet<String> getCompartmentIDSet() {
-			return compartmentIDSet;
+		public void setReactionToPropensityMap(
+				TObjectDoubleHashMap<String> reactionToPropensityMap) {
+			this.reactionToPropensityMap = reactionToPropensityMap;
 		}
 
 		/**
-		 * @param compartmentIDSet the compartmentIDSet to set
+		 * @param reactionToReactantStoichiometrySetMap the reactionToReactantStoichiometrySetMap to set
 		 */
-		public void setCompartmentIDSet(LinkedHashSet<String> compartmentIDSet) {
-			this.compartmentIDSet = compartmentIDSet;
+		public void setReactionToReactantStoichiometrySetMap(
+				HashMap<String, HashSet<HierarchicalStringDoublePair>> reactionToReactantStoichiometrySetMap) {
+			this.reactionToReactantStoichiometrySetMap = reactionToReactantStoichiometrySetMap;
 		}
 
 		/**
-		 * @return the rateRulesList
+		 * @param reactionToSpeciesAndStoichiometrySetMap the reactionToSpeciesAndStoichiometrySetMap to set
 		 */
-		public List<RateRule> getRateRulesList() {
-			return rateRulesList;
-		}
-
-		/**
-		 * @param rateRulesList the rateRulesList to set
-		 */
-		public void setRateRulesList(List<RateRule> rateRulesList) {
-			this.rateRulesList = rateRulesList;
-		}
-
-		/**
-		 * @return the nonConstantStoichiometry
-		 */
-		public HashSet<String> getNonConstantStoichiometry() {
-			return nonConstantStoichiometry;
-		}
-
-		/**
-		 * @param nonConstantStoichiometry the nonConstantStoichiometry to set
-		 */
-		public void setNonConstantStoichiometry(HashSet<String> nonConstantStoichiometry) {
-			this.nonConstantStoichiometry = nonConstantStoichiometry;
-		}
-
-		/**
-		 * @return the isHierarchical
-		 */
-		public HashSet<String> getIsHierarchical() {
-			return isHierarchical;
-		}
-
-		/**
-		 * @param isHierarchical the isHierarchical to set
-		 */
-		public void setIsHierarchical(HashSet<String> isHierarchical) {
-			this.isHierarchical = isHierarchical;
-		}
-
-		/**
-		 * @return the replacementDependency
-		 */
-		public HashMap<String, String> getReplacementDependency() {
-			return replacementDependency;
+		public void setReactionToSpeciesAndStoichiometrySetMap(
+				HashMap<String, HashSet<HierarchicalStringDoublePair>> reactionToSpeciesAndStoichiometrySetMap) {
+			this.reactionToSpeciesAndStoichiometrySetMap = reactionToSpeciesAndStoichiometrySetMap;
 		}
 
 		/**
@@ -2073,10 +2139,57 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 
 		/**
-		 * @return the variablesToPrint
+		 * @param speciesIDSet the speciesIDSet to set
 		 */
-		public HashSet<String> getVariablesToPrint() {
-			return variablesToPrint;
+		public void setSpeciesIDSet(LinkedHashSet<String> speciesIDSet) {
+			this.speciesIDSet = speciesIDSet;
+		}
+
+		/**
+		 * @param speciesToAffectedReactionSetMap the speciesToAffectedReactionSetMap to set
+		 */
+		public void setSpeciesToAffectedReactionSetMap(
+				HashMap<String, HashSet<String>> speciesToAffectedReactionSetMap) {
+			this.speciesToAffectedReactionSetMap = speciesToAffectedReactionSetMap;
+		}
+
+		/**
+		 * @param speciesToCompartmentNameMap the speciesToCompartmentNameMap to set
+		 */
+		public void setSpeciesToCompartmentNameMap(
+				HashMap<String, String> speciesToCompartmentNameMap) {
+			this.speciesToCompartmentNameMap = speciesToCompartmentNameMap;
+		}
+
+		/**
+		 * @param speciesToHasOnlySubstanceUnitsMap the speciesToHasOnlySubstanceUnitsMap to set
+		 */
+		public void setSpeciesToHasOnlySubstanceUnitsMap(
+				HashMap<String, Boolean> speciesToHasOnlySubstanceUnitsMap) {
+			this.speciesToHasOnlySubstanceUnitsMap = speciesToHasOnlySubstanceUnitsMap;
+		}
+
+		/**
+		 * @param speciesToIsBoundaryConditionMap the speciesToIsBoundaryConditionMap to set
+		 */
+		public void setSpeciesToIsBoundaryConditionMap(
+				HashMap<String, Boolean> speciesToIsBoundaryConditionMap) {
+			this.speciesToIsBoundaryConditionMap = speciesToIsBoundaryConditionMap;
+		}
+
+		/**
+		 * @param triggeredEventQueue the triggeredEventQueue to set
+		 */
+		public void setTriggeredEventQueue(
+				PriorityQueue<HierarchicalEventToFire> triggeredEventQueue) {
+			this.triggeredEventQueue = triggeredEventQueue;
+		}
+
+		/**
+		 * @param untriggeredEventSet the untriggeredEventSet to set
+		 */
+		public void setUntriggeredEventSet(HashSet<String> untriggeredEventSet) {
+			this.untriggeredEventSet = untriggeredEventSet;
 		}
 
 		/**
@@ -2087,179 +2200,84 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 
 		/**
-		 * @return the deletedElementsById
+		 * @param variableToAffectedAssignmentRuleSetMap the variableToAffectedAssignmentRuleSetMap to set
 		 */
-		public HashSet<String> getDeletedElementsById() {
-			return deletedElementsById;
+		public void setVariableToAffectedAssignmentRuleSetMap(
+				HashMap<String, HashSet<AssignmentRule>> variableToAffectedAssignmentRuleSetMap) {
+			this.variableToAffectedAssignmentRuleSetMap = variableToAffectedAssignmentRuleSetMap;
 		}
 
 		/**
-		 * @param deletedElementsById the deletedElementsById to set
+		 * @param variableToAffectedConstraintSetMap the variableToAffectedConstraintSetMap to set
 		 */
-		public void setDeletedElementsById(HashSet<String> deletedElementsById) {
-			this.deletedElementsById = deletedElementsById;
+		public void setVariableToAffectedConstraintSetMap(
+				HashMap<String, HashSet<ASTNode>> variableToAffectedConstraintSetMap) {
+			this.variableToAffectedConstraintSetMap = variableToAffectedConstraintSetMap;
 		}
 
 		/**
-		 * @return the deletedElementsByMetaId
+		 * @param variableToEventSetMap the variableToEventSetMap to set
 		 */
-		public HashSet<String> getDeletedElementsByMetaId() {
-			return deletedElementsByMetaId;
+		public void setVariableToEventSetMap(
+				HashMap<String, HashSet<String>> variableToEventSetMap) {
+			this.variableToEventSetMap = variableToEventSetMap;
 		}
 
 		/**
-		 * @param deletedElementsByMetaId the deletedElementsByMetaId to set
+		 * @param variableToIsConstantMap the variableToIsConstantMap to set
 		 */
-		public void setDeletedElementsByMetaId(HashSet<String> deletedElementsByMetaId) {
-			this.deletedElementsByMetaId = deletedElementsByMetaId;
+		public void setVariableToIsConstantMap(
+				HashMap<String, Boolean> variableToIsConstantMap) {
+			this.variableToIsConstantMap = variableToIsConstantMap;
 		}
 
 		/**
-		 * @return the deletedElementsByUId
+		 * @param variableToIsInAssignmentRuleMap the variableToIsInAssignmentRuleMap to set
 		 */
-		public HashSet<String> getDeletedElementsByUId() {
-			return deletedElementsByUId;
+		public void setVariableToIsInAssignmentRuleMap(
+				HashMap<String, Boolean> variableToIsInAssignmentRuleMap) {
+			this.variableToIsInAssignmentRuleMap = variableToIsInAssignmentRuleMap;
 		}
 
 		/**
-		 * @param deletedElementsByUId the deletedElementsByUId to set
+		 * @param variableToIsInConstraintMap the variableToIsInConstraintMap to set
 		 */
-		public void setDeletedElementsByUId(HashSet<String> deletedElementsByUId) {
-			this.deletedElementsByUId = deletedElementsByUId;
+		public void setVariableToIsInConstraintMap(
+				HashMap<String, Boolean> variableToIsInConstraintMap) {
+			this.variableToIsInConstraintMap = variableToIsInConstraintMap;
 		}
-	}
-	/**
-	 * @return the filesCreated
-	 */
-	public ArrayList<String> getFilesCreated() {
-		return filesCreated;
-	}
-	/**
-	 * @return the initReplacementState
-	 */
-	public HashMap<String, Double> getInitReplacementState() {
-		return initReplacementState;
-	}
-	/**
-	 * @return the isGrid
-	 */
-	public boolean isGrid() {
-		return isGrid;
-	}
-	/**
-	 * @return the models
-	 */
-	public HashMap<String, Model> getModels() {
-		return models;
-	}
-	/**
-	 * @return the numSubmodels
-	 */
-	public int getNumSubmodels() {
-		return numSubmodels;
-	}
-	/**
-	 * @return the prng
-	 */
-	public PsRandom getPrng() {
-		return prng;
-	}
-	/**
-	 * @return the replacements
-	 */
-	public HashMap<String, Double> getReplacements() {
-		return replacements;
-	}
-	/**
-	 * @return the submodels
-	 */
-	public HashMap<String, ModelState> getSubmodels() {
-		return submodels;
-	}
-	/**
-	 * @return the topmodel
-	 */
-	public ModelState getTopmodel() {
-		return topmodel;
-	}
-	/**
-	 * @return the eventComparator
-	 */
-	public HierarchicalEventComparator getEventComparator() {
-		if(eventComparator == null)
-			eventComparator = new HierarchicalEventComparator();
-		return eventComparator;
-	}
-	/**
-	 * @param filesCreated the filesCreated to set
-	 */
-	public void setFilesCreated(ArrayList<String> filesCreated) {
-		this.filesCreated = filesCreated;
-	}
-	/**
-	 * @param initReplacementState the initReplacementState to set
-	 */
-	public void setInitReplacementState(HashMap<String, Double> initReplacementState) {
-		this.initReplacementState = initReplacementState;
-	}
-	/**
-	 * @param isGrid the isGrid to set
-	 */
-	public void setGrid(boolean isGrid) {
-		this.isGrid = isGrid;
-	}
-	/**
-	 * @param models the models to set
-	 */
-	public void setModels(HashMap<String, Model> models) {
-		this.models = models;
-	}
-	/**
-	 * @param numSubmodels the numSubmodels to set
-	 */
-	public void setNumSubmodels(int numSubmodels) {
-		this.numSubmodels = numSubmodels;
-	}
-	/**
-	 * @param prng the prng to set
-	 */
-	public void setPrng(PsRandom prng) {
-		this.prng = prng;
-	}
-	/**
-	 * @param replacements the replacements to set
-	 */
-	public void setReplacements(HashMap<String, Double> replacements) {
-		this.replacements = replacements;
-	}
-	/**
-	 * @param submodels the submodels to set
-	 */
-	public void setSubmodels(HashMap<String, ModelState> submodels) {
-		this.submodels = submodels;
-	}
-	/**
-	 * @param topmodel the topmodel to set
-	 */
-	public void setTopmodel(ModelState topmodel) {
-		this.topmodel = topmodel;
-	}
-	/**
-	 * @param eventComparator the eventComparator to set
-	 */
-	public void setEventComparator(HierarchicalEventComparator eventComparator) {
-		this.eventComparator = eventComparator;
-	}
-	/**
-	 * @return the randomNumberGenerator
-	 */
-	public XORShiftRandom getRandomNumberGenerator() {
-		return randomNumberGenerator;
-	}
-	/**
-	 * @param randomNumberGenerator the randomNumberGenerator to set
-	 */
-	public void setRandomNumberGenerator(XORShiftRandom randomNumberGenerator) {
-		this.randomNumberGenerator = randomNumberGenerator;
+
+		/**
+		 * @param variableToIsInRateRuleMap the variableToIsInRateRuleMap to set
+		 */
+		public void setVariableToIsInRateRuleMap(
+				HashMap<String, Boolean> variableToIsInRateRuleMap) {
+			this.variableToIsInRateRuleMap = variableToIsInRateRuleMap;
+		}
+
+		public void setvariableToValueMap(HashMap<String, Double> replacements, String variable, double value)
+		{
+			if(isHierarchical.contains(variable))
+			{
+				String dep = replacementDependency.get(variable);
+				replacements.put(dep, value);
+			}
+			variableToValueMap.put(variable, value);
+		}
+
+		/**
+		 * @param variableToValueMap the variableToValueMap to set
+		 */
+		public void setVariableToValueMap(
+				TObjectDoubleHashMap<String> variableToValueMap) {
+			this.variableToValueMap = variableToValueMap;
+		}
+
+		/**
+		 * @return the reactionToPropensityMap
+		 */
+		public void updateReactionToPropensityMap(String reaction, double value) {
+			reactionToPropensityMap.put(reaction, value);
+		}
 	}
 }

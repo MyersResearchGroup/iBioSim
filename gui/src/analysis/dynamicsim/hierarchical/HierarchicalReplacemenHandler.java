@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
@@ -46,16 +47,16 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 	public HierarchicalReplacemenHandler(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, 
 			JFrame running, String[] interestingSpecies, String quantityType) throws IOException, XMLStreamException 
-	{
+			{
 		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, progress,
 				printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
-		
+
 		setTopmodel(new ModelState(getModels(), getDocument().getModel().getId(), "topmodel"));
 
 		setNumSubmodels ((int)setupSubmodels(getDocument()));
 		getComponentPortMap(getDocument());
-	}
-	
+			}
+
 	/**
 	 * Initializes the modelstate array
 	 */
@@ -326,7 +327,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 		CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
 
 		String p = sbase.getId();
-		
+
 		if(sbmlSBase != null)
 		{
 			if(sbmlSBase.getListOfReplacedElements() != null)
@@ -406,10 +407,10 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 			}
 		}
 	}
-	
+
 	private void setupReplacement(SBase sbase, CompModelPlugin sbmlCompModel)
 	{
-		
+
 		CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
 
 		if(sbmlSBase != null)
@@ -421,7 +422,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 					String submodel = element.getSubmodelRef();
 					ModelState modelstate = getSubmodels().get(submodel);
 					CompModelPlugin subCompModel = (CompModelPlugin)getModels().get(getSubmodels().get(submodel).getModel()).getExtension(CompConstants.namespaceURI);
-					
+
 					if(element.isSetPortRef())
 					{
 						Port port = subCompModel.getListOfPorts().get(element.getPortRef());
@@ -457,7 +458,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 			}
 		}
 	}
-	
+
 	private void setupReplacement(SBMLDocument sbml, Model model, CompModelPlugin sbmlCompModel)
 	{
 		for (int i = 0; i < model.getChildCount(); i++) {
@@ -465,18 +466,27 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 			TreeNode node = model.getChildAt(i);
 			if(!(node instanceof SBase))
 				continue;
+
 			SBase sbase = (SBase) node;
-			if(sbase instanceof Quantity)
-			{
-				Quantity q = (Quantity)sbase;
-				setupReplacement(q, sbmlCompModel);
+			if(sbase instanceof ListOf)
+			{	
+				ListOf list = (ListOf)sbase;
 
-			}
-			else
-			{
-				setupReplacement(sbase, sbmlCompModel);
-			}
+				for(int j = 0; j < list.getChildCount(); j++)
+				{
+					sbase = list.get(j);
+					if(sbase instanceof Quantity)
+					{
+						Quantity q = (Quantity)sbase;
+						setupReplacement(q, sbmlCompModel);
 
+					}
+					else
+					{
+						setupReplacement(sbase, sbmlCompModel);
+					}
+				}
+			}
 		}
 
 	}
