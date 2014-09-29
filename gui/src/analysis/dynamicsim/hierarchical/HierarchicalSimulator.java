@@ -318,26 +318,20 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 
 		HashSet<String> triggeredEvents = new HashSet<String>();
 
-		//loop through all untriggered events
-		//if any trigger, evaluate the fire time(s) and add them to the queue
 		for (String untriggeredEventID : modelstate.getUntriggeredEventSet()) {
-			//if the trigger evaluates to true
+
 			if (HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(untriggeredEventID)))) {
 
-				//skip the event if it's initially true and this is time == 0
 				if (getCurrentTime() == 0.0 && modelstate.getEventToTriggerInitiallyTrueMap().get(untriggeredEventID) == true)
 					continue;
 
-				//switch from false to true must happen
 				if (modelstate.getEventToPreviousTriggerValueMap().get(untriggeredEventID) == true)
 					continue;
 
 				triggeredEvents.add(untriggeredEventID);
 
-				//if assignment is to be evaluated at trigger time, evaluate it and replace the ASTNode assignment
 				if (modelstate.getEventToUseValuesFromTriggerTimeMap().get(untriggeredEventID) == true)	{
 
-					//temporary hashset of evaluated assignments
 					HashSet<Object> evaluatedAssignments = new HashSet<Object>();
 
 					for (Object evAssignment : modelstate.getEventToAssignmentSetMap().get(untriggeredEventID)) {
@@ -372,8 +366,6 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 			}
 		}
 
-		//remove recently triggered events from the untriggered set
-		//when they're fired, they get put back into the untriggered set
 		modelstate.getUntriggeredEventSet().removeAll(triggeredEvents);
 	}
 
@@ -386,26 +378,21 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 
 		for (String untriggeredEventID : modelstate.getUntriggeredEventSet()) 
 		{
-			//if the trigger evaluates to true
 			if (HierarchicalUtilities.getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(untriggeredEventID), t, y, variableToIndexMap)) == true) 
 			{
-
-				//skip the event if it's initially true and this is time == 0
 				if (getCurrentTime() == 0.0 && modelstate.getEventToTriggerInitiallyTrueMap().get(untriggeredEventID) == true)
 					continue;
 
-				//switch from false to true must happen
 				if (modelstate.getEventToPreviousTriggerValueMap().get(untriggeredEventID) == true)
 					continue;
 
 				return true;
 
-
 			}
 		}
 
 		if(modelstate.getTriggeredEventQueue().peek() != null
-				&& modelstate.getTriggeredEventQueue().peek().fireTime <= t)
+				&& modelstate.getTriggeredEventQueue().peek().getFireTime() <= t)
 
 			return true;
 
@@ -420,17 +407,13 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 	 */
 	protected HashSet<String> fireEvents(ModelState modelstate, String selector, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
 
-		//temporary set of events to remove from the triggeredEventQueue
 		HashSet<String> untriggeredEvents = new HashSet<String>();
 		HashSet<String> variableInFiredEvents = new HashSet<String>();
-		//loop through all triggered events
-		//if the trigger is no longer true
-		//remove from triggered queue and put into untriggered set
+
 		for (HierarchicalEventToFire triggeredEvent : modelstate.getTriggeredEventQueue())
 		{
-			String triggeredEventID = triggeredEvent.eventID;
-
-			//if the trigger evaluates to false
+			String triggeredEventID = triggeredEvent.getEventID();
+			
 			if (modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID) == false && 
 					HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID))) == false) {
 
@@ -444,11 +427,6 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 			}
 		}
 
-		//copy the triggered event queue -- except the events that are now untriggered
-		//this is done because the remove function can't work with just a string; it needs to match events
-		//this also re-evaluates the priorities in case they have changed
-		//LinkedList<EventToFire> newTriggeredEventQueue = new LinkedList<EventToFire>();
-
 		PriorityQueue<HierarchicalEventToFire> newTriggeredEventQueue = new PriorityQueue<HierarchicalEventToFire>((int)modelstate.getNumEvents(), getEventComparator());
 
 
@@ -457,19 +435,16 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 			HierarchicalEventToFire event = modelstate.getTriggeredEventQueue().poll();
 
 			@SuppressWarnings("unchecked")
-			HierarchicalEventToFire eventToAdd = new HierarchicalEventToFire(modelstate.getID(), event.getEventID(), (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+			HierarchicalEventToFire eventToAdd = new HierarchicalEventToFire(modelstate.getID(), event.getEventID(), (HashSet<Object>) event.getEventAssignmentSet().clone(), event.getFireTime());
 
-			if (untriggeredEvents.contains(event.eventID) == false)
+			if (untriggeredEvents.contains(event.getEventID()) == false)
 				newTriggeredEventQueue.add(eventToAdd);
 			else
-				modelstate.getUntriggeredEventSet().add(event.eventID);
+				modelstate.getUntriggeredEventSet().add(event.getEventID());
 		}
 
 		modelstate.setTriggeredEventQueue(newTriggeredEventQueue);
 
-		//loop through untriggered events
-		//if the trigger is no longer true
-		//set the previous trigger value to false
 		for (String untriggeredEventID : modelstate.getUntriggeredEventSet()) {
 
 			if (modelstate.getEventToTriggerPersistenceMap().get(untriggeredEventID) == false && 
@@ -477,34 +452,26 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 				modelstate.getEventToPreviousTriggerValueMap().put(untriggeredEventID, false);
 		}
 
-		//these are sets of things that need to be re-evaluated or tested due to the event firing
 		HashSet<String> affectedReactionSet = new HashSet<String>();
 		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
 		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
 
-		//set of fired events to add to the untriggered set
 		HashSet<String> firedEvents = new HashSet<String>();
 
-
-		//fire all events whose fire time is less than the current time	
 		while (modelstate.getTriggeredEventQueue().size() > 0 &&
-				modelstate.getTriggeredEventQueue().peek().fireTime <=  getCurrentTime()) {
+				modelstate.getTriggeredEventQueue().peek().getFireTime() <=  getCurrentTime()) {
 
 			HierarchicalEventToFire eventToFire = modelstate.getTriggeredEventQueue().poll();
-			String eventToFireID = eventToFire.eventID;
+			String eventToFireID = eventToFire.getEventID();
 
-			//System.err.println("firing " + eventToFireID);
 
 			if (modelstate.getEventToAffectedReactionSetMap().get(eventToFireID) != null)
 				affectedReactionSet.addAll(modelstate.getEventToAffectedReactionSetMap().get(eventToFireID));
 
 			firedEvents.add(eventToFireID);
-			//modelstate.eventToPreviousTriggerValueMap.put(eventToFireID, true);
-			modelstate.getEventToPreviousTriggerValueMap().put(eventToFireID, HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(eventToFireID))) == false);
+			modelstate.addEventToPreviousTriggerValueMap(eventToFireID, HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(eventToFireID))));
 
-
-			//execute all assignments for this event
-			for (Object eventAssignment : eventToFire.eventAssignmentSet) {
+			for (Object eventAssignment : eventToFire.getEventAssignmentSet()) {
 
 				String variable;
 				double assignmentValue;
@@ -523,9 +490,6 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 
 				variableInFiredEvents.add(variable);
 
-
-
-				//update the species, but only if it's not a constant (bound. cond. is fine)
 				if (modelstate.getVariableToIsConstantMap().get(variable) == false) {
 
 					if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable) && 
@@ -541,19 +505,14 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 				if (noConstraintsFlag == false && modelstate.getVariableToIsInConstraintMap().get(variable) == true)
 					affectedConstraintSet.addAll(modelstate.getVariableToAffectedConstraintSetMap().get(variable));
 
-			} //end loop through assignments
-
-			//after an event fires, need to make sure the queue is updated
+			}
+			
 			untriggeredEvents.clear();
 
-			//loop through all triggered events
-			//if they aren't persistent and the trigger is no longer true
-			//remove from triggered queue and put into untriggered set
 			for (HierarchicalEventToFire triggeredEvent : modelstate.getTriggeredEventQueue()) {
 
-				String triggeredEventID = triggeredEvent.eventID;
+				String triggeredEventID = triggeredEvent.getEventID();
 
-				//if the trigger evaluates to false and the trigger isn't persistent
 				if (modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID) == false  &&
 						HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID))) == false) {
 
@@ -565,11 +524,7 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 						HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID))) == false)
 					modelstate.getUntriggeredEventSet().add(triggeredEventID);
 			}
-
-			//copy the triggered event queue -- except the events that are now untriggered
-			//this is done because the remove function can't work with just a string; it needs to match events
-			//this also re-evaluates the priorities in case they have changed
-
+			
 			newTriggeredEventQueue = new PriorityQueue<HierarchicalEventToFire>((int)modelstate.getNumEvents(), getEventComparator());
 
 			while (modelstate.getTriggeredEventQueue().size() > 0) {
@@ -578,27 +533,24 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 
 				@SuppressWarnings("unchecked")
 				HierarchicalEventToFire eventToAdd = 
-				new HierarchicalEventToFire(modelstate.getID(), event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+				new HierarchicalEventToFire(modelstate.getID(), event.getEventID(), (HashSet<Object>) event.getEventAssignmentSet().clone(), event.getFireTime());
 
-				if (untriggeredEvents.contains(event.eventID) == false)
+				if (untriggeredEvents.contains(event.getEventID()) == false)
 					newTriggeredEventQueue.add(eventToAdd);
 				else
-					modelstate.getUntriggeredEventSet().add(event.eventID);
+					modelstate.getUntriggeredEventSet().add(event.getEventID());
 			}
 
 			modelstate.setTriggeredEventQueue(newTriggeredEventQueue);
 
-			//some events might trigger after this
 			handleEvents(modelstate);
-		}//end loop through event queue
-
-		//add the fired events back into the untriggered set
-		//this allows them to trigger/fire again later
-
+		}
 
 		modelstate.getUntriggeredEventSet().addAll(firedEvents);
+		
 		if(selector.equals("variable"))
 			return variableInFiredEvents;
+		
 		return affectedReactionSet;
 	}
 

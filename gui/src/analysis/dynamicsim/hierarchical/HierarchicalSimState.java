@@ -24,6 +24,7 @@ import org.sbml.jsbml.SBMLReader;
 import flanagan.math.PsRandom;
 import analysis.dynamicsim.XORShiftRandom;
 import analysis.dynamicsim.hierarchical.HierarchicalSim.ModelState;
+import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
 
 /**
@@ -77,6 +78,7 @@ public abstract class HierarchicalSimState implements Simulation
 		this.printConcentrationSpecies = new HashSet<String>();
 		this.interestingSpecies = interestingSpecies;
 		this.document = SBMLReader.read(new File(SBMLFileName));
+		this.document = HierarchicalUtilities.getFlattenedRegulations(rootDirectory,SBMLFileName);
 		
 		if (quantityType != null)
 		{
