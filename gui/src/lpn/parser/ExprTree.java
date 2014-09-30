@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.lang.Math;
 
+import verification.timed_state_exploration.octagon.Equivalence;
 import verification.timed_state_exploration.zoneProject.IntervalPair;
 import verification.timed_state_exploration.zoneProject.LPNContAndRate;
 import verification.timed_state_exploration.zoneProject.LPNContinuousPair;
@@ -4642,7 +4643,7 @@ public class ExprTree {
 	 * @return
 	 * 			The range of values for the expression tree.
 	 */
-	public IntervalPair evaluateExprBound(HashMap<String, String> variables, Zone z, 
+	public IntervalPair evaluateExprBound(HashMap<String, String> variables, Equivalence z, 
 //			HashMap<LPNContinuousPair, IntervalPair> continuousValues){
 			HashMap<LPNContAndRate, IntervalPair> continuousValues){
 		
