@@ -59,7 +59,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulator{
 				HashSet<String> affectedReactionSet = fireEvents(getTopmodel(), "reaction", getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());				
 				if (affectedReactionSet.size() > 0)
 				{
-					updatePropensities();
+					updatePropensities(affectedReactionSet, getTopmodel());
+					updatePropensities(getTopmodel());
 				}
 			}
 
@@ -69,7 +70,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulator{
 					HashSet<String> affectedReactionSet = fireEvents(models, "reaction", models.isNoRuleFlag(), models.isNoConstraintsFlag());				
 					if (affectedReactionSet.size() > 0)
 					{
-						updatePropensities();
+						updatePropensities(affectedReactionSet, models);
+						updatePropensities(models);
 					}
 				}
 			}
@@ -129,16 +131,18 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulator{
 					{
 						if (!selectedReactionID.isEmpty()) {
 							performReaction(getTopmodel(), selectedReactionID, getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());
-							//HashSet<String> affectedReactionSet = getAffectedReactionSet(getTopmodel(), selectedReactionID, true);
-							updatePropensities();
+							HashSet<String> affectedReactionSet = getAffectedReactionSet(getTopmodel(), selectedReactionID, true);
+							updatePropensities(affectedReactionSet, getTopmodel());
+							updatePropensities(getTopmodel());
 						}
 					}
 					else
 					{
 						if (!selectedReactionID.isEmpty()) {
 							performReaction(getSubmodels().get(modelstateID), selectedReactionID, getSubmodels().get(modelstateID).isNoRuleFlag(), getSubmodels().get(modelstateID).isNoConstraintsFlag());
-							//HashSet<String> affectedReactionSet = getAffectedReactionSet(getSubmodels().get(modelstateID), selectedReactionID, true);
-							updatePropensities();
+							HashSet<String> affectedReactionSet = getAffectedReactionSet(getSubmodels().get(modelstateID), selectedReactionID, true);
+							updatePropensities(affectedReactionSet, getSubmodels().get(modelstateID));
+							updatePropensities(getSubmodels().get(modelstateID));
 						}
 					}
 				}
@@ -306,29 +310,43 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulator{
 	}
 
 
-	private void updatePropensities() {
-		for (String reaction : getTopmodel().getReactionToFormulaMap().keySet())
-		{
-			if(getTopmodel().isDeletedByMetaID(reaction))
+	private void updatePropensities(HashSet<String> affectedReactionSet, ModelState modelstate) {
+		for (String affectedReactionID : affectedReactionSet) {
+
+			if(modelstate.isDeletedByMetaID(affectedReactionID))
 				continue;
 
 			HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet = 
-					getTopmodel().getReactionToReactantStoichiometrySetMap().get(reaction);
-			updatePropensity(getTopmodel(), reaction, reactantStoichiometrySet);
+					modelstate.getReactionToReactantStoichiometrySetMap().get(affectedReactionID);
+			updatePropensity(modelstate, affectedReactionID,reactantStoichiometrySet);		
 		}
+	}
+
+	private void updatePropensities(ModelState modelstate) {
+		if(modelstate != getTopmodel())
+			for (String reaction : getTopmodel().getHierarchicalReactions())
+			{
+				if(getTopmodel().isDeletedByMetaID(reaction))
+					continue;
+
+				HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet = 
+						getTopmodel().getReactionToReactantStoichiometrySetMap().get(reaction);
+				updatePropensity(getTopmodel(), reaction, reactantStoichiometrySet);
+			}
 
 
 		for(ModelState model : getSubmodels().values())
 		{
-			for (String reaction : model.getReactionToFormulaMap().keySet())
-			{
-				if(model.isDeletedByMetaID(reaction))
-					continue;
+			if(modelstate != model)
+				for (String reaction : model.getHierarchicalReactions())
+				{
+					if(model.isDeletedByMetaID(reaction))
+						continue;
 
-				HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet = 
-						model.getReactionToReactantStoichiometrySetMap().get(reaction);
-				updatePropensity(model, reaction, reactantStoichiometrySet);
-			}
+					HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet = 
+							model.getReactionToReactantStoichiometrySetMap().get(reaction);
+					updatePropensity(model, reaction, reactantStoichiometrySet);
+				}
 		}
 	}
 

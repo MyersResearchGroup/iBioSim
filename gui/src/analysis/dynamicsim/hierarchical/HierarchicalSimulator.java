@@ -410,6 +410,12 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 		HashSet<String> untriggeredEvents = new HashSet<String>();
 		HashSet<String> variableInFiredEvents = new HashSet<String>();
 
+		HashSet<String> affectedReactionSet = new HashSet<String>();
+		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
+
+		HashSet<String> firedEvents = new HashSet<String>();
+		
 		for (HierarchicalEventToFire triggeredEvent : modelstate.getTriggeredEventQueue())
 		{
 			String triggeredEventID = triggeredEvent.getEventID();
@@ -452,11 +458,6 @@ public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
 				modelstate.getEventToPreviousTriggerValueMap().put(untriggeredEventID, false);
 		}
 
-		HashSet<String> affectedReactionSet = new HashSet<String>();
-		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
-		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
-
-		HashSet<String> firedEvents = new HashSet<String>();
 
 		while (modelstate.getTriggeredEventQueue().size() > 0 &&
 				modelstate.getTriggeredEventQueue().peek().getFireTime() <=  getCurrentTime()) {
