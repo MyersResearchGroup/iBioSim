@@ -7,7 +7,7 @@ import java.util.Properties;
 
 import verification.platu.lpn.DualHashMap;
 import verification.platu.stategraph.State;
-
+import verification.timed_state_exploration.octagon.Equivalence;
 import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
@@ -266,7 +266,7 @@ public class InequalityVariable extends Variable {
 	//public void update(Zone z){
 //	public String evaluateInequality(State localState, Zone z){
 //		
-//		// TODO : This method ignores the case where the range of the continuous variable
+//		//This method ignores the case where the range of the continuous variable
 //		// stradles the bound.
 //		
 //		//
@@ -361,10 +361,11 @@ public class InequalityVariable extends Variable {
 	 * 			Zero if the inequality is false, a non-zero number if the
 	 * 			inequality is true.
 	 * @throws
-	 * 			IllegalStateException if the inequality cannot be evaulated to
+	 * 			IllegalStateException if the inequality cannot be evaluated to
 	 * 			true or false.
 	 */
-	public int evaluate(State localState, Zone z){
+//	public int evaluate(State localState, Zone z){
+	public int evaluate(State localState, Equivalence z){
 	
 //		// From the (local) state, extract the current values to use in the 
 //		// evaluator.
@@ -390,6 +391,48 @@ public class InequalityVariable extends Variable {
 //		// If the upper and lower bounds agreed, then return that value.
 //		
 //		return range.get_LowerBound();
+		
+		
+		// Due to the strange way that inequalities are evaluated
+		// if the upper and lower bounds are equal to the
+		// the constant, then the rate determines the value
+		// of the inequality.
+		
+		// Get the variable
+		Variable v = _variables.get(0);
+		
+		int lpnIndex = _lpn.getLpnIndex();
+		
+		int varIndex = _lpn.getContVarIndex(v.getName());
+		
+		LPNContinuousPair ltPair = new LPNContinuousPair(lpnIndex,
+				varIndex);
+		
+		
+		IntervalPair range = z.getContinuousBounds(v.getName(), _lpn);
+		
+		if(range.singleValue() &&
+				range.get_LowerBound() == this.getConstant()){
+			// The upper and lower bounds are equal to the constant
+			// so the value of the inequality is determined by
+			// the rate.
+			
+			int rate = z.getCurrentRate(ltPair);
+			
+			if( rate == 0){
+				// Get the inequality variable index.
+				int ineqIndex = _lpn.getVariableIndex(this.name);
+				
+				return localState.getVariableVector()[ineqIndex];
+			}
+			
+			boolean isPositive = rate > 0;
+			
+			boolean result = isGreaterThan() == isPositive;
+			
+			return result ? 1 : 0;
+		}
+		
 		return evaluate(localState.getVariableVector(), z, null);
 	}
 	
@@ -406,7 +449,8 @@ public class InequalityVariable extends Variable {
 	 * 			IllegalStateException if the inequality cannot be evaluated to
 	 * 			true or false.
 	 */
-	public int evaluate(int[] vector, Zone z, HashMap<LPNContAndRate, IntervalPair> continuousValues){
+//	public int evaluate(int[] vector, Zone z, HashMap<LPNContAndRate, IntervalPair> continuousValues){
+	public int evaluate(int[] vector, Equivalence z, HashMap<LPNContAndRate, IntervalPair> continuousValues){
 		
 		// Extract the continuous variable from the zone.
 		
