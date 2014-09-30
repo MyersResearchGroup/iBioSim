@@ -73,19 +73,12 @@ public class Options {
 	/*
 	 * Ample computation during cycle closing check.
 	 */
-	public static enum cycleClosingAmpleMethdDef { 
+	public static enum cycleClosingStrongStubbornMethdDef { 
 		CCTB, // cycle closing with trace-back
 		CCTBDG, // cycle closing with trace-back using dependency graphs
 		CCTBOFF // cycle closing without trace-back
 		}
-	private static String cycleClosingPersistentMethd = "cctb";
-	
-	
-	
-	/*
-	 * Deadlock preserving option during partial order reduction
-	 */
-	private static boolean porDeadlockPreserve = true;
+	private static String cycleClosingStrongStubbornMethd = "cctb";
 	
 ////	/*
 ////	 * Flag to use use dependent set queue for POR
@@ -374,12 +367,12 @@ public class Options {
 		return prjSgPath;
 	}
 
-	public static void setCycleClosingAmpleMethd(String method) {
-		cycleClosingPersistentMethd = method;		
+	public static void setCycleClosingStrongStubbornMethd(String method) {
+		cycleClosingStrongStubbornMethd = method;		
 	}
 	
-	public static String getCycleClosingPersistentMethd() {
-		return cycleClosingPersistentMethd;
+	public static String getCycleClosingStrongStubbornMethd() {
+		return cycleClosingStrongStubbornMethd;
 	}
 
 	public static void setDebugMode(boolean debugMode) {
@@ -406,12 +399,12 @@ public class Options {
 		return lpnName;
 	}
 
-	public static void disablePORdeadlockPreserve() {
-		porDeadlockPreserve = false;
-	}
-	public static boolean getPORdeadlockPreserve() {
-		return porDeadlockPreserve;
-	}
+//	public static void disablePORdeadlockPreserve() {
+//		porDeadlockPreserve = false;
+//	}
+//	public static boolean getPORdeadlockPreserve() {
+//		return porDeadlockPreserve;
+//	}
 	
 	public static void disableDisablingError() {
 		disablingError = false;
