@@ -3,18 +3,26 @@ package verification.timed_state_exploration.zoneProject;
 import java.util.Arrays;
 
 import lpn.parser.LhpnFile;
-
 import verification.platu.lpn.LpnTranList;
+
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
+import verification.timed_state_exploration.octagon.Equivalence;
+import verification.timed_state_exploration.octagon.Octagon;
 
 public class TimedPrjState extends PrjState{
-	protected Zone[] _zones;
+//	protected Zone[] _zones;
+	protected Equivalence[] _zones;
 	
-	public TimedPrjState(final State[] other, final Zone[] otherZones){
+	//*public TimedPrjState(final State[] other, final Zone[] otherZones){
+		//*super(other);
+		//*this._zones = otherZones;
+	//*}
+	public TimedPrjState(final State[] other, final Equivalence[] otherZones){
 		super(other);
 		this._zones = otherZones;
 	}
+	
 	
 	public TimedPrjState(State[] initStateArray) {
 		super(initStateArray);
@@ -23,13 +31,34 @@ public class TimedPrjState extends PrjState{
 //			_zones[i] = new Zone(initStateArray[i]);
 //		}
 		
-		_zones = new Zone[1];
+		if(verification.platu.main.Options.getTimingAnalysisType()
+				.equals("zone")){
 		
-		_zones[0] = new Zone(initStateArray);
+			/*  
+			 * The verification type is zones, so load the
+			 * Equivalence variable with a zone.
+			 */
+			_zones = new Zone[1];
+		
+			_zones[0] = new Zone(initStateArray);
+		}
+		else if (verification.platu.main.Options.getTimingAnalysisType()
+		.equals("octagon")){
+			
+			/*
+			 * The verification type is octagons, so load the
+			 * Equivalence variable with an octagon.
+			 */
+			
+			_zones = new Octagon[1];
+			
+			_zones[0] = new Octagon(initStateArray);
+		}
 	}
 
 
-	public Zone[] toZoneArray(){
+//	public Zone[] toZoneArray(){
+	public Equivalence[] toZoneArray(){
 		return _zones;
 	}
 	
@@ -62,7 +91,8 @@ public class TimedPrjState extends PrjState{
 		
 		result += "\nZones: \n";
 		
-		for(Zone z : _zones){
+//		for(Zone z : _zones){
+		for(Equivalence z: _zones){
 			result += z.toString() + "\n";
 		}
 		
@@ -79,7 +109,8 @@ public class TimedPrjState extends PrjState{
 	public LpnTranList getEnabled(int zoneNumber){
 		
 		// Zone to consider
-		Zone z = _zones[zoneNumber];
+//		Zone z = _zones[zoneNumber];
+		Equivalence z = _zones[zoneNumber];
 		
 		return new LpnTranList(z.getEnabledTransitions());
 	}
@@ -97,7 +128,8 @@ public class TimedPrjState extends PrjState{
 	 */
 	public LpnTranList getEnabled(int zoneNumber, int lpnIndex){
 		
-		Zone z = _zones[zoneNumber];
+//		Zone z = _zones[zoneNumber];
+		Equivalence z = _zones[zoneNumber];
 		
 		return new LpnTranList(z.getEnabledTransitions(lpnIndex));
 	}
@@ -250,7 +282,9 @@ public class TimedPrjState extends PrjState{
 	 */
 	public LpnTranList getPossibleEvents(int zoneNumber, int lpnIndex){
 		
-		Zone z = _zones[zoneNumber];
+//		Zone z = _zones[zoneNumber];
+		
+		Equivalence z = _zones[zoneNumber];
 		
 		return new LpnTranList(z.getPossibleEvents(lpnIndex, this.getStateArray()[lpnIndex]));
 	}
@@ -260,7 +294,10 @@ public class TimedPrjState extends PrjState{
 	 * @return
 	 * 		The Zones this (gloabl) state contains.
 	 */
-	public Zone[] get_zones(){
+//	public Zone[] get_zones(){
+	public Equivalence[] get_zones(){
+
 		return _zones;
+//		return _zones;
 	}
 }
