@@ -272,6 +272,10 @@ public class Options {
     		timingAnalysisFlag = true;
     		timingAnalysisType = timing;
     	}
+		else if (timing.equals("octagon")){
+			timingAnalysisFlag = true;
+			timingAnalysisType = timing;
+		}
     	else if (timing.equals("poset")){
     		timingAnalysisFlag = true;
     		timingAnalysisType = timing;
