@@ -25,6 +25,7 @@ import verification.platu.lpn.LpnTranList;
 import verification.platu.main.Main;
 import verification.platu.main.Options;
 import verification.platu.project.PrjState;
+import verification.timed_state_exploration.octagon.Equivalence;
 import verification.timed_state_exploration.zoneProject.ContinuousRecordSet;
 import verification.timed_state_exploration.zoneProject.ContinuousUtilities;
 import verification.timed_state_exploration.zoneProject.Event;
@@ -1380,10 +1381,12 @@ public class StateGraph {
 		
 		// Extract relevant information from the current project state.
 		State[] curStateArray = currentTimedPrjState.toStateArray();
-		Zone[] currentZones = currentTimedPrjState.toZoneArray();
+//		Zone[] currentZones = currentTimedPrjState.toZoneArray();
+		Equivalence[] currentZones = currentTimedPrjState.toZoneArray();
 
 		
-		Zone[] newZones = new Zone[1];
+//		Zone[] newZones = new Zone[1];
+		Equivalence[] newZones = new Equivalence[1];
 		
 		/* 
 		 * This ArrayList contains four separate maps that store the 
@@ -1406,6 +1409,11 @@ public class StateGraph {
 //						curStateArray, newStates, firedTran);
 		
 		ContinuousRecordSet newAssignValues = new ContinuousRecordSet();
+		
+		//*newStates  =
+				//*updateContinuousState(currentTimedPrjState.get_zones()[0],
+						//*curStateArray, newStates, firedTran,
+						//*newAssignValues);
 		
 		newStates  =
 				updateContinuousState(currentTimedPrjState.get_zones()[0],
@@ -1514,7 +1522,9 @@ public class StateGraph {
 			}
 			
 			// Get a new zone that has been restricted according to the inequalities firing.
-			Zone z = currentTimedPrjState.get_zones()[0]
+			//*Zone z = currentTimedPrjState.get_zones()[0]
+					//*.getContinuousRestrictedZone(eventSet, states);
+			Equivalence z = currentTimedPrjState.get_zones()[0]
 					.getContinuousRestrictedZone(eventSet, states);
 			
 			
@@ -1536,7 +1546,8 @@ public class StateGraph {
 			
 //			return new TimedPrjState(states, currentTimedPrjState.get_zones());
 						
-			return new TimedPrjState(states, new Zone[]{z});
+			//*return new TimedPrjState(states, new Zone[]{z});
+			return new TimedPrjState(states, new Equivalence[]{z});
 		}
 		else if (eventSet.isRate()){
 			// The EventSet is a rate change event, so fire the rate change.
@@ -1547,7 +1558,8 @@ public class StateGraph {
 		return fire(curSgArray, currentPrjState, eventSet.getTransition());
 	}
 	
-	private Zone addNewEnabledTransitions(final StateGraph[] curSgArray,
+	//*private Zone addNewEnabledTransitions(final StateGraph[] curSgArray,
+	private Equivalence addNewEnabledTransitions(final StateGraph[] curSgArray,
 			State[] states, EventSet eventSet,
 			TimedPrjState currentTimedPrjState){
 		HashSet<LPNTransitionPair> newlyEnabled = new HashSet<LPNTransitionPair>();
@@ -1560,8 +1572,12 @@ public class StateGraph {
 		}
 		
 		// Get a new zone that has been restricted according to the inequalities firing.
-		Zone z = currentTimedPrjState.get_zones()[0].
+		//*Zone z = currentTimedPrjState.get_zones()[0].
+				//*getContinuousRestrictedZone(eventSet, states);
+		
+		Equivalence z = currentTimedPrjState.get_zones()[0].
 				getContinuousRestrictedZone(eventSet, states);
+		
 		
 //		z.advance(states);
 		z.recononicalize();
@@ -1606,7 +1622,8 @@ public class StateGraph {
 					"variable. This method is meant for TimedPrjStates.");
 		}
 		
-		Zone[] newZones = new Zone[1];
+		//*Zone[] newZones = new Zone[1];
+		Equivalence[] newZones = new Equivalence[1];
 		
 		newZones[0] = currentTimedPrjState.get_zones()[0].
 				fire(firedRate, firedRate.getCurrentRate());
@@ -1641,9 +1658,11 @@ public class StateGraph {
 		
 		
 		// Create a new copy of the zone.
-		Zone[] newZones = new Zone[1];
+		//*Zone[] newZones = new Zone[1];
+		Equivalence[] newZones = new Equivalence[1];
 		
-		Zone[] oldZones = currentTimedPrjState.get_zones();
+		//*Zone[] oldZones = currentTimedPrjState.get_zones();
+		Equivalence[] oldZones = currentTimedPrjState.get_zones();
 		
 		// Check if this continuous variable is currently in the rate zeros.
 		if(currentTimedPrjState.get_zones()[0].getCurrentRate(firedRate) == 0){
@@ -1659,7 +1678,7 @@ public class StateGraph {
 		else if(firedRate.getCurrentRate() == 0){
 			/*
 			 * If the rate change event is zero, then the variable needs to be
-			 * saved off into the rate zero variables. No warping or recanonicalizing
+			 * saved off into the rate zero variables. No warping or recanonicalization
 			 * is necessary since all the other relationship remain the same.
 			 */
 			newZones[0] = oldZones[0].saveOutZeroRate(firedRate);
@@ -1719,8 +1738,12 @@ public class StateGraph {
 					
 					if(iv.exceedConstant(value)){
 					
+//						inequalityList = 
+//								newZones[0].addSetItem(inequalityList,
+//										new Event(iv),
+//										localStates[firedRate.get_lpnIndex()]);
 						inequalityList = 
-								newZones[0].addSetItem(inequalityList,
+								Zone.addSetItem(newZones[0], inequalityList,
 										new Event(iv),
 										localStates[firedRate.get_lpnIndex()]);
 					}
@@ -1760,7 +1783,8 @@ public class StateGraph {
 //	private ArrayList<UpdateContinuous>
 //	updateContinuousState(Zone z,
 //		State[] oldStates, State[] newStates, Transition firedTran){
-	private State[] updateContinuousState(Zone z,
+	//*private State[] updateContinuousState(Zone z,
+	private State[] updateContinuousState(Equivalence z,
 		State[] oldStates, State[] newStates, Transition firedTran, 
 		ContinuousRecordSet updateContinuousRecords){
 		// Convert the current values of Boolean variables to strings for use in the 
