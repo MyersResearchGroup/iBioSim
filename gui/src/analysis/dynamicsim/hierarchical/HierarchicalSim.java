@@ -46,6 +46,12 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 	private HashMap<String, ModelState> submodels;
 	private ModelState topmodel;
 	
+	protected static boolean checkGrid(Model model)
+	{
+		if(model.getCompartment("Grid") != null)
+			return true;
+		return false;
+	}
 	public HierarchicalSim(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, 
 			JFrame running, String[] interestingSpecies, String quantityType) throws IOException, XMLStreamException 
@@ -59,13 +65,7 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		isGrid = checkGrid(document.getModel());
 		models.put(document.getModel().getId(), document.getModel().clone());
 		
-			}
-	protected static boolean checkGrid(Model model)
-	{
-		if(model.getCompartment("Grid") != null)
-			return true;
-		return false;
-	} 
+			} 
 	
 	protected double evaluateExpressionRecursive(ModelState modelstate, ASTNode node) {
 		if (node.isBoolean()) {
@@ -963,12 +963,14 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 		return formula;
 	}
+	
 	/**
 	 * @return the isGrid
 	 */
 	public boolean isGrid() {
 		return isGrid;
 	}
+	
 	protected HashSet<String> performAssignmentRules(ModelState modelstate, HashSet<AssignmentRule> affectedAssignmentRuleSet) {
 
 
@@ -1188,6 +1190,7 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 			this.modelID = modelID;
 		}
 	}
+	
 	public class ModelState {
 
 		private LinkedHashSet<String> compartmentIDSet;
@@ -1205,6 +1208,7 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		private HashMap<String, ASTNode> eventToTriggerMap;
 		private HashMap<String, Boolean> eventToTriggerPersistenceMap;
 		private HashMap<String, Boolean> eventToUseValuesFromTriggerTimeMap;
+		private HashSet<String> hierarchicalReactions;
 		private HashSet<String> ibiosimFunctionDefinitions;
 		private String ID;
 		private HashSet<String> isHierarchical;
@@ -1244,12 +1248,11 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		private HashMap<String, HashSet<AssignmentRule>> variableToAffectedAssignmentRuleSetMap;
 		private HashMap<String, HashSet<ASTNode> > variableToAffectedConstraintSetMap;
 		private HashMap<String, HashSet<String> > variableToEventSetMap;
-		private HashMap<String, Boolean> variableToIsConstantMap;
+		private HashMap<String, Boolean> variableToIsConstantMap; 
 		private HashMap<String, Boolean> variableToIsInAssignmentRuleMap; 
 		private HashMap<String, Boolean> variableToIsInConstraintMap; 
 		private HashMap<String, Boolean> variableToIsInRateRuleMap; 
-		private TObjectDoubleHashMap<String> variableToValueMap; 
-
+		private TObjectDoubleHashMap<String> variableToValueMap;
 		public ModelState(HashMap<String, Model> models, String bioModel, String submodelID)
 		{
 			this.model = bioModel;
@@ -1334,6 +1337,7 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 
 			compartmentIDSet = new LinkedHashSet<String>();
 			rateRulesList = new LinkedList<RateRule>();
+			hierarchicalReactions = new HashSet<String>();
 		}
 
 		/**
@@ -1466,6 +1470,13 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		 */
 		public HashMap<String, Boolean> getEventToUseValuesFromTriggerTimeMap() {
 			return eventToUseValuesFromTriggerTimeMap;
+		}
+
+		/**
+		 * @return the hierarchicalReactions
+		 */
+		public HashSet<String> getHierarchicalReactions() {
+			return hierarchicalReactions;
 		}
 
 		/**
@@ -1614,14 +1625,14 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		public HashMap<String, HashSet<HierarchicalStringPair>> getReactionToNonconstantStoichiometriesSetMap() {
 			return reactionToNonconstantStoichiometriesSetMap;
 		}
-
+		
 		/**
 		 * @return the reactionToPropensityMap
 		 */
 		public TObjectDoubleHashMap<String> getReactionToPropensityMap() {
 			return reactionToPropensityMap;
 		}
-		
+
 		/**
 		 * @return the reactionToReactantStoichiometrySetMap
 		 */
@@ -1932,6 +1943,13 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		public void setEventToUseValuesFromTriggerTimeMap(
 				HashMap<String, Boolean> eventToUseValuesFromTriggerTimeMap) {
 			this.eventToUseValuesFromTriggerTimeMap = eventToUseValuesFromTriggerTimeMap;
+		}
+
+		/**
+		 * @param hierarchicalReactions the hierarchicalReactions to set
+		 */
+		public void setHierarchicalReactions(HashSet<String> hierarchicalReactions) {
+			this.hierarchicalReactions = hierarchicalReactions;
 		}
 
 		/**

@@ -702,6 +702,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 			ListOf<SpeciesReference> reactantsList,
 			ListOf<SpeciesReference> productsList,
 			ListOf<ModifierSpeciesReference> modifiersList) {
+		
 		reactionID = reactionID.replace("_negative_", "-");
 
 		long size;
@@ -807,6 +808,12 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				String reactantID = reactant.getSpecies().replace("_negative_",
 						"-");
 
+				if(modelstate.getIsHierarchical().contains(reactantID))
+				{
+					modelstate.getHierarchicalReactions().add(reactionID+ "_fd");
+					modelstate.getHierarchicalReactions().add(reactionID+ "_rv");
+				}
+				
 				double reactantStoichiometry;
 				
 				if (modelstate.getVariableToValueMap().contains(reactant.getId()))
@@ -873,6 +880,12 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				String productID = product.getSpecies().replace("_negative_",
 						"-");
 
+				if(modelstate.getIsHierarchical().contains(productID))
+				{
+					modelstate.getHierarchicalReactions().add(reactionID+ "_fd");
+					modelstate.getHierarchicalReactions().add(reactionID+ "_rv");
+				}
+				
 				double productStoichiometry;
 				if (modelstate.getVariableToValueMap().containsKey(product.getId()))
 					productStoichiometry = modelstate
@@ -932,6 +945,11 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 			for (ModifierSpeciesReference modifier : modifiersList) {
 
 				String modifierID = modifier.getSpecies();
+				if(modelstate.getIsHierarchical().contains(modifierID))
+				{
+					modelstate.getHierarchicalReactions().add(reactionID+ "_fd");
+					modelstate.getHierarchicalReactions().add(reactionID+ "_rv");
+				}
 				modifierID = modifierID.replace("_negative_", "-");
 
 				String forwardString = "", reverseString = "";
@@ -1082,6 +1100,11 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				String reactantID = reactant.getSpecies().replace("_negative_",
 						"-");
 
+				if(modelstate.getIsHierarchical().contains(reactantID))
+				{
+					modelstate.getHierarchicalReactions().add(reactionID);
+				}
+				
 				double reactantStoichiometry;
 
 				if (modelstate.getVariableToValueMap().containsKey(reactant.getId()))
@@ -1131,6 +1154,12 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 
 				String productID = product.getSpecies().replace("_negative_",
 						"-");
+				
+				if(modelstate.getIsHierarchical().contains(productID))
+				{
+					modelstate.getHierarchicalReactions().add(reactionID);
+				}
+				
 				double productStoichiometry;
 
 				if (modelstate.getVariableToValueMap().containsKey(product.getId()))
@@ -1178,6 +1207,11 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				String modifierID = modifier.getSpecies();
 				modifierID = modifierID.replace("_negative_", "-");
 
+				if(modelstate.getIsHierarchical().contains(modifierID))
+				{
+					modelstate.getHierarchicalReactions().add(reactionID);
+				}
+				
 				modelstate.getSpeciesToAffectedReactionSetMap().get(modifierID).add(
 						reactionID);
 			}
