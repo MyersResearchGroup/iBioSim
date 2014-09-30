@@ -20,6 +20,7 @@ import verification.platu.lpn.DualHashMap;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.main.Options;
 import verification.platu.stategraph.State;
+import verification.timed_state_exploration.octagon.Equivalence;
 
 
 /**
@@ -68,7 +69,7 @@ import verification.platu.stategraph.State;
  * @author Andrew N. Fisher
  *
  */
-public class Zone{
+public class Zone implements Equivalence{
 	
 	/*Abstraction Function : 
 	* The difference bound matrix is stored in the _matrix member field, along with 
@@ -1268,6 +1269,25 @@ public class Zone{
 		return _matrix[0][dbmIndexToMatrixIndex(index)];
 	}
 	
+	
+	public int getUpperBound(int index){
+		return _matrix[0][dbmIndexToMatrixIndex(index)];
+	}
+	
+	public int getUpperBoundTrue(int index){
+		return _matrix[dbmIndexToMatrixIndex(0)]
+				[dbmIndexToMatrixIndex(index)];
+	}
+	
+	public int getLowerBound(int index){
+		return _matrix[dbmIndexToMatrixIndex(index)][0];
+	}
+	
+	public int getLowerBoundTrue(int index){
+		return _matrix[dbmIndexToMatrixIndex(index)]
+				[dbmIndexToMatrixIndex(0)];
+	}
+	
 	/**
 	 * Set the value of the upper bound for the delay.
 	 * @param t
@@ -1332,7 +1352,7 @@ public class Zone{
 //		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
 		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
 		
-		return -1*getLowerBoundbydbmIndex(
+		return getLowerBoundbydbmIndex(
 				Arrays.binarySearch(_indexToTimerPair, ltPair));
 	}
 	
@@ -1536,7 +1556,7 @@ public class Zone{
 		
 		if(variableIndex < 0){
 			// The variable was not found in the zone. Check to see if its
-			// in the rate-zero varaibles. Technically I will return whatever
+			// in the rate-zero variables. Technically I will return whatever
 			// is in the _rateZeroConintuous, null or not.
 //			return _rateZeroContinuous.get(ltContPair).get_range();
 			
@@ -1546,7 +1566,7 @@ public class Zone{
 			return _rateZeroContinuous.get(lcr).get_range();
 		}
 		
-		// The varaible was found in the zone. Yay.
+		// The variable was found in the zone. Yay.
 		int lower = (-1)*getDbmEntry(variableIndex, 0)
 				*getCurrentRate(ltContPair);
 		int upper = getDbmEntry(0, variableIndex)
@@ -2028,7 +2048,11 @@ public class Zone{
 	 * @return
 	 * 		True if this is a subset of other; false otherwise.
 	 */
-	public boolean subset(Zone otherZone){
+//	public boolean subset(Zone otherZone){
+	public boolean subset(Equivalence otherEquiv){
+		
+		Zone otherZone = (Zone) otherEquiv;
+	
 		// Check if the reference is null first.
 				if(otherZone == null)
 				{
@@ -2077,7 +2101,8 @@ public class Zone{
 	 * 		True if this is a subset of other; false otherwise. More specifically it
 	 *		gives the result of otherZone.subset(this). Thus it agrees with the subset method.
 	 */
-	public boolean superset(Zone otherZone){
+//	public boolean superset(Zone otherZone){
+	public boolean superset(Equivalence otherZone){
 		return otherZone.subset(this);
 	}
 	
@@ -2590,7 +2615,7 @@ public class Zone{
 				
 			}
 			
-			// At this point, the varaible represents a transition (timer).
+			// At this point, the variable represents a transition (timer).
 			// So determine whether this timer is new or old.
 			else if(Arrays.binarySearch(this._indexToTimerPair,
 					newZone._indexToTimerPair[i]) >= 0 )
@@ -2654,7 +2679,7 @@ public class Zone{
 			if(!oldTimers.contains(tempZone._indexToTimerPair[i]))
 			{
 				
-				// A hack to ensure that the newly zero varaibles
+				// A hack to ensure that the newly zero variables
 				// get the new values from the tempZone.
 				if(tempZone._indexToTimerPair[i] instanceof LPNContinuousPair){
 					
@@ -2665,7 +2690,7 @@ public class Zone{
 							.get(new LPNContAndRate(lcPair));
 					
 					if(vrp != null){
-						// This means that the continuous varaible was non-zero
+						// This means that the continuous variable was non-zero
 						// and is now zero. Fix up the values according to 
 						// the temp zone.
 						IntervalPair newRange = tempZone.getContinuousBounds(lcPair);
@@ -3596,7 +3621,7 @@ public class Zone{
 	}
 	
 	/**
-	 * Resets the rates of all continuous varaibles to be their
+	 * Resets the rates of all continuous variables to be their
 	 * lower bounds.
 	 */
 	public Zone resetRates(){
@@ -3617,7 +3642,7 @@ public class Zone{
 //		// Loop through the variables and save off those
 //		// that are rate zero. Accumulate an array that
 //		// indicates which are zero for faster 
-//		// copying. Save the number of continuous varaibles.
+//		// copying. Save the number of continuous variables.
 //		boolean[] rateZero = new boolean[this._indexToTimerPair.length]; // Is rate zero.
 //		int zeroCount = 0;
 //		
@@ -3738,7 +3763,7 @@ public class Zone{
 			// the only possible rate.
 			if(variable.getValue().get_range().singleValue()){
 				// This variable only has zero as a rate so keep it
-				// in the rate zero varaibles.
+				// in the rate zero variables.
 				newZone._rateZeroContinuous.insert(variable.getKey(),
 						variable.getValue());
 			}
@@ -3796,10 +3821,10 @@ public class Zone{
 			}
 			
 			// Copy upper and lower bounds for the variable.
-			newZone._matrix[newZone.dbmIndexToMatrixIndex(newi)][0] =
-					this._matrix[this.dbmIndexToMatrixIndex(i)][0];
-			newZone._matrix[0][newZone.dbmIndexToMatrixIndex(newi)] =
-					this._matrix[0][this.dbmIndexToMatrixIndex(i)];
+			newZone._matrix[dbmIndexToMatrixIndex(newi)][0] =
+					this._matrix[dbmIndexToMatrixIndex(i)][0];
+			newZone._matrix[0][dbmIndexToMatrixIndex(newi)] =
+					this._matrix[0][dbmIndexToMatrixIndex(i)];
 			
 			
 			// Copy the DBM Entry
@@ -4554,7 +4579,7 @@ public class Zone{
 			LPNContinuousPair ltContPair = new LPNContinuousPair(lpnIndex, variableIndex);
 			
 
-			// Need the current rate for the varaible, grab the stored LPNContinuousPair.
+			// Need the current rate for the variable, grab the stored LPNContinuousPair.
 			int zoneIndex = Arrays.binarySearch(_indexToTimerPair, ltContPair);
 			if(zoneIndex > 0){
 				ltContPair = (LPNContinuousPair) _indexToTimerPair[zoneIndex];
@@ -4592,7 +4617,7 @@ public class Zone{
 	}
 	
 	/**
-	 * Returns a zone that is the result from resticting the this zone according to a list of firing event inequalities.
+	 * Returns a zone that is the result from restricting the this zone according to a list of firing event inequalities.
 	 * @param eventSet
 	 * 		The list of inequalities that are firing.
 	 * @return
@@ -4714,7 +4739,7 @@ public class Zone{
 				if(getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i)){
 
 					Event e = new Event(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
-					result = addSetItem(result, e, localState);
+					result = addSetItem(this, result, e, localState);
 				}
 			}
 			
@@ -4754,7 +4779,7 @@ public class Zone{
 //					}
 //				}
 				
-				result = createRateEvents(ltContPair, ratePair, result, localState);
+				result = createRateEvents(this, ltContPair, ratePair, result, localState);
 				
 				// Check all the inequalities for inclusion.
 				Variable contVar = _lpnList[ltPair.get_lpnIndex()]
@@ -4765,7 +4790,7 @@ public class Zone{
 
 						// Check if the inequality can change.
 						if(ContinuousUtilities.inequalityCanChange(this, iv, localState)){
-							result = addSetItem(result, new Event(iv), localState);
+							result = addSetItem(this, result, new Event(iv), localState);
 						}
 					}
 				}
@@ -4781,14 +4806,14 @@ public class Zone{
 			// Extract the range of rates.
 			IntervalPair ratePair = lcrPair.get_rateInterval();
 
-			result = createRateEvents(ltContPair, ratePair, result, localState);
+			result = createRateEvents(this, ltContPair, ratePair, result, localState);
 			
 		}
 		
 		return result;
 	}
 	
-	private LpnTranList createRateEvents(LPNContinuousPair ltContPair, IntervalPair ratePair,
+	public static LpnTranList createRateEvents(Equivalence Z, LPNContinuousPair ltContPair, IntervalPair ratePair,
 			LpnTranList result, State localState){
 		
 //		ltContPair = ltContPair.clone();
@@ -4845,13 +4870,13 @@ public class Zone{
 		if(ratePair.get_LowerBound() >= 0){
 			if(ltContPair.getCurrentRate() == ratePair.get_UpperBound()){
 				ltContPair.setCurrentRate(ratePair.get_LowerBound());
-				result = addSetItem(result, new Event(ltContPair), localState);
+				result = addSetItem(Z, result, new Event(ltContPair), localState);
 			}
 		}
 		else if(ratePair.get_UpperBound()<=0){
 			if(ltContPair.getCurrentRate() == ratePair.get_LowerBound()){
 				ltContPair.setCurrentRate(ratePair.get_UpperBound());
-				result = addSetItem(result, new Event(ltContPair), localState);
+				result = addSetItem(Z, result, new Event(ltContPair), localState);
 			}
 		}
 		// At this point, lower bound < 0 < upper bound.
@@ -4864,15 +4889,15 @@ public class Zone{
 				ltContPair.setCurrentRate(0);
 				ltContPairOther.setCurrentRate(ratePair.get_LowerBound());
 				
-				result = addSetItem(result, new Event(ltContPair), localState);
-				result = addSetItem(result, new Event(ltContPairOther), localState);
+				result = addSetItem(Z, result, new Event(ltContPair), localState);
+				result = addSetItem(Z, result, new Event(ltContPairOther), localState);
 			}
 			else if(ltContPair.getCurrentRate() == ratePair.get_LowerBound()){
 				// The rate has change to the lower bound. Allow one rate
 				// change to zero.
 				ltContPair.setCurrentRate(0);
 				
-				result = addSetItem(result, new Event(ltContPair), localState);
+				result = addSetItem(Z, result, new Event(ltContPair), localState);
 			}
 			
 		}
@@ -4882,15 +4907,15 @@ public class Zone{
 	}
 	
 	/**
-	 * Addes or removes items as appropriate to update the current
-	 * lsit of possible events. Note the type LpnTranList extends
+	 * Adds or removes items as appropriate to update the current
+	 * list of possible events. Note the type LpnTranList extends
 	 * LinkedList<Transition>. The type EventSet extends transition
 	 * specifically so that objects of EventSet type can be place in
 	 * this list.
 	 * @param EventList
 	 * 			The list of possible events.
 	 */
-	public LpnTranList addSetItem(LpnTranList E, Event e, State s){
+	public static LpnTranList addSetItem(Equivalence Z, LpnTranList E, Event e, State s){
 //		void lhpnAddSetItem(eventSets &E,lhpnEventADT e,ineqList &ineqL,lhpnZoneADT z,
 //                lhpnRateADT r,eventADT *events,int nevents,
 //	    lhpnStateADT cur_state)
@@ -4975,8 +5000,10 @@ public class Zone{
 			// Find the LPN.
 			int lpnIndex = ineq.get_lpn().getLpnIndex();
 			
-			int varIndex = _lpnList[lpnIndex].
-					getContinuousIndexMap().getValue(v.getName());
+//			int varIndex = _lpnList[lpnIndex].
+//					getContinuousIndexMap().getValue(v.getName());
+			
+			int varIndex = Z.getVarIndex(lpnIndex, v.getName());
 			
 			// Package it all up.
 //			LPNTransitionPair ltPair = 
@@ -4988,10 +5015,11 @@ public class Zone{
 			LPNContinuousPair ltPair = new LPNContinuousPair(lpnIndex, varIndex);
 			
 			rv2l = ContinuousUtilities.chkDiv(-1*ineq.getConstant(),
-					getCurrentRate(ltPair), true);
+					Z.getCurrentRate(ltPair), true);
 			rv2u = ContinuousUtilities.chkDiv(ineq.getConstant(),
-					getCurrentRate(ltPair), true);
-			iZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
+					Z.getCurrentRate(ltPair), true);
+//			iZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
+			iZ = Z.getIndexByTransitionPair(ltPair);
 //} else {
 		}
 		else{
@@ -5008,7 +5036,8 @@ public class Zone{
 //			LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex, true);
 			LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex);
 			
-			iZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
+//			iZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
+			iZ = Z.getIndexByTransitionPair(ltPair);
 		}
 		
 		
@@ -5077,8 +5106,10 @@ public class Zone{
 					// Find the LPN.
 					int lpnIndex = ineq.get_lpn().getLpnIndex();
 					
-					int varIndex = _lpnList[lpnIndex].
-							getContinuousIndexMap().getValue(v.getName());
+//					int varIndex = _lpnList[lpnIndex].
+//							getContinuousIndexMap().getValue(v.getName());
+					
+					int varIndex = Z.getVarIndex(lpnIndex, v.getName());
 					
 					// Package it all up.
 //					LPNTransitionPair ltPair = 
@@ -5092,12 +5123,14 @@ public class Zone{
 					
 					rv1l = ContinuousUtilities.chkDiv(
 							-1 * oldEvent.getInequalityVariable().getConstant(), 
-							getCurrentRate(ltPair), true);
+							Z.getCurrentRate(ltPair), true);
 					rv1u = ContinuousUtilities.chkDiv(
 							oldEvent.getInequalityVariable().getConstant(), 
-							getCurrentRate(ltPair), true);
+							Z.getCurrentRate(ltPair), true);
 					
-					jZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
+//					jZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
+					
+					jZ = Z.getIndexByTransitionPair(ltPair);
 					
 				}
 				else{
@@ -5117,7 +5150,9 @@ public class Zone{
 //					LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex, true);
 					LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex);
 					
-					jZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
+//					jZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
+					
+					jZ = Z.getIndexByTransitionPair(ltPair);
 				}
 					
 //  /* Both actions are predicate changes */
@@ -5142,7 +5177,7 @@ public class Zone{
 								" " + oldEvent + " refers to more than one variable");
 					}
 					
-					// Both inequalities are on the same varaibles.
+					// Both inequalities are on the same variables.
 					if(newList.get(0).equals(oldList.get(0))){
 						
 //      if (rv1l > rv2l) {
@@ -5215,7 +5250,7 @@ public class Zone{
 //#endif
 //        possible = false;
 						
-						if(rv1l > rv2l + getDbmEntry(jZ, iZ)){
+						if(rv1l > rv2l + Z.getDbmEntry(jZ, iZ)){
 							possible = false;
 						}
 //      }
@@ -5229,7 +5264,7 @@ public class Zone{
 //        //	    workSet->insert(e);
 						
 						
-						else if(rv2l > rv1l + getDbmEntry(iZ, jZ)){
+						else if(rv2l > rv1l + Z.getDbmEntry(iZ, jZ)){
 							workSet.remove(oldEvent);
 						}
 						
@@ -5243,7 +5278,7 @@ public class Zone{
 //        workSet->erase(*j);
 //        //workSet->insert(e);
 						
-						else if(rv1u > getDbmEntry(0, iZ) + getDbmEntry(iZ, jZ)){
+						else if(rv1u > Z.getDbmEntry(0, iZ) + Z.getDbmEntry(iZ, jZ)){
 							workSet.remove(oldEvent);
 						}
 						
@@ -5254,7 +5289,7 @@ public class Zone{
 //#endif
 //        possible = false;
 						
-						else if (rv2u > getDbmEntry(0, jZ) + getDbmEntry(jZ, iZ)){
+						else if (rv2u > Z.getDbmEntry(0, jZ) + Z.getDbmEntry(jZ, iZ)){
 							possible = false;
 						}
 						
@@ -5268,10 +5303,10 @@ public class Zone{
 //#ifdef __LHPN_ADD_ACTION__
 //        printf("Add action case 6\n");
 						
-						else if(rv1l == rv2l + getDbmEntry(jZ, iZ) &&
-								rv2l == rv1l + getDbmEntry(iZ, jZ) &&
-								rv1u == rv2u + getDbmEntry(iZ, jZ) &&
-								rv2u == rv1u + getDbmEntry(jZ, iZ)){
+						else if(rv1l == rv2l + Z.getDbmEntry(jZ, iZ) &&
+								rv2l == rv1l + Z.getDbmEntry(iZ, jZ) &&
+								rv1u == rv2u + Z.getDbmEntry(iZ, jZ) &&
+								rv2u == rv1u + Z.getDbmEntry(jZ, iZ)){
 							
 							workSet.add(e);
 							
@@ -5298,7 +5333,7 @@ public class Zone{
 //#endif
 //      workSet->erase(*j);
 					
-					if(rv2l > -1* getLowerBoundbyTransition(e.getTransition()) + getDbmEntry(iZ, jZ)){
+					if(rv2l > -1* Z.getLowerBoundbyTransition(e.getTransition()) + Z.getDbmEntry(iZ, jZ)){
 						//Probably can change this to refer directly to the zone.
 						workSet.remove(oldEvent);
 					}
@@ -5309,7 +5344,7 @@ public class Zone{
 //#endif
 //      possible = false;
 					
-					else if(rv2u > getDbmEntry(0, jZ) + getDbmEntry(jZ, iZ)){
+					else if(rv2u > Z.getDbmEntry(0, jZ) + Z.getDbmEntry(jZ, iZ)){
 						possible = false;
 					}
 					
@@ -5330,7 +5365,7 @@ public class Zone{
 //#endif
 //      possible = false;
 					
-					if(rv1l > (-1) * getLowerBoundbyTransition(e.getTransition()) + getDbmEntry(jZ, iZ)){
+					if(rv1l > (-1) * Z.getLowerBoundbyTransition(e.getTransition()) + Z.getDbmEntry(jZ, iZ)){
 						possible = false;
 					}
 					
@@ -5343,7 +5378,7 @@ public class Zone{
 //      workSet->erase(*j);
 					
 					
-					else if (rv1u > getDbmEntry(0, iZ) + getDbmEntry(iZ, jZ)){
+					else if (rv1u > Z.getDbmEntry(0, iZ) + Z.getDbmEntry(iZ, jZ)){
 						workSet.remove(oldEvent);
 					}
 					
@@ -5357,7 +5392,7 @@ public class Zone{
 			}
 				
 //if (!(workSet->empty())) {
-//  newE->push_back(*workSet);
+//  newE->pusph_back(*workSet);
 //}
 //}
 			
@@ -5419,6 +5454,12 @@ public class Zone{
 		return E;
 	}
 	
+	@Override
+	public int getVarIndex(int lpnIndex, String name){
+		return _lpnList[lpnIndex].
+				getContinuousIndexMap().getValue(name);
+	}
+	
 	/**
 	 * Adds a set item and explicitly sets a flag to remove the next set item
 	 * upon firing.
@@ -5434,11 +5475,11 @@ public class Zone{
 	 * @return
 	 * The new event set.
 	 */
-	public static LpnTranList addSetItem(LpnTranList E, Event e, State s, 
-			boolean removeNext){
-		
-		return null;
-	}
+//	public static LpnTranList addSetItem(LpnTranList E, Event e, State s, 
+//			boolean removeNext){
+//		
+//		return null;
+//	}
 	
 	/**
 	 * Updates the continuous variables that are set by firing a transition.
@@ -5608,14 +5649,16 @@ public class Zone{
 	}
 	
 	/**
-	 * Warps this Zone with the aid of rate infomation from the previous Zone. 
+	 * Warps this Zone with the aid of rate information from the previous Zone. 
 	 * 
 	 * @param oldZone
 	 * 		The previous Zone.
 	 * @return
 	 * 		The warped Zone.
 	 */
-	public void dbmWarp(Zone oldZone){
+	//*public void dbmWarp(Zone oldZone){
+	public void dbmWarp(Equivalence oldE){
+		Zone oldZone = (Zone) oldE;
 		/*
 		 *  See "Verification of Analog/Mixed-Signal Circuits Using Labeled Hybrid Petri Nets"
 		 *  by S. Little, D. Walter, C. Myers, R. Thacker, S. Batchu, and T. Yoneda
@@ -6055,7 +6098,7 @@ public class Zone{
 //		_indexToTransition = null;
 //	}
 	
-	private static IntervalPair parseRate(String rate){
+	public static IntervalPair parseRate(String rate){
 		
 		String rateNoSpaces = rate.trim();
 		
@@ -6203,7 +6246,7 @@ public class Zone{
 			return;
 		}
 		
-		// Check for the current variable in the Zone varaibles.
+		// Check for the current variable in the Zone variables.
 		int index = Arrays.binarySearch(_indexToTimerPair, contVar);
 		
 		if(index >= 0){
@@ -6300,9 +6343,10 @@ public class Zone{
 	}
 
 	/**
-	 * Returns a new Zone that has added into the DBM portion the given
-	 * continuous varaible that used to be in the zone. 
-	 * @param ltContPair The continuous varaible to move from the rate zero
+	 * Add a rate zero variable to the DBM portion of the zone. This method
+	 * is intended as an aid for when a rate zero variable gets assign a
+	 * non-zero rate.
+	 * @param ltContPair The continuous variable to move from the rate zero
 	 * variables.
 	 * @return The resulting Zone.
 	 */
@@ -6417,6 +6461,14 @@ public class Zone{
 		
 	}
 
+	/**
+	 * This method removes the variable from the DBM portion of the
+	 * zone and adds the variable to the rate-zero portion of the
+	 * zone. The purpose of this method is to handle when a non-zero
+	 * rate variable is assigned a zero rate.
+	 * @param firedRate The new assignment for the variable.
+	 * @return The resulting zone.
+	 */
 	public Zone saveOutZeroRate(LPNContinuousPair firedRate) {
 		// Check if the variable is in the zone.
 		// We assume that the rate is already zero in this case
@@ -6489,6 +6541,12 @@ public class Zone{
 		
 		
 		return newZone;
+	}
+
+	@Override
+	public int getIndexByTransitionPair(LPNTransitionPair ltPair) {
+		
+		return Arrays.binarySearch(_indexToTimerPair, ltPair);
 	}
 	
 	/**
