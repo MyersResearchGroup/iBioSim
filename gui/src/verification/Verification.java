@@ -89,7 +89,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify,
 	vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, lhpn, view, none,
-	simplify, abstractLhpn, dbm2, splitZone;
+	simplify, abstractLhpn, octagon, splitZone;
+	//dbm2
 
 	private JCheckBox abst, partialOrder, dot, verbose, graph, decomposeLPN, multipleLPNs, genrg,
 	timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
@@ -232,12 +233,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			bdd = new JRadioButton("BDD");
 			dbm = new JRadioButton("DBM");
 			smt = new JRadioButton("SMT");
-			dbm2 = new JRadioButton("DBM2");
+			//dbm2 = new JRadioButton("DBM2");
+			octagon = new JRadioButton("Octagon");
 			splitZone = new JRadioButton("Split Zone");
 			bdd.addActionListener(this);
 			dbm.addActionListener(this);
 			smt.addActionListener(this);
-			dbm2.addActionListener(this);
+			//dbm2.addActionListener(this);
+			octagon.addActionListener(this);
 			splitZone.addActionListener(this);
 		}
 		lhpn = new JRadioButton("LPN");
@@ -358,7 +361,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingMethodGroup.add(bdd);
 			timingMethodGroup.add(dbm);
 			timingMethodGroup.add(smt);
-			timingMethodGroup.add(dbm2);
+			//timingMethodGroup.add(dbm2);
+			timingMethodGroup.add(octagon);
 		} else {
 			timingMethodGroup.add(untimed);
 			timingMethodGroup.add(geometric);
@@ -397,7 +401,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingRadioPanel.add(bdd);
 			timingRadioPanel.add(dbm);
 			timingRadioPanel.add(smt);
-			timingRadioPanel.add(dbm2);
+			//timingRadioPanel.add(dbm2);
+			timingRadioPanel.add(octagon);
 		}
 		timingRadioPanel.add(lhpn);
 		timingRadioPanel.add(view);
@@ -1645,22 +1650,22 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		lhpnFile.load(directory + separator + lpnFileName);
 		Abstraction abstraction = lhpnFile.abstractLhpn(this);
 		String abstFilename;
-		if(dbm2.isSelected())
-		{
-			try {
-				verification.timed_state_exploration.dbm2.StateExploration.findStateGraph(lhpnFile, directory+separator, lpnFileName);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+		//if(dbm2.isSelected())
+		//{
+			//try {
+				//verification.timed_state_exploration.dbm2.StateExploration.findStateGraph(lhpnFile, directory+separator, lpnFileName);
+			//} catch (FileNotFoundException e) {
+				//e.printStackTrace();
+			//}
 
-			return;
-		}
+			//return;
+		//}
 
 		/**
 		 * If the splitZone option (labeled "Split Zone") is selected,
 		 * run the timed analysis.
 		 */
-		if(splitZone.isSelected())
+		if(splitZone.isSelected() || octagon.isSelected())
 		{
 
 			// Version prior to adding zones to the project states.
@@ -1787,7 +1792,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			 * The method setTimingAnalysisType sets a static variable
 			 * in the Options class that is queried by the search method.
 			 */
-			Options.setTimingAnalsysisType("zone");
+			if(splitZone.isSelected()){
+				Options.setTimingAnalsysisType("zone");
+			}
+			else if(octagon.isSelected()){
+				Options.setTimingAnalsysisType("octagon");
+			}
+			else{
+				throw new IllegalStateException("Called the timing code"
+						+ " without having selected zones or octagons.");
+			}
 			Options.set_resetOnce(resetOnce.isSelected());
 			
 			Zone.setSubsetFlag(!timsubset.isSelected());
