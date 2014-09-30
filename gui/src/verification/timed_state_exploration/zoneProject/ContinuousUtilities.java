@@ -1,10 +1,12 @@
 package verification.timed_state_exploration.zoneProject;
 
 import java.util.ArrayList;
+
 import lpn.parser.LhpnFile;
 import lpn.parser.Variable;
 import verification.platu.lpn.DualHashMap;
 import verification.platu.stategraph.State;
+import verification.timed_state_exploration.octagon.Equivalence;
 
 /**
  * This class is meant as a utilities package. It contains static methods for
@@ -44,7 +46,7 @@ public class ContinuousUtilities {
 	 * 		The maximum that contVar can be set to before an inequality
 	 * 		must change truth value.
 	 */
-	public static int maxAdvance(Zone z, LPNTransitionPair contVar,
+	public static int maxAdvance(Equivalence z, LPNTransitionPair contVar,
 			State[] localStates){
 		
 		/*
@@ -369,15 +371,18 @@ public class ContinuousUtilities {
 					if(ineqValue != 0){
 						
 						// Check if the entire range lies below the constant.
-						if(z.getDbmEntry(0, contDBMIndex)
+						//*if(z.getDbmEntry(0, contDBMIndex)
+						if(z.getUpperBoundTrue(contDBMIndex)
 								< chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
 //							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
-							newMin = z.getDbmEntry(0, contDBMIndex);
+							//*newMin = z.getDbmEntry(0, contDBMIndex);
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 							System.err.println("maxAdvance: Impossible case 1.");
 						}
 
 						// Check if the entire range lies above the constant.
-						else if ((-1)*z.getDbmEntry(contDBMIndex,0)
+						//*else if ((-1)*z.getDbmEntry(contDBMIndex,0)
+						else if ((-1)*z.getLowerBoundTrue(contDBMIndex)
 								> chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
@@ -394,7 +399,8 @@ public class ContinuousUtilities {
 						// The inequality is marked false.
 						
 						// Check if the entire range lies below the constant.
-						if(z.getDbmEntry(0, contDBMIndex)
+						//*if(z.getDbmEntry(0, contDBMIndex)
+						if(z.getUpperBoundTrue(contDBMIndex)
 								< chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
 							
 							newMin = chkDiv(ineq.getConstant(), 
@@ -402,17 +408,20 @@ public class ContinuousUtilities {
 						}
 						
 						// Check if the entire range lies above the constant.
-						else if((-1)*z.getDbmEntry(contDBMIndex, 0)
+						//*else if((-1)*z.getDbmEntry(contDBMIndex, 0)
+						else if((-1)*z.getLowerBoundTrue(contDBMIndex)
 								> chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
 							
 //							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
-							newMin = z.getDbmEntry(0, contDBMIndex);
+							//*newMin = z.getDbmEntry(0, contDBMIndex);
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 							System.err.print("maxAdvance : Impossible case 3.");
 						}
 
 						else{
 							// straddle case
-							newMin = z.getDbmEntry(0,contDBMIndex);
+							//*newMin = z.getDbmEntry(0,contDBMIndex);
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 						}
 					}
 				}
@@ -425,28 +434,32 @@ public class ContinuousUtilities {
 						// The inequality is marked true.
 
 						// Check if the entire range lies below the constant.
-						if(z.getDbmEntry(contDBMIndex,0)
+						//*if(z.getDbmEntry(contDBMIndex,0)
+						if(z.getLowerBoundTrue(contDBMIndex)
 								< (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
-							newMin = z.getDbmEntry(0,contDBMIndex);
+							//*newMin = z.getDbmEntry(0,contDBMIndex);
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 							System.err.println("Warning: my impossible case 2.");
 						}
 
 						// Check if the entire range lies above the constant.
-						else if((-1)*z.getDbmEntry(0, contDBMIndex)
+						//*else if((-1)*z.getDbmEntry(0, contDBMIndex)
+						else if((-1)*z.getUpperBoundTrue(contDBMIndex)	
 								> (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = chkDiv(ineq.getConstant(), 
 									z.getCurrentRate(contVar), false);
-							System.err.println("Warining: impossible case 8a found.");
+//							System.err.println("Warining: impossible case 8a found.");
 						}
 
 						else{
 							// straddle case
 //							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
-							newMin = z.getDbmEntry(0, contDBMIndex);
+							//*newMin = z.getDbmEntry(0, contDBMIndex);
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 						}
 
 					}
@@ -455,7 +468,8 @@ public class ContinuousUtilities {
 						// The inequality is marked false.
 						
 						// Check if the entire range lies below the constant.
-						if(z.getDbmEntry(contDBMIndex,0)
+						//*if(z.getDbmEntry(contDBMIndex,0)
+						if(z.getLowerBoundTrue(contDBMIndex)
 								< (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
@@ -463,11 +477,15 @@ public class ContinuousUtilities {
 						}
 
 						// Check if the entire range lies above the constant.
-						else if((-1)*z.getDbmEntry(0, contDBMIndex)
+						//*else if((-1)*z.getDbmEntry(0, contDBMIndex)
+						else if((-1)*z.getUpperBoundTrue(contDBMIndex)
 								> (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
-							newMin = z.getDbmEntry(0,contDBMIndex);
+							//*newMin = z.getDbmEntry(0,contDBMIndex);
+							int tmp = z.getUpperBoundTrue(contDBMIndex);
+							
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 							System.err.println("maxAdvance : Impossible case 4.");
 						}
 
@@ -490,7 +508,8 @@ public class ContinuousUtilities {
 						// The inequality is marked true.
 
 						// Check if the entire range lies below the constant.
-						if(z.getDbmEntry(0, contDBMIndex)
+						//*if(z.getDbmEntry(0, contDBMIndex)
+						if(z.getUpperBoundTrue(contDBMIndex)
 								< chkDiv(ineq.getConstant(), 
 										z.getCurrentRate(contVar), false)){
 							
@@ -499,7 +518,8 @@ public class ContinuousUtilities {
 						}
 
 						// Check if the entire range lies above the constant.
-						else if((-1)*z.getDbmEntry(contDBMIndex, 0)
+						//*else if((-1)*z.getDbmEntry(contDBMIndex, 0)
+						else if((-1)*z.getLowerBoundTrue(contDBMIndex)
 								> chkDiv(ineq.getConstant(), z.getCurrentRate(contVar),false)){
 							
 							newMin = Zone.INFINITY;
@@ -508,7 +528,8 @@ public class ContinuousUtilities {
 
 						else{
 							//straddle case
-							newMin = z.getDbmEntry(0,contDBMIndex);
+							//*newMin = z.getDbmEntry(0,contDBMIndex);
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 						}
 
 					}
@@ -517,21 +538,25 @@ public class ContinuousUtilities {
 						// The inequality is marked false.
 						
 						// Check if the entire range lies below the constant.
-						if(z.getDbmEntry(0, contDBMIndex)
+						//*if(z.getDbmEntry(0, contDBMIndex)
+						if(z.getUpperBoundTrue(contDBMIndex)
 								< chkDiv(ineq.getConstant(), 
 										z.getCurrentRate(contVar), false)){
 							
 //							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
-							newMin = z.getDbmEntry(0, contDBMIndex);
+							//*newMin = z.getDbmEntry(0, contDBMIndex);
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 							System.err.println("maxAdvance : Impossible case 7.");
 						}
 
 						// Check if the entire range lies above the constant.
-						else if((-1)*z.getDbmEntry(contDBMIndex, 0)
+						//*else if((-1)*z.getDbmEntry(contDBMIndex, 0)
+						else if((-1)*z.getLowerBoundTrue(contDBMIndex)
 								> chkDiv(ineq.getConstant(), 
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = Zone.INFINITY;
+							System.err.println("Warining: impossible case 8a found.");
 						}
 
 						else{
@@ -551,7 +576,8 @@ public class ContinuousUtilities {
 						// The inequality is marked true.
 
 						// Check if the entire range lies below the constant.
-						if(z.getDbmEntry(contDBMIndex, 0)
+						//*if(z.getDbmEntry(contDBMIndex, 0)
+						if(z.getLowerBoundTrue(contDBMIndex)
 								< (-1)*chkDiv(ineq.getConstant(), 
 										z.getCurrentRate(contVar), false)){
 							
@@ -559,11 +585,13 @@ public class ContinuousUtilities {
 						}
 						
 						// Check if the entire range lies above the constant.
-						else if((-1)*z.getDbmEntry(0, contDBMIndex)
+						//*else if((-1)*z.getDbmEntry(0, contDBMIndex)
+						else if ((-1)*z.getUpperBoundTrue(contDBMIndex)
 								> (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
-							newMin = z.getDbmEntry(0, contDBMIndex);
+							//*newMin = z.getDbmEntry(0, contDBMIndex);
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 							System.err.println("Warning : Impossible case 8.");
 						}
 
@@ -580,16 +608,19 @@ public class ContinuousUtilities {
 						// The inequality is marked false.
 
 						// Check if the entire range lies below the constant.
-						if(z.getDbmEntry(contDBMIndex,0)
+						//*if(z.getDbmEntry(contDBMIndex,0)
+						if(z.getLowerBoundTrue(contDBMIndex)
 								< chkDiv((-1)*ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
-							newMin = z.getDbmEntry(0,contDBMIndex);
+							//*newMin = z.getDbmEntry(0,contDBMIndex);
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 							System.err.println("Warning : Impossible case 6");
 						}
 
 						// Check if the entire range lies above the constant.
-						else if((-1)*z.getDbmEntry(0,contDBMIndex)
+						//*else if((-1)*z.getDbmEntry(0,contDBMIndex)
+						else if((-1)*z.getUpperBoundTrue(contDBMIndex)
 								> (-1)*chkDiv(ineq.getConstant(),
 										(-1)*z.getCurrentRate(contVar),false)){
 							
@@ -602,7 +633,8 @@ public class ContinuousUtilities {
 							// straddle case
 							
 //							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
-							newMin = z.getDbmEntry(0, contDBMIndex);
+							//*newMin = z.getDbmEntry(0, contDBMIndex);
+							newMin = z.getUpperBoundTrue(contDBMIndex);
 						}
 
 
@@ -629,7 +661,7 @@ public class ContinuousUtilities {
 	 * @return
 	 * 		True if the inequality can change truth value, false otherwise.
 	 */
-	public static boolean inequalityCanChange(Zone z, InequalityVariable ineq, State localState){
+	public static boolean inequalityCanChange(Equivalence z, InequalityVariable ineq, State localState){
 		
 		/*
 		 * The Inequality is assumed to be of the form 
@@ -721,7 +753,8 @@ public class ContinuousUtilities {
 				// Inequality is x>a. This is the case
 				// x lies above the and decreases below it making
 				// the inequality turn from true to false.
-				if((-1) * z.getDbmEntry(0, zoneIndex) <= 
+				//if((-1) * z.getDbmEntry(0, zoneIndex) <=
+				if((-1)*z.getUpperBoundTrue(zoneIndex) <=
 						(-1)*chkDiv(ineq.getConstant(), currentRate, false)){	
 					return true;
 				}
@@ -733,7 +766,8 @@ public class ContinuousUtilities {
 			// the constant thus causing the inequality to go from
 			// false to true.
 			else if(currentRate > 0 && currentValue == 0){
-				if(z.getDbmEntry(0, zoneIndex) >= 
+				//if(z.getDbmEntry(0, zoneIndex) >= 
+				if(z.getUpperBoundTrue(zoneIndex) >=
 						chkDiv(ineq.getConstant(), currentRate, false)){
 					return true;
 				}
@@ -748,7 +782,8 @@ public class ContinuousUtilities {
 			// it is below the constant thus causing the constant to
 			// go from false to true.
 			if(currentRate < 0 && currentValue == 0){
-				if((-1) * z.getDbmEntry(0, zoneIndex) <= 
+				//if((-1) * z.getDbmEntry(0, zoneIndex) <=
+				if((-1)*z.getUpperBoundTrue(zoneIndex) <=
 						(-1)*chkDiv(ineq.getConstant(), currentRate, false)){
 					return true;
 				}
@@ -760,7 +795,8 @@ public class ContinuousUtilities {
 			// thus changing the inequality from true to false.
 			else if (currentRate > 0 && 
 					currentValue != 0){
-				if(z.getDbmEntry(0, zoneIndex) >= 
+				//if(z.getDbmEntry(0, zoneIndex) >=
+				if(z.getUpperBoundTrue(zoneIndex) >=
 						chkDiv(ineq.getConstant(), currentRate, false)){
 					return true;
 				}
@@ -829,7 +865,8 @@ public class ContinuousUtilities {
 	 * @param s
 	 * 		The state to update the inequalities in.
 	 */
-	public static void updateInitialInequalities(Zone z, State s){
+	//*public static void updateInitialInequalities(Zone z, State s){
+	public static void updateInitialInequalities(Equivalence z, State s){
 		// Extract the LPN.
 		LhpnFile lpn = s.getLpn();
 
