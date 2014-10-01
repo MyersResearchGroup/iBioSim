@@ -172,7 +172,7 @@ public class Project {
 		for (int index = 0; index < lpnCnt; index++) {
 			LhpnFile curLpn = sgArray[index].getLpn();
 			StateGraph curSg = sgArray[index];			
-			initStateArray[index] = curSg.genInitialState();
+			initStateArray[index] = curSg.genInitialState();			
 			int[] curVariableVector = initStateArray[index].getVariableVector();
 			varValMap = curLpn.getAllVarsWithValuesAsInt(curVariableVector);
 		}
@@ -197,8 +197,7 @@ public class Project {
 				}
 				ContinuousUtilities.updateInitialInequalities(z, ls[0]);
 				initStateArray[index] = curSg.genInitialState();
-			}
-			// TODO: Is it necessary to update initStateArray for un-timed case?
+			}			
 			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());			
 			initStateArray[index] = curSg.addState(initStateArray[index]);	
 		}
@@ -398,7 +397,7 @@ public class Project {
 			if (isPOR)
 				fileName = Options.getPrjSgPath() + Options.getLogName() + "_"
 						+ Options.getPOR() + "_" + Options.getCycleClosingMthd() + "_" 
-						+ Options.getCycleClosingPersistentMethd() +  "_runtime.log";
+						+ Options.getCycleClosingStrongStubbornMethd() +  "_runtime.log";
 			else
 				fileName = Options.getPrjSgPath() + Options.getLogName() + "_full_runtime.log";
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
