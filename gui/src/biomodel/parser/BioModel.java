@@ -6902,8 +6902,10 @@ public class BioModel {
 		}
 		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
 		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
-		if(model.getSBMLDocument().isPackageEnabled(ArraysConstants.shortLabel))
+		if(model.getSBMLDocument().isPackageEnabled(ArraysConstants.shortLabel)) {
+			// TODO: validate arrays before flattening
 			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
+		}
 		model.getSBMLDocument().disablePackage(ArraysConstants.namespaceURI);
 		if(removeComp)
 		{
