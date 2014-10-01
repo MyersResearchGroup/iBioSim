@@ -1276,7 +1276,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					if (ampleMethdsIndex == 1) { 
 						Options.setPOR("tb");
 						Options.setCycleClosingMthd("behavioral");
-						Options.setCycleClosingAmpleMethd("cctb");
+						Options.setCycleClosingStrongStubbornMethd("cctb");
 						if (Options.getMarkovianModelFlag()) {
 							String[] tranRateDepSpectrum = {"Full dependency relations", "Fastest average transition rates",
 									"Ignore dependency relations within a rate change tolerance", "Ignore dependency relations"};
@@ -1315,12 +1315,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					if (ampleMethdsIndex == 2) {
 						Options.setPOR("tboff");
 						Options.setCycleClosingMthd("behavioral");
-						Options.setCycleClosingAmpleMethd("cctboff");
+						Options.setCycleClosingStrongStubbornMethd("cctboff");
 					}
 					if (ampleMethdsIndex == 3) {
 						Options.setPOR("behavioral");
 						Options.setCycleClosingMthd("behavioral");
-						Options.setCycleClosingAmpleMethd("cctboff");
+						Options.setCycleClosingStrongStubbornMethd("cctboff");
 					}
 					// TODO: Choose different cycle closing methods
 					//					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();

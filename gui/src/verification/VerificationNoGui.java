@@ -31,22 +31,22 @@ public class VerificationNoGui {
 			if (args[i].equals("-portb")) {
 				Options.setPOR("tb");
 				Options.setCycleClosingMthd("behavioral");
-				Options.setCycleClosingAmpleMethd("cctb");				
+				Options.setCycleClosingStrongStubbornMethd("cctb");				
 			}
 			else if (args[i].equals("-porbehavioral")) {
 				Options.setPOR("behavioral");
 				Options.setCycleClosingMthd("behavioral");
-				Options.setCycleClosingAmpleMethd("none");
+				Options.setCycleClosingStrongStubbornMethd("none");
 			}
 			else if (args[i].equals("-porbehavioral")) {
 				Options.setPOR("behavioral");
 				Options.setCycleClosingMthd("behavioral");
-				Options.setCycleClosingAmpleMethd("cctboff");
+				Options.setCycleClosingStrongStubbornMethd("cctboff");
 			}
 			else if (args[i].equals("-portboff")) {
 				Options.setPOR("tboff");
 				Options.setCycleClosingMthd("behavioral");
-				Options.setCycleClosingAmpleMethd("cctboff");
+				Options.setCycleClosingStrongStubbornMethd("cctboff");
 			}
 			else if (args[i].contains("-dir=")) { // Directory should be provided as an argument starting with -dir:
 				directory = args[i].trim().substring(5);
@@ -66,9 +66,6 @@ public class VerificationNoGui {
 //					Options.setMemoryUpperBound((long)(Float.parseFloat(memUpperBound) * 1000000));
 //				}
 //			}
-			else if (args[i].contains("-disableDeadlockPreserve")) {
-				Options.disablePORdeadlockPreserve();
-			}
 			else if (args[i].contains("-debugON")) {
 				Options.setDebugMode(true);
 				System.out.println("Debug mode is ON.");
