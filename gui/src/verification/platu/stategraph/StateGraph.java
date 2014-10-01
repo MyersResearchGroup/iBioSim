@@ -436,7 +436,7 @@ public class StateGraph {
     }
 
     /**
-     * Return the set of all LPN transitions that are enabled in current state. The enabled transitions 
+     * Return the set of all enabled local transitions in the current local state. The enabled transitions 
      * are read from the tranVector in current state. 
      * @param curState
      * @return
@@ -970,8 +970,6 @@ public class StateGraph {
         // Enabled transition vector update
 	   	boolean[] newTranVector = updateTranVector(curState, curNewMarking, newVariableVector, firedTran);
         State newState = thisSg.addState(new State(this.lpn, curNewMarking, newVariableVector, newTranVector));
-
-	
         
         // TODO: (future) assertions in our LPN?
         /*
@@ -2183,7 +2181,7 @@ public class StateGraph {
 	}
     
 	/**
-	 * Find enabled transitions in the initial state, and construct the tranVector in this state.
+	 * Find all locally enabled transitions in the initial local state, and construct the corresponding tranVector in this state.
 	 * @param initialVector
 	 * @return
 	 */
