@@ -433,7 +433,6 @@ public class LPNTran {
      * @param curLpnIndex
      * @return
      */
-    // (done) Moved fire to StateGraph
     public State[] fire(final StateGraph[] curSgArray, final int[] curStateIdxArray) {
     	State[] stateArray = new State[curSgArray.length];
     	for(int i = 0; i < curSgArray.length; i++)
@@ -442,7 +441,7 @@ public class LPNTran {
     	return this.fire(curSgArray, stateArray);
     }
     
- // (done) Moved fire to StateGraph
+    
     public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray) {
     	int thisLpnIndex = this.getLpn().getIndex(); 
     	State[] nextStateArray = curStateArray.clone();
