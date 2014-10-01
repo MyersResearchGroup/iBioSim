@@ -103,15 +103,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					en++;
 					eventId = "event" + en;
 				}
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
-				String dimens = " ";
-				for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
-					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
-					dimens += "[" + dimX.getSize() + "]";							
-				}
-				event.setId(eventId+dimens);
+				event.setId(eventId);
 			}
 			ev[i] = event.getId();
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				ev[i] += "[" + dimX.getSize() + "]";
+			}
 		}
 		JPanel addRem = new JPanel();
 		if (!biosim.lema) {
@@ -413,19 +412,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				if (isTransition) eventId = "t" + en;
 				else eventId = "event" + en;
 			}
-			ListOf<Event> e = bioModel.getSBMLDocument().getModel().getListOfEvents();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getEventCount(); i++) {
-				org.sbml.jsbml.Event event = e.get(i);
-				if (event.getId().equals(selected)) {
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
-					String dimInID = "";
-					for(int i1 = sBasePlugin.getDimensionCount()-1; i1>=0; i1--){
-						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
-						dimInID += "[" + dimX.getSize() + "]";
-					}
-					eventID.setText(eventId+dimInID);
-				}
-			}
+			eventID.setText(eventId);
 		}
 		Utility.sort(assign);
 		eventAssign.setListData(assign);
@@ -859,6 +846,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						int index = events.getSelectedIndex();
 						ev[index] = e.getId();
+						for (int i = 1; i < dimID.length; i++) {
+							ev[index] += "[" + dimID[i] + "]";
+						}
 						Utility.sort(ev);
 						events.setListData(ev);
 						events.setSelectedIndex(index);
@@ -1069,8 +1059,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							port.setIdRef(e.getId());
 						}
 					}
-					
-					Object[] adding = { e.getId() };
+					String eventEntry = e.getId();
+					for (int i = 1; i < dimID.length; i++) {
+						eventEntry += "[" + dimID[i] + "]";
+					}
+					Object[] adding = { eventEntry };
 					// Object[] adding = {
 					// myFormulaToString(e.getTrigger().getMath()) };
 					add.setListData(adding);
@@ -1196,15 +1189,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					en++;
 					eventId = "event" + en;
 				}
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
-				String dimens = " ";
-				for(int i1 = 0; i1<sBasePlugin.getDimensionCount(); i1++){
-					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
-					dimens += "[" + dimX.getSize() + "]";							
-				}
-				event.setId(eventId+dimens);
+				event.setId(eventId);
 			}
 			ev[i] = event.getId();
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				ev[i] += "[" + dimX.getSize() + "]";
+			}
 		}
 		Utility.sort(ev);
 		events.setListData(ev);
@@ -1226,7 +1218,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private void removeEvent(JList events, BioModel gcm) {
 		int index = events.getSelectedIndex();
 		if (index != -1) {
-			String selected = ((String) events.getSelectedValue());
+			String selected = ((String) events.getSelectedValue()).split("\\[")[0];
 			removeTheEvent(gcm, selected);
 			events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			Utility.remove(events);
@@ -1571,7 +1563,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No event selected.", "Must Select an Event", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			String selected = ((String) events.getSelectedValue());
+			String selected = ((String) events.getSelectedValue()).split("\\[")[0];
 			eventEditor("OK",selected,false);
 		}
 		// if the remove event button is clicked
@@ -1609,7 +1601,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					JOptionPane.showMessageDialog(Gui.frame, "No event selected.", "Must Select an Event", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				String selected = ((String) events.getSelectedValue());
+				String selected = ((String) events.getSelectedValue()).split("\\[")[0];
 				eventEditor("OK",selected,false);
 			}
 			else if (e.getSource() == eventAssign) {

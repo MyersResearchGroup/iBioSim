@@ -33,6 +33,7 @@ import org.sbml.jsbml.SpeciesReference;
 //SpeciesType not supported in Level 3
 //import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
@@ -127,23 +128,18 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		String[] specs = new String[model.getSpeciesCount()];
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = model.getSpecies(i);
-			/*
-			 * if (species.isSetSpeciesType()) { specs[i] = species.getId() +
-			 * " " + species.getSpeciesType() + " " + species.getCompartment();
-			 * } else {
-			 */
-			specs[i] = species.getId(); // + " " + species.getCompartment();
-			// }
+			specs[i] = species.getId(); 
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				specs[i] += "[" + dimX.getSize() + "]";
+			}
 			if (species.isSetInitialAmount()) {
 				specs[i] += " " + species.getInitialAmount();
 			}
 			else {
 				specs[i] += " " + species.getInitialConcentration();
 			}
-			/*
-			 * if (species.isSetUnits()) { specs[i] += " " + species.getUnits();
-			 * }
-			 */
 			if (paramsOnly) {
 				for (int j = 0; j < getParams.size(); j++) {
 					if (getParams.get(j).split(" ")[0].equals(species.getId())) {
@@ -196,6 +192,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = model.getSpecies(i);
 			specs[i] = species.getId();
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				specs[i] += "[" + dimX.getSize() + "]";
+			}
 			if (species.isSetInitialAmount()) {
 				specs[i] += " " + species.getInitialAmount();
 			}
@@ -205,7 +206,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			if (paramsOnly) {
 				for (int j = 0; j < parameterChanges.size(); j++) {
 					String[] splits = parameterChanges.get(j).split(" ");
-					if (splits[0].equals(specs[i].split(" ")[0])) {
+					if (splits[0].equals(specs[i].split("\\[| ")[0])) {
 						parameterChanges.set(j,	specs[i] + " " + splits[splits.length-2] + " " + 
 								splits[splits.length-1]);
 						specs[i] = parameterChanges.get(j);
@@ -216,7 +217,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		Utility.sort(specs);
 		int selected = 0;
 		for (int i = 0; i < specs.length; i++) {
-			if (specs[i].split(" ")[0].equals(selectedSpecies)) {
+			if (specs[i].split("\\[| ")[0].equals(selectedSpecies)) {
 				selected = i;
 			}
 		}
@@ -363,7 +364,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		if (option.equals("OK")) {
 			try {
-				Species specie = bioModel.getSBMLDocument().getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]);
+				Species specie = bioModel.getSBMLDocument().getModel().getSpecies(((String) species.getSelectedValue()).split("\\[| ")[0]);
 				ID.setText(specie.getId());
 				selectedID = specie.getId();
 				Name.setText(specie.getName());
@@ -412,7 +413,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 								.getSelectedValue()).contains("Sweep"))) {
 					type.setSelectedItem("Modified");
 					sweep.setEnabled(true);
-					init.setText(((String) species.getSelectedValue()).split(" ")[((String) species.getSelectedValue()).split(" ").length - 1]);
+					init.setText(((String) species.getSelectedValue()).split("\\[| ")[((String) species.getSelectedValue()).split("\\[| ").length - 1]);
 					init.setEnabled(true);
 					initLabel.setEnabled(false);
 					if (init.getText().trim().startsWith("(")) {
@@ -525,12 +526,12 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						init.setEnabled(false);
 						initLabel.setEnabled(false);
 						SBMLDocument d = SBMLutilities.readSBML(file);
-						if (d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).isSetInitialAmount()) {
-							init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).getInitialAmount() + "");
+						if (d.getModel().getSpecies(((String) species.getSelectedValue()).split("\\[| ")[0]).isSetInitialAmount()) {
+							init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split("\\[| ")[0]).getInitialAmount() + "");
 							initLabel.setSelectedItem("Initial Amount");
 						}
 						else {
-							init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).getInitialConcentration() + "");
+							init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split("\\[| ")[0]).getInitialConcentration() + "");
 							initLabel.setSelectedItem("Initial Concentration");
 						}
 					}
@@ -609,7 +610,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						specs[i] = species.getModel().getElementAt(i).toString();
 					}
 					int index = species.getSelectedIndex();
-					String[] splits = specs[index].split(" ");
+					String[] splits = specs[index].split("\\[| ");
 					for (int i = 0; i < splits.length - 2; i++) {
 						addSpec += splits[i] + " ";
 					}
@@ -649,11 +650,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				if (!error && option.equals("OK") && specConstant.getSelectedItem().equals("true")) {
-					String val = ((String) species.getSelectedValue()).split(" ")[0];
+					String val = ((String) species.getSelectedValue()).split("\\[| ")[0];
 					error = SBMLutilities.checkConstant(bioModel.getSBMLDocument(), "Species", val);
 				}
 				if (!error && option.equals("OK") && specBoundary.getSelectedItem().equals("false")) {
-					String val = ((String) species.getSelectedValue()).split(" ")[0];
+					String val = ((String) species.getSelectedValue()).split("\\[| ")[0];
 					error = checkBoundary(val, specConstant.getSelectedItem().equals("false"));
 				}
 				if (!error) {
@@ -663,7 +664,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 							specs[i] = species.getModel().getElementAt(i).toString();
 						}
 						int index1 = species.getSelectedIndex();
-						String val = ((String) species.getSelectedValue()).split(" ")[0];
+						String val = ((String) species.getSelectedValue()).split("\\[| ")[0];
 						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						specs = Utility.getList(specs, species);
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -885,7 +886,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		
 		//set the values of the species fields using the sbml gcm.getSBMLDocument()
 			
-		Species selectedSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
+		Species selectedSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split("\\[| ")[0]);
 
 		ID.setText(selectedSpecies.getId());
 		ID.setEditable(false);
@@ -939,7 +940,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		
 		if (value == JOptionPane.YES_OPTION) {
 			
-			selectedSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
+			selectedSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split("\\[| ")[0]);
 			
 			//set the species settings in the sbml model
 			selectedSpecies.setBoundaryCondition(Boolean.valueOf((String) specBoundary.getModel().getSelectedItem()));
@@ -1109,7 +1110,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private void removeSpecies() {
 		int index = species.getSelectedIndex();
 		if (index != -1) {
-			String id = ((String) species.getSelectedValue()).split(" ")[0];
+			String id = ((String) species.getSelectedValue()).split("\\[| ")[0];
 			if (BioModel.isPromoterSpecies(bioModel.getSBMLDocument().getModel().getSpecies(id))) {
 				bioModel.removePromoter(id);
 				modelEditor.setDirty(true);
@@ -1191,7 +1192,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			if (species.getModel().getSize() > 0) {
 				//if we're dealing with grid species, use a different species editor
 				if (AnnotationUtility.parseGridAnnotation(bioModel.getSBMLDocument().getModel().
-								getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0]))!=null) {
+								getSpecies(((String)species.getModel().getElementAt(0)).split("\\[| ")[0]))!=null) {
 					openGridSpeciesEditor();
 				}
 				else {
@@ -1200,7 +1201,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(Gui.frame, "No species selected.", "Must Select A Species", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					String id = ((String) species.getSelectedValue()).split(" ")[0];
+					String id = ((String) species.getSelectedValue()).split("\\[| ")[0];
 					if (BioModel.isPromoterSpecies(bioModel.getSBMLDocument().getModel().getSpecies(id))) {
 						modelEditor.launchPromoterPanel(id);
 					} else {
@@ -1228,7 +1229,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == species) {
 				if (AnnotationUtility.parseGridAnnotation(bioModel.getSBMLDocument().getModel().
-								getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0]))!=null) {
+								getSpecies(((String)species.getModel().getElementAt(0)).split("\\[| ")[0]))!=null) {
 					openGridSpeciesEditor();
 				}
 				else {
@@ -1236,7 +1237,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(Gui.frame, "No species selected.", "Must Select A Species", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					String id = ((String) species.getSelectedValue()).split(" ")[0];
+					String id = ((String) species.getSelectedValue()).split("\\[| ")[0];
 					if (BioModel.isPromoterSpecies(bioModel.getSBMLDocument().getModel().getSpecies(id))) {
 						modelEditor.launchPromoterPanel(id);
 					} else {

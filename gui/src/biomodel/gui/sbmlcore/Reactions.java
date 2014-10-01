@@ -248,6 +248,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = listOfReactions.get(i);
 			reacts[i] = reaction.getId();
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				reacts[i] += "[" + dimX.getSize() + "]";
+			}
 			if (paramsOnly && reaction.getKineticLaw()!=null) {
 				ListOf<LocalParameter> params = reaction.getKineticLaw().getListOfLocalParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
@@ -431,7 +436,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < reac.getReactantCount(); i++) {
 				SpeciesReference reactant = listOfReactants.get(i);
 				changedReactants.add(reactant);
-				reacta[i] = reactant.getSpecies() + " " + reactant.getStoichiometry();
+				reacta[i] = reactant.getSpecies();
+				// TODO: Need to show reactant id and its dimensions and perhaps species and index
+				/*
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
+				for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+					reacts[i] += "[" + dimX.getSize() + "]";
+				}
+				*/
+				reacta[i] += " " + reactant.getStoichiometry();
 			}
 		}
 		Utility.sort(reacta);
@@ -1043,7 +1057,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					if (!error) {
 						if (index >= 0) {
 							if (!paramsOnly) {
-								reacts[index] = dimID[0];
+								reacts[index] = dimID[0].trim(); 
+								for (int i = 1; i < dimID.length; i++) {
+									reacts[index] += "[" + dimID[i] + "]";
+								}
 							}
 							reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 							reacts = Utility.getList(reacts, reactions);
@@ -1178,7 +1195,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					if (!error) {
 						JList add = new JList();
-						Object[] adding = { dimID[0] };
+						String reactionEntry = dimID[0].trim(); 
+						for (int i = 1; i < dimID.length; i++) {
+							reactionEntry += "[" + dimID[i] + "]";
+						}
+						Object[] adding = { reactionEntry };
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -1682,7 +1703,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								reacts = Utility.getList(reacts, reactions);
 								reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-								reacts[index1] = reacValue.split(" ")[0];
+								reacts[index1] = reacValue.split("\\[| ")[0];
 								Utility.sort(reacts);
 								reactions.setListData(reacts);
 								reactions.setSelectedIndex(index1);
@@ -3148,7 +3169,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private void removeReaction() {
 		int index = reactions.getSelectedIndex();
 		if (index != -1) {
-			String selected = ((String) reactions.getSelectedValue()).split(" ")[0];
+			String selected = ((String) reactions.getSelectedValue()).split("\\[| ")[0];
 			Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(selected);
 			if (BioModel.isProductionReaction(reaction)) {
 				bioModel.removePromoter(SBMLutilities.getPromoterId(reaction));
@@ -3188,7 +3209,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private void removeReactant() {
 		int index = reactants.getSelectedIndex();
 		if (index != -1) {
-			String v = ((String) reactants.getSelectedValue()).split(" ")[0];
+			String v = ((String) reactants.getSelectedValue()).split("\\[| ")[0];
 			for (int i = 0; i < changedReactants.size(); i++) {
 				if (changedReactants.get(i).getSpecies().equals(v) && 
 						!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), changedReactants.get(i).getId(), false, true,true)) {
@@ -3215,7 +3236,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private void removeProduct() {
 		int index = products.getSelectedIndex();
 		if (index != -1) {
-			String v = ((String) products.getSelectedValue()).split(" ")[0];
+			String v = ((String) products.getSelectedValue()).split("\\[| ")[0];
 			for (int i = 0; i < changedProducts.size(); i++) {
 				if (changedProducts.get(i).getSpecies().equals(v) && 
 						!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), changedProducts.get(i).getId(), false, true, true)) {
@@ -3242,7 +3263,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private void removeModifier() {
 		int index = modifiers.getSelectedIndex();
 		if (index != -1) {
-			String v = ((String) modifiers.getSelectedValue()).split(" ")[0];
+			String v = ((String) modifiers.getSelectedValue()).split("\\[| ")[0];
 			for (int i = 0; i < changedModifiers.size(); i++) {
 				if (changedModifiers.get(i).getSpecies().equals(v)) {
 					if (!changedModifiers.get(i).isSetSBOTerm() || 
@@ -3412,7 +3433,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private void reacRemoveParam() {
 		int index = reacParameters.getSelectedIndex();
 		if (index != -1) {
-			String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
+			String v = ((String) reacParameters.getSelectedValue()).split("\\[| ")[0];
 			if (reactions.getSelectedIndex() != -1) {
 				String kinetic = kineticLaw.getText().trim();
 				String[] vars = new String[0];
@@ -3449,7 +3470,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private void removeLocalParameter(String v) {
 		for (int i = 0; i < reacParameters.getModel().getSize(); i++) {
-			if (((String)reacParameters.getModel().getElementAt(i)).split(" ")[0].equals(v)) {
+			if (((String)reacParameters.getModel().getElementAt(i)).split("\\[| ")[0].equals(v)) {
 				reacParameters.setSelectedIndex(i);
 				break;
 			}
@@ -3687,7 +3708,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No reaction selected.", "Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			reactionsEditor(bioModel, "OK", ((String) reactions.getSelectedValue()).split(" ")[0], false);
+			reactionsEditor(bioModel, "OK", ((String) reactions.getSelectedValue()).split("\\[| ")[0], false);
 			initialsPanel.refreshInitialAssignmentPanel(bioModel);
 			rulesPanel.refreshRulesPanel();
 		}
@@ -3717,7 +3738,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.", "Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null, false, null);
+			reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split("\\[| ")[0], null, false, null);
 			initialsPanel.refreshInitialAssignmentPanel(bioModel);
 			rulesPanel.refreshRulesPanel();
 		}
@@ -3735,7 +3756,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No product selected.", "Must Select A Product", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			productsEditor(bioModel, "OK", ((String) products.getSelectedValue()).split(" ")[0], null, false, null);
+			productsEditor(bioModel, "OK", ((String) products.getSelectedValue()).split("\\[| ")[0], null, false, null);
 			initialsPanel.refreshInitialAssignmentPanel(bioModel);
 			rulesPanel.refreshRulesPanel();
 		}
@@ -3753,7 +3774,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No modifier selected.", "Must Select A Modifier", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			modifiersEditor(bioModel,"OK", ((String) modifiers.getSelectedValue()).split(" ")[0], null, false, null);
+			modifiersEditor(bioModel,"OK", ((String) modifiers.getSelectedValue()).split("\\[| ")[0], null, false, null);
 		}
 		// if the remove modifiers button is clicked
 		else if (e.getSource() == removeModifier) {
@@ -3811,7 +3832,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					JOptionPane.showMessageDialog(Gui.frame, "No reaction selected.", "Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				reactionsEditor(bioModel, "OK", ((String) reactions.getSelectedValue()).split(" ")[0], false);
+				reactionsEditor(bioModel, "OK", ((String) reactions.getSelectedValue()).split("\\[| ")[0], false);
 				initialsPanel.refreshInitialAssignmentPanel(bioModel);
 				rulesPanel.refreshRulesPanel();
 			}
@@ -3824,7 +3845,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.", "Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null, false, null);
+					reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split("\\[| ")[0], null, false, null);
 					initialsPanel.refreshInitialAssignmentPanel(bioModel);
 					rulesPanel.refreshRulesPanel();
 				}
@@ -3835,7 +3856,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(Gui.frame, "No product selected.", "Must Select A Product", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					productsEditor(bioModel, "OK", ((String) products.getSelectedValue()).split(" ")[0], null, false, null);
+					productsEditor(bioModel, "OK", ((String) products.getSelectedValue()).split("\\[| ")[0], null, false, null);
 					initialsPanel.refreshInitialAssignmentPanel(bioModel);
 					rulesPanel.refreshRulesPanel();
 				}
@@ -3846,7 +3867,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(Gui.frame, "No modifier selected.", "Must Select A Modifier", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					modifiersEditor(bioModel,"OK", ((String) modifiers.getSelectedValue()).split(" ")[0], null, false, null);
+					modifiersEditor(bioModel,"OK", ((String) modifiers.getSelectedValue()).split("\\[| ")[0], null, false, null);
 				}
 			}
 		}
@@ -3858,7 +3879,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	public void refreshReactionPanel(BioModel gcm) {
 		String selectedReactionId = "";
 		if (!reactions.isSelectionEmpty()) {
-			selectedReactionId = ((String) reactions.getSelectedValue()).split(" ")[0];
+			selectedReactionId = ((String) reactions.getSelectedValue()).split("\\[| ")[0];
 		}
 		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
@@ -3867,6 +3888,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = listOfReactions.get(i);
 			reacts[i] = reaction.getId();
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				reacts[i] += "[" + dimX.getSize() + "]";
+			}
 			if (paramsOnly) {
 				if (!reaction.isSetKineticLaw()) continue;
 				ListOf<LocalParameter> params = reaction.getKineticLaw().getListOfLocalParameters();

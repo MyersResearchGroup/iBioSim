@@ -1502,7 +1502,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		reactionPanel = new Reactions(biomodel,paramsOnly,getParams,path + separator + file,parameterChanges,this);
 		speciesPanel = new MySpecies(biomodel,paramsOnly,getParams,path + separator + file,parameterChanges,biomodel.getGrid().isEnabled(),
 				this);
-		parametersPanel = new Parameters(biomodel, this,paramsOnly, getParams,path + separator + file,parameterChanges,!paramsOnly && !biomodel.getGrid().isEnabled() && !textBased);
+		parametersPanel = new Parameters(biomodel, this,paramsOnly, getParams,path + separator + file,parameterChanges,(paramsOnly || !textBased) && !biomodel.getGrid().isEnabled());
 		rulesPanel = new Rules(biomodel, this);
 		consPanel = new Constraints(biomodel, this);
 		eventPanel = new Events(biosim,biomodel,this,textBased);
@@ -1649,7 +1649,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 			for (String s : getParams) {
 				if (!parameterChanges.contains(s)) {
-					System.out.println(s);
+					//System.out.println(s);
 				}
 			}
 			species.addAllItem(specs);
