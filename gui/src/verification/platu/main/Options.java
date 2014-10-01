@@ -78,8 +78,7 @@ public class Options {
 		CCTBDG, // cycle closing with trace-back using dependency graphs
 		CCTBOFF // cycle closing without trace-back
 		}
-	private static String cycleClosingStrongStubbornMethd = "cctb";
-	
+	private static String cycleClosingStrongStubbornMethd = "cctb";	
 ////	/*
 ////	 * Flag to use use dependent set queue for POR
 ////	 */
@@ -370,7 +369,7 @@ public class Options {
 	public static void setCycleClosingStrongStubbornMethd(String method) {
 		cycleClosingStrongStubbornMethd = method;		
 	}
-	
+
 	public static String getCycleClosingStrongStubbornMethd() {
 		return cycleClosingStrongStubbornMethd;
 	}
