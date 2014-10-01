@@ -1327,28 +1327,33 @@ public class SBMLutilities {
 		setDefaultMetaID(document, model, metaIDIndex);
 		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter p = model.getParameter(i);
-			if (p.isSetMetaId() || p.getMetaId().equals(""))
+			if (!p.isSetMetaId() || p.getMetaId().equals(""))
 				metaIDIndex = setDefaultMetaID(document, p, metaIDIndex);
 		}
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species s = model.getSpecies(i);
-			if (s.isSetMetaId() || s.getMetaId().equals(""))
+			if (!s.isSetMetaId() || s.getMetaId().equals(""))
 				metaIDIndex = setDefaultMetaID(document, s, metaIDIndex);
 		}
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction r = model.getReaction(i);
-			if (r.isSetMetaId() || r.getMetaId().equals(""))
+			if (!r.isSetMetaId() || r.getMetaId().equals(""))
 				metaIDIndex = setDefaultMetaID(document, r, metaIDIndex);
 		}
 		for (int i = 0; i < model.getRuleCount(); i++) {
 			Rule r = model.getRule(i);
-			if (r.isSetMetaId() || r.getMetaId().equals(""))
+			if (!r.isSetMetaId() || r.getMetaId().equals(""))
 				metaIDIndex = setDefaultMetaID(document, r, metaIDIndex);
 		}
 		for (int i = 0; i < model.getEventCount(); i++) {
 			Event e = model.getEvent(i);
-			if (e.isSetMetaId() || e.getMetaId().equals(""))
-				metaIDIndex = setDefaultMetaID(document, model.getEvent(i), metaIDIndex);
+			if (!e.isSetMetaId() || e.getMetaId().equals(""))
+				metaIDIndex = setDefaultMetaID(document, e, metaIDIndex);
+		}
+		for (int i = 0; i < model.getConstraintCount(); i++) {
+			Constraint c = model.getConstraint(i);
+			if (!c.isSetMetaId() || c.getMetaId().equals(""))
+				metaIDIndex = setDefaultMetaID(document, c, metaIDIndex);
 		}
 		CompModelPlugin compModel = (CompModelPlugin) document.getModel().getExtension(CompConstants.namespaceURI);
 		if (compModel != null && compModel.isSetListOfSubmodels()) {
