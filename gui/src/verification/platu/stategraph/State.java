@@ -89,7 +89,8 @@ public class State extends PlatuObj {
         counts[0]++;
     }
 
-    // TODO: (temp) Two Unused constructors, State() and State(Object otherState)
+    // Temporarily commented out the two unused constructors, State() and State(Object otherState)
+    
 //    public State() {
 //        this.marking = new int[0];
 //        this.vector = new int[0];//EMPTY_VECTOR.clone();
@@ -195,6 +196,12 @@ public class State extends PlatuObj {
         message += "]" + newLine + "Transition Vector: [";
         for (int i = 0; i < tranVector.length; i++) {
         	message += tranVector[i] + ",";
+        }
+        message += "]" + newLine + "Enabled Transition: [";
+        for (int i = 0; i < tranVector.length; i++) {
+        	if (tranVector[i]) {
+        		message += lpn.getTransition(i).getLabel();
+        	}
         }
         message += "]" + newLine;
         return message;
