@@ -78,6 +78,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				SBMLutilities.setMetaId(constraint, constraintId);
 			}
 			cons[i] = constraint.getMetaId();
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(constraint);
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				cons[i] += "[" + dimX.getSize() + "]";
+			}
 		}
 		JPanel addRem = new JPanel();
 		addRem.add(addConstraint);
@@ -274,6 +279,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							}
 						}
 						cons[index] = c.getMetaId();
+						if (dimID!=null) {
+							for (int i = 1; i < dimID.length; i++) {
+								cons[index] += "[" + dimID[i] + "]";
+							}
+						}
 						Utility.sort(cons);
 						constraints.setListData(cons);
 						constraints.setSelectedIndex(index);
@@ -312,7 +322,13 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
 							port.setMetaIdRef(c.getMetaId());
 						}
-						Object[] adding = { c.getMetaId() };
+						String constraintEntry = c.getMetaId();
+						if (dimID!=null) {
+							for (int i = 1; i < dimID.length; i++) {
+								constraintEntry += "[" + dimID[i] + "]";
+							}
+						}
+						Object[] adding = { constraintEntry };
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -370,6 +386,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				SBMLutilities.setMetaId(constraint, constraintId);
 			}
 			cons[i] = constraint.getMetaId();
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(constraint);
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				cons[i] += "[" + dimX.getSize() + "]";
+			}
 		}
 		Utility.sort(cons);
 		constraints.setListData(cons);
@@ -420,14 +441,14 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				JOptionPane.showMessageDialog(Gui.frame, "No constraint selected.", "Must Select a Constraint", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			String selected = ((String) constraints.getSelectedValue());
+			String selected = ((String) constraints.getSelectedValue()).split("\\[")[0];
 			constraintEditor("OK",selected);
 		}
 		// if the remove constraint button is clicked
 		else if (e.getSource() == removeConstraint) {
 			int index = constraints.getSelectedIndex();
 			if (index != -1) {
-				String selected = ((String) constraints.getSelectedValue());
+				String selected = ((String) constraints.getSelectedValue()).split("\\[")[0];
 				removeConstraint(selected);
 				constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Utility.remove(constraints);
@@ -450,7 +471,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 					JOptionPane.showMessageDialog(Gui.frame, "No constraint selected.", "Must Select a Constraint", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				String selected = ((String) constraints.getSelectedValue());
+				String selected = ((String) constraints.getSelectedValue()).split("\\[")[0];
 				constraintEditor("OK",selected);
 			}
 		}

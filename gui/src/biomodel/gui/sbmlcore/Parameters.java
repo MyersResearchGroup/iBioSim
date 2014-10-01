@@ -146,6 +146,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			Parameter parameter = listOfParameters.get(i);
 			
 			params[i] = parameter.getId(); 
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(parameter);
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				params[i] += "[" + dimX.getSize() + "]";
+			}
 
 			if (parameter.getId().contains("_locations"))
 				++notIncludedParametersCount;
@@ -154,31 +159,33 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				params[i] = params[i] + "__DELETE";
 			}
 			
-			if (paramsOnly) {
-				params[i] = parameter.getId() + " " + parameter.getValue();
-				for (int j = 0; j < getParams.size(); j++) {
-					if (getParams.get(j).split(" ")[0].equals(parameter.getId())) {
-						parameterChanges.add(getParams.get(j));
-						String[] splits = getParams.get(j).split(" ");
-						if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-							String value = splits[splits.length - 1];
-							parameter.setValue(Double.parseDouble(value));
-							params[i] += " Modified " + splits[splits.length - 1];
-						}
-						else if (splits[splits.length - 2].equals("Sweep")) {
-							String value = splits[splits.length - 1];
-							parameter.setValue(Double.parseDouble(value.split(",")[0].substring(1).trim()));
-							params[i] += " " + splits[splits.length - 2] + " " + splits[splits.length - 1];
+			if (!params[i].endsWith("__DELETE")) {
+				if (paramsOnly) {
+					params[i] += " " + parameter.getValue();
+					for (int j = 0; j < getParams.size(); j++) {
+						if (getParams.get(j).split(" ")[0].equals(parameter.getId())) {
+							parameterChanges.add(getParams.get(j));
+							String[] splits = getParams.get(j).split(" ");
+							if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+								String value = splits[splits.length - 1];
+								parameter.setValue(Double.parseDouble(value));
+								params[i] += " Modified " + splits[splits.length - 1];
+							}
+							else if (splits[splits.length - 2].equals("Sweep")) {
+								String value = splits[splits.length - 1];
+								parameter.setValue(Double.parseDouble(value.split(",")[0].substring(1).trim()));
+								params[i] += " " + splits[splits.length - 2] + " " + splits[splits.length - 1];
+							}
 						}
 					}
-				}
-			} else if (!params[i].endsWith("__DELETE")) {
-				if (SBMLutilities.isPlace(parameter)) {
-					params[i] += " - place";
-				} else if (SBMLutilities.isBoolean(parameter)) {
-					params[i] += " - boolean";
 				} else {
-					params[i] += " - real";
+					if (SBMLutilities.isPlace(parameter)) {
+						params[i] += " - place";
+					} else if (SBMLutilities.isBoolean(parameter)) {
+						params[i] += " - boolean";
+					} else {
+						params[i] += " - real";
+					}
 				}
 			}
 		}
@@ -230,6 +237,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			Parameter parameter = listOfParameters.get(i);
 			if (constantsOnly && !parameter.getConstant()) continue;
 			params[k] = parameter.getId();
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(parameter);
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				params[k] += "[" + dimX.getSize() + "]";
+			}
 			if (paramsOnly) {
 				params[k] += " " + parameter.getValue();
 				for (int j = 0; j < parameterChanges.size(); j++) {
@@ -706,6 +718,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					else {
 						if (dimID!=null) {
 							param = dimID[0].trim(); // + " " + val;
+							for (int i = 1; i < dimID.length; i++) {
+								param += "[" + dimID[i] + "]";
+							}
 						}
 						if (paramsOnly)
 							param += " " + val;
@@ -1022,7 +1037,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				JOptionPane.showMessageDialog(Gui.frame, "No parameter selected.", "Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			String selected = ((String) parameters.getSelectedValue()).split(" ")[0];
+			String selected = ((String) parameters.getSelectedValue()).split("\\[| ")[0];
 			parametersEditor("OK",selected,false,false);
 			initialsPanel.refreshInitialAssignmentPanel(bioModel);
 			rulesPanel.refreshRulesPanel();
@@ -1031,7 +1046,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		else if (e.getSource() == removeParam) {
 			int index = parameters.getSelectedIndex();
 			if (index != -1) {
-				if (removeParameter(((String) parameters.getSelectedValue()).split(" ")[0])) {
+				if (removeParameter(((String) parameters.getSelectedValue()).split("\\[| ")[0])) {
 					parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					Utility.remove(parameters);
 					parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -1054,7 +1069,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					JOptionPane.showMessageDialog(Gui.frame, "No parameter selected.", "Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				String selected = ((String) parameters.getSelectedValue()).split(" ")[0];
+				String selected = ((String) parameters.getSelectedValue()).split("\\[| ")[0];
 				parametersEditor("OK",selected,false,false);
 				initialsPanel.refreshInitialAssignmentPanel(bioModel);
 				rulesPanel.refreshRulesPanel();
