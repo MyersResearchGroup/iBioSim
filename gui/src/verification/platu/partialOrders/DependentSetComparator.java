@@ -14,21 +14,24 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 	}
 
 	@Override
-	public int compare(DependentSet dep0, DependentSet dep1) {
-		
+	public int compare(DependentSet dep0, DependentSet dep1) {		
 		if (!dep0.isEnabledTranDummy() && dep1.isEnabledTranDummy()) {
 			return -1;
 		}
 		else if ((dep0.isEnabledTranDummy() && !dep1.isEnabledTranDummy()) || (dep0.isEnabledTranDummy() && dep1.isEnabledTranDummy()))
 			return 1;
-		else {
+		else { // Neither dep0 nor dep1 contains dummy transitions. 			
 			if (!Options.getMarkovianModelFlag()) { // non-stochastic
+				// Compare sets with only immediate transitions and sets with only non-immediate ones. 
+				// Only need to compare seed transitions because a set with mixed immediate 
+				// and non-immediate transitions should not exist. 
+				
 				if (dep0.getDependent().size() < dep1.getDependent().size()) 
 					return -1;
 				else if (dep0.getDependent().size() > dep1.getDependent().size())
 					return 1;
 				else {
-					if (tranFiringFreqMap.get(dep0.getSeed()) < tranFiringFreqMap.get(dep1.getSeed())) 
+					if (tranFiringFreqMap.get(dep0.getSeed()) < tranFiringFreqMap.get(dep1.getSeed()))
 						return -1;
 					else 
 						return 0;
