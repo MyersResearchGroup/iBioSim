@@ -360,7 +360,8 @@ public class ProbLocalStateGraph extends StateGraph {
     	}	
     	HashMap<String, Integer> vvSet = new HashMap<String, Integer>();
     	vvSet = this.lpn.getAllVarsWithValuesAsInt(nextState.getVariableVector());
-    	// update state graphs that are affected by firedTran.    	
+    	// update state graphs that are affected by firedTran.
+    	// TODO: Need to deal with immediate transitions. 
     	for(LhpnFile curLPN : firedTran.getDstLpnList()) {
     		int curIdx = curLPN.getLpnIndex();
     		State newState = curSgArray[curIdx].getNextState(curStateArray[curIdx], firedTran);
