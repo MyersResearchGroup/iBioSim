@@ -21,7 +21,6 @@ public class IndexObjMap<T extends PlatuObj> {
 		T objCopy = uniqueObjTbl.get(obj);
 		if(objCopy != null)
 			return objCopy;
-		
 		this.uniqueObjTbl.put(obj, obj);
 		
 //		String objLabel = obj.getLabel();
