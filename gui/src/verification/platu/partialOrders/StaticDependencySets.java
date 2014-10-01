@@ -58,7 +58,7 @@ public class StaticDependencySets {
 		modifyAssignment = new HashSet<Transition>();
 		if (Options.getDebugMode()) {
 			PORdebugFileName = Options.getPrjSgPath() + Options.getLogName() + "_" + Options.getPOR() + "_" 
-					+ Options.getCycleClosingMthd() + "_" + Options.getCycleClosingPersistentMethd() + ".dbg";
+					+ Options.getCycleClosingMthd() + "_" + Options.getCycleClosingStrongStubbornMethd() + ".dbg";
 			try {
 				PORdebugFileStream = new FileWriter(PORdebugFileName, true);
 			} catch (IOException e) {
@@ -116,8 +116,8 @@ public class StaticDependencySets {
 		// Test if other transition(s) can disable curTran by stealing their tokens.
 		buildConflictSet();
 		// Test if other transitions can disable curTran by executing their assignments.
-		// This excludes any transitions that are in the same process as curTran, and the process is a state machine.
-		if (!curTran.isPersistent()) { 
+		// This excludes any transitions that are in the same process as curTran, and curTran's process is a state machine.
+		if (!curTran.isPersistent()) {
 			// If curTran is persistent, when it becomes enabled, 
 			// it can not be disabled if another transition sets its enabling condition to false.
 			// Dependent calculation on curTran happens when curTran is enabled.
