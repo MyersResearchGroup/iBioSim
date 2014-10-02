@@ -31,7 +31,7 @@ import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
-public abstract class HierarchicalSim extends HierarchicalSimState {
+public abstract class HierarchicalObjects extends HierarchicalSimState {
 
 
 	private HierarchicalEventComparator eventComparator; 
@@ -46,13 +46,7 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 	private HashMap<String, ModelState> submodels;
 	private ModelState topmodel;
 	
-	protected static boolean checkGrid(Model model)
-	{
-		if(model.getCompartment("Grid") != null)
-			return true;
-		return false;
-	}
-	public HierarchicalSim(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
+	public HierarchicalObjects(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, 
 			JFrame running, String[] interestingSpecies, String quantityType) throws IOException, XMLStreamException 
 			{
@@ -66,6 +60,14 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		models.put(document.getModel().getId(), document.getModel().clone());
 		
 			} 
+	
+	protected static boolean checkGrid(Model model)
+	{
+		if(model.getCompartment("Grid") != null)
+			return true;
+		return false;
+	}
+	
 	
 	protected double evaluateExpressionRecursive(ModelState modelstate, ASTNode node) {
 		if (node.isBoolean()) {
@@ -144,8 +146,6 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 
 			}
 		}
-
-		//if it's a mathematical constant
 		else if (node.isConstant()) {
 
 			switch (node.getType()) {
@@ -164,12 +164,8 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		else if (node.isInteger())
 			return node.getInteger();
 
-		//if it's a number
 		else if (node.isReal())
 			return node.getReal();
-
-		//if it's a user-defined variable
-		//eg, a species name or global/local parameter
 		else if (node.isName()) {
 
 			String name = node.getName().replace("_negative_","-");
@@ -178,7 +174,6 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 
 				return getCurrentTime();
 			}
-			//if it's a reaction id return the propensity
 			else if (modelstate.getReactionToPropensityMap().keySet().contains(node.getName())) {
 				return modelstate.getReactionToPropensityMap().get(node.getName());
 			}
@@ -188,7 +183,6 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 
 				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(name) &&
 						modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(name) == false) {
-					//value = (modelstate.variableToValueMap.get(name) / modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(name)));
 					value = (modelstate.getVariableToValue(replacements, name) / modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(name)));
 				}
 				else	
@@ -198,13 +192,7 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 				return value;
 			}
 		}
-
-		//operators/functions with two children
 		else {
-
-			//ASTNode leftChild = node.getLeftChild();
-			//ASTNode rightChild = node.getRightChild();
-
 			switch (node.getType()) {
 
 			case PLUS: {
@@ -458,6 +446,7 @@ public abstract class HierarchicalSim extends HierarchicalSimState {
 		}
 		return 0.0;
 	}
+	
 	protected double evaluateStateExpressionRecursive(ModelState modelstate, ASTNode node, double t, double[] y, HashMap<String, Integer> variableToIndexMap) {
 		if (node.isBoolean()) {
 

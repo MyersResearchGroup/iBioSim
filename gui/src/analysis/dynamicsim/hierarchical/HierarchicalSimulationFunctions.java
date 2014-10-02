@@ -23,9 +23,9 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
-public abstract class HierarchicalSimulator extends HierarchicalSBaseSetup{
+public abstract class HierarchicalSimulationFunctions extends HierarchicalSBaseSetup{
 
-	public HierarchicalSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
+	public HierarchicalSimulationFunctions(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, 
 			JFrame running, String[] interestingSpecies, String quantityType) throws IOException, XMLStreamException 
 	{

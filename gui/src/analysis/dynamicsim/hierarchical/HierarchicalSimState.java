@@ -23,7 +23,7 @@ import org.sbml.jsbml.SBMLReader;
 
 import flanagan.math.PsRandom;
 import analysis.dynamicsim.XORShiftRandom;
-import analysis.dynamicsim.hierarchical.HierarchicalSim.ModelState;
+import analysis.dynamicsim.hierarchical.HierarchicalObjects.ModelState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
 
@@ -33,7 +33,7 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
  * @author Leandro Watanabe
  *
  */
-public abstract class HierarchicalSimState implements Simulation 
+public abstract class HierarchicalSimState implements HierarchicalSimulation 
  {
     private BufferedWriter bufferedTSDWriter;
     private boolean cancelFlag;
