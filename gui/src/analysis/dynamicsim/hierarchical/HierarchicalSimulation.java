@@ -6,7 +6,7 @@ package analysis.dynamicsim.hierarchical;
  * @author Leandro Watanabe
  *
  */
-public interface Simulation {
+public interface HierarchicalSimulation {
 
 	public abstract void simulate();
 

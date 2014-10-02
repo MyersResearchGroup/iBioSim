@@ -38,11 +38,11 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 
-import analysis.dynamicsim.hierarchical.HierarchicalSim.ModelState;
+import analysis.dynamicsim.hierarchical.HierarchicalObjects.ModelState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import biomodel.util.SBMLutilities;
 
-public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
+public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects {
 
 	public HierarchicalReplacemenHandler(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, 
@@ -90,17 +90,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 				{
 					SBMLDocument extDoc = null;
 					try {
-						//						if(checkFileExists(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()))
-						//						{
-						//							extDoc = SBMLReader.read(new File(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()));
-						//
-						//						}
-						//						else
-						//						{
-						//							extDoc = SBMLReader.read(new File(filename));
-						//						}
 						extDoc = SBMLReader.read(new File(filename));
-
 					}
 					catch (XMLStreamException e) {
 						e.printStackTrace();
@@ -143,8 +133,6 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 						}
 					}
 					SBMLWriter writer = new SBMLWriter();
-
-					//updateReplacementsDeletions(extDoc, documentComp, documentCompModel, path);
 					filename = path+getSeparator()+submodel.getModelRef()+"_new.xml";
 					try {
 						writer.writeSBMLToFile(extDoc, filename);
@@ -160,7 +148,6 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 				else if(sbmlComp.getListOfModelDefinitions() != null &&
 						sbmlComp.getListOfModelDefinitions().get(submodel.getModelRef()) != null)
 				{
-					//extractModelDefinitions(path, document, submodel, sbmlComp, sbmlCompModel);
 					extractModelDefintion(path,  document,  submodel,  sbmlComp);
 				}
 
@@ -172,11 +159,6 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 
 			if(isGrid())
 			{
-				//String annotation = submodel.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-				//int copies = getArraySize(annotation);
-
-				//int copies = biomodel.annotation.AnnotationUtility.parseArraySizeAnnotation(submodel);
-
 				String[] ids = biomodel.annotation.AnnotationUtility.parseArrayAnnotation(document.getModel().getParameter(submodel.getModelRef()+ "__locations"));
 				for(String s : ids)
 				{
@@ -186,14 +168,6 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 					getSubmodels().put(getID, new ModelState(getModels(), submodel.getModelRef(), getID));
 
 				}
-
-				/*LinkedList<String> ids = getArrayIDs(document.getModel().getParameter(submodel.getModelRef()+ "__locations").getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim());
-				for(int i = 0; i < copies; i++)
-				{
-					submodels.put(ids.getFirst(), new ModelState(submodel.getModelRef(), ids.getFirst()));
-					ids.removeFirst();
-					index++;
-				}*/
 			}
 			else
 			{
@@ -204,9 +178,6 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 			}
 
 		}
-
-
-		//updateReplacementsDeletions(path, document, sbmlComp, sbmlCompModel);
 		return index;
 	}
 
@@ -247,7 +218,6 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 				comps.add(subModelType);
 			}
 		}
-		// Make compartment enclosing
 		if (document.getModel().getCompartmentCount()==0) {
 			Compartment c = document.getModel().createCompartment();
 			c.setId("default");
@@ -255,7 +225,6 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 			c.setSpatialDimensions(3);
 			c.setConstant(true);
 		}
-		//updateReplacementsDeletions(path, document, documentComp, documentCompModel);
 		SBMLWriter writer = new SBMLWriter();
 
 		try {
@@ -274,8 +243,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalSim {
 	}
 
 	private void performDeletions(ModelState modelstate, Submodel instance) {
-
-
+	
 		if (instance == null)
 			return;
 
