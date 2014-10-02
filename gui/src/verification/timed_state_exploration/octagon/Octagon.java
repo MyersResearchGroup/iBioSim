@@ -71,9 +71,9 @@ import verification.timed_state_exploration.zoneProject.Zone;
  * 
  *     x+   x-  y+ y-
  * x+  0  -2mx  b1 -b4
- * x- -2Mx  0   b3 -b2
+ * x-  2Mx  0   b3 -b2
  * y+ -b2 -b4   0  -2my
- * y-  b3  b1  -2My  0
+ * y-  b3  b1   2My  0
  * 
  * The b1, b2, b3, and b4 are the y-intercepts of the boundary lines
  * for the cross inequalities, the inequalities involving both x and y.
@@ -109,7 +109,7 @@ public class Octagon implements Equivalence {
 	
 	/*
 	 * These two array stores the cached min,max values for timers and
-	 * the range of rates for non-zero continuous variables. I could
+	 * the range of rates for non-zero rate continuous variables. I could
 	 * add an additional row and column to the DBM the same as in the
 	 * case of the Zone, but it is a little tedious to have to keep
 	 * adjusting for the difference this makes for the indecies.
@@ -286,6 +286,8 @@ public class Octagon implements Equivalence {
 		 */
 		//* Zone._matrix = new int[matrixSize()][matrixSize()];
 		_matrix = new int[DBMsize()][DBMsize()];
+		_lowerBounds = new int[DBMsize()];
+		_upperBounds = new int[DBMsize()];
 		
 		
 		// Set the lower bound/ upper bounds of the timers and the rates.
@@ -355,7 +357,9 @@ public class Octagon implements Equivalence {
 				
 		// Initialize the matrix.
 		//*_matrix = new int[matrixSize()][matrixSize()];
-		_matrix = new int[_dbmVarList.length][_dbmVarList.length];
+		_matrix = new int[DBMsize()][DBMsize()];
+		_lowerBounds = new int[_dbmVarList.length];
+		_upperBounds = new int[_dbmVarList.length];
 		
 		// Set the lower bound/ upper bounds of the timers and the rates.
 		initializeLowerUpperBounds(getAllNames(), localStates);
@@ -762,7 +766,7 @@ public class Octagon implements Equivalence {
 			
 				// Get the expression tree.
 				//*ExprTree delay = _lpnList[ltPair.get_lpnIndex()].getDelayTree(varNames[i]);
-				ExprTree delay = _lpnList[i].getDelayTree(varNames[i]);
+				ExprTree delay = _lpnList[ltPair.get_lpnIndex()].getDelayTree(varNames[i]);
 				
 				
 				// Get the values of the variables for evaluating the ExprTree.
@@ -770,8 +774,9 @@ public class Octagon implements Equivalence {
 				//*		_lpnList[ltPair.get_lpnIndex()]
 				//*				.getAllVarsWithValuesAsString(localStates[ltPair.get_lpnIndex()].getVariableVector());
 				HashMap<String, String> varValues =
-						_lpnList[i]
-								.getAllVarsWithValuesAsString(localStates[i].getVariableVector());
+						_lpnList[ltPair.get_lpnIndex()]
+								.getAllVarsWithValuesAsString(
+										localStates[ltPair.get_lpnIndex()].getVariableVector());
 				
 				
 				// Set the upper and lower bound.
@@ -992,6 +997,8 @@ public class Octagon implements Equivalence {
 				
 				// The new (col, row) entry.
 				//*int colRow = getDbmEntry(col, 0) + getDbmEntry(0, row);
+				
+				this.toString();
 				
 				int colP_rowP = twiceMax(colBase) - twiceMin(rowBase);
 				int colP_rowN = twiceMax(colBase) + twiceMax(rowBase);
@@ -4988,5 +4995,93 @@ public class Octagon implements Equivalence {
 		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
 		
 		return getLowerBound(getIndexByTransitionPair(ltPair));
+	}
+	
+	public String toString(){
+		
+		String result = "Timer and delay or continuous and ranges.\n";
+		
+		int count = 0;
+		
+		// Print the timers.
+		for(int i=1; i<_dbmVarList.length; i++, count++)
+		{
+			if(_lpnList.length == 0)
+			{
+				// If no LPN's are associated with this Zone, use the index of the timer.
+				result += " t" + _dbmVarList[i].get_transitionIndex() + " : ";
+			}
+			else
+			{
+				String name;
+				
+				// If the current LPNTransitionPair is a timer, get the name
+				// from the transitions.
+//				if(_indexToTimerPair[i].get_isTimer()){
+				// If the current timer is an LPNTransitionPair and not an LPNContinuousPair
+				if(!(_dbmVarList[i] instanceof LPNContinuousPair)){
+				
+					// Get the name of the transition.
+					Transition tran = _lpnList[_dbmVarList[i].get_lpnIndex()].
+							getTransition(_dbmVarList[i].get_transitionIndex());
+					
+					name = tran.getLabel();
+				}
+				else{
+					// If the current LPNTransitionPair is not a timer, get the
+					// name as a continuous variable.
+					Variable var = _lpnList[_dbmVarList[i].get_lpnIndex()]
+							.getContVar(_dbmVarList[i].get_transitionIndex());
+					
+					LPNContinuousPair lcPair =
+							(LPNContinuousPair) _dbmVarList[i];
+					
+					name = var.getName() + 
+							":[" + -1*getLowerBound(i)*lcPair.getCurrentRate() + ","
+							+ getUpperBound(i)*lcPair.getCurrentRate() + "]\n" +
+							" Current Rate: " + lcPair.getCurrentRate() + " " +
+							"rate:";
+				}
+				
+//				result += " " +  tran.getName() + ":";
+				
+				result += " " + name + ":";
+			}
+			result += "[ " + -1*getLowerBound(i) + ", " + getUpperBound(i) + " ]";
+			
+			if(count > 9)
+			{
+				result += "\n";
+				count = 0;
+			}
+		}
+		
+		if(!_rateZeroContinuous.isEmpty()){
+			result += "\nRate Zero Continuous : \n";
+			for (LPNContAndRate lcrPair : _rateZeroContinuous.keySet()){
+				result += "" + _rateZeroContinuous.get(lcrPair) 
+						+ "Rate: " + lcrPair.get_rateInterval();
+			}
+		}
+		
+		result += "\nDBM\n";
+		
+
+		// Print the DBM.
+		for(int i=0; i<_dbmVarList.length; i++)
+		{
+			result += "| " + String.format("%3d", getDbmEntry(i, 0));
+
+			for(int j=1; j<_dbmVarList.length; j++)
+			{
+
+				result += ", " + String.format("%3d",getDbmEntry(i, j));
+			}
+			
+			result += " |\n";
+		}
+		
+
+		return result;
 	}
 }
