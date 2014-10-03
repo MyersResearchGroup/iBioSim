@@ -117,16 +117,18 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			else if (rule.isAssignment()) {
 				String index = "";
 				for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-					Index indie = sBasePlugin.getIndex(j);
-					index += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+					Index indie = sBasePlugin.getIndex(j,"variable");
+					if (indie!=null)
+						index += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 				}
 				rul[i] += SBMLutilities.getVariable(rule) + index + " = " + bioModel.removeBooleans(rule.getMath());
 			}
 			else {
 				String index = "";
 				for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-					Index indie = sBasePlugin.getIndex(j);
-					index += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+					Index indie = sBasePlugin.getIndex(j,"variable");
+					if (indie!=null) 
+						index += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 				}
 				rul[i] += "d( " + SBMLutilities.getVariable(rule) + index + " )/dt = " + bioModel.removeBooleans(rule.getMath());
 			}
@@ -189,16 +191,18 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				else if (rule.isAssignment()) {
 					String index = "";
 					for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-						Index indie = sBasePlugin.getIndex(j);
-						index += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+						Index indie = sBasePlugin.getIndex(j,"variable");
+						if (indie!=null)
+							index += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 					}
 					rul[i] = SBMLutilities.getVariable(rule) + index + " = " + bioModel.removeBooleans(rule.getMath());
 				}
 				else {
 					String index = "";
 					for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-						Index indie = sBasePlugin.getIndex(j);
-						index += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+						Index indie = sBasePlugin.getIndex(j,"variable");
+						if (indie!=null)
+							index += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 					}
 					rul[i] = "d( " + SBMLutilities.getVariable(rule) + index + " )/dt = " + bioModel.removeBooleans(rule.getMath());
 				}
@@ -308,8 +312,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			// TODO: Scott - work indicies
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i);
-				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+				Index indie = sBasePlugin.getIndex(i,"variable");
+				if (indie!=null)
+					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
 			iIndex.setText(freshIndex);
 		}
