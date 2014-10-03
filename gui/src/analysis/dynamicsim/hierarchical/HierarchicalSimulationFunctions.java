@@ -3,7 +3,6 @@ package analysis.dynamicsim.hierarchical;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
@@ -15,8 +14,6 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.EventAssignment;
-import org.sbml.jsbml.RateRule;
-import org.sbml.jsbml.Rule;
 
 import analysis.dynamicsim.XORShiftRandom;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
@@ -174,6 +171,13 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBaseS
 		return totalPropensity;
 	}
 
+	protected boolean isEventTriggered(ModelState modelstate, double t, double [] y, HashMap<String, Integer> variableToIndexMap) {
+
+		if(checkModelTriggerEvent(getTopmodel(), t, y, variableToIndexMap))
+			return true;
+		return false;
+	}
+	
 	/**
 	 * appends the current species states to the TSD file
 	 * 
