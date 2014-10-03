@@ -684,8 +684,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i);
-				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+				Index indie = sBasePlugin.getIndex(i,"compartment");
+				if (indie!=null)
+					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
 			CiIndex.setText(freshIndex);
 			reacID.setText(reac.getId()+dimInID);
@@ -1158,7 +1159,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for(int i = 0; dex!=null && i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("species");
+							indexRule.setReferencedAttribute("compartment");
 							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 							indexRule.setMath(indexMath);
 							sBasePlugin.addIndex(indexRule);
@@ -1269,7 +1270,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for(int i = 0; dex!=null && i<dex.length-1; i++){
 							Index indexRule = new Index();
 							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("species");
+							indexRule.setReferencedAttribute("compartment");
 							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
 							indexRule.setMath(indexMath);
 							sBasePlugin.addIndex(indexRule);
@@ -1932,8 +1933,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			productId.setText(productId.getText()+dimInID);
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i);
-				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+				Index indie = sBasePlugin.getIndex(i,"species");
+				if (indie!=null)
+					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
 			PiIndex.setText(freshIndex);
 		}
@@ -2315,8 +2317,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			modifierId.setText(modifierId.getText()+dimInID);
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i);
-				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+				Index indie = sBasePlugin.getIndex(i,"species");
+				if (indie!=null)
+					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
 			MiIndex.setText(freshIndex);
 			modifierSpecies.setSelectedItem(modifier.getSpecies());
@@ -2852,8 +2855,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactantId.setText(reactantId.getText()+dimInID);
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i);
-				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+				Index indie = sBasePlugin.getIndex(i,"species");
+				if (indie!=null)
+					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
 			RiIndex.setText(freshIndex);			
 			if (complex!=null) {
@@ -3344,8 +3348,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String result = reference.getSpecies();
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reference);
 		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-			Index index = sBasePlugin.getIndex(i);
-			result += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+			Index index = sBasePlugin.getIndex(i,"species");
+			if (index!=null)
+				result += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
 		}
 		return result;
 	}

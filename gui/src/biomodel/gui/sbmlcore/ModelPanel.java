@@ -177,8 +177,9 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				String freshIndex = "";
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
 				for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-					Index indie = sBasePlugin.getIndex(i);
-					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+					Index indie = sBasePlugin.getIndex(i,"conversionFactor");
+					if (indie!=null)
+						freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 				}
 				conviIndex.setText(freshIndex);
 			}

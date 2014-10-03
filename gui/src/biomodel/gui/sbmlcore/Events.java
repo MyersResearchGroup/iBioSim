@@ -350,8 +350,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						String freshIndex = "; ";
 						for(int i1 = sBasePlugin.getIndexCount()-1; i1>=0; i1--){
-							Index indie = sBasePlugin.getIndex(i1);
-							freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+							Index indie = sBasePlugin.getIndex(i1,"variable");
+							if (indie!=null) {
+								freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+							}
 						}
 						String dimens = " ";
 						for(int i1 = sBasePlugin.getDimensionCount()-1; i1>=0; i1--){

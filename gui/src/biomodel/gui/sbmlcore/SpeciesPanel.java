@@ -170,8 +170,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		conviIndex = new JTextField(20);
 		String freshIndex = "";
 		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-			Index indie = sBasePlugin.getIndex(i);
-			if(indie.getReferencedAttribute().equals("compartment")){
+			Index indie = sBasePlugin.getIndex(i,"compartment");
+			if(indie!=null){
 				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 			}
 		}
@@ -263,8 +263,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			String cfreshIndex = "";
 			//This needs to be fixed for 2 different indices
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i);
-				if(indie.getReferencedAttribute().equals("conversionFactor")){
+				Index indie = sBasePlugin.getIndex(i,"conversionFactor");
+				if(indie!=null){
 					cfreshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
 				}
 			}
@@ -760,8 +760,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							species.unsetConversionFactor();
 							int limit = sBasePlugin.getIndexCount();
 							for(int i = limit-1; i>-1; i--){
-						        Index indie = sBasePlugin.getIndex(i);
-						        if(indie.isSetReferencedAttribute() && indie.getReferencedAttribute().equals("conversionFactor"))
+						        Index indie = sBasePlugin.getIndex(i,"conversionFactor");
+						        if(indie!=null)
 						           sBasePlugin.removeIndex(indie);
 						       }
 						}
@@ -772,8 +772,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							if(cdex==null)return false;
 							int limit = sBasePlugin.getIndexCount();
 							for(int i = limit-1; i>-1; i--){
-						        Index indie = sBasePlugin.getIndex(i);
-						        if(indie.isSetReferencedAttribute() && indie.getReferencedAttribute().equals("conversionFactor"))
+						        Index indie = sBasePlugin.getIndex(i,"conversionFactor");
+						        if(indie!=null)
 						           sBasePlugin.removeIndex(indie);
 						       }
 							for(int i = 0; i<cdex.length-1; i++){
@@ -790,8 +790,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						if(dex==null)return false;
 						int limit = sBasePlugin.getIndexCount();
 						for(int i = limit-1; i>-1; i--){
-					        Index indie = sBasePlugin.getIndex(i);
-					        if(indie.isSetReferencedAttribute() && indie.getReferencedAttribute().equals("compartment"))
+					        Index indie = sBasePlugin.getIndex(i,"compartment");
+					        if(indie!=null)
 					           sBasePlugin.removeIndex(indie);
 						}
 						for(int i = 0; i<dex.length-1; i++){
