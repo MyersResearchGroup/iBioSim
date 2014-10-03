@@ -13,10 +13,10 @@ import odk.lang.FastMath;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Rule;
 
-import analysis.dynamicsim.hierarchical.HierarchicalSimulator;
+import analysis.dynamicsim.hierarchical.HierarchicalSimulationFunctions;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 
-public class HierarchicalSSADirectSimulator extends HierarchicalSimulator{
+public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFunctions{
 
 	private static Long initializationTime = new Long(0);
 	private String modelstateID;
