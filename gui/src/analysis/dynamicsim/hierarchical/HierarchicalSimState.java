@@ -78,7 +78,7 @@ public abstract class HierarchicalSimState implements HierarchicalSimulation
 		this.printConcentrationSpecies = new HashSet<String>();
 		this.interestingSpecies = interestingSpecies;
 		this.document = SBMLReader.read(new File(SBMLFileName));
-		this.document = HierarchicalUtilities.getFlattenedRegulations(rootDirectory,SBMLFileName);
+		//this.document = HierarchicalUtilities.getFlattenedRegulations(rootDirectory,SBMLFileName);
 		
 		if (quantityType != null)
 		{

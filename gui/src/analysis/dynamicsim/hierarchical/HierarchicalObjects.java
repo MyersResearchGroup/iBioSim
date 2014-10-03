@@ -58,7 +58,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState {
 		SBMLDocument document = getDocument();
 		isGrid = checkGrid(document.getModel());
 		models.put(document.getModel().getId(), document.getModel().clone());
-		
+		filesCreated = new ArrayList<String>();
 			} 
 	
 	protected static boolean checkGrid(Model model)

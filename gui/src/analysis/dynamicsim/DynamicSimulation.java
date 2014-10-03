@@ -11,6 +11,9 @@ import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.xml.stream.XMLStreamException;
 
+import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
+import analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
 import main.Gui;
 import main.Log;
 
@@ -21,11 +24,10 @@ public class DynamicSimulation {
 	private String simulatorType;
 	
 	//the simulator object
-	private Simulator simulator = null;
-	private HierarchicalSimulator hSimulator = null;
-	
-	private boolean cancelFlag = false;	
-	private boolean statisticsFlag = false;
+	private Simulator simulator;
+	private HierarchicalSimulation hSimulator;
+	private boolean cancelFlag;	
+	private boolean statisticsFlag;
 	
 	/**
 	 * constructor; sets the simulator type
@@ -63,15 +65,15 @@ public class DynamicSimulation {
 						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, numSteps, relError, absError, quantityType);
 			else if (simulatorType.equals("hierarchical-direct"))
-				hSimulator = new SimulatorSSADirectHierarchical(SBMLFileName, rootDirectory, outputDirectory, timeLimit, 
+				hSimulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory, outputDirectory, timeLimit, 
 						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, quantityType);
 			else if (simulatorType.equals("hierarchical-hybrid"))
-				hSimulator = new SimulatorHybridHierarchical(SBMLFileName, rootDirectory, outputDirectory, timeLimit, 
-						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
-						interestingSpecies, numSteps, relError, absError, quantityType);
+			{
+				
+			}
 			else if (simulatorType.equals("hierarchical-rk"))
-				hSimulator = new SimulatorODERKHierarchical2(SBMLFileName, rootDirectory, outputDirectory, timeLimit, 
+				hSimulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory, outputDirectory, timeLimit, 
 						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, numSteps, relError, absError, quantityType);
 		}
@@ -85,10 +87,10 @@ public class DynamicSimulation {
 		}
 		finally
 		{
-			if(hSimulator != null)
-			{
-				hSimulator.deleteFiles();
-			}
+//			if(hSimulator != null)
+//			{
+//				hSimulator.deleteFiles();
+//			}
 		}
 		double val1 = System.currentTimeMillis();
 		for (int run = 1; run <= runs; ++run) {
