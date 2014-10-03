@@ -28,7 +28,6 @@ public class HierarchicalODERKSimulator  extends HierarchicalSimulationFunctions
 	private int numSteps;
 	private double relativeError;
 	private double absoluteError;
-	private double eventOccurred;
 	private double nextEventTime;
 	private double nextTriggerTime;
 	private DiffEquations[] functions;
@@ -178,7 +177,7 @@ public class HierarchicalODERKSimulator  extends HierarchicalSimulationFunctions
 		}
 
 		double initStepTime = 0;
-		while (getCurrentTime() <= getTimeLimit()&& !isCancelFlag() && isConstraintFlag()) 
+		while (getCurrentTime() <= getTimeLimit()&& !isCancelFlag() && !isConstraintFlag()) 
 		{
 			initStepTime = getCurrentTime();
 
