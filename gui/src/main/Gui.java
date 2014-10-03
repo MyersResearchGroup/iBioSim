@@ -8,9 +8,6 @@ import graph.Graph;
 //import lpn.parser.properties.BuildProperty;
 
 
-
-
-
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -140,7 +137,9 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.*;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
@@ -149,6 +148,10 @@ import org.jlibsedml.*;
 import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
+
+
+
+
 
 
 
@@ -8939,6 +8942,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		catch (InterruptedException e) {
 			reb2sacFound=false;
 		}
+		
 		Gui gui = new Gui(lemaFlag, atacsFlag, libsbmlFound);
 	}
 	

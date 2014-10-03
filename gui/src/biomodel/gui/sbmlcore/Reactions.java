@@ -827,9 +827,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
+			String reactionID = "";
 			if(dimID!=null){
+				reactionID = dimID[0].trim();
 				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
-				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), reactionId.trim(), false);
+				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), reactionID, reactionId.trim(), false);
 			}
 			else{
 				error = true;
@@ -956,7 +958,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						react.setFast(false);
 					}
-					react.setId(dimID[0].trim());
+					react.setId(reactionID);
 					react.setName(reacName.getText().trim());
 					Port port = bioModel.getPortByIdRef(val);
 					if (port!=null) {
@@ -1091,8 +1093,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					if (!error) {
 						if (index >= 0) {
 							if (!paramsOnly) {
-								reacts[index] = dimID[0].trim(); 
-								for (int i = 1; i < dimID.length; i++) {
+								reacts[index] = reactionID;
+								for (int i = 1; dimID!=null && i < dimID.length; i++) {
 									reacts[index] += "[" + dimID[i] + "]";
 								}
 							}
@@ -1145,11 +1147,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								AnnotationUtility.removeSBOLAnnotation(react);
 						}
 					}
-					// TODO: Scott - change for Plugin writing
 					if(!error){
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
 						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; i<dimID.length-1; i++){
+						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
@@ -1199,7 +1200,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					if (bioModel.getSBMLDocument().getLevel() > 2) {
 						react.setCompartment((String) reactionComp.getSelectedItem());
 					}
-					react.setId(dimID[0]);
+					react.setId(reactionID);
 					react.setName(reacName.getText().trim());
 					if (onPort.isSelected()) {
 						Port port = bioModel.getSBMLCompModel().createPort();
@@ -1229,8 +1230,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					if (!error) {
 						JList add = new JList();
-						String reactionEntry = dimID[0].trim(); 
-						for (int i = 1; i < dimID.length; i++) {
+						String reactionEntry = reactionID;
+						for (int i = 1; dimID!=null && i < dimID.length; i++) {
 							reactionEntry += "[" + dimID[i] + "]";
 						}
 						Object[] adding = { reactionEntry };
@@ -1253,14 +1254,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					else {
-						removeTheReaction(bioModel, dimID[0]);
+						removeTheReaction(bioModel, reactionID);
 					}
-					// TODO: Scott - change for Plugin writing
-
 					if(!error){
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
 						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; i<dimID.length-1; i++){
+						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
@@ -2002,14 +2001,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			error = false;
 			String prod = "";
 			double val = 1.0;
+			String productID = "";
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), productId.getText(), true);
 			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds("p",dimID.length-1);
-				if (dimID[0].equals("")) {
+				productID = dimID[0].trim();
+				if (productID.equals("")) {
 					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
 				}
 				else {
-					error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0], selectedID, false);
+					error = SBMLutilities.checkID(bioModel.getSBMLDocument(), productID, selectedID, false);
 				}
 			}
 			else{
@@ -2149,7 +2150,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					}
 					if (produ==null) return;
-					produ.setId(dimID[0]);
+					produ.setId(productID);
 					produ.setName(productName.getText().trim());
 					produ.setSpecies((String) productSpecies.getSelectedItem());
 					produ.setStoichiometry(val);
@@ -2167,7 +2168,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							sBasePlugin.removeDimension(0);
 						}
 						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; i<dimID.length-1; i++){
+						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
@@ -2189,16 +2190,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						products.setListData(proda);
 						products.setSelectedIndex(index);
 					}
-					SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selectedID, dimID[0]);
+					SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selectedID, productID);
 					if (product == null || !inSchematic) {
-						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID, dimID[0]));
+						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID, productID));
 					}
 				}
 				else {
 					// SpeciesReference produ = new
 					// SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 					SpeciesReference produ = new SpeciesReference(bioModel.getSBMLDocument().getLevel(), bioModel.getSBMLDocument().getVersion());
-					produ.setId(dimID[0]);
+					produ.setId(productID);
 					produ.setName(productName.getText().trim());
 					changedProducts.add(produ);
 					produ.setSpecies((String) productSpecies.getSelectedItem());
@@ -2211,7 +2212,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					if(!error){
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(produ);
-						for(int i = 0; i<dimID.length-1; i++){
+						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
@@ -2455,14 +2456,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			int index = -1;
+			String modifierID = "";
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), modifierId.getText(), true);
 			if(dimID!=null){
+				modifierID = dimID[0].trim();
 				dimensionIds = SBMLutilities.getDimensionIds("m",dimID.length-1);
-				if (dimID[0].trim().equals("")) {
+				if (modifierID.equals("")) {
 					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
 				}
 				else {
-					error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+					error = SBMLutilities.checkID(bioModel.getSBMLDocument(), modifierID, selectedID, false);
 				}
 			}
 			else{
@@ -2541,8 +2544,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (!error) {
 				if (option.equals("OK")) {
 					ModifierSpeciesReference modi = modifier;
-					modi.setId(dimID[0]);
-					modi.setName(modifierName.getText());
 					if (modifier == null || !inSchematic) {
 						for (ModifierSpeciesReference p : changedModifiers) {
 							if (p.getId().equals(selectedModifierId)||p.getSpecies().equals(selectedModifierId)) {
@@ -2554,6 +2555,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						//modifiers.setSelectedIndex(index);
 					}
+					if (modi==null) return;
+					modi.setId(modifierID);
+					modi.setName(modifierName.getText());
 					modi.setSpecies((String) modifierSpecies.getSelectedItem());
 					if (production!=null) {
 						if (SBOTerms.getSelectedItem().equals("Repression")) {
@@ -2631,7 +2635,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						sBasePlugin.removeDimension(0);
 					}
 					sBasePlugin.unsetListOfDimensions();
-					for(int i = 0; i<dimID.length-1; i++){
+					for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 						Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 						dimX.setSize(dimID[i+1]);
 						dimX.setArrayDimension(i);
@@ -2652,7 +2656,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					modifiers.setSelectedIndex(index);
 					ModifierSpeciesReference modi = new ModifierSpeciesReference(bioModel.getSBMLDocument().getLevel(), bioModel.getSBMLDocument().getVersion());
-					modi.setId(dimID[0]);
+					modi.setId(modifierID);
 					modi.setName(modifierName.getText());
 					changedModifiers.add(modi);
 					modi.setSpecies(mod);
@@ -2747,7 +2751,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						modifiers.setSelectedIndex(0);
 					}
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modi);
-					for(int i = 0; i<dimID.length-1; i++){
+					for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 						Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 						dimX.setSize(dimID[i+1]);
 						dimX.setArrayDimension(i);
@@ -2806,7 +2810,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactantSpecies = new JComboBox();
 		reactantSpecies.addActionListener(this);
 		reactantSpecies.setEnabled(true);
-		// TODO: Scott: if (inSchematic) extract dimensions from reaction else from reaction id field
 		for (int i = 0; i < speciesList.length; i++) {
 			Species species = gcm.getSBMLDocument().getModel().getSpecies(speciesList[i]);
 			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(gcm, "", speciesList[i]))) {
@@ -2845,7 +2848,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (!reactant.getConstant()) {
 				reactantConstant.setSelectedItem("false");
 			}
-			// TODO: Scott - change for Plugin reading
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
 			String dimInID = "";
 			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
@@ -2922,14 +2924,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			error = false;
 			String react = "";
 			double val = 1.0;
+			String reactantID = "";
 			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reactantId.getText(), true);
 			if(dimID!=null){
+				reactantID = dimID[0].trim();
 				dimensionIds = SBMLutilities.getDimensionIds("r",dimID.length-1);
-				if (dimID[0].trim().equals("")) {
+				if (reactantID.equals("")) {
 					error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
 				}
 				else {
-					error = SBMLutilities.checkID(gcm.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+					error = SBMLutilities.checkID(gcm.getSBMLDocument(), reactantID, selectedID, false);
 				}
 			}
 			else{
@@ -2952,7 +2956,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
 						} else {
-							// TODO: need sot use reactant dimension when it exists
+							// TODO: need to use reactant dimension when it exists
 							error = InitialAssignments.addInitialAssignment(bioModel, reactantStoichiometry.getText().trim(), dimID);
 							val = 1.0;
 						}
@@ -3068,7 +3072,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					}
 					if (reactan==null) return;
-					reactan.setId(dimID[0].trim());
+					reactan.setId(reactantID);
 					reactan.setName(reactantName.getText().trim());
 					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
 					reactan.setStoichiometry(val);
@@ -3108,7 +3112,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							sBasePlugin.removeDimension(0);
 						}
 						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; i<dimID.length-1; i++){
+						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
@@ -3130,16 +3134,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactants.setListData(reacta);
 						reactants.setSelectedIndex(index);
 					}
-					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, selectedID, dimID[0].trim());
+					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, selectedID, reactantID);
 					if (reactant == null || !inSchematic) {
-						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID, dimID[0].trim()));
+						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID, reactantID));
 					}
 				}
 				else {
 					// SpeciesReference reactan = new
 					// SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 					SpeciesReference reactan = new SpeciesReference(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
-					reactan.setId(dimID[0].trim());
+					reactan.setId(reactantID);
 					reactan.setName(reactantName.getText().trim());
 					reactan.setConstant(true);
 					changedReactants.add(reactan);
@@ -3173,10 +3177,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						reactan.setConstant(false);
 					}
-					// TODO: Scott - change for Plugin writing
 					if(!error){
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactan);
-						for(int i = 0; i<dimID.length-1; i++){
+						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
