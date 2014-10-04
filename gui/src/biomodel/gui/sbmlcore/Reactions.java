@@ -452,7 +452,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reacta[i] += " " + reactant.getStoichiometry();
 			}
 		}
-		Utility.sort(reacta);
+		//Utility.sort(reacta);
 		reactants.setListData(reacta);
 		reactants.setSelectedIndex(0);
 		reactants.addMouseListener(this);
@@ -505,7 +505,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				proda[i] += " " + product.getStoichiometry();
 			}
 		}
-		Utility.sort(proda);
+		//Utility.sort(proda);
 		products.setListData(proda);
 		products.setSelectedIndex(0);
 		products.addMouseListener(this);
@@ -557,7 +557,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		Utility.sort(modifierArray);
+		//Utility.sort(modifierArray);
 		modifiers.setListData(modifierArray);
 		modifiers.setSelectedIndex(0);
 		modifiers.addMouseListener(this);
@@ -2186,7 +2186,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					if (product == null || !inSchematic) {
 						proda[index] = prod;
-						Utility.sort(proda);
+						//Utility.sort(proda);
 						products.setListData(proda);
 						products.setSelectedIndex(index);
 					}
@@ -2238,7 +2238,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						proda[i] = (String) adding[i];
 					}
-					Utility.sort(proda);
+					//Utility.sort(proda);
 					products.setListData(proda);
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					products.setSelectedIndex(0);
@@ -2625,7 +2625,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						} else {
 							modifierArray[index] = modifierId.getText() + " : " + mod + MiIndex.getText();
 						}
-						Utility.sort(modifierArray);
+						//Utility.sort(modifierArray);
 						modifiers.setListData(modifierArray);
 						modifiers.setSelectedIndex(index);
 					}
@@ -2736,7 +2736,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						modifierArray[i] = (String) adding[i];
 					}
-					Utility.sort(modifierArray);
+					//Utility.sort(modifierArray);
 					modifiers.setListData(modifierArray);
 					modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					try {
@@ -3130,7 +3130,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					} 
 					if (reactant == null || !inSchematic) {
 						reacta[index] = react;
-						Utility.sort(reacta);
+						//Utility.sort(reacta);
 						reactants.setListData(reacta);
 						reactants.setSelectedIndex(index);
 					}
@@ -3204,7 +3204,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						reacta[i] = (String) adding[i];
 					}
-					Utility.sort(reacta);
+					//Utility.sort(reacta);
 					reactants.setListData(reacta);
 					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					reactants.setSelectedIndex(0);
