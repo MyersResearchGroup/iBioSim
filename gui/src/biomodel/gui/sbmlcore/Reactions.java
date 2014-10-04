@@ -452,7 +452,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reacta[i] += " " + reactant.getStoichiometry();
 			}
 		}
-		//Utility.sort(reacta);
+		Utility.sort(reacta);
 		reactants.setListData(reacta);
 		reactants.setSelectedIndex(0);
 		reactants.addMouseListener(this);
@@ -505,7 +505,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				proda[i] += " " + product.getStoichiometry();
 			}
 		}
-		//Utility.sort(proda);
+		Utility.sort(proda);
 		products.setListData(proda);
 		products.setSelectedIndex(0);
 		products.addMouseListener(this);
@@ -557,7 +557,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		//Utility.sort(modifierArray);
+		Utility.sort(modifierArray);
 		modifiers.setListData(modifierArray);
 		modifiers.setSelectedIndex(0);
 		modifiers.addMouseListener(this);
@@ -1902,7 +1902,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (product == null || !inSchematic) {
 				for (SpeciesReference p : changedProducts) {
 					if (p.getId().equals(selectedProductId)||p.getSpecies().equals(selectedProductId)) {
-						product = p;
+						if (speciesReferenceMatch(p,(String)products.getSelectedValue())) {
+							product = p;
+							break;
+						}
 					}
 				}
 			}
@@ -2065,6 +2068,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					if (index >= 0) {
 						products.setSelectedIndex(index);
 					}
+					/*
 					for (int i = 0; i < proda.length; i++) {
 						if (i != index) {
 							if (proda[i].split(" ")[0].equals(productSpecies.getSelectedItem())) {
@@ -2075,6 +2079,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 					}
+					*/
 				}
 			}
 			if (!error) {
@@ -2142,7 +2147,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					if (product == null || !inSchematic) {
 						for (SpeciesReference p : changedProducts) {
 							if (p.getId().equals(selectedProductId)||p.getSpecies().equals(selectedProductId)) {
-								produ = p;
+								if (speciesReferenceMatch(p,(String)products.getSelectedValue())) {
+									produ = p;
+									break;
+								}
 							}
 						}
 						products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -2186,7 +2194,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					if (product == null || !inSchematic) {
 						proda[index] = prod;
-						//Utility.sort(proda);
+						Utility.sort(proda);
 						products.setListData(proda);
 						products.setSelectedIndex(index);
 					}
@@ -2238,7 +2246,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						proda[i] = (String) adding[i];
 					}
-					//Utility.sort(proda);
+					Utility.sort(proda);
 					products.setListData(proda);
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					products.setSelectedIndex(0);
@@ -2264,6 +2272,42 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		return null;
 	}
+	
+	private static boolean modifierSpeciesReferenceMatch(ModifierSpeciesReference ref,String refStr) {
+		String[] split = refStr.split(" ");
+		String id = "";
+		String dim = "";
+		String species = "";
+		String index = "";
+		int offset = 0;
+		if (refStr.contains(":")) {
+			id = split[0].split("\\[")[0];
+			if (split[0].contains("["))
+				dim = split[0].substring(split[0].indexOf("["));
+			offset = 2;
+		}
+		species = split[offset].split("\\[")[0];
+		if (split[offset].contains("["))
+			index = split[offset].substring(split[offset].indexOf("["));
+		if (ref.isSetId() && !ref.getId().equals(id)) return false;
+		if (!ref.getSpecies().equals(species)) return false;
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ref);
+		String refDim = "";
+		for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
+			Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
+			refDim += "[" + dimX.getSize() + "]";
+		}
+		if (!refDim.equals(dim)) return false;
+		String refIndex = "";
+		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
+			Index ind = sBasePlugin.getIndex(i,"species");
+			if (ind!=null)
+				refIndex += "[" + SBMLutilities.myFormulaToString(ind.getMath()) + "]";
+		}
+		if (!refIndex.equals(index)) return false;
+		return true;
+	}
+
 
 	/**
 	 * Creates a frame used to edit modifiers or create new ones.
@@ -2294,9 +2338,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String selectedID = "";			
 		if (option.equals("OK")) {
 			if (modifier == null || !inSchematic) {
-				for (ModifierSpeciesReference p : changedModifiers) {
-					if (p.getId().equals(selectedModifierId)||p.getSpecies().equals(selectedModifierId)) {
-						modifier = p;
+				for (ModifierSpeciesReference m : changedModifiers) {
+					if (m.getId().equals(selectedModifierId)||m.getSpecies().equals(selectedModifierId)) {
+						if (modifierSpeciesReferenceMatch(m,(String)modifiers.getSelectedValue())) {
+							modifier = m;
+							break;
+						}
 					}
 				}
 			}
@@ -2486,6 +2533,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				if (index >= 0) {
 					modifiers.setSelectedIndex(index);
 				}
+				/*
 				for (int i = 0; i < modifierArray.length; i++) {
 					if (i != index) {
 						if (modifierArray[i].split(" ")[0].equals(modifierSpecies.getSelectedItem())) {
@@ -2496,6 +2544,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 				}
+				*/
 			}
 			
 			String mod = (String) modifierSpecies.getSelectedItem();
@@ -2545,9 +2594,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				if (option.equals("OK")) {
 					ModifierSpeciesReference modi = modifier;
 					if (modifier == null || !inSchematic) {
-						for (ModifierSpeciesReference p : changedModifiers) {
-							if (p.getId().equals(selectedModifierId)||p.getSpecies().equals(selectedModifierId)) {
-								modi = p;
+						for (ModifierSpeciesReference m : changedModifiers) {
+							if (m.getId().equals(selectedModifierId)||m.getSpecies().equals(selectedModifierId)) {
+								if (modifierSpeciesReferenceMatch(m,(String)modifiers.getSelectedValue())) {
+									modi = m;
+									break;
+								}
 							}
 						}
 						modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -2625,7 +2677,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						} else {
 							modifierArray[index] = modifierId.getText() + " : " + mod + MiIndex.getText();
 						}
-						//Utility.sort(modifierArray);
+						Utility.sort(modifierArray);
 						modifiers.setListData(modifierArray);
 						modifiers.setSelectedIndex(index);
 					}
@@ -2736,7 +2788,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						modifierArray[i] = (String) adding[i];
 					}
-					//Utility.sort(modifierArray);
+					Utility.sort(modifierArray);
 					modifiers.setListData(modifierArray);
 					modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					try {
@@ -2776,6 +2828,44 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (value == JOptionPane.NO_OPTION) {
 			return;
 		}
+	}
+	
+	private static boolean speciesReferenceMatch(SpeciesReference ref,String refStr) {
+		String[] split = refStr.split(" ");
+		String id = "";
+		String dim = "";
+		String species = "";
+		String index = "";
+		String stoich = "";
+		int offset = 0;
+		if (refStr.contains(":")) {
+			id = split[0].split("\\[")[0];
+			if (split[0].contains("["))
+				dim = split[0].substring(split[0].indexOf("["));
+			offset = 2;
+		}
+		species = split[offset].split("\\[")[0];
+		if (split[offset].contains("["))
+			index = split[offset].substring(split[offset].indexOf("["));
+		stoich = split[offset+1];
+		if (ref.isSetId() && !ref.getId().equals(id)) return false;
+		if (!ref.getSpecies().equals(species)) return false;
+		if (ref.getStoichiometry() != Double.parseDouble(stoich)) return false;
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ref);
+		String refDim = "";
+		for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
+			Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
+			refDim += "[" + dimX.getSize() + "]";
+		}
+		if (!refDim.equals(dim)) return false;
+		String refIndex = "";
+		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
+			Index ind = sBasePlugin.getIndex(i,"species");
+			if (ind!=null)
+				refIndex += "[" + SBMLutilities.myFormulaToString(ind.getMath()) + "]";
+		}
+		if (!refIndex.equals(index)) return false;
+		return true;
 	}
 
 	/**
@@ -2828,10 +2918,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (reactant == null) {
 				for (SpeciesReference r : changedReactants) {
 					if (r.getId().equals(selectedReactantId) || r.getSpecies().equals(selectedReactantId)) {
-						reactant = r;
+						if (speciesReferenceMatch(r,(String)reactants.getSelectedValue()))
+							reactant = r;
 					}
 				}
 			}
+			if (reactant==null) return;
 			reactantSpecies.setSelectedItem(reactant.getSpecies());
 			if (reactant.isSetName()) {
 				reactantName.setText(reactant.getName());
@@ -2987,6 +3079,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					if (index >= 0) {
 						reactants.setSelectedIndex(index);
 					}
+					/*
 					for (int i = 0; i < reacta.length; i++) {
 						if (i != index) {
 							if (reacta[i].split("\\[| ")[0].equals(reactantSpecies.getSelectedItem())) {
@@ -2997,6 +3090,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 					}
+					*/
 				}
 			}
 			if (!error) {
@@ -3064,7 +3158,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					if (reactant == null || !inSchematic) {
 						for (SpeciesReference r : changedReactants) {
 							if (r.getId().equals(selectedReactantId) || r.getSpecies().equals(selectedReactantId)) {
-								reactan = r;
+								if (speciesReferenceMatch(r,(String)reactants.getSelectedValue())) {
+									reactan = r;
+									break;
+								}
 							}
 						}
 						reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -3130,7 +3227,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					} 
 					if (reactant == null || !inSchematic) {
 						reacta[index] = react;
-						//Utility.sort(reacta);
+						Utility.sort(reacta);
 						reactants.setListData(reacta);
 						reactants.setSelectedIndex(index);
 					}
@@ -3204,7 +3301,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						reacta[i] = (String) adding[i];
 					}
-					//Utility.sort(reacta);
+					Utility.sort(reacta);
 					reactants.setListData(reacta);
 					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					reactants.setSelectedIndex(0);
