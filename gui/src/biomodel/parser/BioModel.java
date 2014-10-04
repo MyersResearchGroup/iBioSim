@@ -39,6 +39,7 @@ import org.sbml.jsbml.ext.layout.GraphicalObject;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.arrays.flattening.ArraysFlattening;
 import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
@@ -1058,15 +1059,15 @@ public class BioModel {
 			kd = Double.parseDouble(property.getProperty(GlobalConstants.KDECAY_STRING));
 		} 
 		if (kd != 0) {
-			createDegradationReaction(s,kd,null,onPort);
+			createDegradationReaction(s,kd,null,onPort,null);
 		} 
 		if (property.containsKey(GlobalConstants.TYPE) && 
 			property.getProperty(GlobalConstants.TYPE).contains("diffusible")) {
-			createDiffusionReaction(s,property.getProperty(GlobalConstants.MEMDIFF_STRING),onPort);
+			createDiffusionReaction(s,property.getProperty(GlobalConstants.MEMDIFF_STRING),onPort,null);
 		}
 		if (property.containsKey(GlobalConstants.TYPE) && 
 				property.getProperty(GlobalConstants.TYPE).contains("constitutive")) {
-			createConstitutiveReaction(s,null, null, onPort);
+			createConstitutiveReaction(s,null, null, onPort, null);
 		}
 	}
 	
@@ -1934,7 +1935,7 @@ public class BioModel {
 		return r;
 	}
 	
-	public static void updateDiffusionParameters(String s,Reaction reaction,String kmdiffStr) {
+	public static void updateDiffusionParameters(Reaction reaction,String kmdiffStr) {
 		KineticLaw k = reaction.getKineticLaw();
 		if (kmdiffStr != null && kmdiffStr.startsWith("(")) {
 			LocalParameter p = k.createLocalParameter();
@@ -1955,11 +1956,9 @@ public class BioModel {
 				p.setValue(kmdiff[1]);
 			}
 		}
-		k.setMath(SBMLutilities.myParseFormula(GlobalConstants.FORWARD_MEMDIFF_STRING+"*"+s+"-"+
-				GlobalConstants.REVERSE_MEMDIFF_STRING));		
 	}
 	
-	public Reaction createDiffusionReaction(String s,String kmdiffStr,boolean onPort) {
+	public Reaction createDiffusionReaction(String s,String kmdiffStr,boolean onPort,String[] dimensions) {
 		createDiffusionDefaultParameters();
 		Reaction reaction = sbml.getModel().getReaction("MembraneDiffusion_"+s);		
 		if (reaction==null) {
@@ -1974,8 +1973,28 @@ public class BioModel {
 			reactant.setStoichiometry(1);
 			reactant.setConstant(true);
 		}
+		String indexStr = "";
+		if (dimensions!=null) {
+			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
+			sBasePlugin.unsetListOfDimensions();
+			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(reaction.getReactant(0));
+			sBasePluginReactant.unsetListOfIndices();
+			for (int i = 1; i < dimensions.length; i++) {
+				org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
+				dim.setSize(dimensions[i]);
+				dim.setArrayDimension(i-1);
+				Index index = sBasePluginReactant.createIndex();
+				index.setReferencedAttribute("species");
+				index.setArrayDimension(i-1);
+				index.setMath(SBMLutilities.myParseFormula(dimIds[i-1]));
+				indexStr = "[" + SBMLutilities.myParseFormula(dimIds[i-1]) + "]" + indexStr;
+			}
+		}
 		reaction.createKineticLaw();
-		updateDiffusionParameters(s,reaction,kmdiffStr);
+		updateDiffusionParameters(reaction,kmdiffStr);
+		reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(GlobalConstants.FORWARD_MEMDIFF_STRING+"*"+s+indexStr+"-"+
+				GlobalConstants.REVERSE_MEMDIFF_STRING));		
 		Port port = getPortByIdRef(reaction.getId());
 		if (port!=null) {
 			if (onPort) {
@@ -1994,7 +2013,7 @@ public class BioModel {
 		return reaction;
 	}
 
-	public Reaction createConstitutiveReaction(String s,String ko,String np,boolean onPort) {
+	public Reaction createConstitutiveReaction(String s,String ko,String np,boolean onPort,String[] dimensions) {
 		Reaction r = sbml.getModel().getReaction("Constitutive_"+s);
 		KineticLaw k = null;
 		if (r==null) {
@@ -2014,6 +2033,22 @@ public class BioModel {
 			k.setMath(SBMLutilities.myParseFormula(GlobalConstants.OCR_STRING));
 		} else {
 			k = r.getKineticLaw();
+		}
+		if (dimensions!=null) {
+			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+			sBasePlugin.unsetListOfDimensions();
+			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(r.getProduct(0));
+			sBasePluginReactant.unsetListOfIndices();
+			for (int i = 1; i < dimensions.length; i++) {
+				org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
+				dim.setSize(dimensions[i]);
+				dim.setArrayDimension(i-1);
+				Index index = sBasePluginReactant.createIndex();
+				index.setReferencedAttribute("species");
+				index.setArrayDimension(i-1);
+				index.setMath(SBMLutilities.myParseFormula(dimIds[i-1]));
+			}
 		}
 		if (np != null) {
 			LocalParameter p = k.getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
@@ -2067,7 +2102,7 @@ public class BioModel {
 		return r;
 	}
 	
-	public Reaction createDegradationReaction(String s,double kd,String sweep,boolean onPort) {
+	public Reaction createDegradationReaction(String s,double kd,String sweep,boolean onPort, String[] dimensions) {
 		createDegradationDefaultParameters();
 		Reaction reaction = getDegradationReaction(s);
 		if (reaction==null) {
@@ -2082,6 +2117,24 @@ public class BioModel {
 			reactant.setStoichiometry(1);
 			reactant.setConstant(true);
 		} 
+		String indexStr = "";
+		if (dimensions!=null) {
+			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
+			sBasePlugin.unsetListOfDimensions();
+			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(reaction.getReactant(0));
+			sBasePluginReactant.unsetListOfIndices();
+			for (int i = 1; i < dimensions.length; i++) {
+				org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
+				dim.setSize(dimensions[i]);
+				dim.setArrayDimension(i-1);
+				Index index = sBasePluginReactant.createIndex();
+				index.setReferencedAttribute("species");
+				index.setArrayDimension(i-1);
+				index.setMath(SBMLutilities.myParseFormula(dimIds[i-1]));
+				indexStr = "[" + SBMLutilities.myParseFormula(dimIds[i-1]) + "]" + indexStr;
+			}
+		}
 		KineticLaw k = reaction.createKineticLaw();
 		if (kd > 0 || sweep != null) {
 			LocalParameter p = k.createLocalParameter();
@@ -2091,7 +2144,7 @@ public class BioModel {
 				AnnotationUtility.setSweepAnnotation(p, sweep);
 			} 
 		}
-		k.setMath(SBMLutilities.myParseFormula("kd*"+s));
+		k.setMath(SBMLutilities.myParseFormula("kd*"+s+indexStr));
 		Port port = getPortByIdRef(reaction.getId());
 		if (port!=null) {
 			if (onPort) {

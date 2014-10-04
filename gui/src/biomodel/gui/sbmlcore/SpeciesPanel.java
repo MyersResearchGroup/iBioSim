@@ -835,12 +835,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				PropertyField f = fields.get(GlobalConstants.KDECAY_STRING);
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					if (f.getValue().startsWith("(")) {
-						bioModel.createDegradationReaction(selected, 1.0, f.getValue(),onPort);		
+						bioModel.createDegradationReaction(selected, 1.0, f.getValue(),onPort,dimID);		
 					} else {
-						bioModel.createDegradationReaction(selected, Double.parseDouble(f.getValue()), null,onPort);		
+						bioModel.createDegradationReaction(selected, Double.parseDouble(f.getValue()), null,onPort,dimID);		
 					}
 				} else {
-					bioModel.createDegradationReaction(selected, -1, null,onPort);		
+					bioModel.createDegradationReaction(selected, -1, null,onPort,dimID);		
 				}
 			} 
 			if (diffusion != null && !specDiffusible.isSelected()) {
@@ -851,7 +851,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					kmdiffStr = f.getValue();
 				}
-				bioModel.createDiffusionReaction(selected, kmdiffStr,onPort);		
+				bioModel.createDiffusionReaction(selected, kmdiffStr, onPort, dimID);		
 			} 
 			if (constitutive != null && !specConstitutive.isSelected()) {
 				bioModel.removeReaction(constitutive.getId());
@@ -866,7 +866,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					koStr = f.getValue();
 				}				
-				bioModel.createConstitutiveReaction(selected, koStr, npStr, onPort);		
+				bioModel.createConstitutiveReaction(selected, koStr, npStr, onPort, dimID);		
 			} 
 			if (complex != null) {
 				String KcStr = null;
