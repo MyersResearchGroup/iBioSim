@@ -1478,41 +1478,34 @@ public class Schematic extends JPanel implements ActionListener {
 					else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 						(graph.getCellType(target) == GlobalConstants.REACTION)) {
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
-						ListOf<SpeciesReference> reactants = r.getListOfReactants();
-						for (int i = 0; i < r.getReactantCount(); i++) {
-							SpeciesReference s = reactants.get(i);
-							if (s.getSpecies().equals(source.getId())) {
-								if (s.isSetId() && 
-										SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
-									doNotRemove = true;
-								}
-								break;
-							}
+						int reactantNum = Integer.parseInt(cell.getId().replace(source.getId()+"__r","").replace("__"+target.getId(),""));
+						SpeciesReference s = r.getReactant(reactantNum);
+						if (s.isSetId() && 
+								SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+							doNotRemove = true;
 						}
+						break;
 					} 
 					else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
 						(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(source.getId());
-						ListOf<SpeciesReference> products = r.getListOfProducts();
-						for (int i = 0; i < r.getProductCount(); i++) {
-							SpeciesReference s = products.get(i);
-							if (s.getSpecies().equals(target.getId())) {
-								if (s.isSetId() && 
-										SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
-									doNotRemove = true;
-								}
-								break;
-							}
+						int productNum = Integer.parseInt(cell.getId().replace(source.getId()+"__p","").replace("__"+target.getId(),""));
+						SpeciesReference s = r.getProduct(productNum);
+						if (s.isSetId() && 
+								SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+							doNotRemove = true;
 						}
+						break;
 					}
 				} else if(type == GlobalConstants.MODIFIER_REACTION_EDGE) {
 					mxCell source = (mxCell)cell.getSource();
 					mxCell target = (mxCell)cell.getTarget();
-					ModifierSpeciesReference modifier = bioModel.getSBMLDocument().getModel().getReaction(target.getId()).
-							getModifierForSpecies(source.getId());
-					if (modifier.isSetId() && 
-							SBMLutilities.variableInUse(bioModel.getSBMLDocument(), modifier.getId(), false, true, false)) {
-							doNotRemove = true;
+					Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
+					int modifierNum = Integer.parseInt(cell.getId().replace(source.getId()+"__m","").replace("__"+target.getId(),""));
+					ModifierSpeciesReference s = r.getModifier(modifierNum);
+					if (s.isSetId() && 
+							SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+						doNotRemove = true;
 					}
 					break;
 				}				
@@ -1580,49 +1573,18 @@ public class Schematic extends JPanel implements ActionListener {
 						(graph.getCellType(target) == GlobalConstants.REACTION)) {
 						
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
-						boolean found = false;
+						int reactantNum = Integer.parseInt(cell.getId().replace(source.getId()+"__r","").replace("__"+target.getId(),""));
 						ListOf<SpeciesReference> reactants = r.getListOfReactants();
-						
-						for (int i = 0; i < r.getReactantCount(); i++) {
-							
-							SpeciesReference s = reactants.get(i);
-							
-							if (s.getSpecies().equals(source.getId())) {
-								reactants.remove(i);
-								found = true;
-								break;
-							}
-						}
-						if (!found) {
-							
-							ListOf<ModifierSpeciesReference> modifiers = r.getListOfModifiers();
-							
-							for (int i = 0; i < r.getModifierCount(); i++) {
-								
-								ModifierSpeciesReference s = modifiers.get(i);
-								
-								if (s.getSpecies().equals(source.getId())) {
-									modifiers.remove(i);
-									break;
-								}
-							}
-						}
+						reactants.remove(reactantNum);
+						break;
 					} 
 					else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
 						(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 						
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(source.getId());
+						int productNum = Integer.parseInt(cell.getId().replace(source.getId()+"__p","").replace("__"+target.getId(),""));
 						ListOf<SpeciesReference> products = r.getListOfProducts();
-						
-						for (int i = 0; i < r.getProductCount(); i++) {
-							
-							SpeciesReference s = products.get(i);
-							
-							if (s.getSpecies().equals(target.getId())) {
-								products.remove(i);
-								break;
-							}
-						}
+						products.remove(productNum);
 					}
 				}
 				else if(type == GlobalConstants.MODIFIER_REACTION_EDGE) {
@@ -1630,9 +1592,10 @@ public class Schematic extends JPanel implements ActionListener {
 					mxCell source = (mxCell)cell.getSource();
 					mxCell target = (mxCell)cell.getTarget();
 
-					ModifierSpeciesReference modifier = bioModel.getSBMLDocument().getModel().getReaction(target.getId()).
-							getModifierForSpecies(source.getId());
-					modifier.removeFromParent();
+					Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
+					int modifierNum = Integer.parseInt(cell.getId().replace(source.getId()+"__m","").replace("__"+target.getId(),""));
+					ListOf<ModifierSpeciesReference> modifiers = r.getListOfModifiers();
+					modifiers.remove(modifierNum);
 				}
 				else if(type == GlobalConstants.REACTION) {
 
@@ -2286,7 +2249,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param cell
 	 */
 	public void bringUpEditorForCell(mxCell cell) {
-		
+
 		String cellType = graph.getCellType(cell);
 		
 		if(cellType == GlobalConstants.SPECIES){
@@ -2378,21 +2341,23 @@ public class Schematic extends JPanel implements ActionListener {
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
-				reactions.reactionsEditor(bioModel,"OK",(String)cell.getValue(),true);
+				reactions.reactionsEditor(bioModel,"OK",(String)cell.getValue(),false);
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 				(graph.getCellType(target) == GlobalConstants.REACTION)) {
 				
-				SpeciesReference reactant = bioModel.getSBMLDocument().getModel().getReaction(target.getId()).
-					getReactantForSpecies(source.getId());
+				int reactantNum = Integer.parseInt(cell.getId().replace(source.getId()+"__r","").replace("__"+target.getId(),""));
+				SpeciesReference reactant = bioModel.getSBMLDocument().getModel().getReaction(target.getId()).getReactant(reactantNum);
+				//getReactantForSpecies(source.getId());
 				reactions.reactantsEditor(bioModel,"OK",source.getId(),reactant, true, 
 						bioModel.getSBMLDocument().getModel().getReaction(target.getId()));
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
 				(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
-				SpeciesReference product = bioModel.getSBMLDocument().getModel().getReaction(source.getId()).
-					getProductForSpecies(target.getId());
+				int productNum = Integer.parseInt(cell.getId().replace(source.getId()+"__p","").replace("__"+target.getId(),""));
+				SpeciesReference product = bioModel.getSBMLDocument().getModel().getReaction(source.getId()).getProduct(productNum);
+				//getProductForSpecies(target.getId());
 				reactions.productsEditor(bioModel,"OK",target.getId(),product, true, 
 						bioModel.getSBMLDocument().getModel().getReaction(source.getId()));
 			}
@@ -2402,8 +2367,9 @@ public class Schematic extends JPanel implements ActionListener {
 			mxCell source = (mxCell)cell.getSource();
 			mxCell target = (mxCell)cell.getTarget();
 
-			ModifierSpeciesReference modifier = bioModel.getSBMLDocument().getModel().getReaction(target.getId()).
-					getModifierForSpecies(source.getId());
+			int modifierNum = Integer.parseInt(cell.getId().replace(source.getId()+"__m","").replace("__"+target.getId(),""));
+			ModifierSpeciesReference modifier = bioModel.getSBMLDocument().getModel().getReaction(target.getId()).getModifier(modifierNum);
+			//getModifierForSpecies(source.getId());
 			reactions.modifiersEditor(bioModel,"OK",source.getId(),modifier, true, 
 					bioModel.getSBMLDocument().getModel().getReaction(target.getId()));
 		}

@@ -663,7 +663,7 @@ public class BioGraph extends mxGraph {
 					
 					SpeciesReference s = r.getReactant(j);
 					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
-							s.getSpecies() + "__" + r.getId(), "", 
+							s.getSpecies() + "__r" + j + "__"  + r.getId(), "", 
 							this.getSpeciesCell(s.getSpecies()), 
 							this.getReactionsCell(r.getId()));
 
@@ -690,7 +690,7 @@ public class BioGraph extends mxGraph {
 					
 					ModifierSpeciesReference s = r.getModifier(j);
 					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
-							s.getSpecies() + "__" + r.getId(), "", 
+							s.getSpecies() + "__m" + j + "__" + r.getId(), "", 
 							this.getSpeciesCell(s.getSpecies()), 
 							this.getReactionsCell(r.getId()));
 
@@ -706,7 +706,7 @@ public class BioGraph extends mxGraph {
 					
 					SpeciesReference s = r.getProduct(k);
 					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
-							r.getId() + "__" + s.getSpecies(), "", 
+							r.getId() + "__p" + k + "__" + s.getSpecies(), "", 
 							this.getReactionsCell(r.getId()),
 							this.getSpeciesCell(s.getSpecies()));
 					
@@ -1212,7 +1212,7 @@ public class BioGraph extends mxGraph {
 					}
 					
 					String key = endA + " " + endB;
-					mxCell cell = this.getInfluence(s.getSpecies() + "__" + r.getId());
+					mxCell cell = this.getInfluence(s.getSpecies() + "__r" + j + "__" + r.getId());
 					
 					if(edgeHash.containsKey(key) == false)
 						edgeHash.put(key, new Vector<mxCell>());
@@ -1234,7 +1234,7 @@ public class BioGraph extends mxGraph {
 					}
 					
 					String key = endA + " " + endB;
-					mxCell cell = this.getInfluence(s.getSpecies() + "__" + r.getId());
+					mxCell cell = this.getInfluence(s.getSpecies() + "__m" + j + "__" + r.getId());
 					
 					if(edgeHash.containsKey(key) == false)
 						edgeHash.put(key, new Vector<mxCell>());
@@ -1256,7 +1256,7 @@ public class BioGraph extends mxGraph {
 					}
 					
 					String key = endA + " " + endB;
-					mxCell cell = this.getInfluence(r.getId() + "__" + s.getSpecies());
+					mxCell cell = this.getInfluence(r.getId() + "__p" + k + "__" + s.getSpecies());
 					
 					if(edgeHash.containsKey(key) == false)
 						edgeHash.put(key, new Vector<mxCell>());
