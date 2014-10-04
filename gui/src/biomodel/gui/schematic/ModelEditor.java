@@ -1373,7 +1373,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					} else if (paramId.equals(GlobalConstants.MEMDIFF_STRING)) {
 						Reaction diffusion = BioModel.getDiffusionReaction(id, d.getModel());
 						if (diffusion!=null && diffusion.getKineticLaw()!=null) {
-							BioModel.updateDiffusionParameters(id,diffusion, value);
+							BioModel.updateDiffusionParameters(diffusion, value);
 						}
 					} else {
 						Reaction production = BioModel.getProductionReaction(id, d.getModel());
