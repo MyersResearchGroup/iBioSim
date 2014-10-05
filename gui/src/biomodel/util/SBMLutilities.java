@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
@@ -35,6 +36,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.util.ArraysMath;
+import org.sbml.jsbml.ext.arrays.validator.ArraysValidator;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompConstants;
@@ -72,6 +74,7 @@ import org.sbml.jsbml.QuantityWithUnit;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLError;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
@@ -2292,10 +2295,18 @@ public class SBMLutilities {
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MATHML_CONSISTENCY, false);
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY, false);
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, false);
-			}			
+			}
+			
 			numErrors = document.checkConsistency();
 			for (int i = 0; i < numErrors; i++) {
 				String error = document.getError(i).getMessage(); 
+				message += i + ":" + error + "\n";
+			}
+			
+			List<SBMLError> arraysErrors = ArraysValidator.validate(doc);
+			numErrors+= arraysErrors.size();
+			for (int i = 0; i < arraysErrors.size(); i++) {
+				String error = arraysErrors.get(i).getMessage(); 
 				message += i + ":" + error + "\n";
 			}
 		}
@@ -2331,7 +2342,14 @@ public class SBMLutilities {
 				String error = document.getError(i).getMessage(); 
 				message += i + ":" + error + "\n";
 			}
+			List<SBMLError> arraysErrors = ArraysValidator.validate(document);
+			numErrors+= arraysErrors.size();
+			for (int i = 0; i < arraysErrors.size(); i++) {
+				String error = arraysErrors.get(i).getMessage(); 
+				message += i + ":" + error + "\n";
+			}
 		}
+		
 		if (numErrors > 0) {
 			JTextArea messageArea = new JTextArea(message);
 			messageArea.setLineWrap(true);
