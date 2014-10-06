@@ -2168,13 +2168,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						produ.setConstant(false);
 					}
-					// TODO: Scott - change for Plugin writing
 					if(!error){
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(produ);
-						// TODO: temporary hack
-						while (sBasePlugin.getListOfDimensions().size()>0) {
-							sBasePlugin.removeDimension(0);
-						}
 						sBasePlugin.unsetListOfDimensions();
 						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
@@ -2682,10 +2677,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						modifiers.setSelectedIndex(index);
 					}
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
-					// TODO: temporary hack
-					while (sBasePlugin.getListOfDimensions().size()>0) {
-						sBasePlugin.removeDimension(0);
-					}
 					sBasePlugin.unsetListOfDimensions();
 					for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 						Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
@@ -3204,10 +3195,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					// TODO: Scott - change for Plugin writing
 					if(!error){
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactan);
-						// TODO: temporary hack
-						while (sBasePlugin.getListOfDimensions().size()>0) {
-							sBasePlugin.removeDimension(0);
-						}
 						sBasePlugin.unsetListOfDimensions();
 						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
