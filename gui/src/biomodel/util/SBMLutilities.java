@@ -90,7 +90,6 @@ import org.sbml.libsbml.libsbmlConstants;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
-import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
 
 
@@ -145,10 +144,6 @@ public class SBMLutilities {
 	 * @return If the parameters are on the list, scalar, and constant.
 	 */
 	public static String[] checkSizeParameters(SBMLDocument document, String entryText, boolean idNotRequired){
-		// TDDO: check size parameters
-		// TODO: have this take the dimension string parse it and make sure of form: <id>[<id>][<id>] etc.
-		// TODO: this function should return the String[] of dimensions including 0 entry which is id of the object.
-		//document.getModel().getParameter(parameter);
 		String id = "";
 		String dims = "";
 		if(entryText.contains("[")){
@@ -252,7 +247,6 @@ public class SBMLutilities {
 	 */
 	public static String[] checkIndices(String index, SBase variable, SBMLDocument document, String[] dimensionIds, String attribute, String[] dimSizeIds,
 			String[] topDimensionIds, String[] topDimSizeIds){
-		// TODO: merge the top with bottom array for each and use that merged version below
 		if(attribute.equals("conversionFactor")){
 			attribute = "conversion factor";
 		}
@@ -279,7 +273,6 @@ public class SBMLutilities {
 			dimNSize.put(meshDimensionIds.get(i), meshDimSizeIds.get(i));
 		}
 		ArraysSBasePlugin ABV = getArraysSBasePlugin(variable);
-		// TODO: need to also check parent dimensions in case of species reference
 		int varDimCount = ABV.getDimensionCount();
 		if(index.trim().equals("")){
 			if(varDimCount==0){
@@ -293,10 +286,6 @@ public class SBMLutilities {
 			return null;
 		}
 		
-		// TODO: fix messages to say which index properly
-		// Spell brackets like this
-		// Make sure message fon Conversion Factor is so
-		// Send a map of dimension ids with their size variables
 		if(!index.trim().endsWith("]")){
 			JOptionPane.showMessageDialog(Gui.frame, "Index must end with a closing bracket for the " + attribute + ".", "Mismatching Brackets", JOptionPane.ERROR_MESSAGE);
 			return null;
@@ -351,7 +340,6 @@ public class SBMLutilities {
 						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			//TODO: array dimension is not getting in the correct order using numIndices.
 			if(ArraysMath.evaluateIndexBounds(document.getModel(), variable, (varDimCount-1)-numIndices, math, dimSize) == false){
 				JOptionPane.showMessageDialog(Gui.frame, "Index math must evaluate to values within possible bounds.", 
 						"Invalid Indices", JOptionPane.ERROR_MESSAGE);
@@ -373,10 +361,6 @@ public class SBMLutilities {
 			JOptionPane.showMessageDialog(Gui.frame, "Too many indices for the " + attribute + ".", "Invalid Indices", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-		//TODO: check for invalid variables in the index 
-		//TODO Must also check variables in math are constant OR a dimension id (Leandro will help)
-		//TODO Math should evaluate within bounds of dimension of the object being indexed. (Leandro will help)
-		
 		String [] reverseRet = new String[forRet.split(";").length];
 		for(int i=1; i<reverseRet.length;i++){
 			reverseRet[i] = forRet.split(";")[reverseRet.length-i];
@@ -385,11 +369,9 @@ public class SBMLutilities {
 	}
 	
 	public static String[] getDimensionIds(String prefix, int count) {
-		//if (count==0) return null;
 		String[] dimensionIds = new String[count];
 		for (int i = 0; i < count; i++) {
 			dimensionIds[i] = prefix + "d" + i;
-			// TODO: need to check here is this dimension id is safe to use, should not already be in use
 		}
 		return dimensionIds;
 	}
@@ -406,7 +388,7 @@ public class SBMLutilities {
 		}
 		return dimensionSizes;
 	}
-	// TODO: create a new function, called displayInvalidVariables(String object, <match getInvalidVariables> )
+
 	/**
 	 * Displays the invalid variables
 	 * @param object This is the prefix of the string if it is not a function
@@ -1604,10 +1586,8 @@ public class SBMLutilities {
 							JOptionPane.WARNING_MESSAGE);
 				}
 			} catch (SBMLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1665,16 +1645,8 @@ public class SBMLutilities {
 	 * Update variable in math formula using String
 	 */
 	public static String updateFormulaVar(String s, String origVar, String newVar) {
-		s = " " + s + " ";
-		s = s.replace(" " + origVar + " ", " " + newVar + " ");
-		s = s.replace(" " + origVar + ",", " " + newVar + ",");
-		s = s.replace(" " + origVar + "(", " " + newVar + "(");
-		s = s.replace("(" + origVar + ")", "(" + newVar + ")");
-		s = s.replace("(" + origVar + " ", "(" + newVar + " ");
-		s = s.replace("(" + origVar + ",", "(" + newVar + ",");
-		s = s.replace(" " + origVar + ")", " " + newVar + ")");
-		s = s.replace(" " + origVar + "^", " " + newVar + "^");
-		return s.trim();
+		String result = s.replaceAll("\\b"+origVar+"\\b", newVar);
+		return result.trim();
 	}
 
 	/**
@@ -2641,11 +2613,9 @@ public class SBMLutilities {
 				f.setMath(ASTNode.parseFormula(formula, parser));
 			}
 			catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -3674,10 +3644,8 @@ public class SBMLutilities {
 		try {
 			sbmlObject.getAnnotation().appendNoRDFAnnotation(annotation);
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//sbmlObject.setAnnotation(new Annotation(sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim() + annotation));
 		return JSBML.OPERATION_SUCCESS;
 	}
 	
@@ -3685,16 +3653,9 @@ public class SBMLutilities {
 
 		try {
 			sbmlObject.getAnnotation().appendNoRDFAnnotation( annotation.toXMLString());
-
-
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//=======
-//		sbmlObject.getAnnotation().appendNoRDFAnnotation(annotation.toXMLString());
-//		//sbmlObject.setAnnotation(new Annotation(sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim() + annotation.toXMLString()));
-//>>>>>>> 1.11
 		return JSBML.OPERATION_SUCCESS;
 	}
 	
@@ -3763,18 +3724,6 @@ public class SBMLutilities {
 			} 
 			document.addNamespace(shortName, prefix, namespaces.get(key));
 		}
-		/*
-		ArrayList<String> remove = new ArrayList<String>();
-		for (String namespace : document.getNamespaces()) {
-			remove.add(namespace);
-		}
-		for (String namespace : remove) {
-			document.removeNamespace(namespace);
-		}
-		for (String namespace : namespaces) {
-			document.addNamespace(namespace);
-		}
-		*/
 	}
 	
 	public static boolean getBooleanFromDouble(double value) {
