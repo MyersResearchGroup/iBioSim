@@ -2390,7 +2390,7 @@ public class Schematic extends JPanel implements ActionListener {
 						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+r.getId());
 						textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+r.getId());
-						textGlyph.setText(r.getId());
+						textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(), r.getId()));
 					}
 				}
 				cell.setId(r.getId());
@@ -2415,7 +2415,7 @@ public class Schematic extends JPanel implements ActionListener {
 							TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 							textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
 							textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-							textGlyph.setText(id);
+							textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id));
 						}
 					}
 					cell.setId(id);
@@ -2450,7 +2450,7 @@ public class Schematic extends JPanel implements ActionListener {
 						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
 						textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-						textGlyph.setText(id);
+						textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),id));
 					}
 				}
 				cell.setId(id);
@@ -2475,7 +2475,7 @@ public class Schematic extends JPanel implements ActionListener {
 							TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 							textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
 							textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-							textGlyph.setText(id);
+							textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id));
 						}
 					}
 					cell.setId(id);
@@ -2511,7 +2511,7 @@ public class Schematic extends JPanel implements ActionListener {
 							TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 							textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
 							textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-							textGlyph.setText(id);
+							textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),id));
 						}
 					}
 					cell.setId(id);
@@ -2542,7 +2542,7 @@ public class Schematic extends JPanel implements ActionListener {
 						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
 						textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-						textGlyph.setText(id);
+						textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),id));
 					}
 				}
 				cell.setId(id);

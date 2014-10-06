@@ -272,7 +272,7 @@ public class BioGraph extends mxGraph {
 					textGlyph.getBoundingBox().createDimensions();
 					textGlyph.getBoundingBox().createPosition();
 					textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+c.getId());
-					textGlyph.setText(c.getId());
+					textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),c.getId()));
 					textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox().clone());
 					if(createGraphCompartmentFromModel(c.getId()))
 						needsPositioning = true;			
@@ -1587,7 +1587,7 @@ public class BioGraph extends mxGraph {
 			}
 			textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 			textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId());
-			textGlyph.setText(cell.getId());
+			textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),cell.getId()));
 			textGlyph.setBoundingBox(speciesGlyph.getBoundingBox().clone());
 		} else if (getCellType(cell).equals(GlobalConstants.VARIABLE) || 
 				getCellType(cell).equals(GlobalConstants.PLACE) || 
@@ -1624,7 +1624,7 @@ public class BioGraph extends mxGraph {
 			}
 			textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 			textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId());
-			textGlyph.setText(cell.getId());
+			textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),cell.getId()));
 			textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());
 		} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
 			Layout layout = null;
@@ -1674,7 +1674,7 @@ public class BioGraph extends mxGraph {
 			}
 			textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 			textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId());
-			textGlyph.setText(cell.getId());
+			textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),cell.getId()));
 			textGlyph.setBoundingBox(reactionGlyph.getBoundingBox().clone());
 		} else if (getCellType(cell).equals(GlobalConstants.RULE)||
 				getCellType(cell).equals(GlobalConstants.CONSTRAINT)||
@@ -1715,7 +1715,7 @@ public class BioGraph extends mxGraph {
 			}
 			textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 			textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId());
-			textGlyph.setText(cell.getId());
+			textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),cell.getId()));
 			textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());		
 		} else if (!bioModel.isGridEnabled() && getCellType(cell).equals(GlobalConstants.COMPARTMENT)) {
 			Layout layout = null;
@@ -1779,7 +1779,7 @@ public class BioGraph extends mxGraph {
 			}
 			textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 			textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId());
-			textGlyph.setText(cell.getId());
+			textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),cell.getId()));
 			textGlyph.setBoundingBox(compGlyph.getBoundingBox().clone());
 		} else if (getCellType(cell).equals(GlobalConstants.COMPONENT)) {
 			Layout layout = null;
@@ -1819,7 +1819,7 @@ public class BioGraph extends mxGraph {
 			}
 			textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
 			textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId());
-			textGlyph.setText(cell.getId());
+			textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),cell.getId()));
 			textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());
 		} 
 	}

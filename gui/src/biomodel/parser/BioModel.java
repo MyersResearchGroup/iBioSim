@@ -1158,7 +1158,7 @@ public class BioModel {
 		}
 		textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+s);
 		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+s);
-		textGlyph.setText(s);
+		textGlyph.setText(SBMLutilities.getArrayId(sbml,s));
 		textGlyph.setBoundingBox(speciesGlyph.getBoundingBox().clone());
 	}
 
@@ -1198,7 +1198,7 @@ public class BioModel {
 		}
 		textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+s);
 		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+s);
-		textGlyph.setText(s);
+		textGlyph.setText(SBMLutilities.getArrayId(sbml,s));
 		textGlyph.setBoundingBox(reactionGlyph.getBoundingBox().clone());
 	}
 
@@ -1238,7 +1238,7 @@ public class BioModel {
 		}
 		textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+s);
 		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+s);
-		textGlyph.setText(s);
+		textGlyph.setText(SBMLutilities.getArrayId(sbml,s));
 		textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox().clone());
 	}
 	
@@ -1287,7 +1287,7 @@ public class BioModel {
 		}
 		textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+s);
 		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+s);
-		textGlyph.setText(s);
+		textGlyph.setText(SBMLutilities.getArrayId(sbml,s));
 		textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());
 	}
 	
@@ -2881,7 +2881,7 @@ public class BioModel {
 				TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+oldId);
 				textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+newId);
 				textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+newId);
-				textGlyph.setText(newId);
+				textGlyph.setText(SBMLutilities.getArrayId(sbml,newId));
 			}
 		}
 	}
@@ -2998,7 +2998,7 @@ public class BioModel {
 				TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+oldId);
 				textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+newId);
 				textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+newId);
-				textGlyph.setText(newId);
+				textGlyph.setText(SBMLutilities.getArrayId(sbml, newId));
 			}
 		}
 	}
@@ -3098,7 +3098,7 @@ public class BioModel {
 				TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+oldName);
 				textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+newName);
 				textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+newName);
-				textGlyph.setText(newName);
+				textGlyph.setText(SBMLutilities.getArrayId(sbml,newName));
 			}
 		}
 	}
@@ -3409,7 +3409,7 @@ public class BioModel {
 		textGlyph.getBoundingBox().createDimensions();
 		textGlyph.getBoundingBox().createPosition();
 		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+submodelID);
-		textGlyph.setText(submodelID);
+		textGlyph.setText(SBMLutilities.getArrayId(sbml,submodelID));
 		textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());
 		
 		return submodelID;
@@ -5582,7 +5582,7 @@ public class BioModel {
 			textGlyph.getBoundingBox().createDimensions();
 			textGlyph.getBoundingBox().createPosition();
 			textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-			textGlyph.setText(id);
+			textGlyph.setText(SBMLutilities.getArrayId(sbml,id));
 			textGlyph.setBoundingBox(speciesGlyph.getBoundingBox().clone());
 		}
 		if (sbml != null && sbml.getModel().getSpecies(id)==null) {
@@ -5642,7 +5642,7 @@ public class BioModel {
 		textGlyph.getBoundingBox().createDimensions();
 		textGlyph.getBoundingBox().createPosition();
 		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-		textGlyph.setText(id);
+		textGlyph.setText(SBMLutilities.getArrayId(sbml,id));
 		textGlyph.setBoundingBox(reactionGlyph.getBoundingBox().clone());
 		Model m = sbml.getModel();
 		Reaction r = m.createReaction();
@@ -5690,7 +5690,7 @@ public class BioModel {
 		textGlyph.getBoundingBox().createDimensions();
 		textGlyph.getBoundingBox().createPosition();
 		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-		textGlyph.setText(id);
+		textGlyph.setText(SBMLutilities.getArrayId(sbml,id));
 		textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());
 	}
 
@@ -5722,7 +5722,7 @@ public class BioModel {
 		textGlyph.getBoundingBox().createDimensions();
 		textGlyph.getBoundingBox().createPosition();
 		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-		textGlyph.setText(id);
+		textGlyph.setText(SBMLutilities.getArrayId(sbml,id));
 		textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());
 	}
 
@@ -5758,7 +5758,7 @@ public class BioModel {
 		textGlyph.getBoundingBox().createDimensions();
 		textGlyph.getBoundingBox().createPosition();
 		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-		textGlyph.setText(id);
+		textGlyph.setText(SBMLutilities.getArrayId(sbml,id));
 		textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());
 	}
 	
@@ -5825,7 +5825,7 @@ public class BioModel {
 			textGlyph.getBoundingBox().createDimensions();
 			textGlyph.getBoundingBox().createPosition();
 			textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+promoterId);
-			textGlyph.setText(promoterId);
+			textGlyph.setText(SBMLutilities.getArrayId(sbml,promoterId));
 			textGlyph.setBoundingBox(speciesGlyph.getBoundingBox().clone());
 		}
 
@@ -5889,7 +5889,7 @@ public class BioModel {
 		textGlyph.getBoundingBox().createDimensions();
 		textGlyph.getBoundingBox().createPosition();
 		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-		textGlyph.setText(id);
+		textGlyph.setText(SBMLutilities.getArrayId(sbml,id));
 		textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());
 
 		return id;
@@ -5943,7 +5943,7 @@ public class BioModel {
 			textGlyph.getBoundingBox().createDimensions();
 			textGlyph.getBoundingBox().createPosition();
 			textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-			textGlyph.setText(id);
+			textGlyph.setText(SBMLutilities.getArrayId(sbml,id));
 			textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox().clone());
 		}
 		return id;
