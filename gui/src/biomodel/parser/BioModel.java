@@ -2887,31 +2887,6 @@ public class BioModel {
 	}
 
 	public void changeSpeciesId(String oldId, String newId) {
-		/*
-		ArrayList<String> newConditions = new ArrayList<String>();
-		for (String condition : conditions) {
-			int index = condition.indexOf(oldName, 0);
-			if (index != -1) {
-				while (index <= condition.length() && index != -1) {
-					if (index != 0 && !Character.isDigit(condition.charAt(index - 1))
-							&& !Character.isLetter(condition.charAt(index - 1))
-							&& condition.charAt(index - 1) != '_'
-							&& index + oldName.length() != condition.length()
-							&& !Character.isDigit(condition.charAt(index + oldName.length()))
-							&& !Character.isLetter(condition.charAt(index + oldName.length()))
-							&& condition.charAt(index + oldName.length()) != '_') {
-						condition = condition.substring(0, index)
-								+ condition.substring(index, condition.length()).replace(oldName,
-										newName);
-					}
-					index++;
-					index = condition.indexOf(oldName, index);
-				}
-			}
-			newConditions.add(condition);
-		}
-		conditions = newConditions;
-		*/
 		if (sbml != null) {
 			if (sbml.getModel() != null) {
 				SBMLutilities.updateVarId(sbml, true, oldId, newId);
