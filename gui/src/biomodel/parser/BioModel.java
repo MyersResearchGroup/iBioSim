@@ -2558,6 +2558,7 @@ public class BioModel {
  		}
 		for (int i = 0; i < flatSBML.getModel().getParameterCount(); i++) {
 			Parameter p = flatSBML.getModel().getParameter(i);
+			if (p.getId().startsWith(GlobalConstants.TRIGGER+"_")) continue;
 			if (SBMLutilities.isPlace(p)) {
 				lpn.addPlace(p.getId(), (p.getValue()==1));
 			} else if (SBMLutilities.isBoolean(p)){

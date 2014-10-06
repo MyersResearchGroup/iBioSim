@@ -824,41 +824,35 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private void removeCompartment() {
 		int index = compartments.getSelectedIndex();
 		if (index != -1) {
-			if (bioModel.getSBMLDocument().getModel().getCompartmentCount() != 1) {
-				if (!SBMLutilities.compartmentInUse(bioModel.getSBMLDocument(),
-						((String) compartments.getSelectedValue()).split("\\[| ")[0])) {
-					if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) compartments.getSelectedValue()).split("\\[| ")[0], false, true, true)) {
-						Compartment tempComp = bioModel.getSBMLDocument().getModel().getCompartment(((String) compartments.getSelectedValue()).split("\\[| ")[0]);
-						ListOf<Compartment> c = bioModel.getSBMLDocument().getModel().getListOfCompartments();
-						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
-							if (c.get(i).getId().equals(tempComp.getId())) {
-								c.remove(i);
-							}
+			if (!SBMLutilities.compartmentInUse(bioModel.getSBMLDocument(),
+					((String) compartments.getSelectedValue()).split("\\[| ")[0])) {
+				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) compartments.getSelectedValue()).split("\\[| ")[0], false, true, true)) {
+					Compartment tempComp = bioModel.getSBMLDocument().getModel().getCompartment(((String) compartments.getSelectedValue()).split("\\[| ")[0]);
+					ListOf<Compartment> c = bioModel.getSBMLDocument().getModel().getListOfCompartments();
+					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
+						if (c.get(i).getId().equals(tempComp.getId())) {
+							c.remove(i);
 						}
-						for (int i = 0; i < bioModel.getSBMLCompModel().getListOfPorts().size(); i++) {
-							Port port = bioModel.getSBMLCompModel().getListOfPorts().get(i);
-							if (port.isSetIdRef() && port.getIdRef().equals(tempComp.getId())) {
-								bioModel.getSBMLCompModel().getListOfPorts().remove(i);
-								break;
-							}
-						}
-						compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						Utility.remove(compartments);
-						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (index < compartments.getModel().getSize()) {
-							compartments.setSelectedIndex(index);
-						}
-						else {
-							compartments.setSelectedIndex(index - 1);
-						}
-						modelEditor.setDirty(true);
-						bioModel.makeUndoPoint();
 					}
+					for (int i = 0; i < bioModel.getSBMLCompModel().getListOfPorts().size(); i++) {
+						Port port = bioModel.getSBMLCompModel().getListOfPorts().get(i);
+						if (port.isSetIdRef() && port.getIdRef().equals(tempComp.getId())) {
+							bioModel.getSBMLCompModel().getListOfPorts().remove(i);
+							break;
+						}
+					}
+					compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					Utility.remove(compartments);
+					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					if (index < compartments.getModel().getSize()) {
+						compartments.setSelectedIndex(index);
+					}
+					else {
+						compartments.setSelectedIndex(index - 1);
+					}
+					modelEditor.setDirty(true);
+					bioModel.makeUndoPoint();
 				}
-			}
-			else {
-				JOptionPane.showMessageDialog(Gui.frame, "Each model must contain at least one compartment.", "Unable To Remove Compartment",
-						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
