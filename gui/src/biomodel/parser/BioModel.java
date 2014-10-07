@@ -3,7 +3,6 @@ package biomodel.parser;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -39,6 +38,7 @@ import org.sbml.jsbml.ext.layout.GraphicalObject;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.arrays.flattening.ArraysFlattening;
 import org.sbml.jsbml.ext.comp.CompConstants;
@@ -533,7 +533,7 @@ public class BioModel {
 			consLevel.get(consLevel.size() - 1).setListData(new Object[0]);
 			conLevel.set(conLevel.size() - 1, new Object[0]);
 			JScrollPane scroll = new JScrollPane();
-			scroll.setPreferredSize(new Dimension(260, 100));
+			scroll.setPreferredSize(new java.awt.Dimension(260, 100));
 			scroll.setViewportView(consLevel.get(consLevel.size() - 1));
 			JPanel area = new JPanel();
 			area.add(scroll);
@@ -634,15 +634,15 @@ public class BioModel {
 
 		naryFrame.setContentPane(naryPanel);
 		naryFrame.pack();
-		Dimension screenSize;
+		java.awt.Dimension screenSize;
 		try {
 			Toolkit tk = Toolkit.getDefaultToolkit();
 			screenSize = tk.getScreenSize();
 		}
 		catch (AWTError awe) {
-			screenSize = new Dimension(640, 480);
+			screenSize = new java.awt.Dimension(640, 480);
 		}
-		Dimension frameSize = naryFrame.getSize();
+		java.awt.Dimension frameSize = naryFrame.getSize();
 
 		if (frameSize.height > screenSize.height) {
 			frameSize.height = screenSize.height;
@@ -1003,7 +1003,6 @@ public class BioModel {
 			c.setMath(SBMLutilities.myParseFormula("true"));
 			c.setMessage(xmlNode);
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1548,6 +1547,23 @@ public class BioModel {
 				k.getListOfLocalParameters().remove(GlobalConstants.REVERSE_KCOMPLEX_STRING);
 			}
 		}
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+		ArraysSBasePlugin sBasePluginSpecies = SBMLutilities.getArraysSBasePlugin(sbml.getModel().getSpecies(s));
+		ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(r.getProduct(0));
+		sBasePlugin.unsetListOfDimensions();
+		sBasePluginProduct.unsetListOfIndices();
+		String indexStr = "";
+		for (int i = 0; i < sBasePluginSpecies.getListOfDimensions().size(); i++) {
+			Dimension prodDim = sBasePluginSpecies.getDimensionByArrayDimension(i);
+			Dimension dim = sBasePlugin.createDimension(prodDim.getId());
+			dim.setSize(prodDim.getSize());
+			dim.setArrayDimension(prodDim.getArrayDimension());
+			Index index = sBasePluginProduct.createIndex();
+			index.setReferencedAttribute("species");
+			index.setArrayDimension(i);
+			index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+			indexStr = "[" + dim.getId() + "]" + indexStr;
+		}
 		updateComplexParameters(r,KcStr);
 		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(r)));
 		Port port = getPortByIdRef(r.getId());
@@ -1568,15 +1584,29 @@ public class BioModel {
 		return r;
 	}
 
-	public Reaction addNoInfluenceToProductionReaction(String promoterId,String activatorId,String productId) {
+	public Reaction addNoInfluenceToProductionReaction(String promoterId,String regulatorId,String productId) {
 		Reaction r = getProductionReaction(promoterId);
-		ModifierSpeciesReference modifier = r.getModifierForSpecies(activatorId);
-		if (!activatorId.equals("none") && modifier==null) {
+		ModifierSpeciesReference modifier = r.getModifierForSpecies(regulatorId);
+		if (!regulatorId.equals("none") && modifier==null) {
 			modifier = r.createModifier();
-			modifier.setSpecies(activatorId);
+			modifier.setSpecies(regulatorId);
 			modifier.setSBOTerm(GlobalConstants.SBO_NEUTRAL);
 		} else if (modifier != null) {
 			return r;
+		}
+		if (modifier!=null) {
+			if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(regulatorId))) {
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(modifier);
+				sBasePluginProduct.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+					Index index = sBasePluginProduct.createIndex();
+					index.setReferencedAttribute("species");
+					index.setArrayDimension(i);
+					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+				}
+			}			
 		}
 		if (!productId.equals("none") && r.getProductForSpecies(productId)==null) {
 			SpeciesReference product = r.createProduct();
@@ -1853,6 +1883,20 @@ public class BioModel {
 		} else if (modifier != null && BioModel.isRepressor(modifier)) {
 			modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
 		}
+		if (modifier!=null) {
+			if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(activatorId))) {
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(modifier);
+				sBasePluginProduct.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+					Index index = sBasePluginProduct.createIndex();
+					index.setReferencedAttribute("species");
+					index.setArrayDimension(i);
+					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+				}
+			}			
+		}
 		if (!productId.equals("none") && r.getProductForSpecies(productId)==null) {
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(productId);
@@ -1864,6 +1908,18 @@ public class BioModel {
 				product.setStoichiometry(np);
 			}
 			product.setConstant(true);
+			if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(productId))) {
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(product);
+				sBasePluginProduct.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+					Index index = sBasePluginProduct.createIndex();
+					index.setReferencedAttribute("species");
+					index.setArrayDimension(i);
+					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+				}
+			}
 			r.removeProduct(promoterId+"_mRNA");
 			sbml.getModel().removeSpecies(promoterId+"_mRNA");
 		}
@@ -1881,6 +1937,20 @@ public class BioModel {
 			modifier.setSBOTerm(GlobalConstants.SBO_REPRESSION);
 		} else if (modifier != null && BioModel.isActivator(modifier)) {
 			modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
+		}
+		if (modifier!=null) {
+			if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(repressorId))) {
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(modifier);
+				sBasePluginProduct.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+					Index index = sBasePluginProduct.createIndex();
+					index.setReferencedAttribute("species");
+					index.setArrayDimension(i);
+					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+				}
+			}			
 		}
 		if (!productId.equals("none") && r.getProductForSpecies(productId)==null) {
 			SpeciesReference product = r.createProduct();
@@ -1931,6 +2001,18 @@ public class BioModel {
 			reactant.setSpecies(reactantId);
 			reactant.setConstant(true);
 		}
+		if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(reactantId))) {
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+			ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(reactant);
+			sBasePluginProduct.unsetListOfIndices();
+			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+				Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+				Index index = sBasePluginProduct.createIndex();
+				index.setReferencedAttribute("species");
+				index.setArrayDimension(i);
+				index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+			}
+		}			
 		updateComplexCooperativity(reactantId, r, CoopStr, sbml.getModel());
 		return r;
 	}
@@ -1981,7 +2063,7 @@ public class BioModel {
 			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(reaction.getReactant(0));
 			sBasePluginReactant.unsetListOfIndices();
 			for (int i = 1; i < dimensions.length; i++) {
-				org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
+				Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
 				dim.setSize(dimensions[i]);
 				dim.setArrayDimension(i-1);
 				Index index = sBasePluginReactant.createIndex();
@@ -2041,7 +2123,7 @@ public class BioModel {
 			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(r.getProduct(0));
 			sBasePluginReactant.unsetListOfIndices();
 			for (int i = 1; i < dimensions.length; i++) {
-				org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
+				Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
 				dim.setSize(dimensions[i]);
 				dim.setArrayDimension(i-1);
 				Index index = sBasePluginReactant.createIndex();
@@ -2125,7 +2207,7 @@ public class BioModel {
 			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(reaction.getReactant(0));
 			sBasePluginReactant.unsetListOfIndices();
 			for (int i = 1; i < dimensions.length; i++) {
-				org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
+				Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
 				dim.setSize(dimensions[i]);
 				dim.setArrayDimension(i-1);
 				Index index = sBasePluginReactant.createIndex();
@@ -2231,7 +2313,7 @@ public class BioModel {
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
 			sBasePlugin.unsetListOfDimensions();
 			for (int i = 1; i < dimensions.length; i++) {
-				org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
+				Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
 				dim.setSize(dimensions[i]);
 				dim.setArrayDimension(i-1);
 			}
@@ -2265,6 +2347,21 @@ public class BioModel {
 		} else {
 			for (int i = 0; i < r.getProductCount(); i++) {
 				r.getProduct(i).setStoichiometry(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
+			}
+		}
+		for (int i = 0; i < r.getProductCount(); i++) {
+			String productId = r.getProduct(i).getSpecies();
+			if (SBMLutilities.dimensionsMatch(r, sbml.getModel().getSpecies(productId))) {
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(r.getProduct(i));
+				sBasePluginProduct.unsetListOfIndices();
+				for (int j = 0; j < sBasePlugin.getListOfDimensions().size(); j++) {
+					Dimension dim = sBasePlugin.getDimensionByArrayDimension(j);
+					Index index = sBasePluginProduct.createIndex();
+					index.setReferencedAttribute("species");
+					index.setArrayDimension(j);
+					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+				}
 			}
 		}
 		if (ko != null) {
@@ -2352,15 +2449,30 @@ public class BioModel {
 		String kineticLaw;
 		kineticLaw = GlobalConstants.FORWARD_KCOMPLEX_STRING;
 		for (int i=0;i<reaction.getReactantCount();i++) {
+			String reactant = reaction.getReactant(i).getSpecies();
+			String indexStr = "";
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getReactant(i));
+			for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
+				Index index = sBasePlugin.getIndex(j,"species");
+				if (index!=null)
+					indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+			}
 			if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + 
 					reaction.getReactant(i).getSpecies())==null) {
-				kineticLaw += "*pow(" + reaction.getReactant(i).getSpecies() + "," + GlobalConstants.COOPERATIVITY_STRING + ")";
+				kineticLaw += "*pow(" + reactant+indexStr + "," + GlobalConstants.COOPERATIVITY_STRING + ")";
 			} else {
-				kineticLaw += "*pow(" + reaction.getReactant(i).getSpecies() + "," + GlobalConstants.COOPERATIVITY_STRING + 
-						"_" + reaction.getReactant(i).getSpecies() + ")";
+				kineticLaw += "*pow(" + reactant+indexStr + "," + GlobalConstants.COOPERATIVITY_STRING + 
+						"_" + reactant + ")";
 			}
 		}
-		kineticLaw += "-" + GlobalConstants.REVERSE_KCOMPLEX_STRING + "*" + reaction.getProduct(0).getSpecies();
+		String indexStr = "";
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getProduct(0));
+		for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
+			Index index = sBasePlugin.getIndex(j,"species");
+			if (index!=null)
+				indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+		}
+		kineticLaw += "-" + GlobalConstants.REVERSE_KCOMPLEX_STRING + "*" + reaction.getProduct(0).getSpecies()+indexStr;
 		return kineticLaw;
 	}
 
@@ -2389,26 +2501,33 @@ public class BioModel {
 			for (int i=0;i<reaction.getModifierCount();i++) {
 				if (BioModel.isActivator(reaction.getModifier(i)) || BioModel.isRegulator(reaction.getModifier(i))) {
 					String activator = reaction.getModifier(i).getSpecies();
+					String indexStr = "";
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getModifier(i));
+					for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
+						Index index = sBasePlugin.getIndex(j,"species");
+						if (index!=null)
+							indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+					}
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+activator+"_"))==null) {
 						kineticLaw += "+" + GlobalConstants.ACTIVATED_STRING + "*" + 
 								"(" + GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING + "/" + 
 								GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING + ")*" + GlobalConstants.RNAP_STRING +
 								"*pow((" + GlobalConstants.FORWARD_KACT_STRING + "/" + GlobalConstants.REVERSE_KACT_STRING + ")*" 
-								+ activator;
+								+ activator+indexStr;
 						actBottom += "+(" + GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING + "/" + 
 								GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING + ")*" + GlobalConstants.RNAP_STRING +
 								"*pow((" + GlobalConstants.FORWARD_KACT_STRING + "/" + GlobalConstants.REVERSE_KACT_STRING + ")*" 
-								+ activator;
+								+ activator+indexStr;
 					} else {
 						kineticLaw += "+" + GlobalConstants.ACTIVATED_STRING + "*" + 
 								"(" + GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING + "/" + 
 								GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING + ")*" + GlobalConstants.RNAP_STRING +
 								"*pow((" + GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + activator + "_") + "/" + 
-								GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + activator + "_") + ")*" + activator;
+								GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + activator + "_") + ")*" + activator+indexStr;
 						actBottom += "+(" + GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING + "/" + 
 								GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING + ")*" + GlobalConstants.RNAP_STRING +
 								"*pow((" + GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + activator + "_") + "/" + 
-								GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + activator +"_") + ")*" + activator;
+								GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + activator +"_") + ")*" + activator+indexStr;
 					}
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+activator+"_a")==null) {
 						kineticLaw += "," + GlobalConstants.COOPERATIVITY_STRING + ")";
@@ -2424,12 +2543,19 @@ public class BioModel {
 			for (int i=0;i<reaction.getModifierCount();i++) {
 				if (BioModel.isRepressor(reaction.getModifier(i)) || BioModel.isRegulator(reaction.getModifier(i))) {
 					String repressor = reaction.getModifier(i).getSpecies();
+					String indexStr = "";
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getModifier(i));
+					for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
+						Index index = sBasePlugin.getIndex(j,"species");
+						if (index!=null)
+							indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+					}
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+repressor+"_"))==null) {
 						kineticLaw += "+pow((" + GlobalConstants.FORWARD_KREP_STRING + "/" + GlobalConstants.REVERSE_KREP_STRING + ")*" 
-								+ repressor;
+								+ repressor+indexStr;
 					} else {
 						kineticLaw += "+pow((" + GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + repressor + "_") + "/" + 
-								GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + repressor + "_") + ")*" + repressor;
+								GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + repressor + "_") + ")*" + repressor+indexStr;
 					}
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+repressor+"_r")==null) {
 						kineticLaw += "," + GlobalConstants.COOPERATIVITY_STRING + ")";
@@ -2448,12 +2574,19 @@ public class BioModel {
 			for (int i=0;i<reaction.getModifierCount();i++) {
 				if (BioModel.isRepressor(reaction.getModifier(i))) {
 					String repressor = reaction.getModifier(i).getSpecies();
+					String indexStr = "";
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getModifier(i));
+					for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
+						Index index = sBasePlugin.getIndex(j,"species");
+						if (index!=null)
+							indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+					}
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+repressor+"_"))==null) {
 						kineticLaw += "+pow((" + GlobalConstants.FORWARD_KREP_STRING + "/" + GlobalConstants.REVERSE_KREP_STRING + ")*" 
-								+ repressor;
+								+ repressor+indexStr;
 					} else {
 						kineticLaw += "+pow((" + GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + repressor + "_")+"/" + 
-								GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + repressor + "_") + ")*" + repressor;
+								GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + repressor + "_") + ")*" + repressor+indexStr;
 					}
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+repressor+"_r")==null) {
 						kineticLaw += "," + GlobalConstants.COOPERATIVITY_STRING + ")";
@@ -2783,8 +2916,8 @@ public class BioModel {
 			JTextArea messageArea = new JTextArea(message);
 			messageArea.setEditable(false);
 			JScrollPane scroll = new JScrollPane();
-			scroll.setMinimumSize(new Dimension(400, 400));
-			scroll.setPreferredSize(new Dimension(400, 400));
+			scroll.setMinimumSize(new java.awt.Dimension(400, 400));
+			scroll.setPreferredSize(new java.awt.Dimension(400, 400));
 			scroll.setViewportView(messageArea);		
 			Object[] options = { "OK", "Cancel" };
 			int value = JOptionPane.showOptionDialog(Gui.frame, scroll, "Conversion Errors",
@@ -3108,13 +3241,63 @@ public class BioModel {
 		}
 	}
 
-	
-	//ADD METHODS
-	/*
-	public void addSpecies(String name, Properties property) {
-		species.put(name, property);
+	public void addReactantToReaction(String reactantId,String reactionId) {
+		Reaction r = sbml.getModel().getReaction(reactionId);
+		SpeciesReference s = r.createReactant();
+		s.setSpecies(reactantId);
+		s.setStoichiometry(1.0);
+		s.setConstant(true);
+		if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(reactantId))) {
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+			ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(s);
+			sBasePluginProduct.unsetListOfIndices();
+			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+				Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+				Index index = sBasePluginProduct.createIndex();
+				index.setReferencedAttribute("species");
+				index.setArrayDimension(i);
+				index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+			}
+		}			
 	}
-	*/
+
+	public void addProductToReaction(String productId,String reactionId) {
+		Reaction r = sbml.getModel().getReaction(reactionId);
+		SpeciesReference s = r.createProduct();
+		s.setSpecies(productId);
+		s.setStoichiometry(1.0);
+		s.setConstant(true);
+		if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(productId))) {
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+			ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(s);
+			sBasePluginProduct.unsetListOfIndices();
+			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+				Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+				Index index = sBasePluginProduct.createIndex();
+				index.setReferencedAttribute("species");
+				index.setArrayDimension(i);
+				index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+			}
+		}			
+	}
+
+	public void addModifierToReaction(String modifierId,String reactionId) {
+		Reaction r = sbml.getModel().getReaction(reactionId);
+		ModifierSpeciesReference s = r.createModifier();
+		s.setSpecies(modifierId);
+		if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(modifierId))) {
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+			ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(s);
+			sBasePluginProduct.unsetListOfIndices();
+			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+				Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+				Index index = sBasePluginProduct.createIndex();
+				index.setReferencedAttribute("species");
+				index.setArrayDimension(i);
+				index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+			}
+		}			
+	}
 	
 	public void addReaction(String sourceID,String targetID,boolean isModifier) {
 		Model m = sbml.getModel();

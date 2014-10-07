@@ -12,11 +12,17 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Dimension;
+import org.sbml.jsbml.ext.arrays.Index;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
@@ -25,7 +31,6 @@ import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
-
 import main.Gui;
 
 
@@ -35,10 +40,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public InfluencePanel(String selection, BioModel gcm, boolean paramsOnly, BioModel refGCM, ModelEditor gcmEditor) {
-		super(new GridLayout(5, 1));
+	public InfluencePanel(String selection, BioModel bioModel, boolean paramsOnly, BioModel refGCM, ModelEditor gcmEditor) {
+		super(new GridLayout(6, 1));
 		this.selection = selection;
-		this.gcm = gcm;
+		this.bioModel = bioModel;
 		this.paramsOnly = paramsOnly;
 		this.gcmEditor = gcmEditor;
 		this.promoterNameChange = false;
@@ -63,9 +68,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		promoterButton = new JButton("Edit Promoter");
 		promoterButton.setActionCommand("buttonPushed");
 		promoterButton.addActionListener(this);
-		promoterId = gcm.influenceHasExplicitPromoter(selection);
+		promoterId = bioModel.influenceHasExplicitPromoter(selection);
 		if (promoterId != null) {
-			promoterBox = new JComboBox(gcm.getPromoters().toArray());
+			promoterBox = new JComboBox(bioModel.getPromoters().toArray());
 			promoterBox.setSelectedItem(promoterId);
 			if (selection.contains("x>")) {
 				regulator = selection.substring(0,selection.indexOf(">")-1);
@@ -84,7 +89,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 //				gcm.createPromoter(null, 0, 0, false);
 //				impProms = gcm.getImplicitPromotersAsArray();
 //			}
-			promoterBox = new JComboBox(gcm.getImplicitPromotersAsArray());
+			promoterBox = new JComboBox(bioModel.getImplicitPromotersAsArray());
 			if (selection.contains(",")) {
 				promoterId = selection.substring(selection.indexOf(",")+1);
 				if (selection.contains("x>")) {
@@ -114,6 +119,14 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			promoterBox.setEnabled(false);
 		}
 		add(tempPanel);
+		
+		// Indices field
+		tempPanel = new JPanel(new GridLayout(1,3));
+		iIndex = new JTextField(20);
+		tempPanel.add(new JLabel("Indices"));
+		tempPanel.add(iIndex);
+		tempPanel.add(new JLabel());
+		add(tempPanel);
 
 		// Type field
 		tempPanel = new JPanel();
@@ -135,7 +148,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		//((DefaultComboBoxModel) (typeBox.getModel())).removeElement(types[4]);
 		production = null;
 		if (promoterId != null) {
-			production = gcm.getProductionReaction(promoterId);
+			production = bioModel.getProductionReaction(promoterId);
 			ModifierSpeciesReference modifier = production.getModifierForSpecies(regulator);
 			if (BioModel.isRepressor(modifier)) {
 				typeBox.setSelectedItem(GlobalConstants.REPRESSION);
@@ -146,15 +159,42 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 			if (BioModel.isRegulator(modifier)) typeBox.setEnabled(false);
 			else if (!paramsOnly) typeBox.setEnabled(true);
+			if (bioModel.isArray(regulator)) {
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
+				String indexStr = "";
+				for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
+					Index index = sBasePlugin.getIndex(i,"species");
+					if(index!=null){
+						indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+					}
+				}
+				iIndex.setText(indexStr);
+			} else {
+				iIndex.setEnabled(false);
+			}
 		} else {
-			production = gcm.getComplexReaction(product);
+			production = bioModel.getComplexReaction(product);
+			if (bioModel.isArray(regulator)) {
+				SpeciesReference reactant = production.getReactantForSpecies(regulator);
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
+				String indexStr = "";
+				for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
+					Index index = sBasePlugin.getIndex(i,"species");
+					if(index!=null){
+						indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+					}
+				}
+				iIndex.setText(indexStr);
+			} else {
+				iIndex.setEnabled(false);
+			}
 			typeBox.setSelectedItem(GlobalConstants.COMPLEX);
 			typeBox.setEnabled(false);
 		}
 		
 		// coop
 		String defString = "default";
-		String defaultValue = gcm.getParameter(GlobalConstants.COOPERATIVITY_STRING);
+		String defaultValue = bioModel.getParameter(GlobalConstants.COOPERATIVITY_STRING);
 		String formatString = Utility.NUMstring;
 		if (paramsOnly) {
 			if (production != null) {
@@ -175,7 +215,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			formatString = Utility.SWEEPstring;
 		} 
 		field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, 
-				gcm.getParameter(GlobalConstants.COOPERATIVITY_STRING),
+				bioModel.getParameter(GlobalConstants.COOPERATIVITY_STRING),
 				defString, defaultValue, formatString, paramsOnly, defString, false);
 		LocalParameter nc = null;
 		if (typeBox.getSelectedItem().equals(GlobalConstants.COMPLEX)) {
@@ -200,8 +240,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 		// krep
 		defString = "default";
-		defaultValue = gcm.getParameter(GlobalConstants.FORWARD_KREP_STRING) + "/" + 
-				gcm.getParameter(GlobalConstants.REVERSE_KREP_STRING);
+		defaultValue = bioModel.getParameter(GlobalConstants.FORWARD_KREP_STRING) + "/" + 
+				bioModel.getParameter(GlobalConstants.REVERSE_KREP_STRING);
 		formatString = Utility.SLASHstring;
 		if (paramsOnly) {
 			if (production != null) {
@@ -219,7 +259,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 			formatString = Utility.SLASHSWEEPstring;
 		} 
-		field = new PropertyField(GlobalConstants.KREP_STRING, gcm.getParameter(GlobalConstants.KREP_STRING),
+		field = new PropertyField(GlobalConstants.KREP_STRING, bioModel.getParameter(GlobalConstants.KREP_STRING),
 				defString, defaultValue, formatString, paramsOnly, defString, false);
 		if (!typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) { 
 			field.setEnabled(false);
@@ -245,8 +285,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 		// kact
 		defString = "default";
-		defaultValue = gcm.getParameter(GlobalConstants.FORWARD_KACT_STRING) + "/" + 
-				gcm.getParameter(GlobalConstants.REVERSE_KACT_STRING);
+		defaultValue = bioModel.getParameter(GlobalConstants.FORWARD_KACT_STRING) + "/" + 
+				bioModel.getParameter(GlobalConstants.REVERSE_KACT_STRING);
 		formatString = Utility.SLASHstring;
 		if (paramsOnly) {
 			if (production != null) {
@@ -264,7 +304,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 			formatString = Utility.SLASHSWEEPstring;
 		} 
-		field = new PropertyField(GlobalConstants.KACT_STRING, gcm.getParameter(GlobalConstants.KACT_STRING),
+		field = new PropertyField(GlobalConstants.KACT_STRING, bioModel.getParameter(GlobalConstants.KACT_STRING),
 				defString, defaultValue, formatString, paramsOnly, defString, false);
 		if (!typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) { 
 			field.setEnabled(false);
@@ -333,8 +373,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			if (promoterId != null && !promoterBox.getSelectedItem().equals(promoterId)) {
 				//production.removeModifier(regulator);
 				//gcm.createProductionKineticLaw(production);
-				gcm.removeInfluence(selection);
-				production = gcm.getProductionReaction(""+promoterBox.getSelectedItem());
+				bioModel.removeInfluence(selection);
+				production = bioModel.getProductionReaction(""+promoterBox.getSelectedItem());
 				SpeciesReference productSpecies = production.getProductForSpecies(product);
 				if (productSpecies==null) {
 					productSpecies = production.createProduct();
@@ -374,6 +414,45 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				production.getModifierForSpecies(regulator).setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 			} else if (typeBox.getSelectedItem().equals(GlobalConstants.NOINFLUENCE)) {
 				production.getModifierForSpecies(regulator).setSBOTerm(GlobalConstants.SBO_NEUTRAL);
+			}
+			ModifierSpeciesReference modifier = null;
+			SpeciesReference reactant = null;
+			if (promoterId!=null) {
+				modifier = production.getModifierForSpecies(regulator);
+			} else{
+				reactant = production.getReactantForSpecies(regulator);
+			}
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(production);
+			String[] dimID = new String[sBasePlugin.getDimensionCount()+1];
+			dimID[0] = production.getId();
+			String[] dimensionIds = new String[sBasePlugin.getDimensionCount()];
+			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+				dimensionIds[j] = dimX.getId(); 
+				dimID[j+1] = dimX.getSize();
+			}
+			sBasePlugin = null;
+			SBase variable = null;
+			if (modifier!=null) {
+				sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
+				variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), modifier.getSpecies());
+			} else if (reactant!=null){
+				sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
+				variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactant.getSpecies());
+			}
+			if (sBasePlugin!=null && variable!=null) {
+				String[] dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), 
+						dimensionIds, "species", dimID, null, null);
+				if(dex==null)return false;
+				sBasePlugin.unsetListOfIndices();
+				for(int i = 0; i<dex.length-1; i++){
+					Index indexRule = new Index();
+					indexRule.setArrayDimension(i);
+					indexRule.setReferencedAttribute("species");
+					ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
+					indexRule.setMath(indexMath);
+					sBasePlugin.addIndex(indexRule);
+				}
 			}
 			PropertyField f = fields.get(GlobalConstants.COOPERATIVITY_STRING);
 			String CoopStr = null;
@@ -445,7 +524,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					KcStr = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue() + "/" +
 							production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue();
 				}
-				gcm.addReactantToComplexReaction(regulator, product, KcStr, CoopStr);
+				bioModel.addReactantToComplexReaction(regulator, product, KcStr, CoopStr);
 			}
 			gcmEditor.setDirty(true);
 		} else if (value == JOptionPane.NO_OPTION) {
@@ -623,7 +702,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		GlobalConstants.NOINFLUENCE};
 	public static String[] bio = { "no", "yes" };
 	private HashMap<String, PropertyField> fields = null;
-	private BioModel gcm = null;
+	private BioModel bioModel = null;
 	private String selection = "";
 	private JComboBox promoterBox = null;
 	private JComboBox typeBox = null;
@@ -635,4 +714,5 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	private String regulator = null;
 	private String product = null;
 	private Reaction production = null;
+	private JTextField iIndex = null;
 }
