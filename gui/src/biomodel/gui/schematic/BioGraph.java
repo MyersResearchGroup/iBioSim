@@ -2509,13 +2509,14 @@ public class BioGraph extends mxGraph {
 	 */
 	private boolean createGraphDrawnPromoterFromModel(String id){
 		
-		String truncID;
+		/* String truncID;
 		
 		if (id.length() > 8)
 			truncID = id.substring(0, 7) + "...";
-		else truncID = id;
+		else truncID = id; */
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
 
-		CellValueObject cvo = new CellValueObject(truncID, "Promoter", null);
+		CellValueObject cvo = new CellValueObject(label, "Promoter", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
 		this.drawnPromoterToMxCellMap.put(id, insertedVertex);

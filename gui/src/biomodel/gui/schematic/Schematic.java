@@ -2085,7 +2085,7 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						mxGeometry geom = target.getGeometry();
 						newPromoterName = bioModel.createPromoter(null, (float)geom.getX(), (float)geom.getY(), false);
-						bioModel.createProductionReaction(newPromoterName,null,null,null,null,null,null,false);
+						bioModel.createProductionReaction(newPromoterName,null,null,null,null,null,null,false,null);
 						if (activationButton.isSelected()) {
 							bioModel.addActivatorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
 						} else if (inhibitionButton.isSelected()) {
