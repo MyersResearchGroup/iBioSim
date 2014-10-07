@@ -16,6 +16,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -64,7 +65,13 @@ public class PromoterPanel extends JPanel {
 
 		PropertyField field  = null;
 		// ID field
-		field = new PropertyField(GlobalConstants.ID, promoter.getId(), null, null, Utility.IDstring, paramsOnly, "default", false);
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(promoter);
+		String dimInID = "";
+		for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
+			dimInID += "[" + dimX.getSize() + "]";
+		}
+		field = new PropertyField(GlobalConstants.ID, promoter.getId() + dimInID, null, null, Utility.IDDimString, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
 		if (!paramsOnly) add(field);		
 		// Name field
@@ -356,23 +363,28 @@ public class PromoterPanel extends JPanel {
 				"Promoter Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
-			
 			boolean valueCheck = checkValues();
 			if (!valueCheck) {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
+			String[] idDims = new String[]{""};
+			String[] dimensionIds = new String[]{""};
+			idDims = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+					fields.get(GlobalConstants.ID).getValue(), false);
+			if(idDims==null)return false;
+			dimensionIds = SBMLutilities.getDimensionIds("",idDims.length-1);
 			String id = selected;
 //			boolean removeModelSBOLAnnotationFlag = false;
 			if (!paramsOnly) {
 				if (oldName == null) {
-					if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
+					if (bioModel.isSIdInUse(idDims[0])) {
 						Utility.createErrorMessage("Error", "Id already exists.");
 						return false;
 					}
 				}
-				else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-					if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
+				else if (!oldName.equals(idDims[0])) {
+					if (bioModel.isSIdInUse(idDims[0])) {
 						Utility.createErrorMessage("Error","Id already exists.");
 						return false;
 					}
@@ -390,8 +402,15 @@ public class PromoterPanel extends JPanel {
 //					else
 //						return false;
 //				}
-				id = fields.get(GlobalConstants.ID).getValue();
+				id = idDims[0];
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(promoter);
+				sBasePlugin.unsetListOfDimensions();
+				for(int i = 0; i<idDims.length-1; i++){
+					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+					dimX.setSize(idDims[i+1].replace("]", "").trim());
+					dimX.setArrayDimension(i);
+				}
 			}
 			String speciesType = typeBox.getSelectedItem().toString();
 			boolean onPort = (speciesType.equals(GlobalConstants.INPUT)||speciesType.equals(GlobalConstants.OUTPUT));
@@ -442,7 +461,7 @@ public class PromoterPanel extends JPanel {
 			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 				KaoStr = f.getValue();
 			}
-			bioModel.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr,onPort);
+			bioModel.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr,onPort,idDims);
 
 			if (!paramsOnly) {
 				// Add SBOL annotation to promoter
