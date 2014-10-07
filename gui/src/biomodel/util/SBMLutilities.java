@@ -2,7 +2,6 @@ package biomodel.util;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +34,7 @@ import odk.lang.FastMath;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.arrays.util.ArraysMath;
 import org.sbml.jsbml.ext.arrays.validator.ArraysValidator;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
@@ -414,8 +414,8 @@ public class SBMLutilities {
 				messageArea.setWrapStyleWord(true);
 				messageArea.setEditable(false);
 				JScrollPane scrolls = new JScrollPane();
-				scrolls.setMinimumSize(new Dimension(300, 300));
-				scrolls.setPreferredSize(new Dimension(300, 300));
+				scrolls.setMinimumSize(new java.awt.Dimension(300, 300));
+				scrolls.setPreferredSize(new java.awt.Dimension(300, 300));
 				scrolls.setViewportView(messageArea);
 				JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -440,8 +440,8 @@ public class SBMLutilities {
 				messageArea.setWrapStyleWord(true);
 				messageArea.setEditable(false);
 				JScrollPane scrolls = new JScrollPane();
-				scrolls.setMinimumSize(new Dimension(300, 300));
-				scrolls.setPreferredSize(new Dimension(300, 300));
+				scrolls.setMinimumSize(new java.awt.Dimension(300, 300));
+				scrolls.setPreferredSize(new java.awt.Dimension(300, 300));
 				scrolls.setViewportView(messageArea);
 				JOptionPane.showMessageDialog(Gui.frame, scrolls, "Illegal Variables", JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -1736,8 +1736,8 @@ public class SBMLutilities {
 			JTextArea messageArea = new JTextArea(message);
 			messageArea.setEditable(false);
 			JScrollPane scroll = new JScrollPane();
-			scroll.setMinimumSize(new Dimension(300, 300));
-			scroll.setPreferredSize(new Dimension(300, 300));
+			scroll.setMinimumSize(new java.awt.Dimension(300, 300));
+			scroll.setPreferredSize(new java.awt.Dimension(300, 300));
 			scroll.setViewportView(messageArea);
 			JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Compartment", JOptionPane.ERROR_MESSAGE);
 		}
@@ -2067,8 +2067,8 @@ public class SBMLutilities {
 				JTextArea messageArea = new JTextArea(message);
 				messageArea.setEditable(false);
 				JScrollPane scroll = new JScrollPane();
-				scroll.setMinimumSize(new Dimension(400, 400));
-				scroll.setPreferredSize(new Dimension(400, 400));
+				scroll.setMinimumSize(new java.awt.Dimension(400, 400));
+				scroll.setPreferredSize(new java.awt.Dimension(400, 400));
 				scroll.setViewportView(messageArea);
 				JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Variable", JOptionPane.ERROR_MESSAGE);
 			}
@@ -2327,8 +2327,8 @@ public class SBMLutilities {
 			messageArea.setLineWrap(true);
 			messageArea.setEditable(false);
 			JScrollPane scroll = new JScrollPane();
-			scroll.setMinimumSize(new Dimension(600, 600));
-			scroll.setPreferredSize(new Dimension(600, 600));
+			scroll.setMinimumSize(new java.awt.Dimension(600, 600));
+			scroll.setPreferredSize(new java.awt.Dimension(600, 600));
 			scroll.setViewportView(messageArea);
 			JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
 			return false;
@@ -2575,8 +2575,8 @@ public class SBMLutilities {
 			messageArea.setLineWrap(true);
 			messageArea.setEditable(false);
 			JScrollPane scroll = new JScrollPane();
-			scroll.setMinimumSize(new Dimension(600, 600));
-			scroll.setPreferredSize(new Dimension(600, 600));
+			scroll.setMinimumSize(new java.awt.Dimension(600, 600));
+			scroll.setPreferredSize(new java.awt.Dimension(600, 600));
 			scroll.setViewportView(messageArea);
 			JOptionPane.showMessageDialog(Gui.frame, scroll, "Unit Errors in Model", JOptionPane.ERROR_MESSAGE);
 			return true;
@@ -3713,6 +3713,20 @@ public class SBMLutilities {
 		return arrays;
 	}
 	
+	public static boolean dimensionsMatch(SBase sbase1,SBase sbase2) {
+		ArraysSBasePlugin sbasePlugin1 = SBMLutilities.getArraysSBasePlugin(sbase1);
+		ArraysSBasePlugin sbasePlugin2 = SBMLutilities.getArraysSBasePlugin(sbase2);
+		if (sbasePlugin1.getDimensionCount()!=sbasePlugin2.getDimensionCount()) return false;
+		for (int i=0;i<sbasePlugin1.getDimensionCount();i++) {
+			Dimension dim1 = sbasePlugin1.getDimensionByArrayDimension(i);
+			Dimension dim2 = sbasePlugin1.getDimensionByArrayDimension(i);
+			if (dim1==null || dim2==null) return false;
+			if (dim1.getId()!=dim2.getId()) return false;
+			if (dim1.getSize()!=dim2.getSize()) return false;
+		}
+		return true;
+	}
+	
 	public static void setNamespaces(SBMLDocument document, Map<String,String> namespaces) {
 		document.getSBMLDocumentNamespaces().clear();
 		for (String key : namespaces.keySet()) {
@@ -4199,8 +4213,8 @@ public class SBMLutilities {
 			messageArea.setSelectionStart(0);
 			messageArea.setSelectionEnd(0);
 			JScrollPane scroll = new JScrollPane();
-			scroll.setMinimumSize(new Dimension(600, 600));
-			scroll.setPreferredSize(new Dimension(600, 600));
+			scroll.setMinimumSize(new java.awt.Dimension(600, 600));
+			scroll.setPreferredSize(new java.awt.Dimension(600, 600));
 			scroll.setViewportView(messageArea);
 			JButton close = new JButton("Dismiss");
 			close.addActionListener(new ActionListener() {
@@ -4214,15 +4228,15 @@ public class SBMLutilities {
 			consistencyPanel.add(close, "South");
 			f.setContentPane(consistencyPanel);
 			f.pack();
-			Dimension screenSize;
+			java.awt.Dimension screenSize;
 			try {
 				Toolkit tk = Toolkit.getDefaultToolkit();
 				screenSize = tk.getScreenSize();
 			}
 			catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
+				screenSize = new java.awt.Dimension(640, 480);
 			}
-			Dimension frameSize = f.getSize();
+			java.awt.Dimension frameSize = f.getSize();
 			if (frameSize.height > screenSize.height) {
 				frameSize.height = screenSize.height;
 			}
@@ -4292,8 +4306,8 @@ public class SBMLutilities {
 				messageArea.setSelectionStart(0);
 				messageArea.setSelectionEnd(0);
 				JScrollPane scroll = new JScrollPane();
-				scroll.setMinimumSize(new Dimension(600, 600));
-				scroll.setPreferredSize(new Dimension(600, 600));
+				scroll.setMinimumSize(new java.awt.Dimension(600, 600));
+				scroll.setPreferredSize(new java.awt.Dimension(600, 600));
 				scroll.setViewportView(messageArea);
 				JButton close = new JButton("Dismiss");
 				close.addActionListener(new ActionListener() {
@@ -4307,15 +4321,15 @@ public class SBMLutilities {
 				consistencyPanel.add(close, "South");
 				f.setContentPane(consistencyPanel);
 				f.pack();
-				Dimension screenSize;
+				java.awt.Dimension screenSize;
 				try {
 					Toolkit tk = Toolkit.getDefaultToolkit();
 					screenSize = tk.getScreenSize();
 				}
 				catch (AWTError awe) {
-					screenSize = new Dimension(640, 480);
+					screenSize = new java.awt.Dimension(640, 480);
 				}
-				Dimension frameSize = f.getSize();
+				java.awt.Dimension frameSize = f.getSize();
 				if (frameSize.height > screenSize.height) {
 					frameSize.height = screenSize.height;
 				}
