@@ -125,7 +125,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// ID field
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
 		String dimInID = "";
-		for(int i = 0; i<sBasePlugin.getDimensionCount(); i++){
+		for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
 			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
 			dimInID += "[" + dimX.getSize() + "]";
 		}

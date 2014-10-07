@@ -1,7 +1,5 @@
 package biomodel.gui.comp;
 
-
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,9 +14,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
-import org.sbml.jsbml.ext.comp.CompModelPlugin;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.Deletion;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
@@ -539,6 +536,12 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 		Submodel instance = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId);
 		// ID field
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(instance);
+		String dimInID = "";
+		for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
+			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
+			dimInID += "[" + dimX.getSize() + "]";
+		}
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
 				Utility.IDDimString, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
@@ -642,7 +645,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
-			fields.get(GlobalConstants.ID).setValue(selected);
+			fields.get(GlobalConstants.ID).setValue(selected+dimInID);
 		}
 		
 		boolean display = false;
@@ -771,7 +774,13 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			// TODO: extract id plus dimensios using checkSizeParameters
-			String id = fields.get(GlobalConstants.ID).getValue();
+			String[] idDims = new String[]{""};
+			String[] dimensionIds = new String[]{""};
+			idDims = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+					fields.get(GlobalConstants.ID).getValue(), false);
+			if(idDims==null)return false;
+			dimensionIds = SBMLutilities.getDimensionIds("",idDims.length-1);
+			String id = idDims[0];
 			if (oldName == null) {
 				if (bioModel.isSIdInUse(id)) {
 					Utility.createErrorMessage("Error", "Id already exists.");
@@ -804,6 +813,13 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			if (instance != null) {
 				instance.setName(fields.get(GlobalConstants.NAME).getValue());
 				// TODO: add/remove dimensions from the instance
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(instance);
+				sBasePlugin.unsetListOfDimensions();
+				for(int i = 0; i<idDims.length-1; i++){
+					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+					dimX.setSize(idDims[i+1].replace("]", "").trim());
+					dimX.setArrayDimension(i);
+				}
 				//long k = 0;
 				while (instance.getListOfDeletions().size()>0) {
 					Deletion deletion = instance.getListOfDeletions().get(0);

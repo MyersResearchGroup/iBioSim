@@ -2291,6 +2291,7 @@ public class BioGraph extends mxGraph {
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		boolean compart = false;
 		//String modelFileName = gcm.getModelFileName(id).replace(".xml", ".gcm");
+		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
 		String modelFileName = bioModel.getModelFileName(id);
 		if (modelFileName.equals("")) {
 			return false;
@@ -2308,18 +2309,19 @@ public class BioGraph extends mxGraph {
 			return false;
 		}
 		
-		String truncGCM = modelFileName.replace(".xml", "");
-		String truncID = "";
+		String truncModelId = modelFileName.replace(".xml", "");
+		//String truncID = "";
 		
 		//if the id is too long, truncate it
-		if (truncGCM.length() > 10)
-			truncGCM = truncGCM.substring(0, 9) + "...";
-		
+		if (truncModelId.length() > 10)
+			truncModelId = truncModelId.substring(0, 9) + "...";
+		/*
 		if (id.length() > 10)
 			truncID = id.substring(0, 9) + "...";
 		else truncID = id;
+		*/
 		
-		String label = truncID + "\n" + truncGCM;
+		label = label + "\n" + truncModelId;
 		CellValueObject cvo = new CellValueObject(label, "Component", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
