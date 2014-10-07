@@ -3142,42 +3142,6 @@ public class BioModel {
 	}
 
 	public void changeComponentName(String oldName, String newName) {
-		// TODO: REMOVED, IS THIS REALLY NEEDED?
-		/*
-		String[] sArray = new String[influences.keySet().size()];
-		sArray = influences.keySet().toArray(sArray);
-		for (int i = 0; i < sArray.length; i++) {
-			String s = sArray[i];
-			String input = getInput(s);
-			String arrow = getArrow(s);
-			String output = getOutput(s);
-			boolean replaceInput = input.equals(oldName);
-			boolean replaceOutput = output.equals(oldName);
-			String newInfluenceName = "";
-			if (replaceInput || replaceOutput) {
-				if (replaceInput) {
-					newInfluenceName = newInfluenceName + newName;
-				}
-				else {
-					newInfluenceName = newInfluenceName + input;
-				}
-				if (replaceOutput) {
-					newInfluenceName = newInfluenceName + " " + arrow + " " + newName;
-				}
-				else {
-					newInfluenceName = newInfluenceName + " " + arrow + " " + output;
-				}
-				String promoterName = "default";
-				if (influences.get(s).containsKey(GlobalConstants.PROMOTER)) {
-					promoterName = influences.get(s).get(GlobalConstants.PROMOTER).toString();
-				}
-				newInfluenceName = newInfluenceName + ", Promoter " + promoterName;
-				influences.put(newInfluenceName, influences.get(s));
-				influences.remove(s);
-			}
-		}
-		*/
-		
 		String submodelID = oldName;
 		
 		//look through locations parameters for find the submodel
