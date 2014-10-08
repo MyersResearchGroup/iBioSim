@@ -765,7 +765,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Component Editor",
+		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Module Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			

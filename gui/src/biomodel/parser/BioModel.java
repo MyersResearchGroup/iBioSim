@@ -7072,6 +7072,12 @@ public class BioModel {
 		
 		BioModel model = new BioModel(path);
 		model.load(tempFile);
+		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
+		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
+		if(model.getSBMLDocument().isPackageEnabled(ArraysConstants.shortLabel)) {
+			// TODO: validate arrays before flattening
+			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
+		}
 
 		// loop through the list of submodels
 		for (String subModelId : comps) {
@@ -7104,12 +7110,6 @@ public class BioModel {
 				new File(tempFile).delete();
 				return null;
 			}
-		}
-		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
-		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
-		if(model.getSBMLDocument().isPackageEnabled(ArraysConstants.shortLabel)) {
-			// TODO: validate arrays before flattening
-			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
 		}
 		model.getSBMLDocument().disablePackage(ArraysConstants.namespaceURI);
 		if(removeComp)
@@ -7181,6 +7181,13 @@ public class BioModel {
 	
 	private BioModel flattenModelRecurse(BioModel model, ArrayList<String> modelList) {
 		ArrayList<String> comps = new ArrayList<String>();
+		
+		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
+		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
+		if(model.getSBMLDocument().isPackageEnabled(ArraysConstants.shortLabel)) {
+			// TODO: validate arrays before flattening
+			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
+		}
 		
 		for (int i = 0; i < model.getSBMLCompModel().getListOfSubmodels().size(); i++) {
 			comps.add(model.getSBMLCompModel().getListOfSubmodels().get(i).getId());

@@ -292,7 +292,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	private Parts allVirtualParts = null;
 
-	private JMenuItem addCompartment, addSpecies, addReaction, addComponent, addPromoter, addVariable, addBoolean, addPlace,
+	private JMenuItem addCompartment, addSpecies, addReaction, addModule, addPromoter, addVariable, addBoolean, addPlace,
 		addTransition, addRule, addConstraint, addEvent, addSelfInfl, cut, select,undo, redo, copy, rename, delete,
 		moveLeft, moveRight, moveUp, moveDown;
 	
@@ -676,7 +676,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addCompartment = new JMenuItem("Add Compartment");
 		addSpecies = new JMenuItem("Add Species");
 		addReaction = new JMenuItem("Add Reaction");
-		addComponent = new JMenuItem("Add Component");
+		addModule = new JMenuItem("Add Module");
 		addPromoter = new JMenuItem("Add Promoter");
 		addVariable = new JMenuItem("Add Variable");
 		addBoolean = new JMenuItem("Add Boolean");
@@ -787,7 +787,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addCompartment.addActionListener(this);
 		addSpecies.addActionListener(this);
 		addReaction.addActionListener(this);
-		addComponent.addActionListener(this);
+		addModule.addActionListener(this);
 		addPromoter.addActionListener(this);
 		addVariable.addActionListener(this);
 		addBoolean.addActionListener(this);
@@ -932,7 +932,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addCompartment.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
 		addSpecies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0));
 		addReaction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
-		addComponent.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0));
+		addModule.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, 0));
 		addPromoter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.SHIFT_MASK));
 		addVariable.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, 0));
 		addBoolean.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0));
@@ -1017,7 +1017,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addCompartment.setEnabled(false);
 		addSpecies.setEnabled(false);
 		addReaction.setEnabled(false);
-		addComponent.setEnabled(false);
+		addModule.setEnabled(false);
 		addPromoter.setEnabled(false);
 		addVariable.setEnabled(false);
 		addBoolean.setEnabled(false);
@@ -1067,7 +1067,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			edit.add(addPromoter);
 			edit.add(addReaction);
 		}
-		edit.add(addComponent);
+		edit.add(addModule);
 		edit.add(addVariable);
 		edit.add(addBoolean);
 		edit.add(addPlace);
@@ -3314,7 +3314,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((ModelEditor) comp).addReaction();
 			}
 		}
-		else if (e.getSource() == addComponent) {
+		else if (e.getSource() == addModule) {
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor) {
 				((ModelEditor) comp).addComponent();
@@ -9458,7 +9458,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addCompartment.setEnabled(false);
 		addSpecies.setEnabled(false);
 		addReaction.setEnabled(false);
-		addComponent.setEnabled(false);
+		addModule.setEnabled(false);
 		addPromoter.setEnabled(false);
 		addVariable.setEnabled(false);
 		addBoolean.setEnabled(false);
@@ -9510,7 +9510,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				moveUp.setEnabled(true);
 				moveDown.setEnabled(true);
 			}
-			addComponent.setEnabled(true);
+			addModule.setEnabled(true);
 			undo.setEnabled(true);
 			redo.setEnabled(true);
 			exportMenu.setEnabled(true);
