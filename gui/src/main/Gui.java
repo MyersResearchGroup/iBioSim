@@ -8,6 +8,10 @@ import graph.Graph;
 //import lpn.parser.properties.BuildProperty;
 
 
+
+
+
+
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -148,6 +152,10 @@ import org.jlibsedml.*;
 import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
+
+
+
+
 
 
 
@@ -8942,6 +8950,33 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		catch (InterruptedException e) {
 			reb2sacFound=false;
 		}
+		/*
+		SBMLDocument doc = new SBMLDocument(3,1);
+		Model model = doc.createModel();
+		CompModelPlugin comp = new CompModelPlugin(model);
+		model.addExtension(CompConstants.namespaceURI, comp);
+		Port port = comp.createPort();
+		port.setId("c");
+		port.setIdRef("s");
+		SBaseRef sbaseRef = port.createSBaseRef();
+		sbaseRef.setPortRef("c__s");
+		SBMLWriter writer = new SBMLWriter();
+		try {
+			writer.write(doc, "foo.xml");
+		}
+		catch (SBMLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
 		
 		Gui gui = new Gui(lemaFlag, atacsFlag, libsbmlFound);
 	}

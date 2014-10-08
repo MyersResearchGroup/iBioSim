@@ -1571,6 +1571,16 @@ public class BioModel {
 			if (onPort) {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
+				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());		
+				sBasePluginPort.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+					Index portIndex = sBasePluginPort.createIndex();
+					portIndex.setReferencedAttribute("idRef");
+					portIndex.setArrayDimension(i);
+					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+				}
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -1580,7 +1590,15 @@ public class BioModel {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
 				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());			
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());		
+				sBasePluginPort.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+					Index portIndex = sBasePluginPort.createIndex();
+					portIndex.setReferencedAttribute("idRef");
+					portIndex.setArrayDimension(i);
+					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+				}
 			}
 		}
 		return r;
@@ -2085,7 +2103,15 @@ public class BioModel {
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
 				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());			
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+				sBasePluginPort.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+					Index portIndex = sBasePluginPort.createIndex();
+					portIndex.setReferencedAttribute("idRef");
+					portIndex.setArrayDimension(i);
+					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+				}
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -2095,7 +2121,15 @@ public class BioModel {
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
 				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());			
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+				sBasePluginPort.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+					Index portIndex = sBasePluginPort.createIndex();
+					portIndex.setReferencedAttribute("idRef");
+					portIndex.setArrayDimension(i);
+					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+				}
 			}
 		}
 		return reaction;
@@ -2178,7 +2212,15 @@ public class BioModel {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
 				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());			
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+				sBasePluginPort.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+					Index portIndex = sBasePluginPort.createIndex();
+					portIndex.setReferencedAttribute("idRef");
+					portIndex.setArrayDimension(i);
+					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+				}
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -2188,7 +2230,15 @@ public class BioModel {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
 				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());			
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+				sBasePluginPort.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+					Index portIndex = sBasePluginPort.createIndex();
+					portIndex.setReferencedAttribute("idRef");
+					portIndex.setArrayDimension(i);
+					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+				}
 			}
 		}
 		return r;
@@ -2243,7 +2293,15 @@ public class BioModel {
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
 				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());			
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+				sBasePluginPort.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+					Index portIndex = sBasePluginPort.createIndex();
+					portIndex.setReferencedAttribute("idRef");
+					portIndex.setArrayDimension(i);
+					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+				}
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -2253,7 +2311,15 @@ public class BioModel {
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
 				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());			
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());		
+				sBasePluginPort.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+					Index portIndex = sBasePluginPort.createIndex();
+					portIndex.setReferencedAttribute("idRef");
+					portIndex.setArrayDimension(i);
+					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+				}
 			}
 		}
 		return reaction;
@@ -2447,7 +2513,15 @@ public class BioModel {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
 				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());			
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+				sBasePluginPort.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+					Index portIndex = sBasePluginPort.createIndex();
+					portIndex.setReferencedAttribute("idRef");
+					portIndex.setArrayDimension(i);
+					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+				}
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -2457,7 +2531,15 @@ public class BioModel {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
 				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());			
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+				sBasePluginPort.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+					Index portIndex = sBasePluginPort.createIndex();
+					portIndex.setReferencedAttribute("idRef");
+					portIndex.setArrayDimension(i);
+					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+				}
 			}
 		}
 		return r;
@@ -4505,7 +4587,15 @@ public class BioModel {
 			port.setIdRef(SId);
 			port.setSBOTerm(GlobalConstants.SBO_INPUT_PORT);
 			ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-			sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
+			sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+			sBasePluginPort.unsetListOfIndices();
+			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+				org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+				Index portIndex = sBasePluginPort.createIndex();
+				portIndex.setReferencedAttribute("idRef");
+				portIndex.setArrayDimension(i);
+				portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+			}
 		} else if (dir.equals(GlobalConstants.OUTPUT)) {
 			if (port==null) {
 				port = sbmlCompModel.createPort();
@@ -4514,7 +4604,15 @@ public class BioModel {
 			port.setIdRef(SId);
 			port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
 			ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-			sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
+			sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+			sBasePluginPort.unsetListOfIndices();
+			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+				org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+				Index portIndex = sBasePluginPort.createIndex();
+				portIndex.setReferencedAttribute("idRef");
+				portIndex.setArrayDimension(i);
+				portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+			}
 		} else if (port != null) {
 			sbmlCompModel.removePort(port);
 		}

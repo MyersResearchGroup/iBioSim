@@ -51,7 +51,12 @@ public class AssemblyGraph {
 		if (/*sbmlDoc.getExtensionPackages().containsKey(CompConstants.namespaceURI)
 				&& */parseSubModelSBOL(sbmlDoc, biomodel.getPath(), idToNode)) {
 			// Creates flattened assembly graph in case hierarchy of SBOL can't be preserved
-			SBMLDocument flatDoc = biomodel.flattenModel(true);
+			SBMLDocument flatDoc;
+			try {
+				flatDoc = biomodel.flattenModel(true);
+			} catch (Exception e){
+				flatDoc = null;
+			}
 			// TODO: Hack to prevent null returned by flattenModel to crash assembly code
 			if (flatDoc==null) {
 				flatDoc = sbmlDoc;

@@ -983,7 +983,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 							port.setIdRef(react.getId());
 							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
+							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+							sBasePluginPort.unsetListOfIndices();
+							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+								Index portIndex = sBasePluginPort.createIndex();
+								portIndex.setReferencedAttribute("idRef");
+								portIndex.setArrayDimension(i);
+								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+							}
 						} else {
 							bioModel.getSBMLCompModel().removePort(port);
 						}
@@ -993,7 +1001,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 							port.setIdRef(react.getId());
 							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
+							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());		
+							sBasePluginPort.unsetListOfIndices();
+							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+								Index portIndex = sBasePluginPort.createIndex();
+								portIndex.setReferencedAttribute("idRef");
+								portIndex.setArrayDimension(i);
+								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+							}
 						}
 					}
 					if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
@@ -1226,7 +1242,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 						port.setIdRef(react.getId());
 						ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-						sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
+						sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+						sBasePluginPort.unsetListOfIndices();
+						for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+							org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+							Index portIndex = sBasePluginPort.createIndex();
+							portIndex.setReferencedAttribute("idRef");
+							portIndex.setArrayDimension(i);
+							portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+						}
 					}
 					if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 						if (complex==null && production==null) {
