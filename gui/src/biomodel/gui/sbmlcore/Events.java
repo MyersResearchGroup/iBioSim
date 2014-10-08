@@ -831,11 +831,20 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								ea.removeFromParent();
 							}
 						}
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
+						sBasePlugin.unsetListOfDimensions();
+						for(int i1 = 0; i1<dimID.length-1; i1++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i1]);
+							dimX.setSize(dimID[i1+1]);
+							dimX.setArrayDimension(i1);
+						}
 						Port port = bioModel.getPortByIdRef(selectedID);
 						if (port!=null) {
 							if (onPort.isSelected()) {
 								port.setId(GlobalConstants.EVENT+"__"+e.getId());
 								port.setIdRef(e.getId());
+								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
 							} else {
 								bioModel.getSBMLCompModel().removePort(port);
 							}
@@ -844,6 +853,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								port = bioModel.getSBMLCompModel().createPort();
 								port.setId(GlobalConstants.EVENT+"__"+e.getId());
 								port.setIdRef(e.getId());
+								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
 							}
 						}
 						int index = events.getSelectedIndex();
@@ -875,14 +886,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							String[] rightSide = origAssign[i].split(":=")[1].split(",");
 							ea.setMath(SBMLutilities.myParseFormula(rightSide[0].trim()));
 						}
-					}
-					// TODO: Scott - change for Plugin writing
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
-					sBasePlugin.unsetListOfDimensions();
-					for(int i1 = 0; i1<dimID.length-1; i1++){
-						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i1]);
-						dimX.setSize(dimID[i1+1]);
-						dimX.setArrayDimension(i1);
 					}
 				} //end if option is "ok"
 				//add event
@@ -1055,10 +1058,18 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								ea.removeFromParent();
 							}
 						}
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
+						for(int i1 = 0; i1<dimID.length-1; i1++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i1]);
+							dimX.setSize(dimID[i1+1]);
+							dimX.setArrayDimension(i1);
+						}
 						if (onPort.isSelected()) {
 							Port port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.EVENT+"__"+e.getId());
 							port.setIdRef(e.getId());
+							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
 						}
 					}
 					String eventEntry = e.getId();
@@ -1092,13 +1103,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					if (error) {
 						removeTheEvent(bioModel, SBMLutilities.myFormulaToString(e.getTrigger().getMath()));
-					}
-					// TODO: Scott - change for Plugin reading
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
-					for(int i1 = 0; i1<dimID.length-1; i1++){
-						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i1]);
-						dimX.setSize(dimID[i1+1]);
-						dimX.setArrayDimension(i1);
 					}
 				}
 				if (!error && !modelEditor.isParamsOnly()) {
