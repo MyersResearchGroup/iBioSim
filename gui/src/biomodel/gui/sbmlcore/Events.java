@@ -844,7 +844,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								port.setId(GlobalConstants.EVENT+"__"+e.getId());
 								port.setIdRef(e.getId());
 								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
+								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+								sBasePluginPort.unsetListOfIndices();
+								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+									Index portIndex = sBasePluginPort.createIndex();
+									portIndex.setReferencedAttribute("idRef");
+									portIndex.setArrayDimension(i);
+									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+								}
 							} else {
 								bioModel.getSBMLCompModel().removePort(port);
 							}
@@ -854,7 +862,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								port.setId(GlobalConstants.EVENT+"__"+e.getId());
 								port.setIdRef(e.getId());
 								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
+								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
+								sBasePluginPort.unsetListOfIndices();
+								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+									Index portIndex = sBasePluginPort.createIndex();
+									portIndex.setReferencedAttribute("idRef");
+									portIndex.setArrayDimension(i);
+									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+								}
 							}
 						}
 						int index = events.getSelectedIndex();
@@ -1069,7 +1085,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.EVENT+"__"+e.getId());
 							port.setIdRef(e.getId());
 							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
+							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+							sBasePluginPort.unsetListOfIndices();
+							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+								Index portIndex = sBasePluginPort.createIndex();
+								portIndex.setReferencedAttribute("idRef");
+								portIndex.setArrayDimension(i);
+								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+							}
 						}
 					}
 					String eventEntry = e.getId();

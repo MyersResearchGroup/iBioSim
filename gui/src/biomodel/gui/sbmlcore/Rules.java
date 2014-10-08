@@ -530,6 +530,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 								port.setMetaIdRef(r.getMetaId());
 								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
 								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
+								sBasePluginPort.unsetListOfIndices();
 								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
 									org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
 									Index portIndex = sBasePluginPort.createIndex();
@@ -658,6 +659,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							port.setMetaIdRef(r.getMetaId());
 							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
 							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());		
+							sBasePluginPort.unsetListOfIndices();
 							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
 								org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
 								Index portIndex = sBasePluginPort.createIndex();

@@ -32,6 +32,7 @@ import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -554,6 +555,14 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 								port.setIdRef(c.getId());
 								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
 								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
+								sBasePluginPort.unsetListOfIndices();
+								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+									Index portIndex = sBasePluginPort.createIndex();
+									portIndex.setReferencedAttribute("idRef");
+									portIndex.setArrayDimension(i);
+									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+								}
 							} else {
 								bioModel.getSBMLCompModel().removePort(port);
 							}
@@ -564,6 +573,14 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 								port.setIdRef(c.getId());
 								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
 								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
+								sBasePluginPort.unsetListOfIndices();
+								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+									Index portIndex = sBasePluginPort.createIndex();
+									portIndex.setReferencedAttribute("idRef");
+									portIndex.setArrayDimension(i);
+									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+								}
 							}
 						}
 						comps[index] = addComp;
@@ -639,6 +656,14 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							port.setIdRef(c.getId());
 							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
 							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
+							sBasePluginPort.unsetListOfIndices();
+							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+								Index portIndex = sBasePluginPort.createIndex();
+								portIndex.setReferencedAttribute("idRef");
+								portIndex.setArrayDimension(i);
+								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+							}
 						}
 						JList add = new JList();
 						String addStr;
