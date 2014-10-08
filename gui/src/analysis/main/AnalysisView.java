@@ -57,7 +57,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/*
 	 * Radio Buttons that represent the different abstractions
 	 */
-	private JRadioButton none, abstraction, nary, ODE, monteCarlo, markov, fba;
+	private JRadioButton none, expand, abstraction, nary, ODE, monteCarlo, markov, fba;
 
 	private JRadioButton sbml, dot, xhtml, lhpn; // Radio Buttons output option
 
@@ -492,10 +492,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// Sets up the radio buttons for Abstraction and Nary
 		JLabel choose = new JLabel("Abstraction:");
 		none = new JRadioButton("None");
-		abstraction = new JRadioButton("Abstraction");
-		nary = new JRadioButton("Logical Abstraction");
+		expand = new JRadioButton("Expand Reactions");
+		abstraction = new JRadioButton("Reaction-based");
+		nary = new JRadioButton("State-based");
 		ButtonGroup abs = new ButtonGroup();
 		abs.add(none);
+		abs.add(expand);
 		abs.add(abstraction);
 		abs.add(nary);
 		none.setSelected(true);
@@ -512,11 +514,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		JPanel absAndNaryPanel = new JPanel();
 		absAndNaryPanel.add(choose);
 		absAndNaryPanel.add(none);
+		absAndNaryPanel.add(expand);
 		absAndNaryPanel.add(abstraction);
 		absAndNaryPanel.add(nary);
 		topPanel.add(backgroundPanel, BorderLayout.NORTH);
 		topPanel.add(absAndNaryPanel, BorderLayout.SOUTH);
 		none.addActionListener(this);
+		expand.addActionListener(this);
 		abstraction.addActionListener(this);
 		nary.addActionListener(this);
 
@@ -635,6 +639,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (biosimrc.get("biosim.sim.abs", "").equals("None")) {
 			none.doClick();
 		}
+		if (biosimrc.get("biosim.sim.abs", "").equals("Expand")) {
+			expand.doClick();
+		}
 		else if (biosimrc.get("biosim.sim.abs", "").equals("Abstraction")) {
 			abstraction.doClick();
 		}
@@ -697,10 +704,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	public void actionPerformed(ActionEvent e) {
 		// if the none Radio Button is selected
 		change = true;
-		if (e.getSource() == none) {
+		if (e.getSource() == none || e.getSource() == expand) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
 					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa, maxCon,
+					simulators, simulatorsLabel, explanation, description, none, expand, rapid1, rapid2, qssa, maxCon,
 					diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
 					fileStemLabel, preAbs, loopAbs, postAbs,
 					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
@@ -733,7 +740,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == abstraction) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
 					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa, maxCon,
+					simulators, simulatorsLabel, explanation, description, none, expand, rapid1, rapid2, qssa, maxCon,
 					diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
 					fileStemLabel, preAbs, loopAbs, postAbs,
 					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
@@ -1999,6 +2006,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (none.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "none_monteCarlo";
 		}
+		else if (expand.isSelected() && ODE.isSelected()) {
+			selectedButtons = "expand_ODE";
+		}
+		else if (expand.isSelected() && monteCarlo.isSelected()) {
+			selectedButtons = "expand_monteCarlo";
+		}
 		else if (abstraction.isSelected() && ODE.isSelected()) {
 			selectedButtons = "abs_ODE";
 		}
@@ -2011,17 +2024,26 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (none.isSelected() && fba.isSelected()) {
 			selectedButtons = "none_fba";
 		}
+		else if (expand.isSelected() && fba.isSelected()) {
+			selectedButtons = "expand_fba";
+		}
 		else if (nary.isSelected() && markov.isSelected()) {
 			selectedButtons = "nary_markov";
 		}
 		else if (none.isSelected() && markov.isSelected()) {
 			selectedButtons = "none_markov";
 		}
+		else if (expand.isSelected() && markov.isSelected()) {
+			selectedButtons = "expand_markov";
+		}
 		else if (abstraction.isSelected() && markov.isSelected()) {
 			selectedButtons = "abs_markov";
 		}
 		else if (none.isSelected() && sbml.isSelected()) {
 			selectedButtons = "none_sbml";
+		}
+		else if (expand.isSelected() && sbml.isSelected()) {
+			selectedButtons = "expand_sbml";
 		}
 		else if (abstraction.isSelected() && sbml.isSelected()) {
 			selectedButtons = "abs_sbml";
@@ -2035,6 +2057,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (none.isSelected() && lhpn.isSelected()) {
 			selectedButtons = "none_lhpn";
 		}
+		else if (expand.isSelected() && dot.isSelected()) {
+			selectedButtons = "expand_dot";
+		}
+		else if (expand.isSelected() && lhpn.isSelected()) {
+			selectedButtons = "expand_lhpn";
+		}
 		else if (abstraction.isSelected() && dot.isSelected()) {
 			selectedButtons = "abs_dot";
 		}
@@ -2043,6 +2071,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		else if (none.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "none_xhtml";
+		}
+		else if (expand.isSelected() && xhtml.isSelected()) {
+			selectedButtons = "expand_xhtml";
 		}
 		else if (abstraction.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "abs_xhtml";
@@ -2552,6 +2583,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (none.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "none_monteCarlo";
 		}
+		else if (expand.isSelected() && ODE.isSelected()) {
+			selectedButtons = "expand_ODE";
+		}
+		else if (expand.isSelected() && monteCarlo.isSelected()) {
+			selectedButtons = "expand_monteCarlo";
+		}
 		else if (abstraction.isSelected() && ODE.isSelected()) {
 			selectedButtons = "abs_ODE";
 		}
@@ -2561,20 +2598,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (nary.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "nary_monteCarlo";
 		}
-		else if (none.isSelected() && fba.isSelected()) {
-			selectedButtons = "none_fba";
-		}
 		else if (nary.isSelected() && markov.isSelected()) {
 			selectedButtons = "nary_markov";
 		}
-		else if (none.isSelected() && markov.isSelected()) {
-			selectedButtons = "none_markov";
-		}
 		else if (abstraction.isSelected() && markov.isSelected()) {
 			selectedButtons = "abs_markov";
-		}
-		else if (none.isSelected() && sbml.isSelected()) {
-			selectedButtons = "none_sbml";
 		}
 		else if (abstraction.isSelected() && sbml.isSelected()) {
 			selectedButtons = "abs_sbml";
@@ -2582,20 +2610,47 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (nary.isSelected() && sbml.isSelected()) {
 			selectedButtons = "nary_sbml";
 		}
-		else if (none.isSelected() && dot.isSelected()) {
-			selectedButtons = "none_dot";
-		}
-		else if (none.isSelected() && lhpn.isSelected()) {
-			selectedButtons = "none_lhpn";
-		}
 		else if (abstraction.isSelected() && dot.isSelected()) {
 			selectedButtons = "abs_dot";
 		}
 		else if (nary.isSelected() && dot.isSelected()) {
 			selectedButtons = "nary_dot";
 		}
+		else if (none.isSelected() && fba.isSelected()) {
+			selectedButtons = "none_fba";
+		}
+		else if (none.isSelected() && markov.isSelected()) {
+			selectedButtons = "none_markov";
+		}
+		else if (none.isSelected() && sbml.isSelected()) {
+			selectedButtons = "none_sbml";
+		}
+		else if (none.isSelected() && dot.isSelected()) {
+			selectedButtons = "none_dot";
+		}
+		else if (none.isSelected() && lhpn.isSelected()) {
+			selectedButtons = "none_lhpn";
+		}
 		else if (none.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "none_xhtml";
+		}
+		else if (expand.isSelected() && fba.isSelected()) {
+			selectedButtons = "expand_fba";
+		}
+		else if (expand.isSelected() && markov.isSelected()) {
+			selectedButtons = "expand_markov";
+		}
+		else if (expand.isSelected() && sbml.isSelected()) {
+			selectedButtons = "expand_sbml";
+		}
+		else if (expand.isSelected() && dot.isSelected()) {
+			selectedButtons = "expand_dot";
+		}
+		else if (expand.isSelected() && lhpn.isSelected()) {
+			selectedButtons = "expand_lhpn";
+		}
+		else if (expand.isSelected() && xhtml.isSelected()) {
+			selectedButtons = "expand_xhtml";
 		}
 		else if (abstraction.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "abs_xhtml";
@@ -3223,7 +3278,21 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					none.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
 							minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa, maxCon,
+							simulators, simulatorsLabel, explanation, description, none, expand, rapid1, rapid2, qssa, maxCon,
+							diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
+							fileStemLabel, preAbs, loopAbs, postAbs,
+							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
+							editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, abstraction, nary);
+					if (modelFile.contains(".lpn")) {
+						markov.setEnabled(true);
+						lhpn.setEnabled(true);
+					}
+				}
+				if (load.getProperty("reb2sac.abstraction.method").equals("expand")) {
+					expand.setSelected(true);
+					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
+							minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+							simulators, simulatorsLabel, explanation, description, none, expand, rapid1, rapid2, qssa, maxCon,
 							diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
 							fileStemLabel, preAbs, loopAbs, postAbs,
 							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
@@ -3237,7 +3306,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					abstraction.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
 							minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa, maxCon,
+							simulators, simulatorsLabel, explanation, description, none, expand, rapid1, rapid2, qssa, maxCon,
 							diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
 							fileStemLabel, preAbs, loopAbs, postAbs,
 							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
@@ -3503,17 +3572,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				if (load.containsKey("reb2sac.abstraction.method")) {
 					if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
 						none.setSelected(true);
-						abstraction.setSelected(false);
-						nary.setSelected(false);
+					}
+					else if (load.getProperty("reb2sac.abstraction.method").equals("expand")) {
+						expand.setSelected(true);
 					}
 					else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
-						none.setSelected(false);
 						abstraction.setSelected(true);
-						nary.setSelected(false);
 					}
 					else if (load.getProperty("reb2sac.abstraction.method").equals("nary")) {
-						none.setSelected(false);
-						abstraction.setSelected(false);
 						nary.setSelected(true);
 					}
 				}
@@ -3678,6 +3744,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	public JButton getSaveButton() {
 		return save;
+	}
+	
+	public boolean noExpand() {
+		return none.isSelected();
 	}
 
 	// Reports which gcm abstraction options are selected

@@ -175,6 +175,9 @@ public class Run implements ActionListener {
 		if (selectedButtons.contains("none")) {
 			abs.setProperty("reb2sac.abstraction.method", "none");
 		}
+		if (selectedButtons.contains("expand")) {
+			abs.setProperty("reb2sac.abstraction.method", "expand");
+		}
 		if (selectedButtons.contains("abs")) {
 			abs.setProperty("reb2sac.abstraction.method", "abs");
 		}
@@ -662,10 +665,10 @@ public class Run implements ActionListener {
 						}
 						progress.setIndeterminate(true);
 						//BioModel paramGCM = gcmEditor.getBioModel();
-						BioModel gcm = new BioModel(root);
-						gcm.load(root + separator + gcmEditor.getRefFile());
+						BioModel bioModel = new BioModel(root);
+						bioModel.load(root + separator + gcmEditor.getRefFile());
 						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
-						if (gcm.flattenModel(true) != null) {
+						if (bioModel.flattenModel(true) != null) {
 							time1 = System.nanoTime();
 							String prop = null;
 							if (!lpnProperty.equals("")) {
@@ -673,7 +676,7 @@ public class Run implements ActionListener {
 							}
 							ArrayList<String> propList = new ArrayList<String>();
 							if (prop == null) {
-								Model m = gcm.getSBMLDocument().getModel();
+								Model m = bioModel.getSBMLDocument().getModel();
 								for (int num = 0; num < m.getConstraintCount(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
@@ -685,7 +688,7 @@ public class Run implements ActionListener {
 								String s = (String) JOptionPane.showInputDialog(component, "Select a property:",
 										"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 								if ((s != null) && (s.length() > 0)) {
-									Model m = gcm.getSBMLDocument().getModel();
+									Model m = bioModel.getSBMLDocument().getModel();
 									for (int num = 0; num < m.getConstraintCount(); num++) {
 										String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 										if (s.equals(constraint)) {
@@ -695,7 +698,7 @@ public class Run implements ActionListener {
 								}
 							}
 							MutableString mutProp = new MutableString(prop);
-							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
+							LhpnFile lpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
 							prop = mutProp.getString();
 							if (lpnFile == null) {
 								new File(directory + separator + "running").delete();
@@ -822,10 +825,10 @@ public class Run implements ActionListener {
 					}
 					progress.setIndeterminate(true);
 					//BioModel paramGCM = gcmEditor.getBioModel();
-					BioModel gcm = new BioModel(root);
-					gcm.load(root + separator + gcmEditor.getRefFile());
+					BioModel bioModel = new BioModel(root);
+					bioModel.load(root + separator + gcmEditor.getRefFile());
 					//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
-					if (gcm.flattenModel(true) != null) {
+					if (bioModel.flattenModel(true) != null) {
 						time1 = System.nanoTime();
 						String prop = null;
 						if (!lpnProperty.equals("")) {
@@ -833,7 +836,7 @@ public class Run implements ActionListener {
 						}
 						ArrayList<String> propList = new ArrayList<String>();
 						if (prop == null) {
-							Model m = gcm.getSBMLDocument().getModel();
+							Model m = bioModel.getSBMLDocument().getModel();
 							for (int num = 0; num < m.getConstraintCount(); num++) {
 								String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 								if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
@@ -845,7 +848,7 @@ public class Run implements ActionListener {
 							String s = (String) JOptionPane.showInputDialog(component, "Select a property:",
 									"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 							if ((s != null) && (s.length() > 0)) {
-								Model m = gcm.getSBMLDocument().getModel();
+								Model m = bioModel.getSBMLDocument().getModel();
 								for (int num = 0; num < m.getConstraintCount(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 									if (s.equals(constraint)) {
@@ -855,7 +858,7 @@ public class Run implements ActionListener {
 							}
 						}
 						MutableString mutProp = new MutableString(prop);
-						LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
+						LhpnFile lhpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
 						prop = mutProp.getString();
 						if (lhpnFile == null) {
 							new File(directory + separator + "running").delete();
@@ -953,17 +956,17 @@ public class Run implements ActionListener {
 							}
 						}
 						//BioModel paramGCM = gcmEditor.getBioModel();
-						BioModel gcm = new BioModel(root);
-						gcm.load(root + separator + gcmEditor.getRefFile());
+						BioModel bioModel = new BioModel(root);
+						bioModel.load(root + separator + gcmEditor.getRefFile());
 						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
-						if (gcm.flattenModel(true) != null) {
+						if (bioModel.flattenModel(true) != null) {
 							time1 = System.nanoTime();
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;
 							}
 							ArrayList<String> propList = new ArrayList<String>();
 							if (prop == null) {
-								Model m = gcm.getSBMLDocument().getModel();
+								Model m = bioModel.getSBMLDocument().getModel();
 								for (int num = 0; num < m.getConstraintCount(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
@@ -975,7 +978,7 @@ public class Run implements ActionListener {
 								String s = (String) JOptionPane.showInputDialog(component, "Select a property:",
 										"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 								if ((s != null) && (s.length() > 0)) {
-									Model m = gcm.getSBMLDocument().getModel();
+									Model m = bioModel.getSBMLDocument().getModel();
 									for (int num = 0; num < m.getConstraintCount(); num++) {
 										String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 										if (s.equals(constraint)) {
@@ -985,7 +988,7 @@ public class Run implements ActionListener {
 								}
 							}
 							MutableString mutProp = new MutableString(prop);
-							lhpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
+							lhpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
 							prop = mutProp.getString();
 							if (lhpnFile == null) {
 								new File(directory + separator + "running").delete();
