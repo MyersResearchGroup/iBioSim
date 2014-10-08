@@ -250,14 +250,14 @@ public class SBMLutilities {
 		if(attribute.equals("conversionFactor")){
 			attribute = "conversion factor";
 		}
-		ArrayList<String> meshDimensionIds = new ArrayList();
+		ArrayList<String> meshDimensionIds = new ArrayList<String>();
 		if (dimensionIds!=null) {
 			meshDimensionIds.addAll(Arrays.asList(dimensionIds));
 		}
 		if (topDimensionIds!=null) {
 			meshDimensionIds.addAll(Arrays.asList(topDimensionIds));
 		}
-		ArrayList<String> meshDimSizeIds = new ArrayList();
+		ArrayList<String> meshDimSizeIds = new ArrayList<String>();
 		if (dimSizeIds!=null) {
 			ArrayList<String> dimSizeIdsList = new ArrayList<String>(Arrays.asList(dimSizeIds));
 			dimSizeIdsList.remove(0);
@@ -3728,15 +3728,15 @@ public class SBMLutilities {
 	}
 	
 	public static void setNamespaces(SBMLDocument document, Map<String,String> namespaces) {
-		document.getSBMLDocumentNamespaces().clear();
+		document.getDeclaredNamespaces().clear();
 		for (String key : namespaces.keySet()) {
 			String prefix = "";
-			String shortName = key;
+			//String shortName = key;
 			if (key.contains(":")) {
 				prefix = key.split(":")[0];
-				shortName = key.split(":")[1];
+				//shortName = key.split(":")[1];
 			} 
-			document.addNamespace(shortName, prefix, namespaces.get(key));
+			document.addDeclaredNamespace(prefix, namespaces.get(key));
 		}
 	}
 	
