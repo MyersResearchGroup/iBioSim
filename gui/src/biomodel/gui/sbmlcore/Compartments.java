@@ -552,6 +552,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							if (onPort.isSelected()) {
 								port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
 								port.setIdRef(c.getId());
+								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
 							} else {
 								bioModel.getSBMLCompModel().removePort(port);
 							}
@@ -560,6 +562,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 								port = bioModel.getSBMLCompModel().createPort();
 								port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
 								port.setIdRef(c.getId());
+								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
 							}
 						}
 						comps[index] = addComp;
@@ -633,6 +637,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							Port port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
 							port.setIdRef(c.getId());
+							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
 						}
 						JList add = new JList();
 						String addStr;

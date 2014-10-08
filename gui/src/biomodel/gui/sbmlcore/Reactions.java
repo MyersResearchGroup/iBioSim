@@ -961,10 +961,29 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					react.setId(reactionID);
 					react.setName(reacName.getText().trim());
 					Port port = bioModel.getPortByIdRef(val);
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
+					sBasePlugin.unsetListOfDimensions();
+					for(int i = 0; dimID!=null && i<dimID.length-1; i++){
+						Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+						dimX.setSize(dimID[i+1]);
+						dimX.setArrayDimension(i);
+					}
+					// Add the indices
+					sBasePlugin.unsetListOfIndices();
+					for(int i = 0; dex!=null && i<dex.length-1; i++){
+						Index indexRule = new Index();
+						indexRule.setArrayDimension(i);
+						indexRule.setReferencedAttribute("compartment");
+						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
+						indexRule.setMath(indexMath);
+						sBasePlugin.addIndex(indexRule);
+					}
 					if (port!=null) {
 						if (onPort.isSelected()) {
 							port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 							port.setIdRef(react.getId());
+							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
 						} else {
 							bioModel.getSBMLCompModel().removePort(port);
 						}
@@ -973,6 +992,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 							port.setIdRef(react.getId());
+							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
 						}
 					}
 					if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
@@ -1147,25 +1168,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								AnnotationUtility.removeSBOLAnnotation(react);
 						}
 					}
-					if(!error){
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
-						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1]);
-							dimX.setArrayDimension(i);
-						}
-						// Add the indices
-						sBasePlugin.unsetListOfIndices();
-						for(int i = 0; dex!=null && i<dex.length-1; i++){
-							Index indexRule = new Index();
-							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("compartment");
-							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-							indexRule.setMath(indexMath);
-							sBasePlugin.addIndex(indexRule);
-						}
-					}
 				}
 				else {
 					Reaction react = bioModel.getSBMLDocument().getModel().createReaction();
@@ -1202,10 +1204,29 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					react.setId(reactionID);
 					react.setName(reacName.getText().trim());
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
+					sBasePlugin.unsetListOfDimensions();
+					for(int i = 0; dimID!=null && i<dimID.length-1; i++){
+						Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+						dimX.setSize(dimID[i+1]);
+						dimX.setArrayDimension(i);
+					}
+					// Add the indices
+					sBasePlugin.unsetListOfIndices();
+					for(int i = 0; dex!=null && i<dex.length-1; i++){
+						Index indexRule = new Index();
+						indexRule.setArrayDimension(i);
+						indexRule.setReferencedAttribute("compartment");
+						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
+						indexRule.setMath(indexMath);
+						sBasePlugin.addIndex(indexRule);
+					}
 					if (onPort.isSelected()) {
 						Port port = bioModel.getSBMLCompModel().createPort();
 						port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 						port.setIdRef(react.getId());
+						ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+						sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());								
 					}
 					if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 						if (complex==null && production==null) {
@@ -1255,25 +1276,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else {
 						removeTheReaction(bioModel, reactionID);
-					}
-					if(!error){
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
-						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1]);
-							dimX.setArrayDimension(i);
-						}
-						// Add the indices
-						sBasePlugin.unsetListOfIndices();
-						for(int i = 0; dex!=null && i<dex.length-1; i++){
-							Index indexRule = new Index();
-							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("compartment");
-							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-							indexRule.setMath(indexMath);
-							sBasePlugin.addIndex(indexRule);
-						}
 					}
 				}
 				modelEditor.setDirty(true);

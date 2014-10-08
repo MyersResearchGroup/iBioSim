@@ -249,6 +249,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				Port port = bioModel.getSBMLCompModel().createPort();
 				port.setId(GlobalConstants.INITIAL_ASSIGNMENT+"__"+variable);
 				port.setMetaIdRef(initialId);
+				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
 			} 
 		}
 		return error;
