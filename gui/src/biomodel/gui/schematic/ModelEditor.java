@@ -8,7 +8,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -1196,24 +1199,45 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		{
 			SBMLDocument sbml = biomodel.flattenModel(true);		
 			performModifications(sbml,dd);
-			GCMParser parser = new GCMParser(biomodel);
-			GeneticNetwork network = parser.buildNetwork(sbml);
-			
-			if (network==null)
-				return false;
-			if (reb2sac != null)
-				network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getProperty());
-			else
-				network.loadProperties(biomodel);
-			
-			SBMLDocument d = network.getSBML();
-			//performModifications(d,dd);
-			network.markAbstractable();
-			network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
-			//			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
-			//					"Error Creating File", JOptionPane.ERROR_MESSAGE);
-			//			return false;
-			//e1.printStackTrace();
+			if (reb2sac==null || !reb2sac.noExpand()) {
+				GCMParser parser = new GCMParser(biomodel);
+				GeneticNetwork network = parser.buildNetwork(sbml);
+
+				if (network==null)
+					return false;
+				if (reb2sac != null)
+					network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getProperty());
+				else
+					network.loadProperties(biomodel);
+
+				SBMLDocument d = network.getSBML();
+				network.markAbstractable();
+				network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
+			} else {
+				SBMLWriter writer = new SBMLWriter();
+				PrintStream p;
+				try {
+					p = new PrintStream(new FileOutputStream(path + separator + simName + separator + stem + direct + separator + modelId + ".xml"),true,"UTF-8");
+					p.print(writer.writeSBMLToString(sbml));
+					p.close();
+				}
+				catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (SBMLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (XMLStreamException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		else
 		{

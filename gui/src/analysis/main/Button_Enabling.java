@@ -25,7 +25,7 @@ public class Button_Enabling {
 			JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel,
 			JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
 			JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
-			JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none, JTextField rapid1,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none, JRadioButton expand, JTextField rapid1,
 			JTextField rapid2, JTextField qssa, JTextField maxCon, JTextField diffStoichAmp, JLabel rapidLabel1, JLabel rapidLabel2,
 			JLabel qssaLabel, JLabel maxConLabel, JLabel diffStoichAmpLabel, JTextField fileStem, JLabel fileStemLabel, JList preAbs,
 			JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs,
@@ -39,7 +39,7 @@ public class Button_Enabling {
 		lhpn.setEnabled(false);
 		abstraction.setEnabled(true);
 		nary.setEnabled(true);
-		if (none.isSelected()) {
+		if (none.isSelected() || expand.isSelected()) {
 			preAbs.setEnabled(false);
 			loopAbs.setEnabled(false);
 			postAbs.setEnabled(false);
