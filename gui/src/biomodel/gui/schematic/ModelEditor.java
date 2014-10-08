@@ -1522,15 +1522,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		biomodel.setConstraintPanel(consPanel);
 		biomodel.setParameterPanel(parametersPanel);
 		
-		components = new PropertyList("Component List");
-		EditButton addInit = new EditButton("Add Component", components);
-		RemoveButton removeInit = new RemoveButton("Remove Component", components);
-		EditButton editInit = new EditButton("Edit Component", components);
+		components = new PropertyList("Module List");
+		EditButton addInit = new EditButton("Add Module", components);
+		RemoveButton removeInit = new RemoveButton("Remove Module", components);
+		EditButton editInit = new EditButton("Edit Module", components);
 		
 		refreshComponentsList();
 		
 		this.getSpeciesPanel().refreshSpeciesPanel(biomodel);
-		JPanel componentsPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
+		JPanel componentsPanel = Utility.createPanel(this, "Modules", components, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(componentsPanel);
 		
 		this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
@@ -1542,7 +1542,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				tab.addTab("Reactions", reactionPanel);
 			}
 			tab.addTab("Parameters", parametersPanel);
-			tab.addTab("Components", componentsPanel);
+			tab.addTab("Modules", componentsPanel);
 			tab.addTab("Rules", rulesPanel);
 			tab.addTab("Constraints", propPanel);
 			if (!biosim.lema) { 	
@@ -2100,13 +2100,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 			if (components.size() == 0) {
 				JOptionPane.showMessageDialog(Gui.frame,
-						"There aren't any other models to use as components."
+						"There aren't any other models to use as modules."
 								+ "\nCreate a new model or import a model into the project first.",
 						"Add Another Model To The Project", JOptionPane.ERROR_MESSAGE);
 			}
 			else {
 				comp = (String) JOptionPane.showInputDialog(Gui.frame,
-						"Choose a model to use as a component:", "Component Editor",
+						"Choose a model to use as a module:", "Module Editor",
 						JOptionPane.PLAIN_MESSAGE, null, components.toArray(new String[0]), null);
 			}
 		}

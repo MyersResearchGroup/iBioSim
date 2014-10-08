@@ -149,9 +149,9 @@ public class GridPanel extends JPanel implements ActionListener {
 						File.separator + component.replace(".gcm",".xml"))) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
-							"Dropping grid components is disallowed.\n" +
-							"Please choose a different component.",
-							"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
+							"Dropping grid modules is disallowed.\n" +
+							"Please choose a different module.",
+							"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
 					
 					continue;
 				}
@@ -265,9 +265,9 @@ public class GridPanel extends JPanel implements ActionListener {
 							File.separator + component.replace(".gcm",".xml"))) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
-						"Dropping grid components is disallowed.\n" +
-						"Please choose a different component.",
-						"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
+						"Dropping grid modules is disallowed.\n" +
+						"Please choose a different module.",
+						"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
 					continue;
 				}
 				int rowCount = 0, colCount = 0;

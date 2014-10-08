@@ -72,8 +72,6 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.layout.TextGlyph;
 import org.sbml.jsbml.Trigger;
 
-import sbol.util.SBOLFileManager;
-import sbol.util.SBOLIdentityManager;
 import main.Gui;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.comp.DropComponentPanel;
@@ -89,7 +87,6 @@ import biomodel.gui.sbmlcore.Parameters;
 import biomodel.gui.sbmlcore.Reactions;
 import biomodel.gui.sbmlcore.Rules;
 import biomodel.gui.sbmlcore.SpeciesPanel;
-import biomodel.gui.sbol.SBOLDescriptorPanel;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
@@ -340,7 +337,7 @@ public class Schematic extends JPanel implements ActionListener {
 				KeyEvent.getKeyText(KeyEvent.VK_ESCAPE) + ")", this, modeButtonGroup); 
 		toolBar.add(selectButton);
 		selectButton.setSelected(true);
-		addComponentButton = makeRadioToolButton("add_component.png", "", "Add Components (C)", this, modeButtonGroup);
+		addComponentButton = makeRadioToolButton("add_component.png", "", "Add Modules (M)", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
 		toolBar.add(makeToolButton("", "editGridSize", "Edit Grid Size", this));
 		
@@ -679,7 +676,7 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(addSpeciesButton);
 		addReactionButton = makeRadioToolButton("add_reaction.png", "", "Add Reactions (R)", this, modeButtonGroup);
 		toolBar.add(addReactionButton);
-		addComponentButton = makeRadioToolButton("add_component.png", "", "Add Components (C)", this, modeButtonGroup);
+		addComponentButton = makeRadioToolButton("add_component.png", "", "Add Modules (M)", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
 		addPromoterButton = makeRadioToolButton("promoter_mode.png", "", "Add Promoters (" +
 				KeyEvent.getKeyText(KeyEvent.VK_SHIFT) + " P)", this, modeButtonGroup);
@@ -765,7 +762,7 @@ public class Schematic extends JPanel implements ActionListener {
 				KeyEvent.getKeyText(KeyEvent.VK_ESCAPE) + ")", this, modeButtonGroup); 
 		toolBar.add(selectButton);
 		selectButton.setSelected(true);
-		addComponentButton = makeRadioToolButton("add_component.png", "", "Add Components (C)", this, modeButtonGroup);
+		addComponentButton = makeRadioToolButton("add_component.png", "", "Add Modules (M)", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
 		addBooleanButton = makeRadioToolButton("boolean_mode.png", "", "Add Booleans (B)", this, modeButtonGroup);
 		toolBar.add(addBooleanButton);
@@ -1719,19 +1716,19 @@ public class Schematic extends JPanel implements ActionListener {
 			numComponents++;
 		// bail out if the user tries to connect two components.
 		if(numComponents == 2){
-			JOptionPane.showMessageDialog(Gui.frame, "You can't connect a component directly to another component. Please go through a species.");
+			JOptionPane.showMessageDialog(Gui.frame, "You can't connect a module directly to another module. Please go through a species or variable.");
 			graph.buildGraph();
 			return;
 		}
 		
 		if((numComponents==0) && (graph.getCellType(source)==GlobalConstants.VARIABLE ||
 				graph.getCellType(target)==GlobalConstants.VARIABLE)) {
-			JOptionPane.showMessageDialog(Gui.frame, "A variable can only be explicitly connected to components.");
+			JOptionPane.showMessageDialog(Gui.frame, "A variable can only be explicitly connected to modules.");
 			graph.buildGraph();
 			return;
 		} else if((numComponents==0) && (graph.getCellType(source)==GlobalConstants.BOOLEAN ||
 				graph.getCellType(target)==GlobalConstants.BOOLEAN)) {
-			JOptionPane.showMessageDialog(Gui.frame, "A Boolean variable can only be explicitly connected to components.");
+			JOptionPane.showMessageDialog(Gui.frame, "A Boolean variable can only be explicitly connected to modules.");
 			graph.buildGraph();
 			return;
 		} /* else if((numComponents==0) && (graph.getCellType(source)==GlobalConstants.PLACE ||
@@ -1799,7 +1796,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// bail out if the user tries to connect a component to a promoter.
 		if(numComponents > 0 && numPromoters > 0){
-			JOptionPane.showMessageDialog(Gui.frame, "You can't connect a component directly to a promoter.");
+			JOptionPane.showMessageDialog(Gui.frame, "You can't connect a module directly to a promoter.");
 			//graph.removeCells(cells);
 			graph.buildGraph();
 			return;
@@ -1832,7 +1829,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectComponentToSpecies(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no speices output ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This module has no speices output ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1841,7 +1838,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectComponentToVariable(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable output ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This module has no variable output ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1850,7 +1847,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectComponentToVariable(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no place output ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This module has no place output ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1859,7 +1856,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectComponentToVariable(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no Boolean output ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This module has no Boolean output ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1875,7 +1872,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectSpeciesToComponent(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no species input ports.");	
+						JOptionPane.showMessageDialog(Gui.frame, "This module has no species input ports.");	
 						graph.buildGraph();
 						return;
 					}
@@ -1884,7 +1881,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectVariableToComponent(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable input ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This module has no variable input ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1893,7 +1890,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectVariableToComponent(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no place input ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This module has no place input ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1902,7 +1899,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectVariableToComponent(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no Boolean input ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This module has no Boolean input ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -2109,7 +2106,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * connects an output in a component to a species.
 	 * @param comp_id
 	 * @param spec_id
-	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the component.
+	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the module.
 	 */
 	public String connectComponentToSpecies(String compID, String specID) throws ListChooser.EmptyListException{
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
@@ -2124,7 +2121,7 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * connects a species to the input of a component.
+	 * connects a species to the input of a module.
 	 * @param spec_id
 	 * @param comp_id
 	 * @return a boolean representing success or failure.
@@ -2142,10 +2139,10 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * connects an output in a component to a species.
+	 * connects an output in a module to a species.
 	 * @param comp_id
 	 * @param spec_id
-	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the component.
+	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the module.
 	 */
 	public String connectComponentToVariable(String compID, String varID) throws ListChooser.EmptyListException{
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
@@ -2169,7 +2166,7 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * connects a species to the input of a component.
+	 * connects a species to the input of a module.
 	 * @param spec_id
 	 * @param comp_id
 	 * @return a boolean representing success or failure.
@@ -2196,7 +2193,7 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * given an mxCell where either the source or target is a component, 
+	 * given an mxCell where either the source or target is a module,
 	 * remove the connection.
 	 */
 	private void removeComponentConnection(mxCell cell){
@@ -2213,7 +2210,7 @@ public class Schematic extends JPanel implements ActionListener {
 			bioModel.removeComponentConnection(speciesId, componentId, 
 					GlobalConstants.OUTPUT+"__"+((String)cell.getValue()).replace("Port ",""));
 		}else
-			throw new Error("removeComponentConnection was called with a cell in which neither the source nor target was a component!");
+			throw new Error("removeComponentConnection was called with a cell in which neither the source nor target was a module!");
 	}
 	
 	/*
@@ -2619,7 +2616,7 @@ public class Schematic extends JPanel implements ActionListener {
 					speciesPanel.add(thresholds.get(compSpec));
 				}
 				
-				JCheckBox copyIntSpecies = new JCheckBox("Apply to all components with this model");
+				JCheckBox copyIntSpecies = new JCheckBox("Apply to all modules with this model");
 				speciesPanel.add(new JLabel(""));
 				speciesPanel.add(copyIntSpecies);
 				
@@ -2767,7 +2764,7 @@ public class Schematic extends JPanel implements ActionListener {
 				//a TSD file to simulate
 				if (movieContainer.getTSDParser() == null && movieContainer.getDTSDParser() == null)
 					JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file " +
-							"before editing grid component properties.");
+							"before editing grid module properties.");
 				else {
 					if (cell != null) {
 						SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);

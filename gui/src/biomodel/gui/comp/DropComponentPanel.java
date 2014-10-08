@@ -108,7 +108,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			JPanel tilingPanel = new JPanel(new GridLayout(1, 1));
 		
 			// radio button to enable tiling
-			doTiling = new JCheckBox("Tile Component", false);
+			doTiling = new JCheckBox("Tile Modules", false);
 			doTiling.addActionListener(this);	
 			tilingPanel.add(doTiling);
 			
@@ -157,7 +157,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		if (componentList.size() == 0) {
 			
 			JOptionPane.showMessageDialog(Gui.frame,
-					"There aren't any models to use as components.\n"
+					"There aren't any models to use as modules.\n"
 							+ "Create a new model or import one into the project first.",
 					"No Models to Add", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -187,7 +187,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		while (error) {
 			
-			int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Component(s)",
+			int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Module(s)",
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 	
 			//if the user clicks okay
@@ -203,9 +203,9 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component.replace(".gcm",".xml"))) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
-							"Dropping grid components is disallowed.\n" +
-							"Please choose a different component.",
-							"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
+							"Dropping grid modules is disallowed.\n" +
+							"Please choose a different module.",
+							"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
 				}
 				else {
 					
@@ -298,7 +298,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		if(componentList.size() == 0){
 			JOptionPane.showMessageDialog(Gui.frame,
-					"There aren't any other gcms to use as components."
+					"There aren't any other gcms to use as modules."
 							+ "\nCreate a new gcm or import a gcm into the project first.",
 					"Add Another GCM To The Project", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -315,7 +315,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		while (error) {
 		
-			int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Component(s)",
+			int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Module(s)",
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 	
 			//if the user clicks okay
@@ -330,15 +330,15 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				//don't allow grids within a grid
 				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component.replace(".gcm",".xml"))) {
 					JOptionPane.showMessageDialog(Gui.frame,
-							"Dropping grid components is disallowed.\n" +
-							"Please choose a different component.",
-							"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
+							"Dropping grid modules is disallowed.\n" +
+							"Please choose a different module.",
+							"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
 				}
 				else if (!gcm2sbml.checkNoComponentLoop(gcm2sbml.getFilename(), component)) {
 					JOptionPane.showMessageDialog(Gui.frame,
-							"Dropping this component creates a cycle of instantiations.\n" +
-							"Please choose a different component.",
-							"Cannot drop a component", JOptionPane.ERROR_MESSAGE);
+							"Dropping this module creates a cycle of instantiations.\n" +
+							"Please choose a different module.",
+							"Cannot drop a module", JOptionPane.ERROR_MESSAGE);
 				} else {
 					applyComponents(mouseX, mouseY);
 					error = false;
