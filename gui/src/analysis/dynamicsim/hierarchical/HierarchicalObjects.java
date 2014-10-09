@@ -162,10 +162,14 @@ public abstract class HierarchicalObjects extends HierarchicalSimState {
 			}
 		}
 		else if (node.isInteger())
+		{
 			return node.getInteger();
+		}
 
 		else if (node.isReal())
+		{
 			return node.getReal();
+		}
 		else if (node.isName()) {
 
 			String name = node.getName().replace("_negative_","-");
@@ -427,14 +431,23 @@ public abstract class HierarchicalObjects extends HierarchicalSimState {
 			//return Fmath.acsch(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
 			case FUNCTION_ARCSEC:
+			{
 				return Fmath.asec(evaluateExpressionRecursive(modelstate, node.getChild(0)));
-
+			}
+			
 			case FUNCTION_ARCSECH:
 			{
 				double x = evaluateExpressionRecursive(modelstate, node.getChild(0));
 				return FastMath.log((1 + FastMath.sqrt(1 - x*x))/x);
 			}
 
+			case FUNCTION_POWER:
+			{
+				ASTNode leftChild = node.getLeftChild();
+				ASTNode rightChild = node.getRightChild();
+
+				return (FastMath.pow(evaluateExpressionRecursive(modelstate, leftChild), evaluateExpressionRecursive(modelstate, rightChild)));
+			}
 
 			default:
 				return 0.0;
@@ -1242,6 +1255,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState {
 		private HashMap<String, Boolean> variableToIsInConstraintMap; 
 		private HashMap<String, Boolean> variableToIsInRateRuleMap; 
 		private TObjectDoubleHashMap<String> variableToValueMap;
+		private HashMap<String, HashSet<HierarchicalStringPair>> speciesToReplacement;
 		public ModelState(HashMap<String, Model> models, String bioModel, String submodelID)
 		{
 			this.model = bioModel;
@@ -1279,7 +1293,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState {
 			reactionToReactantStoichiometrySetMap = new HashMap<String, HashSet<HierarchicalStringDoublePair> >((int) (numReactions * 1.5));
 			reactionToFormulaMap = new HashMap<String, ASTNode>((int) (numReactions * 1.5));
 
-
+			speciesToReplacement = new HashMap<String, HashSet<HierarchicalStringPair>>();
+			
 			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode> >((int)numConstraints);		
 			variableToIsInConstraintMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 
@@ -2285,6 +2300,38 @@ public abstract class HierarchicalObjects extends HierarchicalSimState {
 		 */
 		public void updateReactionToPropensityMap(String reaction, double value) {
 			reactionToPropensityMap.put(reaction, value);
+		}
+
+		/**
+		 * @return the speciesToReplacement
+		 */
+		public HashMap<String, HashSet<HierarchicalStringPair>> getSpeciesToReplacement() {
+			return speciesToReplacement;
+		}
+
+		/**
+		 * @return the speciesToReplacement
+		 */
+		public HashSet<HierarchicalStringPair> getSpeciesToReplacement(String species) {
+			if(speciesToReplacement.get(species) == null)
+				speciesToReplacement.put(species, new HashSet<HierarchicalStringPair>() );
+			
+			return speciesToReplacement.get(species);
+		}
+		/**
+		 * @param speciesToReplacement the speciesToReplacement to set
+		 */
+		public void setSpeciesToReplacement(
+				HashMap<String, HashSet<HierarchicalStringPair>> speciesToReplacement) {
+			this.speciesToReplacement = speciesToReplacement;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "ModelState [ID=" + ID + "]";
 		}
 	}
 }

@@ -36,7 +36,7 @@ import biomodel.parser.GCMParser;
 import biomodel.util.SBMLutilities;
 
 public class HierarchicalUtilities {
-	
+
 	public static boolean getBooleanFromDouble(double value) {
 
 		if (value == 0.0) 
@@ -51,7 +51,7 @@ public class HierarchicalUtilities {
 		return 0.0;
 	}
 
-	
+
 	public static void alterLocalParameter(ASTNode node, Reaction reaction, String oldString, String newString) 
 	{
 		//String reactionID = reaction.getId();
@@ -99,22 +99,25 @@ public class HierarchicalUtilities {
 			n++;
 		}
 	}
-	
-	public static Model flattenModel(String path, String filename)
+
+	public static Model flattenModel(String path, String filename, int abstraction)
 	{
 
 		BioModel biomodel = new BioModel(path);
 
 		biomodel.load(filename);
 		//SBMLDocument sbml = biomodel.getSBMLDocument();
-		SBMLDocument sbml = biomodel.flattenModel(false);		
-		GCMParser parser = new GCMParser(biomodel);
-		GeneticNetwork network = parser.buildNetwork(sbml);
-		sbml = network.getSBML();
-		network.mergeSBML(filename, sbml);
+		SBMLDocument sbml = biomodel.flattenModel(false);
+		if(abstraction == 1)
+		{
+			GCMParser parser = new GCMParser(biomodel);
+			GeneticNetwork network = parser.buildNetwork(sbml);
+			sbml = network.getSBML();
+			network.mergeSBML(filename, sbml);
+		}
 		return sbml.getModel();
 	}
-	
+
 	public static SBMLDocument getFlattenedRegulations(String path, String filename)
 	{
 		BioModel biomodel = new BioModel(path);
