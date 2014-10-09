@@ -46,6 +46,7 @@ import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.fbc.FluxBound;
+import org.sbml.jsbml.ext.fbc.FluxBound.Operation;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -282,6 +283,79 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		this.add(reactionsLabel, "North");
 		this.add(scroll2, "Center");
 		this.add(addReacs, "South");
+	}
+	
+	private boolean createFluxBound(String reactionIdIndex,Operation operation,String value,String[] dimID,String[] dimensionIds) {
+		String reactionId = reactionIdIndex;
+		String indexStr = "";
+		if (reactionIdIndex.contains("[")) {
+			reactionId = reactionIdIndex.substring(0,reactionIdIndex.indexOf("["));
+			indexStr = reactionIdIndex.substring(reactionIdIndex.indexOf("["));
+		} 						
+		SBase reaction = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactionId);
+		String[] dex = SBMLutilities.checkIndices(indexStr, reaction, bioModel.getSBMLDocument(), dimensionIds, "reaction", dimID, null, null);
+		if (dex==null) return false;
+		double greaterValue = Double.parseDouble(value);
+		FluxBound fluxBound = bioModel.getSBMLFBC().createFluxBound();
+		fluxBound.setOperation(operation);
+		fluxBound.setValue(greaterValue);
+		fluxBound.setReaction(reactionId);
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
+		ArraysSBasePlugin sBasePluginFB = SBMLutilities.getArraysSBasePlugin(fluxBound);
+		sBasePluginFB.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
+		sBasePluginFB.unsetListOfIndices();
+		for(int k = 0; dex!=null && k<dex.length-1; k++){
+			Index indexRule = new Index();
+			indexRule.setArrayDimension(k);
+			indexRule.setReferencedAttribute("reaction");
+			ASTNode indexMath = SBMLutilities.myParseFormula(dex[k+1]);
+			indexRule.setMath(indexMath);
+			sBasePluginFB.addIndex(indexRule);
+		}		
+		return true;
+	}
+	
+	private boolean createReactionFluxBounds(String reactionId,String[] dimID,String[] dimensionIds) {
+		if(kineticLaw.getText().contains("<=")){
+			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
+			if (userInput.length==3) {
+				if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[0],dimID,dimensionIds)) return false;
+				if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[2],dimID,dimensionIds)) return false;
+			} 
+			else {
+				if (userInput[0].startsWith(reactionId)) {
+					if (!createFluxBound(userInput[0],FluxBound.Operation.LESS_EQUAL,userInput[1],dimID,dimensionIds)) return false;
+				} else {
+					if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[0],dimID,dimensionIds)) return false;
+				}
+			}			
+		} 
+		else if(kineticLaw.getText().contains(">=")){
+			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split(">=");
+			if (userInput.length==3) {
+				if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[0],dimID,dimensionIds)) return false;
+				if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[2],dimID,dimensionIds)) return false;
+			} 
+			else {
+				if (userInput[0].startsWith(reactionId)) {
+					if (!createFluxBound(userInput[0],FluxBound.Operation.GREATER_EQUAL,userInput[1],dimID,dimensionIds)) return false;
+				} else {
+					if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[0],dimID,dimensionIds)) return false;
+				}
+			}	
+		}
+		else{
+			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("=");
+			FluxBound fxEqual = bioModel.getSBMLFBC().createFluxBound();
+			fxEqual.setOperation(FluxBound.Operation.EQUAL);
+			fxEqual.setReaction(reactionId);
+			if(userInput[0].startsWith(reactionId)){
+				if (!createFluxBound(userInput[0],FluxBound.Operation.EQUAL,userInput[1],dimID,dimensionIds)) return false;
+			} else {
+				if (!createFluxBound(userInput[1],FluxBound.Operation.EQUAL,userInput[0],dimID,dimensionIds)) return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -591,22 +665,30 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				kineticFluxLabel.setSelectedIndex(1);
 				String fluxbounds = "";
 				for(int i = 0; i < bioModel.getSBMLFBC().getListOfFluxBounds().size(); i++){
-					if(bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getReaction().equals(reactionId)){
-						if(bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getOperation().toString().equals("greaterEqual")){
-							fluxbounds = bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getValue() + "<=" + fluxbounds;
+					FluxBound fluxBound = bioModel.getSBMLFBC().getListOfFluxBounds().get(i);
+					if(fluxBound.getReaction().equals(reactionId)){
+						String indexStr = "";
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(fluxBound);
+						for(int k = sBasePlugin.getIndexCount()-1; k>=0; k--){
+							Index index = sBasePlugin.getIndex(k,"reaction");
+							if (index!=null)
+								indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+						}
+						if(fluxBound.getOperation()==FluxBound.Operation.GREATER_EQUAL){
+							fluxbounds = fluxBound.getValue() + "<=" + fluxbounds;
 							if(!fluxbounds.contains(reactionId)){
-								fluxbounds += reactionId;
+								fluxbounds += reactionId + indexStr;
 							}
 						}
-						if(bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getOperation().toString().equals("lessEqual")){
-							fluxbounds += "<=" + bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getValue();
+						else if(fluxBound.getOperation()==FluxBound.Operation.LESS_EQUAL){
+							fluxbounds += "<=" + fluxBound.getValue();
 							if(!fluxbounds.contains(reactionId)){
-								fluxbounds = reactionId + fluxbounds;
+								fluxbounds = reactionId + indexStr + fluxbounds;
 							}
-						}
-						if(bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getOperation().toString().equals("equal")){
-							double value = bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getValue();
-							fluxbounds = value + "<=" + reactionId + "<=" + value;
+						} 
+						else if(fluxBound.getOperation()==FluxBound.Operation.EQUAL){
+							double value = fluxBound.getValue();
+							fluxbounds = value + "<=" + reactionId + indexStr + "<=" + value;
 						}
 
 					}
@@ -891,9 +973,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							error = SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 						}
 					}
-					else {
-						error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
-					}
+				}
+				else {
+					error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
 				}
 			}
 			if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
@@ -1043,84 +1125,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								i++;
 							}
 						}
-						if(kineticLaw.getText().contains("<=")){
-							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
-							if (userInput.length==3) {
-								double greaterValue = Double.parseDouble(userInput[0]);
-								FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
-								fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
-								fxGreater.setValue(greaterValue);
-								fxGreater.setReaction(reactionId);
-
-								double lessValue = Double.parseDouble(userInput[2]);
-								FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
-								fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
-								fxLess.setValue(lessValue);
-								fxLess.setReaction(reactionId);
-							} 
-							else {
-									try{
-										double lessValue = Double.parseDouble(userInput[1]);
-										FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
-										fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
-										fxLess.setValue(lessValue);
-										fxLess.setReaction(reactionId);
-									}
-									catch(Exception e){
-										double greaterValue = Double.parseDouble(userInput[0]);
-										FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
-										fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
-										fxGreater.setValue(greaterValue);
-										fxGreater.setReaction(reactionId);
-									}
-								}
-							
-						}
-						else if(kineticLaw.getText().contains(">=")){
-							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split(">=");
-							if (userInput.length==3) {
-								double greaterValue = Double.parseDouble(userInput[2]);
-								FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
-								fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
-								fxGreater.setValue(greaterValue);
-								fxGreater.setReaction(reactionId);
-
-								double lessValue = Double.parseDouble(userInput[0]);
-								FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
-								fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
-								fxLess.setValue(lessValue);
-								fxLess.setReaction(reactionId);
-							} else {
-								try{
-									double greaterValue = Double.parseDouble(userInput[1]);
-									FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
-									fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
-									fxGreater.setValue(greaterValue);
-									fxGreater.setReaction(reactionId);
-								}
-								catch(Exception e){
-									double lessValue = Double.parseDouble(userInput[0]);
-									FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
-									fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
-									fxLess.setValue(lessValue);
-									fxLess.setReaction(reactionId);									
-								}
-							}
-						}
-						else{
-							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("=");
-							FluxBound fxEqual = bioModel.getSBMLFBC().createFluxBound();
-							fxEqual.setOperation(FluxBound.Operation.EQUAL);
-							fxEqual.setReaction(reactionId);
-							if(userInput[0].equals(reactionId)){
-								fxEqual.setValue(Double.parseDouble(userInput[1]));
-							}
-							else{
-								fxEqual.setValue(Double.parseDouble(userInput[0]));
-							}
-
-						}
-
+						error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
 					}
 
 					if (!error) {
@@ -1148,10 +1153,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else {
 						changedParameters = new ArrayList<LocalParameter>();
-						ListOf<LocalParameter> listOfParameters = react.getKineticLaw().getListOfLocalParameters();
-						for (int i = 0; i < react.getKineticLaw().getLocalParameterCount(); i++) {
-							LocalParameter parameter = listOfParameters.get(i);
-							changedParameters.add(new LocalParameter(parameter));
+						if (react.isSetKineticLaw()) {
+							ListOf<LocalParameter> listOfParameters = react.getKineticLaw().getListOfLocalParameters();
+							for (int i = 0; i < react.getKineticLaw().getLocalParameterCount(); i++) {
+								LocalParameter parameter = listOfParameters.get(i);
+								changedParameters.add(new LocalParameter(parameter));
+							}
 						}
 						changedProducts = new ArrayList<SpeciesReference>();
 						ListOf<SpeciesReference> listOfProducts = react.getListOfProducts();
@@ -1267,6 +1274,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
+						if (!error)	error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
 					}
 						
 					if (!error) {
@@ -3707,6 +3715,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
+				String id = correctnessTest[1];
+				if (id.contains("[")) {
+					id = id.substring(0,id.indexOf("["));
+				} 
+				if(!id.equals(reactionId)){
+					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
 				if(Double.parseDouble(correctnessTest[0]) > Double.parseDouble(correctnessTest[2])){
 					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " must be less than " + correctnessTest[2], 
 							"Imbalance with Bounds", JOptionPane.ERROR_MESSAGE);
@@ -3715,7 +3732,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				return true;
 			}
 			else if(correctnessTest.length == 2){
-				if(!correctnessTest[0].equals(reactionId) && !correctnessTest[1].equals(reactionId)){
+				String id0 = correctnessTest[0];
+				if (id0.contains("[")) {
+					id0 = id0.substring(0,id0.indexOf("["));
+				} 
+				String id1 = correctnessTest[1];
+				if (id1.contains("[")) {
+					id1 = id1.substring(0,id1.indexOf("["));
+				} 
+				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
 					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
 							JOptionPane.ERROR_MESSAGE);
 					return false;
@@ -3770,6 +3795,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
+				String id = correctnessTest[1];
+				if (id.contains("[")) {
+					id = id.substring(0,id.indexOf("["));
+				} 
+				if(!id.equals(reactionId)){
+					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
 				if(Double.parseDouble(correctnessTest[0]) < Double.parseDouble(correctnessTest[2])){
 					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " must be greater than " + correctnessTest[2], 
 							"Imbalance with Bounds", JOptionPane.ERROR_MESSAGE);
@@ -3778,7 +3812,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				return true;
 			}
 			else if(correctnessTest.length == 2){
-				if(!correctnessTest[0].equals(reactionId) && !correctnessTest[1].equals(reactionId)){
+				String id0 = correctnessTest[0];
+				if (id0.contains("[")) {
+					id0 = id0.substring(0,id0.indexOf("["));
+				} 
+				String id1 = correctnessTest[1];
+				if (id1.contains("[")) {
+					id1 = id1.substring(0,id1.indexOf("["));
+				} 
+				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
 					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
 							JOptionPane.ERROR_MESSAGE);
 					return false;
@@ -3817,7 +3859,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else if(s.contains("=")){
 			String [] correctnessTest = s.split("=");
 			if(correctnessTest.length == 2){
-				if(!correctnessTest[0].equals(reactionId) && !correctnessTest[1].equals(reactionId)){
+				String id0 = correctnessTest[0];
+				if (id0.contains("[")) {
+					id0 = id0.substring(0,id0.indexOf("["));
+				} 
+				String id1 = correctnessTest[1];
+				if (id1.contains("[")) {
+					id1 = id1.substring(0,id1.indexOf("["));
+				} 
+				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
 					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
 							JOptionPane.ERROR_MESSAGE);
 					return false;

@@ -183,7 +183,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 						sBasePlugin.unsetListOfIndices();
 						for(int k = 0; dex!=null && k<dex.length-1; k++){
 							Index indexRule = new Index();
-							indexRule.setArrayDimension(i);
+							indexRule.setArrayDimension(k);
 							indexRule.setReferencedAttribute("reaction");
 							ASTNode indexMath = SBMLutilities.myParseFormula(dex[k+1]);
 							indexRule.setMath(indexMath);
