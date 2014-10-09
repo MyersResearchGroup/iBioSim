@@ -446,8 +446,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reacta[i] = reactant.getSpecies();
 				}
 				for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-					Index index = sBasePlugin.getIndex(j);
-					reacta[i] += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+					Index index = sBasePlugin.getIndex(i,"species");
+					if (index!=null)
+						reacta[i] += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
 				}
 				reacta[i] += " " + reactant.getStoichiometry();
 			}
@@ -499,8 +500,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					proda[i] = product.getSpecies();
 				}
 				for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-					Index index = sBasePlugin.getIndex(j);
-					proda[i] += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+					Index index = sBasePlugin.getIndex(i,"species");
+					if (index!=null)
+						proda[i] += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
 				}
 				proda[i] += " " + product.getStoichiometry();
 			}
@@ -552,8 +554,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					modifierArray[i] = modifier.getSpecies();
 				}
 				for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-					Index index = sBasePlugin.getIndex(j);
-					modifierArray[i] += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+					Index index = sBasePlugin.getIndex(i,"species");
+					if (index!=null)
+						modifierArray[i] += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
 				}
 			}
 		}
