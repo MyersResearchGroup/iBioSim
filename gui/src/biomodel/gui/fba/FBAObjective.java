@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -18,6 +19,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FluxObjective;
 import org.sbml.jsbml.ext.fbc.Objective;
@@ -69,15 +74,20 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				objective += "Max";
 			}
 			objective += "(" + id + ") = ";
-			
-			objective += fbc.getObjective(i).getListOfFluxObjectives().get(0).getCoefficient() + 
-					" * " + fbc.getObjective(i).getListOfFluxObjectives().get(0).getReaction();
-			for (int j = 1; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
-				objective += " + " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient() + 
-						" * " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction();
+			boolean first = true;
+			for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
+				FluxObjective fluxObjective = fbc.getObjective(i).getListOfFluxObjectives().get(j);
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(fluxObjective);
+				String indexStr = "";
+				for(int k = sBasePlugin.getIndexCount()-1; k>=0; k--){
+					Index index = sBasePlugin.getIndex(k,"reaction");
+					if (index!=null)
+						indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+				}
+				if (!first) objective += " + "; else first = false;
+				objective += fluxObjective.getCoefficient() + " * " + fluxObjective.getReaction() + indexStr;
 			}
 			objectiveStringArray[i] = objective;
-//			objectiveStringArray[i] = fbc.getObjective(i).toString();
 		}
 		objectives = new JList();
 		objectiveList = new JList();
@@ -150,14 +160,34 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					String[] equationTokens = equationString.split("\\+");
 					for (int j = 0; j<equationTokens.length; j++){
 						FluxObjective fluxObjective = objective.createFluxObjective();
-						String [] coefficeintReaction = equationTokens[j].split("\\*");
-						if(coefficeintReaction.length>1){
-							fluxObjective.setCoefficient(Double.parseDouble(coefficeintReaction[0].trim()));
-							fluxObjective.setReaction(coefficeintReaction[1].trim());
+						String [] coefficientReaction = equationTokens[j].split("\\*");
+						String reactionIdIndex;
+						if(coefficientReaction.length>1){
+							fluxObjective.setCoefficient(Double.parseDouble(coefficientReaction[0].trim()));
+							reactionIdIndex = coefficientReaction[1].trim();
 						}
 						else{
 							fluxObjective.setCoefficient(1.0);
-							fluxObjective.setReaction(coefficeintReaction[0].trim());
+							reactionIdIndex = coefficientReaction[0].trim();
+						}
+						String reactionId = reactionIdIndex;
+						String indexStr = "";
+						if (reactionIdIndex.contains("[")) {
+							reactionId = reactionIdIndex.substring(0,reactionIdIndex.indexOf("["));
+							indexStr = reactionIdIndex.substring(reactionIdIndex.indexOf("["));
+						} 						
+						SBase reaction = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactionId);
+						String[] dex = SBMLutilities.checkIndices(indexStr, reaction, bioModel.getSBMLDocument(), null, "reaction", null, null, null);
+						fluxObjective.setReaction(reactionId);
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(fluxObjective);
+						sBasePlugin.unsetListOfIndices();
+						for(int k = 0; dex!=null && k<dex.length-1; k++){
+							Index indexRule = new Index();
+							indexRule.setArrayDimension(i);
+							indexRule.setReferencedAttribute("reaction");
+							ASTNode indexMath = SBMLutilities.myParseFormula(dex[k+1]);
+							indexRule.setMath(indexMath);
+							sBasePlugin.addIndex(indexRule);
 						}
 					}
 				}
@@ -259,7 +289,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), objectiveID.getText().trim(), selectedID, false);
 			if (!error) {
 				String tester = objective.getText().replaceAll("\\s", "");
-				if(!tester.matches("((\\d*\\.\\d*\\*)?[\\_\\da-zA-Z]+\\+?)+")){
+				if(!tester.matches("((\\d*\\.\\d*\\*)?[\\_\\da-zA-Z]+(\\[\\d+\\])?\\+?)+")){
 					error = true;
 					JOptionPane.showMessageDialog(Gui.frame, "Input does not match acceptable formula format.",
 						"Invalid formula!", JOptionPane.ERROR_MESSAGE);
@@ -273,13 +303,9 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				String[] editEquationTokens = editEquationString.split("\\+");
 				for (int j = 0; j<editEquationTokens.length; j++){
 					String [] coefficeintReaction = editEquationTokens[j].split("\\*");
+					String reactionIdIndex = coefficeintReaction[0].trim();
 					if(coefficeintReaction.length>1){
-						if(!bioModel.getReactions().contains(coefficeintReaction[1].trim())){
-							error = true;
-							JOptionPane.showMessageDialog(Gui.frame, "Reaction " + 
-									coefficeintReaction[1].trim() + " is not a valid reaction!", 
-									"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
-						}
+						reactionIdIndex = coefficeintReaction[1].trim();
 						try{
 							Double.parseDouble(coefficeintReaction[0]);
 						}
@@ -289,12 +315,14 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 									"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
 						}
 					}
-					else{
-						if(!bioModel.getReactions().contains(coefficeintReaction[0].trim())){
-							error = true;
-							JOptionPane.showMessageDialog(Gui.frame, "Reaction " + coefficeintReaction[0].trim() + " is not a valid reaction!", 
-									"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
-						}
+					String reactionId = reactionIdIndex;
+					if (reactionIdIndex.contains("[")) {
+						reactionId = reactionIdIndex.substring(0,reactionIdIndex.indexOf("["));
+					}
+					if(!bioModel.getReactions().contains(reactionId)){
+						error = true;
+						JOptionPane.showMessageDialog(Gui.frame, "Reaction " + reactionId + " is not a valid reaction!", 
+								"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
