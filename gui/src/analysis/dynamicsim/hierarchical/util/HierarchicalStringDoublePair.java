@@ -9,4 +9,13 @@ public class HierarchicalStringDoublePair {
 		string = s;
 		doub = d;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "HierarchicalStringDoublePair [string=" + string + ", doub="
+				+ doub + "]";
+	}
 }

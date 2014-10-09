@@ -39,6 +39,7 @@ import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 
 import analysis.dynamicsim.hierarchical.HierarchicalObjects.ModelState;
+import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import biomodel.util.SBMLutilities;
 
@@ -151,7 +152,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 					extractModelDefintion(path,  document,  submodel,  sbmlComp);
 				}
 
-				Model flattenModel = HierarchicalUtilities.flattenModel(path, filename);
+				Model flattenModel = HierarchicalUtilities.flattenModel(path, filename, 0);
 
 				getModels().put(submodel.getModelRef(), flattenModel);
 
@@ -315,6 +316,8 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 						getTopmodel().getReplacementDependency().put(p, p);
 						getModel(submodel).getIsHierarchical().add(subParameter);
 						getModel(submodel).getReplacementDependency().put(subParameter, p);
+						getTopmodel().getSpeciesToReplacement(p).add(new HierarchicalStringPair(submodel, subParameter));
+						getModel(submodel).getSpeciesToReplacement(subParameter).add(new HierarchicalStringPair("topmodel", p));
 					}
 					if(element.isSetMetaIdRef())
 					{
@@ -323,6 +326,8 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 						getTopmodel().getReplacementDependency().put(p, p);
 						getModel(submodel).getIsHierarchical().add(subParameter);
 						getModel(submodel).getReplacementDependency().put(subParameter, p);
+						getTopmodel().getSpeciesToReplacement(p).add(new HierarchicalStringPair(submodel, subParameter));
+						getModel(submodel).getSpeciesToReplacement(subParameter).add(new HierarchicalStringPair("topmodel", p));
 					}
 					else if(element.isSetPortRef())
 					{
@@ -334,6 +339,8 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 						getTopmodel().getReplacementDependency().put(p, p);
 						getModel(submodel).getIsHierarchical().add(subParameter);
 						getModel(submodel).getReplacementDependency().put(subParameter, p);
+						getTopmodel().getSpeciesToReplacement(p).add(new HierarchicalStringPair(submodel, subParameter));
+						getModel(submodel).getSpeciesToReplacement(subParameter).add(new HierarchicalStringPair("topmodel", p));
 					}
 					else
 					{
@@ -359,6 +366,8 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 					getTopmodel().getReplacementDependency().put(p, p);
 					getModel(submodel).getIsHierarchical().add(subParameter);
 					getModel(submodel).getReplacementDependency().put(subParameter, p);
+					getTopmodel().getSpeciesToReplacement(p).add(new HierarchicalStringPair(submodel, subParameter));
+					getModel(submodel).getSpeciesToReplacement(subParameter).add(new HierarchicalStringPair("topmodel", p));
 				}
 				else if(replacement.isSetPortRef())
 				{
@@ -371,6 +380,8 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 					getTopmodel().getReplacementDependency().put(p, p);
 					getModel(submodel).getIsHierarchical().add(subParameter);
 					getModel(submodel).getReplacementDependency().put(subParameter, p);
+					getTopmodel().getSpeciesToReplacement(p).add(new HierarchicalStringPair(submodel, subParameter));
+					getModel(submodel).getSpeciesToReplacement(subParameter).add(new HierarchicalStringPair("topmodel", p));
 				}
 			}
 		}
@@ -381,6 +392,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 
 		CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
 
+		
 		if(sbmlSBase != null)
 		{
 			if(sbmlSBase.getListOfReplacedElements() != null)
@@ -390,7 +402,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 					String submodel = element.getSubmodelRef();
 					ModelState modelstate = getSubmodels().get(submodel);
 					CompModelPlugin subCompModel = (CompModelPlugin)getModels().get(getSubmodels().get(submodel).getModel()).getExtension(CompConstants.namespaceURI);
-
+					
 					if(element.isSetPortRef())
 					{
 						Port port = subCompModel.getListOfPorts().get(element.getPortRef());
