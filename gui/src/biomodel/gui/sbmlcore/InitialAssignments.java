@@ -255,7 +255,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
 					org.sbml.jsbml.ext.arrays.Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
 					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("metaIdRef");
+					portIndex.setReferencedAttribute("comp:metaIdRef");
 					portIndex.setArrayDimension(i);
 					portIndex.setMath(SBMLutilities.myParseFormula(dim.getId()));
 				}
