@@ -750,7 +750,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j - 1);
 			if (replacement.getSubmodelRef().equals(subModelId) && 
 					(replacement.isSetPortRef()|| replacement.isSetDeletion())) { 
-				sbmlSBase.getListOfReplacedElements().remove(j - 1);
+				//sbmlSBase.getListOfReplacedElements().remove(j - 1);
+				sbmlSBase.removeReplacedElement(replacement);
 				result = true;
 			}
 		}

@@ -307,7 +307,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		for(int k = 0; dex!=null && k<dex.length-1; k++){
 			Index indexRule = new Index();
 			indexRule.setArrayDimension(k);
-			indexRule.setReferencedAttribute("reaction");
+			indexRule.setReferencedAttribute("fbc:reaction");
 			ASTNode indexMath = SBMLutilities.myParseFormula(dex[k+1]);
 			indexRule.setMath(indexMath);
 			sBasePluginFB.addIndex(indexRule);
@@ -1073,7 +1073,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
 								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
 								Index portIndex = sBasePluginPort.createIndex();
-								portIndex.setReferencedAttribute("idRef");
+								portIndex.setReferencedAttribute("comp:idRef");
 								portIndex.setArrayDimension(i);
 								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
 							}
@@ -1091,7 +1091,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
 								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
 								Index portIndex = sBasePluginPort.createIndex();
-								portIndex.setReferencedAttribute("idRef");
+								portIndex.setReferencedAttribute("comp:idRef");
 								portIndex.setArrayDimension(i);
 								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
 							}
@@ -1257,7 +1257,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
 							org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
 							Index portIndex = sBasePluginPort.createIndex();
-							portIndex.setReferencedAttribute("idRef");
+							portIndex.setReferencedAttribute("comp:idRef");
 							portIndex.setArrayDimension(i);
 							portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
 						}

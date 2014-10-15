@@ -849,7 +849,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
 									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
 									Index portIndex = sBasePluginPort.createIndex();
-									portIndex.setReferencedAttribute("idRef");
+									portIndex.setReferencedAttribute("comp:idRef");
 									portIndex.setArrayDimension(i);
 									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
 								}
@@ -867,7 +867,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
 									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
 									Index portIndex = sBasePluginPort.createIndex();
-									portIndex.setReferencedAttribute("idRef");
+									portIndex.setReferencedAttribute("comp:idRef");
 									portIndex.setArrayDimension(i);
 									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
 								}
@@ -1090,7 +1090,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
 								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
 								Index portIndex = sBasePluginPort.createIndex();
-								portIndex.setReferencedAttribute("idRef");
+								portIndex.setReferencedAttribute("comp:idRef");
 								portIndex.setArrayDimension(i);
 								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
 							}
