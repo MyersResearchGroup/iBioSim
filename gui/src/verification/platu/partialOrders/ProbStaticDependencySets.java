@@ -20,88 +20,119 @@ import lpn.parser.LpnDecomposition.LpnProcess;
 public class ProbStaticDependencySets extends StaticDependencySets {
 	
 	/**
-	 * The set of transitions whose transition rates can be changed by executing curTran.
+	 * The set of transitions whose transition rates can be changed by executing seedTran.
 	 */
-	private HashSet<Transition> curTranModifyOtherTranRate;
+	private HashSet<Transition> seedTranModifyOtherTranRate;
 	
 	/**
-	 * The set of transitions that can potentially change curTran's rate.   
+	 * The set of transitions that can potentially change seedTran's rate.   
 	 */
-	private HashSet<Transition> otherTransModifyCurTranRate;
+	private HashSet<Transition> otherTransModifySeedTranRate;
 
-	public ProbStaticDependencySets(Transition curTran,
+	public ProbStaticDependencySets(Transition seedTran,
 			HashMap<Transition, LpnProcess> allTransToLpnProcs) {
-		super(curTran, allTransToLpnProcs);
-		curTranModifyOtherTranRate = new HashSet<Transition>();
-		otherTransModifyCurTranRate = new HashSet<Transition>();
+		super(seedTran, allTransToLpnProcs);
+		seedTranModifyOtherTranRate = new HashSet<Transition>();
+		otherTransModifySeedTranRate = new HashSet<Transition>();
 	}
 	
 	/**
-	 * Construct a set of transitions. The transition rate of each transition in this set can potentially be modified by curTran's assignment(s). 
+	 * Construct a set of transitions. The transition rate of each transition in this set can potentially be modified by seedTran's assignment(s). 
 	 */
-	public void buildCurTranModifyOtherTransRatesSet() {
-		// This excludes any transitions that are in the same process as curTran, and the process is a state machine.
-		if (!curTran.getAssignments().isEmpty()) {
-			Set<String> assignedVarNames = curTran.getAssignments().keySet();
+	public void buildSeedTranModifyOtherTransRatesSet() {
+		// This excludes any transitions that are in the same process as seedTran, and the process is a state machine.
+		if (!seedTran.getAssignments().isEmpty()) {
+			Set<String> assignedVarNames = seedTran.getAssignments().keySet();
 			ArrayList<Transition> transInOneStateMachine = new ArrayList<Transition>();
-			if (allTransToLpnProcs.get(curTran).getStateMachineFlag()) { 
-				transInOneStateMachine = allTransToLpnProcs.get(curTran).getProcessTransitions();
+			if (allTransToLpnProcs.get(seedTran).getStateMachineFlag()) { 
+				transInOneStateMachine = allTransToLpnProcs.get(seedTran).getProcessTransitions();
 			}
 			for (Transition anotherTran : allTransToLpnProcs.keySet()) {
-				if (curTran.equals(anotherTran) || transInOneStateMachine.contains(anotherTran))
+				if (seedTran.equals(anotherTran) || transInOneStateMachine.contains(anotherTran))
 					continue;	
 				ExprTree anotherTranDelayTree = anotherTran.getDelayTree();
 				if (anotherTranDelayTree != null) {
 					for (String var : assignedVarNames) {
 						if (anotherTranDelayTree.containsVar(var)) {
-							curTranModifyOtherTranRate.add(anotherTran);
+							seedTranModifyOtherTranRate.add(anotherTran);
 							break;
 						}							
 					}
 				}
 			}
 		}
-		disableSet.addAll(curTranModifyOtherTranRate);		
+		//disableSet.addAll(seedTranModifyOtherTranRate);		
 	}
 
 	/**
-	 * Construct a set of transitions. Each transition in this set can potentially modify curTran's transition rate.
+	 * Construct a set of transitions. Each transition in this set can potentially modify seedTran's transition rate.
 	 */
-	public void buildOtherTransModifyCurTranRateSet() {		
-		// This excludes any transitions that are in the same process as curTran, and the process is a state machine.
+	public void buildOtherTransModifySeedTranRateSet() {		
+		// This excludes any transitions that are in the same process as seedTran, and the process is a state machine.
 		ArrayList<Transition> transInOneStateMachine = new ArrayList<Transition>();
-		if (allTransToLpnProcs.get(curTran).getStateMachineFlag()) { 
-			transInOneStateMachine = allTransToLpnProcs.get(curTran).getProcessTransitions();
+		if (allTransToLpnProcs.get(seedTran).getStateMachineFlag()) { 
+			transInOneStateMachine = allTransToLpnProcs.get(seedTran).getProcessTransitions();
 		}
 		for (Transition anotherTran : allTransToLpnProcs.keySet()) {
-			if (curTran.equals(anotherTran) || transInOneStateMachine.contains(anotherTran))
+			if (seedTran.equals(anotherTran) || transInOneStateMachine.contains(anotherTran))
 				continue;	
 			if (!anotherTran.getAssignments().isEmpty()) {
-				ExprTree curTranDelayTree = curTran.getDelayTree();
-				if (curTranDelayTree != null) {
+				ExprTree seedTranDelayTree = seedTran.getDelayTree();
+				if (seedTranDelayTree != null) {
 					Set<String> assignedVarNames = anotherTran.getAssignments().keySet();
 					for (String var : assignedVarNames) {
-						if (curTranDelayTree.containsVar(var)) {
-							otherTransModifyCurTranRate.add(anotherTran);
+						if (seedTranDelayTree.containsVar(var)) {
+							otherTransModifySeedTranRate.add(anotherTran);
 							break;
 						}							
 					}				
 					if (Options.getDebugMode()) {
-//						writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getLabel() + ") can be disabled by " + anotherTran.getLpn().getLabel() + "(" + anotherTran.getLabel() + "). " 
-//								+ curTran.getLabel() + "'s enabling condition (" + curTranDelayTree +  "), may become false due to firing of " 
+//						writeStringWithEndOfLineToPORDebugFile(seedTran.getLpn().getLabel() + "(" + seedTran.getLabel() + ") can be disabled by " + anotherTran.getLpn().getLabel() + "(" + anotherTran.getLabel() + "). " 
+//								+ seedTran.getLabel() + "'s enabling condition (" + seedTranDelayTree +  "), may become false due to firing of " 
 //								+ anotherTran.getLabel() + ".");
-//						if (curTranDelayTree.getChange(anotherTran.getAssignments())=='F') 
-//							writeStringWithEndOfLineToPORDebugFile("Reason is " + curTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = F.");
-//						if (curTranDelayTree.getChange(anotherTran.getAssignments())=='f') 
-//							writeStringWithEndOfLineToPORDebugFile("Reason is " + curTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = f.");
-//						if (curTranDelayTree.getChange(anotherTran.getAssignments())=='X') 
-//							writeStringWithEndOfLineToPORDebugFile("Reason is " + curTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = X.");					
+//						if (seedTranDelayTree.getChange(anotherTran.getAssignments())=='F') 
+//							writeStringWithEndOfLineToPORDebugFile("Reason is " + seedTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = F.");
+//						if (seedTranDelayTree.getChange(anotherTran.getAssignments())=='f') 
+//							writeStringWithEndOfLineToPORDebugFile("Reason is " + seedTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = f.");
+//						if (seedTranDelayTree.getChange(anotherTran.getAssignments())=='X') 
+//							writeStringWithEndOfLineToPORDebugFile("Reason is " + seedTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = X.");					
 					}	
-					otherTransModifyCurTranRate.add(anotherTran);
+					otherTransModifySeedTranRate.add(anotherTran);
 				}
 			}
 		}
-		disableSet.addAll(otherTransModifyCurTranRate);
+		//disableSet.addAll(otherTransModifySeedTranRate);
+	}
+	
+	public HashSet<Transition> getDisableSet(boolean seedTranIsPersistent) {
+		HashSet<Transition> disableSet = new HashSet<Transition>();
+		disableSet.addAll(getSeedTranDisableOtherTrans());
+		disableSet.addAll(getOtherTransDisableSeedTran(seedTranIsPersistent));
+		disableSet.addAll(seedTranModifyOtherTranRate);
+		disableSet.addAll(otherTransModifySeedTranRate);
+		return disableSet;
+	}
+	
+	public HashSet<Transition> getOtherTransDisableSeedTran(boolean persistentTranEnabled) {
+		HashSet<Transition> otherTransDisableSeedTran = new HashSet<Transition>();
+		if (!persistentTranEnabled) {
+			otherTransDisableSeedTran.addAll(otherTransSetSeedTranEnablingFalse);
+		}		
+		otherTransDisableSeedTran.addAll(disableByStealingToken);
+		otherTransDisableSeedTran.addAll(otherTransModifySeedTranAssign);
+		otherTransDisableSeedTran.addAll(seedTranOtherTransModifySameVars);
+		otherTransDisableSeedTran.addAll(otherTransModifySeedTranRate);
+		return otherTransDisableSeedTran;
+	}
+
+	public HashSet<Transition> getSeedTranDisableOtherTrans() {
+		HashSet<Transition> seedTranDisableOtherTransSet = new HashSet<Transition>();
+		seedTranDisableOtherTransSet.addAll(disableByStealingToken);
+		seedTranDisableOtherTransSet.addAll(seedTranSetOtherTranEnablingFalse);
+		seedTranDisableOtherTransSet.addAll(seedTranModifyOtherTranAssign);
+		seedTranDisableOtherTransSet.addAll(seedTranOtherTransModifySameVars);
+		seedTranDisableOtherTransSet.addAll(seedTranModifyOtherTranRate);
+		return seedTranDisableOtherTransSet;
 	}
 	
 }

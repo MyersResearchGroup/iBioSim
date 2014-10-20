@@ -789,7 +789,8 @@ public class Analysis {
 			for (Transition curTran : staticDependency.keySet()) {
 				StaticDependencySets curStaticSets = staticDependency.get(curTran);
 				String curTranStr = curTran.getLpn().getLabel() + "_" + curTran.getLabel();
-				for (Transition curTranInDisable : curStaticSets.getOtherTransDisableCurTranSet()) {
+				// TODO: getOtherTransDisableCurTranSet(false) or getOtherTransDisableCurTranSet(true)
+				for (Transition curTranInDisable : curStaticSets.getOtherTransDisableSeedTran(false)) {
 					String curTranInDisableStr = curTranInDisable.getLpn().getLabel() + "_" + curTranInDisable.getLabel();							
 					out.write(curTranInDisableStr + "->" + curTranStr + "[color=\"chocolate\"];");
 					out.newLine();
@@ -818,7 +819,7 @@ public class Analysis {
 					out.newLine();
 				}
 				
-				for (HashSet<Transition> canEnableOneConjunctSet : curStaticSets.getOtherTransSetCurTranEnablingTrue()) {
+				for (HashSet<Transition> canEnableOneConjunctSet : curStaticSets.getOtherTransSetSeedTranEnablingTrue()) {
 					for (Transition curTranInCanEnable : canEnableOneConjunctSet) {
 						String curTranInCanEnableStr = curTranInCanEnable.getLpn().getLabel() + "_" + curTranInCanEnable.getLabel(); 
 						out.write(curTranStr + "->" + curTranInCanEnableStr + "[color=\"deepskyblue\"];");
@@ -1035,7 +1036,7 @@ public class Analysis {
 		HashMap<Transition, Integer> tranFiringFreq = null;
 //		if (Options.getUseDependentQueue())
 		tranFiringFreq = new HashMap<Transition, Integer>(allTransitions.keySet().size());
-		// Need to build conjuncts for each transition's enabling condition first before dealing with dependency and enable sets.
+		// Build conjuncts for each transition's enabling condition first before dealing with dependency and enable sets.
 		for (int lpnIndex=0; lpnIndex<lpnList.length; lpnIndex++) {
 			for (Transition curTran: allTransitions.get(lpnIndex)) {
 				if (curTran.getEnablingTree() != null)
@@ -1046,28 +1047,28 @@ public class Analysis {
 			if (Options.getDebugMode()) {
 				System.out.println("=======LPN = " + lpnList[lpnIndex].getLabel() + "=======");
 			}
-			for (Transition curTran: allTransitions.get(lpnIndex)) {
-				StaticDependencySets curStatic = null;
+			for (Transition seedTran: allTransitions.get(lpnIndex)) {
+				StaticDependencySets seedStatic = null;
 				if (!Options.getMarkovianModelFlag())
-					curStatic = new StaticDependencySets(curTran, allTransitionsToLpnProcesses);
+					seedStatic = new StaticDependencySets(seedTran, allTransitionsToLpnProcesses);
 				else 
-					curStatic = new ProbStaticDependencySets(curTran, allTransitionsToLpnProcesses);
-				// Requires buildConjunctsOfEnabling(ExprTree) to be called on all transitions here.
-				curStatic.buildOtherTransSetCurTranEnablingTrue(); 
-				curStatic.buildCurTranDisableOtherTransSet();
-				curStatic.buildOtherTransDisableCurTranSet();
+					seedStatic = new ProbStaticDependencySets(seedTran, allTransitionsToLpnProcesses);
+				// Requires buildConjunctsOfEnabling(ExprTree) in Transition class to be called on all transitions here.
+				seedStatic.buildOtherTransSetSeedTranEnablingTrue(); 
+				seedStatic.buildSeedTranDisableOtherTrans();
+				seedStatic.buildOtherTransDisableSeedTran();
 				if (Options.getMarkovianModelFlag() && Options.getTranRatePorDef().toLowerCase().equals("full")) {					
-					((ProbStaticDependencySets) curStatic).buildCurTranModifyOtherTransRatesSet();
-					((ProbStaticDependencySets) curStatic).buildOtherTransModifyCurTranRateSet();
+					((ProbStaticDependencySets) seedStatic).buildSeedTranModifyOtherTransRatesSet();
+					((ProbStaticDependencySets) seedStatic).buildOtherTransModifySeedTranRateSet();
 				}
-				staticDependency.put(curTran, curStatic);
-				tranFiringFreq.put(curTran, 0);
+				staticDependency.put(seedTran, seedStatic);
+				tranFiringFreq.put(seedTran, 0);
 			}			
 		}
 		if (Options.getDebugMode()) {
 			printStaticSetsMap(lpnList);
 		}			
-		LpnTranList initStrongStubbornTrans = buildStrongStubbornSet(initStateArray, null, tranFiringFreq, sgList, lpnList, prjStateSet, stateStackTop);
+		LpnTranList initStrongStubbornTrans = buildStrongStubbornSet(initStateArray, null, tranFiringFreq, sgList, lpnList, prjStateSet, stateStackTop, null);
 		lpnTranStack.push(initStrongStubbornTrans);
 		if (Options.getDebugMode()) {			
 			printTransList(initStrongStubbornTrans, "+++++++ Push trans onto lpnTranStack @ 1++++++++");
@@ -1155,7 +1156,7 @@ public class Analysis {
 				}
 			}
 			LpnTranList nextStrongStubbornTrans = new LpnTranList();
-			nextStrongStubbornTrans = buildStrongStubbornSet(curStateArray, nextStateArray, tranFiringFreq, sgList, lpnList, prjStateSet, stateStackTop);
+			nextStrongStubbornTrans = buildStrongStubbornSet(curStateArray, nextStateArray, tranFiringFreq, sgList, lpnList, prjStateSet, stateStackTop, firedTran);
 			// check for possible deadlock
 			if (nextStrongStubbornTrans.size() == 0) {
 				System.out.println("*** Verification failed: deadlock.");
@@ -1257,7 +1258,7 @@ public class Analysis {
 						}
 						LpnTranList newCurStateStrongStubborn = new LpnTranList();
 						newCurStateStrongStubborn = computeCycleClosingTrans(curStateArray, nextStateArray, 
-																	tranFiringFreq, sgList, nextStrongStubbornSet, curStrongStubbornSet);
+																	tranFiringFreq, sgList, nextStrongStubbornSet, curStrongStubbornSet, firedTran);
 						if (newCurStateStrongStubborn != null && !newCurStateStrongStubborn.isEmpty()) {
 							if (Options.getDebugMode()) {
 								printStateArray(stateStackTop.toStateArray(), "%%%%%%% Add state to stateStack %%%%%%%%");
@@ -1377,7 +1378,7 @@ public class Analysis {
 //	}
 
 	private LpnTranList computeCycleClosingTrans(State[] curStateArray, State[] nextStateArray, HashMap<Transition, Integer> tranFiringFreq,
-			StateGraph[] sgList, HashSet<Transition> nextStateStrongStubbornSet, HashSet<Transition> curStateStrongStubbornSet) {		
+			StateGraph[] sgList, HashSet<Transition> nextStateStrongStubbornSet, HashSet<Transition> curStateStrongStubbornSet, Transition firedTran) {		
 		for (State s : nextStateArray)
 			if (s == null) 
 				throw new NullPointerException();
@@ -1415,7 +1416,7 @@ public class Analysis {
 			}
 			HashSet<Transition> curStateReduced = setSubstraction(curStateEnabled, curStateStrongStubbornSet);
 			HashSet<Transition> oldNextStateStrongStubbornSet = new HashSet<Transition>();
-			DependentSetComparator depComp = new DependentSetComparator(tranFiringFreq); 
+			DependentSetComparator depComp = new DependentSetComparator(tranFiringFreq, sgList.length-1); 
 			PriorityQueue<DependentSet> dependentSetQueue = new PriorityQueue<DependentSet>(nextStateEnabled.size(), depComp);
 			if (Options.getDebugMode())
 				printStateArray(nextStateArray,"******* nextStateArray *******");    			
@@ -1765,9 +1766,9 @@ public class Analysis {
 		System.out.println("============ staticSetsMap ============");			
 		for (Transition lpnTranPair : staticDependency.keySet()) {
 			StaticDependencySets statSets = staticDependency.get(lpnTranPair);			
-			printLpnTranPair(statSets.getTran(), statSets.getDisableSet(), "disableSet");
-			for (HashSet<Transition> setOneConjunctTrue : statSets.getOtherTransSetCurTranEnablingTrue()) {
-				printLpnTranPair(statSets.getTran(), setOneConjunctTrue, "enableBySetingEnablingTrue for one conjunct");
+			printLpnTranPair(statSets.getSeedTran(), statSets.getDisableSet(false), "disableSet");
+			for (HashSet<Transition> setOneConjunctTrue : statSets.getOtherTransSetSeedTranEnablingTrue()) {
+				printLpnTranPair(statSets.getSeedTran(), setOneConjunctTrue, "enableBySetingEnablingTrue for one conjunct");
 			}				
 		}
 	}
@@ -1856,7 +1857,7 @@ public class Analysis {
      */
     private LpnTranList buildStrongStubbornSet(State[] curStateArray, State[] nextStateArray, 
     			HashMap<Transition, Integer> tranFiringFreq, StateGraph[] sgList, LhpnFile[] lpnList,
-    			StateSetInterface prjStateSet, PrjState stateStackTop) {
+    			StateSetInterface prjStateSet, PrjState stateStackTop, Transition lastFiredTran) {
     	State[] stateArray = null;
     	if (nextStateArray == null)
     		stateArray = curStateArray;
@@ -4296,7 +4297,7 @@ public class Analysis {
 //    			return ready;
 //    		}				
 //    	}
-    	DependentSetComparator depComp = new DependentSetComparator(tranFiringFreq); 
+    	DependentSetComparator depComp = new DependentSetComparator(tranFiringFreq, sgList.length-1); 
     	PriorityQueue<DependentSet> dependentSetQueue = new PriorityQueue<DependentSet>(curEnabled.size(), depComp);
     	for (Transition enabledTran : curEnabled) {
     		if (Options.getDebugMode())
@@ -4321,6 +4322,11 @@ public class Analysis {
     		}
     		if (dependentOnlyHasNonImmediateTrans && dependentOnlyHasImmediateTrans) {
     			System.err.println("*** Error: Non-immediate transitions are dependent on immediate ones. ***");
+    			System.out.println("dependent set: ");
+    			for (Transition tr : dependent) {
+    				System.out.println(tr.getFullLabel());
+    			}
+    			System.out.println();
     			
     		}
     		// TODO: temporarily dealing with dummy transitions (This requires the dummy transitions to have "_dummy" in their names.)				
@@ -4421,22 +4427,27 @@ public class Analysis {
 			return false;
 	}    
     
-    private HashSet<Transition> computeDependent(State[] curStateArray,
-			Transition seedTran, HashSet<Transition> dependent, HashSet<Transition> curEnabled, boolean isCycleClosingStrongStubbornComputation) { 	
-		// disableSet is the set of transitions that can be disabled by firing enabledLpnTran, or can disable enabledLpnTran.
-		HashSet<Transition> disableSet = staticDependency.get(seedTran).getDisableSet(); 
-		HashSet<Transition> otherTransDisableEnabledTran = staticDependency.get(seedTran).getOtherTransDisableCurTranSet();
+    private HashSet<Transition> computeDependent(State[] curStateArray, Transition seed, HashSet<Transition> dependent, 
+    		HashSet<Transition> curEnabled, boolean isCycleClosingStrongStubbornComputation) { 	
+		// disableSet is the set of transitions that can either be disabled by firing enabledLpnTran, or disable enabledLpnTran.
+    	boolean seedTranIsPersistent = false;
+    	if (seed.isPersistent()) {
+    		seedTranIsPersistent = true;
+    	}
+		HashSet<Transition> disableSet = staticDependency.get(seed).getDisableSet(seedTranIsPersistent); 
+		HashSet<Transition> otherTransDisableEnabledPeristentSeedTran 
+			= staticDependency.get(seed).getOtherTransDisableSeedTran(seedTranIsPersistent);
 		if (Options.getDebugMode()) {
-			System.out.println("@ beginning of computeDependent, consider transition " + seedTran.getFullLabel());
-			printIntegerSet(disableSet, "Disable set for " + seedTran.getFullLabel());
+			System.out.println("@ beginning of computeDependent, consider transition " + seed.getFullLabel());
+			printIntegerSet(disableSet, "Disable set for " + seed.getFullLabel());
 		}
-		dependent.add(seedTran);
+		dependent.add(seed);
 //		for (Transition lpnTranPair : canModifyAssign) {
 //			if (curEnabled.contains(lpnTranPair))
 //				dependent.add(lpnTranPair);
 //		}
 		if (Options.getDebugMode()) 
-			printIntegerSet(dependent, "@ computeDependent at 0, dependent set for " + seedTran.getFullLabel());		
+			printIntegerSet(dependent, "@ computeDependent at 0, dependent set for " + seed.getFullLabel());		
 		// dependent is equal to enabled. Terminate.
 		if (dependent.size() == curEnabled.size()) {
 			if (Options.getDebugMode()) {
@@ -4444,21 +4455,23 @@ public class Analysis {
 			}
 			return dependent;
 		}
-		for (Transition tranInDisableSet : disableSet) {
+		for (Transition tr : disableSet) {
 			if (Options.getDebugMode()) 
 				System.out.println("Consider transition in the disable set of "  
-						+ seedTran.getFullLabel() + ": "
-						+ tranInDisableSet.getFullLabel());			
-			if (curEnabled.contains(tranInDisableSet) && !dependent.contains(tranInDisableSet)
-					&& (!tranInDisableSet.isPersistent() || otherTransDisableEnabledTran.contains(tranInDisableSet))) {
-				dependent.addAll(computeDependent(curStateArray,tranInDisableSet,dependent,curEnabled,isCycleClosingStrongStubbornComputation));
+						+ seed.getFullLabel() + ": "
+						+ tr.getFullLabel());			
+			if (curEnabled.contains(tr) && !dependent.contains(tr)
+					&& (!tr.isPersistent() || otherTransDisableEnabledPeristentSeedTran.contains(tr))) {
+				// (tr is enabled) && (tr is not in seed's dependent set) && (tr is not persistent || ) 
+				dependent.addAll(computeDependent(curStateArray,tr,dependent,curEnabled,isCycleClosingStrongStubbornComputation));
 				if (Options.getDebugMode()) {
-					printIntegerSet(dependent, "@ computeDependent at 1 for transition " + seedTran.getFullLabel());				
+					printIntegerSet(dependent, "@ computeDependent at 1 for transition " + seed.getFullLabel());				
 				}
 			}
-			else if (!curEnabled.contains(tranInDisableSet)) {
+			else if (!curEnabled.contains(tr)) {
 				if(Options.getPOR().toLowerCase().equals("tboff")  // no trace-back
-						|| (Options.getCycleClosingStrongStubbornMethd().toLowerCase().equals("cctboff") && isCycleClosingStrongStubbornComputation)) {
+						|| (Options.getCycleClosingStrongStubbornMethd().toLowerCase().equals("cctboff") 
+								&& isCycleClosingStrongStubbornComputation)) {
 					dependent.addAll(curEnabled);
 					break;
 				}
@@ -4466,40 +4479,40 @@ public class Analysis {
 				if (Options.getDebugMode()) {
 					printCachedNecessarySets();
 				}				
-				if (cachedNecessarySets.containsKey(tranInDisableSet)) {
+				if (cachedNecessarySets.containsKey(tr)) {
 					if (Options.getDebugMode()) {
 						printCachedNecessarySets();
-						System.out.println("@ computeDependent: Found transition " + tranInDisableSet.getFullLabel() + "in the cached necessary sets.");
+						System.out.println("@ computeDependent: Found transition " + tr.getFullLabel() + "in the cached necessary sets.");
 					}
-					necessary = cachedNecessarySets.get(tranInDisableSet);
+					necessary = cachedNecessarySets.get(tr);
 				}
 				else {
 					if (Options.getDebugMode())
-						System.out.println("==== Compute necessary using DFS ====");					
+						System.out.println("==== Compute necessary set using DFS ====");					
 					if (visitedTrans == null)
 						visitedTrans = new HashSet<Transition>();
 					else
 						visitedTrans.clear();
-					necessary = computeNecessary(curStateArray,tranInDisableSet,dependent,curEnabled);//, tranInDisableSet.getFullLabel());
+					necessary = computeNecessary(curStateArray,tr,dependent,curEnabled);
 				}	
 				if (necessary != null && !necessary.isEmpty()) {
-					cachedNecessarySets.put(tranInDisableSet, necessary);
+					cachedNecessarySets.put(tr, necessary);
 					if (Options.getDebugMode()) 
-						printIntegerSet(necessary, "@ computeDependent, necessary set for transition " + tranInDisableSet.getFullLabel());					
-					for (Transition tranNecessary : necessary) {
-						if (!dependent.contains(tranNecessary)) {
+						printIntegerSet(necessary, "@ computeDependent, necessary set for transition " + tr.getFullLabel());					
+					for (Transition tranInNecessary : necessary) {
+						if (!dependent.contains(tranInNecessary)) {
 							if (Options.getDebugMode()) {
-								printIntegerSet(dependent,"Check if the newly found necessary transition is in the dependent set of " + seedTran.getFullLabel());
+								printIntegerSet(dependent,"Check if the newly found necessary transition is in the dependent set of " + seed.getFullLabel());
 								System.out.println("It does not contain this transition found by computeNecessary: " 
-								+ tranNecessary.getFullLabel() + ". Compute its dependent set."); 
+								+ tranInNecessary.getFullLabel() + ". Compute its dependent set."); 
 							}
-							dependent.addAll(computeDependent(curStateArray,tranNecessary,dependent,curEnabled,isCycleClosingStrongStubbornComputation));
+							dependent.addAll(computeDependent(curStateArray,tranInNecessary,dependent,curEnabled,isCycleClosingStrongStubbornComputation));
 						}
 						else {
 							if (Options.getDebugMode()) {
-								printIntegerSet(dependent, "Check if the newly found necessary transition is in the dependent set. Dependent set for " + seedTran.getFullLabel());
+								printIntegerSet(dependent, "Check if the newly found necessary transition is in the dependent set. Dependent set for " + seed.getFullLabel());
 								System.out.println("It already contains this transition found by computeNecessary: " 
-										 + tranNecessary.getFullLabel() + ".");
+										 + tranInNecessary.getFullLabel() + ".");
 							}
 						}
 					}
@@ -4507,22 +4520,22 @@ public class Analysis {
 				else {
 					if (Options.getDebugMode()) {
 						if (necessary == null) 
-							System.out.println("necessary set for transition " + seedTran.getFullLabel() + " is null.");						
+							System.out.println("necessary set for transition " + seed.getFullLabel() + " is null.");						
 						else 
-							System.out.println("necessary set for transition " + seedTran.getFullLabel() + " is empty.");						
+							System.out.println("necessary set for transition " + seed.getFullLabel() + " is empty.");						
 					}			
 					//dependent.addAll(curEnabled);
 					return curEnabled;
 				}
 				if (Options.getDebugMode()) {
-					printIntegerSet(dependent,"@ computeDependent at 2, dependent set for transition " + seedTran.getFullLabel()); 
+					printIntegerSet(dependent,"@ computeDependent at 2, dependent set for transition " + seed.getFullLabel()); 
 				}					
 			}
-			else if (dependent.contains(tranInDisableSet)) {
+			else if (dependent.contains(tr)) {
 				if (Options.getDebugMode()) {
-					printIntegerSet(dependent,"@ computeDependent at 3 for transition " + seedTran.getFullLabel());
-					System.out.println("Transition " + tranInDisableSet.getFullLabel() + " is already in the dependent set of "
-							+ seedTran.getFullLabel() + ".");
+					printIntegerSet(dependent,"@ computeDependent at 3 for transition " + seed.getFullLabel());
+					System.out.println("Transition " + tr.getFullLabel() + " is already in the dependent set of "
+							+ seed.getFullLabel() + ".");
 				}
 			}
 		}
@@ -4647,7 +4660,7 @@ public class Analysis {
 		HashSet<Transition> nEnable = null;
 		int[] varValueVector = curStateArray[tran.getLpn().getLpnIndex()].getVariableVector();
 		//HashSet<Transition> canEnable = staticMap.get(tran).getEnableBySettingEnablingTrue();
-		ArrayList<HashSet<Transition>> canEnable = staticDependency.get(tran).getOtherTransSetCurTranEnablingTrue(); 
+		ArrayList<HashSet<Transition>> canEnable = staticDependency.get(tran).getOtherTransSetSeedTranEnablingTrue(); 
 		if (Options.getDebugMode()) {
 			System.out.println("####### compute nEnable for transition " + tran.getFullLabel() + "########");
 			printIntegerSet(canEnable, "@ nEnable: " + tran.getFullLabel() + " can be enabled by");
@@ -4664,7 +4677,7 @@ public class Analysis {
 							+ conjunctExprTree.toString());	
 				}
 				if (conjunctExprTree.evaluateExpr(tran.getLpn().getAllVarsWithValuesAsString(varValueVector)) == 0.0) {
-					HashSet<Transition> canEnableOneConjunctSet = staticDependency.get(tran).getOtherTransSetCurTranEnablingTrue().get(index);
+					HashSet<Transition> canEnableOneConjunctSet = staticDependency.get(tran).getOtherTransSetSeedTranEnablingTrue().get(index);
 					nEnableForOneConjunct = new HashSet<Transition>();
 					if (Options.getDebugMode()) {
 						System.out.println("@ nEnable: Conjunct for transition " + tran.getFullLabel() + " " 
