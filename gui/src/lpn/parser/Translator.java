@@ -460,7 +460,7 @@ public class Translator {
 				}
 
 				// Is transition persistent?
-				if (!lhpn.getTransition(t).isPersistent() || (lhpn.getTransition(t).isPersistent() && !lhpn.getTransition(t).hasConflictSet())){
+				if (!lhpn.getTransition(t).isPersistent() || (lhpn.getTransition(t).isPersistent() && !lhpn.getTransition(t).hasConflict())){
 					if (!lhpn.getTransition(t).isPersistent()) {
 						trigger.setPersistent(false);
 					}
@@ -904,7 +904,7 @@ public class Translator {
 			}
 
 			// Is transition persistent?
-			if (!lhpn.getTransition(t).isPersistent() || (lhpn.getTransition(t).isPersistent() && !lhpn.getTransition(t).hasConflictSet())){
+			if (!lhpn.getTransition(t).isPersistent() || (lhpn.getTransition(t).isPersistent() && !lhpn.getTransition(t).hasConflict())){
 				if (!lhpn.getTransition(t).isPersistent()) {
 					trigger.setPersistent(false);
 				}

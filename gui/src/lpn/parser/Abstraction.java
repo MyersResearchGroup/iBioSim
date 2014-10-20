@@ -2750,7 +2750,7 @@ public class Abstraction extends LhpnFile {
 			for (Place p : new_proc.getPreset()) {
 				if (!flag) // Check the preset to see if it is part of a process
 					if (p.getPreset().length == 0) {
-						if (new_proc.hasConflictSet()) {
+						if (new_proc.hasConflict()) {
 							for (Transition conflict : new_proc.getConflictSet()) {
 								if (process_trans.get(conflict) != 0) {
 									flag = true;
@@ -2768,7 +2768,7 @@ public class Abstraction extends LhpnFile {
 									process = process_trans.get(t);
 									break;
 								}
-								if (process_trans.get(t) == 0 && t.hasConflictSet()) {
+								if (process_trans.get(t) == 0 && t.hasConflict()) {
 									for (Transition conflict : t.getConflictSet()) {
 										if (process_trans.get(conflict) != 0) {
 											flag = true;
@@ -2974,7 +2974,7 @@ public class Abstraction extends LhpnFile {
 		}
 		for (Place p : tran.getPreset()) {
 			if (p.getPreset().length == 0) {
-				if (tran.hasConflictSet()) {
+				if (tran.hasConflict()) {
 					for (Transition conflict : tran.getConflictSet()) {
 						if (process_trans.get(conflict) != 0 && process_trans.get(conflict) != proc) {
 							System.out
@@ -2990,7 +2990,7 @@ public class Abstraction extends LhpnFile {
 			else {
 				for (Transition t : p.getPreset()) {
 					if (process_trans.get(t) == 0)
-						if (!t.hasConflictSet())
+						if (!t.hasConflict())
 							addTransProcess(t, proc); // Add the preset of the transition to the same process recursively
 						else {
 							for (Transition conflict : tran.getConflictSet()) {

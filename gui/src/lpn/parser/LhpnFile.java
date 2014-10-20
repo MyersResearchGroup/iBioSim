@@ -954,6 +954,10 @@ public class LhpnFile {
 		return transitionList;
 	}
 	
+	/**
+	 * Returns all transitions of this LPN. 
+	 * @return
+	 */
 	public Transition[] getAllTransitions() {
 		if (allTransitions == null) {
 			allTransitions = new Transition[transitions.size()];
