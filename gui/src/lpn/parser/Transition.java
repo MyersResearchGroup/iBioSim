@@ -312,7 +312,12 @@ public class Transition {
 		return false;
 	}
 
-	public boolean hasConflictSet() {
+	/**
+	 * Check if this transition shares a preset place with at least one other transition.
+	 * @return <code>true</code> if it does
+	 * 
+	 */
+	public boolean hasConflict() {
 		for (Place p : getPreset()) {
 			for (Transition t : p.getPostset()) {
 				if (!this.toString().equals(t.toString())) {
