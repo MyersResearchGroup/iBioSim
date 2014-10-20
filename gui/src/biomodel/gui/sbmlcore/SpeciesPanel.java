@@ -124,11 +124,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		// ID field
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
-		String dimInID = "";
-		for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-			dimInID += "[" + dimX.getSize() + "]";
-		}
+		String dimInID = SBMLutilities.getDimensionString(species);
 		field = new PropertyField(GlobalConstants.ID, species.getId() + dimInID, null, null, Utility.IDDimString, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
 		

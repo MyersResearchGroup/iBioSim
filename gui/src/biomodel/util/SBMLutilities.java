@@ -137,6 +137,17 @@ public class SBMLutilities {
 		return false;
 	}
 	
+	
+	public static String getDimensionString(SBase sBase) {
+		String dimStr="";
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
+		for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+			dimStr += "[" + dimX.getSize() + "]";
+		}
+		return dimStr;
+	}
+	
 	/**
 	 * Checks the validity of parameters
 	 * @param document The document to get the list of parameters
@@ -4131,12 +4142,7 @@ public class SBMLutilities {
 				return arrayId;
 			}
 		}
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
-		String dimInID = "";
-		for(int i = sBasePlugin.getDimensionCount(); i>0; i--){
-			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i-1);
-			dimInID += "[" + dimX.getSize() + "]";
-		}
+		String dimInID = SBMLutilities.getDimensionString(sBase);
 		return arrayId + dimInID;
 	}
 	

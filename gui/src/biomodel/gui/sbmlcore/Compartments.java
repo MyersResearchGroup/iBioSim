@@ -107,11 +107,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
 			Compartment compartment = listOfCompartments.get(i);
 			comps[i] = compartment.getId();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(compartment);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				comps[i] += "[" + dimX.getSize() + "]";
-			}
+			comps[i] += SBMLutilities.getDimensionString(compartment);
 			comps[i] += " " + compartment.getSize();
 			if (paramsOnly) {
 				for (int j = 0; j < getParams.size(); j++) {
@@ -342,12 +338,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						}
 					}
 				}
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(compartment);
-				String dimInID = "";
-				for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-					dimInID += "[" + dimX.getSize() + "]";
-				}
+				String dimInID = SBMLutilities.getDimensionString(compartment);
 				compID.setText(compartment.getId() + dimInID);
 			}
 			catch (Exception e) {
@@ -820,12 +811,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		String[] comparts = new String[model.getCompartmentCount()];
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
 			Compartment compartment = listOfCompartments.get(i);
-			comparts[i] = compartment.getId();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(compartment);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				comparts[i] += "[" + dimX.getSize() + "]";
-			}
+			comparts[i] = compartment.getId() + SBMLutilities.getDimensionString(compartment);
 			comparts[i] += " " + compartment.getSize();
 			if (paramsOnly) {
 				for (int j = 0; j < parameterChanges.size(); j++) {

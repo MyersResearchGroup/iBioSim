@@ -4120,6 +4120,7 @@ public class BioModel {
 		ArrayList<String> ports = new ArrayList<String>();
 		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
 			Port port = sbmlCompModel.getListOfPorts().get(i);
+			String dimStr = SBMLutilities.getDimensionString(port);
 			String id = port.getId();
 			if (port.isSetIdRef()) {
 				String idRef = port.getIdRef();
@@ -4146,21 +4147,21 @@ public class BioModel {
 							type = GlobalConstants.TRANSITION;
 						}
 					}
-					ports.add(type + ":" + id + ":" + idRef);
+					ports.add(type + ":" + id + ":" + idRef+dimStr);
 				}
 			} else if (port.isSetMetaIdRef()) {
 				String idRef = port.getMetaIdRef();
 				SBase sbase = SBMLutilities.getElementByMetaId(sbml, idRef);
 				if (sbase!=null) {
 					String type = SBMLutilities.getElementByMetaId(sbml, idRef).getElementName();
-					ports.add(type + ":" + id + ":" + idRef);
+					ports.add(type + ":" + id + ":" + idRef+dimStr);
 				}
 			} else if (port.isSetUnitRef()) {
 				String idRef = port.getUnitRef();
 				SBase sbase = sbml.getModel().getUnitDefinition(idRef);
 				if (sbase!=null) {
 					String type = sbml.getModel().getUnitDefinition(idRef).getElementName();
-					ports.add(type + ":" + id + ":" + idRef);
+					ports.add(type + ":" + id + ":" + idRef+dimStr);
 				}
 			}
 		}

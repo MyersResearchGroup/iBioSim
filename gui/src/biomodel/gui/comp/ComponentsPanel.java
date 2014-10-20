@@ -1,8 +1,12 @@
 package biomodel.gui.comp;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,8 +16,11 @@ import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
@@ -37,7 +44,7 @@ import biomodel.util.Utility;
 import main.Gui;
 
 
-public class ComponentsPanel extends JPanel implements ActionListener {
+public class ComponentsPanel extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * 
 	 */
@@ -80,11 +87,15 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	private boolean paramsOnly;
 	
 	private BioModel subBioModel;
+	
+	private JList replacementsDeletions;
+	
+	private String[] replDel;
 
 	public ComponentsPanel(String selected, PropertyList componentsList, BioModel bioModel, BioModel subBioModel,
 			ArrayList<String> ports, String selectedComponent, String oldPort, boolean paramsOnly, ModelEditor gcmEditor) {
 		
-		super(new GridLayout(ports.size() + 6, 1));
+		super(new BorderLayout());
 		
 		this.selected = selected;
 		this.componentsList = componentsList;
@@ -536,16 +547,12 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 		Submodel instance = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId);
 		// ID field
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(instance);
-		String dimInID = "";
-		for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-			dimInID += "[" + dimX.getSize() + "]";
-		}
+		String dimInID = SBMLutilities.getDimensionString(instance);
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
 				Utility.IDDimString, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
-		add(field);
+		JPanel top = new JPanel(new GridLayout(6, 1));
+		top.add(field);
 
 		// Name field
 		if (instance != null) {
@@ -556,7 +563,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					"default", false);
 		}
 		fields.put(GlobalConstants.NAME, field);
-		add(field);
+		top.add(field);
 
 		JLabel timeConvFactorLabel = new JLabel("Time Conversion Factor");
 		JLabel extentConvFactorLabel = new JLabel("Extent Conversion Factor");
@@ -574,8 +581,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		if (instance != null && instance.isSetExtentConversionFactor()) {
 			extentConvFactorBox.setSelectedItem(instance.getExtentConversionFactor());
 		}
-		add(timePanel);
-		add(extentPanel);
+		top.add(timePanel);
+		top.add(extentPanel);
 		// Parse out SBOL annotations and add to SBOL field
 		if(!paramsOnly) {
 			// Field for annotating submodel with SBOL DNA components
@@ -583,10 +590,26 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(instance, sbolURIs);
 			sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 
 					2, false);
-			add(sbolField);
+			top.add(sbolField);
 		}
-		
+		top.add(new JLabel("Port maps:"));
+
+		replacementsDeletions = new JList();
+		replacementsDeletions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scroll = new JScrollPane();
+		scroll.setViewportView(replacementsDeletions);
+		scroll.setMinimumSize(new Dimension(260, 220));
+		scroll.setPreferredSize(new Dimension(276, 152));
+		scroll.setViewportView(replacementsDeletions);
+		replDel = new String[portIds.size()];
+		for (int i = 0; i < portIds.size(); i++) {
+			replDel[i] = idRefs.get(i) + " port is unchanged";
+		}
+		add(top,"North");
+		add(scroll,"Center");
+
 		// Port Map field
+		/*
 		JPanel headingPanel = new JPanel();
 		JLabel typeLabel = new JLabel("Type");
 		JLabel portLabel = new JLabel("Port");
@@ -617,12 +640,14 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			directionBox.get(i).addActionListener(this);
 			portmapBox.get(i).addActionListener(this);
 		}
+		*/
 		if (instance!=null) {
 			for (int j = 0; j < instance.getListOfDeletions().size(); j++) {
 				Deletion deletion = instance.getListOfDeletions().get(j);
 				int l = portIds.indexOf(deletion.getPortRef());
 				if (l >= 0) {
 					portmapBox.get(l).setSelectedItem("--delete--");
+					replDel[l] = idRefs.get(l) + " port is deleted";
 				}
 			}
 		}
@@ -647,6 +672,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			oldName = selected;
 			fields.get(GlobalConstants.ID).setValue(selected+dimInID);
 		}
+		//main.util.Utility.sort(replDel);
+		replacementsDeletions.setListData(replDel);
+		replacementsDeletions.setSelectedIndex(0);
+		replacementsDeletions.addMouseListener(this);
 		
 		boolean display = false;
 		while (!display) {
@@ -699,6 +728,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 							convBox.get(l).setSelectedItem(replacement.getConversionFactor());
 						}
 					}
+					replDel[l] = idRefs.get(l) + " port is replaced by " + id;
 				} else if (replacement.isSetDeletion()) {
 					Deletion deletion = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId).getListOfDeletions().get(replacement.getDeletion());
 					if (deletion!=null) {
@@ -730,6 +760,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 						directionBox.get(l).setSelectedIndex(1);
 						convBox.get(l).setSelectedIndex(0);
 					}
+					replDel[l] = idRefs.get(l) + " port replaces " + id;
 				} 
 			}
 		}
@@ -967,11 +998,105 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		return true;
 	}
 	
+	private void replDelEditor(String option,String selected) {
+		JPanel replDelPanel = new JPanel(new GridLayout(5,2));
+		int selectedIndex = -1;
+		int originalDir = -1;
+		int originalRepl = -1;
+		int originalConv = -1;
+		if (option.equals("OK")) {
+			selectedIndex = idRefs.indexOf(selected);
+			JLabel typeLabel = new JLabel("Type");
+			replDelPanel.add(typeLabel);
+			JLabel tempLabel2 = new JLabel(types.get(selectedIndex));
+			replDelPanel.add(tempLabel2);
+			
+			JLabel portLabel = new JLabel("Port");
+			replDelPanel.add(portLabel);
+			JLabel tempLabel = new JLabel(idRefs.get(selectedIndex));
+			replDelPanel.add(tempLabel);
+
+			JLabel dirLabel = new JLabel("Direction");
+			replDelPanel.add(dirLabel);
+			replDelPanel.add(directionBox.get(selectedIndex));
+			originalDir = directionBox.get(selectedIndex).getSelectedIndex();
+
+			JLabel replLabel = new JLabel("Replacement");
+			replDelPanel.add(replLabel);
+			replDelPanel.add(portmapBox.get(selectedIndex));
+			originalRepl = portmapBox.get(selectedIndex).getSelectedIndex();
+
+			JLabel convLabel = new JLabel("Conversion");
+			replDelPanel.add(convLabel);
+			replDelPanel.add(convBox.get(selectedIndex));
+			originalConv = convBox.get(selectedIndex).getSelectedIndex();
+			directionBox.get(selectedIndex).addActionListener(this);
+			portmapBox.get(selectedIndex).addActionListener(this);
+		}
+		Object[] options = { option, "Cancel" };
+		int value = JOptionPane.showOptionDialog(Gui.frame, replDelPanel, "Port Map Editor", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		boolean error = true;
+		while (error && value == JOptionPane.YES_OPTION) {
+			error = false;
+			if (error) {
+				value = JOptionPane.showOptionDialog(Gui.frame, replDelPanel, "Port Map Editor", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			}
+			if (portmapBox.get(selectedIndex).getSelectedItem().equals("--none--")) {
+				replDel[selectedIndex] = idRefs.get(selectedIndex) + " port is unchanged"; 
+			} else if (portmapBox.get(selectedIndex).getSelectedItem().equals("--delete--")) {
+				replDel[selectedIndex] = idRefs.get(selectedIndex) + " port is deleted"; 
+			} else if (directionBox.get(selectedIndex).getSelectedItem().equals("<--")) {
+				replDel[selectedIndex] = idRefs.get(selectedIndex) + " port is replaced by " + 
+						portmapBox.get(selectedIndex).getSelectedItem(); 
+			} else {
+				replDel[selectedIndex] = idRefs.get(selectedIndex) + " port replaces " + 
+						portmapBox.get(selectedIndex).getSelectedItem(); 
+			}
+			//main.util.Utility.sort(replDel);
+			replacementsDeletions.setListData(replDel);
+			replacementsDeletions.setSelectedIndex(selectedIndex);
+		}
+		if (value == JOptionPane.NO_OPTION) {
+			directionBox.get(selectedIndex).setSelectedIndex(originalDir);
+			portmapBox.get(selectedIndex).setSelectedIndex(originalRepl);
+			convBox.get(selectedIndex).setSelectedIndex(originalConv);
+			return;
+		}
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			updateComboBoxEnabling();
 		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (e.getClickCount() == 2) {
+			if (e.getSource() == replacementsDeletions) {
+				String selected = ((String)replacementsDeletions.getSelectedValue()).split(" ")[0]; 
+				replDelEditor("OK",selected);
+			}
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
 	}
 
 }
