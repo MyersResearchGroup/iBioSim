@@ -20,6 +20,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
@@ -999,13 +1000,19 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 	}
 	
 	private void replDelEditor(String option,String selected) {
-		JPanel replDelPanel = new JPanel(new GridLayout(5,2));
+		JPanel replDelPanel = new JPanel(new GridLayout(8,2));
 		int selectedIndex = -1;
 		int originalDir = -1;
 		int originalRepl = -1;
 		int originalConv = -1;
 		if (option.equals("OK")) {
 			selectedIndex = idRefs.indexOf(selected);
+			
+			JLabel dimensionsLabel = new JLabel("Dimensions");
+			replDelPanel.add(dimensionsLabel);
+			JTextField dimensionsField = new JTextField();
+			replDelPanel.add(dimensionsField);
+
 			JLabel typeLabel = new JLabel("Type");
 			replDelPanel.add(typeLabel);
 			JLabel tempLabel2 = new JLabel(types.get(selectedIndex));
@@ -1015,6 +1022,16 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			replDelPanel.add(portLabel);
 			JLabel tempLabel = new JLabel(idRefs.get(selectedIndex));
 			replDelPanel.add(tempLabel);
+			
+			JLabel portIndexLabel = new JLabel("Port indices");
+			replDelPanel.add(portIndexLabel);
+			JTextField portIndex = new JTextField();
+			replDelPanel.add(portIndex);
+			
+			JLabel subModelIndexLabel = new JLabel("SubModel indices");
+			replDelPanel.add(subModelIndexLabel);
+			JTextField subModelIndex = new JTextField();
+			replDelPanel.add(subModelIndex);
 
 			JLabel dirLabel = new JLabel("Direction");
 			replDelPanel.add(dirLabel);
