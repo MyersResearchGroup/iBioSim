@@ -106,11 +106,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				event.setId(eventId);
 			}
 			ev[i] = event.getId();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				ev[i] += "[" + dimX.getSize() + "]";
-			}
+			ev[i] += SBMLutilities.getDimensionString(event);
 		}
 		JPanel addRem = new JPanel();
 		if (!biosim.lema) {
@@ -392,13 +388,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								2, false);
 					}
 				}
-				// TODO: Scott - change for Plugin reading
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
-				String dimInID = "";
-				for(int i1 = sBasePlugin.getDimensionCount()-1; i1>=0; i1--){
-					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
-					dimInID += "[" + dimX.getSize() + "]";
-				}
+				
+				String dimInID = SBMLutilities.getDimensionString(event);
 				eventID.setText(eventID.getText()+dimInID);
 			}
 		}
@@ -1221,12 +1212,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 				event.setId(eventId);
 			}
-			ev[i] = event.getId();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(event);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				ev[i] += "[" + dimX.getSize() + "]";
-			}
+			ev[i] = event.getId() + SBMLutilities.getDimensionString(event);
 		}
 		Utility.sort(ev);
 		events.setListData(ev);
@@ -1302,7 +1288,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * Creates a frame used to edit event assignments or create new ones.
 	 * 
 	 */
-	private void eventAssignEditor(BioModel gcm, JList eventAssign, String option) {
+	private void eventAssignEditor(BioModel bioModel, JList eventAssign, String option) {
 		if (option.equals("OK") && eventAssign.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No event assignment selected.", "Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -1329,11 +1315,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		else {
 			selected = "";
 		}
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
 			String id = model.getCompartment(i).getId();
 			if (!(model.getCompartment(i).getConstant())) {
-				if (keepVarEvent(gcm, assign, selected, id)) {
+				if (keepVarEvent(bioModel, assign, selected, id)) {
 					eaID.addItem(id);
 				}
 			}
@@ -1344,11 +1330,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			if (p.getId().equals(GlobalConstants.FAIL)) continue;
 			String id = p.getId();
 			if (!p.getConstant()) {
-				if (keepVarEvent(gcm, assign, selected, id)) {
+				if (keepVarEvent(bioModel, assign, selected, id)) {
 					eaID.addItem(id);
 				}
 				if (isTransition && !SBMLutilities.isBoolean(p) && !SBMLutilities.isPlace(p)) {
-					if (keepVarEvent(gcm, assign, selected, id+"_"+GlobalConstants.RATE)) {
+					if (keepVarEvent(bioModel, assign, selected, id+"_"+GlobalConstants.RATE)) {
 						eaID.addItem(id+"_"+GlobalConstants.RATE);
 					}
 				}
@@ -1357,7 +1343,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			String id = model.getSpecies(i).getId();
 			if (!(model.getSpecies(i).getConstant())) {
-				if (keepVarEvent(gcm, assign, selected, id)) {
+				if (keepVarEvent(bioModel, assign, selected, id)) {
 					eaID.addItem(id);
 				}
 			}
@@ -1368,7 +1354,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				SpeciesReference reactant = reaction.getReactant(j);
 				if ((reactant.isSetId()) && (!reactant.getId().equals("")) && !(reactant.getConstant())) {
 					String id = reactant.getId();
-					if (keepVarEvent(gcm, assign, selected, id)) {
+					if (keepVarEvent(bioModel, assign, selected, id)) {
 						eaID.addItem(id);
 					}
 				}
@@ -1377,7 +1363,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				SpeciesReference product = reaction.getProduct(j);
 				if ((product.isSetId()) && (!product.getId().equals("")) && !(product.getConstant())) {
 					String id = product.getId();
-					if (keepVarEvent(gcm, assign, selected, id)) {
+					if (keepVarEvent(bioModel, assign, selected, id)) {
 						eaID.addItem(id);
 					}
 				}
@@ -1444,7 +1430,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						if (EAdimensionIds!=null) {
 							meshDimensionIds.addAll(Arrays.asList(EAdimensionIds));
 						}
-						error = SBMLutilities.displayinvalidVariables("Event assignment", gcm.getSBMLDocument(), 
+						error = SBMLutilities.displayinvalidVariables("Event assignment", bioModel.getSBMLDocument(), 
 								meshDimensionIds.toArray(new String[meshDimensionIds.size()]), eqn.getText().trim(), "", false);
 					}
 				}
@@ -1457,10 +1443,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (p != null && SBMLutilities.isBoolean(p)) {
 						assignMath = bioModel.addBooleanAssign(eqn.getText().trim());
 					} 
-					error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), 
+					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
 							SBMLutilities.myParseFormula(eqn.getText().trim()));
 					if (!error) {
-						error = SBMLutilities.checkFunctionArgumentTypes(gcm.getSBMLDocument(), assignMath);
+						error = SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), assignMath);
 					}
 					if (!error) {
 						if (p != null && SBMLutilities.isBoolean(p)) {

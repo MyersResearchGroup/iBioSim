@@ -146,11 +146,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			Parameter parameter = listOfParameters.get(i);
 			
 			params[i] = parameter.getId(); 
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(parameter);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				params[i] += "[" + dimX.getSize() + "]";
-			}
+			params[i] += SBMLutilities.getDimensionString(parameter);
 
 			if (parameter.getId().contains("_locations"))
 				++notIncludedParametersCount;
@@ -236,12 +232,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter parameter = listOfParameters.get(i);
 			if (constantsOnly && !parameter.getConstant()) continue;
-			params[k] = parameter.getId();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(parameter);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				params[k] += "[" + dimX.getSize() + "]";
-			}
+			params[k] = parameter.getId() + SBMLutilities.getDimensionString(parameter);
 			if (paramsOnly) {
 				params[k] += " " + parameter.getValue();
 				for (int j = 0; j < parameterChanges.size(); j++) {
@@ -460,13 +451,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 				}
 				//TODO reading?
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
-				String dimInID = "";
-				for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-					Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-					dimInID += "[" + dimX.getSize() + "]";
-				}
-				
+				String dimInID = SBMLutilities.getDimensionString(paramet);
 				paramID.setText(paramet.getId() + dimInID);
 				selectedID = paramet.getId();
 				paramName.setText(paramet.getName());

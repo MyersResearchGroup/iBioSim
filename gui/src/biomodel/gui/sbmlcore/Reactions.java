@@ -247,11 +247,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = listOfReactions.get(i);
 			reacts[i] = reaction.getId();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				reacts[i] += "[" + dimX.getSize() + "]";
-			}
+			reacts[i] += SBMLutilities.getDimensionString(reaction);
 			if (paramsOnly && reaction.getKineticLaw()!=null) {
 				ListOf<LocalParameter> params = reaction.getKineticLaw().getListOfLocalParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
@@ -510,11 +506,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				changedReactants.add(reactant);
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
 				if (reactant.isSetId()) {
-					reacta[i] = reactant.getId();
-					for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-						Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-						reacta[i] += "[" + dimX.getSize() + "]";
-					}
+					reacta[i] = reactant.getId() + SBMLutilities.getDimensionString(reactant);
 					reacta[i] += " : " + reactant.getSpecies();
 				} else {
 					reacta[i] = reactant.getSpecies();
@@ -564,11 +556,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				changedProducts.add(product);
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(product);
 				if (product.isSetId()) {
-					proda[i] = product.getId();
-					for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-						proda[i] += "[" + dimX.getSize() + "]";
-					}
+					proda[i] = product.getId() + SBMLutilities.getDimensionString(product);
 					proda[i] += " : " + product.getSpecies();
 				} else {
 					proda[i] = product.getSpecies();
@@ -618,11 +606,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				changedModifiers.add(modifier);
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
 				if (modifier.isSetId()) {
-					modifierArray[i] = modifier.getId();
-					for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-						Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-						modifierArray[i] += "[" + dimX.getSize() + "]";
-					}
+					modifierArray[i] = modifier.getId() + SBMLutilities.getDimensionString(modifier);
 					modifierArray[i] += " : " + modifier.getSpecies();
 				} else {
 					modifierArray[i] = modifier.getSpecies();
@@ -762,11 +746,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			Reaction reac = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
 			copyReact = reac.clone();
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reac);
-			String dimInID = "";
-			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-				dimInID += "[" + dimX.getSize() + "]";
-			}
+			String dimInID = SBMLutilities.getDimensionString(reac);
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 				Index indie = sBasePlugin.getIndex(i,"compartment");
@@ -1964,11 +1944,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				productConstant.setSelectedItem("false");
 			}
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(product);
-			String dimInID = "";
-			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-				dimInID += "[" + dimX.getSize() + "]";
-			}
+			String dimInID = SBMLutilities.getDimensionString(product);
 			productId.setText(productId.getText()+dimInID);
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
@@ -2324,11 +2300,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (ref.isSetId() && !ref.getId().equals(id)) return false;
 		if (!ref.getSpecies().equals(species)) return false;
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ref);
-		String refDim = "";
-		for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-			Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-			refDim += "[" + dimX.getSize() + "]";
-		}
+		String refDim = SBMLutilities.getDimensionString(ref);
 		if (!refDim.equals(dim)) return false;
 		String refIndex = "";
 		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
@@ -2389,11 +2361,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
-			String dimInID = "";
-			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-				dimInID += "[" + dimX.getSize() + "]";
-			}
+			String dimInID = SBMLutilities.getDimensionString(modifier);
 			modifierId.setText(modifierId.getText()+dimInID);
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
@@ -2880,11 +2848,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (!ref.getSpecies().equals(species)) return false;
 		if (ref.getStoichiometry() != Double.parseDouble(stoich)) return false;
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ref);
-		String refDim = "";
-		for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-			Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-			refDim += "[" + dimX.getSize() + "]";
-		}
+		String refDim = SBMLutilities.getDimensionString(ref);
 		if (!refDim.equals(dim)) return false;
 		String refIndex = "";
 		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
@@ -2969,11 +2933,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reactantConstant.setSelectedItem("false");
 			}
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
-			String dimInID = "";
-			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-				dimInID += "[" + dimX.getSize() + "]";
-			}
+			String dimInID = SBMLutilities.getDimensionString(reactant);
 			reactantId.setText(reactantId.getText()+dimInID);
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
@@ -4109,12 +4069,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reacts = new String[model.getReactionCount()];
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = listOfReactions.get(i);
-			reacts[i] = reaction.getId();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				reacts[i] += "[" + dimX.getSize() + "]";
-			}
+			reacts[i] = reaction.getId() + SBMLutilities.getDimensionString(reaction);
 			if (paramsOnly) {
 				if (!reaction.isSetKineticLaw()) continue;
 				ListOf<LocalParameter> params = reaction.getKineticLaw().getListOfLocalParameters();

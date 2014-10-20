@@ -65,12 +65,7 @@ public class PromoterPanel extends JPanel {
 
 		PropertyField field  = null;
 		// ID field
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(promoter);
-		String dimInID = "";
-		for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-			dimInID += "[" + dimX.getSize() + "]";
-		}
+		String dimInID = SBMLutilities.getDimensionString(promoter);
 		field = new PropertyField(GlobalConstants.ID, promoter.getId() + dimInID, null, null, Utility.IDDimString, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
 		if (!paramsOnly) add(field);		

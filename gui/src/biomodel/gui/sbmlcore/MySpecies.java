@@ -129,11 +129,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = model.getSpecies(i);
 			specs[i] = species.getId(); 
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				specs[i] += "[" + dimX.getSize() + "]";
-			}
+			specs[i] += SBMLutilities.getDimensionString(species);
 			if (species.isSetInitialAmount()) {
 				specs[i] += " " + species.getInitialAmount();
 			}
@@ -191,12 +187,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		String[] specs = new String[model.getSpeciesCount()];
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = model.getSpecies(i);
-			specs[i] = species.getId();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				specs[i] += "[" + dimX.getSize() + "]";
-			}
+			specs[i] = species.getId() + SBMLutilities.getDimensionString(species);
 			if (species.isSetInitialAmount()) {
 				specs[i] += " " + species.getInitialAmount();
 			}

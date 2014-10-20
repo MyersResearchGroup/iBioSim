@@ -104,12 +104,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 				rule.setMetaId(ruleId);
 			}
-			rul[i] = rule.getMetaId();
+			rul[i] = rule.getMetaId() + SBMLutilities.getDimensionString(rule);
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(rule);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				rul[i] += "[" + dimX.getSize() + "]";
-			}
 			rul[i] += " : ";
 			if (rule.isAlgebraic()) {
 				rul[i] += "0 = " + bioModel.removeBooleans(rule.getMath());
@@ -178,13 +174,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			String[] rul = new String[model.getRuleCount()];
 			for (int i = 0; i < model.getRuleCount(); i++) {
 				Rule rule = model.getListOfRules().get(i);
-				rul[i] = rule.getMetaId();
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(rule);
-				for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-					rul[i] += "[" + dimX.getSize() + "]";
-				}
+				rul[i] = rule.getMetaId() + SBMLutilities.getDimensionString(rule);
 				rul[i] += " : ";
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(rule);
 				if (rule.isAlgebraic()) {
 					rul[i] = "0 = " + bioModel.removeBooleans(rule.getMath());
 				}
@@ -254,13 +246,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
 			Rule rule = (Rule)SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId);			
-			//TODO dimensionID size reading
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(rule);
-			String dimInID = "";
-			for(int i = sBasePlugin.getDimensionCount()-1; i>=0; i--){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i);
-				dimInID += "[" + dimX.getSize() + "]";
-			}
+			String dimInID = SBMLutilities.getDimensionString(rule);
 			if (rule.getElementName().equals(GlobalConstants.ALGEBRAIC_RULE)) {
 				ruleType.setSelectedItem("Algebraic");
 				ruleVar.setEnabled(false);

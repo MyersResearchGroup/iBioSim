@@ -79,11 +79,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				SBMLutilities.setMetaId(constraint, constraintId);
 			}
 			cons[i] = constraint.getMetaId();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(constraint);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				cons[i] += "[" + dimX.getSize() + "]";
-			}
+			cons[i] += SBMLutilities.getDimensionString(constraint);
 		}
 		JPanel addRem = new JPanel();
 		addRem.add(addConstraint);
@@ -149,12 +145,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 					consMath.setText(bioModel.removeBooleans(c.get(i).getMath()));
 					if (c.get(i).isSetMetaId()) {
 						selectedID = c.get(i).getMetaId();
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c.get(Cindex));
-						String dimInID = "";
-						for(int i1 = sBasePlugin.getDimensionCount()-1; i1>=0; i1--){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
-							dimInID += "[" + dimX.getSize() + "]";
-						}
+						String dimInID = SBMLutilities.getDimensionString(c.get(Cindex));
 						consID.setText(selectedID+dimInID);
 					}
 					if (c.get(i).isSetMessage()) {
@@ -416,12 +407,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				}
 				SBMLutilities.setMetaId(constraint, constraintId);
 			}
-			cons[i] = constraint.getMetaId();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(constraint);
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				cons[i] += "[" + dimX.getSize() + "]";
-			}
+			cons[i] = constraint.getMetaId() + SBMLutilities.getDimensionString(constraint);
 		}
 		Utility.sort(cons);
 		constraints.setListData(cons);
