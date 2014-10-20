@@ -1,6 +1,7 @@
 package verification.platu.partialOrders;
 
 import java.util.HashSet;
+
 import lpn.parser.Transition;
 
 public class DependentSet {
@@ -24,5 +25,18 @@ public class DependentSet {
 	
 	public boolean isEnabledTranDummy() {
 		return enabledTranIsDummy;
+	}
+
+	/**
+	 * For each transition in <code>dependent</code>, check its LPN index. 
+	 * @return the lowest LPN index found in the <code>dependent</code> set.
+	 */
+	public int getLowestLpnNumber(int highestLpnIndex) {
+		int lowestLpnIndex = highestLpnIndex;
+		for (Transition t: dependent) {
+			if (t.getLpn().getLpnIndex() < lowestLpnIndex)
+				lowestLpnIndex = t.getLpn().getLpnIndex();
+		}
+		return lowestLpnIndex;
 	}
 }
