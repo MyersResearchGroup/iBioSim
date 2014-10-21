@@ -61,6 +61,12 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 	
 	private ArrayList<String> types = null;
 
+	private ArrayList<JTextField> dimensionsField = null;
+
+	private ArrayList<JTextField> portIndicesField = null;
+
+	private ArrayList<JTextField> subModelIndicesField = null;
+
 	private ArrayList<JComboBox> portmapBox = null;
 
 	private ArrayList<JComboBox> directionBox = null;
@@ -112,6 +118,9 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 		portIds = new ArrayList<String>();
 		idRefs = new ArrayList<String>();
 		types = new ArrayList<String>();
+		dimensionsField = new ArrayList<JTextField>();
+		portIndicesField = new ArrayList<JTextField>();
+		subModelIndicesField = new ArrayList<JTextField>();
 		portmapBox = new ArrayList<JComboBox>();
 		directionBox = new ArrayList<JComboBox>();
 		convBox = new ArrayList<JComboBox>();
@@ -136,386 +145,22 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 		timeConvFactorBox = new JComboBox(parameters);
 		extentConvFactorBox = new JComboBox(parameters);
 
-		ArrayList <String> compartmentList = bioModel.getCompartments();
-		Collections.sort(compartmentList);
-		String[] compsWithNone = new String[compartmentList.size() + 2];
-		compsWithNone[0] = "--none--";
-		compsWithNone[1] = "--delete--";
-		for (int l = 2; l < compsWithNone.length; l++) {
-			compsWithNone[l] = compartmentList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.COMPARTMENT)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(compsWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ArrayList <String> parameterList = bioModel.getParameters();
-		Collections.sort(parameterList);
-		String[] paramsWithNone = new String[parameterList.size() + 2];
-		paramsWithNone[0] = "--none--";
-		paramsWithNone[1] = "--delete--";
-		for (int l = 2; l < paramsWithNone.length; l++) {
-			paramsWithNone[l] = parameterList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.PARAMETER) || type.equals(GlobalConstants.LOCALPARAMETER)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(paramsWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ArrayList <String> booleanList = bioModel.getBooleans();
-		Collections.sort(booleanList);
-		String[] boolsWithNone = new String[booleanList.size() + 2];
-		boolsWithNone[0] = "--none--";
-		boolsWithNone[1] = "--delete--";
-		for (int l = 2; l < boolsWithNone.length; l++) {
-			boolsWithNone[l] = booleanList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.BOOLEAN)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(boolsWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ArrayList <String> placeList = bioModel.getPlaces();
-		Collections.sort(placeList);
-		String[] placesWithNone = new String[placeList.size() + 2];
-		placesWithNone[0] = "--none--";
-		placesWithNone[1] = "--delete--";
-		for (int l = 2; l < placesWithNone.length; l++) {
-			placesWithNone[l] = placeList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.PLACE)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(placesWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ArrayList <String> speciesList = bioModel.getSpecies();
-		Collections.sort(speciesList);
-		String[] specsWithNone = new String[speciesList.size() + 2];
-		specsWithNone[0] = "--none--";
-		specsWithNone[1] = "--delete--";
- 		for (int l = 2; l < specsWithNone.length; l++) {
-			specsWithNone[l] = speciesList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.SBMLSPECIES)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(specsWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ArrayList <String> promoterList = bioModel.getPromoters();
-		Collections.sort(promoterList);
-		String[] promsWithNone = new String[promoterList.size() + 2];
-		promsWithNone[0] = "--none--";
-		promsWithNone[1] = "--delete--";
- 		for (int l = 2; l < promsWithNone.length; l++) {
-			promsWithNone[l] = promoterList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.PROMOTER)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(promsWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ArrayList <String> reactionList = bioModel.getReactions();
-		Collections.sort(reactionList);
-		String[] reactionsWithNone = new String[reactionList.size() + 2];
-		reactionsWithNone[0] = "--none--";
-		reactionsWithNone[1] = "--delete--";
- 		for (int l = 2; l < reactionsWithNone.length; l++) {
-			reactionsWithNone[l] = reactionList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.SBMLREACTION)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(reactionsWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ArrayList <String> functionList = bioModel.getFunctions();
-		Collections.sort(functionList);
-		String[] functionsWithNone = new String[functionList.size() + 2];
-		functionsWithNone[0] = "--none--";
-		functionsWithNone[1] = "--delete--";
- 		for (int l = 2; l < functionsWithNone.length; l++) {
-			functionsWithNone[l] = functionList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.FUNCTION)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(functionsWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ArrayList <String> unitList = bioModel.getUnits();
-		Collections.sort(unitList);
-		String[] unitsWithNone = new String[unitList.size() + 2];
-		unitsWithNone[0] = "--none--";
-		unitsWithNone[1] = "--delete--";
- 		for (int l = 2; l < unitsWithNone.length; l++) {
-			unitsWithNone[l] = unitList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.UNIT)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(unitsWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ArrayList <String> ruleList = bioModel.getAlgebraicRules();
-		Collections.sort(ruleList);
-		String[] rulesWithNone = new String[ruleList.size() + 2];
-		rulesWithNone[0] = "--none--";
-		rulesWithNone[1] = "--delete--";
- 		for (int l = 2; l < rulesWithNone.length; l++) {
-			rulesWithNone[l] = ruleList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.ALGEBRAIC_RULE)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(rulesWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convFactor.setEnabled(false);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ruleList = bioModel.getAssignmentRules();
-		Collections.sort(ruleList);
-		rulesWithNone = new String[ruleList.size() + 2];
-		rulesWithNone[0] = "--none--";
-		rulesWithNone[1] = "--delete--";
- 		for (int l = 2; l < rulesWithNone.length; l++) {
-			rulesWithNone[l] = ruleList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.ASSIGNMENT_RULE)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(rulesWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convFactor.setEnabled(false);
-				convBox.add(convFactor);
-			}
-		}	
-		
-		ruleList = bioModel.getRateRules();
-		Collections.sort(ruleList);
-		rulesWithNone = new String[ruleList.size() + 2];
-		rulesWithNone[0] = "--none--";
-		rulesWithNone[1] = "--delete--";
- 		for (int l = 2; l < rulesWithNone.length; l++) {
-			rulesWithNone[l] = ruleList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.RATE_RULE)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(rulesWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convFactor.setEnabled(false);
-				convBox.add(convFactor);
-			}
-		}	
-		
-		ArrayList <String> constraintList = bioModel.getConstraints();
-		Collections.sort(constraintList);
-		String[] constraintsWithNone = new String[constraintList.size() + 2];
-		constraintsWithNone[0] = "--none--";
-		constraintsWithNone[1] = "--delete--";
- 		for (int l = 2; l < constraintsWithNone.length; l++) {
-			constraintsWithNone[l] = constraintList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.CONSTRAINT)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(constraintsWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convFactor.setEnabled(false);
-				convBox.add(convFactor);
-			}
-		}
-				
-		ArrayList <String> eventList = bioModel.getEvents();
-		Collections.sort(eventList);
-		String[] eventsWithNone = new String[eventList.size() + 2];
-		eventsWithNone[0] = "--none--";
-		eventsWithNone[1] = "--delete--";
- 		for (int l = 2; l < eventsWithNone.length; l++) {
-			eventsWithNone[l] = eventList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.EVENT)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(eventsWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convFactor.setEnabled(false);
-				convBox.add(convFactor);
-			}
-		}
-		
-		ArrayList <String> transitionList = bioModel.getTransitions();
-		Collections.sort(transitionList);
-		String[] transWithNone = new String[transitionList.size() + 2];
-		transWithNone[0] = "--none--";
-		transWithNone[1] = "--delete--";
-		for (int l = 2; l < transWithNone.length; l++) {
-			transWithNone[l] = transitionList.get(l - 2);
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String type = ports.get(i).split(":")[0];
-			String portId = ports.get(i).split(":")[1];
-			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.TRANSITION)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(transWithNone);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				directionBox.add(dirport);
-				JComboBox convFactor = new JComboBox(parameters);
-				convFactor.setEnabled(false);
-				convBox.add(convFactor);
-			}
-		}
+		createPortMapFields(bioModel.getCompartments(), ports, GlobalConstants.COMPARTMENT, parameters);
+		createPortMapFields(bioModel.getParameters(), ports, GlobalConstants.PARAMETER, parameters);
+		createPortMapFields(bioModel.getParameters(), ports, GlobalConstants.LOCALPARAMETER, parameters);
+		createPortMapFields(bioModel.getBooleans(), ports, GlobalConstants.BOOLEAN, parameters);
+		createPortMapFields(bioModel.getPlaces(), ports, GlobalConstants.PLACE, parameters);
+		createPortMapFields(bioModel.getSpecies(), ports, GlobalConstants.SBMLSPECIES, parameters);
+		createPortMapFields(bioModel.getPromoters(), ports, GlobalConstants.PROMOTER, parameters);
+		createPortMapFields(bioModel.getReactions(), ports, GlobalConstants.SBMLREACTION, parameters);
+		createPortMapFields(bioModel.getFunctions(), ports, GlobalConstants.FUNCTION, parameters);
+		createPortMapFields(bioModel.getUnits(), ports, GlobalConstants.UNIT, parameters);
+		createPortMapFields(bioModel.getAlgebraicRules(), ports, GlobalConstants.ALGEBRAIC_RULE, parameters);
+		createPortMapFields(bioModel.getAssignmentRules(), ports, GlobalConstants.ASSIGNMENT_RULE, parameters);
+		createPortMapFields(bioModel.getRateRules(), ports, GlobalConstants.RATE_RULE, parameters);
+		createPortMapFields(bioModel.getConstraints(), ports, GlobalConstants.CONSTRAINT, parameters);
+		createPortMapFields(bioModel.getEvents(), ports, GlobalConstants.EVENT, parameters);
+		createPortMapFields(bioModel.getTransitions(), ports, GlobalConstants.TRANSITION, parameters);
 
 		String[] Choices = new String[2];
 		Choices[0] = "--include--";
@@ -542,6 +187,12 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				directionBox.add(dirport);
 				JComboBox convFactor = new JComboBox(parameters);
 				convBox.add(convFactor);
+				JTextField dimension = new JTextField();
+				dimensionsField.add(dimension);
+				JTextField portIndices = new JTextField();
+				portIndicesField.add(portIndices);
+				JTextField subModelIndices = new JTextField();
+				subModelIndicesField.add(subModelIndices);
 			}
 		}
 		
@@ -642,6 +293,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			portmapBox.get(i).addActionListener(this);
 		}
 		*/
+		// TODO: initialize dimensions and indices
 		if (instance!=null) {
 			for (int j = 0; j < instance.getListOfDeletions().size(); j++) {
 				Deletion deletion = instance.getListOfDeletions().get(j);
@@ -649,6 +301,8 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				if (l >= 0) {
 					portmapBox.get(l).setSelectedItem("--delete--");
 					replDel[l] = idRefs.get(l) + " port is deleted";
+					dimensionsField.get(l).setText(SBMLutilities.getDimensionString(deletion));
+					portIndicesField.get(l).setText(SBMLutilities.getIndicesString(deletion,"comp:portRef"));
 				}
 			}
 		}
@@ -684,6 +338,42 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 		}
 	}
 	
+	private void createPortMapFields(ArrayList<String> replacementList,ArrayList<String> ports,String portType,
+			String[] parameters) {
+		Collections.sort(replacementList);
+		String[] choices = new String[replacementList.size() + 2];
+		choices[0] = "--none--";
+		choices[1] = "--delete--";
+		for (int l = 2; l < choices.length; l++) {
+			choices[l] = replacementList.get(l - 2);
+		}
+		String[] directions = new String[2];
+		directions[0] = "<--";
+		directions[1] = "-->";
+		for (int i = 0; i < ports.size(); i++) {
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
+			if (type.equals(portType)) {
+				portIds.add(portId);
+				idRefs.add(idRef);
+				types.add(type);
+				JComboBox port = new JComboBox(choices);
+				portmapBox.add(port);
+				JComboBox dirport = new JComboBox(directions);
+				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
+				JTextField dimension = new JTextField();
+				dimensionsField.add(dimension);
+				JTextField portIndices = new JTextField();
+				portIndicesField.add(portIndices);
+				JTextField subModelIndices = new JTextField();
+				subModelIndicesField.add(subModelIndices);
+			}
+		}
+	}
+	
 	private void updateComboBoxEnabling() {
 		for (int i = 0; i < portmapBox.size(); i++) {
 			if (portmapBox.get(i).getSelectedIndex()<2 &&
@@ -693,20 +383,41 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				directionBox.get(i).setEnabled(false);
 				convBox.get(i).setSelectedIndex(0);
 				convBox.get(i).setEnabled(false);
+				dimensionsField.get(i).setEnabled(false);
+				portIndicesField.get(i).setEnabled(false);
+				subModelIndicesField.get(i).setEnabled(false);
 			} else if (portmapBox.get(i).getSelectedIndex()<2) {
 				directionBox.get(i).setEnabled(false);
 				convBox.get(i).setEnabled(false);
+				if (portmapBox.get(i).getSelectedIndex()==0) {
+					dimensionsField.get(i).setEnabled(false);
+					portIndicesField.get(i).setEnabled(false);
+					subModelIndicesField.get(i).setEnabled(false);
+				} else {
+					dimensionsField.get(i).setEnabled(true);
+					portIndicesField.get(i).setEnabled(true);
+					subModelIndicesField.get(i).setEnabled(false);
+				}
 			} else if (directionBox.get(i).getSelectedIndex()==1 &&
 					convBox.get(i).getSelectedIndex()!=0) {
 					directionBox.get(i).setEnabled(true);
 					convBox.get(i).setSelectedIndex(0);
 					convBox.get(i).setEnabled(false);
+					dimensionsField.get(i).setEnabled(true);
+					portIndicesField.get(i).setEnabled(true);
+					subModelIndicesField.get(i).setEnabled(true);
 			} else if (directionBox.get(i).getSelectedIndex()==1) {
 					directionBox.get(i).setEnabled(true);
 					convBox.get(i).setEnabled(false);
+					dimensionsField.get(i).setEnabled(true);
+					portIndicesField.get(i).setEnabled(true);
+					subModelIndicesField.get(i).setEnabled(true);
 			} else {
 				directionBox.get(i).setEnabled(true);
 				convBox.get(i).setEnabled(true);
+				dimensionsField.get(i).setEnabled(true);
+				portIndicesField.get(i).setEnabled(true);
+				subModelIndicesField.get(i).setEnabled(true);
 			}
 		}
 	}
@@ -806,14 +517,13 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-			// TODO: extract id plus dimensios using checkSizeParameters
-			String[] idDims = new String[]{""};
+			String[] dimensions = new String[]{""};
 			String[] dimensionIds = new String[]{""};
-			idDims = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+			dimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
 					fields.get(GlobalConstants.ID).getValue(), false);
-			if(idDims==null)return false;
-			dimensionIds = SBMLutilities.getDimensionIds("",idDims.length-1);
-			String id = idDims[0];
+			if(dimensions==null)return false;
+			dimensionIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
+			String id = dimensions[0];
 			if (oldName == null) {
 				if (bioModel.isSIdInUse(id)) {
 					Utility.createErrorMessage("Error", "Id already exists.");
@@ -845,12 +555,11 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			Submodel instance = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId);
 			if (instance != null) {
 				instance.setName(fields.get(GlobalConstants.NAME).getValue());
-				// TODO: add/remove dimensions from the instance
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(instance);
 				sBasePlugin.unsetListOfDimensions();
-				for(int i = 0; i<idDims.length-1; i++){
+				for(int i = 0; i<dimensions.length-1; i++){
 					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-					dimX.setSize(idDims[i+1].replace("]", "").trim());
+					dimX.setSize(dimensions[i+1].replace("]", "").trim());
 					dimX.setArrayDimension(i);
 				}
 				//long k = 0;
@@ -894,13 +603,24 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				String portId = portIds.get(i);
 				//String type = types.get(i);
 				String portmapId = (String)portmapBox.get(i).getSelectedItem();
+				String[] portDimensions = new String[]{""};
+				String[] portIndices = new String[]{""};
+				String[] portDimensionIds = new String[]{""};
+				portDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), dimensionsField.get(i).getText(), true);
+				if(portDimensions!=null){
+					dimensionIds = SBMLutilities.getDimensionIds("",portDimensions.length-1);
+				}
+				SBase variable = subBioModel.getSBMLCompModel().getPort(portId);
+				portIndices = SBMLutilities.checkIndices(portIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "comp:portRef", 
+						portDimensions, null, null);
 				if (!portmapId.equals("--none--")&&!portmapId.equals("--delete--")&&!portmapId.equals("--include--")) {
-					CompSBasePlugin sbmlSBase = null;
 					SBase sbase = SBMLutilities.getElementBySId(bioModel.getSBMLDocument().getModel(), portmapId);
+					CompSBasePlugin sbmlSBase = null;
 					if (sbase!=null) {
 						sbmlSBase = SBMLutilities.getCompSBasePlugin(sbase);
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
+								// TODO: send dimension and index
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
 								replacement.setSubmodelRef(subId);
 								replacement.setPortRef(portId);
@@ -910,6 +630,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 							} else {
 								boolean skip = false;
 								if (sbmlSBase.isSetReplacedBy()) {
+									// TODO: send dimension and index
 									ReplacedBy replacement = sbmlSBase.getReplacedBy();
 									if (!replacement.getSubmodelRef().equals(subId) ||
 											!replacement.getPortRef().equals(portId)) {	
@@ -922,6 +643,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 									}
 								}
 								if (!skip) {
+									// TODO: send dimension and index
 									ReplacedBy replacement = sbmlSBase.createReplacedBy();
 									replacement.setSubmodelRef(subId);
 									replacement.setPortRef(portId);
@@ -934,6 +656,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
 								/* TODO: Code below uses just a replacement */
+								// TODO: send dimension and index
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
 								replacement.setSubmodelRef(subId);
 								replacement.setPortRef(portId);
@@ -942,7 +665,9 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 								}
 								String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-								bioModel.addImplicitDeletions(submodel, subBioModel, subSpeciesId);
+								// TODO: send dimension and index
+								BioModel.addImplicitDeletions(submodel, subBioModel, subSpeciesId, portDimensions, 
+										portDimensionIds,portIndices);
 								/* Code below using replacement and deletion */
 								/*
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
@@ -954,20 +679,25 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 								replacement.setDeletion("delete_"+portId);
 								*/
 							} else {
+								// TODO: send dimension and index
 								ReplacedBy replacement = sbmlSBase.createReplacedBy();
 								replacement.setSubmodelRef(subId);
 								replacement.setPortRef(portId);
 								String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
+								// TODO: send dimension and index
 								bioModel.addImplicitReplacedBys(submodel, subBioModel, SBMLutilities.getId(sbase), subSpeciesId);
 							}
 						}
 					}
 				} else if (portmapId.equals("--delete--")) {
 					Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-					bioModel.addDeletion(submodel, portId);
+					// TODO: send dimension and index
+					BioModel.addDeletion(submodel, portId, portDimensions, portDimensionIds,portIndices);
 					String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
-					bioModel.addImplicitDeletions(submodel, subBioModel, subSpeciesId);
+					// TODO: send dimension and index
+					BioModel.addImplicitDeletions(submodel, subBioModel, subSpeciesId, portDimensions, 
+							portDimensionIds,portIndices);
 				}
 			}
 			if (selected != null && oldName != null && !oldName.equals(id)) {
@@ -1005,13 +735,16 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 		int originalDir = -1;
 		int originalRepl = -1;
 		int originalConv = -1;
+		String originalDim = "";
+		String originalPortIndices = "";
+		String originalSubModelIndices = "";
 		if (option.equals("OK")) {
 			selectedIndex = idRefs.indexOf(selected);
 			
 			JLabel dimensionsLabel = new JLabel("Dimensions");
 			replDelPanel.add(dimensionsLabel);
-			JTextField dimensionsField = new JTextField();
-			replDelPanel.add(dimensionsField);
+			replDelPanel.add(dimensionsField.get(selectedIndex));
+			originalDim = dimensionsField.get(selectedIndex).getText();
 
 			JLabel typeLabel = new JLabel("Type");
 			replDelPanel.add(typeLabel);
@@ -1025,13 +758,13 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			
 			JLabel portIndexLabel = new JLabel("Port indices");
 			replDelPanel.add(portIndexLabel);
-			JTextField portIndex = new JTextField();
-			replDelPanel.add(portIndex);
+			replDelPanel.add(portIndicesField.get(selectedIndex));
+			originalPortIndices = portIndicesField.get(selectedIndex).getText();
 			
 			JLabel subModelIndexLabel = new JLabel("SubModel indices");
 			replDelPanel.add(subModelIndexLabel);
-			JTextField subModelIndex = new JTextField();
-			replDelPanel.add(subModelIndex);
+			replDelPanel.add(subModelIndicesField.get(selectedIndex));
+			originalSubModelIndices = subModelIndicesField.get(selectedIndex).getText();
 
 			JLabel dirLabel = new JLabel("Direction");
 			replDelPanel.add(dirLabel);
@@ -1056,6 +789,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
+			// TODO: error check dimensions/indices
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, replDelPanel, "Port Map Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -1079,6 +813,9 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			directionBox.get(selectedIndex).setSelectedIndex(originalDir);
 			portmapBox.get(selectedIndex).setSelectedIndex(originalRepl);
 			convBox.get(selectedIndex).setSelectedIndex(originalConv);
+			dimensionsField.get(selectedIndex).setText(originalDim);
+			portIndicesField.get(selectedIndex).setText(originalPortIndices);
+			subModelIndicesField.get(selectedIndex).setText(originalSubModelIndices);
 			return;
 		}
 	}

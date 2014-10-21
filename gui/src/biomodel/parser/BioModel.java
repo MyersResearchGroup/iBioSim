@@ -6471,33 +6471,51 @@ public class BioModel {
 	}
 	
 	// Note that the ID for a port that refers to a reaction can be the same as the reaction's ID
-	public void addDeletion(Submodel submodel, String subPortId) {
-		if (getDeletionByPortRef(submodel, subPortId) == null) {
-			Deletion deletion = submodel.createDeletion();
+	public static void addDeletion(Submodel submodel, String subPortId, String[] dimensions, String[] dimensionIds,
+			String[] indices) {
+		Deletion deletion = getDeletionByPortRef(submodel, subPortId);
+		if (deletion == null) {
+			deletion = submodel.createDeletion();
 			deletion.setPortRef(subPortId);
+		}
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(deletion);
+		sBasePlugin.unsetListOfDimensions();
+		for(int i = 0; dimensions!=null && i<dimensions.length-1; i++){
+			Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+			dimX.setSize(dimensions[i+1]);
+			dimX.setArrayDimension(i);
+		}
+		sBasePlugin.unsetListOfIndices();
+		for(int i = 0; indices!=null && i<indices.length-1; i++){
+			Index indexRule = sBasePlugin.createIndex();
+			indexRule.setArrayDimension(i);
+			indexRule.setReferencedAttribute("comp:portRef");
+			ASTNode indexMath = SBMLutilities.myParseFormula(indices[i+1]);
+			indexRule.setMath(indexMath);
 		}
 	}
 	
-	public void addImplicitDeletions(Submodel submodel, BioModel subBiomodel, String subSpeciesId) {
+	public static void addImplicitDeletions(Submodel submodel, BioModel subBiomodel, String subSpeciesId, 
+			String[] dimensions, String[] dimensionIds, String[] indices) {
 		ListOf<Port> subPorts = subBiomodel.getSBMLCompModel().getListOfPorts();
 		Reaction subDegradation = subBiomodel.getDegradationReaction(subSpeciesId);
 		if (subDegradation != null && subPorts.get(subDegradation.getId()) != null)
-			addDeletion(submodel, subDegradation.getId());
-		Reaction subDiffusion = getDiffusionReaction(subSpeciesId, sbml.getModel());
+			addDeletion(submodel, subDegradation.getId(), dimensions, dimensionIds, indices);
+		Reaction subDiffusion = subBiomodel.getDiffusionReaction(subSpeciesId);
 		if (subDiffusion != null && subPorts.get(subDiffusion.getId()) != null)
-			addDeletion(submodel, subDiffusion.getId());
+			addDeletion(submodel, subDiffusion.getId(), dimensions, dimensionIds, indices);
 		Reaction subConstitutive = subBiomodel.getConstitutiveReaction(subSpeciesId);
 		if (subConstitutive != null && subPorts.get(subConstitutive.getId()) != null)
-			addDeletion(submodel, subConstitutive.getId());
+			addDeletion(submodel, subConstitutive.getId(), dimensions, dimensionIds, indices);
 		Reaction subComplexation = subBiomodel.getComplexReaction(subSpeciesId);
 		if (subComplexation != null && subPorts.get(subComplexation.getId()) != null)
-			addDeletion(submodel, subComplexation.getId());
+			addDeletion(submodel, subComplexation.getId(), dimensions, dimensionIds, indices);
 		Reaction subProduction = subBiomodel.getProductionReaction(subSpeciesId);
 		if (subProduction != null && subPorts.get(subProduction.getId()) != null)
-			addDeletion(submodel, subProduction.getId());
+			addDeletion(submodel, subProduction.getId(), dimensions, dimensionIds, indices);
 	}
 
-	public void addReplacedBy(Submodel submodel, SBase sbmlElement, String subPortId) {
+	public static void addReplacedBy(Submodel submodel, SBase sbmlElement, String subPortId) {
 		if (getDeletionByPortRef(submodel, subPortId) == null) {
 			CompSBasePlugin compElement = SBMLutilities.getCompSBasePlugin(sbmlElement);
 			if (compElement != null) {
@@ -6518,7 +6536,7 @@ public class BioModel {
 		}
 		Reaction diffusion = getDiffusionReaction(speciesId, sbml.getModel());
 		if (diffusion != null) {
-			Reaction subDiffusion = subBiomodel.getDiffusionReaction(subSpeciesId, subBiomodel.getSBMLDocument().getModel());
+			Reaction subDiffusion = subBiomodel.getDiffusionReaction(subSpeciesId);
 			if (subDiffusion != null && subPorts.get(subDiffusion.getId()) != null)
 				addReplacedBy(submodel, diffusion, subDiffusion.getId());
 		}
@@ -6548,7 +6566,7 @@ public class BioModel {
 			if (deletion.isSetPortRef()) {
 				String subSpeciesId = deletion.getPortRef().replace(GlobalConstants.INPUT+"__", "")
 						.replace(GlobalConstants.OUTPUT+"__", "");
-				addImplicitDeletions(submodel, subBioModel, subSpeciesId);
+				addImplicitDeletions(submodel, subBioModel, subSpeciesId, null, null, null);
 			}
 		}
 		ListOf<Species> sbmlSpecies = sbml.getModel().getListOfSpecies();
@@ -6561,7 +6579,7 @@ public class BioModel {
 							&& remoteReplacement.isSetPortRef()) {
 						String subSpeciesId = remoteReplacement.getPortRef().replace(GlobalConstants.INPUT+"__", "")
 								.replace(GlobalConstants.OUTPUT+"__", "");
-						addImplicitDeletions(submodel, subBioModel, subSpeciesId);
+						addImplicitDeletions(submodel, subBioModel, subSpeciesId, null, null, null);
 					}
 				}
 				if (compElement.isSetReplacedBy()) {
