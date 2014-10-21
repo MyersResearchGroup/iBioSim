@@ -35,6 +35,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.Dimension;
+import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.arrays.util.ArraysMath;
 import org.sbml.jsbml.ext.arrays.validator.ArraysValidator;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
@@ -146,6 +147,17 @@ public class SBMLutilities {
 			dimStr += "[" + dimX.getSize() + "]";
 		}
 		return dimStr;
+	}
+	
+	public static String getIndicesString(SBase sBase, String attribute) {
+		String indicesStr="";
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
+		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
+			Index index = sBasePlugin.getIndex(i,attribute);
+			if (index!=null)
+				indicesStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+		}
+		return indicesStr;
 	}
 	
 	/**

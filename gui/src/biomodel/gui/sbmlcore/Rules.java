@@ -472,11 +472,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					if (!error && !modelEditor.isParamsOnly()) {
-						SBMLutilities.setMetaId(r, dimID[0].trim());
-						Port port = bioModel.getPortByMetaIdRef(r.getMetaId());
 						if (dimID!=null) {
 							SBMLutilities.setMetaId(r, dimID[0].trim());
 						}
+						Port port = bioModel.getPortByMetaIdRef(r.getMetaId());
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
 						sBasePlugin.unsetListOfDimensions();
 						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
