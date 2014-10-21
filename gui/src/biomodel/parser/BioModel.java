@@ -6515,48 +6515,68 @@ public class BioModel {
 			addDeletion(submodel, subProduction.getId(), dimensions, dimensionIds, indices);
 	}
 
-	public static void addReplacedBy(Submodel submodel, SBase sbmlElement, String subPortId) {
-		if (getDeletionByPortRef(submodel, subPortId) == null) {
-			CompSBasePlugin compElement = SBMLutilities.getCompSBasePlugin(sbmlElement);
-			if (compElement != null) {
-				ReplacedBy replacement = compElement.createReplacedBy();
-				replacement.setSubmodelRef(submodel.getId());
-				replacement.setPortRef(subPortId);
-			}
-		} 
+	public static void addReplacedBy(SBase sbmlElement, String subModelId, String subPortId,
+			String[] dimensions, String[] dimensionIds,	String[] portIndices, String[] subModelIndices) {
+		CompSBasePlugin compElement = SBMLutilities.getCompSBasePlugin(sbmlElement);
+		ReplacedBy replacement = compElement.createReplacedBy();
+		replacement.setSubmodelRef(subModelId);
+		replacement.setPortRef(subPortId);
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(replacement);
+		sBasePlugin.unsetListOfDimensions();
+		for(int i = 0; dimensions!=null && i<dimensions.length-1; i++){
+			Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+			dimX.setSize(dimensions[i+1]);
+			dimX.setArrayDimension(i);
+		}
+		sBasePlugin.unsetListOfIndices();
+		for(int i = 0; portIndices!=null && i<portIndices.length-1; i++){
+			Index indexRule = sBasePlugin.createIndex();
+			indexRule.setArrayDimension(i);
+			indexRule.setReferencedAttribute("comp:portRef");
+			ASTNode indexMath = SBMLutilities.myParseFormula(portIndices[i+1]);
+			indexRule.setMath(indexMath);
+		}
+		for(int i = 0; subModelIndices!=null && i<subModelIndices.length-1; i++){
+			Index indexRule = sBasePlugin.createIndex();
+			indexRule.setArrayDimension(i);
+			indexRule.setReferencedAttribute("comp:submodelRef");
+			ASTNode indexMath = SBMLutilities.myParseFormula(subModelIndices[i+1]);
+			indexRule.setMath(indexMath);
+		}
 	}
 	
-	public void addImplicitReplacedBys(Submodel submodel, BioModel subBiomodel, String speciesId, String subSpeciesId) {	
+	public void addImplicitReplacedBys(String submodelId, BioModel subBiomodel, String speciesId, String subSpeciesId,
+			String[] dimensions, String[] dimensionIds,	String[] portIndices, String[] subModelIndices) {	
 		ListOf<Port> subPorts = subBiomodel.getSBMLCompModel().getListOfPorts();
 		Reaction degradation = getDegradationReaction(speciesId);
 		if (degradation != null) {
 			Reaction subDegradation = subBiomodel.getDegradationReaction(subSpeciesId);
 			if (subDegradation != null && subPorts.get(subDegradation.getId()) != null)
-				addReplacedBy(submodel, degradation, subDegradation.getId());
+				addReplacedBy(degradation, submodelId, subDegradation.getId(),dimensions,dimensionIds,portIndices,subModelIndices);
 		}
 		Reaction diffusion = getDiffusionReaction(speciesId, sbml.getModel());
 		if (diffusion != null) {
 			Reaction subDiffusion = subBiomodel.getDiffusionReaction(subSpeciesId);
 			if (subDiffusion != null && subPorts.get(subDiffusion.getId()) != null)
-				addReplacedBy(submodel, diffusion, subDiffusion.getId());
+				addReplacedBy(diffusion, submodelId, subDiffusion.getId(),dimensions,dimensionIds,portIndices,subModelIndices);
 		}
 		Reaction constitutive = getConstitutiveReaction(speciesId);
 		if (constitutive != null) {
 			Reaction subConstitutive = subBiomodel.getConstitutiveReaction(subSpeciesId);
 			if (subConstitutive != null && subPorts.get(subConstitutive.getId()) != null)
-				addReplacedBy(submodel, constitutive, subConstitutive.getId());
+				addReplacedBy(constitutive, submodelId, subConstitutive.getId(),dimensions,dimensionIds,portIndices,subModelIndices);
 		}
 		Reaction complexation = getComplexReaction(speciesId);
 		if (complexation != null) {
 			Reaction subComplexation = subBiomodel.getComplexReaction(subSpeciesId);
 			if (subComplexation != null && subPorts.get(subComplexation.getId()) != null)
-				addReplacedBy(submodel, complexation, subComplexation.getId());
+				addReplacedBy(complexation, submodelId, subComplexation.getId(),dimensions,dimensionIds,portIndices,subModelIndices);
 		}
 		Reaction production = getProductionReaction(speciesId);
 		if (production != null) {
 			Reaction subProduction = subBiomodel.getProductionReaction(subSpeciesId);
 			if (subProduction != null && subPorts.get(subProduction.getId()) != null)
-				addReplacedBy(submodel, production, subProduction.getId());
+				addReplacedBy(production, submodelId, subProduction.getId(),dimensions,dimensionIds,portIndices,subModelIndices);
 		}
 	}
 	
@@ -6566,6 +6586,7 @@ public class BioModel {
 			if (deletion.isSetPortRef()) {
 				String subSpeciesId = deletion.getPortRef().replace(GlobalConstants.INPUT+"__", "")
 						.replace(GlobalConstants.OUTPUT+"__", "");
+				// TODO: need to fix nulls
 				addImplicitDeletions(submodel, subBioModel, subSpeciesId, null, null, null);
 			}
 		}
@@ -6579,6 +6600,7 @@ public class BioModel {
 							&& remoteReplacement.isSetPortRef()) {
 						String subSpeciesId = remoteReplacement.getPortRef().replace(GlobalConstants.INPUT+"__", "")
 								.replace(GlobalConstants.OUTPUT+"__", "");
+						// TODO: need to fix nulls
 						addImplicitDeletions(submodel, subBioModel, subSpeciesId, null, null, null);
 					}
 				}
@@ -6588,7 +6610,8 @@ public class BioModel {
 							&& localReplacement.isSetPortRef()) {
 						String subSpeciesId = localReplacement.getPortRef().replace(GlobalConstants.INPUT+"__", "")
 								.replace(GlobalConstants.OUTPUT+"__", "");
-						addImplicitReplacedBys(submodel, subBioModel, sbmlSpecies.get(i).getId(), subSpeciesId);
+						// TODO: need to fix nulls
+						addImplicitReplacedBys(submodel.getId(), subBioModel, sbmlSpecies.get(i).getId(), subSpeciesId, null, null, null, null);
 						//	sbmlElements = SBMLutilities.getListOfAllElements(sbml.getModel());
 					}
 				}
