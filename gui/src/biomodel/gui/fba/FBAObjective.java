@@ -80,7 +80,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(fluxObjective);
 				String indexStr = "";
 				for(int k = sBasePlugin.getIndexCount()-1; k>=0; k--){
-					Index index = sBasePlugin.getIndex(k,"reaction");
+					Index index = sBasePlugin.getIndex(k,"fbc:reaction");
 					if (index!=null)
 						indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
 				}
@@ -177,7 +177,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 							indexStr = reactionIdIndex.substring(reactionIdIndex.indexOf("["));
 						} 						
 						SBase reaction = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactionId);
-						String[] dex = SBMLutilities.checkIndices(indexStr, reaction, bioModel.getSBMLDocument(), null, "reaction", null, null, null);
+						String[] dex = SBMLutilities.checkIndices(indexStr, reaction, bioModel.getSBMLDocument(), null, "fbc:reaction", null, null, null);
 						fluxObjective.setReaction(reactionId);
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(fluxObjective);
 						sBasePlugin.unsetListOfIndices();

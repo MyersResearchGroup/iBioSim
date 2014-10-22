@@ -374,6 +374,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 	}
 	
 	private void updateComboBoxEnabling() {
+		// TODO: update enablings of dim/index based on context
 		for (int i = 0; i < portmapBox.size(); i++) {
 			if (portmapBox.get(i).getSelectedIndex()<2 &&
 				(directionBox.get(i).getSelectedIndex()!=0 ||
@@ -813,6 +814,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				error = true;
 			}
 			if (!error) {
+				// TODO: not for none
 				SBase variable = subBioModel.getSBMLCompModel().getPort(portId);
 				if (variable==null) {
 					error = true;
@@ -823,6 +825,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				}
 			}
 			if (!error) {
+				// TODO: not for delete or none
 				SBase variable = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 				if (variable==null) {
 					error = true;
