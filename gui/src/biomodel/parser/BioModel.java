@@ -6514,6 +6514,39 @@ public class BioModel {
 		if (subProduction != null && subPorts.get(subProduction.getId()) != null)
 			addDeletion(submodel, subProduction.getId(), dimensions, dimensionIds, indices);
 	}
+	
+	public static void addReplacement(SBase sbmlElement, String subModelId, String subPortId, String convFactor,
+			String[] dimensions, String[] dimensionIds,	String[] portIndices, String[] subModelIndices) {
+		CompSBasePlugin compElement = SBMLutilities.getCompSBasePlugin(sbmlElement);
+		ReplacedElement replacement = compElement.createReplacedElement();
+		replacement.setSubmodelRef(subModelId);
+		replacement.setPortRef(subPortId);
+		if (!convFactor.equals("(none)")) {
+			replacement.setConversionFactor(convFactor);
+		}
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(replacement);
+		sBasePlugin.unsetListOfDimensions();
+		for(int i = 0; dimensions!=null && i<dimensions.length-1; i++){
+			Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+			dimX.setSize(dimensions[i+1]);
+			dimX.setArrayDimension(i);
+		}
+		sBasePlugin.unsetListOfIndices();
+		for(int i = 0; portIndices!=null && i<portIndices.length-1; i++){
+			Index indexRule = sBasePlugin.createIndex();
+			indexRule.setArrayDimension(i);
+			indexRule.setReferencedAttribute("comp:portRef");
+			ASTNode indexMath = SBMLutilities.myParseFormula(portIndices[i+1]);
+			indexRule.setMath(indexMath);
+		}
+		for(int i = 0; subModelIndices!=null && i<subModelIndices.length-1; i++){
+			Index indexRule = sBasePlugin.createIndex();
+			indexRule.setArrayDimension(i);
+			indexRule.setReferencedAttribute("comp:submodelRef");
+			ASTNode indexMath = SBMLutilities.myParseFormula(subModelIndices[i+1]);
+			indexRule.setMath(indexMath);
+		}
+	}
 
 	public static void addReplacedBy(SBase sbmlElement, String subModelId, String subPortId,
 			String[] dimensions, String[] dimensionIds,	String[] portIndices, String[] subModelIndices) {

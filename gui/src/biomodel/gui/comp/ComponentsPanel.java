@@ -621,6 +621,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				if(portDimensions!=null){
 					portDimensionIds = SBMLutilities.getDimensionIds("r",portDimensions.length-1);
 				}
+				// TODO: Need to fail on errors without creating bad stuff
 				SBase variable = subBioModel.getSBMLCompModel().getPort(portId);
 				// TODO: need to pass top-level dimensions
 				portIndices = SBMLutilities.checkIndices(portIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:portRef", 
@@ -636,18 +637,12 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						sbmlSBase = SBMLutilities.getCompSBasePlugin(sbase);
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
-								// TODO: send dimension and index
-								ReplacedElement replacement = sbmlSBase.createReplacedElement();
-								replacement.setSubmodelRef(subId);
-								replacement.setPortRef(portId);
-								if (!convBox.get(i).getSelectedItem().equals("(none)")) {
-									replacement.setConversionFactor((String)convBox.get(i).getSelectedItem());
-								}
+								BioModel.addReplacement(sbase, subId, portId, (String)convBox.get(i).getSelectedItem(),
+										portDimensions, portDimensionIds, portIndices, subModelIndices);
 								// TODO: why not add implicit replacements?
 							} else {
 								boolean skip = false;
 								if (sbmlSBase.isSetReplacedBy()) {
-									// TODO: send dimension and index
 									ReplacedBy replacement = sbmlSBase.getReplacedBy();
 									if (!replacement.getSubmodelRef().equals(subId) ||
 											!replacement.getPortRef().equals(portId)) {	
@@ -660,7 +655,6 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 									}
 								}
 								if (!skip) {
-									// TODO: send dimension and index
 									BioModel.addReplacedBy(sbase, subId, portId, portDimensions, portDimensionIds, portIndices, subModelIndices);
 									// TODO: why not add implicitReplacedBys?
 								}
@@ -672,16 +666,10 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
 								/* TODO: Code below uses just a replacement */
-								// TODO: send dimension and index
-								ReplacedElement replacement = sbmlSBase.createReplacedElement();
-								replacement.setSubmodelRef(subId);
-								replacement.setPortRef(portId);
-								if (!convBox.get(i).getSelectedItem().equals("(none)")) {
-									replacement.setConversionFactor((String)convBox.get(i).getSelectedItem());
-								}
+								BioModel.addReplacement(sbase, subId, portId, (String)convBox.get(i).getSelectedItem(),
+										portDimensions, portDimensionIds, portIndices, subModelIndices);
 								String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-								// TODO: send dimension and index
 								BioModel.addImplicitDeletions(submodel, subBioModel, subSpeciesId, portDimensions, 
 										portDimensionIds,portIndices);
 								// TODO: why not add implicit replacements?
@@ -696,7 +684,6 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 								replacement.setDeletion("delete_"+portId);
 								*/
 							} else {
-								// TODO: send dimension and index
 								BioModel.addReplacedBy(sbase, subId, portId, portDimensions, portDimensionIds, portIndices, subModelIndices);
 								String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 								bioModel.addImplicitReplacedBys(subId, subBioModel, SBMLutilities.getId(sbase), subSpeciesId, 
@@ -706,10 +693,8 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 					}
 				} else if (portmapId.equals("--delete--")) {
 					Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-					// TODO: send dimension and index
 					BioModel.addDeletion(submodel, portId, portDimensions, portDimensionIds,portIndices);
 					String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
-					// TODO: send dimension and index
 					BioModel.addImplicitDeletions(submodel, subBioModel, subSpeciesId, portDimensions, 
 							portDimensionIds,portIndices);
 				}
@@ -759,6 +744,10 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			replDelPanel.add(dimensionsLabel);
 			replDelPanel.add(dimensionsField.get(selectedIndex));
 			originalDim = dimensionsField.get(selectedIndex).getText();
+			if (!idRefs.get(selectedIndex).contains("[")&&!fields.get(GlobalConstants.ID).getValue().contains("[")) {
+				dimensionsField.get(selectedIndex).setEnabled(false);
+				dimensionsField.get(selectedIndex).setText("");
+			}
 
 			JLabel typeLabel = new JLabel("Type");
 			replDelPanel.add(typeLabel);
@@ -774,11 +763,19 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			replDelPanel.add(portIndexLabel);
 			replDelPanel.add(portIndicesField.get(selectedIndex));
 			originalPortIndices = portIndicesField.get(selectedIndex).getText();
+			if (!idRefs.get(selectedIndex).contains("[")) {
+				portIndicesField.get(selectedIndex).setEnabled(false);
+				portIndicesField.get(selectedIndex).setText("");
+			}
 			
 			JLabel subModelIndexLabel = new JLabel("SubModel indices");
 			replDelPanel.add(subModelIndexLabel);
 			replDelPanel.add(subModelIndicesField.get(selectedIndex));
 			originalSubModelIndices = subModelIndicesField.get(selectedIndex).getText();
+			if (!fields.get(GlobalConstants.ID).getValue().contains("[")) {
+				subModelIndicesField.get(selectedIndex).setEnabled(false);
+				subModelIndicesField.get(selectedIndex).setText("");
+			}
 
 			JLabel dirLabel = new JLabel("Direction");
 			replDelPanel.add(dirLabel);
@@ -803,7 +800,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
-			// TODO: need to allow compartment/species dimensions to be used as appropriate
+			// TODO: need to allow subModel/species dimensions to be used as appropriate
 			String portId = portIds.get(selectedIndex);
 			String[] portDimensions = new String[]{""};
 			String[] portIndices = new String[]{""};
