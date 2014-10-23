@@ -7282,7 +7282,6 @@ public class BioModel {
 		modelList.add(filename);
 		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
 		save(tempFile);
-		ArrayList<String> comps = getListOfSubmodels();
 		
 		BioModel model = new BioModel(path);
 		model.load(tempFile);
@@ -7291,12 +7290,15 @@ public class BioModel {
 		if(model.getSBMLDocument().isPackageEnabled(ArraysConstants.shortLabel)) {
 			// TODO: validate arrays before flattening
 			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
+			model.createCompPlugin();
+			model.createFBCPlugin();
 		}
+		ArrayList<String> comps = model.getListOfSubmodels();
 
 		// loop through the list of submodels
 		for (String subModelId : comps) {
 			BioModel subModel = new BioModel(path);		
-			String extModelFile = getExtModelFileName(subModelId);
+			String extModelFile = model.getExtModelFileName(subModelId);
 			subModel.load(path + separator + extModelFile);
 			ArrayList<String> modelListCopy = copyArray(modelList);
 			if (modelListCopy.contains(subModel.getFilename())) {
@@ -7401,6 +7403,8 @@ public class BioModel {
 		if(model.getSBMLDocument().isPackageEnabled(ArraysConstants.shortLabel)) {
 			// TODO: validate arrays before flattening
 			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
+			model.createCompPlugin();
+			model.createFBCPlugin();
 		}
 		
 		for (int i = 0; i < model.getSBMLCompModel().getListOfSubmodels().size(); i++) {

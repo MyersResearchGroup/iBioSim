@@ -793,12 +793,6 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			replDelPanel.add(dimensionsLabel);
 			replDelPanel.add(dimensionsField.get(selectedIndex));
 			originalDim = dimensionsField.get(selectedIndex).getText();
-			if (!idRefs.get(selectedIndex).contains("[")&&!fields.get(GlobalConstants.ID).getValue().contains("[")) {
-				dimensionsField.get(selectedIndex).setEnabled(false);
-				dimensionsField.get(selectedIndex).setText("");
-			} else {
-				dimensionsField.get(selectedIndex).setEnabled(true);
-			}
 
 			JLabel typeLabel = new JLabel("Type");
 			replDelPanel.add(typeLabel);
@@ -814,23 +808,11 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			replDelPanel.add(portIndexLabel);
 			replDelPanel.add(portIndicesField.get(selectedIndex));
 			originalPortIndices = portIndicesField.get(selectedIndex).getText();
-			if (!idRefs.get(selectedIndex).contains("[")) {
-				portIndicesField.get(selectedIndex).setEnabled(false);
-				portIndicesField.get(selectedIndex).setText("");
-			} else {
-				portIndicesField.get(selectedIndex).setEnabled(true);
-			}
 			
 			JLabel subModelIndexLabel = new JLabel("SubModel indices");
 			replDelPanel.add(subModelIndexLabel);
 			replDelPanel.add(subModelIndicesField.get(selectedIndex));
 			originalSubModelIndices = subModelIndicesField.get(selectedIndex).getText();
-			if (!fields.get(GlobalConstants.ID).getValue().contains("[")) {
-				subModelIndicesField.get(selectedIndex).setEnabled(false);
-				subModelIndicesField.get(selectedIndex).setText("");
-			} else {
-				subModelIndicesField.get(selectedIndex).setEnabled(true);
-			}
 
 			JLabel dirLabel = new JLabel("Direction");
 			replDelPanel.add(dirLabel);
@@ -857,6 +839,8 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			error = false;
 			// TODO: need to allow subModel/species dimensions to be used as appropriate
 			String portId = portIds.get(selectedIndex);
+			String[] topDimensions = new String[]{""};
+			String[] topDimensionIds = new String[]{""};
 			String[] portDimensions = new String[]{""};
 			String[] portIndices = new String[]{""};
 			String[] subModelIndices = new String[]{""};
@@ -869,13 +853,22 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				}else{
 					error = true;
 				}
+				if (portmapId.equals("--delete--")) {
+					topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+							fields.get(GlobalConstants.ID).getValue(), false);
+					if(topDimensions!=null) {
+						topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
+					}
+				} else {
+					
+				}
 				if (!error) {
 					SBase variable = subBioModel.getSBMLCompModel().getPort(portId);
 					if (variable==null) {
 						error = true;
 					} else {
 						portIndices = SBMLutilities.checkIndices(portIndicesField.get(selectedIndex).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:portRef", 
-								portDimensions, null, null);
+								portDimensions, topDimensionIds, topDimensions);
 						error = (portIndices==null);
 					}
 				}
@@ -886,7 +879,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 							error = true;
 						} else {
 							subModelIndices = SBMLutilities.checkIndices(subModelIndicesField.get(selectedIndex).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
-									portDimensions, null, null);
+									portDimensions, topDimensionIds, topDimensions);
 							error = (subModelIndices==null);
 						}
 					}
