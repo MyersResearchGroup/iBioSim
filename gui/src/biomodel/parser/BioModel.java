@@ -7604,11 +7604,13 @@ public class BioModel {
 			}
 			updateVarId(false, c.getId(), newName, subBioModel);
 			compartments.remove(c.getId());
-			c.setId(newName);
+			if (subModel.getCompartment(newName)==null) c.setId(newName);
+			else c.setId("skip"+"___"+c.getId());
 			if (c.isSetMetaId()) SBMLutilities.setMetaId(c, subModelId + "___" + c.getMetaId());
 		}
 		for (int i = 0; i < subModel.getCompartmentCount(); i++) {
 			Compartment c = subModel.getCompartment(i).clone();
+			if (c.getId().startsWith("skip___")) continue;
 			if (c.getId().startsWith("_" + subModelId + "__")) {
 				updateVarId(false, c.getId(), c.getId().substring(3 + subModelId.length()), subBioModel);
 				compartments.remove(c.getId());
@@ -7658,11 +7660,13 @@ public class BioModel {
 						model.getSpecies(j).getId());
 			}
 			updateVarId(true, spec.getId(), newName, subBioModel);
-			spec.setId(newName);
+			if (subModel.getSpecies(newName)==null) spec.setId(newName);
+			else spec.setId("skip"+"___"+spec.getId());
 			if (spec.isSetMetaId()) SBMLutilities.setMetaId(spec, subModelId + "___" + spec.getMetaId());
 		}
 		for (int i = 0; i < subModel.getSpeciesCount(); i++) {
 			Species spec = subModel.getSpecies(i).clone();
+			if (spec.getId().startsWith("skip___")) continue;
 			if (spec.getId().startsWith("_" + subModelId + "__")) {
 				updateVarId(true, spec.getId(), spec.getId().substring(3 + subModelId.length()), subBioModel);
 				spec.setId(spec.getId().substring(3 + subModelId.length()));
@@ -7706,11 +7710,13 @@ public class BioModel {
 			}
 			//System.out.println("orig="+p.getId()+" new="+newName);
 			updateVarId(false, p.getId(), newName, subBioModel);
-			p.setId(newName);
+			if (subModel.getParameter(newName)==null) p.setId(newName);
+			else p.setId("skip"+"___"+p.getId());
 			if (p.isSetMetaId()) SBMLutilities.setMetaId(p, subModelId + "___" + p.getMetaId());
 		}
 		for (int i = 0; i < subModel.getParameterCount(); i++) {
 			Parameter p = subModel.getParameter(i).clone();
+			if (p.getId().startsWith("skip___")) continue;
 			if (p.getId().startsWith("_" + subModelId + "__")) {
 				updateVarId(false, p.getId(), p.getId().substring(3 + subModelId.length()), subBioModel);
 				p.setId(p.getId().substring(3 + subModelId.length()));
@@ -7754,7 +7760,8 @@ public class BioModel {
 						model.getReaction(j).getId());
 			}
 			updateVarId(false, r.getId(), newName, subBioModel);
-			r.setId(newName);
+			if (subModel.getReaction(newName)==null) r.setId(newName);
+			else r.setId("skip"+"___"+r.getId());
 			if (r.isSetMetaId()) SBMLutilities.setMetaId(r, subModelId + "___" + r.getMetaId());
 			if (!r.isSetKineticLaw()) continue;
 			for (int j = 0; j < r.getKineticLaw().getLocalParameterCount(); j++) {
@@ -7764,6 +7771,7 @@ public class BioModel {
 		}
 		for (int i = 0; i < subModel.getReactionCount(); i++) {
 			Reaction r = subModel.getReaction(i).clone();
+			if (r.getId().startsWith("skip___")) continue;
 			if (r.getId().startsWith("_" + subModelId + "__")) {
 				updateVarId(false, r.getId(), r.getId().substring(3 + subModelId.length()), subBioModel);
 				r.setId(r.getId().substring(3 + subModelId.length()));
