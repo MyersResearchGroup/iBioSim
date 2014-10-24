@@ -588,6 +588,8 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				}
 			}
 			for (int i = 0; i < portIds.size(); i++) {
+				String[] topDimensions = new String[]{""};
+				String[] topDimensionIds = new String[]{""};
 				String[] portDimensions = new String[]{""};
 				String[] portIndices = new String[]{""};
 				String[] subModelIndices = new String[]{""};
@@ -602,15 +604,34 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						return false;
 					}
 					SBase variable = subBioModel.getSBMLCompModel().getPort(portId);
-					// TODO: need to pass top-level dimensions
+					if (portmapId.equals("--delete--")) {
+						topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+								fields.get(GlobalConstants.ID).getValue(), false);
+						if(topDimensions!=null) {
+							topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
+						}
+					} else {
+						topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+								SBMLutilities.getArrayId(bioModel.getSBMLDocument(), portmapId), false);
+						if(topDimensions!=null) {
+							topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
+						}
+					}
 					portIndices = SBMLutilities.checkIndices(portIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:portRef", 
-							portDimensions, null, null);
+							portDimensions, topDimensionIds, topDimensions);
 					if (portIndices==null) return false;
 					if (!portmapId.equals("--delete--")) {
 						variable = bioModel.getSBMLCompModel().getSubmodel(subModelId);
-						// TODO: need to pass top-level dimensions
+						variable = new Submodel();
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(variable);
+						sBasePlugin.unsetListOfDimensions();
+						for(int j = 0; j<dimensions.length-1; j++){
+							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[j]);
+							dimX.setSize(dimensions[j+1].replace("]", "").trim());
+							dimX.setArrayDimension(j);
+						}
 						subModelIndices = SBMLutilities.checkIndices(subModelIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
-								portDimensions, null, null);
+								portDimensions, topDimensionIds, topDimensions);
 						if (subModelIndices==null) return false;
 					}
 				}
@@ -659,6 +680,8 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				String portId = portIds.get(i);
 				//String type = types.get(i);
 				String portmapId = (String)portmapBox.get(i).getSelectedItem();
+				String[] topDimensions = new String[]{""};
+				String[] topDimensionIds = new String[]{""};
 				String[] portDimensions = new String[]{""};
 				String[] portIndices = new String[]{""};
 				String[] subModelIndices = new String[]{""};
@@ -669,14 +692,25 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						portDimensionIds = SBMLutilities.getDimensionIds("r",portDimensions.length-1);
 					}
 					SBase variable = subBioModel.getSBMLCompModel().getPort(portId);
-					// TODO: need to pass top-level dimensions
+					if (portmapId.equals("--delete--")) {
+						topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+								fields.get(GlobalConstants.ID).getValue(), false);
+						if(topDimensions!=null) {
+							topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
+						}
+					} else {
+						topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+								SBMLutilities.getArrayId(bioModel.getSBMLDocument(), portmapId), false);
+						if(topDimensions!=null) {
+							topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
+						}
+					}
 					portIndices = SBMLutilities.checkIndices(portIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:portRef", 
-							portDimensions, null, null);
+							portDimensions, topDimensionIds, topDimensions);
 					if (!portmapId.equals("--delete--")) {
 						variable = bioModel.getSBMLCompModel().getSubmodel(subModelId);
-						// TODO: need to pass top-level dimensions
 						subModelIndices = SBMLutilities.checkIndices(subModelIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
-								portDimensions, null, null);
+								portDimensions, topDimensionIds, topDimensions);
 					}
 				}
 				if (!portmapId.equals("--none--")&&!portmapId.equals("--delete--")&&!portmapId.equals("--include--")) {
@@ -830,6 +864,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			originalConv = convBox.get(selectedIndex).getSelectedIndex();
 			directionBox.get(selectedIndex).addActionListener(this);
 			portmapBox.get(selectedIndex).addActionListener(this);
+			updateComboBoxEnabling();
 		}
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, replDelPanel, "Port Map Editor", JOptionPane.YES_NO_OPTION,
@@ -837,7 +872,6 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
-			// TODO: need to allow subModel/species dimensions to be used as appropriate
 			String portId = portIds.get(selectedIndex);
 			String[] topDimensions = new String[]{""};
 			String[] topDimensionIds = new String[]{""};
@@ -860,7 +894,11 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
 					}
 				} else {
-					
+					topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+							SBMLutilities.getArrayId(bioModel.getSBMLDocument(), portmapId), false);
+					if(topDimensions!=null) {
+						topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
+					}
 				}
 				if (!error) {
 					SBase variable = subBioModel.getSBMLCompModel().getPort(portId);
@@ -874,14 +912,24 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				}
 				if (!error) {
 					if (!portmapId.equals("--delete--")) {
-						SBase variable = bioModel.getSBMLCompModel().getSubmodel(subModelId);
-						if (variable==null) {
-							error = true;
-						} else {
-							subModelIndices = SBMLutilities.checkIndices(subModelIndicesField.get(selectedIndex).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
-									portDimensions, topDimensionIds, topDimensions);
-							error = (subModelIndices==null);
+						SBase variable = new Submodel();
+						String[] dimensions = new String[]{""};
+						String[] dimensionIds = new String[]{""};
+						dimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+								fields.get(GlobalConstants.ID).getValue(), false);
+						if(dimensions!=null) {
+							dimensionIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
+							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(variable);
+							sBasePlugin.unsetListOfDimensions();
+							for(int i = 0; i<dimensions.length-1; i++){
+								org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+								dimX.setSize(dimensions[i+1].replace("]", "").trim());
+								dimX.setArrayDimension(i);
+							}
 						}
+						subModelIndices = SBMLutilities.checkIndices(subModelIndicesField.get(selectedIndex).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
+								portDimensions, topDimensionIds, topDimensions);
+						error = (subModelIndices==null);
 					}
 				}
 			}
@@ -889,20 +937,22 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				value = JOptionPane.showOptionDialog(Gui.frame, replDelPanel, "Port Map Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
-			if (portmapBox.get(selectedIndex).getSelectedItem().equals("--none--")) {
-				replDel[selectedIndex] = idRefs.get(selectedIndex) + " port is unchanged"; 
-			} else if (portmapBox.get(selectedIndex).getSelectedItem().equals("--delete--")) {
-				replDel[selectedIndex] = idRefs.get(selectedIndex) + " port is deleted"; 
-			} else if (directionBox.get(selectedIndex).getSelectedItem().equals("<--")) {
-				replDel[selectedIndex] = idRefs.get(selectedIndex) + " port is replaced by " + 
-						portmapBox.get(selectedIndex).getSelectedItem(); 
-			} else {
-				replDel[selectedIndex] = idRefs.get(selectedIndex) + " port replaces " + 
-						portmapBox.get(selectedIndex).getSelectedItem(); 
+			if (!error) {
+				if (portmapBox.get(selectedIndex).getSelectedItem().equals("--none--")) {
+					replDel[selectedIndex] = idRefs.get(selectedIndex) + " port is unchanged"; 
+				} else if (portmapBox.get(selectedIndex).getSelectedItem().equals("--delete--")) {
+					replDel[selectedIndex] = idRefs.get(selectedIndex) + " port is deleted"; 
+				} else if (directionBox.get(selectedIndex).getSelectedItem().equals("<--")) {
+					replDel[selectedIndex] = idRefs.get(selectedIndex) + " port is replaced by " + 
+							portmapBox.get(selectedIndex).getSelectedItem(); 
+				} else {
+					replDel[selectedIndex] = idRefs.get(selectedIndex) + " port replaces " + 
+							portmapBox.get(selectedIndex).getSelectedItem(); 
+				}
+				//main.util.Utility.sort(replDel);
+				replacementsDeletions.setListData(replDel);
+				replacementsDeletions.setSelectedIndex(selectedIndex);
 			}
-			//main.util.Utility.sort(replDel);
-			replacementsDeletions.setListData(replDel);
-			replacementsDeletions.setSelectedIndex(selectedIndex);
 		}
 		if (value == JOptionPane.NO_OPTION) {
 			directionBox.get(selectedIndex).setSelectedIndex(originalDir);
