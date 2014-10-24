@@ -7289,9 +7289,30 @@ public class BioModel {
 		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
 		if(model.getSBMLDocument().isPackageEnabled(ArraysConstants.shortLabel)) {
 			// TODO: validate arrays before flattening
+			//model.save(tempFile.replace("_temp", "_before"));
+			
 			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
 			model.createCompPlugin();
 			model.createFBCPlugin();
+			/*
+			SBMLWriter writer = new SBMLWriter();
+			try {
+				writer.writeSBMLToFile(model.getSBMLDocument(), tempFile.replace("_temp", "_after"));
+			}
+			catch (SBMLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (XMLStreamException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			*/
+			//model.save(tempFile.replace("_temp", "_after"));
 		}
 		ArrayList<String> comps = model.getListOfSubmodels();
 
@@ -7402,9 +7423,13 @@ public class BioModel {
 		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
 		if(model.getSBMLDocument().isPackageEnabled(ArraysConstants.shortLabel)) {
 			// TODO: validate arrays before flattening
+			//model.save(model.filename.replace(".gcm","").replace(".xml","")+"_before.xml");
+			
 			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
 			model.createCompPlugin();
 			model.createFBCPlugin();
+			
+			//model.save(model.filename.replace(".gcm","").replace(".xml","")+"_after.xml");
 		}
 		
 		for (int i = 0; i < model.getSBMLCompModel().getListOfSubmodels().size(); i++) {
@@ -7537,7 +7562,7 @@ public class BioModel {
 	private BioModel unionSBML(BioModel bioModel, BioModel subBioModel, String subModelId, String RNAPamount) {
 		SBMLDocument document = bioModel.getSBMLDocument();
 		SBMLDocument subDocument = subBioModel.getSBMLDocument();
-		SBMLutilities.setNamespaces(subDocument, document.getSBMLDocumentNamespaces());
+		SBMLutilities.setNamespaces(subDocument, document.getDeclaredNamespaces());
 
 		Model model = document.getModel();
 		Model subModel = subDocument.getModel();
@@ -7551,14 +7576,18 @@ public class BioModel {
 			Port p = bioModel.getSBMLCompModel().getListOfPorts().get(i);
 			if (p.isSetIdRef() && p.getIdRef().equals(subModelId) && 
 					p.isSetSBaseRef() && p.getSBaseRef().isSetPortRef()) {
-				p.unsetIdRef();
 				Port subPort = subBioModel.getSBMLCompModel().getListOfPorts().get(p.getSBaseRef().getPortRef());
-				if (subPort.isSetIdRef()) {
-					p.setIdRef(subModelId + "__" + subPort.getIdRef());
-				} else if (subPort.isSetMetaIdRef()) {
-					p.setMetaIdRef(subModelId + "__" + subPort.getMetaIdRef());
+				if (subPort!=null) {
+					if (subPort.isSetIdRef()) {
+						p.setIdRef(subModelId + "__" + subPort.getIdRef());
+					} else if (subPort.isSetMetaIdRef()) {
+						p.unsetIdRef();
+						p.setMetaIdRef(subModelId + "__" + subPort.getMetaIdRef());
+					}
+					p.unsetSBaseRef();
+				} else {
+					bioModel.getSBMLCompModel().removePort(p);
 				}
-				p.unsetSBaseRef();
 			} 
 		}
 		
@@ -7675,6 +7704,7 @@ public class BioModel {
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,p.getId(),
 						model.getParameter(j).getId());
 			}
+			//System.out.println("orig="+p.getId()+" new="+newName);
 			updateVarId(false, p.getId(), newName, subBioModel);
 			p.setId(newName);
 			if (p.isSetMetaId()) SBMLutilities.setMetaId(p, subModelId + "___" + p.getMetaId());
