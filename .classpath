@@ -46,7 +46,7 @@
 	<classpathentry kind="lib" path="gui/lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="lib" path="gui/lib/antlr-3.4-complete.jar"/>
-	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.7.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-rc1-with-dependencies-rev2049.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="gui/lib/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jdom-contrib.jar"/>
@@ -72,6 +72,6 @@
 	<classpathentry kind="lib" path="gui/lib/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/csparsej-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-rc1-with-dependencies-rev2048.jar"/>
+	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.7.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
