@@ -639,7 +639,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (biosimrc.get("biosim.sim.abs", "").equals("None")) {
 			none.doClick();
 		}
-		if (biosimrc.get("biosim.sim.abs", "").equals("Expand")) {
+		else if (biosimrc.get("biosim.sim.abs", "").equals("Expand")) {
 			expand.doClick();
 		}
 		else if (biosimrc.get("biosim.sim.abs", "").equals("Abstraction")) {
