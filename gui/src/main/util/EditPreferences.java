@@ -748,15 +748,12 @@ public class EditPreferences {
 
 	private JPanel analysisPreferences(Preferences biosimrc) {	
 		// analysis preferences
-		String[] choices = { "None", "Abstraction", "Logical Abstraction" };
+		String[] choices = { "None", "Expand Reactions", "Reaction-based", "State-based" };
 		simCommand = new JTextField(biosimrc.get("biosim.sim.command", ""));
 		abs = new JComboBox(choices);
 		abs.setSelectedItem(biosimrc.get("biosim.sim.abs", ""));
 
-		if (abs.getSelectedItem().equals("None")) {
-			choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
-		}
-		else if (abs.getSelectedItem().equals("Abstraction")) {
+		if (!abs.getSelectedItem().equals("State-based")) {
 			choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
 		}
 		else {
@@ -785,17 +782,7 @@ public class EditPreferences {
 		abs.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (abs.getSelectedItem().equals("None")) {
-					Object o = type.getSelectedItem();
-					type.removeAllItems();
-					type.addItem("ODE");
-					type.addItem("Monte Carlo");
-					type.addItem("Model");
-					type.addItem("Network");
-					type.addItem("Browser");
-					type.setSelectedItem(o);
-				}
-				else if (abs.getSelectedItem().equals("Abstraction")) {
+				if (!abs.getSelectedItem().equals("State-based")) {
 					Object o = type.getSelectedItem();
 					type.removeAllItems();
 					type.addItem("ODE");
