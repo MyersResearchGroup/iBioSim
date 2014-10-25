@@ -29,6 +29,7 @@ import org.sbml.jsbml.ext.comp.Deletion;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.CompConstants;
+import org.sbml.jsbml.Event;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.ext.comp.Submodel;
 
@@ -484,7 +485,8 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						subModelIndicesField.get(l).setText(SBMLutilities.getIndicesString(replacement,"comp:submodelRef"));
 						replDel[l] = idRefs.get(l) + " port is replaced by " + id;
 					}
-				} else if (replacement.isSetDeletion()) {
+				}
+				else if (replacement.isSetDeletion()) {
 					Deletion deletion = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId).getListOfDeletions().get(replacement.getDeletion());
 					if (deletion!=null) {
 						int l = portIds.indexOf(deletion.getPortRef());
@@ -496,11 +498,10 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 							}
 							directionBox.get(l).setSelectedIndex(0);
 							convBox.get(l).setSelectedIndex(0);
-							// TODO: not sure about this part, need to check
 							dimensionsField.get(l).setText(SBMLutilities.getDimensionString(replacement));
 							portIndicesField.get(l).setText(SBMLutilities.getIndicesString(replacement,"comp:portRef"));
 							subModelIndicesField.get(l).setText(SBMLutilities.getIndicesString(replacement,"comp:submodelRef"));
-							replDel[l] = idRefs.get(l) + " port is deleted";
+							replDel[l] = idRefs.get(l) + " port is replaced by " + id;
 						}
 					}
 				}
@@ -720,9 +721,16 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						sbmlSBase = SBMLutilities.getCompSBasePlugin(sbase);
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
-								BioModel.addReplacement(sbase, subId, portId, (String)convBox.get(i).getSelectedItem(),
-										portDimensions, portDimensionIds, portIndices, subModelIndices);
-								// TODO: why not add implicit replacements?
+								boolean deletion = false;
+								if (sbase instanceof Event) {
+									deletion = true;
+								}
+								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
+								SBMLutilities.addReplacement(sbase, submodel, subId, portId, (String)convBox.get(i).getSelectedItem(),
+										portDimensions, portDimensionIds, portIndices, subModelIndices, deletion);
+								String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
+								SBMLutilities.addImplicitDeletions(submodel, subBioModel, subSpeciesId, portDimensions, 
+										portDimensionIds,portIndices);
 							} else {
 								boolean skip = false;
 								if (sbmlSBase.isSetReplacedBy()) {
@@ -738,8 +746,10 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 									}
 								}
 								if (!skip) {
-									BioModel.addReplacedBy(sbase, subId, portId, portDimensions, portDimensionIds, portIndices, subModelIndices);
-									// TODO: why not add implicitReplacedBys?
+									SBMLutilities.addReplacedBy(sbase, subId, portId, portDimensions, portDimensionIds, portIndices, subModelIndices);
+									String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
+									SBMLutilities.addImplicitReplacedBys(subId, bioModel, subBioModel, SBMLutilities.getId(sbase), subSpeciesId, 
+											portDimensions, portDimensionIds, portIndices, subModelIndices);
 								}
 							}
 						}
@@ -748,37 +758,34 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						sbmlSBase = SBMLutilities.getCompSBasePlugin(sbase);
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
-								/* TODO: Code below uses just a replacement */
-								BioModel.addReplacement(sbase, subId, portId, (String)convBox.get(i).getSelectedItem(),
-										portDimensions, portDimensionIds, portIndices, subModelIndices);
-								String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-								BioModel.addImplicitDeletions(submodel, subBioModel, subSpeciesId, portDimensions, 
-										portDimensionIds,portIndices);
-								// TODO: why not add implicit replacements?
-								/* Code below using replacement and deletion */
-								/*
-								ReplacedElement replacement = sbmlSBase.createReplacedElement();
-								replacement.setSubmodelRef(subId);
-								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-								Deletion deletion = submodel.createDeletion();
-								deletion.setPortRef(portId);
-								deletion.setId("delete_"+portId);
-								replacement.setDeletion("delete_"+portId);
-								*/
+								SBMLutilities.addReplacement(sbase, submodel, subId, portId, (String)convBox.get(i).getSelectedItem(),
+										portDimensions, portDimensionIds, portIndices, subModelIndices, true);
 							} else {
-								BioModel.addReplacedBy(sbase, subId, portId, portDimensions, portDimensionIds, portIndices, subModelIndices);
-								String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
-								bioModel.addImplicitReplacedBys(subId, subBioModel, SBMLutilities.getId(sbase), subSpeciesId, 
-										portDimensions, portDimensionIds, portIndices, subModelIndices);
+								boolean skip = false;
+								if (sbmlSBase.isSetReplacedBy()) {
+									ReplacedBy replacement = sbmlSBase.getReplacedBy();
+									if (!replacement.getSubmodelRef().equals(subId) ||
+											!replacement.getPortRef().equals(portId)) {	
+										Utility.createErrorMessage("Error", portmapId + " is already replaced by " +
+											replacement.getPortRef().replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
+											" from subModel " + replacement.getSubmodelRef() + "\nCannot also replace with " + 
+											portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
+											" from subModel " + subId);
+										skip = true;
+									}
+								}
+								if (!skip) {
+									SBMLutilities.addReplacedBy(sbase, subId, portId, portDimensions, portDimensionIds, portIndices, subModelIndices);
+								}
 							}
 						}
 					}
 				} else if (portmapId.equals("--delete--")) {
 					Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-					BioModel.addDeletion(submodel, portId, portDimensions, portDimensionIds,portIndices);
+					SBMLutilities.addDeletion(submodel, portId, portDimensions, portDimensionIds,portIndices);
 					String subSpeciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
-					BioModel.addImplicitDeletions(submodel, subBioModel, subSpeciesId, portDimensions, 
+					SBMLutilities.addImplicitDeletions(submodel, subBioModel, subSpeciesId, portDimensions, 
 							portDimensionIds,portIndices);
 				}
 			}
