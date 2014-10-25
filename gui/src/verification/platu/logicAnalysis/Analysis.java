@@ -507,9 +507,10 @@ public class Analysis {
 			+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
 			+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
 		if(Options.getTimingAnalysisFlag() && !failure){
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Verification was successful.", "Success",
-					JOptionPane.INFORMATION_MESSAGE);
+//			JOptionPane.showMessageDialog(Gui.frame,
+//					"Verification was successful.", "Success",
+//					JOptionPane.INFORMATION_MESSAGE);
+			System.out.println("Verification was successful");
 			System.out.println(prjStateSet.toString());
 		}
 		if (Options.getOutputLogFlag()) 
