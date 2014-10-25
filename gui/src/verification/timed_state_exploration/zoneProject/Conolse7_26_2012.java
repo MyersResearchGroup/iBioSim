@@ -73,6 +73,12 @@ public class Conolse7_26_2012 {
 		}
 		
 
+		// Extract boolean variables from continuous variable inequalities.
+		for(int i=0; i<selectedLPNs.size(); i++){
+			selectedLPNs.get(i).parseBooleanInequalities();
+		}
+		
+		
 		/**
 		 * This is what selects the timing analysis.
 		 * The method setTimingAnalysisType sets a static variable
@@ -80,6 +86,8 @@ public class Conolse7_26_2012 {
 		 */
 		Options.setTimingAnalsysisType("zone");
 
+		Options.set_resetOnce(false);
+		
 		Zone.setSubsetFlag(subset);
 		Zone.setSupersetFlag(superset);
 
