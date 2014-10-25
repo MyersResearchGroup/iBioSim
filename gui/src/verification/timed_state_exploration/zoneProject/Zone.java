@@ -4983,7 +4983,7 @@ public class Zone implements Equivalence{
 //ineq_update(ineqL[e->ineq],cur_state,nevents);
 			
 			// Is this necessary, or even correct to update the inequalities.
-			System.out.println("Note the inequality is not being updated before in addSetItem");
+			//System.out.println("Note the inequality is not being updated before in addSetItem");
 			
 			// In this case the Event e represents an inequality.
 			InequalityVariable ineq = e.getInequalityVariable();
@@ -5096,7 +5096,7 @@ public class Zone implements Equivalence{
 //  } else {
 					
 					// Again, is it necessary to do an update here?
-					System.out.println("Note the inequality is not being updated before in addSetItem");
+					//System.out.println("Note the inequality is not being updated before in addSetItem");
 					
 					// In this case the Event oldEvent represents an inequality.
 					InequalityVariable ineq = oldEvent.getInequalityVariable();
