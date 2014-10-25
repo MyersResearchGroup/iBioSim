@@ -452,7 +452,7 @@ public class ContinuousUtilities {
 							
 							newMin = chkDiv(ineq.getConstant(), 
 									z.getCurrentRate(contVar), false);
-//							System.err.println("Warining: impossible case 8a found.");
+//							System.err.println("Warning: impossible case 8a found.");
 						}
 
 						else{
@@ -556,7 +556,7 @@ public class ContinuousUtilities {
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = Zone.INFINITY;
-							System.err.println("Warining: impossible case 8a found.");
+//							System.err.println("Warning: impossible case 8a found.");
 						}
 
 						else{
