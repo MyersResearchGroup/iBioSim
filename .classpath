@@ -72,6 +72,6 @@
 	<classpathentry kind="lib" path="gui/lib/csparsej-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.7.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-rc1-with-dependencies-rev2058.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-rc1-with-dependencies-rev2059.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
