@@ -3288,7 +3288,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						lhpn.setEnabled(true);
 					}
 				}
-				if (load.getProperty("reb2sac.abstraction.method").equals("expand")) {
+				else if (load.getProperty("reb2sac.abstraction.method").equals("expand")) {
 					expand.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
 							minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
