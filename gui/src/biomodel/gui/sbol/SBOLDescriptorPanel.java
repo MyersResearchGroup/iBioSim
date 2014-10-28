@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +21,6 @@ import org.sbolstandard.core.DnaComponent;
 
 import sbol.util.SBOLFileManager;
 import sbol.util.SBOLIdentityManager;
-
 import biomodel.util.Utility;
 
 public class SBOLDescriptorPanel extends JPanel {
@@ -41,6 +41,23 @@ public class SBOLDescriptorPanel extends JPanel {
 				loadBioSimComponentDescriptors(identityManager, fileManager));
 		while (display)
 			display = panelOpen(identityManager, fileManager);
+	}
+	
+	public SBOLDescriptorPanel(String SBOLFileName, String displayId, String name, String description) {
+		super(new GridLayout(4, 2));
+		Set<String> SBOLFilePaths = new HashSet<String>();
+		SBOLFilePaths.add(SBOLFileName);
+		constructPanel(SBOLFilePaths);
+		idText.setText(displayId);
+		nameText.setText(name);
+		descriptionText.setText(description);
+		saveFileIDBox.setEnabled(false);
+		idText.setEnabled(false);
+		nameText.setEnabled(false);
+		descriptionText.setEnabled(false);
+		JOptionPane.showOptionDialog(Gui.frame, this,
+				"SBOL Descriptors", JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 	}
 	
 	public void constructPanel(Set<String> sbolFilePaths) {

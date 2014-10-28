@@ -20,6 +20,7 @@ import sbol.util.SBOLFileManager;
 import sbol.util.SBOLIdentityManager;
 import sbol.util.SBOLUtility;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -44,7 +45,7 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 	private URI removedBioSimURI;
 	private JButton add = new JButton("Add");
 	private JButton remove = new JButton("Remove");
-	private JButton editDescriptors = new JButton("Edit Composite");
+	private JButton editDescriptors = new JButton("Edit/View");
 	private JButton addMove = new JButton("Add/Move Composite");
 	
 	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, 
@@ -306,9 +307,26 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 		} else if (e.getSource() == editDescriptors) {
 			Gui gui = modelEditor.getGui();
 			SBOLFileManager fileManager = new SBOLFileManager(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
-			if (fileManager.sbolFilesAreLoaded()) {
-				SBOLIdentityManager identityManager = new SBOLIdentityManager(modelEditor.getBioModel());
-				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
+			if (compList.getSelectedIndex()==-1) return;
+			if (((String)compList.getSelectedValue()).contains("(iBioSim Composite DNA Component)")) {
+				if (fileManager.sbolFilesAreLoaded()) {
+					SBOLIdentityManager identityManager = new SBOLIdentityManager(modelEditor.getBioModel());
+					SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
+				}
+			} else {
+				DnaComponent dnaComponent = null;
+				String SBOLFileName = "";
+				for (String s : fileManager.getSBOLFilePaths()) {
+					dnaComponent = fileManager.resolveDisplayID((String)compList.getSelectedValue(), s);
+					if (dnaComponent!=null) {
+						SBOLFileName = s;
+						break;
+					}
+				}
+				if (dnaComponent!=null) {
+					SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(SBOLFileName.substring(SBOLFileName.lastIndexOf(File.separator)+1),
+							dnaComponent.getDisplayId(),dnaComponent.getName(),dnaComponent.getDescription());
+				}
 			}
 		} else if (e.getSource() == add) {
 			SBOLBrowser browser = new SBOLBrowser(sbolFilePaths, soTypes);
