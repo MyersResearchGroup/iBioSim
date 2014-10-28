@@ -3951,7 +3951,6 @@ public class BioModel {
 		return eventSet;
 	}
 
-	// TODO: remove special reactions
 	public ArrayList<String> getReactions() {
 		ArrayList<String> reactionSet = new ArrayList<String>();
 		if (sbml!=null) {

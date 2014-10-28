@@ -55,6 +55,7 @@ public class AssemblyGraph {
 			try {
 				flatDoc = biomodel.flattenModel(true);
 			} catch (Exception e){
+				e.printStackTrace();
 				flatDoc = null;
 			}
 			// TODO: Hack to prevent null returned by flattenModel to crash assembly code
