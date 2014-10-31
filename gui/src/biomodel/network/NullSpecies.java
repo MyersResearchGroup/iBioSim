@@ -20,8 +20,6 @@ public class NullSpecies extends AbstractSpecies {
 	
 	@Override
 	public void accept(SpeciesVisitor visitor) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
