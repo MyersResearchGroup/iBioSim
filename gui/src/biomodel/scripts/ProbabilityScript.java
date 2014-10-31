@@ -15,7 +15,6 @@ public class ProbabilityScript extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		// TODO Auto-generated method stub
 		super.setUp();
 //		togHigh = new ArrayList<String>();
 //		togHigh.add("Y");

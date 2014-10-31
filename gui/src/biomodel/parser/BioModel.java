@@ -6554,7 +6554,6 @@ public class BioModel {
 		//updateCompartmentReplacements();
 		SBMLutilities.fillBlankMetaIDs(sbml);
 		loadGridSize();
-		// TODO: HACK REMVOE FOR NOW TILL JSBML FIXED
 		updatePorts();
 		removeStaleLayout();
 		
@@ -6624,8 +6623,6 @@ public class BioModel {
 		if (sbmlFBC.getListOfObjectives().size() > 0 || sbmlFBC.getListOfFluxBounds().size() > 0) {
 			document.enablePackage(FBCConstants.namespaceURI);
 		}
-		
-		//TODO: loop through each SBase and see if any has the plugin
 		document.enablePackage(ArraysConstants.namespaceURI);
 
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {
@@ -6762,85 +6759,6 @@ public class BioModel {
 		
 		return extModel;
 	}
-	
-//	private boolean checkModelConsistency(SBMLDocument document) {
-//		if (document != null) {
-//			if (Gui.isLibsbmlFound()) {
-//				try {
-//					org.sbml.libsbml.SBMLDocument doc = new org.sbml.libsbml.SBMLReader().readSBMLFromString(new SBMLWriter().writeSBMLToString(document));
-//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
-//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
-//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
-//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
-//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
-//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
-//					long numErrors = doc.checkConsistency();
-//					if (numErrors > 0) {
-//						//Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
-//						String message = "";
-//						for (int i = 0; i < numErrors; i++) {
-//							if (doc.getError(i).getErrorId()==1020204) continue;
-//							String error = doc.getError(i).getMessage(); // .replace(". ",
-//							// ".\n");
-//							message += i + ":" + error + "\n";
-//						}
-//						if (!message.equals("")) {
-//							JTextArea messageArea = new JTextArea(message);
-//							messageArea.setLineWrap(true);
-//							messageArea.setEditable(false);
-//							JScrollPane scroll = new JScrollPane();
-//							scroll.setMinimumSize(new Dimension(600, 600));
-//							scroll.setPreferredSize(new Dimension(600, 600));
-//							scroll.setViewportView(messageArea);
-//							JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
-//						}
-//						return false;
-//					}
-//				} catch (SBMLException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (XMLStreamException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}			
-//			}
-//			else {
-//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, true);
-//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, true);
-//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, false);
-//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, false);
-//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, false);
-//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, false);
-//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
-//				int numErrors = document.checkConsistency();
-//				if (numErrors > 0) {
-//					// Utility.createErrorMessage("Merged SBMLs Are Inconsistent",
-//					// "The merged sbml files have inconsistencies.");
-//					String message = "";
-//					for (int i = 0; i < numErrors; i++) {
-//						if (document.getError(i).getErrorId() == 1020204)
-//							continue;
-//						String error = document.getError(i).getMessage(); // .replace(". ",
-//						// ".\n");
-//						message += i + ":" + error + "\n";
-//					}
-//					if (!message.equals("")) {
-//						JTextArea messageArea = new JTextArea(message);
-//						messageArea.setLineWrap(true);
-//						messageArea.setEditable(false);
-//						JScrollPane scroll = new JScrollPane();
-//						scroll.setMinimumSize(new Dimension(600, 600));
-//						scroll.setPreferredSize(new Dimension(600, 600));
-//						scroll.setViewportView(messageArea);
-//						JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
-//					}
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
-//	}
 	
 	public SBMLDocument flattenModelWithLibSBML(boolean removeComp) throws Exception {
 		if (Gui.isLibsbmlFound()) {
@@ -7015,7 +6933,6 @@ public class BioModel {
 				// TODO: leavePorts or not?
 				result = flattenModelWithLibSBML(false);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (result!=null) {

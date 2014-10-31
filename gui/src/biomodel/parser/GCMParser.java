@@ -25,7 +25,6 @@ import biomodel.network.SpasticSpecies;
 import biomodel.network.SpeciesInterface;
 //import biomodel.network.SynthesisNode;
 import biomodel.util.GlobalConstants;
-import biomodel.util.SBMLutilities;
 
 /**
  * This class parses a genetic circuit model.
