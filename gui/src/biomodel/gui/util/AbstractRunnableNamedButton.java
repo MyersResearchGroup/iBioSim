@@ -18,7 +18,6 @@ public abstract class AbstractRunnableNamedButton extends JButton implements Nam
 	
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return super.getName();
 	}
 	

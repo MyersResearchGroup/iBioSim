@@ -77,20 +77,6 @@ public class GridPanel extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * static method to create a prompting panel to delete graph before creating a grid
-	 * 
-	 * @return ok/cancel
-	 */
-	/* TODO: appears to not be used
-	public static boolean showGridPromptPanel() {
-		
-		new GridPanel(null, null, false);
-		
-		return built;
-	}
-	*/
-	
-	/**
 	 * builds the grid creation panel
 	 * 
 	 * @return if the user hit ok or cancel

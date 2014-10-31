@@ -3189,7 +3189,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						reactan.setConstant(false);
 					}
-					// TODO: Scott - change for Plugin writing
 					if(!error){
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactan);
 						sBasePlugin.unsetListOfDimensions();

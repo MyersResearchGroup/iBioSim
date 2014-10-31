@@ -1041,11 +1041,9 @@ public class Grid {
 				SBMLstr = writer.writeSBMLToString(compGCMFile.getSBMLDocument());
 			}
 			catch (SBMLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			String md5 = Utility.MD5(SBMLstr);

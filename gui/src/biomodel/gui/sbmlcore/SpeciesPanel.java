@@ -268,9 +268,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			tempPanel.add(new JLabel("Conversion Factor Indices"));
 			tempPanel.add(conviIndex);
-			
-			// TODO: Scott - change for Plugin writing
-				
+					
 			if (!paramsOnly) grid.add(tempPanel);
 		}
 		
@@ -686,9 +684,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					fields.get(GlobalConstants.ID).getValue(), false);
 			if(dimID==null)return false;
 			dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
-			//TODO Here parse out ID into the dimension size ID. And the two indices boxes
-			// replace fields.get(GlobalConstants.ID).getValue() with dimID[0]
-			// if(dex==null) return false
 			if (selected == null) {
 				if (bioModel.isSIdInUse(dimID[0])) {
 					Utility.createErrorMessage("Error", "ID already exists.");

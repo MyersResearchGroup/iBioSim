@@ -1,7 +1,6 @@
 package biomodel.gui.schematic;
 
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.net.URL;
 
 import javax.swing.AbstractButton;
