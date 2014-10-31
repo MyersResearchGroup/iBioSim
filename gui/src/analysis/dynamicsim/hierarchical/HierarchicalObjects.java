@@ -22,7 +22,6 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.SBMLDocument;
 
-import biomodel.parser.BioModel;
 import analysis.dynamicsim.XORShiftRandom;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
@@ -874,6 +873,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState {
 	/**
 	 * @return the prng
 	 */
+	@Override
 	public PsRandom getPrng() {
 		return prng;
 	}
@@ -1042,6 +1042,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState {
 	/**
 	 * @param prng the prng to set
 	 */
+	@Override
 	public void setPrng(PsRandom prng) {
 		this.prng = prng;
 	}

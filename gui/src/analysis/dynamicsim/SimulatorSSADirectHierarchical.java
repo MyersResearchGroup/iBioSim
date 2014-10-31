@@ -588,7 +588,6 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			setupForOutput(0, newRun);
 		} 
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -605,7 +604,6 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				setupInitialAssignments(model);
 				setupRules(model);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -646,7 +644,6 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 		}
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

@@ -270,10 +270,8 @@ public abstract class Simulator {
 		try {
 			document = SBMLReader.read(new File(SBMLFileName));
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -2047,7 +2045,6 @@ public abstract class Simulator {
 		}
 		}
 		catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -4235,7 +4232,6 @@ public abstract class Simulator {
 		
 		}
 		catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (arraysExist) {

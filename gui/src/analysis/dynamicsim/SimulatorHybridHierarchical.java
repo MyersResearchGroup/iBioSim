@@ -260,7 +260,6 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 
 	@Override
 	protected void cancel() {
-		// TODO Auto-generated method stub
 		cancelFlag = true;
 
 	}
@@ -365,12 +364,10 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 	
 	@Override
 	protected void clear() {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	protected void setupForNewRun(int newRun) {
-		// TODO Auto-generated method stub
 		
 	}
 	

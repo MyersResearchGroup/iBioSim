@@ -1,3 +1,0 @@
-TermCond.java is built from TermCond.y using the following byacc command:
-
-yacc.linux -J -Jnodebug -Jclass=TermCond -Jpackage=reb2sac.core.gui TermCond.y

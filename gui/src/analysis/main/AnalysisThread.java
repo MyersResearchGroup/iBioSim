@@ -27,10 +27,8 @@ public class AnalysisThread extends Thread {
 		try {
 			reb.run(direct, refresh);
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -1,7 +1,6 @@
 package analysis.dynamicsim.hierarchical.methods;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import javax.swing.JFrame;
@@ -561,7 +560,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 			setupForOutput(0, newRun);
 		} 
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -578,7 +576,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 				setupInitialAssignments(model);
 				setupRules(model);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -615,7 +612,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 
 		}
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
