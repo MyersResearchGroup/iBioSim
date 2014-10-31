@@ -213,12 +213,10 @@ public class Variable implements Comparable<Variable>{
 	}
 
 	public void setEpsilon(Double v) {
-		// TODO Auto-generated method stub
 		this.epsilon = v;
 	}
 	
 	public Double getEpsilon() {
-		// TODO Auto-generated method stub
 		return(epsilon);
 	}
 	

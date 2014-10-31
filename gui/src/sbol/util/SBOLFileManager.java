@@ -63,7 +63,6 @@ public class SBOLFileManager {
 		try {
 			resolvedComp = aggregateCompResolver.resolve(uri);
 		} catch (MergerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (resolvedComp == null)
@@ -80,7 +79,6 @@ public class SBOLFileManager {
 			try {
 				resolvedComp = aggregateCompResolver.resolve(uri);
 			} catch (MergerException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (resolvedComp == null) {
@@ -172,7 +170,6 @@ public class SBOLFileManager {
 			try {
 				exportFile.createNewFile();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			SBOLUtility.writeSBOLDocument(exportFilePath, sbolDoc);

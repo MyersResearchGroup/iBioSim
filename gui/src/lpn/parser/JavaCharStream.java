@@ -454,7 +454,6 @@ class JavaCharStream
   }
 
 /** Constructor. */
-  @SuppressWarnings("unused")
 public JavaCharStream(java.io.InputStream dstream, int startline,
   int startcolumn, int buffersize)
   {

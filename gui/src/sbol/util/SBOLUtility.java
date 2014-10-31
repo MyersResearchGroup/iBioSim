@@ -32,17 +32,14 @@ public class SBOLUtility {
 		try {
 			sbolDoc = SBOLFactory.read(new FileInputStream(filePath));
 		} catch (SBOLValidationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + filePath + " is invalid.", 
 					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", 
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
 					"Input/Output Error", JOptionPane.ERROR_MESSAGE);
@@ -54,13 +51,10 @@ public class SBOLUtility {
 		try {
 			SBOLFactory.write(sbolDoc, new FileOutputStream(filePath));
 		} catch (SBOLValidationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

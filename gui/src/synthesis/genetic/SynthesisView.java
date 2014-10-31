@@ -186,10 +186,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			synthProps.store(propStreamOut, synthID + " SBOL Synthesis Properties");
 			propStreamOut.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -395,11 +393,9 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			hash2 = biomodel.util.Utility.MD5(xml2);
 		}
 		catch (SBMLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return hash1 == hash2;

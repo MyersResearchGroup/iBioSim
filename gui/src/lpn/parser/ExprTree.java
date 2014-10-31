@@ -9,7 +9,6 @@ import verification.timed_state_exploration.octagon.Equivalence;
 import verification.timed_state_exploration.zoneProject.IntervalPair;
 import verification.timed_state_exploration.zoneProject.LPNContAndRate;
 import verification.timed_state_exploration.zoneProject.LPNContinuousPair;
-import verification.timed_state_exploration.zoneProject.Zone;
 
 public class ExprTree {
 

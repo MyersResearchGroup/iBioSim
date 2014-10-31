@@ -299,11 +299,9 @@ public class Synthesizer {
 			sbmlStr = writer.writeSBMLToString(subBiomodel.getSBMLDocument());
 		}
 		catch (SBMLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String md5 = Utility.MD5(sbmlStr);

@@ -94,7 +94,6 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 				try {
 					dnac = aggregateCompResolver.resolve(compURI);
 				} catch (MergerException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				if (dnac != null) {
@@ -118,7 +117,6 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 							try {
 								resolvedSA = aggregateAnnoResolver.resolve(sa.getURI());
 							} catch (MergerException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
 							if (resolvedSA != null)
@@ -149,7 +147,6 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 						try {
 							resolvedSeq = aggregateSeqResolver.resolve(seq.getURI());
 						} catch (MergerException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 						if (resolvedSeq != null)
@@ -193,7 +190,6 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 				try {
 					resolvedSubComponent = aggregateCompResolver.resolve(subComponent.getURI());
 				} catch (MergerException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				if (resolvedSubComponent != null)
@@ -216,26 +212,18 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
