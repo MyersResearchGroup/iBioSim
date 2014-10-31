@@ -167,16 +167,19 @@ public class BioGraph extends mxGraph {
 		Layouting.applyLayout(ident, this, graphComponent);
 	}
 	
-	private void createLayoutConnection(Layout layout,String reactant,String product,String type) {
+	private void createLayoutConnection(Layout layout,Reaction r,String reactant,String product,String type) {
 		ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
 		if (reactionGlyph!=null) layout.removeReactionGlyph(reactionGlyph);
 		reactionGlyph = layout.createReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
 		reactionGlyph.createBoundingBox();
 		reactionGlyph.getBoundingBox().createDimensions();
 		reactionGlyph.getBoundingBox().createPosition();
+		SBMLutilities.copyDimensions(r,reactionGlyph);
 		SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.REFERENCE_GLYPH+"__"+reactant+"__"+type+"__"+product);
 		speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+product);
 		speciesReferenceGlyph.setRole(SpeciesReferenceRole.PRODUCT);
+		SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:speciesGlyph");
+		SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:id");
 		LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
 		lineSegment.setStart(new Point(this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterX(),
 				this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterY()));
@@ -189,6 +192,8 @@ public class BioGraph extends mxGraph {
 			SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.GLYPH+"__"+reactionId+"__"+role+"__"+speciesId);
 			speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+speciesId);
 			speciesReferenceGlyph.setRole(SpeciesReferenceRole.valueOf(role.toUpperCase()));
+			SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:speciesGlyph");
+			SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:id");
 			LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
 			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
 			lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
@@ -200,6 +205,8 @@ public class BioGraph extends mxGraph {
 			ReferenceGlyph referenceGlyph = generalGlyph.createReferenceGlyph(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId);
 			referenceGlyph.setGlyph(GlobalConstants.GLYPH+"__"+refId);
 			referenceGlyph.setRole(role);
+			SBMLutilities.copyIndices(generalGlyph, referenceGlyph, "layout:glyph");
+			SBMLutilities.copyIndices(generalGlyph, referenceGlyph, "layout:id");
 			LineSegment lineSegment = referenceGlyph.createCurve().createLineSegment();
 			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
 			lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
@@ -261,6 +268,7 @@ public class BioGraph extends mxGraph {
 					compartmentGlyph.getBoundingBox().getPosition().setY(0);
 					compartmentGlyph.getBoundingBox().getDimensions().setWidth(1070/m.getCompartmentCount());
 					compartmentGlyph.getBoundingBox().getDimensions().setHeight(425);
+					SBMLutilities.copyDimensionsIndices(c, compartmentGlyph, "layout:compartment");
 					TextGlyph textGlyph = null;
 					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+c.getId())!=null) {
 						textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+c.getId());
@@ -274,6 +282,7 @@ public class BioGraph extends mxGraph {
 					textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+c.getId());
 					textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),c.getId()));
 					textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox().clone());
+					SBMLutilities.copyDimensionsIndices(compartmentGlyph, textGlyph, "layout:graphicalObject");
 					if(createGraphCompartmentFromModel(c.getId()))
 						needsPositioning = true;			
 				}
@@ -523,7 +532,7 @@ public class BioGraph extends mxGraph {
 					String style = "COMPLEX";
 					mxCell cell = this.getInfluence(id);
 					cell.setStyle(style);
-					createLayoutConnection(layout,reactant,product,GlobalConstants.COMPLEX);
+					createLayoutConnection(layout,r,reactant,product,GlobalConstants.COMPLEX);
 				}
 			} else if (BioModel.isProductionReaction(r)) {
 				String promoterId = SBMLutilities.getPromoterId(r);
@@ -535,7 +544,7 @@ public class BioGraph extends mxGraph {
 						mxCell production = (mxCell)this.insertEdge(this.getDefaultParent(), id, "", 
 								this.getDrawnPromoterCell(promoterId),this.getSpeciesCell(product));
 						production.setStyle("PRODUCTION");
-						createLayoutConnection(layout,promoterId,product,GlobalConstants.PRODUCTION);
+						createLayoutConnection(layout,r,promoterId,product,GlobalConstants.PRODUCTION);
 					}
 					for (int j = 0; j < r.getModifierCount(); j++) {
 						if (BioModel.isRepressor(r.getModifier(j))) {
@@ -546,7 +555,7 @@ public class BioGraph extends mxGraph {
 							String style = "REPRESSION";
 							mxCell cell = this.getInfluence(id);
 							cell.setStyle(style);
-							createLayoutConnection(layout,repressor,promoterId,GlobalConstants.REPRESSION);
+							createLayoutConnection(layout,r,repressor,promoterId,GlobalConstants.REPRESSION);
 						} else if (BioModel.isActivator(r.getModifier(j))) {
 							String activator = r.getModifier(j).getSpecies();
 							String id = activator + "->" + promoterId;
@@ -555,7 +564,7 @@ public class BioGraph extends mxGraph {
 							String style = "ACTIVATION";
 							mxCell cell = this.getInfluence(id);
 							cell.setStyle(style);
-							createLayoutConnection(layout,activator,promoterId,GlobalConstants.ACTIVATION);
+							createLayoutConnection(layout,r,activator,promoterId,GlobalConstants.ACTIVATION);
 						} else if (BioModel.isRegulator(r.getModifier(j))) {
 							String regulator = r.getModifier(j).getSpecies();
 							String id = regulator + "-|" + promoterId;
@@ -570,8 +579,8 @@ public class BioGraph extends mxGraph {
 							style = "ACTIVATION";
 							cell = this.getInfluence(id);
 							cell.setStyle(style);
-							createLayoutConnection(layout,regulator,promoterId,GlobalConstants.REPRESSION);
-							createLayoutConnection(layout,regulator,promoterId,GlobalConstants.ACTIVATION);
+							createLayoutConnection(layout,r,regulator,promoterId,GlobalConstants.REPRESSION);
+							createLayoutConnection(layout,r,regulator,promoterId,GlobalConstants.ACTIVATION);
 						} else if (BioModel.isNeutral(r.getModifier(j))) {
 							String regulator = r.getModifier(j).getSpecies();
 							String id = regulator + "x>" + promoterId;
@@ -580,7 +589,7 @@ public class BioGraph extends mxGraph {
 							String style = "NOINFLUENCE";
 							mxCell cell = this.getInfluence(id);
 							cell.setStyle(style);
-							createLayoutConnection(layout,regulator,promoterId,GlobalConstants.NOINFLUENCE);						}
+							createLayoutConnection(layout,r,regulator,promoterId,GlobalConstants.NOINFLUENCE);						}
 					}
 				} else {
 					for (int j = 0; j < r.getModifierCount(); j++) {
@@ -595,7 +604,7 @@ public class BioGraph extends mxGraph {
 								mxCell cell = this.getInfluence(id);
 								cell.setStyle(style);
 								cell.setValue(promoterId);
-								createLayoutConnection(layout,repressor,product,GlobalConstants.REPRESSION);
+								createLayoutConnection(layout,r,repressor,product,GlobalConstants.REPRESSION);
 							} else if (BioModel.isActivator(r.getModifier(j))) {
 								String activator = r.getModifier(j).getSpecies();
 								String product = r.getProduct(k).getSpecies();
@@ -606,7 +615,7 @@ public class BioGraph extends mxGraph {
 								mxCell cell = this.getInfluence(id);
 								cell.setStyle(style);
 								cell.setValue(promoterId);
-								createLayoutConnection(layout,activator,product,GlobalConstants.REPRESSION);
+								createLayoutConnection(layout,r,activator,product,GlobalConstants.REPRESSION);
 							} else if (BioModel.isNeutral(r.getModifier(j))) {
 								String regulator = r.getModifier(j).getSpecies();
 								String product = r.getProduct(k).getSpecies();
@@ -617,7 +626,7 @@ public class BioGraph extends mxGraph {
 								mxCell cell = this.getInfluence(id);
 								cell.setStyle(style);
 								cell.setValue(promoterId);
-								createLayoutConnection(layout,regulator,product,GlobalConstants.NOINFLUENCE);
+								createLayoutConnection(layout,r,regulator,product,GlobalConstants.NOINFLUENCE);
 							} else if (BioModel.isRegulator(r.getModifier(j))) {
 								String regulator = r.getModifier(j).getSpecies();
 								String product = r.getProduct(k).getSpecies();
@@ -635,8 +644,8 @@ public class BioGraph extends mxGraph {
 								cell = this.getInfluence(id);
 								cell.setStyle(style);
 								cell.setValue(promoterId);
-								createLayoutConnection(layout,regulator,product,GlobalConstants.ACTIVATION);
-								createLayoutConnection(layout,regulator,product,GlobalConstants.REPRESSION);
+								createLayoutConnection(layout,r,regulator,product,GlobalConstants.ACTIVATION);
+								createLayoutConnection(layout,r,regulator,product,GlobalConstants.REPRESSION);
 							}
 						}
 					}
@@ -771,7 +780,7 @@ public class BioGraph extends mxGraph {
 						else {
 							cell.setStyle("REACTION_EDGE");
 						}
-						createLayoutConnection(layout,reactant,product,GlobalConstants.REACTION);
+						createLayoutConnection(layout,r,reactant,product,GlobalConstants.REACTION);
 					}
 				}
 			}
@@ -1196,7 +1205,7 @@ public class BioGraph extends mxGraph {
 			if (BioModel.isComplexReaction(r)) continue;
 			if (BioModel.isConstitutiveReaction(r)) continue;
 			
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim").getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId()) != null) {
+			if (bioModel.getLayout().getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId()) != null) {
 				
 				for (int j = 0; j < r.getReactantCount(); j++) {
 					
@@ -1539,16 +1548,10 @@ public class BioGraph extends mxGraph {
 	 */
 	public void updateInternalPosition(mxCell cell,boolean warn){
 		
+		Layout layout = bioModel.getLayout();
 		mxGeometry geom = cell.getGeometry();
 		if (getCellType(cell).equals(GlobalConstants.SPECIES) ||
 				getCellType(cell).equals(GlobalConstants.PROMOTER)) {
-			Layout layout = null;
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-			} else {
-				layout = bioModel.getSBMLLayout().createLayout();
-				layout.setId("iBioSim");
-			}
 			SpeciesGlyph speciesGlyph = null;
 			if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
 				speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
@@ -1592,13 +1595,6 @@ public class BioGraph extends mxGraph {
 		} else if (getCellType(cell).equals(GlobalConstants.VARIABLE) || 
 				getCellType(cell).equals(GlobalConstants.PLACE) || 
 				getCellType(cell).equals(GlobalConstants.BOOLEAN)) {
-			Layout layout = null;
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-			} else {
-				layout = bioModel.getSBMLLayout().createLayout();
-				layout.setId("iBioSim");
-			}
 			GeneralGlyph generalGlyph = null;
 			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
 				generalGlyph = (GeneralGlyph)layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
@@ -1627,13 +1623,6 @@ public class BioGraph extends mxGraph {
 			textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),cell.getId()));
 			textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());
 		} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
-			Layout layout = null;
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-			} else {
-				layout = bioModel.getSBMLLayout().createLayout();
-				layout.setId("iBioSim");
-			}
 			ReactionGlyph reactionGlyph = null;
 			if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
 				reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
@@ -1680,13 +1669,6 @@ public class BioGraph extends mxGraph {
 				getCellType(cell).equals(GlobalConstants.CONSTRAINT)||
 				getCellType(cell).equals(GlobalConstants.EVENT)||
 				getCellType(cell).equals(GlobalConstants.TRANSITION)) {
-			Layout layout = null;
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-			} else {
-				layout = bioModel.getSBMLLayout().createLayout();
-				layout.setId("iBioSim");
-			}
 			GeneralGlyph generalGlyph = null;
 			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
 				generalGlyph = (GeneralGlyph)
@@ -1718,13 +1700,6 @@ public class BioGraph extends mxGraph {
 			textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),cell.getId()));
 			textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());		
 		} else if (!bioModel.isGridEnabled() && getCellType(cell).equals(GlobalConstants.COMPARTMENT)) {
-			Layout layout = null;
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-			} else {
-				layout = bioModel.getSBMLLayout().createLayout();
-				layout.setId("iBioSim");
-			}
 			CompartmentGlyph compGlyph = null;
 			if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
 				compGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
@@ -1782,13 +1757,6 @@ public class BioGraph extends mxGraph {
 			textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),cell.getId()));
 			textGlyph.setBoundingBox(compGlyph.getBoundingBox().clone());
 		} else if (getCellType(cell).equals(GlobalConstants.COMPONENT)) {
-			Layout layout = null;
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-			} else {
-				layout = bioModel.getSBMLLayout().createLayout();
-				layout.setId("iBioSim");
-			}
 			GeneralGlyph generalGlyph = null;
 			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
 				generalGlyph = (GeneralGlyph)
@@ -1834,171 +1802,154 @@ public class BioGraph extends mxGraph {
 		double y = 0;
 		boolean needsPositioning = false;	
 
+		Layout layout = bioModel.getLayout();
 		if (getCellType(cell).equals(GlobalConstants.SPECIES)||
 				getCellType(cell).equals(GlobalConstants.PROMOTER)) {
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-				if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-					SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-					x = speciesGlyph.getBoundingBox().getPosition().getX();
-					y = speciesGlyph.getBoundingBox().getPosition().getY();
-					width = speciesGlyph.getBoundingBox().getDimensions().getWidth();
-					height = speciesGlyph.getBoundingBox().getDimensions().getHeight();
-					if (bioModel.getSBMLDocument().getModel().getSpecies(cell.getId())!=null) {
-						String compartment = bioModel.getSBMLDocument().getModel().getSpecies(cell.getId()).getCompartment();
-						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
-							if (compartmentGlyph!=null) {
-								x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
-								if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-									x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
-								}
-								bioModel.placeSpecies(cell.getId(), x, y, height, width);
+			if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+				SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+				x = speciesGlyph.getBoundingBox().getPosition().getX();
+				y = speciesGlyph.getBoundingBox().getPosition().getY();
+				width = speciesGlyph.getBoundingBox().getDimensions().getWidth();
+				height = speciesGlyph.getBoundingBox().getDimensions().getHeight();
+				if (bioModel.getSBMLDocument().getModel().getSpecies(cell.getId())!=null) {
+					String compartment = bioModel.getSBMLDocument().getModel().getSpecies(cell.getId()).getCompartment();
+					if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+						CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
+						if (compartmentGlyph!=null) {
+							x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
+							if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+								x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
 							}
+							bioModel.placeSpecies(cell.getId(), x, y, height, width);
 						}
 					}
-				} else {
-					unpositionedElementCount += 1;
-					needsPositioning = true;
-					x = (unpositionedElementCount%50) * 20;
-					y = (unpositionedElementCount%10) * (height + 10);
-					if (bioModel.getSBMLDocument().getModel().getSpecies(cell.getId())!=null) {
-						String compartment = bioModel.getSBMLDocument().getModel().getSpecies(cell.getId()).getCompartment();
-						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
-							if (compartmentGlyph!=null) {
-								x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
-								if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-									x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
-								}
-							}
-						}
-					}
-					bioModel.placeSpecies(cell.getId(), x, y, height, width);
 				}
-			} 
+			} else {
+				unpositionedElementCount += 1;
+				needsPositioning = true;
+				x = (unpositionedElementCount%50) * 20;
+				y = (unpositionedElementCount%10) * (height + 10);
+				if (bioModel.getSBMLDocument().getModel().getSpecies(cell.getId())!=null) {
+					String compartment = bioModel.getSBMLDocument().getModel().getSpecies(cell.getId()).getCompartment();
+					if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+						CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
+						if (compartmentGlyph!=null) {
+							x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
+							if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+								x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
+							}
+						}
+					}
+				}
+				bioModel.placeSpecies(cell.getId(), x, y, height, width);
+			}
 		} else if (getCellType(cell).equals(GlobalConstants.VARIABLE)||
 				getCellType(cell).equals(GlobalConstants.PLACE)||
 				getCellType(cell).equals(GlobalConstants.BOOLEAN)) {
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-				if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-					GeneralGlyph generalGlyph = (GeneralGlyph)
-							layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
-					x = generalGlyph.getBoundingBox().getPosition().getX();
-					y = generalGlyph.getBoundingBox().getPosition().getY();
-					width = generalGlyph.getBoundingBox().getDimensions().getWidth();
-					height = generalGlyph.getBoundingBox().getDimensions().getHeight();
-				} else {
-					unpositionedElementCount += 1;
-					needsPositioning = true;
-					x = (unpositionedElementCount%50) * 20;
-					y = (unpositionedElementCount%10) * (height + 10);
-					bioModel.placeGeneral(cell.getId(), x, y, height, width, null);
-				}
-			} 
+			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+				GeneralGlyph generalGlyph = (GeneralGlyph)
+						layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
+				x = generalGlyph.getBoundingBox().getPosition().getX();
+				y = generalGlyph.getBoundingBox().getPosition().getY();
+				width = generalGlyph.getBoundingBox().getDimensions().getWidth();
+				height = generalGlyph.getBoundingBox().getDimensions().getHeight();
+			} else {
+				unpositionedElementCount += 1;
+				needsPositioning = true;
+				x = (unpositionedElementCount%50) * 20;
+				y = (unpositionedElementCount%10) * (height + 10);
+				bioModel.placeGeneral(cell.getId(), x, y, height, width, null);
+			}
 		} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-				if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-					ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-					x = reactionGlyph.getBoundingBox().getPosition().getX();
-					y = reactionGlyph.getBoundingBox().getPosition().getY();
-					width = reactionGlyph.getBoundingBox().getDimensions().getWidth();
-					height = reactionGlyph.getBoundingBox().getDimensions().getHeight();
-					if (bioModel.getSBMLDocument().getModel().getReaction(cell.getId())!=null) {
-						String compartment = bioModel.getSBMLDocument().getModel().getReaction(cell.getId()).getCompartment();
-						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
-							if (compartmentGlyph!=null) {
-								x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
-								if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-									x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
-								}
-								bioModel.placeReaction(cell.getId(), x, y, height, width);
+			if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+				ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+				x = reactionGlyph.getBoundingBox().getPosition().getX();
+				y = reactionGlyph.getBoundingBox().getPosition().getY();
+				width = reactionGlyph.getBoundingBox().getDimensions().getWidth();
+				height = reactionGlyph.getBoundingBox().getDimensions().getHeight();
+				if (bioModel.getSBMLDocument().getModel().getReaction(cell.getId())!=null) {
+					String compartment = bioModel.getSBMLDocument().getModel().getReaction(cell.getId()).getCompartment();
+					if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+						CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
+						if (compartmentGlyph!=null) {
+							x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
+							if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+								x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
+							}
+							bioModel.placeReaction(cell.getId(), x, y, height, width);
+						}
+					}
+				}
+			} else {
+				unpositionedElementCount += 1;
+				needsPositioning = true;
+				x = (unpositionedElementCount%50) * 20;
+				y = (unpositionedElementCount%10) * (height + 10);
+				if (bioModel.getSBMLDocument().getModel().getReaction(cell.getId())!=null) {
+					String compartment = bioModel.getSBMLDocument().getModel().getReaction(cell.getId()).getCompartment();
+					if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+						CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
+						if (compartmentGlyph!=null) {
+							x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
+							if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+								x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
 							}
 						}
 					}
-				} else {
-					unpositionedElementCount += 1;
-					needsPositioning = true;
-					x = (unpositionedElementCount%50) * 20;
-					y = (unpositionedElementCount%10) * (height + 10);
-					if (bioModel.getSBMLDocument().getModel().getReaction(cell.getId())!=null) {
-						String compartment = bioModel.getSBMLDocument().getModel().getReaction(cell.getId()).getCompartment();
-						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
-							if (compartmentGlyph!=null) {
-								x = x + compartmentGlyph.getBoundingBox().getPosition().getX();
-								if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-									x = compartmentGlyph.getBoundingBox().getPosition().getX() + 10;
-								}
-							}
-						}
-					}
-					bioModel.placeReaction(cell.getId(), x, y, height, width);
-				} 
+				}
+				bioModel.placeReaction(cell.getId(), x, y, height, width);
 			} 
 		} else if (getCellType(cell).equals(GlobalConstants.RULE) ||
 				getCellType(cell).equals(GlobalConstants.CONSTRAINT) ||
 				getCellType(cell).equals(GlobalConstants.EVENT) ||
 				getCellType(cell).equals(GlobalConstants.TRANSITION)) {
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-				if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-					GeneralGlyph generalGlyph = (GeneralGlyph)
-							layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
-					x = generalGlyph.getBoundingBox().getPosition().getX();
-					y = generalGlyph.getBoundingBox().getPosition().getY();
-					width = generalGlyph.getBoundingBox().getDimensions().getWidth();
-					height = generalGlyph.getBoundingBox().getDimensions().getHeight();
+			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+				GeneralGlyph generalGlyph = (GeneralGlyph)
+						layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
+				x = generalGlyph.getBoundingBox().getPosition().getX();
+				y = generalGlyph.getBoundingBox().getPosition().getY();
+				width = generalGlyph.getBoundingBox().getDimensions().getWidth();
+				height = generalGlyph.getBoundingBox().getDimensions().getHeight();
+			} else {
+				unpositionedElementCount += 1;
+				needsPositioning = true;
+				x = (unpositionedElementCount%50) * 20;
+				y = (unpositionedElementCount%10) * (height + 10);
+				if ((getCellType(cell).equals(GlobalConstants.RULE) ||
+						getCellType(cell).equals(GlobalConstants.CONSTRAINT))) {
+					bioModel.placeGeneral(cell.getId(), x, y, height, width, cell.getId());
 				} else {
-					unpositionedElementCount += 1;
-					needsPositioning = true;
-					x = (unpositionedElementCount%50) * 20;
-					y = (unpositionedElementCount%10) * (height + 10);
-					if ((getCellType(cell).equals(GlobalConstants.RULE) ||
-							getCellType(cell).equals(GlobalConstants.CONSTRAINT))) {
-						bioModel.placeGeneral(cell.getId(), x, y, height, width, cell.getId());
-					} else {
-						bioModel.placeGeneral(cell.getId(), x, y, height, width, null);
-					}
-				} 
+					bioModel.placeGeneral(cell.getId(), x, y, height, width, null);
+				}
 			} 
 		} else if (!bioModel.isGridEnabled() && getCellType(cell).equals(GlobalConstants.COMPARTMENT)) {
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-				if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-					CompartmentGlyph compGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-					x = compGlyph.getBoundingBox().getPosition().getX();
-					y = compGlyph.getBoundingBox().getPosition().getY();
-					width = compGlyph.getBoundingBox().getDimensions().getWidth();
-					height = compGlyph.getBoundingBox().getDimensions().getHeight();
-				} else {
-					unpositionedElementCount += 1;
-					needsPositioning = true;
-					x = (unpositionedElementCount%50) * 20;
-					y = (unpositionedElementCount%10) * (height + 10);
-					bioModel.placeCompartment(cell.getId(), x, y, height, width);
-				} 
+			if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+				CompartmentGlyph compGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+				x = compGlyph.getBoundingBox().getPosition().getX();
+				y = compGlyph.getBoundingBox().getPosition().getY();
+				width = compGlyph.getBoundingBox().getDimensions().getWidth();
+				height = compGlyph.getBoundingBox().getDimensions().getHeight();
+			} else {
+				unpositionedElementCount += 1;
+				needsPositioning = true;
+				x = (unpositionedElementCount%50) * 20;
+				y = (unpositionedElementCount%10) * (height + 10);
+				bioModel.placeCompartment(cell.getId(), x, y, height, width);
 			} 
 		} else if (getCellType(cell).equals(GlobalConstants.COMPONENT)) {
-			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-				Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-				if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-					GeneralGlyph generalGlyph = (GeneralGlyph)
-							layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
-					x = generalGlyph.getBoundingBox().getPosition().getX();
-					y = generalGlyph.getBoundingBox().getPosition().getY();
-					width = generalGlyph.getBoundingBox().getDimensions().getWidth();
-					height = generalGlyph.getBoundingBox().getDimensions().getHeight();
-				} else {
-					unpositionedElementCount += 1;
-					needsPositioning = true;
-					x = (unpositionedElementCount%50) * 20;
-					y = (unpositionedElementCount%10) * (height + 10);
-					bioModel.placeGeneral(cell.getId(), x, y, height, width, null);
-				} 
+			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+				GeneralGlyph generalGlyph = (GeneralGlyph)
+						layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
+				x = generalGlyph.getBoundingBox().getPosition().getX();
+				y = generalGlyph.getBoundingBox().getPosition().getY();
+				width = generalGlyph.getBoundingBox().getDimensions().getWidth();
+				height = generalGlyph.getBoundingBox().getDimensions().getHeight();
+			} else {
+				unpositionedElementCount += 1;
+				needsPositioning = true;
+				x = (unpositionedElementCount%50) * 20;
+				y = (unpositionedElementCount%10) * (height + 10);
+				bioModel.placeGeneral(cell.getId(), x, y, height, width, null);
 			} 
 		} 
 		cell.setGeometry(new mxGeometry(x, y, width, height));
@@ -3323,22 +3274,15 @@ public class BioGraph extends mxGraph {
 			double width = 0;
 			double height = 0;
 
+			Layout layout = bioModel.getLayout();
 			if (getCellType(cell).equals(GlobalConstants.SPECIES)||
 					getCellType(cell).equals(GlobalConstants.PROMOTER)) {
-				if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-					Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-					if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-						x = speciesGlyph.getBoundingBox().getPosition().getX();
-						y = speciesGlyph.getBoundingBox().getPosition().getY();
-						width = speciesGlyph.getBoundingBox().getDimensions().getWidth();
-						height = speciesGlyph.getBoundingBox().getDimensions().getHeight();
-					} else {
-						x = -9999;
-						y = -9999;
-						width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
-						height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
-					}
+				if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+					SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+					x = speciesGlyph.getBoundingBox().getPosition().getX();
+					y = speciesGlyph.getBoundingBox().getPosition().getY();
+					width = speciesGlyph.getBoundingBox().getDimensions().getWidth();
+					height = speciesGlyph.getBoundingBox().getDimensions().getHeight();
 				} else {
 					x = -9999;
 					y = -9999;
@@ -3348,21 +3292,13 @@ public class BioGraph extends mxGraph {
 			} else if (getCellType(cell).equals(GlobalConstants.VARIABLE) || 
 					getCellType(cell).equals(GlobalConstants.PLACE) || 
 					getCellType(cell).equals(GlobalConstants.BOOLEAN)) {
-				if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-					Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-					if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						GeneralGlyph generalGlyph = (GeneralGlyph)
-								layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
-						x = generalGlyph.getBoundingBox().getPosition().getX();
-						y = generalGlyph.getBoundingBox().getPosition().getY();
-						width = generalGlyph.getBoundingBox().getDimensions().getWidth();
-						height = generalGlyph.getBoundingBox().getDimensions().getHeight();
-					} else {
-						x = -9999;
-						y = -9999;
-						width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
-						height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
-					}
+				if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+					GeneralGlyph generalGlyph = (GeneralGlyph)
+							layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
+					x = generalGlyph.getBoundingBox().getPosition().getX();
+					y = generalGlyph.getBoundingBox().getPosition().getY();
+					width = generalGlyph.getBoundingBox().getDimensions().getWidth();
+					height = generalGlyph.getBoundingBox().getDimensions().getHeight();
 				} else {
 					x = -9999;
 					y = -9999;
@@ -3370,94 +3306,62 @@ public class BioGraph extends mxGraph {
 					height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
 				}
 			} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
-				if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-					Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-					if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-						x = reactionGlyph.getBoundingBox().getPosition().getX();
-						y = reactionGlyph.getBoundingBox().getPosition().getY();
-						width = reactionGlyph.getBoundingBox().getDimensions().getWidth();
-						height = reactionGlyph.getBoundingBox().getDimensions().getHeight();
-					} else {
-						x = -9999;
-						y = -9999;
-						width = GlobalConstants.DEFAULT_REACTION_WIDTH;
-						height = GlobalConstants.DEFAULT_REACTION_HEIGHT;
-					} 
+				if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+					ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+					x = reactionGlyph.getBoundingBox().getPosition().getX();
+					y = reactionGlyph.getBoundingBox().getPosition().getY();
+					width = reactionGlyph.getBoundingBox().getDimensions().getWidth();
+					height = reactionGlyph.getBoundingBox().getDimensions().getHeight();
 				} else {
 					x = -9999;
 					y = -9999;
 					width = GlobalConstants.DEFAULT_REACTION_WIDTH;
 					height = GlobalConstants.DEFAULT_REACTION_HEIGHT;
-				}
+				} 
 			} else if (getCellType(cell).equals(GlobalConstants.RULE)||
 					getCellType(cell).equals(GlobalConstants.CONSTRAINT)||
 					getCellType(cell).equals(GlobalConstants.EVENT)||
 					getCellType(cell).equals(GlobalConstants.TRANSITION)) {
-				if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-					Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-					if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						GeneralGlyph generalGlyph = (GeneralGlyph)
-								layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
-						x = generalGlyph.getBoundingBox().getPosition().getX();
-						y = generalGlyph.getBoundingBox().getPosition().getY();
-						width = generalGlyph.getBoundingBox().getDimensions().getWidth();
-						height = generalGlyph.getBoundingBox().getDimensions().getHeight();
-					} else {
-						x = -9999;
-						y = -9999;
-						width = GlobalConstants.DEFAULT_REACTION_WIDTH;
-						height = GlobalConstants.DEFAULT_REACTION_HEIGHT;
-					} 
+				if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+					GeneralGlyph generalGlyph = (GeneralGlyph)
+							layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
+					x = generalGlyph.getBoundingBox().getPosition().getX();
+					y = generalGlyph.getBoundingBox().getPosition().getY();
+					width = generalGlyph.getBoundingBox().getDimensions().getWidth();
+					height = generalGlyph.getBoundingBox().getDimensions().getHeight();
 				} else {
 					x = -9999;
 					y = -9999;
 					width = GlobalConstants.DEFAULT_REACTION_WIDTH;
 					height = GlobalConstants.DEFAULT_REACTION_HEIGHT;
-				}
+				} 
 			} else if (getCellType(cell).equals(GlobalConstants.COMPARTMENT)) {
-				if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-					Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-					if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						CompartmentGlyph compGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-						x = compGlyph.getBoundingBox().getPosition().getX();
-						y = compGlyph.getBoundingBox().getPosition().getY();
-						width = compGlyph.getBoundingBox().getDimensions().getWidth();
-						height = compGlyph.getBoundingBox().getDimensions().getHeight();
-					} else {
-						x = -9999;
-						y = -9999;
-						width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
-						height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
-					} 
+				if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+					CompartmentGlyph compGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+					x = compGlyph.getBoundingBox().getPosition().getX();
+					y = compGlyph.getBoundingBox().getPosition().getY();
+					width = compGlyph.getBoundingBox().getDimensions().getWidth();
+					height = compGlyph.getBoundingBox().getDimensions().getHeight();
 				} else {
 					x = -9999;
 					y = -9999;
 					width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
 					height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
-				}
+				} 
 			} else if (getCellType(cell).equals(GlobalConstants.COMPONENT)) {
-				if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-					Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-					if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						GeneralGlyph generalGlyph = (GeneralGlyph)
-								layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
-						x = generalGlyph.getBoundingBox().getPosition().getX();
-						y = generalGlyph.getBoundingBox().getPosition().getY();
-						width = generalGlyph.getBoundingBox().getDimensions().getWidth();
-						height = generalGlyph.getBoundingBox().getDimensions().getHeight();
-					} else {
-						x = -9999;
-						y = -9999;
-						width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
-						height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
-					} 
+				if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+					GeneralGlyph generalGlyph = (GeneralGlyph)
+							layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
+					x = generalGlyph.getBoundingBox().getPosition().getX();
+					y = generalGlyph.getBoundingBox().getPosition().getY();
+					width = generalGlyph.getBoundingBox().getDimensions().getWidth();
+					height = generalGlyph.getBoundingBox().getDimensions().getHeight();
 				} else {
 					x = -9999;
 					y = -9999;
 					width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
 					height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
-				}
+				} 
 			} 
 			
 			double aspect_ratio = height / width;
