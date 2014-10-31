@@ -122,7 +122,6 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 					try {
 						resolvedDnac = aggregateCompResolver.resolve(dnac.getURI());
 					} catch (MergerException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					if ((resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
@@ -150,7 +149,6 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 					try {
 						resolvedDnac = aggregateCompResolver.resolve(compURI);
 					} catch (MergerException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					if (resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
@@ -205,26 +203,18 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

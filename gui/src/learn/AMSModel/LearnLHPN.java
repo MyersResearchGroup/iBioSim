@@ -831,7 +831,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	/*public LearnLHPN() {
 		extrema = getExtrema();
 		System.out.println("extrema in the constructor :"+extrema);
-		// TODO Auto-generated constructor stub
 		
 		
 		

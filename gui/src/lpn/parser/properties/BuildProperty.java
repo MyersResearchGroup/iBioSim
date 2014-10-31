@@ -99,7 +99,6 @@ public class BuildProperty {
 		try {
 			lpnFile.createNewFile();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
@@ -113,7 +112,6 @@ public class BuildProperty {
 			} 
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		lpnFinal.save(lpnFileName);

@@ -1143,11 +1143,9 @@ public class Translator {
 			f.setMath(ASTNode.parseFormula(formula, parser));
 		}
 		catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -1160,15 +1158,12 @@ public class Translator {
 			writer.writeSBMLToFile(document, filename);
 		}
 		catch (SBMLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

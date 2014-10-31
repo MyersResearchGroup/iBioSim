@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -141,29 +140,12 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.*;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.jlibsedml.*;
-//import org.antlr.runtime.TokenStream;
 import org.sbolstandard.core.SBOLDocument;
-
-//import lpn.parser.properties.*;
-
-
-
-
-
-
-
-
-
-
-
-
 
 import sbol.browser.SBOLBrowser;
 import sbol.util.SBOLUtility;
@@ -3936,10 +3918,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (XMLStreamException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

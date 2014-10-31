@@ -199,7 +199,6 @@ public class SBOLIdentityManager {
 //					try {
 //						synthesizedURI = new URI(synthesizedURI.toString() + "Identical");
 //					} catch (URISyntaxException e) {
-//						// TODO Auto-generated catch block
 //						e.printStackTrace();
 //					}
 			} 

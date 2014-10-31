@@ -116,7 +116,6 @@ public class SBOLTestFactory {
 					
 			}
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return libraryComps;
@@ -182,7 +181,6 @@ public class SBOLTestFactory {
 //					
 //			}
 //		} catch (URISyntaxException e) {
-//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 //		return libraryComps;
@@ -238,7 +236,6 @@ public class SBOLTestFactory {
 		dnaSeq.setNucleotides(createTestNucleotides(size));
 		dnaComp.setDnaSequence(dnaSeq);
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return dnaComp;
