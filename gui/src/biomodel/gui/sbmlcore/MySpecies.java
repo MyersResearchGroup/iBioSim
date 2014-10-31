@@ -33,7 +33,6 @@ import org.sbml.jsbml.SpeciesReference;
 //SpeciesType not supported in Level 3
 //import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
@@ -66,10 +65,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	
 	private JComboBox dimensionType, dimensionX, dimensionY;
 	
-	private JTextField iIndex, jIndex;
-	
-	private JTextField conviIndex, convjIndex;
-
 //	SpeciesType not supported in Level 3
 //	private JComboBox specTypeBox; // species
 	
@@ -423,63 +418,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						catch (Exception e1) {
 						}
 					}
-				}
-				String[] sizes = new String[2];
-				String[] indecies = new String[2];
-				String[] convIndecies = new String[2];
-				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(specie);
-				if(sizes[0]==null){
-					sizes = AnnotationUtility.parseMatrixSizeAnnotation(specie);
-					if(sizes==null){
-						dimensionType.setSelectedIndex(0);
-						dimensionX.setEnabled(false);
-						dimensionY.setEnabled(false);
-					}
-					else{
-						dimensionType.setSelectedIndex(2);
-						dimensionX.setEnabled(true);
-						dimensionY.setEnabled(true);
-						dimensionX.setSelectedItem(sizes[0]);
-						dimensionY.setSelectedItem(sizes[1]);
-					}
-				}
-				else{
-					dimensionType.setSelectedIndex(1);
-					dimensionX.setEnabled(true);
-					dimensionX.setSelectedItem(sizes[0]);
-					dimensionY.setEnabled(false);
-				}
-				indecies[0] = AnnotationUtility.parseRowIndexAnnotation(specie);
-				if(indecies[0]!=null){
-					indecies[1] = AnnotationUtility.parseColIndexAnnotation(specie);
-					if(indecies[1]==null){
-						iIndex.setText("");
-						jIndex.setText("");
-					}
-					else{
-						iIndex.setText(indecies[0]);
-						jIndex.setText(indecies[1]);
-					}
-				}
-				else{
-					iIndex.setText(indecies[0]);
-					jIndex.setText("");
-				}
-				convIndecies[0] = AnnotationUtility.parseConversionRowIndexAnnotation(specie);
-				if(convIndecies[0]!=null){
-					convIndecies[1] = AnnotationUtility.parseConversionColIndexAnnotation(specie);
-					if(convIndecies[1]==null){
-						conviIndex.setText("");
-						convjIndex.setText("");
-					}
-					else{
-						conviIndex.setText(convIndecies[0]);
-						convjIndex.setText(convIndecies[1]);
-					}
-				}
-				else{
-					conviIndex.setText(convIndecies[0]);
-					convjIndex.setText("");
 				}
 			}
 			catch (Exception e) {

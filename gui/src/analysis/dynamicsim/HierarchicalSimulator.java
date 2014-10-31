@@ -2922,6 +2922,8 @@ public abstract class HierarchicalSimulator {
 			else if(parameter.isSetMetaId() && modelstate.isDeletedByMetaID(parameter.getMetaId()))
 				continue;
 			// Check if it is a vector 
+			// TODO: This code is no longer valid
+			/*
 			String vSize = biomodel.annotation.AnnotationUtility.parseVectorSizeAnnotation(parameter);
 			if(vSize != null)
 			{
@@ -2953,7 +2955,7 @@ public abstract class HierarchicalSimulator {
 				}
 				continue;
 			}
-
+	*/
 			setupSingleParameter(modelstate, parameter, false, false, 0, 0);
 		}
 
