@@ -416,6 +416,39 @@ public class SBMLutilities {
 		return dimensionSizes;
 	}
 
+	public static void copyDimensionsIndices(SBase source,SBase destination,String indexedAttribute) {
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(source);
+		ArraysSBasePlugin sBasePluginDest = SBMLutilities.getArraysSBasePlugin(destination);
+		sBasePluginDest.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+		sBasePluginDest.unsetListOfIndices();
+		for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+			Dimension dimension = sBasePlugin.getDimensionByArrayDimension(i);
+			Index index = sBasePluginDest.createIndex();
+			index.setReferencedAttribute(indexedAttribute);
+			index.setArrayDimension(i);
+			index.setMath(SBMLutilities.myParseFormula(dimension.getId()));
+		}
+	}
+
+	public static void copyDimensions(SBase source,SBase destination) {
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(source);
+		ArraysSBasePlugin sBasePluginDest = SBMLutilities.getArraysSBasePlugin(destination);
+		sBasePluginDest.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+	}
+
+	public static void copyIndices(SBase source,SBase destination,String indexedAttribute) {
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(source);
+		ArraysSBasePlugin sBasePluginDest = SBMLutilities.getArraysSBasePlugin(destination);
+		//sBasePluginDest.unsetListOfIndices();
+		for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+			Dimension dimension = sBasePlugin.getDimensionByArrayDimension(i);
+			Index index = sBasePluginDest.createIndex();
+			index.setReferencedAttribute(indexedAttribute);
+			index.setArrayDimension(i);
+			index.setMath(SBMLutilities.myParseFormula(dimension.getId()));
+		}
+	}
+	
 	/**
 	 * Displays the invalid variables
 	 * @param object This is the prefix of the string if it is not a function

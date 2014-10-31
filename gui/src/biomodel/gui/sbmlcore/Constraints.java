@@ -432,14 +432,12 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				break;
 			}
 		}
-		if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-			Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+selected)!=null) {
-				layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+selected);
-			}
-			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
-				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+selected);
-			}
+		Layout layout = bioModel.getLayout();
+		if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+selected)!=null) {
+			layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+selected);
+		}
+		if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
+			layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+selected);
 		}
 		modelEditor.setDirty(true);
 		bioModel.makeUndoPoint();

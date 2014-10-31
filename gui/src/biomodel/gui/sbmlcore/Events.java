@@ -1258,29 +1258,27 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * @param selected
 	 *            the event Id to remove
 	 */
-	public static void removeTheEvent(BioModel gcm, String selected) {
-		ListOf<Event> EL = gcm.getSBMLDocument().getModel().getListOfEvents();
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getEventCount(); i++) {
+	public static void removeTheEvent(BioModel bioModel, String selected) {
+		ListOf<Event> EL = bioModel.getSBMLDocument().getModel().getListOfEvents();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getEventCount(); i++) {
 			org.sbml.jsbml.Event E = EL.get(i);
 			if (E.getId().equals(selected)) {
 				EL.remove(i);
 			}
 		}
-		for (int i = 0; i < gcm.getSBMLCompModel().getListOfPorts().size(); i++) {
-			Port port = gcm.getSBMLCompModel().getListOfPorts().get(i);
+		for (int i = 0; i < bioModel.getSBMLCompModel().getListOfPorts().size(); i++) {
+			Port port = bioModel.getSBMLCompModel().getListOfPorts().get(i);
 			if (port.isSetIdRef() && port.getIdRef().equals(selected)) {
-				gcm.getSBMLCompModel().getListOfPorts().remove(i);
+				bioModel.getSBMLCompModel().getListOfPorts().remove(i);
 				break;
 			}
 		}
-		if (gcm.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
-			Layout layout = gcm.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
-			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+selected)!=null) {
-				layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+selected);
-			}
-			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
-				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+selected);
-			}
+		Layout layout = bioModel.getLayout();
+		if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+selected)!=null) {
+			layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+selected);
+		}
+		if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
+			layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+selected);
 		}
 	}
 

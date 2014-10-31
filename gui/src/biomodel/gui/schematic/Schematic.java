@@ -67,6 +67,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.layout.ReactionGlyph;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.layout.TextGlyph;
@@ -1966,6 +1967,24 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		if (reactionButton.isSelected()) {
 			
+			if (graph.getCellType(source) == GlobalConstants.SPECIES) {
+				Species species = bioModel.getSBMLDocument().getModel().getSpecies(sourceID);
+				if (!(species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(bioModel, "", sourceID)))) {
+					JOptionPane.showMessageDialog(Gui.frame, "Reactant cannot be constant or determined by a rule unless it is a boundary condition");
+					graph.buildGraph();
+					modelEditor.refresh();
+					return;
+				}
+			}
+			if (graph.getCellType(target) == GlobalConstants.SPECIES) {
+				Species species = bioModel.getSBMLDocument().getModel().getSpecies(targetID);
+				if (!(species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(bioModel, "", targetID)))) {
+					JOptionPane.showMessageDialog(Gui.frame, "Product cannot be constant or determined by a rule unless it is a boundary condition");
+					graph.buildGraph();
+					modelEditor.refresh();
+					return;
+				}
+			}
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
@@ -2367,48 +2386,45 @@ public class Schematic extends JPanel implements ActionListener {
 			Reaction r = bioModel.getSBMLDocument().getModel().getReaction(cell.getId());
 			reactions.reactionsEditor(bioModel,"OK",cell.getId(),true);
 			
-			if (!cell.getId().equals(r.getId())) {
-				if (bioModel.getSBMLLayout().getListOfLayouts().size() != 0) {
-					Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get(0); 
-					if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-						reactionGlyph.setId(GlobalConstants.GLYPH+"__"+r.getId());
-						reactionGlyph.setReaction(r.getId());
-					}
-					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
-						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
-						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+r.getId());
-						textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+r.getId());
-						textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(), r.getId()));
-					}
+			Layout layout = bioModel.getLayout();
+			if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+				ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+				reactionGlyph.setId(GlobalConstants.GLYPH+"__"+r.getId());
+				reactionGlyph.setReaction(r.getId());
+				SBMLutilities.copyDimensionsIndices(bioModel.getSBMLDocument().getModel().getReaction(r.getId()), 
+						reactionGlyph, "layout:reaction");
+				if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+					TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+					textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+r.getId());
+					textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+r.getId());
+					textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(), r.getId()));
+					SBMLutilities.copyDimensionsIndices(reactionGlyph, textGlyph, "layout:graphicalObject");
 				}
-				cell.setId(r.getId());
 			}
+			cell.setId(r.getId());
 		}
 		else if(cellType == GlobalConstants.RULE){
 			
 			if (editable) {
 				String id = rules.ruleEditor("OK",cell.getId());
-
-				if (!cell.getId().equals(id)) {
-					if (bioModel.getSBMLLayout().getListOfLayouts().size() != 0) {
-						Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get(0); 
-						if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-							GeneralGlyph generalGlyph = (GeneralGlyph)
-									layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
-							generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-							generalGlyph.setMetaidRef(id);
-							generalGlyph.unsetReference();
-						}
-						if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
-							TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
-							textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
-							textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-							textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id));
-						}
+				Layout layout = bioModel.getLayout();
+				if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+					GeneralGlyph generalGlyph = (GeneralGlyph)
+							layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
+					generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+					generalGlyph.setMetaidRef(id);
+					generalGlyph.unsetReference();
+					SBMLutilities.copyDimensionsIndices(SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(),id), 
+							generalGlyph, "layout:metaidRef");
+					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+						textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
+						textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id));
+						SBMLutilities.copyDimensionsIndices(generalGlyph, textGlyph, "layout:graphicalObject");
 					}
-					cell.setId(id);
 				}
+				cell.setId(id);
 			} else {
 				if (cell.getStyle().equals("RULE;")) {
 					cell.setStyle("RULE_EXCLUDE;");
@@ -2425,50 +2441,46 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			String id = parameters.parametersEditor("OK",cell.getId(),
 					cellType == GlobalConstants.BOOLEAN, cellType == GlobalConstants.PLACE);
-			
-			if (!cell.getId().equals(id)) {
-				if (bioModel.getSBMLLayout().getListOfLayouts().size() != 0) {
-					Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get(0); 
-					if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						GeneralGlyph generalGlyph = (GeneralGlyph)
-								layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
-						generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-						generalGlyph.setReference(id);
-					}
-					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
-						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
-						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
-						textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-						textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),id));
-					}
+			Layout layout = bioModel.getLayout();
+			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+				GeneralGlyph generalGlyph = (GeneralGlyph)
+						layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
+				generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+				generalGlyph.setReference(id);
+				SBMLutilities.copyDimensionsIndices(bioModel.getSBMLDocument().getModel().getParameter(id), 
+						generalGlyph, "layout:reference");
+				if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+					TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+					textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+					textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
+					textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),id));
+					SBMLutilities.copyDimensionsIndices(generalGlyph, textGlyph, "layout:graphicalObject");
 				}
-				cell.setId(id);
 			}
+			cell.setId(id);
 		}
 		else if(cellType == GlobalConstants.CONSTRAINT){
 			
 			if (editable) {
 				String id = constraints.constraintEditor("OK",cell.getId());
-
-				if (!cell.getId().equals(id)) {
-					if (bioModel.getSBMLLayout().getListOfLayouts().size() != 0) {
-						Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get(0); 
-						if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-							GeneralGlyph generalGlyph = (GeneralGlyph)
-									layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
-							generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-							generalGlyph.setMetaidRef(id);
-							generalGlyph.unsetReference();
-						}
-						if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
-							TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
-							textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
-							textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-							textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id));
-						}
+				Layout layout = bioModel.getLayout();
+				if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+					GeneralGlyph generalGlyph = (GeneralGlyph)
+							layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
+					generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+					generalGlyph.setMetaidRef(id);
+					generalGlyph.unsetReference();
+					SBMLutilities.copyDimensionsIndices(SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(),id), 
+							generalGlyph, "layout:metaidRef");
+					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+						textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
+						textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id));
+						SBMLutilities.copyDimensionsIndices(generalGlyph, textGlyph, "layout:graphicalObject");
 					}
-					cell.setId(id);
 				}
+				cell.setId(id);
 			} else {
 				if (cell.getStyle().equals("CONSTRAINT;")) {
 					cell.setStyle("CONSTRAINT_EXCLUDE;");
@@ -2485,26 +2497,24 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			if (editable) {
 				String id = events.eventEditor("OK",cell.getId(),cellType == GlobalConstants.TRANSITION);
-
-				if (!cell.getId().equals(id)) {
-					if (bioModel.getSBMLLayout().getListOfLayouts().size() != 0) {
-						Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get(0); 
-						if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-							GeneralGlyph generalGlyph = (GeneralGlyph)
-									layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
-							generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-							generalGlyph.unsetMetaidRef();
-							generalGlyph.setReference(id);
-						}
-						if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
-							TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
-							textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
-							textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-							textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),id));
-						}
+				Layout layout = bioModel.getLayout();
+				if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+					GeneralGlyph generalGlyph = (GeneralGlyph)
+							layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
+					generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+					generalGlyph.unsetMetaidRef();
+					generalGlyph.setReference(id);
+					SBMLutilities.copyDimensionsIndices(bioModel.getSBMLDocument().getModel().getEvent(id), 
+							generalGlyph, "layout:reference");
+					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+						textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
+						textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),id));
+						SBMLutilities.copyDimensionsIndices(generalGlyph, textGlyph, "layout:graphicalObject");
 					}
-					cell.setId(id);
 				}
+				cell.setId(id);
 			} else {
 				if (cell.getStyle().equals("EVENT;")) {
 					cell.setStyle("EVENT_EXCLUDE;");
@@ -2519,23 +2529,22 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if(cellType == GlobalConstants.COMPARTMENT){
 			String id = compartments.compartEditor("OK",cell.getId());
-			if (!cell.getId().equals(id)) {
-				if (bioModel.getSBMLLayout().getListOfLayouts().size() != 0) {
-					Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get(0); 
-					if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-						compartmentGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-						compartmentGlyph.setCompartment(id);
-					}
-					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
-						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
-						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
-						textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
-						textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),id));
-					}
+			Layout layout = bioModel.getLayout();
+			if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+				CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+				compartmentGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+				compartmentGlyph.setCompartment(id);
+				SBMLutilities.copyDimensionsIndices(bioModel.getSBMLDocument().getModel().getCompartment(id), 
+						compartmentGlyph, "layout:compartment");
+				if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+					TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+					textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+					textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+id);
+					textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),id));
+					SBMLutilities.copyDimensionsIndices(compartmentGlyph, textGlyph, "layout:graphicalObject");
 				}
-				cell.setId(id);
 			}
+			cell.setId(id);
 		}
 		else if (cellType == GlobalConstants.COMPONENT) {
 			

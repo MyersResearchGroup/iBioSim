@@ -886,14 +886,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					AnnotationUtility.removeSBOLAnnotation(species);
 			}
 			
-			if (selected != null && !selected.equals(newSpeciesID)) {
-				bioModel.changeSpeciesId(selected, newSpeciesID);
-				((DefaultListModel) components.getModel()).clear();
+			bioModel.changeSpeciesId(selected, newSpeciesID);
+			((DefaultListModel) components.getModel()).clear();
 
-				for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
-					Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(i);
-					components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + bioModel.getComponentPortMap(submodel.getId()));
-				}
+			for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
+				Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(i);
+				components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + bioModel.getComponentPortMap(submodel.getId()));
 			}
 			bioModel.createDirPort(species.getId(),speciesType);
 

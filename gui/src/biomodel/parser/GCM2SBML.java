@@ -41,7 +41,7 @@ public class GCM2SBML {
 		conditions = new ArrayList<String>();
 		parameters = new HashMap<String, String>();
 		loadDefaultParameters();
-		this.gcm = gcm;
+		this.bioModel = gcm;
 	}
 	
 
@@ -936,45 +936,45 @@ public class GCM2SBML {
 			StringBuffer buffer = new StringBuffer("digraph G {\n}\n");
 			int i = 0;
 			for (String s : conditions) {
-				gcm.createCondition(s,i);
+				bioModel.createCondition(s,i);
 				i++;
 			}
 			for (String global : parameters.keySet()) {
-				gcm.createGlobalParameter(global, parameters.get(global));
+				bioModel.createGlobalParameter(global, parameters.get(global));
 			}
 			for (String s : species.keySet()) {
-				gcm.createSpeciesFromGCM(s, species.get(s)); 
+				bioModel.createSpeciesFromGCM(s, species.get(s)); 
 			}
 			for (String s : promoters.keySet()) {
-				gcm.createPromoterFromGCM(s, promoters.get(s)); 
+				bioModel.createPromoterFromGCM(s, promoters.get(s)); 
 			}
 			for (String s : influences.keySet()) {
 				Properties prop = influences.get(s);
 				String promoter = prop.getProperty(GlobalConstants.PROMOTER);
 				if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
-					gcm.addActivatorToProductionReaction(promoter,getInput(s),getOutput(s),
+					bioModel.addActivatorToProductionReaction(promoter,getInput(s),getOutput(s),
 							promoters.get(promoter).getProperty(GlobalConstants.STOICHIOMETRY_STRING),
 							prop.getProperty(GlobalConstants.COOPERATIVITY_STRING),
 							prop.getProperty(GlobalConstants.KACT_STRING));
 				}
 				else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
-					gcm.addRepressorToProductionReaction(promoter,getInput(s),getOutput(s),
+					bioModel.addRepressorToProductionReaction(promoter,getInput(s),getOutput(s),
 							promoters.get(promoter).getProperty(GlobalConstants.STOICHIOMETRY_STRING),
 							prop.getProperty(GlobalConstants.COOPERATIVITY_STRING),prop.getProperty(GlobalConstants.KREP_STRING));
 				}
 				else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.NOINFLUENCE)) {
 					if (promoter==null) {
-						promoter = gcm.createPromoter(null,0, 0, false);
-						gcm.createProductionReaction(promoter,null,null,null,null,null,null,false,null);
+						promoter = bioModel.createPromoter(null,0, 0, false);
+						bioModel.createProductionReaction(promoter,null,null,null,null,null,null,false,null);
 					}
-					gcm.addNoInfluenceToProductionReaction(promoter,getInput(s),getOutput(s));
+					bioModel.addNoInfluenceToProductionReaction(promoter,getInput(s),getOutput(s));
 				}
 				else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX)) {
 					String KcStr = null;
 					if (species.get(getOutput(s))!=null) {
 						KcStr = species.get(getOutput(s)).getProperty(GlobalConstants.KCOMPLEX_STRING);
 					}
-					gcm.addReactantToComplexReaction(getInput(s),getOutput(s), KcStr, 
+					bioModel.addReactantToComplexReaction(getInput(s),getOutput(s), KcStr, 
 							prop.getProperty(GlobalConstants.COOPERATIVITY_STRING));
 				} 
 			}
@@ -984,19 +984,19 @@ public class GCM2SBML {
 			} else {
 				//gcm.setIsWithinCompartment(false);
 				//gcm.setDefaultCompartment("");
-				for (int j = 0; j < gcm.getSBMLDocument().getModel().getCompartmentCount(); j++) {
-					Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(j);
-					Port port = gcm.getSBMLCompModel().createPort();
+				for (int j = 0; j < bioModel.getSBMLDocument().getModel().getCompartmentCount(); j++) {
+					Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(j);
+					Port port = bioModel.getSBMLCompModel().createPort();
 					port.setId(GlobalConstants.COMPARTMENT+"__"+compartment.getId());
 					port.setIdRef(compartment.getId());
 				}
 			}
-			gcm.getLayout();
+			bioModel.getLayout();
 			for (String s : species.keySet()) {
 				Properties prop = species.get(s);
 				if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
 						prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
-					gcm.placeSpecies(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
+					bioModel.placeSpecies(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
 							Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
 				}
 			}
@@ -1004,7 +1004,7 @@ public class GCM2SBML {
 				Properties prop = promoters.get(s);
 				if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
 						prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
-					gcm.placeSpecies(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
+					bioModel.placeSpecies(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
 							Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
 				}
 			}
@@ -1012,7 +1012,7 @@ public class GCM2SBML {
 				Properties prop = reactions.get(s);
 				if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
 						prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
-					gcm.placeReaction(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
+					bioModel.placeReaction(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
 							Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
 				}
 			}
@@ -1020,20 +1020,20 @@ public class GCM2SBML {
 				Properties prop = components.get(s);
 				if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
 						prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
-					gcm.placeCompartment(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
+					bioModel.placeCompartment(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
 							Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
 				}
 			}
-			gcm.updateLayoutDimensions();
+			bioModel.updateLayoutDimensions();
 			
 			if (numRows > 0 || numCols > 0) {
-				gcm.buildGrid(numRows, numCols);
-				gcm.setGridSize(numRows,numCols);
+				bioModel.buildGrid(numRows, numCols);
+				bioModel.setGridSize(numRows,numCols);
 			}
 			
-			gcm.createCompPlugin();
+			bioModel.createCompPlugin();
 			for (String s : components.keySet()) {
-				gcm.createComponentFromGCM(s,components.get(s));
+				bioModel.createComponentFromGCM(s,components.get(s));
 			}
 			buffer.append(GlobalConstants.SBMLFILE + "=\"" + sbmlFile + "\"\n");
 
@@ -1104,7 +1104,7 @@ public class GCM2SBML {
 	
 	//private String path;
 	
-	private BioModel gcm;
+	private BioModel bioModel;
 	
 	private int numRows;
 	
