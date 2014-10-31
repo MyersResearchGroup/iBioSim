@@ -1222,19 +1222,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					p.close();
 				}
 				catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				catch (SBMLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				catch (XMLStreamException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -2158,7 +2154,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					e.printStackTrace();
 				}
 				catch (XMLStreamException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				String md5 = Utility.MD5(SBMLstr);

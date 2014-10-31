@@ -342,7 +342,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
-						// TODO: Scott - change for Plugin reading
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						String freshIndex = "; ";
 						for(int i1 = sBasePlugin.getIndexCount()-1; i1>=0; i1--){
@@ -491,17 +490,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				// TODO: Scott: check that trigger dimensions consistent with event dimensions
 				else if (!eventDelay.getText().trim().equals("") && SBMLutilities.myParseFormula(eventDelay.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Delay formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				// TODO: Scott check delay dimensions
 				else if (!eventPriority.getText().trim().equals("") && SBMLutilities.myParseFormula(eventPriority.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Priority formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				// TODO: Scott check priority dimensions
 				else if (bioModel.getSBMLDocument().getLevel() < 3 && assign.length == 0) {
 					JOptionPane.showMessageDialog(Gui.frame, "Event must have at least one event assignment.", "Event Assignment Needed",
 							JOptionPane.ERROR_MESSAGE);
@@ -558,7 +554,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if(EAdimID!=null){
 						EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
 						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-						// TODO: add the dimensionIds and dimIDs to the new parameters
 						EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 						error = (EAdex==null);
 					}
@@ -594,10 +589,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						if(EAdimID!=null){
 							EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-							// TODO: add the dimensionIds and dimIDs to the new parameters
 							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 						}
-						// TODO: Scott - change for Plugin writing
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						sBasePlugin.unsetListOfDimensions();
 						for(int i1 = 0; EAdimID!=null && i1<EAdimID.length-1; i1++){
@@ -641,7 +634,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ea.setVariable(placeAssign[i].split(" ")[0]);
 						String left = placeAssign[i].split(":=")[0].trim();
 						String rightSide = placeAssign[i].split(":=")[1].split(";")[1];
-						// TODO: Scott - change for Plugin writing
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 						if(EAdimID!=null){
@@ -988,7 +980,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							if(EAdimID!=null){
 								EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
 								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
-								// TODO: add the dimensionIds and dimIDs to the new parameters
 								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 							}
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
@@ -1149,8 +1140,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of an event delay
 	 */
 	private static boolean checkEventDelayUnits(Delay delay) {
-//		TODO:  Is this necessary?
-//		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (delay.containsUndeclaredUnits()) {
 			if (Gui.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event assignment delay contains literals numbers or parameters with undeclared units.\n"
@@ -1173,8 +1162,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of an event assignment
 	 */
 	private boolean checkEventAssignmentUnits(EventAssignment assign) {
-//		TODO:  Is this necessary?
-//		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (assign.containsUndeclaredUnits()) {
 			if (Gui.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event assignment to " + assign.getVariable()
@@ -1421,7 +1408,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					EAdex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 					error = (EAdex==null);
 					if (!error) {	
-						ArrayList<String> meshDimensionIds = new ArrayList();
+						ArrayList<String> meshDimensionIds = new ArrayList<String>();
 						if (dimensionIds!=null) {
 							meshDimensionIds.addAll(Arrays.asList(dimensionIds));
 						}

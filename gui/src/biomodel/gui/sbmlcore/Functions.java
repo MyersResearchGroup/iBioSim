@@ -278,14 +278,11 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 										eqn.getText().trim(), args.getText().trim(), true);
 						}
 					} catch (HeadlessException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 			}
@@ -313,7 +310,6 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						try {
 							f.setMath(JSBML.parseFormula("lambda(" + eqn.getText().trim() + ")"));
 						} catch (ParseException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -321,7 +317,6 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						try {
 							f.setMath(JSBML.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
 						} catch (ParseException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -389,7 +384,6 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							try {
 								f.setMath(JSBML.parseFormula("lambda(" + eqn.getText().trim() + ")"));
 							} catch (ParseException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -397,7 +391,6 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							try {
 								f.setMath(JSBML.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
 							} catch (ParseException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}

@@ -2169,7 +2169,6 @@ public class Schematic extends JPanel implements ActionListener {
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);
 		ArrayList<String> ports;
-		// TODO: WHAT ABOUT PLACES?
 		if (SBMLutilities.isBoolean(p)) {
 			ports = compBioModel.getOutputPorts(GlobalConstants.BOOLEAN);
 		} else if (SBMLutilities.isPlace(p)) {
@@ -2196,7 +2195,6 @@ public class Schematic extends JPanel implements ActionListener {
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);	
 		ArrayList<String> ports;
-		// TODO: what about places
 		if (SBMLutilities.isBoolean(p)) {
 			ports = compBioModel.getInputPorts(GlobalConstants.BOOLEAN);
 		} else if (SBMLutilities.isPlace(p)) {

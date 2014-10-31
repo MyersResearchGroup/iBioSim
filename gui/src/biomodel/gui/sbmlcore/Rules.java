@@ -296,7 +296,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			} else {
 				onPort.setSelected(false);
 			}
-			// TODO: Scott - work indicies
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 				Index indie = sBasePlugin.getIndex(i,"variable");
@@ -350,7 +349,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
-		//TODO don't forget the whiles
 		String[] dimID = new String[]{""};
 		String[] dex = new String[]{""};
 		String[] dimensionIds = new String[]{""};

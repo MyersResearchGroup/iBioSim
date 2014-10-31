@@ -450,7 +450,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						}			
 					}
 				}
-				//TODO reading?
 				String dimInID = SBMLutilities.getDimensionString(paramet);
 				paramID.setText(paramet.getId() + dimInID);
 				selectedID = paramet.getId();
@@ -740,7 +739,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 
-							//TODO edit?
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							paramet.setId(dimID[0].trim());
 							sBasePlugin.unsetListOfDimensions();
@@ -873,7 +871,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							paramet.setId(dimID[0].trim());
 							paramet.setName(paramName.getText().trim());
 							
-							//TODO add?
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							for(int i = 0; i<dimID.length-1; i++){
 								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);

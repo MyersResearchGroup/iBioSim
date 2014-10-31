@@ -157,7 +157,6 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 				try {
 					resolvedComp = aggregateCompResolver.resolve(uri);
 				} catch (MergerException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				if (resolvedComp != null) {
