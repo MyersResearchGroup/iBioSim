@@ -579,10 +579,8 @@ public class Nary_Run implements ActionListener, Runnable {
 					intSpecies, log, biomodelsim, simTab, root, progress, "", null, direct, timeLimit, timeLimit * run, modelFile,
 					abstPane, abstraction, null, absError, timeStep, printInterval, run, rndSeed, true, label, running);
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		running.setCursor(null);

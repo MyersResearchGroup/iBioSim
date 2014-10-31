@@ -1900,7 +1900,6 @@ public class StateGraph implements Runnable {
 			this.transitionSum = transitionSum;
 		}
 
-		@SuppressWarnings("unused")
 		private double getTransitionSum(double noRate, State n) {
 			if (transitionSum == -1) {
 				transitionSum = 0;

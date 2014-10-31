@@ -271,7 +271,6 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 	@Override
 	protected void cancel() {
-		// TODO Auto-generated method stub
 		cancelFlag = true;
 
 	}
@@ -376,7 +375,6 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 	@Override
 	protected void clear() {
-		// TODO Auto-generated method stub
 
 	}
 	@Override

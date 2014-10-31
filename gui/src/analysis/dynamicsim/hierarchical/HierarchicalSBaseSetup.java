@@ -2,7 +2,6 @@ package analysis.dynamicsim.hierarchical;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.swing.JFrame;
@@ -129,7 +128,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 		double newResult = evaluateExpressionRecursive(modelstate,
 				initialAssignment.getMath());
 		double oldResult = modelstate.getVariableToValue(getReplacements(),variable);
-		double speciesVal = 0;
+		//double speciesVal = 0;
 		if (newResult != oldResult) {
 			if (oldResult == Double.NaN)
 				oldResult = 1.0;

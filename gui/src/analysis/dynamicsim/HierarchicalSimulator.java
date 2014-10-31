@@ -67,11 +67,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
-import org.sbml.jsbml.Symbol;
-
 import main.Gui;
 import odk.lang.FastMath;
-import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 
@@ -3821,7 +3818,7 @@ public abstract class HierarchicalSimulator {
 	{
 		double newResult = evaluateExpressionRecursive(modelstate, initialAssignment.getMath());
 		double oldResult = modelstate.getVariableToValue(variable);
-		double speciesVal = 0;
+		//double speciesVal = 0;
 		if(newResult != oldResult)
 		{
 			if(oldResult == Double.NaN)

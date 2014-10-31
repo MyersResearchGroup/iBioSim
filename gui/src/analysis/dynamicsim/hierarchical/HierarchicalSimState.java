@@ -4,8 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.swing.JFrame;
@@ -15,17 +13,11 @@ import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 
-import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
 import flanagan.math.PsRandom;
-import analysis.dynamicsim.XORShiftRandom;
-import analysis.dynamicsim.hierarchical.HierarchicalObjects.ModelState;
-import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
-
 
 /**
  * This class provides the state variables of the simulation.
