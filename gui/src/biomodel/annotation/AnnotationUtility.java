@@ -16,7 +16,6 @@ import org.sbml.jsbml.xml.XMLToken;
 import org.sbml.jsbml.xml.XMLTriple;
 import org.sbml.jsbml.JSBML;
 
-import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
@@ -47,7 +46,6 @@ public class AnnotationUtility {
 				sbmlObject.setAnnotation(new Annotation(annotation));				
 			}
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -79,7 +77,6 @@ public class AnnotationUtility {
 			}
 			return GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 		} catch (XMLStreamException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		return null;
@@ -115,7 +112,6 @@ public class AnnotationUtility {
 				sbmlObject.setAnnotation(new Annotation(annotation));				
 			}
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	
@@ -134,359 +130,11 @@ public class AnnotationUtility {
 				return sweepMatcher.group(2);
 			}
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	
 		return null;
 	}
-	
-	public static void setVectorSizeAnnotation(SBase sbmlObject, String length)  {
-		if (sbmlObject.isSetAnnotation())
-			removeVectorSizeAnnotation(sbmlObject);
-		XMLAttributes attr = new XMLAttributes();
-		attr.add("xmlns:vector", "http://www.fakeuri.com");
-		attr.add("vector:size", ""+length);
-		XMLNode node = new XMLNode(new XMLTriple("vector","http://www.fakeuri.com ","vector"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject)); 
-	}
-
-	public static void removeVectorSizeAnnotation(SBase sbmlObject)  {
-
-		try {
-			String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern vectorSizePattern = Pattern.compile(VECTOR_SIZE_ANNOTATION);
-			Matcher vectorSizeMatcher = vectorSizePattern.matcher(annotation);
-			if (vectorSizeMatcher.find()) {
-				String vectorSizeAnnotation = vectorSizeMatcher.group(0);
-				annotation = annotation.replace(vectorSizeAnnotation, "");
-			}
-			if (annotation.equals("")) {
-				sbmlObject.unsetAnnotation();
-			} else {
-				annotation = "<annotation>\n"+annotation+"\n</annotation>";
-				sbmlObject.setAnnotation(new Annotation(annotation));
-			} 			
-		}	
-		catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		//}
-	}
-	
-	public static String parseVectorSizeAnnotation(SBase sbmlObject) {
-		if (sbmlObject==null)
-			return null;
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern vectorSizePattern = Pattern.compile(VECTOR_SIZE_ANNOTATION);
-			Matcher vectorSizeMatcher = vectorSizePattern.matcher(annotation);
-			if (vectorSizeMatcher.find() && vectorSizeMatcher.groupCount()==2) {
-				if (vectorSizeMatcher.group(1)!=null) {
-					return vectorSizeMatcher.group(1);
-				}
-				return vectorSizeMatcher.group(2);
-			}
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-	
-	public static void setMatrixSizeAnnotation(SBase sbmlObject, String numRows, String numCols) {
-		if (sbmlObject.isSetAnnotation())
-			removeMatrixSizeAnnotation(sbmlObject);
-		XMLAttributes attr = new XMLAttributes();
-		attr.add("xmlns:matrix", "http://www.fakeuri.com");
-		attr.add("matrix:size", "(" + numRows + "," + numCols + ")");
-		XMLNode node = new XMLNode(new XMLTriple("matrix","http://www.fakeuri.com ","matrix"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject)); 
-	}
-
-	public static void removeMatrixSizeAnnotation(SBase sbmlObject)  {
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern marixSizePattern = Pattern.compile(MATRIX_SIZE_ANNOTATION);
-			Matcher mateixSizeMatcher = marixSizePattern.matcher(annotation);
-			if (mateixSizeMatcher.find()) {
-				String matrixSizeAnnotation = mateixSizeMatcher.group(0);
-				annotation = annotation.replace(matrixSizeAnnotation, "");
-			}
-			if (annotation.equals("")) {
-				sbmlObject.unsetAnnotation();
-			} else {
-				annotation = "<annotation>\n"+annotation+"\n</annotation>";
-				sbmlObject.setAnnotation(new Annotation(annotation));				
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-	}
-	
-	public static String[] parseMatrixSizeAnnotation(SBase sbmlObject) {
-		if (sbmlObject==null)
-			return null;
-		String [] ret = null;
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern matrixSizePattern = Pattern.compile(MATRIX_SIZE_ANNOTATION);
-			Matcher matrixSizeMatcher = matrixSizePattern.matcher(annotation);
-			if (matrixSizeMatcher.find() && matrixSizeMatcher.groupCount()==4) {
-				ret = new String[2];
-				if (matrixSizeMatcher.group(1) != null && matrixSizeMatcher.group(2) != null) {
-					ret[0] = matrixSizeMatcher.group(1);
-					ret[1] = matrixSizeMatcher.group(2);
-				}
-				else {
-					ret[0] = matrixSizeMatcher.group(3);
-					ret[1] = matrixSizeMatcher.group(4);
-				}
-			}
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return ret;
-	}
-	
-	public static void setRowIndexAnnotation(SBase sbmlObject, String i) {
-		if (sbmlObject.isSetAnnotation())
-			removeRowIndexAnnotation(sbmlObject);
-		XMLAttributes attr = new XMLAttributes();
-		attr.add("xmlns:rowIndex", "http://www.fakeuri.com");
-		attr.add("rowIndex:eqn", ""+i);
-		XMLNode node = new XMLNode(new XMLTriple("rowIndex","http://www.fakeuri.com ","rowIndex"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject)); 
-	}
-
-	public static void removeRowIndexAnnotation(SBase sbmlObject) {
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern rowIndexPattern = Pattern.compile(ROW_INDEX_ANNOTATION);
-			Matcher rowIndexMatcher = rowIndexPattern.matcher(annotation);
-			if (rowIndexMatcher.find()) {
-				String rowIndexAnnotation = rowIndexMatcher.group(0);
-				annotation = annotation.replace(rowIndexAnnotation, "");
-			}
-			if (annotation.equals("")) {
-				sbmlObject.unsetAnnotation();
-			} else {
-				annotation = "<annotation>\n"+annotation+"\n</annotation>";
-				sbmlObject.setAnnotation(new Annotation(annotation));				
-			}
-			//}
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static String parseRowIndexAnnotation(SBase sbmlObject) {
-		if (sbmlObject==null)
-			return null;
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern rowIndexPattern = Pattern.compile(ROW_INDEX_ANNOTATION);
-			Matcher rowIndexMatcher = rowIndexPattern.matcher(annotation);
-			if (rowIndexMatcher.find() && rowIndexMatcher.groupCount()==2) {
-				if (rowIndexMatcher.group(1)!=null) {
-					return rowIndexMatcher.group(1);
-				}
-				return rowIndexMatcher.group(2);
-			}
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public static void setColIndexAnnotation(SBase sbmlObject, String j) {
-		if (sbmlObject.isSetAnnotation())
-			removeColIndexAnnotation(sbmlObject);
-		XMLAttributes attr = new XMLAttributes();
-		attr.add("xmlns:colIndex", "http://www.fakeuri.com");
-		attr.add("colIndex:eqn", ""+j);
-		XMLNode node = new XMLNode(new XMLTriple("colIndex","http://www.fakeuri.com ","colIndex"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject)); 
-	}
-
-	public static void removeColIndexAnnotation(SBase sbmlObject) {
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern colIndexPattern = Pattern.compile(COL_INDEX_ANNOTATION);
-			Matcher colIndexMatcher = colIndexPattern.matcher(annotation);
-			if (colIndexMatcher.find()) {
-				String colIndexAnnotation = colIndexMatcher.group(0);
-				annotation = annotation.replace(colIndexAnnotation, "");
-			}
-			if (annotation.equals("")) {
-				sbmlObject.unsetAnnotation();
-			} else {
-				annotation = "<annotation>\n"+annotation+"\n</annotation>";
-				sbmlObject.setAnnotation(new Annotation(annotation));				
-			}
-			//}
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static String parseColIndexAnnotation(SBase sbmlObject) {
-		if (sbmlObject==null)
-			return null;
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern colIndexPattern = Pattern.compile(COL_INDEX_ANNOTATION);
-			Matcher colIndexMatcher = colIndexPattern.matcher(annotation);
-			if (colIndexMatcher.find() && colIndexMatcher.groupCount()==2) {
-				if (colIndexMatcher.group(1)!=null) {
-					return colIndexMatcher.group(1);
-				}
-				return colIndexMatcher.group(2);
-			}
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-	
-	public static void setConversionRowIndexAnnotation(SBase sbmlObject, String i) {
-		if (sbmlObject.isSetAnnotation())
-			removeConversionRowIndexAnnotation(sbmlObject);
-		XMLAttributes attr = new XMLAttributes();
-		attr.add("xmlns:rowConvIndex", "http://www.fakeuri.com");
-		attr.add("rowConvIndex:eqn", ""+i);
-		XMLNode node = new XMLNode(new XMLTriple("rowConvIndex","http://www.fakeuri.com ","rowConvIndex"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject)); 
-	}
-
-	public static void removeConversionRowIndexAnnotation(SBase sbmlObject) {
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern rowConvIndexPattern = Pattern.compile(CONV_ROW_INDEX_ANNOTATION);
-			Matcher rowConvIndexMatcher = rowConvIndexPattern.matcher(annotation);
-			if (rowConvIndexMatcher.find()) {
-				String rowIndexAnnotation = rowConvIndexMatcher.group(0);
-				annotation = annotation.replace(rowIndexAnnotation, "");
-			}
-			if (annotation.equals("")) {
-				sbmlObject.unsetAnnotation();
-			} else {
-				annotation = "<annotation>\n"+annotation+"\n</annotation>";
-				sbmlObject.setAnnotation(new Annotation(annotation));				
-			}
-			//}
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static String parseConversionRowIndexAnnotation(SBase sbmlObject) {
-		if (sbmlObject==null)
-			return null;
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern rowConvIndexPattern = Pattern.compile(CONV_ROW_INDEX_ANNOTATION);
-			Matcher rowConvIndexMatcher = rowConvIndexPattern.matcher(annotation);
-			if (rowConvIndexMatcher.find() && rowConvIndexMatcher.groupCount()==2) {
-				if (rowConvIndexMatcher.group(1)!=null) {
-					return rowConvIndexMatcher.group(1);
-				}
-				return rowConvIndexMatcher.group(2);
-			}
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public static void setConversionColIndexAnnotation(SBase sbmlObject, String j) {
-		if (sbmlObject.isSetAnnotation())
-			removeConversionColIndexAnnotation(sbmlObject);
-		XMLAttributes attr = new XMLAttributes();
-		attr.add("xmlns:colConvIndex", "http://www.fakeuri.com");
-		attr.add("colConvIndex:eqn", ""+j);
-		XMLNode node = new XMLNode(new XMLTriple("colConvIndex","http://www.fakeuri.com ","colConvIndex"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject)); 
-	}
-
-	public static void removeConversionColIndexAnnotation(SBase sbmlObject) {
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern colConvIndexPattern = Pattern.compile(CONV_COL_INDEX_ANNOTATION);
-			Matcher colConvIndexMatcher = colConvIndexPattern.matcher(annotation);
-			if (colConvIndexMatcher.find()) {
-				String colIndexAnnotation = colConvIndexMatcher.group(0);
-				annotation = annotation.replace(colIndexAnnotation, "");
-			}
-			if (annotation.equals("")) {
-				sbmlObject.unsetAnnotation();
-			} else {
-				annotation = "<annotation>\n"+annotation+"\n</annotation>";
-				sbmlObject.setAnnotation(new Annotation(annotation));				
-			}
-			//}
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static String parseConversionColIndexAnnotation(SBase sbmlObject) {
-		if (sbmlObject==null)
-			return null;
-		String annotation;
-		try {
-			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-			Pattern colConvIndexPattern = Pattern.compile(CONV_COL_INDEX_ANNOTATION);
-			Matcher colConvIndexMatcher = colConvIndexPattern.matcher(annotation);
-			if (colConvIndexMatcher.find() && colConvIndexMatcher.groupCount()==2) {
-				if (colConvIndexMatcher.group(1)!=null) {
-					return colConvIndexMatcher.group(1);
-				}
-				return colConvIndexMatcher.group(2);
-			}
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	
 	
 	public static void setArraySizeAnnotation(SBase sbmlObject, int size) {
 		if (sbmlObject.isSetAnnotation())
@@ -517,7 +165,6 @@ public class AnnotationUtility {
 				sbmlObject.setAnnotation(new Annotation(annotation));				
 			}
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -553,7 +200,6 @@ public class AnnotationUtility {
 				return Integer.valueOf(arraySizeMatcher.group(2))+1;
 			}
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -589,7 +235,6 @@ public class AnnotationUtility {
 				sbmlObject.setAnnotation(new Annotation(annotation));				
 			}
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	
@@ -609,7 +254,6 @@ public class AnnotationUtility {
 				return dynamicMatcher.group(2);
 			}
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -651,10 +295,8 @@ public class AnnotationUtility {
 				sbmlObject.setAnnotation(new Annotation(annotation));				
 			}
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
 	}
 	
 	public static int[] parseGridAnnotation(SBase sbmlObject) {
@@ -694,7 +336,6 @@ public class AnnotationUtility {
 			}
 			return gridSize;
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -763,7 +404,6 @@ public class AnnotationUtility {
 				sbmlObject.setAnnotation(new Annotation(annotation));				
 			}
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -782,7 +422,6 @@ public class AnnotationUtility {
 				return arrayMatcher.group(2).replace("\"","").replace(" ","").split("array:");
 			}
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -815,7 +454,6 @@ public class AnnotationUtility {
 		try {
 			return sbmlObject.isSetAnnotation() && sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().contains(annotation);
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;
@@ -867,30 +505,6 @@ public class AnnotationUtility {
 	private static final String GRID_ANNOTATION =
 			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\((\\d),(\\d+)\\)\"/>" + "|" +
 					"<ibiosim:ibiosim ibiosim:grid=\"\\((\\d+),(\\d+)\\)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
-	
-	private static final String VECTOR_SIZE_ANNOTATION =
-			"<vector:vector xmlns:vector=\"http://www\\.fakeuri\\.com\" vector:size=\"([a-zA-Z]+[_a-zA-Z\\d]*)\"/>" + "|" +
-					"<vector:vector vector:size=\"([a-zA-Z]+[_a-zA-Z\\d]*)\" xmlns:vector=\"http://www\\.fakeuri\\.com\"/>";
-	
-	private static final String MATRIX_SIZE_ANNOTATION =
-			"<matrix:matrix xmlns:matrix=\"http://www\\.fakeuri\\.com\" matrix:size=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\"/>" + "|" +
-					"<matrix:matrix matrix:size=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\" xmlns:matrix=\"http://www\\.fakeuri\\.com\"/>";
-	
-	private static final String ROW_INDEX_ANNOTATION =
-			"<rowIndex:rowIndex xmlns:rowIndex=\"http://www\\.fakeuri\\.com\" rowIndex:eqn=\"([^:]+)\"/>" + "|" +
-					"<rowIndex:rowIndex rowIndex:eqn=\"([^:]+)\" xmlns:rowIndex=\"http://www\\.fakeuri\\.com\"/>";
-	
-	private static final String COL_INDEX_ANNOTATION =
-			"<colIndex:colIndex xmlns:colIndex=\"http://www\\.fakeuri\\.com\" colIndex:eqn=\"([^:]+)\"/>" + "|" +
-					"<colIndex:colIndex colIndex:eqn=\"([^:]+)\" xmlns:colIndex=\"http://www\\.fakeuri\\.com\"/>";
-	
-	private static final String CONV_ROW_INDEX_ANNOTATION =
-			"<rowConvIndex:rowConvIndex xmlns:rowConvIndex=\"http://www\\.fakeuri\\.com\" rowConvIndex:eqn=\"([^:]+)\"/>" + "|" +
-					"<rowConvIndex:rowConvIndex rowConvIndex:eqn=\"([^:]+)\" xmlns:rowConvIndex=\"http://www\\.fakeuri\\.com\"/>";
-	
-	private static final String CONV_COL_INDEX_ANNOTATION =
-			"<colConvIndex:colConvIndex xmlns:colConvIndex=\"http://www\\.fakeuri\\.com\" colConvIndex:eqn=\"([^:]+)\"/>" + "|" +
-					"<colConvIndex:colConvIndex colConvIndex:eqn=\"([^:]+)\" xmlns:colConvIndex=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
 	

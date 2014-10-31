@@ -462,6 +462,8 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 					&& modelstate.isDeletedByMetaID(parameter.getMetaId()))
 				continue;
 			// Check if it is a vector
+			// TODO: no longer valid
+			/*
 			String vSize = biomodel.annotation.AnnotationUtility
 					.parseVectorSizeAnnotation(parameter);
 			if (vSize != null) {
@@ -495,7 +497,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				}
 				continue;
 			}
-
+*/
 			setupSingleParameter(modelstate, parameter, false, false, 0, 0);
 		}
 
