@@ -183,8 +183,7 @@ public class LPN {
         return newLPN;
     }
 
-    @SuppressWarnings("unused")
-	public void setGlobals(List<StateGraph> designUnitSet){
+ 	public void setGlobals(List<StateGraph> designUnitSet){
     	List<String> removeList = new ArrayList<String>();
     	List<String> addList = new ArrayList<String>();
     	for(String output : this.outputs){

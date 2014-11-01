@@ -531,7 +531,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					} else if (lhpnFile.isInteger(VarName)) {
 						integer = true;
 					}
-					VariablesPanel variablesPanel = new VariablesPanel(selected, list, continuous, integer,
+					new VariablesPanel(selected, list, continuous, integer,
 							lhpnFile);
 				} else {
 					String temp = (String) JOptionPane.showInputDialog(
@@ -544,7 +544,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 						} else if (temp.equals(varOptions[2])) {
 							integer = true;
 						}
-						VariablesPanel variablesPanel = new VariablesPanel(selected, list, continuous, integer,
+						new VariablesPanel(selected, list, continuous, integer,
 								lhpnFile);
 					}
 				}
@@ -556,28 +556,28 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					String[] array = selected.split(" ");
 					selected = array[0];
 				}
-				PlacePanel placePanel = new PlacePanel(selected, list, controlFlow, lhpnFile);
+				new PlacePanel(selected, list, controlFlow, lhpnFile);
 			} else if (getName().contains("Transition")) {
 				String selected = null;
 				if (list.getSelectedValue() != null
 						&& getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				TransitionsPanel transitionsPanel = new TransitionsPanel(selected, list, controlFlow, lhpnFile);
+				new TransitionsPanel(selected, list, controlFlow, lhpnFile);
 			} else if (getName().contains("Movement")) {
 				String selected = null;
 				if (list.getSelectedValue() != null
 						&& getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				ControlFlowPanel controlFlowPanel = new ControlFlowPanel(selected, list, lhpnFile);
+				new ControlFlowPanel(selected, list, lhpnFile);
 			} else if (getName().contains("Property")) {
 				String selected = null;
 				if (list.getSelectedValue() != null
 						&& getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				PropertyPanel propertyPanel = new PropertyPanel(selected, list, lhpnFile);
+				new PropertyPanel(selected, list, lhpnFile);
 			}
 		}
 

@@ -1176,9 +1176,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		help.add(manual);
 		help.add(bugReport);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			MacOSAboutHandler macOSAboutHandler = new MacOSAboutHandler();
-			MacOSPreferencesHandler macOSPreferencesHandler = new MacOSPreferencesHandler();
-			MacOSQuitHandler macOSQuitHandler = new MacOSQuitHandler();
+			new MacOSAboutHandler();
+			new MacOSPreferencesHandler();
+			new MacOSQuitHandler();
 			Application application = new Application();
 			application.addPreferencesMenuItem();
 			application.setEnabledPreferencesMenu(true);
@@ -1631,7 +1631,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		else if (e.getSource() == saveAsVerilog) {
-			Lpn2verilog lpn2verilog = new Lpn2verilog(tree.getFile());
+			new Lpn2verilog(tree.getFile());
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0) {
 				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
@@ -1889,7 +1889,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			addToTree(theFile.replace(".lpn", ".xml"));
 		}
 		else if (e.getActionCommand().equals("convertToVerilog")) {
-			Lpn2verilog lpn2verilog = new Lpn2verilog(tree.getFile());
+			new Lpn2verilog(tree.getFile());
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0) {
 				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
@@ -1901,7 +1901,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		
 		else if (e.getActionCommand().equals("convertToLPN")) {
-			BuildProperty prop = new BuildProperty();
+			new BuildProperty();
 			try {
 				BuildProperty.buildProperty(tree.getFile());
 			} catch (IOException e1) {
@@ -2213,7 +2213,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						return;
 					}
 				}
-				Run run = new Run(null);
+				new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
@@ -2399,7 +2399,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						return;
 					}
 				}
-				Run run = new Run(null);
+				new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
@@ -2498,7 +2498,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				out = out.substring(0, out.length() - 4);
 			}
 			try {
-				Run run = new Run(null);
+				new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
@@ -3780,7 +3780,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							getPartsThread = null;
 						}
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 			    }
@@ -3792,6 +3791,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			final JPanel virtualPartsPanel = new JPanel(new BorderLayout());
 			final JPanel labelPanel = new JPanel(new BorderLayout());
 			TableModel dataModel = new AbstractTableModel() {
+
+				private static final long serialVersionUID = 1L;
+
 				public int getColumnCount() {
 					return 6;
 				}
@@ -3858,6 +3860,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								final Interactions interactions = partsHandler.GetInteractions(part);
 								if (interactions != null && interactions.getInteractions() != null) {
 									TableModel dataModel = new AbstractTableModel() {
+
+										private static final long serialVersionUID = 1L;
+
 										public int getColumnCount() {
 											return 4;
 										}
@@ -5999,7 +6004,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else {
 			//SBOLBrowser browser = new SBOLBrowser(this, filePath);
-			SBOLBrowser sbolBrowser = new SBOLBrowser(this, filePath);
+			new SBOLBrowser(this, filePath);
 		}
 	}
 	
@@ -8945,20 +8950,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			writer.write(doc, "foo.xml");
 		}
 		catch (SBMLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		*/
 		
-		Gui gui = new Gui(lemaFlag, atacsFlag, libsbmlFound);
+		new Gui(lemaFlag, atacsFlag, libsbmlFound);
 	}
 	
 	public static boolean isLibsbmlFound() {

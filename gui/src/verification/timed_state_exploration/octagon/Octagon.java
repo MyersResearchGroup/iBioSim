@@ -1037,6 +1037,7 @@ public class Octagon implements Equivalence {
 	 * value may be an over-approximation since an octagon stores twice
 	 * the max and min, so one needs to adjust the division by 2 to an integer.
 	 */
+	@Override
 	public IntervalPair getContinuousBounds(String contVar, LhpnFile lpn){
 		
 		// Extract the necessary indecies.
@@ -1149,6 +1150,7 @@ public class Octagon implements Equivalence {
 	 * @return
 	 * 		The range of the continuous variable described by ltContPair.
 	 */
+	@Override
 	public IntervalPair getContinuousBounds(LPNContinuousPair ltContPair){
 		
 		// First check if the variable is in the DBM portion of the
@@ -1205,6 +1207,7 @@ public class Octagon implements Equivalence {
 	 * 		The range of rates associated with the continuous variable indexed
 	 * 		by ltContPair.
 	 */
+	@Override
 	public IntervalPair getRateBounds(LPNTransitionPair ltPair){
 
 		int upper;
@@ -1258,6 +1261,7 @@ public class Octagon implements Equivalence {
 	/**
 	 * Always the lower bound.
 	 */
+	@Override
 	public int getLowerBoundTrue(int index){
 		return _matrix[baseToPos(index)][baseToNeg(index)];
 	}
@@ -1278,6 +1282,7 @@ public class Octagon implements Equivalence {
 	/**
 	 * Always gives the upper bound.
 	 */
+	@Override
 	public int getUpperBoundTrue(int index){
 		return _matrix[baseToNeg(index)][baseToPos(index)];
 	}
@@ -1287,6 +1292,7 @@ public class Octagon implements Equivalence {
 	 * @param ltPair The index for the continuous variable.
 	 * @return The value to reset to.
 	 */
+	@Override
 	public int rateResetValue(LPNTransitionPair ltPair){
 		
 		//*IntervalPair rateBounds = getRateBounds(ltPair);
@@ -1320,6 +1326,7 @@ public class Octagon implements Equivalence {
 	 * 		The value of the (i,j) element of the DBM where i corresponds to the row
 	 * 		for the variable iPair and j corresponds to the row for the variable jPair.
 	 */
+	@Override
 	public int getDbmEntryByPair(LPNTransitionPair iPair, LPNTransitionPair jPair){
 		
 		
@@ -1428,6 +1435,7 @@ public class Octagon implements Equivalence {
 	 *		gives the result of otherOctagon.subset(this). Thus it agrees with the subset method.
 	 */
 //	public boolean superset(Octagon otherOctagon){
+	@Override
 	public boolean superset(Equivalence otherOctagon){
 		return otherOctagon.subset(this);
 	}
@@ -1435,6 +1443,7 @@ public class Octagon implements Equivalence {
 	/**
 	 * Performs the tighten algorithm of in Mine's Ocatgon paper.
 	 */
+	@Override
 	public void recononicalize(){
 				
 		// This is the bagnara2008
@@ -1485,6 +1494,7 @@ public class Octagon implements Equivalence {
 	 * 		The Octagon obtained by firing Transition t with enabled Transitions enabled
 	 * 		enabledTran when the current state is localStates.
 	 */
+	@Override
 	public Octagon fire(Transition t, LpnTranList enabledTran, 
 			ContinuousRecordSet newAssignValues,
 			State[] localStates){
@@ -2591,6 +2601,7 @@ public class Octagon implements Equivalence {
 	 * @return
 	 * 		The new zone resulting from the rate change.
 	 */
+	@Override
 	public Octagon fire(LPNTransitionPair ltPair, int rate){
 		
 		// Make a copy of the Zone.
@@ -2618,6 +2629,7 @@ public class Octagon implements Equivalence {
 	 * Advances time.
 	 * @param localStates
 	 */
+	@Override
 	public void advance(State[] localStates){
 		
 		//*for(LPNTransitionPair ltPair : _indexToTimerPair){
@@ -2698,6 +2710,7 @@ public class Octagon implements Equivalence {
 	 * Resets the rates of all continuous variables to be their
 	 * lower bounds.
 	 */
+	@Override
 	public Octagon resetRates(){
 		/*
 		 * Create a new zone.
@@ -2985,6 +2998,7 @@ public class Octagon implements Equivalence {
 	 * @return The new Octagon that is the result of restricting this Octagon
 	 *  according to the firing of the inequalities in the eventSet.
 	 */
+	@Override
 	public Octagon getContinuousRestrictedZone(EventSet eventSet, State[] localStates){
 		// Make a new copy of the zone.
 		//*Zone z = this.clone();
@@ -3178,6 +3192,7 @@ public class Octagon implements Equivalence {
 	 * @return
 	 * 		The list of all timers that have reached their lower bounds.
 	 */
+	@Override
 	public List<Transition> getEnabledTransitions(){
 		
 		// This method is probably not necessary and does not take
@@ -3224,6 +3239,7 @@ public class Octagon implements Equivalence {
 	 * @return
 	 * 			A List of the Transitions that are enabled in the LPN given by the index.
 	 */
+	@Override
 	public List<Transition> getEnabledTransitions(int LpnIndex){
 		
 		// This method is probably not necessary and does not take
@@ -3280,6 +3296,7 @@ public class Octagon implements Equivalence {
 	 * 		either contain a transition to
 	 * 		fire or set of inequalities to change sign. 
 	 */
+	@Override
 	public LpnTranList getPossibleEvents(int LpnIndex, State localState){
 		
 		
@@ -3686,6 +3703,7 @@ public class Octagon implements Equivalence {
 	 * 		The warped Octagon.
 	 */
 	//*public void dbmWarp(Octagon oldOctagon){
+	@Override
 	public void dbmWarp(Equivalence oldE){
 		Octagon oldOctagon = (Octagon) oldE;
 		for(int i=1; i<DBMsize(); i++){
@@ -3997,6 +4015,7 @@ public class Octagon implements Equivalence {
 	 * @return
 	 * 		The list of LhpnFile objects that this Octagon depends on.
 	 */
+	@Override
 	public LhpnFile[] get_lpnList(){
 		return _lpnList;
 	}
@@ -4010,6 +4029,7 @@ public class Octagon implements Equivalence {
 	 * @throws ClassCastException
 	 * 		If the LPNTransitionPair is not an instance of an LPNContinuousPair.
 	 */
+	@Override
 	public int getCurrentRate(LPNTransitionPair contVar){
 		
 		// Find  the index in the _dbmVarList.
@@ -4035,6 +4055,7 @@ public class Octagon implements Equivalence {
 	 * @param currentRate
 	 * 		The value of the rate.
 	 */
+	@Override
 	public void setCurrentRate(LPNTransitionPair contVar, int currentRate){
 		
 		//*if(!(contVar instanceof LPNContinuousPair)){
@@ -4099,6 +4120,7 @@ public class Octagon implements Equivalence {
 	 * @return
 	 * 			The resulting Octagon after adding newTransitions
 	 */
+	@Override
 	public Octagon addTransition(HashSet<LPNTransitionPair> newTransitions, State[] localStates){
 		
 		/*
@@ -4400,6 +4422,7 @@ public class Octagon implements Equivalence {
 	 * variables.
 	 * @return The resulting Octagon.
 	 */
+	@Override
 	public Octagon moveOldRateZero(LPNContinuousPair ltContPair) {
 		
 		// Create a Zone to alter.
@@ -4589,6 +4612,7 @@ public class Octagon implements Equivalence {
 	 * @param firedRate The continuous variable with the new rate.
 	 * @return The resulting Octagon.
 	 */
+	@Override
 	public Octagon saveOutZeroRate(LPNContinuousPair firedRate) {
 		
 		// Check if the variable is in the zone.
@@ -4997,6 +5021,7 @@ public class Octagon implements Equivalence {
 		return getLowerBound(getIndexByTransitionPair(ltPair));
 	}
 	
+	@Override
 	public String toString(){
 		
 		String result = "Timer and delay or continuous and ranges.\n";

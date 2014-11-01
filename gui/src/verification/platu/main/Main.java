@@ -30,7 +30,6 @@ public class Main {
 //    	System.out.println("isWindows: " + isWindows);
 //    }
     
-    //TODO: (original) use thread pool
     public static ExecutorService exec = Executors.newFixedThreadPool(PROCESSORS);
     
     // options
@@ -134,7 +133,7 @@ public class Main {
                     setOptions(prop);
             }
             
-            Main main = new Main(cmdFileString);
+            new Main(cmdFileString);
 
 //            if (PRINT_USAGE_STATS) {
 //                VarVal.printUsageStats();
