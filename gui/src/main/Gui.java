@@ -1902,7 +1902,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		
 		else if (e.getActionCommand().equals("convertToLPN")) {
-			new BuildProperty();
+			//new BuildProperty();
 			try {
 				BuildProperty.buildProperty(tree.getFile());
 			} catch (IOException e1) {
@@ -2214,7 +2214,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						return;
 					}
 				}
-				new Run(null);
+				//new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
@@ -2400,7 +2400,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						return;
 					}
 				}
-				new Run(null);
+				//new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
@@ -2499,7 +2499,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				out = out.substring(0, out.length() - 4);
 			}
 			try {
-				new Run(null);
+				//new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
@@ -3795,14 +3795,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 				private static final long serialVersionUID = 1L;
 
+				@Override
 				public int getColumnCount() {
 					return 6;
 				}
 
+				@Override
 				public int getRowCount() {
 					return list.size();
 				}
 
+				@Override
 				public Object getValueAt(int row, int col) {
 					Part p = list.get(row);
 					switch (col) {
@@ -3821,6 +3824,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 
+				@Override
 				public String getColumnName(int col) {
 					switch (col) {
 					case 0:
@@ -3864,14 +3868,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 										private static final long serialVersionUID = 1L;
 
+										@Override
 										public int getColumnCount() {
 											return 4;
 										}
 
+										@Override
 										public int getRowCount() {
 											return interactions.getInteractions().size();
 										}
 
+										@Override
 										public Object getValueAt(int row, int col) {
 											Interaction i = interactions.getInteractions().get(row);
 											switch (col) {
@@ -3890,6 +3897,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 											}
 										}
 
+										@Override
 										public String getColumnName(int col) {
 											switch (col) {
 											case 0:
@@ -6006,7 +6014,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else {
 			//SBOLBrowser browser = new SBOLBrowser(this, filePath);
-			new SBOLBrowser(this, filePath);
+			SBOLBrowser sbolBrowser = new SBOLBrowser(this, filePath);
+			sbolBrowser.open();
 		}
 	}
 	

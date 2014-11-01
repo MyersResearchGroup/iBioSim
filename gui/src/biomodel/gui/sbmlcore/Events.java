@@ -638,14 +638,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 						if(EAdimID!=null){
 							EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-						}
-						else{
-							error = true;
-						}
-						if(!error){
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
 							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID, dimensionIds, dimID);
 							error = (EAdex==null);
+						}
+						else{
+							error = true;
 						}
 						if (error) break;
 						sBasePlugin.unsetListOfDimensions();
