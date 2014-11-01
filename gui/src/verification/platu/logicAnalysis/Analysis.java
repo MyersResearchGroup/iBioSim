@@ -1307,7 +1307,7 @@ public class Analysis {
 	 * @param prjState
 	 * @return
 	 */
-	private String printGlobalStateLabel(PrjState prjState) {
+	private static String printGlobalStateLabel(PrjState prjState) {
 		String prjStateLabel = "";
 		for (State local : prjState.toStateArray()) {
 			prjStateLabel += local.getFullLabel() + "_";
@@ -1316,7 +1316,7 @@ public class Analysis {
 	}
 	
 	
-	private String printGlobalStateLabel(State[] nextStateArray) {
+	private static String printGlobalStateLabel(State[] nextStateArray) {
 		String prjStateLabel = "";
 		for (State local : nextStateArray) {
 			prjStateLabel += local.getFullLabel() + "_";
@@ -1346,7 +1346,7 @@ public class Analysis {
 		}	
 	}
 
-	private void printTranStack(Stack<LinkedList<Transition>> lpnTranStack, String title) {
+	private static void printTranStack(Stack<LinkedList<Transition>> lpnTranStack, String title) {
 		if (title != null)
 			System.out.println(title);
 		for (int i=0; i<lpnTranStack.size(); i++) {
@@ -1480,7 +1480,7 @@ public class Analysis {
 	}
 
 
-	private void updateLocalStrongStubbornSetTbl(LpnTranList nextStrongStubbornTrans,
+	private static void updateLocalStrongStubbornSetTbl(LpnTranList nextStrongStubbornTrans,
 			StateGraph[] sgList, State[] curStateArray) {
 		// Persistent set at each state is stored in the enabledSetTbl in each state graph.
 		for (Transition tran : nextStrongStubbornTrans) {
@@ -1773,7 +1773,7 @@ public class Analysis {
 		}
 	}
 	
-	private void printLpnTranPair(Transition curTran,
+	private static void printLpnTranPair(Transition curTran,
 			HashSet<Transition> TransitionSet, String setName) {				
 		System.out.println(setName + " for transition " + curTran.getFullLabel() + " is: ");
 		if (TransitionSet.isEmpty()) {
@@ -1931,7 +1931,7 @@ public class Analysis {
 		return merge(left, right, tranFiringFreq);
 	}
 
-	private LinkedList<Transition> merge(LinkedList<Transition> left,
+	private static LinkedList<Transition> merge(LinkedList<Transition> left,
 			LinkedList<Transition> right, HashMap<Transition, Integer> tranFiringFreq) {
 		LinkedList<Transition> result = new LinkedList<Transition>(); 
 		while (left.size() > 0 || right.size() > 0) {
@@ -3324,7 +3324,7 @@ public class Analysis {
 
 		System.out.println("---> final numbers: # LPN transition firings: "
 				+ tranFiringCnt + "\n" + "---> # of prjStates found: "
-				+ (mddMgr.numberOfStates(reachSet)) + "\n"
+				+ (Mdd.numberOfStates(reachSet)) + "\n"
 				+ "---> peak total memory: " + peakTotalMem / 1000000F
 				+ " MB\n" + "---> peak used memory: " + peakUsedMem / 1000000F
 				+ " MB\n" + "---> peak MMD nodes: " + mddMgr.peakNodeCnt());
@@ -4276,7 +4276,7 @@ public class Analysis {
 		return localIdxArray;
 	}
 	
-    private void printStrongStubbornSetTbl(StateGraph[] sgList) {
+    private static void printStrongStubbornSetTbl(StateGraph[] sgList) {
     	for (int i=0; i<sgList.length; i++) {
     		System.out.println("******* Stored strong stubborn sets for state graph " + sgList[i].getLpn().getLabel() + " *******");
     		for (State s : sgList[i].getEnabledSetTbl().keySet()) {
@@ -4926,7 +4926,7 @@ public class Analysis {
 		}	
 	}
 	
-	private HashSet<Transition> setSubstraction(
+	private static HashSet<Transition> setSubstraction(
 			HashSet<Transition> left, HashSet<Transition> right) {
 		HashSet<Transition> sub = new HashSet<Transition>();
 		for (Transition lpnTranPair : left) {
@@ -4936,7 +4936,7 @@ public class Analysis {
 		return sub;
 	}
 	
-	public boolean stateOnStack(int lpnIndex, State curState, HashSet<PrjState> stateStack) {
+	public static boolean stateOnStack(int lpnIndex, State curState, HashSet<PrjState> stateStack) {
 		boolean isStateOnStack = false;
 		for (PrjState prjState : stateStack) {
 			State[] stateArray = prjState.toStateArray();
@@ -4948,7 +4948,7 @@ public class Analysis {
 		return isStateOnStack;
 	}
 	
-	private void printIntegerSet(HashSet<Transition> Trans, String setName) {
+	private static void printIntegerSet(HashSet<Transition> Trans, String setName) {
 		if (!setName.isEmpty())
 			System.out.print(setName + ": ");
 		if (Trans == null) {
@@ -4966,7 +4966,7 @@ public class Analysis {
 		}	
 	}
 	
-	private void printIntegerSet(ArrayList<HashSet<Transition>> transSet, String setName) {
+	private static void printIntegerSet(ArrayList<HashSet<Transition>> transSet, String setName) {
 		if (!setName.isEmpty())
 			System.out.print(setName + ": ");
 		if (transSet == null) {

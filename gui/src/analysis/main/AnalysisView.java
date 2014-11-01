@@ -2664,7 +2664,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (abstraction.isSelected() && lhpn.isSelected()) {
 			selectedButtons = "abs_lhpn";
 		}
-		Run runProgram = new Run(this);
+		//Run runProgram = new Run(this);
 		int cut = 0;
 		String[] getFilename = sbmlProp.split(separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {

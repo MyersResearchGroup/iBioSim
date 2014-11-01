@@ -636,7 +636,7 @@ public class StateGraph {
 	 * @param curState
 	 * @return
 	 */
-	public Transition getEnabledImmediateTran(State curState) {
+	public static Transition getEnabledImmediateTran(State curState) {
 		Transition enabledImmTran = null;
 		for (Transition enabledTran : curState.getEnabledTransitions()) {
 			if (enabledTran.getDelay() == null) {

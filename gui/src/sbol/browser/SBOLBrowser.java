@@ -46,21 +46,28 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 	private LinkedList<URI> localCompURIs = new LinkedList<URI>();
 	private boolean isAssociationBrowser = false;
 	
+	private Gui gui;
+	private String browsePath;
+	
 	//Constructor when browsing a single RDF file from the main gui
 	public SBOLBrowser(Gui gui, String browsePath) {
 		super(new BorderLayout());
+		this.gui = gui;
+		this.browsePath = browsePath;
 		
 		browsePath = browsePath.replace("\\\\", "\\");
 		
 		loadSbolFiles(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), browsePath);
 		
 		constructBrowser(new HashSet<String>());
-			
+	}
+		
+	public void open() {			
 		JPanel browserPanel = new JPanel(new BorderLayout());
 		browserPanel.add(filterPanel, BorderLayout.NORTH);
 		browserPanel.add(selectionPanel, BorderLayout.CENTER);
 		browserPanel.add(viewScroll, BorderLayout.SOUTH);
-		
+
 		JTabbedPane browserTab = new JTabbedPane();
 		browserTab.add("SBOL Browser", browserPanel);
 		this.add(browserTab);

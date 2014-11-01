@@ -72,4 +72,3 @@ abstract public class AbstractTester implements TesterInterface {
 	protected double[] lowThreshold = null;	
 }
 
-//TODO:  Make test with toggle-heat-lower

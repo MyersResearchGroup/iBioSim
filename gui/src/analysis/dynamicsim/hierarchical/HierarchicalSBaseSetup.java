@@ -330,7 +330,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 	 * @param kineticLaw
 	 * @param reactionID
 	 */
-	private void setupLocalParameters(ModelState modelstate,
+	private static void setupLocalParameters(ModelState modelstate,
 			KineticLaw kineticLaw, Reaction reaction) {
 
 		String reactionID = reaction.getId();
