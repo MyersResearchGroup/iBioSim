@@ -262,7 +262,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 	 * @param noAssignmentRulesFlag
 	 * @param isNoConstraintsFlag()
 	 */
-	private void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException {	 
+	private void initialize(long randomSeed, int runNumber) throws IOException {	 
 		setupNonConstantSpeciesReferences(getTopmodel());
 		setupSpecies(getTopmodel());
 		setupParameters(getTopmodel());	

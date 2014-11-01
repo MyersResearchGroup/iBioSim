@@ -6831,7 +6831,6 @@ public class BioModel {
 			try {
 				result = flattenModelWithLibSBML(removeComp);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (result!=null) {
@@ -6861,15 +6860,12 @@ public class BioModel {
 				writer.writeSBMLToFile(model.getSBMLDocument(), tempFile.replace("_temp", "_after"));
 			}
 			catch (SBMLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			*/
@@ -7404,7 +7400,6 @@ public class BioModel {
 							return null;
 						}
 					} catch (XMLStreamException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					if (c.getMath() != constraint.getMath()) {

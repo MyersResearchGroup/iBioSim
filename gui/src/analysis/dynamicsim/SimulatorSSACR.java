@@ -51,7 +51,7 @@ public class SimulatorSSACR extends Simulator {
 	
 	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType)  throws IOException, XMLStreamException {	
+			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType)  throws IOException {	
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,
 				progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);

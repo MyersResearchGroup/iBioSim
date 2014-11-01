@@ -13,7 +13,6 @@ public class StateGraph_timed extends StateGraph{
 
 	public StateGraph_timed(LhpnFile lpn) {
 		super(lpn);
-		// TODO Auto-generated constructor stub
 	}
 	
 	
@@ -103,7 +102,6 @@ public class StateGraph_timed extends StateGraph{
 		
 		State initialStateNoTime = genInitialState();
 		
-		// TODO Auto-generated method stub
 		// Adds the zone factor.
 		if(usegraph){
 			return new TimedState(initialStateNoTime, true);

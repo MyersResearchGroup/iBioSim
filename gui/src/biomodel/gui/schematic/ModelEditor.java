@@ -2150,7 +2150,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					SBMLstr = writer.writeSBMLToString(subBioModel.getSBMLDocument());
 				}
 				catch (SBMLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				catch (XMLStreamException e) {

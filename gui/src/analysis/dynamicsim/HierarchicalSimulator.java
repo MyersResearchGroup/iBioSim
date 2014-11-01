@@ -4331,8 +4331,7 @@ public abstract class HierarchicalSimulator {
 		{
 			if(deletedElementsById.contains(sid))
 				return true;
-			else
-				return false;
+			return false;
 		}
 
 
@@ -4340,16 +4339,14 @@ public abstract class HierarchicalSimulator {
 		{
 			if(deletedElementsByMetaId.contains(metaid))
 				return true;
-			else
-				return false;
+			return false;
 		}
 
 		protected boolean isDeletedByUID(String uid)
 		{
 			if(deletedElementsByUId.contains(uid))
 				return true;
-			else
-				return false;
+			return false;
 		}
 
 		

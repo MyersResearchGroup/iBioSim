@@ -65,10 +65,8 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 					}
 				}
 			}
-			else { // stochastic
-				// TODO: Add condition to compare the average transition rates.
-				return 0;
-			}			
+			// TODO: Add condition to compare the average transition rates.
+			return 0;
 		}	
 	}
 }

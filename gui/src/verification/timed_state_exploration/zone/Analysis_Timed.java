@@ -19,12 +19,10 @@ public class Analysis_Timed extends Analysis{
 	public Analysis_Timed(StateGraph[] lpnList, State[] initStateArray,
 			LPNTranRelation lpnTranRelation, String method) {
 		super(lpnList, initStateArray, lpnTranRelation, method);
-		// TODO Auto-generated constructor stub
 	}
 
 	public Analysis_Timed(StateGraph[] lpnList) {
 		super(lpnList);
-		// TODO Auto-generated constructor stub
 	}
 	
 	int iterations = 0;

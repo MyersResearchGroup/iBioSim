@@ -19,12 +19,10 @@ public class Project_Timed extends Project{
 	
 	public Project_Timed() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Project_Timed(ArrayList<LhpnFile> lpns) {
 		super(lpns);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -63,7 +61,6 @@ public class Project_Timed extends Project{
 
 	public Project_Timed(LhpnFile lpn) {
 		super(lpn);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override

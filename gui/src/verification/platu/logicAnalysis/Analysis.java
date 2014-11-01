@@ -2764,8 +2764,8 @@ public class Analysis {
 						lpnTranStack.push(curEnabled);
 						curIndexStack.push(curIndex);
 						break;
-					} else
-						curIndex++;
+					} 
+					curIndex++;
 				}
 			}
 
@@ -4420,11 +4420,10 @@ public class Analysis {
 //		return ready;
 //	}
 
-	private boolean isDummyTran(String tranName) {
+	private static boolean isDummyTran(String tranName) {
 		if (tranName.contains("_dummy"))
 			return true;
-		else
-			return false;
+		return false;
 	}    
     
     private HashSet<Transition> computeDependent(State[] curStateArray, Transition seed, HashSet<Transition> dependent, 
@@ -4609,8 +4608,7 @@ public class Analysis {
 							}		
 							continue;
 						}
-						else
-							visitedTrans.add(presetTran);
+						visitedTrans.add(presetTran);
 						if (Options.getDebugMode()) {
 							System.out.println("~~~~~~~~~ transVisited ~~~~~~~~~");
 							for (Transition visitedTran :visitedTrans) {
@@ -4707,8 +4705,7 @@ public class Analysis {
 								}				
 								continue;
 							}
-							else 
-								visitedTrans.add(tranCanEnable);
+							visitedTrans.add(tranCanEnable);
 							if (Options.getDebugMode()) {
 								System.out.println("@ nEnable: Transition " + tranCanEnable.getFullLabel()
 										+ " is not enabled. Compute its necessary set.");
@@ -4802,13 +4799,11 @@ public class Analysis {
 					}					
 					return nMarking;
 				}
-				else {
-					cachedNecessarySets.put(tran, nEnable);
-					if (Options.getDebugMode()) {
-						printCachedNecessarySets();
-					}
-					return nEnable;
+				cachedNecessarySets.put(tran, nEnable);
+				if (Options.getDebugMode()) {
+					printCachedNecessarySets();
 				}
+				return nEnable;
 			}
 			else if (nMarking.isEmpty() && !nEnable.isEmpty()) {
 				cachedNecessarySets.put(tran, nEnable);

@@ -180,11 +180,13 @@ public class DATParser extends DataParser {
 							if (dataPoints > species.size()) {
 								JOptionPane.showMessageDialog(component, "Time point includes more data than number of species", "Extra Data",
 										JOptionPane.ERROR_MESSAGE);
+								input.close();
 								throw new ArrayIndexOutOfBoundsException();
 							}
 							if (dataPoints < species.size()) {
 								JOptionPane.showMessageDialog(component, "Time point includes less data than number of species", "Missing Data",
 										JOptionPane.ERROR_MESSAGE);
+								input.close();
 								throw new ArrayIndexOutOfBoundsException();
 							}
 							dataPoints = 0;
