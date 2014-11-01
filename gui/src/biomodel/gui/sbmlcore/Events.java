@@ -776,7 +776,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						else {
 							e.getTrigger().setInitialValue(true);
 						}
-						if (dimID[0].trim().equals("")) {
+						if (dimID==null || dimID[0].trim().equals("")) {
 							e.unsetId();
 						}
 						else {
@@ -816,7 +816,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
 						sBasePlugin.unsetListOfDimensions();
-						for(int i1 = 0; i1<dimID.length-1; i1++){
+						for(int i1 = 0; dimID!=null && i1<dimID.length-1; i1++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i1]);
 							dimX.setSize(dimID[i1+1]);
 							dimX.setArrayDimension(i1);
@@ -858,7 +858,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						int index = events.getSelectedIndex();
 						ev[index] = e.getId();
-						for (int i = 1; i < dimID.length; i++) {
+						for (int i = 1; dimID!=null && i < dimID.length; i++) {
 							ev[index] += "[" + dimID[i] + "]";
 						}
 						Utility.sort(ev);
@@ -896,7 +896,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					e.setUseValuesFromTriggerTime(assignTime.isSelected());
 					e.createTrigger();
-					if (!dimID[0].trim().equals("")) {
+					if (dimID!=null && !dimID[0].trim().equals("")) {
 						e.setId(dimID[0].trim());
 					}
 					bioModel.setMetaIDIndex(
@@ -1057,7 +1057,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
-						for(int i1 = 0; i1<dimID.length-1; i1++){
+						for(int i1 = 0; dimID!=null && i1<dimID.length-1; i1++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i1]);
 							dimX.setSize(dimID[i1+1]);
 							dimX.setArrayDimension(i1);
@@ -1079,7 +1079,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					String eventEntry = e.getId();
-					for (int i = 1; i < dimID.length; i++) {
+					for (int i = 1; dimID!=null && i < dimID.length; i++) {
 						eventEntry += "[" + dimID[i] + "]";
 					}
 					Object[] adding = { eventEntry };
@@ -1133,7 +1133,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			return selected;
 		}
 		modelEditor.setDirty(true);
-		return dimID[0].trim();
+		if (dimID!=null) 
+			return dimID[0].trim();
+		return null;
 	}
 
 	/**

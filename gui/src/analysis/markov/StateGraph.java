@@ -1340,7 +1340,7 @@ public class StateGraph implements Runnable {
 			}
 			resetColors();
 			HashMap<String, Double> output = new HashMap<String, Double>();
-			if (conditions != null && !stop) {
+			if (!stop) {
 				for (Property cond : conditions) {
 					String prop = cond.getProperty();
 					if (prop.startsWith("St")) {

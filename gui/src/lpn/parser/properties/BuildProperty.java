@@ -75,7 +75,8 @@ public class BuildProperty {
 				sb.append(line);
 				
 		}
-
+		input.close();
+		
 		String  property = sb.toString();
 		//System.out.println("property: "+property+"\n");
 		CharStream charStream = new ANTLRStringStream(property);
@@ -281,7 +282,7 @@ public class BuildProperty {
 					lpnObj.addPlace("p"+numPlaces, false);
 					numPlaces++;
 					
-					if(sensitivityList != null && sensitivityList != null){
+					if(sensitivityList != null && sensitivityVariables != null){
 					
 						// Create the enabling condition.
 						enablingCond = "~(" + sensitivityVariables[0]

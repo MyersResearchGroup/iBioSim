@@ -12,6 +12,7 @@ import graph.Graph;
 
 
 
+
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -4221,6 +4222,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 									
 							}
+							input.close();
 							if (!lpnUSF) {
 								String outFileName = file[file.length - 1];
 								

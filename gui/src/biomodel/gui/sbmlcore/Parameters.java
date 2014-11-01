@@ -740,9 +740,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
-							paramet.setId(dimID[0].trim());
+							if (dimID!=null) {
+								paramet.setId(dimID[0].trim());
+							}
 							sBasePlugin.unsetListOfDimensions();
-							for(int i = 0; i<dimID.length-1; i++){
+							for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 								dimX.setSize(dimID[i+1]);
 								dimX.setArrayDimension(i);
@@ -758,7 +760,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							bioModel.createDirPort(paramet.getId(),(String)portDir.getSelectedItem());
 							paramet.setValue(val);
 							if (rateParam!=null) {
-								rateParam.setId(dimID[0].trim()+"_"+GlobalConstants.RATE);
+								if (dimID!=null) {
+									rateParam.setId(dimID[0].trim()+"_"+GlobalConstants.RATE);
+								}
 								rateParam.setValue(rateVal);
 							}
 							if (unit.equals("( none )")) {
@@ -817,7 +821,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							if (paramsOnly) {
 								int remove = -1;
 								for (int i = 0; i < parameterChanges.size(); i++) {
-									if (parameterChanges.get(i).split(" ")[0].equals(dimID[0].trim())) {
+									if (dimID!=null && parameterChanges.get(i).split(" ")[0].equals(dimID[0].trim())) {
 										remove = i;
 									}
 								}
@@ -829,8 +833,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							}
 							else {
-								SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected, dimID[0].trim());
-								if (rateParam!=null) {
+								if (dimID!=null) {
+									SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected, dimID[0].trim());
+								}
+								if (rateParam!=null && dimID!=null) {
 									SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected+"_"+GlobalConstants.RATE, 
 											dimID[0].trim()+"_"+GlobalConstants.RATE);
 								}
@@ -868,11 +874,12 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								if (params[i].equals(selected)) index = i;
 							}
 							paramet = bioModel.getSBMLDocument().getModel().createParameter();
-							paramet.setId(dimID[0].trim());
+							if (dimID!=null)
+								paramet.setId(dimID[0].trim());
 							paramet.setName(paramName.getText().trim());
 							
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
-							for(int i = 0; i<dimID.length-1; i++){
+							for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 								dimX.setSize(dimID[i+1]);
 								dimX.setArrayDimension(i);

@@ -1003,7 +1003,7 @@ public class Octagon implements Equivalence {
 				int colP_rowP = twiceMax(colBase) - twiceMin(rowBase);
 				int colP_rowN = twiceMax(colBase) + twiceMax(rowBase);
 				int colN_rowP = -1*twiceMin(colBase) - twiceMin(rowBase);
-				int colN_rowN = -1*twiceMin(colBase) + twiceMax(rowBase);;
+				int colN_rowN = -1*twiceMin(colBase) + twiceMax(rowBase);
 				
 				//*setDbmEntry(row, col, rowCol);
 				//*setDbmEntry(col, row, colRow);
@@ -2453,7 +2453,7 @@ public class Octagon implements Equivalence {
 			//*int upper = _matrix[0][dbmIndexToMatrixIndex(i)];
 			//*int newRate;
 			int lower = -1*_lowerBounds[i];
-			;int upper = _upperBounds[i];
+			int upper = _upperBounds[i];
 			int newRate;
 			
 			/*
@@ -3894,7 +3894,7 @@ public class Octagon implements Equivalence {
 					int b1new = (int) Math.ceil((ynew/yold - xnew/xold)*My + xnew*b1/xold);
 					int negb2new = (int) Math.ceil((-1)*((ynew/yold - xnew/xold)*my + xnew*b2/xold));
 					int b3new = (int) Math.ceil((ynew/yold-xnew/xold)*My + xnew*b3/xold);
-					int negb4new = (int) Math.ceil((-1)*((ynew/yold - ynew/yold)*my + xnew*b4/xold));;
+					int negb4new = (int) Math.ceil((-1)*((ynew/yold - ynew/yold)*my + xnew*b4/xold));
 					
 					
 					// b1

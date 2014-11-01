@@ -53,9 +53,10 @@ public class DTSDParser {
 			fileStream = new BufferedInputStream(fileInput);
 			
 			//get rid of the opening '('
-			if (((char) fileStream.read()) != '(')
+			if (((char) fileStream.read()) != '(') {
+				fileInput.close();
 				return;
-			
+			}
 			boolean stopReading = false;
 			
 			while (stopReading == false) {

@@ -1785,24 +1785,21 @@ public abstract class HierarchicalObjects extends HierarchicalSimState {
 		{
 			if(deletedElementsByMetaId.contains(metaid))
 				return true;
-			else
-				return false;
+			return false;
 		}
 
 		public boolean isDeletedBySID(String sid)
 		{
 			if(deletedElementsById.contains(sid))
 				return true;
-			else
-				return false;
+			return false;
 		}
 
 		public boolean isDeletedByUID(String uid)
 		{
 			if(deletedElementsByUId.contains(uid))
 				return true;
-			else
-				return false;
+			return false;
 		}
 
 		/**

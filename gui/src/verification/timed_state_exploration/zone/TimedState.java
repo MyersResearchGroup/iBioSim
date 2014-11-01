@@ -98,13 +98,11 @@ public class TimedState extends State{
 
 	@Override
 	public String print() {
-		// TODO Auto-generated method stub
 		return _state.print();
 	}
 
 	@Override
 	public int hashCode() {
-		// TODO Auto-generated method stub
 		return _state.hashCode();
 	}
 

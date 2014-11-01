@@ -300,7 +300,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		ArraysSBasePlugin sBasePluginFB = SBMLutilities.getArraysSBasePlugin(fluxBound);
 		sBasePluginFB.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
 		sBasePluginFB.unsetListOfIndices();
-		for(int k = 0; dex!=null && k<dex.length-1; k++){
+		for(int k = 0; k<dex.length-1; k++){
 			Index indexRule = new Index();
 			indexRule.setArrayDimension(k);
 			indexRule.setReferencedAttribute("fbc:reaction");

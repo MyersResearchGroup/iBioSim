@@ -2333,6 +2333,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						break;
 					}
 				}
+				atacsBuffer.close();
 				if (exitValue == 143) {
 					JOptionPane.showMessageDialog(Gui.frame,
 							"Verification was" + " canceled by the user.",
