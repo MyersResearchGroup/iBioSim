@@ -35,7 +35,6 @@ public class SearchDepFromLPN {
     	return this.interleavingSet;
     }
     
-    @SuppressWarnings("unused")
 	public void setIndep(StateGraph[] lpnList)
     {
     	// TODO: (future) change to use our LPN transitions

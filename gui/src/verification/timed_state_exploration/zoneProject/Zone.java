@@ -1274,6 +1274,7 @@ public class Zone implements Equivalence{
 		return _matrix[0][dbmIndexToMatrixIndex(index)];
 	}
 	
+	@Override
 	public int getUpperBoundTrue(int index){
 		return _matrix[dbmIndexToMatrixIndex(0)]
 				[dbmIndexToMatrixIndex(index)];
@@ -1283,6 +1284,7 @@ public class Zone implements Equivalence{
 		return _matrix[dbmIndexToMatrixIndex(index)][0];
 	}
 	
+	@Override
 	public int getLowerBoundTrue(int index){
 		return _matrix[dbmIndexToMatrixIndex(index)]
 				[dbmIndexToMatrixIndex(0)];
@@ -1341,6 +1343,7 @@ public class Zone implements Equivalence{
 	 * @return
 	 * 		The lower bound of Transition t.
 	 */
+	@Override
 	public int getLowerBoundbyTransition(Transition t)
 	{
 		LhpnFile lpn = t.getLpn();
@@ -1489,6 +1492,7 @@ public class Zone implements Equivalence{
 	 * @return
 	 * 		The upper and lower bounds according to the Zone.
 	 */
+	@Override
 	public IntervalPair getContinuousBounds(String contVar, LhpnFile lpn){
 		
 		/*
@@ -1549,6 +1553,7 @@ public class Zone implements Equivalence{
 	 * @return
 	 * 		The range of the continuous variable described by ltContPair.
 	 */
+	@Override
 	public IntervalPair getContinuousBounds(LPNContinuousPair ltContPair){
 		
 		// First check in the zone.
@@ -1583,6 +1588,7 @@ public class Zone implements Equivalence{
 	 * 		The range of rates associated with the continuous variable indexed
 	 * 		by ltContPair.
 	 */
+	@Override
 	public IntervalPair getRateBounds(LPNTransitionPair ltPair){
 		
 		int upper;
@@ -1626,6 +1632,7 @@ public class Zone implements Equivalence{
 	 * @param ltPair
 	 * @return
 	 */
+	@Override
 	public int rateResetValue(LPNTransitionPair ltPair){
 
 		IntervalPair rateBounds = getRateBounds(ltPair);
@@ -1797,6 +1804,7 @@ public class Zone implements Equivalence{
 	 * @return
 	 * 			The value of the (i, j) element of the DBM.
 	 */
+	@Override
 	public int getDbmEntry(int i, int j)
 	{
 		return _matrix[dbmIndexToMatrixIndex(i)][dbmIndexToMatrixIndex(j)];
@@ -1812,6 +1820,7 @@ public class Zone implements Equivalence{
 	 * 		The value of the (i,j) element of the DBM where i corresponds to the row
 	 * 		for the variable iPair and j corresponds to the row for the variable jPair.
 	 */
+	@Override
 	public int getDbmEntryByPair(LPNTransitionPair iPair, LPNTransitionPair jPair){
 		int iIndex = Arrays.binarySearch(_indexToTimerPair, iPair);
 		int jIndex = Arrays.binarySearch(_indexToTimerPair, jPair);
@@ -1861,6 +1870,7 @@ public class Zone implements Equivalence{
 	 * @return
 	 * 		The row/column of the DBM associated with the ltPair.
 	 */
+	@Override
 	public int timerIndexToDBMIndex(LPNTransitionPair ltPair)
 	{
 		return Arrays.binarySearch(_indexToTimerPair, ltPair);
@@ -2049,6 +2059,7 @@ public class Zone implements Equivalence{
 	 * 		True if this is a subset of other; false otherwise.
 	 */
 //	public boolean subset(Zone otherZone){
+	@Override
 	public boolean subset(Equivalence otherEquiv){
 		
 		Zone otherZone = (Zone) otherEquiv;
@@ -2102,6 +2113,7 @@ public class Zone implements Equivalence{
 	 *		gives the result of otherZone.subset(this). Thus it agrees with the subset method.
 	 */
 //	public boolean superset(Zone otherZone){
+	@Override
 	public boolean superset(Equivalence otherZone){
 		return otherZone.subset(this);
 	}
@@ -2161,6 +2173,7 @@ public class Zone implements Equivalence{
 	/**
 	 * Performs the Floyd's least pairs algorithm to reduce the DBM.
 	 */
+	@Override
 	public void recononicalize()
 	{
 		for(int k=0; k<dbmSize(); k++)
@@ -2259,6 +2272,7 @@ public class Zone implements Equivalence{
 //	public Zone fire(Transition t, LpnTranList enabledTran, 
 //			ArrayList<UpdateContinuous> newAssignValues,
 //			State[] localStates){
+	@Override
 	public Zone fire(Transition t, LpnTranList enabledTran, 
 			ContinuousRecordSet newAssignValues,
 			State[] localStates){
@@ -2968,6 +2982,7 @@ public class Zone implements Equivalence{
 	 * @return
 	 * 		The new zone resulting from the rate change.
 	 */
+	@Override
 	public Zone fire(LPNTransitionPair ltPair, int rate){
 		
 		// Make a copy of the Zone.
@@ -3408,6 +3423,7 @@ public class Zone implements Equivalence{
 	 * Advances time. (This method should replace advance().)
 	 * @param localStates
 	 */
+	@Override
 	public void advance(State[] localStates){
 			
 		for(LPNTransitionPair ltPair : _indexToTimerPair){
@@ -3624,6 +3640,7 @@ public class Zone implements Equivalence{
 	 * Resets the rates of all continuous variables to be their
 	 * lower bounds.
 	 */
+	@Override
 	public Zone resetRates(){
 		
 		// Create the new zone.
@@ -4624,6 +4641,7 @@ public class Zone implements Equivalence{
 	 * 		The new zone that is the result of restricting this zone according to the firing of the inequalities
 	 * 		in the eventSet.
 	 */
+	@Override
 	public Zone getContinuousRestrictedZone(EventSet eventSet, State[] localStates){
 		// Make a new copy of the zone.
 		Zone z = this.clone();
@@ -4646,6 +4664,7 @@ public class Zone implements Equivalence{
 	 * @return
 	 * 		The list of all timers that have reached their lower bounds.
 	 */
+	@Override
 	public List<Transition> getEnabledTransitions()
 	{
 		ArrayList<Transition> enabledTransitions = new ArrayList<Transition>();
@@ -4671,6 +4690,7 @@ public class Zone implements Equivalence{
 	 * @return
 	 * 			A List of the Transitions that are enabled in the LPN given by the index.
 	 */
+	@Override
 	public List<Transition> getEnabledTransitions(int LpnIndex){
 		ArrayList<Transition> enabledTransitions = new ArrayList<Transition>();
 
@@ -4706,6 +4726,7 @@ public class Zone implements Equivalence{
 	 * 		either contain a transition to
 	 * 		fire or set of inequalities to change sign. 
 	 */
+	@Override
 	public LpnTranList getPossibleEvents(int LpnIndex, State localState){
 		LpnTranList result = new LpnTranList();
 		
@@ -5657,6 +5678,7 @@ public class Zone implements Equivalence{
 	 * 		The warped Zone.
 	 */
 	//*public void dbmWarp(Zone oldZone){
+	@Override
 	public void dbmWarp(Equivalence oldE){
 		Zone oldZone = (Zone) oldE;
 		/*
@@ -6132,6 +6154,7 @@ public class Zone implements Equivalence{
 	 * @return
 	 * 		The lits of LhpnFile objects that this Zone depends on.
 	 */
+	@Override
 	public LhpnFile[] get_lpnList(){
 		return _lpnList;
 	}
@@ -6191,6 +6214,7 @@ public class Zone implements Equivalence{
 	 * @throws IllegalArgumentException
 	 * 		If the LPNTransitionPair is not an instance of an LPNContinuousPair.
 	 */
+	@Override
 	public int getCurrentRate(LPNTransitionPair contVar){
 		
 		if(!(contVar instanceof LPNContinuousPair)){
@@ -6223,6 +6247,7 @@ public class Zone implements Equivalence{
 	 * @param currentRate
 	 * 		The value of the rate.
 	 */
+	@Override
 	public void setCurrentRate(LPNTransitionPair contVar, int currentRate){
 		
 		if(!(contVar instanceof LPNContinuousPair)){
@@ -6263,6 +6288,7 @@ public class Zone implements Equivalence{
 	 * @return
 	 * 			The result of adding the transition.
 	 */
+	@Override
 	public Zone addTransition(HashSet<LPNTransitionPair> newTransitions, State[] localStates){
 		/*
 		 * The zone will remain the same for all the continuous variables.
@@ -6350,6 +6376,7 @@ public class Zone implements Equivalence{
 	 * variables.
 	 * @return The resulting Zone.
 	 */
+	@Override
 	public Zone moveOldRateZero(LPNContinuousPair ltContPair) {
 		
 		// Create a Zone to alter.
@@ -6469,6 +6496,7 @@ public class Zone implements Equivalence{
 	 * @param firedRate The new assignment for the variable.
 	 * @return The resulting zone.
 	 */
+	@Override
 	public Zone saveOutZeroRate(LPNContinuousPair firedRate) {
 		// Check if the variable is in the zone.
 		// We assume that the rate is already zero in this case

@@ -53,6 +53,7 @@ public class Interval {
 	 * a is the min value of this instance and b
 	 * is the max value of this instance.
 	 */
+	@Override
 	protected Interval clone() {
 		
 		return new Interval(this._min, this._max);
@@ -65,6 +66,7 @@ public class Interval {
 	 * that satisfies obj.min = this.min and
 	 * obj.max = obj.max.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		
 		if(!(obj instanceof Interval)){
@@ -90,6 +92,7 @@ public class Interval {
 	/**
 	 * @return Returns a hashcode.
 	 */
+	@Override
 	public int hashCode() {
 		
 		return 31*this._min + this._max;
@@ -98,6 +101,7 @@ public class Interval {
 	/**
 	 * @return Returns a string representation of this Interval.
 	 */
+	@Override
 	public String toString() {
 		
 		if( this._min > this._max){

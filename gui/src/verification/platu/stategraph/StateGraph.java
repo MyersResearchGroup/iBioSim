@@ -1637,7 +1637,6 @@ public class StateGraph {
 		return new TimedPrjState(currentTimedPrjState.getStateArray(), newZones);
 	}
 
-	@SuppressWarnings("unused")
 	public static TimedPrjState fireRateChange(final StateGraph[] curSgArray, 
 			final PrjState currentPrjState, LPNContinuousPair firedRate){
 		

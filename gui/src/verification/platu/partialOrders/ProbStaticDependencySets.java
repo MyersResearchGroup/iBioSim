@@ -104,6 +104,7 @@ public class ProbStaticDependencySets extends StaticDependencySets {
 		//disableSet.addAll(otherTransModifySeedTranRate);
 	}
 	
+	@Override
 	public HashSet<Transition> getDisableSet(boolean seedTranIsPersistent) {
 		HashSet<Transition> disableSet = new HashSet<Transition>();
 		disableSet.addAll(getSeedTranDisableOtherTrans());
@@ -113,6 +114,7 @@ public class ProbStaticDependencySets extends StaticDependencySets {
 		return disableSet;
 	}
 	
+	@Override
 	public HashSet<Transition> getOtherTransDisableSeedTran(boolean persistentTranEnabled) {
 		HashSet<Transition> otherTransDisableSeedTran = new HashSet<Transition>();
 		if (!persistentTranEnabled) {
@@ -125,6 +127,7 @@ public class ProbStaticDependencySets extends StaticDependencySets {
 		return otherTransDisableSeedTran;
 	}
 
+	@Override
 	public HashSet<Transition> getSeedTranDisableOtherTrans() {
 		HashSet<Transition> seedTranDisableOtherTransSet = new HashSet<Transition>();
 		seedTranDisableOtherTransSet.addAll(disableByStealingToken);

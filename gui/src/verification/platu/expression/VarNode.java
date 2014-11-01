@@ -59,7 +59,6 @@ public class VarNode implements ExpressionNode {
 	}
 	
 	// TODO: No need to pass in the stateVector for this method.
-	@SuppressWarnings("unused")
 	public int getIndex(int[] stateVector){
 		return this.index;
 	}

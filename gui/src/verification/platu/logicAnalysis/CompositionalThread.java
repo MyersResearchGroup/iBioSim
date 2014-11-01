@@ -43,7 +43,6 @@ public class CompositionalThread extends Thread{
 	 * Applies new constraints to the entire state set, and applies old constraints to the frontier state set.
      * @return Number of new transitions.
      */
-	@SuppressWarnings("unused")
 	private static int applyConstraintSet(StateGraph sg, StateGraph srcSG, int iter, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		int newTransitions = 0;
 //		int[] thisIndexList = null;

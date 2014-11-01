@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
@@ -995,7 +994,7 @@ public class Analysis {
 			allTransitions.put(lpnIndex, lpnList[lpnIndex].getAllTransitions());
 			Abstraction abs = new Abstraction(lpnList[lpnIndex]);
 			abs.decomposeLpnIntoProcesses();				 
-			allProcessTransInOneLpn = (HashMap<Transition, Integer>)abs.getTransWithProcIDs();
+			allProcessTransInOneLpn = abs.getTransWithProcIDs();
 			HashMap<Integer, LpnProcess> processMapForOneLpn = new HashMap<Integer, LpnProcess>();
 			for (Transition curTran: allProcessTransInOneLpn.keySet()) {
 				Integer procId = allProcessTransInOneLpn.get(curTran);
@@ -2583,7 +2582,7 @@ public class Analysis {
 					lpnEnabledSet.add(tran);
 				}
 				LpnState tmp = new LpnState(lpnList[i].getLpn(), nextStateArray[i], lpnEnabledSet);
-				LpnState tmpCached = (LpnState)(lpnStateCache[i].add(tmp));
+				LpnState tmpCached = (lpnStateCache[i].add(tmp));
 				nextLpnStateArray[i] = tmpCached; 
 				
 			}
@@ -3180,7 +3179,7 @@ public class Analysis {
 		// mddMgr.add(reachSet, curLocalStateArray);
 		mddNode reachSet = null;
 		mddNode exploredSet = null;
-		LinkedList<State>[] nextSetArray = (LinkedList<State>[]) (new LinkedList[arraySize]);
+		LinkedList<State>[] nextSetArray = new LinkedList[arraySize];
 		for (int i = 0; i < arraySize; i++)
 			nextSetArray[i] = new LinkedList<State>();
 
