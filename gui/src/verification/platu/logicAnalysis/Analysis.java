@@ -4787,7 +4787,7 @@ public class Analysis {
 			}
 			return nEnable;
 		}
-		else if (nMarking == null && nEnable == null) {
+		else if (nMarking == null || nEnable == null) {
 			return null;
 		}
 		else {

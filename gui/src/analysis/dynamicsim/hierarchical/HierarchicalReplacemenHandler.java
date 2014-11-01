@@ -286,7 +286,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 	protected void getComponentPortMap(SBMLDocument sbml) 
 	{
 		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstants.namespaceURI);
-		setupReplacement(sbml, sbml.getModel(), sbmlCompModel);	
+		setupReplacement(sbml.getModel(), sbmlCompModel);	
 	}
 
 	private void setupReplacement(Quantity sbase, CompModelPlugin sbmlCompModel)
@@ -437,7 +437,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 		}
 	}
 
-	private void setupReplacement(SBMLDocument sbml, Model model, CompModelPlugin sbmlCompModel)
+	private void setupReplacement(Model model, CompModelPlugin sbmlCompModel)
 	{
 		for (int i = 0; i < model.getChildCount(); i++) {
 
