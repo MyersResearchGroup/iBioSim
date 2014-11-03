@@ -396,6 +396,10 @@ public class Nary_Run implements ActionListener, Runnable {
 		int y = screenSize.height / 2 - frameSize.height / 2;
 		naryFrame.setLocation(x, y);
 		naryFrame.setResizable(false);
+		//naryFrame.setVisible(true);
+	}
+	
+	public void open() {
 		naryFrame.setVisible(true);
 	}
 

@@ -4530,7 +4530,6 @@ public class ExprTree {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public ExprTree clone(){
 		
 		ExprTree ET = new ExprTree(); // ET phone home.
@@ -4579,7 +4578,6 @@ public class ExprTree {
 	/*
 	 * Performs the same operation as this.clone except it does not copy the parsing information.
 	 */
-	@SuppressWarnings("unchecked")
 	public ExprTree shallowclone(){
 		
 		ExprTree ET = new ExprTree(); // ET phone home.

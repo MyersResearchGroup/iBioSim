@@ -27,7 +27,7 @@ public class PrintTable {
         this.width = width;
         this.col1Width = col1Width;
     }
-    LinkedList keys = new LinkedList();
+    LinkedList<Object> keys = new LinkedList<Object>();
     HashMap<Object, Object> table = new HashMap<Object, Object>(100);
 
     public void put(Object left, Object right) {

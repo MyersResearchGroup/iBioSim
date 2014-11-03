@@ -248,7 +248,7 @@ public class Project {
 				dfsStateExploration.searchPOR_taceback(sgArray, initStateArray);
 			}				
 			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
-				CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
+				//CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
 				CompositionalAnalysis.compositionalFindSG(sgArray);
 				// TODO: temporarily commented out POR with behavioral analysis
 				//dfsStateExploration.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
@@ -274,7 +274,7 @@ public class Project {
 				globalStateSet = (ProbGlobalStateSet) dfsStateExploration.searchPOR_taceback(sgArray, initStateArray);
 			}
 			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
-				CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
+				//CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
 				CompositionalAnalysis.compositionalFindSG(sgArray);	
 				// TODO: (temp) Temporarily disable POR behavioral analysis on prob. models.
 				//globalStateSet = (ProbGlobalStateSet) dfsStateExploration.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");

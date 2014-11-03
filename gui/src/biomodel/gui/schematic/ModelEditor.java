@@ -2161,6 +2161,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				list.addItem(outID + " " + comp.replace(".xml", "") + " ()");
 			}else{
 				ComponentsPanel componentsPanel = new ComponentsPanel(selected, list, biomodel, subBioModel, ports, comp, oldPort, paramsOnly, this);
+				while (!componentsPanel.openGui(selected));
 				outID = selected;
 			}
 

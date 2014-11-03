@@ -321,9 +321,9 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				}
 			}
 		}
-		String oldName = null;
+		//String oldName = null;
 		if (selected != null) {
-			oldName = selected;
+			//oldName = selected;
 			fields.get(GlobalConstants.ID).setValue(selected+dimInID);
 		}
 		updateComboBoxEnabling();
@@ -331,11 +331,12 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 		replacementsDeletions.setListData(replDel);
 		replacementsDeletions.setSelectedIndex(0);
 		replacementsDeletions.addMouseListener(this);
-		
+		/*
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
 		}
+		*/
 	}
 	
 	private void createPortMapFields(ArrayList<String> replacementList,ArrayList<String> ports,String portType,
@@ -560,7 +561,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 		return result;
 	}
 
-	private boolean openGui(String oldName) {
+	public boolean openGui(String oldName) {
 		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Module Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {

@@ -62,7 +62,7 @@ public class Poset {
 				System.out.println("*** Transition does not exist in causalityFwd");
 				return null;
 			}
-			newPoset.causalityFwd.put(curTran, (HashSet)curEnabledSet.clone());
+			newPoset.causalityFwd.put(curTran, (HashSet<Transition>)curEnabledSet.clone());
 			
 			for(int j = 0; j < this.tranIdxMap.size(); j++) {
 				dbmCopy.assign(i, j, this.dbm.value(i, j));

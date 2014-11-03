@@ -403,7 +403,6 @@ public class LPNState {
 	 * Returns a HashSet of the states directly previous to this state.
 	 * @return Returns a HashSet of the states directly previous to this state.
 	 */
-	@SuppressWarnings("unchecked")
 	public HashSet<LPNState> getPreviousStates()
 	{
 		return (HashSet<LPNState>) previousStates.clone();
@@ -413,7 +412,6 @@ public class LPNState {
 	 * Returns a HashSet of the states directly following this state.
 	 * @return Returns a HashSet of the states directly following this state.
 	 */
-	@SuppressWarnings("unchecked")
 	public HashSet<LPNState> getNextStates()
 	{
 		return (HashSet<LPNState>) nextStates.clone();

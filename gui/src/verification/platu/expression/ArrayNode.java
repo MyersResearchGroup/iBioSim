@@ -38,6 +38,7 @@ public class ArrayNode extends VarNode{
 		return (VarNode) this.array.get(index);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public VarNode getElement(List<Integer> indexList){
 		if(this.dimensions != indexList.size()){
 			System.err.println("error: incorrect dimensions for array " + this.name);
@@ -45,7 +46,7 @@ public class ArrayNode extends VarNode{
 		}
 		
 		int lastIndex = indexList.size() - 1;
-		lastIndex = indexList.get(lastIndex);
+		lastIndex = indexList.get(lastIndex).intValue();
 		
 		Object currentArray = this.array;
 		for(int i = 0; i < indexList.size() - 1; i++){

@@ -2547,7 +2547,6 @@ public abstract class HierarchicalSimulator {
 
 			EventToFire event = modelstate.triggeredEventQueue.poll();
 
-			@SuppressWarnings("unchecked")
 			EventToFire eventToAdd = new EventToFire(modelstate.ID, event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 
 			if (untriggeredEvents.contains(event.eventID) == false)
@@ -2667,7 +2666,6 @@ public abstract class HierarchicalSimulator {
 
 				EventToFire event = modelstate.triggeredEventQueue.poll();
 
-				@SuppressWarnings("unchecked")
 				EventToFire eventToAdd = 
 				new EventToFire(modelstate.ID, event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 
