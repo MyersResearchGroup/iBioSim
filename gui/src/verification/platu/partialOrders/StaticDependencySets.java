@@ -128,7 +128,7 @@ public class StaticDependencySets {
 	 */
 	public void buildSeedTranDisableOtherTrans() {
 		buildDisableByStealingToken();
-		buildOtherTransModifySeedTranAssign();
+		buildSeedTranModifyOtherTransAssign();
 		buildSeedTranOtherTransModifySameVars();
 		buildSeedTranSetOtherTranEnablingFalse();		
 	}
