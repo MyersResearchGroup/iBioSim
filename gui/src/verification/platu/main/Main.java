@@ -49,7 +49,7 @@ public class Main {
     public static boolean PRINT_MAIN = false;
     public static boolean ENABLE_LOGGING = false;
 
-    private Main(String cmdFile) {
+    private static void start(String cmdFile) {
         try {
             BufferedReader br = null;
 
@@ -133,7 +133,7 @@ public class Main {
                     setOptions(prop);
             }
             
-            new Main(cmdFileString);
+            Main.start(cmdFileString);
 
 //            if (PRINT_USAGE_STATS) {
 //                VarVal.printUsageStats();

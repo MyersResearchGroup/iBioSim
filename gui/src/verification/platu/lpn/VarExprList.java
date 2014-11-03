@@ -77,7 +77,8 @@ public class VarExprList extends ArrayList<VarExpr> {
         if (((LinkedList) o).size() != size()) {
             return false;
         }
-        LinkedList<VarExpr> st = ((LinkedList<VarExpr>) o);
+        @SuppressWarnings("unchecked")
+		LinkedList<VarExpr> st = ((LinkedList<VarExpr>) o);
         for (VarExpr s : this) {
             if (!st.contains(s)) {
                 return false;

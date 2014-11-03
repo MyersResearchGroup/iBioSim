@@ -5,12 +5,12 @@ import java.util.*;
 
 
 public class Lpn2verilog {
-	private String separator;
-	private HashMap<String,Boolean> visitedPlaces;
-	String enable;
 	//String place;
 
-	public Lpn2verilog(String lpnFileName) {
+	public static void convert(String lpnFileName) {
+		HashMap<String,Boolean> visitedPlaces;
+		String enable = "";
+		String separator;
 		try{
 			if (File.separator.equals("\\")) {
 				separator = "\\\\";
@@ -75,7 +75,7 @@ public class Lpn2verilog {
 			first = true;
 			String[] transitionList = lpn.getTransitionList();
 			
-			ArrayList<String> transArrayList = new ArrayList(Arrays.asList(transitionList));
+			ArrayList<String> transArrayList = new ArrayList<String>(Arrays.asList(transitionList));
 			//System.out.println("\ntransArray list is  " + transArrayList + "\n");
 			Collections.sort(transArrayList,new Comparator<String>(){
 				@Override
@@ -85,7 +85,7 @@ public class Lpn2verilog {
 			});
 			transArrayList.toArray(transitionList);
 			String[] placeList = lpn.getPlaceList();
-			ArrayList<String> placeArrayList = new ArrayList(Arrays.asList(placeList));
+			ArrayList<String> placeArrayList = new ArrayList<String>(Arrays.asList(placeList));
 			Collections.sort(placeArrayList,new Comparator<String>(){
 				@Override
 				public int compare(String a, String b){
@@ -192,7 +192,7 @@ public class Lpn2verilog {
 						if (markedPlaceBuffer.length() == 0)
 							markedPlaceBuffer.append("\t\t#1;\n");
 						markedPlaceBuffer.append("\t\t" + st + " = 1; //Initially Marked\n");
-						tag = tagNet(lpn,st,netCount,tag);
+						tag = tagNet(lpn,st,netCount,tag,visitedPlaces);
 						netCount++;
 					}
 					else
@@ -205,7 +205,7 @@ public class Lpn2verilog {
 						if (markedPlaceBuffer.length() == 0)
 							markedPlaceBuffer.append("\t\t#1;\n");
 						markedPlaceBuffer.append("\t\t" + st + " = 1; //Initially Marked\n");
-						tagNet(lpn,st,netCount,tag);
+						tagNet(lpn,st,netCount,tag,visitedPlaces);
 						netCount++;
 					}
 					else
@@ -628,7 +628,8 @@ public class Lpn2verilog {
 		return(initBufferString);
 	}
 
-	private HashMap<String,Integer> tagNet(LhpnFile g, String place, int id, HashMap<String,Integer> tag){
+	private static HashMap<String,Integer> tagNet(LhpnFile g, String place, int id, HashMap<String,Integer> tag,
+			HashMap<String,Boolean> visitedPlaces){
 		//System.out.println("Place is :"+place);
 		if (!visitedPlaces.containsKey(place)){
 			visitedPlaces.put(place,true);
@@ -637,7 +638,7 @@ public class Lpn2verilog {
 				tag.put(postsetTrans, id);
 				//System.out.println("Tagged transition " + postsetTrans + " with " + id);
 				for (String postsetPlace : g.getPostset(postsetTrans)){// System.out.println("postsetPlace :"+postsetPlace);
-				tag = tagNet(g, postsetPlace, id, tag);
+				tag = tagNet(g, postsetPlace, id, tag, visitedPlaces);
 				}
 			}
 		}

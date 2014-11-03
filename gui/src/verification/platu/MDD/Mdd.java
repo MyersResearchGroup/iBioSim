@@ -16,6 +16,7 @@ public class Mdd {
 	/*
 	 * Initialize MDD with the number of modules in the design model.
 	 */
+	@SuppressWarnings("unchecked")
 	public Mdd(int numMods) {
 		Mdd.terminal.level = numMods;
 		//stateCount = 0;
@@ -79,6 +80,7 @@ public class Mdd {
 	
 	public mddNode doLocalFirings(StateGraph[] curLpnArray, State[] curStateArray, mddNode reachSet) {
 		mddNode result = Mdd.newNode();
+		@SuppressWarnings("unchecked")
 		LinkedList<State>[] nextSetArray = (new LinkedList[curLpnArray.length]);
 		for(int i = 0; i < curLpnArray.length; i++)
 			nextSetArray[i] = new LinkedList<State>();

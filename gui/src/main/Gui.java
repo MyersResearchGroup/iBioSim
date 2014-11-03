@@ -484,6 +484,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public class MacOSAboutHandler extends Application {
 
 		public MacOSAboutHandler() {
+			//addApplicationListener(new AboutBoxHandler());
+		}
+		
+		public void addAboutBoxHandler() {
 			addApplicationListener(new AboutBoxHandler());
 		}
 
@@ -499,6 +503,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public class MacOSPreferencesHandler extends Application {
 
 		public MacOSPreferencesHandler() {
+			//addApplicationListener(new PreferencesHandler());
+		}
+		
+		public void addPreferencesHandler() {
 			addApplicationListener(new PreferencesHandler());
 		}
 
@@ -515,6 +523,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public class MacOSQuitHandler extends Application {
 
 		public MacOSQuitHandler() {
+			//addApplicationListener(new QuitHandler());
+		}
+		
+		public void addQuitHandler() {
 			addApplicationListener(new QuitHandler());
 		}
 
@@ -1177,9 +1189,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		help.add(manual);
 		help.add(bugReport);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			new MacOSAboutHandler();
-			new MacOSPreferencesHandler();
-			new MacOSQuitHandler();
+			MacOSAboutHandler macOSAboutHandler = new MacOSAboutHandler();
+			macOSAboutHandler.addAboutBoxHandler();
+			MacOSPreferencesHandler macOSPreferencesHandler = new MacOSPreferencesHandler();
+			macOSPreferencesHandler.addPreferencesHandler();
+			MacOSQuitHandler macOSQuitHandler = new MacOSQuitHandler();
+			macOSQuitHandler.addQuitHandler();
 			Application application = new Application();
 			application.addPreferencesMenuItem();
 			application.setEnabledPreferencesMenu(true);
@@ -1418,7 +1433,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return true;
 	}
 
-	public void about() {
+	private void about() {
 		final JFrame f = new JFrame("About");
 		JLabel name;
 		JLabel version;
@@ -1632,7 +1647,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		else if (e.getSource() == saveAsVerilog) {
-			new Lpn2verilog(tree.getFile());
+			Lpn2verilog.convert(tree.getFile());
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0) {
 				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
@@ -1890,7 +1905,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			addToTree(theFile.replace(".lpn", ".xml"));
 		}
 		else if (e.getActionCommand().equals("convertToVerilog")) {
-			new Lpn2verilog(tree.getFile());
+			Lpn2verilog.convert(tree.getFile());
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0) {
 				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);

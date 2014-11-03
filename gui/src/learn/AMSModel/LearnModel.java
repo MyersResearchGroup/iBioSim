@@ -237,7 +237,7 @@ public class LearnModel { // added ItemListener SB
 						if(j>i){
 						String transition1 = trans1.get(i);
 						String transition2 = trans2.get(j);
-						ArrayList scaledThresh = scaledThresholds.get(InterpolateInfo2.get(transition1).get("variable"));
+						ArrayList<Double> scaledThresh = scaledThresholds.get(InterpolateInfo2.get(transition1).get("variable"));
 						Object lastThresh1 = scaledThresh.get((scaledThresh.size())-1);
 						//Object firstThresh1=scaledThresh.get(0);
 						System.out.println("scaled thresh:"+lastThresh1);
@@ -270,7 +270,7 @@ public class LearnModel { // added ItemListener SB
 										System.out.println("to interpolate1 "+transition1+" and "+transition2);
 										Set dmvSet2 = dmvProp2.keySet();
 										Iterator<String>  dmvIterator = dmvSet2.iterator();
-										HashMap<String, Object> calculate = new HashMap();
+										HashMap<String, Object> calculate = new HashMap<String, Object>();
 										while(dmvIterator.hasNext()){
 											String key = dmvIterator.next();
 											if((Double.valueOf((String)dmvProp2.get(key))> Double.valueOf((String)InterpolateInfo2.get(transition1).get("lowerThresh"))) & (Double.valueOf((String)dmvProp2.get(key))< Double.valueOf((String)InterpolateInfo2.get(transition1).get("upperThresh")))){
@@ -297,7 +297,7 @@ public class LearnModel { // added ItemListener SB
 										System.out.println("to interpolate2 "+transition1+" and "+transition2);
 										Set dmvSet2 = dmvProp2.keySet();
 										Iterator<String>  dmvIterator = dmvSet2.iterator();
-										HashMap<String, Object> calculate = new HashMap();
+										HashMap<String, Object> calculate = new HashMap<String, Object>();
 										while(dmvIterator.hasNext()){
 											String key = dmvIterator.next();
 											if((Double.valueOf((String)dmvProp2.get(key))> Double.valueOf((String)InterpolateInfo2.get(transition1).get("lowerThresh"))) & (Double.valueOf((String)dmvProp2.get(key))< Double.valueOf((String)InterpolateInfo2.get(transition1).get("upperThresh")))){
@@ -326,7 +326,7 @@ public class LearnModel { // added ItemListener SB
 										System.out.println("to interpolate3 "+transition1+" and "+transition2);
 										Set dmvSet2 = dmvProp2.keySet();
 										Iterator<String>  dmvIterator = dmvSet2.iterator();
-										HashMap<String, Object> calculate = new HashMap();
+										HashMap<String, Object> calculate = new HashMap<String, Object>();
 										while(dmvIterator.hasNext()){
 											String key = dmvIterator.next();
 											if((Double.valueOf((String)dmvProp2.get(key))> Double.valueOf((String)InterpolateInfo2.get(transition1).get("lowerThresh"))) & (Double.valueOf((String)dmvProp2.get(key))< Double.valueOf((String)InterpolateInfo2.get(transition1).get("upperThresh")))){
@@ -392,7 +392,7 @@ public class LearnModel { // added ItemListener SB
 										System.out.println("to interpolate4 "+transition1+" and "+transition2);
 										Set dmvSet2 = dmvProp2.keySet();
 										Iterator<String>  dmvIterator = dmvSet2.iterator();
-										HashMap<String, Object> calculate = new HashMap();
+										HashMap<String, Object> calculate = new HashMap<String, Object>();
 										while(dmvIterator.hasNext()){
 											String key = dmvIterator.next();
 											if((Double.valueOf((String)dmvProp2.get(key))> Double.valueOf((String)InterpolateInfo2.get(transition1).get("lowerThresh"))) & (Double.valueOf((String)dmvProp2.get(key))< Double.valueOf((String)InterpolateInfo2.get(transition1).get("upperThresh")))){
@@ -437,7 +437,7 @@ public class LearnModel { // added ItemListener SB
 
 									Set dmvSet2 = dmvProp2.keySet();
 									Iterator<String>  dmvIterator = dmvSet2.iterator();
-									HashMap<String, Object> calculate = new HashMap();
+									HashMap<String, Object> calculate = new HashMap<String, Object>();
 									while(dmvIterator.hasNext()){
 										String key = dmvIterator.next();
 										if((Double.valueOf((String)dmvProp2.get(key))< Double.valueOf((String)InterpolateInfo2.get(transition1).get("onlyLowerThresh")))){
@@ -477,7 +477,7 @@ public class LearnModel { // added ItemListener SB
 
 							Set dmvSet2 = dmvProp2.keySet();
 							Iterator<String>  dmvIterator = dmvSet2.iterator();
-							HashMap<String, Object> calculate = new HashMap();
+							HashMap<String, Object> calculate = new HashMap<String, Object>();
 							while(dmvIterator.hasNext()){
 								String key = dmvIterator.next();
 								if((Double.valueOf((String)dmvProp2.get(key))> Double.valueOf((String)InterpolateInfo2.get(transition1).get("onlyUpperThresh")))){
@@ -520,7 +520,7 @@ public class LearnModel { // added ItemListener SB
 
 	public static HashMap<String, ArrayList<Double>> threshForInterpolation(HashMap<String, ArrayList<Double>> scaledThresholds){
 		double diff=0;
-		HashMap<String, ArrayList<Double>> threshForInterpolation = new HashMap();
+		HashMap<String, ArrayList<Double>> threshForInterpolation = new HashMap<String, ArrayList<Double>>();
 		Set variableSet = scaledThresholds.keySet();
 		String varName = null;
 		ArrayList<Double> thresholds = new ArrayList<Double>();
@@ -1639,9 +1639,9 @@ public class LearnModel { // added ItemListener SB
 
 	 */
 
-	public ArrayList modeBinsCalculate(HashMap<String, ArrayList<String>> useMap, int i)
+	public ArrayList<Integer> modeBinsCalculate(HashMap<String, ArrayList<String>> useMap, int i)
 	{
-		ArrayList currentBinArray = new ArrayList();
+		ArrayList<Integer> currentBinArray = new ArrayList<Integer>();
 		//ArrayList<ArrayList> modeBinArray = new ArrayList<ArrayList>();
 		Set<String> useMapKeySet = useMap.keySet();
 		int index  =0;
@@ -1672,9 +1672,9 @@ public class LearnModel { // added ItemListener SB
 
 	 */
 
-	public ArrayList varsBinsCalculate(HashMap<String, ArrayList<String>> useMap, int i)
+	public ArrayList<Integer> varsBinsCalculate(HashMap<String, ArrayList<String>> useMap, int i)
 	{
-		ArrayList currentBinArray = new ArrayList();
+		ArrayList<Integer> currentBinArray = new ArrayList<Integer>();
 		//ArrayList<ArrayList> varsBinArray = new ArrayList<ArrayList>();
 		Set<String> useMapKeySet = useMap.keySet();
 		int index  =0;
@@ -1748,7 +1748,7 @@ public class LearnModel { // added ItemListener SB
 		int end =0;
 		int startMode=0;
 		int endMode =0;
-		Set allVarsBins = new HashSet();
+		Set<ArrayList<Integer>> allVarsBins = new HashSet<ArrayList<Integer>>();
 
 
 		ArrayList<Object> allInfo = new ArrayList<Object>();
@@ -5054,7 +5054,9 @@ public class LearnModel { // added ItemListener SB
 							}
 						}
 						transBuffer[cnt].append("\t\t\tentryTime = $abstime;\n");
-						transBuffer[cnt].append("\t\t\tplace = " + postsetPlace.split("p")[1] + ";\n");
+						if (postsetPlace!=null) {
+							transBuffer[cnt].append("\t\t\tplace = " + postsetPlace.split("p")[1] + ";\n");
+						}
 						for (int j = 0; j<reqdVarsL.size(); j++){
 							if ((!reqdVarsL.get(j).isInput()) && (!reqdVarsL.get(j).isDmvc())){
 								transBuffer[cnt].append("\t\t\trate_"+reqdVarsL.get(j).getName()+ " = "+(int)((getMinRate(getPlaceInfoIndex(postsetPlace), reqdVarsL.get(j).getName())+getMaxRate(getPlaceInfoIndex(postsetPlace), reqdVarsL.get(j).getName()))/(2.0*rateFactor)) + ";\n");

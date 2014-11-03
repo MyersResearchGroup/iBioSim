@@ -189,7 +189,7 @@ public class TimingAnalysis {
 		lpnTranStack.push(initTimedEnabled);
 
 		PrjState initPrjState = new PrjState(initStateArray);
-		HashSet initStateZoneSet = prjStateZoneSet.get(initPrjState);
+		HashSet<DBM> initStateZoneSet = prjStateZoneSet.get(initPrjState);
 		if (initStateZoneSet == null) {
 			initStateZoneSet = new HashSet<DBM>();
 			initStateZoneSet.add(initZone.getDbm());

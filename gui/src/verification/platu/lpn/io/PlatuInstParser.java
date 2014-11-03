@@ -3,23 +3,25 @@
     package verification.platu.lpn.io;
     
     import java.util.StringTokenizer;
-    import java.io.File;
-    import verification.platu.lpn.io.Instance;
-    import java.util.Map.Entry;
-    import java.util.HashMap;
-    import java.util.HashSet;
-    import java.util.LinkedList;
-    import java.util.Queue;
-    import verification.platu.lpn.*;
-    import verification.platu.lpn.DualHashMap;
-    import verification.platu.lpn.VarExpr;
-    import verification.platu.lpn.VarExprList;
-    import verification.platu.expression.*;   
+import java.io.File;
+
+import verification.platu.lpn.io.Instance;
+
+import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+
+import verification.platu.lpn.*;
+import verification.platu.expression.*;   
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.project.Project;
+
 import org.antlr.runtime.*;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -2584,8 +2586,8 @@ public class PlatuInstParser extends Parser {
             {
 
             	    		Integer result = null;
-            	    		ArrayList presetList = new ArrayList();  
-            	    		ArrayList postsetList = new ArrayList(); 
+            	    		ArrayList<Integer> presetList = new ArrayList<Integer>();  
+            	    		ArrayList<Integer> postsetList = new ArrayList<Integer>(); 
             	    		VarExprList assignmentList = new VarExprList();
             	    		ArrayList<Expression> assertionList = new ArrayList<Expression>();
             	    		Expression guardExpr = TrueExpr; 

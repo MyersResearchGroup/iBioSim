@@ -444,7 +444,6 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBaseS
 
 			HierarchicalEventToFire event = modelstate.getTriggeredEventQueue().poll();
 
-			@SuppressWarnings("unchecked")
 			HierarchicalEventToFire eventToAdd = new HierarchicalEventToFire(modelstate.getID(), event.getEventID(), (HashSet<Object>) event.getEventAssignmentSet().clone(), event.getFireTime());
 
 			if (untriggeredEvents.contains(event.getEventID()) == false)
@@ -536,7 +535,6 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBaseS
 
 				HierarchicalEventToFire event = modelstate.getTriggeredEventQueue().poll();
 
-				@SuppressWarnings("unchecked")
 				HierarchicalEventToFire eventToAdd = 
 				new HierarchicalEventToFire(modelstate.getID(), event.getEventID(), (HashSet<Object>) event.getEventAssignmentSet().clone(), event.getFireTime());
 

@@ -311,6 +311,7 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 				if (fileManager.sbolFilesAreLoaded()) {
 					SBOLIdentityManager identityManager = new SBOLIdentityManager(modelEditor.getBioModel());
 					SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
+					while (descriptorPanel.panelOpen(identityManager, fileManager));
 				}
 			} else {
 				DnaComponent dnaComponent = null;
@@ -325,6 +326,7 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 				if (dnaComponent!=null) {
 					SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(SBOLFileName.substring(SBOLFileName.lastIndexOf(File.separator)+1),
 							dnaComponent.getDisplayId(),dnaComponent.getName(),dnaComponent.getDescription());
+					descriptorPanel.openViewer();
 				}
 			}
 		} else if (e.getSource() == add) {

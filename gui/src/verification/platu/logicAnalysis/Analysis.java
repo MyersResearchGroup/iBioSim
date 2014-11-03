@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
@@ -369,8 +370,10 @@ public class Analysis {
 			// Check if the firedTran causes disabling error or deadlock.
 			//LinkedList<Transition>[] curEnabledArray = new LinkedList[numLpns];
 			//LinkedList<Transition>[] nextEnabledArray = new LinkedList[numLpns];
-			LinkedList<Transition>[] curEnabledArray = new LinkedList[numLpns];			
-			LinkedList<Transition>[] nextEnabledArray = new LinkedList[numLpns];
+			//LinkedList<Transition>[] curEnabledArray = new LinkedList[numLpns];			
+			//LinkedList<Transition>[] nextEnabledArray = new LinkedList[numLpns];
+			List<LinkedList<Transition>> curEnabledArray = new ArrayList<LinkedList<Transition>>(); 
+			List<LinkedList<Transition>> nextEnabledArray = new ArrayList<LinkedList<Transition>>(); 
 			for (int i = 0; i < numLpns; i++) {
 				LinkedList<Transition> enabledList;
 				if(!Options.getTimingAnalysisFlag()){ // Timing Change.
@@ -382,7 +385,7 @@ public class Analysis {
 					//enabledList = ((TimedPrjState) stateStackTop).getEnabled(i);
 					enabledList = ((TimedPrjState) stateStackTop).getPossibleEvents(0, i);
 				}
-				curEnabledArray[i] = enabledList;
+				curEnabledArray.add(i,enabledList);
 				if(!Options.getTimingAnalysisFlag()){ // Timing Change.
 					enabledList = StateGraph.getEnabledFromTranVector(nextStateArray[i]);
 				}
@@ -390,11 +393,11 @@ public class Analysis {
 					//enabledList = ((TimedPrjState) nextPrjState).getEnabled(i);
 					enabledList = ((TimedPrjState) nextPrjState).getPossibleEvents(0, i);
 				}
-				nextEnabledArray[i] = enabledList;
+				nextEnabledArray.add(i,enabledList);
 				// TODO: (temp) Stochastic model does not need disabling error?
 				if (Options.getReportDisablingError() && !Options.getMarkovianModelFlag()) {
 					Transition disabledTran = firedTran.disablingError(
-							curEnabledArray[i], nextEnabledArray[i]);
+							curEnabledArray.get(i), nextEnabledArray.get(i));
 					if (disabledTran != null) {
 						System.err.println("Disabling Error: "
 								+ disabledTran.getFullLabel() + " is disabled by "
@@ -461,13 +464,13 @@ public class Analysis {
 //				}
 				stateStackTop = nextPrjState;
 				stateStack.add(stateStackTop);
-				lpnTranStack.push((LpnTranList) nextEnabledArray[0].clone());
+				lpnTranStack.push((LpnTranList) nextEnabledArray.get(0).clone());
 				curIndexStack.push(0);
 				totalStates++;
 				if (Options.getDebugMode()) {										
 					printStateArray(stateStackTop.toStateArray(), "~~~~~~~ Add global state to stateStack ~~~~~~~");
 					System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
-					printTransList(nextEnabledArray[0], "");
+					printTransList(nextEnabledArray.get(0), "");
 					printTranStack(lpnTranStack, "******** lpnTranStack ***********");
 				}
 			}
@@ -2676,7 +2679,7 @@ public class Analysis {
 		int tranFiringCnt = 0;
 		int totalStates = 1;
 		int arraySize = lpnList.length;
-		int newStateCnt = 0;
+		//int newStateCnt = 0;
 		
 		Stack<State[]> stateStack = new Stack<State[]>();
 		Stack<LinkedList<Transition>> lpnTranStack = new Stack<LinkedList<Transition>>();
@@ -2779,17 +2782,22 @@ public class Analysis {
 			tranFiringCnt++;
 
 			// Check if the firedTran causes disabling error or deadlock.
-			LinkedList<Transition>[] curEnabledArray = new LinkedList[arraySize];
-			LinkedList<Transition>[] nextEnabledArray = new LinkedList[arraySize];
+			List<LinkedList<Transition>> curEnabledArray = new ArrayList<LinkedList<Transition>>(); 
+			List<LinkedList<Transition>> nextEnabledArray = new ArrayList<LinkedList<Transition>>(); 
+			
+			//LinkedList<Transition>[] curEnabledArray = new LinkedList[arraySize];
+			//LinkedList<Transition>[] nextEnabledArray = new LinkedList[arraySize];
 			for (int i = 0; i < arraySize; i++) {
 				StateGraph lpn_tmp = lpnList[i];
 				LinkedList<Transition> enabledList = lpn_tmp.getEnabled(curStateArray[i]);
-				curEnabledArray[i] = enabledList;
+				//curEnabledArray[i] = enabledList;
+				curEnabledArray.add(i, enabledList);
 				enabledList = lpn_tmp.getEnabled(nextStateArray[i]);
-				nextEnabledArray[i] = enabledList;
-
-				Transition disabledTran = firedTran.disablingError(
-						curEnabledArray[i], nextEnabledArray[i]);
+				//nextEnabledArray[i] = enabledList;
+				nextEnabledArray.add(i, enabledList);
+				
+				Transition disabledTran = firedTran.disablingError(curEnabledArray.get(i),nextEnabledArray.get(i));
+						
 				if (disabledTran != null) {
 					System.err.println("Disabling Error: "
 							+ disabledTran.getFullLabel() + " is disabled by "
@@ -2819,9 +2827,9 @@ public class Analysis {
 			
 			if (existingState == false) {
 				mddMgr.add(reach, localIdxArray, compressed);
-				newStateCnt++;
+				//newStateCnt++;
 				stateStack.push(nextStateArray);
-				lpnTranStack.push((LpnTranList) nextEnabledArray[0].clone());
+				lpnTranStack.push((LpnTranList) nextEnabledArray.get(0).clone());
 				curIndexStack.push(0);
 				totalStates++;
 			}
@@ -3179,9 +3187,10 @@ public class Analysis {
 		// mddMgr.add(reachSet, curLocalStateArray);
 		mddNode reachSet = null;
 		mddNode exploredSet = null;
-		LinkedList<State>[] nextSetArray = new LinkedList[arraySize];
+		List<LinkedList<State>> nextSetArray = new ArrayList<LinkedList<State>>(); 
+		//LinkedList<State>[] nextSetArray = new LinkedList[arraySize];
 		for (int i = 0; i < arraySize; i++)
-			nextSetArray[i] = new LinkedList<State>();
+			nextSetArray.add(i,new LinkedList<State>());
 
 		mddNode initMdd = mddMgr.doLocalFirings(lpnList, initStateArray, null);
 		mddNode curMdd = initMdd;
@@ -4158,10 +4167,10 @@ public class Analysis {
 		return deadlock;
 	}
 	
-	public static boolean deadLock(LinkedList<Transition>[] lpnList) {
+	public static boolean deadLock(List<LinkedList<Transition>> lpnList) {
 		boolean deadlock = true;
-		for (int i = 0; i < lpnList.length; i++) {
-			LinkedList<Transition> tmp = lpnList[i];
+		for (int i = 0; i < lpnList.size(); i++) {
+			LinkedList<Transition> tmp = lpnList.get(i);
 			if (tmp.size() > 0) {
 				deadlock = false;
 				break;

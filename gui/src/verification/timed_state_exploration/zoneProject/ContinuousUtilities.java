@@ -483,7 +483,7 @@ public class ContinuousUtilities {
 										z.getCurrentRate(contVar), false)){
 							
 							//*newMin = z.getDbmEntry(0,contDBMIndex);
-							int tmp = z.getUpperBoundTrue(contDBMIndex);
+							//int tmp = z.getUpperBoundTrue(contDBMIndex);
 							
 							newMin = z.getUpperBoundTrue(contDBMIndex);
 							System.err.println("maxAdvance : Impossible case 4.");

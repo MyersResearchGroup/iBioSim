@@ -32,15 +32,18 @@ public class SBOLDescriptorPanel extends JPanel {
 	private List<String> saveFilePaths;
 	private String[] options = {"Ok", "Cancel"};
 	private boolean removeBioSimURI = false;
+	private boolean display;
 	
 	public SBOLDescriptorPanel(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
 		super(new GridLayout(4, 2));
 		constructPanel(fileManager.getSBOLFilePaths());
-		boolean display = (loadSBOLDescriptors(identityManager) || 
+		display = (loadSBOLDescriptors(identityManager) || 
 				!identityManager.containsBioSimURI() || identityManager.containsPlaceHolderURI() ||
 				loadBioSimComponentDescriptors(identityManager, fileManager));
+		/*
 		while (display)
 			display = panelOpen(identityManager, fileManager);
+			*/
 	}
 	
 	public SBOLDescriptorPanel(String SBOLFileName, String displayId, String name, String description) {
@@ -55,6 +58,9 @@ public class SBOLDescriptorPanel extends JPanel {
 		idText.setEnabled(false);
 		nameText.setEnabled(false);
 		descriptionText.setEnabled(false);
+	}
+	
+	public void openViewer() {
 		JOptionPane.showOptionDialog(Gui.frame, this,
 				"SBOL Descriptors", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -116,7 +122,8 @@ public class SBOLDescriptorPanel extends JPanel {
 		return false;
 	}
 	
-	private boolean panelOpen(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
+	public boolean panelOpen(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
+		if (!display) return false;
 		int option = JOptionPane.showOptionDialog(Gui.frame, this,
 				"Composite SBOL Descriptors", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);

@@ -57,7 +57,6 @@ public class LPNTransitionState{
 		zone = new DBMLL(baseState);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public LPNTransitionState(LPNState baseState, HashSet<Integer> enabledTransitions)
 	{
 		this.state = baseState;
@@ -265,7 +264,6 @@ public class LPNTransitionState{
 	 * Gets a set of the enabled transitions that have not yet fired.
 	 * @return The set of the remaining transitions.
 	 */
-	@SuppressWarnings("unchecked")
 	public HashSet<Integer> getRemainingTransitions()
 	{
 		return (HashSet<Integer>) enabledTransitions.clone();
