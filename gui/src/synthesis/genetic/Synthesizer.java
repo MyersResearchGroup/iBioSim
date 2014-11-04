@@ -1,6 +1,5 @@
 package synthesis.genetic;
 
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -8,13 +7,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
-import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 
@@ -293,18 +288,7 @@ public class Synthesizer {
 	private static void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) {
 		BioModel subBiomodel = new BioModel(biomodel.getPath());
 		subBiomodel.load(biomodel.getPath() + biomodel.getSeparator() + sbmlFileID);
-		SBMLWriter writer = new SBMLWriter();
-		String sbmlStr = null;
-		try {
-			sbmlStr = writer.writeSBMLToString(subBiomodel.getSBMLDocument());
-		}
-		catch (SBMLException e) {
-			e.printStackTrace();
-		}
-		catch (XMLStreamException e) {
-			e.printStackTrace();
-		}
-		String md5 = Utility.MD5(sbmlStr);
+		String md5 = Utility.MD5(subBiomodel.getSBMLDocument());
 		
 		biomodel.addComponent(submodelID, sbmlFileID, subBiomodel.IsWithinCompartment(), 
 				subBiomodel.getCompartmentPorts(), -1, -1, 0, 0, md5);

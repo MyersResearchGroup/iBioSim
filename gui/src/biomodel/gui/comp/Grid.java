@@ -9,11 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.sbml.jsbml.Parameter;
-import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLWriter;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.BioGraph;
@@ -1022,32 +1018,21 @@ public class Grid {
 	 * 
 	 * @param row
 	 * @param col
-	 * @param compGCM the name of the component's gcm file
-	 * @param gcm the gcm to put the component in
+	 * @param compGCM the name of the component's model file
+	 * @param bioModel the model to put the component in
 	 */
-	private void addComponentToGCM(int row, int col, String compGCM, BioModel gcm) {
+	private void addComponentToGCM(int row, int col, String compGCM, BioModel bioModel) {
 		
 		double padding = 30;
 		double width = componentGeomWidth;
 		double height = componentGeomHeight;
 		
-		//don't put blank components onto the grid or gcm
+		//don't put blank components onto the grid or model
 		if (!compGCM.equals("none")) {
-			BioModel compGCMFile = new BioModel(gcm.getPath());
-			compGCMFile.load(gcm.getPath() + File.separator + compGCM);
-			SBMLWriter writer = new SBMLWriter();
-			String SBMLstr = null;
-			try {
-				SBMLstr = writer.writeSBMLToString(compGCMFile.getSBMLDocument());
-			}
-			catch (SBMLException e) {
-				e.printStackTrace();
-			}
-			catch (XMLStreamException e) {
-				e.printStackTrace();
-			}
-			String md5 = Utility.MD5(SBMLstr);
-			gcm.addComponent(null, compGCM, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
+			BioModel compGCMFile = new BioModel(bioModel.getPath());
+			compGCMFile.load(bioModel.getPath() + File.separator + compGCM);
+			String md5 = Utility.MD5(compGCMFile.getSBMLDocument());
+			bioModel.addComponent(null, compGCM, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 					col * (width + padding) + padding, row * (height + padding) + padding, md5);
 		}
 	}

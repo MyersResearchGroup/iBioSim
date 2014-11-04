@@ -85,15 +85,15 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	
 	private JCheckBox onPort;
 
-	public Compartments(BioModel gcm, ModelEditor modelEditor, Boolean paramsOnly, ArrayList<String> getParams, 
+	public Compartments(BioModel bioModel, ModelEditor modelEditor, Boolean paramsOnly, ArrayList<String> getParams, 
 			String file, ArrayList<String> parameterChanges, Boolean editOnly) {
 		super(new BorderLayout());
-		this.bioModel = gcm;
+		this.bioModel = bioModel;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
 		this.modelEditor = modelEditor;
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		addCompart = new JButton("Add Compartment");
 		removeCompart = new JButton("Remove Compartment");
 		editCompart = new JButton("Edit Compartment");
@@ -434,7 +434,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						addCompSize = Double.parseDouble(compSize.getText().trim());
 					}
 					catch (Exception e1) {
-						// TODO: do not forget to send dimID as last parameter to this function
 						error = InitialAssignments.addInitialAssignment(bioModel, compSize.getText().trim(), dimID);
 						addCompSize = 1.0;
 					}

@@ -5,13 +5,6 @@ import lpn.parser.LhpnFile;
 import lpn.parser.Lpn2verilog;
 import lpn.parser.Translator;
 import graph.Graph;
-//import lpn.parser.properties.BuildProperty;
-
-
-
-
-
-
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
@@ -47,8 +40,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,7 +56,6 @@ import java.util.regex.Matcher;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -98,9 +88,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.tree.TreeModel;
 import javax.xml.stream.XMLStreamException;
-import javax.mail.*;
-import javax.mail.PasswordAuthentication;
-import javax.mail.internet.*;
 
 import analysis.main.AnalysisView;
 import analysis.main.Run;
@@ -313,174 +300,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 
-	private static final String[] bugReportTypes = new String[] { "BUG", "CHANGE", "FEATURE" };
-	
 	private static final String lemaVersion = "2.8";
 	
 	private static final String atacsVersion = "6.1";
 	
 	private static final String iBioSimVersion = "2.8";
 		
-	public static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
-		
-		String message;
-		
-		//Implements Thread.UncaughtExceptionHandler.uncaughtException()
-		@Override
-		public void uncaughtException(Thread th, Throwable ex) {
-			final JFrame exp = new JFrame("Unhandled Exception");
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			ex.printStackTrace(pw);
-			ex.printStackTrace();
-			message = sw.toString(); // stack trace as a string
-			JLabel error = new JLabel("Program has thrown an exception of the type:");
-			JLabel errMsg = new JLabel(ex.toString());
-			JButton details = new JButton("Details");
-			details.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Object[] options = { "Close" };
-					JOptionPane.showOptionDialog(exp, message, "Details", JOptionPane.YES_OPTION, 
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				}
-			});
-			JButton report = new JButton("Send Bug Report");
-			report.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					submitBugReport("\n\nStack trace:\n"+message);
-				}
-			});
-			JButton close = new JButton("Close");
-			close.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					exp.dispose();
-				}
-			});
-			JPanel errMessage = new JPanel();
-			errMessage.add(error);
-			JPanel errMsgPanel = new JPanel();
-			errMsgPanel.add(errMsg);
-			JPanel buttons = new JPanel();
-			buttons.add(details);
-			buttons.add(report);
-			buttons.add(close);
-			JPanel expPanel = new JPanel(new BorderLayout());
-			expPanel.add(errMessage,"North");
-			expPanel.add(errMsgPanel,"Center");
-			expPanel.add(buttons,"South");
-			exp.setContentPane(expPanel);
-			exp.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			}
-			catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
-			}
-			Dimension frameSize = exp.getSize();
-
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
-			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			exp.setLocation(x, y);
-			exp.setVisible(true);
-		}
-	}
-	
-	private static void submitBugReport(String message) {
-		JPanel reportBugPanel = new JPanel(new GridLayout(4,1));
-		JLabel typeLabel = new JLabel("Type of Report:");
-		JComboBox reportType = new JComboBox(bugReportTypes);
-		if (!message.equals("")) {
-			typeLabel.setEnabled(false);
-			reportType.setEnabled(false);
-		}
- 		JPanel typePanel = new JPanel(new GridLayout(1,2));
-		typePanel.add(typeLabel);
-		typePanel.add(reportType);
-		JLabel emailLabel = new JLabel("Email address:");
-		JTextField emailAddr = new JTextField(30);
-		JPanel emailPanel = new JPanel(new GridLayout(1,2));
-		emailPanel.add(emailLabel);
-		emailPanel.add(emailAddr);
-		JLabel bugSubjectLabel = new JLabel("Brief Description:");
-		JTextField bugSubject = new JTextField(30);
-		JPanel bugSubjectPanel = new JPanel(new GridLayout(1,2));
-		bugSubjectPanel.add(bugSubjectLabel);
-		bugSubjectPanel.add(bugSubject);
-		JLabel bugDetailLabel = new JLabel("Detailed Description:");
-		JTextArea bugDetail = new JTextArea(5,30);
-		bugDetail.setLineWrap(true);
-		bugDetail.setWrapStyleWord(true);
-		JScrollPane scroll = new JScrollPane();
-		scroll.setMinimumSize(new Dimension(100, 100));
-		scroll.setPreferredSize(new Dimension(100, 100));
-		scroll.setViewportView(bugDetail);
-		JPanel bugDetailPanel = new JPanel(new GridLayout(1,2));
-		bugDetailPanel.add(bugDetailLabel);
-		bugDetailPanel.add(scroll);
-		reportBugPanel.add(typePanel);
-		reportBugPanel.add(emailPanel);
-		reportBugPanel.add(bugSubjectPanel);
-		reportBugPanel.add(bugDetailPanel);
-		Object[] options = { "Send", "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, reportBugPanel, "Bug Report",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		if (value==0) {
-			String to = "atacs-bugs@vlsigroup.ece.utah.edu";
-			Properties props = new Properties();
-			props.put("mail.smtp.user", "ibiosim@gmail.com");
-			props.put("mail.smtp.host", "smtp.gmail.com");
-			props.put("mail.smtp.port", "465");
-			props.put("mail.smtp.starttls.enable", "true");
-			props.put("mail.smtp.debug", "true");
-			props.put("mail.smtp.auth", "true");
-			props.put("mail.smtp.socketFactory.port", "465");
-			props.put("mail.smtp.socketFactory.class", 
-					"javax.net.ssl.SSLSocketFactory");
-			props.put("mail.smtp.socketFactory.fallback", "false");
-			MyAuthenticator authentication = new MyAuthenticator("ibiosim@gmail.com","lambda123");
-			Session session = Session.getDefaultInstance(props,authentication);
-			MimeMessage mimeMessage = new MimeMessage(session);
-			try {
-				mimeMessage.setFrom(new InternetAddress(emailAddr.getText().trim()));
-				mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-				mimeMessage.setSubject(reportType.getSelectedItem() + ": "+bugSubject.getText().trim());
-				mimeMessage.setText(System.getProperty("software.running") + "\n\nOperating system: " + 
-						System.getProperty("os.name") + "\n\nBug reported by: " + emailAddr.getText().trim() + 
-						"\n\nDescription:\n"+bugDetail.getText().trim()+message);
-				Transport.send(mimeMessage);
-			} catch (MessagingException mex) {
-				mex.printStackTrace();
-			}
-		}
-	}
-	
-	   
-	public static class MyAuthenticator extends javax.mail.Authenticator {
-		String User;
-		String Password;
-		public MyAuthenticator (String user, String password) {
-			User = user;
-			Password = password;
-		}
-
-		@Override
-		public PasswordAuthentication getPasswordAuthentication() {
-			return new javax.mail.PasswordAuthentication(User, Password);
-		}
-	}
-
- 
 	public class MacOSAboutHandler extends Application {
 
 		public MacOSAboutHandler() {
@@ -552,7 +377,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		this.atacs = atacs;
 		Gui.libsbmlFound = libsbmlFound;
 		async = lema || atacs;
-		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
+		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -1173,7 +998,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportFlatSBML);
 		exportMenu.add(exportSBML);
 		exportMenu.add(exportSBOL);
-		exportMenu.addSeparator();
 		
 		exportDataMenu.add(exportTsd);
 		exportDataMenu.add(exportCsv);
@@ -1318,30 +1142,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		openRecent.addSeparator();
 		openRecent.add(clearRecent);
-//		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-//			new MacOSAboutHandler();
-//			new MacOSPreferencesHandler();
-//			new MacOSQuitHandler();
-//			Application application = new Application();
-//			application.addPreferencesMenuItem();
-//			application.setEnabledPreferencesMenu(true);
-//		}
-//		else {
-//			// file.add(pref);
-//			// file.add(exit);
-//			help.add(about);
-//		}
-		/*if (biosimrc.get("biosim.sbml.level_version", "").equals("L2V4")) {
-			SBMLLevelVersion = "L2V4";
-			SBML_LEVEL = 2;
-			SBML_VERSION = 4;
-		}
-		else {*/
 		SBMLLevelVersion = "L3V1";
 		SBML_LEVEL = 3;
 		SBML_VERSION = 1;
-		//}
-		// Open .biosimrc here
 
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
@@ -1364,10 +1167,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		mainPanel.add(toolbar, "North");
 		frame.setContentPane(mainPanel);
 		frame.setJMenuBar(menuBar);
-		// frame.getGlassPane().setVisible(true);
-		// frame.getGlassPane().addMouseListener(this);
-		// frame.getGlassPane().addMouseMotionListener(this);
-		// frame.getGlassPane().addMouseWheelListener(this);
 		frame.addMouseListener(this);
 		menuBar.addMouseListener(this);
 		frame.pack();
@@ -1827,7 +1626,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			about();
 		}
 		else if (e.getSource() == bugReport) {
-			submitBugReport("");
+			Utility.submitBugReport("");
 		}
 		else if (e.getSource() == manual) {
 			try {
@@ -2896,11 +2695,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getActionCommand().equals("check")) {
 			Component comp = tab.getSelectedComponent();
-			/*if (comp instanceof SBML_Editor) {
-				((SBML_Editor) comp).save(true, "", true, true);
-				((SBML_Editor) comp).check();
-			}
-			else*/ if (comp instanceof ModelEditor) {
+			if (comp instanceof ModelEditor) {
 				((ModelEditor) comp).save("Save and Check GCM");
 			}
 		}
@@ -2918,6 +2713,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (component instanceof Graph) {
 					((Graph) component).export();
 				}
+				// TODO: what about export of movie?
 			}
 		}
 		// if the new menu item is selected

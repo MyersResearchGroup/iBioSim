@@ -3661,36 +3661,6 @@ public class BioModel {
 		
 		return submodelID;
 	}
-
-	// used by createNewObjectName
-	private HashMap<String, Integer> createdHighIds;
-
-	/**
-	 * builds a sensible default name for a new species, component, or promoter.
-	 * 
-	 * @param prefix
-	 *            : a string which will begin the component name. ("S", "C", or
-	 *            "P")
-	 * @param hash
-	 *            : the internal model of species or components or promoter
-	 * @return: a string name for the new component.
-	 */
-	public String createNewObjectName(String prefix, HashMap<String, Properties> hash) {
-		// make sure createdHighIds exists and is initialized.
-		if (createdHighIds == null)
-			createdHighIds = new HashMap<String, Integer>();
-		if (createdHighIds.containsKey(prefix) == false)
-			createdHighIds.put(prefix, 0);
-
-		String name;
-		do {
-			createdHighIds.put(prefix, createdHighIds.get(prefix) + 1);
-			name = prefix + String.valueOf(createdHighIds.get(prefix));
-		}
-		while (hash.containsKey(name) || SBMLutilities.getElementBySId(sbml, name)!=null);
-
-		return name;
-	}
 	
 	/**
 	 * loads the grid size from the gcm file
@@ -6359,19 +6329,8 @@ public class BioModel {
 			String extModelFile = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef())
 					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 			subBioModel.load(path + separator + extModelFile);
-			SBMLWriter writer = new SBMLWriter();
-			String SBMLstr = null;
-			try {
-				SBMLstr = writer.writeSBMLToString(subBioModel.getSBMLDocument());
-			}
-			catch (SBMLException e) {
-				e.printStackTrace();
-			}
-			catch (XMLStreamException e) {
-				e.printStackTrace();
-			}
 //			TODO:  Not currently supported.
-			String md5 = Utility.MD5(SBMLstr);
+			String md5 = Utility.MD5(subBioModel.getSBMLDocument());
 			if (!sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getMd5().equals("") &&
 					!sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getMd5().equals(md5)) {
 				//System.out.println("MD5 DOES NOT MATCH");
