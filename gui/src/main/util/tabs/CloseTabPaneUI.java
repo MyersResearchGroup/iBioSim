@@ -37,7 +37,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.AbstractAction;
@@ -149,14 +148,6 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	public CloseTabPaneUI(Gui biosim) {
 
 		super();
-
-		String separator;
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
 
 		this.biosim = biosim;
 

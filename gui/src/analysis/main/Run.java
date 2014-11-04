@@ -44,22 +44,14 @@ public class Run implements ActionListener {
 
 	private Process reb2sac;
 
-	private String separator;
-
-	private AnalysisView r2s;
+	private AnalysisView analysisView;
 	
 	DynamicSimulation dynSim = null;
 
 	StateGraph sg;
 
-	public Run(AnalysisView reb2sac) {
-		r2s = reb2sac;
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+	public Run(AnalysisView analysisView) {
+		this.analysisView = analysisView;
 	}
 
 	/**
@@ -81,9 +73,6 @@ public class Run implements ActionListener {
 				String abstractionOption = (String) preAbs.getModel().getElementAt(i);
 				if (abstractionOption.equals("complex-formation-and-sequestering-abstraction")
 						|| abstractionOption.equals("operator-site-reduction-abstraction")) {
-					// ||
-					// abstractionOption.equals("species-sequestering-abstraction"))
-					// {
 					abs.setProperty("gcm.abstraction.method." + gcmIndex, abstractionOption);
 					gcmIndex++;
 				}
@@ -93,64 +82,12 @@ public class Run implements ActionListener {
 			for (int i = 0; i < loopAbs.getModel().getSize(); i++) {
 				abs.setProperty("reb2sac.abstraction.method.2." + (i + 1), (String) loopAbs.getModel().getElementAt(i));
 			}
-			// abs.setProperty("reb2sac.abstraction.method.0.1",
-			// "enzyme-kinetic-qssa-1");
-			// abs.setProperty("reb2sac.abstraction.method.0.2",
-			// "reversible-to-irreversible-transformer");
-			// abs.setProperty("reb2sac.abstraction.method.0.3",
-			// "multiple-products-reaction-eliminator");
-			// abs.setProperty("reb2sac.abstraction.method.0.4",
-			// "multiple-reactants-reaction-eliminator");
-			// abs.setProperty("reb2sac.abstraction.method.0.5",
-			// "single-reactant-product-reaction-eliminator");
-			// abs.setProperty("reb2sac.abstraction.method.0.6",
-			// "dimer-to-monomer-substitutor");
-			// abs.setProperty("reb2sac.abstraction.method.0.7",
-			// "inducer-structure-transformer");
-			// abs.setProperty("reb2sac.abstraction.method.1.1",
-			// "modifier-structure-transformer");
-			// abs.setProperty("reb2sac.abstraction.method.1.2",
-			// "modifier-constant-propagation");
-			// abs.setProperty("reb2sac.abstraction.method.2.1",
-			// "operator-site-forward-binding-remover");
-			// abs.setProperty("reb2sac.abstraction.method.2.3",
-			// "enzyme-kinetic-rapid-equilibrium-1");
-			// abs.setProperty("reb2sac.abstraction.method.2.4",
-			// "irrelevant-species-remover");
-			// abs.setProperty("reb2sac.abstraction.method.2.5",
-			// "inducer-structure-transformer");
-			// abs.setProperty("reb2sac.abstraction.method.2.6",
-			// "modifier-constant-propagation");
-			// abs.setProperty("reb2sac.abstraction.method.2.7",
-			// "similar-reaction-combiner");
-			// abs.setProperty("reb2sac.abstraction.method.2.8",
-			// "modifier-constant-propagation");
 		}
-		// if (selectedButtons.contains("abs")) {
-		// abs.setProperty("reb2sac.abstraction.method.2.2",
-		// "dimerization-reduction");
-		// }
-		// else if (selectedButtons.contains("nary")) {
-		// abs.setProperty("reb2sac.abstraction.method.2.2",
-		// "dimerization-reduction-level-assignment");
-		// }
 		for (int i = 0; i < postAbs.getModel().getSize(); i++) {
 			abs.setProperty("reb2sac.abstraction.method.3." + (i + 1), (String) postAbs.getModel().getElementAt(i));
 		}
 		abs.setProperty("simulation.printer", printer_id);
 		abs.setProperty("simulation.printer.tracking.quantity", printer_track_quantity);
-		// if (selectedButtons.contains("monteCarlo")) {
-		// abs.setProperty("reb2sac.abstraction.method.3.1",
-		// "distribute-transformer");
-		// abs.setProperty("reb2sac.abstraction.method.3.2",
-		// "reversible-to-irreversible-transformer");
-		// abs.setProperty("reb2sac.abstraction.method.3.3",
-		// "kinetic-law-constants-simplifier");
-		// }
-		// else if (selectedButtons.contains("none")) {
-		// abs.setProperty("reb2sac.abstraction.method.3.1",
-		// "kinetic-law-constants-simplifier");
-		// }
 		for (int i = 0; i < intSpecies.length; i++) {
 			if (!intSpecies[i].equals("")) {
 				String[] split = intSpecies[i].split(" ");
@@ -254,8 +191,6 @@ public class Run implements ActionListener {
 			abs.setProperty("reb2sac.simulation.method", "LPN");
 		}
 		if (!selectedButtons.contains("monteCarlo")) {
-			// if (selectedButtons.equals("none_ODE") ||
-			// selectedButtons.equals("abs_ODE")) {
 			abs.setProperty("ode.simulation.time.limit", "" + timeLimit);
 			if (useInterval.equals("Print Interval")) {
 				abs.setProperty("ode.simulation.print.interval", "" + printInterval);
@@ -279,8 +214,6 @@ public class Run implements ActionListener {
 			abs.setProperty("monte.carlo.simulation.runs", "" + run);
 		}
 		if (!selectedButtons.contains("ODE")) {
-			// if (selectedButtons.equals("none_monteCarlo") ||
-			// selectedButtons.equals("abs_monteCarlo")) {
 			abs.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
 			if (useInterval.equals("Print Interval")) {
 				abs.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
@@ -303,13 +236,6 @@ public class Run implements ActionListener {
 			abs.setProperty("monte.carlo.simulation.out.dir", outDir);
 		}
 		abs.setProperty("simulation.run.termination.decider", "constraint");
-		/*
-		for (int i = 0; i < termCond.length; i++) {
-			if (termCond[i] != "") {
-				abs.setProperty("simulation.run.termination.condition." + (i + 1), "" + termCond[i]);
-			}
-		}
-		*/
 		try {
 			if (!getFilename[getFilename.length - 1].contains(".")) {
 				getFilename[getFilename.length - 1] += ".";
@@ -337,7 +263,7 @@ public class Run implements ActionListener {
 	 * This method is given what data is entered into the nary frame and creates
 	 * the nary properties file from that information.
 	 */
-	public void createNaryProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
+	public static void createNaryProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
 			double timeStep, String outDir, long rndSeed, int run, int numPaths, String printer_id, String printer_track_quantity,
 			String[] getFilename, Component component, String filename, JRadioButton monteCarlo, String stopE, double stopR,
 			String[] finalS, ArrayList<JTextField> inhib, ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps,
@@ -345,7 +271,7 @@ public class Run implements ActionListener {
 			int con, ArrayList<Integer> counts, boolean mpde, boolean meanPath, boolean adaptive) {
 		Properties nary = new Properties();
 		try {
-			FileInputStream load = new FileInputStream(new File(outDir + separator + "species.properties"));
+			FileInputStream load = new FileInputStream(new File(outDir + File.separator + "species.properties"));
 			nary.load(load);
 			load.close();
 		}
@@ -477,9 +403,9 @@ public class Run implements ActionListener {
 			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running) throws NumberFormatException, XMLStreamException {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
-		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
+		while (outDir.split(File.separator)[outDir.split(File.separator).length - 1].equals(".")) {
 			outDir = outDir.substring(0,
-					outDir.length() - 1 - outDir.split(separator)[outDir.split(separator).length - 1].length());
+					outDir.length() - 1 - outDir.split(File.separator)[outDir.split(File.separator).length - 1].length());
 		}
 		try {
 			long time1, time2;
@@ -497,10 +423,10 @@ public class Run implements ActionListener {
 				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 			}
 			File work = new File(directory);
-			new FileWriter(new File(directory + separator + "running")).close();
-			FileWriter logFile = new FileWriter(new File(directory + separator + "log.txt"));
+			new FileWriter(new File(directory + File.separator + "running")).close();
+			FileWriter logFile = new FileWriter(new File(directory + File.separator + "log.txt"));
 			Properties properties = new Properties();
-			properties.load(new FileInputStream(directory + separator + 
+			properties.load(new FileInputStream(directory + File.separator + 
 					theFile.replace(".sbml", "").replace(".xml","") + ".properties"));
 			boolean genStats = Boolean.parseBoolean(properties.getProperty("reb2sac.generate.statistics"));
 			String out = theFile;
@@ -526,10 +452,8 @@ public class Run implements ActionListener {
 						}
 					}
 				}
-				//BioModel paramBioModel = gcmEditor.getBioModel();
 				BioModel bioModel = new BioModel(root);
-				bioModel.load(root + separator + modelEditor.getRefFile());
-				//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
+				bioModel.load(root + File.separator + modelEditor.getRefFile());
 				time1 = System.nanoTime();
 				String prop = null;
 				if (!lpnProperty.equals("")) {
@@ -562,24 +486,24 @@ public class Run implements ActionListener {
 				LhpnFile lpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
 				prop = mutProp.getString();
 				if (lpnFile == null) {
-					new File(directory + separator + "running").delete();
+					new File(directory + File.separator + "running").delete();
 					logFile.close();
 					return 0;
 				}
-				lpnFile.save(root + separator + simName + separator + lpnName);
+				lpnFile.save(root + File.separator + simName + File.separator + lpnName);
 				Translator t1 = new Translator();
 				if (abstraction.isSelected()) {
 					LhpnFile lhpnFile = new LhpnFile();
-					lhpnFile.load(root + separator + simName + separator + lpnName);
+					lhpnFile.load(root + File.separator + simName + File.separator + lpnName);
 					Abstraction abst = new Abstraction(lhpnFile, abstPane);
 					abst.abstractSTG(false);
-					abst.save(root + separator + simName + separator + lpnName + ".temp");
-					t1.convertLPN2SBML(root + separator + simName + separator + lpnName + ".temp", prop);
+					abst.save(root + File.separator + simName + File.separator + lpnName + ".temp");
+					t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName + ".temp", prop);
 				}
 				else {
-					t1.convertLPN2SBML(root + separator + simName + separator + lpnName, prop);
+					t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName, prop);
 				}
-				t1.setFilename(root + separator + simName + separator + lpnName.replace(".lpn", ".xml"));
+				t1.setFilename(root + File.separator + simName + File.separator + lpnName.replace(".lpn", ".xml"));
 				t1.outputSBML();
 			}
 			if (nary.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
@@ -591,7 +515,7 @@ public class Run implements ActionListener {
 			}
 			else if (fba.isSelected()) {
 				time1 = System.nanoTime();
-				FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(directory + separator,theFile,absError);
+				FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(directory + File.separator,theFile,absError);
 				exitValue = fluxBalanceAnalysis.PerformFluxBalanceAnalysis();
 			}
 			else if (sbml.isSelected()) {
@@ -601,13 +525,13 @@ public class Run implements ActionListener {
 					if (!sbmlName.endsWith(".xml")) {
 						sbmlName += ".xml";
 					}
-					File f = new File(root + separator + sbmlName);
+					File f = new File(root + File.separator + sbmlName);
 					if (f.exists()) {
 						Object[] options = { "Overwrite", "Cancel" };
 						int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?",
 								"Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
-							File dir = new File(root + separator + sbmlName);
+							File dir = new File(root + File.separator + sbmlName);
 							if (dir.isDirectory()) {
 								biomodelsim.deleteDir(dir);
 							}
@@ -617,7 +541,7 @@ public class Run implements ActionListener {
 							}
 						}
 						else {
-							new File(directory + separator + "running").delete();
+							new File(directory + File.separator + "running").delete();
 							logFile.close();
 							return 0;
 						}
@@ -628,16 +552,16 @@ public class Run implements ActionListener {
 						Translator t1 = new Translator();
 						if (abstraction.isSelected()) {
 							LhpnFile lhpnFile = new LhpnFile();
-							lhpnFile.load(root + separator + modelFile);
+							lhpnFile.load(root + File.separator + modelFile);
 							Abstraction abst = new Abstraction(lhpnFile, abstPane);
 							abst.abstractSTG(false);
-							abst.save(root + separator + simName + separator + modelFile);
-							t1.convertLPN2SBML(root + separator + simName + separator + modelFile, lpnProperty);
+							abst.save(root + File.separator + simName + File.separator + modelFile);
+							t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile, lpnProperty);
 						}
 						else {
-							t1.convertLPN2SBML(root + separator + modelFile, lpnProperty);
+							t1.convertLPN2SBML(root + File.separator + modelFile, lpnProperty);
 						}
-						t1.setFilename(root + separator + sbmlName);
+						t1.setFilename(root + File.separator + sbmlName);
 						t1.outputSBML();
 						exitValue = 0;
 						logFile.close();
@@ -660,10 +584,8 @@ public class Run implements ActionListener {
 							}
 						}
 						progress.setIndeterminate(true);
-						//BioModel paramGCM = gcmEditor.getBioModel();
 						BioModel bioModel = new BioModel(root);
-						bioModel.load(root + separator + modelEditor.getRefFile());
-						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
+						bioModel.load(root + File.separator + modelEditor.getRefFile());
 						if (bioModel.flattenModel(true) != null) {
 							time1 = System.nanoTime();
 							String prop = null;
@@ -697,49 +619,49 @@ public class Run implements ActionListener {
 							LhpnFile lpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
 							prop = mutProp.getString();
 							if (lpnFile == null) {
-								new File(directory + separator + "running").delete();
+								new File(directory + File.separator + "running").delete();
 								logFile.close();
 								return 0;
 							}
-							lpnFile.save(root + separator + simName + separator + lpnName);
+							lpnFile.save(root + File.separator + simName + File.separator + lpnName);
 							Translator t1 = new Translator();
 							if (abstraction.isSelected()) {
 								LhpnFile lhpnFile = new LhpnFile();
-								lhpnFile.load(root + separator + simName + separator + lpnName);
+								lhpnFile.load(root + File.separator + simName + File.separator + lpnName);
 								Abstraction abst = new Abstraction(lhpnFile, abstPane);
 								abst.abstractSTG(false);
-								abst.save(root + separator + simName + separator + lpnName + ".temp");
-								t1.convertLPN2SBML(root + separator + simName + separator + lpnName + ".temp", prop);
+								abst.save(root + File.separator + simName + File.separator + lpnName + ".temp");
+								t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName + ".temp", prop);
 							}
 							else {
-								t1.convertLPN2SBML(root + separator + simName + separator + lpnName, prop);
+								t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName, prop);
 							}
-							t1.setFilename(root + separator + sbmlName);
+							t1.setFilename(root + File.separator + sbmlName);
 							t1.outputSBML();
 						}
 						else {
 							time1 = System.nanoTime();
-							new File(directory + separator + "running").delete();
+							new File(directory + File.separator + "running").delete();
 							logFile.close();
 							return 0;
 						}
 						exitValue = 0;
 					}
 					else {
-						if (r2s.reb2sacAbstraction() && (abstraction.isSelected() || nary.isSelected())) {
-							log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " "
+						if (analysisView.reb2sacAbstraction() && (abstraction.isSelected() || nary.isSelected())) {
+							log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + File.separator + sbmlName + " "
 									+ filename + "\n");
-							logFile.write("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " "
+							logFile.write("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + File.separator + sbmlName + " "
 									+ filename + "\n\n");
 							time1 = System.nanoTime();
 							reb2sac = exec.exec(
-									"reb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " " + theFile, null, work);
+									"reb2sac --target.encoding=sbml --out=" + ".." + File.separator + sbmlName + " " + theFile, null, work);
 						}
 						else {
-							log.addText("Outputting SBML file:\n" + root + separator + sbmlName + "\n");
-							logFile.write("Outputting SBML file:\n" + root + separator + sbmlName + "\n\n");
+							log.addText("Outputting SBML file:\n" + root + File.separator + sbmlName + "\n");
+							logFile.write("Outputting SBML file:\n" + root + File.separator + sbmlName + "\n\n");
 							time1 = System.nanoTime();
-							FileOutputStream fileOutput = new FileOutputStream(new File(root + separator + sbmlName));
+							FileOutputStream fileOutput = new FileOutputStream(new File(root + File.separator + sbmlName));
 							FileInputStream fileInput = new FileInputStream(new File(filename));
 							int read = fileInput.read();
 							while (read != -1) {
@@ -768,13 +690,13 @@ public class Run implements ActionListener {
 					else {
 						lhpnName += ".lpn";
 					}
-					File f = new File(root + separator + lhpnName);
+					File f = new File(root + File.separator + lhpnName);
 					if (f.exists()) {
 						Object[] options = { "Overwrite", "Cancel" };
 						int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?",
 								"Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
-							File dir = new File(root + separator + lhpnName);
+							File dir = new File(root + File.separator + lhpnName);
 							if (dir.isDirectory()) {
 								biomodelsim.deleteDir(dir);
 							}
@@ -784,21 +706,21 @@ public class Run implements ActionListener {
 							}
 						}
 						else {
-							new File(directory + separator + "running").delete();
+							new File(directory + File.separator + "running").delete();
 							logFile.close();
 							return 0;
 						}
 					}
 					if (modelFile.contains(".lpn")) {
 						LhpnFile lhpnFile = new LhpnFile();
-						lhpnFile.load(root + separator + modelFile);
+						lhpnFile.load(root + File.separator + modelFile);
 						if (abstraction.isSelected()) {
 							Abstraction abst = new Abstraction(lhpnFile, abstPane);
 							abst.abstractSTG(false);
-							abst.save(root + separator + lhpnName);
+							abst.save(root + File.separator + lhpnName);
 						}
 						else {
-							lhpnFile.save(root + separator + lhpnName);
+							lhpnFile.save(root + File.separator + lhpnName);
 						}
 						time1 = System.nanoTime();
 						exitValue = 0;
@@ -820,10 +742,8 @@ public class Run implements ActionListener {
 						}
 					}
 					progress.setIndeterminate(true);
-					//BioModel paramGCM = gcmEditor.getBioModel();
 					BioModel bioModel = new BioModel(root);
-					bioModel.load(root + separator + modelEditor.getRefFile());
-					//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
+					bioModel.load(root + File.separator + modelEditor.getRefFile());
 					if (bioModel.flattenModel(true) != null) {
 						time1 = System.nanoTime();
 						String prop = null;
@@ -857,16 +777,16 @@ public class Run implements ActionListener {
 						LhpnFile lhpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
 						prop = mutProp.getString();
 						if (lhpnFile == null) {
-							new File(directory + separator + "running").delete();
+							new File(directory + File.separator + "running").delete();
 							logFile.close();
 							return 0;
 						}
-						lhpnFile.save(root + separator + lhpnName);
-						log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n");
-						logFile.write("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n\n");
+						lhpnFile.save(root + File.separator + lhpnName);
+						log.addText("Saving GCM file as LHPN:\n" + root + File.separator + lhpnName + "\n");
+						logFile.write("Saving GCM file as LHPN:\n" + root + File.separator + lhpnName + "\n\n");
 					}
 					else {
-						new File(directory + separator + "running").delete();
+						new File(directory + File.separator + "running").delete();
 						logFile.close();
 						return 0;
 					}
@@ -880,21 +800,21 @@ public class Run implements ActionListener {
 			else if (dot.isSelected()) {
 				if (nary.isSelected() && modelEditor != null) {
 					LhpnFile lhpnFile = new LhpnFile(log);
-					lhpnFile.load(directory + separator + theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
-					lhpnFile.printDot(directory + separator + theFile.replace(".sbml", "").replace(".xml", "") + ".dot");
+					lhpnFile.load(directory + File.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
+					lhpnFile.printDot(directory + File.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".dot");
 					time1 = System.nanoTime();
 					exitValue = 0;
 				}
 				else if (modelFile.contains(".lpn")) {
 					LhpnFile lhpnFile = new LhpnFile();
-					lhpnFile.load(root + separator + modelFile);
+					lhpnFile.load(root + File.separator + modelFile);
 					if (abstraction.isSelected()) {
 						Abstraction abst = new Abstraction(lhpnFile, abstPane);
 						abst.abstractSTG(false);
-						abst.printDot(root + separator + simName + separator + modelFile.replace(".lpn", ".dot"));
+						abst.printDot(root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".dot"));
 					}
 					else {
-						lhpnFile.printDot(root + separator + simName + separator + modelFile.replace(".lpn", ".dot"));
+						lhpnFile.printDot(root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".dot"));
 					}
 					time1 = System.nanoTime();
 					exitValue = 0;
@@ -910,11 +830,6 @@ public class Run implements ActionListener {
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + filename + "\n");
 				logFile.write("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + filename + "\n\n");
 				time1 = System.nanoTime();
-				
-//				double stoichAmpValue = 
-//					Double.parseDouble(properties.getProperty(
-//							"reb2sac.diffusion.stoichiometry.amplification.value"));
-				
 				Simulator.expandArrays(filename, 1);
 				
 				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, null, work);
@@ -933,7 +848,7 @@ public class Run implements ActionListener {
 					LhpnFile lhpnFile = null;
 					if (modelFile.contains(".lpn")) {
 						lhpnFile = new LhpnFile();
-						lhpnFile.load(root + separator + modelFile);
+						lhpnFile.load(root + File.separator + modelFile);
 					}
 					else {
 						new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
@@ -951,10 +866,8 @@ public class Run implements ActionListener {
 								}
 							}
 						}
-						//BioModel paramGCM = gcmEditor.getBioModel();
 						BioModel bioModel = new BioModel(root);
-						bioModel.load(root + separator + modelEditor.getRefFile());
-						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
+						bioModel.load(root + File.separator + modelEditor.getRefFile());
 						if (bioModel.flattenModel(true) != null) {
 							time1 = System.nanoTime();
 							if (!lpnProperty.equals("")) {
@@ -987,7 +900,7 @@ public class Run implements ActionListener {
 							lhpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
 							prop = mutProp.getString();
 							if (lhpnFile == null) {
-								new File(directory + separator + "running").delete();
+								new File(directory + File.separator + "running").delete();
 								logFile.close();
 								return 0;
 							}
@@ -998,7 +911,7 @@ public class Run implements ActionListener {
 									+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn" + "\n\n");
 						}
 						else {
-							new File(directory + separator + "running").delete();
+							new File(directory + File.separator + "running").delete();
 							logFile.close();
 							return 0;
 						}
@@ -1049,7 +962,6 @@ public class Run implements ActionListener {
 								JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error",
 										JOptionPane.ERROR_MESSAGE);
 							}
-							// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 						}
 					}
 					else if (sim.equals("steady-state-markov-chain-analysis")) {
@@ -1063,7 +975,7 @@ public class Run implements ActionListener {
 							}
 							else {
 								BioModel gcm = new BioModel(root);
-								gcm.load(root + separator + modelEditor.getRefFile());
+								gcm.load(root + File.separator + modelEditor.getRefFile());
 								ArrayList<Property> propList = new ArrayList<Property>();
 								if (prop == null) {
 									Model m = gcm.getSBMLDocument().getModel();
@@ -1090,7 +1002,7 @@ public class Run implements ActionListener {
 								String simrep = sg.getMarkovResults();
 								if (simrep != null) {
 									FileOutputStream simrepstream = new FileOutputStream(
-											new File(directory + separator + "sim-rep.txt"));
+											new File(directory + File.separator + "sim-rep.txt"));
 									simrepstream.write((simrep).getBytes());
 									simrepstream.close();
 								}
@@ -1127,7 +1039,6 @@ public class Run implements ActionListener {
 										JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error",
 												JOptionPane.ERROR_MESSAGE);
 									}
-									// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 								}
 							}
 						}
@@ -1159,7 +1070,7 @@ public class Run implements ActionListener {
 									String simrep = sg.getMarkovResults();
 									if (simrep != null) {
 										FileOutputStream simrepstream = new FileOutputStream(
-												new File(directory + separator + "sim-rep.txt"));
+												new File(directory + File.separator + "sim-rep.txt"));
 										simrepstream.write((simrep).getBytes());
 										simrepstream.close();
 									}
@@ -1196,9 +1107,8 @@ public class Run implements ActionListener {
 											JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error",
 													JOptionPane.ERROR_MESSAGE);
 										}
-										// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 									}
-									if (sg.outputTSD(directory + separator + "percent-term-time.tsd")) {
+									if (sg.outputTSD(directory + File.separator + "percent-term-time.tsd")) {
 										if (refresh) {
 											for (int i = 0; i < simTab.getComponentCount(); i++) {
 												if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
@@ -1220,8 +1130,8 @@ public class Run implements ActionListener {
 									}
 									else {
 										simTab.setComponentAt(i,
-												new Graph(r2s, printer_track_quantity,
-														outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+												new Graph(analysisView, printer_track_quantity,
+														outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 														printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
 										simTab.getComponentAt(i).setName("ProbGraph");
 									}
@@ -1244,11 +1154,11 @@ public class Run implements ActionListener {
 							}
 						}
 						GillespieSSAJavaSingleStep javaSim = new GillespieSSAJavaSingleStep();
-						String SBMLFileName = directory + separator + theFile;
+						String SBMLFileName = directory + File.separator + theFile;
 						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep, rndSeed,
 								((Graph) simTab.getComponentAt(index)));
 						exitValue = 0;
-						new File(directory + separator + "running").delete();
+						new File(directory + File.separator + "running").delete();
 						logFile.close();
 						return exitValue;
 					}
@@ -1263,16 +1173,16 @@ public class Run implements ActionListener {
 							Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 						
 						dynSim = new DynamicSimulation("cr");
-						String SBMLFileName = directory + separator + theFile;
+						String SBMLFileName = directory + File.separator + theFile;
 						if (direct != null && !direct.equals(".")) {
-							outDir = outDir + separator + direct;
+							outDir = outDir + File.separator + direct;
 						}
 
-						dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
+						dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
 						exitValue = 0;
-						new File(directory + separator + "running").delete();
+						new File(directory + File.separator + "running").delete();
 						logFile.close();
 						return exitValue;
 					}
@@ -1286,15 +1196,15 @@ public class Run implements ActionListener {
 							Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation("direct");					
-						String SBMLFileName = directory + separator + theFile;
+						String SBMLFileName = directory + File.separator + theFile;
 						if (direct != null && !direct.equals(".")) {
-							outDir = outDir + separator + direct;
+							outDir = outDir + File.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
+						dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
 						exitValue = 0;
-						new File(directory + separator + "running").delete();
+						new File(directory + File.separator + "running").delete();
 						logFile.close();
 						return exitValue;
 					}
@@ -1308,15 +1218,15 @@ public class Run implements ActionListener {
 							Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation("hierarchical-direct");					
-						String SBMLFileName = directory + separator + theFile;
+						String SBMLFileName = directory + File.separator + theFile;
 						if (direct != null && !direct.equals(".")) {
-							outDir = outDir + separator + direct;
+							outDir = outDir + File.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
+						dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
 						exitValue = 0;
-						new File(directory + separator + "running").delete();
+						new File(directory + File.separator + "running").delete();
 						logFile.close();
 						return exitValue;
 					}
@@ -1330,15 +1240,15 @@ public class Run implements ActionListener {
 						Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 					dynSim = new DynamicSimulation("hierarchical-hybrid");					
-					String SBMLFileName = directory + separator + theFile;
+					String SBMLFileName = directory + File.separator + theFile;
 					if (direct != null && !direct.equals(".")) {
-						outDir = outDir + separator + direct;
+						outDir = outDir + File.separator + direct;
 					}
-					dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
+					dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, 
 							timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 							stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, log);						
 					exitValue = 0;
-					new File(directory + separator + "running").delete();
+					new File(directory + File.separator + "running").delete();
 					logFile.close();
 					return exitValue;
 				}
@@ -1349,15 +1259,15 @@ public class Run implements ActionListener {
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
 						
 						dynSim = new DynamicSimulation("rk");					
-						String SBMLFileName = directory + separator + theFile;
+						String SBMLFileName = directory + File.separator + theFile;
 						if (direct != null && !direct.equals(".")) {
-							outDir = outDir + separator + direct;
+							outDir = outDir + File.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
+						dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, 
 								timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, (int)Math.floor(timeLimit/printInterval), 0, absError, printer_track_quantity, genStats, simTab, log);				
 						exitValue = 0;
-						new File(directory + separator + "running").delete();
+						new File(directory + File.separator + "running").delete();
 						logFile.close();
 						return exitValue;
 					}
@@ -1368,15 +1278,15 @@ public class Run implements ActionListener {
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
 						
 						dynSim = new DynamicSimulation("hierarchical-rk");					
-						String SBMLFileName = directory + separator + theFile;
+						String SBMLFileName = directory + File.separator + theFile;
 						if (direct != null && !direct.equals(".")) {
-							outDir = outDir + separator + direct;
+							outDir = outDir + File.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + separator, timeLimit, 
+						dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, 
 								timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, log);				
 						exitValue = 0;
-						new File(directory + separator + "running").delete();
+						new File(directory + File.separator + "running").delete();
 						logFile.close();
 						return exitValue;
 					}
@@ -1419,7 +1329,6 @@ public class Run implements ActionListener {
 				InputStream reb = reb2sac.getInputStream();
 				InputStreamReader isr = new InputStreamReader(reb);
 				BufferedReader br = new BufferedReader(isr);
-				// int count = 0;
 				String line;
 				double time = 0;
 				double oldTime = 0;
@@ -1444,19 +1353,11 @@ public class Run implements ActionListener {
 								prog = (int) (d);
 							}
 						}
-						// else {
-						// log.addText(line);
-						// }
 					}
 					catch (Exception e) {
 						e.printStackTrace();
 					}
 					progress.setValue(prog);
-					// if (steps > 0) {
-					// count++;
-					// progress.setValue(count);
-					// }
-					// log.addText(output);
 				}
 				InputStream reb2 = reb2sac.getErrorStream();
 				int read = reb2.read();
@@ -1512,11 +1413,11 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									} else {
 										if (new File(filename.substring(0,
-												filename.length() - filename.split(separator)[filename.split(separator).length - 1].length())
+												filename.length() - filename.split(File.separator)[filename.split(File.separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
 											simTab.setComponentAt(i,
-													new Graph(r2s, printer_track_quantity,
-															outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+													new Graph(analysisView, printer_track_quantity,
+															outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 															printer_id, outDir, "Flux", biomodelsim, null, log, null, false, false));
 											simTab.getComponentAt(i).setName("ProbGraph");
 										}
@@ -1560,7 +1461,7 @@ public class Run implements ActionListener {
 					if (sbmlName != null && !sbmlName.trim().equals("")) {
 						if (!biomodelsim.updateOpenGCM(sbmlName)) {
 							try {
-								ModelEditor gcm = new ModelEditor(root + separator, sbmlName, biomodelsim, log, false, null, null,
+								ModelEditor gcm = new ModelEditor(root + File.separator, sbmlName, biomodelsim, log, false, null, null,
 										null, false, false);
 								biomodelsim.addTab(sbmlName, gcm, "GCM Editor");
 								biomodelsim.addToTree(sbmlName);
@@ -1624,10 +1525,10 @@ public class Run implements ActionListener {
 				else if (sim.equals("atacs")) {
 					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA "
 							+ filename.substring(0, filename.length()
-									- filename.split(separator)[filename.split(separator).length - 1].length()) + "out.hse\n");
+									- filename.split(File.separator)[filename.split(File.separator).length - 1].length()) + "out.hse\n");
 					logFile.write("Executing:\natacs -T0.000001 -oqoflhsgllvA "
 							+ filename.substring(0, filename.length()
-									- filename.split(separator)[filename.split(separator).length - 1].length()) + "out.hse\n\n");
+									- filename.split(File.separator)[filename.split(File.separator).length - 1].length()) + "out.hse\n\n");
 					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
 					if (refresh) {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
@@ -1637,8 +1538,8 @@ public class Run implements ActionListener {
 								}
 								else {
 									simTab.setComponentAt(i,
-											new Graph(r2s, printer_track_quantity,
-													outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+											new Graph(analysisView, printer_track_quantity,
+													outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 													printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
 									simTab.getComponentAt(i).setName("ProbGraph");
 								}
@@ -1647,7 +1548,6 @@ public class Run implements ActionListener {
 					}
 				}
 				else {
-					// if (!printer_id.equals("null.printer")) {
 					if (ode.isSelected()) {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
 							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
@@ -1679,15 +1579,15 @@ public class Run implements ActionListener {
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
-									new File(directory + separator + "running").delete();
+									new File(directory + File.separator + "running").delete();
 									logFile.close();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
 										ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-										if (new File(directory + separator + "sim-rep.txt").exists()) {
+										if (new File(directory + File.separator + "sim-rep.txt").exists()) {
 											try {
-												Scanner s = new Scanner(new File(directory + separator + "sim-rep.txt"));
+												Scanner s = new Scanner(new File(directory + File.separator + "sim-rep.txt"));
 												if (s.hasNextLine()) {
 													String[] ss = s.nextLine().split(" ");
 													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
@@ -1708,7 +1608,7 @@ public class Run implements ActionListener {
 												e.printStackTrace();
 											}
 										}
-										Scanner scan = new Scanner(new File(directory + separator + "term-time.txt"));
+										Scanner scan = new Scanner(new File(directory + File.separator + "term-time.txt"));
 										while (scan.hasNextLine()) {
 											String line = scan.nextLine();
 											String[] term = line.split(" ");
@@ -1750,9 +1650,9 @@ public class Run implements ActionListener {
 											}
 										}
 										DataParser probData = new DataParser(dataLabels, data);
-										probData.outputTSD(directory + separator + "term-time.tsd");
+										probData.outputTSD(directory + File.separator + "term-time.tsd");
 										probData = new DataParser(dataLabels, percentData);
-										probData.outputTSD(directory + separator + "percent-term-time.tsd");
+										probData.outputTSD(directory + File.separator + "percent-term-time.tsd");
 									}
 									if (refresh) {
 										((Graph) simTab.getComponentAt(i)).refresh();
@@ -1760,8 +1660,8 @@ public class Run implements ActionListener {
 								}
 								else {
 									simTab.setComponentAt(i,
-											new Graph(r2s, printer_track_quantity,
-													outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+											new Graph(analysisView, printer_track_quantity,
+													outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 													printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
 									boolean outputM = true;
 									boolean outputV = true;
@@ -1790,15 +1690,15 @@ public class Run implements ActionListener {
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
-									new File(directory + separator + "running").delete();
+									new File(directory + File.separator + "running").delete();
 									logFile.close();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
 										ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-										if (new File(directory + separator + "sim-rep.txt").exists()) {
+										if (new File(directory + File.separator + "sim-rep.txt").exists()) {
 											try {
-												Scanner s = new Scanner(new File(directory + separator + "sim-rep.txt"));
+												Scanner s = new Scanner(new File(directory + File.separator + "sim-rep.txt"));
 												if (s.hasNextLine()) {
 													String[] ss = s.nextLine().split(" ");
 													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
@@ -1819,7 +1719,7 @@ public class Run implements ActionListener {
 												e.printStackTrace();
 											}
 										}
-										Scanner scan = new Scanner(new File(directory + separator + "term-time.txt"));
+										Scanner scan = new Scanner(new File(directory + File.separator + "term-time.txt"));
 										while (scan.hasNextLine()) {
 											String line = scan.nextLine();
 											String[] term = line.split(" ");
@@ -1861,9 +1761,9 @@ public class Run implements ActionListener {
 											}
 										}
 										DataParser probData = new DataParser(dataLabels, data);
-										probData.outputTSD(directory + separator + "term-time.tsd");
+										probData.outputTSD(directory + File.separator + "term-time.tsd");
 										probData = new DataParser(dataLabels, percentData);
-										probData.outputTSD(directory + separator + "percent-term-time.tsd");
+										probData.outputTSD(directory + File.separator + "percent-term-time.tsd");
 									}
 									simTab.getComponentAt(i).setName("TSD Graph");
 								}
@@ -1875,11 +1775,11 @@ public class Run implements ActionListener {
 									}
 									else {
 										if (new File(filename.substring(0,
-												filename.length() - filename.split(separator)[filename.split(separator).length - 1].length())
+												filename.length() - filename.split(File.separator)[filename.split(File.separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
 											simTab.setComponentAt(i,
-													new Graph(r2s, printer_track_quantity,
-															outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+													new Graph(analysisView, printer_track_quantity,
+															outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 															printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
 											simTab.getComponentAt(i).setName("ProbGraph");
 										}
@@ -1919,15 +1819,15 @@ public class Run implements ActionListener {
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
-									new File(directory + separator + "running").delete();
+									new File(directory + File.separator + "running").delete();
 									logFile.close();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
 										ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-										if (new File(directory + separator + "sim-rep.txt").exists()) {
+										if (new File(directory + File.separator + "sim-rep.txt").exists()) {
 											try {
-												Scanner s = new Scanner(new File(directory + separator + "sim-rep.txt"));
+												Scanner s = new Scanner(new File(directory + File.separator + "sim-rep.txt"));
 												if (s.hasNextLine()) {
 													String[] ss = s.nextLine().split(" ");
 													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
@@ -1948,7 +1848,7 @@ public class Run implements ActionListener {
 												e.printStackTrace();
 											}
 										}
-										Scanner scan = new Scanner(new File(directory + separator + "term-time.txt"));
+										Scanner scan = new Scanner(new File(directory + File.separator + "term-time.txt"));
 										while (scan.hasNextLine()) {
 											String line = scan.nextLine();
 											String[] term = line.split(" ");
@@ -1990,9 +1890,9 @@ public class Run implements ActionListener {
 											}
 										}
 										DataParser probData = new DataParser(dataLabels, data);
-										probData.outputTSD(directory + separator + "term-time.tsd");
+										probData.outputTSD(directory + File.separator + "term-time.tsd");
 										probData = new DataParser(dataLabels, percentData);
-										probData.outputTSD(directory + separator + "percent-term-time.tsd");
+										probData.outputTSD(directory + File.separator + "percent-term-time.tsd");
 									}
 									if (refresh) {
 										((Graph) simTab.getComponentAt(i)).refresh();
@@ -2000,8 +1900,8 @@ public class Run implements ActionListener {
 								}
 								else {
 									simTab.setComponentAt(i,
-											new Graph(r2s, printer_track_quantity,
-													outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+											new Graph(analysisView, printer_track_quantity,
+													outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 													printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
 									boolean outputM = true;
 									boolean outputV = true;
@@ -2030,15 +1930,15 @@ public class Run implements ActionListener {
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
-									new File(directory + separator + "running").delete();
+									new File(directory + File.separator + "running").delete();
 									logFile.close();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
 										ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-										if (new File(directory + separator + "sim-rep.txt").exists()) {
+										if (new File(directory + File.separator + "sim-rep.txt").exists()) {
 											try {
-												Scanner s = new Scanner(new File(directory + separator + "sim-rep.txt"));
+												Scanner s = new Scanner(new File(directory + File.separator + "sim-rep.txt"));
 												if (s.hasNextLine()) {
 													String[] ss = s.nextLine().split(" ");
 													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
@@ -2059,7 +1959,7 @@ public class Run implements ActionListener {
 												e.printStackTrace();
 											}
 										}
-										Scanner scan = new Scanner(new File(directory + separator + "term-time.txt"));
+										Scanner scan = new Scanner(new File(directory + File.separator + "term-time.txt"));
 										while (scan.hasNextLine()) {
 											String line = scan.nextLine();
 											String[] term = line.split(" ");
@@ -2101,9 +2001,9 @@ public class Run implements ActionListener {
 											}
 										}
 										DataParser probData = new DataParser(dataLabels, data);
-										probData.outputTSD(directory + separator + "term-time.tsd");
+										probData.outputTSD(directory + File.separator + "term-time.tsd");
 										probData = new DataParser(dataLabels, percentData);
-										probData.outputTSD(directory + separator + "percent-term-time.tsd");
+										probData.outputTSD(directory + File.separator + "percent-term-time.tsd");
 									}
 									simTab.getComponentAt(i).setName("TSD Graph");
 								}
@@ -2115,11 +2015,11 @@ public class Run implements ActionListener {
 									}
 									else {
 										if (new File(filename.substring(0,
-												filename.length() - filename.split(separator)[filename.split(separator).length - 1].length())
+												filename.length() - filename.split(File.separator)[filename.split(File.separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
 											simTab.setComponentAt(i,
-													new Graph(r2s, printer_track_quantity,
-															outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+													new Graph(analysisView, printer_track_quantity,
+															outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 															printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
 											simTab.getComponentAt(i).setName("ProbGraph");
 										}
@@ -2130,8 +2030,7 @@ public class Run implements ActionListener {
 					}
 				}
 			}
-			// }
-			new File(directory + separator + "running").delete();
+			new File(directory + File.separator + "running").delete();
 			logFile.close();
 		}
 		catch (InterruptedException e1) {
