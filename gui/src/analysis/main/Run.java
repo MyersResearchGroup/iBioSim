@@ -1,6 +1,5 @@
 package analysis.main;
 
-
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -24,8 +23,6 @@ import analysis.markov.StateGraph.Property;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.SBMLutilities;
-
-
 
 import lpn.gui.LHPNEditor;
 import lpn.parser.Abstraction;
@@ -475,7 +472,7 @@ public class Run implements ActionListener {
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id,
 			String printer_track_quantity, String outDir, JRadioButton nary, int naryRun, String[] intSpecies, Log log,
 			Gui biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
-			String simName, ModelEditor gcmEditor, String direct, double timeLimit, double runTime, String modelFile,
+			String simName, ModelEditor modelEditor, String direct, double timeLimit, double runTime, String modelFile,
 			AbstPane abstPane, JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
 			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running) throws NumberFormatException, XMLStreamException {
 		Runtime exec = Runtime.getRuntime();
@@ -505,8 +502,7 @@ public class Run implements ActionListener {
 			Properties properties = new Properties();
 			properties.load(new FileInputStream(directory + separator + 
 					theFile.replace(".sbml", "").replace(".xml","") + ".properties"));
-			boolean genStats = Boolean.parseBoolean(properties.getProperty(
-					"reb2sac.generate.statistics"));
+			boolean genStats = Boolean.parseBoolean(properties.getProperty("reb2sac.generate.statistics"));
 			String out = theFile;
 			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 				out = out.substring(0, out.length() - 5);
@@ -514,7 +510,7 @@ public class Run implements ActionListener {
 			else if (out.length() > 3 && out.substring(out.length() - 4, out.length()).equals(".xml")) {
 				out = out.substring(0, out.length() - 4);
 			}
-			if (nary.isSelected() && gcmEditor != null && (monteCarlo.isSelected() || xhtml.isSelected() || dot.isSelected())) {
+			if (nary.isSelected() && modelEditor != null && (monteCarlo.isSelected() || xhtml.isSelected() || dot.isSelected())) {
 				String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "").replace(".xml", "") + ".lpn";
 				ArrayList<String> specs = new ArrayList<String>();
 				ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
@@ -532,7 +528,7 @@ public class Run implements ActionListener {
 				}
 				//BioModel paramBioModel = gcmEditor.getBioModel();
 				BioModel bioModel = new BioModel(root);
-				bioModel.load(root + separator + gcmEditor.getRefFile());
+				bioModel.load(root + separator + modelEditor.getRefFile());
 				//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
 				time1 = System.nanoTime();
 				String prop = null;
@@ -586,7 +582,7 @@ public class Run implements ActionListener {
 				t1.setFilename(root + separator + simName + separator + lpnName.replace(".lpn", ".xml"));
 				t1.outputSBML();
 			}
-			if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
+			if (nary.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
 					&& naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				logFile.write("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n\n");
@@ -647,7 +643,7 @@ public class Run implements ActionListener {
 						logFile.close();
 						return exitValue;
 					}
-					else if (gcmEditor != null && nary.isSelected()) {
+					else if (modelEditor != null && nary.isSelected()) {
 						String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "").replace(".xml", "") + ".lpn";
 						ArrayList<String> specs = new ArrayList<String>();
 						ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
@@ -666,7 +662,7 @@ public class Run implements ActionListener {
 						progress.setIndeterminate(true);
 						//BioModel paramGCM = gcmEditor.getBioModel();
 						BioModel bioModel = new BioModel(root);
-						bioModel.load(root + separator + gcmEditor.getRefFile());
+						bioModel.load(root + separator + modelEditor.getRefFile());
 						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
 						if (bioModel.flattenModel(true) != null) {
 							time1 = System.nanoTime();
@@ -826,7 +822,7 @@ public class Run implements ActionListener {
 					progress.setIndeterminate(true);
 					//BioModel paramGCM = gcmEditor.getBioModel();
 					BioModel bioModel = new BioModel(root);
-					bioModel.load(root + separator + gcmEditor.getRefFile());
+					bioModel.load(root + separator + modelEditor.getRefFile());
 					//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
 					if (bioModel.flattenModel(true) != null) {
 						time1 = System.nanoTime();
@@ -882,7 +878,7 @@ public class Run implements ActionListener {
 				}
 			}
 			else if (dot.isSelected()) {
-				if (nary.isSelected() && gcmEditor != null) {
+				if (nary.isSelected() && modelEditor != null) {
 					LhpnFile lhpnFile = new LhpnFile(log);
 					lhpnFile.load(directory + separator + theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
 					lhpnFile.printDot(directory + separator + theFile.replace(".sbml", "").replace(".xml", "") + ".dot");
@@ -957,7 +953,7 @@ public class Run implements ActionListener {
 						}
 						//BioModel paramGCM = gcmEditor.getBioModel();
 						BioModel bioModel = new BioModel(root);
-						bioModel.load(root + separator + gcmEditor.getRefFile());
+						bioModel.load(root + separator + modelEditor.getRefFile());
 						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
 						if (bioModel.flattenModel(true) != null) {
 							time1 = System.nanoTime();
@@ -1067,7 +1063,7 @@ public class Run implements ActionListener {
 							}
 							else {
 								BioModel gcm = new BioModel(root);
-								gcm.load(root + separator + gcmEditor.getRefFile());
+								gcm.load(root + separator + modelEditor.getRefFile());
 								ArrayList<Property> propList = new ArrayList<Property>();
 								if (prop == null) {
 									Model m = gcm.getSBMLDocument().getModel();
@@ -1482,59 +1478,7 @@ public class Run implements ActionListener {
 			if (time2 == -1) {
 				time2 = System.nanoTime();
 			}
-			long minutes;
-			long hours;
-			long days;
-			double secs = ((time2 - time1) / 1000000000.0);
-			long seconds = ((time2 - time1) / 1000000000);
-			secs = secs - seconds;
-			minutes = seconds / 60;
-			secs = seconds % 60 + secs;
-			hours = minutes / 60;
-			minutes = minutes % 60;
-			days = hours / 24;
-			hours = hours % 60;
-			String time;
-			String dayLabel;
-			String hourLabel;
-			String minuteLabel;
-			String secondLabel;
-			if (days == 1) {
-				dayLabel = " day ";
-			}
-			else {
-				dayLabel = " days ";
-			}
-			if (hours == 1) {
-				hourLabel = " hour ";
-			}
-			else {
-				hourLabel = " hours ";
-			}
-			if (minutes == 1) {
-				minuteLabel = " minute ";
-			}
-			else {
-				minuteLabel = " minutes ";
-			}
-			if (seconds == 1) {
-				secondLabel = " second";
-			}
-			else {
-				secondLabel = " seconds";
-			}
-			if (days != 0) {
-				time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
-			}
-			else if (hours != 0) {
-				time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
-			}
-			else if (minutes != 0) {
-				time = minutes + minuteLabel + secs + secondLabel;
-			}
-			else {
-				time = secs + secondLabel;
-			}
+			String time = createTimeString(time1,time2);
 			if (!error.equals("")) {
 				log.addText("Errors:\n" + error + "\n");
 				logFile.write("Errors:\n" + error + "\n\n");
@@ -1556,7 +1500,7 @@ public class Run implements ActionListener {
 				}
 			}
 			else {
-				if (nary.isSelected() && gcmEditor == null && !lhpn.isSelected() && naryRun == 1) {
+				if (nary.isSelected() && modelEditor == null && !lhpn.isSelected() && naryRun == 1) {
 				}
 				else if (fba.isSelected()) {
 					if(exitValue == 0) {
@@ -1614,7 +1558,6 @@ public class Run implements ActionListener {
 				}
 				else if (sbml.isSelected()) {
 					if (sbmlName != null && !sbmlName.trim().equals("")) {
-						//Gui.createGCMFromSBML(root, root + separator + sbmlName, sbmlName, gcmName, true);
 						if (!biomodelsim.updateOpenGCM(sbmlName)) {
 							try {
 								ModelEditor gcm = new ModelEditor(root + separator, sbmlName, biomodelsim, log, false, null, null,
@@ -1702,15 +1645,6 @@ public class Run implements ActionListener {
 							}
 						}
 					}
-					// simTab.add("Probability Graph", new
-					// Graph(printer_track_quantity,
-					// outDir.split(separator)[outDir.split(separator).length -
-					// 1] + "
-					// simulation results",
-					// printer_id, outDir, "time", biomodelsim, null, log, null,
-					// false));
-					// simTab.getComponentAt(simTab.getComponentCount() -
-					// 1).setName("ProbGraph");
 				}
 				else {
 					// if (!printer_id.equals("null.printer")) {
@@ -2209,6 +2143,63 @@ public class Run implements ActionListener {
 			e1.printStackTrace();
 		}
 		return exitValue;
+	}
+	
+	private String createTimeString(long time1, long time2) {
+		long minutes;
+		long hours;
+		long days;
+		double secs = ((time2 - time1) / 1000000000.0);
+		long seconds = ((time2 - time1) / 1000000000);
+		secs = secs - seconds;
+		minutes = seconds / 60;
+		secs = seconds % 60 + secs;
+		hours = minutes / 60;
+		minutes = minutes % 60;
+		days = hours / 24;
+		hours = hours % 60;
+		String time;
+		String dayLabel;
+		String hourLabel;
+		String minuteLabel;
+		String secondLabel;
+		if (days == 1) {
+			dayLabel = " day ";
+		}
+		else {
+			dayLabel = " days ";
+		}
+		if (hours == 1) {
+			hourLabel = " hour ";
+		}
+		else {
+			hourLabel = " hours ";
+		}
+		if (minutes == 1) {
+			minuteLabel = " minute ";
+		}
+		else {
+			minuteLabel = " minutes ";
+		}
+		if (seconds == 1) {
+			secondLabel = " second";
+		}
+		else {
+			secondLabel = " seconds";
+		}
+		if (days != 0) {
+			time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+		}
+		else if (hours != 0) {
+			time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+		}
+		else if (minutes != 0) {
+			time = minutes + minuteLabel + secs + secondLabel;
+		}
+		else {
+			time = secs + secondLabel;
+		}
+		return time;
 	}
 
 	/**
