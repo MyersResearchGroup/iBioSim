@@ -274,9 +274,9 @@ public class ExprTree {
 					readsign = true;
 					tokvalue += c;
 					break;
-				} else if (!readword){
+				} /*else if (!readword){  // TODO: had to remove to make exponential parse but does scientific notation still work?
 					return -1;
-				}
+				}*/
 			default:
 				if ((readnum) || (readsci)) {
 					return -1;
