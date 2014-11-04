@@ -28,10 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.xml.stream.XMLStreamException;
-
-import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLWriter;
 
 import sbol.util.SBOLFileManager;
 
@@ -383,21 +379,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	}
 	
 	private static boolean compareModels(BioModel subModel1, BioModel subModel2) {
-		SBMLWriter writer = new SBMLWriter();
-		String hash1 = null;
-		String hash2 = null;
-		try {
-			String xml1 = writer.writeSBMLToString(subModel1.getSBMLDocument());
-			hash1 = biomodel.util.Utility.MD5(xml1);
-			String xml2 = writer.writeSBMLToString(subModel2.getSBMLDocument());
-			hash2 = biomodel.util.Utility.MD5(xml2);
-		}
-		catch (SBMLException e) {
-			e.printStackTrace();
-		}
-		catch (XMLStreamException e) {
-			e.printStackTrace();
-		}
+		String hash1 = biomodel.util.Utility.MD5(subModel1.getSBMLDocument());
+		String hash2 = biomodel.util.Utility.MD5(subModel2.getSBMLDocument());
 		return hash1 == hash2;
 	}
 	

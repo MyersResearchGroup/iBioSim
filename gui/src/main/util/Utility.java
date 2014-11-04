@@ -1,11 +1,27 @@
 package main.util;
 
 import java.io.*;
+import java.awt.AWTError;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FileDialog;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.prefs.Preferences;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.swing.*;
 
+import main.Gui;
 import biomodel.util.GlobalConstants;
 
 /**
@@ -15,6 +31,95 @@ import biomodel.util.GlobalConstants;
  * @author Curtis Madsen
  */
 public class Utility {
+
+	public static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+		
+		String message;
+		
+		//Implements Thread.UncaughtExceptionHandler.uncaughtException()
+		@Override
+		public void uncaughtException(Thread th, Throwable ex) {
+			final JFrame exp = new JFrame("Unhandled Exception");
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ex.printStackTrace(pw);
+			ex.printStackTrace();
+			message = sw.toString(); // stack trace as a string
+			JLabel error = new JLabel("Program has thrown an exception of the type:");
+			JLabel errMsg = new JLabel(ex.toString());
+			JButton details = new JButton("Details");
+			details.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Object[] options = { "Close" };
+					JOptionPane.showOptionDialog(exp, message, "Details", JOptionPane.YES_OPTION, 
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				}
+			});
+			JButton report = new JButton("Send Bug Report");
+			report.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Utility.submitBugReport("\n\nStack trace:\n"+message);
+				}
+			});
+			JButton close = new JButton("Close");
+			close.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					exp.dispose();
+				}
+			});
+			JPanel errMessage = new JPanel();
+			errMessage.add(error);
+			JPanel errMsgPanel = new JPanel();
+			errMsgPanel.add(errMsg);
+			JPanel buttons = new JPanel();
+			buttons.add(details);
+			buttons.add(report);
+			buttons.add(close);
+			JPanel expPanel = new JPanel(new BorderLayout());
+			expPanel.add(errMessage,"North");
+			expPanel.add(errMsgPanel,"Center");
+			expPanel.add(buttons,"South");
+			exp.setContentPane(expPanel);
+			exp.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			}
+			catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
+			}
+			Dimension frameSize = exp.getSize();
+	
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			exp.setLocation(x, y);
+			exp.setVisible(true);
+		}
+	}
+
+	public static class MyAuthenticator extends javax.mail.Authenticator {
+		String User;
+		String Password;
+		public MyAuthenticator (String user, String password) {
+			User = user;
+			Password = password;
+		}
+	
+		@Override
+		public PasswordAuthentication getPasswordAuthentication() {
+			return new javax.mail.PasswordAuthentication(User, Password);
+		}
+	}
 
 	/**
 	 * Returns the pathname of the selected file in the file chooser.
@@ -748,4 +853,90 @@ public class Utility {
 			sort[j] = index;
 		}
 	}
+	
+	public static ArrayList<String> sort(ArrayList<String> components){
+		int i, j;
+		String index;
+		for (i = 1; i < components.size(); i++) {
+			index = components.get(i);
+			j = i;
+			while ((j > 0) && components.get(j - 1).compareToIgnoreCase(index) > 0) {
+				components.set(j, components.get(j - 1));
+				j = j - 1;
+			}
+			components.set(j, index);
+		}
+		return components;
+	}
+
+	public static void submitBugReport(String message) {
+		JPanel reportBugPanel = new JPanel(new GridLayout(4,1));
+		JLabel typeLabel = new JLabel("Type of Report:");
+		JComboBox reportType = new JComboBox(Utility.bugReportTypes);
+		if (!message.equals("")) {
+			typeLabel.setEnabled(false);
+			reportType.setEnabled(false);
+		}
+		JPanel typePanel = new JPanel(new GridLayout(1,2));
+		typePanel.add(typeLabel);
+		typePanel.add(reportType);
+		JLabel emailLabel = new JLabel("Email address:");
+		JTextField emailAddr = new JTextField(30);
+		JPanel emailPanel = new JPanel(new GridLayout(1,2));
+		emailPanel.add(emailLabel);
+		emailPanel.add(emailAddr);
+		JLabel bugSubjectLabel = new JLabel("Brief Description:");
+		JTextField bugSubject = new JTextField(30);
+		JPanel bugSubjectPanel = new JPanel(new GridLayout(1,2));
+		bugSubjectPanel.add(bugSubjectLabel);
+		bugSubjectPanel.add(bugSubject);
+		JLabel bugDetailLabel = new JLabel("Detailed Description:");
+		JTextArea bugDetail = new JTextArea(5,30);
+		bugDetail.setLineWrap(true);
+		bugDetail.setWrapStyleWord(true);
+		JScrollPane scroll = new JScrollPane();
+		scroll.setMinimumSize(new Dimension(100, 100));
+		scroll.setPreferredSize(new Dimension(100, 100));
+		scroll.setViewportView(bugDetail);
+		JPanel bugDetailPanel = new JPanel(new GridLayout(1,2));
+		bugDetailPanel.add(bugDetailLabel);
+		bugDetailPanel.add(scroll);
+		reportBugPanel.add(typePanel);
+		reportBugPanel.add(emailPanel);
+		reportBugPanel.add(bugSubjectPanel);
+		reportBugPanel.add(bugDetailPanel);
+		Object[] options = { "Send", "Cancel" };
+		int value = JOptionPane.showOptionDialog(Gui.frame, reportBugPanel, "Bug Report",
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		if (value==0) {
+			String to = "atacs-bugs@vlsigroup.ece.utah.edu";
+			Properties props = new Properties();
+			props.put("mail.smtp.user", "ibiosim@gmail.com");
+			props.put("mail.smtp.host", "smtp.gmail.com");
+			props.put("mail.smtp.port", "465");
+			props.put("mail.smtp.starttls.enable", "true");
+			props.put("mail.smtp.debug", "true");
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.socketFactory.port", "465");
+			props.put("mail.smtp.socketFactory.class", 
+					"javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.socketFactory.fallback", "false");
+			Utility.MyAuthenticator authentication = new Utility.MyAuthenticator("ibiosim@gmail.com","lambda123");
+			Session session = Session.getDefaultInstance(props,authentication);
+			MimeMessage mimeMessage = new MimeMessage(session);
+			try {
+				mimeMessage.setFrom(new InternetAddress(emailAddr.getText().trim()));
+				mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+				mimeMessage.setSubject(reportType.getSelectedItem() + ": "+bugSubject.getText().trim());
+				mimeMessage.setText(System.getProperty("software.running") + "\n\nOperating system: " + 
+						System.getProperty("os.name") + "\n\nBug reported by: " + emailAddr.getText().trim() + 
+						"\n\nDescription:\n"+bugDetail.getText().trim()+message);
+				Transport.send(mimeMessage);
+			} catch (MessagingException mex) {
+				mex.printStackTrace();
+			}
+		}
+	}
+
+	public static final String[] bugReportTypes = new String[] { "BUG", "CHANGE", "FEATURE" };
 }

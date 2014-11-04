@@ -279,16 +279,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
 		
-//		SpeciesType not supported in Level 3
-//		ListOf listOfSpecTypes = bioModel.getSBMLDocument().getModel().getListOfSpeciesTypes();
-//		String[] specTypeList = new String[(int) bioModel.getSBMLDocument().getModel().getSpeciesTypeCount() + 1];
-//		specTypeList[0] = "( none )";
-//		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesTypeCount(); i++) {
-//			specTypeList[i + 1] = ((SpeciesType) listOfSpecTypes.get(i)).getId();
-//		}
-//		Utility.sort(specTypeList);
-//		Object[] choices = specTypeList;
-//		specTypeBox = new JComboBox(choices);
 		comp = createCompartmentChoices(bioModel);
 		String[] list = { "Original", "Modified" };
 		String[] list1 = { "1", "2" };
@@ -427,11 +417,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		speciesPanel.add(ID);
 		speciesPanel.add(nameLabel);
 		speciesPanel.add(Name);
-//		SpeciesType not supported in Level 3
-//		if (bioModel.getSBMLDocument().getLevel() < 3) {
-//			speciesPanel.add(specTypeLabel);
-//			speciesPanel.add(specTypeBox);
-//		}
 		speciesPanel.add(compLabel);
 		speciesPanel.add(comp);
 		speciesPanel.add(boundLabel);
@@ -620,15 +605,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							specie.setHasOnlySubstanceUnits(false);
 						}
-//						SpeciesType not supported in Level 3
-//						if (!selSpecType.equals("( none )")) {
-//							specie.setSpeciesType(selSpecType);
-//						}
-//						else {
-//							//specie.unsetSpeciesType();
-//							SpeciesType unset = null;
-//							specie.setSpeciesType(unset);
-//						}
 						if (initLabel.getSelectedItem().equals("Initial Amount")) {
 							specie.unsetInitialConcentration();
 							specie.setInitialAmount(initial);
@@ -703,10 +679,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							specie.setHasOnlySubstanceUnits(false);
 						}
-//						SpeciesType not supported in Level 3
-//						if (!selSpecType.equals("( none )")) {
-//							specie.setSpeciesType(selSpecType);
-//						}
 						if (initLabel.getSelectedItem().equals("Initial Amount")) {
 							specie.setInitialAmount(initial);
 						}
@@ -1050,28 +1022,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
 				}
-				/*
-				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), id, false, true, true)) {
-					Species tempSpecies = bioModel.getSBMLDocument().getModel().getSpecies(id);
-					ListOf s = bioModel.getSBMLDocument().getModel().getListOfSpecies();
-					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
-						if (((Species) s.get(i)).getId().equals(tempSpecies.getId())) {
-							s.remove(i);
-						}
-					}
-					species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					Utility.remove(species);
-					species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					if (index < species.getModel().getSize()) {
-						species.setSelectedIndex(index);
-					}
-					else {
-						species.setSelectedIndex(index - 1);
-					}
-					modelEditor.setDirty(true);
-					bioModel.makeUndoPoint();
-				}
-				*/
 			}
 		}
 	}

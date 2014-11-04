@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Properties;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -15,10 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.xml.stream.XMLStreamException;
-
-import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLWriter;
 
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
@@ -48,27 +43,27 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	
 	private static DropComponentPanel panel;
 	private ModelEditor gcm2sbml;
-	private BioModel gcm;
+	private BioModel bioModel;
 
 	/**
 	 * sets up the component dropping
 	 * @param gcm2sbml
-	 * @param gcm
+	 * @param bioModel
 	 * @param mouseX where to drop the component(s)
 	 * @param mouseY where to drop the component(s)
 	 * @param onGrid if we're dropping onto a grid
 	 * @return true/false is the dropping occurred or not
 	 */
 	public static boolean dropComponent(
-			ModelEditor gcm2sbml, BioModel gcm, float mouseX, float mouseY, boolean onGrid){
+			ModelEditor gcm2sbml, BioModel bioModel, float mouseX, float mouseY, boolean onGrid){
 		
-		panel = new DropComponentPanel(gcm2sbml, gcm, onGrid);
+		panel = new DropComponentPanel(gcm2sbml, bioModel, onGrid);
 		
 		//if we're dropping onto a grid
 		if (onGrid) {
 			
 			//if the location isn't occupied, go ahead and show the menu
-			if (!gcm.getGrid().getOccupancyFromPoint(new Point((int)mouseX, (int)mouseY)))
+			if (!bioModel.getGrid().getOccupancyFromPoint(new Point((int)mouseX, (int)mouseY)))
 				panel.openGridGUI(mouseX, mouseY, false);
 			else 
 				return false;
@@ -83,24 +78,24 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 * for dropping components to selected grid locations
 	 * 
 	 * @param gcm2sbml
-	 * @param gcm
+	 * @param bioModel
 	 * @return whether the user clicked ok/cancel
 	 */
-	public static boolean dropSelectedComponents(ModelEditor gcm2sbml, BioModel gcm) {
+	public static boolean dropSelectedComponents(ModelEditor gcm2sbml, BioModel bioModel) {
 		
-		panel = new DropComponentPanel(gcm2sbml, gcm, true);
+		panel = new DropComponentPanel(gcm2sbml, bioModel, true);
 		
 		panel.openGridGUI(0, 0, true);
 		
 		return panel.droppedComponent;
 	}
 	
-	private DropComponentPanel(ModelEditor gcm2sbml, BioModel gcm, boolean onGrid){
+	private DropComponentPanel(ModelEditor gcm2sbml, BioModel bioModel, boolean onGrid){
 		
 		super(new BorderLayout());
 		
 		this.gcm2sbml = gcm2sbml;
-		this.gcm = gcm;
+		this.bioModel = bioModel;
 		
 		//no tiling if we're on a grid
 		if (!onGrid) {
@@ -172,7 +167,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		componentChooser = new JComboBox(componentList.toArray());
 		
 		//don't allow dropping of a model within itself
-		String[] splitFilename = gcm.getFilename().split("/");
+		String[] splitFilename = bioModel.getFilename().split("/");
 		String fname = splitFilename[splitFilename.length - 1].replace(".gcm",".xml");
 		componentChooser.removeItem(fname);
 		
@@ -191,16 +186,16 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 	
 			//if the user clicks okay
-			//add the components to the gcm
+			//add the components to the model
 			if (value == JOptionPane.OK_OPTION) {			
 			
 				//name of the component
 				String component = (String)componentChooser.getSelectedItem();
 				
-				BioModel compGCM = new BioModel(gcm.getPath());
+				BioModel compGCM = new BioModel(bioModel.getPath());
 				
 				//don't allow dropping a grid component
-				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component.replace(".gcm",".xml"))) {
+				if (compGCM.getGridEnabledFromFile(bioModel.getPath() + File.separator + component.replace(".gcm",".xml"))) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
 							"Dropping grid modules is disallowed.\n" +
@@ -214,8 +209,8 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 					//if we're adding a single component
 					if (selected == false) {
 						
-						int row = gcm.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
-						int col = gcm.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
+						int row = bioModel.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
+						int col = bioModel.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
 						
 						//newComponentID = 
 						applyGridComponent(row, col, component);
@@ -223,7 +218,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 					//if we're adding components to selected location(s)
 					else {
 						
-						ArrayList<Point> selectedNodes = gcm.getGrid().getSelectedUnoccupiedNodes();
+						ArrayList<Point> selectedNodes = bioModel.getGrid().getSelectedUnoccupiedNodes();
 						
 						//loop through all selected locations; apply the component to that location
 						if (selectedNodes.size() > 0) {
@@ -234,9 +229,9 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 						}
 					}
 					
-					Grid grid = gcm.getGrid();
+					Grid grid = bioModel.getGrid();
 					grid.refreshComponents();
-					gcm2sbml.getSpeciesPanel().refreshSpeciesPanel(gcm);
+					gcm2sbml.getSpeciesPanel().refreshSpeciesPanel(bioModel);
 					
 					droppedComponent = true;
 				}
@@ -250,7 +245,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * puts a component into the grid and gcm
+	 * puts a component into the grid and model
 	 * 
 	 * @param mouseX where the user clicked
 	 * @param mouseY where the user clicked
@@ -258,27 +253,16 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 */
 	private String applyGridComponent(int row, int col, String component) {
 		
-		Grid grid = gcm.getGrid();
+		Grid grid = bioModel.getGrid();
 		
 		double padding = 30;
 		double width = grid.getComponentGeomWidth();
 		double height = grid.getComponentGeomHeight();
 		
-		BioModel compGCMFile = new BioModel(gcm.getPath());
-		compGCMFile.load(gcm.getPath() + File.separator + component);
-		SBMLWriter writer = new SBMLWriter();
-		String SBMLstr = null;
-		try {
-			SBMLstr = writer.writeSBMLToString(compGCMFile.getSBMLDocument());
-		}
-		catch (SBMLException e) {
-			e.printStackTrace();
-		}
-		catch (XMLStreamException e) {
-			e.printStackTrace();
-		}
-		String md5 = Utility.MD5(SBMLstr);
-		return gcm.addComponent(null, component, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
+		BioModel compGCMFile = new BioModel(bioModel.getPath());
+		compGCMFile.load(bioModel.getPath() + File.separator + component);
+		String md5 = Utility.MD5(compGCMFile.getSBMLDocument());
+		return bioModel.addComponent(null, component, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 				col * (width + padding) + padding, row * (height + padding) + padding,md5);
 	}
 	
@@ -296,13 +280,13 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		if(componentList.size() == 0){
 			JOptionPane.showMessageDialog(Gui.frame,
-					"There aren't any other gcms to use as modules."
-							+ "\nCreate a new gcm or import a gcm into the project first.",
-					"Add Another GCM To The Project", JOptionPane.ERROR_MESSAGE);
+					"There aren't any other models to use as modules."
+							+ "\nCreate a new model or import a model into the project first.",
+					"No Models in the Project", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
  
-		//this is the box where the user selects the component gcm to add
+		//this is the box where the user selects the component model to add
 		componentCombo = new JComboBox(componentList.toArray());
 		componentCombo.setSelectedItem(componentList.get(0));
 		this.add(componentCombo, BorderLayout.NORTH);
@@ -317,16 +301,16 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 	
 			//if the user clicks okay
-			//add the components to the gcm
+			//add the components to the model
 			if (value == JOptionPane.OK_OPTION) {		
 			
 				//name of the component
 				String component = (String)componentCombo.getSelectedItem();
 				
-				BioModel compGCM = new BioModel(gcm.getPath());
+				BioModel compGCM = new BioModel(bioModel.getPath());
 				
 				//don't allow grids within a grid
-				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component.replace(".gcm",".xml"))) {
+				if (compGCM.getGridEnabledFromFile(bioModel.getPath() + File.separator + component.replace(".gcm",".xml"))) {
 					JOptionPane.showMessageDialog(Gui.frame,
 							"Dropping grid modules is disallowed.\n" +
 							"Please choose a different module.",
@@ -340,7 +324,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				} else {
 					applyComponents(mouseX, mouseY);
 					error = false;
-					gcm.makeUndoPoint();
+					bioModel.makeUndoPoint();
 				}
 			}
 			else {
@@ -351,7 +335,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * Adds the components to the GCM file. Does -NOT- update the
+	 * Adds the components to the Model file. Does -NOT- update the
 	 * biograph, make an undo point, or mark anything dirty.
 	 * 
 	 * this is for components that aren't part of a grid
@@ -409,40 +393,10 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		//sets location(s) for all of the tiled component(s)
 		for(int row=0; row<rowCount; row++) {
 			for(int col=0; col<colCount; col++) {
-				
-				Properties properties = new Properties();
-				properties.put("gcm", comp); //comp is the name of the gcm that the component contains
-				
-				//properties.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH));
-				//properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
-				//properties.setProperty("graphx", String.valueOf(col * separationX + topleftX));
-				//properties.setProperty("graphy", String.valueOf(row * separationY + topleftY));
-				
-				//find out if the component is a compartment by looking at the gcm data
-				//set the property appropriately
-				BioModel compGCM = new BioModel(gcm.getPath());
-				compGCM.load(gcm.getPath() + File.separator + comp);
-				
-				if (compGCM.IsWithinCompartment()) {
-					properties.setProperty("compartment","true");
-				} 
-				else {
-					properties.setProperty("compartment","false");
-				}
-				SBMLWriter writer = new SBMLWriter();
-				String SBMLstr = null;
-				try {
-					SBMLstr = writer.writeSBMLToString(compGCM.getSBMLDocument());
-				}
-				catch (SBMLException e) {
-					e.printStackTrace();
-				}
-				catch (XMLStreamException e) {
-					e.printStackTrace();
-				}
-				String md5 = Utility.MD5(SBMLstr);
-				//String id = 
-				gcm.addComponent(null, comp, compGCM.IsWithinCompartment(), compGCM.getCompartmentPorts(), -1, -1, 
+				BioModel compBioModel = new BioModel(bioModel.getPath());
+				compBioModel.load(bioModel.getPath() + File.separator + comp);
+				String md5 = Utility.MD5(compBioModel.getSBMLDocument());
+				bioModel.addComponent(null, comp, compBioModel.IsWithinCompartment(), compBioModel.getCompartmentPorts(), -1, -1, 
 						col * separationX + topleftX, row * separationY + topleftY,md5);
 			}
 		}

@@ -4409,10 +4409,12 @@ public class SBMLutilities {
 			} 
 			try {
 				document = SBMLReader.read(new File(filename));
-			} catch (XMLStreamException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (XMLStreamException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return null;
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return null;
 			}
 		}
 		return document;

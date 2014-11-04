@@ -1758,7 +1758,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					list.removeItem(name);
 				}
 			}
-			else if (getName().contains("Component")) {
+			else if (getName().contains("Module")) {
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
@@ -1843,47 +1843,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 			}
 			else if (getName().contains("Property")) {
-//				String selected = null;
-//				if (list.getSelectedValue() != null && getName().contains("Edit")) {
-//					selected = list.getSelectedValue().toString();
-//				}
-				//ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly,gcmEditor);
 			}
-			else if (getName().contains("Component")) {
+			else if (getName().contains("Module")) {
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
-					displayChooseComponentDialog(true, list, false);
+					displayChooseComponentDialog(list, false);
 				} else {
-					displayChooseComponentDialog(false, list, true);
+					displayChooseComponentDialog(list, true);
 				}
 			}
 			else if (getName().contains("Parameter")) {
-//				String selected = null;
-//				if (list.getSelectedValue() != null && getName().contains("Edit")) {
-//					selected = list.getSelectedValue().toString();
-//				}
-//				BioModel refGCM = null;
-//				if (paramsOnly) {
-//					refGCM = new BioModel(path);
-//					refGCM.load(path + separator + refFile);
-//				}
-				/*
-				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly, refGCM, gcmEditor);
-				if (paramsOnly) {
-					String updates = panel.updates();
-					if (!updates.equals("")) {
-						for (int i = parameterChanges.size() - 1; i >= 0; i--) {
-							if (parameterChanges.get(i).startsWith(updates.split(" ")[0])) {
-								parameterChanges.remove(i);
-							}
-						}
-						if (updates.contains(" ")) {
-							for (String s : updates.split("\n")) {
-								parameterChanges.add(s);
-							}
-						}
-					}
-				}
-				 */
 			}
 		}
 
@@ -1984,31 +1952,28 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return panel;
 	}
 	
-	public String launchComponentPanel(String id){
-		
-		BioModel refGCM = null;
+	public void launchComponentPanel(String id){
+		/*
+		BioModel refBioModel = null;
 		
 		if (paramsOnly) {
-			refGCM = new BioModel(path);
-			refGCM.load(path + separator + refFile);
+			refBioModel = new BioModel(path);
+			refBioModel.load(path + separator + refFile);
 		}
+		*/
 		
 		// TODO: This is a messy way to do things. We set the selected component in the list
 		// and then call displayChooseComponentDialog(). This makes for tight coupling with the
 		// component list.
 		for (int i = 0; i < this.components.getModel().getSize(); i++) {
-			
 			String componentsListRow = this.components.getModel().getElementAt(i).toString();
 			String componentsListId = componentsListRow.split(" ")[0];
-			
-			//System.err.println(componentsListId + "   " + id);
-			
 			if (componentsListId.equals(id)) {
 				this.components.setSelectedIndex(i);
 				break;
 			}
 		}
-		return displayChooseComponentDialog(true, this.components, false);
+		displayChooseComponentDialog(this.components, false);
 	}
 	
 	/**
@@ -2070,19 +2035,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				components.add(s);
 			}
 		}
-		
-		// I think this sorts them
-		int i, j;
-		String index;
-		for (i = 1; i < components.size(); i++) {
-			index = components.get(i);
-			j = i;
-			while ((j > 0) && components.get(j - 1).compareToIgnoreCase(index) > 0) {
-				components.set(j, components.get(j - 1));
-				j = j - 1;
-			}
-			components.set(j, index);
-		}
+		main.util.Utility.sort(components);
 		
 		return components;
 	}
@@ -2103,7 +2056,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	 * 
 	 * @return: the id of the component that was edited or created.
 	 */
-	public String displayChooseComponentDialog(boolean tryEdit, PropertyList list, boolean createUsingDefaults){
+	public void displayChooseComponentDialog(PropertyList list, boolean create){
 		
 		String outID = null;
 		
@@ -2111,7 +2064,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			list = this.components;
 		String selected = null;
 		String comp = null;
-		if (list.getSelectedValue() != null && tryEdit) {
+		if (list.getSelectedValue() != null && !create) {
 			selected = list.getSelectedValue().toString();
 			comp = selected.split(" ")[1] + ".xml";
 		}
@@ -2143,30 +2096,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 			ArrayList<String> ports = subBioModel.getPorts();
 
-			if(createUsingDefaults){
-				SBMLWriter writer = new SBMLWriter();
-				String SBMLstr = null;
-				try {
-					SBMLstr = writer.writeSBMLToString(subBioModel.getSBMLDocument());
-				}
-				catch (SBMLException e) {
-					e.printStackTrace();
-				}
-				catch (XMLStreamException e) {
-					e.printStackTrace();
-				}
-				String md5 = Utility.MD5(SBMLstr);
-				// TODO: Is this correct?
-				outID = biomodel.addComponent(null, comp, false, null, -1, -1, 0, 0, md5);
+			if(create){
+				String md5 = Utility.MD5(subBioModel.getSBMLDocument());
+				outID = biomodel.addComponent(null, comp, false, subBioModel.getCompartmentPorts(), -1, -1, 0, 0, md5);
 				list.addItem(outID + " " + comp.replace(".xml", "") + " ()");
 			}else{
 				ComponentsPanel componentsPanel = new ComponentsPanel(selected, list, biomodel, subBioModel, ports, comp, oldPort, paramsOnly, this);
 				while (!componentsPanel.openGui(selected));
-				outID = selected;
 			}
 
 		}
-		return outID;
 	}
 	
 	public boolean isGridEditor() {

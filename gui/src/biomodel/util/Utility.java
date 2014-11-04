@@ -18,6 +18,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 
@@ -27,6 +28,8 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -368,7 +371,6 @@ public class Utility {
 		}
 		s.unsetSBOTerm();
 		return true;
-		//Give warning
 	}
 	
 	public static boolean addUnits() {
@@ -424,7 +426,18 @@ public class Utility {
 		return params;
 	}
 	
-	public static String MD5(String md5) {
+	public static String MD5(SBMLDocument document) {
+		SBMLWriter writer = new SBMLWriter();
+		String md5 = null;
+		try {
+			md5 = writer.writeSBMLToString(document);
+		}
+		catch (SBMLException e) {
+			e.printStackTrace();
+		}
+		catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
 		try {
 			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
 			byte[] array = md.digest(md5.getBytes());
