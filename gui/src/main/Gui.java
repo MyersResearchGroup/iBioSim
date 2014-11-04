@@ -400,15 +400,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// Creates a new frame
 		if (lema) {
 			frame = new JFrame("LEMA");
-			frame.setIconImage(new ImageIcon(getClass().getResource(separator + "icons" + separator + "LEMA.png")).getImage());
+			frame.setIconImage(new ImageIcon(getClass().getResource("/icons/LEMA.png")).getImage());
 		}
 		else if (atacs) {
 			frame = new JFrame("ATACS");
-			frame.setIconImage(new ImageIcon(getClass().getResource(separator + "icons" + separator + "ATACS.png")).getImage());
+			frame.setIconImage(new ImageIcon(getClass().getResource("/icons/ATACS.png")).getImage());
 		}
 		else {
 			frame = new JFrame("iBioSim");
-			frame.setIconImage(new ImageIcon(getClass().getResource(separator + "icons" + separator + "iBioSim.png")).getImage());
+			frame.setIconImage(new ImageIcon(getClass().getResource("/icons/iBioSim.png")).getImage());
 		}
 
 		// Makes it so that clicking the x in the corner closes the program
@@ -451,23 +451,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 		// Sets up the Tool Bar
 		toolbar = new JToolBar();
-		String imgName = separator + "icons" + separator + "save.png";
+		String imgName = "/icons/save.png";
 		saveButton = makeToolButton(imgName, "save", "Save");
 		// toolButton = new JButton("Save");
 		toolbar.add(saveButton);
-		imgName = separator + "icons" + separator + "saveas.png";
+		imgName = "/icons/saveas.png";
 		saveasButton = makeToolButton(imgName, "saveas", "Save As");
 		toolbar.add(saveasButton);
-		imgName = separator + "icons" + separator + "savecheck.png";
+		imgName = "/icons/savecheck.png";
 		checkButton = makeToolButton(imgName, "check", "Save and Check");
 		toolbar.add(checkButton);
-		imgName = separator + "icons" + separator + "export.jpg";
+		imgName = "/icons/export.jpg";
 		exportButton = makeToolButton(imgName, "export", "Export");
 		toolbar.add(exportButton);
-		imgName = separator + "icons" + separator + "run-icon.jpg";
+		imgName = "/icons/run-icon.jpg";
 		runButton = makeToolButton(imgName, "run", "Save and Run");
 		toolbar.add(runButton);
-		imgName = separator + "icons" + separator + "refresh.jpg";
+		imgName = "/icons/refresh.jpg";
 		refreshButton = makeToolButton(imgName, "refresh", "Refresh");
 		toolbar.add(refreshButton);
 		saveButton.setEnabled(false);
@@ -1285,15 +1285,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		uOfUPanel.add(uOfU, "South");
 		if (lema) {
 			aboutPanel.add(new javax.swing.JLabel(
-					new javax.swing.ImageIcon(getClass().getResource(separator + "icons" + separator + "LEMA.png"))), "North");
+					new javax.swing.ImageIcon(getClass().getResource("/icons/LEMA.png"))), "North");
 		}
 		else if (atacs) {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource(separator + "icons" + separator
-					+ "ATACS.png"))), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource("/icons/ATACS.png"))), "North");
 		}
 		else {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource(separator + "icons" + separator
-					+ "iBioSim.png"))), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource("/icons/iBioSim.png"))), "North");
 		}
 		// aboutPanel.add(bioSim, "North");
 		aboutPanel.add(uOfUPanel, "Center");
@@ -1324,7 +1322,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public boolean exit() {
 		int autosave = 0;
-		for (int i = 0; i < tab.getTabCount(); i++) {
+		for (int i = 0; tab!=null && i < tab.getTabCount(); i++) {
 			int save = save(i, autosave);
 			if (save == 0) {
 				return false;
