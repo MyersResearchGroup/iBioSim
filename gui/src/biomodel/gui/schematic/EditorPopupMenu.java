@@ -36,7 +36,7 @@ public class EditorPopupMenu extends JPopupMenu
 		addSeparator();
 		
 		if (cell != null && editor.getGraph().getCellType(cell).equals(GlobalConstants.COMPONENT)) {
-			add(new ComponentAction("Open Component in New Tab", editor.getGraph().getModelFileName(cell.getId()), biosim));
+			add(new ComponentAction("Open Module in New Tab", editor.getGraph().getModelFileName(cell.getId()), biosim));
 			addSeparator();
 		}
 
@@ -47,7 +47,7 @@ public class EditorPopupMenu extends JPopupMenu
 				.setEnabled(editor.getGrid().isALocationSelected());
 			add(new GridAction("Clear Selected Location(s)", editor))
 				.setEnabled(editor.getGrid().isALocationSelected());
-			add(new GridAction("Add Component(s) to (Non-Occupied) Selected Location(s)", 
+			add(new GridAction("Add Module(s) to (Non-Occupied) Selected Location(s)", 
 				editor)).setEnabled(editor.getGrid().isALocationSelected());
 		}
 		else {	
