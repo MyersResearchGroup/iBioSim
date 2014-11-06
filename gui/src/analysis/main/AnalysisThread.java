@@ -1,35 +1,26 @@
 package analysis.main;
 
-import javax.xml.stream.XMLStreamException;
-
-
 public class AnalysisThread extends Thread {
 
-	private AnalysisView reb;
+	private AnalysisView analysisView;
 
-	private String direct;
+	private String directory;
 
 	private boolean refresh;
 
-	public AnalysisThread(AnalysisView reb2sac) {
-		super(reb2sac);
-		reb = reb2sac;
+	public AnalysisThread(AnalysisView analysisView) {
+		super(analysisView);
+		this.analysisView = analysisView;
 	}
 
-	public void start(String string, boolean refresh) {
-		direct = string;
+	public void start(String directory, boolean refresh) {
+		this.directory = directory;
 		this.refresh = refresh;
 		super.start();
 	}
 
 	@Override
 	public void run() {
-		try {
-			reb.run(direct, refresh);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
-		}
+		analysisView.run(directory, refresh);
 	}
 }

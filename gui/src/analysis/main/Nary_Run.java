@@ -6,7 +6,6 @@ import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
-import javax.xml.stream.XMLStreamException;
 
 import main.*;
 import main.util.*;
@@ -62,7 +61,7 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private String[] getFilename; // array of filename
 
-	private JRadioButton fba, sbml, dot, xhtml, lhpn; // Radio Buttons output option
+	private JRadioButton fba, sbml, dot, xhtml; // Radio Buttons output option
 
 	/*
 	 * Radio Buttons that represent the different abstractions
@@ -122,7 +121,7 @@ public class Nary_Run implements ActionListener, Runnable {
 	 * member variables and creates the nary frame.
 	 */
 	public Nary_Run(Component component, JComboBox simulators, String[] getFilename, String filename, JRadioButton fba, JRadioButton sbml,
-			JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn, JRadioButton nary, JRadioButton ODE, JRadioButton monteCarlo, double timeLimit, String useInterval,
+			JRadioButton dot, JRadioButton xhtml, JRadioButton nary, JRadioButton ODE, JRadioButton monteCarlo, double timeLimit, String useInterval,
 			double printInterval, double minTimeStep, double timeStep, String outDir, long rndSeed, int run,
 			String printer_id, String printer_track_quantity, String[] intSpecies, double rap1, double rap2, double qss, int con,
 			Log log, Gui biomodelsim, JTabbedPane simTab, String root, String direct, String modelFile, JRadioButton abstraction,
@@ -158,7 +157,6 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.sbml = sbml;
 		this.fba = fba;
 		this.xhtml = xhtml;
-		this.lhpn = lhpn;
 		this.nary = nary;
 		this.monteCarlo = monteCarlo;
 		this.ODE = ODE;
@@ -578,15 +576,9 @@ public class Nary_Run implements ActionListener, Runnable {
 				}
 			}
 		}
-		try {
-			runProgram.execute(filename, fba, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, outDir, nary, 2,
-					intSpecies, log, biomodelsim, simTab, root, progress, "", null, direct, timeLimit, timeLimit * run, modelFile,
-					abstPane, abstraction, null, absError, timeStep, printInterval, run, rndSeed, true, label, running);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
-		}
+		runProgram.execute(filename, fba, sbml, dot, xhtml, naryFrame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, outDir, nary, 2,
+				intSpecies, log, biomodelsim, simTab, root, progress, "", null, direct, timeLimit, timeLimit * run, modelFile,
+				abstPane, abstraction, null, absError, timeStep, printInterval, run, rndSeed, true, label, running);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);

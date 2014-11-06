@@ -24,7 +24,6 @@ import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.SBMLutilities;
 
-import lpn.gui.LHPNEditor;
 import lpn.parser.Abstraction;
 import lpn.parser.LhpnFile;
 import lpn.parser.Translator;
@@ -394,13 +393,13 @@ public class Run implements ActionListener {
 	 * @throws XMLStreamException 
 	 * @throws NumberFormatException 
 	 */
-	public int execute(String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn,
+	public int execute(String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, 
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id,
 			String printer_track_quantity, String outDir, JRadioButton nary, int naryRun, String[] intSpecies, Log log,
 			Gui biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
 			String simName, ModelEditor modelEditor, String direct, double timeLimit, double runTime, String modelFile,
 			AbstPane abstPane, JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
-			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running) throws NumberFormatException, XMLStreamException {
+			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(File.separator)[outDir.split(File.separator).length - 1].equals(".")) {
@@ -413,7 +412,6 @@ public class Run implements ActionListener {
 			String directory = "";
 			String theFile = "";
 			String sbmlName = "";
-			String lhpnName = "";
 			if (filename.lastIndexOf('/') >= 0) {
 				directory = filename.substring(0, filename.lastIndexOf('/') + 1);
 				theFile = filename.substring(filename.lastIndexOf('/') + 1);
@@ -506,8 +504,7 @@ public class Run implements ActionListener {
 				t1.setFilename(root + File.separator + simName + File.separator + lpnName.replace(".lpn", ".xml"));
 				t1.outputSBML();
 			}
-			if (nary.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
-					&& naryRun == 1) {
+			if (nary.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				logFile.write("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n\n");
 				time1 = System.nanoTime();
@@ -678,6 +675,7 @@ public class Run implements ActionListener {
 					time1 = System.nanoTime();
 				}
 			}
+			/*
 			else if (lhpn.isSelected()) {
 				lhpnName = JOptionPane.showInputDialog(component, "Enter LPN Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (lhpnName != null && !lhpnName.trim().equals("")) {
@@ -797,6 +795,7 @@ public class Run implements ActionListener {
 					exitValue = 0;
 				}
 			}
+			*/
 			else if (dot.isSelected()) {
 				if (nary.isSelected() && modelEditor != null) {
 					LhpnFile lhpnFile = new LhpnFile(log);
@@ -1401,7 +1400,7 @@ public class Run implements ActionListener {
 				}
 			}
 			else {
-				if (nary.isSelected() && modelEditor == null && !lhpn.isSelected() && naryRun == 1) {
+				if (nary.isSelected() && modelEditor == null && naryRun == 1) {
 				}
 				else if (fba.isSelected()) {
 					if(exitValue == 0) {
@@ -1476,6 +1475,7 @@ public class Run implements ActionListener {
 						biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 					}
 				}
+				/*
 				else if (lhpn.isSelected()) {
 					if (lhpnName != null && !lhpnName.trim().equals("")) {
 						if (!biomodelsim.updateOpenLHPN(lhpnName)) {
@@ -1488,6 +1488,7 @@ public class Run implements ActionListener {
 						biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 					}
 				}
+				*/
 				else if (dot.isSelected()) {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
 						log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");

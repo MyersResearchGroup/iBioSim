@@ -2638,7 +2638,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
 						Component component = ((JTabbedPane) comp).getComponent(i);
 						if (component instanceof AnalysisView) {
-							((AnalysisView) component).getRunButton().doClick();
+							((AnalysisView) component).executeRun();
 							break;
 						}
 						else if (component instanceof LearnGCM) {
@@ -4427,7 +4427,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String gcmFile = sbml1[sbml1.length - 1].replace(".xml", ".gcm");
 		ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
 				+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
-		reb2sac.setGcm(modelEditor);
+		reb2sac.setModelEditor(modelEditor);
 		ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
 				root + separator + simName.trim() + separator + simName.trim() + ".sim");
 		modelEditor.setElementsPanel(elementsPanel);
@@ -7863,7 +7863,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String gcmFile = sbml1[sbml1.length - 1];
 			ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
 					+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
-			reb2sac.setGcm(modelEditor);
+			reb2sac.setModelEditor(modelEditor);
 			ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
 					root + separator + simName.trim() + separator + simName.trim() + ".sim");
 			modelEditor.setElementsPanel(elementsPanel);
@@ -7877,7 +7877,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String gcmFile = sbml1[sbml1.length - 1].replace(".xml", ".gcm");
 			ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
 					+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
-			reb2sac.setGcm(modelEditor);
+			reb2sac.setModelEditor(modelEditor);
 			ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
 					root + separator + simName.trim() + separator + simName.trim() + ".sim");
 			modelEditor.setElementsPanel(elementsPanel);
@@ -8460,22 +8460,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (gcmFile.contains(".lpn")) {
 							lhpnAbstraction = new AbstPane(root, gcmFile, log);
 						}
-						AnalysisView reb2sac;
+						AnalysisView analysisView;
 						if (gcmFile.contains(".lpn")) {
-							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
+							analysisView = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
 									lhpnAbstraction);
 						}
 						else {
-							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
+							analysisView = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
 									null);
 						}
-						simTab.addTab("Simulation Options", reb2sac);
+						simTab.addTab("Simulation Options", analysisView);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 						if (gcmFile.contains(".lpn")) {
 							simTab.addTab("Advanced Options", lhpnAbstraction);
 						}
 						else {
-							simTab.addTab("Advanced Options", reb2sac.getAdvanced());
+							simTab.addTab("Advanced Options", analysisView.getAdvanced());
 						}
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						// simTab.addTab("Advanced Options",
@@ -8489,24 +8489,24 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									+ split[split.length - 1].trim() + ".sim");
 									*/
 							ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, split[split.length - 1].trim(), root
-									+ separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".sim", reb2sac,
+									+ separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".sim", analysisView,
 									false, false);
-							reb2sac.setGcm(modelEditor);
+							analysisView.setModelEditor(modelEditor);
 							// sbml.addMouseListener(this);
 							ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
 									root + separator + split[split.length - 1].trim() + separator
 									+ split[split.length - 1].trim() + ".sim");
 							modelEditor.setElementsPanel(elementsPanel);
-							addModelViewTab(reb2sac, simTab, modelEditor);
+							addModelViewTab(analysisView, simTab, modelEditor);
 							simTab.addTab("Parameters", modelEditor);
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
 							//simTab.addTab("SBML Elements", elementsPanel);
 							//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						}
-						Graph tsdGraph = reb2sac.createGraph(open);
+						Graph tsdGraph = analysisView.createGraph(open);
 						simTab.addTab("TSD Graph", tsdGraph);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
-						Graph probGraph = reb2sac.createProbGraph(openProb);
+						Graph probGraph = analysisView.createProbGraph(openProb);
 						simTab.addTab("Histogram", probGraph);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 						addTab(split[split.length - 1], simTab, null);
