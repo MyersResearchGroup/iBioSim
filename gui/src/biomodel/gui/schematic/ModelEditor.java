@@ -762,7 +762,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							threads.add(thread);
 							dirs.add(sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
 									.replace("\"", "").replace(" ", "_").replace(",", ""));
-							reb2sac.emptyFrames();
+							//reb2sac.emptyFrames();
 							if (ignoreSweep) {
 								l = max2;
 								j = max;
@@ -786,7 +786,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						threads.add(thread);
 						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
 								.replace("\"", "").replace(" ", "_").replace(",", ""));
-						reb2sac.emptyFrames();
+						//reb2sac.emptyFrames();
 						if (ignoreSweep) {
 							j = max;
 						}
@@ -808,7 +808,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						new AnalysisThread(reb2sac).start(".", true);
 					}
 				}
-				reb2sac.emptyFrames();
+				//reb2sac.emptyFrames();
 			}
 		}
 	}

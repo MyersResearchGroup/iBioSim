@@ -125,15 +125,12 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		removeParam.addActionListener(this);
 		editParam.addActionListener(this);
 		if (paramsOnly) {
+			addBool.setEnabled(false);
 			addParam.setEnabled(false);
 			removeParam.setEnabled(false);
 		}
 		JLabel parametersLabel;
-		if (constantsOnly) {
-			parametersLabel = new JLabel("List of Global Parameters:");
-		} else {
-			parametersLabel = new JLabel("List of Global Parameters:");
-		}
+		parametersLabel = new JLabel("List of Global Parameters:");
 		parameters = new JList();
 		parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll3 = new JScrollPane();

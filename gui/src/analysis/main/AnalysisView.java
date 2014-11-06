@@ -14,18 +14,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.jlibsedml.Algorithm;
-import org.jlibsedml.Annotation;
-import org.jlibsedml.Libsedml;
-import org.jlibsedml.Model;
-import org.jlibsedml.SEDBase;
-import org.jlibsedml.SEDMLDocument;
-import org.jlibsedml.SedML;
-import org.jlibsedml.SedMLError;
-import org.jlibsedml.Simulation;
-import org.jlibsedml.Task;
-import org.jlibsedml.UniformTimeCourse;
-import org.jlibsedml.XMLException;
+import org.jlibsedml.*;
 import org.jlibsedml.modelsupport.SUPPORTED_LANGUAGE;
 
 import lpn.gui.LHPNEditor;
@@ -54,34 +43,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private static final long serialVersionUID = 3181014495993143825L;
 
-	/*
-	 * Radio Buttons that represent the different abstractions
-	 */
-	private JRadioButton none, expand, abstraction, nary, ODE, monteCarlo, markov, fba;
+	private JRadioButton noAbstraction, expandReactions, reactionAbstraction, stateAbstraction;
+	
+	private JRadioButton ODE, monteCarlo, markov, fba, sbml, dot, xhtml;
 
-	private JRadioButton sbml, dot, xhtml, lhpn; // Radio Buttons output option
-
-	/*
-	 * Radio Buttons for termination conditions
-	 */
-
-	private JButton run, save; // The save and run button
-
-	/*
-	 * Text fields for changes in the abstraction
-	 */
 	private JTextField limit, interval, minStep, step, absErr, seed, runs, fileStem;
 
 	private JComboBox intervalLabel;
 
-	/*
-	 * Labels for the changes in the abstraction
-	 */
 	private JLabel limitLabel, minStepLabel, stepLabel, errorLabel, seedLabel, runsLabel, fileStemLabel;
 
-	/*
-	 * Description of selected simulator
-	 */
 	private JLabel description, explanation;
 
 	private Object[] preAbstractions = new Object[0];
@@ -101,17 +72,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	private JRadioButton mpde, meanPath, medianPath;
 	
 	private JRadioButton adaptive, nonAdaptive;
-	/*
-	 * advanced labels
-	 */
+
 	private JLabel rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, 
 		iSSATypeLabel, iSSAAdaptiveLabel, bifurcationLabel;
 
 	private String sbmlFile, root; // sbml file and root directory
-
-	public String getRootPath() {
-		return root;
-	}
 
 	private Gui biomodelsim; // reference to the tstubd class
 
@@ -121,57 +86,31 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private JTabbedPane simTab; // the simulation tab
 
-	private ModelEditor modelEditor; // gcm editor
+	private ModelEditor modelEditor; // model editor
 
-	private JCheckBox append;
-
-	private JCheckBox concentrations, genRuns, genStats;
+	private JCheckBox append, concentrations, genRuns, genStats;
 
 	private JLabel report;
 
 	private boolean runFiles;
 
-	private String separator;
-
 	private String sbmlProp;
 
 	private boolean change;
 
-	private ArrayList<JFrame> frames;
-
 	private Pattern stemPat = Pattern.compile("([a-zA-Z]|[0-9]|_)*");
 
-	private JPanel propertiesPanel, advanced;
+	private JPanel advanced;
 
-	private JList preAbs;
+	private JList preAbs, loopAbs, postAbs;
 
-	private JList loopAbs;
+	private JLabel preAbsLabel, loopAbsLabel, postAbsLabel;
 
-	private JList postAbs;
+	private JButton addPreAbs, rmPreAbs, editPreAbs;
 
-	private JLabel preAbsLabel;
+	private JButton addLoopAbs, rmLoopAbs, editLoopAbs;
 
-	private JLabel loopAbsLabel;
-
-	private JLabel postAbsLabel;
-
-	private JButton addPreAbs;
-
-	private JButton rmPreAbs;
-
-	private JButton editPreAbs;
-
-	private JButton addLoopAbs;
-
-	private JButton rmLoopAbs;
-
-	private JButton editLoopAbs;
-
-	private JButton addPostAbs;
-
-	private JButton rmPostAbs;
-
-	private JButton editPostAbs;
+	private JButton addPostAbs, rmPostAbs, editPostAbs;
 
 	private String modelFile;
 
@@ -179,7 +118,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private JComboBox transientProperties;
 
-	private JTextField backgroundField;
+	private JTextField modelFileField;
 
 	private String selectedMarkovSim = null;
 
@@ -188,6 +127,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	private SEDMLDocument sedmlDoc = null;
 
 	private String sedmlFilename = "";
+	
+	private Preferences biosimrc;
 
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
@@ -197,15 +138,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 */
 	public AnalysisView(String sbmlFile, String sbmlProp, String root, Gui biomodelsim, String simName, Log log,
 			JTabbedPane simTab, String open, String modelFile, AbstPane lhpnAbstraction) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
 
-		this.interestingSpecies = new ArrayList<String>();
-
+		super(new BorderLayout());
 		this.biomodelsim = biomodelsim;
 		this.sbmlFile = sbmlFile;
 		this.sbmlProp = sbmlProp;
@@ -214,55 +148,229 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		this.log = log;
 		this.simTab = simTab;
 		this.lhpnAbstraction = lhpnAbstraction;
-		change = false;
-		frames = new ArrayList<JFrame>();
-		String[] tempArray = modelFile.split(separator);
+		this.interestingSpecies = new ArrayList<String>();
+		String[] tempArray = modelFile.split(File.separator);
 		this.modelFile = tempArray[tempArray.length - 1];
+		change = false;
+		biosimrc = Preferences.userRoot();
+
+		JPanel modelFilePanel = new JPanel();
+		JLabel modelFileLabel = new JLabel("Model File:");
+		modelFileField = new JTextField(this.modelFile);
+		modelFileField.setEditable(false);
+		modelFilePanel.add(modelFileLabel);
+		modelFilePanel.add(modelFileField);
+
+		JPanel abstractionOptions = createAbstractionOptions();
+		JPanel simulationTypeOptions = createSimulationTypeOptions();
+		JPanel simulationOptions = createSimulationOptions();
+		JPanel reportOptions = createReportOptions();
+		createAdvancedOptionsTab();
+		setDefaultOptions();
 		
-		// Creates the input fields for the changes in abstraction
-		Preferences biosimrc = Preferences.userRoot();
-		String[] odeSimulators = new String[6];
-		odeSimulators[0] = "euler";
-		odeSimulators[1] = "gear1";
-		odeSimulators[2] = "gear2";
-		odeSimulators[3] = "rk4imp";
-		odeSimulators[4] = "rk8pd";
-		odeSimulators[5] = "rkf45";
-		explanation = new JLabel("Description Of Selected Simulator:     ");
-		description = new JLabel("Embedded Runge-Kutta-Fehlberg (4, 5) method");
-		simulators = new JComboBox(odeSimulators);
-		simulators.setSelectedItem("rkf45");
-		simulators.addActionListener(this);
-		limit = new JTextField(biosimrc.get("biosim.sim.limit", ""), 39);
-		interval = new JTextField(biosimrc.get("biosim.sim.interval", ""), 15);
-		minStep = new JTextField(biosimrc.get("biosim.sim.min.step", ""), 15);
-		step = new JTextField(biosimrc.get("biosim.sim.step", ""), 15);
-		absErr = new JTextField(biosimrc.get("biosim.sim.error", ""), 15);
-		int next = 1;
-		String filename = "sim" + next;
-		while (new File(root + separator + filename).exists()) {
-			next++;
-			filename = "sim" + next;
+		JPanel topPanel = new JPanel(new BorderLayout());
+		topPanel.add(modelFilePanel, BorderLayout.NORTH);
+		topPanel.add(abstractionOptions, BorderLayout.SOUTH);
+		JPanel buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel.add(topPanel, BorderLayout.NORTH);
+		buttonPanel.add(simulationTypeOptions, BorderLayout.CENTER);
+		buttonPanel.add(reportOptions, BorderLayout.SOUTH);
+		this.add(buttonPanel, BorderLayout.NORTH);
+		this.add(simulationOptions, BorderLayout.CENTER);
+		
+		runFiles = false;
+		String[] searchForRunFiles = new File(root + File.separator + simName).list();
+		for (String s : searchForRunFiles) {
+			if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
+				runFiles = true;
+				break;
+			}
 		}
-		// dir = new JTextField(filename, 15);
-		seed = new JTextField(biosimrc.get("biosim.sim.seed", ""), 15);
-		runs = new JTextField(biosimrc.get("biosim.sim.runs", ""), 15);
+
+		loadPropertiesFile(open);
+		loadSEDML();
+	}
+	
+	/* Creates the abstraction radio button options */
+	private JPanel createAbstractionOptions() {
+		JLabel choose = new JLabel("Abstraction:");
+		noAbstraction = new JRadioButton("None");
+		expandReactions = new JRadioButton("Expand Reactions");
+		if (modelFile.contains(".lpn")) {
+			reactionAbstraction = new JRadioButton("Safe net reductions");
+		} else {
+			reactionAbstraction = new JRadioButton("Reaction-based");
+		}
+		stateAbstraction = new JRadioButton("State-based");
+		noAbstraction.addActionListener(this);
+		expandReactions.addActionListener(this);
+		reactionAbstraction.addActionListener(this);
+		stateAbstraction.addActionListener(this);
+		ButtonGroup abstractionButtons = new ButtonGroup();
+		abstractionButtons.add(noAbstraction);
+		abstractionButtons.add(expandReactions);
+		abstractionButtons.add(reactionAbstraction);
+		abstractionButtons.add(stateAbstraction);
+		noAbstraction.setSelected(true);
+		JPanel abstractionOptions = new JPanel();
+		abstractionOptions.add(choose);
+		abstractionOptions.add(noAbstraction);
+		if (!modelFile.contains(".lpn")) {
+			abstractionOptions.add(expandReactions);
+		}
+		abstractionOptions.add(reactionAbstraction);
+		if (!modelFile.contains(".lpn")) {
+			abstractionOptions.add(stateAbstraction);
+		}
+		return abstractionOptions;
+	}
+	
+	/* Creates the radio buttons for selecting the simulation type */
+	private JPanel createSimulationTypeOptions() {
+		JLabel choose2 = new JLabel("Simulation Type:");
+		ODE = new JRadioButton("ODE");
+		monteCarlo = new JRadioButton("Monte Carlo");
+		markov = new JRadioButton("Markov");
+		fba = new JRadioButton("FBA");
+		sbml = new JRadioButton("Model");
+		dot = new JRadioButton("Network");
+		xhtml = new JRadioButton("Browser");
+		ODE.addActionListener(this);
+		monteCarlo.addActionListener(this);
+		markov.addActionListener(this);
+		fba.addActionListener(this);
+		sbml.addActionListener(this);
+		dot.addActionListener(this);
+		xhtml.addActionListener(this);
+		ButtonGroup simulationTypeButtons = new ButtonGroup();
+		simulationTypeButtons.add(ODE);
+		simulationTypeButtons.add(monteCarlo);
+		simulationTypeButtons.add(markov);
+		simulationTypeButtons.add(fba);
+		simulationTypeButtons.add(sbml);
+		simulationTypeButtons.add(dot);
+		simulationTypeButtons.add(xhtml);
+		ODE.setSelected(true);
+		JPanel simulationTypeOptions = new JPanel();
+		simulationTypeOptions.add(choose2);
+		simulationTypeOptions.add(ODE);
+		simulationTypeOptions.add(monteCarlo);
+		simulationTypeOptions.add(markov);
+		simulationTypeOptions.add(fba);
+		simulationTypeOptions.add(sbml);
+		simulationTypeOptions.add(dot);
+		simulationTypeOptions.add(xhtml);
+		return simulationTypeOptions;
+	}
+
+	/* Set the default simulation options from the preferences */
+	private void setDefaultOptions() {
+		if (biosimrc.get("biosim.sim.abs", "").equals("None")) {
+			noAbstraction.doClick(); 
+		}
+		else if (biosimrc.get("biosim.sim.abs", "").equals("Expand Reactions")) {
+			expandReactions.doClick();
+		}
+		else if (biosimrc.get("biosim.sim.abs", "").equals("Reaction-based")) {
+			reactionAbstraction.doClick();
+		}
+		else {
+			stateAbstraction.doClick();
+		}
+		if (biosimrc.get("biosim.sim.type", "").equals("ODE")) {
+			ODE.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+		}
+		else if (biosimrc.get("biosim.sim.type", "").equals("Monte Carlo")) {
+			monteCarlo.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+		}
+		else if (biosimrc.get("biosim.sim.type", "").equals("Markov")) {
+			markov.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+			if (!simulators.getSelectedItem().equals(biosimrc.get("biosim.sim.sim", ""))) {
+				selectedMarkovSim = biosimrc.get("biosim.sim.sim", "");
+			}
+		}
+		else if (biosimrc.get("biosim.sim.type", "").equals("FBA")) {
+			fba.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+		}
+		else if (biosimrc.get("biosim.sim.type", "").equals("SBML")) {
+			sbml.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+			sbml.doClick();
+		}
+		else if (biosimrc.get("biosim.sim.type", "").equals("Network")) {
+			dot.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+			dot.doClick();
+		}
+		else {
+			xhtml.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+			xhtml.doClick();
+		}
+	}
+	
+	/* Create the report option buttons */
+	private JPanel createReportOptions() {
+		JPanel reportOptions = new JPanel();
+		report = new JLabel("Report Options:");
+		reportOptions.add(report);
+
+		concentrations = new JCheckBox("Report Concentrations");
+		concentrations.setEnabled(true);
+		reportOptions.add(concentrations);
+		concentrations.addActionListener(this);
+
+		genRuns = new JCheckBox("Do Not Generate Runs");
+		genRuns.setEnabled(true);
+		reportOptions.add(genRuns);
+		genRuns.addActionListener(this);
+
+		append = new JCheckBox("Append Simulation Runs");
+		append.setEnabled(true);
+		reportOptions.add(append);
+		append.addActionListener(this);
+		
+		genStats = new JCheckBox("Generate Statistics");
+		genStats.setEnabled(true);
+		reportOptions.add(genStats);
+		genStats.addActionListener(this);
+		return reportOptions;
+	}
+	
+	/* Create the simulation option fields */
+	private JPanel createSimulationOptions() {
+		explanation = new JLabel("Description Of Selected Simulator:     ");
+		description = new JLabel("");
 		simulatorsLabel = new JLabel("Possible Simulators/Analyzers:");
+		simulators = new JComboBox();
+		//simulators.setSelectedItem("rkf45");
+		simulators.addActionListener(this);
 		limitLabel = new JLabel("Time Limit:");
+		limit = new JTextField(biosimrc.get("biosim.sim.limit", ""), 39);
 		String[] intervalChoices = { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
 		intervalLabel = new JComboBox(intervalChoices);
 		intervalLabel.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
+		interval = new JTextField(biosimrc.get("biosim.sim.interval", ""), 15);
 		minStepLabel = new JLabel("Minimum Time Step:");
+		minStep = new JTextField(biosimrc.get("biosim.sim.min.step", ""), 15);
 		stepLabel = new JLabel("Maximum Time Step:");
+		step = new JTextField(biosimrc.get("biosim.sim.step", ""), 15);
 		errorLabel = new JLabel("Absolute Error:");
+		absErr = new JTextField(biosimrc.get("biosim.sim.error", ""), 15);
 		seedLabel = new JLabel("Random Seed:");
+		seed = new JTextField(biosimrc.get("biosim.sim.seed", ""), 15);
 		runsLabel = new JLabel("Runs:");
-		fileStem = new JTextField("", 15);
+		runs = new JTextField(biosimrc.get("biosim.sim.runs", ""), 15);
 		fileStemLabel = new JLabel("Simulation ID:");
+		fileStem = new JTextField("", 15);
 		JPanel inputHolder = new JPanel(new BorderLayout());
 		JPanel inputHolderLeft;
 		JPanel inputHolderRight;
-		if (modelFile.contains(".lpn") || modelFile.contains(".gcm")) {
+		if (modelFile.contains(".lpn")) {
 			inputHolderLeft = new JPanel(new GridLayout(11, 1));
 			inputHolderRight = new JPanel(new GridLayout(11, 1));
 		}
@@ -294,7 +402,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JLabel prop = new JLabel("Property:");
 			String[] props = new String[] { "none" };
 			LhpnFile lpn = new LhpnFile();
-			lpn.load(root + separator + modelFile);
+			lpn.load(root + File.separator + modelFile);
 			String[] getProps = lpn.getProperties().toArray(new String[0]);
 			props = new String[getProps.length + 1];
 			props[0] = "none";
@@ -308,392 +416,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		inputHolder.add(inputHolderLeft, "West");
 		inputHolder.add(inputHolderRight, "Center");
-		JPanel topInputHolder = new JPanel();
-		topInputHolder.add(inputHolder);
-
-		// Creates the interesting species JList
-		preAbs = new JList();
-		loopAbs = new JList();
-		postAbs = new JList();
-		preAbsLabel = new JLabel("Preprocess abstraction methods:");
-		loopAbsLabel = new JLabel("Main loop abstraction methods:");
-		postAbsLabel = new JLabel("Postprocess abstraction methods:");
-		JPanel absHolder = new JPanel(new BorderLayout());
-		JPanel listOfAbsLabelHolder = new JPanel(new GridLayout(1, 3));
-		JPanel listOfAbsHolder = new JPanel(new GridLayout(1, 3));
-		JPanel listOfAbsButtonHolder = new JPanel(new GridLayout(1, 3));
-		JScrollPane preAbsScroll = new JScrollPane();
-		JScrollPane loopAbsScroll = new JScrollPane();
-		JScrollPane postAbsScroll = new JScrollPane();
-		preAbsScroll.setMinimumSize(new Dimension(260, 200));
-		preAbsScroll.setPreferredSize(new Dimension(276, 132));
-		preAbsScroll.setViewportView(preAbs);
-		loopAbsScroll.setMinimumSize(new Dimension(260, 200));
-		loopAbsScroll.setPreferredSize(new Dimension(276, 132));
-		loopAbsScroll.setViewportView(loopAbs);
-		postAbsScroll.setMinimumSize(new Dimension(260, 200));
-		postAbsScroll.setPreferredSize(new Dimension(276, 132));
-		postAbsScroll.setViewportView(postAbs);
-		addPreAbs = new JButton("Add");
-		rmPreAbs = new JButton("Remove");
-		editPreAbs = new JButton("Edit");
-		JPanel preAbsButtonHolder = new JPanel();
-		preAbsButtonHolder.add(addPreAbs);
-		preAbsButtonHolder.add(rmPreAbs);
-		// preAbsButtonHolder.add(editPreAbs);
-		addLoopAbs = new JButton("Add");
-		rmLoopAbs = new JButton("Remove");
-		editLoopAbs = new JButton("Edit");
-		JPanel loopAbsButtonHolder = new JPanel();
-		loopAbsButtonHolder.add(addLoopAbs);
-		loopAbsButtonHolder.add(rmLoopAbs);
-		// loopAbsButtonHolder.add(editLoopAbs);
-		addPostAbs = new JButton("Add");
-		rmPostAbs = new JButton("Remove");
-		editPostAbs = new JButton("Edit");
-		JPanel postAbsButtonHolder = new JPanel();
-		postAbsButtonHolder.add(addPostAbs);
-		postAbsButtonHolder.add(rmPostAbs);
-		// postAbsButtonHolder.add(editPostAbs);
-		listOfAbsLabelHolder.add(preAbsLabel);
-		listOfAbsHolder.add(preAbsScroll);
-		listOfAbsLabelHolder.add(loopAbsLabel);
-		listOfAbsHolder.add(loopAbsScroll);
-		listOfAbsLabelHolder.add(postAbsLabel);
-		listOfAbsHolder.add(postAbsScroll);
-		listOfAbsButtonHolder.add(preAbsButtonHolder);
-		listOfAbsButtonHolder.add(loopAbsButtonHolder);
-		listOfAbsButtonHolder.add(postAbsButtonHolder);
-		absHolder.add(listOfAbsLabelHolder, "North");
-		absHolder.add(listOfAbsHolder, "Center");
-		absHolder.add(listOfAbsButtonHolder, "South");
-		preAbs.setEnabled(false);
-		loopAbs.setEnabled(false);
-		postAbs.setEnabled(false);
-		preAbs.addMouseListener(this);
-		loopAbs.addMouseListener(this);
-		postAbs.addMouseListener(this);
-		preAbsLabel.setEnabled(false);
-		loopAbsLabel.setEnabled(false);
-		postAbsLabel.setEnabled(false);
-		addPreAbs.setEnabled(false);
-		rmPreAbs.setEnabled(false);
-		editPreAbs.setEnabled(false);
-		addPreAbs.addActionListener(this);
-		rmPreAbs.addActionListener(this);
-		editPreAbs.addActionListener(this);
-		addLoopAbs.setEnabled(false);
-		rmLoopAbs.setEnabled(false);
-		editLoopAbs.setEnabled(false);
-		addLoopAbs.addActionListener(this);
-		rmLoopAbs.addActionListener(this);
-		editLoopAbs.addActionListener(this);
-		addPostAbs.setEnabled(false);
-		rmPostAbs.setEnabled(false);
-		editPostAbs.setEnabled(false);
-		addPostAbs.addActionListener(this);
-		rmPostAbs.addActionListener(this);
-		editPostAbs.addActionListener(this);
-
-		// Creates some abstraction options
-		JPanel advancedGrid = new JPanel(new GridLayout(8, 4));
-		advanced = new JPanel(new BorderLayout());
-		
-		rapidLabel1 = new JLabel("Rapid Equilibrium Condition 1:");
-		rapid1 = new JTextField(biosimrc.get("biosim.sim.rapid1", ""), 15);
-		rapidLabel2 = new JLabel("Rapid Equilibrium Condition 2:");
-		rapid2 = new JTextField(biosimrc.get("biosim.sim.rapid2", ""), 15);
-		qssaLabel = new JLabel("QSSA Condition:");
-		qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""), 15);
-		maxConLabel = new JLabel("Max Concentration Threshold:");
-		maxCon = new JTextField(biosimrc.get("biosim.sim.concentration", ""), 15);
-		diffStoichAmp = new JTextField("1.0", 15);
-		diffStoichAmpLabel = new JLabel("Grid Diffusion Stoichiometry Amplification:");
-		String [] options = { "1", "2" };
-
-		mpde = new JRadioButton();
-		mpde.setText("MPDE");
-		mpde.addActionListener(this);
-		meanPath = new JRadioButton();
-		meanPath.setText("Mean Path");
-		meanPath.addActionListener(this);
-		medianPath = new JRadioButton();
-		medianPath.setText("Median Path");
-		medianPath.addActionListener(this);
-		ButtonGroup iSSATypeButtons = new ButtonGroup();
-		iSSATypeButtons.add(mpde);
-		iSSATypeButtons.add(meanPath);
-		iSSATypeButtons.add(medianPath);
-		medianPath.setSelected(true);
-		JPanel iSSAType = new JPanel(new GridLayout(1,3));
-		iSSAType.add(mpde);
-		iSSAType.add(meanPath);
-		iSSAType.add(medianPath);
-		iSSATypeLabel = new JLabel("iSSA Type:");
-
-		adaptive = new JRadioButton();
-		adaptive.setText("Adaptive");
-		nonAdaptive = new JRadioButton();
-		nonAdaptive.setText("Non-adaptive");
-		ButtonGroup iSSAAdaptiveButtons = new ButtonGroup();
-		iSSAAdaptiveButtons.add(adaptive);
-		iSSAAdaptiveButtons.add(nonAdaptive);
-		adaptive.setSelected(true);
-		JPanel iSSAAdaptive = new JPanel(new GridLayout(1,2));
-		iSSAAdaptive.add(adaptive);
-		iSSAAdaptive.add(nonAdaptive);
-		iSSAAdaptiveLabel = new JLabel("iSSA Adaptive:");
-		
-		bifurcation = new JComboBox(options);
-		bifurcationLabel = new JLabel("Number of Paths to Follow with iSSA:");
-		
-		maxConLabel.setEnabled(false);
-		maxCon.setEnabled(false);
-		qssaLabel.setEnabled(false);
-		qssa.setEnabled(false);
-		rapidLabel1.setEnabled(false);
-		rapid1.setEnabled(false);
-		rapidLabel2.setEnabled(false);
-		rapid2.setEnabled(false);
-		diffStoichAmp.setEnabled(false);
-		diffStoichAmpLabel.setEnabled(false);
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
-		
-		advancedGrid.add(rapidLabel1);
-		advancedGrid.add(rapid1);
-		advancedGrid.add(rapidLabel2);
-		advancedGrid.add(rapid2);
-		advancedGrid.add(qssaLabel);
-		advancedGrid.add(qssa);
-		advancedGrid.add(maxConLabel);
-		advancedGrid.add(maxCon);
-		advancedGrid.add(diffStoichAmpLabel);
-		advancedGrid.add(diffStoichAmp);
-		advancedGrid.add(iSSATypeLabel);
-		advancedGrid.add(iSSAType);
-		advancedGrid.add(iSSAAdaptiveLabel);
-		advancedGrid.add(iSSAAdaptive);
-		advancedGrid.add(bifurcationLabel);
-		advancedGrid.add(bifurcation);
-		JPanel advAbs = new JPanel(new BorderLayout());
-		advAbs.add(absHolder, "Center");
-		advAbs.add(advancedGrid, "South");
-		advanced.add(advAbs, "North");
-		// advanced.add(interestingPanel, "Center");
-
-		// Sets up the radio buttons for Abstraction and Nary
-		JLabel choose = new JLabel("Abstraction:");
-		none = new JRadioButton("None");
-		expand = new JRadioButton("Expand Reactions");
-		abstraction = new JRadioButton("Reaction-based");
-		nary = new JRadioButton("State-based");
-		ButtonGroup abs = new ButtonGroup();
-		abs.add(none);
-		abs.add(expand);
-		abs.add(abstraction);
-		abs.add(nary);
-		none.setSelected(true);
-		if (modelFile.contains(".lpn")) {
-			nary.setEnabled(false);
-		}
-		JPanel topPanel = new JPanel(new BorderLayout());
-		JPanel backgroundPanel = new JPanel();
-		JLabel backgroundLabel = new JLabel("Model File:");
-		backgroundField = new JTextField(this.modelFile);
-		backgroundField.setEditable(false);
-		backgroundPanel.add(backgroundLabel);
-		backgroundPanel.add(backgroundField);
-		JPanel absAndNaryPanel = new JPanel();
-		absAndNaryPanel.add(choose);
-		absAndNaryPanel.add(none);
-		absAndNaryPanel.add(expand);
-		absAndNaryPanel.add(abstraction);
-		absAndNaryPanel.add(nary);
-		topPanel.add(backgroundPanel, BorderLayout.NORTH);
-		topPanel.add(absAndNaryPanel, BorderLayout.SOUTH);
-		none.addActionListener(this);
-		expand.addActionListener(this);
-		abstraction.addActionListener(this);
-		nary.addActionListener(this);
-
-		// Sets up the radio buttons for ODE, Monte Carlo, and Markov
-		JLabel choose2 = new JLabel("Simulation Type:");
-		ODE = new JRadioButton("ODE");
-		monteCarlo = new JRadioButton("Monte Carlo");
-		markov = new JRadioButton("Markov");
-		fba = new JRadioButton("FBA");
-		ODE.setSelected(true);
-		seed.setEnabled(true);
-		seedLabel.setEnabled(true);
-		runs.setEnabled(true);
-		runsLabel.setEnabled(true);
-		fileStem.setEnabled(true);
-		fileStemLabel.setEnabled(true);
-		minStep.setEnabled(true);
-		minStepLabel.setEnabled(true);
-		step.setEnabled(true);
-		stepLabel.setEnabled(true);
-		absErr.setEnabled(true);
-		errorLabel.setEnabled(true);
-		JPanel odeMonteAndMarkovPanel = new JPanel();
-		odeMonteAndMarkovPanel.add(choose2);
-		odeMonteAndMarkovPanel.add(ODE);
-		odeMonteAndMarkovPanel.add(monteCarlo);
-		odeMonteAndMarkovPanel.add(markov);
-		odeMonteAndMarkovPanel.add(fba);
-		ODE.addActionListener(this);
-		monteCarlo.addActionListener(this);
-		markov.addActionListener(this);
-		fba.addActionListener(this);
-
-		// Sets up the radio buttons for output option
-		sbml = new JRadioButton("Model");
-		dot = new JRadioButton("Network");
-		xhtml = new JRadioButton("Browser");
-		lhpn = new JRadioButton("LPN");
-		sbml.setSelected(true);
-		odeMonteAndMarkovPanel.add(sbml);
-		odeMonteAndMarkovPanel.add(dot);
-		odeMonteAndMarkovPanel.add(xhtml);
-		//odeMonteAndMarkovPanel.add(lhpn);
-		sbml.addActionListener(this);
-		dot.addActionListener(this);
-		xhtml.addActionListener(this);
-		lhpn.addActionListener(this);
-		ButtonGroup sim = new ButtonGroup();
-		sim.add(ODE);
-		sim.add(monteCarlo);
-		sim.add(markov);
-		sim.add(fba);
-		sim.add(sbml);
-		sim.add(dot);
-		sim.add(xhtml);
-		sim.add(lhpn);
-
-		JPanel reportPanel = new JPanel();
-		report = new JLabel("Options:");
-		reportPanel.add(report);
-
-		concentrations = new JCheckBox("Report Concentrations");
-		concentrations.setEnabled(true);
-		reportPanel.add(concentrations);
-		concentrations.addActionListener(this);
-
-		genRuns = new JCheckBox("Do Not Generate Runs");
-		genRuns.setEnabled(true);
-		reportPanel.add(genRuns);
-		genRuns.addActionListener(this);
-
-		append = new JCheckBox("Append Simulation Runs");
-		append.setEnabled(true);
-		reportPanel.add(append);
-		append.addActionListener(this);
-		
-		genStats = new JCheckBox("Generate Statistics");
-		genStats.setEnabled(true);
-		reportPanel.add(genStats);
-		genStats.addActionListener(this);
-
-		// Puts all the radio buttons in a panel
-		JPanel radioButtonPanel = new JPanel(new BorderLayout());
-		radioButtonPanel.add(topPanel, "North");
-		radioButtonPanel.add(odeMonteAndMarkovPanel, "Center");
-		JPanel bottomPanel = new JPanel(new BorderLayout());
-		// bottomPanel.add(overwritePanel, "North");
-		bottomPanel.add(reportPanel, "South");
-		radioButtonPanel.add(bottomPanel, "South");
-
-		// Creates the main tabbed panel
-		JPanel mainTabbedPanel = new JPanel(new BorderLayout());
-		mainTabbedPanel.add(topInputHolder, "Center");
-		mainTabbedPanel.add(radioButtonPanel, "North");
-
-		// Creates the run button
-		run = new JButton("Save and Run");
-		save = new JButton("Save Parameters");
-		JPanel runHolder = new JPanel();
-		runHolder.add(run);
-		run.addActionListener(this);
-		run.setMnemonic(KeyEvent.VK_R);
-		runHolder.add(save);
-		save.addActionListener(this);
-		save.setMnemonic(KeyEvent.VK_S);
-
-		this.setLayout(new BorderLayout());
-		this.add(mainTabbedPanel, "Center");
-		runFiles = false;
-		String[] searchForRunFiles = new File(root + separator + simName).list();
-		for (String s : searchForRunFiles) {
-			if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
-				runFiles = true;
-			}
-		}
-		if (biosimrc.get("biosim.sim.abs", "").equals("None")) {
-			none.doClick();
-		}
-		else if (biosimrc.get("biosim.sim.abs", "").equals("Expand")) {
-			expand.doClick();
-		}
-		else if (biosimrc.get("biosim.sim.abs", "").equals("Abstraction")) {
-			abstraction.doClick();
-		}
-		else {
-			nary.doClick();
-		}
-		if (biosimrc.get("biosim.sim.type", "").equals("ODE")) {
-			ODE.doClick();
-			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-		}
-		else if (biosimrc.get("biosim.sim.type", "").equals("Monte Carlo")) {
-			monteCarlo.doClick();
-			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-		}
-		else if (biosimrc.get("biosim.sim.type", "").equals("Markov")) {
-			markov.doClick();
-			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-			if (!simulators.getSelectedItem().equals(biosimrc.get("biosim.sim.sim", ""))) {
-				selectedMarkovSim = biosimrc.get("biosim.sim.sim", "");
-			}
-		}
-		else if (biosimrc.get("biosim.sim.type", "").equals("FBA")) {
-			fba.doClick();
-			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-		}
-		else if (biosimrc.get("biosim.sim.type", "").equals("SBML")) {
-			sbml.doClick();
-			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-			sbml.doClick();
-		}
-		else if (biosimrc.get("biosim.sim.type", "").equals("LPN")) {
-			if (lhpn.isEnabled()) {
-				lhpn.doClick();
-				simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-				lhpn.doClick();
-			}
-		}
-		else if (biosimrc.get("biosim.sim.type", "").equals("Network")) {
-			dot.doClick();
-			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-			dot.doClick();
-		}
-		else {
-			xhtml.doClick();
-			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-			xhtml.doClick();
-		}
-		if (open != null) {
-			open(open);
-		}
-		sedmlFilename = root + separator + simName + separator + modelFile.replace(".xml","") + "-sedml.xml";
-		loadSEDML();
+		JPanel simulationOptions = new JPanel();
+		simulationOptions.add(inputHolder);
+		return simulationOptions;
 	}
 
 	/**
@@ -702,967 +427,137 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// if the none Radio Button is selected
 		change = true;
-		if (e.getSource() == none || e.getSource() == expand) {
-			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
-					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, none, expand, rapid1, rapid2, qssa, maxCon,
-					diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
-					fileStemLabel, preAbs, loopAbs, postAbs,
-					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, abstraction, nary);
-			if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
-				markov.setEnabled(true);
-				lhpn.setEnabled(true);
-			}
-			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
-				append.setEnabled(true);
-				concentrations.setEnabled(true);
-				genRuns.setEnabled(true);
-				genStats.setEnabled(true);
-				report.setEnabled(true);
-				if (append.isSelected()) {
-					limit.setEnabled(false);
-					interval.setEnabled(false);
-					limitLabel.setEnabled(false);
-					intervalLabel.setEnabled(false);
-				}
-				else {
-					limit.setEnabled(true);
-					interval.setEnabled(true);
-					limitLabel.setEnabled(true);
-					intervalLabel.setEnabled(true);
-				}
-			}
+		if (e.getSource() == noAbstraction || e.getSource() == expandReactions || e.getSource() == reactionAbstraction) {
+			enableNoneOrAbs();
 		}
-		// if the abstraction Radio Button is selected
-		else if (e.getSource() == abstraction) {
-			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
-					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, none, expand, rapid1, rapid2, qssa, maxCon,
-					diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
-					fileStemLabel, preAbs, loopAbs, postAbs,
-					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, abstraction, nary);
-			if (modelFile.contains(".lpn")) {
-				markov.setEnabled(true);
-				lhpn.setEnabled(true);
-			}
-			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
-				append.setEnabled(true);
-				concentrations.setEnabled(true);
-				genRuns.setEnabled(true);
-				genStats.setEnabled(true);
-				report.setEnabled(true);
-				if (append.isSelected()) {
-					limit.setEnabled(false);
-					interval.setEnabled(false);
-					limitLabel.setEnabled(false);
-					intervalLabel.setEnabled(false);
-				}
-				else {
-					limit.setEnabled(true);
-					interval.setEnabled(true);
-					limitLabel.setEnabled(true);
-					intervalLabel.setEnabled(true);
-				}
-			}
+		else if (e.getSource() == stateAbstraction) {
+			enableNary();
 		}
-		// if the nary Radio Button is selected
-		else if (e.getSource() == nary) {
-			Button_Enabling.enableNary(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
-					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, rapid1, rapid2, qssa, maxCon, rapidLabel1,
-					rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
-					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, modelEditor, abstraction, nary);
-			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
-				append.setEnabled(true);
-				concentrations.setEnabled(true);
-				genRuns.setEnabled(true);
-				genStats.setEnabled(true);
-				report.setEnabled(true);
-				if (append.isSelected()) {
-					limit.setEnabled(false);
-					interval.setEnabled(false);
-					limitLabel.setEnabled(false);
-					intervalLabel.setEnabled(false);
-				}
-				else {
-					limit.setEnabled(true);
-					interval.setEnabled(true);
-					limitLabel.setEnabled(true);
-					intervalLabel.setEnabled(true);
-				}
-			}
-		}
-		// if the ODE Radio Button is selected
 		else if (e.getSource() == ODE) {
-			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
-					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
-			append.setEnabled(true);
-			concentrations.setEnabled(true);
-			genRuns.setEnabled(true);
-			genStats.setEnabled(true);
-			report.setEnabled(true);
-			mpde.setEnabled(false);
-			meanPath.setEnabled(false);
-			medianPath.setEnabled(false);
-			iSSATypeLabel.setEnabled(false);
-			adaptive.setEnabled(false);
-			nonAdaptive.setEnabled(false);
-			iSSAAdaptiveLabel.setEnabled(false);
-			bifurcation.setEnabled(false);
-			bifurcationLabel.setEnabled(false);
+			enableODE();
 		}
-		// if the monteCarlo Radio Button is selected
 		else if (e.getSource() == monteCarlo) {
-			Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
-					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
-			if (runFiles) {
-				append.setEnabled(true);
-				concentrations.setEnabled(true);
-				genRuns.setEnabled(true);
-				genStats.setEnabled(true);
-				report.setEnabled(true);
-				if (append.isSelected()) {
-					limit.setEnabled(false);
-					interval.setEnabled(false);
-					limitLabel.setEnabled(false);
-					intervalLabel.setEnabled(false);
-				}
-				else {
-					limit.setEnabled(true);
-					interval.setEnabled(true);
-					limitLabel.setEnabled(true);
-					intervalLabel.setEnabled(true);
-				}
-			}
-			mpde.setEnabled(false);
-			meanPath.setEnabled(false);
-			medianPath.setEnabled(false);
-			iSSATypeLabel.setEnabled(false);
-			adaptive.setEnabled(false);
-			nonAdaptive.setEnabled(false);
-			iSSAAdaptiveLabel.setEnabled(false);
-			bifurcation.setEnabled(false);
-			bifurcationLabel.setEnabled(false);
+			enableMonteCarlo();
 		}
-		// if the markov Radio Button is selected
 		else if (e.getSource() == markov) {
-			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
-					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, modelEditor, postAbs, modelFile, abstraction, nary);
-			append.setEnabled(false);
-			concentrations.setEnabled(false);
-			genRuns.setEnabled(false);
-			genStats.setEnabled(false);
-			report.setEnabled(false);
-			mpde.setEnabled(false);
-			meanPath.setEnabled(false);
-			medianPath.setEnabled(false);
-			iSSATypeLabel.setEnabled(false);
-			adaptive.setEnabled(false);
-			nonAdaptive.setEnabled(false);
-			iSSAAdaptiveLabel.setEnabled(false);
-			bifurcation.setEnabled(false);
-			bifurcationLabel.setEnabled(false);
+			enableMarkov();
 		}
-		// if the sbml Radio Button is selected
 		else if (e.getSource() == fba) {
-			Button_Enabling.enableFBA(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, abstraction, nary, postAbs);
-			append.setEnabled(false);
-			concentrations.setEnabled(false);
-			genRuns.setEnabled(false);
-			genStats.setEnabled(false);
-			absErr.setEnabled(true);
-			report.setEnabled(false);
-			mpde.setEnabled(false);
-			meanPath.setEnabled(false);
-			medianPath.setEnabled(false);
-			iSSATypeLabel.setEnabled(false);
-			adaptive.setEnabled(false);
-			nonAdaptive.setEnabled(false);
-			iSSAAdaptiveLabel.setEnabled(false);
-			bifurcation.setEnabled(false);
-			bifurcationLabel.setEnabled(false);
+			enableFBA();
 		}
-		else if (e.getSource() == sbml) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
-			append.setEnabled(false);
-			concentrations.setEnabled(false);
-			genRuns.setEnabled(false);
-			genStats.setEnabled(false);
-			report.setEnabled(false);
-			absErr.setEnabled(false);
-			mpde.setEnabled(false);
-			meanPath.setEnabled(false);
-			medianPath.setEnabled(false);
-			iSSATypeLabel.setEnabled(false);
-			adaptive.setEnabled(false);
-			nonAdaptive.setEnabled(false);
-			iSSAAdaptiveLabel.setEnabled(false);
-			bifurcation.setEnabled(false);
-			bifurcationLabel.setEnabled(false);
+		else if (e.getSource() == sbml || e.getSource() == dot || e.getSource() == xhtml) {
+			enableSbmlDotAndXhtml();
 		}
-		// if the dot Radio Button is selected
-		else if (e.getSource() == dot) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
-			append.setEnabled(false);
-			concentrations.setEnabled(false);
-			genRuns.setEnabled(false);
-			genStats.setEnabled(false);
-			report.setEnabled(false);
-			absErr.setEnabled(false);
-			mpde.setEnabled(false);
-			meanPath.setEnabled(false);
-			medianPath.setEnabled(false);
-			iSSATypeLabel.setEnabled(false);
-			adaptive.setEnabled(false);
-			nonAdaptive.setEnabled(false);
-			iSSAAdaptiveLabel.setEnabled(false);
-			bifurcation.setEnabled(false);
-			bifurcationLabel.setEnabled(false);
-		}
-		// if the xhtml Radio Button is selected
-		else if (e.getSource() == xhtml) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
-			append.setEnabled(false);
-			concentrations.setEnabled(false);
-			genRuns.setEnabled(false);
-			genStats.setEnabled(false);
-			report.setEnabled(false);
-			absErr.setEnabled(false);
-			mpde.setEnabled(false);
-			meanPath.setEnabled(false);
-			medianPath.setEnabled(false);
-			iSSATypeLabel.setEnabled(false);
-			adaptive.setEnabled(false);
-			nonAdaptive.setEnabled(false);
-			iSSAAdaptiveLabel.setEnabled(false);
-			bifurcation.setEnabled(false);
-			bifurcationLabel.setEnabled(false);
-		}
-		// if the lhpn Radio Button is selected
-		else if (e.getSource() == lhpn) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
-			append.setEnabled(false);
-			concentrations.setEnabled(false);
-			genRuns.setEnabled(false);
-			genStats.setEnabled(false);
-			report.setEnabled(false);
-			absErr.setEnabled(false);
-			mpde.setEnabled(false);
-			meanPath.setEnabled(false);
-			medianPath.setEnabled(false);
-			iSSATypeLabel.setEnabled(false);
-			adaptive.setEnabled(false);
-			nonAdaptive.setEnabled(false);
-			iSSAAdaptiveLabel.setEnabled(false);
-			bifurcation.setEnabled(false);
-			bifurcationLabel.setEnabled(false);
-		}
-		// if the add interesting species button is clicked
-		// else if (e.getSource() == addIntSpecies) {
-		// addInterstingSpecies();
-		// }
-		// if the add interesting species button is clicked
-		// else if (e.getSource() == editIntSpecies) {
-		// editInterstingSpecies();
-		// }
-		// if the remove interesting species button is clicked
-		// else if (e.getSource() == removeIntSpecies) {
-		// removeIntSpecies();
-		// }
-		// if the clear interesting species button is clicked
-		// else if (e.getSource() == clearIntSpecies) {
-		// int[] select = new int[interestingSpecies.length];
-		// for (int i = 0; i < interestingSpecies.length; i++) {
-		// select[i] = i;
-		// }
-		// //species.setSelectedIndices(select);
-		// removeIntSpecies();
-		// }
-		// if the add termination conditions button is clicked
-		/*
-		 * else if (e.getSource() == addTermCond) { termConditions =
-		 * Utility.add(termConditions, terminations, termCond, true, amountTerm,
-		 * ge, gt, eq, lt, le, this); } // if the remove termination conditions
-		 * button is clicked else if (e.getSource() == removeTermCond) {
-		 * termConditions = Utility.remove(terminations, termConditions); } //
-		 * if the clear termination conditions button is clicked else if
-		 * (e.getSource() == clearTermCond) { termConditions = new Object[0];
-		 * terminations.setListData(termConditions); }
-		 */
-		// if the simulators combo box is selected
 		else if (e.getSource() == mpde) {
-			nonAdaptive.setSelected(true);
-			adaptive.setEnabled(false);
-			nonAdaptive.setEnabled(false);
-			iSSAAdaptiveLabel.setEnabled(false);
-			bifurcation.setEnabled(false);
-			bifurcationLabel.setEnabled(false);
+			enableMPDEMethod();
 		}
 		else if (e.getSource() == meanPath) {
-			adaptive.setEnabled(true);
-			nonAdaptive.setEnabled(true);
-			iSSAAdaptiveLabel.setEnabled(true);
-			bifurcation.setEnabled(true);
-			bifurcationLabel.setEnabled(true);
+			enableMeanMedianPath();
 		}
 		else if (e.getSource() == medianPath) {
-			adaptive.setEnabled(true);
-			nonAdaptive.setEnabled(true);
-			iSSAAdaptiveLabel.setEnabled(true);
-			bifurcation.setEnabled(true);
-			bifurcationLabel.setEnabled(true);
+			enableMeanMedianPath();
 		}
 		else if (e.getSource() == simulators) {
 			if (simulators.getItemCount() == 0) {
 				description.setText("");
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				disableSimulatorOptions();
 			}
 			else if (simulators.getSelectedItem().equals("euler")) {
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				absErr.setEnabled(false);
-				errorLabel.setEnabled(false);
 				description.setText("Euler method");
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableEulerMethod();
 			}
 			else if (simulators.getSelectedItem().equals("gear1")) {
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				absErr.setEnabled(true);
-				errorLabel.setEnabled(true);
 				description.setText("Gear method, M=1");
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableODESimulator();
 			}
 			else if (simulators.getSelectedItem().equals("gear2")) {
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				absErr.setEnabled(true);
-				errorLabel.setEnabled(true);
 				description.setText("Gear method, M=2");
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableODESimulator();
 			}
 			else if (simulators.getSelectedItem().equals("rk4imp")) {
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				absErr.setEnabled(true);
-				errorLabel.setEnabled(true);
 				description.setText("Implicit 4th order Runge-Kutta at Gaussian points");
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableODESimulator();
 			}
 			else if (simulators.getSelectedItem().equals("rk8pd")) {
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				absErr.setEnabled(true);
-				errorLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta Prince-Dormand (8,9) method");
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableODESimulator();
 			}
 			else if (simulators.getSelectedItem().equals("rkf45")) {
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				absErr.setEnabled(true);
-				errorLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableODESimulator();
 			}
 			else if (((String) simulators.getSelectedItem()).equals("SSA-CR")) {
 				description.setText("SSA Composition and Rejection Method");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableSSASimulator();
 			}
 			else if (((String) simulators.getSelectedItem()).equals("SSA-Direct")) {
 				description.setText("SSA-Direct Method (Java)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableSSASimulator();
 			}
 			else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg")) {
 				description.setText("Runge-Kutta-Fehlberg Method (java)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(true);
-				absErr.setEnabled(true);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableODESimulator();
 			}
 			else if (((String) simulators.getSelectedItem()).equals("Hierarchical-RK")) {
 				description.setText("Runge-Kutta-Fehlberg Method on Hierarchical Models (java)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(true);
-				absErr.setEnabled(true);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableODESimulator();
 			}
 			else if (((String) simulators.getSelectedItem()).equals("Hierarchical-Hybrid")) {
 				description.setText("Hybrid SSA/ODE on Hierarchical Models (java)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(true);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableSSASimulator();
 			}
 			else if (((String) simulators.getSelectedItem()).contains("gillespie")) {
 				description.setText("SSA-Direct Method");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableSSASimulator();
 			}
 			else if (((String) simulators.getSelectedItem()).contains("SSA-Hierarchical")) {
 				description.setText("SSA-Direct Method on Hierarchical Models (java)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableSSASimulator();
 			}
 			else if (((String) simulators.getSelectedItem()).contains("interactive")) {
 				description.setText("Interactive SSA-Direct Method (java)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableSSASimulator();
 			}
 			else if (simulators.getSelectedItem().equals("iSSA")) {
 				description.setText("incremental SSA");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				mpde.setEnabled(true);
-				meanPath.setEnabled(true);
-				medianPath.setEnabled(true);
-				iSSATypeLabel.setEnabled(true);
-				if (mpde.isSelected()) {
-					adaptive.setEnabled(false);
-					nonAdaptive.setEnabled(false);
-					iSSAAdaptiveLabel.setEnabled(false);
-					bifurcation.setEnabled(false);
-					bifurcationLabel.setEnabled(false);
-				} else {
-					adaptive.setEnabled(true);
-					nonAdaptive.setEnabled(true);
-					iSSAAdaptiveLabel.setEnabled(true);
-					bifurcation.setEnabled(true);
-					bifurcationLabel.setEnabled(true);
-				}
+				enableiSSASimulator();
 			}
 			else if (simulators.getSelectedItem().equals("emc-sim")) {
-				description.setText("Monte Carlo sim with jump count as" + " independent variable");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				description.setText("Monte Carlo sim with jump count as independent variable");
+				enableSSASimulator();
 			}
 			else if (simulators.getSelectedItem().equals("bunker")) {
 				description.setText("Bunker's method");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableSSASimulator();
 			}
 			else if (simulators.getSelectedItem().equals("nmc")) {
 				description.setText("Monte Carlo simulation with normally" + " distributed waiting time");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableSSASimulator();
 			}
 			else if (simulators.getSelectedItem().equals("ctmc-transient")) {
 				description.setText("Transient Distribution Analysis");
-				minStep.setEnabled(false);
-				minStepLabel.setEnabled(false);
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				limitLabel.setEnabled(false);
-				limit.setEnabled(false);
-				intervalLabel.setEnabled(false);
-				interval.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableMarkovAnalyzer();
 			}
 			else if (simulators.getSelectedItem().equals("atacs")) {
 				description.setText("ATACS Analysis Tool");
-				minStep.setEnabled(false);
-				minStepLabel.setEnabled(false);
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				limitLabel.setEnabled(false);
-				limit.setEnabled(false);
-				intervalLabel.setEnabled(false);
-				interval.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableMarkovAnalyzer();
 			}
 			else if (simulators.getSelectedItem().equals("reachability-analysis")) {
 				description.setText("State Space Exploration");
-				minStep.setEnabled(false);
-				minStepLabel.setEnabled(false);
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-				limitLabel.setEnabled(false);
-				limit.setEnabled(false);
-				intervalLabel.setEnabled(false);
-				interval.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableMarkovAnalyzer();
 			}
 			else if (simulators.getSelectedItem().equals("steady-state-markov-chain-analysis")) {
 				description.setText("Steady State Markov Chain Analysis");
-				minStep.setEnabled(false);
-				minStepLabel.setEnabled(false);
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
-				errorLabel.setEnabled(true);
-				absErr.setEnabled(true);
-				limitLabel.setEnabled(false);
-				limit.setEnabled(false);
-				intervalLabel.setEnabled(false);
-				interval.setEnabled(false);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableMarkovAnalyzer();
 			}
 			else if (simulators.getSelectedItem().equals("transient-markov-chain-analysis")) {
 				description.setText("Transient Markov Chain Analysis Using Uniformization");
-				minStep.setEnabled(false);
-				minStepLabel.setEnabled(false);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(true);
-				absErr.setEnabled(true);
-				limitLabel.setEnabled(true);
-				limit.setEnabled(true);
-				intervalLabel.setEnabled(true);
-				interval.setEnabled(true);
-				mpde.setEnabled(false);
-				meanPath.setEnabled(false);
-				medianPath.setEnabled(false);
-				iSSATypeLabel.setEnabled(false);
-				adaptive.setEnabled(false);
-				nonAdaptive.setEnabled(false);
-				iSSAAdaptiveLabel.setEnabled(false);
-				bifurcation.setEnabled(false);
-				bifurcationLabel.setEnabled(false);
+				enableTransientMarkovAnalyzer();
 			}
-		}
-		// if the Run button is clicked
-		else if (e.getSource() == run) {
-			boolean ignoreSweep = false;
-			if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected() || lhpn.isSelected()) {
-				ignoreSweep = true;
-			}
-			String stem = "";
-			if (!fileStem.getText().trim().equals("")) {
-				if (!(stemPat.matcher(fileStem.getText().trim()).matches())) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"A file stem can only contain letters, numbers, and underscores.", "Invalid File Stem",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				stem += fileStem.getText().trim();
-			}
-			for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
-				if (modelEditor != null) {
-					if (biomodelsim.getTitleAt(i).equals(modelEditor.getRefFile())) {
-						if (biomodelsim.getTab().getComponentAt(i) instanceof ModelEditor) {
-							ModelEditor gcm = ((ModelEditor) (biomodelsim.getTab().getComponentAt(i)));
-							if (gcm.isDirty()) {
-								Object[] options = { "Yes", "No" };
-								int value = JOptionPane
-										.showOptionDialog(Gui.frame,
-												"Do you want to save changes to " + modelEditor.getRefFile()
-														+ " before running the simulation?", "Save Changes",
-												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-												options[0]);
-								if (value == JOptionPane.YES_OPTION) {
-									gcm.save("gcm");
-								}
-							}
-						}
-					}
-				}
-				else {
-					if (biomodelsim.getTitleAt(i).equals(modelFile)) {
-						if (biomodelsim.getTab().getComponentAt(i) instanceof LHPNEditor) {
-							LHPNEditor lpn = ((LHPNEditor) (biomodelsim.getTab().getComponentAt(i)));
-							if (lpn.isDirty()) {
-								Object[] options = { "Yes", "No" };
-								int value = JOptionPane
-										.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelFile
-												+ " before running the simulation?", "Save Changes",
-												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-												options[0]);
-								if (value == JOptionPane.YES_OPTION) {
-									lpn.save();
-								}
-							}
-						}
-					}
-				}
-			}
-			if (modelEditor != null) {
-				modelEditor.saveParams(true, stem, ignoreSweep, simulators.getSelectedItem().toString());
-			}
-			else {
-				if (!stem.equals("")) {
-				}
-				Translator t1 = new Translator();
-				if (abstraction.isSelected()) {
-					LhpnFile lhpnFile = new LhpnFile();
-					lhpnFile.load(root + separator + modelFile);
-					Abstraction abst = new Abstraction(lhpnFile, lhpnAbstraction);
-					abst.abstractSTG(false);
-					abst.save(root + separator + simName + separator + modelFile);
-					if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none")) {
-						t1.convertLPN2SBML(root + separator + simName + separator + modelFile,
-								((String) transientProperties.getSelectedItem()));
-					}
-					else {
-						t1.convertLPN2SBML(root + separator + simName + separator + modelFile, "");
-					}
-				}
-				else {
-					if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none")) {
-						t1.convertLPN2SBML(root + separator + modelFile, ((String) transientProperties.getSelectedItem()));
-					}
-					else {
-						t1.convertLPN2SBML(root + separator + modelFile, "");
-					}
-				}
-				t1.setFilename(root + separator + simName + separator + stem + separator
-						+ modelFile.replace(".lpn", ".xml"));
-				t1.outputSBML();
-				if (!stem.equals("")) {
-					new File(root + separator + simName + separator + stem).mkdir();
-					new AnalysisThread(this).start(stem, true);
-				}
-				else {
-					new AnalysisThread(this).start(".", true);
-				}
-				emptyFrames();
-			}
-		}
-		else if (e.getSource() == save) {
-			boolean ignoreSweep = false;
-			if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected() || lhpn.isSelected()) {
-				ignoreSweep = true;
-			}
-			if (modelEditor != null) {
-				modelEditor.saveParams(false, "", ignoreSweep, simulators.getSelectedItem().toString());
-			}
-			save();
 		}
 		else if ((e.getSource() == addPreAbs) || (e.getSource() == addLoopAbs) || (e.getSource() == addPostAbs)) {
-			JPanel addAbsPanel = new JPanel(new BorderLayout());
-			JComboBox absList = new JComboBox();
-			if (e.getSource() == addPreAbs)
-				absList.addItem("complex-formation-and-sequestering-abstraction");
-			// absList.addItem("species-sequestering-abstraction");
-			absList.addItem("operator-site-reduction-abstraction");
-			absList.addItem("absolute-activation/inhibition-generator");
-			absList.addItem("absolute-inhibition-generator");
-			absList.addItem("birth-death-generator");
-			absList.addItem("birth-death-generator2");
-			absList.addItem("birth-death-generator3");
-			absList.addItem("birth-death-generator4");
-			absList.addItem("birth-death-generator5");
-			absList.addItem("birth-death-generator6");
-			absList.addItem("birth-death-generator7");
-			absList.addItem("degradation-stoichiometry-amplifier");
-			absList.addItem("degradation-stoichiometry-amplifier2");
-			absList.addItem("degradation-stoichiometry-amplifier3");
-			absList.addItem("degradation-stoichiometry-amplifier4");
-			absList.addItem("degradation-stoichiometry-amplifier5");
-			absList.addItem("degradation-stoichiometry-amplifier6");
-			absList.addItem("degradation-stoichiometry-amplifier7");
-			absList.addItem("degradation-stoichiometry-amplifier8");
-			absList.addItem("dimer-to-monomer-substitutor");
-			absList.addItem("dimerization-reduction");
-			absList.addItem("dimerization-reduction-level-assignment");
-			absList.addItem("distribute-transformer");
-			absList.addItem("enzyme-kinetic-qssa-1");
-			absList.addItem("enzyme-kinetic-rapid-equilibrium-1");
-			absList.addItem("enzyme-kinetic-rapid-equilibrium-2");
-			absList.addItem("final-state-generator");
-			absList.addItem("inducer-structure-transformer");
-			absList.addItem("irrelevant-species-remover");
-			absList.addItem("kinetic-law-constants-simplifier");
-			absList.addItem("max-concentration-reaction-adder");
-			absList.addItem("modifier-constant-propagation");
-			absList.addItem("modifier-structure-transformer");
-			absList.addItem("multiple-products-reaction-eliminator");
-			absList.addItem("multiple-reactants-reaction-eliminator");
-			absList.addItem("nary-order-unary-transformer");
-			absList.addItem("nary-order-unary-transformer2");
-			absList.addItem("nary-order-unary-transformer3");
-			absList.addItem("operator-site-forward-binding-remover");
-			absList.addItem("operator-site-forward-binding-remover2");
-			absList.addItem("pow-kinetic-law-transformer");
-			absList.addItem("ppta");
-			absList.addItem("reversible-reaction-structure-transformer");
-			absList.addItem("reversible-to-irreversible-transformer");
-			absList.addItem("similar-reaction-combiner");
-			absList.addItem("single-reactant-product-reaction-eliminator");
-			absList.addItem("stoichiometry-amplifier");
-			absList.addItem("stoichiometry-amplifier2");
-			absList.addItem("stoichiometry-amplifier3");
-			absList.addItem("stop-flag-generator");
-			addAbsPanel.add(absList, "Center");
-			String[] options = { "Add", "Cancel" };
-			int value = JOptionPane.showOptionDialog(Gui.frame, addAbsPanel, "Add abstraction method",
-					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (value == JOptionPane.YES_OPTION) {
-				if (e.getSource() == addPreAbs) {
-					Utility.add(preAbs, absList.getSelectedItem());
-				}
-				else if (e.getSource() == addLoopAbs) {
-					Utility.add(loopAbs, absList.getSelectedItem());
-				}
-				else {
-					Utility.add(postAbs, absList.getSelectedItem());
-				}
-			}
+			addAbstractionMethod(e);
 		}
 		else if (e.getSource() == rmPreAbs) {
 			Utility.remove(preAbs);
@@ -1673,101 +568,126 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == rmPostAbs) {
 			Utility.remove(postAbs);
 		}
-		// if the remove ssa button is clicked
-		/*
-		 * else if (e.getSource() == removeSSA) { ssaList = Utility.remove(ssa,
-		 * ssaList); } // if the remove sad button is clicked else if
-		 * (e.getSource() == removeSAD) { sadList = Utility.remove(sad,
-		 * sadList); } // if the new ssa button is clicked else if
-		 * (e.getSource() == newSSA) { ssaList = new Object[0];
-		 * ssa.setListData(ssaList); ssa.setEnabled(true);
-		 * timeLabel.setEnabled(true); time.setEnabled(true);
-		 * availSpecies.setEnabled(true); ssaMod.setEnabled(true);
-		 * ssaModNum.setEnabled(true); addSSA.setEnabled(true);
-		 * editSSA.setEnabled(true); removeSSA.setEnabled(true); } // if the new
-		 * sad button is clicked else if (e.getSource() == newSAD) { sadList =
-		 * new Object[0]; sad.setListData(sadList); TCid.setText("");
-		 * desc.setText(""); cond.setText(""); } // if the new sad button is
-		 * clicked else if (e.getSource() == newProp) { props = new Object[0];
-		 * properties.setListData(props); prop.setText(""); value.setText(""); }
-		 * // if the remove properties button is clicked else if (e.getSource()
-		 * == removeProp) { props = Utility.remove(properties, props); } // if
-		 * the add properties button is clicked else if (e.getSource() ==
-		 * addProp) { if (prop.getText().trim().equals("")) {
-		 * JOptionPane.showMessageDialog(Gui.frame,
-		 * "Enter a option into the option field!", "Must Enter an Option",
-		 * JOptionPane.ERROR_MESSAGE); return; } if
-		 * (value.getText().trim().equals("")) {
-		 * JOptionPane.showMessageDialog(Gui.frame,
-		 * "Enter a value into the value field!", "Must Enter a Value",
-		 * JOptionPane.ERROR_MESSAGE); return; } String add =
-		 * prop.getText().trim() + "=" + value.getText().trim(); JList
-		 * addPropery = new JList(); Object[] adding = { add };
-		 * addPropery.setListData(adding); addPropery.setSelectedIndex(0); props
-		 * = Utility.add(props, properties, addPropery, false, null, null, null,
-		 * null, null, null, this); }
-		 */
 		else if (e.getSource() == append) {
-			if (append.isSelected()) {
-				limit.setEnabled(false);
-				interval.setEnabled(false);
-				limitLabel.setEnabled(false);
-				intervalLabel.setEnabled(false);
+			setupToAppendRuns();
+		}
+	}
+	
+	/* Add an abstraction method */
+	private void addAbstractionMethod(ActionEvent e) {
+		JPanel addAbsPanel = new JPanel(new BorderLayout());
+		JComboBox absList = new JComboBox();
+		if (e.getSource() == addPreAbs)
+			absList.addItem("complex-formation-and-sequestering-abstraction");
+		absList.addItem("operator-site-reduction-abstraction");
+		absList.addItem("absolute-activation/inhibition-generator");
+		absList.addItem("absolute-inhibition-generator");
+		absList.addItem("birth-death-generator");
+		absList.addItem("birth-death-generator2");
+		absList.addItem("birth-death-generator3");
+		absList.addItem("birth-death-generator4");
+		absList.addItem("birth-death-generator5");
+		absList.addItem("birth-death-generator6");
+		absList.addItem("birth-death-generator7");
+		absList.addItem("degradation-stoichiometry-amplifier");
+		absList.addItem("degradation-stoichiometry-amplifier2");
+		absList.addItem("degradation-stoichiometry-amplifier3");
+		absList.addItem("degradation-stoichiometry-amplifier4");
+		absList.addItem("degradation-stoichiometry-amplifier5");
+		absList.addItem("degradation-stoichiometry-amplifier6");
+		absList.addItem("degradation-stoichiometry-amplifier7");
+		absList.addItem("degradation-stoichiometry-amplifier8");
+		absList.addItem("dimer-to-monomer-substitutor");
+		absList.addItem("dimerization-reduction");
+		absList.addItem("dimerization-reduction-level-assignment");
+		absList.addItem("distribute-transformer");
+		absList.addItem("enzyme-kinetic-qssa-1");
+		absList.addItem("enzyme-kinetic-rapid-equilibrium-1");
+		absList.addItem("enzyme-kinetic-rapid-equilibrium-2");
+		absList.addItem("final-state-generator");
+		absList.addItem("inducer-structure-transformer");
+		absList.addItem("irrelevant-species-remover");
+		absList.addItem("kinetic-law-constants-simplifier");
+		absList.addItem("max-concentration-reaction-adder");
+		absList.addItem("modifier-constant-propagation");
+		absList.addItem("modifier-structure-transformer");
+		absList.addItem("multiple-products-reaction-eliminator");
+		absList.addItem("multiple-reactants-reaction-eliminator");
+		absList.addItem("nary-order-unary-transformer");
+		absList.addItem("nary-order-unary-transformer2");
+		absList.addItem("nary-order-unary-transformer3");
+		absList.addItem("operator-site-forward-binding-remover");
+		absList.addItem("operator-site-forward-binding-remover2");
+		absList.addItem("pow-kinetic-law-transformer");
+		absList.addItem("ppta");
+		absList.addItem("reversible-reaction-structure-transformer");
+		absList.addItem("reversible-to-irreversible-transformer");
+		absList.addItem("similar-reaction-combiner");
+		absList.addItem("single-reactant-product-reaction-eliminator");
+		absList.addItem("stoichiometry-amplifier");
+		absList.addItem("stoichiometry-amplifier2");
+		absList.addItem("stoichiometry-amplifier3");
+		absList.addItem("stop-flag-generator");
+		addAbsPanel.add(absList, "Center");
+		String[] options = { "Add", "Cancel" };
+		int value = JOptionPane.showOptionDialog(Gui.frame, addAbsPanel, "Add abstraction method",
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		if (value == JOptionPane.YES_OPTION) {
+			if (e.getSource() == addPreAbs) {
+				Utility.add(preAbs, absList.getSelectedItem());
+			}
+			else if (e.getSource() == addLoopAbs) {
+				Utility.add(loopAbs, absList.getSelectedItem());
 			}
 			else {
-				limit.setEnabled(true);
-				interval.setEnabled(true);
-				limitLabel.setEnabled(true);
-				intervalLabel.setEnabled(true);
-			}
-			Random rnd = new Random();
-			seed.setText("" + rnd.nextInt());
-			int cut = 0;
-			String[] getFilename = sbmlProp.split(separator);
-			for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
-				if (getFilename[getFilename.length - 1].charAt(i) == '.') {
-					cut = i;
-				}
-			}
-			String propName = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
-					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
-			try {
-				if (new File(propName).exists()) {
-					Properties getProps = new Properties();
-					FileInputStream load = new FileInputStream(new File(propName));
-					getProps.load(load);
-					load.close();
-					if (getProps.containsKey("monte.carlo.simulation.time.limit")) {
-						minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
-						step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
-						limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
-						interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
-					}
-				}
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				Utility.add(postAbs, absList.getSelectedItem());
 			}
 		}
-		/*
-		 * else if (e.getActionCommand().contains("box")) { int num =
-		 * Integer.parseInt(e.getActionCommand().substring(3)) - 1; if
-		 * (!((JCheckBox) speciesInt.get(num).get(0)).isSelected()) { for (int i
-		 * = 2; i < speciesInt.get(num).size(); i++) {
-		 * speciesInt.get(num).get(i).setEnabled(false); } } else { if
-		 * (gcmEditor == null ||
-		 * !(gcmEditor.getGCM().getBiochemicalSpecies().contains(((JTextField)
-		 * speciesInt.get(num).get(1)).getText()) || gcmEditor
-		 * .getGCM().getInputSpecies().contains(((JTextField)
-		 * speciesInt.get(num).get(1)).getText()))) { for (int i = 2; i <
-		 * speciesInt.get(num).size(); i++) {
-		 * speciesInt.get(num).get(i).setEnabled(true); } } } } else if
-		 * (e.getActionCommand().contains("text")) { int num =
-		 * Integer.parseInt(e.getActionCommand().substring(4)) - 1;
-		 * editNumThresholds(num); speciesPanel.revalidate();
-		 * speciesPanel.repaint(); }
-		 */
+	}
+	
+	/* Setup to append runs */
+	private void setupToAppendRuns() {
+		if (append.isSelected()) {
+			limit.setEnabled(false);
+			interval.setEnabled(false);
+			limitLabel.setEnabled(false);
+			intervalLabel.setEnabled(false);
+		}
+		else {
+			limit.setEnabled(true);
+			interval.setEnabled(true);
+			limitLabel.setEnabled(true);
+			intervalLabel.setEnabled(true);
+		}
+		Random rnd = new Random();
+		seed.setText("" + rnd.nextInt());
+		int cut = 0;
+		String[] getFilename = sbmlProp.split(File.separator);
+		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
+			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
+				cut = i;
+			}
+		}
+		String propName = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
+				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
+		try {
+			if (new File(propName).exists()) {
+				Properties getProps = new Properties();
+				FileInputStream load = new FileInputStream(new File(propName));
+				getProps.load(load);
+				load.close();
+				if (getProps.containsKey("monte.carlo.simulation.time.limit")) {
+					minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
+					step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
+					limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
+					interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
+				}
+			}
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	/**
@@ -1778,7 +698,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 * @throws XMLStreamException 
 	 * @throws NumberFormatException 
 	 */
-	public void run(String direct, boolean refresh) throws NumberFormatException, XMLStreamException {
+	public void run(String direct, boolean refresh) {
 		double timeLimit = 100.0;
 		double printInterval = 1.0;
 		double minTimeStep = 0.0;
@@ -1878,7 +798,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			outDir = simName;
 		}
 		else {
-			outDir = simName + separator + direct;
+			outDir = simName + File.separator + direct;
 		}
 		try {
 			// if (seed.isEnabled()) {
@@ -1908,7 +828,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			return;
 		}
 		if (!runs.isEnabled()) {
-			for (String runs : new File(root + separator + outDir).list()) {
+			for (String runs : new File(root + File.separator + outDir).list()) {
 				if (runs.length() >= 4) {
 					String end = "";
 					for (int j = 1; j < 5; j++) {
@@ -1990,7 +910,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			return;
 		}
 		try {
-			if (abstraction.isSelected())
+			if (reactionAbstraction.isSelected())
 				stoichAmp = Double.parseDouble(diffStoichAmp.getText().trim());
 			else
 				stoichAmp = 1;
@@ -2000,106 +920,94 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					+ " amp. field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		if (none.isSelected() && ODE.isSelected()) {
+		if (noAbstraction.isSelected() && ODE.isSelected()) {
 			selectedButtons = "none_ODE";
 		}
-		else if (none.isSelected() && monteCarlo.isSelected()) {
+		else if (noAbstraction.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "none_monteCarlo";
 		}
-		else if (expand.isSelected() && ODE.isSelected()) {
+		else if (expandReactions.isSelected() && ODE.isSelected()) {
 			selectedButtons = "expand_ODE";
 		}
-		else if (expand.isSelected() && monteCarlo.isSelected()) {
+		else if (expandReactions.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "expand_monteCarlo";
 		}
-		else if (abstraction.isSelected() && ODE.isSelected()) {
+		else if (reactionAbstraction.isSelected() && ODE.isSelected()) {
 			selectedButtons = "abs_ODE";
 		}
-		else if (abstraction.isSelected() && monteCarlo.isSelected()) {
+		else if (reactionAbstraction.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "abs_monteCarlo";
 		}
-		else if (nary.isSelected() && monteCarlo.isSelected()) {
+		else if (stateAbstraction.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "nary_monteCarlo";
 		}
-		else if (none.isSelected() && fba.isSelected()) {
+		else if (noAbstraction.isSelected() && fba.isSelected()) {
 			selectedButtons = "none_fba";
 		}
-		else if (expand.isSelected() && fba.isSelected()) {
+		else if (expandReactions.isSelected() && fba.isSelected()) {
 			selectedButtons = "expand_fba";
 		}
-		else if (nary.isSelected() && markov.isSelected()) {
+		else if (stateAbstraction.isSelected() && markov.isSelected()) {
 			selectedButtons = "nary_markov";
 		}
-		else if (none.isSelected() && markov.isSelected()) {
+		else if (noAbstraction.isSelected() && markov.isSelected()) {
 			selectedButtons = "none_markov";
 		}
-		else if (expand.isSelected() && markov.isSelected()) {
+		else if (expandReactions.isSelected() && markov.isSelected()) {
 			selectedButtons = "expand_markov";
 		}
-		else if (abstraction.isSelected() && markov.isSelected()) {
+		else if (reactionAbstraction.isSelected() && markov.isSelected()) {
 			selectedButtons = "abs_markov";
 		}
-		else if (none.isSelected() && sbml.isSelected()) {
+		else if (noAbstraction.isSelected() && sbml.isSelected()) {
 			selectedButtons = "none_sbml";
 		}
-		else if (expand.isSelected() && sbml.isSelected()) {
+		else if (expandReactions.isSelected() && sbml.isSelected()) {
 			selectedButtons = "expand_sbml";
 		}
-		else if (abstraction.isSelected() && sbml.isSelected()) {
+		else if (reactionAbstraction.isSelected() && sbml.isSelected()) {
 			selectedButtons = "abs_sbml";
 		}
-		else if (nary.isSelected() && sbml.isSelected()) {
+		else if (stateAbstraction.isSelected() && sbml.isSelected()) {
 			selectedButtons = "nary_sbml";
 		}
-		else if (none.isSelected() && dot.isSelected()) {
+		else if (noAbstraction.isSelected() && dot.isSelected()) {
 			selectedButtons = "none_dot";
 		}
-		else if (none.isSelected() && lhpn.isSelected()) {
-			selectedButtons = "none_lhpn";
-		}
-		else if (expand.isSelected() && dot.isSelected()) {
+		else if (expandReactions.isSelected() && dot.isSelected()) {
 			selectedButtons = "expand_dot";
 		}
-		else if (expand.isSelected() && lhpn.isSelected()) {
-			selectedButtons = "expand_lhpn";
-		}
-		else if (abstraction.isSelected() && dot.isSelected()) {
+		else if (reactionAbstraction.isSelected() && dot.isSelected()) {
 			selectedButtons = "abs_dot";
 		}
-		else if (nary.isSelected() && dot.isSelected()) {
+		else if (stateAbstraction.isSelected() && dot.isSelected()) {
 			selectedButtons = "nary_dot";
 		}
-		else if (none.isSelected() && xhtml.isSelected()) {
+		else if (noAbstraction.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "none_xhtml";
 		}
-		else if (expand.isSelected() && xhtml.isSelected()) {
+		else if (expandReactions.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "expand_xhtml";
 		}
-		else if (abstraction.isSelected() && xhtml.isSelected()) {
+		else if (reactionAbstraction.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "abs_xhtml";
 		}
-		else if (nary.isSelected() && xhtml.isSelected()) {
+		else if (stateAbstraction.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "nary_xhtml";
-		}
-		else if (nary.isSelected() && lhpn.isSelected()) {
-			selectedButtons = "nary_lhpn";
-		}
-		else if (abstraction.isSelected() && lhpn.isSelected()) {
-			selectedButtons = "abs_lhpn";
 		}
 		int cut = 0;
 		String simProp = sbmlProp;
 		boolean saveTopLevel = false;
 		if (!direct.equals(".")) {
 			simProp = simProp.substring(0, simProp.length()
-					- simProp.split(separator)[simProp.split(separator).length - 1].length())
+					- simProp.split(File.separator)[simProp.split(File.separator).length - 1].length())
 					+ direct
-					+ separator
+					+ File.separator
 					+ simProp.substring(simProp.length()
-							- simProp.split(separator)[simProp.split(separator).length - 1].length());
+							- simProp.split(File.separator)[simProp.split(File.separator).length - 1].length());
 			saveTopLevel = true;
 		}
-		String[] getFilename = simProp.split(separator);
+		String[] getFilename = simProp.split(File.separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
 			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
 				cut = i;
@@ -2215,7 +1123,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		int numPaths = Integer.parseInt((String)(bifurcation.getSelectedItem()));
 		Run.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
 				minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths, intSpecies, printer_id, printer_track_quantity, 
-				generate_statistics, simProp.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, 
+				generate_statistics, simProp.split(File.separator), selectedButtons, this, simProp, rap1, rap2, qss, con, 
 				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction, mpde.isSelected(), meanPath.isSelected(), 
 				adaptive.isSelected());
 		try {
@@ -2232,11 +1140,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			if (monteCarlo.isSelected() || ODE.isSelected()) {
 				if (append.isSelected()) {
-					String[] searchForRunFiles = new File(root + separator + outDir).list();
+					String[] searchForRunFiles = new File(root + File.separator + outDir).list();
 					int start = 1;
 					for (String s : searchForRunFiles) {
 						if (s.length() > 3 && s.substring(0, 4).equals("run-")
-								&& new File(root + separator + outDir + separator + s).isFile()) {
+								&& new File(root + File.separator + outDir + File.separator + s).isFile()) {
 							String getNumber = s.substring(4, s.length());
 							String number = "";
 							for (int i = 0; i < getNumber.length(); i++) {
@@ -2250,20 +1158,20 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							start = Math.max(Integer.parseInt(number), start);
 						}
 						else if (s.length() > 3
-								&& new File(root + separator + outDir + separator + s).isFile()
+								&& new File(root + File.separator + outDir + File.separator + s).isFile()
 								&& (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s
 										.equals("variance.tsd"))) {
-							new File(root + separator + outDir + separator + s).delete();
+							new File(root + File.separator + outDir + File.separator + s).delete();
 						}
 					}
 					getProps.setProperty("monte.carlo.simulation.start.index", (start + 1) + "");
 				}
 				else {
-					String[] searchForRunFiles = new File(root + separator + outDir).list();
+					String[] searchForRunFiles = new File(root + File.separator + outDir).list();
 					for (String s : searchForRunFiles) {
 						if (s.length() > 3 && s.substring(0, 4).equals("run-")
-								&& new File(root + separator + outDir + separator + s).isFile()) {
-							new File(root + separator + outDir + separator + s).delete();
+								&& new File(root + File.separator + outDir + File.separator + s).isFile()) {
+							new File(root + File.separator + outDir + File.separator + s).delete();
 						}
 					}
 					getProps.setProperty("monte.carlo.simulation.start.index", "1");
@@ -2285,7 +1193,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					JOptionPane.ERROR_MESSAGE);
 		}
 		if (monteCarlo.isSelected() || ODE.isSelected()) {
-			File[] files = new File(root + separator + outDir).listFiles();
+			File[] files = new File(root + File.separator + outDir).listFiles();
 			for (File f : files) {
 				if (f.getName().contains("mean.") || f.getName().contains("standard_deviation.")
 						|| f.getName().contains("variance.")) {
@@ -2301,10 +1209,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					lpnProperty = ((String) transientProperties.getSelectedItem());
 				}
 			}
-			exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id,
-					printer_track_quantity, root + separator + simName, nary, 1, intSpecies, log, biomodelsim, simTab,
+			exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id,
+					printer_track_quantity, root + File.separator + simName, stateAbstraction, 1, intSpecies, log, biomodelsim, simTab,
 					root, progress, simName + " " + direct, modelEditor, direct, timeLimit, runTime, modelFile,
-					lhpnAbstraction, abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed,
+					lhpnAbstraction, reactionAbstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed,
 					refresh, label, running);
 		}
 		else {
@@ -2314,27 +1222,26 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					lpnProperty = ((String) transientProperties.getSelectedItem());
 				}
 			}
-			exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id,
-					printer_track_quantity, root + separator + simName, nary, 1, intSpecies, log, biomodelsim, simTab,
+			exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id,
+					printer_track_quantity, root + File.separator + simName, stateAbstraction, 1, intSpecies, log, biomodelsim, simTab,
 					root, progress, simName, modelEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction,
-					abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label, running);
+					reactionAbstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label, running);
 		}
-		if (nary.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
-				&& exit == 0) {
+		if (stateAbstraction.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && exit == 0) {
 			String d = null;
 			if (!direct.equals(".")) {
 				d = direct;
 			}
-			Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split(separator), simProp, fba, sbml, dot, xhtml, lhpn, nary, ODE, monteCarlo, timeLimit,
-					((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + separator + simName, rndSeed,
+			Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split(File.separator), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo, timeLimit,
+					((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + File.separator + simName, rndSeed,
 					run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss,
-					con, log, biomodelsim, simTab, root, d, modelFile, abstraction, lhpnAbstraction, absError);
+					con, log, biomodelsim, simTab, root, d, modelFile, reactionAbstraction, lhpnAbstraction, absError);
 			nary_Run.open();
 		}
 		running.setCursor(null);
 		running.dispose();
 		biomodelsim.getExitButton().removeActionListener(runProgram);
-		String[] searchForRunFiles = new File(root + separator + outDir).list();
+		String[] searchForRunFiles = new File(root + File.separator + outDir).list();
 		for (String s : searchForRunFiles) {
 			if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
 				runFiles = true;
@@ -2370,48 +1277,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 	}
 
-	public void emptyFrames() {
-		for (JFrame f : frames) {
-			f.dispose();
-		}
-	}
-
-	/**
-	 * Invoked when the mouse is double clicked in the interesting species
-	 * JLists or termination conditions JLists. Adds or removes the selected
-	 * interesting species or termination conditions.
-	 */
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	/**
-	 * This method currently does nothing.
-	 */
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
-
-	/**
-	 * This method currently does nothing.
-	 */
-	@Override
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	/**
-	 * This method currently does nothing.
-	 */
-	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	/**
-	 * This method currently does nothing.
-	 */
-	@Override
-	public void mouseExited(MouseEvent e) {
-	}
 
 	/**
 	 * Saves the simulate options.
@@ -2568,7 +1433,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			return;
 		}
 		try {
-			if (abstraction.isSelected())
+			if (reactionAbstraction.isSelected())
 				stoichAmp = Double.parseDouble(diffStoichAmp.getText().trim());
 			else
 				stoichAmp = 1;
@@ -2578,96 +1443,84 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					+ " Amp. Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		if (none.isSelected() && ODE.isSelected()) {
+		if (noAbstraction.isSelected() && ODE.isSelected()) {
 			selectedButtons = "none_ODE";
 		}
-		else if (none.isSelected() && monteCarlo.isSelected()) {
+		else if (noAbstraction.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "none_monteCarlo";
 		}
-		else if (expand.isSelected() && ODE.isSelected()) {
+		else if (expandReactions.isSelected() && ODE.isSelected()) {
 			selectedButtons = "expand_ODE";
 		}
-		else if (expand.isSelected() && monteCarlo.isSelected()) {
+		else if (expandReactions.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "expand_monteCarlo";
 		}
-		else if (abstraction.isSelected() && ODE.isSelected()) {
+		else if (reactionAbstraction.isSelected() && ODE.isSelected()) {
 			selectedButtons = "abs_ODE";
 		}
-		else if (abstraction.isSelected() && monteCarlo.isSelected()) {
+		else if (reactionAbstraction.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "abs_monteCarlo";
 		}
-		else if (nary.isSelected() && monteCarlo.isSelected()) {
+		else if (stateAbstraction.isSelected() && monteCarlo.isSelected()) {
 			selectedButtons = "nary_monteCarlo";
 		}
-		else if (nary.isSelected() && markov.isSelected()) {
+		else if (stateAbstraction.isSelected() && markov.isSelected()) {
 			selectedButtons = "nary_markov";
 		}
-		else if (abstraction.isSelected() && markov.isSelected()) {
+		else if (reactionAbstraction.isSelected() && markov.isSelected()) {
 			selectedButtons = "abs_markov";
 		}
-		else if (abstraction.isSelected() && sbml.isSelected()) {
+		else if (reactionAbstraction.isSelected() && sbml.isSelected()) {
 			selectedButtons = "abs_sbml";
 		}
-		else if (nary.isSelected() && sbml.isSelected()) {
+		else if (stateAbstraction.isSelected() && sbml.isSelected()) {
 			selectedButtons = "nary_sbml";
 		}
-		else if (abstraction.isSelected() && dot.isSelected()) {
+		else if (reactionAbstraction.isSelected() && dot.isSelected()) {
 			selectedButtons = "abs_dot";
 		}
-		else if (nary.isSelected() && dot.isSelected()) {
+		else if (stateAbstraction.isSelected() && dot.isSelected()) {
 			selectedButtons = "nary_dot";
 		}
-		else if (none.isSelected() && fba.isSelected()) {
+		else if (noAbstraction.isSelected() && fba.isSelected()) {
 			selectedButtons = "none_fba";
 		}
-		else if (none.isSelected() && markov.isSelected()) {
+		else if (noAbstraction.isSelected() && markov.isSelected()) {
 			selectedButtons = "none_markov";
 		}
-		else if (none.isSelected() && sbml.isSelected()) {
+		else if (noAbstraction.isSelected() && sbml.isSelected()) {
 			selectedButtons = "none_sbml";
 		}
-		else if (none.isSelected() && dot.isSelected()) {
+		else if (noAbstraction.isSelected() && dot.isSelected()) {
 			selectedButtons = "none_dot";
 		}
-		else if (none.isSelected() && lhpn.isSelected()) {
-			selectedButtons = "none_lhpn";
-		}
-		else if (none.isSelected() && xhtml.isSelected()) {
+		else if (noAbstraction.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "none_xhtml";
 		}
-		else if (expand.isSelected() && fba.isSelected()) {
+		else if (expandReactions.isSelected() && fba.isSelected()) {
 			selectedButtons = "expand_fba";
 		}
-		else if (expand.isSelected() && markov.isSelected()) {
+		else if (expandReactions.isSelected() && markov.isSelected()) {
 			selectedButtons = "expand_markov";
 		}
-		else if (expand.isSelected() && sbml.isSelected()) {
+		else if (expandReactions.isSelected() && sbml.isSelected()) {
 			selectedButtons = "expand_sbml";
 		}
-		else if (expand.isSelected() && dot.isSelected()) {
+		else if (expandReactions.isSelected() && dot.isSelected()) {
 			selectedButtons = "expand_dot";
 		}
-		else if (expand.isSelected() && lhpn.isSelected()) {
-			selectedButtons = "expand_lhpn";
-		}
-		else if (expand.isSelected() && xhtml.isSelected()) {
+		else if (expandReactions.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "expand_xhtml";
 		}
-		else if (abstraction.isSelected() && xhtml.isSelected()) {
+		else if (reactionAbstraction.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "abs_xhtml";
 		}
-		else if (nary.isSelected() && xhtml.isSelected()) {
+		else if (stateAbstraction.isSelected() && xhtml.isSelected()) {
 			selectedButtons = "nary_xhtml";
-		}
-		else if (nary.isSelected() && lhpn.isSelected()) {
-			selectedButtons = "nary_lhpn";
-		}
-		else if (abstraction.isSelected() && lhpn.isSelected()) {
-			selectedButtons = "abs_lhpn";
 		}
 		//Run runProgram = new Run(this);
 		int cut = 0;
-		String[] getFilename = sbmlProp.split(separator);
+		String[] getFilename = sbmlProp.split(File.separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
 			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
 				cut = i;
@@ -2679,7 +1532,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		int numPaths = Integer.parseInt((String)(bifurcation.getSelectedItem()));
 		Run.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
 				minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths, intSpecies, printer_id, printer_track_quantity, 
-				generate_statistics, sbmlProp.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, 
+				generate_statistics, sbmlProp.split(File.separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, 
 				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction, mpde.isSelected(), meanPath.isSelected(), 
 				adaptive.isSelected());
 		try {
@@ -2708,6 +1561,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	}
 	
 	private void loadSEDML() {
+		sedmlFilename = root + File.separator + simName + File.separator + modelFile.replace(".xml","") + "-sedml.xml";
 		File sedmlFile = new File(sedmlFilename);
 		if (sedmlFile.exists()) {
 			try {
@@ -2726,9 +1580,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				if (simulations.size() > 0) {
 					if (simulations.get(0).getAlgorithm().getKisaoID().equals("KISAO:0000019")) {
 						ODE.setSelected(true);
-						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
-								simulatorsLabel, explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
+						enableODE();
 						simulators.setSelectedItem("Runge-Kutta-Fehlberg");
 						UniformTimeCourse simulation = (UniformTimeCourse) simulations.get(0);
 						//KisaoTerm kisaoTerm = KisaoOntology.getInstance().getTermById(simulation.getAlgorithm().getKisaoID());
@@ -2749,9 +1601,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						limit.setText(""+simulation.getOutputEndTime());
 					} else if (simulations.get(0).getAlgorithm().getKisaoID().equals("KISAO:0000437")) {
 						fba.setSelected(true);
-						Button_Enabling.enableFBA(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-								explanation, description, fileStem, fileStemLabel, abstraction, nary, postAbs);
+						enableFBA();
 						absErr.setText("1e-4");
 					}
 				}
@@ -2914,7 +1764,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/**
 	 * Loads the simulate options.
 	 */
-	public void open(String openFile) {
+	private void loadPropertiesFile(String openFile) {
+		if (openFile==null) return;
 		Properties load = new Properties();
 		try {
 			if (!openFile.equals("")) {
@@ -3276,56 +2127,20 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					lhpnAbstraction.postAbs.setListData(lhpnAbstraction.postAbsModel.toArray());
 				}
 				if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
-					none.setSelected(true);
-					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
-							minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							simulators, simulatorsLabel, explanation, description, none, expand, rapid1, rapid2, qssa, maxCon,
-							diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
-							fileStemLabel, preAbs, loopAbs, postAbs,
-							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-							editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, abstraction, nary);
-					if (modelFile.contains(".lpn")) {
-						markov.setEnabled(true);
-						lhpn.setEnabled(true);
-					}
+					noAbstraction.setSelected(true);
+					enableNoneOrAbs();
 				}
 				else if (load.getProperty("reb2sac.abstraction.method").equals("expand")) {
-					expand.setSelected(true);
-					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
-							minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							simulators, simulatorsLabel, explanation, description, none, expand, rapid1, rapid2, qssa, maxCon,
-							diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
-							fileStemLabel, preAbs, loopAbs, postAbs,
-							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-							editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, abstraction, nary);
-					if (modelFile.contains(".lpn")) {
-						markov.setEnabled(true);
-						lhpn.setEnabled(true);
-					}
+					expandReactions.setSelected(true);
+					enableNoneOrAbs();
 				}
 				else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
-					abstraction.setSelected(true);
-					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
-							minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							simulators, simulatorsLabel, explanation, description, none, expand, rapid1, rapid2, qssa, maxCon,
-							diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, 
-							fileStemLabel, preAbs, loopAbs, postAbs,
-							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-							editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, abstraction, nary);
-					if (modelFile.contains(".lpn")) {
-						markov.setEnabled(true);
-						lhpn.setEnabled(true);
-					}
+					reactionAbstraction.setSelected(true);
+					enableNoneOrAbs();
 				}
 				else {
-					nary.setSelected(true);
-					Button_Enabling.enableNary(ODE, monteCarlo, markov, fba, seed, seedLabel, runs, runsLabel, minStepLabel,
-							minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							simulators, simulatorsLabel, explanation, description, rapid1, rapid2, qssa, maxCon,
-							rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs,
-							postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs,
-							addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, modelEditor, 
-							abstraction, nary);
+					stateAbstraction.setSelected(true);
+					enableNary();
 				}
 				if (load.containsKey("ode.simulation.absolute.error")) {
 					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
@@ -3380,7 +2195,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					explanation.setEnabled(true);
 					simulators.setEnabled(true);
 					simulatorsLabel.setEnabled(true);
-					if (!nary.isSelected()) {
+					if (!stateAbstraction.isSelected()) {
 						ODE.setEnabled(true);
 					}
 					else {
@@ -3421,9 +2236,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						if (load.containsKey("ode.simulation.min.time.step")) {
 							minStep.setText(load.getProperty("ode.simulation.min.time.step"));
 						}
-						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
-								simulatorsLabel, explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
+						enableODE();
 						if (load.containsKey("selected.simulator")) {
 							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
@@ -3438,10 +2251,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							append.setEnabled(true);
 							// choose3.setEnabled(true);
 						}
-						Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs, abstraction, nary);
+						enableMonteCarlo();
 						if (load.containsKey("selected.simulator")) {
 							String simId = load.getProperty("selected.simulator");
 							if (simId.equals("mpde")) {
@@ -3520,10 +2330,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("markov")) {
 						markov.setSelected(true);
-						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								modelEditor, postAbs, modelFile, abstraction, nary);
+						enableMarkov();
 						if (load.containsKey("selected.simulator")) {
 							selectedMarkovSim = load.getProperty("selected.simulator");
 							simulators.setSelectedItem(selectedMarkovSim);
@@ -3532,56 +2339,41 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("FBA")) {
 						fba.doClick();
-						Button_Enabling.enableFBA(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-								explanation, description, fileStem, fileStemLabel, abstraction, nary, postAbs);
+						enableFBA();
 						//absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("SBML")) {
 						sbml.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs, abstraction, nary);
+						enableSbmlDotAndXhtml();
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Network")) {
 						dot.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs, abstraction, nary);
+						enableSbmlDotAndXhtml();
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Browser")) {
 						xhtml.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs, abstraction, nary);
+						enableSbmlDotAndXhtml();
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("LPN")) {
-						lhpn.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs, abstraction, nary);
+						enableSbmlDotAndXhtml();
 						absErr.setEnabled(false);
 					}
 				}
 				if (load.containsKey("reb2sac.abstraction.method")) {
 					if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
-						none.setSelected(true);
+						noAbstraction.setSelected(true);
 					}
 					else if (load.getProperty("reb2sac.abstraction.method").equals("expand")) {
-						expand.setSelected(true);
+						expandReactions.setSelected(true);
 					}
 					else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
-						abstraction.setSelected(true);
+						reactionAbstraction.setSelected(true);
 					}
 					else if (load.getProperty("reb2sac.abstraction.method").equals("nary")) {
-						nary.setSelected(true);
+						stateAbstraction.setSelected(true);
 					}
 				}
 				if (load.containsKey("selected.property")) {
@@ -3726,7 +2518,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	}
 
 	public Graph createGraph(String open) {
-		String outDir = root + separator + simName;
+		String outDir = root + File.separator + simName;
 		String printer_id;
 		printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
@@ -3739,16 +2531,104 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				biomodelsim, open, log, null, true, false);
 	}
 
-	public JButton getRunButton() {
-		return run;
-	}
-
-	public JButton getSaveButton() {
-		return save;
+	public void executeRun() {
+		boolean ignoreSweep = false;
+		if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected()) {
+			ignoreSweep = true;
+		}
+		String stem = "";
+		if (!fileStem.getText().trim().equals("")) {
+			if (!(stemPat.matcher(fileStem.getText().trim()).matches())) {
+				JOptionPane.showMessageDialog(Gui.frame,
+						"A file stem can only contain letters, numbers, and underscores.", "Invalid File Stem",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			stem += fileStem.getText().trim();
+		}
+		for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
+			if (modelEditor != null) {
+				if (biomodelsim.getTitleAt(i).equals(modelEditor.getRefFile())) {
+					if (biomodelsim.getTab().getComponentAt(i) instanceof ModelEditor) {
+						ModelEditor gcm = ((ModelEditor) (biomodelsim.getTab().getComponentAt(i)));
+						if (gcm.isDirty()) {
+							Object[] options = { "Yes", "No" };
+							int value = JOptionPane
+									.showOptionDialog(Gui.frame,
+											"Do you want to save changes to " + modelEditor.getRefFile()
+													+ " before running the simulation?", "Save Changes",
+											JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+											options[0]);
+							if (value == JOptionPane.YES_OPTION) {
+								gcm.save("gcm");
+							}
+						}
+					}
+				}
+			}
+			else {
+				if (biomodelsim.getTitleAt(i).equals(modelFile)) {
+					if (biomodelsim.getTab().getComponentAt(i) instanceof LHPNEditor) {
+						LHPNEditor lpn = ((LHPNEditor) (biomodelsim.getTab().getComponentAt(i)));
+						if (lpn.isDirty()) {
+							Object[] options = { "Yes", "No" };
+							int value = JOptionPane
+									.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelFile
+											+ " before running the simulation?", "Save Changes",
+											JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+											options[0]);
+							if (value == JOptionPane.YES_OPTION) {
+								lpn.save();
+							}
+						}
+					}
+				}
+			}
+		}
+		if (modelEditor != null) {
+			modelEditor.saveParams(true, stem, ignoreSweep, simulators.getSelectedItem().toString());
+		}
+		else {
+			if (!stem.equals("")) {
+			}
+			Translator t1 = new Translator();
+			if (reactionAbstraction.isSelected()) {
+				LhpnFile lhpnFile = new LhpnFile();
+				lhpnFile.load(root + File.separator + modelFile);
+				Abstraction abst = new Abstraction(lhpnFile, lhpnAbstraction);
+				abst.abstractSTG(false);
+				abst.save(root + File.separator + simName + File.separator + modelFile);
+				if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none")) {
+					t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile,
+							((String) transientProperties.getSelectedItem()));
+				}
+				else {
+					t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile, "");
+				}
+			}
+			else {
+				if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none")) {
+					t1.convertLPN2SBML(root + File.separator + modelFile, ((String) transientProperties.getSelectedItem()));
+				}
+				else {
+					t1.convertLPN2SBML(root + File.separator + modelFile, "");
+				}
+			}
+			t1.setFilename(root + File.separator + simName + File.separator + stem + File.separator
+					+ modelFile.replace(".lpn", ".xml"));
+			t1.outputSBML();
+			if (!stem.equals("")) {
+				new File(root + File.separator + simName + File.separator + stem).mkdir();
+				new AnalysisThread(this).start(stem, true);
+			}
+			else {
+				new AnalysisThread(this).start(".", true);
+			}
+		}
 	}
 	
 	public boolean noExpand() {
-		return none.isSelected();
+		return noAbstraction.isSelected();
 	}
 
 	// Reports which gcm abstraction options are selected
@@ -3759,8 +2639,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			String abstractionOption = (String) preAbsList.getElementAt(i);
 			if (abstractionOption.equals("complex-formation-and-sequestering-abstraction")
 					|| abstractionOption.equals("operator-site-reduction-abstraction"))
-				// ||
-				// abstractionOption.equals("species-sequestering-abstraction"))
 				gcmAbsList.add(abstractionOption);
 		}
 		return gcmAbsList;
@@ -3773,8 +2651,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			String abstractionOption = (String) preAbsList.getElementAt(i);
 			if (!abstractionOption.equals("complex-formation-and-sequestering-abstraction")
 					&& !abstractionOption.equals("operator-site-reduction-abstraction"))
-				// &&
-				// !abstractionOption.equals("species-sequestering-abstraction"))
 				return true;
 		}
 		ListModel loopAbsList = loopAbs.getModel();
@@ -3785,18 +2661,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			return true;
 		return false;
 	}
-
-	/*
-	public void setSbml(SBML_Editor sbml) {
-		sbmlEditor = sbml;
-	}
-*/
 	
-	public void setGcm(ModelEditor gcm) {
-		modelEditor = gcm;
-		if (nary.isSelected()) {
-			lhpn.setEnabled(true);
-		}
+	public void setModelEditor(ModelEditor modelEditor) {
+		this.modelEditor = modelEditor;
 		if (markov.isSelected()) {
 			simulators.removeAllItems();
 			simulators.addItem("steady-state-markov-chain-analysis");
@@ -3815,19 +2682,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 
 	public void setSim(String newSimName) {
-		sbmlProp = root + separator + newSimName + separator
-				+ sbmlFile.split(separator)[sbmlFile.split(separator).length - 1];
+		sbmlProp = root + File.separator + newSimName + File.separator
+				+ sbmlFile.split(File.separator)[sbmlFile.split(File.separator).length - 1];
 		simName = newSimName;
 	}
 
 	public boolean hasChanged() {
 		return change;
 	}
-
-	public void addLhpnAbstraction(AbstPane pane) {
-		lhpnAbstraction = pane;
-	}
-
 
 	public String[] getInterestingSpecies() {
 		return interestingSpecies.toArray(new String[0]);
@@ -3869,46 +2731,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 	}
 
-	/*
-	 * private String[] getAllSpecies() { ArrayList<String> species = new
-	 * ArrayList<String>(); for (Object s : allSpecies) { species.add((String)
-	 * s); } for (int i = 0; i < speciesInt.size(); i++) { String spec =
-	 * ((JTextField) speciesInt.get(i).get(1)).getText(); if
-	 * (species.contains(spec)) { species.set(species.indexOf(spec), spec + " "
-	 * + getLine(i)); } } String[] speciesArray = species.toArray(new
-	 * String[0]); for (int i = 1; i < speciesArray.length; i++) { String index
-	 * = (String) speciesArray[i]; int j = i; while ((j > 0) && ((String)
-	 * speciesArray[j - 1]).compareToIgnoreCase(index) > 0) { speciesArray[j] =
-	 * speciesArray[j - 1]; j = j - 1; } speciesArray[j] = index; } return
-	 * speciesArray; }
-	 * 
-	 * private void editNumThresholds(int num) { try { ArrayList<Component>
-	 * specs = speciesInt.get(num); Component[] panels =
-	 * speciesPanel.getComponents(); int boxes = Integer.parseInt((String)
-	 * ((JComboBox) specs.get(2)).getSelectedItem()); if ((specs.size() - 3) <
-	 * boxes) { for (int i = 0; i < boxes; i++) { try { specs.get(i + 3); }
-	 * catch (Exception e1) { JTextField temp = new JTextField(""); ((JPanel)
-	 * panels[num + 1]).add(temp); specs.add(temp); } } } else { try { if (boxes
-	 * > 0) { while (true) { specs.remove(boxes + 3); ((JPanel) panels[num +
-	 * 1]).remove(boxes + 3); } } else if (boxes == 0) { while (true) {
-	 * specs.remove(3); ((JPanel) panels[num + 1]).remove(3); } } } catch
-	 * (Exception e1) { } } int max = 0; for (int i = 0; i < speciesInt.size();
-	 * i++) { max = Math.max(max, speciesInt.get(i).size()); } if (((JPanel)
-	 * panels[0]).getComponentCount() < max) { for (int i = 0; i < max - 3; i++)
-	 * { try { ((JPanel) panels[0]).getComponent(i + 3); } catch (Exception e) {
-	 * ((JPanel) panels[0]).add(new JLabel("Threshold " + (i + 1))); } } } else
-	 * { try { while (true) { ((JPanel) panels[0]).remove(max); } } catch
-	 * (Exception e) { } } for (int i = 1; i < panels.length; i++) { JPanel sp =
-	 * (JPanel) panels[i]; for (int j = sp.getComponentCount() - 1; j >= 3; j--)
-	 * { if (sp.getComponent(j) instanceof JLabel) { sp.remove(j); } } if (max >
-	 * sp.getComponentCount()) { for (int j = sp.getComponentCount(); j < max;
-	 * j++) { sp.add(new JLabel()); } } else { for (int j =
-	 * sp.getComponentCount() - 3; j >= max; j--) { sp.remove(j); } } } } catch
-	 * (Exception e) { } }
-	 */
-
 	public Graph createProbGraph(String open) {
-		String outDir = root + separator + simName;
+		String outDir = root + File.separator + simName;
 		String printer_id;
 		printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
@@ -3928,7 +2752,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 		}
 		if (!dirs.isEmpty()
-				&& new File(root + separator + simName + separator + stem + dirs.get(0) + separator + "sim-rep.txt")
+				&& new File(root + File.separator + simName + File.separator + stem + dirs.get(0) + File.separator + "sim-rep.txt")
 						.exists()) {
 			ArrayList<String> dataLabels = new ArrayList<String>();
 			ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
@@ -3943,8 +2767,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						String suffix = d.replace(prefix, "");
 						ArrayList<String> vals = new ArrayList<String>();
 						try {
-							Scanner s = new Scanner(new File(root + separator + simName + separator + stem + d
-									+ separator + "sim-rep.txt"));
+							Scanner s = new Scanner(new File(root + File.separator + simName + File.separator + stem + d
+									+ File.separator + "sim-rep.txt"));
 							while (s.hasNextLine()) {
 								String[] ss = s.nextLine().split(" ");
 								if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
@@ -3992,7 +2816,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 			}
 			DataParser constData = new DataParser(dataLabels, data);
-			constData.outputTSD(root + separator + simName + separator + "sim-rep.tsd");
+			constData.outputTSD(root + File.separator + simName + File.separator + "sim-rep.tsd");
 			for (int i = 0; i < simTab.getComponentCount(); i++) {
 				if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 					if (simTab.getComponentAt(i) instanceof Graph) {
@@ -4007,60 +2831,184 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	public void run() {
 	}
 
+	public void createAdvancedOptionsTab() {
+		preAbs = new JList();
+		loopAbs = new JList();
+		postAbs = new JList();
+		preAbsLabel = new JLabel("Preprocess abstraction methods:");
+		loopAbsLabel = new JLabel("Main loop abstraction methods:");
+		postAbsLabel = new JLabel("Postprocess abstraction methods:");
+		JPanel absHolder = new JPanel(new BorderLayout());
+		JPanel listOfAbsLabelHolder = new JPanel(new GridLayout(1, 3));
+		JPanel listOfAbsHolder = new JPanel(new GridLayout(1, 3));
+		JPanel listOfAbsButtonHolder = new JPanel(new GridLayout(1, 3));
+		JScrollPane preAbsScroll = new JScrollPane();
+		JScrollPane loopAbsScroll = new JScrollPane();
+		JScrollPane postAbsScroll = new JScrollPane();
+		preAbsScroll.setMinimumSize(new Dimension(260, 200));
+		preAbsScroll.setPreferredSize(new Dimension(276, 132));
+		preAbsScroll.setViewportView(preAbs);
+		loopAbsScroll.setMinimumSize(new Dimension(260, 200));
+		loopAbsScroll.setPreferredSize(new Dimension(276, 132));
+		loopAbsScroll.setViewportView(loopAbs);
+		postAbsScroll.setMinimumSize(new Dimension(260, 200));
+		postAbsScroll.setPreferredSize(new Dimension(276, 132));
+		postAbsScroll.setViewportView(postAbs);
+		addPreAbs = new JButton("Add");
+		rmPreAbs = new JButton("Remove");
+		editPreAbs = new JButton("Edit");
+		JPanel preAbsButtonHolder = new JPanel();
+		preAbsButtonHolder.add(addPreAbs);
+		preAbsButtonHolder.add(rmPreAbs);
+		addLoopAbs = new JButton("Add");
+		rmLoopAbs = new JButton("Remove");
+		editLoopAbs = new JButton("Edit");
+		JPanel loopAbsButtonHolder = new JPanel();
+		loopAbsButtonHolder.add(addLoopAbs);
+		loopAbsButtonHolder.add(rmLoopAbs);
+		addPostAbs = new JButton("Add");
+		rmPostAbs = new JButton("Remove");
+		editPostAbs = new JButton("Edit");
+		JPanel postAbsButtonHolder = new JPanel();
+		postAbsButtonHolder.add(addPostAbs);
+		postAbsButtonHolder.add(rmPostAbs);
+		listOfAbsLabelHolder.add(preAbsLabel);
+		listOfAbsHolder.add(preAbsScroll);
+		listOfAbsLabelHolder.add(loopAbsLabel);
+		listOfAbsHolder.add(loopAbsScroll);
+		listOfAbsLabelHolder.add(postAbsLabel);
+		listOfAbsHolder.add(postAbsScroll);
+		listOfAbsButtonHolder.add(preAbsButtonHolder);
+		listOfAbsButtonHolder.add(loopAbsButtonHolder);
+		listOfAbsButtonHolder.add(postAbsButtonHolder);
+		absHolder.add(listOfAbsLabelHolder, "North");
+		absHolder.add(listOfAbsHolder, "Center");
+		absHolder.add(listOfAbsButtonHolder, "South");
+		preAbs.setEnabled(false);
+		loopAbs.setEnabled(false);
+		postAbs.setEnabled(false);
+		preAbs.addMouseListener(this);
+		loopAbs.addMouseListener(this);
+		postAbs.addMouseListener(this);
+		preAbsLabel.setEnabled(false);
+		loopAbsLabel.setEnabled(false);
+		postAbsLabel.setEnabled(false);
+		addPreAbs.setEnabled(false);
+		rmPreAbs.setEnabled(false);
+		editPreAbs.setEnabled(false);
+		addPreAbs.addActionListener(this);
+		rmPreAbs.addActionListener(this);
+		editPreAbs.addActionListener(this);
+		addLoopAbs.setEnabled(false);
+		rmLoopAbs.setEnabled(false);
+		editLoopAbs.setEnabled(false);
+		addLoopAbs.addActionListener(this);
+		rmLoopAbs.addActionListener(this);
+		editLoopAbs.addActionListener(this);
+		addPostAbs.setEnabled(false);
+		rmPostAbs.setEnabled(false);
+		editPostAbs.setEnabled(false);
+		addPostAbs.addActionListener(this);
+		rmPostAbs.addActionListener(this);
+		editPostAbs.addActionListener(this);
+
+		// Creates some abstraction options
+		JPanel advancedGrid = new JPanel(new GridLayout(8, 4));
+		advanced = new JPanel(new BorderLayout());
+
+		rapidLabel1 = new JLabel("Rapid Equilibrium Condition 1:");
+		rapid1 = new JTextField(biosimrc.get("biosim.sim.rapid1", ""), 15);
+		rapidLabel2 = new JLabel("Rapid Equilibrium Condition 2:");
+		rapid2 = new JTextField(biosimrc.get("biosim.sim.rapid2", ""), 15);
+		qssaLabel = new JLabel("QSSA Condition:");
+		qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""), 15);
+		maxConLabel = new JLabel("Max Concentration Threshold:");
+		maxCon = new JTextField(biosimrc.get("biosim.sim.concentration", ""), 15);
+		diffStoichAmp = new JTextField("1.0", 15);
+		diffStoichAmpLabel = new JLabel("Grid Diffusion Stoichiometry Amplification:");
+		String [] options = { "1", "2" };
+
+		mpde = new JRadioButton();
+		mpde.setText("MPDE");
+		mpde.addActionListener(this);
+		meanPath = new JRadioButton();
+		meanPath.setText("Mean Path");
+		meanPath.addActionListener(this);
+		medianPath = new JRadioButton();
+		medianPath.setText("Median Path");
+		medianPath.addActionListener(this);
+		ButtonGroup iSSATypeButtons = new ButtonGroup();
+		iSSATypeButtons.add(mpde);
+		iSSATypeButtons.add(meanPath);
+		iSSATypeButtons.add(medianPath);
+		medianPath.setSelected(true);
+		JPanel iSSAType = new JPanel(new GridLayout(1,3));
+		iSSAType.add(mpde);
+		iSSAType.add(meanPath);
+		iSSAType.add(medianPath);
+		iSSATypeLabel = new JLabel("iSSA Type:");
+
+		adaptive = new JRadioButton();
+		adaptive.setText("Adaptive");
+		nonAdaptive = new JRadioButton();
+		nonAdaptive.setText("Non-adaptive");
+		ButtonGroup iSSAAdaptiveButtons = new ButtonGroup();
+		iSSAAdaptiveButtons.add(adaptive);
+		iSSAAdaptiveButtons.add(nonAdaptive);
+		adaptive.setSelected(true);
+		JPanel iSSAAdaptive = new JPanel(new GridLayout(1,2));
+		iSSAAdaptive.add(adaptive);
+		iSSAAdaptive.add(nonAdaptive);
+		iSSAAdaptiveLabel = new JLabel("iSSA Adaptive:");
+		
+		bifurcation = new JComboBox(options);
+		bifurcationLabel = new JLabel("Number of Paths to Follow with iSSA:");
+		
+		maxConLabel.setEnabled(false);
+		maxCon.setEnabled(false);
+		qssaLabel.setEnabled(false);
+		qssa.setEnabled(false);
+		rapidLabel1.setEnabled(false);
+		rapid1.setEnabled(false);
+		rapidLabel2.setEnabled(false);
+		rapid2.setEnabled(false);
+		diffStoichAmp.setEnabled(false);
+		diffStoichAmpLabel.setEnabled(false);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+
+		advancedGrid.add(rapidLabel1);
+		advancedGrid.add(rapid1);
+		advancedGrid.add(rapidLabel2);
+		advancedGrid.add(rapid2);
+		advancedGrid.add(qssaLabel);
+		advancedGrid.add(qssa);
+		advancedGrid.add(maxConLabel);
+		advancedGrid.add(maxCon);
+		advancedGrid.add(diffStoichAmpLabel);
+		advancedGrid.add(diffStoichAmp);
+		advancedGrid.add(iSSATypeLabel);
+		advancedGrid.add(iSSAType);
+		advancedGrid.add(iSSAAdaptiveLabel);
+		advancedGrid.add(iSSAAdaptive);
+		advancedGrid.add(bifurcationLabel);
+		advancedGrid.add(bifurcation);
+		JPanel advAbs = new JPanel(new BorderLayout());
+		advAbs.add(absHolder, "Center");
+		advAbs.add(advancedGrid, "South");
+		advanced.add(advAbs, "North");
+	}
+	
 	public JPanel getAdvanced() {
 		JPanel constructPanel = new JPanel(new BorderLayout());
 		constructPanel.add(advanced, "Center");
-		JButton runButton = new JButton("Save and Run");
-		JButton saveButton = new JButton("Save Parameters");
-		JPanel runHolder = new JPanel();
-		runHolder.add(runButton);
-		runButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				run.doClick();
-			}
-		});
-		runButton.setMnemonic(KeyEvent.VK_R);
-		runHolder.add(saveButton);
-		saveButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				save.doClick();
-			}
-		});
-		saveButton.setMnemonic(KeyEvent.VK_S);
-		// JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-		// runHolder, null);
-		// splitPane.setDividerSize(0);
-		// constructPanel.add(splitPane, "South");
-		return constructPanel;
-	}
-
-	public JPanel getProperties() {
-		JPanel constructPanel = new JPanel(new BorderLayout());
-		constructPanel.add(propertiesPanel, "Center");
-		JButton runButton = new JButton("Save and Run");
-		JButton saveButton = new JButton("Save Parameters");
-		JPanel runHolder = new JPanel();
-		runHolder.add(runButton);
-		runButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				run.doClick();
-			}
-		});
-		runButton.setMnemonic(KeyEvent.VK_R);
-		runHolder.add(saveButton);
-		saveButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				save.doClick();
-			}
-		});
-		saveButton.setMnemonic(KeyEvent.VK_S);
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, runHolder, null);
-		splitPane.setDividerSize(0);
-		constructPanel.add(splitPane, "South");
 		return constructPanel;
 	}
 
@@ -4084,17 +3032,17 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	public String getSimPath() {
 		if (!fileStem.getText().trim().equals("")) {
-			return root + separator + simName + separator + fileStem.getText().trim();
+			return root + File.separator + simName + File.separator + fileStem.getText().trim();
 		}
-		return root + separator + simName;
+		return root + File.separator + simName;
 	}
 
 	public void updateBackgroundFile(String updatedFile) {
-		backgroundField.setText(updatedFile);
+		modelFileField.setText(updatedFile);
 	}
 
 	public String getBackgroundFile() {
-		return backgroundField.getText();
+		return modelFileField.getText();
 	}
 
 	public void updateProperties() {
@@ -4102,7 +3050,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			Object selected = transientProperties.getSelectedItem();
 			String[] props = new String[] { "none" };
 			LhpnFile lpn = new LhpnFile();
-			lpn.load(root + separator + modelFile);
+			lpn.load(root + File.separator + modelFile);
 			String[] getProps = lpn.getProperties().toArray(new String[0]);
 			props = new String[getProps.length + 1];
 			props[0] = "none";
@@ -4115,5 +3063,759 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			transientProperties.setSelectedItem(selected);
 		}
+	}
+
+	/**
+	 * This method enables and disables the required fields for none and abstraction.
+	 */
+	private void enableNoneOrAbs() {
+		ODE.setEnabled(true);
+		monteCarlo.setEnabled(true);
+		fba.setEnabled(true);
+		markov.setEnabled(false);
+		//reactionAbstraction.setEnabled(true);
+		//stateAbstraction.setEnabled(true);
+		if (noAbstraction.isSelected() || expandReactions.isSelected()) {
+			preAbs.setEnabled(false);
+			loopAbs.setEnabled(false);
+			postAbs.setEnabled(false);
+			preAbsLabel.setEnabled(false);
+			loopAbsLabel.setEnabled(false);
+			postAbsLabel.setEnabled(false);
+			addPreAbs.setEnabled(false);
+			rmPreAbs.setEnabled(false);
+			editPreAbs.setEnabled(false);
+			addLoopAbs.setEnabled(false);
+			rmLoopAbs.setEnabled(false);
+			editLoopAbs.setEnabled(false);
+			addPostAbs.setEnabled(false);
+			rmPostAbs.setEnabled(false);
+			editPostAbs.setEnabled(false);
+			maxConLabel.setEnabled(false);
+			maxCon.setEnabled(false);
+			diffStoichAmpLabel.setEnabled(false);
+			diffStoichAmp.setEnabled(false);
+			qssaLabel.setEnabled(false);
+			qssa.setEnabled(false);
+			rapidLabel1.setEnabled(false);
+			rapid1.setEnabled(false);
+			rapidLabel2.setEnabled(false);
+			rapid2.setEnabled(false);
+			ArrayList<String> getLists = new ArrayList<String>();
+			Object[] objects = getLists.toArray();
+			preAbs.setListData(objects);
+			loopAbs.setListData(objects);
+			getLists = new ArrayList<String>();
+			if (monteCarlo.isSelected()) {
+				getLists.add("distribute-transformer");
+				getLists.add("reversible-to-irreversible-transformer");
+			}
+			if (monteCarlo.isSelected() || ODE.isSelected())
+				getLists.add("kinetic-law-constants-simplifier");
+			objects = getLists.toArray();
+			postAbs.setListData(objects);
+		}
+		else {
+			preAbs.setEnabled(true);
+			loopAbs.setEnabled(true);
+			postAbs.setEnabled(true);
+			preAbsLabel.setEnabled(true);
+			loopAbsLabel.setEnabled(true);
+			postAbsLabel.setEnabled(true);
+			addPreAbs.setEnabled(true);
+			rmPreAbs.setEnabled(true);
+			editPreAbs.setEnabled(true);
+			addLoopAbs.setEnabled(true);
+			rmLoopAbs.setEnabled(true);
+			editLoopAbs.setEnabled(true);
+			addPostAbs.setEnabled(true);
+			rmPostAbs.setEnabled(true);
+			editPostAbs.setEnabled(true);
+			maxConLabel.setEnabled(true);
+			maxCon.setEnabled(true);
+			diffStoichAmpLabel.setEnabled(true);
+			diffStoichAmp.setEnabled(true);
+			qssaLabel.setEnabled(true);
+			qssa.setEnabled(true);
+			rapidLabel1.setEnabled(true);
+			rapid1.setEnabled(true);
+			rapidLabel2.setEnabled(true);
+			rapid2.setEnabled(true);
+			ArrayList<String> getLists = new ArrayList<String>();
+			getLists.add("complex-formation-and-sequestering-abstraction");
+			getLists.add("operator-site-reduction-abstraction");
+			Object[] objects = getLists.toArray();
+			preAbs.setListData(objects);
+			getLists = new ArrayList<String>();
+			objects = getLists.toArray();
+			loopAbs.setListData(objects);
+			getLists = new ArrayList<String>();
+			if (monteCarlo.isSelected()) {
+				getLists.add("distribute-transformer");
+				getLists.add("reversible-to-irreversible-transformer");
+			}
+			if (monteCarlo.isSelected() || ODE.isSelected())
+				getLists.add("kinetic-law-constants-simplifier");
+			objects = getLists.toArray();
+			postAbs.setListData(objects);
+		}
+		if (markov.isSelected()) {
+			ODE.setSelected(true);
+			monteCarlo.setSelected(false);
+			markov.setSelected(false);
+			seed.setEnabled(true);
+			seedLabel.setEnabled(true);
+			runs.setEnabled(true);
+			runsLabel.setEnabled(true);
+			fileStem.setEnabled(true);
+			fileStemLabel.setEnabled(true);
+			minStepLabel.setEnabled(true);
+			minStep.setEnabled(true);
+			stepLabel.setEnabled(true);
+			step.setEnabled(true);
+			errorLabel.setEnabled(false);
+			absErr.setEnabled(false);
+			limitLabel.setEnabled(true);
+			limit.setEnabled(true);
+			intervalLabel.setEnabled(true);
+			interval.setEnabled(true);
+			simulators.setEnabled(true);
+			simulatorsLabel.setEnabled(true);
+			explanation.setEnabled(true);
+			description.setEnabled(true);
+			simulators.removeAllItems();
+			simulators.addItem("Runge-Kutta-Fehlberg");
+			simulators.addItem("Hierarchical-RK");
+			simulators.setSelectedItem("Runge-Kutta-Fehlberg");
+			if (Gui.isReb2sacFound()) {
+				simulators.addItem("euler");
+				simulators.addItem("gear1");
+				simulators.addItem("gear2");
+				simulators.addItem("rk4imp");
+				simulators.addItem("rk8pd");
+				simulators.addItem("rkf45");
+				simulators.setSelectedItem("rkf45");
+			}
+		}
+		if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
+			markov.setEnabled(true);
+		}
+		if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
+			append.setEnabled(true);
+			concentrations.setEnabled(true);
+			genRuns.setEnabled(true);
+			genStats.setEnabled(true);
+			report.setEnabled(true);
+			if (append.isSelected()) {
+				limit.setEnabled(false);
+				interval.setEnabled(false);
+				limitLabel.setEnabled(false);
+				intervalLabel.setEnabled(false);
+			}
+			else {
+				limit.setEnabled(true);
+				interval.setEnabled(true);
+				limitLabel.setEnabled(true);
+				intervalLabel.setEnabled(true);
+			}
+		}
+	}
+
+	/**
+	 * This method enables and disables the required fields for FBA.
+	 */
+	private void enableFBA() {
+		seed.setEnabled(false);
+		seedLabel.setEnabled(false);
+		runs.setEnabled(false);
+		runsLabel.setEnabled(false);
+		fileStem.setEnabled(false);
+		fileStemLabel.setEnabled(false);
+		minStepLabel.setEnabled(false);
+		minStep.setEnabled(false);
+		stepLabel.setEnabled(false);
+		step.setEnabled(false);
+		errorLabel.setEnabled(true);
+		absErr.setEnabled(true);
+		limitLabel.setEnabled(false);
+		limit.setEnabled(false);
+		intervalLabel.setEnabled(false);
+		interval.setEnabled(false);
+		simulators.setEnabled(false);
+		simulatorsLabel.setEnabled(false);
+		explanation.setEnabled(false);
+		description.setEnabled(false);
+		reactionAbstraction.setEnabled(true);
+		stateAbstraction.setEnabled(false);
+		fileStem.setText("");
+		ArrayList<String> getLists = new ArrayList<String>();
+		Object[] objects = getLists.toArray();
+		postAbs.setListData(objects);
+		append.setEnabled(false);
+		concentrations.setEnabled(false);
+		genRuns.setEnabled(false);
+		genStats.setEnabled(false);
+		absErr.setEnabled(true);
+		report.setEnabled(false);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+	
+	/* Enable options for iSSA Mean or Median Path method */
+	private void enableMeanMedianPath() {
+		adaptive.setEnabled(true);
+		nonAdaptive.setEnabled(true);
+		iSSAAdaptiveLabel.setEnabled(true);
+		bifurcation.setEnabled(true);
+		bifurcationLabel.setEnabled(true);
+	}
+	
+	/* Enable options for an ODE simulator */
+	private void enableODESimulator() {
+		minStep.setEnabled(true);
+		minStepLabel.setEnabled(true);
+		step.setEnabled(true);
+		stepLabel.setEnabled(true);
+		absErr.setEnabled(true);
+		errorLabel.setEnabled(true);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+	
+	/* Enable options for an SSA simulator */
+	private void enableSSASimulator() {
+		minStep.setEnabled(true);
+		minStepLabel.setEnabled(true);
+		step.setEnabled(true);
+		stepLabel.setEnabled(true);
+		errorLabel.setEnabled(false);
+		absErr.setEnabled(false);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+	
+	/* Enable options for an iSSA simulator */
+	private void enableiSSASimulator() {
+		minStep.setEnabled(true);
+		minStepLabel.setEnabled(true);
+		step.setEnabled(true);
+		stepLabel.setEnabled(true);
+		errorLabel.setEnabled(false);
+		absErr.setEnabled(false);
+		mpde.setEnabled(true);
+		meanPath.setEnabled(true);
+		medianPath.setEnabled(true);
+		iSSATypeLabel.setEnabled(true);
+		if (mpde.isSelected()) {
+			adaptive.setEnabled(false);
+			nonAdaptive.setEnabled(false);
+			iSSAAdaptiveLabel.setEnabled(false);
+			bifurcation.setEnabled(false);
+			bifurcationLabel.setEnabled(false);
+		} else {
+			adaptive.setEnabled(true);
+			nonAdaptive.setEnabled(true);
+			iSSAAdaptiveLabel.setEnabled(true);
+			bifurcation.setEnabled(true);
+			bifurcationLabel.setEnabled(true);
+		}
+	}
+	
+	/* Enable options for a Markov analyzer */
+	private void enableMarkovAnalyzer() {
+		minStep.setEnabled(false);
+		minStepLabel.setEnabled(false);
+		step.setEnabled(false);
+		stepLabel.setEnabled(false);
+		errorLabel.setEnabled(false);
+		absErr.setEnabled(false);
+		limitLabel.setEnabled(false);
+		limit.setEnabled(false);
+		intervalLabel.setEnabled(false);
+		interval.setEnabled(false);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+	
+	/* Enable options for a transient Markov analyzer */
+	private void enableTransientMarkovAnalyzer() {
+		minStep.setEnabled(false);
+		minStepLabel.setEnabled(false);
+		step.setEnabled(true);
+		stepLabel.setEnabled(true);
+		errorLabel.setEnabled(true);
+		absErr.setEnabled(true);
+		limitLabel.setEnabled(true);
+		limit.setEnabled(true);
+		intervalLabel.setEnabled(true);
+		interval.setEnabled(true);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+	
+	/* Enable options for Euler method */
+	private void enableEulerMethod() {
+		minStep.setEnabled(true);
+		minStepLabel.setEnabled(true);
+		step.setEnabled(true);
+		stepLabel.setEnabled(true);
+		absErr.setEnabled(false);
+		errorLabel.setEnabled(false);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+	
+	/* Enable options for MPDE method */
+	private void enableMPDEMethod() {
+		nonAdaptive.setSelected(true);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+	
+	/* Disable simulator options */
+	private void disableSimulatorOptions() {
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+
+	/**
+	 * This method enables and disables the required fields for sbml, dot, and xhtml.
+	 */
+	private void enableSbmlDotAndXhtml() {
+		seed.setEnabled(false);
+		seedLabel.setEnabled(false);
+		runs.setEnabled(false);
+		runsLabel.setEnabled(false);
+		fileStem.setEnabled(false);
+		fileStemLabel.setEnabled(false);
+		minStepLabel.setEnabled(false);
+		minStep.setEnabled(false);
+		stepLabel.setEnabled(false);
+		step.setEnabled(false);
+		errorLabel.setEnabled(false);
+		absErr.setEnabled(false);
+		limitLabel.setEnabled(false);
+		limit.setEnabled(false);
+		intervalLabel.setEnabled(false);
+		interval.setEnabled(false);
+		simulators.setEnabled(false);
+		simulatorsLabel.setEnabled(false);
+		explanation.setEnabled(false);
+		description.setEnabled(false);
+		reactionAbstraction.setEnabled(true);
+		stateAbstraction.setEnabled(true);
+		fileStem.setText("");
+		ArrayList<String> getLists = new ArrayList<String>();
+		// getLists.add("kinetic-law-constants-simplifier");
+		Object[] objects = getLists.toArray();
+		postAbs.setListData(objects);
+		append.setEnabled(false);
+		concentrations.setEnabled(false);
+		genRuns.setEnabled(false);
+		genStats.setEnabled(false);
+		report.setEnabled(false);
+		absErr.setEnabled(false);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+
+	/**
+	 * This method enables and disables the required fields for Markov analysis.
+	 */
+	private void enableMarkov() {
+		seed.setEnabled(false);
+		seedLabel.setEnabled(false);
+		runs.setEnabled(false);
+		runsLabel.setEnabled(false);
+		fileStem.setEnabled(true);
+		fileStemLabel.setEnabled(true);
+		minStepLabel.setEnabled(false);
+		minStep.setEnabled(false);
+		stepLabel.setEnabled(false);
+		step.setEnabled(false);
+		errorLabel.setEnabled(false);
+		absErr.setEnabled(false);
+		limitLabel.setEnabled(false);
+		limit.setEnabled(false);
+		intervalLabel.setEnabled(false);
+		interval.setEnabled(false);
+		simulators.setEnabled(true);
+		simulatorsLabel.setEnabled(true);
+		explanation.setEnabled(true);
+		description.setEnabled(true);
+		simulators.removeAllItems();
+		reactionAbstraction.setEnabled(true);
+		stateAbstraction.setEnabled(true);
+		if (modelEditor != null || modelFile.contains(".lpn")) {
+			simulators.addItem("steady-state-markov-chain-analysis");
+			simulators.addItem("transient-markov-chain-analysis");
+			simulators.addItem("reachability-analysis");
+		}
+		if (Gui.isReb2sacFound()) {
+			simulators.addItem("atacs");
+			simulators.addItem("ctmc-transient");
+		}
+		ArrayList<String> getLists = new ArrayList<String>();
+		// getLists.add("kinetic-law-constants-simplifier");
+		Object[] objects = getLists.toArray();
+		postAbs.setListData(objects);
+		append.setEnabled(false);
+		concentrations.setEnabled(false);
+		genRuns.setEnabled(false);
+		genStats.setEnabled(false);
+		report.setEnabled(false);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+
+	/**
+	 * This method enables and disables the required fields for Monte Carlo analysis.
+	 */
+	private void enableMonteCarlo() {
+		seed.setEnabled(true);
+		seedLabel.setEnabled(true);
+		runs.setEnabled(true);
+		runsLabel.setEnabled(true);
+		fileStem.setEnabled(true);
+		fileStemLabel.setEnabled(true);
+		minStepLabel.setEnabled(true);
+		minStep.setEnabled(true);
+		stepLabel.setEnabled(true);
+		step.setEnabled(true);
+		errorLabel.setEnabled(false);
+		limitLabel.setEnabled(true);
+		limit.setEnabled(true);
+		intervalLabel.setEnabled(true);
+		interval.setEnabled(true);
+		simulators.setEnabled(true);
+		simulatorsLabel.setEnabled(true);
+		explanation.setEnabled(true);
+		description.setEnabled(true);
+		reactionAbstraction.setEnabled(true);
+		stateAbstraction.setEnabled(true);
+		simulators.removeAllItems();
+		simulators.addItem("SSA-Direct");
+		simulators.addItem("SSA-CR");
+		simulators.addItem("SSA-Hierarchical");
+		simulators.addItem("Hybrid-Hierarchical");
+		simulators.setSelectedItem("SSA-Direct");
+		if (Gui.isReb2sacFound()) {
+			simulators.addItem("gillespie");
+			simulators.addItem("iSSA");
+			simulators.addItem("interactive");
+			simulators.addItem("emc-sim");
+			simulators.addItem("bunker");
+			simulators.addItem("nmc");
+			simulators.setSelectedItem("gillespie");
+		}
+		absErr.setEnabled(false);
+		if (!stateAbstraction.isSelected()) {
+			ArrayList<String> getLists = new ArrayList<String>();
+			getLists.add("distribute-transformer");
+			getLists.add("reversible-to-irreversible-transformer");
+			getLists.add("kinetic-law-constants-simplifier");
+			Object[] objects = getLists.toArray();
+			postAbs.setListData(objects);
+		}
+		if (runFiles) {
+			append.setEnabled(true);
+			concentrations.setEnabled(true);
+			genRuns.setEnabled(true);
+			genStats.setEnabled(true);
+			report.setEnabled(true);
+			if (append.isSelected()) {
+				limit.setEnabled(false);
+				interval.setEnabled(false);
+				limitLabel.setEnabled(false);
+				intervalLabel.setEnabled(false);
+			}
+			else {
+				limit.setEnabled(true);
+				interval.setEnabled(true);
+				limitLabel.setEnabled(true);
+				intervalLabel.setEnabled(true);
+			}
+		}
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+
+	/**
+	 * This method enables and disables the required fields for ODE simulation.
+	 */
+	private void enableODE() {
+		seed.setEnabled(true);
+		seedLabel.setEnabled(true);
+		runs.setEnabled(true);
+		runsLabel.setEnabled(true);
+		fileStem.setEnabled(true);
+		fileStemLabel.setEnabled(true);
+		minStepLabel.setEnabled(true);
+		minStep.setEnabled(true);
+		stepLabel.setEnabled(true);
+		step.setEnabled(true);
+		errorLabel.setEnabled(false);
+		absErr.setEnabled(false);
+		limitLabel.setEnabled(true);
+		limit.setEnabled(true);
+		intervalLabel.setEnabled(true);
+		interval.setEnabled(true);
+		simulators.setEnabled(true);
+		simulatorsLabel.setEnabled(true);
+		explanation.setEnabled(true);
+		description.setEnabled(true);
+		reactionAbstraction.setEnabled(true);
+		stateAbstraction.setEnabled(true);
+		simulators.removeAllItems();
+		simulators.addItem("Runge-Kutta-Fehlberg");
+		simulators.addItem("Hierarchical-RK");
+		simulators.setSelectedItem("Runge-Kutta-Fehlberg");
+		if (Gui.isReb2sacFound()) {
+			simulators.addItem("euler");
+			simulators.addItem("gear1");
+			simulators.addItem("gear2");
+			simulators.addItem("rk4imp");
+			simulators.addItem("rk8pd");
+			simulators.addItem("rkf45");
+			simulators.setSelectedItem("rkf45");
+		}	
+		ArrayList<String> getLists = new ArrayList<String>();
+		getLists.add("kinetic-law-constants-simplifier");
+		Object[] objects = getLists.toArray();
+		postAbs.setListData(objects);
+		append.setEnabled(true);
+		concentrations.setEnabled(true);
+		genRuns.setEnabled(true);
+		genStats.setEnabled(true);
+		report.setEnabled(true);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
+	}
+
+	/**
+	 * This method enables and disables the required fields for N-ary analysis.
+	 */
+	private void enableNary() {
+		ODE.setEnabled(false);
+		fba.setEnabled(false);
+		monteCarlo.setEnabled(true);
+		markov.setEnabled(true);
+		preAbs.setEnabled(true);
+		loopAbs.setEnabled(true);
+		postAbs.setEnabled(true);
+		preAbsLabel.setEnabled(true);
+		loopAbsLabel.setEnabled(true);
+		postAbsLabel.setEnabled(true);
+		addPreAbs.setEnabled(false);
+		rmPreAbs.setEnabled(false);
+		editPreAbs.setEnabled(false);
+		addLoopAbs.setEnabled(false);
+		rmLoopAbs.setEnabled(false);
+		editLoopAbs.setEnabled(false);
+		addPostAbs.setEnabled(false);
+		rmPostAbs.setEnabled(false);
+		editPostAbs.setEnabled(false);
+		reactionAbstraction.setEnabled(true);
+		stateAbstraction.setEnabled(true);
+		maxConLabel.setEnabled(true);
+		maxCon.setEnabled(true);
+		qssaLabel.setEnabled(true);
+		qssa.setEnabled(true);
+		rapidLabel1.setEnabled(true);
+		rapid1.setEnabled(true);
+		rapidLabel2.setEnabled(true);
+		rapid2.setEnabled(true);
+		if (ODE.isSelected()) {
+			ODE.setSelected(false);
+			monteCarlo.setSelected(true);
+			markov.setSelected(false);
+			fba.setSelected(false);
+			seed.setEnabled(true);
+			seedLabel.setEnabled(true);
+			runs.setEnabled(true);
+			runsLabel.setEnabled(true);
+			fileStem.setEnabled(true);
+			fileStemLabel.setEnabled(true);
+			minStepLabel.setEnabled(false);
+			minStep.setEnabled(false);
+			stepLabel.setEnabled(false);
+			step.setEnabled(false);
+			errorLabel.setEnabled(false);
+			absErr.setEnabled(false);
+			limitLabel.setEnabled(true);
+			limit.setEnabled(true);
+			intervalLabel.setEnabled(true);
+			interval.setEnabled(true);
+			simulators.setEnabled(true);
+			simulatorsLabel.setEnabled(true);
+			explanation.setEnabled(true);
+			description.setEnabled(true);
+			simulators.removeAllItems();
+			simulators.addItem("SSA-Direct");
+			simulators.addItem("SSA-CR");
+			simulators.addItem("SSA-Hierarchical");
+			simulators.addItem("Hybrid-Hierarchical");
+			simulators.setSelectedItem("SSA-Direct");
+			if (Gui.isReb2sacFound()) {
+				simulators.addItem("gillespie");
+				simulators.addItem("iSSA");
+				simulators.addItem("interactive");
+				simulators.addItem("emc-sim");
+				simulators.addItem("bunker");
+				simulators.addItem("nmc");
+				simulators.setSelectedItem("gillespie");
+			}
+		}
+		ArrayList<String> getLists = new ArrayList<String>();
+		getLists.add("complex-formation-and-sequestering-abstraction");
+		getLists.add("operator-site-reduction-abstraction");
+		Object[] objects = getLists.toArray();
+		preAbs.setListData(objects);
+		getLists = new ArrayList<String>();
+		objects = getLists.toArray();
+		loopAbs.setListData(objects);
+		getLists = new ArrayList<String>();
+		objects = getLists.toArray();
+		postAbs.setListData(objects);
+		if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
+			append.setEnabled(true);
+			concentrations.setEnabled(true);
+			genRuns.setEnabled(true);
+			genStats.setEnabled(true);
+			report.setEnabled(true);
+			if (append.isSelected()) {
+				limit.setEnabled(false);
+				interval.setEnabled(false);
+				limitLabel.setEnabled(false);
+				intervalLabel.setEnabled(false);
+			}
+			else {
+				limit.setEnabled(true);
+				interval.setEnabled(true);
+				limitLabel.setEnabled(true);
+				intervalLabel.setEnabled(true);
+			}
+		}
+	}
+
+	public String getRootPath() {
+		return root;
+	}
+	
+	/**
+	 * Invoked when the mouse is double clicked in the interesting species
+	 * JLists or termination conditions JLists. Adds or removes the selected
+	 * interesting species or termination conditions.
+	 */
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	/**
+	 * This method currently does nothing.
+	 */
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	/**
+	 * This method currently does nothing.
+	 */
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	/**
+	 * This method currently does nothing.
+	 */
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	/**
+	 * This method currently does nothing.
+	 */
+	@Override
+	public void mouseExited(MouseEvent e) {
 	}
 }

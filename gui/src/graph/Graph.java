@@ -217,7 +217,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private IconNode node, simDir;
 
-	private AnalysisView reb2sac; // reb2sac options
+	private AnalysisView analysisView; // reb2sac options
 
 	private ArrayList<String> learnSpecs;
 
@@ -253,7 +253,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String open, Log log, String graphName, boolean timeSeries, boolean learnGraph) {
 		lock = new ReentrantLock(true);
 		lock2 = new ReentrantLock(true);
-		this.reb2sac = reb2sac;
+		this.analysisView = reb2sac;
 		averageOrder = null;
 		popup = new JPopupMenu();
 		warn = false;
@@ -411,7 +411,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// exportEps.addActionListener(this);
 		// exportSvg.addActionListener(this);
 		// exportCsv.addActionListener(this);
-		if (reb2sac != null) {
+		if (analysisView != null) {
 			ButtonHolder.add(run);
 		}
 		ButtonHolder.add(save);
@@ -667,7 +667,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	public void actionPerformed(ActionEvent e) {
 		// if the save button is clicked
 		if (e.getSource() == run) {
-			reb2sac.getRunButton().doClick();
+			analysisView.executeRun();
 		}
 		if (e.getSource() == save) {
 			save();
@@ -4911,7 +4911,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// exportEps.addActionListener(this);
 		// exportSvg.addActionListener(this);
 		// exportCsv.addActionListener(this);
-		if (reb2sac != null) {
+		if (analysisView != null) {
 			ButtonHolder.add(run);
 		}
 		ButtonHolder.add(save);
@@ -5527,7 +5527,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	public void run() {
-		reb2sac.getRunButton().doClick();
+		analysisView.executeRun();
 	}
 
 	public void save() {
@@ -6907,7 +6907,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		saveAs.addActionListener(this);
 		export.addActionListener(this);
 		refresh.addActionListener(this);
-		if (reb2sac != null) {
+		if (analysisView != null) {
 			ButtonHolder.add(run);
 		}
 		ButtonHolder.add(save);
@@ -8176,7 +8176,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		saveAs.addActionListener(this);
 		export.addActionListener(this);
 		refresh.addActionListener(this);
-		if (reb2sac != null) {
+		if (analysisView != null) {
 			ButtonHolder.add(run);
 		}
 		ButtonHolder.add(save);

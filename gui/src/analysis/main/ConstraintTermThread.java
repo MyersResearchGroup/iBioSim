@@ -2,10 +2,9 @@ package analysis.main;
 
 import java.util.ArrayList;
 
-
 public class ConstraintTermThread extends Thread {
 
-	private AnalysisView reb;
+	private AnalysisView analysisView;
 
 	private ArrayList<AnalysisThread> threads;
 
@@ -13,9 +12,9 @@ public class ConstraintTermThread extends Thread {
 
 	private String stem;
 
-	public ConstraintTermThread(AnalysisView reb2sac) {
-		super(reb2sac);
-		reb = reb2sac;
+	public ConstraintTermThread(AnalysisView analysisView) {
+		super(analysisView);
+		this.analysisView = analysisView;
 	}
 
 	public void start(ArrayList<AnalysisThread> threads, ArrayList<String> dirs, ArrayList<String> levelOne, String stem) {
@@ -28,6 +27,6 @@ public class ConstraintTermThread extends Thread {
 
 	@Override
 	public void run() {
-		reb.run(threads, dirs, levelOne, stem);
+		analysisView.run(threads, dirs, levelOne, stem);
 	}
 }
