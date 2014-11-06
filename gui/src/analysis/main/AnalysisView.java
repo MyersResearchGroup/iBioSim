@@ -92,8 +92,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private JLabel report;
 
-	private boolean runFiles;
-
 	private String sbmlProp;
 
 	private boolean change;
@@ -129,7 +127,25 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	private String sedmlFilename = "";
 	
 	private Preferences biosimrc;
-
+	
+	private double timeLimit;
+	private double printInterval;
+	private double minTimeStep;
+	private double timeStep;
+	private double absError;
+	private long rndSeed;
+	private int run;
+	private String outDir;
+	private String[] intSpecies;
+	private double rap1;
+	private double rap2;
+	private double qss;
+	private int con;
+	private String printer_id;
+	private String printer_track_quantity;
+	private String sim;
+	private String simProp;
+	
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
 	 * puts them on panels, adds the panels to the frame, and then displays the
@@ -177,16 +193,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		buttonPanel.add(reportOptions, BorderLayout.SOUTH);
 		this.add(buttonPanel, BorderLayout.NORTH);
 		this.add(simulationOptions, BorderLayout.CENTER);
-		
-		runFiles = false;
-		String[] searchForRunFiles = new File(root + File.separator + simName).list();
-		for (String s : searchForRunFiles) {
-			if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
-				runFiles = true;
-				break;
-			}
-		}
-
 		loadPropertiesFile(open);
 		loadSEDML();
 	}
@@ -689,339 +695,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-
-	/**
-	 * If the run button is pressed, this method starts a new thread for the
-	 * simulation.
-	 * 
-	 * @param refresh
-	 * @throws XMLStreamException 
-	 * @throws NumberFormatException 
-	 */
-	public void run(String direct, boolean refresh) {
-		double timeLimit = 100.0;
-		double printInterval = 1.0;
-		double minTimeStep = 0.0;
-		double timeStep = 1.0;
-		double absError = 1.0e-9;
-		String outDir = "";
-		long rndSeed = 314159;
-		int run = 1;
-		try {
-			timeLimit = Double.parseDouble(limit.getText().trim());
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Limit Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		try {
-			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
-				printInterval = Double.parseDouble(interval.getText().trim());
-				if (printInterval < 0) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Must Enter A Positive Number Into The Print Interval Field.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				else if (printInterval == 0 && !((String) intervalLabel.getSelectedItem()).contains("Minimum")) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Must Enter A Positive Number Into The Print Interval Field.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-			}
-			else {
-				printInterval = Integer.parseInt(interval.getText().trim());
-				if (printInterval <= 0) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Must Enter A Positive Number Into The Number of Steps Field.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-			}
-		}
-		catch (Exception e1) {
-			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Print Interval Field.",
-						"Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Number Of Steps Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		String sim = (String) simulators.getSelectedItem();
-		if (step.getText().trim().equals("inf") && !sim.equals("euler")) {
-			timeStep = Double.MAX_VALUE;
-		}
-		else if (step.getText().trim().equals("inf") && sim.equals("euler")) {
-			JOptionPane.showMessageDialog(Gui.frame, "Cannot Select An Infinite Time Step With Euler Simulation.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		else {
-			try {
-				// if (step.isEnabled()) {
-				timeStep = Double.parseDouble(step.getText().trim());
-				// }
-			}
-			catch (Exception e1) {
-				// if (step.isEnabled()) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Step Field.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				// }
-				return;
-			}
-		}
-		try {
-			minTimeStep = Double.parseDouble(minStep.getText().trim());
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Minimum Time Step Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		try {
-			// if (absErr.isEnabled()) {
-			absError = Double.parseDouble(absErr.getText().trim());
-			// }
-		}
-		catch (Exception e1) {
-			// if (absErr.isEnabled()) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Absolute Error Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-			// }
-			return;
-		}
-		if (direct.equals(".")) {
-			outDir = simName;
-		}
-		else {
-			outDir = simName + File.separator + direct;
-		}
-		try {
-			// if (seed.isEnabled()) {
-			rndSeed = Long.parseLong(seed.getText().trim());
-			// }
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Random Seed Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		Preferences biosimrc = Preferences.userRoot();
-		try {
-			// if (runs.isEnabled()) {
-			run = Integer.parseInt(runs.getText().trim());
-			if (run < 0) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field."
-						+ "\nProceding With Default:   " + biosimrc.get("biosim.sim.runs", ""), "Error",
-						JOptionPane.ERROR_MESSAGE);
-				run = Integer.parseInt(biosimrc.get("biosim.sim.runs", ""));
-			}
-			// }
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		if (!runs.isEnabled()) {
-			for (String runs : new File(root + File.separator + outDir).list()) {
-				if (runs.length() >= 4) {
-					String end = "";
-					for (int j = 1; j < 5; j++) {
-						end = runs.charAt(runs.length() - j) + end;
-					}
-					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-						if (runs.contains("run-")) {
-							run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length() - end.length())));
-						}
-					}
-				}
-			}
-		}
-		
-		String printer_id;
-		if (genRuns.isSelected()) {
-			printer_id = "null.printer";
-		}
-		else {
-			printer_id = "tsd.printer";
-		}
-		
-		String printer_track_quantity = "amount";
-		if (concentrations.isSelected()) {
-			printer_track_quantity = "concentration";
-		}
-		
-		String generate_statistics = "false";
-		if (genStats.isSelected()) {
-			generate_statistics = "true";
-		}
-		
-		String[] intSpecies = getInterestingSpecies();
-		String selectedButtons = "";
-		double rap1 = 0.1;
-		double rap2 = 0.1;
-		double qss = 0.1;
-		int con = 15;
-		double stoichAmp = 1.0;
-		
-		try {
-			// if (rapid1.isEnabled()) {
-			rap1 = Double.parseDouble(rapid1.getText().trim());
-			// }
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The"
-					+ " Rapid Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		try {
-			// if (rapid2.isEnabled()) {
-			rap2 = Double.parseDouble(rapid2.getText().trim());
-			// }
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The"
-					+ " Rapid Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		try {
-			// if (qssa.isEnabled()) {
-			qss = Double.parseDouble(qssa.getText().trim());
-			// }
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The QSSA Condition Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		try {
-			// if (maxCon.isEnabled()) {
-			con = Integer.parseInt(maxCon.getText().trim());
-			// }
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max"
-					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		try {
-			if (reactionAbstraction.isSelected())
-				stoichAmp = Double.parseDouble(diffStoichAmp.getText().trim());
-			else
-				stoichAmp = 1;
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "You must enter a double into the shoich."
-					+ " amp. field.", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		if (noAbstraction.isSelected() && ODE.isSelected()) {
-			selectedButtons = "none_ODE";
-		}
-		else if (noAbstraction.isSelected() && monteCarlo.isSelected()) {
-			selectedButtons = "none_monteCarlo";
-		}
-		else if (expandReactions.isSelected() && ODE.isSelected()) {
-			selectedButtons = "expand_ODE";
-		}
-		else if (expandReactions.isSelected() && monteCarlo.isSelected()) {
-			selectedButtons = "expand_monteCarlo";
-		}
-		else if (reactionAbstraction.isSelected() && ODE.isSelected()) {
-			selectedButtons = "abs_ODE";
-		}
-		else if (reactionAbstraction.isSelected() && monteCarlo.isSelected()) {
-			selectedButtons = "abs_monteCarlo";
-		}
-		else if (stateAbstraction.isSelected() && monteCarlo.isSelected()) {
-			selectedButtons = "nary_monteCarlo";
-		}
-		else if (noAbstraction.isSelected() && fba.isSelected()) {
-			selectedButtons = "none_fba";
-		}
-		else if (expandReactions.isSelected() && fba.isSelected()) {
-			selectedButtons = "expand_fba";
-		}
-		else if (stateAbstraction.isSelected() && markov.isSelected()) {
-			selectedButtons = "nary_markov";
-		}
-		else if (noAbstraction.isSelected() && markov.isSelected()) {
-			selectedButtons = "none_markov";
-		}
-		else if (expandReactions.isSelected() && markov.isSelected()) {
-			selectedButtons = "expand_markov";
-		}
-		else if (reactionAbstraction.isSelected() && markov.isSelected()) {
-			selectedButtons = "abs_markov";
-		}
-		else if (noAbstraction.isSelected() && sbml.isSelected()) {
-			selectedButtons = "none_sbml";
-		}
-		else if (expandReactions.isSelected() && sbml.isSelected()) {
-			selectedButtons = "expand_sbml";
-		}
-		else if (reactionAbstraction.isSelected() && sbml.isSelected()) {
-			selectedButtons = "abs_sbml";
-		}
-		else if (stateAbstraction.isSelected() && sbml.isSelected()) {
-			selectedButtons = "nary_sbml";
-		}
-		else if (noAbstraction.isSelected() && dot.isSelected()) {
-			selectedButtons = "none_dot";
-		}
-		else if (expandReactions.isSelected() && dot.isSelected()) {
-			selectedButtons = "expand_dot";
-		}
-		else if (reactionAbstraction.isSelected() && dot.isSelected()) {
-			selectedButtons = "abs_dot";
-		}
-		else if (stateAbstraction.isSelected() && dot.isSelected()) {
-			selectedButtons = "nary_dot";
-		}
-		else if (noAbstraction.isSelected() && xhtml.isSelected()) {
-			selectedButtons = "none_xhtml";
-		}
-		else if (expandReactions.isSelected() && xhtml.isSelected()) {
-			selectedButtons = "expand_xhtml";
-		}
-		else if (reactionAbstraction.isSelected() && xhtml.isSelected()) {
-			selectedButtons = "abs_xhtml";
-		}
-		else if (stateAbstraction.isSelected() && xhtml.isSelected()) {
-			selectedButtons = "nary_xhtml";
-		}
-		int cut = 0;
-		String simProp = sbmlProp;
-		boolean saveTopLevel = false;
-		if (!direct.equals(".")) {
-			simProp = simProp.substring(0, simProp.length()
-					- simProp.split(File.separator)[simProp.split(File.separator).length - 1].length())
-					+ direct
-					+ File.separator
-					+ simProp.substring(simProp.length()
-							- simProp.split(File.separator)[simProp.split(File.separator).length - 1].length());
-			saveTopLevel = true;
-		}
-		String[] getFilename = simProp.split(File.separator);
-		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
-			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
-				cut = i;
-			}
-		}
-		String propName = simProp.substring(0, simProp.length() - getFilename[getFilename.length - 1].length())
-				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
-		String topLevelProps = null;
-		if (saveTopLevel) {
-			topLevelProps = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
-					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
-		}
-		log.addText("Creating properties file:\n" + propName + "\n");
-		final JButton cancel = new JButton("Cancel");
+	
+	public JFrame createProgressBar(JLabel label, JProgressBar progress, final JButton cancel) {
 		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener() {
 			@Override
@@ -1059,32 +734,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		JPanel progBar = new JPanel();
 		JPanel button = new JPanel();
 		JPanel all = new JPanel(new BorderLayout());
-		JLabel label;
-		if (!direct.equals(".")) {
-			label = new JLabel("Running " + simName + " " + direct);
-		}
-		else {
-			label = new JLabel("Running " + simName);
-		}
-		// int steps;
-		double runTime;
-		if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
-			if (simulators.getSelectedItem().equals("iSSA")) { 
-				runTime = timeLimit;
-			}
-			else {
-				runTime = timeLimit * run;
-			}
-		}
-		else {
-			if (simulators.getSelectedItem().equals("iSSA")) { 
-				runTime = timeLimit;
-			}
-			else {
-				runTime = timeLimit * run;
-			}
-		}
-		JProgressBar progress = new JProgressBar(0, 100);
 		progress.setStringPainted(true);
 		progress.setValue(0);
 		text.add(label);
@@ -1116,82 +765,38 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		running.setLocation(x, y);
 		running.setVisible(true);
 		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		return running;
+	}
+
+	/**
+	 * If the run button is pressed, this method starts a new thread for the
+	 * simulation.
+	 * 
+	 * @param refresh
+	 * @throws XMLStreamException 
+	 * @throws NumberFormatException 
+	 */
+	public void run(String direct, boolean refresh) {
+		if (!save(direct)) return;
+		JProgressBar progress = new JProgressBar(0, 100);
+		final JButton cancel = new JButton("Cancel");
+		JFrame running;
+		JLabel label;
+		if (!direct.equals(".")) {
+			label = new JLabel("Running " + simName + " " + direct);
+		}
+		else {
+			label = new JLabel("Running " + simName);
+		}
+		running = createProgressBar(label,progress,cancel);
+		// int steps;
+		double runTime = timeLimit * run;
+		if (simulators.getSelectedItem().equals("iSSA")) { 
+			runTime = timeLimit;
+		}
 		Run runProgram = new Run(this);
 		cancel.addActionListener(runProgram);
 		biomodelsim.getExitButton().addActionListener(runProgram);
-		// saveSAD(outDir);
-		int numPaths = Integer.parseInt((String)(bifurcation.getSelectedItem()));
-		Run.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
-				minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths, intSpecies, printer_id, printer_track_quantity, 
-				generate_statistics, simProp.split(File.separator), selectedButtons, this, simProp, rap1, rap2, qss, con, 
-				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction, mpde.isSelected(), meanPath.isSelected(), 
-				adaptive.isSelected());
-		try {
-			Properties getProps = new Properties();
-			FileInputStream load = new FileInputStream(new File(propName));
-			getProps.load(load);
-			load.close();
-			getProps.setProperty("selected.simulator", sim);
-			if (transientProperties != null) {
-				getProps.setProperty("selected.property", (String) transientProperties.getSelectedItem());
-			}
-			if (!fileStem.getText().trim().equals("")) {
-				getProps.setProperty("file.stem", fileStem.getText().trim());
-			}
-			if (monteCarlo.isSelected() || ODE.isSelected()) {
-				if (append.isSelected()) {
-					String[] searchForRunFiles = new File(root + File.separator + outDir).list();
-					int start = 1;
-					for (String s : searchForRunFiles) {
-						if (s.length() > 3 && s.substring(0, 4).equals("run-")
-								&& new File(root + File.separator + outDir + File.separator + s).isFile()) {
-							String getNumber = s.substring(4, s.length());
-							String number = "";
-							for (int i = 0; i < getNumber.length(); i++) {
-								if (Character.isDigit(getNumber.charAt(i))) {
-									number += getNumber.charAt(i);
-								}
-								else {
-									break;
-								}
-							}
-							start = Math.max(Integer.parseInt(number), start);
-						}
-						else if (s.length() > 3
-								&& new File(root + File.separator + outDir + File.separator + s).isFile()
-								&& (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s
-										.equals("variance.tsd"))) {
-							new File(root + File.separator + outDir + File.separator + s).delete();
-						}
-					}
-					getProps.setProperty("monte.carlo.simulation.start.index", (start + 1) + "");
-				}
-				else {
-					String[] searchForRunFiles = new File(root + File.separator + outDir).list();
-					for (String s : searchForRunFiles) {
-						if (s.length() > 3 && s.substring(0, 4).equals("run-")
-								&& new File(root + File.separator + outDir + File.separator + s).isFile()) {
-							new File(root + File.separator + outDir + File.separator + s).delete();
-						}
-					}
-					getProps.setProperty("monte.carlo.simulation.start.index", "1");
-				}
-			}
-			FileOutputStream store = new FileOutputStream(new File(propName));
-			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
-			store.close();
-			if (saveTopLevel) {
-				store = new FileOutputStream(new File(topLevelProps));
-				getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
-				store.close();
-			}
-			//saveSEDML();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
 		if (monteCarlo.isSelected() || ODE.isSelected()) {
 			File[] files = new File(root + File.separator + outDir).listFiles();
 			for (File f : files) {
@@ -1202,70 +807,32 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 		}
 		int exit;
+		String lpnProperty = "";
+		if (transientProperties != null) {
+			if (!((String) transientProperties.getSelectedItem()).equals("none")) {
+				lpnProperty = ((String) transientProperties.getSelectedItem());
+			}
+		}
+		String simulationName = simName;
+		String directory = null;
 		if (!direct.equals(".")) {
-			String lpnProperty = "";
-			if (transientProperties != null) {
-				if (!((String) transientProperties.getSelectedItem()).equals("none")) {
-					lpnProperty = ((String) transientProperties.getSelectedItem());
-				}
-			}
-			exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id,
-					printer_track_quantity, root + File.separator + simName, stateAbstraction, 1, intSpecies, log, biomodelsim, simTab,
-					root, progress, simName + " " + direct, modelEditor, direct, timeLimit, runTime, modelFile,
-					lhpnAbstraction, reactionAbstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed,
-					refresh, label, running);
+			simulationName = simName + " " + direct;
+			directory = direct;
 		}
-		else {
-			String lpnProperty = "";
-			if (transientProperties != null) {
-				if (!((String) transientProperties.getSelectedItem()).equals("none")) {
-					lpnProperty = ((String) transientProperties.getSelectedItem());
-				}
-			}
-			exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id,
-					printer_track_quantity, root + File.separator + simName, stateAbstraction, 1, intSpecies, log, biomodelsim, simTab,
-					root, progress, simName, modelEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction,
-					reactionAbstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label, running);
-		}
+		exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id,
+				printer_track_quantity, root + File.separator + simName, stateAbstraction, 1, intSpecies, log, biomodelsim, simTab,
+				root, progress, simulationName, modelEditor, directory, timeLimit, runTime, modelFile, lhpnAbstraction,
+				reactionAbstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label, running);
 		if (stateAbstraction.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && exit == 0) {
-			String d = null;
-			if (!direct.equals(".")) {
-				d = direct;
-			}
 			Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split(File.separator), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo, timeLimit,
 					((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + File.separator + simName, rndSeed,
 					run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss,
-					con, log, biomodelsim, simTab, root, d, modelFile, reactionAbstraction, lhpnAbstraction, absError);
+					con, log, biomodelsim, simTab, root, directory, modelFile, reactionAbstraction, lhpnAbstraction, absError);
 			nary_Run.open();
 		}
 		running.setCursor(null);
 		running.dispose();
 		biomodelsim.getExitButton().removeActionListener(runProgram);
-		String[] searchForRunFiles = new File(root + File.separator + outDir).list();
-		for (String s : searchForRunFiles) {
-			if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
-				runFiles = true;
-			}
-		}
-		if (monteCarlo.isSelected()) {
-			append.setEnabled(true);
-			concentrations.setEnabled(true);
-			genRuns.setEnabled(true);
-			genStats.setEnabled(true);
-			report.setEnabled(true);
-			if (append.isSelected()) {
-				limit.setEnabled(false);
-				interval.setEnabled(false);
-				limitLabel.setEnabled(false);
-				intervalLabel.setEnabled(false);
-			}
-			else {
-				limit.setEnabled(true);
-				interval.setEnabled(true);
-				limitLabel.setEnabled(true);
-				intervalLabel.setEnabled(true);
-			}
-		}
 		if (append.isSelected()) {
 			Random rnd = new Random();
 			seed.setText("" + rnd.nextInt());
@@ -1281,124 +848,137 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/**
 	 * Saves the simulate options.
 	 */
-	public void save() {
-		double timeLimit = 100.0;
-		double printInterval = 1.0;
-		double minTimeStep = 0.0;
-		double timeStep = 1.0;
-		double absError = 1.0e-9;
-		long rndSeed = 314159;
-		int run = 1;
+	public boolean save(String direct) {
+		timeLimit = 100.0;
+		printInterval = 1.0;
+		minTimeStep = 0.0;
+		timeStep = 1.0;
+		absError = 1.0e-9;
+		rndSeed = 314159;
+		run = 1;
+		intSpecies = getInterestingSpecies();
+		String selectedButtons = "";
+		rap1 = 0.1;
+		rap2 = 0.1;
+		qss = 0.1;
+		con = 15;
+		double stoichAmp = 1.0;
+		printer_track_quantity = "amount";
+		String generate_statistics = "false";
+		sim = (String) simulators.getSelectedItem();
+		simProp = sbmlProp;
+
 		try {
 			timeLimit = Double.parseDouble(limit.getText().trim());
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Limit Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
 		try {
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
 				printInterval = Double.parseDouble(interval.getText().trim());
+				if (printInterval < 0) {
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Must Enter a Positive Number into the Print Interval Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				else if (printInterval == 0 && !((String) intervalLabel.getSelectedItem()).contains("Minimum")) {
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Must Enter a Positive Number into the Print Interval Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
 			}
 			else {
 				printInterval = Integer.parseInt(interval.getText().trim());
+				if (printInterval <= 0) {
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Must Enter a Positive Number into the Number of Steps Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
 			}
 		}
 		catch (Exception e1) {
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Print Interval Field.",
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Print Interval Field.",
 						"Error", JOptionPane.ERROR_MESSAGE);
-				return;
+				return false;
 			}
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Number Of Steps Field.",
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter an Integer into the Number of Steps Field.",
 					"Error", JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
-		if (step.getText().trim().equals("inf")) {
+		if (step.getText().trim().equals("inf") && !sim.equals("euler")) {
 			timeStep = Double.MAX_VALUE;
+		}
+		else if (step.getText().trim().equals("inf") && sim.equals("euler")) {
+			JOptionPane.showMessageDialog(Gui.frame, "Cannot Select an Infinite Time Step with Euler Simulation.",
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 		else {
 			try {
 				timeStep = Double.parseDouble(step.getText().trim());
 			}
 			catch (Exception e1) {
-				if (step.isEnabled()) {
-					JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Step Field.",
-							"Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Time Step Field.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return false;
 			}
 		}
 		try {
 			minTimeStep = Double.parseDouble(minStep.getText().trim());
 		}
 		catch (Exception e1) {
-			if (minStep.isEnabled()) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Step Field.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Minimum Time Step Field.",
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 		try {
-			// if (absErr.isEnabled()) {
 			absError = Double.parseDouble(absErr.getText().trim());
-			// }
 		}
 		catch (Exception e1) {
-			// if (absErr.isEnabled()) {
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Absolute Error Field.",
 					"Error", JOptionPane.ERROR_MESSAGE);
-			// }
-			return;
+			return false;
 		}
 		try {
-			// if (seed.isEnabled()) {
 			rndSeed = Long.parseLong(seed.getText().trim());
-			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Random Seed Field.", "Error",
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter an Integer into the Random Seed Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
 		try {
-			// if (runs.isEnabled()) {
 			run = Integer.parseInt(runs.getText().trim());
 			if (run < 0) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field."
-						+ "\nProceding With Default:  1", "Error", JOptionPane.ERROR_MESSAGE);
-				run = 1;
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Integer into the Runs Field."
+						+ "\nProceding with Default:   " + biosimrc.get("biosim.sim.runs", ""), "Error",
+						JOptionPane.ERROR_MESSAGE);
+				run = Integer.parseInt(biosimrc.get("biosim.sim.runs", ""));
 			}
-			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field.", "Error",
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Integer into the Runs Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
-		String printer_id;
 		if (genRuns.isSelected()) {
 			printer_id = "null.printer";
 		}
 		else {
 			printer_id = "tsd.printer";
 		}
-		String printer_track_quantity = "amount";
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
 		}
-		
-		String generate_statistics = "false";
 		if (genStats.isSelected())
 			generate_statistics = "true";
-		String[] intSpecies = getInterestingSpecies();
-		String selectedButtons = "";
-		double rap1 = 0.1;
-		double rap2 = 0.1;
-		double qss = 0.1;
-		int con = 15;
-		double stoichAmp = 1.0;
 		
 		try {
 			rap1 = Double.parseDouble(rapid1.getText().trim());
@@ -1406,7 +986,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The"
 					+ " Rapid Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
 		try {
 			rap2 = Double.parseDouble(rapid2.getText().trim());
@@ -1414,7 +994,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The"
 					+ " Rapid Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
 		try {
 			qss = Double.parseDouble(qssa.getText().trim());
@@ -1422,7 +1002,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The QSSA Condition Field.",
 					"Error", JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
 		try {
 			con = Integer.parseInt(maxCon.getText().trim());
@@ -1430,7 +1010,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max"
 					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
 		try {
 			if (reactionAbstraction.isSelected())
@@ -1441,7 +1021,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Double Into the Stoich."
 					+ " Amp. Field.", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
+			return false;
 		}
 		if (noAbstraction.isSelected() && ODE.isSelected()) {
 			selectedButtons = "none_ODE";
@@ -1535,21 +1115,101 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				generate_statistics, sbmlProp.split(File.separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, 
 				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction, mpde.isSelected(), meanPath.isSelected(), 
 				adaptive.isSelected());
+		if (direct.equals(".")) {
+			outDir = simName;
+		}
+		else {
+			outDir = simName + File.separator + direct;
+		}
+		if (!runs.isEnabled()) {
+			for (String runs : new File(root + File.separator + outDir).list()) {
+				if (runs.length() >= 4) {
+					String end = "";
+					for (int j = 1; j < 5; j++) {
+						end = runs.charAt(runs.length() - j) + end;
+					}
+					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+						if (runs.contains("run-")) {
+							run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length() - end.length())));
+						}
+					}
+				}
+			}
+		}
+		boolean saveTopLevel = false;
+		if (!direct.equals(".")) {
+			simProp = simProp.substring(0, simProp.length()
+					- simProp.split(File.separator)[simProp.split(File.separator).length - 1].length())
+					+ direct
+					+ File.separator
+					+ simProp.substring(simProp.length()
+							- simProp.split(File.separator)[simProp.split(File.separator).length - 1].length());
+			saveTopLevel = true;
+		}
+		String topLevelProps = null;
+		if (saveTopLevel) {
+			topLevelProps = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
+					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
+		}
 		try {
 			Properties getProps = new Properties();
 			FileInputStream load = new FileInputStream(new File(propName));
 			getProps.load(load);
 			load.close();
-			getProps.setProperty("selected.simulator", (String) simulators.getSelectedItem());
+			getProps.setProperty("selected.simulator", sim);
 			if (transientProperties != null) {
 				getProps.setProperty("selected.property", (String) transientProperties.getSelectedItem());
 			}
 			if (!fileStem.getText().trim().equals("")) {
 				getProps.setProperty("file.stem", fileStem.getText().trim());
 			}
+			if (monteCarlo.isSelected() || ODE.isSelected()) {
+				if (append.isSelected()) {
+					String[] searchForRunFiles = new File(root + File.separator + outDir).list();
+					int start = 1;
+					for (String s : searchForRunFiles) {
+						if (s.length() > 3 && s.substring(0, 4).equals("run-")
+								&& new File(root + File.separator + outDir + File.separator + s).isFile()) {
+							String getNumber = s.substring(4, s.length());
+							String number = "";
+							for (int i = 0; i < getNumber.length(); i++) {
+								if (Character.isDigit(getNumber.charAt(i))) {
+									number += getNumber.charAt(i);
+								}
+								else {
+									break;
+								}
+							}
+							start = Math.max(Integer.parseInt(number), start);
+						}
+						else if (s.length() > 3
+								&& new File(root + File.separator + outDir + File.separator + s).isFile()
+								&& (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s
+										.equals("variance.tsd"))) {
+							new File(root + File.separator + outDir + File.separator + s).delete();
+						}
+					}
+					getProps.setProperty("monte.carlo.simulation.start.index", (start + 1) + "");
+				}
+				else {
+					String[] searchForRunFiles = new File(root + File.separator + outDir).list();
+					for (String s : searchForRunFiles) {
+						if (s.length() > 3 && s.substring(0, 4).equals("run-")
+								&& new File(root + File.separator + outDir + File.separator + s).isFile()) {
+							new File(root + File.separator + outDir + File.separator + s).delete();
+						}
+					}
+					getProps.setProperty("monte.carlo.simulation.start.index", "1");
+				}
+			}
 			FileOutputStream store = new FileOutputStream(new File(propName));
 			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
+			if (saveTopLevel) {
+				store = new FileOutputStream(new File(topLevelProps));
+				getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
+				store.close();
+			}
 			//saveSEDML();
 		}
 		catch (Exception e) {
@@ -1558,6 +1218,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					JOptionPane.ERROR_MESSAGE);
 		}
 		change = false;
+		return true;
 	}
 	
 	private void loadSEDML() {
@@ -2246,11 +1907,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("monteCarlo")) {
 						monteCarlo.setSelected(true);
-						if (runFiles) {
-							// overwrite.setEnabled(true);
-							append.setEnabled(true);
-							// choose3.setEnabled(true);
-						}
+						append.setEnabled(true);
 						enableMonteCarlo();
 						if (load.containsKey("selected.simulator")) {
 							String simId = load.getProperty("selected.simulator");
@@ -3200,7 +2857,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
 			markov.setEnabled(true);
 		}
-		if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
+		if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected()) {
 			append.setEnabled(true);
 			concentrations.setEnabled(true);
 			genRuns.setEnabled(true);
@@ -3583,24 +3240,22 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			Object[] objects = getLists.toArray();
 			postAbs.setListData(objects);
 		}
-		if (runFiles) {
-			append.setEnabled(true);
-			concentrations.setEnabled(true);
-			genRuns.setEnabled(true);
-			genStats.setEnabled(true);
-			report.setEnabled(true);
-			if (append.isSelected()) {
-				limit.setEnabled(false);
-				interval.setEnabled(false);
-				limitLabel.setEnabled(false);
-				intervalLabel.setEnabled(false);
-			}
-			else {
-				limit.setEnabled(true);
-				interval.setEnabled(true);
-				limitLabel.setEnabled(true);
-				intervalLabel.setEnabled(true);
-			}
+		append.setEnabled(true);
+		concentrations.setEnabled(true);
+		genRuns.setEnabled(true);
+		genStats.setEnabled(true);
+		report.setEnabled(true);
+		if (append.isSelected()) {
+			limit.setEnabled(false);
+			interval.setEnabled(false);
+			limitLabel.setEnabled(false);
+			intervalLabel.setEnabled(false);
+		}
+		else {
+			limit.setEnabled(true);
+			interval.setEnabled(true);
+			limitLabel.setEnabled(true);
+			intervalLabel.setEnabled(true);
 		}
 		mpde.setEnabled(false);
 		meanPath.setEnabled(false);
@@ -3757,7 +3412,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		getLists = new ArrayList<String>();
 		objects = getLists.toArray();
 		postAbs.setListData(objects);
-		if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
+		if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && !fba.isSelected()) {
 			append.setEnabled(true);
 			concentrations.setEnabled(true);
 			genRuns.setEnabled(true);

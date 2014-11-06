@@ -565,7 +565,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		String[] finalS = Utility.getList(finalStates, finalState);
 		Run runProgram = new Run(null);
 		naryCancel.addActionListener(runProgram);
-		Run.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep, timeStep, outDir, rndSeed, run, 1, printer_id,
+		Nary_Run.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep, timeStep, outDir, rndSeed, run, 1, printer_id,
 				printer_track_quantity, getFilename, naryFrame, filename, monteCarlo, stopE, stopR, finalS, inhib, consLevel, getSpeciesProps,
 				conLevel, termCond, intSpecies, rap1, rap2, qss, con, counts, false, false, false);
 		if (monteCarlo.isSelected()) {
@@ -582,5 +582,131 @@ public class Nary_Run implements ActionListener, Runnable {
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);
+	}
+
+	/**
+	 * This method is given what data is entered into the nary frame and creates
+	 * the nary properties file from that information.
+	 */
+	public static void createNaryProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
+			double timeStep, String outDir, long rndSeed, int run, int numPaths, String printer_id, String printer_track_quantity,
+			String[] getFilename, Component component, String filename, JRadioButton monteCarlo, String stopE, double stopR,
+			String[] finalS, ArrayList<JTextField> inhib, ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps,
+			ArrayList<Object[]> conLevel, String[] termCond, String[] intSpecies, double rap1, double rap2, double qss,
+			int con, ArrayList<Integer> counts, boolean mpde, boolean meanPath, boolean adaptive) {
+		Properties nary = new Properties();
+		try {
+			FileInputStream load = new FileInputStream(new File(outDir + File.separator + "species.properties"));
+			nary.load(load);
+			load.close();
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(component, "Species Properties File Not Found!", "File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		nary.setProperty("reb2sac.abstraction.method.0.1", "enzyme-kinetic-qssa-1");
+		nary.setProperty("reb2sac.abstraction.method.0.2", "reversible-to-irreversible-transformer");
+		nary.setProperty("reb2sac.abstraction.method.0.3", "multiple-products-reaction-eliminator");
+		nary.setProperty("reb2sac.abstraction.method.0.4", "multiple-reactants-reaction-eliminator");
+		nary.setProperty("reb2sac.abstraction.method.0.5", "single-reactant-product-reaction-eliminator");
+		nary.setProperty("reb2sac.abstraction.method.0.6", "dimer-to-monomer-substitutor");
+		nary.setProperty("reb2sac.abstraction.method.0.7", "inducer-structure-transformer");
+		nary.setProperty("reb2sac.abstraction.method.1.1", "modifier-structure-transformer");
+		nary.setProperty("reb2sac.abstraction.method.1.2", "modifier-constant-propagation");
+		nary.setProperty("reb2sac.abstraction.method.2.1", "operator-site-forward-binding-remover");
+		nary.setProperty("reb2sac.abstraction.method.2.3", "enzyme-kinetic-rapid-equilibrium-1");
+		nary.setProperty("reb2sac.abstraction.method.2.4", "irrelevant-species-remover");
+		nary.setProperty("reb2sac.abstraction.method.2.5", "inducer-structure-transformer");
+		nary.setProperty("reb2sac.abstraction.method.2.6", "modifier-constant-propagation");
+		nary.setProperty("reb2sac.abstraction.method.2.7", "similar-reaction-combiner");
+		nary.setProperty("reb2sac.abstraction.method.2.8", "modifier-constant-propagation");
+		nary.setProperty("reb2sac.abstraction.method.2.2", "dimerization-reduction");
+		nary.setProperty("reb2sac.abstraction.method.3.1", "nary-order-unary-transformer");
+		nary.setProperty("reb2sac.abstraction.method.3.2", "modifier-constant-propagation");
+		nary.setProperty("reb2sac.abstraction.method.3.3", "absolute-inhibition-generator");
+		nary.setProperty("reb2sac.abstraction.method.3.4", "final-state-generator");
+		nary.setProperty("reb2sac.abstraction.method.3.5", "stop-flag-generator");
+		nary.setProperty("reb2sac.nary.order.decider", "distinct");
+		nary.setProperty("simulation.printer", printer_id);
+		nary.setProperty("simulation.printer.tracking.quantity", printer_track_quantity);
+		nary.setProperty("reb2sac.analysis.stop.enabled", stopE);
+		nary.setProperty("reb2sac.analysis.stop.rate", "" + stopR);
+		for (int i = 0; i < getSpeciesProps.size(); i++) {
+			if (!(inhib.get(i).getText().trim() != "<<none>>")) {
+				nary.setProperty("reb2sac.absolute.inhibition.threshold." + getSpeciesProps.get(i), inhib.get(i).getText()
+						.trim());
+			}
+			String[] consLevels = Utility.getList(conLevel.get(i), consLevel.get(i));
+			for (int j = 0; j < counts.get(i); j++) {
+				nary.remove("reb2sac.concentration.level." + getSpeciesProps.get(i) + "." + (j + 1));
+			}
+			for (int j = 0; j < consLevels.length; j++) {
+				nary.setProperty("reb2sac.concentration.level." + getSpeciesProps.get(i) + "." + (j + 1), consLevels[j]);
+			}
+		}
+		if (monteCarlo.isSelected()) {
+			nary.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
+			if (useInterval.equals("Print Interval")) {
+				nary.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
+			}
+			else if (useInterval.equals("Minimum Print Interval")) {
+				nary.setProperty("monte.carlo.simulation.minimum.print.interval", "" + printInterval);
+			}
+			else {
+				nary.setProperty("monte.carlo.simulation.number.steps", "" + ((int) printInterval));
+			}
+			if (timeStep == Double.MAX_VALUE) {
+				nary.setProperty("monte.carlo.simulation.time.step", "inf");
+			}
+			else {
+				nary.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
+			}
+			nary.setProperty("monte.carlo.simulation.min.time.step", "" + minTimeStep);
+			nary.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
+			nary.setProperty("monte.carlo.simulation.runs", "" + run);
+			nary.setProperty("monte.carlo.simulation.out.dir", ".");
+			nary.setProperty("reb2sac.iSSA.number.paths", "" + numPaths);
+			if (mpde) {
+				nary.setProperty("reb2sac.iSSA.type", "mpde");
+			} else if (meanPath) {
+				nary.setProperty("reb2sac.iSSA.type", "meanPath");
+			} else {
+				nary.setProperty("reb2sac.iSSA.type", "medianPath");
+			}
+			if (adaptive) {
+				nary.setProperty("reb2sac.iSSA.adaptive", "true");
+			} else {
+				nary.setProperty("reb2sac.iSSA.adaptive", "false");
+			}
+		}
+		for (int i = 0; i < finalS.length; i++) {
+			if (finalS[i].trim() != "<<unknown>>") {
+				nary.setProperty("reb2sac.final.state." + (i + 1), "" + finalS[i]);
+			}
+		}
+		for (int i = 0; i < intSpecies.length; i++) {
+			if (intSpecies[i] != "") {
+				nary.setProperty("reb2sac.interesting.species." + (i + 1), "" + intSpecies[i]);
+			}
+		}
+		nary.setProperty("reb2sac.rapid.equilibrium.condition.1", "" + rap1);
+		nary.setProperty("reb2sac.rapid.equilibrium.condition.2", "" + rap2);
+		nary.setProperty("reb2sac.qssa.condition.1", "" + qss);
+		nary.setProperty("reb2sac.operator.max.concentration.threshold", "" + con);
+		for (int i = 0; i < termCond.length; i++) {
+			if (termCond[i] != "") {
+				nary.setProperty("simulation.run.termination.condition." + (i + 1), "" + termCond[i]);
+			}
+		}
+		try {
+			FileOutputStream store = new FileOutputStream(new File(filename.replace(".sbml", "").replace(".xml", "")
+					+ ".properties"));
+			nary.store(store, getFilename[getFilename.length - 1].replace(".sbml", "").replace(".xml", "") + " Properties");
+			store.close();
+		}
+		catch (Exception except) {
+			JOptionPane.showMessageDialog(component, "Unable To Save Properties File!"
+					+ "\nMake sure you select a model for simulation.", "Unable To Save File", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

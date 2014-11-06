@@ -2421,7 +2421,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							((ModelEditor) component).saveParams(false, "", true, null);
 						}
 						else if (component instanceof AnalysisView) {
-							((AnalysisView) component).save();
+							((AnalysisView) component).save("");
 						}
 						else if (component instanceof MovieContainer) {
 							((MovieContainer) component).savePreferences();
@@ -6446,13 +6446,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 												"Do you want to save simulation option changes for " + getTitleAt(index) + "?", "Save Changes",
 												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 										if (value == YES_OPTION) {
-											((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+											((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save("");
 										}
 										else if (value == CANCEL_OPTION) {
 											return 0;
 										}
 										else if (value == YES_TO_ALL_OPTION) {
-											((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+											((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save("");
 											autosave = 1;
 										}
 										else if (value == NO_TO_ALL_OPTION) {
@@ -6460,7 +6460,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										}
 									}
 									else if (autosave == 1) {
-										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save("");
 									}
 								}
 							}
