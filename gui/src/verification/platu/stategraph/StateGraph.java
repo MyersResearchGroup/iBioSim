@@ -758,6 +758,19 @@ public class StateGraph {
 //    		return (State)this.nextStateMap.get(curState);
     	
     	State nextState = thisSg.getNextState(curState, firedTran);
+    	
+    	if(Options.getTimingAnalysisFlag()){
+    		// This effectively turns off the caching done by
+    		// thisSg.getNextState. The caching takes the current state and transition and
+    		// outputs the next state if it has been seen before. The problem with this
+    		// is that it is agnostic to timing information while the state itself is not
+    		// due to having the boolean variables for the inequalities. Thus, it is possible
+    		// to have the same current state and transition result in different next states
+    		// based on how the continuous portion of the state effects the boolean inequality
+    		// variables.
+    		nextState = null;
+    	}
+    	
     	if(nextState != null)
     		return nextState;  	
     	// If no cached next state exists, do regular firing. 
