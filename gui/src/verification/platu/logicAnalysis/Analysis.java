@@ -200,6 +200,7 @@ public class Analysis {
 		int tranFiringCnt = 0;
 		int totalStates = 1;
 		int numLpns = sgList.length;
+		Transition firedFailure = null;
 		
 		//Stack<State[]> stateStack = new Stack<State[]>();
 		HashSet<PrjState> stateStack = new HashSet<PrjState>();
@@ -291,8 +292,11 @@ public class Analysis {
 			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
 			int curIndex = curIndexStack.peek();
 			LinkedList<Transition> curEnabled = lpnTranStack.peek();
-			if (failureTranIsEnabled(curEnabled)) {
-				return null;
+			//if (failureTranIsEnabled(curEnabled)) {
+			firedFailure = failureTranIsEnabled(curEnabled); // Null means no failures.
+			if(firedFailure != null){
+				failure = true;
+				break main_while_loop;
 			}
 			if (Options.getDebugMode()) {
 				printStateArray(curStateArray, "------- curStateArray ----------");
@@ -508,12 +512,23 @@ public class Analysis {
 			+ ", max_stack_depth: " + max_stack_depth 
 			+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
 			+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
-		if(Options.getTimingAnalysisFlag() && !failure){
-//			JOptionPane.showMessageDialog(Gui.frame,
-//					"Verification was successful.", "Success",
-//					JOptionPane.INFORMATION_MESSAGE);
-			System.out.println("Verification was successful");
+		if(Options.getTimingAnalysisFlag()){// && !failure){
+			if(!failure){
+//				JOptionPane.showMessageDialog(Gui.frame,
+//						"Verification was successful.", "Success",
+//						JOptionPane.INFORMATION_MESSAGE);
+				System.out.println("Verification was successful");
+			}
+			else{
+//				JOptionPane.showMessageDialog(Gui.frame,
+//						"Failure transition " + firedFailure.getLabel() + " is enabled.", "Error",
+//						JOptionPane.ERROR_MESSAGE);
+				System.out.println("System failed.");
+				System.out.println("The failure transition" + firedFailure.getLabel() + "fired.");
+			}
 			System.out.println(prjStateSet.toString());
+			
+			
 		}
 		if (Options.getOutputLogFlag()) 
 			writePerformanceResultsToLogFile(false, tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
@@ -622,8 +637,8 @@ public class Analysis {
 		return new HashSetWrapper();
 	}
 	
-	private static boolean failureTranIsEnabled(LinkedList<Transition> enabledTrans) {
-		boolean failureTranIsEnabled = false;
+	private static Transition failureTranIsEnabled(LinkedList<Transition> enabledTrans) {
+		Transition failure = null;
 		for (Transition tran : enabledTrans) {
 			if (tran.isFail()) {
 				
@@ -635,15 +650,14 @@ public class Analysis {
 						e.printStackTrace();
 					}
 				}
-				
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Failure transition " + tran.getLabel() + " is enabled.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				failureTranIsEnabled = true;
-				break;
+//				
+//				JOptionPane.showMessageDialog(Gui.frame,
+//						"Failure transition " + tran.getLabel() + " is enabled.", "Error",
+//						JOptionPane.ERROR_MESSAGE);
+				return tran;
 			}
 		}
-		return failureTranIsEnabled;
+		return failure;
 	}
 
 	/**
@@ -959,6 +973,7 @@ public class Analysis {
 		int tranFiringCnt = 0;
 		int totalStates = 1;
 		int numLpns = sgList.length;
+		Transition firedFailure = null;
 		
 		LhpnFile[] lpnList = new LhpnFile[numLpns];
 		for (int i=0; i<numLpns; i++) {
@@ -1106,7 +1121,9 @@ public class Analysis {
 			}
 			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
 			LinkedList<Transition> curStrongStubbornTrans = lpnTranStack.peek();
-			if (failureTranIsEnabled(curStrongStubbornTrans)) {
+			firedFailure = failureTranIsEnabled(curStrongStubbornTrans); // Null mean no failure.
+			//if (failureTranIsEnabled(curStrongStubbornTrans)) {
+			if(firedFailure != null){
 				return null;
 			}
 			if (curStrongStubbornTrans.size() == 0) {
