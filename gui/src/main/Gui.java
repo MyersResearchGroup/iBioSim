@@ -4401,16 +4401,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	private void performAnalysis(String modelId, String simName, SEDMLDocument sedmlDoc) throws Exception {
 		String sbmlFile = root + separator + modelId + ".xml";
-		String[] sbml1 = null;
 		File sedmlFile = new File(root + separator + simName + separator + modelId + "-sedml.xml");
 		sedmlDoc.writeDocument(sedmlFile);
-		sbml1 = sbmlFile.split(separator);
+		String modelFileName = sbmlFile.split(separator)[sbmlFile.split(separator).length-1];
 		String sbmlFileProp;
-		sbmlFileProp = root + separator + simName + separator + sbml1[sbml1.length - 1];
+		sbmlFileProp = root + separator + simName + separator + modelFileName;
 		new FileOutputStream(new File(sbmlFileProp)).close();
 		try {
 			FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim() + separator + simName.trim() + ".sim"));
-			out.write((sbml1[sbml1.length - 1] + "\n").getBytes());
+			out.write((modelFileName + "\n").getBytes());
 			out.close();
 		}
 		catch (IOException e1) {
@@ -4419,12 +4418,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addToTree(simName);
 		JTabbedPane simTab = new JTabbedPane();
 		simTab.addMouseListener(this);
-		AnalysisView reb2sac = new AnalysisView(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null);
+		AnalysisView reb2sac = new AnalysisView(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, modelFileName, null);
 		simTab.addTab("Simulation Options", reb2sac);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 		simTab.addTab("Advanced Options", reb2sac.getAdvanced());
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-		String gcmFile = sbml1[sbml1.length - 1].replace(".xml", ".gcm");
+		String gcmFile = modelFileName.replace(".xml", ".gcm");
 		ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
 				+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
 		reb2sac.setModelEditor(modelEditor);
@@ -4434,8 +4433,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addModelViewTab(reb2sac, simTab, modelEditor);
 		simTab.addTab("Parameters", modelEditor);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-		//simTab.addTab("SBML Elements", elementsPanel);
-		//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		modelEditor.createSBML("",".", "rkf45");
 		reb2sac.run(".", true);
 		Graph tsdGraph;

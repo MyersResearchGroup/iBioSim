@@ -78,7 +78,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private String sbmlFile, root; // sbml file and root directory
 
-	private Gui biomodelsim; // reference to the tstubd class
+	private Gui gui; // reference to the tstubd class
 
 	private String simName; // simulation id
 
@@ -112,7 +112,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private String modelFile;
 
-	private AbstPane lhpnAbstraction;
+	private AbstPane lpnAbstraction;
 
 	private JComboBox transientProperties;
 
@@ -148,22 +148,30 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
-	 * puts them on panels, adds the panels to the frame, and then displays the
-	 * GUI.
-	 * @param modelFile
+	 * puts them on panels, adds the panels to the frame, and then displays the GUI.
+	 * @param sbmlFile - full path for the original SBML file to analyze
+	 * @param sbmlProp - full path for the generated SBML file to analyze
+	 * @param root - the project root directory path
+	 * @param gui - the main GUI window object
+	 * @param simName - the name of the analysis view
+	 * @param log - the log for the console
+	 * @param simTab - the tabbedPane this is to be added too
+	 * @param open - the properties file for this analysis view
+	 * @param modelFile - the SBML model file 
+	 * @param lpnAbstraction - the abstraction pane for LPN abstraction options
 	 */
-	public AnalysisView(String sbmlFile, String sbmlProp, String root, Gui biomodelsim, String simName, Log log,
-			JTabbedPane simTab, String open, String modelFile, AbstPane lhpnAbstraction) {
+	public AnalysisView(String sbmlFile, String sbmlProp, String root, Gui gui, String simName, Log log,
+			JTabbedPane simTab, String open, String modelFile, AbstPane lpnAbstraction) {
 
 		super(new BorderLayout());
-		this.biomodelsim = biomodelsim;
+		this.gui = gui;
 		this.sbmlFile = sbmlFile;
 		this.sbmlProp = sbmlProp;
 		this.root = root;
 		this.simName = simName;
 		this.log = log;
 		this.simTab = simTab;
-		this.lhpnAbstraction = lhpnAbstraction;
+		this.lpnAbstraction = lpnAbstraction;
 		this.interestingSpecies = new ArrayList<String>();
 		String[] tempArray = modelFile.split(File.separator);
 		this.modelFile = tempArray[tempArray.length - 1];
@@ -434,11 +442,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		change = true;
-		if (e.getSource() == noAbstraction || e.getSource() == expandReactions || e.getSource() == reactionAbstraction) {
-			enableNoneOrAbs();
+		if (e.getSource() == noAbstraction || e.getSource() == expandReactions) { 
+			enableNoAbstraction();
+		}
+		else if (e.getSource() == reactionAbstraction) {
+			enableReactionAbstraction();
 		}
 		else if (e.getSource() == stateAbstraction) {
-			enableNary();
+			enableStateAbstraction();
 		}
 		else if (e.getSource() == ODE) {
 			enableODE();
@@ -467,7 +478,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == simulators) {
 			if (simulators.getItemCount() == 0) {
 				description.setText("");
-				disableSimulatorOptions();
+				disableiSSASimulatorOptions();
 			}
 			else if (simulators.getSelectedItem().equals("euler")) {
 				description.setText("Euler method");
@@ -575,7 +586,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			Utility.remove(postAbs);
 		}
 		else if (e.getSource() == append) {
-			setupToAppendRuns();
+			setupToAppendRuns(true);
 		}
 	}
 	
@@ -652,47 +663,50 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	}
 	
 	/* Setup to append runs */
-	private void setupToAppendRuns() {
+	private void setupToAppendRuns(boolean newSeed) {
 		if (append.isSelected()) {
 			limit.setEnabled(false);
 			interval.setEnabled(false);
 			limitLabel.setEnabled(false);
 			intervalLabel.setEnabled(false);
+			if (newSeed) {
+				Random rnd = new Random();
+				seed.setText("" + rnd.nextInt());
+			}
+			// TODO: Does this part actually still work.  Seems you need to look at the runs themselves.
+			int cut = 0;
+			String[] getFilename = sbmlProp.split(File.separator);
+			for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
+				if (getFilename[getFilename.length - 1].charAt(i) == '.') {
+					cut = i;
+				}
+			}
+			String propName = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
+					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
+			try {
+				if (new File(propName).exists()) {
+					Properties getProps = new Properties();
+					FileInputStream load = new FileInputStream(new File(propName));
+					getProps.load(load);
+					load.close();
+					if (getProps.containsKey("monte.carlo.simulation.time.limit")) {
+						minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
+						step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
+						limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
+						interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
+					}
+				}
+			}
+			catch (IOException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		else {
 			limit.setEnabled(true);
 			interval.setEnabled(true);
 			limitLabel.setEnabled(true);
 			intervalLabel.setEnabled(true);
-		}
-		Random rnd = new Random();
-		seed.setText("" + rnd.nextInt());
-		int cut = 0;
-		String[] getFilename = sbmlProp.split(File.separator);
-		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
-			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
-				cut = i;
-			}
-		}
-		String propName = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
-				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
-		try {
-			if (new File(propName).exists()) {
-				Properties getProps = new Properties();
-				FileInputStream load = new FileInputStream(new File(propName));
-				getProps.load(load);
-				load.close();
-				if (getProps.containsKey("monte.carlo.simulation.time.limit")) {
-					minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
-					step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
-					limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
-					interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
-				}
-			}
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error",
-					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -796,7 +810,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		Run runProgram = new Run(this);
 		cancel.addActionListener(runProgram);
-		biomodelsim.getExitButton().addActionListener(runProgram);
+		gui.getExitButton().addActionListener(runProgram);
 		if (monteCarlo.isSelected() || ODE.isSelected()) {
 			File[] files = new File(root + File.separator + outDir).listFiles();
 			for (File f : files) {
@@ -820,26 +834,26 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			directory = direct;
 		}
 		exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id,
-				printer_track_quantity, root + File.separator + simName, stateAbstraction, 1, intSpecies, log, biomodelsim, simTab,
-				root, progress, simulationName, modelEditor, directory, timeLimit, runTime, modelFile, lhpnAbstraction,
+				printer_track_quantity, root + File.separator + simName, stateAbstraction, 1, intSpecies, log, gui, simTab,
+				root, progress, simulationName, modelEditor, directory, timeLimit, runTime, modelFile, lpnAbstraction,
 				reactionAbstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label, running);
 		if (stateAbstraction.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && exit == 0) {
 			Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split(File.separator), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo, timeLimit,
 					((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + File.separator + simName, rndSeed,
 					run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss,
-					con, log, biomodelsim, simTab, root, directory, modelFile, reactionAbstraction, lhpnAbstraction, absError);
+					con, log, gui, simTab, root, directory, modelFile, reactionAbstraction, lpnAbstraction, absError);
 			nary_Run.open();
 		}
 		running.setCursor(null);
 		running.dispose();
-		biomodelsim.getExitButton().removeActionListener(runProgram);
+		gui.getExitButton().removeActionListener(runProgram);
 		if (append.isSelected()) {
 			Random rnd = new Random();
 			seed.setText("" + rnd.nextInt());
 		}
-		for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
-			if (biomodelsim.getTab().getComponentAt(i) instanceof Graph) {
-				((Graph) biomodelsim.getTab().getComponentAt(i)).refresh();
+		for (int i = 0; i < gui.getTab().getTabCount(); i++) {
+			if (gui.getTab().getComponentAt(i) instanceof Graph) {
+				((Graph) gui.getTab().getComponentAt(i)).refresh();
 			}
 		}
 	}
@@ -1113,7 +1127,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		Run.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
 				minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths, intSpecies, printer_id, printer_track_quantity, 
 				generate_statistics, sbmlProp.split(File.separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, 
-				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction, mpde.isSelected(), meanPath.isSelected(), 
+				stoichAmp, preAbs, loopAbs, postAbs, lpnAbstraction, mpde.isSelected(), meanPath.isSelected(), 
 				adaptive.isSelected());
 		if (direct.equals(".")) {
 			outDir = simName;
@@ -1686,20 +1700,20 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (key.equals("monte.carlo.simulation.start.index")) {
 					}
-					else if (key.equals("abstraction.interesting") && lhpnAbstraction != null) {
+					else if (key.equals("abstraction.interesting") && lpnAbstraction != null) {
 						String intVars = load.getProperty("abstraction.interesting");
 						String[] array = intVars.split(" ");
 						for (String s : array) {
 							if (!s.equals("")) {
-								lhpnAbstraction.addIntVar(s);
+								lpnAbstraction.addIntVar(s);
 							}
 						}
 					}
-					else if (key.equals("abstraction.factor") && lhpnAbstraction != null) {
-						lhpnAbstraction.factorField.setText(load.getProperty("abstraction.factor"));
+					else if (key.equals("abstraction.factor") && lpnAbstraction != null) {
+						lpnAbstraction.factorField.setText(load.getProperty("abstraction.factor"));
 					}
-					else if (key.equals("abstraction.iterations") && lhpnAbstraction != null) {
-						lhpnAbstraction.iterField.setText(load.getProperty("abstraction.iterations"));
+					else if (key.equals("abstraction.iterations") && lpnAbstraction != null) {
+						lpnAbstraction.iterField.setText(load.getProperty("abstraction.iterations"));
 					}
 					else if (key.toString().startsWith("abstraction.transform")) {
 						continue;
@@ -1713,8 +1727,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				HashMap<Integer, String> postOrder = new HashMap<Integer, String>();
 				HashMap<String, Boolean> containsXform = new HashMap<String, Boolean>();
 				boolean containsAbstractions = false;
-				if (lhpnAbstraction != null) {
-					for (String s : lhpnAbstraction.transforms) {
+				if (lpnAbstraction != null) {
+					for (String s : lpnAbstraction.transforms) {
 						if (load.containsKey("abstraction.transform." + s)) {
 							if (load.getProperty("abstraction.transform." + s).contains("preloop")) {
 								Pattern prePattern = Pattern.compile("preloop(\\d+)");
@@ -1724,11 +1738,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 									preOrder.put(index, s);
 								}
 								else {
-									lhpnAbstraction.addPreXform(s);
+									lpnAbstraction.addPreXform(s);
 								}
 							}
 							else {
-								lhpnAbstraction.preAbsModel.removeElement(s);
+								lpnAbstraction.preAbsModel.removeElement(s);
 							}
 							if (load.getProperty("abstraction.transform." + s).contains("mainloop")) {
 								Pattern loopPattern = Pattern.compile("mainloop(\\d+)");
@@ -1738,11 +1752,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 									loopOrder.put(index, s);
 								}
 								else {
-									lhpnAbstraction.addLoopXform(s);
+									lpnAbstraction.addLoopXform(s);
 								}
 							}
 							else {
-								lhpnAbstraction.loopAbsModel.removeElement(s);
+								lpnAbstraction.loopAbsModel.removeElement(s);
 							}
 							if (load.getProperty("abstraction.transform." + s).contains("postloop")) {
 								Pattern postPattern = Pattern.compile("postloop(\\d+)");
@@ -1752,56 +1766,56 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 									postOrder.put(index, s);
 								}
 								else {
-									lhpnAbstraction.addPostXform(s);
+									lpnAbstraction.addPostXform(s);
 								}
 							}
 							else {
-								lhpnAbstraction.postAbsModel.removeElement(s);
+								lpnAbstraction.postAbsModel.removeElement(s);
 							}
 						}
 						else if (containsAbstractions && !containsXform.get(s)) {
-							lhpnAbstraction.preAbsModel.removeElement(s);
-							lhpnAbstraction.loopAbsModel.removeElement(s);
-							lhpnAbstraction.postAbsModel.removeElement(s);
+							lpnAbstraction.preAbsModel.removeElement(s);
+							lpnAbstraction.loopAbsModel.removeElement(s);
+							lpnAbstraction.postAbsModel.removeElement(s);
 						}
 					}
 					if (preOrder.size() > 0) {
-						lhpnAbstraction.preAbsModel.removeAllElements();
+						lpnAbstraction.preAbsModel.removeAllElements();
 					}
 					for (Integer j = 0; j < preOrder.size(); j++) {
-						lhpnAbstraction.preAbsModel.addElement(preOrder.get(j));
+						lpnAbstraction.preAbsModel.addElement(preOrder.get(j));
 					}
 					if (loopOrder.size() > 0) {
-						lhpnAbstraction.loopAbsModel.removeAllElements();
+						lpnAbstraction.loopAbsModel.removeAllElements();
 					}
 					for (Integer j = 0; j < loopOrder.size(); j++) {
-						lhpnAbstraction.loopAbsModel.addElement(loopOrder.get(j));
+						lpnAbstraction.loopAbsModel.addElement(loopOrder.get(j));
 					}
 					if (postOrder.size() > 0) {
-						lhpnAbstraction.postAbsModel.removeAllElements();
+						lpnAbstraction.postAbsModel.removeAllElements();
 					}
 					for (Integer j = 0; j < postOrder.size(); j++) {
-						lhpnAbstraction.postAbsModel.addElement(postOrder.get(j));
+						lpnAbstraction.postAbsModel.addElement(postOrder.get(j));
 					}
-					lhpnAbstraction.preAbs.setListData(lhpnAbstraction.preAbsModel.toArray());
-					lhpnAbstraction.loopAbs.setListData(lhpnAbstraction.loopAbsModel.toArray());
-					lhpnAbstraction.postAbs.setListData(lhpnAbstraction.postAbsModel.toArray());
+					lpnAbstraction.preAbs.setListData(lpnAbstraction.preAbsModel.toArray());
+					lpnAbstraction.loopAbs.setListData(lpnAbstraction.loopAbsModel.toArray());
+					lpnAbstraction.postAbs.setListData(lpnAbstraction.postAbsModel.toArray());
 				}
 				if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
 					noAbstraction.setSelected(true);
-					enableNoneOrAbs();
+					enableNoAbstraction();
 				}
 				else if (load.getProperty("reb2sac.abstraction.method").equals("expand")) {
 					expandReactions.setSelected(true);
-					enableNoneOrAbs();
+					enableNoAbstraction();
 				}
 				else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
 					reactionAbstraction.setSelected(true);
-					enableNoneOrAbs();
+					enableReactionAbstraction();
 				}
 				else {
 					stateAbstraction.setSelected(true);
-					enableNary();
+					enableStateAbstraction();
 				}
 				if (load.containsKey("ode.simulation.absolute.error")) {
 					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
@@ -2044,8 +2058,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					getLists.add(load.getProperty("simulation.run.termination.condition." + i));
 					i++;
 				}
-				// termConditions = getLists.toArray();
-				// terminations.setListData(termConditions);
 				getLists = new ArrayList<String>();
 				i = 1;
 				while (load.containsKey("reb2sac.interesting.species." + i)) {
@@ -2182,10 +2194,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
 		}
-		// int[] index = species.getSelectedIndices();
-		// species.setSelectedIndices(index);
 		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time",
-				biomodelsim, open, log, null, true, false);
+				gui, open, log, null, true, false);
 	}
 
 	public void executeRun() {
@@ -2203,11 +2213,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			stem += fileStem.getText().trim();
 		}
-		for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
+		for (int i = 0; i < gui.getTab().getTabCount(); i++) {
 			if (modelEditor != null) {
-				if (biomodelsim.getTitleAt(i).equals(modelEditor.getRefFile())) {
-					if (biomodelsim.getTab().getComponentAt(i) instanceof ModelEditor) {
-						ModelEditor gcm = ((ModelEditor) (biomodelsim.getTab().getComponentAt(i)));
+				if (gui.getTitleAt(i).equals(modelEditor.getRefFile())) {
+					if (gui.getTab().getComponentAt(i) instanceof ModelEditor) {
+						ModelEditor gcm = ((ModelEditor) (gui.getTab().getComponentAt(i)));
 						if (gcm.isDirty()) {
 							Object[] options = { "Yes", "No" };
 							int value = JOptionPane
@@ -2224,9 +2234,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 			}
 			else {
-				if (biomodelsim.getTitleAt(i).equals(modelFile)) {
-					if (biomodelsim.getTab().getComponentAt(i) instanceof LHPNEditor) {
-						LHPNEditor lpn = ((LHPNEditor) (biomodelsim.getTab().getComponentAt(i)));
+				if (gui.getTitleAt(i).equals(modelFile)) {
+					if (gui.getTab().getComponentAt(i) instanceof LHPNEditor) {
+						LHPNEditor lpn = ((LHPNEditor) (gui.getTab().getComponentAt(i)));
 						if (lpn.isDirty()) {
 							Object[] options = { "Yes", "No" };
 							int value = JOptionPane
@@ -2252,7 +2262,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			if (reactionAbstraction.isSelected()) {
 				LhpnFile lhpnFile = new LhpnFile();
 				lhpnFile.load(root + File.separator + modelFile);
-				Abstraction abst = new Abstraction(lhpnFile, lhpnAbstraction);
+				Abstraction abst = new Abstraction(lhpnFile, lpnAbstraction);
 				abst.abstractSTG(false);
 				abst.save(root + File.separator + simName + File.separator + modelFile);
 				if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none")) {
@@ -2397,7 +2407,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			printer_track_quantity = "concentration";
 		}
 		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time",
-				biomodelsim, open, log, null, false, false);
+				gui, open, log, null, false, false);
 	}
 
 	public void run(ArrayList<AnalysisThread> threads, ArrayList<String> dirs, ArrayList<String> levelOne, String stem) {
@@ -2679,10 +2689,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		return null;
 	}
 
-	public String getSimName() {
-		return simName;
-	}
-
 	public String getSimID() {
 		return fileStem.getText().trim();
 	}
@@ -2721,138 +2727,60 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			transientProperties.setSelectedItem(selected);
 		}
 	}
+	
+	private void enableAbstractionOptions(boolean enable,boolean edit) {
+		preAbs.setEnabled(enable);
+		loopAbs.setEnabled(enable);
+		postAbs.setEnabled(enable);
+		preAbsLabel.setEnabled(enable);
+		loopAbsLabel.setEnabled(enable);
+		postAbsLabel.setEnabled(enable);
+		addPreAbs.setEnabled(edit);
+		rmPreAbs.setEnabled(edit);
+		editPreAbs.setEnabled(edit);
+		addLoopAbs.setEnabled(edit);
+		rmLoopAbs.setEnabled(edit);
+		editLoopAbs.setEnabled(edit);
+		addPostAbs.setEnabled(edit);
+		rmPostAbs.setEnabled(edit);
+		editPostAbs.setEnabled(edit);
+		maxConLabel.setEnabled(enable);
+		maxCon.setEnabled(enable);
+		diffStoichAmpLabel.setEnabled(enable);
+		diffStoichAmp.setEnabled(enable);
+		qssaLabel.setEnabled(enable);
+		qssa.setEnabled(enable);
+		rapidLabel1.setEnabled(enable);
+		rapid1.setEnabled(enable);
+		rapidLabel2.setEnabled(enable);
+		rapid2.setEnabled(enable);		
+	}
 
 	/**
 	 * This method enables and disables the required fields for none and abstraction.
 	 */
-	private void enableNoneOrAbs() {
+	private void enableNoAbstraction() {
 		ODE.setEnabled(true);
 		monteCarlo.setEnabled(true);
 		fba.setEnabled(true);
 		markov.setEnabled(false);
-		//reactionAbstraction.setEnabled(true);
-		//stateAbstraction.setEnabled(true);
-		if (noAbstraction.isSelected() || expandReactions.isSelected()) {
-			preAbs.setEnabled(false);
-			loopAbs.setEnabled(false);
-			postAbs.setEnabled(false);
-			preAbsLabel.setEnabled(false);
-			loopAbsLabel.setEnabled(false);
-			postAbsLabel.setEnabled(false);
-			addPreAbs.setEnabled(false);
-			rmPreAbs.setEnabled(false);
-			editPreAbs.setEnabled(false);
-			addLoopAbs.setEnabled(false);
-			rmLoopAbs.setEnabled(false);
-			editLoopAbs.setEnabled(false);
-			addPostAbs.setEnabled(false);
-			rmPostAbs.setEnabled(false);
-			editPostAbs.setEnabled(false);
-			maxConLabel.setEnabled(false);
-			maxCon.setEnabled(false);
-			diffStoichAmpLabel.setEnabled(false);
-			diffStoichAmp.setEnabled(false);
-			qssaLabel.setEnabled(false);
-			qssa.setEnabled(false);
-			rapidLabel1.setEnabled(false);
-			rapid1.setEnabled(false);
-			rapidLabel2.setEnabled(false);
-			rapid2.setEnabled(false);
-			ArrayList<String> getLists = new ArrayList<String>();
-			Object[] objects = getLists.toArray();
-			preAbs.setListData(objects);
-			loopAbs.setListData(objects);
-			getLists = new ArrayList<String>();
-			if (monteCarlo.isSelected()) {
-				getLists.add("distribute-transformer");
-				getLists.add("reversible-to-irreversible-transformer");
-			}
-			if (monteCarlo.isSelected() || ODE.isSelected())
-				getLists.add("kinetic-law-constants-simplifier");
-			objects = getLists.toArray();
-			postAbs.setListData(objects);
+		enableAbstractionOptions(false,false);
+		ArrayList<String> getLists = new ArrayList<String>();
+		Object[] objects = getLists.toArray();
+		preAbs.setListData(objects);
+		loopAbs.setListData(objects);
+		getLists = new ArrayList<String>();
+		if (monteCarlo.isSelected()) {
+			getLists.add("distribute-transformer");
+			getLists.add("reversible-to-irreversible-transformer");
 		}
-		else {
-			preAbs.setEnabled(true);
-			loopAbs.setEnabled(true);
-			postAbs.setEnabled(true);
-			preAbsLabel.setEnabled(true);
-			loopAbsLabel.setEnabled(true);
-			postAbsLabel.setEnabled(true);
-			addPreAbs.setEnabled(true);
-			rmPreAbs.setEnabled(true);
-			editPreAbs.setEnabled(true);
-			addLoopAbs.setEnabled(true);
-			rmLoopAbs.setEnabled(true);
-			editLoopAbs.setEnabled(true);
-			addPostAbs.setEnabled(true);
-			rmPostAbs.setEnabled(true);
-			editPostAbs.setEnabled(true);
-			maxConLabel.setEnabled(true);
-			maxCon.setEnabled(true);
-			diffStoichAmpLabel.setEnabled(true);
-			diffStoichAmp.setEnabled(true);
-			qssaLabel.setEnabled(true);
-			qssa.setEnabled(true);
-			rapidLabel1.setEnabled(true);
-			rapid1.setEnabled(true);
-			rapidLabel2.setEnabled(true);
-			rapid2.setEnabled(true);
-			ArrayList<String> getLists = new ArrayList<String>();
-			getLists.add("complex-formation-and-sequestering-abstraction");
-			getLists.add("operator-site-reduction-abstraction");
-			Object[] objects = getLists.toArray();
-			preAbs.setListData(objects);
-			getLists = new ArrayList<String>();
-			objects = getLists.toArray();
-			loopAbs.setListData(objects);
-			getLists = new ArrayList<String>();
-			if (monteCarlo.isSelected()) {
-				getLists.add("distribute-transformer");
-				getLists.add("reversible-to-irreversible-transformer");
-			}
-			if (monteCarlo.isSelected() || ODE.isSelected())
-				getLists.add("kinetic-law-constants-simplifier");
-			objects = getLists.toArray();
-			postAbs.setListData(objects);
-		}
+		if (monteCarlo.isSelected() || ODE.isSelected())
+			getLists.add("kinetic-law-constants-simplifier");
+		objects = getLists.toArray();
+		postAbs.setListData(objects);
 		if (markov.isSelected()) {
 			ODE.setSelected(true);
-			monteCarlo.setSelected(false);
-			markov.setSelected(false);
-			seed.setEnabled(true);
-			seedLabel.setEnabled(true);
-			runs.setEnabled(true);
-			runsLabel.setEnabled(true);
-			fileStem.setEnabled(true);
-			fileStemLabel.setEnabled(true);
-			minStepLabel.setEnabled(true);
-			minStep.setEnabled(true);
-			stepLabel.setEnabled(true);
-			step.setEnabled(true);
-			errorLabel.setEnabled(false);
-			absErr.setEnabled(false);
-			limitLabel.setEnabled(true);
-			limit.setEnabled(true);
-			intervalLabel.setEnabled(true);
-			interval.setEnabled(true);
-			simulators.setEnabled(true);
-			simulatorsLabel.setEnabled(true);
-			explanation.setEnabled(true);
-			description.setEnabled(true);
-			simulators.removeAllItems();
-			simulators.addItem("Runge-Kutta-Fehlberg");
-			simulators.addItem("Hierarchical-RK");
-			simulators.setSelectedItem("Runge-Kutta-Fehlberg");
-			if (Gui.isReb2sacFound()) {
-				simulators.addItem("euler");
-				simulators.addItem("gear1");
-				simulators.addItem("gear2");
-				simulators.addItem("rk4imp");
-				simulators.addItem("rk8pd");
-				simulators.addItem("rkf45");
-				simulators.setSelectedItem("rkf45");
-			}
+			enableODE();
 		}
 		if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
 			markov.setEnabled(true);
@@ -2863,18 +2791,50 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			genRuns.setEnabled(true);
 			genStats.setEnabled(true);
 			report.setEnabled(true);
-			if (append.isSelected()) {
-				limit.setEnabled(false);
-				interval.setEnabled(false);
-				limitLabel.setEnabled(false);
-				intervalLabel.setEnabled(false);
-			}
-			else {
-				limit.setEnabled(true);
-				interval.setEnabled(true);
-				limitLabel.setEnabled(true);
-				intervalLabel.setEnabled(true);
-			}
+			setupToAppendRuns(false);
+		}
+	}
+	
+	/**
+	 * This method enables and disables the required fields for none and abstraction.
+	 */
+	private void enableReactionAbstraction() {
+		ODE.setEnabled(true);
+		monteCarlo.setEnabled(true);
+		fba.setEnabled(true);
+		markov.setEnabled(false);
+		enableAbstractionOptions(true,true);
+		ArrayList<String> getLists = new ArrayList<String>();
+		getLists.add("complex-formation-and-sequestering-abstraction");
+		getLists.add("operator-site-reduction-abstraction");
+		Object[] objects = getLists.toArray();
+		preAbs.setListData(objects);
+		getLists = new ArrayList<String>();
+		objects = getLists.toArray();
+		loopAbs.setListData(objects);
+		getLists = new ArrayList<String>();
+		if (monteCarlo.isSelected()) {
+			getLists.add("distribute-transformer");
+			getLists.add("reversible-to-irreversible-transformer");
+		}
+		if (monteCarlo.isSelected() || ODE.isSelected())
+			getLists.add("kinetic-law-constants-simplifier");
+		objects = getLists.toArray();
+		postAbs.setListData(objects);
+		if (markov.isSelected()) {
+			ODE.setSelected(true);
+			enableODE();
+		}
+		if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
+			markov.setEnabled(true);
+		}
+		if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected()) {
+			append.setEnabled(true);
+			concentrations.setEnabled(true);
+			genRuns.setEnabled(true);
+			genStats.setEnabled(true);
+			report.setEnabled(true);
+			setupToAppendRuns(false);
 		}
 	}
 
@@ -2914,15 +2874,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		genStats.setEnabled(false);
 		absErr.setEnabled(true);
 		report.setEnabled(false);
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
+		disableiSSASimulatorOptions();
 	}
 	
 	/* Enable options for iSSA Mean or Median Path method */
@@ -2942,15 +2894,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		stepLabel.setEnabled(true);
 		absErr.setEnabled(true);
 		errorLabel.setEnabled(true);
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
+		disableiSSASimulatorOptions();
 	}
 	
 	/* Enable options for an SSA simulator */
@@ -2961,15 +2905,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		stepLabel.setEnabled(true);
 		errorLabel.setEnabled(false);
 		absErr.setEnabled(false);
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
+		disableiSSASimulatorOptions();
 	}
 	
 	/* Enable options for an iSSA simulator */
@@ -2999,6 +2935,19 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 	}
 	
+	/* Disable options for an iSSA simulator */
+	private void disableiSSASimulatorOptions() {
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);	
+	}
+	
 	/* Enable options for a Markov analyzer */
 	private void enableMarkovAnalyzer() {
 		minStep.setEnabled(false);
@@ -3011,15 +2960,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);
 		interval.setEnabled(false);
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
+		disableiSSASimulatorOptions();
 	}
 	
 	/* Enable options for a transient Markov analyzer */
@@ -3034,15 +2975,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
 		interval.setEnabled(true);
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
+		disableiSSASimulatorOptions();
 	}
 	
 	/* Enable options for Euler method */
@@ -3053,15 +2986,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		stepLabel.setEnabled(true);
 		absErr.setEnabled(false);
 		errorLabel.setEnabled(false);
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
+		disableiSSASimulatorOptions();
 	}
 	
 	/* Enable options for MPDE method */
@@ -3074,19 +2999,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		bifurcationLabel.setEnabled(false);
 	}
 	
-	/* Disable simulator options */
-	private void disableSimulatorOptions() {
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
-	}
-
 	/**
 	 * This method enables and disables the required fields for sbml, dot, and xhtml.
 	 */
@@ -3124,15 +3036,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		genStats.setEnabled(false);
 		report.setEnabled(false);
 		absErr.setEnabled(false);
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
+		disableiSSASimulatorOptions();
 	}
 
 	/**
@@ -3180,15 +3084,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		genRuns.setEnabled(false);
 		genStats.setEnabled(false);
 		report.setEnabled(false);
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
+		disableiSSASimulatorOptions();
 	}
 
 	/**
@@ -3245,27 +3141,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		genRuns.setEnabled(true);
 		genStats.setEnabled(true);
 		report.setEnabled(true);
-		if (append.isSelected()) {
-			limit.setEnabled(false);
-			interval.setEnabled(false);
-			limitLabel.setEnabled(false);
-			intervalLabel.setEnabled(false);
-		}
-		else {
-			limit.setEnabled(true);
-			interval.setEnabled(true);
-			limitLabel.setEnabled(true);
-			intervalLabel.setEnabled(true);
-		}
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
+		setupToAppendRuns(false);
+		disableiSSASimulatorOptions();
 	}
 
 	/**
@@ -3316,90 +3193,23 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		genRuns.setEnabled(true);
 		genStats.setEnabled(true);
 		report.setEnabled(true);
-		mpde.setEnabled(false);
-		meanPath.setEnabled(false);
-		medianPath.setEnabled(false);
-		iSSATypeLabel.setEnabled(false);
-		adaptive.setEnabled(false);
-		nonAdaptive.setEnabled(false);
-		iSSAAdaptiveLabel.setEnabled(false);
-		bifurcation.setEnabled(false);
-		bifurcationLabel.setEnabled(false);
+		disableiSSASimulatorOptions();
 	}
 
 	/**
 	 * This method enables and disables the required fields for N-ary analysis.
 	 */
-	private void enableNary() {
+	private void enableStateAbstraction() {
 		ODE.setEnabled(false);
 		fba.setEnabled(false);
 		monteCarlo.setEnabled(true);
 		markov.setEnabled(true);
-		preAbs.setEnabled(true);
-		loopAbs.setEnabled(true);
-		postAbs.setEnabled(true);
-		preAbsLabel.setEnabled(true);
-		loopAbsLabel.setEnabled(true);
-		postAbsLabel.setEnabled(true);
-		addPreAbs.setEnabled(false);
-		rmPreAbs.setEnabled(false);
-		editPreAbs.setEnabled(false);
-		addLoopAbs.setEnabled(false);
-		rmLoopAbs.setEnabled(false);
-		editLoopAbs.setEnabled(false);
-		addPostAbs.setEnabled(false);
-		rmPostAbs.setEnabled(false);
-		editPostAbs.setEnabled(false);
-		reactionAbstraction.setEnabled(true);
-		stateAbstraction.setEnabled(true);
-		maxConLabel.setEnabled(true);
-		maxCon.setEnabled(true);
-		qssaLabel.setEnabled(true);
-		qssa.setEnabled(true);
-		rapidLabel1.setEnabled(true);
-		rapid1.setEnabled(true);
-		rapidLabel2.setEnabled(true);
-		rapid2.setEnabled(true);
+		//reactionAbstraction.setEnabled(true);
+		//stateAbstraction.setEnabled(true);
+		enableAbstractionOptions(true,false);
 		if (ODE.isSelected()) {
-			ODE.setSelected(false);
 			monteCarlo.setSelected(true);
-			markov.setSelected(false);
-			fba.setSelected(false);
-			seed.setEnabled(true);
-			seedLabel.setEnabled(true);
-			runs.setEnabled(true);
-			runsLabel.setEnabled(true);
-			fileStem.setEnabled(true);
-			fileStemLabel.setEnabled(true);
-			minStepLabel.setEnabled(false);
-			minStep.setEnabled(false);
-			stepLabel.setEnabled(false);
-			step.setEnabled(false);
-			errorLabel.setEnabled(false);
-			absErr.setEnabled(false);
-			limitLabel.setEnabled(true);
-			limit.setEnabled(true);
-			intervalLabel.setEnabled(true);
-			interval.setEnabled(true);
-			simulators.setEnabled(true);
-			simulatorsLabel.setEnabled(true);
-			explanation.setEnabled(true);
-			description.setEnabled(true);
-			simulators.removeAllItems();
-			simulators.addItem("SSA-Direct");
-			simulators.addItem("SSA-CR");
-			simulators.addItem("SSA-Hierarchical");
-			simulators.addItem("Hybrid-Hierarchical");
-			simulators.setSelectedItem("SSA-Direct");
-			if (Gui.isReb2sacFound()) {
-				simulators.addItem("gillespie");
-				simulators.addItem("iSSA");
-				simulators.addItem("interactive");
-				simulators.addItem("emc-sim");
-				simulators.addItem("bunker");
-				simulators.addItem("nmc");
-				simulators.setSelectedItem("gillespie");
-			}
+			enableMonteCarlo();
 		}
 		ArrayList<String> getLists = new ArrayList<String>();
 		getLists.add("complex-formation-and-sequestering-abstraction");
@@ -3418,18 +3228,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			genRuns.setEnabled(true);
 			genStats.setEnabled(true);
 			report.setEnabled(true);
-			if (append.isSelected()) {
-				limit.setEnabled(false);
-				interval.setEnabled(false);
-				limitLabel.setEnabled(false);
-				intervalLabel.setEnabled(false);
-			}
-			else {
-				limit.setEnabled(true);
-				interval.setEnabled(true);
-				limitLabel.setEnabled(true);
-				intervalLabel.setEnabled(true);
-			}
+			setupToAppendRuns(false);
 		}
 	}
 
