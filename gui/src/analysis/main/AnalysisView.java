@@ -149,21 +149,29 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
 	 * puts them on panels, adds the panels to the frame, and then displays the GUI.
-	 * @param sbmlFile - full path for the original SBML file to analyze
-	 * @param sbmlProp - full path for the generated SBML file to analyze
-	 * @param root - the project root directory path
 	 * @param gui - the main GUI window object
-	 * @param simName - the name of the analysis view
 	 * @param log - the log for the console
 	 * @param simTab - the tabbedPane this is to be added too
+	 * @param lpnAbstraction - the abstraction pane for LPN abstraction options
+	 * @param root - the project root directory path
+	 * @param sbmlFile - full path for the original SBML file to analyze
+	 * @param sbmlProp - full path for the generated SBML file to analyze
+	 * @param simName - the name of the analysis view
 	 * @param open - the properties file for this analysis view
 	 * @param modelFile - the SBML model file 
-	 * @param lpnAbstraction - the abstraction pane for LPN abstraction options
 	 */
-	public AnalysisView(String sbmlFile, String sbmlProp, String root, Gui gui, String simName, Log log,
-			JTabbedPane simTab, String open, String modelFile, AbstPane lpnAbstraction) {
+	public AnalysisView(Gui gui, Log log, JTabbedPane simTab, AbstPane lpnAbstraction, String root, String sbmlFile,
+			String sbmlProp, String simName, String open, String modelFile) {
 
 		super(new BorderLayout());
+		/*
+		System.out.println(" r:"+root);
+		System.out.println("sf:"+sbmlFile);
+		System.out.println("sp:"+sbmlProp);
+		System.out.println("sn:"+simName);
+		System.out.println("op:"+open);
+		System.out.println("mf:"+modelFile);
+		*/
 		this.gui = gui;
 		this.sbmlFile = sbmlFile;
 		this.sbmlProp = sbmlProp;
@@ -1441,6 +1449,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 */
 	private void loadPropertiesFile(String openFile) {
 		if (openFile==null) return;
+		if (!(new File(openFile)).exists()) return;
 		Properties load = new Properties();
 		try {
 			if (!openFile.equals("")) {
