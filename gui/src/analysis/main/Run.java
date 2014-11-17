@@ -876,7 +876,7 @@ public class Run implements ActionListener {
 						}
 						if (refresh) {
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
-								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+								if (simTab.getComponentAt(i).getName().equals("Histogram")) {
 									if (simTab.getComponentAt(i) instanceof Graph) {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
@@ -885,7 +885,7 @@ public class Run implements ActionListener {
 												new Graph(analysisView, printer_track_quantity,
 														outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 														printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
-										simTab.getComponentAt(i).setName("ProbGraph");
+										simTab.getComponentAt(i).setName("Histogram");
 									}
 								}
 							}
@@ -1159,7 +1159,7 @@ public class Run implements ActionListener {
 					if(exitValue == 0) {
 						if (refresh) {
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
-								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+								if (simTab.getComponentAt(i).getName().equals("Histogram")) {
 									if (simTab.getComponentAt(i) instanceof Graph) {
 										((Graph) simTab.getComponentAt(i)).setYLabel("Flux");
 										((Graph) simTab.getComponentAt(i)).refresh();
@@ -1171,7 +1171,7 @@ public class Run implements ActionListener {
 													new Graph(analysisView, printer_track_quantity,
 															outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 															printer_id, outDir, "Flux", biomodelsim, null, log, null, false, false));
-											simTab.getComponentAt(i).setName("ProbGraph");
+											simTab.getComponentAt(i).setName("Histogram");
 										}
 									}
 								}
@@ -1215,7 +1215,7 @@ public class Run implements ActionListener {
 							try {
 								ModelEditor gcm = new ModelEditor(root + File.separator, sbmlName, biomodelsim, log, false, null, null,
 										null, false, false);
-								biomodelsim.addTab(sbmlName, gcm, "GCM Editor");
+								biomodelsim.addTab(sbmlName, gcm, "Model Editor");
 								biomodelsim.addToTree(sbmlName);
 							}
 							catch (Exception e) {
@@ -1286,7 +1286,7 @@ public class Run implements ActionListener {
 					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
 					if (refresh) {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
-							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+							if (simTab.getComponentAt(i).getName().equals("Histogram")) {
 								if (simTab.getComponentAt(i) instanceof Graph) {
 									((Graph) simTab.getComponentAt(i)).refresh();
 								}
@@ -1295,7 +1295,7 @@ public class Run implements ActionListener {
 											new Graph(analysisView, printer_track_quantity,
 													outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 													printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
-									simTab.getComponentAt(i).setName("ProbGraph");
+									simTab.getComponentAt(i).setName("Histogram");
 								}
 							}
 						}
@@ -1523,7 +1523,7 @@ public class Run implements ActionListener {
 								}
 							}
 							if (refresh) {
-								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+								if (simTab.getComponentAt(i).getName().equals("Histogram")) {
 									if (simTab.getComponentAt(i) instanceof Graph) {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
@@ -1535,7 +1535,7 @@ public class Run implements ActionListener {
 													new Graph(analysisView, printer_track_quantity,
 															outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 															printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
-											simTab.getComponentAt(i).setName("ProbGraph");
+											simTab.getComponentAt(i).setName("Histogram");
 										}
 									}
 								}
@@ -1763,7 +1763,7 @@ public class Run implements ActionListener {
 								}
 							}
 							if (refresh) {
-								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+								if (simTab.getComponentAt(i).getName().equals("Histogram")) {
 									if (simTab.getComponentAt(i) instanceof Graph) {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
@@ -1775,7 +1775,7 @@ public class Run implements ActionListener {
 													new Graph(analysisView, printer_track_quantity,
 															outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
 															printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
-											simTab.getComponentAt(i).setName("ProbGraph");
+											simTab.getComponentAt(i).setName("Histogram");
 										}
 									}
 								}

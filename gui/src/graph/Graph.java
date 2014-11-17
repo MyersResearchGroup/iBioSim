@@ -251,6 +251,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 */
 	public Graph(AnalysisView reb2sac, String printer_track_quantity, String label, String printer_id, String outDir, String time, Gui biomodelsim,
 			String open, Log log, String graphName, boolean timeSeries, boolean learnGraph) {
+		// If does not exist then set to null, so won't try to open.
+		if (open!=null && !(new File(open).exists())) open = null;
 		lock = new ReentrantLock(true);
 		lock2 = new ReentrantLock(true);
 		this.analysisView = reb2sac;
