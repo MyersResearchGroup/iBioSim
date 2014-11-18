@@ -46,6 +46,7 @@ import org.sbml.jsbml.ext.comp.Deletion;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
+import org.sbml.jsbml.ext.comp.SBaseRef;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
@@ -4657,5 +4658,114 @@ public class SBMLutilities {
 				}
 			}
 		}
+	}
+
+
+	public static String changeIdToPortRef(String root, SBaseRef sbaseRef, BioModel bioModel) {
+		String id = "";
+		if (sbaseRef.isSetSBaseRef()) {
+			BioModel subModel = new BioModel(root);
+			Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(sbaseRef.getIdRef());
+			String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(submodel.getModelRef())
+					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+			subModel.load(root + Gui.separator + extModel);
+			id += changeIdToPortRef(root, sbaseRef.getSBaseRef(), subModel);
+			subModel.save(root + Gui.separator + extModel);
+		}
+		if (sbaseRef.isSetIdRef()) {
+			Port port = bioModel.getPortBySBaseRef(sbaseRef);
+			SBase sbase = getElementBySId(bioModel.getSBMLDocument(), sbaseRef.getIdRef());
+			if (sbase!=null) {
+				if (id.equals("")) {
+					id = sbase.getElementName() + "__" + sbaseRef.getIdRef();
+				} else {
+					id = id + "__" + sbaseRef.getIdRef();
+				}
+				if (port == null) {
+					port = bioModel.getSBMLCompModel().createPort();
+					port.setId(id);
+					port.setIdRef(sbaseRef.getIdRef());
+					port.setSBaseRef(sbaseRef.getSBaseRef());
+				} 
+				sbaseRef.unsetIdRef();
+				sbaseRef.unsetSBaseRef();
+				sbaseRef.setPortRef(port.getId());
+				return id;
+			}
+			return "";
+		} 
+		if (sbaseRef.isSetMetaIdRef()) {
+			Port port = bioModel.getPortBySBaseRef(sbaseRef);
+			SBase sbase = getElementByMetaId(bioModel.getSBMLDocument(), sbaseRef.getMetaIdRef());
+			if (id.equals("")) {
+				id = sbase.getElementName() + "__" + sbaseRef.getMetaIdRef();
+			} else {
+				id = id + "__" + sbaseRef.getMetaIdRef();
+			}
+			if (sbase!=null) { 
+				if (port == null) {
+					port = bioModel.getSBMLCompModel().createPort();
+					port.setId(id);
+					port.setMetaIdRef(sbaseRef.getMetaIdRef());
+					port.setSBaseRef(sbaseRef.getSBaseRef());
+				}
+				sbaseRef.unsetMetaIdRef();
+				sbaseRef.unsetSBaseRef();
+				sbaseRef.setPortRef(port.getId());
+				return id;
+			}
+		} 
+		return "";
+	}
+
+
+	public static boolean updatePortMap(String root,CompSBasePlugin sbmlSBase,BioModel subModel,String subModelId) {
+		boolean updated = false;
+		if (sbmlSBase.isSetListOfReplacedElements()) {
+			for (int k = 0; k < sbmlSBase.getListOfReplacedElements().size(); k++) {
+				ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(k);
+				if (replacement.getSubmodelRef().equals(subModelId)) {
+					changeIdToPortRef(root,replacement,subModel);
+					updated = true;
+				}
+			}
+		}
+		if (sbmlSBase.isSetReplacedBy()) {
+			ReplacedBy replacement = sbmlSBase.getReplacedBy();
+			if (replacement.getSubmodelRef().equals(subModelId)) {
+				changeIdToPortRef(root,replacement,subModel);
+				updated = true;
+			}
+		}
+		return updated;
+	}
+
+
+	public static boolean updateReplacementsDeletions(String root, SBMLDocument document, CompSBMLDocumentPlugin sbmlComp, 
+			CompModelPlugin sbmlCompModel) {
+		for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
+			BioModel subModel = new BioModel(root);
+			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
+			String extModel = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef())
+					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+			subModel.load(root + Gui.separator + extModel);
+			ArrayList<SBase> elements = getListOfAllElements(document.getModel());
+			for (int j = 0; j < elements.size(); j++) {
+				SBase sbase = elements.get(j);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
+				if (sbmlSBase!=null) {
+					if (updatePortMap(root,sbmlSBase,subModel,submodel.getId())) {
+						elements = getListOfAllElements(document.getModel());
+					}
+				}
+			}
+			for (int j = 0; j < submodel.getListOfDeletions().size(); j++) {
+				Deletion deletion = submodel.getListOfDeletions().get(j);
+				changeIdToPortRef(root,deletion,subModel);
+			}
+			subModel.save(root + Gui.separator + extModel);
+		}
+		
+		return true;
 	}
 }
