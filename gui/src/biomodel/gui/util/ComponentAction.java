@@ -15,17 +15,17 @@ public class ComponentAction extends AbstractAction {
 
 	private String id;
 
-	private Gui biosim;
+	private Gui gui;
 
-	public ComponentAction(String name, String id, Gui biosim) {
+	public ComponentAction(String name, String id, Gui gui) {
 		super(name);
 		this.id = id;
-		this.biosim = biosim;
+		this.gui = gui;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		biosim.openGCM(id, false);
+		gui.openModelEditor(id, false);
 	}
 
 }
