@@ -270,7 +270,7 @@ public class Run implements ActionListener {
 	public int execute(String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, 
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id,
 			String printer_track_quantity, String outDir, JRadioButton nary, int naryRun, String[] intSpecies, Log log,
-			Gui biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
+			Gui gui, JTabbedPane simTab, String root, JProgressBar progress,
 			String simName, ModelEditor modelEditor, String direct, double timeLimit, double runTime, String modelFile,
 			AbstPane abstPane, JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
 			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running) {
@@ -404,7 +404,7 @@ public class Run implements ActionListener {
 						if (value == JOptionPane.YES_OPTION) {
 							File dir = new File(root + File.separator + sbmlName);
 							if (dir.isDirectory()) {
-								biomodelsim.deleteDir(dir);
+								gui.deleteDir(dir);
 							}
 							else {
 								System.gc();
@@ -884,7 +884,7 @@ public class Run implements ActionListener {
 										simTab.setComponentAt(i,
 												new Graph(analysisView, printer_track_quantity,
 														outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
-														printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
+														printer_id, outDir, "time", gui, null, log, null, false, false));
 										simTab.getComponentAt(i).setName("Histogram");
 									}
 								}
@@ -1170,7 +1170,7 @@ public class Run implements ActionListener {
 											simTab.setComponentAt(i,
 													new Graph(analysisView, printer_track_quantity,
 															outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
-															printer_id, outDir, "Flux", biomodelsim, null, log, null, false, false));
+															printer_id, outDir, "Flux", gui, null, log, null, false, false));
 											simTab.getComponentAt(i).setName("Histogram");
 										}
 									}
@@ -1211,37 +1211,23 @@ public class Run implements ActionListener {
 				}
 				else if (sbml.isSelected()) {
 					if (sbmlName != null && !sbmlName.trim().equals("")) {
-						if (!biomodelsim.updateOpenGCM(sbmlName)) {
+						if (!gui.updateOpenModelEditor(sbmlName)) {
 							try {
-								ModelEditor gcm = new ModelEditor(root + File.separator, sbmlName, biomodelsim, log, false, null, null,
+								ModelEditor gcm = new ModelEditor(root + File.separator, sbmlName, gui, log, false, null, null,
 										null, false, false);
-								biomodelsim.addTab(sbmlName, gcm, "Model Editor");
-								biomodelsim.addToTree(sbmlName);
+								gui.addTab(sbmlName, gcm, "Model Editor");
+								gui.addToTree(sbmlName);
 							}
 							catch (Exception e) {
 								e.printStackTrace();
 							}
 						}
 						else {
-							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(sbmlName));
+							gui.getTab().setSelectedIndex(gui.getTab(sbmlName));
 						}
-						biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+						gui.enableTabMenu(gui.getTab().getSelectedIndex());
 					}
 				}
-				/*
-				else if (lhpn.isSelected()) {
-					if (lhpnName != null && !lhpnName.trim().equals("")) {
-						if (!biomodelsim.updateOpenLHPN(lhpnName)) {
-							biomodelsim.addTab(lhpnName, new LHPNEditor(root, lhpnName, null, biomodelsim), "LHPN Editor");
-							biomodelsim.addToTree(lhpnName);
-						}
-						else {
-							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(lhpnName));
-						}
-						biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
-					}
-				}
-				*/
 				else if (dot.isSelected()) {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
 						log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
@@ -1294,7 +1280,7 @@ public class Run implements ActionListener {
 									simTab.setComponentAt(i,
 											new Graph(analysisView, printer_track_quantity,
 													outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
-													printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
+													printer_id, outDir, "time", gui, null, log, null, false, false));
 									simTab.getComponentAt(i).setName("Histogram");
 								}
 							}
@@ -1416,7 +1402,7 @@ public class Run implements ActionListener {
 									simTab.setComponentAt(i,
 											new Graph(analysisView, printer_track_quantity,
 													outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
-													printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
+													printer_id, outDir, "time", gui, null, log, null, true, false));
 									boolean outputM = true;
 									boolean outputV = true;
 									boolean outputS = true;
@@ -1534,7 +1520,7 @@ public class Run implements ActionListener {
 											simTab.setComponentAt(i,
 													new Graph(analysisView, printer_track_quantity,
 															outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
-															printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
+															printer_id, outDir, "time", gui, null, log, null, false, false));
 											simTab.getComponentAt(i).setName("Histogram");
 										}
 									}
@@ -1656,7 +1642,7 @@ public class Run implements ActionListener {
 									simTab.setComponentAt(i,
 											new Graph(analysisView, printer_track_quantity,
 													outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
-													printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
+													printer_id, outDir, "time", gui, null, log, null, true, false));
 									boolean outputM = true;
 									boolean outputV = true;
 									boolean outputS = true;
@@ -1774,7 +1760,7 @@ public class Run implements ActionListener {
 											simTab.setComponentAt(i,
 													new Graph(analysisView, printer_track_quantity,
 															outDir.split(File.separator)[outDir.split(File.separator).length - 1] + " simulation results",
-															printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
+															printer_id, outDir, "time", gui, null, log, null, false, false));
 											simTab.getComponentAt(i).setName("Histogram");
 										}
 									}

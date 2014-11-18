@@ -21,7 +21,7 @@ import javax.swing.*;
  * 
  * @author Curtis Madsen
  */
-public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemListener { // added ItemListener SB
+public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemListener { // added ItemListener SB
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
@@ -53,7 +53,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	private String separator;
 
-	private Gui biosim;
+	private Gui gui;
 
 	private String seedLpnFile, lhpnFile;
 
@@ -204,14 +204,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public LearnLHPN(String directory, Log log, Gui biosim) {
+	public LearnLPN(String directory, Log log, Gui biosim) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
 			separator = File.separator;
 		}
 
-		this.biosim = biosim;
+		this.gui = biosim;
 		this.log = log;
 		this.directory = directory;
 		String[] getFilename = directory.split(separator);
@@ -1698,7 +1698,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						copy += ".lpn";
 					}
 				}
-				biosim.saveLhpn(copy, directory + separator + lhpnFile);
+				gui.saveLPN(copy, directory + separator + lhpnFile);
 			} /* TODO: dead code
 			else {
 				JOptionPane.showMessageDialog(Gui.frame,
@@ -2554,7 +2554,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						}
 					}
 				}
-				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, false, false, valScaleFactor, delayScaleFactor, failProp);
+				LhpnFile g = l.learnModel(directory, log, gui, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, false, false, valScaleFactor, delayScaleFactor, failProp);
 				
 				// the false parameter above says that it's not generating a net for stable
 				if (new File(seedLpnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
@@ -2584,7 +2584,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							varsT.add(input);
 							l = new LearnModel();
 							//LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, false, false, valScaleFactor, delayScaleFactor, null);
-							LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, false, false, false, valScaleFactor, delayScaleFactor, null);
+							LhpnFile moduleLPN = l.learnModel(directory, log, gui, j, thresholds, tPar, varsT, destabMap, false, false, false, valScaleFactor, delayScaleFactor, null);
 							// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 							g = mergeLhpns(moduleLPN,g);
 						}	
@@ -2609,7 +2609,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							JOptionPane.PLAIN_MESSAGE);
 
 					//viewLhpn();
-					biosim.updateMenu(true,true);
+					gui.updateMenu(true,true);
 				} else {
 					//	System.out.println(" does not exist \n");
 					viewVHDL.setEnabled(false); 	// SB
@@ -2618,7 +2618,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					viewCoverage.setEnabled(false); // SB
 					saveLhpn.setEnabled(false); 	// SB
 					fail = true;
-					biosim.updateMenu(true,false);
+					gui.updateMenu(true,false);
 				}
 			}
 			out.close();

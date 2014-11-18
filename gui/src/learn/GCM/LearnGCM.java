@@ -929,7 +929,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 					copy += ".gcm";
 				}
 			}
-			biosim.saveGcm(copy, directory + separator + "method.gcm");
+			biosim.saveGCM(copy, directory + separator + "method.gcm");
 		}
 		else {
 			JOptionPane.showMessageDialog(Gui.frame, "No model has been generated yet.", "Error", JOptionPane.ERROR_MESSAGE);
