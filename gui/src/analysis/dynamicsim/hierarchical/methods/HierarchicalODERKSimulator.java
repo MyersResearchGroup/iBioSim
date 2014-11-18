@@ -477,7 +477,7 @@ public class HierarchicalODERKSimulator  extends HierarchicalSimulationFunctions
 						state.modelstate.getVariableToIsConstantMap().get(currentVar) == false) {
 
 
-					currValueChanges[i] = evaluateExpressionRecursive(state.modelstate, state.dvariablesdtime[i]);
+					currValueChanges[i] = evaluateExpressionRecursive(state.modelstate, state.dvariablesdtime[i], false, getCurrentTime(), null, null);
 					//if (currValueChanges[i]!=0) {
 					//	System.out.println(indexToVariableMap.get(i) + "= " + dvariablesdtime[i].toFormula() + "=" + currValueChanges[i]);
 					//}
@@ -580,7 +580,7 @@ public class HierarchicalODERKSimulator  extends HierarchicalSimulationFunctions
 							continue;
 
 						//double oldValue = modelstate.getVariableToValue(variable);
-						double value = (evaluateExpressionRecursive(modelstate, formula) *
+						double value = (evaluateExpressionRecursive(modelstate, formula, false, getCurrentTime(), null, null) *
 								modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable)));
 						currValueChanges[index] = value;
 						//modelstate.setvariableToValueMap(variable, oldValue + value);
@@ -593,7 +593,7 @@ public class HierarchicalODERKSimulator  extends HierarchicalSimulationFunctions
 						if(index > currValueChanges.length)
 							continue;
 						//double oldValue = modelstate.getVariableToValue(variable);
-						double value = evaluateExpressionRecursive(modelstate, formula);
+						double value = evaluateExpressionRecursive(modelstate, formula, false, getCurrentTime(), null, null);
 						currValueChanges[index] = value;
 						//modelstate.setvariableToValueMap(variable, oldValue + value);
 					}

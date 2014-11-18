@@ -234,13 +234,13 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 
 					double currVal = modelstate.getVariableToValue(getReplacements(), variable);
 					double incr = delta_t * (
-							evaluateExpressionRecursive(modelstate, rateRule.getMath()) * 
+							evaluateExpressionRecursive(modelstate, rateRule.getMath(), false, getCurrentTime(), null, null) * 
 							modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable)));
 					modelstate.setvariableToValueMap(getReplacements(), variable, currVal + incr);
 				}
 				else {
 					double currVal = modelstate.getVariableToValue(getReplacements(), variable);
-					double incr = delta_t * evaluateExpressionRecursive(modelstate, rateRule.getMath());
+					double incr = delta_t * evaluateExpressionRecursive(modelstate, rateRule.getMath(), false, getCurrentTime(), null, null);
 
 					modelstate.setvariableToValueMap(getReplacements(), variable, currVal + incr);
 				}
@@ -432,7 +432,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 
 		double newPropensity = 0.0;
 		if (notEnoughMoleculesFlag == false) {
-			newPropensity = evaluateExpressionRecursive(model, model.getReactionToFormulaMap().get(affectedReactionID));
+			newPropensity = evaluateExpressionRecursive(model, model.getReactionToFormulaMap().get(affectedReactionID), false, getCurrentTime(), null, null);
 		}
 
 		double oldPropensity = model.getReactionToPropensityMap().get(affectedReactionID);
