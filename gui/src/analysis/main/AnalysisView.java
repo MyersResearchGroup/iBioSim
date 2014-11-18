@@ -154,35 +154,27 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 * @param simTab - the tabbedPane this is to be added too
 	 * @param lpnAbstraction - the abstraction pane for LPN abstraction options
 	 * @param root - the project root directory path
-	 * @param sbmlFile - full path for the original SBML file to analyze
-	 * @param sbmlProp - full path for the generated SBML file to analyze
 	 * @param simName - the name of the analysis view
-	 * @param open - the properties file for this analysis view
 	 * @param modelFile - the SBML model file 
 	 */
-	public AnalysisView(Gui gui, Log log, JTabbedPane simTab, AbstPane lpnAbstraction, String root, String sbmlFile,
-			String sbmlProp, String simName, String open, String modelFile) {
+	public AnalysisView(Gui gui, Log log, JTabbedPane simTab, AbstPane lpnAbstraction, String root, String simName,
+			String modelFile) {
 
 		super(new BorderLayout());
-		/*
-		System.out.println(" r:"+root);
-		System.out.println("sf:"+sbmlFile);
-		System.out.println("sp:"+sbmlProp);
-		System.out.println("sn:"+simName);
-		System.out.println("op:"+open);
-		System.out.println("mf:"+modelFile);
-		*/
 		this.gui = gui;
-		this.sbmlFile = sbmlFile;
-		this.sbmlProp = sbmlProp;
-		this.root = root;
-		this.simName = simName;
 		this.log = log;
 		this.simTab = simTab;
 		this.lpnAbstraction = lpnAbstraction;
-		this.interestingSpecies = new ArrayList<String>();
-		String[] tempArray = modelFile.split(File.separator);
-		this.modelFile = tempArray[tempArray.length - 1];
+		this.root = root;
+		this.simName = simName;
+		this.modelFile = modelFile;
+		if (modelFile.endsWith(".lpn")) {
+			sbmlFile = root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".xml");
+		} else {
+			sbmlFile = root + File.separator + modelFile;
+		}
+		sbmlProp = root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".xml");
+		interestingSpecies = new ArrayList<String>();
 		change = false;
 		biosimrc = Preferences.userRoot();
 
@@ -209,7 +201,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		buttonPanel.add(reportOptions, BorderLayout.SOUTH);
 		this.add(buttonPanel, BorderLayout.NORTH);
 		this.add(simulationOptions, BorderLayout.CENTER);
-		loadPropertiesFile(open);
+		loadPropertiesFile(root + File.separator + simName + File.separator + simName + ".properties");
 		loadSEDML();
 	}
 	
@@ -718,7 +710,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 	}
 	
-	public JFrame createProgressBar(JLabel label, JProgressBar progress, final JButton cancel) {
+	private JFrame createProgressBar(JLabel label, JProgressBar progress, final JButton cancel) {
 		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener() {
 			@Override
@@ -1264,7 +1256,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					if (simulations.get(0).getAlgorithm().getKisaoID().equals("KISAO:0000019")) {
 						ODE.setSelected(true);
 						enableODE();
-						simulators.setSelectedItem("Runge-Kutta-Fehlberg");
+						//simulators.setSelectedItem("Runge-Kutta-Fehlberg");
+						// TODO: what java ODE simulator fails on 987
+						simulators.setSelectedItem("rkf45");
 						UniformTimeCourse simulation = (UniformTimeCourse) simulations.get(0);
 						//KisaoTerm kisaoTerm = KisaoOntology.getInstance().getTermById(simulation.getAlgorithm().getKisaoID());
 						Annotation annotation = getSEDBaseAnnotation(simulation,"printInterval");

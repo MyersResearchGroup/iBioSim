@@ -1861,11 +1861,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("modelEditor")) {
-			openGCM(false);
+			openModelEditor(false);
 		}
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("modelTextEditor")) {
-			openGCM(true);
+			openModelEditor(true);
 		}
 		// if the edit popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("sbmlEditor")) {
@@ -4386,7 +4386,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		sbmlFileProp = root + separator + simName + separator + modelFileName;
 		new FileOutputStream(new File(sbmlFileProp)).close();
 		try {
-			FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim() + separator + simName.trim() + ".sim"));
+			FileOutputStream out = new FileOutputStream(new File(root + separator + simName + separator + simName + ".sim"));
 			out.write((modelFileName + "\n").getBytes());
 			out.close();
 		}
@@ -4396,36 +4396,36 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addToTree(simName);
 		JTabbedPane simTab = new JTabbedPane();
 		simTab.addMouseListener(this);
-		AnalysisView reb2sac = new AnalysisView(this, log, simTab, null, root, sbmlFile, sbmlFileProp, simName.trim(), null, modelFileName);
-		simTab.addTab("Simulation Options", reb2sac);
+		AnalysisView analysisView = new AnalysisView(this, log, simTab, null, root, simName, modelFileName);
+		simTab.addTab("Simulation Options", analysisView);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-		simTab.addTab("Advanced Options", reb2sac.getAdvanced());
+		simTab.addTab("Advanced Options", analysisView.getAdvanced());
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		String gcmFile = modelFileName.replace(".xml", ".gcm");
-		ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
-				+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
-		reb2sac.setModelEditor(modelEditor);
+		ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName, root
+				+ separator + simName + separator + simName + ".sim", analysisView, false, false);
+		analysisView.setModelEditor(modelEditor);
 		ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
 				root + separator + simName.trim() + separator + simName.trim() + ".sim");
 		modelEditor.setElementsPanel(elementsPanel);
-		addModelViewTab(reb2sac, simTab, modelEditor);
+		addModelViewTab(analysisView, simTab, modelEditor);
 		simTab.addTab("Parameters", modelEditor);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Model Editor");
 		modelEditor.createSBML("",".", "rkf45");
-		reb2sac.run(".", true);
+		analysisView.run(".", true);
 		Graph tsdGraph;
 		if (new File(root + separator + simName + separator + simName + ".grf").exists()) {
-			tsdGraph = reb2sac.createGraph(root + separator + simName + separator + simName + ".grf");
+			tsdGraph = analysisView.createGraph(root + separator + simName + separator + simName + ".grf");
 		} else {
-			tsdGraph = reb2sac.createGraph(null);
+			tsdGraph = analysisView.createGraph(null);
 		}
 		simTab.addTab("TSD Graph", tsdGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
 		Graph probGraph;
 		if (new File(root + separator + simName + separator + simName + ".prb").exists()) {
-			probGraph = reb2sac.createProbGraph(root + separator + simName + separator + simName + ".prb");
+			probGraph = analysisView.createProbGraph(root + separator + simName + separator + simName + ".prb");
 		} else {
-			probGraph = reb2sac.createProbGraph(null);
+			probGraph = analysisView.createProbGraph(null);
 		}
 		simTab.addTab("Histogram", probGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Histogram");
@@ -5665,53 +5665,30 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	private void openGCM(boolean textBased) {
-		String file = tree.getFile();
-		String filename = "";
-		if (file.lastIndexOf('/') >= 0) {
-			filename = file.substring(file.lastIndexOf('/') + 1);
-		}
-		if (file.lastIndexOf('\\') >= 0) {
-			filename = file.substring(file.lastIndexOf('\\') + 1);
-		}
-		openGCM(filename, textBased);
+	private void openModelEditor(boolean textBased) {
+		String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+		openModelEditor(filename, textBased);
 	}
 
-	public void openGCM(String filename, boolean textBased) {
-		try {
-			File work = new File(root);
-			int i = getTab(filename);
-			if (i == -1) {
-				i = getTab(filename.replace(".gcm", ".xml"));
+	public void openModelEditor(String filename, boolean textBased) {
+		File work = new File(root);
+		int i = getTab(filename);
+		if (i != -1) {
+			if (((ModelEditor)tab.getComponentAt(i)).isTextBased()!=textBased) {
+				((ModelEditor)tab.getComponentAt(i)).setTextBased(textBased);
+				((ModelEditor)tab.getComponentAt(i)).rebuildGui();
 			}
-			if (i != -1) {
-				if (((ModelEditor)tab.getComponentAt(i)).isTextBased()) {
-					if (!textBased) {
-						((ModelEditor)tab.getComponentAt(i)).setTextBased(textBased);
-						((ModelEditor)tab.getComponentAt(i)).rebuildGui();
-					} 
-				} else {
-					if (textBased) {
-						((ModelEditor)tab.getComponentAt(i)).setTextBased(textBased);
-						((ModelEditor)tab.getComponentAt(i)).rebuildGui();
-					} 
-				}
-				tab.setSelectedIndex(i);
-			}
-			else {
-				String path = work.getAbsolutePath();
-				try {
-					ModelEditor gcm = new ModelEditor(path, filename, this, log, false, null, null, null, textBased, false);
-					addTab(filename, gcm, "Model Editor");
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+			tab.setSelectedIndex(i);
 		}
-		catch (Exception e1) {
-			e1.printStackTrace();
-			JOptionPane.showMessageDialog(frame, "Unable to open this GCM file.", "Error", JOptionPane.ERROR_MESSAGE);
+		else {
+			String path = work.getAbsolutePath();
+			try {
+				ModelEditor gcm = new ModelEditor(path, filename, this, log, false, null, null, null, textBased, false);
+				addTab(filename, gcm, "Model Editor");
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -7353,7 +7330,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				openSBML(tree.getFile());
 			}
 			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-				openGCM(false);
+				openModelEditor(false);
 			}
 			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol")) {
 				openSBOL();
@@ -8089,7 +8066,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		String simFile = fileName + separator + analysisName + ".sim";
 		updateSimulationFile(fileName,simFile);
-		String propertiesFile = fileName + separator + analysisName + ".properties";
 		String analysisModelFile = findAnalysisModelFile(fileName);
 		if (analysisModelFile.equals("")) return;
 
@@ -8111,12 +8087,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		AbstPane lhpnAbstraction = null;
 		if (modelFileName.contains(".lpn")) {
 			lhpnAbstraction = new AbstPane(root, modelFileName, log);
-			analysisView = new AnalysisView(this, log, simTab, lhpnAbstraction, root, sbmlLoadFile, analysisModelFile, analysisName, propertiesFile,
-					modelFileName);
+			analysisView = new AnalysisView(this, log, simTab, lhpnAbstraction, root, analysisName, modelFileName);
 		}
 		else {
-			analysisView = new AnalysisView(this, log, simTab, null, root, sbmlLoadFile, analysisModelFile, analysisName, propertiesFile,
-					modelFileName);
+			analysisView = new AnalysisView(this, log, simTab, null, root, analysisName, modelFileName);
 		}
 		simTab.addTab("Simulation Options", analysisView);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
