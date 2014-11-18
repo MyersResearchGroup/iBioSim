@@ -97,7 +97,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 
 					oldResult = modelstate.getVariableToValue(getReplacements(),variable);
 					newResult = evaluateExpressionRecursive(modelstate,
-							assignmentRule.getMath())
+							assignmentRule.getMath(), false, getCurrentTime(), null, null)
 							* modelstate
 									.getVariableToValue(getReplacements(),modelstate.getSpeciesToCompartmentNameMap()
 											.get(variable));
@@ -108,7 +108,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				} else {
 					oldResult = modelstate.getVariableToValue(getReplacements(),variable);
 					newResult = evaluateExpressionRecursive(modelstate,
-							assignmentRule.getMath());
+							assignmentRule.getMath(), false, getCurrentTime(), null, null);
 
 					if (oldResult != newResult) {
 						modelstate.setvariableToValueMap(getReplacements(),variable, newResult);
@@ -126,7 +126,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 	private boolean calcCompInitAssign(ModelState modelstate, String variable,
 			InitialAssignment initialAssignment) {
 		double newResult = evaluateExpressionRecursive(modelstate,
-				initialAssignment.getMath());
+				initialAssignment.getMath(), false, getCurrentTime(), null, null);
 		double oldResult = modelstate.getVariableToValue(getReplacements(),variable);
 		//double speciesVal = 0;
 		if (newResult != oldResult) {
@@ -171,7 +171,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 	private boolean calcParamInitAssign(ModelState modelstate, String variable,
 			InitialAssignment initialAssignment) {
 		double newResult = evaluateExpressionRecursive(modelstate,
-				initialAssignment.getMath());
+				initialAssignment.getMath(), false, getCurrentTime(), null, null);
 		double oldResult = modelstate.getVariableToValue(getReplacements(),variable);
 
 		// if(Double.compare(newResult, oldResult) == 0)
@@ -193,7 +193,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 				&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false) {
 
 			newResult = evaluateExpressionRecursive(modelstate,
-					initialAssignment.getMath())
+					initialAssignment.getMath(), false, getCurrentTime(), null, null)
 					* modelstate
 							.getVariableToValue(getReplacements(),modelstate.getSpeciesToCompartmentNameMap()
 									.get(variable));
@@ -204,7 +204,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 
 		} else {
 			newResult = evaluateExpressionRecursive(modelstate,
-					initialAssignment.getMath());
+					initialAssignment.getMath(), false, getCurrentTime(), null, null);
 
 			if (newResult != modelstate.getVariableToValue(getReplacements(),variable)) {
 				modelstate.setvariableToValueMap(getReplacements(),variable, newResult);
@@ -307,7 +307,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 							initialAssignment);
 				} else {
 					newResult = evaluateExpressionRecursive(modelstate,
-							initialAssignment.getMath());
+							initialAssignment.getMath(), false, getCurrentTime(), null, null);
 					if (newResult != modelstate.getVariableToValue(getReplacements(),variable)) {
 						modelstate.setvariableToValueMap(getReplacements(),variable, newResult);
 						temp = true;
@@ -990,7 +990,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 					propensity = evaluateExpressionRecursive(
 							modelstate,
 							inlineFormula(modelstate,
-									reactionFormula.getLeftChild()));
+									reactionFormula.getLeftChild()), false, getCurrentTime(), null, null);
 
 					if (reactionID.contains("_Diffusion_")
 							&& isStoichAmpBoolean() == true)
@@ -1016,7 +1016,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 					propensity = evaluateExpressionRecursive(
 							modelstate,
 							inlineFormula(modelstate,
-									reactionFormula.getRightChild()));
+									reactionFormula.getRightChild()), false, getCurrentTime(), null, null);
 
 					if (propensity < 0.0)
 						propensity = 0.0;
@@ -1040,7 +1040,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						propensity = 0.0;
 					else {
 						propensity = evaluateExpressionRecursive(modelstate,
-								inlineFormula(modelstate, reactionFormula));
+								inlineFormula(modelstate, reactionFormula), false, getCurrentTime(), null, null);
 
 						if (propensity < 0.0)
 							propensity = 0.0;
@@ -1064,7 +1064,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 						propensity = 0.0;
 					else {
 						propensity = evaluateExpressionRecursive(modelstate,
-								inlineFormula(modelstate, reactionFormula));
+								inlineFormula(modelstate, reactionFormula), false, getCurrentTime(), null, null);
 
 						if (reactionID.contains("_Diffusion_")
 								&& isStoichAmpBoolean() == true)
@@ -1226,7 +1226,7 @@ public abstract class HierarchicalSBaseSetup extends HierarchicalReplacemenHandl
 			else {
 				
 				propensity = evaluateExpressionRecursive(modelstate,
-						inlineFormula(modelstate, reactionFormula));
+						inlineFormula(modelstate, reactionFormula), false, getCurrentTime(), null, null);
 				if (propensity < 0.0)
 					propensity = 0.0;
 
