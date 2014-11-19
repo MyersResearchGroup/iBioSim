@@ -7,24 +7,24 @@ import org.sbml.jsbml.Model;
 
 public abstract class ModuleState
 {
-	private final String ID;
-	private double maxPropensity;
-	private double minPropensity;
-	private final String model;
-	private boolean noConstraintsFlag;
-	private boolean noEventsFlag;
-	private boolean noRuleFlag;
-	private long numCompartments;
-	private long numConstraints;
-	private long numEvents;
-	private int numInitialAssignments;
-	private long numParameters;
-	private int numRateRules;
-	private long numReactions;
-	private long numRules;
-	private long numSpecies;
-	private double propensity;
-	private HashSet<String> variablesToPrint;
+	private final String	ID;
+	private double			maxPropensity;
+	private double			minPropensity;
+	private final String	model;
+	private boolean			noConstraintsFlag;
+	private boolean			noEventsFlag;
+	private boolean			noRuleFlag;
+	private long			numCompartments;
+	private long			numConstraints;
+	private long			numEvents;
+	private int				numInitialAssignments;
+	private long			numParameters;
+	private int				numRateRules;
+	private long			numReactions;
+	private long			numRules;
+	private long			numSpecies;
+	private double			propensity;
+	private HashSet<String>	variablesToPrint;
 
 	public ModuleState(HashMap<String, Model> models, String bioModel,
 			String submodelID)
