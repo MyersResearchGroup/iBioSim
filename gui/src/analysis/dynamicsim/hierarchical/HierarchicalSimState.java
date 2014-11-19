@@ -17,46 +17,51 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
+import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import flanagan.math.PsRandom;
 
 /**
  * This class provides the state variables of the simulation.
  * 
  * @author Leandro Watanabe
- *
+ * 
  */
-public abstract class HierarchicalSimState implements HierarchicalSimulation 
- {
-    private BufferedWriter bufferedTSDWriter;
-    private boolean cancelFlag;
-    private boolean constraintFailureFlag;
-    private boolean constraintFlag;
-    private int currentRun;
-    private double currentTime;
-    private String[] interestingSpecies;
-    private double maxTimeStep;
-    private double minTimeStep;
-    private String outputDirectory;
-    private boolean printConcentrations;
-    private HashSet<String> printConcentrationSpecies;
-    private double printInterval;
-    private JProgressBar progress;
-    private JFrame running;
-    final private int SBML_LEVEL = 3;
-    final private int SBML_VERSION = 1;
-    private String SBMLFileName;
-    private boolean sbmlHasErrorsFlag;
-    private String separator;
-    private boolean stoichAmpBoolean;
-    private double stoichAmpGridValue;
-    private double timeLimit;
-    private String rootDirectory;
-    private FileWriter TSDWriter;
-    private PsRandom prng;
-    private SBMLDocument document;
-	public HierarchicalSimState(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
-			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval,  double stoichAmpValue,
-			JFrame running, String[] interestingSpecies, String quantityType) throws IOException, XMLStreamException 
+public abstract class HierarchicalSimState implements HierarchicalSimulation
+{
+	private BufferedWriter	bufferedTSDWriter;
+	private boolean			cancelFlag;
+	private boolean			constraintFailureFlag;
+	private boolean			constraintFlag;
+	private int				currentRun;
+	private double			currentTime;
+	private String[]		interestingSpecies;
+	private double			maxTimeStep;
+	private double			minTimeStep;
+	private String			outputDirectory;
+	private boolean			printConcentrations;
+	private HashSet<String>	printConcentrationSpecies;
+	private double			printInterval;
+	private JProgressBar	progress;
+	private JFrame			running;
+	final private int		SBML_LEVEL		= 3;
+	final private int		SBML_VERSION	= 1;
+	private String			SBMLFileName;
+	private boolean			sbmlHasErrorsFlag;
+	private String			separator;
+	private boolean			stoichAmpBoolean;
+	private double			stoichAmpGridValue;
+	private double			timeLimit;
+	private String			rootDirectory;
+	private FileWriter		TSDWriter;
+	private PsRandom		prng;
+	private SBMLDocument	document;
+	private String			abstraction;
+
+	public HierarchicalSimState(String SBMLFileName, String rootDirectory, String outputDirectory,
+			double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress,
+			double printInterval, double stoichAmpValue, JFrame running,
+			String[] interestingSpecies, String quantityType, String abstraction)
+			throws IOException, XMLStreamException
 	{
 		this.SBMLFileName = SBMLFileName;
 		this.timeLimit = timeLimit;
@@ -70,48 +75,62 @@ public abstract class HierarchicalSimState implements HierarchicalSimulation
 		this.printConcentrationSpecies = new HashSet<String>();
 		this.interestingSpecies = interestingSpecies;
 		this.document = SBMLReader.read(new File(SBMLFileName));
-		//this.document = HierarchicalUtilities.getFlattenedRegulations(rootDirectory,SBMLFileName);
-		
+		this.abstraction = abstraction;
+
+		if (abstraction != null)
+		{
+			if (abstraction.equals("expandReaction"))
+			{
+				this.document = HierarchicalUtilities.getFlattenedRegulations(rootDirectory,
+						SBMLFileName);
+			}
+		}
+
 		if (quantityType != null)
 		{
 			String[] printConcentration = quantityType.replaceAll(" ", "").split(",");
 
-			for(String s : printConcentration)
+			for (String s : printConcentration)
+			{
 				printConcentrationSpecies.add(s);
+			}
 		}
 
 		if (stoichAmpValue <= 1.0)
+		{
 			stoichAmpBoolean = false;
-		else {
+		}
+		else
+		{
 			stoichAmpBoolean = true;
 			stoichAmpGridValue = stoichAmpValue;
 		}
 
 		SBMLErrorLog errors = document.getErrorLog();
-		
-		if (document.getErrorCount() > 0) 
-		{	
+
+		if (document.getErrorCount() > 0)
+		{
 			String errorString = "";
 
-			for (int i = 0; i < errors.getErrorCount(); i++) {
+			for (int i = 0; i < errors.getErrorCount(); i++)
+			{
 				errorString += errors.getError(i);
 			}
 
-			JOptionPane.showMessageDialog(Gui.frame, 
-					"The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString,
-					"SBML Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame,
+					"The SBML file contains " + document.getErrorCount() + " error(s):\n"
+							+ errorString, "SBML Error", JOptionPane.ERROR_MESSAGE);
 
 			sbmlHasErrorsFlag = true;
 		}
 
-
 		prng = new PsRandom();
-		 
-		if (File.separator.equals("\\")) 
+
+		if (File.separator.equals("\\"))
 		{
 			separator = "\\\\";
 		}
-		else 
+		else
 		{
 			separator = File.separator;
 		}
@@ -120,365 +139,451 @@ public abstract class HierarchicalSimState implements HierarchicalSimulation
 	/**
 	 * @return the bufferedTSDWriter
 	 */
-	public BufferedWriter getBufferedTSDWriter() {
+	public BufferedWriter getBufferedTSDWriter()
+	{
 		return bufferedTSDWriter;
 	}
 
 	/**
 	 * @return the cancelFlag
 	 */
-	public boolean isCancelFlag() {
+	public boolean isCancelFlag()
+	{
 		return cancelFlag;
 	}
 
 	/**
 	 * @return the constraintFailureFlag
 	 */
-	public boolean isConstraintFailureFlag() {
+	public boolean isConstraintFailureFlag()
+	{
 		return constraintFailureFlag;
 	}
 
 	/**
 	 * @return the constraintFlag
 	 */
-	public boolean isConstraintFlag() {
+	public boolean isConstraintFlag()
+	{
 		return constraintFlag;
 	}
 
 	/**
 	 * @return the currentRun
 	 */
-	public int getCurrentRun() {
+	public int getCurrentRun()
+	{
 		return currentRun;
 	}
 
 	/**
 	 * @return the currentTime
 	 */
-	public double getCurrentTime() {
+	public double getCurrentTime()
+	{
 		return currentTime;
 	}
 
 	/**
 	 * @return the interestingSpecies
 	 */
-	public String[] getInterestingSpecies() {
+	public String[] getInterestingSpecies()
+	{
 		return interestingSpecies;
 	}
 
 	/**
 	 * @return the maxTimeStep
 	 */
-	public double getMaxTimeStep() {
+	public double getMaxTimeStep()
+	{
 		return maxTimeStep;
 	}
 
 	/**
 	 * @return the minTimeStep
 	 */
-	public double getMinTimeStep() {
+	public double getMinTimeStep()
+	{
 		return minTimeStep;
 	}
 
 	/**
 	 * @return the outputDirectory
 	 */
-	public String getOutputDirectory() {
+	public String getOutputDirectory()
+	{
 		return outputDirectory;
 	}
 
 	/**
 	 * @return the printConcentrations
 	 */
-	public boolean isPrintConcentrations() {
+	public boolean isPrintConcentrations()
+	{
 		return printConcentrations;
 	}
 
 	/**
 	 * @return the printConcentrationSpecies
 	 */
-	public HashSet<String> getPrintConcentrationSpecies() {
+	public HashSet<String> getPrintConcentrationSpecies()
+	{
 		return printConcentrationSpecies;
 	}
 
 	/**
 	 * @return the printInterval
 	 */
-	public double getPrintInterval() {
+	public double getPrintInterval()
+	{
 		return printInterval;
 	}
 
 	/**
 	 * @return the progress
 	 */
-	public JProgressBar getProgress() {
+	public JProgressBar getProgress()
+	{
 		return progress;
 	}
 
 	/**
 	 * @return the running
 	 */
-	public JFrame getRunning() {
+	public JFrame getRunning()
+	{
 		return running;
 	}
 
 	/**
 	 * @return the sBML_LEVEL
 	 */
-	public int getSBML_LEVEL() {
+	public int getSBML_LEVEL()
+	{
 		return SBML_LEVEL;
 	}
 
 	/**
 	 * @return the sBML_VERSION
 	 */
-	public int getSBML_VERSION() {
+	public int getSBML_VERSION()
+	{
 		return SBML_VERSION;
 	}
 
 	/**
 	 * @return the sBMLFileName
 	 */
-	public String getSBMLFileName() {
+	public String getSBMLFileName()
+	{
 		return SBMLFileName;
 	}
 
 	/**
 	 * @return the sbmlHasErrorsFlag
 	 */
-	public boolean isSbmlHasErrorsFlag() {
+	public boolean isSbmlHasErrorsFlag()
+	{
 		return sbmlHasErrorsFlag;
 	}
 
 	/**
 	 * @return the separator
 	 */
-	public String getSeparator() {
+	public String getSeparator()
+	{
 		return separator;
 	}
 
 	/**
 	 * @return the stoichAmpBoolean
 	 */
-	public boolean isStoichAmpBoolean() {
+	public boolean isStoichAmpBoolean()
+	{
 		return stoichAmpBoolean;
 	}
 
 	/**
 	 * @return the stoichAmpGridValue
 	 */
-	public double getStoichAmpGridValue() {
+	public double getStoichAmpGridValue()
+	{
 		return stoichAmpGridValue;
 	}
 
 	/**
 	 * @return the timeLimit
 	 */
-	public double getTimeLimit() {
+	public double getTimeLimit()
+	{
 		return timeLimit;
 	}
 
 	/**
 	 * @return the rootDirectory
 	 */
-	public String getRootDirectory() {
+	public String getRootDirectory()
+	{
 		return rootDirectory;
 	}
 
 	/**
 	 * @return the tSDWriter
 	 */
-	public FileWriter getTSDWriter() {
+	public FileWriter getTSDWriter()
+	{
 		return TSDWriter;
 	}
 
 	/**
 	 * @return the prng
 	 */
-	public PsRandom getPrng() {
+	public PsRandom getPrng()
+	{
 		return prng;
 	}
 
 	/**
-	 * @param bufferedTSDWriter the bufferedTSDWriter to set
+	 * @param bufferedTSDWriter
+	 *            the bufferedTSDWriter to set
 	 */
-	public void setBufferedTSDWriter(BufferedWriter bufferedTSDWriter) {
+	public void setBufferedTSDWriter(BufferedWriter bufferedTSDWriter)
+	{
 		this.bufferedTSDWriter = bufferedTSDWriter;
 	}
 
 	/**
-	 * @param cancelFlag the cancelFlag to set
+	 * @param cancelFlag
+	 *            the cancelFlag to set
 	 */
-	public void setCancelFlag(boolean cancelFlag) {
+	public void setCancelFlag(boolean cancelFlag)
+	{
 		this.cancelFlag = cancelFlag;
 	}
 
 	/**
-	 * @param constraintFailureFlag the constraintFailureFlag to set
+	 * @param constraintFailureFlag
+	 *            the constraintFailureFlag to set
 	 */
-	public void setConstraintFailureFlag(boolean constraintFailureFlag) {
+	public void setConstraintFailureFlag(boolean constraintFailureFlag)
+	{
 		this.constraintFailureFlag = constraintFailureFlag;
 	}
 
 	/**
-	 * @param constraintFlag the constraintFlag to set
+	 * @param constraintFlag
+	 *            the constraintFlag to set
 	 */
-	public void setConstraintFlag(boolean constraintFlag) {
+	public void setConstraintFlag(boolean constraintFlag)
+	{
 		this.constraintFlag = constraintFlag;
 	}
 
 	/**
-	 * @param currentRun the currentRun to set
+	 * @param currentRun
+	 *            the currentRun to set
 	 */
-	public void setCurrentRun(int currentRun) {
+	public void setCurrentRun(int currentRun)
+	{
 		this.currentRun = currentRun;
 	}
 
 	/**
-	 * @param currentTime the currentTime to set
+	 * @param currentTime
+	 *            the currentTime to set
 	 */
-	public void setCurrentTime(double currentTime) {
+	public void setCurrentTime(double currentTime)
+	{
 		this.currentTime = currentTime;
 	}
 
 	/**
-	 * @param interestingSpecies the interestingSpecies to set
+	 * @param interestingSpecies
+	 *            the interestingSpecies to set
 	 */
-	public void setInterestingSpecies(String[] interestingSpecies) {
+	public void setInterestingSpecies(String[] interestingSpecies)
+	{
 		this.interestingSpecies = interestingSpecies;
 	}
 
 	/**
-	 * @param maxTimeStep the maxTimeStep to set
+	 * @param maxTimeStep
+	 *            the maxTimeStep to set
 	 */
-	public void setMaxTimeStep(double maxTimeStep) {
+	public void setMaxTimeStep(double maxTimeStep)
+	{
 		this.maxTimeStep = maxTimeStep;
 	}
 
 	/**
-	 * @param minTimeStep the minTimeStep to set
+	 * @param minTimeStep
+	 *            the minTimeStep to set
 	 */
-	public void setMinTimeStep(double minTimeStep) {
+	public void setMinTimeStep(double minTimeStep)
+	{
 		this.minTimeStep = minTimeStep;
 	}
 
 	/**
-	 * @param outputDirectory the outputDirectory to set
+	 * @param outputDirectory
+	 *            the outputDirectory to set
 	 */
-	public void setOutputDirectory(String outputDirectory) {
+	public void setOutputDirectory(String outputDirectory)
+	{
 		this.outputDirectory = outputDirectory;
 	}
 
 	/**
-	 * @param printConcentrations the printConcentrations to set
+	 * @param printConcentrations
+	 *            the printConcentrations to set
 	 */
-	public void setPrintConcentrations(boolean printConcentrations) {
+	public void setPrintConcentrations(boolean printConcentrations)
+	{
 		this.printConcentrations = printConcentrations;
 	}
 
 	/**
-	 * @param printConcentrationSpecies the printConcentrationSpecies to set
+	 * @param printConcentrationSpecies
+	 *            the printConcentrationSpecies to set
 	 */
-	public void setPrintConcentrationSpecies(
-			HashSet<String> printConcentrationSpecies) {
+	public void setPrintConcentrationSpecies(HashSet<String> printConcentrationSpecies)
+	{
 		this.printConcentrationSpecies = printConcentrationSpecies;
 	}
 
 	/**
-	 * @param printInterval the printInterval to set
+	 * @param printInterval
+	 *            the printInterval to set
 	 */
-	public void setPrintInterval(double printInterval) {
+	public void setPrintInterval(double printInterval)
+	{
 		this.printInterval = printInterval;
 	}
 
 	/**
-	 * @param progress the progress to set
+	 * @param progress
+	 *            the progress to set
 	 */
-	public void setProgress(JProgressBar progress) {
+	public void setProgress(JProgressBar progress)
+	{
 		this.progress = progress;
 	}
 
 	/**
-	 * @param running the running to set
+	 * @param running
+	 *            the running to set
 	 */
-	public void setRunning(JFrame running) {
+	public void setRunning(JFrame running)
+	{
 		this.running = running;
 	}
 
 	/**
-	 * @param sBMLFileName the sBMLFileName to set
+	 * @param sBMLFileName
+	 *            the sBMLFileName to set
 	 */
-	public void setSBMLFileName(String sBMLFileName) {
+	public void setSBMLFileName(String sBMLFileName)
+	{
 		SBMLFileName = sBMLFileName;
 	}
 
 	/**
-	 * @param sbmlHasErrorsFlag the sbmlHasErrorsFlag to set
+	 * @param sbmlHasErrorsFlag
+	 *            the sbmlHasErrorsFlag to set
 	 */
-	public void setSbmlHasErrorsFlag(boolean sbmlHasErrorsFlag) {
+	public void setSbmlHasErrorsFlag(boolean sbmlHasErrorsFlag)
+	{
 		this.sbmlHasErrorsFlag = sbmlHasErrorsFlag;
 	}
 
 	/**
-	 * @param separator the separator to set
+	 * @param separator
+	 *            the separator to set
 	 */
-	public void setSeparator(String separator) {
+	public void setSeparator(String separator)
+	{
 		this.separator = separator;
 	}
 
 	/**
-	 * @param stoichAmpBoolean the stoichAmpBoolean to set
+	 * @param stoichAmpBoolean
+	 *            the stoichAmpBoolean to set
 	 */
-	public void setStoichAmpBoolean(boolean stoichAmpBoolean) {
+	public void setStoichAmpBoolean(boolean stoichAmpBoolean)
+	{
 		this.stoichAmpBoolean = stoichAmpBoolean;
 	}
 
 	/**
-	 * @param stoichAmpGridValue the stoichAmpGridValue to set
+	 * @param stoichAmpGridValue
+	 *            the stoichAmpGridValue to set
 	 */
-	public void setStoichAmpGridValue(double stoichAmpGridValue) {
+	public void setStoichAmpGridValue(double stoichAmpGridValue)
+	{
 		this.stoichAmpGridValue = stoichAmpGridValue;
 	}
 
 	/**
-	 * @param timeLimit the timeLimit to set
+	 * @param timeLimit
+	 *            the timeLimit to set
 	 */
-	public void setTimeLimit(double timeLimit) {
+	public void setTimeLimit(double timeLimit)
+	{
 		this.timeLimit = timeLimit;
 	}
 
 	/**
-	 * @param rootDirectory the rootDirectory to set
+	 * @param rootDirectory
+	 *            the rootDirectory to set
 	 */
-	public void setRootDirectory(String rootDirectory) {
+	public void setRootDirectory(String rootDirectory)
+	{
 		this.rootDirectory = rootDirectory;
 	}
 
 	/**
-	 * @param tSDWriter the tSDWriter to set
+	 * @param tSDWriter
+	 *            the tSDWriter to set
 	 */
-	public void setTSDWriter(FileWriter tSDWriter) {
+	public void setTSDWriter(FileWriter tSDWriter)
+	{
 		TSDWriter = tSDWriter;
 	}
 
 	/**
-	 * @param prng the prng to set
+	 * @param prng
+	 *            the prng to set
 	 */
-	public void setPrng(PsRandom prng) {
+	public void setPrng(PsRandom prng)
+	{
 		this.prng = prng;
 	}
 
 	/**
 	 * @return the document
 	 */
-	public SBMLDocument getDocument() {
+	public SBMLDocument getDocument()
+	{
 		return document;
 	}
 
 	/**
-	 * @param document the document to set
+	 * @param document
+	 *            the document to set
 	 */
-	public void setDocument(SBMLDocument document) {
+	public void setDocument(SBMLDocument document)
+	{
 		this.document = document;
+	}
+
+	public String getAbstraction()
+	{
+		return abstraction;
+	}
+
+	public void setAbstraction(String abstraction)
+	{
+		this.abstraction = abstraction;
 	}
 }

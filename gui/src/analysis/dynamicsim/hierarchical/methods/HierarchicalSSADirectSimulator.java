@@ -16,20 +16,23 @@ import analysis.dynamicsim.hierarchical.HierarchicalSimulationFunctions;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 
-public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFunctions {
+public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFunctions
+{
 
-	private static Long initializationTime = new Long(0);
-	private String modelstateID;
-	private boolean updateRateRule;
+	private static Long	initializationTime	= new Long(0);
+	private String		modelstateID;
+	private boolean		updateRateRule;
 
+	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory,
+			String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep,
+			long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue,
+			JFrame running, String[] interestingSpecies, String quantityType, String abstraction)
+			throws IOException, XMLStreamException
+	{
 
-	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
-			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
-					throws IOException, XMLStreamException {
-
-		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, progress,
-				printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
+		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
+				progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
+				abstraction);
 
 		initialize(randomSeed, 1);
 		modelstateID = "topmodel";
@@ -37,57 +40,71 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 	}
 
 	@Override
-	public void simulate() {
+	public void simulate()
+	{
 
 		if (isSbmlHasErrorsFlag())
+		{
 			return;
+		}
 
 		long initTime2 = System.nanoTime();
 
 		initializationTime += System.nanoTime() - initTime2;
 
-		//SIMULATION LOOP
+		// SIMULATION LOOP
 		setCurrentTime(0.0);
 		double printTime = getPrintInterval();
 
 		double nextEventTime = handleEvents();
 
-		while (getCurrentTime() < getTimeLimit() && !isCancelFlag()) 
+		while (getCurrentTime() < getTimeLimit() && !isCancelFlag())
 		{
-			if (getTopmodel().isNoEventsFlag() == false) 
+			if (getTopmodel().isNoEventsFlag() == false)
 			{
-				HashSet<String> affectedReactionSet = fireEvents(getTopmodel(), "reaction", getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());				
+				HashSet<String> affectedReactionSet = fireEvents(getTopmodel(), "reaction",
+						getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());
 				if (affectedReactionSet.size() > 0)
 				{
-					HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet, getTopmodel());
-					for(String species : affectedSpecies)
+					HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
+							getTopmodel());
+					for (String species : affectedSpecies)
 					{
-						HashSet<HierarchicalStringPair> pairs = getTopmodel().getSpeciesToReplacement().get(species);
-						if(pairs != null)
+						HashSet<HierarchicalStringPair> pairs = getTopmodel()
+								.getSpeciesToReplacement().get(species);
+						if (pairs != null)
 						{
-							for(HierarchicalStringPair pair : pairs)
+							for (HierarchicalStringPair pair : pairs)
+							{
 								updatePropensity(pair.string1, pair.string2);
+							}
 						}
 					}
-					//updatePropensities(getTopmodel());
+					// updatePropensities(getTopmodel());
 				}
 			}
 
-			for(ModelState models : getSubmodels().values())
+			for (ModelState models : getSubmodels().values())
 			{
-				if (models.isNoEventsFlag() == false) {
-					HashSet<String> affectedReactionSet = fireEvents(models, "reaction", models.isNoRuleFlag(), models.isNoConstraintsFlag());				
+				if (models.isNoEventsFlag() == false)
+				{
+					HashSet<String> affectedReactionSet = fireEvents(models, "reaction",
+							models.isNoRuleFlag(), models.isNoConstraintsFlag());
 					if (affectedReactionSet.size() > 0)
 					{
-						HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet, models);
-						//updatePropensities(models);
-						for(String species : affectedSpecies)
+						HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
+								models);
+						// updatePropensities(models);
+						for (String species : affectedSpecies)
 						{
-							HashSet<HierarchicalStringPair> pairs = models.getSpeciesToReplacement().get(species);
-							if(pairs != null)
+							HashSet<HierarchicalStringPair> pairs = models
+									.getSpeciesToReplacement().get(species);
+							if (pairs != null)
 							{
-								for(HierarchicalStringPair pair : pairs)
+								for (HierarchicalStringPair pair : pairs)
+								{
 									updatePropensity(pair.string1, pair.string2);
+								}
 							}
 						}
 					}
@@ -101,89 +118,110 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 			nextEventTime = handleEvents();
 			updateRateRule = false;
 
-			if (nextReactionTime < nextEventTime && nextReactionTime < getCurrentTime() + getMaxTimeStep()) 
+			if (nextReactionTime < nextEventTime
+					&& nextReactionTime < getCurrentTime() + getMaxTimeStep())
 			{
 				setCurrentTime(nextReactionTime);
-			} 
-			else if (nextEventTime <= getCurrentTime() + getMaxTimeStep()) 
+			}
+			else if (nextEventTime <= getCurrentTime() + getMaxTimeStep())
 			{
 				setCurrentTime(nextEventTime);
-			} 
-			else 
+			}
+			else
 			{
 				setCurrentTime(getCurrentTime() + getMaxTimeStep());
 				updateRateRule = true;
 			}
 
-			if (getCurrentTime() > getTimeLimit()) 
+			if (getCurrentTime() > getTimeLimit())
 			{
 				setCurrentTime(getTimeLimit());
 			}
 
-			while (getCurrentTime() > printTime && printTime < getTimeLimit()) 
+			while (getCurrentTime() > printTime && printTime < getTimeLimit())
 			{
 
-				try {
+				try
+				{
 					printToTSD(printTime);
 					getBufferedTSDWriter().write(",\n");
-				} catch (IOException e) {
+				}
+				catch (IOException e)
+				{
 					e.printStackTrace();
 				}
 
 				printTime += getPrintInterval();
-				getRunning().setTitle("Progress (" + (int)((getCurrentTime() / getTimeLimit()) * 100.0) + "%)");		
-				getProgress().setValue((int)((getCurrentTime() / getTimeLimit()) * 100.0));
+				getRunning().setTitle(
+						"Progress (" + (int) ((getCurrentTime() / getTimeLimit()) * 100.0) + "%)");
+				getProgress().setValue((int) ((getCurrentTime() / getTimeLimit()) * 100.0));
 
 			}
 
-			if (getCurrentTime() == nextReactionTime) 
+			if (getCurrentTime() == nextReactionTime)
 			{
 				String selectedReactionID = selectReaction(r2);
-				if (!selectedReactionID.isEmpty()) {
-					if(modelstateID.equals("topmodel"))
+				if (!selectedReactionID.isEmpty())
+				{
+					if (modelstateID.equals("topmodel"))
 					{
-						if (!selectedReactionID.isEmpty()) {
-							performReaction(getTopmodel(), selectedReactionID, getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());
-							HashSet<String> affectedReactionSet = getAffectedReactionSet(getTopmodel(), selectedReactionID, true);
-							HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet, getTopmodel());
-							//updatePropensities(getTopmodel());
-							for(String species : affectedSpecies)
+						if (!selectedReactionID.isEmpty())
+						{
+							performReaction(getTopmodel(), selectedReactionID, getTopmodel()
+									.isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());
+							HashSet<String> affectedReactionSet = getAffectedReactionSet(
+									getTopmodel(), selectedReactionID, true);
+							HashSet<String> affectedSpecies = updatePropensities(
+									affectedReactionSet, getTopmodel());
+							// updatePropensities(getTopmodel());
+							for (String species : affectedSpecies)
 							{
-								HashSet<HierarchicalStringPair> pairs = getTopmodel().getSpeciesToReplacement(species);
-								if(pairs != null)
+								HashSet<HierarchicalStringPair> pairs = getTopmodel()
+										.getSpeciesToReplacement(species);
+								if (pairs != null)
 								{
-									for(HierarchicalStringPair pair : pairs)
+									for (HierarchicalStringPair pair : pairs)
+									{
 										updatePropensity(pair.string1, pair.string2);
+									}
 								}
 							}
 						}
 					}
 					else
 					{
-						if (!selectedReactionID.isEmpty()) {
-							performReaction(getSubmodels().get(modelstateID), selectedReactionID, getSubmodels().get(modelstateID).isNoRuleFlag(), getSubmodels().get(modelstateID).isNoConstraintsFlag());
-							HashSet<String> affectedReactionSet = getAffectedReactionSet(getSubmodels().get(modelstateID), selectedReactionID, true);
-							HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet, getSubmodels().get(modelstateID));
-							for(String species : affectedSpecies)
+						if (!selectedReactionID.isEmpty())
+						{
+							performReaction(getSubmodels().get(modelstateID), selectedReactionID,
+									getSubmodels().get(modelstateID).isNoRuleFlag(), getSubmodels()
+											.get(modelstateID).isNoConstraintsFlag());
+							HashSet<String> affectedReactionSet = getAffectedReactionSet(
+									getSubmodels().get(modelstateID), selectedReactionID, true);
+							HashSet<String> affectedSpecies = updatePropensities(
+									affectedReactionSet, getSubmodels().get(modelstateID));
+							for (String species : affectedSpecies)
 							{
-								HashSet<HierarchicalStringPair> pairs = getSubmodels().get(modelstateID).getSpeciesToReplacement(species);
-								if(pairs != null)
+								HashSet<HierarchicalStringPair> pairs = getSubmodels().get(
+										modelstateID).getSpeciesToReplacement(species);
+								if (pairs != null)
 								{
-									for(HierarchicalStringPair pair : pairs)
+									for (HierarchicalStringPair pair : pairs)
+									{
 										updatePropensity(pair.string1, pair.string2);
+									}
 								}
 							}
-							//updatePropensities(getSubmodels().get(modelstateID));
+							// updatePropensities(getSubmodels().get(modelstateID));
 						}
 					}
 				}
 			}
 
-			if(updateRateRule)
+			if (updateRateRule)
 			{
 				performRateRules(getTopmodel(), getCurrentTime());
 
-				for(ModelState modelstate : getSubmodels().values())
+				for (ModelState modelstate : getSubmodels().values())
 				{
 					performRateRules(modelstate, getCurrentTime());
 				}
@@ -192,20 +230,26 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 			updateRules();
 		}
 
-		if (isCancelFlag() == false) {
+		if (isCancelFlag() == false)
+		{
 
-			//print the final species counts
-			try {
+			// print the final species counts
+			try
+			{
 				printToTSD(printTime);
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 
-			try {
+			try
+			{
 				getBufferedTSDWriter().write(')');
 				getBufferedTSDWriter().flush();
-			} 
-			catch (IOException e1) {
+			}
+			catch (IOException e1)
+			{
 				e1.printStackTrace();
 			}
 		}
@@ -217,30 +261,41 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 	 * @param delta_t
 	 * @return
 	 */
-	private HashSet<String> performRateRules(ModelState modelstate, double delta_t) {
+	private HashSet<String> performRateRules(ModelState modelstate, double delta_t)
+	{
 
 		HashSet<String> affectedVariables = new HashSet<String>();
 
-		for (Rule rule : modelstate.getRateRulesList()) {
+		for (Rule rule : modelstate.getRateRulesList())
+		{
 
-			RateRule rateRule = (RateRule) rule;	
+			RateRule rateRule = (RateRule) rule;
 			String variable = rateRule.getVariable();
 
-			//update the species count (but only if the species isn't constant) (bound cond is fine)
-			if (modelstate.getVariableToIsConstantMap().containsKey(variable) && modelstate.getVariableToIsConstantMap().get(variable) == false) {
+			// update the species count (but only if the species isn't constant)
+			// (bound cond is fine)
+			if (modelstate.getVariableToIsConstantMap().containsKey(variable)
+					&& modelstate.getVariableToIsConstantMap().get(variable) == false)
+			{
 
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable) &&
-						modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false) {
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
+						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
+				{
 
 					double currVal = modelstate.getVariableToValue(getReplacements(), variable);
-					double incr = delta_t * (
-							evaluateExpressionRecursive(modelstate, rateRule.getMath(), false, getCurrentTime(), null, null) * 
-							modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable)));
+					double incr = delta_t
+							* (evaluateExpressionRecursive(modelstate, rateRule.getMath(), false,
+									getCurrentTime(), null, null) * modelstate.getVariableToValue(
+									getReplacements(), modelstate.getSpeciesToCompartmentNameMap()
+											.get(variable)));
 					modelstate.setvariableToValueMap(getReplacements(), variable, currVal + incr);
 				}
-				else {
+				else
+				{
 					double currVal = modelstate.getVariableToValue(getReplacements(), variable);
-					double incr = delta_t * evaluateExpressionRecursive(modelstate, rateRule.getMath(), false, getCurrentTime(), null, null);
+					double incr = delta_t
+							* evaluateExpressionRecursive(modelstate, rateRule.getMath(), false,
+									getCurrentTime(), null, null);
 
 					modelstate.setvariableToValueMap(getReplacements(), variable, currVal + incr);
 				}
@@ -253,34 +308,34 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 		return affectedVariables;
 	}
 
-
-
 	/**
 	 * sets up data structures local to the SSA-Direct method
 	 * 
-	 * @param isNoEventsFlag()
+	 * @param isNoEventsFlag
+	 *            ()
 	 * @param noAssignmentRulesFlag
-	 * @param isNoConstraintsFlag()
+	 * @param isNoConstraintsFlag
+	 *            ()
 	 */
-	private void initialize(long randomSeed, int runNumber) throws IOException {	 
+	private void initialize(long randomSeed, int runNumber) throws IOException
+	{
 		setupNonConstantSpeciesReferences(getTopmodel());
 		setupSpecies(getTopmodel());
-		setupParameters(getTopmodel());	
-		setupReactions(getTopmodel());		
+		setupParameters(getTopmodel());
+		setupReactions(getTopmodel());
 		setupConstraints(getTopmodel());
 		setupEvents(getTopmodel());
 		setupInitialAssignments(getTopmodel());
 		setupRules(getTopmodel());
 		setupForOutput(randomSeed, runNumber);
+		setupArraysValues(getTopmodel());
 
-
-
-		for(ModelState model : getSubmodels().values())
+		for (ModelState model : getSubmodels().values())
 		{
 			setupNonConstantSpeciesReferences(model);
 			setupSpecies(model);
-			setupParameters(model);	
-			setupReactions(model);		
+			setupParameters(model);
+			setupReactions(model);
 			setupConstraints(model);
 			setupEvents(model);
 			setupInitialAssignments(model);
@@ -288,12 +343,11 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 			setupForOutput(randomSeed, runNumber);
 		}
 
-
 		getBufferedTSDWriter().write("(" + "\"" + "time" + "\"");
 
-		if(getInterestingSpecies().length > 0)
+		if (getInterestingSpecies().length > 0)
 		{
-			for(String s : getInterestingSpecies())
+			for (String s : getInterestingSpecies())
 			{
 
 				getBufferedTSDWriter().write(",\"" + s + "\"");
@@ -306,165 +360,168 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 		}
 
 		for (String speciesID : getTopmodel().getSpeciesIDSet())
-		{	
+		{
 			getBufferedTSDWriter().write(",\"" + speciesID + "\"");
 		}
 
-		for (String noConstantParam : getTopmodel().getVariablesToPrint()) 
+		for (String noConstantParam : getTopmodel().getVariablesToPrint())
 		{
 			getBufferedTSDWriter().write(",\"" + noConstantParam + "\"");
 		}
 		/*
-		for (String compartment : getTopmodel().compartmentIDSet)
-		{
-			bufferedTSDWriter.write(", \"" + compartment + "\"");
-		}
+		 * for (String compartment : getTopmodel().compartmentIDSet) {
+		 * bufferedTSDWriter.write(", \"" + compartment + "\""); }
 		 */
-		for(ModelState model : getSubmodels().values())
+		for (ModelState model : getSubmodels().values())
 		{
-			for (String speciesID : model.getSpeciesIDSet()) 		
-				if(!model.getIsHierarchical().contains(speciesID))
+			for (String speciesID : model.getSpeciesIDSet())
+			{
+				if (!model.getIsHierarchical().contains(speciesID))
 				{
 					getBufferedTSDWriter().write(",\"" + model.getID() + "__" + speciesID + "\"");
 				}
+			}
 
 			for (String noConstantParam : model.getVariablesToPrint())
-				if(!model.getIsHierarchical().contains(noConstantParam))
+			{
+				if (!model.getIsHierarchical().contains(noConstantParam))
 				{
-					getBufferedTSDWriter().write(",\"" + model.getID() + "__" +  noConstantParam + "\"");
+					getBufferedTSDWriter().write(
+							",\"" + model.getID() + "__" + noConstantParam + "\"");
 				}
+			}
 		}
-
 
 		getBufferedTSDWriter().write("),\n");
 
 	}
 
-
-	private HashSet<String> updatePropensities(HashSet<String> affectedReactionSet, ModelState modelstate) {
+	private HashSet<String> updatePropensities(HashSet<String> affectedReactionSet,
+			ModelState modelstate)
+	{
 
 		HashSet<String> affectedSpecies = new HashSet<String>();
 
-		for (String affectedReactionID : affectedReactionSet) {
+		for (String affectedReactionID : affectedReactionSet)
+		{
 
-			if(modelstate.isDeletedByMetaID(affectedReactionID))
+			if (modelstate.isDeletedByMetaID(affectedReactionID))
+			{
 				continue;
+			}
 
-			HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet = 
-					modelstate.getReactionToReactantStoichiometrySetMap().get(affectedReactionID);
-			updatePropensity(modelstate, affectedReactionID,reactantStoichiometrySet, affectedSpecies);		
+			HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet = modelstate
+					.getReactionToReactantStoichiometrySetMap().get(affectedReactionID);
+			updatePropensity(modelstate, affectedReactionID, reactantStoichiometrySet,
+					affectedSpecies);
 		}
 
 		return affectedSpecies;
 	}
 
 	/*
-	private void updatePropensities(ModelState modelstate) {
-		if(modelstate != getTopmodel())
-			for (String reaction : getTopmodel().getHierarchicalReactions())
-			{
-				if(getTopmodel().isDeletedByMetaID(reaction))
-					continue;
-
-				HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet = 
-						getTopmodel().getReactionToReactantStoichiometrySetMap().get(reaction);
-				updatePropensity(getTopmodel(), reaction, reactantStoichiometrySet);
-			}
-
-
-		for(ModelState model : getSubmodels().values())
-		{
-			if(modelstate != model)
-				for (String reaction : model.getHierarchicalReactions())
-				{
-					if(model.isDeletedByMetaID(reaction))
-						continue;
-
-					HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet = 
-							model.getReactionToReactantStoichiometrySetMap().get(reaction);
-					updatePropensity(model, reaction, reactantStoichiometrySet);
-				}
-		}
-	}
+	 * private void updatePropensities(ModelState modelstate) { if(modelstate !=
+	 * getTopmodel()) for (String reaction :
+	 * getTopmodel().getHierarchicalReactions()) {
+	 * if(getTopmodel().isDeletedByMetaID(reaction)) continue;
+	 * 
+	 * HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet =
+	 * getTopmodel().getReactionToReactantStoichiometrySetMap().get(reaction);
+	 * updatePropensity(getTopmodel(), reaction, reactantStoichiometrySet); }
+	 * 
+	 * 
+	 * for(ModelState model : getSubmodels().values()) { if(modelstate != model)
+	 * for (String reaction : model.getHierarchicalReactions()) {
+	 * if(model.isDeletedByMetaID(reaction)) continue;
+	 * 
+	 * HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet =
+	 * model.getReactionToReactantStoichiometrySetMap().get(reaction);
+	 * updatePropensity(model, reaction, reactantStoichiometrySet); } } }
 	 */
 
-	private void updatePropensity(String modelstate, String species) 
+	private void updatePropensity(String modelstate, String species)
 	{
 		ModelState model = getModel(modelstate);
 		HashSet<String> reactions = model.getSpeciesToAffectedReactionSetMap().get(species);
 		updatePropensities(reactions, model);
 
+	}
 
-	}	
 	private void updatePropensity(ModelState model, String affectedReactionID,
-			HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet, HashSet<String> affectedSpecies) 
+			HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet,
+			HashSet<String> affectedSpecies)
 	{
-		
-		HashSet<HierarchicalStringDoublePair> reactionToSpecies = model.getReactionToSpeciesAndStoichiometrySetMap().get(affectedReactionID);
-		
-		if(model.getReactionToFormulaMap().get(affectedReactionID) == null)
+
+		HashSet<HierarchicalStringDoublePair> reactionToSpecies = model
+				.getReactionToSpeciesAndStoichiometrySetMap().get(affectedReactionID);
+
+		if (model.getReactionToFormulaMap().get(affectedReactionID) == null)
 		{
 			model.getReactionToPropensityMap().put(affectedReactionID, 0.0);
 			return;
 		}
 
-		boolean notEnoughMoleculesFlag = false; 
+		boolean notEnoughMoleculesFlag = false;
 
-		//check for enough molecules for the reaction to occur
-		for (HierarchicalStringDoublePair speciesAndStoichiometry : reactantStoichiometrySet) {
+		// check for enough molecules for the reaction to occur
+		for (HierarchicalStringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
+		{
 			String speciesID = speciesAndStoichiometry.string;
-			
 
 			double stoichiometry = speciesAndStoichiometry.doub;
 
-
-			//if there aren't enough molecules to satisfy the stoichiometry
-			if (model.getVariableToValue(getReplacements(), speciesID) < stoichiometry) {
+			// if there aren't enough molecules to satisfy the stoichiometry
+			if (model.getVariableToValue(getReplacements(), speciesID) < stoichiometry)
+			{
 				notEnoughMoleculesFlag = true;
 				break;
 			}
 		}
-		
-		for(HierarchicalStringDoublePair speciesPair : reactionToSpecies)
+
+		for (HierarchicalStringDoublePair speciesPair : reactionToSpecies)
 		{
 			affectedSpecies.add(speciesPair.string);
 		}
 
 		double newPropensity = 0.0;
-		if (notEnoughMoleculesFlag == false) {
-			newPropensity = evaluateExpressionRecursive(model, model.getReactionToFormulaMap().get(affectedReactionID), false, getCurrentTime(), null, null);
+		if (notEnoughMoleculesFlag == false)
+		{
+			newPropensity = evaluateExpressionRecursive(model,
+					model.getReactionToFormulaMap().get(affectedReactionID), false,
+					getCurrentTime(), null, null);
 		}
 
 		double oldPropensity = model.getReactionToPropensityMap().get(affectedReactionID);
 		model.setPropensity(model.getPropensity() + newPropensity - oldPropensity);
 		model.updateReactionToPropensityMap(affectedReactionID, newPropensity);
 
-	}	
-
+	}
 
 	/**
 	 * randomly selects a reaction to perform
 	 * 
-	 * @param r2 random number
+	 * @param r2
+	 *            random number
 	 * @return the getID() of the selected reaction
 	 */
-	private String selectReaction(double r2) {
+	private String selectReaction(double r2)
+	{
 
 		double randomPropensity = r2 * (getTotalPropensity());
 		double runningTotalReactionsPropensity = 0.0;
 		String selectedReaction = "";
 
-		//finds the reaction that the random propensity lies in
-		//it keeps adding the next reaction's propensity to a running total
-		//until the running total is greater than the random propensity
+		// finds the reaction that the random propensity lies in
+		// it keeps adding the next reaction's propensity to a running total
+		// until the running total is greater than the random propensity
 
+		for (String currentReaction : getTopmodel().getReactionToPropensityMap().keySet())
+		{
 
-		for (String currentReaction : getTopmodel().getReactionToPropensityMap().keySet()) {
+			runningTotalReactionsPropensity += getTopmodel().getReactionToPropensityMap().get(
+					currentReaction);
 
-
-			runningTotalReactionsPropensity += getTopmodel().getReactionToPropensityMap().get(currentReaction);
-
-			if (randomPropensity < runningTotalReactionsPropensity) 
+			if (randomPropensity < runningTotalReactionsPropensity)
 			{
 				selectedReaction = currentReaction;
 				// keep track of submodel index
@@ -473,14 +530,15 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 			}
 		}
 
-		for(ModelState models : getSubmodels().values())
+		for (ModelState models : getSubmodels().values())
 		{
 
-			for (String currentReaction : models.getReactionToPropensityMap().keySet()) 
+			for (String currentReaction : models.getReactionToPropensityMap().keySet())
 			{
-				runningTotalReactionsPropensity += models.getReactionToPropensityMap().get(currentReaction);
+				runningTotalReactionsPropensity += models.getReactionToPropensityMap().get(
+						currentReaction);
 
-				if (randomPropensity < runningTotalReactionsPropensity) 
+				if (randomPropensity < runningTotalReactionsPropensity)
 				{
 					selectedReaction = currentReaction;
 					// keep track of submodel index
@@ -490,15 +548,15 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 			}
 		}
 
-
-		return selectedReaction;		
+		return selectedReaction;
 	}
 
 	/**
 	 * cancels the current run
 	 */
 	@Override
-	public void cancel() {
+	public void cancel()
+	{
 
 		setCancelFlag(true);
 	}
@@ -507,15 +565,19 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 	 * clears data structures for new run
 	 */
 	@Override
-	public void clear() {
+	public void clear()
+	{
 		getTopmodel().clear();
 
-		for(ModelState modelstate : getSubmodels().values())
+		for (ModelState modelstate : getSubmodels().values())
+		{
 			modelstate.clear();
+		}
 
-
-		for(String key : getReplacements().keySet())
+		for (String key : getReplacements().keySet())
+		{
 			getReplacements().put(key, getInitReplacementState().get(key));
+		}
 
 	}
 
@@ -525,20 +587,35 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 		if (getTopmodel().isNoEventsFlag() == false)
 		{
 			handleEvents(getTopmodel());
-			//step to the next event fire time if it comes before the next time step
-			if (!getTopmodel().getTriggeredEventQueue().isEmpty() && getTopmodel().getTriggeredEventQueue().peek().getFireTime() <= nextEventTime)
-				if(getTopmodel().getTriggeredEventQueue().peek().getFireTime() < nextEventTime)
+			// step to the next event fire time if it comes before the next time
+			// step
+			if (!getTopmodel().getTriggeredEventQueue().isEmpty()
+					&& getTopmodel().getTriggeredEventQueue().peek().getFireTime() <= nextEventTime)
+			{
+				if (getTopmodel().getTriggeredEventQueue().peek().getFireTime() < nextEventTime)
+				{
 					nextEventTime = getTopmodel().getTriggeredEventQueue().peek().getFireTime();
+				}
+			}
 		}
 
-		for(ModelState models : getSubmodels().values())
-			if (models.isNoEventsFlag() == false){
+		for (ModelState models : getSubmodels().values())
+		{
+			if (models.isNoEventsFlag() == false)
+			{
 				handleEvents(models);
-				//step to the next event fire time if it comes before the next time step
-				if (!models.getTriggeredEventQueue().isEmpty() && models.getTriggeredEventQueue().peek().getFireTime() <= nextEventTime)
-					if(models.getTriggeredEventQueue().peek().getFireTime() < nextEventTime)
+				// step to the next event fire time if it comes before the next
+				// time step
+				if (!models.getTriggeredEventQueue().isEmpty()
+						&& models.getTriggeredEventQueue().peek().getFireTime() <= nextEventTime)
+				{
+					if (models.getTriggeredEventQueue().peek().getFireTime() < nextEventTime)
+					{
 						nextEventTime = models.getTriggeredEventQueue().peek().getFireTime();
+					}
+				}
 			}
+		}
 		return nextEventTime;
 	}
 
@@ -546,36 +623,41 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 	 * does minimized initalization process to prepare for a new run
 	 */
 	@Override
-	public void setupForNewRun(int newRun) {
+	public void setupForNewRun(int newRun)
+	{
 
-		try {
+		try
+		{
 			setupNonConstantSpeciesReferences(getTopmodel());
 			setupSpecies(getTopmodel());
-			setupParameters(getTopmodel());	
-			setupReactions(getTopmodel());		
+			setupParameters(getTopmodel());
+			setupReactions(getTopmodel());
 			setupConstraints(getTopmodel());
 			setupEvents(getTopmodel());
 			setupInitialAssignments(getTopmodel());
 			setupRules(getTopmodel());
 			setupForOutput(0, newRun);
-		} 
-		catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 
-
-		for(ModelState model : getSubmodels().values())
+		for (ModelState model : getSubmodels().values())
 		{
-			try {
+			try
+			{
 				setupNonConstantSpeciesReferences(model);
 				setupSpecies(model);
-				setupParameters(model);	
-				setupReactions(model);		
+				setupParameters(model);
+				setupReactions(model);
 				setupConstraints(model);
 				setupEvents(model);
 				setupInitialAssignments(model);
 				setupRules(model);
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 
@@ -583,35 +665,43 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 
 		setConstraintFlag(true);
 
-		try {
-			for (String speciesID : getTopmodel().getSpeciesIDSet()) {				
+		try
+		{
+			for (String speciesID : getTopmodel().getSpeciesIDSet())
+			{
 				getBufferedTSDWriter().write(",\"" + speciesID + "\"");
 			}
-			for (String noConstantParam : getTopmodel().getVariablesToPrint()) 				
+			for (String noConstantParam : getTopmodel().getVariablesToPrint())
+			{
 				getBufferedTSDWriter().write(",\"" + noConstantParam + "\"");
+			}
 			/*
-			for (String compartment : getTopmodel().compartmentIDSet)
-			{
-				bufferedTSDWriter.write(", \"" + compartment + "\"");
-			}
+			 * for (String compartment : getTopmodel().compartmentIDSet) {
+			 * bufferedTSDWriter.write(", \"" + compartment + "\""); }
 			 */
-			for(ModelState model : getSubmodels().values())
+			for (ModelState model : getSubmodels().values())
 			{
-				for (String speciesID : model.getSpeciesIDSet()) 				
+				for (String speciesID : model.getSpeciesIDSet())
+				{
 					getBufferedTSDWriter().write(",\"" + model.getID() + "__" + speciesID + "\"");
-				for (String noConstantParam : model.getVariablesToPrint()) 				
-					getBufferedTSDWriter().write(",\"" + model.getID() + "__" +  noConstantParam + "\"");
-				/*
-				for (String compartment : model.compartmentIDSet)
-					bufferedTSDWriter.write(", \"" + model.getID() + "__" + compartment + "\"");
-				 */
+				}
+				for (String noConstantParam : model.getVariablesToPrint())
+				{
+					getBufferedTSDWriter().write(
+							",\"" + model.getID() + "__" + noConstantParam + "\"");
+					/*
+					 * for (String compartment : model.compartmentIDSet)
+					 * bufferedTSDWriter.write(", \"" + model.getID() + "__" +
+					 * compartment + "\"");
+					 */
+				}
 			}
-
 
 			getBufferedTSDWriter().write("),\n");
 
 		}
-		catch (IOException e) {
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 

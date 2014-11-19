@@ -12,16 +12,19 @@ import org.sbml.jsbml.RateRule;
 public abstract class RuleState extends EventState
 {
 
-	private List<RateRule> rateRulesList;
+	private List<RateRule>	rateRulesList;
 
 	public RuleState(HashMap<String, Model> models, String bioModel,
 			String submodelID)
 	{
+
 		super(models, bioModel, submodelID);
+
+		rateRulesList = new LinkedList<RateRule>();
+
 		if (getNumRules() > 0)
 		{
 
-			rateRulesList = new LinkedList<RateRule>();
 			setVariableToAffectedAssignmentRuleSetMap(new HashMap<String, HashSet<AssignmentRule>>(
 					(int) getNumRules()));
 			setVariableToIsInAssignmentRuleMap(new HashMap<String, Boolean>(

@@ -41,20 +41,24 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import biomodel.util.SBMLutilities;
 
-public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects {
+public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
+{
 
-	public HierarchicalReplacemenHandler(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, 
-			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, 
-			JFrame running, String[] interestingSpecies, String quantityType) throws IOException, XMLStreamException 
-			{
-		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, progress,
-				printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
+	public HierarchicalReplacemenHandler(String SBMLFileName, String rootDirectory,
+			String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep,
+			JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
+			String[] interestingSpecies, String quantityType, String abstraction)
+			throws IOException, XMLStreamException
+	{
+		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
+				progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
+				abstraction);
 
 		setTopmodel(new ModelState(getModels(), getDocument().getModel().getId(), "topmodel"));
 
-		setNumSubmodels ((int)setupSubmodels(getDocument()));
+		setNumSubmodels((int) setupSubmodels(getDocument()));
 		getComponentPortMap(getDocument());
-			}
+	}
 
 	/**
 	 * Initializes the modelstate array
@@ -62,10 +66,12 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 	protected long setupSubmodels(SBMLDocument document)
 	{
 		String path = getRootDirectory();
-		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getExtension(CompConstants.namespaceURI);
-		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document.getExtension(CompConstants.namespaceURI);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getPlugin(
+				CompConstants.namespaceURI);
+		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document
+				.getPlugin(CompConstants.namespaceURI);
 
-		if(sbmlCompModel == null)
+		if (sbmlCompModel == null)
 		{
 			setSubmodels(new HashMap<String, ModelState>(0));
 			return 0;
@@ -73,104 +79,135 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 
 		setSubmodels(new HashMap<String, ModelState>(sbmlCompModel.getListOfSubmodels().size()));
 
-
 		int index = 0;
-		//HierarchicalUtilities.extractModelDefinitions(sbmlComp, sbmlCompModel, alternativePath, separator);
-		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
+		// HierarchicalUtilities.extractModelDefinitions(sbmlComp,
+		// sbmlCompModel, alternativePath, separator);
+		for (Submodel submodel : sbmlCompModel.getListOfSubmodels())
+		{
 
-
-			if(!getModels().containsKey(submodel.getModelRef()))
+			if (!getModels().containsKey(submodel.getModelRef()))
 			{
 
-				String filename = path+getSeparator()+submodel.getModelRef()+".xml";
+				String filename = path + getSeparator() + submodel.getModelRef() + ".xml";
 
-				if(sbmlComp.getListOfExternalModelDefinitions() != null &&
-						sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null)
+				if (sbmlComp.getListOfExternalModelDefinitions() != null
+						&& sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null)
 				{
 					SBMLDocument extDoc = null;
-					try {
+					try
+					{
 						extDoc = SBMLReader.read(new File(filename));
 					}
-					catch (XMLStreamException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
+					catch (XMLStreamException e)
+					{
 						e.printStackTrace();
 					}
-					CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(extDoc.getModel());
-					CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(extDoc);
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+					CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(extDoc
+							.getModel());
+					CompSBMLDocumentPlugin documentComp = SBMLutilities
+							.getCompSBMLDocumentPlugin(extDoc);
 
 					for (Submodel sub : documentCompModel.getListOfSubmodels())
-						extractModelDefintion(path,  document,  sub,  sbmlComp);
+					{
+						extractModelDefintion(path, document, sub, sbmlComp);
+					}
 
 					ArrayList<String> comps = new ArrayList<String>();
 
-					for (int j=0; j < documentCompModel.getListOfSubmodels().size(); j++) {
-						String subModelType = documentCompModel.getListOfSubmodels().get(j).getModelRef();
-						if (!comps.contains(subModelType)) {
-							ExternalModelDefinition extModel = documentComp.createExternalModelDefinition();
+					for (int j = 0; j < documentCompModel.getListOfSubmodels().size(); j++)
+					{
+						String subModelType = documentCompModel.getListOfSubmodels().get(j)
+								.getModelRef();
+						if (!comps.contains(subModelType))
+						{
+							ExternalModelDefinition extModel = documentComp
+									.createExternalModelDefinition();
 							extModel.setId(subModelType);
 							extModel.setSource("file:" + subModelType + ".xml");
 							comps.add(subModelType);
 						}
 					}
-					while (documentComp.getListOfModelDefinitions().size() > 0) {
+					while (documentComp.getListOfModelDefinitions().size() > 0)
+					{
 						documentComp.removeModelDefinition(0);
 					}
-					for (int i = 0; i < documentComp.getListOfExternalModelDefinitions().size(); i++) {
-						ExternalModelDefinition extModel = documentComp.getListOfExternalModelDefinitions().get(i);
-						if (extModel.isSetModelRef()) {
+					for (int i = 0; i < documentComp.getListOfExternalModelDefinitions().size(); i++)
+					{
+						ExternalModelDefinition extModel = documentComp
+								.getListOfExternalModelDefinitions().get(i);
+						if (extModel.isSetModelRef())
+						{
 							String oldId = extModel.getId();
 							extModel.setSource("file:" + extModel.getModelRef() + ".xml");
 							extModel.setId(extModel.getModelRef());
 							extModel.unsetModelRef();
-							for (int j=0; j < sbmlCompModel.getListOfSubmodels().size(); j++) {
+							for (int j = 0; j < sbmlCompModel.getListOfSubmodels().size(); j++)
+							{
 								Submodel sub = sbmlCompModel.getListOfSubmodels().get(j);
-								if (sub.getModelRef().equals(oldId)) {
+								if (sub.getModelRef().equals(oldId))
+								{
 									sub.setModelRef(extModel.getId());
 								}
 							}
 						}
 					}
 					SBMLWriter writer = new SBMLWriter();
-					filename = path+getSeparator()+submodel.getModelRef()+"_new.xml";
-					try {
+					filename = path + getSeparator() + submodel.getModelRef() + "_new.xml";
+					try
+					{
 						writer.writeSBMLToFile(extDoc, filename);
 
-					} catch (SBMLException e) {
+					}
+					catch (SBMLException e)
+					{
 						e.printStackTrace();
-					} catch (FileNotFoundException e) {
+					}
+					catch (FileNotFoundException e)
+					{
 						e.printStackTrace();
-					} catch (XMLStreamException e) {
+					}
+					catch (XMLStreamException e)
+					{
 						e.printStackTrace();
 					}
 				}
-				else if(sbmlComp.getListOfModelDefinitions() != null &&
-						sbmlComp.getListOfModelDefinitions().get(submodel.getModelRef()) != null)
+				else if (sbmlComp.getListOfModelDefinitions() != null
+						&& sbmlComp.getListOfModelDefinitions().get(submodel.getModelRef()) != null)
 				{
-					extractModelDefintion(path,  document,  submodel,  sbmlComp);
+					extractModelDefintion(path, document, submodel, sbmlComp);
 				}
 
-				Model flattenModel = HierarchicalUtilities.flattenModel(path, filename, 0);
+				Model flattenModel = HierarchicalUtilities.flattenModel(path, filename,
+						getAbstraction());
 
 				getModels().put(submodel.getModelRef(), flattenModel);
 
 			}
 
-			if(isGrid())
+			if (isGrid())
 			{
-				String[] ids = biomodel.annotation.AnnotationUtility.parseArrayAnnotation(document.getModel().getParameter(submodel.getModelRef()+ "__locations"));
-				for(String s : ids)
+				String[] ids = biomodel.annotation.AnnotationUtility.parseArrayAnnotation(document
+						.getModel().getParameter(submodel.getModelRef() + "__locations"));
+				for (String s : ids)
 				{
-					if(s.isEmpty())
+					if (s.isEmpty())
+					{
 						continue;
+					}
 					String getID = s.replaceAll("[=].*", "");
-					getSubmodels().put(getID, new ModelState(getModels(), submodel.getModelRef(), getID));
+					getSubmodels().put(getID,
+							new ModelState(getModels(), submodel.getModelRef(), getID));
 
 				}
 			}
 			else
 			{
-				ModelState modelstate =  new ModelState(getModels(), submodel.getModelRef(), submodel.getId());
+				ModelState modelstate = new ModelState(getModels(), submodel.getModelRef(),
+						submodel.getId());
 				getSubmodels().put(submodel.getId(), modelstate);
 				performDeletions(modelstate, submodel);
 				index++;
@@ -180,12 +217,15 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 		return index;
 	}
 
-	private void extractModelDefintion(String path, SBMLDocument document, Submodel submodel, CompSBMLDocumentPlugin sbmlComp)
+	private void extractModelDefintion(String path, SBMLDocument document, Submodel submodel,
+			CompSBMLDocumentPlugin sbmlComp)
 	{
 		ModelDefinition md = sbmlComp.getListOfModelDefinitions().get(submodel.getModelRef());
 
-		if(md == null)
+		if (md == null)
+		{
 			return;
+		}
 
 		String extId = md.getId();
 		org.sbml.jsbml.Model model = new org.sbml.jsbml.Model(md);
@@ -208,16 +248,19 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 		newDoc.setModel(model);
 
 		ArrayList<String> comps = new ArrayList<String>();
-		for (int j=0; j < documentCompModel.getListOfSubmodels().size(); j++) {
+		for (int j = 0; j < documentCompModel.getListOfSubmodels().size(); j++)
+		{
 			String subModelType = documentCompModel.getListOfSubmodels().get(j).getModelRef();
-			if (!comps.contains(subModelType)) {
+			if (!comps.contains(subModelType))
+			{
 				ExternalModelDefinition extModel = documentComp.createExternalModelDefinition();
 				extModel.setId(subModelType);
 				extModel.setSource("file:" + subModelType + ".xml");
 				comps.add(subModelType);
 			}
 		}
-		if (document.getModel().getCompartmentCount()==0) {
+		if (document.getModel().getCompartmentCount() == 0)
+		{
 			Compartment c = document.getModel().createCompartment();
 			c.setId("default");
 			c.setSize(1);
@@ -226,39 +269,50 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 		}
 		SBMLWriter writer = new SBMLWriter();
 
-		try {
+		try
+		{
 			writer.writeSBMLToFile(newDoc, path + getSeparator() + extId + ".xml");
 			getFilesCreated().add(path + getSeparator() + extId + ".xml");
 
-		} catch (SBMLException e) {
+		}
+		catch (SBMLException e)
+		{
 			e.printStackTrace();
-		} catch (FileNotFoundException e) {
+		}
+		catch (FileNotFoundException e)
+		{
 			e.printStackTrace();
-		} catch (XMLStreamException e) {
+		}
+		catch (XMLStreamException e)
+		{
 			e.printStackTrace();
 		}
 
-
 	}
 
-	private void performDeletions(ModelState modelstate, Submodel instance) {
-	
+	private void performDeletions(ModelState modelstate, Submodel instance)
+	{
+
 		if (instance == null)
+		{
 			return;
+		}
 
-		for(Deletion deletion : instance.getListOfDeletions()){
+		for (Deletion deletion : instance.getListOfDeletions())
+		{
 
-			if (deletion.isSetPortRef()) 
+			if (deletion.isSetPortRef())
 			{
-				ListOf<Port> ports = ((CompModelPlugin) getModels().get(modelstate.getModel()).getExtension(CompConstants.namespaceURI)).getListOfPorts();
+				ListOf<Port> ports = ((CompModelPlugin) getModels().get(modelstate.getModel())
+						.getPlugin(CompConstants.namespaceURI)).getListOfPorts();
 				Port port = ports.get(deletion.getPortRef());
-				if (port!=null) 
+				if (port != null)
 				{
 					if (port.isSetIdRef())
 					{
 						modelstate.getDeletedElementsById().add(port.getIdRef());
 					}
-					else if (port.isSetMetaIdRef()) 
+					else if (port.isSetMetaIdRef())
 					{
 						modelstate.getDeletedElementsByMetaId().add(port.getMetaIdRef());
 					}
@@ -269,76 +323,87 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 				}
 
 			}
-			else if (deletion.isSetIdRef()) {
+			else if (deletion.isSetIdRef())
+			{
 				modelstate.getDeletedElementsById().add(deletion.getIdRef());
 			}
-			else if (deletion.isSetMetaIdRef()) 
+			else if (deletion.isSetMetaIdRef())
 			{
 				modelstate.getDeletedElementsByMetaId().add(deletion.getMetaIdRef());
 			}
-			else if (deletion.isSetUnitRef()) 
+			else if (deletion.isSetUnitRef())
 			{
 				modelstate.getDeletedElementsByUId().add(deletion.getUnitRef());
 			}
 		}
 	}
 
-	protected void getComponentPortMap(SBMLDocument sbml) 
+	protected void getComponentPortMap(SBMLDocument sbml)
 	{
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstants.namespaceURI);
-		setupReplacement(sbml.getModel(), sbmlCompModel);	
+		CompModelPlugin sbmlCompModel = (CompModelPlugin) sbml.getModel().getPlugin(
+				CompConstants.namespaceURI);
+		setupReplacement(sbml.getModel(), sbmlCompModel);
 	}
 
 	private void setupReplacement(Quantity sbase, CompModelPlugin sbmlCompModel)
 	{
-		CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
+		CompSBasePlugin sbmlSBase = (CompSBasePlugin) sbase.getPlugin(CompConstants.namespaceURI);
 
 		String p = sbase.getId();
 
-		if(sbmlSBase != null)
+		if (sbmlSBase != null)
 		{
-			if(sbmlSBase.getListOfReplacedElements() != null)
+			if (sbmlSBase.getListOfReplacedElements() != null)
 			{
-				getReplacements().put(p, sbase.getValue());	
+				getReplacements().put(p, sbase.getValue());
 				getInitReplacementState().put(p, sbase.getValue());
 
-
-				for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+				for (ReplacedElement element : sbmlSBase.getListOfReplacedElements())
 				{
 					String submodel = element.getSubmodelRef();
-					sbmlCompModel = (CompModelPlugin)getModels().get(getSubmodels().get(submodel).getModel()).getExtension(CompConstants.namespaceURI);
-					if(element.isSetIdRef())
+					sbmlCompModel = (CompModelPlugin) getModels().get(
+							getSubmodels().get(submodel).getModel()).getPlugin(
+							CompConstants.namespaceURI);
+					if (element.isSetIdRef())
 					{
 						String subParameter = element.getIdRef();
 						getTopmodel().getIsHierarchical().add(p);
 						getTopmodel().getReplacementDependency().put(p, p);
 						getModel(submodel).getIsHierarchical().add(subParameter);
 						getModel(submodel).getReplacementDependency().put(subParameter, p);
-						getTopmodel().getSpeciesToReplacement(p).add(new HierarchicalStringPair(submodel, subParameter));
-						getModel(submodel).getSpeciesToReplacement(subParameter).add(new HierarchicalStringPair("topmodel", p));
+						getTopmodel().getSpeciesToReplacement(p).add(
+								new HierarchicalStringPair(submodel, subParameter));
+						getModel(submodel).getSpeciesToReplacement(subParameter).add(
+								new HierarchicalStringPair("topmodel", p));
 					}
-					if(element.isSetMetaIdRef())
+					if (element.isSetMetaIdRef())
 					{
 						String subParameter = element.getMetaIdRef();
 						getTopmodel().getIsHierarchical().add(p);
 						getTopmodel().getReplacementDependency().put(p, p);
 						getModel(submodel).getIsHierarchical().add(subParameter);
 						getModel(submodel).getReplacementDependency().put(subParameter, p);
-						getTopmodel().getSpeciesToReplacement(p).add(new HierarchicalStringPair(submodel, subParameter));
-						getModel(submodel).getSpeciesToReplacement(subParameter).add(new HierarchicalStringPair("topmodel", p));
+						getTopmodel().getSpeciesToReplacement(p).add(
+								new HierarchicalStringPair(submodel, subParameter));
+						getModel(submodel).getSpeciesToReplacement(subParameter).add(
+								new HierarchicalStringPair("topmodel", p));
 					}
-					else if(element.isSetPortRef())
+					else if (element.isSetPortRef())
 					{
 						Port port = sbmlCompModel.getListOfPorts().get(element.getPortRef());
 						String subParameter = port.getIdRef();
-						if(port.isSetMetaIdRef() && subParameter.length() == 0)
+						if (port.isSetMetaIdRef() && subParameter.length() == 0)
+						{
 							subParameter = port.getMetaIdRef();
+						}
 						getTopmodel().getIsHierarchical().add(p);
 						getTopmodel().getReplacementDependency().put(p, p);
 						getModel(submodel).getIsHierarchical().add(subParameter);
 						getModel(submodel).getReplacementDependency().put(subParameter, p);
-						getTopmodel().getSpeciesToReplacement(p).add(new HierarchicalStringPair(submodel, subParameter));
-						getModel(submodel).getSpeciesToReplacement(subParameter).add(new HierarchicalStringPair("topmodel", p));
+						getTopmodel().getSpeciesToReplacement(p).add(
+								new HierarchicalStringPair(submodel, subParameter));
+						getModel(submodel).getSpeciesToReplacement(subParameter).add(
+								new HierarchicalStringPair("topmodel", p));
 					}
 					else
 					{
@@ -347,39 +412,51 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 				}
 			}
 
-
-			if(sbmlSBase.isSetReplacedBy())
+			if (sbmlSBase.isSetReplacedBy())
 			{
 				ReplacedBy replacement = sbmlSBase.getReplacedBy();
 				String submodel = replacement.getSubmodelRef();
-				sbmlCompModel = (CompModelPlugin)getModels().get(getSubmodels().get(submodel).getModel()).getExtension(CompConstants.namespaceURI);
-				if(replacement.isSetIdRef())
+				sbmlCompModel = (CompModelPlugin) getModels().get(
+						getSubmodels().get(submodel).getModel()).getPlugin(
+						CompConstants.namespaceURI);
+				if (replacement.isSetIdRef())
 				{
 					String subParameter = replacement.getIdRef();
 					ModelState temp = getModel(submodel);
 					Model sub = getModels().get(temp.getModel()).getModel();
 					getReplacements().put(p, sub.getParameter(subParameter).getValue());
-					getInitReplacementState().put(p, getModels().get(temp.getModel()).getModel().getParameter(subParameter).getValue());
+					getInitReplacementState().put(
+							p,
+							getModels().get(temp.getModel()).getModel().getParameter(subParameter)
+									.getValue());
 					getTopmodel().getIsHierarchical().add(p);
 					getTopmodel().getReplacementDependency().put(p, p);
 					getModel(submodel).getIsHierarchical().add(subParameter);
 					getModel(submodel).getReplacementDependency().put(subParameter, p);
-					getTopmodel().getSpeciesToReplacement(p).add(new HierarchicalStringPair(submodel, subParameter));
-					getModel(submodel).getSpeciesToReplacement(subParameter).add(new HierarchicalStringPair("topmodel", p));
+					getTopmodel().getSpeciesToReplacement(p).add(
+							new HierarchicalStringPair(submodel, subParameter));
+					getModel(submodel).getSpeciesToReplacement(subParameter).add(
+							new HierarchicalStringPair("topmodel", p));
 				}
-				else if(replacement.isSetPortRef())
+				else if (replacement.isSetPortRef())
 				{
 					Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
 					String subParameter = port.getIdRef();
 					ModelState temp = getModel(submodel);
-					getReplacements().put(p, getModels().get(temp.getModel()).getModel().getParameter(subParameter).getValue());
-					getInitReplacementState().put(p, getModels().get(temp.getModel()).getParameter(subParameter).getValue());
+					getReplacements().put(
+							p,
+							getModels().get(temp.getModel()).getModel().getParameter(subParameter)
+									.getValue());
+					getInitReplacementState().put(p,
+							getModels().get(temp.getModel()).getParameter(subParameter).getValue());
 					getTopmodel().getIsHierarchical().add(p);
 					getTopmodel().getReplacementDependency().put(p, p);
 					getModel(submodel).getIsHierarchical().add(subParameter);
 					getModel(submodel).getReplacementDependency().put(subParameter, p);
-					getTopmodel().getSpeciesToReplacement(p).add(new HierarchicalStringPair(submodel, subParameter));
-					getModel(submodel).getSpeciesToReplacement(subParameter).add(new HierarchicalStringPair("topmodel", p));
+					getTopmodel().getSpeciesToReplacement(p).add(
+							new HierarchicalStringPair(submodel, subParameter));
+					getModel(submodel).getSpeciesToReplacement(subParameter).add(
+							new HierarchicalStringPair("topmodel", p));
 				}
 			}
 		}
@@ -388,50 +465,50 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 	private void setupReplacement(SBase sbase, CompModelPlugin sbmlCompModel)
 	{
 
-		CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
+		CompSBasePlugin sbmlSBase = (CompSBasePlugin) sbase.getPlugin(CompConstants.namespaceURI);
 
-		
-		if(sbmlSBase != null)
+		if (sbmlSBase != null)
 		{
-			if(sbmlSBase.getListOfReplacedElements() != null)
+			if (sbmlSBase.getListOfReplacedElements() != null)
 			{
-				for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+				for (ReplacedElement element : sbmlSBase.getListOfReplacedElements())
 				{
 					String submodel = element.getSubmodelRef();
 					ModelState modelstate = getSubmodels().get(submodel);
-					CompModelPlugin subCompModel = (CompModelPlugin)getModels().get(getSubmodels().get(submodel).getModel()).getExtension(CompConstants.namespaceURI);
-					
-					if(element.isSetPortRef())
+					CompModelPlugin subCompModel = (CompModelPlugin) getModels().get(
+							getSubmodels().get(submodel).getModel()).getPlugin(
+							CompConstants.namespaceURI);
+
+					if (element.isSetPortRef())
 					{
 						Port port = subCompModel.getListOfPorts().get(element.getPortRef());
 						String subRule = port.getMetaIdRef();
 						modelstate.getDeletedElementsById().add(subRule);
 					}
-					else if(element.isSetMetaIdRef())
+					else if (element.isSetMetaIdRef())
 					{
 						modelstate.getDeletedElementsByMetaId().add(element.getMetaIdRef());
 					}
 				}
 			}
 
-
-			if(sbmlSBase.isSetReplacedBy())
+			if (sbmlSBase.isSetReplacedBy())
 			{
 				ReplacedBy replacement = sbmlSBase.getReplacedBy();
-				if(replacement.isSetIdRef())
+				if (replacement.isSetIdRef())
 				{
 					getTopmodel().getDeletedElementsById().add(replacement.getIdRef());
 				}
-				else if(replacement.isSetPortRef())
+				else if (replacement.isSetPortRef())
 				{
 					Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
 					String subCompartment = port.getIdRef();
 					getTopmodel().getDeletedElementsById().add(subCompartment);
 				}
-				else if(replacement.isSetMetaIdRef())
+				else if (replacement.isSetMetaIdRef())
 				{
 					getTopmodel().getDeletedElementsByMetaId().add(replacement.getMetaIdRef());
-				}	
+				}
 
 			}
 		}
@@ -439,23 +516,26 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects 
 
 	private void setupReplacement(Model model, CompModelPlugin sbmlCompModel)
 	{
-		for (int i = 0; i < model.getChildCount(); i++) {
+		for (int i = 0; i < model.getChildCount(); i++)
+		{
 
 			TreeNode node = model.getChildAt(i);
-			if(!(node instanceof SBase))
+			if (!(node instanceof SBase))
+			{
 				continue;
+			}
 
 			SBase sbase = (SBase) node;
-			if(sbase instanceof ListOf)
-			{	
-				ListOf list = (ListOf)sbase;
+			if (sbase instanceof ListOf)
+			{
+				ListOf list = (ListOf) sbase;
 
-				for(int j = 0; j < list.getChildCount(); j++)
+				for (int j = 0; j < list.getChildCount(); j++)
 				{
 					sbase = list.get(j);
-					if(sbase instanceof Quantity)
+					if (sbase instanceof Quantity)
 					{
-						Quantity q = (Quantity)sbase;
+						Quantity q = (Quantity) sbase;
 						setupReplacement(q, sbmlCompModel);
 
 					}
