@@ -10,20 +10,27 @@ import org.sbml.jsbml.Model;
 
 import analysis.dynamicsim.hierarchical.util.ArraysObject;
 
-public class ArraysState extends HierarchicalState
+public abstract class ArraysState extends HierarchicalState
 {
 
 	private HashMap<String, List<ArraysObject>>	dimensionObjects;
 	private HashMap<String, ASTNode>			values;
 	private HashSet<String>						arrayedObjects;
 
-	public ArraysState(HashMap<String, Model> models, String bioModel,
-			String submodelID)
+	public ArraysState(HashMap<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 		dimensionObjects = new HashMap<String, List<ArraysObject>>();
 		arrayedObjects = new HashSet<String>();
 		values = new HashMap<String, ASTNode>();
+	}
+
+	public ArraysState(ArraysState state)
+	{
+		super(state);
+		dimensionObjects = state.dimensionObjects;
+		values = state.values;
+		arrayedObjects = state.arrayedObjects;
 	}
 
 	public void addArrayedObject(String id)
@@ -71,12 +78,10 @@ public class ArraysState extends HierarchicalState
 
 	public int getDimensionCount(String id)
 	{
-		return dimensionObjects.get(id) == null ? -1 : dimensionObjects.get(id)
-				.size();
+		return dimensionObjects.get(id) == null ? -1 : dimensionObjects.get(id).size();
 	}
 
-	public void setDimensionObjects(
-			HashMap<String, List<ArraysObject>> dimensionObjects)
+	public void setDimensionObjects(HashMap<String, List<ArraysObject>> dimensionObjects)
 	{
 		this.dimensionObjects = dimensionObjects;
 	}

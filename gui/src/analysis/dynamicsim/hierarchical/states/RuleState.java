@@ -14,8 +14,7 @@ public abstract class RuleState extends EventState
 
 	private List<RateRule>	rateRulesList;
 
-	public RuleState(HashMap<String, Model> models, String bioModel,
-			String submodelID)
+	public RuleState(HashMap<String, Model> models, String bioModel, String submodelID)
 	{
 
 		super(models, bioModel, submodelID);
@@ -33,6 +32,12 @@ public abstract class RuleState extends EventState
 					(int) (getNumRules() + getNumParameters())));
 		}
 
+	}
+
+	public RuleState(RuleState state)
+	{
+		super(state);
+		rateRulesList = state.rateRulesList;
 	}
 
 	public List<RateRule> getRateRulesList()

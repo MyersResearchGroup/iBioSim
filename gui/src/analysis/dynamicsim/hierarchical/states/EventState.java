@@ -11,21 +11,20 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalEventToFire;
 
 public abstract class EventState extends ReactionState
 {
-	private HashMap<String, HashSet<String>> eventToAffectedReactionSetMap;
-	private HashMap<String, HashSet<Object>> eventToAssignmentSetMap;
-	private HashMap<String, ASTNode> eventToDelayMap;
-	private HashMap<String, Boolean> eventToHasDelayMap;
-	private HashMap<String, Boolean> eventToPreviousTriggerValueMap;
-	private HashMap<String, ASTNode> eventToPriorityMap;
-	private HashMap<String, Boolean> eventToTriggerInitiallyTrueMap;
-	private HashMap<String, ASTNode> eventToTriggerMap;
-	private HashMap<String, Boolean> eventToTriggerPersistenceMap;
-	private HashMap<String, Boolean> eventToUseValuesFromTriggerTimeMap;
-	private PriorityQueue<HierarchicalEventToFire> triggeredEventQueue;
-	private HashSet<String> untriggeredEventSet;
+	private HashMap<String, HashSet<String>>		eventToAffectedReactionSetMap;
+	private HashMap<String, HashSet<Object>>		eventToAssignmentSetMap;
+	private HashMap<String, ASTNode>				eventToDelayMap;
+	private HashMap<String, Boolean>				eventToHasDelayMap;
+	private HashMap<String, Boolean>				eventToPreviousTriggerValueMap;
+	private HashMap<String, ASTNode>				eventToPriorityMap;
+	private HashMap<String, Boolean>				eventToTriggerInitiallyTrueMap;
+	private HashMap<String, ASTNode>				eventToTriggerMap;
+	private HashMap<String, Boolean>				eventToTriggerPersistenceMap;
+	private HashMap<String, Boolean>				eventToUseValuesFromTriggerTimeMap;
+	private PriorityQueue<HierarchicalEventToFire>	triggeredEventQueue;
+	private HashSet<String>							untriggeredEventSet;
 
-	public EventState(HashMap<String, Model> models, String bioModel,
-			String submodelID)
+	public EventState(HashMap<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 		untriggeredEventSet = new HashSet<String>();
@@ -33,28 +32,36 @@ public abstract class EventState extends ReactionState
 		{
 			setNoEventsFlag(false);
 			untriggeredEventSet = new HashSet<String>((int) getNumEvents());
-			eventToPriorityMap = new HashMap<String, ASTNode>(
-					(int) getNumEvents());
+			eventToPriorityMap = new HashMap<String, ASTNode>((int) getNumEvents());
 			eventToDelayMap = new HashMap<String, ASTNode>((int) getNumEvents());
-			eventToHasDelayMap = new HashMap<String, Boolean>(
-					(int) getNumEvents());
-			eventToTriggerMap = new HashMap<String, ASTNode>(
-					(int) getNumEvents());
-			eventToTriggerInitiallyTrueMap = new HashMap<String, Boolean>(
-					(int) getNumEvents());
-			eventToTriggerPersistenceMap = new HashMap<String, Boolean>(
-					(int) getNumEvents());
-			eventToUseValuesFromTriggerTimeMap = new HashMap<String, Boolean>(
-					(int) getNumEvents());
-			eventToAssignmentSetMap = new HashMap<String, HashSet<Object>>(
-					(int) getNumEvents());
+			eventToHasDelayMap = new HashMap<String, Boolean>((int) getNumEvents());
+			eventToTriggerMap = new HashMap<String, ASTNode>((int) getNumEvents());
+			eventToTriggerInitiallyTrueMap = new HashMap<String, Boolean>((int) getNumEvents());
+			eventToTriggerPersistenceMap = new HashMap<String, Boolean>((int) getNumEvents());
+			eventToUseValuesFromTriggerTimeMap = new HashMap<String, Boolean>((int) getNumEvents());
+			eventToAssignmentSetMap = new HashMap<String, HashSet<Object>>((int) getNumEvents());
 			eventToAffectedReactionSetMap = new HashMap<String, HashSet<String>>(
 					(int) getNumEvents());
-			eventToPreviousTriggerValueMap = new HashMap<String, Boolean>(
-					(int) getNumEvents());
-			setVariableToEventSetMap(new HashMap<String, HashSet<String>>(
-					(int) getNumEvents()));
+			eventToPreviousTriggerValueMap = new HashMap<String, Boolean>((int) getNumEvents());
+			setVariableToEventSetMap(new HashMap<String, HashSet<String>>((int) getNumEvents()));
 		}
+	}
+
+	public EventState(EventState state)
+	{
+		super(state);
+		eventToAffectedReactionSetMap = state.eventToAffectedReactionSetMap;
+		eventToAssignmentSetMap = state.eventToAssignmentSetMap;
+		eventToDelayMap = state.eventToDelayMap;
+		eventToHasDelayMap = state.eventToHasDelayMap;
+		eventToPreviousTriggerValueMap = state.eventToPreviousTriggerValueMap;
+		eventToPriorityMap = state.eventToPriorityMap;
+		eventToTriggerInitiallyTrueMap = state.eventToTriggerInitiallyTrueMap;
+		eventToTriggerMap = state.eventToTriggerMap;
+		eventToTriggerPersistenceMap = state.eventToTriggerPersistenceMap;
+		eventToUseValuesFromTriggerTimeMap = state.eventToUseValuesFromTriggerTimeMap;
+		triggeredEventQueue = state.triggeredEventQueue;
+		untriggeredEventSet = state.untriggeredEventSet;
 	}
 
 	public HashMap<String, HashSet<String>> getEventToAffectedReactionSetMap()
@@ -73,8 +80,7 @@ public abstract class EventState extends ReactionState
 		return eventToAssignmentSetMap;
 	}
 
-	public void setEventToAssignmentSetMap(
-			HashMap<String, HashSet<Object>> eventToAssignmentSetMap)
+	public void setEventToAssignmentSetMap(HashMap<String, HashSet<Object>> eventToAssignmentSetMap)
 	{
 		this.eventToAssignmentSetMap = eventToAssignmentSetMap;
 	}
@@ -94,8 +100,7 @@ public abstract class EventState extends ReactionState
 		return eventToHasDelayMap;
 	}
 
-	public void setEventToHasDelayMap(
-			HashMap<String, Boolean> eventToHasDelayMap)
+	public void setEventToHasDelayMap(HashMap<String, Boolean> eventToHasDelayMap)
 	{
 		this.eventToHasDelayMap = eventToHasDelayMap;
 	}
@@ -116,8 +121,7 @@ public abstract class EventState extends ReactionState
 		return eventToPriorityMap;
 	}
 
-	public void setEventToPriorityMap(
-			HashMap<String, ASTNode> eventToPriorityMap)
+	public void setEventToPriorityMap(HashMap<String, ASTNode> eventToPriorityMap)
 	{
 		this.eventToPriorityMap = eventToPriorityMap;
 	}
@@ -180,8 +184,7 @@ public abstract class EventState extends ReactionState
 		return triggeredEventQueue;
 	}
 
-	public void setTriggeredEventQueue(
-			PriorityQueue<HierarchicalEventToFire> triggeredEventQueue)
+	public void setTriggeredEventQueue(PriorityQueue<HierarchicalEventToFire> triggeredEventQueue)
 	{
 		this.triggeredEventQueue = triggeredEventQueue;
 	}

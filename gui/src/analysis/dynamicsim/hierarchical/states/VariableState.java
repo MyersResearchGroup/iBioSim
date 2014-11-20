@@ -12,31 +12,41 @@ import org.sbml.jsbml.Model;
 
 public abstract class VariableState extends ModuleState
 {
-	private final LinkedHashSet<String> compartmentIDSet;
-	private final LinkedHashSet<String> speciesIDSet;
-	private HashMap<String, HashSet<AssignmentRule>> variableToAffectedAssignmentRuleSetMap;
-	private final HashMap<String, HashSet<ASTNode>> variableToAffectedConstraintSetMap;
-	private HashMap<String, HashSet<String>> variableToEventSetMap;
-	private final HashMap<String, Boolean> variableToIsConstantMap;
-	private HashMap<String, Boolean> variableToIsInAssignmentRuleMap;
-	private final HashMap<String, Boolean> variableToIsInConstraintMap;
-	private HashMap<String, Boolean> variableToIsInRateRuleMap;
-	private final TObjectDoubleHashMap<String> variableToValueMap;
+	private final LinkedHashSet<String>					compartmentIDSet;
+	private final LinkedHashSet<String>					speciesIDSet;
+	private HashMap<String, HashSet<AssignmentRule>>	variableToAffectedAssignmentRuleSetMap;
+	private final HashMap<String, HashSet<ASTNode>>		variableToAffectedConstraintSetMap;
+	private HashMap<String, HashSet<String>>			variableToEventSetMap;
+	private final HashMap<String, Boolean>				variableToIsConstantMap;
+	private HashMap<String, Boolean>					variableToIsInAssignmentRuleMap;
+	private final HashMap<String, Boolean>				variableToIsInConstraintMap;
+	private HashMap<String, Boolean>					variableToIsInRateRuleMap;
+	private final TObjectDoubleHashMap<String>			variableToValueMap;
 
-	public VariableState(HashMap<String, Model> models, String bioModel,
-			String submodelID)
+	public VariableState(HashMap<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 		compartmentIDSet = new LinkedHashSet<String>();
 		speciesIDSet = new LinkedHashSet<String>((int) getNumSpecies());
 		variableToIsConstantMap = new HashMap<String, Boolean>(
 				(int) (getNumSpecies() + getNumParameters()));
-		variableToValueMap = new TObjectDoubleHashMap<String>(
-				(int) getNumSpecies() + (int) getNumParameters());
+		variableToValueMap = new TObjectDoubleHashMap<String>((int) getNumSpecies()
+				+ (int) getNumParameters());
 		variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode>>(
 				(int) getNumConstraints());
 		variableToIsInConstraintMap = new HashMap<String, Boolean>(
 				(int) (getNumSpecies() + getNumParameters()));
+	}
+
+	public VariableState(VariableState state)
+	{
+		super(state);
+		compartmentIDSet = state.compartmentIDSet;
+		speciesIDSet = state.speciesIDSet;
+		variableToIsConstantMap = state.variableToIsConstantMap;
+		variableToValueMap = state.variableToValueMap;
+		variableToAffectedConstraintSetMap = state.variableToAffectedConstraintSetMap;
+		variableToIsInConstraintMap = state.variableToIsInConstraintMap;
 	}
 
 	public HashMap<String, HashSet<AssignmentRule>> getVariableToAffectedAssignmentRuleSetMap()
@@ -55,8 +65,7 @@ public abstract class VariableState extends ModuleState
 		return variableToEventSetMap;
 	}
 
-	public void setVariableToEventSetMap(
-			HashMap<String, HashSet<String>> variableToEventSetMap)
+	public void setVariableToEventSetMap(HashMap<String, HashSet<String>> variableToEventSetMap)
 	{
 		this.variableToEventSetMap = variableToEventSetMap;
 	}
@@ -77,8 +86,7 @@ public abstract class VariableState extends ModuleState
 		return variableToIsInRateRuleMap;
 	}
 
-	public void setVariableToIsInRateRuleMap(
-			HashMap<String, Boolean> variableToIsInRateRuleMap)
+	public void setVariableToIsInRateRuleMap(HashMap<String, Boolean> variableToIsInRateRuleMap)
 	{
 		this.variableToIsInRateRuleMap = variableToIsInRateRuleMap;
 	}

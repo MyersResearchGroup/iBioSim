@@ -26,8 +26,7 @@ public abstract class ModuleState
 	private double			propensity;
 	private HashSet<String>	variablesToPrint;
 
-	public ModuleState(HashMap<String, Model> models, String bioModel,
-			String submodelID)
+	public ModuleState(HashMap<String, Model> models, String bioModel, String submodelID)
 	{
 		this.model = bioModel;
 		this.ID = submodelID;
@@ -38,6 +37,26 @@ public abstract class ModuleState
 		noRuleFlag = true;
 		noEventsFlag = true;
 		variablesToPrint = new HashSet<String>();
+	}
+
+	public ModuleState(ModuleState state)
+	{
+		this.ID = state.ID;
+		this.model = state.model;
+		this.minPropensity = state.minPropensity;
+		this.maxPropensity = state.maxPropensity;
+		this.noConstraintsFlag = state.noConstraintsFlag;
+		this.noRuleFlag = state.noRuleFlag;
+		this.noEventsFlag = state.noEventsFlag;
+		this.variablesToPrint = state.variablesToPrint;
+		this.numSpecies = state.numSpecies;
+		this.numParameters = state.numParameters;
+		this.numReactions = state.numReactions;
+		this.numInitialAssignments = state.numInitialAssignments;
+		this.numEvents = state.numEvents;
+		this.numRules = state.numRules;
+		this.numConstraints = state.numConstraints;
+		this.numCompartments = state.numCompartments;
 	}
 
 	public String getID()
