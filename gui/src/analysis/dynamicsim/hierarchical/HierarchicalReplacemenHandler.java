@@ -347,7 +347,13 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 
 	private void setupReplacement(Quantity sbase, CompModelPlugin sbmlCompModel)
 	{
-		CompSBasePlugin sbmlSBase = (CompSBasePlugin) sbase.getPlugin(CompConstants.namespaceURI);
+		if (sbmlCompModel == null)
+		{
+			return;
+		}
+
+		CompSBasePlugin sbmlSBase = (CompSBasePlugin) sbase
+				.getExtension(CompConstants.namespaceURI);
 
 		String p = sbase.getId();
 

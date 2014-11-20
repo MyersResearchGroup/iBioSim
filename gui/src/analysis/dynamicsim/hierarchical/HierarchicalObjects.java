@@ -494,12 +494,10 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		{
 			return evaluateOperator(modelstate, node, evaluateState, t, y, variableToIndexMap);
 		}
-		else if (node.isFunction())
+		else
 		{
 			return evaluateFunction(modelstate, node, evaluateState, t, y, variableToIndexMap);
 		}
-
-		return 0.0;
 	}
 
 	private double evaluateFunction(ModelState modelstate, ASTNode node, boolean evaluateState,
@@ -785,7 +783,6 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 					y, variableToIndexMap);
 			return FastMath.log((1 + FastMath.sqrt(1 - x * x)) / x);
 		}
-
 		case FUNCTION_POWER:
 		{
 			ASTNode leftChild = node.getLeftChild();

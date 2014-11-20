@@ -385,8 +385,8 @@ public class HierarchicalODERKSimulator extends HierarchicalSimulationFunctions
 					{
 						eq.state.values[index] = modelstate.getVariableToValue(getReplacements(),
 								var)
-								* modelstate.getVariableToValueMap().get(
-										modelstate.getSpeciesToCompartmentNameMap().get(var));
+								* modelstate.getVariableToValue(getReplacements(), modelstate
+										.getSpeciesToCompartmentNameMap().get(var));
 					}
 					else
 					{

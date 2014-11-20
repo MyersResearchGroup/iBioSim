@@ -68,18 +68,19 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 				{
 					HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
 							getTopmodel());
-					for (String species : affectedSpecies)
-					{
-						HashSet<HierarchicalStringPair> pairs = getTopmodel()
-								.getSpeciesToReplacement().get(species);
-						if (pairs != null)
-						{
-							for (HierarchicalStringPair pair : pairs)
-							{
-								updatePropensity(pair.string1, pair.string2);
-							}
-						}
-					}
+					// for (String species : affectedSpecies)
+					// {
+					// HashSet<HierarchicalStringPair> pairs = getTopmodel()
+					// .getSpeciesToReplacement().get(species);
+					// if (pairs != null)
+					// {
+					// for (HierarchicalStringPair pair : pairs)
+					// {
+					// updatePropensity(pair.string1, pair.string2);
+					// }
+					// }
+					// }
+					perculateDown(getTopmodel(), affectedSpecies);
 					// updatePropensities(getTopmodel());
 				}
 			}
@@ -95,18 +96,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 						HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
 								models);
 						// updatePropensities(models);
-						for (String species : affectedSpecies)
-						{
-							HashSet<HierarchicalStringPair> pairs = models
-									.getSpeciesToReplacement().get(species);
-							if (pairs != null)
-							{
-								for (HierarchicalStringPair pair : pairs)
-								{
-									updatePropensity(pair.string1, pair.string2);
-								}
-							}
-						}
+						perculateUp(models, affectedSpecies);
+
 					}
 				}
 			}
@@ -174,43 +165,47 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 							HashSet<String> affectedSpecies = updatePropensities(
 									affectedReactionSet, getTopmodel());
 							// updatePropensities(getTopmodel());
-							for (String species : affectedSpecies)
-							{
-								HashSet<HierarchicalStringPair> pairs = getTopmodel()
-										.getSpeciesToReplacement(species);
-								if (pairs != null)
-								{
-									for (HierarchicalStringPair pair : pairs)
-									{
-										updatePropensity(pair.string1, pair.string2);
-									}
-								}
-							}
+							// for (String species : affectedSpecies)
+							// {
+							// HashSet<HierarchicalStringPair> pairs =
+							// getTopmodel()
+							// .getSpeciesToReplacement(species);
+							// if (pairs != null)
+							// {
+							// for (HierarchicalStringPair pair : pairs)
+							// {
+							// updatePropensity(pair.string1, pair.string2);
+							// }
+							// }
+							// }
+							perculateDown(getTopmodel(), affectedSpecies);
 						}
 					}
 					else
 					{
 						if (!selectedReactionID.isEmpty())
 						{
-							performReaction(getSubmodels().get(modelstateID), selectedReactionID,
-									getSubmodels().get(modelstateID).isNoRuleFlag(), getSubmodels()
-											.get(modelstateID).isNoConstraintsFlag());
+							ModelState modelstate = getSubmodels().get(modelstateID);
+							performReaction(modelstate, selectedReactionID,
+									modelstate.isNoRuleFlag(), modelstate.isNoConstraintsFlag());
 							HashSet<String> affectedReactionSet = getAffectedReactionSet(
-									getSubmodels().get(modelstateID), selectedReactionID, true);
+									modelstate, selectedReactionID, true);
 							HashSet<String> affectedSpecies = updatePropensities(
-									affectedReactionSet, getSubmodels().get(modelstateID));
-							for (String species : affectedSpecies)
-							{
-								HashSet<HierarchicalStringPair> pairs = getSubmodels().get(
-										modelstateID).getSpeciesToReplacement(species);
-								if (pairs != null)
-								{
-									for (HierarchicalStringPair pair : pairs)
-									{
-										updatePropensity(pair.string1, pair.string2);
-									}
-								}
-							}
+									affectedReactionSet, modelstate);
+							// for (String species : affectedSpecies)
+							// {
+							// HashSet<HierarchicalStringPair> pairs =
+							// getSubmodels().get(
+							// modelstateID).getSpeciesToReplacement(species);
+							// if (pairs != null)
+							// {
+							// for (HierarchicalStringPair pair : pairs)
+							// {
+							// updatePropensity(pair.string1, pair.string2);
+							// }
+							// }
+							// }
+							perculateUp(modelstate, affectedSpecies);
 							// updatePropensities(getSubmodels().get(modelstateID));
 						}
 					}
@@ -445,6 +440,42 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 		HashSet<String> reactions = model.getSpeciesToAffectedReactionSetMap().get(species);
 		updatePropensities(reactions, model);
 
+	}
+
+	private void perculateUp(ModelState modelstate, HashSet<String> affectedSpecies)
+	{
+		HashSet<String> updatedTopSpecies = new HashSet<String>();
+		for (String species : affectedSpecies)
+		{
+			HashSet<HierarchicalStringPair> pairs = modelstate.getSpeciesToReplacement().get(
+					species);
+			if (pairs != null)
+			{
+				for (HierarchicalStringPair pair : pairs)
+				{
+					updatePropensity(pair.string1, pair.string2);
+					updatedTopSpecies.add(pair.string2);
+				}
+			}
+		}
+		perculateDown(getTopmodel(), updatedTopSpecies);
+
+	}
+
+	private void perculateDown(ModelState modelstate, HashSet<String> affectedSpecies)
+	{
+		for (String species : affectedSpecies)
+		{
+			HashSet<HierarchicalStringPair> pairs = modelstate.getSpeciesToReplacement().get(
+					species);
+			if (pairs != null)
+			{
+				for (HierarchicalStringPair pair : pairs)
+				{
+					updatePropensity(pair.string1, pair.string2);
+				}
+			}
+		}
 	}
 
 	private void updatePropensity(ModelState model, String affectedReactionID,
