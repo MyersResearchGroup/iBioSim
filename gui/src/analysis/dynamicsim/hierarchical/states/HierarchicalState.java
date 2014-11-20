@@ -9,16 +9,15 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 
 public abstract class HierarchicalState extends RuleState
 {
-	private final HashSet<String> deletedElementsById;
-	private final HashSet<String> deletedElementsByMetaId;
-	private final HashSet<String> deletedElementsByUId;
-	private final HashSet<String> hierarchicalReactions;
-	private final HashSet<String> isHierarchical;
-	private final HashMap<String, HashSet<HierarchicalStringPair>> speciesToReplacement;
-	private final HashMap<String, String> replacementDependency;
+	private final HashSet<String>									deletedElementsById;
+	private final HashSet<String>									deletedElementsByMetaId;
+	private final HashSet<String>									deletedElementsByUId;
+	private final HashSet<String>									hierarchicalReactions;
+	private final HashSet<String>									isHierarchical;
+	private final HashMap<String, HashSet<HierarchicalStringPair>>	speciesToReplacement;
+	private final HashMap<String, String>							replacementDependency;
 
-	public HierarchicalState(HashMap<String, Model> models, String bioModel,
-			String submodelID)
+	public HierarchicalState(HashMap<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 		speciesToReplacement = new HashMap<String, HashSet<HierarchicalStringPair>>();
@@ -28,6 +27,18 @@ public abstract class HierarchicalState extends RuleState
 		deletedElementsByMetaId = new HashSet<String>();
 		deletedElementsByUId = new HashSet<String>();
 		hierarchicalReactions = new HashSet<String>();
+	}
+
+	public HierarchicalState(HierarchicalState state)
+	{
+		super(state);
+		speciesToReplacement = state.speciesToReplacement;
+		isHierarchical = state.isHierarchical;
+		replacementDependency = state.replacementDependency;
+		deletedElementsById = state.deletedElementsById;
+		deletedElementsByMetaId = state.deletedElementsByMetaId;
+		deletedElementsByUId = state.deletedElementsByUId;
+		hierarchicalReactions = state.hierarchicalReactions;
 	}
 
 	public HashSet<String> getDeletedElementsById()

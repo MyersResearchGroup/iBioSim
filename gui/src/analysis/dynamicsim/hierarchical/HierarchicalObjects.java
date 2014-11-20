@@ -148,6 +148,18 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			}
 		}
 
+		public ModelState(ModelState state)
+		{
+			super(state);
+			eventComparator = state.eventComparator;
+		}
+
+		@Override
+		public ModelState clone()
+		{
+			return new ModelState(this);
+		}
+
 		/**
 		 * @return the eventToPreviousTriggerValueMap
 		 */
