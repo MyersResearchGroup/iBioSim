@@ -52,7 +52,12 @@ public class Utility {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					Object[] options = { "Close" };
-					JOptionPane.showOptionDialog(exp, message, "Details", JOptionPane.YES_OPTION, 
+					JTextArea textArea = new JTextArea(message);
+					JScrollPane scrollPane = new JScrollPane(textArea);  
+					textArea.setLineWrap(false);  
+					textArea.setWrapStyleWord(false); 
+					scrollPane.setPreferredSize( new Dimension( 500, 500 ) );
+					JOptionPane.showOptionDialog(exp, scrollPane, "Details", JOptionPane.YES_OPTION, 
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				}
 			});
