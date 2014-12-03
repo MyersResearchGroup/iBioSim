@@ -253,7 +253,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				dot.delete();
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
-					command = "gnome-open " + dotFile;
+					command = "xdg-open " + dotFile;
 				} else {
 					command = "open " + dotFile;
 				}

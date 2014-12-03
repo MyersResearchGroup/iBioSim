@@ -2348,7 +2348,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						String command;
 						if (System.getProperty("os.name")
 								.contentEquals("Linux")) {
-							command = "gnome-open ";
+							command = "xdg-open ";
 						} else if (System.getProperty("os.name").toLowerCase()
 								.startsWith("mac os")) {
 							command = "open ";
@@ -2367,7 +2367,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						String command;
 						if (System.getProperty("os.name")
 								.contentEquals("Linux")) {
-							command = "gnome-open ";
+							command = "xdg-open ";
 						} else if (System.getProperty("os.name").toLowerCase()
 								.startsWith("mac os")) {
 							command = "open ";
@@ -2403,7 +2403,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						String command;
 						if (System.getProperty("os.name")
 								.contentEquals("Linux")) {
-							command = "gnome-open ";
+							command = "xdg-open ";
 						} else if (System.getProperty("os.name").toLowerCase()
 								.startsWith("mac os")) {
 							command = "open ";
@@ -3068,7 +3068,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				String command;
 				if (System.getProperty("os.name")
 						.contentEquals("Linux")) {
-					command = "gnome-open ";
+					command = "xdg-open ";
 				} else if (System.getProperty("os.name").toLowerCase()
 						.startsWith("mac os")) {
 					command = "open ";

@@ -1732,8 +1732,8 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 					viewLhpn.setEnabled(true);
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open " + dotFile;
-						log.addText("gnome-open " + directory + separator
+						command = "xdg-open " + dotFile;
+						log.addText("xdg-open " + directory + separator
 								+ dotFile + "\n");
 					} else {
 						command = "open " + dotFile;
