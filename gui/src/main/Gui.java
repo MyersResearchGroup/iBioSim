@@ -1642,7 +1642,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
 					directory = ENVVAR + "/docs/";
-					command = "gnome-open ";
+					command = "xdg-open ";
 				}
 				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 					directory = ENVVAR + "/docs/";
@@ -1940,7 +1940,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (dot.exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							command = "gnome-open ";
+							command = "xdg-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 							command = "open ";
@@ -2126,7 +2126,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (dot.exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							command = "gnome-open ";
+							command = "xdg-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 							command = "open ";
@@ -2326,7 +2326,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String command = "";
 				if (error.equals("")) {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open ";
+						command = "xdg-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						command = "open ";
@@ -3374,7 +3374,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
-					command = "gnome-open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
+					command = "xdg-open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
 				}
 				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 					command = "open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
@@ -3401,7 +3401,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					String Pub = (client.getSimpleModelById(SelectedModel)).getPublicationId();
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
+						command = "xdg-open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						command = "open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
@@ -4656,7 +4656,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (dot.exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open ";
+						command = "xdg-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						command = "open ";
@@ -4703,7 +4703,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (dot.exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open ";
+						command = "xdg-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						command = "open ";
@@ -4838,7 +4838,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (new File(root + separator + theFile).exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open ";
+						command = "xdg-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						command = "open ";
@@ -4883,7 +4883,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (new File(root + separator + theFile).exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open ";
+						command = "xdg-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						command = "open ";
@@ -4928,7 +4928,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (new File(root + separator + theFile).exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open ";
+						command = "xdg-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						command = "open ";
@@ -4973,7 +4973,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (new File(root + separator + theFile).exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open ";
+						command = "xdg-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						command = "open ";

@@ -1731,10 +1731,10 @@ public class Run implements ActionListener
 				{
 					if (System.getProperty("os.name").contentEquals("Linux"))
 					{
-						log.addText("Executing:\ngnome-open " + directory + out + ".xhtml" + "\n");
-						logFile.write("Executing:\ngnome-open " + directory + out + ".xhtml"
+						log.addText("Executing:\nxdg-open " + directory + out + ".xhtml" + "\n");
+						logFile.write("Executing:\nxdg-open " + directory + out + ".xhtml"
 								+ "\n\n");
-						exec.exec("gnome-open " + out + ".xhtml", null, work);
+						exec.exec("xdg-open " + out + ".xhtml", null, work);
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
 					{

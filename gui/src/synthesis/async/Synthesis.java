@@ -1262,7 +1262,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 				if (dot.isSelected()) {
 					String command;
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open ";
+						command = "xdg-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						command = "open ";
@@ -1700,7 +1700,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 			String command = "";
 			if (System.getProperty("os.name").contentEquals("Linux")) {
-				command = "gnome-open ";
+				command = "xdg-open ";
 			}
 			else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 				command = "open ";
