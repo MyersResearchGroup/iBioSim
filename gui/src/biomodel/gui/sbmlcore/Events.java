@@ -553,7 +553,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 					if(EAdimID!=null){
 						EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
+						String variableId = EAdimID[0].trim();
+						if (variableId.endsWith("_"+GlobalConstants.RATE)) {
+							variableId = variableId.replace("_"+GlobalConstants.RATE, "");
+						}
+						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
 						EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 						error = (EAdex==null);
 					}
@@ -588,7 +592,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 						if(EAdimID!=null){
 							EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
+							String variableId = EAdimID[0].trim();
+							if (variableId.endsWith("_"+GlobalConstants.RATE)) {
+								variableId = variableId.replace("_"+GlobalConstants.RATE, "");
+							}
+							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
 							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 						}
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
@@ -638,7 +646,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 						if(EAdimID!=null){
 							EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
+							String variableId = EAdimID[0].trim();
+							if (variableId.endsWith("_"+GlobalConstants.RATE)) {
+								variableId = variableId.replace("_"+GlobalConstants.RATE, "");
+							}
+							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
 							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), dimensionIds, "variable", EAdimID, dimensionIds, dimID);
 							error = (EAdex==null);
 						}
@@ -977,7 +989,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 							if(EAdimID!=null){
 								EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), EAdimID[0].trim());
+								String variableId = EAdimID[0].trim();
+								if (variableId.endsWith("_"+GlobalConstants.RATE)) {
+									variableId = variableId.replace("_"+GlobalConstants.RATE, "");
+								}
+								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
 								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 							}
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
@@ -1404,7 +1420,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), EAdimensions.getText(), true);
 				if(EAdimID!=null){
 					EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-					SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)eaID.getSelectedItem());
+					String variableId = (String)eaID.getSelectedItem();
+					if (variableId.endsWith("_"+GlobalConstants.RATE)) {
+						variableId = variableId.replace("_"+GlobalConstants.RATE, "");
+					}
+					SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
 					EAdex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 					error = (EAdex==null);
 					if (!error) {	
