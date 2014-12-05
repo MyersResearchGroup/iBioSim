@@ -511,6 +511,11 @@ public class SBMLutilities {
 		return false;
 	}
 	
+	public static String[] getSupport(String mathExpression) {	
+		String[] support = mathExpression.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-|>|=|<|\\^|%|&|\\||!|\\[|\\]|\\{|\\}");
+		return support;
+	}
+	
 	/**
 	 * Find invalid reaction variables in a formula
 	 */
@@ -571,7 +576,7 @@ public class SBMLutilities {
 				}
 			}
 		}
-		String[] splitLaw = formula.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-|>|=|<|\\^|%|&|\\||!|\\[|\\]|\\{|\\}");
+		String[] splitLaw = getSupport(formula);
 		for (int i = 0; i < splitLaw.length; i++) {
 			if (splitLaw[i].equals("abs") || splitLaw[i].equals("arccos") || splitLaw[i].equals("arccosh") || splitLaw[i].equals("arcsin")
 					|| splitLaw[i].equals("arcsinh") || splitLaw[i].equals("arctan") || splitLaw[i].equals("arctanh") || splitLaw[i].equals("arccot")
@@ -2284,10 +2289,11 @@ public class SBMLutilities {
 	/**
 	 * Checks consistency of the sbml file.
 	 */
-	public static boolean check(String file,SBMLDocument doc,boolean warnings,boolean overdetermined) {
+	public static boolean check(String file,SBMLDocument doc,boolean overdeterminedOnly) {
 		String message = "";
 		long numErrors = 0;
 		Preferences biosimrc = Preferences.userRoot();
+		boolean warnings = biosimrc.get("biosim.general.warnings", "").equals("true");
 		if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Gui.isLibsbmlFound()) {
 			message += "Validation Problems Found by libsbml\n";
 			org.sbml.libsbml.SBMLDocument document = null;
@@ -2307,7 +2313,7 @@ public class SBMLutilities {
 				}
 			}
 			if (document==null) return false;
-			if (overdetermined) {
+			if (overdeterminedOnly) {
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_GENERAL_CONSISTENCY, false);
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, false);
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_INTERNAL_CONSISTENCY, false);
@@ -2318,7 +2324,7 @@ public class SBMLutilities {
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_INTERNAL_CONSISTENCY, true);
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
 			}
-			if (warnings) {
+			if (warnings && !overdeterminedOnly) {
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY, true);
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MATHML_CONSISTENCY, true);
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY, true);
@@ -2330,17 +2336,20 @@ public class SBMLutilities {
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, false);
 			}
 			
-			numErrors = document.checkConsistency();
-			for (int i = 0; i < numErrors; i++) {
+			for (int i = 0; i < document.checkConsistency(); i++) {
 				String error = document.getError(i).getMessage(); 
-				message += i + ":" + error + "\n";
+				if (error.startsWith("Due to the need to instantiate models")) continue;
+				if (error.startsWith("The CompFlatteningConverter has encountered a required package")) continue;
+				message += numErrors + ":" + error + "\n";
+				numErrors++;
 			}
-			
-			List<SBMLError> arraysErrors = ArraysValidator.validate(doc);
-			numErrors+= arraysErrors.size();
-			for (int i = 0; i < arraysErrors.size(); i++) {
-				String error = arraysErrors.get(i).getMessage(); 
-				message += i + ":" + error + "\n";
+			if (!overdeterminedOnly) {
+				List<SBMLError> arraysErrors = ArraysValidator.validate(doc);
+				for (int i = 0; i < arraysErrors.size(); i++) {
+					String error = arraysErrors.get(i).getMessage(); 
+					message += numErrors + ":" + error + "\n";
+					numErrors++;
+				}
 			}
 		}
 		else {
@@ -2350,7 +2359,7 @@ public class SBMLutilities {
 				document = SBMLutilities.readSBML(file);
 			} 
 			if (document==null) return false;
-			if (overdetermined) {
+			if (overdeterminedOnly) {
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, false);
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, false);
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
@@ -2359,7 +2368,7 @@ public class SBMLutilities {
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, true);
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
 			}
-			if (warnings) {
+			if (warnings && !overdeterminedOnly) {
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, true);
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, true);
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, true);
@@ -2370,16 +2379,20 @@ public class SBMLutilities {
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, false);
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, false);
 			}			
-			numErrors = document.checkConsistency();
-			for (int i = 0; i < numErrors; i++) {
+			for (int i = 0; i < document.checkConsistency(); i++) {
 				String error = document.getError(i).getMessage(); 
-				message += i + ":" + error + "\n";
+				if (error.startsWith("Due to the need to instantiate models")) continue;
+				if (error.startsWith("The CompFlatteningConverter has encountered a required package")) continue;
+				message += numErrors + ":" + error + "\n";
+				numErrors++;
 			}
-			List<SBMLError> arraysErrors = ArraysValidator.validate(document);
-			numErrors+= arraysErrors.size();
-			for (int i = 0; i < arraysErrors.size(); i++) {
-				String error = arraysErrors.get(i).getMessage(); 
-				message += i + ":" + error + "\n";
+			if (!overdeterminedOnly) {
+				List<SBMLError> arraysErrors = ArraysValidator.validate(document);
+				for (int i = 0; i < arraysErrors.size(); i++) {
+					String error = arraysErrors.get(i).getMessage(); 
+					message += numErrors + ":" + error + "\n";
+					numErrors++;
+				}
 			}
 		}
 		

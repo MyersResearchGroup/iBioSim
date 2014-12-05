@@ -49,6 +49,7 @@ public class EditPreferences {
 	private JCheckBox delete;
 	private JCheckBox libsbmlFlatten;
 	private JCheckBox libsbmlValidate;
+	private JCheckBox showWarnings;
 	private JCheckBox infix;
 	private JTextField verCmd;
 	private JTextField viewerField;
@@ -158,6 +159,7 @@ public class EditPreferences {
 		delete = new JCheckBox("Must Confirm File Deletions");
 		libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models");
 		libsbmlValidate = new JCheckBox("Use libsbml to Validate Models");
+		showWarnings = new JCheckBox("Report Validation Warnings");
 		infix = new JCheckBox("Use Infix Expression Parser");
 		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
 			dialog.setSelected(true);
@@ -189,6 +191,12 @@ public class EditPreferences {
 		else {
 			libsbmlValidate.setSelected(false);
 		}
+		if (biosimrc.get("biosim.general.warnings", "").equals("true")) {
+			libsbmlValidate.setSelected(true);
+		}
+		else {
+			libsbmlValidate.setSelected(false);
+		}
 		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
 			infix.setSelected(false);
 		}
@@ -209,6 +217,7 @@ public class EditPreferences {
 				delete.setSelected(true);
 				libsbmlFlatten.setSelected(false);
 				libsbmlValidate.setSelected(false);
+				showWarnings.setSelected(false);
 				infix.setSelected(true);
 				verCmd.setText("");
 				viewerField.setText("");
@@ -218,15 +227,16 @@ public class EditPreferences {
 		// create general preferences panel
 		JPanel generalPrefsBordered;
 		if (async) {
-			generalPrefsBordered = new JPanel(new GridLayout(8,1));
+			generalPrefsBordered = new JPanel(new GridLayout(9,1));
 		} else {
-			generalPrefsBordered = new JPanel(new GridLayout(6,1));
+			generalPrefsBordered = new JPanel(new GridLayout(7,1));
 		}
 		generalPrefsBordered.add(dialog);
 		generalPrefsBordered.add(icons);
 		generalPrefsBordered.add(delete);
 		generalPrefsBordered.add(libsbmlFlatten);
 		generalPrefsBordered.add(libsbmlValidate);
+		generalPrefsBordered.add(showWarnings);
 		//generalPrefsBordered.add(infix);
 		if (async) {
 			JPanel verCmdPanel = new JPanel(new GridLayout(1,2));
@@ -1061,6 +1071,11 @@ public class EditPreferences {
 			biosimrc.put("biosim.general.validate", "libsbml");
 		} else {
 			biosimrc.put("biosim.general.validate", "default");
+		}
+		if (showWarnings.isSelected()) {
+			biosimrc.put("biosim.general.warnings", "true");
+		} else {
+			biosimrc.put("biosim.general.warnings", "false");
 		}
 		if (infix.isSelected()) {
 			biosimrc.put("biosim.general.infix", "infix");

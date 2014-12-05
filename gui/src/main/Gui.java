@@ -3443,7 +3443,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					out.close();
 					String[] file = filename.trim().split(separator);
 					SBMLDocument document = SBMLutilities.readSBML(root + separator + filename.trim());
-					SBMLutilities.check(root + separator + filename.trim(), document, false, false);
+					SBMLutilities.check(root + separator + filename.trim(), document, false);
 					SBMLWriter writer = new SBMLWriter();
 					writer.writeSBMLToFile(document, root + separator + file[file.length - 1]);
 					addToTree(file[file.length - 1]);
@@ -3767,7 +3767,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						writer.writeSBMLToFile(sbmlDocument, root + separator + part.getName() + ".xml.temp");
 						SBMLDocument document = SBMLutilities.readSBML(root + separator + part.getName() + ".xml.temp");
 						SBMLutilities.checkModelCompleteness(document);
-						SBMLutilities.check(root + separator + part.getName() + ".xml.temp", document, false, false);
+						SBMLutilities.check(root + separator + part.getName() + ".xml.temp", document, false);
 						String newFile = part.getName() + ".xml";
 						newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 						if (Character.isDigit(newFile.charAt(0))) {
@@ -4145,7 +4145,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							SBMLDocument document = SBMLutilities.readSBML(filename.trim() + separator + s);
 							SBMLutilities.checkModelCompleteness(document);
 							if (overwrite(root + separator + s, s)) {
-								SBMLutilities.check(filename.trim(), document, false, false);
+								SBMLutilities.check(filename.trim(), document, false);
 								SBMLWriter writer = new SBMLWriter();
 								s = s.replaceAll("[^a-zA-Z0-9_.]+", "_");
 								writer.writeSBMLToFile(document, root + separator + s);
@@ -4165,7 +4165,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					SBMLDocument document = SBMLutilities.readSBML(filename.trim());
 					if (overwrite(root + separator + file[file.length - 1], file[file.length - 1])) {
 						SBMLutilities.checkModelCompleteness(document);
-						SBMLutilities.check(filename.trim(), document, false, false);
+						SBMLutilities.check(filename.trim(), document, false);
 						newFile = file[file.length - 1];
 						newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 						if (Character.isDigit(newFile.charAt(0))) {
