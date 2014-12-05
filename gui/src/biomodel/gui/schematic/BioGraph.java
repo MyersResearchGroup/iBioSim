@@ -33,6 +33,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.ext.layout.ReactionGlyph;
 import org.sbml.jsbml.ext.layout.ReferenceGlyph;
 import org.sbml.jsbml.Rule;
@@ -167,6 +168,15 @@ public class BioGraph extends mxGraph {
 		Layouting.applyLayout(ident, this, graphComponent);
 	}
 	
+	private static SBase getGlyph(Layout layout, String glyphId) {
+		SBase sbase = layout.getCompartmentGlyph(glyphId);
+		if (sbase!=null) return sbase;
+		sbase = layout.getSpeciesGlyph(glyphId);
+		if (sbase!=null) return sbase;
+		sbase = layout.getListOfAdditionalGraphicalObjects().get(glyphId);
+		return sbase;
+	}
+	
 	private void createLayoutConnection(Layout layout,Reaction r,String reactant,String product,String type) {
 		ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
 		if (reactionGlyph!=null) layout.removeReactionGlyph(reactionGlyph);
@@ -178,7 +188,7 @@ public class BioGraph extends mxGraph {
 		SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.REFERENCE_GLYPH+"__"+reactant+"__"+type+"__"+product);
 		speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+product);
 		speciesReferenceGlyph.setRole(SpeciesReferenceRole.PRODUCT);
-		SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:speciesGlyph");
+		SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+product), speciesReferenceGlyph, "layout:speciesGlyph");
 		SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:id");
 		LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
 		lineSegment.setStart(new Point(this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterX(),
@@ -187,12 +197,12 @@ public class BioGraph extends mxGraph {
 				this.getSpeciesOrPromoterCell(product).getGeometry().getCenterY()));
 	}
 
-	private static void addSpeciesReferenceGlyph(mxCell cell,ReactionGlyph reactionGlyph,String reactionId,String speciesId, String role) {
+	private static void addSpeciesReferenceGlyph(Layout layout,mxCell cell,ReactionGlyph reactionGlyph,String reactionId,String speciesId, String role) {
 		if (reactionGlyph.getListOfSpeciesReferenceGlyphs().get(GlobalConstants.GLYPH+"__"+reactionId+"__"+role+"__"+speciesId)==null) {
 			SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.GLYPH+"__"+reactionId+"__"+role+"__"+speciesId);
 			speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+speciesId);
 			speciesReferenceGlyph.setRole(SpeciesReferenceRole.valueOf(role.toUpperCase()));
-			SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:speciesGlyph");
+			SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+speciesId), speciesReferenceGlyph, "layout:speciesGlyph");
 			SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:id");
 			LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
 			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
@@ -200,12 +210,12 @@ public class BioGraph extends mxGraph {
 		}
 	}
 
-	private static void addReferenceGlyph(mxCell cell,GeneralGlyph generalGlyph,String objectId,String refId, String role) {
+	private static void addReferenceGlyph(Layout layout,mxCell cell,GeneralGlyph generalGlyph,String objectId,String refId, String role) {
 		if (generalGlyph.getListOfReferenceGlyphs().get(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId)==null) {
 			ReferenceGlyph referenceGlyph = generalGlyph.createReferenceGlyph(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId);
 			referenceGlyph.setGlyph(GlobalConstants.GLYPH+"__"+refId);
 			referenceGlyph.setRole(role);
-			SBMLutilities.copyIndices(generalGlyph, referenceGlyph, "layout:glyph");
+			SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+refId), referenceGlyph, "layout:glyph");
 			SBMLutilities.copyIndices(generalGlyph, referenceGlyph, "layout:id");
 			LineSegment lineSegment = referenceGlyph.createCurve().createLineSegment();
 			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
@@ -692,7 +702,7 @@ public class BioGraph extends mxGraph {
 						cell.setStyle("REACTION_EDGE");
 					}
 					String reactant = s.getSpecies();
-					addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),reactant,"substrate");
+					addSpeciesReferenceGlyph(layout,cell,reactionGlyph,r.getId(),reactant,"substrate");
 				}
 				
 				for (int j = 0; j < r.getModifierCount(); j++) {
@@ -708,7 +718,7 @@ public class BioGraph extends mxGraph {
 					
 					cell.setStyle("MODIFIER_REACTION_EDGE");
 					String modifier = s.getSpecies();
-					addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),modifier,"modifier");
+					addSpeciesReferenceGlyph(layout,cell,reactionGlyph,r.getId(),modifier,"modifier");
 				}
 				
 				for (int k = 0; k < r.getProductCount(); k++) {
@@ -736,12 +746,12 @@ public class BioGraph extends mxGraph {
 						cell.setStyle("REACTION_EDGE");
 					}
 					String product = s.getSpecies();
-					addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),product,"product");
+					addSpeciesReferenceGlyph(layout,cell,reactionGlyph,r.getId(),product,"product");
 				}
 				
 				if (r.isSetKineticLaw()) { 
 					String initStr = SBMLutilities.myFormulaToString(r.getKineticLaw().getMath());
-					String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
+					String[] vars = SBMLutilities.getSupport(initStr);
 					for (int j = 0; j < vars.length; j++) {
 						Parameter parameter = m.getParameter(vars[j]);
 						if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
@@ -753,7 +763,7 @@ public class BioGraph extends mxGraph {
 							//addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),parameter.getId(),"substrate");
 							GeneralGlyph generalGlyph = 
 									(GeneralGlyph)layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+parameter.getId());
-							addReferenceGlyph(cell,generalGlyph,parameter.getId(),r.getId(),"product");
+							addReferenceGlyph(layout,cell,generalGlyph,parameter.getId(),r.getId(),"product");
 						}
 					}
 				}
@@ -798,7 +808,7 @@ public class BioGraph extends mxGraph {
 				while (generalGlyph.getListOfReferenceGlyphs().size() > 0) 
 					generalGlyph.getListOfReferenceGlyphs().remove(0);
 				String initStr = SBMLutilities.myFormulaToString(r.getMath());
-				String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
+				String[] vars = SBMLutilities.getSupport(initStr);
 				for (int j = 0; j < vars.length; j++) {
 					Species species = m.getSpecies(vars[j]);
 					if (species != null) {
@@ -807,7 +817,7 @@ public class BioGraph extends mxGraph {
 								this.getSpeciesOrPromoterCell(species.getId()), 
 								this.getRulesCell(r.getMetaId()));
 						cell.setStyle("RULE_EDGE");
-						addReferenceGlyph(cell,generalGlyph,r.getMetaId(),species.getId(),"substrate");
+						addReferenceGlyph(layout,cell,generalGlyph,r.getMetaId(),species.getId(),"substrate");
 					} else {
 						Parameter parameter = m.getParameter(vars[j]);
 						if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
@@ -816,7 +826,7 @@ public class BioGraph extends mxGraph {
 									this.getVariableCell(parameter.getId()), 
 									this.getRulesCell(r.getMetaId()));
 							cell.setStyle("RULE_EDGE");
-							addReferenceGlyph(cell,generalGlyph,r.getMetaId(),parameter.getId(),"substrate");
+							addReferenceGlyph(layout,cell,generalGlyph,r.getMetaId(),parameter.getId(),"substrate");
 						}
 					}
 				}
@@ -829,7 +839,7 @@ public class BioGraph extends mxGraph {
 								this.getRulesCell(r.getMetaId()),
 								this.getSpeciesOrPromoterCell(species.getId()));
 						cell.setStyle("RULE_EDGE");
-						addReferenceGlyph(cell,generalGlyph,r.getMetaId(),species.getId(),"product");
+						addReferenceGlyph(layout,cell,generalGlyph,r.getMetaId(),species.getId(),"product");
 					} else {
 						Parameter parameter = m.getParameter(SBMLutilities.getVariable(r));
 						if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
@@ -838,7 +848,7 @@ public class BioGraph extends mxGraph {
 									this.getRulesCell(r.getMetaId()),
 									this.getVariableCell(parameter.getId()));
 							cell.setStyle("RULE_EDGE");
-							addReferenceGlyph(cell,generalGlyph,r.getMetaId(),parameter.getId(),"product");
+							addReferenceGlyph(layout,cell,generalGlyph,r.getMetaId(),parameter.getId(),"product");
 						}
 					}
 				}
@@ -855,7 +865,7 @@ public class BioGraph extends mxGraph {
 				while (generalGlyph.getListOfReferenceGlyphs().size() > 0) 
 					generalGlyph.getListOfReferenceGlyphs().remove(0);
 				String initStr = SBMLutilities.myFormulaToString(c.getMath());
-				String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
+				String[] vars = SBMLutilities.getSupport(initStr);
 				HashSet<String> variables = new HashSet<String>();
 				for (String var: vars) {
 					variables.add(var);
@@ -868,7 +878,7 @@ public class BioGraph extends mxGraph {
 								this.getSpeciesOrPromoterCell(species.getId()), 
 								this.getConstraintsCell(c.getMetaId()));
 						cell.setStyle("CONSTRAINT_EDGE");
-						addReferenceGlyph(cell,generalGlyph,c.getMetaId(),species.getId(),"substrate");
+						addReferenceGlyph(layout,cell,generalGlyph,c.getMetaId(),species.getId(),"substrate");
 					} else {
 						Parameter parameter = m.getParameter(var);
 						if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
@@ -877,7 +887,7 @@ public class BioGraph extends mxGraph {
 									this.getVariableCell(parameter.getId()), 
 									this.getConstraintsCell(c.getMetaId()));
 							cell.setStyle("CONSTRAINT_EDGE");
-							addReferenceGlyph(cell,generalGlyph,c.getMetaId(),parameter.getId(),"substrate");
+							addReferenceGlyph(layout,cell,generalGlyph,c.getMetaId(),parameter.getId(),"substrate");
 						}
 					}
 				}
@@ -895,7 +905,7 @@ public class BioGraph extends mxGraph {
 					generalGlyph.getListOfReferenceGlyphs().remove(0);
 				if (!isTransition && e.isSetTrigger()) {
 					String initStr = SBMLutilities.myFormulaToString(e.getTrigger().getMath());
-					String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
+					String[] vars = SBMLutilities.getSupport(initStr);
 					for (int j = 0; j < vars.length; j++) {
 						Species species = m.getSpecies(vars[j]);
 						if (species != null) {
@@ -904,7 +914,7 @@ public class BioGraph extends mxGraph {
 									this.getSpeciesOrPromoterCell(species.getId()), 
 									this.getEventsCell(e.getId()));
 							cell.setStyle("EVENT_EDGE");
-							addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"substrate");
+							addReferenceGlyph(layout,cell,generalGlyph,e.getId(),species.getId(),"substrate");
 						} else {
 							Parameter parameter = m.getParameter(vars[j]);
 							if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
@@ -913,14 +923,14 @@ public class BioGraph extends mxGraph {
 										this.getVariableCell(parameter.getId()), 
 										this.getEventsCell(e.getId()));
 								cell.setStyle("EVENT_EDGE");
-								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
+								addReferenceGlyph(layout,cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
 							}
 						}
 					}
 				}
 				if (!isTransition && e.isSetDelay()) {
 					String initStr = SBMLutilities.myFormulaToString(e.getDelay().getMath());
-					String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
+					String[] vars = SBMLutilities.getSupport(initStr);
 					for (int j = 0; j < vars.length; j++) {
 						Species species = m.getSpecies(vars[j]);
 						if (species != null) {
@@ -929,7 +939,7 @@ public class BioGraph extends mxGraph {
 									this.getSpeciesOrPromoterCell(species.getId()), 
 									this.getEventsCell(e.getId()));
 							cell.setStyle("EVENT_EDGE");
-							addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"substrate");
+							addReferenceGlyph(layout,cell,generalGlyph,e.getId(),species.getId(),"substrate");
 						} else {
 							Parameter parameter = m.getParameter(vars[j]);
 							if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
@@ -938,14 +948,14 @@ public class BioGraph extends mxGraph {
 										this.getVariableCell(parameter.getId()), 
 										this.getEventsCell(e.getId()));
 								cell.setStyle("EVENT_EDGE");
-								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
+								addReferenceGlyph(layout,cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
 							}
 						}
 					}
 				}
 				if (!isTransition && e.isSetPriority()) {
 					String initStr = SBMLutilities.myFormulaToString(e.getPriority().getMath());
-					String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
+					String[] vars = SBMLutilities.getSupport(initStr);
 					for (int j = 0; j < vars.length; j++) {
 						Species species = m.getSpecies(vars[j]);
 						if (species != null) {
@@ -954,7 +964,7 @@ public class BioGraph extends mxGraph {
 									this.getSpeciesOrPromoterCell(species.getId()), 
 									this.getEventsCell(e.getId()));
 							cell.setStyle("EVENT_EDGE");
-							addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"substrate");
+							addReferenceGlyph(layout,cell,generalGlyph,e.getId(),species.getId(),"substrate");
 						} else {
 							Parameter parameter = m.getParameter(vars[j]);
 							if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
@@ -963,7 +973,7 @@ public class BioGraph extends mxGraph {
 										this.getVariableCell(parameter.getId()), 
 										this.getEventsCell(e.getId()));
 								cell.setStyle("EVENT_EDGE");
-								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
+								addReferenceGlyph(layout,cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
 							}
 						}
 					}
@@ -973,7 +983,7 @@ public class BioGraph extends mxGraph {
 					EventAssignment ea = e.getListOfEventAssignments().get(k);
 					String initStr = SBMLutilities.myFormulaToString(ea.getMath());
 					if (!isTransition) {
-						String[] vars = initStr.split(" |\\(|\\)|\\,|\\[|\\]");
+						String[] vars = SBMLutilities.getSupport(initStr);
 						for (int j = 0; j < vars.length; j++) {
 							Species species = m.getSpecies(vars[j]);
 							if (species != null) {
@@ -982,7 +992,7 @@ public class BioGraph extends mxGraph {
 										this.getSpeciesOrPromoterCell(species.getId()), 
 										this.getEventsCell(e.getId()));
 								cell.setStyle("EVENT_EDGE");
-								addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"substrate");
+								addReferenceGlyph(layout,cell,generalGlyph,e.getId(),species.getId(),"substrate");
 							}else {
 								Parameter parameter = m.getParameter(vars[j]);
 								if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
@@ -991,7 +1001,7 @@ public class BioGraph extends mxGraph {
 											this.getVariableCell(parameter.getId()), 
 											this.getEventsCell(e.getId()));
 									cell.setStyle("EVENT_EDGE");
-									addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
+									addReferenceGlyph(layout,cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
 								}
 							}
 						}
@@ -1003,7 +1013,7 @@ public class BioGraph extends mxGraph {
 								this.getEventsCell(e.getId()),
 								this.getSpeciesOrPromoterCell(species.getId()));
 						cell.setStyle("EVENT_EDGE");
-						addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"product");
+						addReferenceGlyph(layout,cell,generalGlyph,e.getId(),species.getId(),"product");
 					} else if (species==null){
 						Parameter parameter = m.getParameter(ea.getVariable());
 						if (parameter != null) {
@@ -1019,7 +1029,7 @@ public class BioGraph extends mxGraph {
 									} else {
 										cell.setStyle("EVENT_EDGE");
 									}
-									addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"product");
+									addReferenceGlyph(layout,cell,generalGlyph,e.getId(),parameter.getId(),"product");
 								}
 							} else if (isPlace && initStr.equals("0")) {
 								if (this.getVariableCell(parameter.getId())!=null) {
@@ -1028,7 +1038,7 @@ public class BioGraph extends mxGraph {
 											this.getVariableCell(parameter.getId()),
 											this.getEventsCell(e.getId()));
 									cell.setStyle("TRANSITION_EDGE");
-									addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
+									addReferenceGlyph(layout,cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
 								}							
 							}
 						}

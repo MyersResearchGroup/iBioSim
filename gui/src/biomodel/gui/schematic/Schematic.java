@@ -97,6 +97,7 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxRubberband;
+import com.mxgraph.swing.util.mxGraphTransferable;
 import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
@@ -175,6 +176,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		//sets how much of the cell, when dragged, results in moving vs. edge creation
 		mxConstants.DEFAULT_HOTSPOT = 0.5;
+		mxGraphTransferable.enableImageSupport = false;
 		
 		this.bioModel = gcm;
 		this.biosim = biosim;
