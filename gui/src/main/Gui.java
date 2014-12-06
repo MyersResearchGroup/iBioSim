@@ -1639,23 +1639,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				else {
 					theFile = "LEMA.html";
 				}
-				String command = "";
-				if (System.getProperty("os.name").contentEquals("Linux")) {
+				Preferences biosimrc = Preferences.userRoot();
+				String command = biosimrc.get("biosim.general.browser", "");
+				if (System.getProperty("os.name").contentEquals("Linux") ||
+						System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 					directory = ENVVAR + "/docs/";
-					command = "xdg-open ";
-				}
-				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					directory = ENVVAR + "/docs/";
-					command = "open ";
 				}
 				else {
 					directory = ENVVAR + "\\docs\\";
-					command = "cmd /c start ";
 				}
 				File work = new File(directory);
-				log.addText("Executing:\n" + command + directory + theFile + "\n");
+				log.addText("Executing:\n" + command + " " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				exec.exec(command + theFile, null, work);
+				exec.exec(command + " " + theFile, null, work);
 			}
 			catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to open manual.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1938,17 +1934,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					// ATACS.waitFor();
 					// log.addText("Executing:\n" + cmd);
 					if (dot.exists()) {
-						String command = "";
-						if (System.getProperty("os.name").contentEquals("Linux")) {
-							command = "xdg-open ";
-						}
-						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							command = "open ";
-						}
-						else {
-							command = "dotty start ";
-						}
-						log.addText(command + root + separator + theFile + "\n");
+						Preferences biosimrc = Preferences.userRoot();
+						String command = biosimrc.get("biosim.general.graphviz", "");
+						log.addText(command + " " + root + separator + theFile + "\n");
 						exec.exec(command + theFile, null, work);
 					}
 					else {
@@ -2124,18 +2112,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					// ATACS.waitFor();
 					// log.addText("Executing:\n" + cmd);
 					if (dot.exists()) {
-						String command = "";
-						if (System.getProperty("os.name").contentEquals("Linux")) {
-							command = "xdg-open ";
-						}
-						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							command = "open ";
-						}
-						else {
-							command = "dotty start ";
-						}
-						log.addText(command + root + separator + theFile + "\n");
-						exec.exec(command + theFile, null, work);
+						Preferences biosimrc = Preferences.userRoot();
+						String command = biosimrc.get("biosim.general.graphviz", "");
+						log.addText(command + " " + root + separator + theFile + "\n");
+						exec.exec(command + " " + theFile, null, work);
 					}
 					else {
 						File log = new File(root + separator + "atacs.log");
@@ -2323,19 +2303,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				browse.waitFor();
 
-				String command = "";
+				Preferences biosimrc = Preferences.userRoot();
+				String command = biosimrc.get("biosim.general.browser", "");
 				if (error.equals("")) {
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "xdg-open ";
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						command = "open ";
-					}
-					else {
-						command = "cmd /c start ";
-					}
-					log.addText("Executing:\n" + command + directory + out + ".xhtml\n");
-					exec.exec(command + out + ".xhtml", null, work);
+					log.addText("Executing:\n" + command + " " + directory + out + ".xhtml\n");
+					exec.exec(command + " " + out + ".xhtml", null, work);
 				}
 				String remove;
 				if (theFile.substring(theFile.length() - 4).equals("sbml")) {
@@ -3372,16 +3344,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			public void actionPerformed(ActionEvent e) {
 				if (ListOfBioModels.isSelectionEmpty()) return;
 				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
-				String command = "";
-				if (System.getProperty("os.name").contentEquals("Linux")) {
-					command = "xdg-open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
-				}
-				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					command = "open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
-				}
-				else {
-					command = "cmd /c start http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
-				}
+				Preferences biosimrc = Preferences.userRoot();
+				String command = biosimrc.get("biosim.general.browser", "");
+				command = command + " http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
 				log.addText("Executing:\n" + command + "\n");
 				Runtime exec = Runtime.getRuntime();
 				try {
@@ -3399,16 +3364,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
 				try {
 					String Pub = (client.getSimpleModelById(SelectedModel)).getPublicationId();
-					String command = "";
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "xdg-open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						command = "open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
-					}
-					else {
-						command = "cmd /c start http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
-					}
+					Preferences biosimrc = Preferences.userRoot();
+					String command = biosimrc.get("biosim.general.browser", "");
+					command = command + " http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
 					log.addText("Executing:\n" + command + "\n");
 					Runtime exec = Runtime.getRuntime();
 					exec.exec(command);
@@ -4654,19 +4612,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
 				if (dot.exists()) {
-					String command = "";
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "xdg-open ";
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						command = "open ";
-					}
-					else {
-						command = "dotty start ";
-						//command = "dotty ";
-					}
-					log.addText(command + root + separator + theFile + "\n");
-					exec.exec(command + theFile, null, work);
+					Preferences biosimrc = Preferences.userRoot();
+					String command = biosimrc.get("biosim.general.graphviz", "");
+					log.addText(command + " " + root + separator + theFile + "\n");
+					exec.exec(command + " " + theFile, null, work);
 				}
 				else {
 					File log = new File(root + separator + "atacs.log");
@@ -4701,18 +4650,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				ATACS.waitFor();
 				log.addText("Executing:\n" + cmd);
 				if (dot.exists()) {
-					String command = "";
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "xdg-open ";
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						command = "open ";
-					}
-					else {
-						command = "dotty start ";
-					}
-					log.addText(command + root + separator + theFile + "\n");
-					exec.exec(command + theFile, null, work);
+					Preferences biosimrc = Preferences.userRoot();
+					String command = biosimrc.get("biosim.general.graphviz", "");
+					log.addText(command + " " + root + separator + theFile + "\n");
+					exec.exec(command + " " + theFile, null, work);
 				}
 				else {
 					File log = new File(root + separator + "atacs.log");
@@ -4836,18 +4777,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// String directory = "";
 				String theFile = findTheFile[0] + ".dot";
 				if (new File(root + separator + theFile).exists()) {
-					String command = "";
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "xdg-open ";
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						command = "open ";
-					}
-					else {
-						command = "dotty start ";
-					}
-					log.addText(command + root + theFile + "\n");
-					exec.exec(command + theFile, null, work);
+					Preferences biosimrc = Preferences.userRoot();
+					String command = biosimrc.get("biosim.general.graphviz", "");
+					log.addText(command + " " + root + theFile + "\n");
+					exec.exec(command + " " + theFile, null, work);
 				}
 				else {
 					File log = new File(root + separator + "atacs.log");
@@ -4881,18 +4814,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// String directory = "";
 				String theFile = findTheFile[0] + ".dot";
 				if (new File(root + separator + theFile).exists()) {
-					String command = "";
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "xdg-open ";
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						command = "open ";
-					}
-					else {
-						command = "dotty start ";
-					}
-					log.addText(command + root + theFile + "\n");
-					exec.exec(command + theFile, null, work);
+					Preferences biosimrc = Preferences.userRoot();
+					String command = biosimrc.get("biosim.general.graphviz", "");
+					log.addText(command + " " + root + theFile + "\n");
+					exec.exec(command + " " + theFile, null, work);
 				}
 				else {
 					File log = new File(root + separator + "atacs.log");
@@ -4926,18 +4851,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// String directory = "";
 				String theFile = findTheFile[0] + ".dot";
 				if (new File(root + separator + theFile).exists()) {
-					String command = "";
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "xdg-open ";
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						command = "open ";
-					}
-					else {
-						command = "dotty start ";
-					}
-					log.addText(command + root + theFile + "\n");
-					exec.exec(command + theFile, null, work);
+					Preferences biosimrc = Preferences.userRoot();
+					String command = biosimrc.get("biosim.general.graphviz", "");
+					log.addText(command + " " + root + theFile + "\n");
+					exec.exec(command + " " + theFile, null, work);
 				}
 				else {
 					File log = new File(root + separator + "atacs.log");
@@ -4971,18 +4888,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// String directory = "";
 				String theFile = findTheFile[0] + ".dot";
 				if (new File(root + separator + theFile).exists()) {
-					String command = "";
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "xdg-open ";
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						command = "open ";
-					}
-					else {
-						command = "dotty start ";
-					}
-					log.addText(command + root + theFile + "\n");
-					exec.exec(command + theFile, null, work);
+					Preferences biosimrc = Preferences.userRoot();
+					String command = biosimrc.get("biosim.general.graphviz", "");
+					log.addText(command + " " + root + theFile + "\n");
+					exec.exec(command + " " + theFile, null, work);
 				}
 				else {
 					File log = new File(root + separator + "atacs.log");

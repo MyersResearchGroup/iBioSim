@@ -1729,26 +1729,11 @@ public class Run implements ActionListener
 				}
 				else if (xhtml.isSelected())
 				{
-					if (System.getProperty("os.name").contentEquals("Linux"))
-					{
-						log.addText("Executing:\nxdg-open " + directory + out + ".xhtml" + "\n");
-						logFile.write("Executing:\nxdg-open " + directory + out + ".xhtml"
-								+ "\n\n");
-						exec.exec("xdg-open " + out + ".xhtml", null, work);
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
-					{
-						log.addText("Executing:\nopen " + directory + out + ".xhtml" + "\n");
-						logFile.write("Executing:\nopen " + directory + out + ".xhtml" + "\n\n");
-						exec.exec("open " + out + ".xhtml", null, work);
-					}
-					else
-					{
-						log.addText("Executing:\ncmd /c start " + directory + out + ".xhtml" + "\n");
-						logFile.write("Executing:\ncmd /c start " + directory + out + ".xhtml"
-								+ "\n\n");
-						exec.exec("cmd /c start " + out + ".xhtml", null, work);
-					}
+					Preferences biosimrc = Preferences.userRoot();
+					String xhtmlCmd = biosimrc.get("biosim.general.browser", "");
+					log.addText("Executing:\n" + xhtmlCmd + " " + directory + out + ".xhtml" + "\n");
+					logFile.write("Executing:\n" + xhtmlCmd + " " + directory + out + ".xhtml" + "\n\n");
+					exec.exec(xhtmlCmd + " " + out + ".xhtml", null, work);
 				}
 				else if (sim.equals("atacs"))
 				{

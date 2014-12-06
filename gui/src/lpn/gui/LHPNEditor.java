@@ -3,7 +3,6 @@ package lpn.gui;
 import lpn.parser.*;
 import main.Gui;
 
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -12,8 +11,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import javax.swing.BoxLayout;
+import java.util.prefs.Preferences;
 
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -251,12 +251,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				String dotFile = filename.replace(".lpn", ".dot");
 				File dot = new File(directory + separator + dotFile);
 				dot.delete();
-				String command = "";
-				if (System.getProperty("os.name").contentEquals("Linux")) {
-					command = "xdg-open " + dotFile;
-				} else {
-					command = "open " + dotFile;
-				}
+				Preferences biosimrc = Preferences.userRoot();
+				String command = biosimrc.get("biosim.general.graphviz", "");
+				command = command + " " + dotFile;
 				Runtime exec = Runtime.getRuntime();
 				lhpnFile.printDot(directory + separator + dotFile);
 				if (dot.exists()) {
