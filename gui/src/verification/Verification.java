@@ -2345,16 +2345,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						log.addText("parg " + pargName + "\n");
 						parg.waitFor();
 					} else if (new File(dotName).exists()) {
-						String command;
-						if (System.getProperty("os.name")
-								.contentEquals("Linux")) {
-							command = "xdg-open ";
-						} else if (System.getProperty("os.name").toLowerCase()
-								.startsWith("mac os")) {
-							command = "open ";
-						} else {
-							command = "dotty ";
-						}
+						String command = biosimrc.get("biosim.general.graphviz", "") + " ";
 						Process dot = exec.exec("open " + dotName);
 						log.addText(command + dotName + "\n");
 						dot.waitFor();
@@ -2364,16 +2355,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 				if (graph.isSelected()) {
 					if (dot.isSelected()) {
-						String command;
-						if (System.getProperty("os.name")
-								.contentEquals("Linux")) {
-							command = "xdg-open ";
-						} else if (System.getProperty("os.name").toLowerCase()
-								.startsWith("mac os")) {
-							command = "open ";
-						} else {
-							command = "dotty ";
-						}
+						String command = biosimrc.get("biosim.general.graphviz", "") + " ";
 						exec.exec(command + dotName);
 						log.addText("Executing:\n" + command + dotName + "\n");
 					} else {
@@ -2400,16 +2382,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					Runtime exec = Runtime.getRuntime();
 					abstraction.printDot(directory + separator + dotName);
 					if (new File(directory + separator + dotName).exists()) {
-						String command;
-						if (System.getProperty("os.name")
-								.contentEquals("Linux")) {
-							command = "xdg-open ";
-						} else if (System.getProperty("os.name").toLowerCase()
-								.startsWith("mac os")) {
-							command = "open ";
-						} else {
-							command = "dotty ";
-						}
+						Preferences biosimrc = Preferences.userRoot();
+						String command = biosimrc.get("biosim.general.graphviz", "") + " ";
 						Process dot = exec.exec(command + dotName, null, work);
 						log.addText(command + dotName + "\n");
 						dot.waitFor();
@@ -3064,17 +3038,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						return;
 					}
 				}
-
-				String command;
-				if (System.getProperty("os.name")
-						.contentEquals("Linux")) {
-					command = "xdg-open ";
-				} else if (System.getProperty("os.name").toLowerCase()
-						.startsWith("mac os")) {
-					command = "open ";
-				} else {
-					command = "dotty ";
-				}
+				Preferences biosimrc = Preferences.userRoot();
+				String command = biosimrc.get("biosim.general.graphviz", "") + " ";
 				Process dot = exec.exec(command + fileName, null, work);
 				log.addText(command + fileName + "\n");
 				dot.waitFor();

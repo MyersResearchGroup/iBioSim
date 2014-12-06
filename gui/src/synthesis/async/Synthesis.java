@@ -5,7 +5,6 @@ import javax.swing.*;
 
 import biomodel.gui.util.PropertyList;
 import biomodel.util.Utility;
-
 import main.*;
 
 import java.awt.*;
@@ -21,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 
 /**
@@ -1260,16 +1260,8 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 			if (graph.isSelected()) {
 				if (dot.isSelected()) {
-					String command;
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "xdg-open ";
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						command = "open ";
-					}
-					else {
-						command = "dotty ";
-					}
+					Preferences biosimrc = Preferences.userRoot();
+					String command = biosimrc.get("biosim.general.graphviz", "") + " ";
 					exec.exec(command + graphFilename);
 					log.addText("Executing:\n" + command + graphFilename + "\n");
 				}
@@ -1698,18 +1690,10 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
-			String command = "";
-			if (System.getProperty("os.name").contentEquals("Linux")) {
-				command = "xdg-open ";
-			}
-			else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-				command = "open ";
-			}
-			else {
-				command = "dotty ";
-			}
-			exec.exec(command + graphFile, null, work);
-			log.addText(command + directory + separator + graphFile + "\n");
+			Preferences biosimrc = Preferences.userRoot();
+			String command = biosimrc.get("biosim.general.graphviz", "");
+			exec.exec(command + " " + graphFile, null, work);
+			log.addText(command + " " + directory + separator + graphFile + "\n");
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to view circuit.", "Error",

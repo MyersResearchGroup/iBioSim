@@ -51,6 +51,8 @@ public class EditPreferences {
 	private JCheckBox libsbmlValidate;
 	private JCheckBox showWarnings;
 	private JCheckBox infix;
+	private JTextField xhtmlCmd;
+	private JTextField dotCmd;
 	private JTextField verCmd;
 	private JTextField viewerField;
 	
@@ -160,6 +162,28 @@ public class EditPreferences {
 		libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models");
 		libsbmlValidate = new JCheckBox("Use libsbml to Validate Models");
 		showWarnings = new JCheckBox("Report Validation Warnings");
+		xhtmlCmd = new JTextField(biosimrc.get("biosim.general.browser", ""));
+		JLabel xhtmlCmdLabel = new JLabel("Browser Viewer Command");
+		if (xhtmlCmd.getText().equals("")) {
+			if (System.getProperty("os.name").contentEquals("Linux")) {
+				xhtmlCmd.setText("xdg-open");
+			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				xhtmlCmd.setText("open");
+			} else {
+				xhtmlCmd.setText("cmd /c start");
+			}
+		}
+		dotCmd = new JTextField(biosimrc.get("biosim.general.graphviz", ""));
+		JLabel dotCmdLabel = new JLabel("Graphviz Viewer Command");
+		if (dotCmd.getText().equals("")) {
+			if (System.getProperty("os.name").contentEquals("Linux")) {
+				dotCmd.setText("xdg-open");
+			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				dotCmd.setText("open");
+			} else {
+				dotCmd.setText("dotty");
+			}
+		}
 		infix = new JCheckBox("Use Infix Expression Parser");
 		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
 			dialog.setSelected(true);
@@ -192,10 +216,10 @@ public class EditPreferences {
 			libsbmlValidate.setSelected(false);
 		}
 		if (biosimrc.get("biosim.general.warnings", "").equals("true")) {
-			libsbmlValidate.setSelected(true);
+			showWarnings.setSelected(true);
 		}
 		else {
-			libsbmlValidate.setSelected(false);
+			showWarnings.setSelected(false);
 		}
 		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
 			infix.setSelected(false);
@@ -218,6 +242,16 @@ public class EditPreferences {
 				libsbmlFlatten.setSelected(false);
 				libsbmlValidate.setSelected(false);
 				showWarnings.setSelected(false);
+				if (System.getProperty("os.name").contentEquals("Linux")) {
+					xhtmlCmd.setText("xdg-open");
+					dotCmd.setText("xgd-open");
+				} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+					xhtmlCmd.setText("open");
+					dotCmd.setText("open");
+				} else {
+					xhtmlCmd.setText("cmd /c start");
+					dotCmd.setText("dotty");
+				}
 				infix.setSelected(true);
 				verCmd.setText("");
 				viewerField.setText("");
@@ -227,9 +261,9 @@ public class EditPreferences {
 		// create general preferences panel
 		JPanel generalPrefsBordered;
 		if (async) {
-			generalPrefsBordered = new JPanel(new GridLayout(9,1));
+			generalPrefsBordered = new JPanel(new GridLayout(11,1));
 		} else {
-			generalPrefsBordered = new JPanel(new GridLayout(7,1));
+			generalPrefsBordered = new JPanel(new GridLayout(9,1));
 		}
 		generalPrefsBordered.add(dialog);
 		generalPrefsBordered.add(icons);
@@ -237,6 +271,14 @@ public class EditPreferences {
 		generalPrefsBordered.add(libsbmlFlatten);
 		generalPrefsBordered.add(libsbmlValidate);
 		generalPrefsBordered.add(showWarnings);
+		JPanel xhtmlCmdPanel = new JPanel(new GridLayout(1,2));
+		xhtmlCmdPanel.add(xhtmlCmdLabel);
+		xhtmlCmdPanel.add(xhtmlCmd);
+		generalPrefsBordered.add(xhtmlCmdPanel);
+		JPanel dotCmdPanel = new JPanel(new GridLayout(1,2));
+		dotCmdPanel.add(dotCmdLabel);
+		dotCmdPanel.add(dotCmd);
+		generalPrefsBordered.add(dotCmdPanel);
 		//generalPrefsBordered.add(infix);
 		if (async) {
 			JPanel verCmdPanel = new JPanel(new GridLayout(1,2));
@@ -1085,6 +1127,8 @@ public class EditPreferences {
 		//SBMLLevelVersion = "L3V1";
 		//SBML_LEVEL = 3;
 		//SBML_VERSION = 1;
+		biosimrc.put("biosim.general.browser", xhtmlCmd.getText().trim());
+		biosimrc.put("biosim.general.graphviz", dotCmd.getText().trim());
 		biosimrc.put("biosim.sbml.level_version", "L3V1");
 		biosimrc.put("lema.verification.command", verCmd.getText().trim());
 		biosimrc.put("lema.general.viewer", viewerField.getText().trim());
@@ -1373,6 +1417,30 @@ public class EditPreferences {
 		}
 		if (biosimrc.get("biosim.general.flatten", "").equals("")) {
 			biosimrc.put("biosim.general.flatten", "default");
+		}
+		if (biosimrc.get("biosim.general.validate", "").equals("")) {
+			biosimrc.put("biosim.general.validate", "default");
+		}
+		if (biosimrc.get("biosim.general.warnings", "").equals("")) {
+			biosimrc.put("biosim.general.warnings", "false");
+		}
+		if (biosimrc.get("biosim.general.browser", "").equals("")) {
+			if (System.getProperty("os.name").contentEquals("Linux")) {
+				biosimrc.put("biosim.general.browser","xdg-open");
+			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				biosimrc.put("biosim.general.browser","open");
+			} else {
+				biosimrc.put("biosim.general.browser","cmd /c start");
+			}
+		}
+		if (biosimrc.get("biosim.general.graphviz", "").equals("")) {
+			if (System.getProperty("os.name").contentEquals("Linux")) {
+				biosimrc.put("biosim.general.graphviz","xdg-open");
+			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				biosimrc.put("biosim.general.graphviz","open");
+			} else {
+				biosimrc.put("biosim.general.graphviz","dotty");
+			}
 		}
 		if (biosimrc.get("biosim.general.infix", "").equals("")) {
 			biosimrc.put("biosim.general.infix", "infix");

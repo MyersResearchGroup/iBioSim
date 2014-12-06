@@ -9,6 +9,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.Preferences;
+
 import javax.swing.*;
 
 
@@ -1730,16 +1731,10 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 				//load.waitFor();
 				if (dot.exists()) {
 					viewLhpn.setEnabled(true);
-					String command = "";
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "xdg-open " + dotFile;
-						log.addText("xdg-open " + directory + separator
-								+ dotFile + "\n");
-					} else {
-						command = "open " + dotFile;
-						log.addText("open " + directory + separator + dotFile
-								+ "\n");
-					}
+					Preferences biosimrc = Preferences.userRoot();
+					String command = biosimrc.get("biosim.general.graphviz", "");
+					command = command + " " + dotFile;
+					log.addText(command + " " + directory + separator + dotFile + "\n");
 					exec.exec(command, null, work);
 				} else {
 					File log = new File(directory + separator + "atacs.log");
