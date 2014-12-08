@@ -244,7 +244,7 @@ public class EditPreferences {
 				showWarnings.setSelected(false);
 				if (System.getProperty("os.name").contentEquals("Linux")) {
 					xhtmlCmd.setText("xdg-open");
-					dotCmd.setText("xgd-open");
+					dotCmd.setText("xdg-open");
 				} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 					xhtmlCmd.setText("open");
 					dotCmd.setText("open");
