@@ -289,7 +289,7 @@ public class Octagon implements Equivalence {
 		_lowerBounds = new int[DBMsize()];
 		_upperBounds = new int[DBMsize()];
 		
-		
+//		this.toString();
 		// Set the lower bound/ upper bounds of the timers and the rates.
 		//* Zone.initializeLowerUpperBounds(getAllNames(), localStates);
 		initializeLowerUpperBounds(getAllNames(), localStates);
@@ -998,7 +998,7 @@ public class Octagon implements Equivalence {
 				// The new (col, row) entry.
 				//*int colRow = getDbmEntry(col, 0) + getDbmEntry(0, row);
 				
-				this.toString();
+//				this.toString();
 				
 				int colP_rowP = twiceMax(colBase) - twiceMin(rowBase);
 				int colP_rowN = twiceMax(colBase) + twiceMax(rowBase);
@@ -3706,9 +3706,11 @@ public class Octagon implements Equivalence {
 	@Override
 	public void dbmWarp(Equivalence oldE){
 		Octagon oldOctagon = (Octagon) oldE;
-		for(int i=1; i<DBMsize(); i++){
+//		for(int i=1; i<DBMsize(); i++){
+		for(int i=0; i<this._dbmVarList.length; i++){
 			
-			for(int j=i+1; j<DBMsize(); j++){
+//			for(int j=i+1; j<DBMsize(); j++){
+			for(int j=i+1; j<this._dbmVarList.length; j++){
 
 				// Let i be 'x' and j be 'y'.
 				double alpha, beta, ynew, yold, xnew, xold;
@@ -5029,7 +5031,7 @@ public class Octagon implements Equivalence {
 		int count = 0;
 		
 		// Print the timers.
-		for(int i=1; i<_dbmVarList.length; i++, count++)
+		for(int i=0; i<_dbmVarList.length; i++, count++)
 		{
 			if(_lpnList.length == 0)
 			{
@@ -5093,14 +5095,16 @@ public class Octagon implements Equivalence {
 		
 
 		// Print the DBM.
-		for(int i=0; i<_dbmVarList.length; i++)
+		for(int i=0; i<2*_dbmVarList.length; i++)
 		{
-			result += "| " + String.format("%3d", getDbmEntry(i, 0));
-
-			for(int j=1; j<_dbmVarList.length; j++)
+//			result += "| " + String.format("%3d", getDbmEntry(i, 0));
+			result += "| " + String.format("%3d", _matrix[i][0]);
+			
+			for(int j=1; j<2*_dbmVarList.length; j++)
 			{
 
-				result += ", " + String.format("%3d",getDbmEntry(i, j));
+//				result += ", " + String.format("%3d",getDbmEntry(i, j));
+				result += ", " + String.format("%3d",_matrix[i][j]);
 			}
 			
 			result += " |\n";
