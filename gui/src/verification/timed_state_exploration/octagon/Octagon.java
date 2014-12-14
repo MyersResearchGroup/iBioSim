@@ -1476,7 +1476,7 @@ public class Octagon implements Equivalence {
 				this._matrix[bar(i)][bar(j)] = newValue;
 			}
 			
-			if(this._matrix[i][i] != 0){
+			if(this._matrix[i][i] != 0 || this._matrix[bar(i)][bar(i)] != 0){
 				throw new IllegalStateException("Diagonal non-zero");
 			}
 		}
@@ -4038,7 +4038,8 @@ public class Octagon implements Equivalence {
 			
 			// Warp the upper and lower bounds for x.
 			
-			if(Math.abs(this.getUpperBound(i)) != Zone.INFINITY){
+			if((this._dbmVarList[i] instanceof  LPNContinuousPair)
+					&& Math.abs(this.getUpperBound(i)) != Zone.INFINITY){
 			
 			
 				if(oldOctagon.getCurrentRate(i) == 0){
@@ -4067,7 +4068,8 @@ public class Octagon implements Equivalence {
 				
 			}
 		//*if(Math.abs(getDbmEntry(0, i)) != INFINITY){
-			if(Math.abs(this.getLowerBound(i)) != Zone.INFINITY){
+			if((this._dbmVarList[i] instanceof LPNContinuousPair)
+					&& Math.abs(this.getLowerBound(i)) != Zone.INFINITY){
 			
 				if(oldOctagon.getCurrentRate(i) == 0){
 					// If the old rate is zero, then only need to warp
@@ -4078,6 +4080,17 @@ public class Octagon implements Equivalence {
 									*this._matrix[baseToPos(i)][baseToNeg(i)],
 									Math.abs(this.getCurrentRate(i)),
 									true);
+				}
+				else{
+					// Undo the old warping and introduce the new warping.
+					// If the bound is infinite, then division does nothing.
+					this._matrix[baseToPos(i)][baseToNeg(i)] =
+							ContinuousUtilities.chkDiv(
+									Math.abs(oldOctagon.getCurrentRate(i))
+									*this._matrix[baseToPos(i)][baseToNeg(i)],
+									Math.abs(getCurrentRate(i)),
+									true);
+					
 				}
 			}
 		}
