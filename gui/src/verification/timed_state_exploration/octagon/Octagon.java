@@ -3713,7 +3713,7 @@ public class Octagon implements Equivalence {
 			for(int j=i+1; j<this._dbmVarList.length; j++){
 
 				// Let i be 'x' and j be 'y'.
-				double alpha, beta, ynew, yold, xnew, xold;
+				double alpha, beta, ynew, yold, xnew, xold, signx, signy;
 				
 				// Define the alpha, ynew, and yold.
 				if(_dbmVarList[i] instanceof LPNContinuousPair){
@@ -3725,6 +3725,16 @@ public class Octagon implements Equivalence {
 					xold = Math.abs((double) oldOctagon.getCurrentRate(i));
 					
 					xnew = Math.abs((double) this.getCurrentRate(i));
+					
+					
+//					if (xold == 0){
+//						signx = (double) this.getCurrentRate(i) /
+//								(double) this.getCurrentRate(i);
+//					}
+//					else{
+					signx = (double) oldOctagon.getCurrentRate(i)/
+							(double) this.getCurrentRate(i);
+//					}
 					
 					
 					// I'm not going to do any warping when the previous rate
@@ -3740,6 +3750,7 @@ public class Octagon implements Equivalence {
 					alpha = 1.0;
 					xold = 1.0;
 					xnew = 1.0;
+					signx = 1.0;
 				}
 				
 				// Assign the beta, xnew, and xold.
@@ -3757,7 +3768,17 @@ public class Octagon implements Equivalence {
 
 					ynew = Math.floor(Math.abs(
 							(double) this.getCurrentRate(j)));
-							
+					
+					
+//					if (yold == 0){
+//						signy = (double) this.getCurrentRate(i) /
+//								(double) this.getCurrentRate(i);
+//					}
+//					else{
+					signy = (double) oldOctagon.getCurrentRate(i)/
+							(double) this.getCurrentRate(i);
+//					}
+					
 					// I'm not going to do any warping when the previous rate is
 					// zero.
 					if(yold == 0){
@@ -3768,18 +3789,20 @@ public class Octagon implements Equivalence {
 					beta = 1.0;
 					yold = 1.0;
 					ynew = 1.0;
+					signy = 1.0;
 				}
 				
 				// When the sign of the old rates are different than the sign
 				// of the new rates, then the upper and lower bounds swap.
-				// In addition, when y is negative, b1 and b4 are swapped as
-				// well as b2 and b3 are swapped (as well as the sign changes).
-				// When x is negative, b1 and b3 are swapped as well as b2 and
-				// b4 are swapped.
-				if((double) oldOctagon.getCurrentRate(i)/
-						(double) this.getCurrentRate(i) < 0.0){
-					// The ratio being negative indicates that the signs are
-					// different.
+				// In addition, depending on whether both y and x change or
+				// just one of them, the internal relationships change.
+				if((signx < 0) & (signy > 0)){
+					// Perform the swaps of the intercepts.
+					// b1 -> b3, b2 -> b4, b3 -> b1, b4 -> b2
+					// However, the dbm stores, b1, -b2, b3, and -b4.
+					// So the b1 and the b3 entries are swapped directly,
+					// Simlarly, the -b2 and the -b4 entries are swapped
+					// directly.
 					
 					// Swap the bounds.
 					int tmp = this._matrix[baseToNeg(i)][baseToPos(i)];
@@ -3787,8 +3810,49 @@ public class Octagon implements Equivalence {
 							-1*this._matrix[baseToPos(i)][baseToNeg(i)];
 					this._matrix[baseToPos(i)][baseToNeg(i)] = -1 * tmp;
 					
+					// Seve the b1 entry.
+					tmp = this._matrix[baseToPos(i)][baseToPos(j)];
+					
+					// Write over the b1 entry with b3.
+					this._matrix[baseToPos(i)][baseToPos(j)] =
+							this._matrix[baseToNeg(i)][baseToPos(j)];
+					this._matrix[baseToNeg(j)][baseToNeg(i)] =
+							this._matrix[baseToNeg(i)][baseToPos(j)];
+					
+					// Write over the b3 entry with b1.
+					this._matrix[baseToNeg(i)][baseToPos(j)] = tmp;
+					this._matrix[baseToNeg(j)][baseToPos(i)] = tmp;
+					
+					// Save the -b2 entry.
+					tmp = this._matrix[baseToNeg(i)][baseToNeg(j)];
+					
+					// Write over the -b2 entry with -b4.
+					this._matrix[baseToNeg(i)][baseToNeg(j)] =
+							this._matrix[baseToPos(i)][baseToNeg(j)];
+					this._matrix[baseToPos(j)][baseToPos(i)] =
+							this._matrix[baseToPos(i)][baseToNeg(j)];
+					
+					// Write over the -b4 entry with -b2.
+					this._matrix[baseToPos(i)][baseToNeg(j)] = tmp;
+					this._matrix[baseToPos(j)][baseToNeg(i)] = tmp;
+					
+				}
+				else if((signx > 0) & (signy < 0)){
+					// When y is negative, b1 and b4 are swapped as
+					// well as b2 and b3 are swapped (as well as the sign changes).
+					// When x is negative, b1 and b3 are swapped as well as b2 and
+					// b4 are swapped.
+					
+					
+					// Since x is positive, do not swap the bounds.
+					int tmp = 0;
+//					int tmp = this._matrix[baseToNeg(i)][baseToPos(i)];
+//					this._matrix[baseToNeg(i)][baseToPos(i)] =
+//							-1*this._matrix[baseToPos(i)][baseToNeg(i)];
+//					this._matrix[baseToPos(i)][baseToNeg(i)] = -1 * tmp;
+					
 					// Perform the swaps of the intercepts.
-					// b1 --> -b4, b4 -> -b1, b3 -> -b2, b2 -> -b3
+					// b1 -> -b4, b4 -> -b1, b3 -> -b2, b2 -> -b3
 					// However, the dbm stores b1, -b2, b3, and -b4.
 					// So the b1 and -b4 entries are swapped directly.
 					// Simlarly, b3 and the -b2 entry are swapped
@@ -3818,20 +3882,8 @@ public class Octagon implements Equivalence {
 					// Write over the -b2 values with b3.
 					this._matrix[baseToNeg(i)][baseToNeg(j)] = tmp;
 					this._matrix[baseToPos(j)][baseToPos(i)] = tmp;
-					
 				}
-				
-				if((double) oldOctagon.getCurrentRate(i)/
-						(double) this.getCurrentRate(i) < 0.0){
-					// The ratio being negative indicates that the signs are
-					// different.
-					
-					// Swap the bounds.
-					int tmp = this._matrix[baseToNeg(j)][baseToPos(j)];
-					this._matrix[baseToNeg(j)][baseToPos(j)] =
-							-1*this._matrix[baseToPos(j)][baseToNeg(j)];
-					this._matrix[baseToPos(j)][baseToNeg(j)] = -1 * tmp;
-					
+				else if((signx < 0) & (signy < 0)){
 					// Perform the swaps of the intercepts.
 					// b1 -> -b2, b2 -> -b1, b3 -> -b4, b4 -> -b3
 					// However, the dbm stores, b1, -b2, b3, and -b4.
@@ -3839,17 +3891,23 @@ public class Octagon implements Equivalence {
 					// Simlarly, the b3 and the -b4 entries are swapped
 					// directly.
 					
-					// Seve the b1 entry.
+					// Swap the bounds.
+					int tmp = this._matrix[baseToNeg(i)][baseToPos(i)];
+					this._matrix[baseToNeg(i)][baseToPos(i)] =
+							-1*this._matrix[baseToPos(i)][baseToNeg(i)];
+					this._matrix[baseToPos(i)][baseToNeg(i)] = -1 * tmp;
+					
+					// Save the b1 entry.
 					tmp = this._matrix[baseToPos(i)][baseToPos(j)];
 					
 					// Write over the b1 entry with -b2.
 					this._matrix[baseToPos(i)][baseToPos(j)] =
-							this._matrix[baseToNeg(i)][baseToPos(j)];
+							this._matrix[baseToNeg(i)][baseToNeg(j)];
 					this._matrix[baseToNeg(j)][baseToNeg(i)] =
-							this._matrix[baseToPos(j)][baseToPos(i)];
+							this._matrix[baseToNeg(i)][baseToNeg(j)];
 					
 					// Write over the -b2 entry with b1.
-					this._matrix[baseToNeg(i)][baseToPos(j)] = tmp;
+					this._matrix[baseToNeg(i)][baseToNeg(j)] = tmp;
 					this._matrix[baseToPos(j)][baseToPos(i)] = tmp;
 					
 					// Save the b3 entry.
@@ -3859,9 +3917,9 @@ public class Octagon implements Equivalence {
 					this._matrix[baseToNeg(i)][baseToPos(j)] =
 							this._matrix[baseToPos(i)][baseToNeg(j)];
 					this._matrix[baseToNeg(i)][baseToPos(j)] =
-							this._matrix[baseToPos(j)][baseToNeg(i)];
+							this._matrix[baseToPos(i)][baseToNeg(j)];
 					
-					// Write over the -4 entry with b3.
+					// Write over the -b4 entry with b3.
 					this._matrix[baseToPos(i)][baseToNeg(j)] = tmp;
 					this._matrix[baseToPos(j)][baseToNeg(i)] = tmp;
 				}
@@ -3882,6 +3940,12 @@ public class Octagon implements Equivalence {
 					int my = (int)((-1)*
 							Math.ceil(
 							this._matrix[baseToPos(j)][baseToNeg(j)]/2));
+					
+//					int My =(int) Math.ceil(
+//							oldOctagon._matrix[baseToNeg(j)][baseToPos(j)]/2);
+//					int my = (int)((-1)*
+//							Math.ceil(
+//							oldOctagon._matrix[baseToPos(j)][baseToNeg(j)]/2));
 					
 					int b1 = this._matrix[baseToPos(i)][baseToPos(j)];
 					int b2 = (-1)*this._matrix[baseToNeg(i)][baseToNeg(j)];
@@ -3931,6 +3995,13 @@ public class Octagon implements Equivalence {
 					int mx = (int)((-1)*
 							Math.ceil(
 							this._matrix[baseToPos(i)][baseToNeg(i)]/2));
+					
+//					int Mx =(int) Math.ceil(
+//							oldOctagon._matrix[baseToNeg(i)][baseToPos(i)]/2);
+//					int mx = (int)((-1)*
+//							Math.ceil(
+//							oldOctagon._matrix[baseToPos(i)][baseToNeg(i)]/2));
+					
 					
 					int b1 = this._matrix[baseToPos(i)][baseToPos(j)];
 					int b2 = (-1)*this._matrix[baseToNeg(i)][baseToNeg(j)];
