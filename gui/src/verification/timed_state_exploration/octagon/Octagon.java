@@ -1457,23 +1457,36 @@ public class Octagon implements Equivalence {
 				
 		// This is the bagnara2008
 		
-		// Starts with Floy-Walsh all pairs.
-		for(int k=0; k<this._dbmVarList.length; k++){
-			for (int i=0; i<this._dbmVarList.length; i++){
-				for (int j=0; j<this._dbmVarList.length; j++){
+		// Starts with Floyd-Walsh all pairs.
+		for(int k=0; k<2*this._dbmVarList.length; k++){
+			for (int i=0; i<2*this._dbmVarList.length; i++){
+				for (int j=0; j<2*this._dbmVarList.length; j++){
 					int newValue =
 							Math.min(this._matrix[i][j],
 									this._matrix[i][k] + this._matrix[k][j]);
 					this._matrix[i][j] = newValue;
-					this._matrix[bar(i)][bar(j)] = newValue;
+					this._matrix[bar(j)][bar(i)] = newValue;
 				}
 			}
 		}
 		
+		/**
+		 * This to me does not seem to be sound for our
+		 * purposes. This make the upper bound and lower
+		 * bound the nearest even number that less than
+		 * or equal to the value. So if the upper bound is
+		 * 5, then this routine makes it 4.
+		 **/
+		// Tightening.
+//		for(int i=0; i<2*this._dbmVarList.length; i++){
+//			this._matrix[i][bar(i)] = (int) (2*Math.floor(
+//					this._matrix[i][bar(i)]/2.0));
+//		}
+		
 		
 		// Now the coherence portion.
-		for(int i=0; i<this._dbmVarList.length; i++){
-			for(int j=0; j<this._dbmVarList.length; j++){
+		for(int i=0; i<2*this._dbmVarList.length; i++){
+			for(int j=0; j<2*this._dbmVarList.length; j++){
 				
 				int testValue = (int)(Math.floor(this._matrix[i][bar(i)]/2.0)
 						+ Math.floor(this._matrix[bar(j)][j]/2.0));
@@ -1482,7 +1495,7 @@ public class Octagon implements Equivalence {
 						Math.min(this._matrix[i][j], testValue);
 				
 				this._matrix[i][j] = newValue;
-				this._matrix[bar(i)][bar(j)] = newValue;
+				this._matrix[bar(j)][bar(i)] = newValue;
 			}
 			
 			if(this._matrix[i][i] != 0 || this._matrix[bar(i)][bar(i)] != 0){
@@ -3708,53 +3721,23 @@ public class Octagon implements Equivalence {
 	 * Handles the modification to the octagon due to the negative rates.
 	 * @param oldOctagon
 	 */
-	public void negativeWarp(Octagon oldOctagon){
+	private void negativeWarp(Octagon oldOctagon){
 		
-	}
-	
-	/**
-	 * Warps this Octagon with the aid of rate information from the previous Octagon. 
-	 * 
-	 * @param oldOctagon
-	 * 		The previous Octagon.
-	 * @return
-	 * 		The warped Octagon.
-	 */
-	//*public void dbmWarp(Octagon oldOctagon){
-	@Override
-	public void dbmWarp(Equivalence oldE){
-		Octagon oldOctagon = (Octagon) oldE;
-//		for(int i=1; i<DBMsize(); i++){
 		for(int i=0; i<this._dbmVarList.length; i++){
 			
-//			for(int j=i+1; j<DBMsize(); j++){
 			for(int j=i+1; j<this._dbmVarList.length; j++){
 
 				// Let i be 'x' and j be 'y'.
-				double alpha, beta, ynew, yold, xnew, xold, signx, signy;
+				double yold, xold, signx, signy;
 				
 				// Define the alpha, ynew, and yold.
 				if(_dbmVarList[i] instanceof LPNContinuousPair){
-					
-					alpha = Math.floor(Math.abs(
-							(double) oldOctagon.getCurrentRate(i) /
-							(double) this.getCurrentRate(i)));
-					
+										
 					xold = Math.abs((double) oldOctagon.getCurrentRate(i));
 					
-					xnew = Math.abs((double) this.getCurrentRate(i));
-					
-					
-//					if (xold == 0){
-//						signx = (double) this.getCurrentRate(i) /
-//								(double) this.getCurrentRate(i);
-//					}
-//					else{
 					signx = (double) oldOctagon.getCurrentRate(i)/
 							(double) this.getCurrentRate(i);
-//					}
-					
-					
+				
 					// I'm not going to do any warping when the previous rate
 					// is zero. This statement is a break to go to next i value
 					// and not the next j.
@@ -3764,38 +3747,18 @@ public class Octagon implements Equivalence {
 				}
 				
 				else{
-
-					alpha = 1.0;
 					xold = 1.0;
-					xnew = 1.0;
 					signx = 1.0;
 				}
 				
 				// Assign the beta, xnew, and xold.
-				//*if(_indexToTimerPair[j] instanceof LPNContinuousPair){
 				if(_dbmVarList[j] instanceof LPNContinuousPair){
 				
-					beta = Math.floor(Math.abs(
-							(double) oldOctagon.getCurrentRate(j)/
-							(double) this.getCurrentRate(j)));
-					
-
 					yold = Math.floor(Math.abs(
 							(double) oldOctagon.getCurrentRate(j)));
 					
-
-					ynew = Math.floor(Math.abs(
-							(double) this.getCurrentRate(j)));
-					
-					
-//					if (yold == 0){
-//						signy = (double) this.getCurrentRate(i) /
-//								(double) this.getCurrentRate(i);
-//					}
-//					else{
 					signy = (double) oldOctagon.getCurrentRate(i)/
 							(double) this.getCurrentRate(i);
-//					}
 					
 					// I'm not going to do any warping when the previous rate is
 					// zero.
@@ -3804,9 +3767,7 @@ public class Octagon implements Equivalence {
 					}
 				}
 				else{
-					beta = 1.0;
 					yold = 1.0;
-					ynew = 1.0;
 					signy = 1.0;
 				}
 				
@@ -3941,6 +3902,106 @@ public class Octagon implements Equivalence {
 					this._matrix[baseToPos(i)][baseToNeg(j)] = tmp;
 					this._matrix[baseToPos(j)][baseToNeg(i)] = tmp;
 				}
+			}
+		}
+	}
+	
+	/**
+	 * Warps this Octagon with the aid of rate information from the previous Octagon. 
+	 * 
+	 * @param oldOctagon
+	 * 		The previous Octagon.
+	 * @return
+	 * 		The warped Octagon.
+	 */
+	//*public void dbmWarp(Octagon oldOctagon){
+	@Override
+	public void dbmWarp(Equivalence oldE){
+		
+		Octagon oldOctagon = (Octagon) oldE;
+		
+		oldOctagon.negativeWarp(oldOctagon);
+		
+//		for(int i=1; i<DBMsize(); i++){
+		for(int i=0; i<this._dbmVarList.length; i++){
+			
+//			for(int j=i+1; j<DBMsize(); j++){
+			for(int j=i+1; j<this._dbmVarList.length; j++){
+
+				// Let i be 'x' and j be 'y'.
+				double alpha, beta, ynew, yold, xnew, xold;
+				
+				// Define the alpha, ynew, and yold.
+				if(_dbmVarList[i] instanceof LPNContinuousPair){
+					
+					alpha = Math.floor(Math.abs(
+							(double) oldOctagon.getCurrentRate(i) /
+							(double) this.getCurrentRate(i)));
+					
+					xold = Math.abs((double) oldOctagon.getCurrentRate(i));
+					
+					xnew = Math.abs((double) this.getCurrentRate(i));
+					
+					
+//					if (xold == 0){
+//						signx = (double) this.getCurrentRate(i) /
+//								(double) this.getCurrentRate(i);
+//					}
+//					else{
+//					}
+					
+					
+					// I'm not going to do any warping when the previous rate
+					// is zero. This statement is a break to go to next i value
+					// and not the next j.
+					if(xold == 0){
+						break;
+					}
+				}
+				
+				else{
+
+					alpha = 1.0;
+					xold = 1.0;
+					xnew = 1.0;
+				}
+				
+				// Assign the beta, xnew, and xold.
+				//*if(_indexToTimerPair[j] instanceof LPNContinuousPair){
+				if(_dbmVarList[j] instanceof LPNContinuousPair){
+				
+					beta = Math.floor(Math.abs(
+							(double) oldOctagon.getCurrentRate(j)/
+							(double) this.getCurrentRate(j)));
+					
+
+					yold = Math.floor(Math.abs(
+							(double) oldOctagon.getCurrentRate(j)));
+					
+
+					ynew = Math.floor(Math.abs(
+							(double) this.getCurrentRate(j)));
+					
+					
+//					if (yold == 0){
+//						signy = (double) this.getCurrentRate(i) /
+//								(double) this.getCurrentRate(i);
+//					}
+//					else{
+//					}
+					
+					// I'm not going to do any warping when the previous rate is
+					// zero.
+					if(yold == 0){
+						continue;
+					}
+				}
+				else{
+					beta = 1.0;
+					yold = 1.0;
+					ynew = 1.0;
+				}
+				
 				
 				// Next is the warping.
 				
