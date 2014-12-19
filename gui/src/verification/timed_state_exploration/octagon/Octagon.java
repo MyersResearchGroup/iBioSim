@@ -794,7 +794,7 @@ public class Octagon implements Equivalence {
 			 * Set the lower and upper bounds on the timer delays and
 			 * range of rates.
 			 */
-			_lowerBounds[i] = range.get_LowerBound();
+			_lowerBounds[i] = -1*range.get_LowerBound();
 			_upperBounds[i] = range.get_UpperBound();
 			
 		//*}
@@ -1000,25 +1000,34 @@ public class Octagon implements Equivalence {
 				
 //				this.toString();
 				
-				int colP_rowP = twiceMax(colBase) - twiceMin(rowBase);
-				int colP_rowN = twiceMax(colBase) + twiceMax(rowBase);
-				int colN_rowP = -1*twiceMin(colBase) - twiceMin(rowBase);
-				int colN_rowN = -1*twiceMin(colBase) + twiceMax(rowBase);
+//				int colP_rowP = twiceMax(colBase) - twiceMin(rowBase);
+//				int colP_rowN = twiceMax(colBase) + twiceMax(rowBase);
+//				int colN_rowP = -1*twiceMin(colBase) - twiceMin(rowBase);
+//				int colN_rowN = -1*twiceMin(colBase) + twiceMax(rowBase);
+				
+				int colM_rowm = ContinuousUtilities.chkDiv(
+						twiceMax(colBase) - twiceMin(rowBase), 2, true);
+				int colM_rowM = ContinuousUtilities.chkDiv(
+						twiceMax(colBase) + twiceMax(rowBase), 2, true);
+				int colm_rowm = ContinuousUtilities.chkDiv(
+						-1*twiceMin(colBase) - twiceMin(rowBase), 2, true);
+				int colm_rowM = ContinuousUtilities.chkDiv(
+						-1*twiceMin(colBase) + twiceMax(rowBase), 2, true);
 				
 				//*setDbmEntry(row, col, rowCol);
 				//*setDbmEntry(col, row, colRow);
 				
-				_matrix[baseToPos(rowBase)][baseToPos(colBase)] = colP_rowP;
-				_matrix[bar(baseToPos(colBase))][bar(baseToPos(rowBase))] = colP_rowP;
+				_matrix[baseToPos(rowBase)][baseToPos(colBase)] = colM_rowm;
+				_matrix[baseToNeg(colBase)][baseToNeg(rowBase)] = colM_rowm;
 				
-				_matrix[baseToNeg(rowBase)][baseToPos(colBase)] = colP_rowN;
-				_matrix[bar(baseToPos(colBase))][bar(baseToNeg(rowBase))] = colP_rowN;
+				_matrix[baseToNeg(rowBase)][baseToPos(colBase)] = colM_rowM;
+				_matrix[baseToNeg(colBase)][baseToPos(rowBase)] = colM_rowM;
 				
-				_matrix[baseToNeg(rowBase)][baseToPos(colBase)] = colN_rowP;
-				_matrix[bar(baseToPos(colBase))][bar(baseToNeg(rowBase))] = colN_rowP;
+				_matrix[baseToPos(rowBase)][baseToNeg(colBase)] = colm_rowm;
+				_matrix[baseToPos(colBase)][baseToNeg(rowBase)] = colm_rowm;
 				
-				_matrix[baseToNeg(rowBase)][baseToNeg(colBase)] = colN_rowN;
-				_matrix[bar(baseToNeg(colBase))][bar(baseToNeg(rowBase))] = colN_rowN;
+				_matrix[baseToNeg(rowBase)][baseToNeg(colBase)] = colm_rowM;
+				_matrix[baseToPos(colBase)][baseToPos(rowBase)] = colm_rowM;
 				
 			}
 			//*}
@@ -1873,7 +1882,7 @@ public class Octagon implements Equivalence {
 					// When the variable is a continuous variable, the range of rates
 					// are stored in the _lowerBounds and _upperBounds member
 					// variables.
-					newOct._lowerBounds[i] = rates.get_LowerBound();
+					newOct._lowerBounds[i] = -1*rates.get_LowerBound();
 					newOct._upperBounds[i] = rates.get_UpperBound();
 					
 					// Copy the smallest and greatest continuous value.
@@ -1895,7 +1904,8 @@ public class Octagon implements Equivalence {
 			
 			// The cached lower and upper bound values of the delay are stored in the
 			// _upperBounds and _lowerBounds member variables.
-			newOct._lowerBounds[i] = -1*tempOct._lowerBounds[i];
+//			newOct._lowerBounds[i] = -1*tempOct._lowerBounds[i];
+			newOct._lowerBounds[i] = tempOct._lowerBounds[i];
 			newOct._upperBounds[i] = tempOct._upperBounds[i];
 			
 		//*}
@@ -1989,7 +1999,7 @@ public class Octagon implements Equivalence {
 				//*newZone.setUpperBoundByLPNTransitionPair(lcPair, 
 					//*	rates.get_UpperBound());
 				int baseIndexPair = newOct.getBaseIndex(lcPair);
-				newOct._lowerBounds[baseIndexPair] = rates.get_LowerBound();
+				newOct._lowerBounds[baseIndexPair] = -1*rates.get_LowerBound();
 				newOct._upperBounds[baseIndexPair] = rates.get_UpperBound();
 				
 				// Get the current rate.
@@ -2424,7 +2434,7 @@ public class Octagon implements Equivalence {
 		//*       = getLowerBoundbydbmIndex(timer);
 		
 		_matrix[baseToPos(timer)][baseToNeg(timer)] =
-				_lowerBounds[timer];
+				2*_lowerBounds[timer];
 	}
 	
 	/**
@@ -2924,7 +2934,7 @@ public class Octagon implements Equivalence {
 			//*newZone.setUpperBoundbydbmIndex(currentIndex, rangeOfRates.get_UpperBound());
 			//*newZone.setDbmEntry(currentIndex, 0, -1*rangeOfValues.get_LowerBound());
 			//*newZone.setDbmEntry(0, currentIndex, rangeOfValues.get_UpperBound());
-			newOct._lowerBounds[currentIndex] = rangeOfRates.get_LowerBound();
+			newOct._lowerBounds[currentIndex] = -1*rangeOfRates.get_LowerBound();
 			newOct._upperBounds[currentIndex] = rangeOfRates.get_UpperBound();
 			// The upper bound is v+ - v- and the lower bound is v- -v+
 			// but remember it is column minus row.
@@ -3214,7 +3224,7 @@ public class Octagon implements Equivalence {
 			
 			//*if(getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i))
 			//*{
-			if(_matrix[baseToNeg(i)][baseToPos(i)] >= -1*_lowerBounds[i]){
+			if(_matrix[baseToNeg(i)][baseToPos(i)] >= -2*_lowerBounds[i]){
 			
 				//*enabledTransitions.add(_lpnList[_indexToTimerPair[i].get_lpnIndex()]
 						//*.getTransition(_indexToTimerPair[i].get_transitionIndex()));
@@ -3257,7 +3267,7 @@ public class Octagon implements Equivalence {
 			
 			//*if(getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i))
 			//*{
-			if(_matrix[baseToNeg(i)][baseToPos(i)] > -1*_lowerBounds[i]){
+			if(_matrix[baseToNeg(i)][baseToPos(i)] > -2*_lowerBounds[i]){
 			
 				//*LPNTransitionPair ltPair = _indexToTimerPair[i];
 				LPNTransitionPair ltPair = _dbmVarList[i];
@@ -3342,7 +3352,7 @@ public class Octagon implements Equivalence {
 				
 				// Note the upper bound is the v+-v- entry.
 				if(_matrix[baseToNeg(i)][baseToPos(i)]
-						>= -1*_lowerBounds[i]){
+						>= -2*_lowerBounds[i]){
 					//*Event e = new Event(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
 					//*result = addSetItem(result, e, localState);
 					
@@ -3692,6 +3702,14 @@ public class Octagon implements Equivalence {
 				//*}
 			//*}
 		//*}
+	}
+	
+	/**
+	 * Handles the modification to the octagon due to the negative rates.
+	 * @param oldOctagon
+	 */
+	public void negativeWarp(Octagon oldOctagon){
+		
 	}
 	
 	/**
@@ -4603,7 +4621,7 @@ public class Octagon implements Equivalence {
 		// Copy in the range of rates.
 		//*newZone.setLowerBoundbydbmIndex(index, rangeOfRates.get_LowerBound());
 		//*newZone.setUpperBoundbydbmIndex(index, rangeOfRates.get_UpperBound());
-		newOct._lowerBounds[index] = rangeOfRates.get_LowerBound();
+		newOct._lowerBounds[index] = -1*rangeOfRates.get_LowerBound();
 		newOct._upperBounds[index] = rangeOfRates.get_UpperBound();
 		
 		
