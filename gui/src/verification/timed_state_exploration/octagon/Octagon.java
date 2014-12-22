@@ -1461,6 +1461,24 @@ public class Octagon implements Equivalence {
 		for(int k=0; k<2*this._dbmVarList.length; k++){
 			for (int i=0; i<2*this._dbmVarList.length; i++){
 				for (int j=0; j<2*this._dbmVarList.length; j++){
+					
+					/*
+					 *  Need to check for infinity in the summands.
+					 *  If either summand is inifinite, then they
+					 *  will not change the current value since we
+					 *  only change if the sum is smaller. Logically,
+					 *  we consider the largest integer as being infinity.
+					 *  However, maybe a warning should be issued for
+					 *  overflow not resulting from one of the bounds
+					 *  being infinite.
+					 */
+					
+					if(this._matrix[i][k] == Zone.INFINITY ||
+							this._matrix[k][j] == Zone.INFINITY){
+						continue;
+					}
+					
+					
 					int newValue =
 							Math.min(this._matrix[i][j],
 									this._matrix[i][k] + this._matrix[k][j]);
@@ -1470,13 +1488,18 @@ public class Octagon implements Equivalence {
 			}
 		}
 		
-		/**
+		/*
 		 * This to me does not seem to be sound for our
 		 * purposes. This make the upper bound and lower
 		 * bound the nearest even number that less than
 		 * or equal to the value. So if the upper bound is
 		 * 5, then this routine makes it 4.
-		 **/
+		 * 
+		 * Would also have to account for the logical
+		 * infinity.
+		 */
+		// TODO: Need to decide whether this part of the
+		// code is necessary.
 		// Tightening.
 //		for(int i=0; i<2*this._dbmVarList.length; i++){
 //			this._matrix[i][bar(i)] = (int) (2*Math.floor(
@@ -1487,6 +1510,19 @@ public class Octagon implements Equivalence {
 		// Now the coherence portion.
 		for(int i=0; i<2*this._dbmVarList.length; i++){
 			for(int j=0; j<2*this._dbmVarList.length; j++){
+				
+				/*
+				 * Again care needs to be taken to account for the locigal
+				 * infinity. We *should* only be dealing with positive
+				 * infinities so the cases are infty+infty, infty+con, and
+				 * infty-con. All cases should be taken to be infty, so the
+				 * value should not change.
+				 */
+				
+				if(this._matrix[i][bar(i)] == Zone.INFINITY ||
+						this._matrix[bar(j)][j] == Zone.INFINITY){
+					continue;
+				}
 				
 				int testValue = (int)(Math.floor(this._matrix[i][bar(i)]/2.0)
 						+ Math.floor(this._matrix[bar(j)][j]/2.0));
@@ -1628,7 +1664,7 @@ public class Octagon implements Equivalence {
 		
 		// These sets will differentiate between the new timers and the
 		// old timers, that is between the timers that are not already in the
-		// zone and those that are already in the zone..
+		// zone and those that are already in the zone.
 		//*HashSet<LPNTransitionPair> newTimers = new HashSet<LPNTransitionPair>();
 		//*HashSet<LPNTransitionPair> oldTimers = new HashSet<LPNTransitionPair>();
 		
@@ -1814,6 +1850,9 @@ public class Octagon implements Equivalence {
 		}
 		
 		// Copy the upper and lower bounds.
+		// First create the upper and lower bound 
+		newOct._lowerBounds = new int[_dbmVarList.length];
+		newOct._upperBounds = new int[_dbmVarList.length];
 		//*for(int i=1; i<tempZone.dbmSize(); i++)
 		//*{
 		for (int i=0; i<tempOct._dbmVarList.length; i++){
@@ -1945,28 +1984,23 @@ public class Octagon implements Equivalence {
 				int baseTimerNew = newOct.getBaseIndex(timerNew);
 				int baseTimerOld = newOct.getBaseIndex(timerOld);
 				
+				int upperBound = (int)Math.ceil(
+						tempOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerOld)]/2.0);
 				
-				// newTimerOld - baseTimerNew stuff.
-				newOct._matrix[baseToNeg(baseTimerNew)][baseToNeg(baseTimerOld)] =
-						(int)Math.floor(tempOct._matrix[baseToNeg(baseTimerOld)][baseToNeg(baseTimerOld)]/2.0);
-				newOct._matrix[baseToNeg(baseTimerNew)][baseToPos(baseTimerOld)] =
-						(int)Math.ceil(tempOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerOld)]/2.0);
-				newOct._matrix[baseToPos(baseTimerNew)][baseToNeg(baseTimerOld)] =
-						(int)Math.floor(tempOct._matrix[baseToNeg(baseTimerOld)][baseToNeg(baseTimerOld)]/2.0);
-				newOct._matrix[baseToPos(baseTimerNew)][baseToPos(baseTimerOld)] =
-						(int)Math.ceil(tempOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerOld)]/2.0);
+				int lowerBound = (int)Math.ceil(
+						tempOct._matrix[baseToNeg(baseTimerOld)][baseToNeg(baseTimerOld)]/2.0);
 				
-				// baseTimerNew - baseTimerOld stuff.
-				newOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerNew)] =
-						(int)Math.floor(tempOct._matrix[baseToNeg(baseTimerOld)][baseToNeg(baseTimerOld)]/2.0);
-				newOct._matrix[baseToNeg(baseTimerOld)][baseToPos(baseTimerNew)] =
-						(int)Math.ceil(tempOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerOld)]/2.0);
-				newOct._matrix[baseToPos(baseTimerOld)][baseToNeg(baseTimerNew)] =
-						(int)Math.floor(tempOct._matrix[baseToNeg(baseTimerOld)][baseToNeg(baseTimerOld)]/2.0);
-				newOct._matrix[baseToNeg(baseTimerOld)][baseToNeg(baseTimerNew)] =
-						(int)Math.ceil(tempOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerOld)]/2.0);
+				// copy in lowerBound.
+				newOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerNew)] = lowerBound;
+				newOct._matrix[baseToPos(baseTimerOld)][baseToNeg(baseTimerNew)] = lowerBound;
+				newOct._matrix[baseToPos(baseTimerNew)][baseToNeg(baseTimerOld)] = lowerBound;
+				newOct._matrix[baseToNeg(baseTimerNew)][baseToNeg(baseTimerOld)] = lowerBound;
 				
-				
+				// copy in upperBound.
+				newOct._matrix[baseToNeg(baseTimerOld)][baseToPos(baseTimerNew)] = upperBound;
+				newOct._matrix[baseToNeg(baseTimerOld)][baseToNeg(baseTimerNew)] = upperBound;
+				newOct._matrix[baseToPos(baseTimerNew)][baseToPos(baseTimerOld)] = upperBound;
+				newOct._matrix[baseToNeg(baseTimerNew)][baseToPos(baseTimerOld)] = upperBound;
 			}
 			//*}
 		//*}
@@ -2232,7 +2266,7 @@ public class Octagon implements Equivalence {
 			//*totalContinuous += _lpnList[i].getTotalNumberOfContVars();
 		//*}
 		int totalContinuous =0;
-		for (int i=1; i<_lpnList.length; i++){
+		for (int i=0; i<_lpnList.length; i++){
 			totalContinuous += _lpnList[i].getTotalNumberOfContVars();
 		}
 
@@ -3493,7 +3527,7 @@ public class Octagon implements Equivalence {
 			//*for(int j=i+1; j<dbmSize(); j++){
 			for(int j=i+1; j<DBMsize(); j++){
 				//*double iVal, jVal, iWarp, jWarp, iXDot, jXDot;
-				double iVal, jVal, iWarp, jWarp, iXDot, jXDot;
+				double iVal, jVal, iWarp, jWarp;// iXDot, jXDot;
 				
 				// Note : the iVal and the jVal correspond to the 
 				// alpha and beta describe in Scott Little's thesis.
@@ -3522,8 +3556,8 @@ public class Octagon implements Equivalence {
 					// The current rate rate of this continuous variable.
 					//*iXDot = Math.floor(Math.abs(
 							//*(double) this.getCurrentRate(_indexToTimerPair[i])));
-					iXDot = Math.floor(Math.abs(
-							(double) this.getCurrentRate(i)));
+//					iXDot = Math.floor(Math.abs(
+//							(double) this.getCurrentRate(i)));
 					
 					
 					// I'm not going to do any warping when the previous rate
@@ -3548,7 +3582,7 @@ public class Octagon implements Equivalence {
 					//*iXDot = 1.0;
 					iVal = 1.0;
 					iWarp = 1.0;
-					iXDot = 1.0;
+//					iXDot = 1.0;
 					
 				//*}
 				}
@@ -3576,8 +3610,8 @@ public class Octagon implements Equivalence {
 					// The current rate of this continuous variable.
 					//*jXDot = Math.floor(Math.abs(
 							//*(double) this.getCurrentRate(_indexToTimerPair[j])));
-					jXDot = Math.floor(Math.abs(
-							(double) this.getCurrentRate(j)));
+//					jXDot = Math.floor(Math.abs(
+//							(double) this.getCurrentRate(j)));
 							
 					// I'm not going to do any warping when the previous rate is
 					// zero.
@@ -3599,7 +3633,7 @@ public class Octagon implements Equivalence {
 					//*jXDot = 1.0;
 					jVal = 1.0;
 					jWarp = 1.0;
-					jXDot = 1.0;
+//					jXDot = 1.0;
 				//*}
 				}
 				
@@ -3935,10 +3969,10 @@ public class Octagon implements Equivalence {
 				if(_dbmVarList[i] instanceof LPNContinuousPair){
 					
 					alpha = Math.floor(Math.abs(
-							(double) oldOctagon.getCurrentRate(i) /
+							(double) oldOctagon.getCurrentRate(this._dbmVarList[i]) /
 							(double) this.getCurrentRate(i)));
 					
-					xold = Math.abs((double) oldOctagon.getCurrentRate(i));
+					xold = Math.abs((double) oldOctagon.getCurrentRate(this._dbmVarList[i]));
 					
 					xnew = Math.abs((double) this.getCurrentRate(i));
 					
@@ -3971,12 +4005,12 @@ public class Octagon implements Equivalence {
 				if(_dbmVarList[j] instanceof LPNContinuousPair){
 				
 					beta = Math.floor(Math.abs(
-							(double) oldOctagon.getCurrentRate(j)/
+							(double) oldOctagon.getCurrentRate(this._dbmVarList[j])/
 							(double) this.getCurrentRate(j)));
 					
 
 					yold = Math.floor(Math.abs(
-							(double) oldOctagon.getCurrentRate(j)));
+							(double) oldOctagon.getCurrentRate(this._dbmVarList[j])));
 					
 
 					ynew = Math.floor(Math.abs(
@@ -4121,7 +4155,7 @@ public class Octagon implements Equivalence {
 					&& Math.abs(this.getUpperBound(i)) != Zone.INFINITY){
 			
 			
-				if(oldOctagon.getCurrentRate(i) == 0){
+				if(oldOctagon.getCurrentRate(this._dbmVarList[i]) == 0){
 					// If the older rate was zero, then we just need to
 					// divide by the new rate. Note: as long as the
 					// rate stored in the octagon is already twice the
@@ -4150,12 +4184,12 @@ public class Octagon implements Equivalence {
 			if((this._dbmVarList[i] instanceof LPNContinuousPair)
 					&& Math.abs(this.getLowerBound(i)) != Zone.INFINITY){
 			
-				if(oldOctagon.getCurrentRate(i) == 0){
+				if(oldOctagon.getCurrentRate(this._dbmVarList[i]) == 0){
 					// If the old rate is zero, then only need to warp
 					// for the current rate.
 					this._matrix[baseToPos(i)][baseToNeg(i)] =
 							ContinuousUtilities.chkDiv(
-									Math.abs(oldOctagon.getCurrentRate(i))
+									Math.abs(oldOctagon.getCurrentRate(this._dbmVarList[i]))
 									*this._matrix[baseToPos(i)][baseToNeg(i)],
 									Math.abs(this.getCurrentRate(i)),
 									true);
@@ -4165,7 +4199,7 @@ public class Octagon implements Equivalence {
 					// If the bound is infinite, then division does nothing.
 					this._matrix[baseToPos(i)][baseToNeg(i)] =
 							ContinuousUtilities.chkDiv(
-									Math.abs(oldOctagon.getCurrentRate(i))
+									Math.abs(oldOctagon.getCurrentRate(this._dbmVarList[i]))
 									*this._matrix[baseToPos(i)][baseToNeg(i)],
 									Math.abs(getCurrentRate(i)),
 									true);
@@ -4337,6 +4371,9 @@ public class Octagon implements Equivalence {
 		// Create matrix.
 		//*newZone._matrix = new int[newZone._indexToTimerPair.length+1][newZone._indexToTimerPair.length+1];
 		newOct._matrix = new int[newOct._dbmVarList.length][newOct._dbmVarList.length];
+		
+		// Create the upper and lower bound arrays.
+		// TODO: Add the creation of the upper and lower bound arrays.
 		
 		
 		// Convert the current transitions to a collection of transitions.
