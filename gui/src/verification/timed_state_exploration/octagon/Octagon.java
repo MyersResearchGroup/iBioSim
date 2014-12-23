@@ -286,8 +286,10 @@ public class Octagon implements Equivalence {
 		 */
 		//* Zone._matrix = new int[matrixSize()][matrixSize()];
 		_matrix = new int[DBMsize()][DBMsize()];
-		_lowerBounds = new int[DBMsize()];
-		_upperBounds = new int[DBMsize()];
+//		_lowerBounds = new int[DBMsize()];
+//		_upperBounds = new int[DBMsize()];
+		_lowerBounds = new int[_dbmVarList.length];
+		_upperBounds = new int[_dbmVarList.length];
 		
 //		this.toString();
 		// Set the lower bound/ upper bounds of the timers and the rates.
@@ -4370,7 +4372,7 @@ public class Octagon implements Equivalence {
 		
 		// Create matrix.
 		//*newZone._matrix = new int[newZone._indexToTimerPair.length+1][newZone._indexToTimerPair.length+1];
-		newOct._matrix = new int[newOct._dbmVarList.length][newOct._dbmVarList.length];
+		newOct._matrix = new int[newOct.DBMsize()][newOct.DBMsize()];
 		
 		// Create the upper and lower bound arrays.
 		// TODO: Add the creation of the upper and lower bound arrays.
@@ -4697,7 +4699,8 @@ public class Octagon implements Equivalence {
 
 		// Create matrix.
 		//*newZone._matrix = new int[newZone._indexToTimerPair.length+1][newZone._indexToTimerPair.length+1];
-		newOct._matrix = new int[newOct._dbmVarList.length][newOct._dbmVarList.length];
+//		newOct._matrix = new int[newOct._dbmVarList.length][newOct._dbmVarList.length];
+		newOct._matrix = new int[newOct.DBMsize()][newOct.DBMsize()];
 		
 		// Convert the current transitions to a collection of transitions.
 		//*HashSet<LPNTransitionPair> oldTransitionSet = new HashSet<LPNTransitionPair>();
