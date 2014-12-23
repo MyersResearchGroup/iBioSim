@@ -4374,6 +4374,8 @@ public class Octagon implements Equivalence {
 		
 		// Create the upper and lower bound arrays.
 		// TODO: Add the creation of the upper and lower bound arrays.
+		newOct._lowerBounds = new int[newOct._dbmVarList.length];
+		newOct._upperBounds = new int[newOct._dbmVarList.length];
 		
 		
 		// Convert the current transitions to a collection of transitions.
@@ -4417,7 +4419,8 @@ public class Octagon implements Equivalence {
 		//*for(int i=0; i<tempZone.dbmSize(); i++)
 		//*{
 		// Copy the tmpOct to the new octagon.
-		for (int i=0; i<tmpOct.DBMsize(); i++){
+//		for (int i=0; i<tmpOct.DBMsize(); i++){
+		for (int i=0; i<tmpOct._dbmVarList.length; i++){
 		
 			//*if(!oldTimers.contains(tempZone._indexToTimerPair[i]))
 			//*{
@@ -4435,7 +4438,8 @@ public class Octagon implements Equivalence {
 			
 			//*for(int j=0; j<tempZone.dbmSize(); j++)
 			//*{
-			for (int j=0; j<tmpOct.DBMsize(); j++){
+//			for (int j=0; j<tmpOct.DBMsize(); j++){
+			for (int j=0; j<tmpOct._dbmVarList.length; j++){
 			
 				//*if(!oldTimers.contains(tempZone._indexToTimerPair[j]))
 				//*{
@@ -4469,7 +4473,8 @@ public class Octagon implements Equivalence {
 		// Copy the upper and lower bounds.
 		//*for(int i=1; i<tempZone.dbmSize(); i++)
 		//*{
-		for (int i=0; i<tmpOct.DBMsize(); i++){
+//		for (int i=0; i<tmpOct.DBMsize(); i++){
+		for (int i=0; i<tmpOct._dbmVarList.length; i++){
 			//*if(!oldTimers.contains(tempZone._indexToTimerPair[i]))
 			//*{
 				//*continue;
