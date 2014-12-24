@@ -2896,7 +2896,8 @@ public class Octagon implements Equivalence {
 		
 		
 		//*for(int i =0; i< this.dbmSize(); i++){
-	    for(int i=0; i<this.DBMsize(); i++){
+//	    for(int i=0; i<this.DBMsize(); i++){
+	    for(int i=0; i<this._dbmVarList.length; i++){
 			
 			//*int newi = Arrays.binarySearch(newZone._indexToTimerPair,
 					//*this._indexToTimerPair[i]);
@@ -2932,8 +2933,9 @@ public class Octagon implements Equivalence {
 			
 			// Copy the DBM Entry
 			//for(int j=0; j< this.dbmSize(); j++){
-	    	for(int j=0; j<this.DBMsize(); j++){
-	    		// TODO: make sure that DBMsize is correct instead of _dbmVarList.size.
+//	    	for(int j=0; j<this.DBMsize(); j++){
+	    	for(int j=0; j<this._dbmVarList.length; j++){
+	    		// Make sure that DBMsize is correct instead of _dbmVarList.size. done.
 	    		
 	    		
 				//*int newj = Arrays.binarySearch(newZone._indexToTimerPair,
@@ -3145,7 +3147,7 @@ public class Octagon implements Equivalence {
 				//*ltContPair = (LPNContinuousPair) _indexToTimerPair[zoneIndex];
 			//*}
 			int octIndex = Arrays.binarySearch(_dbmVarList, ltContPair);
-			if (octIndex > 0){
+			if (octIndex >= 0){
 				ltContPair = (LPNContinuousPair) _dbmVarList[octIndex];
 			}
 			
@@ -3323,7 +3325,7 @@ public class Octagon implements Equivalence {
 			
 			//*if(getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i))
 			//*{
-			if(_matrix[baseToNeg(i)][baseToPos(i)] > -2*_lowerBounds[i]){
+			if(_matrix[baseToNeg(i)][baseToPos(i)] >= -2*_lowerBounds[i]){
 			
 				//*LPNTransitionPair ltPair = _indexToTimerPair[i];
 				LPNTransitionPair ltPair = _dbmVarList[i];
@@ -4382,7 +4384,7 @@ public class Octagon implements Equivalence {
 		newOct._matrix = new int[newOct.DBMsize()][newOct.DBMsize()];
 		
 		// Create the upper and lower bound arrays.
-		// TODO: Add the creation of the upper and lower bound arrays.
+		// Add the creation of the upper and lower bound arrays. Done
 		newOct._lowerBounds = new int[newOct._dbmVarList.length];
 		newOct._upperBounds = new int[newOct._dbmVarList.length];
 		
