@@ -2914,6 +2914,10 @@ public class Octagon implements Equivalence {
 	    				+ " in new value.");
 	    		continue;
 	    	}
+	    	
+	    	// Create the upper and lower bound arrays.
+	    	newOct._lowerBounds = new int[newOct._dbmVarList.length];
+	    	newOct._upperBounds = new int[newOct._dbmVarList.length];
 			
 			// Copy upper and lower bounds for the variable.
 			//*newZone._matrix[newZone.dbmIndexToMatrixIndex(newi)][0] =
@@ -2929,6 +2933,9 @@ public class Octagon implements Equivalence {
 			// Copy the DBM Entry
 			//for(int j=0; j< this.dbmSize(); j++){
 	    	for(int j=0; j<this.DBMsize(); j++){
+	    		// TODO: make sure that DBMsize is correct instead of _dbmVarList.size.
+	    		
+	    		
 				//*int newj = Arrays.binarySearch(newZone._indexToTimerPair,
 						//*this._indexToTimerPair[j]);
 	    		int newj = Arrays.binarySearch(newOct._dbmVarList,
