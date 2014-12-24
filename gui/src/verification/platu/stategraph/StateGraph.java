@@ -2138,8 +2138,39 @@ public class StateGraph {
 			int ineqIndex = this.lpn.getVarIndexMap().
 					get(ineq.getName());
 			
+			LhpnFile lpn = ineq.get_lpn();
+			
+			// Build the index object
+			LPNContinuousPair lcv =
+					new LPNContinuousPair(lpn.getLpnIndex(),
+							lpn.getContVarIndex(ineq.getContVariables().get(0).getName()));
+			
+			// Get the record value.
+			UpdateContinuous upc = updateContinuousRecords.get(lcv);
+			
+			// Get the current rate.
+			int rate = upc.get_lcrPair().get_lcPair().getCurrentRate();
+			
+			// TODO: add logic to correctly evaluate the inequality due to rates.
+			
+			int newvalue = 0;
+			
+			if(ineq.isGreaterThan() && rate > 0){
+				newvalue = 1;
+			}
+			else if(ineq.isGreaterThan() && rate < 0){
+				newvalue = 0;
+			}
+			else if(ineq.isLessThan() && rate > 0){
+				newvalue = 0;
+			}
+			else if(ineq.isLessThan() && rate < 0){
+				newvalue = 1;
+			}
+			
 			// Flip the value of the inequality variable.
-			newVectorArray[ineqIndex] = newVectorArray[ineqIndex] == 0 ? 1 : 0;
+//			newVectorArray[ineqIndex] = newVectorArray[ineqIndex] == 0 ? 1 : 0;
+			newVectorArray[ineqIndex] = newvalue;
 		}
 			
 			
