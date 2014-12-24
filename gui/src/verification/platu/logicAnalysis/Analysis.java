@@ -524,7 +524,9 @@ public class Analysis {
 //						"Failure transition " + firedFailure.getLabel() + " is enabled.", "Error",
 //						JOptionPane.ERROR_MESSAGE);
 				System.out.println("************ System failed. ***********");
-				System.out.println("The failure transition" + firedFailure.getLabel() + "fired.");
+				if(firedFailure != null){
+					System.out.println("The failure transition" + firedFailure.getLabel() + "fired.");
+				}
 			}
 			System.out.println(prjStateSet.toString());
 			
