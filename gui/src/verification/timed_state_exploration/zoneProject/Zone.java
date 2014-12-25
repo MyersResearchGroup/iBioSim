@@ -5299,7 +5299,8 @@ public class Zone implements Equivalence{
 //        workSet->erase(*j);
 //        //workSet->insert(e);
 						
-						else if(rv1u > Z.getDbmEntry(0, iZ) + Z.getDbmEntry(iZ, jZ)){
+//						else if(rv1u > Z.getDbmEntry(0, iZ) + Z.getDbmEntry(iZ, jZ)){
+						else if(rv1u > Z.getUpperBoundTrue(iZ) + Z.getDbmEntry(iZ, jZ)){
 							workSet.remove(oldEvent);
 						}
 						
@@ -5310,7 +5311,8 @@ public class Zone implements Equivalence{
 //#endif
 //        possible = false;
 						
-						else if (rv2u > Z.getDbmEntry(0, jZ) + Z.getDbmEntry(jZ, iZ)){
+//						else if (rv2u > Z.getDbmEntry(0, jZ) + Z.getDbmEntry(jZ, iZ)){
+						else if (rv2u > Z.getUpperBoundTrue(jZ) + Z.getDbmEntry(jZ, iZ)){
 							possible = false;
 						}
 						
@@ -5365,7 +5367,8 @@ public class Zone implements Equivalence{
 //#endif
 //      possible = false;
 					
-					else if(rv2u > Z.getDbmEntry(0, jZ) + Z.getDbmEntry(jZ, iZ)){
+//					else if(rv2u > Z.getDbmEntry(0, jZ) + Z.getDbmEntry(jZ, iZ)){
+					else if(rv2u > Z.getUpperBoundTrue(jZ) + Z.getDbmEntry(jZ, iZ)){
 						possible = false;
 					}
 					
@@ -5398,8 +5401,9 @@ public class Zone implements Equivalence{
 //#endif
 //      workSet->erase(*j);
 					
-					
-					else if (rv1u > Z.getDbmEntry(0, iZ) + Z.getDbmEntry(iZ, jZ)){
+					// Real one: fix the getting of the upper and lower bounds. Done
+//					else if (rv1u > Z.getDbmEntry(0, iZ) + Z.getDbmEntry(iZ, jZ)){
+					else if (rv1u > Z.getUpperBoundTrue(iZ) + Z.getDbmEntry(iZ, jZ)){
 						workSet.remove(oldEvent);
 					}
 					
