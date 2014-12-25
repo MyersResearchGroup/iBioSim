@@ -1270,11 +1270,15 @@ public class Octagon implements Equivalence {
 	}
 	
 	/**
-	 * Always the lower bound.
+	 * Always the (negative) lower bound in warped space.
 	 */
 	@Override
 	public int getLowerBoundTrue(int index){
-		return _matrix[baseToPos(index)][baseToNeg(index)];
+		// The matrix stores twice the lower bound.
+		return (int)(ContinuousUtilities.chkDiv(
+				_matrix[baseToPos(index)][baseToNeg(index)],
+				2,
+				true));
 	}
 	
 	/**
@@ -1291,11 +1295,15 @@ public class Octagon implements Equivalence {
 	}
 	
 	/**
-	 * Always gives the upper bound.
+	 * Always gives the upper bound in warped space.
 	 */
 	@Override
 	public int getUpperBoundTrue(int index){
-		return _matrix[baseToNeg(index)][baseToPos(index)];
+		// The matrix stores twice the upper bound.
+		return (int)(ContinuousUtilities.chkDiv(
+				_matrix[baseToNeg(index)][baseToPos(index)],
+				2,
+				true));
 	}
 	
 	/**
@@ -1780,6 +1788,9 @@ public class Octagon implements Equivalence {
 		// Create the new matrix.
 		//*newZone._matrix = new int[newZone.matrixSize()][newZone.matrixSize()];
 		newOct._matrix = new int[newOct.DBMsize()][newOct.DBMsize()];
+		// Create the upper and lower bound 
+		newOct._lowerBounds = new int[newOct._dbmVarList.length];
+		newOct._upperBounds = new int[newOct._dbmVarList.length];
 		
 		// Note: For simplicity, make a copy of the current Octagon and perform the
 		// restriction and re-canonicalization. Later add a copy re-canonicalization
@@ -1852,9 +1863,6 @@ public class Octagon implements Equivalence {
 		}
 		
 		// Copy the upper and lower bounds.
-		// First create the upper and lower bound 
-		newOct._lowerBounds = new int[_dbmVarList.length];
-		newOct._upperBounds = new int[_dbmVarList.length];
 		//*for(int i=1; i<tempZone.dbmSize(); i++)
 		//*{
 		for (int i=0; i<tempOct._dbmVarList.length; i++){
@@ -1986,11 +1994,14 @@ public class Octagon implements Equivalence {
 				int baseTimerNew = newOct.getBaseIndex(timerNew);
 				int baseTimerOld = newOct.getBaseIndex(timerOld);
 				
-				int upperBound = (int)Math.ceil(
-						tempOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerOld)]/2.0);
+//				int upperBound = (int)Math.ceil(
+//						tempOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerOld)]/2.0);
+				int upperBound = tempOct.getUpperBoundTrue(baseTimerOld);
 				
-				int lowerBound = (int)Math.ceil(
-						tempOct._matrix[baseToNeg(baseTimerOld)][baseToNeg(baseTimerOld)]/2.0);
+//				int lowerBound = (int)Math.ceil(
+//						tempOct._matrix[baseToNeg(baseTimerOld)][baseToNeg(baseTimerOld)]/2.0);
+				int lowerBound = tempOct.getLowerBoundTrue(baseTimerOld);
+				
 				
 				// copy in lowerBound.
 				newOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerNew)] = lowerBound;
@@ -2741,7 +2752,8 @@ public class Octagon implements Equivalence {
 			
 			// In either case (timer or continuous), set the upper bound portion
 			// of the DBM to the new value.
-			this._matrix[baseToNeg(i)][baseToPos(i)] = newValue;
+			this._matrix[baseToNeg(i)][baseToPos(i)] = 
+					newValue == Zone.INFINITY ? Zone.INFINITY : 2*newValue;
 		}
 		
 		// Handle the b3 entry.
@@ -2893,7 +2905,8 @@ public class Octagon implements Equivalence {
 		 */
 		//*newZone._matrix = new int[newZone.matrixSize()][newZone.matrixSize()];
 	    newOct._matrix = new int[newOct.DBMsize()][newOct.DBMsize()];
-		
+	    newOct._lowerBounds = new int[newOct._dbmVarList.length];
+    	newOct._upperBounds = new int[newOct._dbmVarList.length];
 		
 		//*for(int i =0; i< this.dbmSize(); i++){
 //	    for(int i=0; i<this.DBMsize(); i++){
@@ -2917,8 +2930,8 @@ public class Octagon implements Equivalence {
 	    	}
 	    	
 	    	// Create the upper and lower bound arrays.
-	    	newOct._lowerBounds = new int[newOct._dbmVarList.length];
-	    	newOct._upperBounds = new int[newOct._dbmVarList.length];
+//	    	newOct._lowerBounds = new int[newOct._dbmVarList.length];
+//	    	newOct._upperBounds = new int[newOct._dbmVarList.length];
 			
 			// Copy upper and lower bounds for the variable.
 			//*newZone._matrix[newZone.dbmIndexToMatrixIndex(newi)][0] =
@@ -5281,8 +5294,8 @@ public class Octagon implements Equivalence {
 							(LPNContinuousPair) _dbmVarList[i];
 					
 					name = var.getName() + 
-							":[" + -1*getLowerBound(i)*lcPair.getCurrentRate() + ","
-							+ getUpperBound(i)*lcPair.getCurrentRate() + "]\n" +
+							":[" + -1*getLowerBoundTrue(i)*lcPair.getCurrentRate() + ","
+							+ getUpperBoundTrue(i)*lcPair.getCurrentRate() + "]\n" +
 							" Current Rate: " + lcPair.getCurrentRate() + " " +
 							"rate:";
 				}
