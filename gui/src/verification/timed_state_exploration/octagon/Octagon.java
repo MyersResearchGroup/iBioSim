@@ -5225,8 +5225,17 @@ public class Octagon implements Equivalence {
 
 	@Override
 	public int getDbmEntry(int i, int j) {
+		/*
+		 * This method extracts the relational information that
+		 * the zone would provide. If x is the i variable and
+		 * j is the y variable, the (i,j) entry coprresponds the
+		 * relation y-x <= value. This same information is
+		 * contained as y+ - x+ <= value or x- - y- <= value
+		 * in the octagon. Choosing the former, yeilds the
+		 * following code.
+		 */
 		
-		return this._matrix[baseToPos(i)][baseToNeg(j)];
+		return this._matrix[baseToPos(i)][baseToPos(j)];
 	}
 
 	@Override
@@ -5240,6 +5249,8 @@ public class Octagon implements Equivalence {
 		return _lpnList[lpnIndex].
 				getContinuousIndexMap().getValue(name);
 	}
+	
+	
 	@Override
 	public int getLowerBoundbyTransition(Transition t){
 		LhpnFile lpn = t.getLpn();
