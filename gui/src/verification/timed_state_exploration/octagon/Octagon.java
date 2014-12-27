@@ -1183,7 +1183,7 @@ public class Octagon implements Equivalence {
 		}
 				
 		// The variable was found in the Octagon. Yay.
-		int lower = (int) Math.floor((-1)*twiceMin(variableIndex)
+		int lower = (int) Math.floor(twiceMin(variableIndex)
 			*getCurrentRate(variableIndex)/2);
 		int upper = (int) Math.ceil(twiceMax(variableIndex)
 			*getCurrentRate(variableIndex)/2);
@@ -2589,10 +2589,12 @@ public class Octagon implements Equivalence {
 				//*					currentRate, true));
 					/*
 					 *  Set the lower bound. Recall in an Octagon with variable v,
-					 *  the lower bound is in the entry given with column and row
-					 *  v- and is acutally twice the lower bound value.
+					 *  the lower bound is in v- - v+
 					 */
-					_matrix[baseToNeg(i)][baseToNeg(i)] = 2*
+//					_matrix[baseToNeg(i)][baseToNeg(i)] = 2*
+//							ContinuousUtilities.chkDiv(-1*values.get_LowerBound(),
+//									currentRate, true);
+					_matrix[baseToPos(i)][baseToNeg(i)] = 2*
 							ContinuousUtilities.chkDiv(-1*values.get_LowerBound(),
 									currentRate, true);
 					
@@ -2602,10 +2604,9 @@ public class Octagon implements Equivalence {
 					
 					/* 
 					 * Set the upper bound. Recall in an Octagon with variable v,
-					 * the upper bound is in the entry with row and column v+ and
-					 * is actually twice the upper bound.
+					 * the upper bound is in the entry v+ - v-.
 					 */
-					_matrix[baseToPos(i)][baseToPos(i)] = 2*
+					_matrix[baseToNeg(i)][baseToPos(i)] = 2*
 							ContinuousUtilities.chkDiv(values.get_UpperBound(),
 									currentRate, true);
 				}
@@ -3790,10 +3791,12 @@ public class Octagon implements Equivalence {
 				
 				// Define the alpha, ynew, and yold.
 				if(_dbmVarList[i] instanceof LPNContinuousPair){
-										
-					xold = Math.abs((double) oldOctagon.getCurrentRate(i));
+//					(double) oldOctagon.getCurrentRate(this._dbmVarList[i])					
 					
-					signx = (double) oldOctagon.getCurrentRate(i)/
+					
+					xold = Math.abs((double) oldOctagon.getCurrentRate(this._dbmVarList[i]));
+					
+					signx = (double) oldOctagon.getCurrentRate(this._dbmVarList[i])/
 							(double) this.getCurrentRate(i);
 				
 					// I'm not going to do any warping when the previous rate
@@ -3813,10 +3816,10 @@ public class Octagon implements Equivalence {
 				if(_dbmVarList[j] instanceof LPNContinuousPair){
 				
 					yold = Math.floor(Math.abs(
-							(double) oldOctagon.getCurrentRate(j)));
+							(double) oldOctagon.getCurrentRate(this._dbmVarList[j])));
 					
-					signy = (double) oldOctagon.getCurrentRate(i)/
-							(double) this.getCurrentRate(i);
+					signy = (double) oldOctagon.getCurrentRate(this._dbmVarList[j])/
+							(double) this.getCurrentRate(j);
 					
 					// I'm not going to do any warping when the previous rate is
 					// zero.
@@ -3843,11 +3846,14 @@ public class Octagon implements Equivalence {
 					
 					// Swap the bounds.
 					int tmp = this._matrix[baseToNeg(i)][baseToPos(i)];
+//					this._matrix[baseToNeg(i)][baseToPos(i)] =
+//							-1*this._matrix[baseToPos(i)][baseToNeg(i)];
+//					this._matrix[baseToPos(i)][baseToNeg(i)] = -1 * tmp;
 					this._matrix[baseToNeg(i)][baseToPos(i)] =
-							-1*this._matrix[baseToPos(i)][baseToNeg(i)];
-					this._matrix[baseToPos(i)][baseToNeg(i)] = -1 * tmp;
+							this._matrix[baseToPos(i)][baseToNeg(i)];
+					this._matrix[baseToPos(i)][baseToNeg(i)] = tmp;
 					
-					// Seve the b1 entry.
+					// Save the b1 entry.
 					tmp = this._matrix[baseToPos(i)][baseToPos(j)];
 					
 					// Write over the b1 entry with b3.
@@ -3978,7 +3984,8 @@ public class Octagon implements Equivalence {
 		
 		Octagon oldOctagon = (Octagon) oldE;
 		
-		oldOctagon.negativeWarp(oldOctagon);
+//		oldOctagon.negativeWarp(oldOctagon);
+		this.negativeWarp(oldOctagon);
 		
 //		for(int i=1; i<DBMsize(); i++){
 		for(int i=0; i<this._dbmVarList.length; i++){
