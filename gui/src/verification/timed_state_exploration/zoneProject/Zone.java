@@ -1280,6 +1280,18 @@ public class Zone implements Equivalence{
 				[dbmIndexToMatrixIndex(index)];
 	}
 	
+	public int getUnwarpedUpperBound(LPNContinuousPair lcpair){
+		// Get the index.
+		int index = Arrays.binarySearch(_indexToTimerPair, lcpair);
+
+		int rate = ((LPNContinuousPair) _indexToTimerPair[index])
+				.getCurrentRate();
+
+		int warpValue = getUpperBoundTrue(index);
+		
+		return warpValue * rate;
+	}
+	
 	public int getLowerBound(int index){
 		return _matrix[dbmIndexToMatrixIndex(index)][0];
 	}
