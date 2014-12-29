@@ -186,9 +186,25 @@ public class Options {
 		_resetOnce = resetOnce;
 	}
 	
-	/* gets the _resetOnce flag. */
+	/* Gets the _resetOnce flag. */
 	public static boolean get_resetOnce(){
 		return _resetOnce;
+	}
+	
+	/* 
+	 * Flag for turn on/off the gui response for
+	 * verification results
+	 */
+	private static boolean _displayResults = false;
+	
+	/* Sets the _displayResults flag. */
+	public static void set_displayResults(boolean displayResults){
+		_displayResults = displayResults;
+	}
+	
+	/* Gets the _displayResults flag. */
+	public static boolean get_displayResults(){
+		return _displayResults;
 	}
 	
 	/*
