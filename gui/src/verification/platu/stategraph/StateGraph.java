@@ -1742,9 +1742,10 @@ public class StateGraph {
 					LPNContinuousPair index = 
 							new LPNContinuousPair(lpn.getLpnIndex(), contIndex, 0);
 
-					int value = newZones[0]
-							.getDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR,
-									index);
+//					int value = newZones[0]
+//							.getDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR,
+//									index);
+					int value = newZones[0].getUnwarpedUpperBound(index);
 					
 					if(iv.exceedConstant(value)){
 					
