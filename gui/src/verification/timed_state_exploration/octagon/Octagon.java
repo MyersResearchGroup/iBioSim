@@ -3117,6 +3117,13 @@ public class Octagon implements Equivalence {
 	 */
 	private void restrictContinuous(EventSet eventSet){
 	
+		/*
+		 * TODO: check logic that bounds need to be adjusted by two,
+		 * since the bounds are twice the actual bounds. Also need to
+		 * check the logic for adjusting b3. If b3 is not adjusted and
+		 * the bound changes, the octagon may become empty.
+		 */
+				
 		// Check that the eventSet is a set of Inequality events.
 		//*if(!eventSet.isInequalities()){
 			// If the eventSet is not a set of inequalities, do nothing.
@@ -3193,7 +3200,7 @@ public class Octagon implements Equivalence {
 		if(needsAdjusting){
 		
 			// At least one of the continuous variables has been moved forward,
-			// so se need to ajust the bounds to keep a consistent zone.
+			// so we need to ajust the bounds to keep a consistent zone.
 			//*for(int i=1; i<_indexToTimerPair.length; i++){
 			for (int i=0; i<_dbmVarList.length; i++){
 				
@@ -3214,10 +3221,35 @@ public class Octagon implements Equivalence {
 				// With a zone we added 1. Should we add 1 or 2 for
 				// Octagons? I'll choosing 1 for right now.
 				// Upper bound is v+ -v- (remember column minus row).
-				_matrix[baseToNeg(i)][baseToPos(i)] += 1;
+				_matrix[baseToNeg(i)][baseToPos(i)] += 2;
 				
 			}
 			//*}
+			
+			// For every continous variable that was adjusted, need
+			// to adjust the b3 entry. We will add one to the b3 entry
+			// for each continuous variable involved.
+			for(int i=0; i<_dbmVarList.length; i++){
+				
+				LPNTransitionPair ltpair = _dbmVarList[i];
+				
+				if(!adjustedColumns.contains(ltpair)){
+					// If this continuous variable has not
+					// had the upper bound change, then
+					// do nothing.
+					continue;
+				}
+				
+				for (int j=0; j<_dbmVarList.length; j++){
+					
+					if(adjustedColumns.contains(_dbmVarList[j]) && j<=i){
+						continue;
+					}
+					
+					_matrix[baseToNeg(i)][baseToPos(j)] += 2;
+					_matrix[baseToNeg(j)][baseToPos(i)] += 2;
+				}
+			}
 		}
 		//*}
 	}
@@ -3247,8 +3279,8 @@ public class Octagon implements Equivalence {
 		
 		// Set the lower bound for the variable (V- - v+) entry.
 		// Note: lower bounds are doubled in the Octagon and are negative.
-		_matrix[baseToPos(baseIndex)][baseToNeg(baseIndex)] =
-				ContinuousUtilities.chkDiv(-2*constant, ltContPair.getCurrentRate(), true);
+		int newLower = ContinuousUtilities.chkDiv(-2*constant, ltContPair.getCurrentRate(), true);
+		_matrix[baseToPos(baseIndex)][baseToNeg(baseIndex)] = newLower%2 == 0 ? newLower: newLower -1;
 		
 		
 		// Check if the upper bound needs to be advanced and advance it if necessary.
@@ -3262,8 +3294,8 @@ public class Octagon implements Equivalence {
 			// If the upper bound in the Octagon is less than the new
 			// restricting value, we must advance it for the
 			// Octagon to remain consistent.
-			_matrix[baseToNeg(baseIndex)][baseToPos(baseIndex)] =
-					ContinuousUtilities.chkDiv(2*constant, ltContPair.getCurrentRate(), true);
+			int newUpper = ContinuousUtilities.chkDiv(2*constant, ltContPair.getCurrentRate(), true);
+			_matrix[baseToNeg(baseIndex)][baseToPos(baseIndex)] = newUpper%2 == 0 ? newUpper: newUpper +1;
 			
 			
 			//*return true;
