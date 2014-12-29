@@ -1944,8 +1944,10 @@ public class Octagon implements Equivalence {
 					// When the variable is a continuous variable, the range of rates
 					// are stored in the _lowerBounds and _upperBounds member
 					// variables.
-					newOct._lowerBounds[i] = -1*rates.get_LowerBound();
-					newOct._upperBounds[i] = rates.get_UpperBound();
+					int newIndex = Arrays.binarySearch(newOct._dbmVarList,
+							tempOct._dbmVarList[i]);
+					newOct._lowerBounds[newIndex] = -1*rates.get_LowerBound();
+					newOct._upperBounds[newIndex] = rates.get_UpperBound();
 					
 					// Copy the smallest and greatest continuous value.
 					// The material was commented out in the Zone.
@@ -1967,8 +1969,10 @@ public class Octagon implements Equivalence {
 			// The cached lower and upper bound values of the delay are stored in the
 			// _upperBounds and _lowerBounds member variables.
 //			newOct._lowerBounds[i] = -1*tempOct._lowerBounds[i];
-			newOct._lowerBounds[i] = tempOct._lowerBounds[i];
-			newOct._upperBounds[i] = tempOct._upperBounds[i];
+			int newIndex = Arrays.binarySearch(newOct._dbmVarList,
+					tempOct._dbmVarList[i]);
+			newOct._lowerBounds[newIndex] = tempOct._lowerBounds[i];
+			newOct._upperBounds[newIndex] = tempOct._upperBounds[i];
 			
 		//*}
 		}
@@ -1996,11 +2000,13 @@ public class Octagon implements Equivalence {
 				
 //				int upperBound = (int)Math.ceil(
 //						tempOct._matrix[baseToPos(baseTimerOld)][baseToPos(baseTimerOld)]/2.0);
-				int upperBound = tempOct.getUpperBoundTrue(baseTimerOld);
+				int upperBound = tempOct.getUpperBoundTrue(
+						tempOct.getBaseIndex(timerOld));
 				
 //				int lowerBound = (int)Math.ceil(
 //						tempOct._matrix[baseToNeg(baseTimerOld)][baseToNeg(baseTimerOld)]/2.0);
-				int lowerBound = tempOct.getLowerBoundTrue(baseTimerOld);
+				int lowerBound = tempOct.getLowerBoundTrue(
+						tempOct.getBaseIndex(timerOld));
 				
 				
 				// copy in lowerBound.
@@ -3784,7 +3790,7 @@ public class Octagon implements Equivalence {
 		
 		for(int i=0; i<this._dbmVarList.length; i++){
 			
-			for(int j=i+1; j<this._dbmVarList.length; j++){
+//			for(int j=i+1; j<this._dbmVarList.length; j++){
 
 				// Let i be 'x' and j be 'y'.
 				double yold, xold, signx, signy;
@@ -3811,6 +3817,16 @@ public class Octagon implements Equivalence {
 					xold = 1.0;
 					signx = 1.0;
 				}
+				
+				// Swap the bound if they need to be swapped.
+				if(signx < 0){
+					int tmp = this._matrix[baseToNeg(i)][baseToPos(i)];
+					this._matrix[baseToNeg(i)][baseToPos(i)] =
+							this._matrix[baseToPos(i)][baseToNeg(i)];
+					this._matrix[baseToPos(i)][baseToNeg(i)] = tmp;
+				}
+				
+				for(int j=i+1; j<this._dbmVarList.length; j++){
 				
 				// Assign the beta, xnew, and xold.
 				if(_dbmVarList[j] instanceof LPNContinuousPair){
@@ -3845,16 +3861,16 @@ public class Octagon implements Equivalence {
 					// directly.
 					
 					// Swap the bounds.
-					int tmp = this._matrix[baseToNeg(i)][baseToPos(i)];
+//					int tmp = this._matrix[baseToNeg(i)][baseToPos(i)];
 //					this._matrix[baseToNeg(i)][baseToPos(i)] =
 //							-1*this._matrix[baseToPos(i)][baseToNeg(i)];
 //					this._matrix[baseToPos(i)][baseToNeg(i)] = -1 * tmp;
-					this._matrix[baseToNeg(i)][baseToPos(i)] =
-							this._matrix[baseToPos(i)][baseToNeg(i)];
-					this._matrix[baseToPos(i)][baseToNeg(i)] = tmp;
+//					this._matrix[baseToNeg(i)][baseToPos(i)] =
+//							this._matrix[baseToPos(i)][baseToNeg(i)];
+//					this._matrix[baseToPos(i)][baseToNeg(i)] = tmp;
 					
 					// Save the b1 entry.
-					tmp = this._matrix[baseToPos(i)][baseToPos(j)];
+					int tmp = this._matrix[baseToPos(i)][baseToPos(j)];
 					
 					// Write over the b1 entry with b3.
 					this._matrix[baseToPos(i)][baseToPos(j)] =
@@ -3888,7 +3904,7 @@ public class Octagon implements Equivalence {
 					
 					
 					// Since x is positive, do not swap the bounds.
-					int tmp = 0;
+//					int tmp = 0;
 //					int tmp = this._matrix[baseToNeg(i)][baseToPos(i)];
 //					this._matrix[baseToNeg(i)][baseToPos(i)] =
 //							-1*this._matrix[baseToPos(i)][baseToNeg(i)];
@@ -3901,7 +3917,7 @@ public class Octagon implements Equivalence {
 					// Simlarly, b3 and the -b2 entry are swapped
 					// directly.
 					// Save the b1 value.
-					tmp = this._matrix[baseToPos(i)][baseToPos(j)];
+					int tmp = this._matrix[baseToPos(i)][baseToPos(j)];
 					
 					// Write over the b1 values with -b4.
 					this._matrix[baseToPos(i)][baseToPos(j)] =
@@ -3935,13 +3951,16 @@ public class Octagon implements Equivalence {
 					// directly.
 					
 					// Swap the bounds.
-					int tmp = this._matrix[baseToNeg(i)][baseToPos(i)];
-					this._matrix[baseToNeg(i)][baseToPos(i)] =
-							-1*this._matrix[baseToPos(i)][baseToNeg(i)];
-					this._matrix[baseToPos(i)][baseToNeg(i)] = -1 * tmp;
+//					int tmp = this._matrix[baseToNeg(i)][baseToPos(i)];
+//					this._matrix[baseToNeg(i)][baseToPos(i)] =
+//							-1*this._matrix[baseToPos(i)][baseToNeg(i)];
+//					this._matrix[baseToPos(i)][baseToNeg(i)] = -1 * tmp;
+//					this._matrix[baseToNeg(i)][baseToPos(i)] =
+//							this._matrix[baseToPos(i)][baseToNeg(i)];
+//					this._matrix[baseToPos(i)][baseToNeg(i)] = tmp;
 					
 					// Save the b1 entry.
-					tmp = this._matrix[baseToPos(i)][baseToPos(j)];
+					int tmp = this._matrix[baseToPos(i)][baseToPos(j)];
 					
 					// Write over the b1 entry with -b2.
 					this._matrix[baseToPos(i)][baseToPos(j)] =
