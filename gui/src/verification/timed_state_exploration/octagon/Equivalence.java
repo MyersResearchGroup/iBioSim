@@ -30,6 +30,8 @@ public interface Equivalence {
 
 	public int getUpperBoundTrue(int index);
 	
+	public int getUnwarpedUpperBound(LPNContinuousPair lcpair);
+	
 	public int getLowerBoundTrue(int index);
 
 	public LhpnFile[] get_lpnList();
