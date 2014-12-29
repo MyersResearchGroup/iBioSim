@@ -423,10 +423,11 @@ public class Analysis {
 				if (Analysis.deadLock(nextEnabledArray)){
 					System.out.println("*** Verification failed: deadlock.");
 					failure = true;
-					JOptionPane.showMessageDialog(Gui.frame,
-							"The system deadlocked.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-				
+					if(Options.get_displayResults()){
+						JOptionPane.showMessageDialog(Gui.frame,
+								"The system deadlocked.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
 					break main_while_loop;
 				}
 			}
@@ -514,18 +515,29 @@ public class Analysis {
 			+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
 		if(Options.getTimingAnalysisFlag()){// && !failure){
 			if(!failure){
-//				JOptionPane.showMessageDialog(Gui.frame,
-//						"Verification was successful.", "Success",
-//						JOptionPane.INFORMATION_MESSAGE);
+				if(Options.get_displayResults()){
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Verification was successful.", "Success",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
 				System.out.println("Verification was successful");
 			}
 			else{
-//				JOptionPane.showMessageDialog(Gui.frame,
-//						"Failure transition " + firedFailure.getLabel() + " is enabled.", "Error",
-//						JOptionPane.ERROR_MESSAGE);
 				System.out.println("************ System failed. ***********");
 				if(firedFailure != null){
+					if(Options.get_displayResults()){
+						JOptionPane.showMessageDialog(Gui.frame,
+								"Failure transition " + firedFailure.getLabel() + " is enabled.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
 					System.out.println("The failure transition" + firedFailure.getLabel() + "fired.");
+				}
+				else{
+					if(Options.get_displayResults()){
+						JOptionPane.showMessageDialog(Gui.frame,
+								"System failed for reason other\nthan a failure transition.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 			System.out.println(prjStateSet.toString());
