@@ -4127,7 +4127,7 @@ public class Octagon implements Equivalence {
 					// This is the warping when the 'y' is greater
 					// than the x.
 					
-					// Warp the bounds.
+					// Get the bounds.
 					
 					// Get the values out of the matrix.
 					int My =(int) Math.ceil(
@@ -4147,15 +4147,15 @@ public class Octagon implements Equivalence {
 					int b3 = this._matrix[baseToNeg(i)][baseToPos(j)];
 					int b4 = (-1)*this._matrix[baseToPos(i)][baseToNeg(j)];
 					
-					//int b1new = (int) Math.ceil((beta - alpha)*My + alpha*b1);
-					//int negb2new = (int) Math.ceil((-1)*((beta - alpha)*my + alpha*b2));
-					//int b3new = (int) Math.ceil((beta-alpha)*My + alpha*b3);
-					//int negb4new = (int) Math.ceil((-1)*((beta - alpha)*my + alpha*b4));;
+//					int b1new = (int) Math.ceil((beta - alpha)*My + alpha*b1);
+//					int negb2new = (int) Math.ceil((-1)*((beta - alpha)*my + alpha*b2));
+//					int b3new = (int) Math.ceil((beta-alpha)*My + alpha*b3);
+//					int negb4new = (int) Math.ceil((-1)*((beta - alpha)*my + alpha*b4));
 
-					int b1new = (int) Math.ceil((ynew/yold - xnew/xold)*My + xnew*b1/xold);
-					int negb2new = (int) Math.ceil((-1)*((ynew/yold - xnew/xold)*my + xnew*b2/xold));
-					int b3new = (int) Math.ceil((ynew/yold-xnew/xold)*My + xnew*b3/xold);
-					int negb4new = (int) Math.ceil((-1)*((ynew/yold - ynew/yold)*my + xnew*b4/xold));
+					int b1new = (int) Math.ceil((yold/ynew - xold/xnew)*My + xold*b1/xnew);
+					int negb2new = (int) Math.ceil((-1)*((yold/ynew - xold/xnew)*my + xold*b2/xnew));
+					int b3new = (int) Math.ceil((yold/ynew-xold/xnew)*My + xold*b3/xnew);
+					int negb4new = (int) Math.ceil((-1)*((yold/ynew - xold/xnew)*my + xold*b4/xnew));
 					
 					
 					// b1
@@ -4183,7 +4183,7 @@ public class Octagon implements Equivalence {
 					// This is the warping when the 'x' is greater
 					// than the y.
 					
-					// Warp the bounds.
+					// Get the bounds.
 					
 					int Mx =(int) Math.ceil(
 							this._matrix[baseToNeg(i)][baseToPos(i)]/2);
@@ -4203,10 +4203,15 @@ public class Octagon implements Equivalence {
 					int b3 = this._matrix[baseToNeg(i)][baseToPos(j)];
 					int b4 = (-1)*this._matrix[baseToPos(i)][baseToNeg(j)];
 					
-					int b1new = (int) Math.ceil((beta - alpha)*mx + beta*b1);
-					int negb2new = (int) Math.ceil((-1)*((beta - alpha)*Mx + beta*b2));
-					int b3new = (int) Math.ceil((alpha - beta)*Mx + beta*b3);
-					int negb4new = (int) Math.ceil((-1)*((alpha - beta)*mx + beta*b4));
+//					int b1new = (int) Math.ceil((beta - alpha)*mx + beta*b1);
+//					int negb2new = (int) Math.ceil((-1)*((beta - alpha)*Mx + beta*b2));
+//					int b3new = (int) Math.ceil((alpha - beta)*Mx + beta*b3);
+//					int negb4new = (int) Math.ceil((-1)*((alpha - beta)*mx + beta*b4));
+					
+					int b1new = (int) Math.ceil((yold/ynew - xold/xnew)*mx + yold/ynew*b1);
+					int negb2new = (int) Math.ceil((-1)*((yold/ynew - xold/xnew)*Mx + yold/ynew*b2));
+					int b3new = (int) Math.ceil((xold/xnew - yold/ynew)*Mx + yold/ynew*b3);
+					int negb4new = (int) Math.ceil((-1)*((xold/xnew - yold/ynew)*mx + yold/ynew*b4));
 					
 					// b1
 					this._matrix[baseToPos(i)][baseToPos(j)] = b1new;
@@ -4230,62 +4235,67 @@ public class Octagon implements Equivalence {
 					this._matrix[baseToPos(j)][baseToNeg(i)] = negb4new;
 				}
 			}
-			
-			// Warp the upper and lower bounds for x.
-			
-			if((this._dbmVarList[i] instanceof  LPNContinuousPair)
-					&& Math.abs(this.getUpperBound(i)) != Zone.INFINITY){
-			
-			
-				if(oldOctagon.getCurrentRate(this._dbmVarList[i]) == 0){
-					// If the older rate was zero, then we just need to
-					// divide by the new rate. Note: as long as the
-					// rate stored in the octagon is already twice the
-					// max, there is no need to divide by two before
-					// doing the warping.
-					this._matrix[baseToNeg(i)][baseToPos(i)] =
-							ContinuousUtilities.chkDiv(
-									this._matrix[baseToNeg(i)][baseToPos(i)],
-									Math.abs(getCurrentRate(i)),
-									true);
-				}
-				else{
-					// Undo the old warping and introduce the new warping.
-					// If the bound is infinite, then division does nothing.
-					this._matrix[baseToNeg(i)][baseToPos(i)] =
-							ContinuousUtilities.chkDiv(
-									Math.abs(oldOctagon.getCurrentRate(i))
-									*this._matrix[baseToNeg(i)][baseToPos(i)],
-									Math.abs(getCurrentRate(i)),
-									true);
-					
-				}
+		}
+		
+		// Warp the upper and lower bounds for x.
+		for(int i=0; i<this._dbmVarList.length; i++){
+			if(this._dbmVarList[i] instanceof LPNContinuousPair){
 				
-			}
-		//*if(Math.abs(getDbmEntry(0, i)) != INFINITY){
-			if((this._dbmVarList[i] instanceof LPNContinuousPair)
-					&& Math.abs(this.getLowerBound(i)) != Zone.INFINITY){
-			
-				if(oldOctagon.getCurrentRate(this._dbmVarList[i]) == 0){
-					// If the old rate is zero, then only need to warp
-					// for the current rate.
-					this._matrix[baseToPos(i)][baseToNeg(i)] =
-							ContinuousUtilities.chkDiv(
-									Math.abs(oldOctagon.getCurrentRate(this._dbmVarList[i]))
-									*this._matrix[baseToPos(i)][baseToNeg(i)],
-									Math.abs(this.getCurrentRate(i)),
-									true);
+
+				if((this._dbmVarList[i] instanceof  LPNContinuousPair)
+						&& Math.abs(this.getUpperBound(i)) != Zone.INFINITY){
+
+
+					if(oldOctagon.getCurrentRate(this._dbmVarList[i]) == 0){
+						// If the older rate was zero, then we just need to
+						// divide by the new rate. Note: as long as the
+						// rate stored in the octagon is already twice the
+						// max, there is no need to divide by two before
+						// doing the warping.
+						this._matrix[baseToNeg(i)][baseToPos(i)] =
+								ContinuousUtilities.chkDiv(
+										this._matrix[baseToNeg(i)][baseToPos(i)],
+										Math.abs(getCurrentRate(i)),
+										true);
+					}
+					else{
+						// Undo the old warping and introduce the new warping.
+						// If the bound is infinite, then division does nothing.
+						this._matrix[baseToNeg(i)][baseToPos(i)] =
+								ContinuousUtilities.chkDiv(
+										Math.abs(oldOctagon.getCurrentRate(i))
+										*this._matrix[baseToNeg(i)][baseToPos(i)],
+										Math.abs(getCurrentRate(i)),
+										true);
+
+					}
+
 				}
-				else{
-					// Undo the old warping and introduce the new warping.
-					// If the bound is infinite, then division does nothing.
-					this._matrix[baseToPos(i)][baseToNeg(i)] =
-							ContinuousUtilities.chkDiv(
-									Math.abs(oldOctagon.getCurrentRate(this._dbmVarList[i]))
-									*this._matrix[baseToPos(i)][baseToNeg(i)],
-									Math.abs(getCurrentRate(i)),
-									true);
-					
+				//*if(Math.abs(getDbmEntry(0, i)) != INFINITY){
+				if((this._dbmVarList[i] instanceof LPNContinuousPair)
+						&& Math.abs(this.getLowerBound(i)) != Zone.INFINITY){
+
+					if(oldOctagon.getCurrentRate(this._dbmVarList[i]) == 0){
+						// If the old rate is zero, then only need to warp
+						// for the current rate.
+						this._matrix[baseToPos(i)][baseToNeg(i)] =
+								ContinuousUtilities.chkDiv(
+										Math.abs(oldOctagon.getCurrentRate(this._dbmVarList[i]))
+										*this._matrix[baseToPos(i)][baseToNeg(i)],
+										Math.abs(this.getCurrentRate(i)),
+										true);
+					}
+					else{
+						// Undo the old warping and introduce the new warping.
+						// If the bound is infinite, then division does nothing.
+						this._matrix[baseToPos(i)][baseToNeg(i)] =
+								ContinuousUtilities.chkDiv(
+										Math.abs(oldOctagon.getCurrentRate(this._dbmVarList[i]))
+										*this._matrix[baseToPos(i)][baseToNeg(i)],
+										Math.abs(getCurrentRate(i)),
+										true);
+
+					}
 				}
 			}
 		}
