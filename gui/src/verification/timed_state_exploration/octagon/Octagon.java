@@ -1307,6 +1307,22 @@ public class Octagon implements Equivalence {
 	}
 	
 	/**
+	 * Get the upper bound unwarped.
+	 */
+	public int getUnwarpedUpperBound(LPNContinuousPair lcpair){
+		
+		// Get the index.
+		int index = Arrays.binarySearch(_dbmVarList, lcpair);
+		
+		int rate = ((LPNContinuousPair) _dbmVarList[index])
+				.getCurrentRate();
+		
+		int warpValue = getUpperBoundTrue(index);
+		
+		return warpValue * rate;
+	}
+	
+	/**
 	 * Gets the rate reset value.
 	 * @param ltPair The index for the continuous variable.
 	 * @return The value to reset to.
@@ -1500,21 +1516,31 @@ public class Octagon implements Equivalence {
 		
 		/*
 		 * This to me does not seem to be sound for our
-		 * purposes. This make the upper bound and lower
+		 * purposes. This can make the upper bound and lower
 		 * bound the nearest even number that less than
 		 * or equal to the value. So if the upper bound is
 		 * 5, then this routine makes it 4.
 		 * 
 		 * Would also have to account for the logical
 		 * infinity.
+		 * 
+		 * Update: the recanonicalization routine gets upset
+		 * when the bounds are not even. However, we
+		 * need to over-approximate the state space. So,
+		 * we need the ceiling and not the floor.
 		 */
-		// TODO: Need to decide whether this part of the
+		// Need to decide whether this part of the
 		// code is necessary.
 		// Tightening.
 //		for(int i=0; i<2*this._dbmVarList.length; i++){
 //			this._matrix[i][bar(i)] = (int) (2*Math.floor(
 //					this._matrix[i][bar(i)]/2.0));
 //		}
+		
+		for(int i=0; i<2*this._dbmVarList.length; i++){
+		this._matrix[i][bar(i)] = (int) (2*Math.ceil(
+				this._matrix[i][bar(i)]/2.0));
+	}
 		
 		
 		// Now the coherence portion.
