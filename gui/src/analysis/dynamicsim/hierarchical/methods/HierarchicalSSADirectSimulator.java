@@ -12,11 +12,11 @@ import odk.lang.FastMath;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Rule;
 
-import analysis.dynamicsim.hierarchical.HierarchicalSimulationFunctions;
+import analysis.dynamicsim.hierarchical.HierarchicalArrayModels;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 
-public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFunctions
+public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 {
 
 	private static Long	initializationTime	= new Long(0);
@@ -337,6 +337,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulationFuncti
 			setupRules(model);
 			setupForOutput(randomSeed, runNumber);
 		}
+
+		setupArrayedModels();
 
 		getBufferedTSDWriter().write("(" + "\"" + "time" + "\"");
 

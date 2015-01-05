@@ -19,11 +19,11 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.RateRule;
 
-import analysis.dynamicsim.hierarchical.HierarchicalSimulationFunctions;
+import analysis.dynamicsim.hierarchical.HierarchicalArrayModels;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 
-public class HierarchicalODERKSimulator extends HierarchicalSimulationFunctions
+public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 {
 
 	private int						numSteps;

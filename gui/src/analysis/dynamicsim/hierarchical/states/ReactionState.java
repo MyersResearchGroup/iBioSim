@@ -49,7 +49,7 @@ public abstract class ReactionState extends SpeciesState
 
 		super(state);
 		nonConstantStoichiometry = state.nonConstantStoichiometry;
-		reactionToPropensityMap = state.reactionToPropensityMap;
+		reactionToPropensityMap = new TObjectDoubleHashMap<String>(state.reactionToPropensityMap);
 		reactionToSpeciesAndStoichiometrySetMap = state.reactionToSpeciesAndStoichiometrySetMap;
 		reactionToReactantStoichiometrySetMap = state.reactionToReactantStoichiometrySetMap;
 		reactionToFormulaMap = state.reactionToFormulaMap;

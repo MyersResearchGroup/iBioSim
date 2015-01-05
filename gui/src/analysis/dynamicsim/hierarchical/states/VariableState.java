@@ -44,7 +44,7 @@ public abstract class VariableState extends ModuleState
 		compartmentIDSet = state.compartmentIDSet;
 		speciesIDSet = state.speciesIDSet;
 		variableToIsConstantMap = state.variableToIsConstantMap;
-		variableToValueMap = state.variableToValueMap;
+		variableToValueMap = new TObjectDoubleHashMap<String>(state.variableToValueMap);
 		variableToAffectedConstraintSetMap = state.variableToAffectedConstraintSetMap;
 		variableToIsInConstraintMap = state.variableToIsInConstraintMap;
 	}
