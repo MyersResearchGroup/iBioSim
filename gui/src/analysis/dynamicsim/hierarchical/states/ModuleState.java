@@ -7,7 +7,7 @@ import org.sbml.jsbml.Model;
 
 public abstract class ModuleState
 {
-	private final String	ID;
+	private String			ID;
 	private double			maxPropensity;
 	private double			minPropensity;
 	private final String	model;
@@ -159,6 +159,11 @@ public abstract class ModuleState
 		this.numRules = model.getRuleCount();
 		this.numConstraints = model.getConstraintCount();
 		this.numCompartments = model.getCompartmentCount();
+	}
+
+	public void setID(String iD)
+	{
+		ID = iD;
 	}
 
 	public void setMaxPropensity(double maxPropensity)

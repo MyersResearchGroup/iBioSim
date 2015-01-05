@@ -54,14 +54,17 @@ public abstract class EventState extends ReactionState
 		eventToAssignmentSetMap = state.eventToAssignmentSetMap;
 		eventToDelayMap = state.eventToDelayMap;
 		eventToHasDelayMap = state.eventToHasDelayMap;
-		eventToPreviousTriggerValueMap = state.eventToPreviousTriggerValueMap;
+		eventToPreviousTriggerValueMap = state.eventToPreviousTriggerValueMap == null ? null
+				: new HashMap<String, Boolean>(state.eventToPreviousTriggerValueMap);
 		eventToPriorityMap = state.eventToPriorityMap;
 		eventToTriggerInitiallyTrueMap = state.eventToTriggerInitiallyTrueMap;
 		eventToTriggerMap = state.eventToTriggerMap;
 		eventToTriggerPersistenceMap = state.eventToTriggerPersistenceMap;
 		eventToUseValuesFromTriggerTimeMap = state.eventToUseValuesFromTriggerTimeMap;
-		triggeredEventQueue = state.triggeredEventQueue;
-		untriggeredEventSet = state.untriggeredEventSet;
+		triggeredEventQueue = state.triggeredEventQueue == null ? null
+				: new PriorityQueue<HierarchicalEventToFire>(state.triggeredEventQueue);
+		untriggeredEventSet = state.untriggeredEventSet == null ? null : new HashSet<String>(
+				state.untriggeredEventSet);
 	}
 
 	public HashMap<String, HashSet<String>> getEventToAffectedReactionSetMap()

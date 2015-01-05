@@ -37,6 +37,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	private XORShiftRandom				randomNumberGenerator;
 	private HashMap<String, Double>		replacements;
 	private HashMap<String, ModelState>	submodels;
+	private HashMap<String, ModelState>	arrayModels;
 	private ModelState					topmodel;
 
 	protected static boolean checkGrid(Model model)
@@ -310,11 +311,12 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		replacements = new HashMap<String, Double>();
 		initReplacementState = new HashMap<String, Double>();
 		models = new HashMap<String, Model>();
+
 		SBMLDocument document = getDocument();
 		isGrid = checkGrid(document.getModel());
 		models.put(document.getModel().getId(), document.getModel().clone());
 		filesCreated = new ArrayList<String>();
-
+		arrayModels = new HashMap<String, ModelState>();
 		ibiosimFunctionDefinitions = new HashSet<String>();
 
 		ibiosimFunctionDefinitions.add("uniform");
@@ -1040,6 +1042,16 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	public ModelState getTopmodel()
 	{
 		return topmodel;
+	}
+
+	public HashMap<String, ModelState> getArrayModels()
+	{
+		return arrayModels;
+	}
+
+	public void setArrayModels(HashMap<String, ModelState> arrayModels)
+	{
+		this.arrayModels = arrayModels;
 	}
 
 	/**
