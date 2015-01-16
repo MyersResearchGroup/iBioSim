@@ -94,17 +94,23 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 						&& sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null)
 				{
 					SBMLDocument extDoc = null;
+
+					String source = sbmlComp.getListOfExternalModelDefinitions()
+							.get(submodel.getModelRef()).getSource();
+					String extDef = path + getSeparator() + source;
 					try
 					{
-						extDoc = SBMLReader.read(new File(filename));
+						extDoc = SBMLReader.read(new File(extDef));
 					}
 					catch (XMLStreamException e)
 					{
-						e.printStackTrace();
+						System.err.println("XMLStream problem");
+						return -1;
 					}
 					catch (IOException e)
 					{
-						e.printStackTrace();
+						System.err.println("IO problem");
+						return -1;
 					}
 					CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(extDoc
 							.getModel());
@@ -191,7 +197,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 			if (isGrid())
 			{
 				String[] ids = biomodel.annotation.AnnotationUtility.parseArrayAnnotation(document
-						.getModel().getParameter(submodel.getModelRef() + "__locations"));
+						.getModel().findQuantity(submodel.getModelRef() + "__locations"));
 				for (String s : ids)
 				{
 					if (s.isEmpty())
@@ -370,7 +376,19 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 					sbmlCompModel = (CompModelPlugin) getModels().get(
 							getSubmodels().get(submodel).getModel()).getPlugin(
 							CompConstants.namespaceURI);
-					if (element.isSetIdRef())
+					if (element.isSetSBaseRef())
+					{
+						String subParameter = element.getSBaseRef().getIdRef();
+						getTopmodel().getIsHierarchical().add(p);
+						getTopmodel().getReplacementDependency().put(p, p);
+						getModel(submodel).getIsHierarchical().add(subParameter);
+						getModel(submodel).getReplacementDependency().put(subParameter, p);
+						getTopmodel().getSpeciesToReplacement(p).add(
+								new HierarchicalStringPair(submodel, subParameter));
+						getModel(submodel).getSpeciesToReplacement(subParameter).add(
+								new HierarchicalStringPair("topmodel", p));
+					}
+					else if (element.isSetIdRef())
 					{
 						String subParameter = element.getIdRef();
 						getTopmodel().getIsHierarchical().add(p);
@@ -382,7 +400,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 						getModel(submodel).getSpeciesToReplacement(subParameter).add(
 								new HierarchicalStringPair("topmodel", p));
 					}
-					if (element.isSetMetaIdRef())
+					else if (element.isSetMetaIdRef())
 					{
 						String subParameter = element.getMetaIdRef();
 						getTopmodel().getIsHierarchical().add(p);
@@ -425,15 +443,53 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 				sbmlCompModel = (CompModelPlugin) getModels().get(
 						getSubmodels().get(submodel).getModel()).getPlugin(
 						CompConstants.namespaceURI);
-				if (replacement.isSetIdRef())
+				if (replacement.isSetSBaseRef())
+				{
+					String subParameter = replacement.getSBaseRef().getIdRef();
+					ModelState temp = getModel(submodel);
+					Model sub = getModels().get(temp.getModel()).getModel();
+					getReplacements().put(p, sub.findQuantity(subParameter).getValue());
+					getInitReplacementState().put(
+							p,
+							getModels().get(temp.getModel()).getModel().findQuantity(subParameter)
+									.getValue());
+					getTopmodel().getIsHierarchical().add(p);
+					getTopmodel().getReplacementDependency().put(p, p);
+					getModel(submodel).getIsHierarchical().add(subParameter);
+					getModel(submodel).getReplacementDependency().put(subParameter, p);
+					getTopmodel().getSpeciesToReplacement(p).add(
+							new HierarchicalStringPair(submodel, subParameter));
+					getModel(submodel).getSpeciesToReplacement(subParameter).add(
+							new HierarchicalStringPair("topmodel", p));
+				}
+				if (replacement.isSetSBaseRef())
+				{
+					String subParameter = replacement.getSBaseRef().getIdRef();
+					ModelState temp = getModel(submodel);
+					Model sub = getModels().get(temp.getModel()).getModel();
+					getReplacements().put(p, sub.findQuantity(subParameter).getValue());
+					getInitReplacementState().put(
+							p,
+							getModels().get(temp.getModel()).getModel().findQuantity(subParameter)
+									.getValue());
+					getTopmodel().getIsHierarchical().add(p);
+					getTopmodel().getReplacementDependency().put(p, p);
+					getModel(submodel).getIsHierarchical().add(subParameter);
+					getModel(submodel).getReplacementDependency().put(subParameter, p);
+					getTopmodel().getSpeciesToReplacement(p).add(
+							new HierarchicalStringPair(submodel, subParameter));
+					getModel(submodel).getSpeciesToReplacement(subParameter).add(
+							new HierarchicalStringPair("topmodel", p));
+				}
+				else if (replacement.isSetIdRef())
 				{
 					String subParameter = replacement.getIdRef();
 					ModelState temp = getModel(submodel);
 					Model sub = getModels().get(temp.getModel()).getModel();
-					getReplacements().put(p, sub.getParameter(subParameter).getValue());
+					getReplacements().put(p, sub.findQuantity(subParameter).getValue());
 					getInitReplacementState().put(
 							p,
-							getModels().get(temp.getModel()).getModel().getParameter(subParameter)
+							getModels().get(temp.getModel()).getModel().findQuantity(subParameter)
 									.getValue());
 					getTopmodel().getIsHierarchical().add(p);
 					getTopmodel().getReplacementDependency().put(p, p);
@@ -451,10 +507,10 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 					ModelState temp = getModel(submodel);
 					getReplacements().put(
 							p,
-							getModels().get(temp.getModel()).getModel().getParameter(subParameter)
+							getModels().get(temp.getModel()).getModel().findQuantity(subParameter)
 									.getValue());
 					getInitReplacementState().put(p,
-							getModels().get(temp.getModel()).getParameter(subParameter).getValue());
+							getModels().get(temp.getModel()).findQuantity(subParameter).getValue());
 					getTopmodel().getIsHierarchical().add(p);
 					getTopmodel().getReplacementDependency().put(p, p);
 					getModel(submodel).getIsHierarchical().add(subParameter);

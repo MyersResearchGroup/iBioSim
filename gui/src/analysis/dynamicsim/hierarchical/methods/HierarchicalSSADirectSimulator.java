@@ -318,12 +318,12 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 		setupSpecies(getTopmodel());
 		setupParameters(getTopmodel());
 		setupReactions(getTopmodel());
-		setupConstraints(getTopmodel());
 		setupEvents(getTopmodel());
-		setupInitialAssignments(getTopmodel());
-		setupRules(getTopmodel());
-		setupForOutput(randomSeed, runNumber);
 		setupArraysValues(getTopmodel());
+		setupConstraints(getTopmodel());
+		setupRules(getTopmodel());
+		setupInitialAssignments(getTopmodel());
+		setupForOutput(randomSeed, runNumber);
 
 		for (ModelState model : getSubmodels().values())
 		{
@@ -333,8 +333,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			setupReactions(model);
 			setupConstraints(model);
 			setupEvents(model);
-			setupInitialAssignments(model);
 			setupRules(model);
+			setupInitialAssignments(model);
 			setupForOutput(randomSeed, runNumber);
 		}
 

@@ -561,47 +561,57 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 			state.modelstate.setvariableToValueMap(getReplacements(), "time", t);
 			// updatePropensities(performRateRules(getTopmodel(), currentTime),
 			// "getTopmodel()");
-			revaluateVariables.addAll(performRateRules(state.modelstate, state.variableToIndexMap,
-					currValueChanges));
+			// revaluateVariables.addAll(performRateRules(state.modelstate,
+			// state.variableToIndexMap,
+			// currValueChanges));
 
 			// if assignment rules are performed, these changes need to be
 			// reflected in the currValueChanges
 			// that get passed back
 			if (affectedAssignmentRuleSet.size() > 0)
 			{
-
-				HashSet<String> affectedVariables = performAssignmentRules(state.modelstate,
-						affectedAssignmentRuleSet);
-
-				for (String affectedVariable : affectedVariables)
+				HashSet<String> affectedVariables;
+				boolean changed = true;
+				while (changed)
 				{
+					affectedVariables = performAssignmentRules(state.modelstate,
+							affectedAssignmentRuleSet);
+					changed = false;
+					for (String affectedVariable : affectedVariables)
+					{
+						int index = state.variableToIndexMap.get(affectedVariable);
 
-					int index = state.variableToIndexMap.get(affectedVariable);
-					currValueChanges[index] = state.modelstate.getVariableToValue(
-							getReplacements(), affectedVariable) - y[index];
-					revaluateVariables.add(affectedVariable);
+						double oldValue = currValueChanges[index];
 
+						double newValue = evaluateExpressionRecursive(state.modelstate,
+								state.dvariablesdtime[index], false, getCurrentTime(), null, null);
+
+						if (newValue != oldValue)
+						{
+							changed |= true;
+							currValueChanges[index] = newValue;
+						}
+
+					}
+
+					for (String affectedVariable : revaluateVariables)
+					{
+						int index = state.variableToIndexMap.get(affectedVariable);
+
+						double oldValue = currValueChanges[index];
+
+						double newValue = evaluateExpressionRecursive(state.modelstate,
+								state.dvariablesdtime[index], false, getCurrentTime(), null, null);
+
+						if (newValue != oldValue)
+						{
+							changed |= true;
+							currValueChanges[index] = newValue;
+						}
+					}
 				}
-				/*
-				 * //for (String variable : revaluateVariables) { //int i =
-				 * state.variableToIndexMap.get(variable); for (int i = 0; i <
-				 * currValueChanges.length - 1; i++) {
-				 * 
-				 * String variable = state.indexToVariableMap.get(i);
-				 * 
-				 * if ((state.modelstate.speciesIDSet.contains(variable) &&
-				 * state
-				 * .modelstate.speciesToIsBoundaryConditionMap.get(variable) ==
-				 * false) &&
-				 * (state.modelstate.variableToValueMap.contains(variable)) &&
-				 * state.modelstate.variableToIsConstantMap.get(variable) ==
-				 * false) {
-				 * 
-				 * currValueChanges[i] =
-				 * evaluateExpressionRecursive(state.modelstate,
-				 * state.dvariablesdtime[i]); } }
-				 */
 			}
+			performRateRules(state.modelstate, state.variableToIndexMap, currValueChanges);
 
 			setCurrentTime(t);
 
@@ -627,10 +637,8 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 		{
 
 			HashSet<String> affectedVariables = new HashSet<String>();
-
 			for (RateRule rateRule : modelstate.getRateRulesList())
 			{
-
 				String variable = rateRule.getVariable();
 				ASTNode formula = inlineFormula(modelstate, rateRule.getMath());
 
@@ -647,6 +655,7 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 						{
 							continue;
 						}
+
 						int index = variableToIndexMap.get(variable);
 
 						if (index > currValueChanges.length)
@@ -654,14 +663,16 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 							continue;
 						}
 
-						// double oldValue =
 						// modelstate.getVariableToValue(variable);
-						double value = (evaluateExpressionRecursive(modelstate, formula, false,
+						double newValue = (evaluateExpressionRecursive(modelstate, formula, false,
 								getCurrentTime(), null, null) * modelstate.getVariableToValue(
 								getReplacements(),
 								modelstate.getSpeciesToCompartmentNameMap().get(variable)));
-						currValueChanges[index] = value;
-						// modelstate.setvariableToValueMap(variable, oldValue +
+
+						currValueChanges[index] = newValue;
+
+						// modelstate.setvariableToValueMap(variable,
+						// oldValue +
 						// value);
 
 					}
@@ -676,12 +687,15 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 						{
 							continue;
 						}
-						// double oldValue =
-						// modelstate.getVariableToValue(variable);
-						double value = evaluateExpressionRecursive(modelstate, formula, false,
+						double newValue = evaluateExpressionRecursive(modelstate, formula, false,
 								getCurrentTime(), null, null);
-						currValueChanges[index] = value;
-						// modelstate.setvariableToValueMap(variable, oldValue +
+
+						// modelstate.setvariableToValueMap(getReplacements(),
+						// variable, newValue);
+						currValueChanges[index] = newValue;
+
+						// modelstate.setvariableToValueMap(variable,
+						// oldValue +
 						// value);
 					}
 
@@ -691,7 +705,6 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 
 			return affectedVariables;
 		}
-
 	}
 
 	protected class VariableState

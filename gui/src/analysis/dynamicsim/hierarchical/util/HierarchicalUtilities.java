@@ -124,7 +124,7 @@ public class HierarchicalUtilities
 		biomodel.load(filename);
 		// SBMLDocument sbml = biomodel.getSBMLDocument();
 		SBMLDocument sbml = biomodel.flattenModel(false);
-		if (abstraction.equals("expandReaction"))
+		if ("expandReaction".equals(abstraction))
 		{
 			GCMParser parser = new GCMParser(biomodel);
 			GeneticNetwork network = parser.buildNetwork(sbml);
