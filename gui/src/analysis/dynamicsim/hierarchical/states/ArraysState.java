@@ -19,15 +19,19 @@ public abstract class ArraysState extends HierarchicalState
 
 	private HashMap<String, ASTNode>			arraysIDs;
 	private final HashMap<String, ASTNode>		arraysMetaIDs;
+
 	private HashSet<String>						arrayedObjects;
+	private HashSet<String>						arrayedMetaObjects;
 
 	public ArraysState(HashMap<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 		dimensionObjects = new HashMap<String, List<ArraysObject>>();
 		arrayedObjects = new HashSet<String>();
+		arrayedMetaObjects = new HashSet<String>();
 		arraysIDs = new HashMap<String, ASTNode>();
 		arraysMetaIDs = new HashMap<String, ASTNode>();
+		indexObjects = new HashMap<String, IndexObject>();
 	}
 
 	public ArraysState(ArraysState state)
@@ -37,11 +41,18 @@ public abstract class ArraysState extends HierarchicalState
 		arraysIDs = new HashMap<String, ASTNode>(state.arraysIDs);
 		arraysMetaIDs = new HashMap<String, ASTNode>(state.arraysMetaIDs);
 		arrayedObjects = new HashSet<String>(state.arrayedObjects);
+		arrayedMetaObjects = new HashSet<String>(state.arrayedMetaObjects);
+		indexObjects = new HashMap<String, IndexObject>(indexObjects);
 	}
 
 	public void addArrayedObject(String id)
 	{
 		arrayedObjects.add(id);
+	}
+
+	public void addArrayedMetaObject(String id)
+	{
+		arrayedMetaObjects.add(id);
 	}
 
 	public void addValue(String id, double value, int... indices)
@@ -64,14 +75,15 @@ public abstract class ArraysState extends HierarchicalState
 			child = child.getChild(indices[i]);
 			newId += "_" + indices[i];
 		}
-
+		child.setType(ASTNode.Type.NAME);
 		child.setName(newId);
 		this.getVariableToValueMap().put(newId, value);
+		this.getVariablesToPrint().add(newId);
 	}
 
 	public void addSBase(String metaid, int... indices)
 	{
-		ASTNode vector = arraysIDs.get(metaid);
+		ASTNode vector = arraysMetaIDs.get(metaid);
 		String newId = metaid;
 		ASTNode child;
 		if (vector == null)
@@ -104,6 +116,20 @@ public abstract class ArraysState extends HierarchicalState
 		list.add(new ArraysObject(size, arrayDim));
 	}
 
+	public void addIndex(String id, String attribute, int dim, ASTNode math)
+	{
+		if (indexObjects.containsKey(id))
+		{
+			indexObjects.get(id).addDimToAttribute(attribute, dim, math);
+		}
+		else
+		{
+			IndexObject obj = new IndexObject();
+			obj.addDimToAttribute(attribute, dim, math);
+			indexObjects.put(id, obj);
+		}
+	}
+
 	public HashMap<String, List<ArraysObject>> getDimensionObjects()
 	{
 		return dimensionObjects;
@@ -122,6 +148,11 @@ public abstract class ArraysState extends HierarchicalState
 	public HashSet<String> getArrayedObjects()
 	{
 		return arrayedObjects;
+	}
+
+	public boolean isArrayed(String id)
+	{
+		return arrayedObjects.contains(id) || arrayedMetaObjects.contains(id);
 	}
 
 	public void setArrayedObjects(HashSet<String> arrayedObjects)
@@ -149,18 +180,14 @@ public abstract class ArraysState extends HierarchicalState
 		this.indexObjects = indexObjects;
 	}
 
-	public void addIndexObjects(String id, String attribute, String dimId, ASTNode math)
+	public HashSet<String> getArrayedMetaObjects()
 	{
-		if (indexObjects.containsKey(id))
-		{
-			indexObjects.get(id).addDimToAttribute(attribute, dimId, math);
-		}
-		else
-		{
-			IndexObject obj = new IndexObject();
-			obj.addDimToAttribute(attribute, dimId, math);
-			indexObjects.put(id, obj);
-		}
+		return arrayedMetaObjects;
+	}
+
+	public void setArrayedMetaObjects(HashSet<String> arrayedMetaObjects)
+	{
+		this.arrayedMetaObjects = arrayedMetaObjects;
 	}
 
 }
