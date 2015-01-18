@@ -71,6 +71,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.ext.layout.ReactionGlyph;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
+import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
@@ -1104,6 +1105,48 @@ public class BioModel {
 		}
 	}
 	
+	private void convertLayout(Layout layout) {
+		for (int i = 0; i < layout.getNumTextGlyphs(); i++) {
+			TextGlyph textGlyph = layout.getTextGlyph(i);
+			CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(textGlyph.getGraphicalObject());
+			if (compartmentGlyph!=null) {
+				textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+compartmentGlyph.getCompartment());
+				textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+compartmentGlyph.getCompartment());
+				continue;
+			} 
+			SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(textGlyph.getGraphicalObject());
+			if (speciesGlyph!=null) {
+				textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+speciesGlyph.getSpecies());
+				textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+speciesGlyph.getSpecies());
+				continue;
+			}
+			ReactionGlyph reactionGlyph = layout.getReactionGlyph(textGlyph.getGraphicalObject());
+			if (reactionGlyph!=null) {
+				textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+reactionGlyph.getReaction());
+				textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+reactionGlyph.getReaction());
+				continue;
+			}
+		}
+		for (int i = 0; i < layout.getNumCompartmentGlyphs(); i++) {
+			CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(i);
+			compartmentGlyph.setId(GlobalConstants.GLYPH+"__"+compartmentGlyph.getCompartment());
+		}
+		for (int i = 0; i < layout.getNumSpeciesGlyphs(); i++) {
+			SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(i);
+			speciesGlyph.setId(GlobalConstants.GLYPH+"__"+speciesGlyph.getSpecies());
+		}
+		int i = 0; 
+		while (i < layout.getNumReactionGlyphs()) {
+			ReactionGlyph reactionGlyph = layout.getReactionGlyph(i);
+			reactionGlyph.setId(GlobalConstants.GLYPH+"__"+reactionGlyph.getReaction());
+			if (!reactionGlyph.isSetBoundingBox()) {
+				reactionGlyph.removeFromParent();
+			} else {
+				i++;
+			}
+		}
+	}
+	
 	public Layout getLayout() {
 		if (sbmlLayout==null) {
 			sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
@@ -1117,6 +1160,7 @@ public class BioModel {
 				layout.createDimensions(0, 0, 0);
 			}
 			layout.setId("iBioSim");
+			convertLayout(layout);
 		} else {
 			layout = sbmlLayout.getListOfLayouts().get("iBioSim");
 		}
@@ -2723,31 +2767,39 @@ public class BioModel {
 		double height = 0;
 		for (int i = 0; i < layout.getCompartmentGlyphCount(); i++) {
 			CompartmentGlyph glyph = layout.getCompartmentGlyph(i);
-			double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
-			if (x > width) width = x;
-			double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
-			if (y > height) height = y;
+			if (glyph.isSetBoundingBox()) {
+				double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
+				if (x > width) width = x;
+				double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
+				if (y > height) height = y;
+			}
 		}
 		for (int i = 0; i < layout.getSpeciesGlyphCount(); i++) {
 			SpeciesGlyph glyph = layout.getSpeciesGlyph(i);
-			double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
-			if (x > width) width = x;
-			double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
-			if (y > height) height = y;
+			if (glyph.isSetBoundingBox()) {
+				double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
+				if (x > width) width = x;
+				double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
+				if (y > height) height = y;
+			}
 		}
 		for (int i = 0; i < layout.getReactionGlyphCount(); i++) {
 			ReactionGlyph glyph = layout.getReactionGlyph(i);
-			double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
-			if (x > width) width = x;
-			double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
-			if (y > height) height = y;
+			if (glyph.isSetBoundingBox()) {
+				double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
+				if (x > width) width = x;
+				double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
+				if (y > height) height = y;
+			}
 		}
 		for (int i = 0; i < layout.getAdditionalGraphicalObjectCount(); i++) {
 			GraphicalObject glyph = layout.getAdditionalGraphicalObject(i);
-			double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
-			if (x > width) width = x;
-			double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
-			if (y > height) height = y;
+			if (glyph.isSetBoundingBox()) {
+				double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
+				if (x > width) width = x;
+				double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
+				if (y > height) height = y;
+			}
 		}
 		if (!layout.isSetDimensions()) {
 			layout.createDimensions(0, 0, 0);
@@ -4534,6 +4586,7 @@ public class BioModel {
 	
 	public void createDirPort(String SId,String dir) {
 		Port port = getPortByIdRef(SId);
+		if (port!=null) return;
 		SBase variable = SBMLutilities.getElementBySId(sbml,SId);
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(variable);
 		if (dir.equals(GlobalConstants.INPUT)) {
@@ -6274,6 +6327,27 @@ public class BioModel {
 		}
 	}
 	
+	private boolean portReplacedBy(Submodel submodel,String portId,Port port) {
+		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
+		for (int i = 0; i < elements.size(); i++) {
+			SBase sbase = elements.get(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
+			if (sbmlSBase!=null) {
+				if (sbmlSBase.isSetReplacedBy()) {
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if (replacement.getSubmodelRef().equals(submodel.getId()) &&
+							replacement.isSetPortRef() && replacement.getPortRef().equals(portId)) {
+						if (sbase instanceof NamedSBase) {
+							port.setIdRef(((NamedSBase)sbase).getId());
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	private boolean isPortRemoved(Submodel submodel,String portId) {
 		for (int i = 0; i < submodel.getListOfDeletions().size(); i++) {
 			Deletion deletion = submodel.getListOfDeletions().get(i);
@@ -6293,13 +6367,15 @@ public class BioModel {
 							return true;
 						}
 				}
+				/*
 				if (sbmlSBase.isSetReplacedBy()) {
 					ReplacedBy replacement = sbmlSBase.getReplacedBy();
 					if (replacement.getSubmodelRef().equals(submodel.getId()) &&
 							replacement.isSetPortRef() && replacement.getPortRef().equals(portId)) {
-							return true;
+						return true;
 					}
 				}
+				*/
 			}
 		}
 		return false;
@@ -6347,28 +6423,32 @@ public class BioModel {
 					}
 					port = sbmlCompModel.createPort();
 					port.setId(subPort.getId()+"__"+submodel.getId());
-					port.setIdRef(submodel.getId());
+					if (!portReplacedBy(submodel,subPort.getId(),port)) {
+						port.setIdRef(submodel.getId());
+						SBaseRef sbaseRef = port.createSBaseRef();
+						sbaseRef.setPortRef(subPort.getId());
+						// TODO: need to support arrays of subModels which has arrays of ports
+						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(submodel);
+						ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+						ArraysSBasePlugin sBasePluginSBaseRef = SBMLutilities.getArraysSBasePlugin(sbaseRef);
+						ArraysSBasePlugin sBasePluginSubPort = SBMLutilities.getArraysSBasePlugin(subPort);
+						for (int k = 0; k < sBasePlugin.getListOfDimensions().size(); k++) {
+							Dimension dimen = sBasePlugin.getDimensionByArrayDimension(k);
+							Index portIndex = sBasePluginPort.createIndex();
+							portIndex.setReferencedAttribute("comp:idRef");
+							portIndex.setArrayDimension(k);
+							portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+						}
+						sBasePluginPort.setListOfDimensions(sBasePluginSubPort.getListOfDimensions().clone());
+						sBasePluginSBaseRef.setListOfIndices(sBasePluginSubPort.getListOfIndices().clone());
+						for (int k=0; k<sBasePluginSBaseRef.getIndexCount();k++) {
+							sBasePluginSBaseRef.getIndex(k).setReferencedAttribute("comp:portRef");
+						}
+					} else {
+						// TODO: need to deal with array replacedBy
+					}
 					if (subPort.isSetSBOTerm()) {
 						port.setSBOTerm(subPort.getSBOTerm());
-					}
-					SBaseRef sbaseRef = port.createSBaseRef();
-					sbaseRef.setPortRef(subPort.getId());
-					// TODO: need to support arrays of subModels which has arrays of ports
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(submodel);
-					ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-					ArraysSBasePlugin sBasePluginSBaseRef = SBMLutilities.getArraysSBasePlugin(sbaseRef);
-					ArraysSBasePlugin sBasePluginSubPort = SBMLutilities.getArraysSBasePlugin(subPort);
-					for (int k = 0; k < sBasePlugin.getListOfDimensions().size(); k++) {
-						Dimension dimen = sBasePlugin.getDimensionByArrayDimension(k);
-						Index portIndex = sBasePluginPort.createIndex();
-						portIndex.setReferencedAttribute("comp:idRef");
-						portIndex.setArrayDimension(k);
-						portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-					}
-					sBasePluginPort.setListOfDimensions(sBasePluginSubPort.getListOfDimensions().clone());
-					sBasePluginSBaseRef.setListOfIndices(sBasePluginSubPort.getListOfIndices().clone());
-					for (int k=0; k<sBasePluginSBaseRef.getIndexCount();k++) {
-						sBasePluginSBaseRef.getIndex(k).setReferencedAttribute("comp:portRef");
 					}
 				}
 			}
