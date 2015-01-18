@@ -92,6 +92,10 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.JSBML;
+import org.sbml.libsbml.ConversionProperties;
+import org.sbml.libsbml.SBMLNamespaces;
+import org.sbml.libsbml.SBasePlugin;
+import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 
 import flanagan.math.Fmath;
@@ -4318,6 +4322,60 @@ public class SBMLutilities {
 			f.setVisible(true);
 		}
 	}
+	
+	// TODO: should weave in better with existing conversion
+	private static void convertToL3(org.sbml.libsbml.SBMLDocument doc) {
+		if (doc == null || doc.getModel() == null) return;
+
+		String layoutNsUri = "http://www.sbml.org/sbml/level3/version1/layout/version1";
+		//String renderNsUri = "http://www.sbml.org/sbml/level3/version1/render/version1";
+
+		org.sbml.libsbml.LayoutModelPlugin plugin = 
+				(org.sbml.libsbml.LayoutModelPlugin) doc.getModel().getPlugin("layout");
+
+		// bail if we don't have layout
+		if (plugin == null) return;
+
+		// convert document
+		ConversionProperties prop = new ConversionProperties(new SBMLNamespaces(3,1));
+		prop.addOption("strict", false);
+		prop.addOption("setLevelAndVersion", true);
+		prop.addOption("ignorePackages", true);
+
+		if (doc.convert(prop) != libsbml.LIBSBML_OPERATION_SUCCESS)
+		{
+			System.err.println("Conversion failed!");
+			doc.printErrors();
+			//System.exit(2);
+		}
+
+		// add new layout namespace and set required flag
+		SBasePlugin docPlugin = doc.getPlugin("layout");
+
+		// if we don't have layout there isnothing to do
+		if (docPlugin == null) return;
+
+		docPlugin.setElementNamespace(layoutNsUri);
+
+		doc.getSBMLNamespaces().addPackageNamespace("layout", 1);
+		doc.setPackageRequired("layout", false);
+
+		// TODO: restore when we have render support
+		// add enable render if needed
+		/*
+		SBasePlugin rdocPlugin = doc.getPlugin("render");
+		if (rdocPlugin != null)
+		{
+			doc.getSBMLNamespaces().addPackageNamespace("render", 1);
+		}
+		else
+		{
+			doc.enablePackage(renderNsUri, "render", true);
+		}
+		doc.setPackageRequired("render", false);
+		*/
+
+	}
 
 	public static SBMLDocument readSBML(String filename) {
 		//SBMLReader reader = new SBMLReader();
@@ -4413,8 +4471,13 @@ public class SBMLutilities {
 				JOptionPane.showOptionDialog(Gui.frame, scroll, "SBML Conversion Errors and Warnings", JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 			}
-			
+			convertToL3(doc);
 			doc.setLevelAndVersion(Gui.SBML_LEVEL, Gui.SBML_VERSION,false);
+			/*
+			for (int i = 0; i < doc.getNumErrors(); i++) {
+				System.out.println(doc.getError(i).getMessage());
+			}
+			*/
 			org.sbml.libsbml.SBMLWriter writer = new org.sbml.libsbml.SBMLWriter();
 			try {
 				writer.writeSBMLToFile(doc, filename);
@@ -4695,10 +4758,15 @@ public class SBMLutilities {
 					id = id + "__" + sbaseRef.getIdRef();
 				}
 				if (port == null) {
-					port = bioModel.getSBMLCompModel().createPort();
+					port = bioModel.getSBMLCompModel().getPort(id);
+					if (port == null) {	
+						port = bioModel.getSBMLCompModel().createPort();
+					}
 					port.setId(id);
 					port.setIdRef(sbaseRef.getIdRef());
-					port.setSBaseRef(sbaseRef.getSBaseRef());
+					if (sbaseRef.isSetSBaseRef()) {
+						port.setSBaseRef(sbaseRef.getSBaseRef().clone());
+					}
 				} 
 				sbaseRef.unsetIdRef();
 				sbaseRef.unsetSBaseRef();
