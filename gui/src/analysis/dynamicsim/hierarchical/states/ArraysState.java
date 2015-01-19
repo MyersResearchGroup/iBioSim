@@ -23,6 +23,8 @@ public abstract class ArraysState extends HierarchicalState
 	private HashSet<String>						arrayedObjects;
 	private HashSet<String>						arrayedMetaObjects;
 
+	private HashMap<String, String>				arraySizeToSBase;
+
 	public ArraysState(HashMap<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
@@ -32,6 +34,7 @@ public abstract class ArraysState extends HierarchicalState
 		arraysIDs = new HashMap<String, ASTNode>();
 		arraysMetaIDs = new HashMap<String, ASTNode>();
 		indexObjects = new HashMap<String, IndexObject>();
+		arraySizeToSBase = new HashMap<String, String>();
 	}
 
 	public ArraysState(ArraysState state)
@@ -55,7 +58,12 @@ public abstract class ArraysState extends HierarchicalState
 		arrayedMetaObjects.add(id);
 	}
 
-	public void addValue(String id, double value, int... indices)
+	public void addSizeTrigger(String parameterSize, String id)
+	{
+		arraySizeToSBase.put(parameterSize, id);
+	}
+
+	public String addValue(String id, double value, int... indices)
 	{
 		ASTNode vector = arraysIDs.get(id);
 		String newId = id;
@@ -77,8 +85,7 @@ public abstract class ArraysState extends HierarchicalState
 		}
 		child.setType(ASTNode.Type.NAME);
 		child.setName(newId);
-		this.getVariableToValueMap().put(newId, value);
-		this.getVariablesToPrint().add(newId);
+		return newId;
 	}
 
 	public void addSBase(String metaid, int... indices)
@@ -188,6 +195,16 @@ public abstract class ArraysState extends HierarchicalState
 	public void setArrayedMetaObjects(HashSet<String> arrayedMetaObjects)
 	{
 		this.arrayedMetaObjects = arrayedMetaObjects;
+	}
+
+	public HashMap<String, String> getArraySizeToSBase()
+	{
+		return arraySizeToSBase;
+	}
+
+	public void setArraySizeToSBase(HashMap<String, String> arraySizeToSBase)
+	{
+		this.arraySizeToSBase = arraySizeToSBase;
 	}
 
 }

@@ -21,7 +21,7 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
-public abstract class HierarchicalSimulationFunctions extends HierarchicalSBaseSetup
+public abstract class HierarchicalSimulationFunctions extends HierarchicalSBasesSetup
 {
 
 	public HierarchicalSimulationFunctions(String SBMLFileName, String rootDirectory,
