@@ -442,6 +442,7 @@ public class SBMLutilities {
 	}
 
 	public static void copyIndices(SBase source,SBase destination,String indexedAttribute) {
+		if (source==null || destination==null) return;
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(source);
 		ArraysSBasePlugin sBasePluginDest = SBMLutilities.getArraysSBasePlugin(destination);
 		//sBasePluginDest.unsetListOfIndices();
