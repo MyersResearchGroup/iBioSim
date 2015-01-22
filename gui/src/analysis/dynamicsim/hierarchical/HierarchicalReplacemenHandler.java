@@ -57,8 +57,8 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 		setTopmodel(new ModelState(getModels(), getDocument().getModel().getId(), "topmodel"));
 
 		setNumSubmodels((int) setupSubmodels(getDocument()));
-		
-		if(getNumSubmodels() < 0)
+
+		if (getNumSubmodels() < 0)
 		{
 			setSbmlHasErrorsFlag(true);
 		}
@@ -104,7 +104,8 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 					SBMLDocument extDoc = null;
 
 					String source = sbmlComp.getListOfExternalModelDefinitions()
-							.get(submodel.getModelRef()).getSource();
+							.get(submodel.getModelRef()).getSource().replace("file:", "");
+
 					String extDef = path + getSeparator() + source;
 					try
 					{
