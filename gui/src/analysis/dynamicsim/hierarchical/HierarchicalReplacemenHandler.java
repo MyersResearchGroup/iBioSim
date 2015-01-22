@@ -57,7 +57,15 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 		setTopmodel(new ModelState(getModels(), getDocument().getModel().getId(), "topmodel"));
 
 		setNumSubmodels((int) setupSubmodels(getDocument()));
-		getComponentPortMap(getDocument());
+		
+		if(getNumSubmodels() < 0)
+		{
+			setSbmlHasErrorsFlag(true);
+		}
+		else
+		{
+			getComponentPortMap(getDocument());
+		}
 	}
 
 	/**
