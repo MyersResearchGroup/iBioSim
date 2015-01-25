@@ -35,11 +35,11 @@
 There are versions of {\tt iBioSim} available for Windows, Linux, and
 MacOS.  You can download the appropriate installation file from:\\
 %%tth:\begin{html}<a href="http://www.async.ece.utah.edu/iBioSim/">\end{html}
-{\tt http://www.async.ece.utah.edu/iBioSim}
+{\tt http://www.async.ece.utah.edu/iBioSim}.
 %%tth:\begin{html}</a>\end{html}
-\\ {\tt iBioSim} requires that you have 
+{\tt iBioSim} requires that you have 
 %%tth:\begin{html}<a href="http://java.sun.com/javase/downloads/index.jsp">\end{html}
-Java Runtime Environment 1.5
+Java Runtime Environment 1.6
 %%tth:\begin{html}</a>\end{html}
 or higher install on your system.  It is also useful to have 
 %%tth:\begin{html}<a href="http://www.graphviz.org/">\end{html}
@@ -47,9 +47,26 @@ Graphviz.
 %%tth:\begin{html}</a>\end{html}
 Also, you should associate files with a ``.dot'' extension with the 
 {\tt Graphviz} tool, and files with the ``.xhtml'' extension to your
-web browswer.
+web browswer.  There is also a pure java version available that
+supports most though not all features of {\tt iBioSim}.  This is a good option when having trouble with the other installations, since it is machine independent.
 
-\section{Installation on Windows}
+\section{Java Installation}
+
+\noindent
+To install the pure Java version, you need to download {\tt iBioSim-2.8-Java.zip} and unzip it in the directory you wish to install.  The {\tt iBioSim.jar} file should be executable, but may require being invoked using the explicit command: {\tt java -jar iBioSim.jar}.
+The {\tt iBioSim.mac64} script makes it look better on Mac environment.
+
+\section{MacOS Installation}
+
+\noindent
+To install on MacOS, you need to download {\tt
+  iBioSim-$\langle$version$\rangle$-MacOS.dmg} file.  You should then
+open this file with {\tt DiskImageMounter.app}.  This should open up
+this disk image in {\tt finder}.  You should then copy the contents of
+this disk image to your Applications folder.  You should then be able
+to start {\tt iBioSim} by double-clicking on this application. 
+
+\section{Windows Installation}
 
 \noindent
 Download and execute {\tt iBioSim-$\langle$version$\rangle$-Setup.exe}.\\
@@ -63,8 +80,6 @@ Press {\tt Next} to continue.
 
 \includegraphics[height=95mm]{screenshots/setup}
 
-\clearpage
-
 Next, it ask you for an installation location.  Please make sure to
 select a path that does not have any spaces or special symbols as
 these cause problems with {\tt iBioSim}.
@@ -74,8 +89,6 @@ these cause problems with {\tt iBioSim}.
 You are now ready to install.  Press {\tt Next} to continue.
 
 \includegraphics[height=95mm]{screenshots/confirm}
-
-\clearpage
 
 You are all done.  Press {\tt Finish}.  If selected, {\tt iBioSim}
 will launch immediately.  Otherwise, you can start it using your
@@ -89,7 +102,7 @@ remove {\tt iBioSim} from your system.  It is highly recommended that
 you remove {\tt iBioSim} using this uninstall procedure before
 installing a new version.
 
-\section{Installation on Linux}
+\section{Linux Installation}
 
 \noindent
 Since InstallJammmer is also used for the Linux install, the
@@ -105,8 +118,6 @@ preferred installation language.  Make your selection and press {\tt OK}.
 
 \includegraphics[height=40mm]{screenshots/language}
 
-\clearpage
-
 The next screen tells you that you what version you are installing.
 Press {\tt Next} to continue.
 
@@ -117,8 +128,6 @@ select a path that does not have any spaces or special symbols as
 these cause problems with {\tt iBioSim}.
 
 \includegraphics[height=95mm]{screenshots/location}
-
-\clearpage
 
 You are now ready to install.  Press {\tt Next} to continue.
 
@@ -148,17 +157,5 @@ Note that this is for bash shell, so you may need to change for your shell, if n
 \item ./GeneNet
 \end{itemize}
 You should see the usage lines for these programs.  If you do not, you may need custom builds, contact {\tt myers@ece.utah.edu}.
-
-\clearpage
-
-\section{Installation on MacOS}
-
-\noindent
-To install on MacOS, you need to download {\tt
-  iBioSim-$\langle$version$\rangle$-MacOS.dmg} file.  You should then
-open this file with {\tt DiskImageMounter.app}.  This should open up
-this disk image in {\tt finder}.  You should then copy the contents of
-this disk image to your Applications folder.  You should then be able
-to start {\tt iBioSim} by double-clicking on this application. 
 
 \end{document}

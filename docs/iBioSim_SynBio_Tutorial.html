@@ -14,9 +14,9 @@
  
 
 
-<title> iBioSim Version 2.7 \ Tutorial</title>
+<title> iBioSim Version 2.8 \ Synthetic Biology Tutorial</title>
  
-<h1 align="center">iBioSim Version 2.7 <br />Tutorial </h1>
+<h1 align="center">iBioSim Version 2.8 <br />Synthetic Biology Tutorial </h1>
 
 <div class="p"><!----></div>
 
@@ -193,7 +193,7 @@ Let us know see how to create a new model using the Model Editor.  First, select
 </center>
 
 <div class="p"><!----></div>
-To add a chemical species, select the Add Species icon <img src="../gui/icons/modelview/add_species_selected.png" alt="../gui/icons/modelview/add_species_selected.png" /> and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by clicking on the selection icon 
+To add a chemical species, select the Add Species icon <img src="../gui/icons/modelview/add_species_selected.png" alt="../gui/icons/modelview/add_species_selected.png" /> and click on the schematic canvas  (note that this can also be done using the Edit menu or the hotkeys shown in this menu).  This will drop a new species with default ID and other values.  You may change these defaults by clicking on the selection icon 
 <img src="../gui/icons/modelview/select_mode_selected.png" alt="../gui/icons/modelview/select_mode_selected.png" />, and
 double-clicking on the species to open the Species Editor.  In this case, let us change the ID to LacI and change the Port type to <em>input</em>.  We will leave all the other values at their default values.  The port type of input indicates that this species will be used as an input for the LacI inverter.   
 Note that while in the select mode, you can also select an object in the schematic and move it by moving the mouse while holding the left mouse button.  Pressing the right mouse button while an object is selected brings up a menu that allows you to delete an object from the schematic.  Repeat the steps above to add TetR and GFP species.  Give these species port type of <em>output</em>. 
@@ -229,7 +229,7 @@ The pLac promoter is repressed by the LacI species.  To create this relationship
 </center>
 
 <div class="p"><!----></div>
-As mentioned earlier, the pLac promoter initiates the production of the TetR and GFP species.  Highlight the pLac promoter and, while holding the mouse button, stretch the production arc to the TetR species.  Repeat these steps to create a production arc between the pLac promoter and GFP species.  Note that the icons selected for this are not important because all arcs from promoters to species are always production arcs.  
+As mentioned earlier, the pLac promoter initiates the production of the TetR and GFP species.  Highlight the pLac promoter and, while holding the mouse button, stretch the production arc to the TetR species.  Repeat these steps to create a production arc between the pLac promoter and GFP species.  Note that any regulation icon can be selected for this because all arcs from promoters to species are always production arcs.  
 
 <div class="p"><!----></div>
 
@@ -497,7 +497,7 @@ The schematic in a grid model is a bit different.  It includes a grid in which e
 </center>
 
 <div class="p"><!----></div>
-Next, right-click on the Population model and create an analysis view.  Select Abstraction, Monte Carlo, and the SSA-Direct simulator.  Set the time limit to 10000 with a print interval of 100, and perform the simulation.  Now, go to the schematic tab and press the Choose Simulation button to select run-1.tsd.  Click on one of the genetic toggle switch models to bring up the Edit Species editor.  Select the GFP species and a green color gradient, and apply to all components with this model.  Now, play back the simulation to see the toggle switches turn on and off.
+Next, right-click on the Population model and create an analysis view.  Select Abstraction, Monte Carlo, and the SSA-Direct simulator.  Set the time limit to 10000 with a print interval of 100, change the number of runs to 1, and perform the simulation.  Now, go to the schematic tab and press the Choose Simulation button to select run-1.tsd.  Click on one of the genetic toggle switch models to bring up the Edit Species editor.  Select the GFP species and a green color gradient, and apply to all components with this model.  Now, play back the simulation to see the toggle switches turn on and off.
 
 <div class="p"><!----></div>
 
@@ -522,5 +522,5 @@ Next, right-click on the Population model and create an analysis view.  Select A
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 10 Sep 2014, 21:33.</small>
+version 3.81.<br />On 25 Jan 2015, 14:23.</small>
 </html>

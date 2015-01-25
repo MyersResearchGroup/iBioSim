@@ -31,11 +31,13 @@
 <h1>Contents </h1><a href="#tth_sEc1"
 >1&nbsp; General Requirements</a><br />
 <a href="#tth_sEc2"
->2&nbsp; Installation on Windows</a><br />
+>2&nbsp; Java Installation</a><br />
 <a href="#tth_sEc3"
->3&nbsp; Installation on Linux</a><br />
+>3&nbsp; MacOS Installation</a><br />
 <a href="#tth_sEc4"
->4&nbsp; Installation on MacOS</a><br />
+>4&nbsp; Windows Installation</a><br />
+<a href="#tth_sEc5"
+>5&nbsp; Linux Installation</a><br />
 
 
 <div class="p"><!----></div>
@@ -48,11 +50,11 @@
 There are versions of <tt>iBioSim</tt> available for Windows, Linux, and
 MacOS.  You can download the appropriate installation file from:<br />
 <a href="http://www.async.ece.utah.edu/iBioSim/">
-<tt>http://www.async.ece.utah.edu/iBioSim</tt>
+<tt>http://www.async.ece.utah.edu/iBioSim</tt>.
 </a>
-<br /><tt>iBioSim</tt> requires that you have 
+<tt>iBioSim</tt> requires that you have 
 <a href="http://java.sun.com/javase/downloads/index.jsp">
-Java Runtime Environment 1.5
+Java Runtime Environment 1.6
 </a>
 or higher install on your system.  It is also useful to have 
 <a href="http://www.graphviz.org/">
@@ -60,11 +62,32 @@ Graphviz.
 </a>
 Also, you should associate files with a ".dot" extension with the 
 <tt>Graphviz</tt> tool, and files with the ".xhtml" extension to your
-web browswer.
+web browswer.  There is also a pure java version available that
+supports most though not all features of <tt>iBioSim</tt>.  This is a good option when having trouble with the other installations, since it is machine independent.
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc2">
-2</a>&nbsp;&nbsp;Installation on Windows</h2>
+2</a>&nbsp;&nbsp;Java Installation</h2>
+
+<div class="p"><!----></div>
+To install the pure Java version, you need to download <tt>iBioSim-2.8-Java.zip</tt> and unzip it in the directory you wish to install.  The <tt>iBioSim.jar</tt> file should be executable, but may require being invoked using the explicit command: <tt>java -jar iBioSim.jar</tt>.
+The <tt>iBioSim.mac64</tt> script makes it look better on Mac environment.
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc3">
+3</a>&nbsp;&nbsp;MacOS Installation</h2>
+
+<div class="p"><!----></div>
+To install on MacOS, you need to download <tt>
+  iBioSim-&#9001;version&#9002;-MacOS.dmg</tt> file.  You should then
+open this file with <tt>DiskImageMounter.app</tt>.  This should open up
+this disk image in <tt>finder</tt>.  You should then copy the contents of
+this disk image to your Applications folder.  You should then be able
+to start <tt>iBioSim</tt> by double-clicking on this application. 
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc4">
+4</a>&nbsp;&nbsp;Windows Installation</h2>
 
 <div class="p"><!----></div>
 Download and execute <tt>iBioSim-&#9001;version&#9002;-Setup.exe</tt>.<br />
@@ -111,8 +134,8 @@ you remove <tt>iBioSim</tt> using this uninstall procedure before
 installing a new version.
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc3">
-3</a>&nbsp;&nbsp;Installation on Linux</h2>
+ <h2><a name="tth_sEc5">
+5</a>&nbsp;&nbsp;Linux Installation</h2>
 
 <div class="p"><!----></div>
 Since InstallJammmer is also used for the Linux install, the
@@ -193,22 +216,10 @@ Note that this is for bash shell, so you may need to change for your shell, if n
 You should see the usage lines for these programs.  If you do not, you may need custom builds, contact <tt>myers@ece.utah.edu</tt>.
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc4">
-4</a>&nbsp;&nbsp;Installation on MacOS</h2>
-
-<div class="p"><!----></div>
-To install on MacOS, you need to download <tt>
-  iBioSim-&#9001;version&#9002;-MacOS.dmg</tt> file.  You should then
-open this file with <tt>DiskImageMounter.app</tt>.  This should open up
-this disk image in <tt>finder</tt>.  You should then copy the contents of
-this disk image to your Applications folder.  You should then be able
-to start <tt>iBioSim</tt> by double-clicking on this application. 
-
-<div class="p"><!----></div>
 
 <br /><br /><hr /><small>File translated from
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 18 Jan 2013, 09:45.</small>
+version 3.81.<br />On 25 Jan 2015, 15:49.</small>
 </html>
