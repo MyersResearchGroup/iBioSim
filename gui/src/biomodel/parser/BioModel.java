@@ -3579,8 +3579,15 @@ public class BioModel {
 		
 		Compartment compartment = sbml.getModel().getCompartment(getDefaultCompartment());
 		if (!isGridEnabled()) {
-			sbml.getModel().getCompartment(getCompartmentByLocation((float)x,(float)y,GlobalConstants.DEFAULT_COMPONENT_WIDTH,
-					GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
+			String comp = getCompartmentByLocation((float)x,(float)y,GlobalConstants.DEFAULT_COMPONENT_WIDTH,
+					GlobalConstants.DEFAULT_COMPONENT_HEIGHT);
+			// TODO: not sure if this is right approach.  What about the default compartment above?
+			if (comp.equals("")) {
+				if (sbml.getModel().getCompartmentCount() > 0) {
+					comp = sbml.getModel().getCompartment(0).getId();
+				}
+			}
+			sbml.getModel().getCompartment(comp);
 		}
 			
 		int numRows = grid.getNumRows();
@@ -5667,7 +5674,7 @@ public class BioModel {
 		}
 	}
 	
-	public boolean checkCompartmentLocation(String id,double x, double y, double w, double h) {
+	public boolean checkCompartmentOverlap(String id,double x, double y, double w, double h) {
 		for (int i = 0; i < sbml.getModel().getCompartmentCount(); i++) {
 			Compartment c = sbml.getModel().getCompartment(i);
 			if (c.getId().equals(id)) continue;
@@ -5684,6 +5691,61 @@ public class BioModel {
 			if (y+h <= cy) continue;
 			if (y >= cy+ch) continue;
 			return false;
+		}
+		return true;
+	}
+	
+	public boolean checkCompartmentLocation(String id,double cx, double cy, double cw, double ch) {
+		Layout layout = getLayout();
+		for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
+			Species s = sbml.getModel().getSpecies(i);
+			if (s.getCompartment().equals(id)) {
+				SpeciesGlyph speciesGlyph = null;
+				if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+s.getId())!=null) {
+					speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+s.getId());
+					double x = speciesGlyph.getBoundingBox().getPosition().getX();
+					double y = speciesGlyph.getBoundingBox().getPosition().getY();
+					double w = speciesGlyph.getBoundingBox().getDimensions().getWidth();
+					double h = speciesGlyph.getBoundingBox().getDimensions().getHeight();
+					if (x < cx) {
+						return false;
+					}
+					if (y < cy) {
+						return false;
+					}
+					if (x + w > cx + cw) {
+						return false;
+					}
+					if (y + h > cy + ch) {
+						return false;
+					}
+				}
+			}
+		}
+		for (int i = 0; i < sbml.getModel().getReactionCount(); i++) {
+			Reaction r = sbml.getModel().getReaction(i);
+			if (r.getCompartment().equals(id)) {
+				ReactionGlyph reactionGlyph = null;
+				if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId())!=null) {
+					reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId());
+					double x = reactionGlyph.getBoundingBox().getPosition().getX();
+					double y = reactionGlyph.getBoundingBox().getPosition().getY();
+					double w = reactionGlyph.getBoundingBox().getDimensions().getWidth();
+					double h = reactionGlyph.getBoundingBox().getDimensions().getHeight();
+					if (x < cx) {
+						return false;
+					}
+					if (y < cy) {
+						return false;
+					}
+					if (x + w > cx + cw) {
+						return false;
+					}
+					if (y + h > cy + ch) {
+						return false;
+					}
+				}
+			}
 		}
 		return true;
 	}
@@ -5773,9 +5835,11 @@ public class BioModel {
 	
 	public String getCompartmentByLocation(float x, float y, float w, float h) {
 		String compartment = "";
+		/*
 		if (sbml.getModel().getCompartmentCount() > 0) {
 			compartment = sbml.getModel().getCompartment(0).getId();
 		}
+		*/
 		double distance = -1;
 		for (int i = 0; i < sbml.getModel().getCompartmentCount(); i++) {
 			Compartment c = sbml.getModel().getCompartment(i);
@@ -6118,7 +6182,7 @@ public class BioModel {
 	}
 	
 	public String createCompartment(String id, float x, float y) {
-		if (!checkCompartmentLocation(id,x,y,
+		if (!checkCompartmentOverlap(id,x,y,
 				GlobalConstants.DEFAULT_COMPARTMENT_WIDTH,GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT)) {
 			Utility.createErrorMessage("Compartment Overlap", "Compartments must not overlap.");
 			return "";

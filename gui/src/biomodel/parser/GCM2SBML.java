@@ -776,8 +776,11 @@ public class GCM2SBML {
 				//gcm.setDefaultCompartment("");
 				for (int j = 0; j < bioModel.getSBMLDocument().getModel().getCompartmentCount(); j++) {
 					Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(j);
-					Port port = bioModel.getSBMLCompModel().createPort();
-					port.setId(GlobalConstants.COMPARTMENT+"__"+compartment.getId());
+					Port port = bioModel.getSBMLCompModel().getPort(GlobalConstants.COMPARTMENT+"__"+compartment.getId());
+					if (port==null) {
+						port = bioModel.getSBMLCompModel().createPort();
+						port.setId(GlobalConstants.COMPARTMENT+"__"+compartment.getId());
+					}
 					port.setIdRef(compartment.getId());
 				}
 			}

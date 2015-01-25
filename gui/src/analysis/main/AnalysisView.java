@@ -868,7 +868,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			// TODO: Does this part actually still work. Seems you need to look
 			// at the runs themselves.
 			int cut = 0;
-			String[] getFilename = sbmlProp.split(File.separator);
+			sbmlProp = sbmlProp.replace("\\", "/");
+			String[] getFilename = sbmlProp.split("/");
 			for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++)
 			{
 				if (getFilename[getFilename.length - 1].charAt(i) == '.')
@@ -1082,8 +1083,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		if (stateAbstraction.isSelected() && modelEditor == null
 				&& !sim.contains("markov-chain-analysis") && exit == 0)
 		{
+			simProp = simProp.replace("\\", "/");
 			Nary_Run nary_Run = new Nary_Run(this, simulators,
-					simProp.split(File.separator), simProp, fba, sbml, dot,
+					simProp.split("/"), simProp, fba, sbml, dot,
 					xhtml, stateAbstraction, ODE, monteCarlo, timeLimit,
 					((String) (intervalLabel.getSelectedItem())),
 					printInterval, minTimeStep, timeStep, root + File.separator
@@ -1470,7 +1472,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		// Run runProgram = new Run(this);
 		int cut = 0;
-		String[] getFilename = sbmlProp.split(File.separator);
+		sbmlProp = sbmlProp.replace("\\", "/");
+		String[] getFilename = sbmlProp.split("/");
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++)
 		{
 			if (getFilename[getFilename.length - 1].charAt(i) == '.')
@@ -1489,7 +1492,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				((String) (intervalLabel.getSelectedItem())), printInterval,
 				minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths,
 				intSpecies, printer_id, printer_track_quantity,
-				generate_statistics, sbmlProp.split(File.separator),
+				generate_statistics, sbmlProp.split("/"),
 				selectedButtons, this, sbmlProp, rap1, rap2, qss, con,
 				stoichAmp, preAbs, loopAbs, postAbs, lpnAbstraction,
 				mpde.isSelected(), meanPath.isSelected(), adaptive.isSelected());
@@ -1533,15 +1536,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					.substring(
 							0,
 							simProp.length()
-									- simProp.split(File.separator)[simProp
-											.split(File.separator).length - 1]
+									- simProp.split("/")[simProp
+											.split("/").length - 1]
 											.length())
 					+ direct
 					+ File.separator
 					+ simProp
 							.substring(simProp.length()
-									- simProp.split(File.separator)[simProp
-											.split(File.separator).length - 1]
+									- simProp.split("/")[simProp
+											.split("/").length - 1]
 											.length());
 			saveTopLevel = true;
 		}
@@ -3198,11 +3201,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 
 	public void setSim(String newSimName)
 	{
+		sbmlFile = sbmlFile.replace("\\", "/");
 		sbmlProp = root
 				+ File.separator
 				+ newSimName
 				+ File.separator
-				+ sbmlFile.split(File.separator)[sbmlFile.split(File.separator).length - 1];
+				+ sbmlFile.split("/")[sbmlFile.split("/").length - 1];
 		simName = newSimName;
 	}
 

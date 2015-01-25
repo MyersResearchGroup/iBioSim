@@ -1514,10 +1514,6 @@ public class BioGraph extends mxGraph {
 	 */
 	public void updateAllInternalPosition(){
 
-		for(mxCell cell:this.compartmentsToMxCellMap.values()){
-			updateInternalPosition(cell,false);
-		}
-
 		for(mxCell cell:this.speciesToMxCellMap.values()){
 			updateInternalPosition(cell,false);
 		}
@@ -1547,6 +1543,10 @@ public class BioGraph extends mxGraph {
 		}
 		
 		for(mxCell cell:this.variableToMxCellMap.values()){
+			updateInternalPosition(cell,false);
+		}
+		
+		for(mxCell cell:this.compartmentsToMxCellMap.values()){
 			updateInternalPosition(cell,false);
 		}
 	}
@@ -1724,13 +1724,23 @@ public class BioGraph extends mxGraph {
 			double y = compGlyph.getBoundingBox().getPosition().getY();
 			double width = compGlyph.getBoundingBox().getDimensions().getWidth();
 			double height = compGlyph.getBoundingBox().getDimensions().getHeight();
-			if (!bioModel.checkCompartmentLocation(cell.getId(),geom.getX(), geom.getY(), geom.getWidth(), geom.getHeight())) {
+			if (!bioModel.checkCompartmentOverlap(cell.getId(),geom.getX(), geom.getY(), geom.getWidth(), geom.getHeight())) {
 				geom.setX(x);
 				geom.setY(y);
 				geom.setWidth(width);
 				geom.setHeight(height);
 				if (warn) {
 					Utility.createErrorMessage("Compartment Overlap", "Compartments must not overlap.");
+				}
+				return;
+			}
+			if (!bioModel.checkCompartmentLocation(cell.getId(),geom.getX(), geom.getY(), geom.getWidth(), geom.getHeight())) {
+				geom.setX(x);
+				geom.setY(y);
+				geom.setWidth(width);
+				geom.setHeight(height);
+				if (warn) {
+					Utility.createErrorMessage("Compartment Location", "Compartments must include their species and reactions.");
 				}
 				return;
 			}

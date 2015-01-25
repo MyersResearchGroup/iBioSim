@@ -3499,7 +3499,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private void refreshTree() {
 		tree = new JTree(simDir);
-		if (!topLevel && learnSpecs == null) {
+		if (!topLevel /*&& learnSpecs == null*/) {
 			tree.addMouseListener(this);
 		}
 		tree.putClientProperty("JTree.icons", makeIcons());

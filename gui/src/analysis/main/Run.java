@@ -369,15 +369,17 @@ public class Run implements ActionListener
 			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel,
 			JFrame running)
 	{
+		outDir = outDir.replace("\\","/");
+		filename = filename.replace("\\","/");
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
-		while (outDir.split(File.separator)[outDir.split(File.separator).length - 1].equals("."))
+		while (outDir.split("/")[outDir.split("/").length - 1].equals("."))
 		{
 			outDir = outDir.substring(
 					0,
 					outDir.length()
 							- 1
-							- outDir.split(File.separator)[outDir.split(File.separator).length - 1]
+							- outDir.split("/")[outDir.split("/").length - 1]
 									.length());
 		}
 		try
@@ -1252,8 +1254,8 @@ public class Run implements ActionListener
 										simTab.setComponentAt(
 												i,
 												new Graph(analysisView, printer_track_quantity,
-														outDir.split(File.separator)[outDir
-																.split(File.separator).length - 1]
+														outDir.split("/")[outDir
+																.split("/").length - 1]
 																+ " simulation results",
 														printer_id, outDir, "time", gui, null, log,
 														null, false, false));
@@ -1602,8 +1604,8 @@ public class Run implements ActionListener
 										if (new File(filename.substring(
 												0,
 												filename.length()
-														- filename.split(File.separator)[filename
-																.split(File.separator).length - 1]
+														- filename.split("/")[filename
+																.split("/").length - 1]
 																.length())
 												+ "sim-rep.txt").exists())
 										{
@@ -1612,8 +1614,8 @@ public class Run implements ActionListener
 													new Graph(
 															analysisView,
 															printer_track_quantity,
-															outDir.split(File.separator)[outDir
-																	.split(File.separator).length - 1]
+															outDir.split("/")[outDir
+																	.split("/").length - 1]
 																	+ " simulation results",
 															printer_id, outDir, "Flux", gui, null,
 															log, null, false, false));
@@ -1741,15 +1743,15 @@ public class Run implements ActionListener
 							+ filename.substring(
 									0,
 									filename.length()
-											- filename.split(File.separator)[filename
-													.split(File.separator).length - 1].length())
+											- filename.split("/")[filename
+													.split("/").length - 1].length())
 							+ "out.hse\n");
 					logFile.write("Executing:\natacs -T0.000001 -oqoflhsgllvA "
 							+ filename.substring(
 									0,
 									filename.length()
-											- filename.split(File.separator)[filename
-													.split(File.separator).length - 1].length())
+											- filename.split("/")[filename
+													.split("/").length - 1].length())
 							+ "out.hse\n\n");
 					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
 					if (refresh)
@@ -1767,8 +1769,8 @@ public class Run implements ActionListener
 									simTab.setComponentAt(
 											i,
 											new Graph(analysisView, printer_track_quantity, outDir
-													.split(File.separator)[outDir
-													.split(File.separator).length - 1]
+													.split("/")[outDir
+													.split("/").length - 1]
 													+ " simulation results", printer_id, outDir,
 													"time", gui, null, log, null, false, false));
 									simTab.getComponentAt(i).setName("Histogram");
@@ -1949,8 +1951,8 @@ public class Run implements ActionListener
 									simTab.setComponentAt(
 											i,
 											new Graph(analysisView, printer_track_quantity, outDir
-													.split(File.separator)[outDir
-													.split(File.separator).length - 1]
+													.split("/")[outDir
+													.split("/").length - 1]
 													+ " simulation results", printer_id, outDir,
 													"time", gui, null, log, null, true, false));
 									boolean outputM = true;
@@ -2121,8 +2123,8 @@ public class Run implements ActionListener
 										if (new File(filename.substring(
 												0,
 												filename.length()
-														- filename.split(File.separator)[filename
-																.split(File.separator).length - 1]
+														- filename.split("/")[filename
+																.split("/").length - 1]
 																.length())
 												+ "sim-rep.txt").exists())
 										{
@@ -2131,8 +2133,8 @@ public class Run implements ActionListener
 													new Graph(
 															analysisView,
 															printer_track_quantity,
-															outDir.split(File.separator)[outDir
-																	.split(File.separator).length - 1]
+															outDir.split("/")[outDir
+																	.split("/").length - 1]
 																	+ " simulation results",
 															printer_id, outDir, "time", gui, null,
 															log, null, false, false));
@@ -2313,8 +2315,8 @@ public class Run implements ActionListener
 									simTab.setComponentAt(
 											i,
 											new Graph(analysisView, printer_track_quantity, outDir
-													.split(File.separator)[outDir
-													.split(File.separator).length - 1]
+													.split("/")[outDir
+													.split("/").length - 1]
 													+ " simulation results", printer_id, outDir,
 													"time", gui, null, log, null, true, false));
 									boolean outputM = true;
@@ -2485,8 +2487,8 @@ public class Run implements ActionListener
 										if (new File(filename.substring(
 												0,
 												filename.length()
-														- filename.split(File.separator)[filename
-																.split(File.separator).length - 1]
+														- filename.split("/")[filename
+																.split("/").length - 1]
 																.length())
 												+ "sim-rep.txt").exists())
 										{
@@ -2495,8 +2497,8 @@ public class Run implements ActionListener
 													new Graph(
 															analysisView,
 															printer_track_quantity,
-															outDir.split(File.separator)[outDir
-																	.split(File.separator).length - 1]
+															outDir.split("/")[outDir
+																	.split("/").length - 1]
 																	+ " simulation results",
 															printer_id, outDir, "time", gui, null,
 															log, null, false, false));
