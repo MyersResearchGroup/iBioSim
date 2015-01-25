@@ -655,11 +655,20 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				}
 				write.close();
 				String geneNet = "";
-				if (spacing.isSelected()) {
-					geneNet = "GeneNet --readLevels --lvl -binN .";
+				if (System.getProperty("os.name").contentEquals("Linux")) {
+					geneNet = "GeneNet.linux64";
+				}
+				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+					geneNet = "GeneNet.mac64";
 				}
 				else {
-					geneNet = "GeneNet --readLevels --lvl .";
+					geneNet = "GeneNet.exe";
+				}
+				if (spacing.isSelected()) {
+					geneNet += " --readLevels --lvl -binN .";
+				}
+				else {
+					geneNet += " --readLevels --lvl .";
 				}
 				log.addText("Executing:\n" + geneNet + " " + directory + "\n");
 				Runtime exec = Runtime.getRuntime();
@@ -1075,7 +1084,16 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 
 	@Override
 	public void run() {
-		String geneNet = "GeneNet";
+		String geneNet = "";
+		if (System.getProperty("os.name").contentEquals("Linux")) {
+			geneNet = "GeneNet.linux64";
+		}
+		else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+			geneNet = "GeneNet.mac64";
+		}
+		else {
+			geneNet = "GeneNet.exe";
+		}
 		geneNet += " --debug " + debug.getSelectedItem();
 		try {
 			double activation = Double.parseDouble(this.activation.getText().trim());

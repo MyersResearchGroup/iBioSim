@@ -6258,13 +6258,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				in.close();
 				out.close();
 				
-				BioModel gcm = new BioModel(root);
-				gcm.load(root + separator + filename);
-				GCM2SBML gcm2sbml = new GCM2SBML(gcm);
+				BioModel bioModel = new BioModel(root);
+				bioModel.load(root + separator + filename);
+				GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
 				gcm2sbml.load(root + separator + filename);
 				gcm2sbml.convertGCM2SBML(root + separator + filename);
 				String sbmlFile = filename.replace(".gcm", ".xml");
-				gcm.save(root + separator + sbmlFile);
+				bioModel.save(root + separator + sbmlFile);
 				addToTree(sbmlFile);
 			}
 		}
