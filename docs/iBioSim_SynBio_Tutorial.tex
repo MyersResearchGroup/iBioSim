@@ -7,7 +7,7 @@
 
 \usepackage{indentfirst,graphics,alltt,epsfig,color}
 
-\title{iBioSim Version 2.7 \\ Tutorial}
+\title{iBioSim Version 2.8 \\ Synthetic Biology Tutorial}
 
 \author{Chris J. Myers}
 
@@ -128,7 +128,7 @@ Let us know see how to create a new model using the Model Editor.  First, select
 \includegraphics[width=160mm]{screenshots/schematicGT}
 \end{center}
 
-To add a chemical species, select the Add Species icon \includegraphics{../gui/icons/modelview/add_species_selected} and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by clicking on the selection icon 
+To add a chemical species, select the Add Species icon \includegraphics{../gui/icons/modelview/add_species_selected} and click on the schematic canvas  (note that this can also be done using the Edit menu or the hotkeys shown in this menu).  This will drop a new species with default ID and other values.  You may change these defaults by clicking on the selection icon 
 \includegraphics{../gui/icons/modelview/select_mode_selected}, and
 double-clicking on the species to open the Species Editor.  In this case, let us change the ID to LacI and change the Port type to \emph{input}.  We will leave all the other values at their default values.  The port type of input indicates that this species will be used as an input for the LacI inverter.   
 Note that while in the select mode, you can also select an object in the schematic and move it by moving the mouse while holding the left mouse button.  Pressing the right mouse button while an object is selected brings up a menu that allows you to delete an object from the schematic.  Repeat the steps above to add TetR and GFP species.  Give these species port type of \emph{output}. 
@@ -163,7 +163,7 @@ The pLac promoter is repressed by the LacI species.  To create this relationship
 \includegraphics[width=160mm]{screenshots/repressionGT} 
 \end{center}
 
-As mentioned earlier, the pLac promoter initiates the production of the TetR and GFP species.  Highlight the pLac promoter and, while holding the mouse button, stretch the production arc to the TetR species.  Repeat these steps to create a production arc between the pLac promoter and GFP species.  Note that the icons selected for this are not important because all arcs from promoters to species are always production arcs.  
+As mentioned earlier, the pLac promoter initiates the production of the TetR and GFP species.  Highlight the pLac promoter and, while holding the mouse button, stretch the production arc to the TetR species.  Repeat these steps to create a production arc between the pLac promoter and GFP species.  Note that any regulation icon can be selected for this because all arcs from promoters to species are always production arcs.  
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/productionGT}
@@ -350,7 +350,7 @@ The schematic in a grid model is a bit different.  It includes a grid in which e
 \includegraphics[width=160mm]{screenshots/gridModelGT}
 \end{center}
 
-Next, right-click on the Population model and create an analysis view.  Select Abstraction, Monte Carlo, and the SSA-Direct simulator.  Set the time limit to 10000 with a print interval of 100, and perform the simulation.  Now, go to the schematic tab and press the Choose Simulation button to select run-1.tsd.  Click on one of the genetic toggle switch models to bring up the Edit Species editor.  Select the GFP species and a green color gradient, and apply to all components with this model.  Now, play back the simulation to see the toggle switches turn on and off.
+Next, right-click on the Population model and create an analysis view.  Select Abstraction, Monte Carlo, and the SSA-Direct simulator.  Set the time limit to 10000 with a print interval of 100, change the number of runs to 1, and perform the simulation.  Now, go to the schematic tab and press the Choose Simulation button to select run-1.tsd.  Click on one of the genetic toggle switch models to bring up the Edit Species editor.  Select the GFP species and a green color gradient, and apply to all components with this model.  Now, play back the simulation to see the toggle switches turn on and off.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/gridSimGT}
