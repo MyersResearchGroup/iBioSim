@@ -253,14 +253,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		this.modelFile = modelFile;
 		if (modelFile.endsWith(".lpn"))
 		{
-			sbmlFile = root + File.separator + simName + File.separator
+			sbmlFile = root + Gui.separator + simName + Gui.separator
 					+ modelFile.replace(".lpn", ".xml");
 		}
 		else
 		{
-			sbmlFile = root + File.separator + modelFile;
+			sbmlFile = root + Gui.separator + modelFile;
 		}
-		sbmlProp = root + File.separator + simName + File.separator
+		sbmlProp = root + Gui.separator + simName + Gui.separator
 				+ modelFile.replace(".lpn", ".xml");
 		interestingSpecies = new ArrayList<String>();
 		change = false;
@@ -289,7 +289,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		buttonPanel.add(reportOptions, BorderLayout.SOUTH);
 		this.add(buttonPanel, BorderLayout.NORTH);
 		this.add(simulationOptions, BorderLayout.CENTER);
-		loadPropertiesFile(root + File.separator + simName + File.separator
+		loadPropertiesFile(root + Gui.separator + simName + Gui.separator
 				+ simName + ".properties");
 		loadSEDML();
 	}
@@ -533,7 +533,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			JLabel prop = new JLabel("Property:");
 			String[] props = new String[] { "none" };
 			LhpnFile lpn = new LhpnFile();
-			lpn.load(root + File.separator + modelFile);
+			lpn.load(root + Gui.separator + modelFile);
 			String[] getProps = lpn.getProperties().toArray(new String[0]);
 			props = new String[getProps.length + 1];
 			props[0] = "none";
@@ -1044,7 +1044,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		gui.getExitButton().addActionListener(runProgram);
 		if (monteCarlo.isSelected() || ODE.isSelected())
 		{
-			File[] files = new File(root + File.separator + outDir).listFiles();
+			File[] files = new File(root + Gui.separator + outDir).listFiles();
 			for (File f : files)
 			{
 				if (f.getName().contains("mean.")
@@ -1074,7 +1074,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame,
 				ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
-						+ File.separator + simName, stateAbstraction, 1,
+						+ Gui.separator + simName, stateAbstraction, 1,
 				intSpecies, log, gui, simTab, root, progress, simulationName,
 				modelEditor, directory, timeLimit, runTime, modelFile,
 				lpnAbstraction, reactionAbstraction, expandReactions,
@@ -1088,7 +1088,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					simProp.split("/"), simProp, fba, sbml, dot,
 					xhtml, stateAbstraction, ODE, monteCarlo, timeLimit,
 					((String) (intervalLabel.getSelectedItem())),
-					printInterval, minTimeStep, timeStep, root + File.separator
+					printInterval, minTimeStep, timeStep, root + Gui.separator
 							+ simName, rndSeed, run, printer_id,
 					printer_track_quantity, intSpecies, rap1, rap2, qss, con,
 					log, gui, simTab, root, directory, modelFile,
@@ -1502,11 +1502,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		else
 		{
-			outDir = simName + File.separator + direct;
+			outDir = simName + Gui.separator + direct;
 		}
 		if (!runs.isEnabled())
 		{
-			for (String runs : new File(root + File.separator + outDir).list())
+			for (String runs : new File(root + Gui.separator + outDir).list())
 			{
 				if (runs.length() >= 4)
 				{
@@ -1540,7 +1540,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 											.split("/").length - 1]
 											.length())
 					+ direct
-					+ File.separator
+					+ Gui.separator
 					+ simProp
 							.substring(simProp.length()
 									- simProp.split("/")[simProp
@@ -1576,15 +1576,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			{
 				if (append.isSelected())
 				{
-					String[] searchForRunFiles = new File(root + File.separator
+					String[] searchForRunFiles = new File(root + Gui.separator
 							+ outDir).list();
 					int start = 1;
 					for (String s : searchForRunFiles)
 					{
 						if (s.length() > 3
 								&& s.substring(0, 4).equals("run-")
-								&& new File(root + File.separator + outDir
-										+ File.separator + s).isFile())
+								&& new File(root + Gui.separator + outDir
+										+ Gui.separator + s).isFile())
 						{
 							String getNumber = s.substring(4, s.length());
 							String number = "";
@@ -1602,14 +1602,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 							start = Math.max(Integer.parseInt(number), start);
 						}
 						else if (s.length() > 3
-								&& new File(root + File.separator + outDir
-										+ File.separator + s).isFile()
+								&& new File(root + Gui.separator + outDir
+										+ Gui.separator + s).isFile()
 								&& (s.equals("mean.tsd")
 										|| s.equals("standard_deviation.tsd") || s
 											.equals("variance.tsd")))
 						{
-							new File(root + File.separator + outDir
-									+ File.separator + s).delete();
+							new File(root + Gui.separator + outDir
+									+ Gui.separator + s).delete();
 						}
 					}
 					getProps.setProperty("monte.carlo.simulation.start.index",
@@ -1617,17 +1617,17 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 				else
 				{
-					String[] searchForRunFiles = new File(root + File.separator
+					String[] searchForRunFiles = new File(root + Gui.separator
 							+ outDir).list();
 					for (String s : searchForRunFiles)
 					{
 						if (s.length() > 3
 								&& s.substring(0, 4).equals("run-")
-								&& new File(root + File.separator + outDir
-										+ File.separator + s).isFile())
+								&& new File(root + Gui.separator + outDir
+										+ Gui.separator + s).isFile())
 						{
-							new File(root + File.separator + outDir
-									+ File.separator + s).delete();
+							new File(root + Gui.separator + outDir
+									+ Gui.separator + s).delete();
 						}
 					}
 					getProps.setProperty("monte.carlo.simulation.start.index",
@@ -1662,7 +1662,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 
 	private void loadSEDML()
 	{
-		sedmlFilename = root + File.separator + simName + File.separator
+		sedmlFilename = root + Gui.separator + simName + Gui.separator
 				+ modelFile.replace(".xml", "") + "-sedml.xml";
 		File sedmlFile = new File(sedmlFilename);
 		if (sedmlFile.exists())
@@ -2967,7 +2967,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 
 	public Graph createGraph(String open)
 	{
-		String outDir = root + File.separator + simName;
+		String outDir = root + Gui.separator + simName;
 		String printer_id;
 		printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
@@ -3076,23 +3076,23 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			if (reactionAbstraction.isSelected())
 			{
 				LhpnFile lhpnFile = new LhpnFile();
-				lhpnFile.load(root + File.separator + modelFile);
+				lhpnFile.load(root + Gui.separator + modelFile);
 				Abstraction abst = new Abstraction(lhpnFile, lpnAbstraction);
 				abst.abstractSTG(false);
-				abst.save(root + File.separator + simName + File.separator
+				abst.save(root + Gui.separator + simName + Gui.separator
 						+ modelFile);
 				if (transientProperties != null
 						&& !((String) transientProperties.getSelectedItem())
 								.equals("none"))
 				{
-					t1.convertLPN2SBML(root + File.separator + simName
-							+ File.separator + modelFile,
+					t1.convertLPN2SBML(root + Gui.separator + simName
+							+ Gui.separator + modelFile,
 							((String) transientProperties.getSelectedItem()));
 				}
 				else
 				{
-					t1.convertLPN2SBML(root + File.separator + simName
-							+ File.separator + modelFile, "");
+					t1.convertLPN2SBML(root + Gui.separator + simName
+							+ Gui.separator + modelFile, "");
 				}
 			}
 			else
@@ -3101,20 +3101,20 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 						&& !((String) transientProperties.getSelectedItem())
 								.equals("none"))
 				{
-					t1.convertLPN2SBML(root + File.separator + modelFile,
+					t1.convertLPN2SBML(root + Gui.separator + modelFile,
 							((String) transientProperties.getSelectedItem()));
 				}
 				else
 				{
-					t1.convertLPN2SBML(root + File.separator + modelFile, "");
+					t1.convertLPN2SBML(root + Gui.separator + modelFile, "");
 				}
 			}
-			t1.setFilename(root + File.separator + simName + File.separator
-					+ stem + File.separator + modelFile.replace(".lpn", ".xml"));
+			t1.setFilename(root + Gui.separator + simName + Gui.separator
+					+ stem + Gui.separator + modelFile.replace(".lpn", ".xml"));
 			t1.outputSBML();
 			if (!stem.equals(""))
 			{
-				new File(root + File.separator + simName + File.separator
+				new File(root + Gui.separator + simName + Gui.separator
 						+ stem).mkdir();
 				new AnalysisThread(this).start(stem, true);
 			}
@@ -3203,9 +3203,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 	{
 		sbmlFile = sbmlFile.replace("\\", "/");
 		sbmlProp = root
-				+ File.separator
+				+ Gui.separator
 				+ newSimName
-				+ File.separator
+				+ Gui.separator
 				+ sbmlFile.split("/")[sbmlFile.split("/").length - 1];
 		simName = newSimName;
 	}
@@ -3265,7 +3265,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 
 	public Graph createProbGraph(String open)
 	{
-		String outDir = root + File.separator + simName;
+		String outDir = root + Gui.separator + simName;
 		String printer_id;
 		printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
@@ -3292,8 +3292,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			}
 		}
 		if (!dirs.isEmpty()
-				&& new File(root + File.separator + simName + File.separator
-						+ stem + dirs.get(0) + File.separator + "sim-rep.txt")
+				&& new File(root + Gui.separator + simName + Gui.separator
+						+ stem + dirs.get(0) + Gui.separator + "sim-rep.txt")
 						.exists())
 		{
 			ArrayList<String> dataLabels = new ArrayList<String>();
@@ -3315,9 +3315,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 						try
 						{
 							Scanner s = new Scanner(
-									new File(root + File.separator + simName
-											+ File.separator + stem + d
-											+ File.separator + "sim-rep.txt"));
+									new File(root + Gui.separator + simName
+											+ Gui.separator + stem + d
+											+ Gui.separator + "sim-rep.txt"));
 							while (s.hasNextLine())
 							{
 								String[] ss = s.nextLine().split(" ");
@@ -3387,8 +3387,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 			}
 			DataParser constData = new DataParser(dataLabels, data);
-			constData.outputTSD(root + File.separator + simName
-					+ File.separator + "sim-rep.tsd");
+			constData.outputTSD(root + Gui.separator + simName
+					+ Gui.separator + "sim-rep.tsd");
 			for (int i = 0; i < simTab.getComponentCount(); i++)
 			{
 				if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
@@ -3615,10 +3615,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 	{
 		if (!fileStem.getText().trim().equals(""))
 		{
-			return root + File.separator + simName + File.separator
+			return root + Gui.separator + simName + Gui.separator
 					+ fileStem.getText().trim();
 		}
-		return root + File.separator + simName;
+		return root + Gui.separator + simName;
 	}
 
 	public void updateBackgroundFile(String updatedFile)
@@ -3638,7 +3638,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			Object selected = transientProperties.getSelectedItem();
 			String[] props = new String[] { "none" };
 			LhpnFile lpn = new LhpnFile();
-			lpn.load(root + File.separator + modelFile);
+			lpn.load(root + Gui.separator + modelFile);
 			String[] getProps = lpn.getProperties().toArray(new String[0]);
 			props = new String[getProps.length + 1];
 			props[0] = "none";
