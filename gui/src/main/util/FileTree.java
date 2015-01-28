@@ -87,12 +87,7 @@ public class FileTree extends JPanel implements MouseListener {
 		this.lema = lema;
 		this.atacs = atacs;
 		async = lema || atacs;
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 
 		ICON_VHDL = new ImageIcon(getClass().getResource("/icons/iconVHDL.png"));
 

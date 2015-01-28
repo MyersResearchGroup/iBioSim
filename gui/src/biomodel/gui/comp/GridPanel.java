@@ -132,7 +132,7 @@ public class GridPanel extends JPanel implements ActionListener {
 				
 				//don't allow dropping a grid component
 				if (component != "none" && compGCM.getGridEnabledFromFile(gcm.getPath() + 
-						File.separator + component.replace(".gcm",".xml"))) {
+						Gui.separator + component.replace(".gcm",".xml"))) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
 							"Dropping grid modules is disallowed.\n" +
@@ -248,7 +248,7 @@ public class GridPanel extends JPanel implements ActionListener {
 				
 				//don't allow dropping a grid component
 				if (!component.equals("none") && compGCM.getGridEnabledFromFile(gcm.getPath() + 
-							File.separator + component.replace(".gcm",".xml"))) {
+							Gui.separator + component.replace(".gcm",".xml"))) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
 						"Dropping grid modules is disallowed.\n" +

@@ -6,9 +6,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
+import main.Gui;
 import biomodel.util.Utility;
-
-
 import junit.framework.TestCase;
 
 public class ProbabilityScript extends TestCase {
@@ -62,30 +61,30 @@ public class ProbabilityScript extends TestCase {
 
 	public void Promoter() {
 		for (int i = 1; i <= 5; i++) {
-			String currDir = Utility.directory + File.separator + "promoter" + i;
+			String currDir = Utility.directory + Gui.separator + "promoter" + i;
 			for (int j = 0; j < 3; j++) {
 				SpeciesThresholdTester highTester = new SpeciesThresholdTester(
 						currDir, gate[j], highSpecies.get(j), lowSpecies.get(j));
 				double[][] results = GCMScript.generateStatistics(currDir
-						+ File.separator + gate[j] + experiment[1], highTester);
-				printResults(currDir + File.separator + dataGate[j] + "-"
+						+ Gui.separator + gate[j] + experiment[1], highTester);
+				printResults(currDir + Gui.separator + dataGate[j] + "-"
 						+ dataInput[0] + "-" + dataChange[1] + ".dat", results);
 
-				results = GCMScript.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + Gui.separator
 						+ gate[j] + experiment[3], highTester);
-				printResults(currDir + File.separator + dataGate[j] + "-"
+				printResults(currDir + Gui.separator + dataGate[j] + "-"
 						+ dataInput[1] + "-" + dataChange[1] + ".dat", results);
 
 				SpeciesThresholdTester lowTester = new SpeciesThresholdTester(
 						currDir, gate[j], lowSpecies.get(j), highSpecies.get(j));
-				results = GCMScript.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + Gui.separator
 						+ gate[j] + experiment[0], lowTester);
-				printResults(currDir + File.separator + dataGate[j] + "-"
+				printResults(currDir + Gui.separator + dataGate[j] + "-"
 						+ dataInput[0] + "-" + dataChange[0] + ".dat", results);
 
-				results = GCMScript.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + Gui.separator
 						+ gate[j] + experiment[2], highTester);
-				printResults(currDir + File.separator + dataGate[j] + "-"
+				printResults(currDir + Gui.separator + dataGate[j] + "-"
 						+ dataInput[1] + "-" + dataChange[0] + ".dat", results);
 			}
 		}
@@ -126,31 +125,31 @@ public class ProbabilityScript extends TestCase {
 
 	public void generateProbabilities(String files, int cases) {
 		for (int i = 1; i <= cases; i++) {
-			String currDir = Utility.directory + File.separator + files + i;
+			String currDir = Utility.directory + Gui.separator + files + i;
 			for (int j = 0; j < 4; j++) {
 				
 				SpeciesThresholdTester highTester = new SpeciesThresholdTester(
 						currDir, gate[j], highSpecies.get(j), lowSpecies.get(j));
 				double[][] results = GCMScript.generateStatistics(currDir
-						+ File.separator + gate[j] + experiment[1], highTester);
-				printResults(currDir + File.separator + dataGate[j] + "-"
+						+ Gui.separator + gate[j] + experiment[1], highTester);
+				printResults(currDir + Gui.separator + dataGate[j] + "-"
 						+ dataInput[0] + "-" + dataChange[1] + ".dat", results);
 				System.out.println("Finished " + 1);
-				results = GCMScript.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + Gui.separator
 						+ gate[j] + experiment[3], highTester);
-				printResults(currDir + File.separator + dataGate[j] + "-"
+				printResults(currDir + Gui.separator + dataGate[j] + "-"
 						+ dataInput[1] + "-" + dataChange[1] + ".dat", results);
 				System.out.println("Finished " + 2);
 				SpeciesThresholdTester lowTester = new SpeciesThresholdTester(
 						currDir, gate[j], lowSpecies.get(j), highSpecies.get(j));
-				results = GCMScript.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + Gui.separator
 						+ gate[j] + experiment[0], lowTester);
-				printResults(currDir + File.separator + dataGate[j] + "-"
+				printResults(currDir + Gui.separator + dataGate[j] + "-"
 						+ dataInput[0] + "-" + dataChange[0] + ".dat", results);
 				System.out.println("Finished " + 3);
-				results = GCMScript.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + Gui.separator
 						+ gate[j] + experiment[2], lowTester);
-				printResults(currDir + File.separator + dataGate[j] + "-"
+				printResults(currDir + Gui.separator + dataGate[j] + "-"
 						+ dataInput[1] + "-" + dataChange[0] + ".dat", results);
 				System.out.println("Finished " + 4);
 			}

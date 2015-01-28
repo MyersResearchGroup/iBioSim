@@ -73,12 +73,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	 * displays the frame.
 	 */
 	public Synthesis(String directory, String filename, Log log, Gui biosim) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 
 		this.biosim = biosim;
 		this.directory = directory;

@@ -88,13 +88,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 	 * displays the frame.
 	 */
 	public LearnGCM(String directory, Log log, Gui biosim) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
-
+		separator = Gui.separator;
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;

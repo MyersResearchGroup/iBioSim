@@ -3,6 +3,8 @@ package lpn.parser;
 import java.io.*;
 import java.util.*;
 
+import main.Gui;
+
 
 public class Lpn2verilog {
 	//String place;
@@ -10,14 +12,8 @@ public class Lpn2verilog {
 	public static void convert(String lpnFileName) {
 		HashMap<String,Boolean> visitedPlaces;
 		String enable = "";
-		String separator;
+		String separator = Gui.separator;
 		try{
-			if (File.separator.equals("\\")) {
-				separator = "\\\\";
-			}
-			else {
-				separator = File.separator;
-			}
 			LhpnFile lpn = new LhpnFile();
 			lpn.load(lpnFileName);
 			String svFileName = lpnFileName.replaceAll(".lpn", ".sv");

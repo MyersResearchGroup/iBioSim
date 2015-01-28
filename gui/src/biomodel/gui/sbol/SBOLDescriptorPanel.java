@@ -73,9 +73,7 @@ public class SBOLDescriptorPanel extends JPanel {
 		saveFilePaths = new LinkedList<String>(sbolFilePaths);
 		saveFileIDBox = new JComboBox();
 		for (String saveFilePath : saveFilePaths) {
-			String regex = File.separator;
-			if (regex.equals("\\"))
-				regex = "\\\\";
+			String regex = Gui.separator;
 			String[] splitPath = saveFilePath.split(regex);
 			saveFileIDBox.addItem(splitPath[splitPath.length - 1]);
 		}

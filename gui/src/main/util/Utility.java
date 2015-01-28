@@ -341,10 +341,7 @@ public class Utility {
 							selectedFile += ".tsd";
 						}
 					}
-					if (File.separator.equals("\\")) {
-						return fd.getDirectory() + "\\\\" + selectedFile;
-					}
-					return fd.getDirectory() + File.separator + selectedFile;
+					return fd.getDirectory() + Gui.separator + selectedFile;
 				}
 				return "";
 			}

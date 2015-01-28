@@ -7,10 +7,9 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import main.Gui;
 import biomodel.util.ExperimentResult;
 import biomodel.util.Utility;
-
-
 import junit.framework.TestCase;
 
 public class TimingScript extends TestCase {
@@ -72,10 +71,10 @@ public class TimingScript extends TestCase {
 		double[][] timingResults = new double[6][cases];
 
 		for (int i = 1; i <= cases; i++) {
-			String currDir = Utility.directory + File.separator + files + i;
+			String currDir = Utility.directory + Gui.separator + files + i;
 			for (int j = 0; j < 3; j++) {
 				HashMap<String, double[]> results = Utility
-						.calculateAverage(currDir + File.separator
+						.calculateAverage(currDir + Gui.separator
 								+ dataGate[j]);
 				ExperimentResult expResults = new ExperimentResult(results);
 				double[] times = findTime(expResults);
@@ -90,7 +89,7 @@ public class TimingScript extends TestCase {
 			}
 			System.out.println("Done " + i);
 		}
-		printResults(Utility.directory + File.separator + files + ".dat", timingResults);
+		printResults(Utility.directory + Gui.separator + files + ".dat", timingResults);
 	}
 
 	private static void printResults(String file, double[][] results) {

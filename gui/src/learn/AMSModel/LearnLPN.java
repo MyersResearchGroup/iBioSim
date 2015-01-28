@@ -206,12 +206,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 	 * displays the frame.
 	 */
 	public LearnLPN(String directory, Log log, Gui biosim) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		} else {
-			separator = File.separator;
-		}
-
+		separator = Gui.separator;
 		this.gui = biosim;
 		this.log = log;
 		this.directory = directory;

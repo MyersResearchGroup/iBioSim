@@ -125,15 +125,8 @@ public abstract class HierarchicalSimState implements HierarchicalSimulation
 		}
 
 		prng = new PsRandom();
-
-		if (File.separator.equals("\\"))
-		{
-			separator = "\\\\";
-		}
-		else
-		{
-			separator = File.separator;
-		}
+		
+		separator = Gui.separator;
 	}
 
 	/**

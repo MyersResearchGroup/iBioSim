@@ -376,7 +376,7 @@ public class AnnotationUtility {
 			Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
 			Matcher arrayMatcher = arrayPattern.matcher(annotation);
 			if (arrayMatcher.find()) {
-				String arrayAnnotation = arrayMatcher.group(0);
+				//String arrayAnnotation = arrayMatcher.group(0);
 				annotation = annotation.replaceAll(" array:"+element+"=\"\\(\\d+,\\d+\\)\"", "");
 			}
 			if (annotation.equals("")) {

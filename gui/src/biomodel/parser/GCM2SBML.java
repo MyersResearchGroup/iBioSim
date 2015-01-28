@@ -15,6 +15,8 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import main.Gui;
+
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
@@ -27,15 +29,6 @@ import biomodel.util.SBMLutilities;
 public class GCM2SBML {
 	
 	public GCM2SBML(BioModel gcm) {
-		/*
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
-		this.path = path;
-		*/
 		species = new HashMap<String, Properties>();
 		reactions = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
@@ -731,7 +724,7 @@ public class GCM2SBML {
 	 * @return
 	 */
 	public void convertGCM2SBML(String root, String fileName) {
-		String filename = root + File.separator + fileName;
+		String filename = root + Gui.separator + fileName;
 		int condCnt = 0;
 		for (String s : conditions) {
 			bioModel.createCondition(s,condCnt);
@@ -840,7 +833,7 @@ public class GCM2SBML {
 			bioModel.createComponentFromGCM(s,components.get(s));
 		}
 		if (sbmlFile!=null && !sbmlFile.equals("")) {
-			SBMLDocument document = SBMLutilities.readSBML(root + File.separator + sbmlFile);
+			SBMLDocument document = SBMLutilities.readSBML(root + Gui.separator + sbmlFile);
 			if (document!=null) {
 				Model model = document.getModel();
 				Model modelNew = bioModel.getSBMLDocument().getModel();
@@ -852,7 +845,7 @@ public class GCM2SBML {
 				for (int i = 0; i < model.getEventCount(); i++) {
 					modelNew.addEvent(model.getEvent(i).clone());
 				}
-				new File(root + File.separator + sbmlFile).delete();
+				new File(root + Gui.separator + sbmlFile).delete();
 			}
 		}
 		new File(filename).delete();

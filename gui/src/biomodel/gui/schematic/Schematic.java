@@ -2130,7 +2130,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the module.
 	 */
 	public String connectComponentToSpecies(String compID, String specID) throws ListChooser.EmptyListException{
-		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + Gui.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);
 		ArrayList<String> ports = compBioModel.getOutputPorts(GlobalConstants.SBMLSPECIES);
@@ -2148,7 +2148,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return a boolean representing success or failure.
 	 */
 	public String connectSpeciesToComponent(String specID, String compID) throws ListChooser.EmptyListException{
-		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + Gui.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);	
 		ArrayList<String> ports = compBioModel.getInputPorts(GlobalConstants.SBMLSPECIES);
@@ -2167,7 +2167,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectComponentToVariable(String compID, String varID) throws ListChooser.EmptyListException{
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
-		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + Gui.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);
 		ArrayList<String> ports;
@@ -2193,7 +2193,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectVariableToComponent(String varID, String compID) throws ListChooser.EmptyListException{
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
-		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + Gui.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);	
 		ArrayList<String> ports;
@@ -2935,12 +2935,7 @@ public class Schematic extends JPanel implements ActionListener {
 	public void outputFrame(String filename, boolean scale) {
 
 		FileOutputStream out = null;		
-		String separator = "";
-		
-		if (File.separator.equals("\\"))
-			separator = "\\\\";
-		else
-			separator = File.separator;
+		String separator = Gui.separator;
 		
 		String path = "";
 		

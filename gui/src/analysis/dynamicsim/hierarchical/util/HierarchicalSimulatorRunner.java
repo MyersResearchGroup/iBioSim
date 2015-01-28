@@ -46,16 +46,7 @@ public class HierarchicalSimulatorRunner
 			return;
 		}
 
-		String separator;
-
-		if (File.separator.equals("\\"))
-		{
-			separator = "\\\\";
-		}
-		else
-		{
-			separator = File.separator;
-		}
+		String separator = Gui.separator;
 
 		String testcase = args[1];
 

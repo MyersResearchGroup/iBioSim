@@ -7,10 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import biomodel.util.Utility;
-
-
+import main.Gui;
 import main.Log;
-
 import verification.Verification;
 import verification.platu.lpn.DualHashMap;
 import verification.platu.stategraph.StateGraph;
@@ -89,12 +87,7 @@ public class LhpnFile {
     protected StateGraph stateGraph;
 	
 	public LhpnFile(Log log) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		this.log = log;
 		transitions = new HashMap<String, Transition>();
 		places = new HashMap<String, Place>();
@@ -108,12 +101,7 @@ public class LhpnFile {
 	}
 	
 	public LhpnFile() {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		transitions = new HashMap<String, Transition>();
 		places = new HashMap<String, Place>();
 		booleans = new HashMap<String, Variable>();

@@ -195,7 +195,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				BioModel compGCM = new BioModel(bioModel.getPath());
 				
 				//don't allow dropping a grid component
-				if (compGCM.getGridEnabledFromFile(bioModel.getPath() + File.separator + component.replace(".gcm",".xml"))) {
+				if (compGCM.getGridEnabledFromFile(bioModel.getPath() + Gui.separator + component.replace(".gcm",".xml"))) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
 							"Dropping grid modules is disallowed.\n" +
@@ -260,7 +260,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		double height = grid.getComponentGeomHeight();
 		
 		BioModel compGCMFile = new BioModel(bioModel.getPath());
-		compGCMFile.load(bioModel.getPath() + File.separator + component);
+		compGCMFile.load(bioModel.getPath() + Gui.separator + component);
 		String md5 = Utility.MD5(compGCMFile.getSBMLDocument());
 		return bioModel.addComponent(null, component, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 				col * (width + padding) + padding, row * (height + padding) + padding,md5);
@@ -310,7 +310,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				BioModel compGCM = new BioModel(bioModel.getPath());
 				
 				//don't allow grids within a grid
-				if (compGCM.getGridEnabledFromFile(bioModel.getPath() + File.separator + component.replace(".gcm",".xml"))) {
+				if (compGCM.getGridEnabledFromFile(bioModel.getPath() + Gui.separator + component.replace(".gcm",".xml"))) {
 					JOptionPane.showMessageDialog(Gui.frame,
 							"Dropping grid modules is disallowed.\n" +
 							"Please choose a different module.",
@@ -394,7 +394,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		for(int row=0; row<rowCount; row++) {
 			for(int col=0; col<colCount; col++) {
 				BioModel compBioModel = new BioModel(bioModel.getPath());
-				compBioModel.load(bioModel.getPath() + File.separator + comp);
+				compBioModel.load(bioModel.getPath() + Gui.separator + comp);
 				String md5 = Utility.MD5(compBioModel.getSBMLDocument());
 				bioModel.addComponent(null, comp, compBioModel.IsWithinCompartment(), compBioModel.getCompartmentPorts(), -1, -1, 
 						col * separationX + topleftX, row * separationY + topleftY,md5);

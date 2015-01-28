@@ -1322,7 +1322,7 @@ public class BioGraph extends mxGraph {
 			String id = bioModel.getSBMLCompModel().getListOfSubmodels().get(i).getId();
 			BioModel compBioModel = new BioModel(bioModel.getPath());
 			String modelFileName = bioModel.getModelFileName(id);
-			compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
+			compBioModel.load(bioModel.getPath() + Gui.separator + modelFileName);
 			HashMap<String,String> connections = bioModel.getInputConnections(compBioModel,id);
 			for (String propName : connections.keySet()) {
 				String targetName = connections.get(propName);
@@ -2267,10 +2267,10 @@ public class BioGraph extends mxGraph {
 		if (modelFileName.equals("")) {
 			return false;
 		}
-		File compFile = new File(bioModel.getPath() + File.separator + modelFileName);
+		File compFile = new File(bioModel.getPath() + Gui.separator + modelFileName);
 		
 		if (compFile.exists()) {
-			compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
+			compBioModel.load(bioModel.getPath() + Gui.separator + modelFileName);
 			compart = compBioModel.IsWithinCompartment();
 		} else {
 			JOptionPane.showMessageDialog(Gui.frame, 

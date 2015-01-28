@@ -136,12 +136,7 @@ public class BioModel {
 	public BioModel(String path) {
 		//gcm2sbml = new GCM2SBML(this);
 		undoManager = new UndoManager();
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		this.path = path;
 		grid = new Grid();
 		compartments = new HashMap<String, Properties>();

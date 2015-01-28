@@ -235,14 +235,7 @@ public class Nary_Run implements ActionListener, Runnable
 			String direct, String modelFile, JRadioButton abstraction, AbstPane abstPane,
 			double absError)
 	{
-		if (File.separator.equals("\\"))
-		{
-			separator = "\\\\";
-		}
-		else
-		{
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 
 		// intitializes the member variables
 		this.absError = absError;
@@ -781,7 +774,7 @@ public class Nary_Run implements ActionListener, Runnable
 		Properties nary = new Properties();
 		try
 		{
-			FileInputStream load = new FileInputStream(new File(outDir + File.separator
+			FileInputStream load = new FileInputStream(new File(outDir + Gui.separator
 					+ "species.properties"));
 			nary.load(load);
 			load.close();

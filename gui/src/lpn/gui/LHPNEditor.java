@@ -70,12 +70,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		this.biosim = biosim;
 		addMouseListener(biosim);
 
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		} else {
-			separator = File.separator;
-		}
-
+		separator = Gui.separator;
+		
 		lhpnFile = lhpn;
 		if (lhpnFile == null) {
 			lhpnFile = new LhpnFile();
