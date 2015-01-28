@@ -77,14 +77,6 @@ public class GeneticNetwork {
 	 * Constructor 
 	 */
 	public GeneticNetwork() {
-		/*
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
-		*/
 	}
 
 	/**
@@ -102,14 +94,7 @@ public class GeneticNetwork {
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species, 
 			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap, 
 			HashMap<String, Promoter> promoters, BioModel gcm) {
-		/*
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
-		*/
+
 		this.species = species;
 		//interestingSpecies = new String[species.size()];
 		this.promoters = promoters;

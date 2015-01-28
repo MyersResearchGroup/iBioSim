@@ -2,6 +2,7 @@ package verification;
 
 import javax.swing.*;
 
+import main.Gui;
 import biomodel.gui.util.AbstractRunnableNamedButton;
 import biomodel.gui.util.PropertyList;
 import biomodel.gui.util.Runnable;
@@ -68,12 +69,7 @@ public class ParamEditor extends JPanel implements ActionListener {
 	 * then displays the frame.
 	 */
 	public ParamEditor(String directory, boolean lema, boolean atacs) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		//this.atacs = atacs;
 		//this.biosim = biosim;
 		//this.log = log;

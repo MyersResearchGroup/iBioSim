@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import main.Gui;
+
 import org.sbml.jsbml.Parameter;
 
 import biomodel.annotation.AnnotationUtility;
@@ -1030,7 +1032,7 @@ public class Grid {
 		//don't put blank components onto the grid or model
 		if (!compGCM.equals("none")) {
 			BioModel compGCMFile = new BioModel(bioModel.getPath());
-			compGCMFile.load(bioModel.getPath() + File.separator + compGCM);
+			compGCMFile.load(bioModel.getPath() + Gui.separator + compGCM);
 			String md5 = Utility.MD5(compGCMFile.getSBMLDocument());
 			bioModel.addComponent(null, compGCM, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 					col * (width + padding) + padding, row * (height + padding) + padding, md5);

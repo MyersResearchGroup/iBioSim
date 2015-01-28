@@ -269,13 +269,7 @@ public class Utility {
 	}
 
 	public static HashMap<String, double[]> calculateAverage(String folder) {
-		String separator;
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		String separator = Gui.separator;
 		HashMap<String, double[]> result = new HashMap<String, double[]>();
 		HashMap<String, double[]> average = null;
 		String[] files = getTSDFiles(folder);

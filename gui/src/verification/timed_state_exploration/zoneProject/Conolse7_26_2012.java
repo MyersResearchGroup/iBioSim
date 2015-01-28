@@ -7,6 +7,7 @@ import verification.platu.main.Options;
 import verification.platu.project.Project;
 import verification.timed_state_exploration.zoneProject.Zone;
 import lpn.parser.LhpnFile;
+import main.Gui;
 
 public class Conolse7_26_2012 {
 	
@@ -60,7 +61,7 @@ public class Conolse7_26_2012 {
 		
 		LhpnFile lpn = new LhpnFile();
 
-		lpn.load(directory + File.separator + lpnList[0]);
+		lpn.load(directory + Gui.separator + lpnList[0]);
 		
 		ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
 		// Add the current LPN to the list.
@@ -68,7 +69,7 @@ public class Conolse7_26_2012 {
 		for (int i=1; i < lpnList.length; i++) {
 			 String curLPNname = lpnList[i];
 			 LhpnFile curLPN = new LhpnFile();
-			 curLPN.load(directory + File.separator + curLPNname);
+			 curLPN.load(directory + Gui.separator + curLPNname);
 			 selectedLPNs.add(curLPN);
 		}
 		

@@ -143,12 +143,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public ModelEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly,
 			String simName, String paramFile, AnalysisView reb2sac, boolean textBased, boolean grid) throws Exception {
 		super();
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		this.biosim = biosim;
 		this.log = log;
 		this.path = path;
@@ -323,7 +318,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 //		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
 //			String fileName = tree.getChild(tree.getRoot(), i).toString();
 //			if (fileName.endsWith(".sbol"))
-//				filePaths.add(getGui().getRoot() + File.separator + fileName);
+//				filePaths.add(getGui().getRoot() + Gui.separator + fileName);
 //		}
 //		return filePaths;
 //	}

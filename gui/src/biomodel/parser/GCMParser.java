@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 
+import main.Gui;
+
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -37,12 +39,7 @@ public class GCMParser {
 	private String separator;
 
 	public GCMParser(String filename) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		//this.debug = debug;
 		biomodel = new BioModel(filename.substring(0, filename.length()
 				- filename.split(separator)[filename.split(separator).length - 1]
@@ -64,12 +61,7 @@ public class GCMParser {
 	}
 	
 	public GCMParser(BioModel gcm) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		//this.debug = debug;
 		this.biomodel = gcm;
 	}

@@ -158,7 +158,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		for (String s : new File(directoryName).list()) {
 			
-			String fullFileName = directoryName + File.separator + s;
+			String fullFileName = directoryName + Gui.separator + s;
 			File f = new File(fullFileName);
 			
 			if (s.endsWith(".tsd") || s.endsWith(".dtsd") && f.isFile()) {
@@ -273,13 +273,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		movieToolbar.addSeparator();
 		
-		rewindButton = makeToolButton("movie" + File.separator + "rewind.png", "rewind", "Rewind", this);
+		rewindButton = makeToolButton("movie" + Gui.separator + "rewind.png", "rewind", "Rewind", this);
 		movieToolbar.add(rewindButton);
 
-		singleStepButton = makeToolButton("movie" + File.separator + "single_step.png", "singlestep", "Single Step", this);
+		singleStepButton = makeToolButton("movie" + Gui.separator + "single_step.png", "singlestep", "Single Step", this);
 		movieToolbar.add(singleStepButton);
 		
-		playPauseButton = makeToolButton("movie" + File.separator + "play.png", "playpause", "Play", this);
+		playPauseButton = makeToolButton("movie" + Gui.separator + "play.png", "playpause", "Play", this);
 		movieToolbar.add(playPauseButton);
 			
 		slider = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 0);
@@ -400,13 +400,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 				slider.setValue(0);
 			
 			playTimer.setDelay(FRAME_DELAY_MILLISECONDS);
-			setIcon(playPauseButton, "movie" + File.separator + "pause.png");
+			setIcon(playPauseButton, "movie" + Gui.separator + "pause.png");
 			playTimer.start();
 			mode = PLAYING;
 		}
 		else{
 			
-			setIcon(playPauseButton, "movie" + File.separator + "play.png");
+			setIcon(playPauseButton, "movie" + Gui.separator + "play.png");
 			playTimer.stop();
 			mode = PAUSED;
 		}		
@@ -759,12 +759,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	        }
 		}
 		
-		String separator = "";
-		
-		if (File.separator.equals("\\"))
-			separator = "\\\\";
-		else
-			separator = File.separator;
+		String separator = Gui.separator;
 		
 		String filenum = String.format("%09d", fileNumber);			
 		schematic.outputFrame(analysisView.getRootPath() + separator + filenum  + ".jpg", scale);
@@ -775,12 +770,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	private void removeJPGs() {
 		
-		String separator = "";
-		
-		if (File.separator.equals("\\"))
-			separator = "\\\\";
-		else
-			separator = File.separator;
+		String separator = Gui.separator;
 		
 		//remove all created jpg files
 	    for (int jpgNum = 0; jpgNum <= slider.getMaximum(); ++jpgNum) {
@@ -920,7 +910,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private String getPreferencesFullPath() {
 		
 		String path = analysisView.getSimPath();
-		String fullPath = path + File.separator + "schematic_preferences.json";
+		String fullPath = path +  Gui.separator + "schematic_preferences.json";
 		return fullPath;
 	}
 
@@ -993,12 +983,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 				progressBar.setValue((100 * (currentFrame - startFrame) / (endFrame - startFrame)));
 			}
 			
-			String separator = "";
-			
-			if (File.separator.equals("\\"))
-				separator = "\\\\";
-			else
-				separator = File.separator;
+			String separator = Gui.separator;
 			
 			String path = "";
 			String movieName = "";

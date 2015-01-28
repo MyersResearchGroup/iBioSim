@@ -1815,9 +1815,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 	 */
 	private void loadPropertiesFile(String simName,String modelName)
 	{
-		String openFile = root + File.separator + simName + File.separator + simName + ".properties";
+		String openFile = root + Gui.separator + simName + Gui.separator + simName + ".properties";
 		if (!(new File(openFile)).exists())	{
-			openFile = root + File.separator + simName + File.separator + modelName + ".properties";
+			openFile = root + Gui.separator + simName + Gui.separator + modelName + ".properties";
 			if (!(new File(openFile)).exists()) {
 				return;
 			}

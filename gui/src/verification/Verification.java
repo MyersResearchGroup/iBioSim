@@ -126,11 +126,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	 */
 	public Verification(String directory, String verName, String filename,
 			Log log, Gui biosim, boolean lema, boolean atacs) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		} else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		this.atacs = atacs;
 		this.lema = lema;
 		this.biosim = biosim;

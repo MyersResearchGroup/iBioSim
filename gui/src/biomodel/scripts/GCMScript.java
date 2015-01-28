@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import main.Gui;
 import biomodel.util.ExperimentResult;
 import biomodel.util.Utility;
 
@@ -42,7 +43,7 @@ public class GCMScript {
 		double high = 0;
 		double low = 0;
 		int index = -1;
-		results = Utility.calculateAverage(directory + File.separator + type
+		results = Utility.calculateAverage(directory + Gui.separator + type
 				+ experiment[0]);
 
 		timeValues = results.get("time");
@@ -54,7 +55,7 @@ public class GCMScript {
 		}
 
 		low = results.get(species)[index];
-		results = Utility.calculateAverage(directory + File.separator + type
+		results = Utility.calculateAverage(directory + Gui.separator + type
 				+ experiment[1]);
 		high = results.get(species)[index];
 
@@ -68,11 +69,11 @@ public class GCMScript {
 		double[] high = new double[species.size()];
 		double[] low = new double[species.size()];
 		//int index = -1;
-		highResults = new ExperimentResult(Utility.calculateAverage(directory + File.separator + type
+		highResults = new ExperimentResult(Utility.calculateAverage(directory + Gui.separator + type
 				+ experiment[0]));
 
 		
-		lowResults = new ExperimentResult(Utility.calculateAverage(directory + File.separator + type
+		lowResults = new ExperimentResult(Utility.calculateAverage(directory + Gui.separator + type
 				+ experiment[1]));
 				
 		for (int i = 0; i < species.size(); i++) {
@@ -94,7 +95,7 @@ public class GCMScript {
 		double[][] passed = null;
 		String[] files = Utility.getTSDFiles(directory);
 		for (int i = 0; i < files.length; i++) {
-			boolean[] results = tester.passedTest(new ExperimentResult(directory+File.separator+files[i]));
+			boolean[] results = tester.passedTest(new ExperimentResult(directory+Gui.separator+files[i]));
 			if (passed == null) {
 				passed = new double[3][results.length];				
 			}

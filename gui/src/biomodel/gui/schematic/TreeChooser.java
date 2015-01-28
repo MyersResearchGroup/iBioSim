@@ -12,6 +12,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import main.Gui;
+
 
 public class TreeChooser extends JPanel {
 
@@ -51,7 +53,7 @@ public class TreeChooser extends JPanel {
 		String out = "";
 		
 		for (Object part : tp.getPath()) {
-			out += File.separator + ((DefaultMutableTreeNode)part).toString();
+			out += Gui.separator + ((DefaultMutableTreeNode)part).toString();
 		}
 		
 		return out;

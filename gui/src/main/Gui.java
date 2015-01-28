@@ -5463,7 +5463,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void openSBOL() {
 		String filePath = tree.getFile();
 		String fileName = "";
-		fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
+		fileName = filePath.substring(filePath.lastIndexOf(Gui.separator) + 1);
 		int i = getTab(fileName);
 		if (i != -1) {
 			tab.setSelectedIndex(i);
@@ -5481,7 +5481,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
 			String fileName = tree.getChild(tree.getRoot(), i).toString();
 			if (fileName.endsWith(fileExtension))
-				filePaths.add(getRoot() + File.separator + fileName);
+				filePaths.add(getRoot() + Gui.separator + fileName);
 		}
 		return filePaths;
 	}

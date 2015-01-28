@@ -103,11 +103,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	 * then displays the frame.
 	 */
 	public AbstPane(String directory, Verification verification, Log log) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		} else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		this.directory = directory;
 		this.log = log;
 		this.verification = verification;
@@ -253,11 +249,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 
 	public AbstPane(String directory, String lpnFile, Log log) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		} else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		this.directory = directory;
 		this.log = log;
 		this.setLayout(new BorderLayout());

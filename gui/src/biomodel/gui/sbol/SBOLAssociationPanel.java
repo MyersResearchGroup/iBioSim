@@ -324,7 +324,7 @@ public class SBOLAssociationPanel extends JPanel implements ActionListener {
 					}
 				}
 				if (dnaComponent!=null) {
-					SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(SBOLFileName.substring(SBOLFileName.lastIndexOf(File.separator)+1),
+					SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(SBOLFileName.substring(SBOLFileName.lastIndexOf(Gui.separator)+1),
 							dnaComponent.getDisplayId(),dnaComponent.getName(),dnaComponent.getDescription());
 					descriptorPanel.openViewer();
 				}

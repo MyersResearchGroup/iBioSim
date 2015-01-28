@@ -259,12 +259,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		averageOrder = null;
 		popup = new JPopupMenu();
 		warn = false;
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 
 		// initializes member variables
 		this.log = log;

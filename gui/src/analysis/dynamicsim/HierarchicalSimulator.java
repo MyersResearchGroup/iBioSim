@@ -184,15 +184,7 @@ public abstract class HierarchicalSimulator {
 			sbmlHasErrorsFlag = true;
 		}
 
-
-		if (File.separator.equals("\\")) 
-		{
-			separator = "\\\\";
-		}
-		else 
-		{
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 
 		isGrid = checkGrid(document.getModel());
 		models.put(document.getModel().getId(), document.getModel());

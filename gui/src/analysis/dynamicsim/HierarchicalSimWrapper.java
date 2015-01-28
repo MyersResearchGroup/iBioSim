@@ -82,14 +82,7 @@ public class HierarchicalSimWrapper
 
 		String separator;
 
-		if (File.separator.equals("\\"))
-		{
-			separator = "\\\\";
-		}
-		else
-		{
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 
 		String testcase = args[1];
 

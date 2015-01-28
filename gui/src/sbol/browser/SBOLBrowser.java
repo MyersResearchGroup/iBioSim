@@ -71,7 +71,7 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		JTabbedPane browserTab = new JTabbedPane();
 		browserTab.add("SBOL Browser", browserPanel);
 		this.add(browserTab);
-		gui.addTab(browsePath.substring(browsePath.lastIndexOf(File.separator) + 1), this, "SBOL Browser");
+		gui.addTab(browsePath.substring(browsePath.lastIndexOf(Gui.separator) + 1), this, "SBOL Browser");
 	}
 	
 	public void reload(Gui gui,String browsePath) {
@@ -135,9 +135,9 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		LinkedList<Resolver<SequenceAnnotation, URI>> annoResolvers = new LinkedList<Resolver<SequenceAnnotation, URI>>();
 		LinkedList<Resolver<DnaSequence, URI>> seqResolvers = new LinkedList<Resolver<DnaSequence, URI>>();
 		LinkedList<Resolver<org.sbolstandard.core.Collection, URI>> libResolvers = new LinkedList<Resolver<org.sbolstandard.core.Collection, URI>>();
-		String browseFile = browsePath.substring(browsePath.lastIndexOf(File.separator) + 1);
+		String browseFile = browsePath.substring(browsePath.lastIndexOf(Gui.separator) + 1);
 		for (String filePath : sbolFilePaths) {
-			String file = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
+			String file = filePath.substring(filePath.lastIndexOf(Gui.separator) + 1);
 			if (browsePath.equals("") || browseFile.equals(file)) {
 				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 				if (sbolDoc != null) {

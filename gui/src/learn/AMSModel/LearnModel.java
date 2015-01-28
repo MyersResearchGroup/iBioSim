@@ -575,11 +575,7 @@ public class LearnModel { // added ItemListener SB
 			ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, 
 			HashMap<String, ArrayList<String>> dstab, Boolean netForStable, boolean pseudoEnable, 
 			boolean transientPlaceReqd, Double vScaleFactor, Double dScaleFactor, String failProp) throws IOException {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		} else {
-			separator = File.separator;
-		}
+		separator = Gui.separator;
 		// Assign the parameters received from the call to the fields of this class
 		this.directory = directory;
 		this.reqdVarsL = rVarsL;

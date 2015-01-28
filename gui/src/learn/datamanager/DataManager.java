@@ -62,13 +62,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 	private String[] list;
 
 	public DataManager(String directory, Gui biosim) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
-
+		separator = Gui.separator;
+		
 		this.biosim = biosim;
 		this.directory = directory;
 		this.lrnName = directory.split(separator)[directory.split(separator).length - 1];
