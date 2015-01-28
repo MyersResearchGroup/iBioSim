@@ -7,7 +7,7 @@
 
 \usepackage{indentfirst,graphics,alltt,epsfig,color}
 
-\title{iBioSim Version 3.0 \\ User's Manual}
+\title{iBioSim Version 2.8 \\ User's Manual}
 
 \author{Chris J. Myers, Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curtis
   Madsen, \\ Nam Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe} 
@@ -58,9 +58,8 @@ Chris Myers
 %%tth:\begin{html}</A>\end{html}
 research group at the University of Utah.
 This project has involved many students including Nathan Barker, Scott Glass, Kevin Jones,
-Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tyler Patterson, Nicholas Roehner, and 
-Jason Stevens.
-Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with King Abdullah University of Science and Technology, Curtis Madsen is now with Newcastle University, Nam Nguyen is now with the University of Texas in Austin, and Jason Stevens is now with the University of Washington.
+Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tramy Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe, and Zhen Zhang.
+% Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with King Abdullah University of Science and Technology, Curtis Madsen is now with Newcastle University, Nam Nguyen is now with the University of Texas in Austin, and Jason Stevens is now with the University of Washington.
 
 \clearpage
 
@@ -133,15 +132,19 @@ Once a model or graph is created, it can be opened again later by right-clicking
 \subsection{Importing Models}
 
 \noindent
-You can also import files into the current working project.  These can be models in the 
+You can also import files into the current working project.  These can be 
 %%tth:\begin{html}<A HREF="http://www.sbml.org/">\end{html}
 \emph{Systems Biology Markup Language}
 %%tth:\begin{html}</A>\end{html}
-~(SBML), models from the
+~(SBML) models, models from the
 %%tth:\begin{html}<A HREF="http://www.ebi.ac.uk/biomodels-main/">\end{html}
-\emph{BioModels database}
+\emph{BioModels database},
 %%tth:\begin{html}</A>\end{html}
-, \emph{Labeled Petri Net} (LPN) models, a 
+models from the
+%%tth:\begin{html}<A HREF="http://sbol.ncl.ac.uk:8081/">\end{html}
+\emph{Virtual Parts repository},
+%%tth:\begin{html}</A>\end{html}
+\emph{Labeled Petri Net} (LPN) models, a 
 %%tth:\begin{html}<A HREF="http://www.sbolstandard.org/">\end{html}
 \emph{Synthetic Biology Open Language}
 %%tth:\begin{html}</A>\end{html}  
@@ -162,6 +165,8 @@ The model will also be checked for consistency, and any errors or warnings will 
 \begin{center}
 \includegraphics[height=60mm]{screenshots/BioModels}
 \end{center} 
+
+%% TODO: NEED TO DISCUSS VIRTUAL PARTS REPOSITORY
 
 \subsection{Exporting Models and Graphs}
 
@@ -264,15 +269,15 @@ The schematic for a model on a grid is a bit different than for an ordinary mode
 Compartments are used to specify membrane-enclosed regions where species are found. A new model includes a compartment named {\tt Cell} by default.  Note that when a compartment has species or reactions assigned to it that it cannot be removed without first removing or reassigning these species and reactions.  To add a new compartment to the model, select the Add Compartment icon \includegraphics{../gui/icons/modelview/add_compartment_selected} and click on the schematic canvas.  This will drop a new compartment with default ID and other values.  You may change these defaults by double-clicking on the compartment to open the Compartment Editor.  
 As shown below, a compartment has the following fields:
 \begin{itemize}
-\item ID: a unique ID composed of only alphanumeric characters and underscores.
+\item ID: a unique ID composed of only alphanumeric characters and underscores.  Can also have optional array dimension(s) enclosed in square brakets.  Within each set of brackets, a constant parameter must be provided that sets the size of that dimension of the compartment array.
 \item Name: an arbitrary string description (optional).
-\item Dimensions: number of spatial dimensions (default=3).
-\item Constant: Boolean indicating if the size is constant (default=true).
-\item Size: initial size of the compartment (default=1.0).  This value can be a mathematical expression (see Section~\ref{SBMLMath}) which is called an \emph{initial assignment}.
-\item Units: the units for the size (default=none).
 \item Is Mapped to a Port: a checkbox indicating whether or not this compartment is mapped to a port, so it can be replaced or deleted in hierarchical models (default=false).
+\item Spatial Dimensions: number of spatial dimensions (default=3).
+\item Spatial Size: initial size of the compartment (default=1.0).  This value can be a mathematical expression (see Section~\ref{SBMLMath}) which is called an \emph{initial assignment}.
+\item Units: the units for the size (default=none).
+\item Constant: Boolean indicating if the size is constant (default=true).
 \end{itemize}
-Finally, a compartment can be mapped to a port (default=true).  When a compartment is assigned to a port, it is assumed that the compartment is not membrane enclosed.  This is indicated by the compartment having square corners.  By assigning a compartment to a port, when this model is used as a subModel in another model, the compartment can be replaced with the one in the enclosing model.  When a compartment is not assigned to a port, it is assumed that the compartment is membrane enclosed which is indicated with rounded corners.
+When a compartment is assigned to a port, it is assumed that the compartment is not membrane enclosed.  This is indicated by the compartment having square corners.  By assigning a compartment to a port, when this model is used as a subModel in another model, the compartment can be replaced with the one in the enclosing model.  When a compartment is not assigned to a port, it is assumed that the compartment is membrane enclosed which is indicated with rounded corners.
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/compartment}
@@ -286,23 +291,25 @@ Species are the molecules, such as proteins, that are produced by genes or chemi
 \item ID: a unique ID composed of only alphanumeric characters and underscores.
 \item Name: an arbitrary string description of the species (optional).
 \item Port Type: used to indicate how this species can be connected in hierarchical models.  The \emph{input} type is used to indicate a species that is produced outside this model, the \emph{internal} type is used to indicate that a species is produced inside this model but cannot be used in other models, and the \emph{output} type is used to indicate that a species is produced by this model and can be used in other models (default=internal). 
-\item Constitutive: this checkbox indicates that a default production reaction should be created for this species (default=false).
-\item Degrades: this checkbox indicates that a default degradation reaction should be created for this species (default=false).
-\item Diffusible: this checkbox indicates if this species can diffuse in multi-compartment and grid-based models (default=false).
 \item Compartment: location of the species (default is set by where the species is placed in the schematic).
+\item Compartment Indices: used to reference the compartment when it is an array.
+\item Initial Amount/Concentration: initial value of the amount or concentration of the species (default=0.0).  This value can be a mathematical expression (see Section~\ref{SBMLMath}) which is called an \emph{initial assignment}.  If the value/expression is enclosed in brackets (i.e., $[e]$), it is a concentration, otherwise it is an amount.  
+\item Units: the units for the amount/concentration (default=none).
+\item Conversion Factor: is a constant global parameter, the value of which is used to convert this species' units into the units used for extent (i.e., the units of change due to reactions).
+\item Conversion Factor Indicies: used to reference the conversion factor when the parameter is an array.
 \item Boundary Condition: Boolean indicating if the species amount/concentration cannot be changed by reactions (default=false).
 \item Constant: Boolean indicating if the species amount/concentration is constant (default=false).
 \item Has Only Substance Units: Boolean indicating if the species is to be considered an amount in mathematical equations (default=true).
-\item Units: the units for the amount/concentration (default=none).
-\item Conversion Factor: is a constant global parameter, the value of which is used to convert this species' units into the units used for extent (i.e., the units of change due to reactions).
-\item Initial Amount/Concentration: initial value of the amount or concentration of the species (default=0.0).  This value can be a mathematical expression (see Section~\ref{SBMLMath}) which is called an \emph{initial assignment}.  If the value/expression is enclosed in brackets (i.e., $[e]$), it is a concentration, otherwise it is an amount.  
+\item Constitutive: this checkbox indicates that a default production reaction should be created for this species (default=false).
+\item Degrades: this checkbox indicates that a default degradation reaction should be created for this species (default=false).
+\item Diffusible: this checkbox indicates if this species can diffuse in multi-compartment and grid-based models (default=false).
 \item Open complex production rate (ko): once RNAP binds to this promoter, this is the rate at which transcription is initiated.  Note that this production rate is used in the production reaction created when a species is marked as constitutively produced.  The default value is the global parameter ko.
 \item Stoichiometry of production (np): the average number of proteins that are produced by an mRNA before it degrades.  This value is used in the production reaction created when a species is marked as constitutively produced.  The default value is the global parameter np.
 \item Degradation rate (kd): the degradation rate for this species.  This value is used in the degradation reaction created when a species is marked that it degrades.  The default is the value of the global parameter kd.  
 \item Complex formation equilibrium (Kc): the equilibrium constant for formation of this species when it is produced by a complex formation reaction.  The default is the global parameter Kc.  The equilibrium constant can be specified as a forward and reverse rate constant using the $\langle$ forward rate $\rangle / \langle$ reverse rate $\rangle$ form.
 \item Membrane diffusion rate (fd/rv) (kmdiff): the forward (in to out) and reverse (out to in) rate constants (slash-separated) for diffusion of this species through its compartment's membrane.  Note that when membrane diffusion reactions are generated, the rates are taken from the inner species.  If no reverse rate is given, a default of 1.0 is used.  The default is the global parameter kmdiff.
 \end{itemize}
-Finally, one can specify that an SBOL DNA Component is associated with this species by clicking on the Associate SBOL button.  More details can be found in Section~\ref{SBOL}.
+Finally, one can specify that an SBOL element is associated with this species by clicking on the Associate SBOL button.  More details can be found in Section~\ref{SBOL}.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/species}
@@ -432,7 +439,7 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 \item Basal production rate (kb): once RNAP binds to an activated promoter, this is the rate at which transcription is initiated without the activator also being bound.  The default value is the global parameter kb.
 \item Activated production rate (ka): once RNAP binds to an activated promoter, this is the rate at which transcription is initiated when the activator is also bound to the promoter.  The default value is the global value ka.
 \item Stoichiometry of production (np): the average number of proteins that are produced by an mRNA before it degrades.  The default value is the global parameter np.
-\item SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL DNA component with the promoter (see Section~\ref{SBOL}).
+\item SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL  with the promoter (see Section~\ref{SBOL}).
 \end{itemize}
 
 \begin{center}
@@ -643,7 +650,9 @@ Clicking on the Model button on the schematic tab brings up the Model Editor.  T
 \item Length units: the default units for 1-dimensional compartments.
 \item Extent units: the default units for the amount changed due to a reaction.  Kinetic laws have default units of extent units / time units.  
 \item Conversion factor: the constant global parameter to be used as the default conversion factor to convert species units into extent units.
+\item Conversion factor indices: used to reference a conversion factor in a parameter array.
 \item SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL DNA component with the model (see Section~\ref{SBOL}).
+\item Flux Objective: add/edit flux balance objectives for a flux balance model.
 \end{itemize}
 
 \begin{center}
@@ -659,10 +668,11 @@ The Constants tab includes a list of all the constant global parameters.  They a
 \begin{itemize}
 \item ID: a unique ID composed only of alphanumeric characters and underscores.
 \item Name: an arbitrary string description (optional).
+\item Port Type: used to indicate how this object can be connected in hierarchical models.  The \emph{input} type is used to indicate a object that is produced outside this model, the \emph{internal} type is used to indicate that a object is produced inside this model but cannot be used in other models, and the \emph{output} type is used to indicate that a object is produced by this model and can be used in other models (default=internal). 
 \item Initial value: initial value for the parameter.  This value can be a mathematical expression (see Section~\ref{SBMLMath}) which is called an \emph{initial assignment}.
 \item Units: the units for the parameter value (default=none).
 \item Constant: Boolean indicating if the parameter value is constant (default=true).
-\item Port Type: used to indicate how this object can be connected in hierarchical models.  The \emph{input} type is used to indicate a object that is produced outside this model, the \emph{internal} type is used to indicate that a object is produced inside this model but cannot be used in other models, and the \emph{output} type is used to indicate that a object is produced by this model and can be used in other models (default=internal). 
+\item SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL  with the promoter (see Section~\ref{SBOL}).
 \end{itemize}
 Note that changing the Constant attribute to false removes the parameter from the constants list, and it places the parameter on the schematic.
 
@@ -1306,8 +1316,10 @@ The Restore Defaults button on this tab and the others restores the default pref
 \noindent
 Math formulas appear in many model constructs.  These formulas are expressed as text strings using a simple syntax.  In particular, model math formulas can include: 
 \begin{itemize}
-\item Variables (compartment, species, parameter IDs, and reaction IDs)
-\item Real numbers followed optionally by its units
+\item Variables (compartments, species, parameters, reaction IDs, and species reference IDs).
+\item Real numbers followed optionally by its units.
+\item Vector constant (\{~\}) which can be nested.
+\item Array selector(s) ([~]) can occur after array variables or vector constants.  
 \item Built-in constants: exponential, pi, Infinity, NaN, true, and false.
 \item Special variable time or t, which returns the current simulation time.
 \item Mathematical operators including add (+), subtract (-), multiply (*), divide (/), power (\^{} or pow(x,y)), and root.

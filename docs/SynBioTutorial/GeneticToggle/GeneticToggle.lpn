@@ -1,0 +1,5 @@
+.internal aTc GFP IPTG_LacI LacI aTc_TetR IPTG TetR 
+#@.variables aTc GFP IPTG_LacI LacI aTc_TetR IPTG TetR 
+#@.init_vals {<aTc=0.0><GFP=0.0><IPTG_LacI=0.0><LacI=60.0><aTc_TetR=0.0><IPTG=0.0><TetR=0.0>}
+#@.continuous 
+.end

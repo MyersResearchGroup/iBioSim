@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" level="3" arrays:required="true" fbc:required="false" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version1" comp:required="true" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" version="1" layout:required="false">
+  <comp:listOfExternalModelDefinitions xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+    <comp:externalModelDefinition comp:md5="5d2aa496305af9da7fab776c09143e26" comp:source="file:lambda.xml" comp:id="lambda"/>
+  </comp:listOfExternalModelDefinitions>
+  <model id="Population" metaid="iBioSim25">
+    <comp:listOfSubmodels xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:submodel comp:modelRef="lambda" comp:id="GRID__lambda">
+        <annotation>
+          <array:array xmlns:array="http://www.fakeuri.com" array:size="4"/>
+        </annotation>
+            </comp:submodel>
+    </comp:listOfSubmodels>
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="330" layout:height="210" layout:depth="0"/>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:reference="C1" layout:id="Glyph__C1">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:reference="C2" layout:id="Glyph__C2">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:reference="C3" layout:id="Glyph__C3">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:reference="C4" layout:id="Glyph__C4">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="Glyph__C1" layout:id="TextGlyph__C1" layout:text="C1">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__C2" layout:id="TextGlyph__C2" layout:text="C2">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__C3" layout:id="TextGlyph__C3" layout:text="C3">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__C4" layout:id="TextGlyph__C4" layout:text="C4">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfCompartments>
+      <compartment id="Grid" constant="true" spatialDimensions="3" size="1">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:grid="(3,3)"/>
+        </annotation>
+            </compartment>
+    </listOfCompartments>
+    <listOfParameters>
+      <parameter id="kr_f" constant="true" name="Forward repression binding rate" metaid="iBioSim1" value="0.5"/>
+      <parameter id="kr_r" constant="true" name="Reverse repression binding rate" metaid="iBioSim3" value="1"/>
+      <parameter id="ka_f" constant="true" name="Forward activation binding rate" metaid="iBioSim4" value="0.0033"/>
+      <parameter id="ka_r" constant="true" name="Reverse activation binding rate" metaid="iBioSim5" value="1"/>
+      <parameter id="ko_f" constant="true" name="Forward RNAP binding rate" metaid="iBioSim6" value="0.033"/>
+      <parameter id="ko_r" constant="true" name="Reverse RNAP binding rate" metaid="iBioSim7" value="1"/>
+      <parameter id="kao_f" constant="true" name="Forward activated RNAP binding rate" metaid="iBioSim8" value="1"/>
+      <parameter id="kao_r" constant="true" name="Reverse activated RNAP binding rate" metaid="iBioSim9" value="1"/>
+      <parameter id="kc_f" constant="true" name="Forward complex formation rate" metaid="iBioSim10" value="0.05"/>
+      <parameter id="kc_r" constant="true" name="Reverse complex formation rate" metaid="iBioSim11" value="1"/>
+      <parameter id="kmdiff_f" constant="true" name="Forward membrane diffusion rate" metaid="iBioSim12" value="1"/>
+      <parameter id="kmdiff_r" constant="true" name="Reverse membrane diffusion rate" metaid="iBioSim13" value="0.01"/>
+      <parameter id="kd" constant="true" name="Degradation rate" metaid="iBioSim14" value="0.0075"/>
+      <parameter id="kecd" constant="true" name="Extracellular degradation rate" metaid="iBioSim15" value="0.005"/>
+      <parameter id="nc" constant="true" name="Stoichiometry of binding" metaid="iBioSim16" value="2"/>
+      <parameter id="nr" constant="true" name="Initial RNAP count" metaid="iBioSim17" value="30"/>
+      <parameter id="ko" constant="true" name="Open complex production rate" metaid="iBioSim18" value="0.05"/>
+      <parameter id="kb" constant="true" name="Basal production rate" metaid="iBioSim19" value="0.0001"/>
+      <parameter id="ng" constant="true" name="Initial promoter count" metaid="iBioSim20" value="2"/>
+      <parameter id="np" constant="true" name="Stoichiometry of production" metaid="iBioSim21" value="10"/>
+      <parameter id="ka" constant="true" name="Activated production rate" metaid="iBioSim22" value="0.25"/>
+      <parameter id="kecdiff" constant="true" name="Extracellular diffusion rate" metaid="iBioSim23" value="1"/>
+      <parameter id="lambda__locations" constant="false" value="0">
+        <annotation>
+          <array:array xmlns:array="http://www.fakeuri.com" array:C4="(0,2)" array:C3="(2,2)" array:C2="(2,1)" array:C1="(2,0)"/>
+        </annotation>
+            </parameter>
+    </listOfParameters>
+  </model>
+</sbml>

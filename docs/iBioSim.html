@@ -14,9 +14,9 @@
  
 
 
-<title> iBioSim Version 3.0 \ User's Manual</title>
+<title> iBioSim Version 2.8 \ User's Manual</title>
  
-<h1 align="center">iBioSim Version 3.0 <br />User's Manual </h1>
+<h1 align="center">iBioSim Version 2.8 <br />User's Manual </h1>
 
 <div class="p"><!----></div>
 
@@ -168,9 +168,7 @@ Chris Myers
 </A>
 research group at the University of Utah.
 This project has involved many students including Nathan Barker, Scott Glass, Kevin Jones,
-Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tyler Patterson, Nicholas Roehner, and 
-Jason Stevens.
-Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with King Abdullah University of Science and Technology, Curtis Madsen is now with Newcastle University, Nam Nguyen is now with the University of Texas in Austin, and Jason Stevens is now with the University of Washington.
+Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tramy Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe, and Zhen Zhang.
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc2">
@@ -256,15 +254,19 @@ Once a model or graph is created, it can be opened again later by right-clicking
 2.3</a>&nbsp;&nbsp;Importing Models</h3>
 
 <div class="p"><!----></div>
-You can also import files into the current working project.  These can be models in the 
+You can also import files into the current working project.  These can be 
 <A HREF="http://www.sbml.org/">
 <em>Systems Biology Markup Language</em>
 </A>
-&nbsp;(SBML), models from the
+&nbsp;(SBML) models, models from the
 <A HREF="http://www.ebi.ac.uk/biomodels-main/">
-<em>BioModels database</em>
+<em>BioModels database</em>,
 </A>
-, <em>Labeled Petri Net</em> (LPN) models, a 
+models from the
+<A HREF="http://sbol.ncl.ac.uk:8081/">
+<em>Virtual Parts repository</em>,
+</A>
+<em>Labeled Petri Net</em> (LPN) models, a 
 <A HREF="http://www.sbolstandard.org/">
 <em>Synthetic Biology Open Language</em>
 </A>  
@@ -288,6 +290,8 @@ The model will also be checked for consistency, and any errors or warnings will 
 
 <center><img src="screenshots/BioModels.png" alt="screenshots/BioModels.png" />
 </center> 
+
+<div class="p"><!----></div>
 
 <div class="p"><!----></div>
      <h3><a name="tth_sEc2.4">
@@ -435,7 +439,7 @@ Compartments are used to specify membrane-enclosed regions where species are fou
 As shown below, a compartment has the following fields:
 
 <ul>
-<li> ID: a unique ID composed of only alphanumeric characters and underscores.
+<li> ID: a unique ID composed of only alphanumeric characters and underscores.  Can also have optional array dimension(s) enclosed in square brakets.  Within each set of brackets, a constant parameter must be provided that sets the size of that dimension of the compartment array.
 <div class="p"><!----></div>
 </li>
 
@@ -443,15 +447,15 @@ As shown below, a compartment has the following fields:
 <div class="p"><!----></div>
 </li>
 
-<li> Dimensions: number of spatial dimensions (default=3).
+<li> Is Mapped to a Port: a checkbox indicating whether or not this compartment is mapped to a port, so it can be replaced or deleted in hierarchical models (default=false).
 <div class="p"><!----></div>
 </li>
 
-<li> Constant: Boolean indicating if the size is constant (default=true).
+<li> Spatial Dimensions: number of spatial dimensions (default=3).
 <div class="p"><!----></div>
 </li>
 
-<li> Size: initial size of the compartment (default=1.0).  This value can be a mathematical expression (see Section&nbsp;<a href="#SBMLMath">10</a>) which is called an <em>initial assignment</em>.
+<li> Spatial Size: initial size of the compartment (default=1.0).  This value can be a mathematical expression (see Section&nbsp;<a href="#SBMLMath">10</a>) which is called an <em>initial assignment</em>.
 <div class="p"><!----></div>
 </li>
 
@@ -459,11 +463,11 @@ As shown below, a compartment has the following fields:
 <div class="p"><!----></div>
 </li>
 
-<li> Is Mapped to a Port: a checkbox indicating whether or not this compartment is mapped to a port, so it can be replaced or deleted in hierarchical models (default=false).
+<li> Constant: Boolean indicating if the size is constant (default=true).
 <div class="p"><!----></div>
 </li>
 </ul>
-Finally, a compartment can be mapped to a port (default=true).  When a compartment is assigned to a port, it is assumed that the compartment is not membrane enclosed.  This is indicated by the compartment having square corners.  By assigning a compartment to a port, when this model is used as a subModel in another model, the compartment can be replaced with the one in the enclosing model.  When a compartment is not assigned to a port, it is assumed that the compartment is membrane enclosed which is indicated with rounded corners.
+When a compartment is assigned to a port, it is assumed that the compartment is not membrane enclosed.  This is indicated by the compartment having square corners.  By assigning a compartment to a port, when this model is used as a subModel in another model, the compartment can be replaced with the one in the enclosing model.  When a compartment is not assigned to a port, it is assumed that the compartment is membrane enclosed which is indicated with rounded corners.
 
 <div class="p"><!----></div>
 
@@ -491,19 +495,27 @@ Species are the molecules, such as proteins, that are produced by genes or chemi
 <div class="p"><!----></div>
 </li>
 
-<li> Constitutive: this checkbox indicates that a default production reaction should be created for this species (default=false).
-<div class="p"><!----></div>
-</li>
-
-<li> Degrades: this checkbox indicates that a default degradation reaction should be created for this species (default=false).
-<div class="p"><!----></div>
-</li>
-
-<li> Diffusible: this checkbox indicates if this species can diffuse in multi-compartment and grid-based models (default=false).
-<div class="p"><!----></div>
-</li>
-
 <li> Compartment: location of the species (default is set by where the species is placed in the schematic).
+<div class="p"><!----></div>
+</li>
+
+<li> Compartment Indices: used to reference the compartment when it is an array.
+<div class="p"><!----></div>
+</li>
+
+<li> Initial Amount/Concentration: initial value of the amount or concentration of the species (default=0.0).  This value can be a mathematical expression (see Section&nbsp;<a href="#SBMLMath">10</a>) which is called an <em>initial assignment</em>.  If the value/expression is enclosed in brackets (i.e., [e]), it is a concentration, otherwise it is an amount.
+<div class="p"><!----></div>
+</li>
+
+<li> Units: the units for the amount/concentration (default=none).
+<div class="p"><!----></div>
+</li>
+
+<li> Conversion Factor: is a constant global parameter, the value of which is used to convert this species' units into the units used for extent (i.e., the units of change due to reactions).
+<div class="p"><!----></div>
+</li>
+
+<li> Conversion Factor Indicies: used to reference the conversion factor when the parameter is an array.
 <div class="p"><!----></div>
 </li>
 
@@ -519,15 +531,15 @@ Species are the molecules, such as proteins, that are produced by genes or chemi
 <div class="p"><!----></div>
 </li>
 
-<li> Units: the units for the amount/concentration (default=none).
+<li> Constitutive: this checkbox indicates that a default production reaction should be created for this species (default=false).
 <div class="p"><!----></div>
 </li>
 
-<li> Conversion Factor: is a constant global parameter, the value of which is used to convert this species' units into the units used for extent (i.e., the units of change due to reactions).
+<li> Degrades: this checkbox indicates that a default degradation reaction should be created for this species (default=false).
 <div class="p"><!----></div>
 </li>
 
-<li> Initial Amount/Concentration: initial value of the amount or concentration of the species (default=0.0).  This value can be a mathematical expression (see Section&nbsp;<a href="#SBMLMath">10</a>) which is called an <em>initial assignment</em>.  If the value/expression is enclosed in brackets (i.e., [e]), it is a concentration, otherwise it is an amount.
+<li> Diffusible: this checkbox indicates if this species can diffuse in multi-compartment and grid-based models (default=false).
 <div class="p"><!----></div>
 </li>
 
@@ -551,7 +563,7 @@ Species are the molecules, such as proteins, that are produced by genes or chemi
 <div class="p"><!----></div>
 </li>
 </ul>
-Finally, one can specify that an SBOL DNA Component is associated with this species by clicking on the Associate SBOL button.  More details can be found in Section&nbsp;<a href="#SBOL">4</a>.
+Finally, one can specify that an SBOL element is associated with this species by clicking on the Associate SBOL button.  More details can be found in Section&nbsp;<a href="#SBOL">4</a>.
 
 <div class="p"><!----></div>
 
@@ -815,7 +827,7 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 <div class="p"><!----></div>
 </li>
 
-<li> SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL DNA component with the promoter (see Section&nbsp;<a href="#SBOL">4</a>).
+<li> SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL  with the promoter (see Section&nbsp;<a href="#SBOL">4</a>).
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -1199,7 +1211,15 @@ Clicking on the Model button on the schematic tab brings up the Model Editor.  T
 <div class="p"><!----></div>
 </li>
 
+<li> Conversion factor indices: used to reference a conversion factor in a parameter array.
+<div class="p"><!----></div>
+</li>
+
 <li> SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL DNA component with the model (see Section&nbsp;<a href="#SBOL">4</a>).
+<div class="p"><!----></div>
+</li>
+
+<li> Flux Objective: add/edit flux balance objectives for a flux balance model.
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -1226,6 +1246,10 @@ The Constants tab includes a list of all the constant global parameters.  They a
 <div class="p"><!----></div>
 </li>
 
+<li> Port Type: used to indicate how this object can be connected in hierarchical models.  The <em>input</em> type is used to indicate a object that is produced outside this model, the <em>internal</em> type is used to indicate that a object is produced inside this model but cannot be used in other models, and the <em>output</em> type is used to indicate that a object is produced by this model and can be used in other models (default=internal).
+<div class="p"><!----></div>
+</li>
+
 <li> Initial value: initial value for the parameter.  This value can be a mathematical expression (see Section&nbsp;<a href="#SBMLMath">10</a>) which is called an <em>initial assignment</em>.
 <div class="p"><!----></div>
 </li>
@@ -1238,7 +1262,7 @@ The Constants tab includes a list of all the constant global parameters.  They a
 <div class="p"><!----></div>
 </li>
 
-<li> Port Type: used to indicate how this object can be connected in hierarchical models.  The <em>input</em> type is used to indicate a object that is produced outside this model, the <em>internal</em> type is used to indicate that a object is produced inside this model but cannot be used in other models, and the <em>output</em> type is used to indicate that a object is produced by this model and can be used in other models (default=internal).
+<li> SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL  with the promoter (see Section&nbsp;<a href="#SBOL">4</a>).
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -2179,11 +2203,19 @@ The Restore Defaults button on this tab and the others restores the default pref
 Math formulas appear in many model constructs.  These formulas are expressed as text strings using a simple syntax.  In particular, model math formulas can include: 
 
 <ul>
-<li> Variables (compartment, species, parameter IDs, and reaction IDs)
+<li> Variables (compartments, species, parameters, reaction IDs, and species reference IDs).
 <div class="p"><!----></div>
 </li>
 
-<li> Real numbers followed optionally by its units
+<li> Real numbers followed optionally by its units.
+<div class="p"><!----></div>
+</li>
+
+<li> Vector constant ({&nbsp;}) which can be nested.
+<div class="p"><!----></div>
+</li>
+
+<li> Array selector(s) ([&nbsp;]) can occur after array variables or vector constants.
 <div class="p"><!----></div>
 </li>
 
@@ -2356,5 +2388,5 @@ mail will be filtered by our spam filters.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 25 Jan 2015, 14:33.</small>
+version 3.81.<br />On 25 Jan 2015, 19:09.</small>
 </html>

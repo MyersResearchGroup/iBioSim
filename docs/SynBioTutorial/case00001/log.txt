@@ -1,6 +1,6 @@
 Executing:
-reb2sac --target.encoding=rkf45 /Users/myers/research/nobackup/workspace/BioSim/docs//SynBioTutorial/case00001/case00001.xml
+reb2sac --target.encoding=rkf45 /Users/myers/research/nobackup/workspace/BioSim/docs/SynBioTutorial/case00001/case00001.xml
 
-Total Simulation Time: 0.212765 seconds for case00001
+Total Simulation Time: 0.106553 seconds for case00001
 
 

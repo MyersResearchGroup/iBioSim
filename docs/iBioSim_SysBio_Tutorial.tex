@@ -50,7 +50,7 @@ Within {\tt iBioSim}, all files are collected within projects.   A project is a 
 \end{center}
 
 \noindent
-To create a new project, select New $\rightarrow$ Project from the File menu as shown below.  You will then be prompted to browse to a desired location and to give a name to the project directory.  Enter the name {\tt Tutorial}.  After you do this, click the new button and a new project directory will be created.  
+To create a new project, select New $\rightarrow$ Project from the File menu as shown below.  You will then be prompted to browse to a desired location and to give a name to the project directory.  Enter the name {\tt SysBioTutorial}.  After you do this, click the new button and a new project directory will be created.  
 
 \begin{center}
 \includegraphics[width=60mm]{screenshots/project}
@@ -191,7 +191,7 @@ Next, let's add a constraint.  A constraint is a condition that must be satisfie
 \includegraphics[width=160mm]{screenshots/constraint}
 \end{center}
 
-Finally, let's add an event.  Events are used to specify discrete state changes.  For example, let's describe an event for cell division.  Click on the Add Event button, enter the ID CellDivision, trigger true, and delay of 2100.  The trigger specifies the condition that should be satisfied to enable this event.  In this case, we want it to be enabled initially.  The delay indicates the time after which it is enabled that it should execute.  Finally, select the Dynamic Process of Symmetric Division.  This combination results in a cell division event at 2100 seconds after simulation begins.  The event assignments specify the state change(s) for this event.  Click on the Add Assignment button and select the CI variable, and enter the assignment CI / uniform(1,2).  In other words, the number of molecules is being divided between the two daughter cells with a random distribution.  Similarly, add event assignments to divide up CI2 and CII.
+Finally, let's add an event.  Events are used to specify discrete state changes.  For example, let's describe an event for cell division.  Click on the Add Event button, enter the ID CellDivision, trigger true, and delay of 2100.  The trigger specifies the condition that should be satisfied to enable this event.  In this case, we want it to be enabled initially.  The delay indicates the time after which it is enabled that it should execute. This combination results in a cell division event at 2100 seconds after simulation begins.  The event assignments specify the state change(s) for this event.  Click on the Add Assignment button and select the CI variable, and enter the assignment CI / 2.  In other words, the number of molecules is being divided between the two daughter cells with a random distribution.  Similarly, add event assignments to divide up CI2 and CII.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/event}
