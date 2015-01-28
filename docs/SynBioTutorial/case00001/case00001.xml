@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" level="3" arrays:required="true" fbc:required="false" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version1" comp:required="true" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" version="1" layout:required="false">
-  <model id="case00001" name="Created by libsbml flatten routine" metaid="iBioSim6" timeUnits="time" substanceUnits="mole" volumeUnits="litre">
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="case00001" name="Created by iBioSim flatten routine" metaid="iBioSim6" timeUnits="time" substanceUnits="mole" volumeUnits="litre">
     <listOfUnitDefinitions>
       <unitDefinition id="volume">
         <listOfUnits>

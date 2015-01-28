@@ -1,21 +1,21 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" level="3" arrays:required="true" fbc:required="false" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version1" comp:required="true" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" version="1" layout:required="false">
   <comp:listOfExternalModelDefinitions xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-    <comp:externalModelDefinition comp:md5="cd2fabe762194e7884b72b8ef2e10f63" comp:source="file:LacI_Inverter.xml" comp:id="LacI_Inverter"/>
-    <comp:externalModelDefinition comp:md5="05f080c72f6c8a3e671967f6f1549f86" comp:source="file:TetR_Inverter.xml" comp:id="TetR_Inverter"/>
+    <comp:externalModelDefinition comp:md5="f1aec8d614b2cf9419a189c03d413468" comp:source="file:LacI_Inverter.xml" comp:id="LacI_Inverter"/>
+    <comp:externalModelDefinition comp:md5="d34b0aad693c9a48a4754bbfabb6189c" comp:source="file:TetR_Inverter.xml" comp:id="TetR_Inverter"/>
   </comp:listOfExternalModelDefinitions>
-  <model id="GeneticToggle" metaid="iBioSim1">
+  <model id="GeneticToggle" metaid="iBioSim2">
     <annotation>
       <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
-          <rdf:Description rdf:about="#iBioSim1">
+          <rdf:Description rdf:about="#iBioSim2">
             <mts:DNAComponents>
               <rdf:Seq>
-                <rdf:li rdf:resource="http://www.async.ece.utah.edu#comp_8_10_2014_16_40_24_971_iBioSim"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+                <rdf:li rdf:resource="http://www.async.ece.utah.edu#comp_10_2_2014_15_7_48_611_iBioSim"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
     </annotation>
       <comp:listOfSubmodels xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-      <comp:submodel comp:modelRef="LacI_Inverter" metaid="iBioSim29" comp:id="C1"/>
-      <comp:submodel comp:modelRef="TetR_Inverter" metaid="iBioSim30" comp:id="C2"/>
+      <comp:submodel comp:modelRef="LacI_Inverter" metaid="iBioSim1" comp:id="C1"/>
+      <comp:submodel comp:modelRef="TetR_Inverter" metaid="iBioSim29" comp:id="C2"/>
     </comp:listOfSubmodels>
     <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <layout:layout layout:id="iBioSim">
@@ -158,6 +158,80 @@
             </layout:boundingBox>
           </layout:speciesGlyph>
         </layout:listOfSpeciesGlyphs>
+        <layout:listOfReactionGlyphs>
+          <layout:reactionGlyph layout:id="Glyph__IPTG__complex__IPTG_LacI">
+            <layout:boundingBox>
+              <layout:position/>
+              <layout:dimensions/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__IPTG__complex__IPTG_LacI" layout:role="product" layout:speciesGlyph="Glyph__IPTG_LacI">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="210" layout:y="285"/>
+                      <layout:end layout:x="310" layout:y="375"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__LacI__complex__IPTG_LacI">
+            <layout:boundingBox>
+              <layout:position/>
+              <layout:dimensions/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__LacI__complex__IPTG_LacI" layout:role="product" layout:speciesGlyph="Glyph__IPTG_LacI">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="420" layout:y="285"/>
+                      <layout:end layout:x="310" layout:y="375"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__TetR__complex__aTc_TetR">
+            <layout:boundingBox>
+              <layout:position/>
+              <layout:dimensions/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__TetR__complex__aTc_TetR" layout:role="product" layout:speciesGlyph="Glyph__aTc_TetR">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="640" layout:y="125"/>
+                      <layout:end layout:x="740" layout:y="55"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__aTc__complex__aTc_TetR">
+            <layout:boundingBox>
+              <layout:position/>
+              <layout:dimensions/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__aTc__complex__aTc_TetR" layout:role="product" layout:speciesGlyph="Glyph__aTc_TetR">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="840" layout:y="125"/>
+                      <layout:end layout:x="740" layout:y="55"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+        </layout:listOfReactionGlyphs>
         <layout:listOfTextGlyphs>
           <layout:textGlyph layout:graphicalObject="Glyph__Cell" layout:id="TextGlyph__Cell" layout:text="Cell">
             <layout:boundingBox>
@@ -249,8 +323,8 @@
     <listOfCompartments>
       <compartment id="Cell" constant="true" spatialDimensions="3" size="1">
         <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C1"/>
           <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C2"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C1"/>
         </comp:listOfReplacedElements>
       </compartment>
     </listOfCompartments>
@@ -262,14 +336,14 @@
       </species>
       <species id="LacI" constant="false" initialAmount="60" hasOnlySubstanceUnits="true" metaid="iBioSim12" boundaryCondition="false" compartment="Cell">
         <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="input__LacI" comp:submodelRef="C1"/>
           <comp:replacedElement comp:portRef="output__LacI" comp:submodelRef="C2"/>
+          <comp:replacedElement comp:portRef="input__LacI" comp:submodelRef="C1"/>
         </comp:listOfReplacedElements>
       </species>
       <species id="TetR" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim13" boundaryCondition="false" compartment="Cell">
         <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="output__TetR" comp:submodelRef="C1"/>
           <comp:replacedElement comp:portRef="input__TetR" comp:submodelRef="C2"/>
+          <comp:replacedElement comp:portRef="output__TetR" comp:submodelRef="C1"/>
         </comp:listOfReplacedElements>
       </species>
       <species id="IPTG" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim14" boundaryCondition="true" compartment="Cell"/>

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="case00987" name="Created by iBioSim flatten routine" metaid="iBioSim9">
+    <listOfCompartments>
+      <compartment id="default_compartment" constant="true" spatialDimensions="3" sboTerm="SBO:0000410" size="1"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="A" constant="false" initialAmount="1" hasOnlySubstanceUnits="true" metaid="iBioSim3" boundaryCondition="false" compartment="default_compartment"/>
+      <species id="B" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim4" boundaryCondition="false" compartment="default_compartment"/>
+      <species id="C" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim5" boundaryCondition="false" compartment="default_compartment"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="k1" constant="false" metaid="iBioSim2" value="0"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="fast" metaid="iBioSim6" reversible="true" fast="true">
+        <listOfReactants>
+          <speciesReference constant="true" species="A" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" species="B" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> k1 </ci>
+              <ci> A </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction id="slow" metaid="iBioSim7" reversible="true" fast="false">
+        <listOfReactants>
+          <speciesReference constant="true" species="B" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" species="C" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> k1 </ci>
+              <ci> B </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <listOfEvents>
+      <event id="_E0" metaid="iBioSim1" useValuesFromTriggerTime="true">
+        <trigger persistent="true" initialValue="true">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <gt/>
+              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> t </csymbol>
+              <cn> 0.99 </cn>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="k1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+    </listOfEvents>
+  </model>
+</sbml>

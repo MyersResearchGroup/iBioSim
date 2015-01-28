@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" level="3" arrays:required="true" fbc:required="false" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version1" comp:required="true" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" version="1" layout:required="false">
+  <model id="case00987" name="case00987" metaid="iBioSim1">
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="160" layout:height="230"/>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:reference="_E0" layout:id="Glyph___E0">
+            <layout:boundingBox>
+              <layout:position layout:x="80" layout:y="140"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph___E0__product__k1" layout:role="product" layout:glyph="Glyph__k1">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="117.5" layout:y="152.5"/>
+                      <layout:end layout:x="115" layout:y="215"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:reference="k1" layout:id="Glyph__k1">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="200"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:id="Glyph__default_compartment" layout:compartment="default_compartment">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__A" layout:species="A">
+            <layout:boundingBox>
+              <layout:position layout:x="20" layout:y="40"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__B" layout:species="B">
+            <layout:boundingBox>
+              <layout:position layout:x="40" layout:y="80"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__C" layout:species="C">
+            <layout:boundingBox>
+              <layout:position layout:x="60" layout:y="120"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="Glyph__default_compartment" layout:id="TextGlyph__default_compartment" layout:text="default_compartment">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__A" layout:id="TextGlyph__A" layout:text="A">
+            <layout:boundingBox>
+              <layout:position layout:x="20" layout:y="40"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__B" layout:id="TextGlyph__B" layout:text="B">
+            <layout:boundingBox>
+              <layout:position layout:x="40" layout:y="80"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__C" layout:id="TextGlyph__C" layout:text="C">
+            <layout:boundingBox>
+              <layout:position layout:x="60" layout:y="120"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph___E0" layout:id="TextGlyph___E0" layout:text="_E0">
+            <layout:boundingBox>
+              <layout:position layout:x="80" layout:y="140"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__k1" layout:id="TextGlyph__k1" layout:text="k1">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="200"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfCompartments>
+      <compartment id="default_compartment" constant="true" spatialDimensions="3" sboTerm="SBO:0000410" size="1"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="A" constant="false" initialAmount="1" hasOnlySubstanceUnits="true" metaid="iBioSim3" boundaryCondition="false" compartment="default_compartment"/>
+      <species id="B" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim4" boundaryCondition="false" compartment="default_compartment"/>
+      <species id="C" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim5" boundaryCondition="false" compartment="default_compartment"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="k1" constant="false" metaid="iBioSim2" value="0"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="fast" metaid="iBioSim6" reversible="true" fast="true">
+        <listOfReactants>
+          <speciesReference constant="true" species="A" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" species="B" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> k1 </ci>
+              <ci> A </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction id="slow" metaid="iBioSim7" reversible="true" fast="false">
+        <listOfReactants>
+          <speciesReference constant="true" species="B" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" species="C" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> k1 </ci>
+              <ci> B </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <listOfEvents>
+      <event id="_E0" useValuesFromTriggerTime="true">
+        <trigger persistent="true" initialValue="true">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <gt/>
+              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> t </csymbol>
+              <cn> 0.99 </cn>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="k1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+    </listOfEvents>
+  </model>
+</sbml>
