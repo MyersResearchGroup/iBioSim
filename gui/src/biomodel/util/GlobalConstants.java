@@ -89,7 +89,8 @@ public class GlobalConstants {
 	public static final String INPUT = "input";
 	public static final String OUTPUT = "output";
 	public static final String INTERNAL = "internal";
-	public static final String TYPE = "Port Type";
+	public static final String TYPE = "Type";
+	public static final String PORTTYPE = "Port Type";
 	public static final String MAX_DIMER_STRING = "N-mer as trascription factor";
 	public static final String INITIAL_STRING = "ns";	
 	public static final String PROMOTER = "Promoter";

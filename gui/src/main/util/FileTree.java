@@ -275,12 +275,12 @@ public class FileTree extends JPanel implements MouseListener {
 				if (!async && thisObject.toString().length() > 3 && 
 						thisObject.toString().substring(thisObject.toString().length() - 4).equals(".gcm")) {
 					String sbmlFile = thisObject.replace(".gcm",".xml");
-					BioModel gcm = new BioModel(curPath);
-					gcm.load(curPath + separator + sbmlFile);
-					GCM2SBML gcm2sbml = new GCM2SBML(gcm);
+					BioModel bioModel = new BioModel(curPath);
+					bioModel.load(curPath + separator + sbmlFile);
+					GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
 					gcm2sbml.load(curPath + separator + thisObject.toString());
-					gcm2sbml.convertGCM2SBML(curPath + separator + thisObject.toString());
-					gcm.save(curPath + separator + sbmlFile);
+					gcm2sbml.convertGCM2SBML(curPath,thisObject.toString());
+					bioModel.save(curPath + separator + sbmlFile);
 					files.add(sbmlFile);
 				}
 				else {

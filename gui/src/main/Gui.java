@@ -300,11 +300,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 
-	private static final String lemaVersion = "2.8";
+	private static final String lemaVersion = "2.8.1";
 	
 	private static final String atacsVersion = "6.1";
 	
-	private static final String iBioSimVersion = "2.8";
+	private static final String iBioSimVersion = "2.8.1";
 		
 	public class MacOSAboutHandler extends Application {
 
@@ -1254,7 +1254,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			name = new JLabel("iBioSim", SwingConstants.CENTER);
 			version = new JLabel("Version "+iBioSimVersion, SwingConstants.CENTER);
 			developers = "Nathan Barker\nScott Glass\nKevin Jones\nHiroyuki Kuwahara\n"
-					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe";
+					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTramy Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe\nZhen Zhang";
 		}
 		Font font = name.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
@@ -6262,7 +6262,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				bioModel.load(root + separator + filename);
 				GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
 				gcm2sbml.load(root + separator + filename);
-				gcm2sbml.convertGCM2SBML(root + separator + filename);
+				gcm2sbml.convertGCM2SBML(root,filename);
 				String sbmlFile = filename.replace(".gcm", ".xml");
 				bioModel.save(root + separator + sbmlFile);
 				addToTree(sbmlFile);
@@ -7662,6 +7662,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			s.close();
 		}
+		if (modelFileName.endsWith(".gcm")) modelFileName = modelFileName.replace(".gcm", ".xml");
 		return modelFileName;
 	}
 	
@@ -7669,7 +7670,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String sbmlLoadFile = "";
 		if (new File(simFile).exists()) {
 			sbmlLoadFile = modelFileName;
-			if (sbmlLoadFile.endsWith(".gcm")) sbmlLoadFile = sbmlLoadFile.replace(".gcm", ".xml");
+			//if (sbmlLoadFile.endsWith(".gcm")) sbmlLoadFile = sbmlLoadFile.replace(".gcm", ".xml");
 			if (sbmlLoadFile.equals("")) {
 				JOptionPane.showMessageDialog(frame, "Unable to open analysis view because there is no SBML file linked to this view.", 
 						"Error", JOptionPane.ERROR_MESSAGE);
