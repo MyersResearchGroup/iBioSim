@@ -369,6 +369,26 @@ public class AnnotationUtility {
 	}
 	
 	public static boolean removeArrayAnnotation(SBase sbmlObject, String element) {
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+
+			Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
+			Matcher arrayMatcher = arrayPattern.matcher(annotation);
+			if (arrayMatcher.find()) {
+				String arrayAnnotation = arrayMatcher.group(0);
+				annotation = annotation.replaceAll(" array:"+element+"=\"\\(\\d+,\\d+\\)\"", "");
+			}
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				annotation = "<annotation>\n"+annotation+"\n</annotation>";
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+		/*
 		//get rid of the component from the location-lookup array and the modelref array
 		if (AnnotationUtility.parseArrayAnnotation(sbmlObject).length==2 &&
 				(((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).getAttrIndex("array:" + element)>=0 || 
@@ -383,6 +403,7 @@ public class AnnotationUtility {
 				((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).getAttrIndex("array:" + element, "http://www.fakeuri.com"));
 		((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).removeAttr(
 				((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).getAttrIndex(element, "http://www.fakeuri.com"));
+		*/
 		return false;
 	}
 	

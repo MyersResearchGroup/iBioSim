@@ -16,9 +16,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.ext.comp.Port;
 
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 
 
 public class GCM2SBML {
@@ -66,7 +69,7 @@ public class GCM2SBML {
 			parseInfluences(data);
 			parseGlobal(data);
 			parsePromoters(data);
-			//parseSBMLFile(data);
+			parseSBMLFile(data);
 			parseConditions(data);
 			parseGridSize(data);
 		}
@@ -247,6 +250,13 @@ public class GCM2SBML {
 		}
 	}
 
+	private void parseSBMLFile(StringBuffer data) {
+		Pattern network = Pattern.compile(SBMLFILE);
+		Matcher matcher = network.matcher(data.toString());
+		if (!matcher.find()) return;
+		sbmlFile = matcher.group(1);
+	}
+	
 	/**
 	 * loads the grid size from the gcm file
 	 * 
@@ -720,123 +730,132 @@ public class GCM2SBML {
 	 * 
 	 * @return
 	 */
-	public void convertGCM2SBML(String filename) {
-		try {
-			PrintStream p = new PrintStream(new FileOutputStream(filename));
-			StringBuffer buffer = new StringBuffer("digraph G {\n}\n");
-			int i = 0;
-			for (String s : conditions) {
-				bioModel.createCondition(s,i);
-				i++;
-			}
-			for (String global : parameters.keySet()) {
-				bioModel.createGlobalParameter(global, parameters.get(global));
-			}
-			for (String s : species.keySet()) {
-				bioModel.createSpeciesFromGCM(s, species.get(s)); 
-			}
-			for (String s : promoters.keySet()) {
-				bioModel.createPromoterFromGCM(s, promoters.get(s)); 
-			}
-			for (String s : influences.keySet()) {
-				Properties prop = influences.get(s);
-				String promoter = prop.getProperty(GlobalConstants.PROMOTER);
-				if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
-					bioModel.addActivatorToProductionReaction(promoter,getInput(s),getOutput(s),
-							promoters.get(promoter).getProperty(GlobalConstants.STOICHIOMETRY_STRING),
-							prop.getProperty(GlobalConstants.COOPERATIVITY_STRING),
-							prop.getProperty(GlobalConstants.KACT_STRING));
-				}
-				else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
-					bioModel.addRepressorToProductionReaction(promoter,getInput(s),getOutput(s),
-							promoters.get(promoter).getProperty(GlobalConstants.STOICHIOMETRY_STRING),
-							prop.getProperty(GlobalConstants.COOPERATIVITY_STRING),prop.getProperty(GlobalConstants.KREP_STRING));
-				}
-				else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.NOINFLUENCE)) {
-					if (promoter==null) {
-						promoter = bioModel.createPromoter(null,0, 0, false);
-						bioModel.createProductionReaction(promoter,null,null,null,null,null,null,false,null);
-					}
-					bioModel.addNoInfluenceToProductionReaction(promoter,getInput(s),getOutput(s));
-				}
-				else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX)) {
-					String KcStr = null;
-					if (species.get(getOutput(s))!=null) {
-						KcStr = species.get(getOutput(s)).getProperty(GlobalConstants.KCOMPLEX_STRING);
-					}
-					bioModel.addReactantToComplexReaction(getInput(s),getOutput(s), KcStr, 
-							prop.getProperty(GlobalConstants.COOPERATIVITY_STRING));
-				} 
-			}
-			if (isWithinCompartment) {
-				//gcm.setIsWithinCompartment(true);
-				//gcm.setDefaultCompartment(enclosingCompartment);
-			} else {
-				//gcm.setIsWithinCompartment(false);
-				//gcm.setDefaultCompartment("");
-				for (int j = 0; j < bioModel.getSBMLDocument().getModel().getCompartmentCount(); j++) {
-					Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(j);
-					Port port = bioModel.getSBMLCompModel().getPort(GlobalConstants.COMPARTMENT+"__"+compartment.getId());
-					if (port==null) {
-						port = bioModel.getSBMLCompModel().createPort();
-						port.setId(GlobalConstants.COMPARTMENT+"__"+compartment.getId());
-					}
-					port.setIdRef(compartment.getId());
-				}
-			}
-			bioModel.getLayout();
-			for (String s : species.keySet()) {
-				Properties prop = species.get(s);
-				if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
-						prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
-					bioModel.placeSpecies(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
-							Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
-				}
-			}
-			for (String s : promoters.keySet()) {
-				Properties prop = promoters.get(s);
-				if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
-						prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
-					bioModel.placeSpecies(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
-							Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
-				}
-			}
-			for (String s : reactions.keySet()) {
-				Properties prop = reactions.get(s);
-				if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
-						prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
-					bioModel.placeReaction(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
-							Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
-				}
-			}
-			for (String s : components.keySet()) {
-				Properties prop = components.get(s);
-				if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
-						prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
-					bioModel.placeCompartment(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
-							Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
-				}
-			}
-			bioModel.updateLayoutDimensions();
-			
-			if (numRows > 0 || numCols > 0) {
-				bioModel.buildGrid(numRows, numCols);
-				bioModel.setGridSize(numRows,numCols);
-			}
-			
-			bioModel.createCompPlugin();
-			for (String s : components.keySet()) {
-				bioModel.createComponentFromGCM(s,components.get(s));
-			}
-			buffer.append(GlobalConstants.SBMLFILE + "=\"" + sbmlFile + "\"\n");
-
-			p.print(buffer);
-			p.close();
-			new File(filename).delete();
+	public void convertGCM2SBML(String root, String fileName) {
+		String filename = root + File.separator + fileName;
+		int condCnt = 0;
+		for (String s : conditions) {
+			bioModel.createCondition(s,condCnt);
+			condCnt++;
 		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
+		for (String global : parameters.keySet()) {
+			bioModel.createGlobalParameter(global, parameters.get(global));
 		}
+		for (String s : species.keySet()) {
+			bioModel.createSpeciesFromGCM(s, species.get(s)); 
+		}
+		for (String s : promoters.keySet()) {
+			bioModel.createPromoterFromGCM(s, promoters.get(s)); 
+		}
+		for (String s : influences.keySet()) {
+			Properties prop = influences.get(s);
+			String promoter = prop.getProperty(GlobalConstants.PROMOTER);
+			if (promoters.get(promoter)==null) {
+				continue;
+			}
+			if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
+				bioModel.addActivatorToProductionReaction(promoter,getInput(s),getOutput(s),
+						promoters.get(promoter).getProperty(GlobalConstants.STOICHIOMETRY_STRING),
+						prop.getProperty(GlobalConstants.COOPERATIVITY_STRING),
+						prop.getProperty(GlobalConstants.KACT_STRING));
+			}
+			else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
+				bioModel.addRepressorToProductionReaction(promoter,getInput(s),getOutput(s),
+						promoters.get(promoter).getProperty(GlobalConstants.STOICHIOMETRY_STRING),
+						prop.getProperty(GlobalConstants.COOPERATIVITY_STRING),prop.getProperty(GlobalConstants.KREP_STRING));
+			}
+			else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.NOINFLUENCE)) {
+				if (promoter==null) {
+					promoter = bioModel.createPromoter(null,0, 0, false);
+					bioModel.createProductionReaction(promoter,null,null,null,null,null,null,false,null);
+				}
+				bioModel.addNoInfluenceToProductionReaction(promoter,getInput(s),getOutput(s));
+			}
+			else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX)) {
+				String KcStr = null;
+				if (species.get(getOutput(s))!=null) {
+					KcStr = species.get(getOutput(s)).getProperty(GlobalConstants.KCOMPLEX_STRING);
+				}
+				bioModel.addReactantToComplexReaction(getInput(s),getOutput(s), KcStr, 
+						prop.getProperty(GlobalConstants.COOPERATIVITY_STRING));
+			} 
+		}
+		if (isWithinCompartment) {
+			//gcm.setIsWithinCompartment(true);
+			//gcm.setDefaultCompartment(enclosingCompartment);
+		} else {
+			//gcm.setIsWithinCompartment(false);
+			//gcm.setDefaultCompartment("");
+			for (int j = 0; j < bioModel.getSBMLDocument().getModel().getCompartmentCount(); j++) {
+				Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(j);
+				Port port = bioModel.getSBMLCompModel().getPort(GlobalConstants.COMPARTMENT+"__"+compartment.getId());
+				if (port==null) {
+					port = bioModel.getSBMLCompModel().createPort();
+					port.setId(GlobalConstants.COMPARTMENT+"__"+compartment.getId());
+				}
+				port.setIdRef(compartment.getId());
+			}
+		}
+		bioModel.getLayout();
+		for (String s : species.keySet()) {
+			Properties prop = species.get(s);
+			if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
+					prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
+				bioModel.placeSpecies(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
+						Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
+			}
+		}
+		for (String s : promoters.keySet()) {
+			Properties prop = promoters.get(s);
+			if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
+					prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
+				bioModel.placeSpecies(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
+						Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
+			}
+		}
+		for (String s : reactions.keySet()) {
+			Properties prop = reactions.get(s);
+			if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
+					prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
+				bioModel.placeReaction(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
+						Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
+			}
+		}
+		for (String s : components.keySet()) {
+			Properties prop = components.get(s);
+			if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
+					prop.containsKey("graphheight")&&prop.containsKey("graphwidth")) {
+				bioModel.placeCompartment(s,Double.parseDouble(prop.getProperty("graphx")),Double.parseDouble(prop.getProperty("graphy")),
+						Double.parseDouble(prop.getProperty("graphheight")),Double.parseDouble(prop.getProperty("graphwidth")));
+			}
+		}
+		bioModel.updateLayoutDimensions();
+		
+		if (numRows > 0 || numCols > 0) {
+			bioModel.buildGrid(numRows, numCols);
+			bioModel.setGridSize(numRows,numCols);
+		}
+		
+		bioModel.createCompPlugin();
+		for (String s : components.keySet()) {
+			bioModel.createComponentFromGCM(s,components.get(s));
+		}
+		if (sbmlFile!=null && !sbmlFile.equals("")) {
+			SBMLDocument document = SBMLutilities.readSBML(root + File.separator + sbmlFile);
+			if (document!=null) {
+				Model model = document.getModel();
+				Model modelNew = bioModel.getSBMLDocument().getModel();
+				for (int i = 0; i < model.getParameterCount(); i++) {
+					if (modelNew.getParameter(model.getParameter(i).getId())==null) {
+						modelNew.addParameter(model.getParameter(i).clone());
+					}
+				}
+				for (int i = 0; i < model.getEventCount(); i++) {
+					modelNew.addEvent(model.getEvent(i).clone());
+				}
+				new File(root + File.separator + sbmlFile).delete();
+			}
+		}
+		new File(filename).delete();
 	}
 	
 	//CONSTANTS AND VARIABLES
@@ -858,7 +877,7 @@ public class GCM2SBML {
 
 	private static final String CONDITION = "Conditions\\s\\{([^@]*)\\s\\}";
 
-	//private static final String SBMLFILE = GlobalConstants.SBMLFILE + "=\"([^\"]*)\"";
+	private static final String SBMLFILE = GlobalConstants.SBMLFILE + "=\"([^\"]*)\"";
 
 	//private static final String SBML = "SBML=((.*)\n)*";
 

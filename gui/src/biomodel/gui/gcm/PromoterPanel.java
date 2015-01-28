@@ -76,7 +76,7 @@ public class PromoterPanel extends JPanel {
 			
 		// Type field
 		JPanel tempPanel = new JPanel();
-		JLabel tempLabel = new JLabel(GlobalConstants.TYPE);
+		JLabel tempLabel = new JLabel(GlobalConstants.PORTTYPE);
 		typeBox = new JComboBox(types);
 		//typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));

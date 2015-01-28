@@ -422,6 +422,7 @@ public class SBMLutilities {
 	}
 
 	public static void copyDimensionsIndices(SBase source,SBase destination,String indexedAttribute) {
+		if (source==null) return;
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(source);
 		ArraysSBasePlugin sBasePluginDest = SBMLutilities.getArraysSBasePlugin(destination);
 		sBasePluginDest.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	

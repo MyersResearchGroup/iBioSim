@@ -1052,6 +1052,9 @@ public class BioModel {
 		if (property.containsKey(GlobalConstants.TYPE)) {
 			String type = property.getProperty(GlobalConstants.TYPE).replace("diffusible","").replace("constitutive","");
 			createDirPort(species.getId(),type);
+			if (type.equals(GlobalConstants.INPUT)) {
+				species.setBoundaryCondition(true);
+			}
 			onPort = (type.equals(GlobalConstants.INPUT)||type.equals(GlobalConstants.OUTPUT));
 		} 
 		double kd = -1;
@@ -5105,10 +5108,10 @@ public class BioModel {
 		}
 		Layout layout = getLayout();
 		if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+name)!=null) {
-			layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+name);
+			layout.removeGeneralGlyph(GlobalConstants.GLYPH+"__"+name);
 		}
 		if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+name) != null) {
-			layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+name);
+			layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+name);
 		}
 	}
 	
