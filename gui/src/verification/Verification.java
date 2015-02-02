@@ -94,7 +94,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private JCheckBox abst, partialOrder, dot, verbose, graph, decomposeLPN, multipleLPNs, genrg,
 	timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
 	nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
-	postProc, redCheck, xForm2, expandRate, useGraphs, resetOnce, displayResult;
+	postProc, redCheck, xForm2, expandRate, useGraphs, resetOnce, displayResult,
+	rateOptimization;
 
 	private JTextField bddSize, backgroundField, componentField;
 
@@ -318,6 +319,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		resetOnce.addActionListener(this);
 		displayResult = new JCheckBox("Display Verification Results");
 		displayResult.addActionListener(this);
+		rateOptimization = new JCheckBox("Rate Optimization");
+		rateOptimization.addActionListener(this);
 		// Component List
 		addComponent = new JButton("Add Component");
 		removeComponent = new JButton("Remove Component");
@@ -454,7 +457,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		advancedPanel.add(reduction);
 		advancedPanel.add(resetOnce);
 		advancedPanel.add(displayResult);
-
+		advancedPanel.add(rateOptimization);
+		
 		bddPanel.add(bddSizeLabel);
 		bddPanel.add(bddSize);
 
@@ -1802,6 +1806,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			Options.set_resetOnce(resetOnce.isSelected());
 			Options.set_displayResults(displayResult.isSelected());
+			Options.set_rateOptimization(rateOptimization.isSelected());
 			
 			Zone.setSubsetFlag(!timsubset.isSelected());
 			Zone.setSupersetFlag(!superset.isSelected());
