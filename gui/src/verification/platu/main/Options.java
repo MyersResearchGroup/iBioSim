@@ -191,6 +191,19 @@ public class Options {
 		return _resetOnce;
 	}
 	
+	/* Flag for turning on rate event optimization*/
+	private static boolean _rateOptimization = false;
+	
+	/* Sets the _rateOptimization flag. */
+	public static void set_rateOptimization(Boolean rateOptimization){
+		_rateOptimization = rateOptimization;
+	}
+	
+	/* Gets the _rateOptimization flag. */
+	public static Boolean get_rateOptimization(){
+		return _rateOptimization;
+	}
+	
 	/* 
 	 * Flag for turn on/off the gui response for
 	 * verification results
