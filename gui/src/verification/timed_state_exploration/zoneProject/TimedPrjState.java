@@ -3,8 +3,9 @@ package verification.timed_state_exploration.zoneProject;
 import java.util.Arrays;
 
 import lpn.parser.LhpnFile;
+import lpn.parser.Transition;
 import verification.platu.lpn.LpnTranList;
-
+import verification.platu.main.Options;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 import verification.timed_state_exploration.octagon.Equivalence;
@@ -286,7 +287,38 @@ public class TimedPrjState extends PrjState{
 		
 		Equivalence z = _zones[zoneNumber];
 		
-		return new LpnTranList(z.getPossibleEvents(lpnIndex, this.getStateArray()[lpnIndex]));
+//		return new LpnTranList(z.getPossibleEvents(lpnIndex, this.getStateArray()[lpnIndex]));
+		
+		LpnTranList newEvents = new LpnTranList(z.getPossibleEvents(lpnIndex,
+				this.getStateArray()[lpnIndex]));
+		
+		/*
+		 * If the rateOptimization flag is enabled, bias the search towards firing rate change
+		 * events. Specifically, when only a single rate change event is present, remove
+		 * the other possible events and just fire the rate change event.
+		 */
+		if(Options.get_rateOptimization()){
+			// Determine if the number of rate events is one.
+			int rateCount = 0;
+			EventSet rateEvent = null;
+			
+			for(Transition event: newEvents){
+				EventSet es = (EventSet) event;
+				if(es.isRate()){
+					rateCount++;
+					rateEvent = es;
+				}
+			}
+			
+			// If one rate change event, change newEvents to have that single event.
+			if(rateCount == 1){
+				newEvents = new LpnTranList();
+				newEvents.add(rateEvent);
+			}
+		}
+		
+		return newEvents;
+		
 	}
 	
 	/**
