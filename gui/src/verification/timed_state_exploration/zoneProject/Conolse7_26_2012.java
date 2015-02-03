@@ -22,6 +22,7 @@ public class Conolse7_26_2012 {
 		String lpnFileDirectory = "";
 		boolean subset = true;
 		boolean superset = true;
+		boolean rateOptimization = false; // rate optimization is off by default
 
 		if(args.length > 2 || args.length == 0){
 			System.out.println("Incorrect number of parameters");
@@ -35,9 +36,11 @@ public class Conolse7_26_2012 {
 			lpnFileDirectory = args[1];
 			subset = !commands.contains("b");
 			superset = !commands.contains("p");
+			rateOptimization = commands.contains("r");
 			System.out.println("Subset is : " + subset);
 			System.out.println("Superset is : " + superset);
 			System.out.println("The input string was : " + commands);
+			System.out.println("The file directory was: " + lpnFileDirectory);
 		}
 		
 		File directory = new File(lpnFileDirectory);
@@ -91,6 +94,7 @@ public class Conolse7_26_2012 {
 		
 		Zone.setSubsetFlag(subset);
 		Zone.setSupersetFlag(superset);
+		Options.set_rateOptimization(rateOptimization);
 
 		Project timedStateSearch = new Project(selectedLPNs);
 
