@@ -1806,7 +1806,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			Options.set_resetOnce(resetOnce.isSelected());
 			Options.set_displayResults(displayResult.isSelected());
-			Options.set_rateOptimization(rateOptimization.isSelected());
+			// Checking the rate optimization flag turns the optimization on.
+			Options.set_rateOptimization(!rateOptimization.isSelected());
 			
 			Zone.setSubsetFlag(!timsubset.isSelected());
 			Zone.setSupersetFlag(!superset.isSelected());
