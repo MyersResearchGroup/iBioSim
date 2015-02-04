@@ -707,8 +707,8 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		// sortSpecies();
 		JPanel runHolder = new JPanel();
 		
-		//levels(); 
-		autogen(false);
+		levels(); 
+		//autogen(false);
 		if (auto.isSelected()) {
 			auto.doClick();
 		} else {
@@ -1344,324 +1344,256 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 	}
 	
 	private void levels() {  
-		if (!directory.equals("")) {
-			if (true) {
-				variablesPanel.removeAll();
-				this.variables = new ArrayList<ArrayList<Component>>();
-				variablesPanel.setLayout(new GridLayout(allVars.size() + 1, 1));
-				int max = 0;
-				if (!thresholds.isEmpty()){
-					for (String s : thresholds.keySet()){
-						if (thresholds.get(s) != null) {
-							max = Math.max(max, thresholds.get(s).size()+2);
-							//System.out.println("Max is : "+thresholds.get(s).size());
-						}
-					}
-				}
-				JPanel label = new JPanel(new FlowLayout(FlowLayout.LEADING));
-				label.add(new JLabel("Variables                   "));
-				label.add(new JLabel("Port")); 
-				label.add(new JLabel("Ctrl ")); 
-				label.add(new JLabel("Care ")); 
-				label.add(new JLabel("Epsilon  ")); 
-				label.add(new JLabel("Type                       ")); 
-				label.add(new JLabel("# Bins          "));
-				label.add(new JLabel("Interpolate"));
-				label.add(new JLabel("Levels              "));
-				
-				variablesPanel.add(label);
-				int j = 0;
-				for (String s : allVars) {
-					j++;
-					JPanel sp = new JPanel(new FlowLayout(FlowLayout.LEADING,0,0));
-					ArrayList<Component> specs = new ArrayList<Component>();
-					JTextField varsText = new JTextField(10);
-					varsText.setText(s);
-					specs.add(varsText);
-					String[] options = { "Auto", "2", "3", "4", "5", "6", "7", "8", "16", "32"};
-					JComboBox combo = new JComboBox(options);
-					String[] portOptions = {"Not used", "Input", "Output"};
-					JComboBox port = new JComboBox(portOptions);
-					JCheckBox mode = new JCheckBox();					
-					JCheckBox care = new JCheckBox(); 
-					JCheckBox interpolate = new JCheckBox();
-					//JCheckBox interpolate = new JCheckBox(); 
-					JTextField epsilonTb = new JTextField(3);
-					epsilonTb.setText(epsilonG.getText().trim()); 
-					String[] dmvOptions = {"DMV", "Continuous", "Auto"};
-					JComboBox dmv = new JComboBox(dmvOptions);
-					port.addActionListener(this); 
-					mode.addActionListener(this); 
-					
-					care.addActionListener(this); 
-					dmv.addActionListener(this); 
-					epsilonTb.addActionListener(this);
-					interpolate.addActionListener(this); 
-					port.setActionCommand("port" + s);
-					mode.setActionCommand("mode" + s);
-					care.setActionCommand("care" + s);
-					dmv.setActionCommand("DMV" + s);
-					interpolate.setActionCommand("Interpolate" + s);
-					dmv.setSelectedItem("Auto");
-					epsilonTb.setActionCommand("epsilon" + s);
-					combo.setSelectedItem(numBins.getSelectedItem());
-					specs.add(port);
-					specs.add(mode);
-					specs.add(care);
-					
-					specs.add(epsilonTb); 
-					specs.add(dmv);
-					specs.add(combo);
-					specs.add(interpolate);
-					
-					
-					((JTextField) specs.get(0)).setEditable(false);
-					//System.out.println("this is specs :"+(JTextField)specs.get(2));
-					sp.add(specs.get(0));
-					sp.add(specs.get(1));
-					sp.add(specs.get(2));  
-					sp.add(specs.get(3));  
-					sp.add(specs.get(4));
-					sp.add(specs.get(5));
-					sp.add(specs.get(6));
-					sp.add(specs.get(7));
-					//sp.add(specs.get(8));
-					if (findReqdVarslIndex(s) != -1){
-						if (reqdVarsL.get((findReqdVarslIndex(s))).isInput())
-							((JComboBox) specs.get(1)).setSelectedItem("Input");
-						else
-							((JComboBox) specs.get(1)).setSelectedItem("Output"); 
-						((JCheckBox) specs.get(2)).setEnabled(true); 
-						((JCheckBox) specs.get(3)).setEnabled(true); 
-						((JTextField) specs.get(4)).setEnabled(true); 
-						((JComboBox) specs.get(5)).setEnabled(true);
-						((JComboBox) specs.get(6)).setEnabled(true);
-						((JCheckBox) specs.get(7)).setEnabled(true);
-						if (reqdVarsL.get(findReqdVarslIndex(s)).isDestab()){
-							((JCheckBox) specs.get(2)).setSelected(true);
-						}
-						else{
-							((JCheckBox) specs.get(2)).setSelected(false);
-						}
-						if (reqdVarsL.get(findReqdVarslIndex(s)).isCare()){
-							((JCheckBox) specs.get(3)).setSelected(true);
-						}
-						else{
-							((JCheckBox) specs.get(3)).setSelected(false);
-						}
-						if (reqdVarsL.get(findReqdVarslIndex(s)).isInterpolate()){
-							((JCheckBox) specs.get(7)).setSelected(true);
-						}
-						else{
-							((JCheckBox) specs.get(7)).setSelected(false);
-						} 
-						
-						if (reqdVarsL.get(findReqdVarslIndex(s)).getEpsilon()!= null){
-							((JTextField) specs.get(4)).setText(String.valueOf(reqdVarsL.get(findReqdVarslIndex(s)).getEpsilon()));
-						} else if (epsilonG.getText() != ""){
-							((JTextField) specs.get(4)).setText(epsilonG.getText().trim());
-						}
-						if (!dmvDetectDone && !dmvStatusLoaded)
-							((JComboBox) specs.get(5)).setSelectedItem("Auto");
-						else{
-							if (reqdVarsL.get(findReqdVarslIndex(s)).isDmvc()){
-								((JComboBox) specs.get(5)).setSelectedItem("DMV");
-							}
-							else{
-								((JComboBox) specs.get(5)).setSelectedItem("Continuous");
-							}
-						}
-					}
-					else{	// variable not required
-						((JComboBox) specs.get(1)).setSelectedItem("Not used"); // changed 1 to 2 after required
-						((JCheckBox) specs.get(2)).setEnabled(false); // added after allVars
-						((JCheckBox) specs.get(3)).setEnabled(false); // added after allVars
-						((JTextField) specs.get(4)).setEnabled(false); // added after allVars
-						((JComboBox) specs.get(5)).setEnabled(false);
-						((JComboBox) specs.get(6)).setEnabled(false);
-						((JCheckBox) specs.get(7)).setEnabled(false);
-					}
-					((JComboBox) specs.get(6)).addActionListener(this); // changed 1 to 2 SB
-					((JComboBox) specs.get(6)).setActionCommand("text" + j);// changed 1 to 2 SB
-					this.variables.add(specs);
-					/* TODO: fix here for new comma-separated thresholds. */
-					if (!thresholds.isEmpty()) {
-						if (findReqdVarslIndex(s) != -1){	//This condition added after adding allvarsL
-							ArrayList<Double> div =  thresholds.get(s); 
-							//System.out.println("Div size :"+div.size());
-							if ((div != null) && (div.size() > 0)){ //changed >= to >
-								((JComboBox) specs.get(6)).setSelectedItem(String.valueOf(div.size()+1));// changed 1 to 2 SB
-								String selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
-								//System.out.println("selected "+selected);
-								int combox_selected;
-								if (!selected.equalsIgnoreCase("Auto"))
-									combox_selected = Integer.parseInt(selected);
-								else
-									combox_selected = 0;
-								StringBuilder builder = new StringBuilder(div.size()); //DRK
-								for (int o=0;o<div.size();o++){//DRK	
-										
-										long app = (long) ((div.get(o))*valScaleFactor);
-										builder.append((app/valScaleFactor));
-										//builder.
-										if (o!=div.size()-1)
-										builder.append(",");}//DRK  
-																		
-									specs.add(new JTextField(builder.toString(),20)); //DRK
-									
-									
-									sp.add(specs.get(8)); //System.out.println("builder :"+builder.toString());			// changed 2 to 3 SB 
-									
-									
-								selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
-								if (!selected.equalsIgnoreCase("Auto"))
-								combox_selected = Integer.parseInt(selected);
-								else
-								combox_selected = 0;
-								for (int i = combox_selected - 1; i < max - 2; i++) {// changed 1 to 2 SB
-									sp.add(new JLabel());
-								}
-							}
-							else{	
-							
-							}
-							String selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
-							//int combox_selected;
-							if (!selected.equalsIgnoreCase("Auto")) {
-								//combox_selected = Integer.parseInt(selected);
-							} else {
-							//	combox_selected = 0;
-							}
-							//for (int i = 0; i < combox_selected - 1; i++) {
-						/*	if (specs.size() > 8) { //new for interpolation
-								((JTextField) specs.get(7)).setEnabled(true);
-							} */
-							//}
-							if (reqdVarsL.get((findReqdVarslIndex(s))).isInput())
-								((JComboBox) specs.get(1)).setSelectedItem("Input"); // changed 1 to 2 after required
-							else
-								((JComboBox) specs.get(1)).setSelectedItem("Output"); // changed 1 to 2 after required
-							((JCheckBox) specs.get(2)).setEnabled(true);
-							((JCheckBox) specs.get(3)).setEnabled(true);
-							((JTextField) specs.get(4)).setEnabled(true);
-							((JComboBox) specs.get(5)).setEnabled(true);
-							((JComboBox) specs.get(6)).setEnabled(true);
-							((JCheckBox) specs.get(7)).setEnabled(true);
-							if (reqdVarsL.get(findReqdVarslIndex(s)).isDestab()){ // This was there before. removed on june 29 thinking redundant
-								((JCheckBox) specs.get(2)).setSelected(true);
-							} else {
-								((JCheckBox) specs.get(2)).setSelected(false);
-							}
-							if (reqdVarsL.get(findReqdVarslIndex(s)).isCare()){
-								((JCheckBox) specs.get(3)).setSelected(true);
-							}
-							if (reqdVarsL.get(findReqdVarslIndex(s)).isInterpolate()){
-								((JCheckBox) specs.get(7)).setSelected(true);
-							}
-							if (!dmvDetectDone && !dmvStatusLoaded)
-								((JComboBox) specs.get(5)).setSelectedItem("Auto");
-							else{
-								if (reqdVarsL.get(findReqdVarslIndex(s)).isDmvc()){
-									((JComboBox) specs.get(5)).setSelectedItem("DMV");
-								}
-								else{
-									((JComboBox) specs.get(5)).setSelectedItem("Continuous");
-								}
-							}
-						}
-						else{
-							((JComboBox) specs.get(1)).setSelectedItem("Not used");
-							((JCheckBox) specs.get(2)).setEnabled(false);
-							((JCheckBox) specs.get(3)).setEnabled(false);
-							((JTextField) specs.get(4)).setEnabled(false);
-							((JComboBox) specs.get(5)).setEnabled(false);
-							((JComboBox) specs.get(6)).setEnabled(false);
-							((JCheckBox) specs.get(7)).setEnabled(false);
-							String selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
-							//int combox_selected;
-							if (!selected.equalsIgnoreCase("Auto")) {
-								//combox_selected = Integer.parseInt(selected);
-							} else {
-								//combox_selected = 0;
-							}
-							///specs.add(interpolate);
-							//sp.add(specs.get(7));
-							//((JCheckBox) specs.get(7)).setEnabled(true);
-							
-						}
-						//((JCheckBox) specs.get(8)).setEnabled(true);
-					} 
-					
-					else {
-						if (findReqdVarslIndex(((JTextField) sp.getComponent(0)).getText().trim()) != -1){
-							if (reqdVarsL.get((findReqdVarslIndex(s))).isInput())
-								((JComboBox) specs.get(1)).setSelectedItem("Input"); // changed 1 to 2 after required
-							else
-								((JComboBox) specs.get(1)).setSelectedItem("Output"); // changed 1 to 2 after required
-							((JCheckBox) specs.get(2)).setEnabled(true);
-							((JCheckBox) specs.get(3)).setEnabled(true);
-							((JTextField) specs.get(4)).setEnabled(true);
-							((JComboBox) specs.get(5)).setEnabled(true);
-							((JComboBox) specs.get(6)).setEnabled(true);
-							((JCheckBox) specs.get(7)).setEnabled(true);
-							if (reqdVarsL.get(findReqdVarslIndex(s)).isDestab()){
-								((JCheckBox) specs.get(2)).setSelected(true);
-							} else {
-								((JCheckBox) specs.get(2)).setSelected(false);
-							}
-							if (reqdVarsL.get(findReqdVarslIndex(s)).isCare()){
-								((JCheckBox) specs.get(3)).setSelected(true);
-							}
-							if (reqdVarsL.get(findReqdVarslIndex(s)).isInterpolate()){
-								((JCheckBox) specs.get(7)).setSelected(true);
-							}
-							if (!dmvDetectDone && !dmvStatusLoaded)
-								((JComboBox) specs.get(5)).setSelectedItem("Auto");
-							else{
-								if (reqdVarsL.get(findReqdVarslIndex(s)).isDmvc()){
-									((JComboBox) specs.get(5)).setSelectedItem("DMV");
-								}
-								else{
-									((JComboBox) specs.get(5)).setSelectedItem("Continuous");
-								}
-							}
-						}	
-						else{
-							((JComboBox) specs.get(1)).setSelectedItem("Not used");
-							((JCheckBox) specs.get(2)).setEnabled(false);
-							((JCheckBox) specs.get(3)).setEnabled(false);
-							((JTextField) specs.get(4)).setEnabled(false);
-							((JComboBox) specs.get(5)).setEnabled(false);
-							((JComboBox) specs.get(6)).setEnabled(false);
-							((JCheckBox) specs.get(7)).setEnabled(false);
-						}
-						String selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
-						
-						//int combox_selected;
-						if (!selected.equalsIgnoreCase("Auto")){//System.out.println("I am here");
-							//combox_selected = Integer.parseInt(selected);
-						} else
-							//combox_selected = 0;
-						
-								specs.add(new JTextField("",20));
-								sp.add(specs.get(8));// changed 1 to 2 SB //changed to 4 bcoz of a bug
-								if (findReqdVarslIndex(((JTextField) sp.getComponent(0)).getText().trim()) != -1){
-									((JTextField) specs.get(8)).setEnabled(true);
-								}
-								else{
-									((JTextField) specs.get(8)).setEnabled(false);
-								}
-							
-					}
-					
-					
-					variablesPanel.add(sp);
+		if (directory.equals("")) return;
+		variablesPanel.removeAll();
+		this.variables = new ArrayList<ArrayList<Component>>();
+		variablesPanel.setLayout(new GridLayout(allVars.size() + 1, 1));
+		int max = 0;
+		if (!thresholds.isEmpty()){
+			for (String s : thresholds.keySet()){
+				if (thresholds.get(s) != null) {
+					max = Math.max(max, thresholds.get(s).size()+2);
+					//System.out.println("Max is : "+thresholds.get(s).size());
 				}
 			}
 		}
-		variablesPanel.revalidate(); //july 21,2010
-		variablesPanel.repaint(); //july 21,2010
-		//editText(0);
+		JPanel label = new JPanel(new FlowLayout(FlowLayout.LEADING));
+		label.add(new JLabel("Variables                   "));
+		label.add(new JLabel("Port")); 
+		label.add(new JLabel("Ctrl ")); 
+		label.add(new JLabel("Care ")); 
+		label.add(new JLabel("Epsilon  ")); 
+		label.add(new JLabel("Type                       ")); 
+		label.add(new JLabel("# Bins          "));
+		label.add(new JLabel("Interpolate"));
+		label.add(new JLabel("Levels              "));
+
+		variablesPanel.add(label);
+		int j = 0;
+		for (String s : allVars) {
+			j++;
+			JPanel sp = new JPanel(new FlowLayout(FlowLayout.LEADING,0,0));
+			ArrayList<Component> specs = new ArrayList<Component>();
+			JTextField varsText = new JTextField(10);
+			varsText.setText(s);
+			specs.add(varsText);
+			String[] options = { "Auto", "2", "3", "4", "5", "6", "7", "8", "16", "32"};
+			JComboBox combo = new JComboBox(options);
+			String[] portOptions = {"Not used", "Input", "Output"};
+			JComboBox port = new JComboBox(portOptions);
+			JCheckBox mode = new JCheckBox();					
+			JCheckBox care = new JCheckBox(); 
+			JCheckBox interpolate = new JCheckBox();
+			//JCheckBox interpolate = new JCheckBox(); 
+			JTextField epsilonTb = new JTextField(3);
+			epsilonTb.setText(epsilonG.getText().trim()); 
+			String[] dmvOptions = {"DMV", "Continuous", "Auto"};
+			JComboBox dmv = new JComboBox(dmvOptions);
+			port.addActionListener(this); 
+			mode.addActionListener(this); 
+
+			care.addActionListener(this); 
+			dmv.addActionListener(this); 
+			epsilonTb.addActionListener(this);
+			interpolate.addActionListener(this); 
+			port.setActionCommand("port" + s);
+			mode.setActionCommand("mode" + s);
+			care.setActionCommand("care" + s);
+			dmv.setActionCommand("DMV" + s);
+			interpolate.setActionCommand("Interpolate" + s);
+			dmv.setSelectedItem("Auto");
+			epsilonTb.setActionCommand("epsilon" + s);
+			combo.setSelectedItem(numBins.getSelectedItem());
+			specs.add(port);
+			specs.add(mode);
+			specs.add(care);
+
+			specs.add(epsilonTb); 
+			specs.add(dmv);
+			specs.add(combo);
+			specs.add(interpolate);
+			((JComboBox) specs.get(1)).setSelectedItem("Not used");
+			((JCheckBox) specs.get(2)).setEnabled(false);
+			((JCheckBox) specs.get(3)).setEnabled(false);
+			((JTextField) specs.get(4)).setEnabled(false);
+			((JComboBox) specs.get(5)).setEnabled(false);
+			((JComboBox) specs.get(6)).setEnabled(false);
+			((JCheckBox) specs.get(7)).setEnabled(false);
+
+			((JTextField) specs.get(0)).setEditable(false);
+			sp.add(specs.get(0));
+			sp.add(specs.get(1));
+			sp.add(specs.get(2));  
+			sp.add(specs.get(3));  
+			sp.add(specs.get(4));
+			sp.add(specs.get(5));
+			sp.add(specs.get(6));
+			sp.add(specs.get(7));
+			if (findReqdVarslIndex(s) != -1){
+				if (reqdVarsL.get((findReqdVarslIndex(s))).isInput())
+					((JComboBox) specs.get(1)).setSelectedItem("Input");
+				else
+					((JComboBox) specs.get(1)).setSelectedItem("Output"); 
+				((JCheckBox) specs.get(2)).setEnabled(true); 
+				((JCheckBox) specs.get(3)).setEnabled(true); 
+				((JTextField) specs.get(4)).setEnabled(true); 
+				((JComboBox) specs.get(5)).setEnabled(true);
+				((JComboBox) specs.get(6)).setEnabled(true);
+				((JCheckBox) specs.get(7)).setEnabled(true);
+				if (reqdVarsL.get(findReqdVarslIndex(s)).isDestab()){
+					((JCheckBox) specs.get(2)).setSelected(true);
+				}
+				else{
+					((JCheckBox) specs.get(2)).setSelected(false);
+				}
+				if (reqdVarsL.get(findReqdVarslIndex(s)).isCare()){
+					((JCheckBox) specs.get(3)).setSelected(true);
+				}
+				else{
+					((JCheckBox) specs.get(3)).setSelected(false);
+				}
+				if (reqdVarsL.get(findReqdVarslIndex(s)).getEpsilon()!= null){
+					((JTextField) specs.get(4)).setText(String.valueOf(reqdVarsL.get(findReqdVarslIndex(s)).getEpsilon()));
+				} else if (epsilonG.getText() != ""){
+					((JTextField) specs.get(4)).setText(epsilonG.getText().trim());
+				}
+				if (!dmvDetectDone && !dmvStatusLoaded)
+					((JComboBox) specs.get(5)).setSelectedItem("Auto");
+				else{
+					if (reqdVarsL.get(findReqdVarslIndex(s)).isDmvc()){
+						((JComboBox) specs.get(5)).setSelectedItem("DMV");
+					}
+					else{
+						((JComboBox) specs.get(5)).setSelectedItem("Continuous");
+					}
+				}
+				if (reqdVarsL.get(findReqdVarslIndex(s)).isInterpolate()){
+					((JCheckBox) specs.get(7)).setSelected(true);
+				}
+				else{
+					((JCheckBox) specs.get(7)).setSelected(false);
+				} 
+			}
+			((JComboBox) specs.get(6)).addActionListener(this); // changed 1 to 2 SB
+			((JComboBox) specs.get(6)).setActionCommand("text" + j);// changed 1 to 2 SB
+			this.variables.add(specs);
+			/* TODO: fix here for new comma-separated thresholds. */
+			if (!thresholds.isEmpty()) {
+				if (findReqdVarslIndex(s) != -1){	//This condition added after adding allvarsL
+					ArrayList<Double> div =  thresholds.get(s); 
+					if ((div != null) && (div.size() > 0)){ //changed >= to >
+						((JComboBox) specs.get(6)).setSelectedItem(String.valueOf(div.size()+1));
+						String selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
+						int combox_selected;
+						if (!selected.equalsIgnoreCase("Auto"))
+							combox_selected = Integer.parseInt(selected);
+						else
+							combox_selected = 0;
+						StringBuilder builder = new StringBuilder(div.size()); 
+						for (int o=0;o<div.size();o++){
+							long app = (long) ((div.get(o))*valScaleFactor);
+							builder.append((app/valScaleFactor));
+							if (o!=div.size()-1)
+								builder.append(",");
+						}
+						specs.add(new JTextField(builder.toString(),20)); 
+						sp.add(specs.get(8)); 
+						selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
+						if (!selected.equalsIgnoreCase("Auto"))
+							combox_selected = Integer.parseInt(selected);
+						else
+							combox_selected = 0;
+						for (int i = combox_selected - 1; i < max - 2; i++) {// changed 1 to 2 SB
+							sp.add(new JLabel());
+						}
+					}
+					else{	
+
+					}
+					if (reqdVarsL.get((findReqdVarslIndex(s))).isInput())
+						((JComboBox) specs.get(1)).setSelectedItem("Input"); 
+					else
+						((JComboBox) specs.get(1)).setSelectedItem("Output"); 
+					((JCheckBox) specs.get(2)).setEnabled(true);
+					((JCheckBox) specs.get(3)).setEnabled(true);
+					((JTextField) specs.get(4)).setEnabled(true);
+					((JComboBox) specs.get(5)).setEnabled(true);
+					((JComboBox) specs.get(6)).setEnabled(true);
+					((JCheckBox) specs.get(7)).setEnabled(true);
+					if (reqdVarsL.get(findReqdVarslIndex(s)).isDestab()){ 
+						((JCheckBox) specs.get(2)).setSelected(true);
+					} else {
+						((JCheckBox) specs.get(2)).setSelected(false);
+					}
+					if (reqdVarsL.get(findReqdVarslIndex(s)).isCare()){
+						((JCheckBox) specs.get(3)).setSelected(true);
+					}
+					if (reqdVarsL.get(findReqdVarslIndex(s)).isInterpolate()){
+						((JCheckBox) specs.get(7)).setSelected(true);
+					}
+					if (!dmvDetectDone && !dmvStatusLoaded)
+						((JComboBox) specs.get(5)).setSelectedItem("Auto");
+					else{
+						if (reqdVarsL.get(findReqdVarslIndex(s)).isDmvc()){
+							((JComboBox) specs.get(5)).setSelectedItem("DMV");
+						}
+						else{
+							((JComboBox) specs.get(5)).setSelectedItem("Continuous");
+						}
+					}
+				}
+			} 
+
+			else {
+				if (findReqdVarslIndex(((JTextField) sp.getComponent(0)).getText().trim()) != -1){
+					if (reqdVarsL.get((findReqdVarslIndex(s))).isInput())
+						((JComboBox) specs.get(1)).setSelectedItem("Input"); 
+					else
+						((JComboBox) specs.get(1)).setSelectedItem("Output"); 
+					((JCheckBox) specs.get(2)).setEnabled(true);
+					((JCheckBox) specs.get(3)).setEnabled(true);
+					((JTextField) specs.get(4)).setEnabled(true);
+					((JComboBox) specs.get(5)).setEnabled(true);
+					((JComboBox) specs.get(6)).setEnabled(true);
+					((JCheckBox) specs.get(7)).setEnabled(true);
+					if (reqdVarsL.get(findReqdVarslIndex(s)).isDestab()){
+						((JCheckBox) specs.get(2)).setSelected(true);
+					} else {
+						((JCheckBox) specs.get(2)).setSelected(false);
+					}
+					if (reqdVarsL.get(findReqdVarslIndex(s)).isCare()){
+						((JCheckBox) specs.get(3)).setSelected(true);
+					}
+					if (reqdVarsL.get(findReqdVarslIndex(s)).isInterpolate()){
+						((JCheckBox) specs.get(7)).setSelected(true);
+					}
+					if (!dmvDetectDone && !dmvStatusLoaded)
+						((JComboBox) specs.get(5)).setSelectedItem("Auto");
+					else{
+						if (reqdVarsL.get(findReqdVarslIndex(s)).isDmvc()){
+							((JComboBox) specs.get(5)).setSelectedItem("DMV");
+						}
+						else{
+							((JComboBox) specs.get(5)).setSelectedItem("Continuous");
+						}
+					}
+				}	
+				specs.add(new JTextField("",20));
+				sp.add(specs.get(8));
+				if (findReqdVarslIndex(((JTextField) sp.getComponent(0)).getText().trim()) != -1){
+					((JTextField) specs.get(8)).setEnabled(true);
+				}
+				else{
+					((JTextField) specs.get(8)).setEnabled(false);
+				}
+
+			}
+
+
+			variablesPanel.add(sp);
+		}
+		variablesPanel.revalidate(); 
+		variablesPanel.repaint(); 
 	}
 
 	private int findReqdVarslIndex(String s) {

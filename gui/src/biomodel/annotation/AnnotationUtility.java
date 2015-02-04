@@ -136,6 +136,18 @@ public class AnnotationUtility {
 		return null;
 	}
 	
+	public static void setDistributionAnnotation(SBase sbmlObject,String definition) {
+		if (sbmlObject.isSetAnnotation())
+			sbmlObject.unsetAnnotation();
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns", "http://sbml.org/annotations/distribution");
+		attr.add("definition", definition);
+		XMLNode node = new XMLNode(new XMLTriple("distribution","http://sbml.org/annotations/distribution",""), attr);
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ SBMLutilities.getId(sbmlObject));
+	}
+	
 	public static void setArraySizeAnnotation(SBase sbmlObject, int size) {
 		if (sbmlObject.isSetAnnotation())
 			removeArraySizeAnnotation(sbmlObject);
