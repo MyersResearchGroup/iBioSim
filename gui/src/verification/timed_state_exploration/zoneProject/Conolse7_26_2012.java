@@ -23,7 +23,6 @@ public class Conolse7_26_2012 {
 		boolean subset = true;
 		boolean superset = true;
 		boolean rateOptimization = false; // rate optimization is off by default
-
 		if(args.length > 2 || args.length == 0){
 			System.out.println("Incorrect number of parameters");
 			return;
