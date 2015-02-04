@@ -1921,6 +1921,7 @@ public class LhpnFile {
 	}
 
 	private void parseControlFlow(StringBuffer data) {
+		allTransitions = null;
 		Pattern pattern = Pattern.compile(TRANSITION);
 		Matcher lineMatcher = pattern.matcher(data.toString());
 		if (lineMatcher.find()) {
@@ -2064,6 +2065,7 @@ public class LhpnFile {
 	}
 
 	private void parsePlaces(StringBuffer data) {
+		placeList = null;
 		Pattern linePattern = Pattern.compile(PLACES_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {

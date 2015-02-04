@@ -100,6 +100,7 @@ import org.sbml.libsbml.libsbmlConstants;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
+import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
 
 
@@ -1020,6 +1021,11 @@ public class SBMLutilities {
 	 */
 	public static boolean checkNumFunctionArguments(SBMLDocument document, ASTNode node) {
 		ListOf<FunctionDefinition> sbml = document.getModel().getListOfFunctionDefinitions();
+		if (node==null) {
+			JOptionPane.showMessageDialog(Gui.frame, "Parse error in math formula.",
+					"Parse Error", JOptionPane.ERROR_MESSAGE);
+			return true;
+		}
 		switch (node.getType()) {
 		case FUNCTION_ABS:
 		case FUNCTION_ARCCOS:
@@ -2697,6 +2703,31 @@ public class SBMLutilities {
 			}
 			catch (Exception e) {
 				e.printStackTrace();
+			}
+			if (id.equals("uniform")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Uniform_distribution_(continuous)");
+			} else if (id.equals("normal")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Normal_distribution");
+			} else if (id.equals("exponential")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Exponential_distribution");
+			} else if (id.equals("gamma")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Gamma_distribution");
+			} else if (id.equals("poisson")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Poisson_distribution");
+			} else if (id.equals("lognormal")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Log-normal_distribution");
+			} else if (id.equals("chisq")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Chi-squared_distribution");
+			} else if (id.equals("laplace")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Laplace_distribution");
+			} else if (id.equals("cauchy")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Cauchy_distribution");
+			} else if (id.equals("rayleigh")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Rayleigh_distribution");
+			} else if (id.equals("binomial")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Binomial_distribution");
+			} else if (id.equals("bernoulli")) {
+				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Bernoulli_distribution");
 			}
 		}
 	}

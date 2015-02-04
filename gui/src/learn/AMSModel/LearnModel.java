@@ -2093,45 +2093,45 @@ public class LearnModel { // added ItemListener SB
 					String condStr = "";
 					for (int j = 0; j < reqdVarsL.size(); j++){ // preserving the order by having reqdVarsL as outer loop rather than care
 						String st2 = reqdVarsL.get(j).getName();
-							if (reqdVarsL.get(j).isCare()){
-						if (reqdVarsL.get(j).isInput()){
-							int x = getCareIndex(j);
-							String x1 = binOutgoing[x];
-							System.out.println(" x1 is :"+x1);
-							int bin = Integer.valueOf(binOutgoing[getCareIndex(j)]);
-							if (bin == 0){
-								if (!condStr.equalsIgnoreCase(""))
-									condStr += "&";
-								condStr += "~(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
-								//transProp.put("onlyLowerThresh", (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()));
-							} else if (bin == (scaledThresholds.get(st2).size())){
-								if (!condStr.equalsIgnoreCase(""))
-									condStr += "&";
-								condStr += "(" + st2 + ">="	+ (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")";
-								//transProp.put("onlyUpperThresh", (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()));
-							} else{
-								if (!condStr.equalsIgnoreCase(""))
-									condStr += "&";
-								condStr += "(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")&~(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
-								//transProp.put("lowerThresh", (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()));
-								//transProp.put("upperThresh", (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()));
+						if (reqdVarsL.get(j).isCare()){
+							if (reqdVarsL.get(j).isInput()){
+								int x = getCareIndex(j);
+								String x1 = binOutgoing[x];
+								System.out.println(" x1 is :"+x1);
+								int bin = Integer.valueOf(binOutgoing[getCareIndex(j)]);
+								if (bin == 0){
+									if (!condStr.equalsIgnoreCase(""))
+										condStr += "&";
+									condStr += "~(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
+									//transProp.put("onlyLowerThresh", (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()));
+								} else if (bin == (scaledThresholds.get(st2).size())){
+									if (!condStr.equalsIgnoreCase(""))
+										condStr += "&";
+									condStr += "(" + st2 + ">="	+ (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")";
+									//transProp.put("onlyUpperThresh", (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()));
+								} else{
+									if (!condStr.equalsIgnoreCase(""))
+										condStr += "&";
+									condStr += "(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")&~(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
+									//transProp.put("lowerThresh", (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()));
+									//transProp.put("upperThresh", (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()));
+								}
+							} else {
+								if (reqdVarsL.get(j).isDmvc()){
+									if (placeInfo.get(st).getProperty(st2 + "_vMin")!=null){
+										int minv = (int) Math.floor(Double.parseDouble(placeInfo.get(st).getProperty(st2 + "_vMin")));
+										int maxv = (int) Math.ceil(Double.parseDouble(placeInfo.get(st).getProperty(st2 + "_vMax"))); 
+										//transProp.put("minV", Integer.toString(minv));
+										//transProp.put("maxV", Integer.toString(maxv));
+										if (minv != maxv)
+											g.addIntAssign("t" + numTransitions,st2,"uniform(" + minv  + ","+ maxv + ")");
+										else
+											g.addIntAssign("t" + numTransitions,st2,String.valueOf(minv));
+										out.write("Added assignment to " + st2 + " at transition t" + numTransitions + "\n");
+									}}
+								// deal with rates for continuous here
 							}
-						} else {
-							if (reqdVarsL.get(j).isDmvc()){
-								if (placeInfo.get(st).getProperty(st2 + "_vMin")!=null){
-									int minv = (int) Math.floor(Double.parseDouble(placeInfo.get(st).getProperty(st2 + "_vMin")));
-									int maxv = (int) Math.ceil(Double.parseDouble(placeInfo.get(st).getProperty(st2 + "_vMax"))); 
-									//transProp.put("minV", Integer.toString(minv));
-									//transProp.put("maxV", Integer.toString(maxv));
-									if (minv != maxv)
-										g.addIntAssign("t" + numTransitions,st2,"uniform(" + minv  + ","+ maxv + ")");
-									else
-										g.addIntAssign("t" + numTransitions,st2,String.valueOf(minv));
-									out.write("Added assignment to " + st2 + " at transition t" + numTransitions + "\n");
-								}}
-							// deal with rates for continuous here
-						}
-							} //else {
+						} //else {
 						///	out.write(st2 + " was don't care " + "\n");
 						//}
 					}
@@ -2213,8 +2213,9 @@ public class LearnModel { // added ItemListener SB
 
 						// System.out.print(" ");
 						break;
+					} else {
+						out.write("WARNING: A variable in reqdVarsL wasn't found in the complete list of names.\n");
 					}
-					out.write("WARNING: A variable in reqdVarsL wasn't found in the complete list of names.\n");
 				}
 			}
 			/*
@@ -2364,8 +2365,9 @@ public class LearnModel { // added ItemListener SB
 				if (value <= varThresholds.get(l)) {
 					bin = l;
 					break;
+				} else {
+					bin = l + 1;
 				}
-				bin = l + 1;
 			}
 		} catch (NullPointerException e){
 			e.printStackTrace();
@@ -2429,13 +2431,14 @@ public class LearnModel { // added ItemListener SB
 					key = ""; fullKey = "";
 					//Full keys are for transitions; Just Keys are for Places
 					
+					/*
 					for (int j = 0; j < reqdVarsL.size(); j++) {
 						System.out.println("is required :"+reqdVarsL.get(j).getName()+"\n");
 						if (reqdVarsL.get(j).isCare()){
 							System.out.println("is care :"+reqdVarsL.get(j).getName()+"\n");	
 						}
 					}
-					
+					*/					
 					
 					for (int j = 0; j < reqdVarsL.size(); j++) {
 						if (reqdVarsL.get(j).isCare()){
@@ -3900,6 +3903,7 @@ public class LearnModel { // added ItemListener SB
 
 	public Integer getMinRate(String place, String name) {
 		Properties p = placeInfo.get(place);
+		System.out.println(place + " " + p);
 		if (p.getProperty(name + "_rMin") != null)
 			return ((int) Math.floor(Double.parseDouble(p.getProperty(name
 					+ "_rMin"))));

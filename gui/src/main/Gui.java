@@ -236,7 +236,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JPopupMenu popup; // popup menu
 
-	public static String separator;
+	public static final String separator = (File.separator.equals("\\"))?"\\\\":File.separator;
 
 	private KeyEventDispatcher dispatcher;
 
@@ -300,11 +300,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 
-	private static final String lemaVersion = "2.8.1";
+	private static final String lemaVersion = "2.8.2";
 	
 	private static final String atacsVersion = "6.1";
 	
-	private static final String iBioSimVersion = "2.8.1";
+	private static final String iBioSimVersion = "2.8.2";
 		
 	public class MacOSAboutHandler extends Application {
 
@@ -378,12 +378,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		Gui.libsbmlFound = libsbmlFound;
 		async = lema || atacs;
 		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
+		/*
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
 		else {
 			separator = File.separator;
 		}
+		*/
 		if (atacs) {
 			ENVVAR = System.getenv("ATACSGUI");
 			System.setProperty("software.running", "ATACS Version " + atacsVersion);
