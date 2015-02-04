@@ -181,9 +181,11 @@ public class BioGraph extends mxGraph {
 		ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
 		if (reactionGlyph!=null) layout.removeReactionGlyph(reactionGlyph);
 		reactionGlyph = layout.createReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
+		/*
 		reactionGlyph.createBoundingBox();
 		reactionGlyph.getBoundingBox().createDimensions();
 		reactionGlyph.getBoundingBox().createPosition();
+		*/
 		SBMLutilities.copyDimensions(r,reactionGlyph);
 		SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.REFERENCE_GLYPH+"__"+reactant+"__"+type+"__"+product);
 		speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+product);
@@ -195,6 +197,8 @@ public class BioGraph extends mxGraph {
 				this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterY()));
 		lineSegment.setEnd(new Point(this.getSpeciesOrPromoterCell(product).getGeometry().getCenterX(),
 				this.getSpeciesOrPromoterCell(product).getGeometry().getCenterY()));
+		// TODO: is this correct?
+		reactionGlyph.setCurve(speciesReferenceGlyph.getCurve().clone());
 	}
 
 	private static void addSpeciesReferenceGlyph(Layout layout,mxCell cell,ReactionGlyph reactionGlyph,String reactionId,String speciesId, String role) {
