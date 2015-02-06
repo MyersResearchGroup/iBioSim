@@ -94,7 +94,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private JCheckBox abst, partialOrder, dot, verbose, graph, decomposeLPN, multipleLPNs, genrg,
 	timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
 	nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
-	postProc, redCheck, xForm2, expandRate, useGraphs, resetOnce, displayResult,
+	postProc, redCheck, xForm2, expandRate, useGraphs, resetOnce, noDisplayResult,
 	rateOptimization;
 
 	private JTextField bddSize, backgroundField, componentField;
@@ -317,8 +317,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		reduction.addActionListener(this);
 		resetOnce = new JCheckBox("Reset Once");
 		resetOnce.addActionListener(this);
-		displayResult = new JCheckBox("Display Verification Results");
-		displayResult.addActionListener(this);
+		noDisplayResult = new JCheckBox("Do not display time results");
+		noDisplayResult.addActionListener(this);
 		rateOptimization = new JCheckBox("Rate Optimization");
 		rateOptimization.addActionListener(this);
 		// Component List
@@ -456,7 +456,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		advancedPanel.add(nochecks);
 		advancedPanel.add(reduction);
 		advancedPanel.add(resetOnce);
-		advancedPanel.add(displayResult);
+		advancedPanel.add(noDisplayResult);
 		advancedPanel.add(rateOptimization);
 		
 		bddPanel.add(bddSizeLabel);
@@ -1805,7 +1805,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						+ " without having selected zones or octagons.");
 			}
 			Options.set_resetOnce(resetOnce.isSelected());
-			Options.set_displayResults(displayResult.isSelected());
+			Options.set_displayResults(!noDisplayResult.isSelected());
 			// Checking the rate optimization flag turns the optimization on.
 			Options.set_rateOptimization(!rateOptimization.isSelected());
 			
