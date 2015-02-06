@@ -766,6 +766,8 @@ public class LearnModel { // added ItemListener SB
 
 			for (String t : transitionList) {
 				Properties transProp = new Properties();
+				// TODO: added as a hack to make sure default delay put on transitions
+				g.changeDelay(t, "0");
 
 				//transNum = Integer.parseInt(t.split("t")[1]);
 
@@ -1508,6 +1510,8 @@ public class LearnModel { // added ItemListener SB
 				//g.removePlace(st1);
 				int initPlaceNum = numPlaces - 1;
 				g.addTransition("t" + numTransitions);
+				// TODO: hack to make sure default delay of 0
+				g.changeDelay("t" + numTransitions,"0");
 				g.addMovement(st1, "t" + numTransitions);
 				g.addMovement("t" + numTransitions,"p" + initPlaceNum);
 				out.write("Added transition t" + numTransitions + " b/w terminating place " + st1 + " and initPlace p" + initPlaceNum + "\n");
@@ -2027,6 +2031,8 @@ public class LearnModel { // added ItemListener SB
 					//p1.setProperty("transitionNum", numTransitions.toString());
 					//initTransitions.put(key, p1); //from initPlaceNum to key
 					g.addTransition("t" + numTransitions); // prevTranKey+key);
+					// TODO: hack to make sure default delay of 0
+					g.changeDelay("t" + numTransitions,"0");
 					//transProp.put("transition", "t" + numTransitions);
 					g.addMovement("p" + initPlaceNum, "t" + numTransitions);
 					g.addMovement("t" + numTransitions, "p" + transientNetPlaces.get(st).getProperty("placeNum"));
@@ -2084,6 +2090,8 @@ public class LearnModel { // added ItemListener SB
 					//p1.setProperty("transitionNum", numTransitions.toString());
 					//initTransitions.put(key, p1); //from initPlaceNum to key
 					g.addTransition("t" + numTransitions); // prevTranKey+key);
+					// TODO: hack to make sure default delay of 0
+					g.changeDelay("t" + numTransitions,"0");
 					//transProp.put("transition", "t" + numTransitions);
 					g.addMovement("p" + initPlaceNum, "t" + numTransitions);
 					g.addMovement("t" + numTransitions, "p" + placeInfo.get(st).getProperty("placeNum"));
@@ -2142,6 +2150,8 @@ public class LearnModel { // added ItemListener SB
 				for (HashMap<String,String> st1 : constVal){	// for output signals that are constant throughout the trace.
 					if (st1.size() != 0){
 						g.addTransition("t" + numTransitions); // prevTranKey+key);
+						// TODO: hack to make sure default delay of 0
+						g.changeDelay("t" + numTransitions,"0");
 						g.addMovement("p" + initPlaceNum, "t" + numTransitions);
 						for (String st2: st1.keySet()){
 							g.addIntAssign("t" + numTransitions,st2,st1.get(st2));
@@ -2569,6 +2579,8 @@ public class LearnModel { // added ItemListener SB
 								if (transientPlaceReqd && (ratePlaces.size() <= 2)){ // changed == to <= for the sake of non-care outputs
 									transientNetTransitions.put(prevPlaceFullKey + "," + fullKey, p1);
 									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									// TODO: hack to make sure default delay of 0
+									g.changeDelay("t" + numTransitions,"0");
 									g.addMovement("p" + transientNetPlaces.get(prevPlaceKey).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 									if (ratePlaces.size() == 2)
 										g.addMovement("t" + transientNetTransitions.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
@@ -2606,6 +2618,8 @@ public class LearnModel { // added ItemListener SB
 												p1.put("ioChangeDelay", "yes");
 												int removeTransNum =  Integer.valueOf(transitionInfo.get(lastLastPlaceFullKey + "," +  prevPlaceFullKey).getProperty("transitionNum"));
 												g.addTransition("t" + numTransitions); // prevTranKey+key);
+												// TODO: hack to make sure default delay of 0
+												g.changeDelay("t" + numTransitions,"0");
 												g.addMovement(lastLastPlace, "t" + transitionInfo.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 												g.addMovement("t" + transitionInfo.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 												if (removeTransNum == numTransitions -1){
@@ -2641,6 +2655,8 @@ public class LearnModel { // added ItemListener SB
 												p1.put("ioChangeDelay", "yes");
 												int removeTransNum =  Integer.valueOf(transientNetTransitions.get(lastLastPlaceFullKey + "," + prevPlaceFullKey).getProperty("transitionNum"));
 												g.addTransition("t" + numTransitions); // prevTranKey+key);
+												// TODO: hack to make sure default delay of 0
+												g.changeDelay("t" + numTransitions,"0");
 												g.addMovement(lastLastPlace, "t" + transientNetTransitions.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 												g.addMovement("t" + transientNetTransitions.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 												if (removeTransNum == numTransitions -1){
@@ -2661,6 +2677,8 @@ public class LearnModel { // added ItemListener SB
 									} else {
 										transitionInfo.put(prevPlaceFullKey + "," + fullKey, p1);
 										g.addTransition("t" + numTransitions); // prevTranKey+key);
+										// TODO: hack to make sure default delay of 0
+										g.changeDelay("t" + numTransitions,"0");
 										g.addMovement("p" + placeInfo.get(prevPlaceKey).getProperty("placeNum"), "t" + transitionInfo.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 										g.addMovement("t" + transitionInfo.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 										transId = prevPlaceFullKey + "," + fullKey;
@@ -2683,6 +2701,8 @@ public class LearnModel { // added ItemListener SB
 							if (transientPlaceReqd && (ratePlaces.size() <= 2)){ // changed == to <= for the sake of non-care outputs
 								transientNetTransitions.put(prevPlaceFullKey + "," + fullKey, p1);
 								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								// TODO: hack to make sure default delay of 0
+								g.changeDelay("t" + numTransitions,"0");
 								g.addMovement("p" + transientNetPlaces.get(prevPlaceKey).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 								if (ratePlaces.size() == 2)
 									g.addMovement("t" + transientNetTransitions.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
@@ -2720,6 +2740,8 @@ public class LearnModel { // added ItemListener SB
 											p1.put("ioChangeDelay", "yes");
 											int removeTransNum =  Integer.valueOf(transitionInfo.get(lastLastPlaceFullKey + "," +  prevPlaceFullKey).getProperty("transitionNum"));
 											g.addTransition("t" + numTransitions); // prevTranKey+key);
+											// TODO: hack to make sure default delay of 0
+											g.changeDelay("t" + numTransitions,"0");
 											g.addMovement(lastLastPlace, "t" + transitionInfo.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 											g.addMovement("t" + transitionInfo.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 											if (removeTransNum == numTransitions -1){
@@ -2755,6 +2777,8 @@ public class LearnModel { // added ItemListener SB
 											p1.put("ioChangeDelay", "yes");
 											int removeTransNum =  Integer.valueOf(transientNetTransitions.get(lastLastPlaceFullKey + "," + prevPlaceFullKey).getProperty("transitionNum"));
 											g.addTransition("t" + numTransitions); // prevTranKey+key);
+											// TODO: hack to make sure default delay of 0
+											g.changeDelay("t" + numTransitions,"0");
 											g.addMovement(lastLastPlace, "t" + transientNetTransitions.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 											g.addMovement("t" + transientNetTransitions.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 											if (removeTransNum == numTransitions -1){
@@ -2775,6 +2799,8 @@ public class LearnModel { // added ItemListener SB
 								} else {
 									transitionInfo.put(prevPlaceFullKey + "," + fullKey, p1);
 									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									// TODO: hack to make sure default delay of 0
+									g.changeDelay("t" + numTransitions,"0");
 									g.addMovement("p" + placeInfo.get(prevPlaceKey).getProperty("placeNum"), "t" + transitionInfo.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 									g.addMovement("t" + transitionInfo.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 									transId = prevPlaceFullKey + "," + fullKey;

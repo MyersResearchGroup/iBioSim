@@ -24,6 +24,7 @@ import org.sbml.jsbml.ext.layout.CompartmentGlyph;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
+import org.sbml.jsbml.ext.layout.Dimensions;
 import org.sbml.jsbml.ext.layout.GeneralGlyph;
 import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.ext.layout.LineSegment;
@@ -181,11 +182,13 @@ public class BioGraph extends mxGraph {
 		ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
 		if (reactionGlyph!=null) layout.removeReactionGlyph(reactionGlyph);
 		reactionGlyph = layout.createReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
-		/*
 		reactionGlyph.createBoundingBox();
-		reactionGlyph.getBoundingBox().createDimensions();
-		reactionGlyph.getBoundingBox().createPosition();
-		*/
+		Dimensions dimension = reactionGlyph.getBoundingBox().createDimensions();
+		dimension.setHeight(0);
+		dimension.setWidth(0);
+		Point point = reactionGlyph.getBoundingBox().createPosition();
+		point.setX(this.getSpeciesOrPromoterCell(product).getGeometry().getCenterX());
+		point.setY(this.getSpeciesOrPromoterCell(product).getGeometry().getCenterY());
 		SBMLutilities.copyDimensions(r,reactionGlyph);
 		SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.REFERENCE_GLYPH+"__"+reactant+"__"+type+"__"+product);
 		speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+product);
@@ -197,8 +200,6 @@ public class BioGraph extends mxGraph {
 				this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterY()));
 		lineSegment.setEnd(new Point(this.getSpeciesOrPromoterCell(product).getGeometry().getCenterX(),
 				this.getSpeciesOrPromoterCell(product).getGeometry().getCenterY()));
-		// TODO: is this correct?
-		reactionGlyph.setCurve(speciesReferenceGlyph.getCurve().clone());
 	}
 
 	private static void addSpeciesReferenceGlyph(Layout layout,mxCell cell,ReactionGlyph reactionGlyph,String reactionId,String speciesId, String role) {
