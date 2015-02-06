@@ -1588,7 +1588,15 @@ public class Zone implements Equivalence{
 				*getCurrentRate(ltContPair);
 		int upper = getDbmEntry(0, variableIndex)
 				*getCurrentRate(ltContPair);
-				
+		
+		// If the current rate is negative the upper and lower bounds
+		// need to be switched.
+		if(getCurrentRate(ltContPair) < 0 ){
+			int tmp = lower;
+			lower = upper;
+			upper = tmp;
+		}
+		
 		return new IntervalPair(lower, upper);
 	}
 	
@@ -1935,9 +1943,19 @@ public class Zone implements Equivalence{
 					LPNContinuousPair lcPair =
 							(LPNContinuousPair) _indexToTimerPair[i];
 					
+					int lowerBound = -1*getDbmEntry(i, 0)*lcPair.getCurrentRate();
+					int upperBound = getDbmEntry(0, i)*lcPair.getCurrentRate();
+					
+					// If the rate is negative, the bounds are switched
+					// in the zone.
+					if(lcPair.getCurrentRate() < 0){
+						int tmp = lowerBound;
+						lowerBound = upperBound;
+						upperBound = tmp;
+					}
+					
 					name = var.getName() + 
-							":[" + -1*getDbmEntry(i, 0)*lcPair.getCurrentRate() + ","
-							+ getDbmEntry(0, i)*lcPair.getCurrentRate() + "]\n" +
+							":[" + lowerBound + "," + upperBound + "]\n" +
 							" Current Rate: " + lcPair.getCurrentRate() + " " +
 							"rate:";
 				}
@@ -3790,7 +3808,8 @@ public class Zone implements Equivalence{
 			
 			// Check for a single value which indicates that zero is
 			// the only possible rate.
-			if(variable.getValue().get_range().singleValue()){
+//			if(variable.getValue().get_range().singleValue()){
+			if(variable.getKey().get_rateInterval().singleValue()){	
 				// This variable only has zero as a rate so keep it
 				// in the rate zero variables.
 				newZone._rateZeroContinuous.insert(variable.getKey(),
@@ -6555,11 +6574,12 @@ public class Zone implements Equivalence{
 		newZone._indexToTimerPair = 
 				new LPNTransitionPair[this._indexToTimerPair.length-1];
 		
+		int offset = 0;
 		for(int i=0; i<newZone._indexToTimerPair.length; i++){
 			if(i == index){
-				continue;
+				offset++;
 			}
-			newZone._indexToTimerPair[i] = this._indexToTimerPair[i].clone();
+			newZone._indexToTimerPair[i] = this._indexToTimerPair[i+offset].clone();
 		}
 		
 		// Copy over the DBM
@@ -6569,13 +6589,13 @@ public class Zone implements Equivalence{
 		int offsetj = 0;
 		
 		for(int i=0; i<newZone.matrixSize(); i++){
-			if(i == index){
+			if(i == index+1){
 				offseti++;
 			}
 				
-				
+			offsetj = 0;	
 			for(int j=0; j<newZone.matrixSize(); j++){
-				if(j == index){
+				if(j == index+1){
 					offsetj++;
 				}
 				
