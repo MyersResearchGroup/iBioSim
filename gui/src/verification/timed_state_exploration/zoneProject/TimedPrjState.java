@@ -298,22 +298,41 @@ public class TimedPrjState extends PrjState{
 		 * the other possible events and just fire the rate change event.
 		 */
 		if(Options.get_rateOptimization()){
-			// Determine if the number of rate events is one.
-			int rateCount = 0;
-			EventSet rateEvent = null;
+//			// Determine if the number of rate events is one.
+//			int rateCount = 0;
+//			EventSet rateEvent = null;
+//			
+//			for(Transition event: newEvents){
+//				EventSet es = (EventSet) event;
+//				if(es.isRate()){
+//					rateCount++;
+//					rateEvent = es;
+//				}
+//			}
+//			
+//			// If one rate change event, change newEvents to have that single event.
+//			if(rateCount == 1){
+//				newEvents = new LpnTranList();
+//				newEvents.add(rateEvent);
+//			}
+			
+			LpnTranList rateEvents = null;
 			
 			for(Transition event: newEvents){
 				EventSet es = (EventSet) event;
 				if(es.isRate()){
-					rateCount++;
-					rateEvent = es;
+					if(rateEvents == null){
+						rateEvents = new LpnTranList();
+						rateEvents.add(es);
+					}
+					else{
+						rateEvents.add(es);
+					}
 				}
 			}
 			
-			// If one rate change event, change newEvents to have that single event.
-			if(rateCount == 1){
-				newEvents = new LpnTranList();
-				newEvents.add(rateEvent);
+			if(rateEvents != null){
+				newEvents = rateEvents;
 			}
 		}
 		
