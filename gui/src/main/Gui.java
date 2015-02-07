@@ -752,6 +752,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			newSBMLModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | InputEvent.ALT_MASK));
 			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | InputEvent.SHIFT_MASK));
+			createSynth.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ShortCutKey | InputEvent.SHIFT_MASK));
 			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | InputEvent.SHIFT_MASK));
 		}
 		newLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
@@ -3031,7 +3032,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			createHistogram();
 		}
 		else if (e.getActionCommand().equals("createLearn")) {
-			createLearn();
+			try {
+				createLearn(tree.getFile());
+			}
+			catch (Exception e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(frame, "You must select a valid model file for learning.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		else if (e.getActionCommand().equals("viewModel")) {
 			viewModel();
@@ -4517,8 +4524,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	private void createLearn() {
+	private void createLearn(String modelFile) {
 		if (root != null) {
+			String modelFileName = modelFile.split(separator)[modelFile.split(separator).length - 1];
+			String modelId = modelFileName.replace(".xml","").replace(".lpn","");
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
@@ -4528,71 +4537,72 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					break;
 				}
 			}
-			String lrnName = JOptionPane.showInputDialog(frame, "Enter Learn ID:", "Learn View ID", JOptionPane.PLAIN_MESSAGE);
-			if (lrnName != null && !lrnName.trim().equals("")) {
-				lrnName = lrnName.trim();
-				// try {
-				if (overwrite(root + separator + lrnName, lrnName)) {
-					new File(root + separator + lrnName).mkdir();
-					// new FileWriter(new File(root + separator +
-					// lrnName + separator
-					// +
-					// ".lrn")).close();
-					String sbmlFile = tree.getFile();
-					String[] getFilename = sbmlFile.split(separator);
-					String sbmlFileNoPath = getFilename[getFilename.length - 1];
-					if (sbmlFileNoPath.endsWith(".vhd")) {
-						try {
-							File work = new File(root);
-							Runtime.getRuntime().exec("atacs -lvsl " + sbmlFileNoPath, null, work);
-							sbmlFileNoPath = sbmlFileNoPath.replace(".vhd", ".lpn");
-							log.addText("atacs -lvsl " + sbmlFileNoPath + "\n");
-						}
-						catch (IOException e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to generate LPN from VHDL file!", "Error Generating File",
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
+			String lrnName = JOptionPane.showInputDialog(frame, "Enter Learn ID (default=" + modelId + "):", 
+					"Learn ID", JOptionPane.PLAIN_MESSAGE);
+			if (lrnName == null) return;
+			if (lrnName.equals("")) lrnName = modelId;
+			lrnName = lrnName.trim();
+			// try {
+			if (overwrite(root + separator + lrnName, lrnName)) {
+				new File(root + separator + lrnName).mkdir();
+				// new FileWriter(new File(root + separator +
+				// lrnName + separator
+				// +
+				// ".lrn")).close();
+				String sbmlFile = tree.getFile();
+				String[] getFilename = sbmlFile.split(separator);
+				String sbmlFileNoPath = getFilename[getFilename.length - 1];
+				if (sbmlFileNoPath.endsWith(".vhd")) {
 					try {
-						FileOutputStream out = new FileOutputStream(new File(root + separator + lrnName.trim() + separator + lrnName.trim() + ".lrn"));
-						if (lema) {
-							out.write(("learn.file=" + sbmlFileNoPath + "\n").getBytes());
-						}
-						else {
-							out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
-						}
-						out.close();
+						File work = new File(root);
+						Runtime.getRuntime().exec("atacs -lvsl " + sbmlFileNoPath, null, work);
+						sbmlFileNoPath = sbmlFileNoPath.replace(".vhd", ".lpn");
+						log.addText("atacs -lvsl " + sbmlFileNoPath + "\n");
 					}
 					catch (IOException e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Unable to generate LPN from VHDL file!", "Error Generating File",
+								JOptionPane.ERROR_MESSAGE);
 					}
-					addToTree(lrnName);
-					JTabbedPane lrnTab = new JTabbedPane();
-					lrnTab.addMouseListener(this);
-					DataManager data = new DataManager(root + separator + lrnName, this);
-					lrnTab.addTab("Data Manager", data);
-					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
+				}
+				try {
+					FileOutputStream out = new FileOutputStream(new File(root + separator + lrnName.trim() + separator + lrnName.trim() + ".lrn"));
 					if (lema) {
-						LearnLPN learn = new LearnLPN(root + separator + lrnName, log, this);
-						lrnTab.addTab("Learn Options", learn);
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
-						lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
+						out.write(("learn.file=" + sbmlFileNoPath + "\n").getBytes());
 					}
 					else {
-						LearnGCM learn = new LearnGCM(root + separator + lrnName, log, this);
-						lrnTab.addTab("Learn Options", learn);
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
-						lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
+						out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
 					}
-					Graph tsdGraph;
-					tsdGraph = new Graph(null, "Number of molecules", lrnName + " data", "tsd.printer", root + separator + lrnName, "Time", this,
-							null, log, null, true, false);
-					lrnTab.addTab("TSD Graph", tsdGraph);
-					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-					addTab(lrnName, lrnTab, null);
+					out.close();
 				}
+				catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
+				}
+				addToTree(lrnName);
+				JTabbedPane lrnTab = new JTabbedPane();
+				lrnTab.addMouseListener(this);
+				DataManager data = new DataManager(root + separator + lrnName, this);
+				lrnTab.addTab("Data Manager", data);
+				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
+				if (lema) {
+					LearnLPN learn = new LearnLPN(root + separator + lrnName, log, this);
+					lrnTab.addTab("Learn Options", learn);
+					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
+					lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
+					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
+				}
+				else {
+					LearnGCM learn = new LearnGCM(root + separator + lrnName, log, this);
+					lrnTab.addTab("Learn Options", learn);
+					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
+					lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
+					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
+				}
+				Graph tsdGraph;
+				tsdGraph = new Graph(null, "Number of molecules", lrnName + " data", "tsd.printer", root + separator + lrnName, "Time", this,
+						null, log, null, true, false);
+				lrnTab.addTab("TSD Graph", tsdGraph);
+				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
+				addTab(lrnName, lrnTab, null);
 			}
 		}
 		else {
