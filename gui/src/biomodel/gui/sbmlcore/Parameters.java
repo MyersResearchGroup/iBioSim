@@ -296,6 +296,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		paramID = new JTextField();
 		paramName = new JTextField();
 		paramValue = new JTextField();
+		paramValue.setText("0.0");
 		rateValue = new JTextField();
 		placeMarking = new JComboBox();
 		placeMarking.addItem("false");
