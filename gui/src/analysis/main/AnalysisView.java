@@ -1480,11 +1480,30 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				cut = i;
 			}
 		}
-		String propName = sbmlProp.substring(0, sbmlProp.length()
+		boolean saveTopLevel = false;
+		if (!direct.equals("."))
+		{
+			simProp = simProp
+					.substring(
+							0,
+							simProp.length()
+									- simProp.split("/")[simProp
+											.split("/").length - 1]
+											.length())
+					+ direct
+					+ Gui.separator
+					+ simProp
+							.substring(simProp.length()
+									- simProp.split("/")[simProp
+											.split("/").length - 1]
+											.length());
+			saveTopLevel = true;
+		}
+		String propName = simProp.substring(0, simProp.length()
 				- getFilename[getFilename.length - 1].length())
 				+ getFilename[getFilename.length - 1].substring(0, cut)
 				+ ".properties";
-		log.addText("Creating properties file1:\n" + propName + "\n");
+		log.addText("Creating properties file:\n" + propName + "\n");
 		int numPaths = Integer
 				.parseInt((String) (bifurcation.getSelectedItem()));
 		Run.createProperties(timeLimit,
@@ -1528,37 +1547,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 			}
 		}
-		boolean saveTopLevel = false;
-		if (!direct.equals("."))
-		{
-			simProp = simProp
-					.substring(
-							0,
-							simProp.length()
-									- simProp.split("/")[simProp
-											.split("/").length - 1]
-											.length())
-					+ direct
-					+ Gui.separator
-					+ simProp
-							.substring(simProp.length()
-									- simProp.split("/")[simProp
-											.split("/").length - 1]
-											.length());
-			saveTopLevel = true;
-		}
-		String topLevelProps = null;
-		if (saveTopLevel)
-		{
-			topLevelProps = sbmlProp.substring(0, sbmlProp.length()
+		String topLevelProps = sbmlProp.substring(0, sbmlProp.length()
 					- getFilename[getFilename.length - 1].length())
 					+ getFilename[getFilename.length - 1].substring(0, cut)
 					+ ".properties";
-		}
 		try
 		{
 			Properties getProps = new Properties();
-			FileInputStream load = new FileInputStream(new File(propName));
+			FileInputStream load = new FileInputStream(new File(topLevelProps));
 			getProps.load(load);
 			load.close();
 			getProps.setProperty("selected.simulator", sim);
@@ -1634,9 +1630,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 			}
 			FileOutputStream store = new FileOutputStream(new File(propName));
-			getProps.store(store,
-					getFilename[getFilename.length - 1].substring(0, cut)
-							+ " Properties");
+			getProps.store(store,getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
 			if (saveTopLevel)
 			{
