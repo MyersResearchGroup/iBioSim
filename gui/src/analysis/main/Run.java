@@ -375,12 +375,7 @@ public class Run implements ActionListener
 		int exitValue = 255;
 		while (outDir.split("/")[outDir.split("/").length - 1].equals("."))
 		{
-			outDir = outDir.substring(
-					0,
-					outDir.length()
-							- 1
-							- outDir.split("/")[outDir.split("/").length - 1]
-									.length());
+			outDir = outDir.substring(0, outDir.length() - 1 - outDir.split("/")[outDir.split("/").length - 1].length());
 		}
 		try
 		{
