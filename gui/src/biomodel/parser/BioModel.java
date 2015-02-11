@@ -7581,6 +7581,8 @@ public class BioModel {
 		s = s.replace(">", " > ").replace("> =",">=");
 		s = s.replace("<", " < ").replace("< =","<=");
 		s = s.replace("=", " = ").replace("> =",">=").replace("< =", "<=");
+		s = s.replace("=  =", "==");
+		s = s.replace("! =", "!=");
 		// TODO: Are these needed to be handled?  Or are arrays gone by this point?
 		//formula.split("\\[|\\]|\\{|\\}")
 		do { 
