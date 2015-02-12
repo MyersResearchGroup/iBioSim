@@ -475,7 +475,11 @@ These results can also be visualized using the TSD graph tool.  Click on the TSD
 5</a>&nbsp;&nbsp;Learn Tool</h2>
 
 <div class="p"><!----></div>
-This section describes how a model can be learned from time series data using <tt>iBioSim</tt>'s Learn Tool.  To demonstrate the Learn Tool, first create a simple model, <tt>lambdaLearn</tt>, which just includes the two species CI and CII as shown below.  Next, create a learn view by right-clicking on this model file and selecting Create Learn View.  Give this learn view the ID <tt>learnLambda</tt>.  At this point, a new learn view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
+This section describes how a model can be learned from time series data using <tt>iBioSim</tt>'s Learn Tool.  To demonstrate the Learn Tool, first create a simple model, <tt>learnModel</tt>, which just includes the two species CI and CII as shown below.  This model represents any background knowledge you have about the model that you wish to learn.  Any influences that you add between species will be assumed as part of the final learned model.  You can also indicate definite knowledge about there not being any influence between two species by selecting the No Influence icon 
+<img src="../gui/icons/modelview/no_influence_selected.png" alt="../gui/icons/modelview/no_influence_selected.png" /> and connecting the species with a no influence arc.
+
+<div class="p"><!----></div>
+Now, create a learn view by right-clicking on this model file and selecting Create Learn View.  Give this learn view the ID <tt>learnLambda</tt>.  At this point, a new learn view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
 
 <div class="p"><!----></div>
 
@@ -491,11 +495,16 @@ The next step is to add some experimental data from which you wish to learn a mo
 </center>
 
 <div class="p"><!----></div>
-Now, click on the Learn tab.  Here you can edit the various learning options.  For example, you can either use auto-generated levels or user-generated levels for your data encoding.  Select Use User Generated Levels, which will make the levels below editable.  At this point, you can ask the tool to suggest levels by clicking on the Suggest Levels button.  Finally, click on the Save and Run icon which will bring up the model that has been learned from this experimental data using Graphviz's dotty program, and ask you for a model ID for the generated model.  
+Now, click on the Learn tab.  Here you can edit the various learning options.  For example, you can either use auto-generated levels or user-generated levels for your data encoding.  Select Use User Generated Levels, which will make the levels below editable.  At this point, you can ask the tool to suggest levels by clicking on the Suggest Levels button.  Finally, click on the Save and Run icon, which if successful, will ask you for a model ID for the generated model.  Enter <tt>learnedModel</tt>, then open this model in the model editor which should show you the model shown below.
 
 <div class="p"><!----></div>
 
 <center><img src="screenshots/learn.png" alt="screenshots/learn.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/learnResult.png" alt="screenshots/learnResult.png" />
 </center>
 
 <div class="p"><!----></div>
@@ -611,5 +620,5 @@ is available in the <tt>docs</tt> directory that comes with the distribution.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 25 Jan 2015, 19:38.</small>
+version 3.81.<br />On 12 Feb 2015, 12:40.</small>
 </html>

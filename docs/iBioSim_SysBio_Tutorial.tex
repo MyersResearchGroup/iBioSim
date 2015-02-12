@@ -330,7 +330,10 @@ These results can also be visualized using the TSD graph tool.  Click on the TSD
 
 \section{Learn Tool}
 
-This section describes how a model can be learned from time series data using {\tt iBioSim}'s Learn Tool.  To demonstrate the Learn Tool, first create a simple model, {\tt lambdaLearn}, which just includes the two species CI and CII as shown below.  Next, create a learn view by right-clicking on this model file and selecting Create Learn View.  Give this learn view the ID {\tt learnLambda}.  At this point, a new learn view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
+This section describes how a model can be learned from time series data using {\tt iBioSim}'s Learn Tool.  To demonstrate the Learn Tool, first create a simple model, {\tt learnModel}, which just includes the two species CI and CII as shown below.  This model represents any background knowledge you have about the model that you wish to learn.  Any influences that you add between species will be assumed as part of the final learned model.  You can also indicate definite knowledge about there not being any influence between two species by selecting the No Influence icon 
+\includegraphics{../gui/icons/modelview/no_influence_selected} and connecting the species with a no influence arc.
+
+Now, create a learn view by right-clicking on this model file and selecting Create Learn View.  Give this learn view the ID {\tt learnLambda}.  At this point, a new learn view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
 
 \begin{center}
 \includegraphics[height=60mm]{screenshots/createLearn}
@@ -342,10 +345,14 @@ The next step is to add some experimental data from which you wish to learn a mo
 \includegraphics[width=160mm]{screenshots/dataManager}
 \end{center}
 
-Now, click on the Learn tab.  Here you can edit the various learning options.  For example, you can either use auto-generated levels or user-generated levels for your data encoding.  Select Use User Generated Levels, which will make the levels below editable.  At this point, you can ask the tool to suggest levels by clicking on the Suggest Levels button.  Finally, click on the Save and Run icon which will bring up the model that has been learned from this experimental data using Graphviz's dotty program, and ask you for a model ID for the generated model.  
+Now, click on the Learn tab.  Here you can edit the various learning options.  For example, you can either use auto-generated levels or user-generated levels for your data encoding.  Select Use User Generated Levels, which will make the levels below editable.  At this point, you can ask the tool to suggest levels by clicking on the Suggest Levels button.  Finally, click on the Save and Run icon, which if successful, will ask you for a model ID for the generated model.  Enter {\tt learnedModel}, then open this model in the model editor which should show you the model shown below.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/learn}
+\end{center}
+
+\begin{center}
+\includegraphics[width=160mm]{screenshots/learnResult}
 \end{center}
 
 \section{Advanced Modeling}
