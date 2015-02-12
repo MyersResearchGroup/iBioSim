@@ -678,7 +678,6 @@ public class BioGraph extends mxGraph {
 			if (BioModel.isComplexReaction(r)) continue;
 			if (BioModel.isConstitutiveReaction(r)) continue;
 			if (BioModel.isGridReaction(r)) continue;
-			
 			ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId());
 			if (reactionGlyph != null) {
 				while (reactionGlyph.getListOfSpeciesReferenceGlyphs().size() > 0) 
@@ -688,7 +687,7 @@ public class BioGraph extends mxGraph {
 					SpeciesReference s = r.getReactant(j);
 					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
 							s.getSpecies() + "__r" + j + "__"  + r.getId(), "", 
-							this.getSpeciesCell(s.getSpecies()), 
+							this.getSpeciesOrPromoterCell(s.getSpecies()), 
 							this.getReactionsCell(r.getId()));
 
 					if (r.getReversible()) {
@@ -715,7 +714,7 @@ public class BioGraph extends mxGraph {
 					ModifierSpeciesReference s = r.getModifier(j);
 					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
 							s.getSpecies() + "__m" + j + "__" + r.getId(), "", 
-							this.getSpeciesCell(s.getSpecies()), 
+							this.getSpeciesOrPromoterCell(s.getSpecies()), 
 							this.getReactionsCell(r.getId()));
 
 					if (r.getReversible())
@@ -732,7 +731,7 @@ public class BioGraph extends mxGraph {
 					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
 							r.getId() + "__p" + k + "__" + s.getSpecies(), "", 
 							this.getReactionsCell(r.getId()),
-							this.getSpeciesCell(s.getSpecies()));
+							this.getSpeciesOrPromoterCell(s.getSpecies()));
 					
 					if (r.getReversible()) {
 						
@@ -784,8 +783,8 @@ public class BioGraph extends mxGraph {
 						String product = s2.getSpecies();
 						mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
 								s1.getSpecies() + "_" + r.getId() + "_" + s2.getSpecies(), "", 
-								this.getSpeciesCell(s1.getSpecies()), 
-								this.getSpeciesCell(s2.getSpecies()));
+								this.getSpeciesOrPromoterCell(s1.getSpecies()), 
+								this.getSpeciesOrPromoterCell(s2.getSpecies()));
 						
 						cell.setValue(r.getId());
 						
