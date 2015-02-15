@@ -5872,7 +5872,8 @@ public class Zone implements Equivalence{
 				
 				// The zone is warped differently depending on which of rate is
 				// larger. See Scott Little's Thesis for more details.
-				if(iVal > jVal){
+				//if(iVal > jVal){
+				if(iWarp*jXDot > jWarp*iXDot ){
 					setDbmEntry(j, i, (int)
 							Math.ceil(((jWarp*getDbmEntry(j, i))/jXDot) +
 							((-1*jWarp*getDbmEntry(0, i)/jXDot)) +
