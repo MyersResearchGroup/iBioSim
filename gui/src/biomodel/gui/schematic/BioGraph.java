@@ -2376,7 +2376,7 @@ public class BioGraph extends mxGraph {
 		} else if (bioModel.isOutput(sp)) {
 			label += '\n' + GlobalConstants.OUTPUT;
 		} else {
-			label += '\n' + GlobalConstants.INTERNAL;
+			//label += '\n' + GlobalConstants.INTERNAL;
 		}
 		
 		CellValueObject cvo = new CellValueObject(label, "Species", null);

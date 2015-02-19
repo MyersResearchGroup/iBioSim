@@ -1058,8 +1058,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		String lpnProperty = "";
 		if (transientProperties != null)
 		{
-			if (!((String) transientProperties.getSelectedItem())
-					.equals("none"))
+			if (!((String) transientProperties.getSelectedItem()).equals("none"))
 			{
 				lpnProperty = ((String) transientProperties.getSelectedItem());
 			}
@@ -1607,8 +1606,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 									+ Gui.separator + s).delete();
 						}
 					}
-					getProps.setProperty("monte.carlo.simulation.start.index",
-							(start + 1) + "");
+					getProps.setProperty("monte.carlo.simulation.start.index",(start + 1) + "");
 				}
 				else
 				{
@@ -1625,8 +1623,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 									+ Gui.separator + s).delete();
 						}
 					}
-					getProps.setProperty("monte.carlo.simulation.start.index",
-							"1");
+					getProps.setProperty("monte.carlo.simulation.start.index","1");
 				}
 			}
 			FileOutputStream store = new FileOutputStream(new File(propName));

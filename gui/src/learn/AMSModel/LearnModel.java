@@ -2437,6 +2437,7 @@ public class LearnModel { // added ItemListener SB
 			out.write("In UpdateRateInfo\n");
 			for (int i = 0; i < (data.get(0).size() - 1); i++) {
 				if (rates[0][i] != null) { // check if indices are ok. 0???? or 1???
+					System.out.println("#trans="+numTransitions);
 					prevPlaceKey = key; prevPlaceFullKey = fullKey;
 					key = ""; fullKey = "";
 					//Full keys are for transitions; Just Keys are for Places
@@ -2559,9 +2560,11 @@ public class LearnModel { // added ItemListener SB
 						} else if (!(transitionInfo.containsKey(prevPlaceFullKey + "," + fullKey)) && (ipChange && opChange) && !prevPlaceFullKey.equalsIgnoreCase("") /*&& (ratePlaces.size() > 2)*/) { // instead of tuple
 							String[] allPrevBins = prevPlaceFullKey.split(",");
 							String[] allNextBins = fullKey.split(",");
+							/* TODO: not sure the purpose of this but it takes inputs out of guards
 							for(int l=0; l<inputIndex.size();l++){
 								allPrevBins[inputIndex.get(l)] = allNextBins[inputIndex.get(l)];
 							}
+							*/
 							
 							prevPlaceFullKey = Arrays.asList(allPrevBins).toString().replaceAll("(^\\[|\\]$)", "").replace(", ", ",");
 							fullKey = Arrays.asList(allNextBins).toString().replaceAll("(^\\[|\\]$)", "").replace(", ", ",");
@@ -2588,7 +2591,7 @@ public class LearnModel { // added ItemListener SB
 										g.addMovement("t" + transientNetTransitions.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + transientNetPlaces.get(key).getProperty("placeNum"));
 									//								transientNet = true;
 									transId = prevPlaceFullKey + "," + fullKey;
-									out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+									out.write("New transition1 t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 									numTransitions++;
 									cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 								} else {
@@ -2629,7 +2632,7 @@ public class LearnModel { // added ItemListener SB
 													g.removeTransition("t" + removeTransNum);
 												}
 												transId = lastLastPlaceFullKey + "," + fullKey;
-												out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+												out.write("New transition2 t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 												numTransitions++;
 												cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 											}
@@ -2666,7 +2669,7 @@ public class LearnModel { // added ItemListener SB
 													g.removeTransition("t" + removeTransNum);
 												}
 												transId = lastLastPlaceFullKey + "," + fullKey;
-												out.write("TRANSIENT:New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+												out.write("TRANSIENT:New transition3 t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 												numTransitions++;
 												cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 											}
@@ -2682,7 +2685,7 @@ public class LearnModel { // added ItemListener SB
 										g.addMovement("p" + placeInfo.get(prevPlaceKey).getProperty("placeNum"), "t" + transitionInfo.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 										g.addMovement("t" + transitionInfo.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 										transId = prevPlaceFullKey + "," + fullKey;
-										out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+										out.write("New transition4 t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 										numTransitions++;
 										cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 									}
@@ -2710,7 +2713,7 @@ public class LearnModel { // added ItemListener SB
 									g.addMovement("t" + transientNetTransitions.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + transientNetPlaces.get(key).getProperty("placeNum"));
 								//								transientNet = true;
 								transId = prevPlaceFullKey + "," + fullKey;
-								out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+								out.write("New transition5 t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 								numTransitions++;
 								cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 							} else {
@@ -2751,7 +2754,7 @@ public class LearnModel { // added ItemListener SB
 												g.removeTransition("t" + removeTransNum);
 											}
 											transId = lastLastPlaceFullKey + "," + fullKey;
-											out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+											out.write("New transition6 t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 											numTransitions++;
 											cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 										}
@@ -2788,7 +2791,7 @@ public class LearnModel { // added ItemListener SB
 												g.removeTransition("t" + removeTransNum);
 											}
 											transId = lastLastPlaceFullKey + "," + fullKey;
-											out.write("TRANSIENT:New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+											out.write("TRANSIENT:New transition7 t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 											numTransitions++;
 											cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 										}
@@ -2804,7 +2807,7 @@ public class LearnModel { // added ItemListener SB
 									g.addMovement("p" + placeInfo.get(prevPlaceKey).getProperty("placeNum"), "t" + transitionInfo.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 									g.addMovement("t" + transitionInfo.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 									transId = prevPlaceFullKey + "," + fullKey;
-									out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+									out.write("New transition8 t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 									numTransitions++;
 									cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 								}
@@ -3930,19 +3933,19 @@ public class LearnModel { // added ItemListener SB
 	public Integer getMinRate(String place, String name) {
 		Properties p = placeInfo.get(place);
 		System.out.println(place + " " + p);
-		if (p.getProperty(name + "_rMin") != null)
+		if (p!=null && p.getProperty(name + "_rMin") != null)
 			return ((int) Math.floor(Double.parseDouble(p.getProperty(name
 					+ "_rMin"))));
-		return null;
+		return 0;
 // return(rMin[i]);
 	}
 
 	public Integer getMaxRate(String place, String name) {
 		Properties p = placeInfo.get(place);
-		if (p.getProperty(name + "_rMax") != null)
+		if (p!=null && p.getProperty(name + "_rMax") != null)
 			return ((int) Math.floor(Double.parseDouble(p.getProperty(name
 					+ "_rMax"))));
-		return null;
+		return 0;
 // return(rMin[i]);
 	}
 
