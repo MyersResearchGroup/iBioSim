@@ -1265,11 +1265,11 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		} else if (e.getSource() == save) {
 			save();
 		} else if (e.getSource() == viewLhpn) {
-			viewLhpn();
+			viewLPN();
 		} else if (e.getSource() == viewLog) {
 			viewLog();
 		} else if (e.getSource() == saveLhpn) {
-			saveLhpn();
+			saveLPN();
 		} else if (e.getSource() == viewCoverage) {  // SB
 			viewCoverage();
 		} else if (e.getSource() == viewVHDL) {  // SB
@@ -1605,7 +1605,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		return -1;
 	}
 
-	public void saveLhpn() {
+	public void saveLPN() {
 		try {
 			if (true) {// (new File(directory + separator +
 				// "method.gcm").exists()) {
@@ -1641,7 +1641,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		}
 	}
 
-	public void viewLhpn() {
+	public void viewLPN() {
 		try {
 			File work = new File(directory);
 			if (new File(directory + separator + lhpnFile).exists()) {
@@ -2524,12 +2524,13 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 					viewCoverage.setEnabled(true); 	// SB
 					saveLhpn.setEnabled(true); 		// SB
 					//viewLearnComplete();			// SB
+					/*
 					JFrame learnComplete = new JFrame();
 					JOptionPane.showMessageDialog(learnComplete,
 							"Learning Complete.",
 							"LEMA",
 							JOptionPane.PLAIN_MESSAGE);
-
+			        */
 					//viewLhpn();
 					gui.updateMenu(true,true);
 				} else {
@@ -2548,6 +2549,8 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 			running.dispose();
 			if (fail) {
 				viewLog();
+			} else {
+				if (execute) saveLPN();
 			}
 		} catch (IOException e1) {
 			e1.printStackTrace();

@@ -1552,6 +1552,8 @@ public class Run implements ActionListener
 			}
 			log.addText("Total Simulation Time: " + time + " for " + simName + "\n\n");
 			logFile.write("Total Simulation Time: " + time + " for " + simName + "\n\n\n");
+			running.setCursor(null);
+			running.dispose();
 			if (exitValue != 0 && !fba.isSelected())
 			{
 				if (exitValue == 143)

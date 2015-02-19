@@ -963,9 +963,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			file.addSeparator();
 			file.add(refresh);
 		}
+		/*
 		if (lema) {
 			file.add(saveModel);
 		}
+		*/
 		file.addSeparator();
 		file.add(importMenu);
 		if (!async) {
@@ -1382,7 +1384,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					((LearnGCM) component).viewModel();
 				}
 				else if (component instanceof LearnLPN) {
-					((LearnLPN) component).viewLhpn();
+					((LearnLPN) component).viewLPN();
 				}
 			}
 			else if (comp instanceof LHPNEditor) {
@@ -1441,7 +1443,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						((LearnGCM) component).saveModel();
 					}
 					else if (component instanceof LearnLPN) {
-						((LearnLPN) component).saveLhpn();
+						((LearnLPN) component).saveLPN();
 					}
 				}
 			}
@@ -2069,7 +2071,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					return;
 				}
 				else if (component instanceof LearnLPN) {
-					((LearnLPN) component).viewLhpn();
+					((LearnLPN) component).viewLPN();
 					return;
 				}
 			}
