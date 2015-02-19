@@ -4647,11 +4647,12 @@ public class BioModel {
 	
 	public static Reaction getDegradationReaction(String speciesId, Model sbmlModel) {
 		String componentId = "";
+		String shortSpeciesId = "";
 		if (speciesId.contains("__")) {
 			componentId = speciesId.substring(0,speciesId.lastIndexOf("__")+2);
-			speciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
+			shortSpeciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
 		}
-		Reaction degradation = sbmlModel.getReaction(componentId + GlobalConstants.DEGRADATION + "_" + speciesId);
+		Reaction degradation = sbmlModel.getReaction(componentId + GlobalConstants.DEGRADATION + "_" + shortSpeciesId);
 		if (degradation == null) {
 			for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
 				Reaction r = sbmlModel.getReaction(i);
@@ -4669,12 +4670,12 @@ public class BioModel {
 	
 	public static Reaction getProductionReaction(String promoterId, Model sbmlModel) {
 		String componentId = "";
+		String shortPromoterId = "";
 		if (promoterId.contains("__")) {
 			componentId = promoterId.substring(0, promoterId.lastIndexOf("__") + 2);
-			promoterId = promoterId.substring(promoterId.lastIndexOf("__") + 2);
+			shortPromoterId = promoterId.substring(promoterId.lastIndexOf("__") + 2);
 		}
-		Reaction production = sbmlModel.getReaction(componentId + GlobalConstants.PRODUCTION 
-				+ "_" + promoterId);
+		Reaction production = sbmlModel.getReaction(componentId + GlobalConstants.PRODUCTION + "_" + shortPromoterId);
 		if (production == null)
 			for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
 				Reaction r = sbmlModel.getReaction(i);
@@ -4724,12 +4725,13 @@ public class BioModel {
 	
 	public static Reaction getComplexReaction(String speciesId, Model sbmlModel) {
 		String componentId = "";
+		String shortSpeciesId = "";
 		if (speciesId.contains("__")) {
 			componentId = speciesId.substring(0,speciesId.lastIndexOf("__")+2);
-			speciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
+			shortSpeciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
 		}
 		Reaction complexation = sbmlModel.getReaction(componentId + GlobalConstants.COMPLEXATION 
-				+ "_" + speciesId);
+				+ "_" + shortSpeciesId);
 		if (complexation == null) {
 			for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
 				Reaction r = sbmlModel.getReaction(i);
