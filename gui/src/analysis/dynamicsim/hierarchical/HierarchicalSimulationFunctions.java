@@ -626,6 +626,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 							.getEventToTriggerMap().get(eventToFireID), false, getCurrentTime(),
 							null, null)));
 
+			// TODO: need to split into two loops.  One to evaluate.  Second to execute the assignments.
 			for (Object eventAssignment : eventToFire.getEventAssignmentSet())
 			{
 

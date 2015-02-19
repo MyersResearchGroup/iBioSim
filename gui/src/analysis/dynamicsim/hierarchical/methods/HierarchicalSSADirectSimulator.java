@@ -107,7 +107,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			double delta_t = FastMath.log(1 / r1) / totalPropensity;
 			double nextReactionTime = getCurrentTime() + delta_t;
 			nextEventTime = handleEvents();
-			updateRateRule = false;
+			double previousTime = getCurrentTime();
 
 			if (nextReactionTime < nextEventTime
 					&& nextReactionTime < getCurrentTime() + getMaxTimeStep())
@@ -121,7 +121,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			else
 			{
 				setCurrentTime(getCurrentTime() + getMaxTimeStep());
-				updateRateRule = true;
 			}
 
 			if (getCurrentTime() > getTimeLimit())
@@ -212,14 +211,11 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 				}
 			}
 
-			if (updateRateRule)
-			{
-				performRateRules(getTopmodel(), getCurrentTime());
+			performRateRules(getTopmodel(), getCurrentTime()-previousTime);
 
-				for (ModelState modelstate : getSubmodels().values())
-				{
-					performRateRules(modelstate, getCurrentTime());
-				}
+			for (ModelState modelstate : getSubmodels().values())
+			{
+				performRateRules(modelstate, getCurrentTime()-previousTime);
 			}
 
 			updateRules();

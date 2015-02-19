@@ -2213,6 +2213,7 @@ public abstract class Simulator {
 			}
 			else {
 				
+				// TODO: split into two loops, one to evaluate, second to update state
 				//execute all assignments for this event
 				for (Object eventAssignment : eventToFire.eventAssignmentSet) {
 					
