@@ -1019,6 +1019,43 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		{
 			return;
 		}
+		if (monteCarlo.isSelected() || ODE.isSelected())
+		{
+			if (append.isSelected())
+			{
+				String[] searchForRunFiles = new File(root + Gui.separator
+						+ outDir).list();
+				for (String s : searchForRunFiles)
+				{
+					if (s.length() > 3
+							&& new File(root + Gui.separator + outDir
+									+ Gui.separator + s).isFile()
+							&& (s.equals("mean.tsd")
+									|| s.equals("standard_deviation.tsd") || s
+										.equals("variance.tsd")))
+					{
+						new File(root + Gui.separator + outDir
+								+ Gui.separator + s).delete();
+					}
+				}
+			}
+			else
+			{
+				String[] searchForRunFiles = new File(root + Gui.separator
+						+ outDir).list();
+				for (String s : searchForRunFiles)
+				{
+					if (s.length() > 3
+							&& s.substring(0, 4).equals("run-")
+							&& new File(root + Gui.separator + outDir
+									+ Gui.separator + s).isFile())
+					{
+						new File(root + Gui.separator + outDir
+								+ Gui.separator + s).delete();
+					}
+				}
+			}
+		}
 		JProgressBar progress = new JProgressBar(0, 100);
 		final JButton cancel = new JButton("Cancel");
 		JFrame running;
@@ -1570,8 +1607,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			{
 				if (append.isSelected())
 				{
-					String[] searchForRunFiles = new File(root + Gui.separator
-							+ outDir).list();
+					String[] searchForRunFiles = new File(root + Gui.separator + outDir).list();
 					int start = 1;
 					for (String s : searchForRunFiles)
 					{
@@ -1595,34 +1631,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 							}
 							start = Math.max(Integer.parseInt(number), start);
 						}
-						else if (s.length() > 3
-								&& new File(root + Gui.separator + outDir
-										+ Gui.separator + s).isFile()
-								&& (s.equals("mean.tsd")
-										|| s.equals("standard_deviation.tsd") || s
-											.equals("variance.tsd")))
-						{
-							new File(root + Gui.separator + outDir
-									+ Gui.separator + s).delete();
-						}
 					}
 					getProps.setProperty("monte.carlo.simulation.start.index",(start + 1) + "");
 				}
 				else
 				{
-					String[] searchForRunFiles = new File(root + Gui.separator
-							+ outDir).list();
-					for (String s : searchForRunFiles)
-					{
-						if (s.length() > 3
-								&& s.substring(0, 4).equals("run-")
-								&& new File(root + Gui.separator + outDir
-										+ Gui.separator + s).isFile())
-						{
-							new File(root + Gui.separator + outDir
-									+ Gui.separator + s).delete();
-						}
-					}
 					getProps.setProperty("monte.carlo.simulation.start.index","1");
 				}
 			}
