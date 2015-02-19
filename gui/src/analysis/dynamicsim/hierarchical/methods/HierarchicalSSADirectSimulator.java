@@ -21,7 +21,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 	private static Long	initializationTime	= new Long(0);
 	private String		modelstateID;
-	private boolean		updateRateRule;
 
 	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory,
 			String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep,
@@ -68,20 +67,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 				{
 					HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
 							getTopmodel());
-					// for (String species : affectedSpecies)
-					// {
-					// HashSet<HierarchicalStringPair> pairs = getTopmodel()
-					// .getSpeciesToReplacement().get(species);
-					// if (pairs != null)
-					// {
-					// for (HierarchicalStringPair pair : pairs)
-					// {
-					// updatePropensity(pair.string1, pair.string2);
-					// }
-					// }
-					// }
 					perculateDown(getTopmodel(), affectedSpecies);
-					// updatePropensities(getTopmodel());
 				}
 			}
 
@@ -95,12 +81,12 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 					{
 						HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
 								models);
-						// updatePropensities(models);
 						perculateUp(models, affectedSpecies);
 
 					}
 				}
 			}
+			
 			double r1 = getRandomNumberGenerator().nextDouble();
 			double r2 = getRandomNumberGenerator().nextDouble();
 			double totalPropensity = getTotalPropensity();
