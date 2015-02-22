@@ -15,6 +15,7 @@ import javax.xml.stream.XMLStreamException;
 import main.Gui;
 import main.Log;
 import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.methods.HierarchicalHybridSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
 
@@ -84,7 +85,10 @@ public class DynamicSimulation
 			}
 			else if (simulatorType.equals("hierarchical-hybrid"))
 			{
-
+				hSimulator = new HierarchicalHybridSimulator(SBMLFileName, rootDirectory,
+						outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
+						printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
+						abstraction);
 			}
 			else if (simulatorType.equals("hierarchical-rk"))
 			{

@@ -134,7 +134,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		}
 	}
 
-	protected class ModelState extends ArraysState
+	public class ModelState extends ArraysState
 	{
 		private HierarchicalEventComparator	eventComparator;
 
@@ -1269,5 +1269,34 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	public void setTopmodel(ModelState topmodel)
 	{
 		this.topmodel = topmodel;
+	}
+
+	public void setTopLevelValue(String variable, double value)
+	{
+		topmodel.setvariableToValueMap(getReplacements(), variable, value);
+	}
+
+	public void setSubmodelValue(String submodel, String variable, double value)
+	{
+		if (submodels.containsKey(submodel))
+		{
+
+			submodels.get(submodel).setvariableToValueMap(getReplacements(), variable, value);
+		}
+	}
+
+	public double getTopLevelValue(String variable)
+	{
+		return topmodel.getVariableToValue(getReplacements(), variable);
+	}
+
+	public void getSubmodelValue(String submodel, String variable)
+	{
+		if (submodels.containsKey(submodel))
+		{
+
+			submodels.get(submodel).getVariableToValue(getReplacements(), variable);
+		}
+
 	}
 }

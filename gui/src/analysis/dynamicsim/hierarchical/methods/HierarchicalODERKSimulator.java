@@ -31,6 +31,7 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 	private double					absoluteError;
 	private double					nextEventTime;
 	private double					nextTriggerTime;
+	private final boolean			print;
 	private final DiffEquations[]	functions;
 
 	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory,
@@ -48,6 +49,37 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 		this.relativeError = relError;
 		this.absoluteError = absError;
 		this.functions = new DiffEquations[getNumSubmodels() + 1];
+		this.print = true;
+
+		try
+		{
+			initialize(randomSeed, 1);
+
+		}
+		catch (IOException e2)
+		{
+			e2.printStackTrace();
+		}
+
+	}
+
+	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory,
+			String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed,
+			JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
+			String[] interestingSpecies, int numSteps, double relError, double absError,
+			String quantityType, String abstraction, boolean print) throws IOException,
+			XMLStreamException
+	{
+
+		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, 0.0, progress,
+				printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
+				abstraction);
+
+		this.numSteps = numSteps;
+		this.relativeError = relError;
+		this.absoluteError = absError;
+		this.functions = new DiffEquations[getNumSubmodels() + 1];
+		this.print = print;
 
 		try
 		{
@@ -235,24 +267,29 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 
 			// TSD PRINTING
 			// this prints the previous timestep's data
-			while (getCurrentTime() >= printTime && printTime <= getTimeLimit())
+
+			if (print)
 			{
-
-				try
+				while (getCurrentTime() >= printTime && printTime <= getTimeLimit())
 				{
-					printToTSD(printTime);
-					getBufferedTSDWriter().write(",\n");
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
 
-				currSteps++;
-				printTime = (currSteps * getTimeLimit() / numSteps);
-				// printTime += printInterval;
-				getRunning().setTitle(
-						"Progress (" + (int) ((getCurrentTime() / getTimeLimit()) * 100.0) + "%)");
+					try
+					{
+						printToTSD(printTime);
+						getBufferedTSDWriter().write(",\n");
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+
+					currSteps++;
+					printTime = (currSteps * getTimeLimit() / numSteps);
+					// printTime += printInterval;
+					getRunning().setTitle(
+							"Progress (" + (int) ((getCurrentTime() / getTimeLimit()) * 100.0)
+									+ "%)");
+				}
 			}
 
 			// update progress bar
