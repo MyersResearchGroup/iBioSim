@@ -145,10 +145,10 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 	public void simulate()
 	{
 
+		performAssignmentRules();
+
 		while (currentTime <= timeLimit)
 		{
-			performAssignmentRules();
-
 			for (HierarchicalArrayModels sim : sims)
 			{
 				sim.setTimeLimit(currentTime + 1);
@@ -156,6 +156,9 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 			}
 
 			update();
+
+			performAssignmentRules();
+
 			try
 			{
 				printValueToTSD(currentTime);
@@ -342,6 +345,11 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 	{
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 
+		for (String species : values.keySet())
+		{
+			bufferedTSDWriter.write(",\"" + species + "\"");
+		}
+
 		for (int i = 0; i < sims.size(); i++)
 		{
 			HierarchicalArrayModels sim = sims.get(i);
@@ -365,6 +373,11 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 		bufferedTSDWriter.write(printTime + ",");
 
 		// loop through the speciesIDs and print their current value to the file
+
+		for (String species : values.keySet())
+		{
+			bufferedTSDWriter.write(",\"" + values.get(species) + "\"");
+		}
 
 		for (int i = 0; i < sims.size(); i++)
 		{
