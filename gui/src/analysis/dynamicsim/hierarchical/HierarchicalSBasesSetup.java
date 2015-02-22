@@ -551,4 +551,28 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 	}
 
+	protected void setupArraysSBases(ModelState modelstate)
+	{
+		for (Constraint constraint : getModels().get(modelstate.getModel()).getListOfConstraints())
+		{
+			setupArrays(modelstate, constraint);
+		}
+		for (Rule rule : getModels().get(modelstate.getModel()).getListOfRules())
+		{
+			if (rule.isAssignment())
+			{
+				setupArrays(modelstate, rule);
+				setupArraysRule(modelstate, rule.getMetaId(), (AssignmentRule) rule);
+			}
+		}
+		setupInitialAssignments(modelstate);
+		for (Reaction reaction : getModels().get(modelstate.getModel()).getListOfReactions())
+		{
+			setupArrays(modelstate, reaction);
+			setupSpeciesReferenceArrays(modelstate, reaction);
+			setupArraysReaction(modelstate, reaction.getId(), reaction);
+		}
+
+	}
+
 }

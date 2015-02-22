@@ -19,8 +19,9 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 {
 
-	private static Long	initializationTime	= new Long(0);
-	private String		modelstateID;
+	private static Long		initializationTime	= new Long(0);
+	private String			modelstateID;
+	private final boolean	print;
 
 	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory,
 			String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep,
@@ -35,6 +36,23 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		initialize(randomSeed, 1);
 		modelstateID = "topmodel";
+		this.print = true;
+	}
+
+	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory,
+			String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep,
+			long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue,
+			JFrame running, String[] interestingSpecies, String quantityType, String abstraction,
+			boolean print) throws IOException, XMLStreamException
+	{
+
+		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
+				progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
+				abstraction);
+
+		initialize(randomSeed, 1);
+		modelstateID = "topmodel";
+		this.print = print;
 
 	}
 
@@ -52,7 +70,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 		initializationTime += System.nanoTime() - initTime2;
 
 		// SIMULATION LOOP
-		setCurrentTime(0.0);
 		double printTime = getPrintInterval();
 
 		double nextEventTime = handleEvents();
@@ -86,7 +103,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 					}
 				}
 			}
-			
+
 			double r1 = getRandomNumberGenerator().nextDouble();
 			double r2 = getRandomNumberGenerator().nextDouble();
 			double totalPropensity = getTotalPropensity();
@@ -114,24 +131,28 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 				setCurrentTime(getTimeLimit());
 			}
 
-			while (getCurrentTime() > printTime && printTime < getTimeLimit())
+			if (print)
 			{
-
-				try
+				while (getCurrentTime() > printTime && printTime < getTimeLimit())
 				{
-					printToTSD(printTime);
-					getBufferedTSDWriter().write(",\n");
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
 
-				printTime += getPrintInterval();
-				getRunning().setTitle(
-						"Progress (" + (int) ((getCurrentTime() / getTimeLimit()) * 100.0) + "%)");
-				getProgress().setValue((int) ((getCurrentTime() / getTimeLimit()) * 100.0));
+					try
+					{
+						printToTSD(printTime);
+						getBufferedTSDWriter().write(",\n");
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
 
+					printTime += getPrintInterval();
+					getRunning().setTitle(
+							"Progress (" + (int) ((getCurrentTime() / getTimeLimit()) * 100.0)
+									+ "%)");
+					getProgress().setValue((int) ((getCurrentTime() / getTimeLimit()) * 100.0));
+
+				}
 			}
 
 			if (getCurrentTime() == nextReactionTime)
@@ -197,11 +218,11 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 				}
 			}
 
-			performRateRules(getTopmodel(), getCurrentTime()-previousTime);
+			performRateRules(getTopmodel(), getCurrentTime() - previousTime);
 
 			for (ModelState modelstate : getSubmodels().values())
 			{
-				performRateRules(modelstate, getCurrentTime()-previousTime);
+				performRateRules(modelstate, getCurrentTime() - previousTime);
 			}
 
 			updateRules();
@@ -296,6 +317,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 	 */
 	private void initialize(long randomSeed, int runNumber) throws IOException
 	{
+
+		setCurrentTime(0.0);
 		setupNonConstantSpeciesReferences(getTopmodel());
 		setupSpecies(getTopmodel());
 		setupParameters(getTopmodel());
@@ -304,9 +327,9 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 		setupEvents(getTopmodel());
 		setupConstraints(getTopmodel());
 		setupRules(getTopmodel());
+		// setupInitialAssignments(getTopmodel());
 		setupArraysValues(getTopmodel());
 		setupArraysSBases(getTopmodel());
-		setupInitialAssignments(getTopmodel());
 
 		setupForOutput(randomSeed, runNumber);
 

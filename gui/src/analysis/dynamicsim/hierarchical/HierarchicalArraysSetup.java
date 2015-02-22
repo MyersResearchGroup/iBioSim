@@ -2,7 +2,6 @@ package analysis.dynamicsim.hierarchical;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +21,6 @@ import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
@@ -296,29 +294,6 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 
 	}
 
-	protected void setupArraysSBases(ModelState modelstate)
-	{
-		for (Constraint constraint : getModels().get(modelstate.getModel()).getListOfConstraints())
-		{
-			setupArrays(modelstate, constraint);
-		}
-		for (Rule rule : getModels().get(modelstate.getModel()).getListOfRules())
-		{
-			if (rule.isAssignment())
-			{
-				setupArrays(modelstate, rule);
-				setupArraysRule(modelstate, rule.getMetaId(), (AssignmentRule) rule);
-			}
-		}
-		for (Reaction reaction : getModels().get(modelstate.getModel()).getListOfReactions())
-		{
-			setupArrays(modelstate, reaction);
-			setupSpeciesReferenceArrays(modelstate, reaction);
-			setupArraysReaction(modelstate, reaction.getId(), reaction);
-		}
-
-	}
-
 	protected void setupArraysValues(ModelState modelstate)
 	{
 		for (String id : modelstate.getArrayedObjects())
@@ -357,76 +332,67 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 	private void setupArrayValue(ModelState modelstate, Compartment compartment, String id,
 			double value, int[] sizes, int[] indices)
 	{
-		Compartment clone = compartment.clone();
-		String newId = modelstate.addValue(id, value, indices);
-		clone.setId(newId);
-		setupSingleCompartment(modelstate, clone);
-
-		if (Arrays.equals(sizes, indices))
+		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-			return;
-		}
+			Compartment clone = compartment.clone();
+			String newId = modelstate.addValue(id, value, indices);
+			clone.setId(newId);
+			setupSingleCompartment(modelstate, clone);
 
-		indices[0]++;
-		for (int i = 0; i < indices.length - 1; i++)
-		{
-			if (indices[i] > sizes[i])
+			indices[0]++;
+			for (int i = 0; i < indices.length - 1; i++)
 			{
-				indices[i] = 0;
-				indices[i + 1]++;
+				if (indices[i] > sizes[i])
+				{
+					indices[i] = 0;
+					indices[i + 1]++;
+				}
 			}
 		}
-		setupArrayValue(modelstate, compartment, id, value, sizes, indices);
 	}
 
 	private void setupArrayValue(ModelState modelstate, Species species, String id, double value,
 			int[] sizes, int[] indices)
 	{
-		Species clone = species.clone();
-		String newId = modelstate.addValue(id, value, indices);
-		clone.setId(newId);
-		setupSingleSpecies(modelstate, clone, newId);
-
-		if (Arrays.equals(sizes, indices))
+		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-			return;
-		}
+			Species clone = species.clone();
+			String newId = modelstate.addValue(id, value, indices);
+			clone.setId(newId);
+			setupSingleSpecies(modelstate, clone, newId);
 
-		indices[0]++;
-		for (int i = 0; i < indices.length - 1; i++)
-		{
-			if (indices[i] > sizes[i])
+			indices[0]++;
+			for (int i = 0; i < indices.length - 1; i++)
 			{
-				indices[i] = 0;
-				indices[i + 1]++;
+				if (indices[i] > sizes[i])
+				{
+					indices[i] = 0;
+					indices[i + 1]++;
+				}
 			}
 		}
-		setupArrayValue(modelstate, species, id, value, sizes, indices);
 	}
 
 	private void setupArrayValue(ModelState modelstate, Parameter parameter, String id,
 			double value, int[] sizes, int[] indices)
 	{
-		Parameter clone = parameter.clone();
-		String newId = modelstate.addValue(id, value, indices);
-		clone.setId(newId);
-		setupSingleParameter(modelstate, clone, 0, 0);
-
-		if (Arrays.equals(sizes, indices))
+		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-			return;
-		}
+			Parameter clone = parameter.clone();
+			String newId = modelstate.addValue(id, value, indices);
+			clone.setId(newId);
+			setupSingleParameter(modelstate, clone, 0, 0);
 
-		indices[0]++;
-		for (int i = 0; i < indices.length - 1; i++)
-		{
-			if (indices[i] > sizes[i])
+			indices[0]++;
+			for (int i = 0; i < indices.length - 1; i++)
 			{
-				indices[i] = 0;
-				indices[i + 1]++;
+				if (indices[i] > sizes[i])
+				{
+					indices[i] = 0;
+					indices[i + 1]++;
+				}
 			}
 		}
-		setupArrayValue(modelstate, parameter, id, value, sizes, indices);
 	}
 
 	protected void setupArraysConstraint(ModelState modelstate, String metaID, Constraint constraint)
@@ -446,28 +412,26 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 	private void setupArraysConstraint(ModelState modelstate, Constraint constraint, String metaID,
 			int[] sizes, int[] indices)
 	{
-		if (sizes[sizes.length - 1] < indices[indices.length - 1])
+		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-			return;
-		}
 
-		String arrayedId = getArrayedID(modelstate, metaID, indices);
+			String arrayedId = getArrayedID(modelstate, metaID, indices);
 
-		if (arrayedId != null)
-		{
-			setupArraysConstraint(modelstate, constraint, arrayedId, indices);
-		}
-
-		indices[0]++;
-		for (int i = 0; i < indices.length - 1; i++)
-		{
-			if (indices[i] > sizes[i])
+			if (arrayedId != null)
 			{
-				indices[i] = 0;
-				indices[i + 1]++;
+				setupArraysConstraint(modelstate, constraint, arrayedId, indices);
+			}
+
+			indices[0]++;
+			for (int i = 0; i < indices.length - 1; i++)
+			{
+				if (indices[i] > sizes[i])
+				{
+					indices[i] = 0;
+					indices[i + 1]++;
+				}
 			}
 		}
-		setupArraysConstraint(modelstate, constraint, metaID, sizes, indices);
 	}
 
 	private void setupArraysConstraint(ModelState modelstate, Constraint constraint, String metaId,
@@ -498,28 +462,27 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 	private void setupArraysInitialAssignment(ModelState modelstate, InitialAssignment rule,
 			String metaID, int[] sizes, int[] indices)
 	{
-		if (sizes[sizes.length - 1] < indices[indices.length - 1])
+		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-			return;
-		}
 
-		String arrayedId = getArrayedID(modelstate, metaID, indices);
+			String arrayedId = getArrayedID(modelstate, metaID, indices);
 
-		if (arrayedId != null)
-		{
-			setupArraysInitialAssignment(modelstate, rule, arrayedId, indices);
-		}
-
-		indices[0]++;
-		for (int i = 0; i < indices.length - 1; i++)
-		{
-			if (indices[i] > sizes[i])
+			if (arrayedId != null)
 			{
-				indices[i] = 0;
-				indices[i + 1]++;
+				setupArraysInitialAssignment(modelstate, rule, arrayedId, indices);
 			}
+
+			indices[0]++;
+			for (int i = 0; i < indices.length - 1; i++)
+			{
+				if (indices[i] > sizes[i])
+				{
+					indices[i] = 0;
+					indices[i + 1]++;
+				}
+			}
+
 		}
-		setupArraysInitialAssignment(modelstate, rule, metaID, sizes, indices);
 	}
 
 	private void setupArraysInitialAssignment(ModelState modelstate, InitialAssignment rule,
@@ -551,28 +514,26 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 	private void setupArraysEvent(ModelState modelstate, Event event, String metaID, int[] sizes,
 			int[] indices)
 	{
-		if (sizes[sizes.length - 1] < indices[indices.length - 1])
+		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-			return;
-		}
 
-		String arrayedId = getArrayedID(modelstate, metaID, indices);
+			String arrayedId = getArrayedID(modelstate, metaID, indices);
 
-		if (arrayedId != null)
-		{
-			setupArraysEvent(modelstate, event, arrayedId, indices);
-		}
-
-		indices[0]++;
-		for (int i = 0; i < indices.length - 1; i++)
-		{
-			if (indices[i] > sizes[i])
+			if (arrayedId != null)
 			{
-				indices[i] = 0;
-				indices[i + 1]++;
+				setupArraysEvent(modelstate, event, arrayedId, indices);
+			}
+
+			indices[0]++;
+			for (int i = 0; i < indices.length - 1; i++)
+			{
+				if (indices[i] > sizes[i])
+				{
+					indices[i] = 0;
+					indices[i + 1]++;
+				}
 			}
 		}
-		setupArraysEvent(modelstate, event, metaID, sizes, indices);
 	}
 
 	private void setupArraysEvent(ModelState modelstate, Event event, String metaId, int[] indices)
@@ -597,28 +558,26 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 	private void setupArraysEventAssignment(ModelState modelstate, EventAssignment event,
 			String metaID, int[] sizes, int[] indices)
 	{
-		if (sizes[sizes.length - 1] < indices[indices.length - 1])
+		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-			return;
-		}
 
-		String arrayedId = getArrayedID(modelstate, metaID, indices);
+			String arrayedId = getArrayedID(modelstate, metaID, indices);
 
-		if (arrayedId != null)
-		{
-			setupArraysEventAssignment(modelstate, event, arrayedId, indices);
-		}
-
-		indices[0]++;
-		for (int i = 0; i < indices.length - 1; i++)
-		{
-			if (indices[i] > sizes[i])
+			if (arrayedId != null)
 			{
-				indices[i] = 0;
-				indices[i + 1]++;
+				setupArraysEventAssignment(modelstate, event, arrayedId, indices);
+			}
+
+			indices[0]++;
+			for (int i = 0; i < indices.length - 1; i++)
+			{
+				if (indices[i] > sizes[i])
+				{
+					indices[i] = 0;
+					indices[i + 1]++;
+				}
 			}
 		}
-		setupArraysEventAssignment(modelstate, event, metaID, sizes, indices);
 	}
 
 	private void setupArraysEventAssignment(ModelState modelstate, EventAssignment event,
@@ -643,28 +602,26 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 	private void setupArraysReaction(ModelState modelstate, Reaction reaction, String id,
 			int[] sizes, int[] indices)
 	{
-		if (sizes[sizes.length - 1] < indices[indices.length - 1])
+		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-			return;
-		}
 
-		String arrayedId = getArrayedID(modelstate, id, indices);
+			String arrayedId = getArrayedID(modelstate, id, indices);
 
-		if (arrayedId != null)
-		{
-			setupArraysReaction(modelstate, reaction, arrayedId, indices);
-		}
-
-		indices[0]++;
-		for (int i = 0; i < indices.length - 1; i++)
-		{
-			if (indices[i] > sizes[i])
+			if (arrayedId != null)
 			{
-				indices[i] = 0;
-				indices[i + 1]++;
+				setupArraysReaction(modelstate, reaction, arrayedId, indices);
+			}
+
+			indices[0]++;
+			for (int i = 0; i < indices.length - 1; i++)
+			{
+				if (indices[i] > sizes[i])
+				{
+					indices[i] = 0;
+					indices[i + 1]++;
+				}
 			}
 		}
-		setupArraysReaction(modelstate, reaction, id, sizes, indices);
 	}
 
 	private void setupArraysReaction(ModelState modelstate, Reaction reaction, String id,
@@ -707,28 +664,26 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 	private void setupArraysRule(ModelState modelstate, AssignmentRule rule, String metaID,
 			int[] sizes, int[] indices)
 	{
-		if (sizes[sizes.length - 1] < indices[indices.length - 1])
+		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-			return;
-		}
 
-		String arrayedId = getArrayedID(modelstate, metaID, indices);
+			String arrayedId = getArrayedID(modelstate, metaID, indices);
 
-		if (arrayedId != null)
-		{
-			setupArrayedRule(modelstate, rule, arrayedId, indices);
-		}
-
-		indices[0]++;
-		for (int i = 0; i < indices.length - 1; i++)
-		{
-			if (indices[i] > sizes[i])
+			if (arrayedId != null)
 			{
-				indices[i] = 0;
-				indices[i + 1]++;
+				setupArrayedRule(modelstate, rule, arrayedId, indices);
+			}
+
+			indices[0]++;
+			for (int i = 0; i < indices.length - 1; i++)
+			{
+				if (indices[i] > sizes[i])
+				{
+					indices[i] = 0;
+					indices[i + 1]++;
+				}
 			}
 		}
-		setupArraysRule(modelstate, rule, metaID, sizes, indices);
 	}
 
 	private void setupArrayedRule(ModelState modelstate, AssignmentRule rule, String metaId,
@@ -789,28 +744,26 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 	private void setupArraysSpeciesReference(ModelState modelstate, SpeciesReference reaction,
 			String id, int[] sizes, int[] indices, int[] parentIndices)
 	{
-		if (sizes[sizes.length - 1] < indices[indices.length - 1])
+		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-			return;
-		}
 
-		String arrayedId = getArrayedID(modelstate, id, indices);
+			String arrayedId = getArrayedID(modelstate, id, indices);
 
-		if (arrayedId != null)
-		{
-			setupArraysSpeciesReference(modelstate, reaction, arrayedId, indices, parentIndices);
-		}
-
-		indices[0]++;
-		for (int i = 0; i < indices.length - 1; i++)
-		{
-			if (indices[i] > sizes[i])
+			if (arrayedId != null)
 			{
-				indices[i] = 0;
-				indices[i + 1]++;
+				setupArraysSpeciesReference(modelstate, reaction, arrayedId, indices, parentIndices);
+			}
+
+			indices[0]++;
+			for (int i = 0; i < indices.length - 1; i++)
+			{
+				if (indices[i] > sizes[i])
+				{
+					indices[i] = 0;
+					indices[i + 1]++;
+				}
 			}
 		}
-		setupArraysSpeciesReference(modelstate, reaction, id, sizes, indices, parentIndices);
 	}
 
 	private void setupArraysSpeciesReference(ModelState modelstate, SpeciesReference specRef,
