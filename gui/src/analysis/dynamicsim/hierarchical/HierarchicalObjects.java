@@ -1136,27 +1136,44 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		return isGrid;
 	}
 
-	protected void updateVariableValue(ModelState modelstate, String variable, ASTNode math)
+	protected boolean updateVariableValue(ModelState modelstate, String variable, ASTNode math)
 	{
+
+		boolean changed = false;
 		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
-				&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
+				&& !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable))
 		{
-			modelstate.setvariableToValueMap(
-					replacements,
-					variable,
-					evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(), null,
-							null)
-							* modelstate.getVariableToValue(replacements, modelstate
-									.getSpeciesToCompartmentNameMap().get(variable)));
+			double compartment = modelstate.getVariableToValue(replacements, modelstate
+					.getSpeciesToCompartmentNameMap().get(variable));
+
+			double oldValue = modelstate.getVariableToValue(replacements, variable) * compartment;
+			double newValue = evaluateExpressionRecursive(modelstate, math, false,
+					getCurrentTime(), null, null) * compartment;
+
+			if (oldValue != newValue)
+			{
+				changed = true;
+				modelstate.setvariableToValueMap(replacements, variable, newValue);
+			}
 		}
 		else
 		{
-			modelstate.setvariableToValueMap(
-					replacements,
-					variable,
-					evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(), null,
-							null));
+			double oldValue = modelstate.getVariableToValue(replacements, variable);
+			double newValue = evaluateExpressionRecursive(modelstate, math, false,
+					getCurrentTime(), null, null);
+
+			if (oldValue != newValue)
+			{
+				changed = true;
+				modelstate.setvariableToValueMap(
+						replacements,
+						variable,
+						evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(),
+								null, null));
+			}
 		}
+
+		return changed;
 	}
 
 	protected HashSet<String> performAssignmentRules(ModelState modelstate,
