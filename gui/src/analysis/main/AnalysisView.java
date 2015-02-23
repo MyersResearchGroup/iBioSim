@@ -72,11 +72,11 @@ import biomodel.gui.schematic.ModelEditor;
 import biomodel.util.GlobalConstants;
 
 /**
- * This class creates a GUI for the reb2sac program. It implements the
+ * This class creates a GUI for analysis. It implements the
  * ActionListener class, the KeyListener class, the MouseListener class, and the
  * Runnable class. This allows the GUI to perform actions when buttons are
  * pressed, text is entered into a field, or the mouse is clicked. It also
- * allows this class to execute many reb2sac programs at the same time on
+ * allows this class to execute many analysis programs at the same time on
  * different threads.
  * 
  * @author Curtis Madsen
@@ -359,6 +359,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		simulationTypeButtons.add(sbml);
 		simulationTypeButtons.add(dot);
 		simulationTypeButtons.add(xhtml);
+		if (!Gui.isReb2sacFound()) {
+			dot.setEnabled(false);
+			xhtml.setEnabled(false);
+		}
 		ODE.setSelected(true);
 		JPanel simulationTypeOptions = new JPanel();
 		simulationTypeOptions.add(choose2);

@@ -232,6 +232,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	public static Boolean reb2sacFound = true;
 
+	public static String reb2sacExecutable;
+	
 	public Log log; // the log
 
 	private JPopupMenu popup; // popup menu
@@ -2005,9 +2007,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				Run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
 						null, false, false, false);
-				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
+				log.addText("Executing:\n" + reb2sacExecutable + 
+						" --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
+				Process graph = exec.exec(reb2sacExecutable + 
+						" --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
 				String error = "";
 				String output = "";
 				InputStream reb = graph.getErrorStream();
@@ -2183,9 +2187,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				Run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
 						null, false, false, false);
-				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
+				log.addText("Executing:\n"+reb2sacExecutable+
+						" --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
+				Process graph = exec.exec(reb2sacExecutable+
+						" --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
 				String error = "";
 				String output = "";
 				InputStream reb = graph.getErrorStream();
@@ -2281,9 +2287,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				Run.createProperties(0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, directory, 314159L, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
 						null, false, false, false);
-				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory + theFile + "\n");
+				log.addText("Executing:\n" + reb2sacExecutable + 
+						" --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process browse = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, null, work);
+				Process browse = exec.exec(reb2sacExecutable +
+						" --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, null, work);
 				String error = "";
 				String output = "";
 				InputStream reb = browse.getErrorStream();
@@ -8037,7 +8045,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 1;
 		try {
-			Process reb2sac = exec.exec("reb2sac", null);
+			if (System.getProperty("os.name").contentEquals("Linux")) {
+				reb2sacExecutable = "reb2sac.linux64";
+			}
+			else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				reb2sacExecutable = "reb2sac.mac64";
+			}
+			else {
+				reb2sacExecutable = "reb2sac.exe";
+			}
+			Process reb2sac = exec.exec(reb2sacExecutable, null);
 			if (reb2sac != null) {
 				exitValue = reb2sac.waitFor();
 			}
@@ -8085,6 +8102,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	public static boolean isReb2sacFound() {
 		return reb2sacFound;
+	}
+	
+	public static String getReb2sacExecutable() {
+		return reb2sacExecutable;
 	}
 	
 	public void refreshLearn(String learnName) {
