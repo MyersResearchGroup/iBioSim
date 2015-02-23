@@ -6913,7 +6913,7 @@ public class BioModel {
 					return null;
 				}
 			}
-			document.enablePackage(org.sbml.libsbml.CompExtension.getXmlnsL3V1V1(), "comp", false);
+			document.enablePackage(org.sbml.libsbml.CompExtension.getXmlnsL3V1V1(), "comp", !removeComp);
 			org.sbml.libsbml.SBMLWriter writer = new org.sbml.libsbml.SBMLWriter();
 			writer.writeSBMLToFile(document, tempFile);
 			BioModel bioModel = new BioModel(path);
