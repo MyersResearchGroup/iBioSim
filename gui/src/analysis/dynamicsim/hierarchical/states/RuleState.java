@@ -12,7 +12,8 @@ import org.sbml.jsbml.RateRule;
 public abstract class RuleState extends EventState
 {
 
-	private List<RateRule>	rateRulesList;
+	private List<RateRule>			rateRulesList;
+	private List<AssignmentRule>	assignmentRulesList;
 
 	public RuleState(HashMap<String, Model> models, String bioModel, String submodelID)
 	{
@@ -20,6 +21,7 @@ public abstract class RuleState extends EventState
 		super(models, bioModel, submodelID);
 
 		rateRulesList = new LinkedList<RateRule>();
+		assignmentRulesList = new LinkedList<AssignmentRule>();
 
 		if (getNumRules() > 0)
 		{
@@ -48,6 +50,16 @@ public abstract class RuleState extends EventState
 	public void setRateRulesList(List<RateRule> rateRulesList)
 	{
 		this.rateRulesList = rateRulesList;
+	}
+
+	public List<AssignmentRule> getAssignmentRulesList()
+	{
+		return assignmentRulesList;
+	}
+
+	public void setAssignmentRulesList(List<AssignmentRule> assignmentRulesList)
+	{
+		this.assignmentRulesList = assignmentRulesList;
 	}
 
 }

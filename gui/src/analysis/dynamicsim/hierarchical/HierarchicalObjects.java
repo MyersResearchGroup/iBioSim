@@ -1136,6 +1136,29 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		return isGrid;
 	}
 
+	protected void updateVariableValue(ModelState modelstate, String variable, ASTNode math)
+	{
+		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
+				&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
+		{
+			modelstate.setvariableToValueMap(
+					replacements,
+					variable,
+					evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(), null,
+							null)
+							* modelstate.getVariableToValue(replacements, modelstate
+									.getSpeciesToCompartmentNameMap().get(variable)));
+		}
+		else
+		{
+			modelstate.setvariableToValueMap(
+					replacements,
+					variable,
+					evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(), null,
+							null));
+		}
+	}
+
 	protected HashSet<String> performAssignmentRules(ModelState modelstate,
 			HashSet<AssignmentRule> affectedAssignmentRuleSet)
 	{
@@ -1147,32 +1170,12 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 
 			String variable = assignmentRule.getVariable();
 
-			// update the species count (but only if the species isn't constant)
-			// (bound cond is fine)
 			if (modelstate.getVariableToIsConstantMap().containsKey(variable)
 					&& modelstate.getVariableToIsConstantMap().get(variable) == false
 					|| modelstate.getVariableToIsConstantMap().containsKey(variable) == false)
 			{
 
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
-						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
-				{
-					modelstate.setvariableToValueMap(
-							replacements,
-							variable,
-							evaluateExpressionRecursive(modelstate, assignmentRule.getMath(),
-									false, getCurrentTime(), null, null)
-									* modelstate.getVariableToValue(replacements, modelstate
-											.getSpeciesToCompartmentNameMap().get(variable)));
-				}
-				else
-				{
-					modelstate.setvariableToValueMap(
-							replacements,
-							variable,
-							evaluateExpressionRecursive(modelstate, assignmentRule.getMath(),
-									false, getCurrentTime(), null, null));
-				}
+				updateVariableValue(modelstate, variable, assignmentRule.getMath());
 
 				affectedVariables.add(variable);
 			}

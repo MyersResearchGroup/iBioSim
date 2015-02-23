@@ -379,6 +379,8 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 					modelstate.getVariableToIsInAssignmentRuleMap().put(nodeName, true);
 				}
 			}
+
+			modelstate.getAssignmentRulesList().add(assignmentRule);
 		}
 		else if (rule.isRate())
 		{
