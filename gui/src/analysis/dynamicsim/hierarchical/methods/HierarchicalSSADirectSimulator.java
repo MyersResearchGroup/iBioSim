@@ -9,6 +9,7 @@ import javax.xml.stream.XMLStreamException;
 
 import odk.lang.FastMath;
 
+import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Rule;
 
@@ -60,22 +61,27 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 	public void simulate()
 	{
 
+		double r1, r2, totalPropensity, delta_t, nextReactionTime, previousTime, printTime, nextEventTime;
+		long initTime2;
+		boolean performAssignmentRules;
+
 		if (isSbmlHasErrorsFlag())
 		{
 			return;
 		}
 
-		long initTime2 = System.nanoTime();
+		initTime2 = System.nanoTime();
 
 		initializationTime += System.nanoTime() - initTime2;
 
-		// SIMULATION LOOP
-		double printTime = getPrintInterval();
+		printTime = getPrintInterval();
 
-		double nextEventTime = handleEvents();
+		nextEventTime = handleEvents();
 
 		while (getCurrentTime() < getTimeLimit() && !isCancelFlag())
 		{
+			performAssignmentRules = false;
+
 			if (getTopmodel().isNoEventsFlag() == false)
 			{
 				HashSet<String> affectedReactionSet = fireEvents(getTopmodel(), "reaction",
@@ -104,13 +110,13 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 				}
 			}
 
-			double r1 = getRandomNumberGenerator().nextDouble();
-			double r2 = getRandomNumberGenerator().nextDouble();
-			double totalPropensity = getTotalPropensity();
-			double delta_t = FastMath.log(1 / r1) / totalPropensity;
-			double nextReactionTime = getCurrentTime() + delta_t;
+			r1 = getRandomNumberGenerator().nextDouble();
+			r2 = getRandomNumberGenerator().nextDouble();
+			totalPropensity = getTotalPropensity();
+			delta_t = FastMath.log(1 / r1) / totalPropensity;
+			nextReactionTime = getCurrentTime() + delta_t;
 			nextEventTime = handleEvents();
-			double previousTime = getCurrentTime();
+			previousTime = getCurrentTime();
 
 			if (nextReactionTime < nextEventTime
 					&& nextReactionTime < getCurrentTime() + getMaxTimeStep())
@@ -124,6 +130,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			else
 			{
 				setCurrentTime(getCurrentTime() + getMaxTimeStep());
+				performAssignmentRules = true;
 			}
 
 			if (getCurrentTime() > getTimeLimit())
@@ -170,20 +177,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 									getTopmodel(), selectedReactionID, true);
 							HashSet<String> affectedSpecies = updatePropensities(
 									affectedReactionSet, getTopmodel());
-							// updatePropensities(getTopmodel());
-							// for (String species : affectedSpecies)
-							// {
-							// HashSet<HierarchicalStringPair> pairs =
-							// getTopmodel()
-							// .getSpeciesToReplacement(species);
-							// if (pairs != null)
-							// {
-							// for (HierarchicalStringPair pair : pairs)
-							// {
-							// updatePropensity(pair.string1, pair.string2);
-							// }
-							// }
-							// }
 							perculateDown(getTopmodel(), affectedSpecies);
 						}
 					}
@@ -198,24 +191,20 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 									modelstate, selectedReactionID, true);
 							HashSet<String> affectedSpecies = updatePropensities(
 									affectedReactionSet, modelstate);
-							// for (String species : affectedSpecies)
-							// {
-							// HashSet<HierarchicalStringPair> pairs =
-							// getSubmodels().get(
-							// modelstateID).getSpeciesToReplacement(species);
-							// if (pairs != null)
-							// {
-							// for (HierarchicalStringPair pair : pairs)
-							// {
-							// updatePropensity(pair.string1, pair.string2);
-							// }
-							// }
-							// }
 							perculateUp(modelstate, affectedSpecies);
-							// updatePropensities(getSubmodels().get(modelstateID));
 						}
 					}
 				}
+			}
+			else if (performAssignmentRules)
+			{
+				performAssignmentRules(getTopmodel());
+
+				for (ModelState modelstate : getSubmodels().values())
+				{
+					performAssignmentRules(modelstate);
+				}
+
 			}
 
 			performRateRules(getTopmodel(), getCurrentTime() - previousTime);
@@ -230,8 +219,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		if (isCancelFlag() == false)
 		{
-
-			// print the final species counts
 			try
 			{
 				printToTSD(printTime);
@@ -424,26 +411,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		return affectedSpecies;
 	}
-
-	/*
-	 * private void updatePropensities(ModelState modelstate) { if(modelstate !=
-	 * getTopmodel()) for (String reaction :
-	 * getTopmodel().getHierarchicalReactions()) {
-	 * if(getTopmodel().isDeletedByMetaID(reaction)) continue;
-	 * 
-	 * HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet =
-	 * getTopmodel().getReactionToReactantStoichiometrySetMap().get(reaction);
-	 * updatePropensity(getTopmodel(), reaction, reactantStoichiometrySet); }
-	 * 
-	 * 
-	 * for(ModelState model : getSubmodels().values()) { if(modelstate != model)
-	 * for (String reaction : model.getHierarchicalReactions()) {
-	 * if(model.isDeletedByMetaID(reaction)) continue;
-	 * 
-	 * HashSet<HierarchicalStringDoublePair> reactantStoichiometrySet =
-	 * model.getReactionToReactantStoichiometrySetMap().get(reaction);
-	 * updatePropensity(model, reaction, reactantStoichiometrySet); } } }
-	 */
 
 	private void updatePropensity(String modelstate, String species)
 	{
@@ -747,5 +714,23 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			e.printStackTrace();
 		}
 
+	}
+
+	private void performAssignmentRules(ModelState modelstate)
+	{
+		for (AssignmentRule assignmentRule : modelstate.getAssignmentRulesList())
+		{
+
+			String variable = assignmentRule.getVariable();
+
+			if (modelstate.getVariableToIsConstantMap().containsKey(variable)
+					&& !modelstate.getVariableToIsConstantMap().get(variable)
+					|| !modelstate.getVariableToIsConstantMap().containsKey(variable))
+			{
+
+				updateVariableValue(modelstate, variable, assignmentRule.getMath());
+
+			}
+		}
 	}
 }

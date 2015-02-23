@@ -307,9 +307,6 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 		if (affectedConstraintSet.size() > 0)
 		{
-			// if (testConstraints(modelstate, affectedConstraintSet) == false)
-			// constraintFailureFlag = true;
-			// else
 			setConstraintFlag(testConstraints(modelstate, affectedConstraintSet));
 		}
 
@@ -547,7 +544,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
 		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
 
-		//HashSet<String> firedEvents = new HashSet<String>();
+		// HashSet<String> firedEvents = new HashSet<String>();
 
 		for (HierarchicalEventToFire triggeredEvent : modelstate.getTriggeredEventQueue())
 		{
@@ -621,17 +618,18 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 						eventToFireID));
 			}
 
-			//firedEvents.add(eventToFireID);
+			// firedEvents.add(eventToFireID);
 			modelstate.getUntriggeredEventSet().add(eventToFireID);
 			modelstate.addEventToPreviousTriggerValueMap(eventToFireID, HierarchicalUtilities
 					.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate
 							.getEventToTriggerMap().get(eventToFireID), false, getCurrentTime(),
 							null, null)));
 
-			// TODO: need to split into two loops.  One to evaluate.  Second to execute the assignments.
-			
+			// TODO: need to split into two loops. One to evaluate. Second to
+			// execute the assignments.
+
 			Map<String, Double> assignments = new HashMap<String, Double>();
-			
+
 			for (Object eventAssignment : eventToFire.getEventAssignmentSet())
 			{
 
@@ -655,19 +653,24 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 				if (modelstate.getVariableToIsConstantMap().get(variable) == false)
 				{
-					
+
 					assignments.put(variable, assignmentValue);
-//					if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
-//							&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
-//					{
-//						modelstate.setvariableToValueMap(getReplacements(), variable,
-//								assignmentValue); // needs to fix this
-//					}
-//					else
-//					{
-//						modelstate.setvariableToValueMap(getReplacements(), variable,
-//								assignmentValue);
-//					}
+					// if
+					// (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
+					// &&
+					// modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable)
+					// == false)
+					// {
+					// modelstate.setvariableToValueMap(getReplacements(),
+					// variable,
+					// assignmentValue); // needs to fix this
+					// }
+					// else
+					// {
+					// modelstate.setvariableToValueMap(getReplacements(),
+					// variable,
+					// assignmentValue);
+					// }
 				}
 
 				if (noAssignmentRulesFlag == false
@@ -684,12 +687,11 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 				}
 
 			}
-			
+
 			// Perform event assignments
-			for(String id : assignments.keySet())
+			for (String id : assignments.keySet())
 			{
-				modelstate.setvariableToValueMap(getReplacements(), id,
-						assignments.get(id));
+				modelstate.setvariableToValueMap(getReplacements(), id, assignments.get(id));
 			}
 
 			untriggeredEvents.clear();
@@ -747,7 +749,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			handleEvents(modelstate);
 		}
 
-		//modelstate.getUntriggeredEventSet().addAll(firedEvents);
+		// modelstate.getUntriggeredEventSet().addAll(firedEvents);
 
 		if (selector.equals("variable"))
 		{
