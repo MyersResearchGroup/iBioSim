@@ -63,8 +63,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		double r1, r2, totalPropensity, delta_t, nextReactionTime, previousTime, printTime, nextEventTime;
 		long initTime2;
-		boolean performAssignmentRules;
-
 		if (isSbmlHasErrorsFlag())
 		{
 			return;
@@ -80,8 +78,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		while (getCurrentTime() < getTimeLimit() && !isCancelFlag())
 		{
-			performAssignmentRules = false;
-
 			if (getTopmodel().isNoEventsFlag() == false)
 			{
 				HashSet<String> affectedReactionSet = fireEvents(getTopmodel(), "reaction",
@@ -130,7 +126,14 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			else
 			{
 				setCurrentTime(getCurrentTime() + getMaxTimeStep());
-				performAssignmentRules = true;
+
+				performAssignmentRules(getTopmodel());
+
+				for (ModelState modelstate : getSubmodels().values())
+				{
+					performAssignmentRules(modelstate);
+				}
+
 			}
 
 			if (getCurrentTime() > getTimeLimit())
@@ -195,16 +198,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 						}
 					}
 				}
-			}
-			else if (performAssignmentRules)
-			{
-				performAssignmentRules(getTopmodel());
-
-				for (ModelState modelstate : getSubmodels().values())
-				{
-					performAssignmentRules(modelstate);
-				}
-
 			}
 
 			performRateRules(getTopmodel(), getCurrentTime() - previousTime);
@@ -718,18 +711,23 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 	private void performAssignmentRules(ModelState modelstate)
 	{
-		for (AssignmentRule assignmentRule : modelstate.getAssignmentRulesList())
+		boolean changed = true;
+		while (changed)
 		{
-
-			String variable = assignmentRule.getVariable();
-
-			if (modelstate.getVariableToIsConstantMap().containsKey(variable)
-					&& !modelstate.getVariableToIsConstantMap().get(variable)
-					|| !modelstate.getVariableToIsConstantMap().containsKey(variable))
+			changed = false;
+			for (AssignmentRule assignmentRule : modelstate.getAssignmentRulesList())
 			{
 
-				updateVariableValue(modelstate, variable, assignmentRule.getMath());
+				String variable = assignmentRule.getVariable();
 
+				if (modelstate.getVariableToIsConstantMap().containsKey(variable)
+						&& !modelstate.getVariableToIsConstantMap().get(variable)
+						|| !modelstate.getVariableToIsConstantMap().containsKey(variable))
+				{
+
+					changed |= updateVariableValue(modelstate, variable, assignmentRule.getMath());
+
+				}
 			}
 		}
 	}
