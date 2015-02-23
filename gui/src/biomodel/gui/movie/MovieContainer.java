@@ -109,12 +109,12 @@ public class MovieContainer extends JPanel implements ActionListener {
 	/**
 	 * constructor
 	 * 
-	 * @param reb2sac_
+	 * @param analysisView
 	 * @param bioModel
 	 * @param biosim
 	 * @param gcm2sbml
 	 */
- 	public MovieContainer(AnalysisView reb2sac_, BioModel bioModel, Gui biosim, ModelEditor gcm2sbml, boolean lema) {
+ 	public MovieContainer(AnalysisView analysisView, BioModel bioModel, Gui biosim, ModelEditor gcm2sbml, boolean lema) {
 		
 		super(new BorderLayout());
 		
@@ -125,7 +125,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		this.bioModel = bioModel;
 		this.biosim = biosim;
-		this.analysisView = reb2sac_;
+		this.analysisView = analysisView;
 		this.modelEditor = gcm2sbml;
 		this.movieScheme = new MovieScheme();
 		this.originalGridRows = bioModel.getGrid().getNumRows();

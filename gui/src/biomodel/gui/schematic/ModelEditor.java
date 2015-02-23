@@ -108,7 +108,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	private String paramFile, refFile, simName;
 
-	private AnalysisView reb2sac;
+	private AnalysisView analysisView;
 	
 	private ElementsPanel elementsPanel;
 	
@@ -141,7 +141,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public ModelEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly,
-			String simName, String paramFile, AnalysisView reb2sac, boolean textBased, boolean grid) throws Exception {
+			String simName, String paramFile, AnalysisView analysisView, boolean textBased, boolean grid) throws Exception {
 		super();
 		separator = Gui.separator;
 		this.biosim = biosim;
@@ -150,7 +150,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		this.paramsOnly = paramsOnly;
 		this.paramFile = paramFile;
 		this.simName = simName;
-		this.reb2sac = reb2sac;
+		this.analysisView = analysisView;
 		this.textBased = textBased;
 		elementsPanel = null;
 		getParams = new ArrayList<String>();
@@ -749,7 +749,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 									+ sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
 											.replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
 							createSBML(stem, sweepTwo, analysisMethod);
-							AnalysisThread thread = new AnalysisThread(reb2sac);
+							AnalysisThread thread = new AnalysisThread(analysisView);
 							thread.start(
 									stem
 											+ sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
@@ -757,7 +757,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							threads.add(thread);
 							dirs.add(sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
 									.replace("\"", "").replace(" ", "_").replace(",", ""));
-							//reb2sac.emptyFrames();
+							//analysisView.emptyFrames();
 							if (ignoreSweep) {
 								l = max2;
 								j = max;
@@ -773,7 +773,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								+ sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
 										.replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
 						createSBML(stem, sweep, analysisMethod);
-						AnalysisThread thread = new AnalysisThread(reb2sac);
+						AnalysisThread thread = new AnalysisThread(analysisView);
 						thread.start(
 								stem
 										+ sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
@@ -781,7 +781,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						threads.add(thread);
 						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
 								.replace("\"", "").replace(" ", "_").replace(",", ""));
-						//reb2sac.emptyFrames();
+						//analysisView.emptyFrames();
 						if (ignoreSweep) {
 							j = max;
 						}
@@ -789,7 +789,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					levelOne.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
 							.replace("\"", "").replace(" ", "_").replace(",", ""));
 				}
-				new ConstraintTermThread(reb2sac).start(threads, dirs, levelOne, stem);
+				new ConstraintTermThread(analysisView).start(threads, dirs, levelOne, stem);
 			}
 			else {
 				if (!stem.equals("")) {
@@ -797,13 +797,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 				if (createSBML(stem, ".", analysisMethod)) {
 					if (!stem.equals("")) {
-						new AnalysisThread(reb2sac).start(stem, true);
+						new AnalysisThread(analysisView).start(stem, true);
 					}
 					else {
-						new AnalysisThread(reb2sac).start(".", true);
+						new AnalysisThread(analysisView).start(".", true);
 					}
 				}
-				//reb2sac.emptyFrames();
+				//analysisView.emptyFrames();
 			}
 		}
 	}
@@ -1194,14 +1194,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		{
 			SBMLDocument sbml = biomodel.flattenModel(true);		
 			performModifications(sbml,dd);
-			if (reb2sac==null || !reb2sac.noExpand()) {
+			if (analysisView==null || !analysisView.noExpand()) {
 				GCMParser parser = new GCMParser(biomodel);
 				GeneticNetwork network = parser.buildNetwork(sbml);
 
 				if (network==null)
 					return false;
-				if (reb2sac != null)
-					network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getProperty());
+				if (analysisView != null)
+					network.loadProperties(biomodel, analysisView.getGcmAbstractions(), analysisView.getProperty());
 				else
 					network.loadProperties(biomodel);
 
@@ -2210,7 +2210,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public AnalysisView getReb2Sac() {
-		return reb2sac;
+		return analysisView;
 	}
 	
 	public boolean isTextBased() {

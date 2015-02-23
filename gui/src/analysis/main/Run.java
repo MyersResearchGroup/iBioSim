@@ -511,11 +511,13 @@ public class Run implements ActionListener
 			if (nary.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis")
 					&& naryRun == 1)
 			{
-				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
-				logFile.write("Executing:\nreb2sac --target.encoding=nary-level " + filename
-						+ "\n\n");
+				log.addText("Executing:\n" + Gui.reb2sacExecutable + 
+						" --target.encoding=nary-level " + filename + "\n");
+				logFile.write("Executing:\n" + Gui.reb2sacExecutable + 
+						" --target.encoding=nary-level " + filename + "\n\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
+				reb2sac = exec.exec(Gui.reb2sacExecutable + 
+						" --target.encoding=nary-level " + theFile, null, work);
 			}
 			else if (fba.isSelected())
 			{
@@ -702,12 +704,15 @@ public class Run implements ActionListener
 						if (analysisView.reb2sacAbstraction()
 								&& (abstraction.isSelected() || nary.isSelected()))
 						{
-							log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".."
+							log.addText("Executing:\n" + Gui.reb2sacExecutable + 
+									" --target.encoding=sbml --out=" + ".."
 									+ Gui.separator + sbmlName + " " + filename + "\n");
-							logFile.write("Executing:\nreb2sac --target.encoding=sbml --out="
+							logFile.write("Executing:\n" + Gui.reb2sacExecutable + 
+									" --target.encoding=sbml --out="
 									+ ".." + Gui.separator + sbmlName + " " + filename + "\n\n");
 							time1 = System.nanoTime();
-							reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + ".."
+							reb2sac = exec.exec(Gui.reb2sacExecutable + 
+									" --target.encoding=sbml --out=" + ".."
 									+ Gui.separator + sbmlName + " " + theFile, null, work);
 						}
 						else
@@ -770,35 +775,38 @@ public class Run implements ActionListener
 				}
 				else
 				{
-					log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot "
-							+ filename + "\n");
-					logFile.write("Executing:\nreb2sac --target.encoding=dot --out=" + out
-							+ ".dot " + filename + "\n\n");
+					log.addText("Executing:\n" + Gui.reb2sacExecutable + 
+							" --target.encoding=dot --out=" + out + ".dot " + filename + "\n");
+					logFile.write("Executing:\n" + Gui.reb2sacExecutable + 
+							" --target.encoding=dot --out=" + out + ".dot " + filename + "\n\n");
 					time1 = System.nanoTime();
-					reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
-							+ theFile, null, work);
+					reb2sac = exec.exec(Gui.reb2sacExecutable + 
+							" --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
 				}
 			}
 			else if (xhtml.isSelected())
 			{
-				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
-						+ filename + "\n");
-				logFile.write("Executing:\nreb2sac --target.encoding=xhtml --out=" + out
+				log.addText("Executing:\n" + Gui.reb2sacExecutable + 
+						" --target.encoding=xhtml --out=" + out + ".xhtml " + filename + "\n");
+				logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=xhtml --out=" + out
 						+ ".xhtml " + filename + "\n\n");
 				time1 = System.nanoTime();
 				Simulator.expandArrays(filename, 1);
 
-				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
+				reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml "
 						+ theFile, null, work);
 			}
 			else
 			{
 				if (sim.equals("atacs"))
 				{
-					log.addText("Executing:\nreb2sac --target.encoding=hse2 " + filename + "\n");
-					logFile.write("Executing:\nreb2sac --target.encoding=hse2 " + filename + "\n\n");
+					log.addText("Executing:\n" + Gui.reb2sacExecutable + 
+							" --target.encoding=hse2 " + filename + "\n");
+					logFile.write("Executing:\n" + Gui.reb2sacExecutable + 
+							" --target.encoding=hse2 " + filename + "\n\n");
 					time1 = System.nanoTime();
-					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
+					reb2sac = exec.exec(Gui.reb2sacExecutable + 
+							" --target.encoding=hse2 " + theFile, null, work);
 				}
 				else if (sim.contains("markov-chain-analysis")
 						|| sim.equals("reachability-analysis"))
@@ -1440,10 +1448,10 @@ public class Run implements ActionListener
 					{
 
 						time1 = System.nanoTime();
-						log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename
-								+ "\n");
-						logFile.write("Executing:\nreb2sac --target.encoding=" + sim + " "
-								+ filename + "\n\n");
+						log.addText("Executing:\n" + Gui.reb2sacExecutable + 
+								" --target.encoding=" + sim + " " + filename + "\n");
+						logFile.write("Executing:\n" + Gui.reb2sacExecutable + 
+								" --target.encoding=" + sim + " " + filename + "\n\n");
 
 						double stoichAmpValue = Double
 								.parseDouble(properties
@@ -1451,7 +1459,7 @@ public class Run implements ActionListener
 
 						Simulator.expandArrays(filename, stoichAmpValue);
 
-						reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile,
+						reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=" + sim + " " + theFile,
 								null, work);
 					}
 					else
