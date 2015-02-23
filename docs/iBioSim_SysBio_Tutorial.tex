@@ -203,42 +203,30 @@ At this point, you should have a model that looks like the one below (though loc
 \includegraphics[width=160mm]{screenshots/save}
 \end{center}
 
-\section{Analysis Tool}
+\section{ODE Analysis}
 
 This section describes how to analyze the model just created.  The first step is to create an analysis view.  To do this, right-click on the model file and select Create Analysis View.  Enter the analysis ID {\tt lambda} or just press enter.  At this point, a new analysis view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
 
 \begin{center}
-\includegraphics[height=60mm]{screenshots/GCMAnalysis}\\
-\includegraphics[width=160mm]{screenshots/analysisView}
+\includegraphics[height=60mm]{screenshots/GCMAnalysis}
 \end{center}
 
-In order to perform analysis, the analysis tool first converts the model into a reaction-based model in the \emph{Systems Biology Markup Language} (SBML).  There are three different ways to see the reaction-based model that is produced.  If GraphViz is installed on your computer, you can select Network for your Simulation Type.  Then, either press the Save and Run icon \includegraphics{../gui/icons/run-icon} or select the Save and Run option from the File menu.  The result will be a GraphViz window that will open to show the reaction-based model such as the one shown below for our example.  If it does not open in GraphViz, make sure that you have files with the {\tt .dot} file extension associated with GraphViz on your computer.  You can also view the model in a web browser by selecting Browser for your simulation type.  In this case, you should ensure that you have files with the {\tt .xhtml} extension associated with your favorite browser.  Finally, you can save the reaction-based model by selecting Model as your simulation type.  In this case, you must provide a new model ID.  This new model will appear in your project and it can be opened in the Model Editor.  Since this model does not include any layout information, you will need to either lay it out by hand or using one of the default layout routines selectable using the Apply Layout icon    \includegraphics{../gui/icons/modelview/choose_layout_selected},
-
-\begin{center}
-\includegraphics[width=120mm]{screenshots/viewNetwork}
-\end{center}
-
-\begin{center}
-\includegraphics[width=160mm]{screenshots/viewBrowser}
-\end{center}
-
-\begin{center}
-\includegraphics[width=160mm]{screenshots/reactionModel}
-\end{center}
-
-Next, click on the SBML elements tab.  This tab allows you to select which SBML model elements to include in your analysis.  This includes initial assignments, rules, constraints, and events.  Initially, let's only include the rule to compute CI\_total.  Uncheck all the other elements.
+Next, click on the Schematic tab.  This tab allows you to select which SBML model elements to include in your analysis, modify initial conditions, and visualize simulation results on your schematic.  For now, let us remove both constraints and the event from our analysis by clicking on them to make them invisible.  
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/SBMLElements}
 \end{center}
 
-Now, go back to the simulation options tab.  Here, change the simulation type back to ODE, change the time limit to 2100.0, change the print interval to 10.0, and enter a Simulation ID of {\tt ode}.  Then, either press the Save and Run icon \includegraphics{../gui/icons/run-icon} or select the Save and Run option from the File menu.
-After the simulation completes, click on the TSD Graph tab.  Double-click on the graph to bring up the graph editor.
-Open the {\tt ode} simulation, highlight Average, select CI\_total and CII, change the Title to ``ODE Simulation Results'', change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  
+Now, go back to the simulation options tab.  Make sure that the simulation type is set to ODE and the simulator selected is Runge-Kutta-Fehlberg.  Change the time limit to 2100.0, change the print interval to 10.0, and enter a Simulation ID of {\tt ode}.  Then, either press the Save and Run icon \includegraphics{../gui/icons/run-icon} or select the Save and Run option from the File menu.  
+
+\begin{center}
+\includegraphics[width=160mm]{screenshots/analysisView}
+\end{center}
+
+After the simulation completes, click on the TSD Graph tab.  Double-click on the graph to bring up the graph editor.  Open the {\tt ode} simulation, highlight Average, select CI\_total and CII, change the Title to ``ODE Simulation Results'', change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  
 Press the OK button.  
 
 \begin{center}
-\includegraphics[width=160mm]{screenshots/odeSim}\\
 \includegraphics[width=160mm]{screenshots/odeResults}\\
 \includegraphics[width=160mm]{screenshots/odeSimResults}
 \end{center}
@@ -259,6 +247,38 @@ In order to export a graph, you can either click on the Export icon \includegrap
 \begin{center}
 \includegraphics[height=60mm]{screenshots/exportTSD}
 \end{center}
+
+Genetic production and its regulation are modeled as a single complex reaction.  If the expand reactions abstraction option is selected, the binding reactions for transcription factors are separated into their own reactions providing a more detailed model.  To see the effect of this, select Expand Reactions, change the Simulation ID to {\tt ode2} and rerun the simulation.  Then, go to the TSD Graph tab, and add CI\_total and CII from this simulation to the graph.  You should see that there is not a significant difference though the simulation time is slower due to these extra reactions.  If you would like to see the actual model that is simulated in this case,  you can save the reaction-based model by selecting Model as your simulation type.  Then, either press the Save and Run icon \includegraphics{../gui/icons/run-icon} or select the Save and Run option from the File menu.  In this case, you must provide a new model ID.  This new model will appear in your project and it can be opened in the Model Editor.  Since this model does not include any layout information, you will need to either lay it out by hand or using one of the default layout routines selectable using the Apply Layout icon    \includegraphics{../gui/icons/modelview/choose_layout_selected},
+
+\begin{center}
+\includegraphics[width=160mm]{screenshots/reactionModel}
+\end{center}
+
+There are two additional ways to see reaction-based models.  If GraphViz is installed on your computer, you can select Network for your Simulation Type to open the reaction-based model in GraphViz (the example below is when abstraction is set to none).   If it does not open in GraphViz, make sure that you have files with the {\tt .dot} file extension associated with GraphViz on your computer.  
+
+\begin{center}
+\includegraphics[width=120mm]{screenshots/viewNetwork}
+\end{center}
+
+You can also view the model in a web browser by selecting Browser for your simulation type.  In this case, you should ensure that you have files with the {\tt .xhtml} extension associated with your favorite browser.  
+
+\begin{center}
+\includegraphics[width=160mm]{screenshots/viewBrowser}
+\end{center}
+
+Parameters and initial amounts can be modified for a simulation.  To try this, select the schematic tab, and click on CII to bring up the parameter editor.  Change the degradation rate from default to modified, and change its value to 0.075.  Go back to the simulation options tab, select ODE simulation, change abstraction back to none, and change the simulation id to {\tt ode3}.  After running simulation, add CI\_total and CII from the {\tt ode3} simulation results to the graph.  You should observe that the amounts have reduced significantly.
+
+\begin{center}
+\includegraphics[width=160mm]{screenshots/paramEdit}
+\end{center}
+
+Go back to the schematic and change the degradation rate for CII back to default.  Now, click on the Parameters tab.  Here, click on kd to open the parameter editor for this constant.  Let us sweep this parameter.  Change the value type to Modified, and click on the sweep button.  Enter a start value of 0.005, stop value of 0.01, and step value of 0.0025.  Go back to the simulation tab, and remove the simulation id, and run the simulation.  Now, go to the TSD graph tab, and edit the graph.  First, press the Deselect All button to clear the selections.  You should now have three new simulation folders, one for each value.  Go into each and select CI\_total from the average for each.  This will plot the value of CI\_total for each degradation rate.
+
+\begin{center}
+\includegraphics[width=160mm]{screenshots/parameterEditor}
+\end{center}
+
+\section{Stochastic Analysis}
 
 Now, select the Simulation Options tab again, select {\tt Monte Carlo}, change the number of runs to 100, set the simulation ID to {\tt ssa}, and click on the Save and Run icon.  Click on the TSD Graph tab.  Double-click on the graph to bring up the graph editor.  Open the {\tt ssa} simulation directory, and highlight {\tt run-1}.  Select CI\_Total and CII, change the title to ``SSA Simulation Results'', change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  Press the OK button.  Click on the Export icon and enter the file name {\tt ssa-1.pdf}.  Repeat these steps to generate graphs for the average ({\tt average.pdf}) and standard deviation ({\tt stddev.pdf}).  Note that you can use the ``Deselect All'' button to remove all items from the graph.
 
@@ -297,6 +317,8 @@ In addition to making single changes, you can also sweep a value as shown below.
 \includegraphics[width=160mm]{screenshots/sweep}
 %\includegraphics[height=90mm]{screenshots/sweepPR}
 \end{center}
+
+\section{Reaction-based Abstraction}
 
 The efficiency of simulation can be improved by employing various automatic abstraction techniques.  Go back to the Schematic tab and change the degradation rate of CI back to the default value.  Also, go to the SBML elements tab and uncheck the rule for CI\_total.  To activate abstraction, click on the Simulation Options tab, select Abstraction and change the simulation ID to {\tt abs}.  Press the Save and Run icon and note that the simulation time is substantially faster.  Plot both the SSA results for CI\_total and CII with the abstraction results for CI (note this is now equivalent to CI\_total after abstraction) and CII.
 
