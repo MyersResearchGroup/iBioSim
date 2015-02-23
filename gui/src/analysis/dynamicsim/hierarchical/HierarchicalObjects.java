@@ -1146,14 +1146,15 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			double compartment = modelstate.getVariableToValue(replacements, modelstate
 					.getSpeciesToCompartmentNameMap().get(variable));
 
-			double oldValue = modelstate.getVariableToValue(replacements, variable) * compartment;
+			double oldValue = modelstate.getVariableToValue(replacements, variable);
 			double newValue = evaluateExpressionRecursive(modelstate, math, false,
-					getCurrentTime(), null, null) * compartment;
+					getCurrentTime(), null, null);
 
+			// TODO: is this correct?
 			if (oldValue != newValue)
 			{
 				changed = true;
-				modelstate.setvariableToValueMap(replacements, variable, newValue);
+				modelstate.setvariableToValueMap(replacements, variable, newValue * compartment);
 			}
 		}
 		else

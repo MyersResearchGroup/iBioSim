@@ -164,6 +164,7 @@ public class SimulatorSSADirect extends Simulator
 			else
 			{
 				currentTime += maxTimeStep;
+				performAssignmentRules();
 				// print
 			}
 			if (currentTime > timeLimit)

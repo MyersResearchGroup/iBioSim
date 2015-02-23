@@ -90,6 +90,8 @@ public abstract class Simulator
 
 	// contains all rate rules
 	protected HashSet<RateRule>								listOfRateRules;
+	// contains all assignment rules
+	protected HashSet<AssignmentRule>						listOfAssignmentRules;
 
 	// allows for access to a set of reactions that a species is in (as a
 	// reactant or modifier) from a species ID
@@ -359,7 +361,7 @@ public abstract class Simulator
 		componentToEventSetMap = new HashMap<String, HashSet<String>>();
 
 		listOfRateRules = new HashSet<RateRule>();
-
+		listOfAssignmentRules = new HashSet<AssignmentRule>();
 		if (numEvents > 0)
 		{
 
@@ -4159,6 +4161,60 @@ public abstract class Simulator
 		}
 	}
 
+	protected void performAssignmentRules()
+	{
+		boolean changed = true;
+
+		while (changed)
+		{
+			changed = false;
+
+			for (AssignmentRule assignmentRule : listOfAssignmentRules)
+			{
+				String variable = assignmentRule.getVariable();
+
+				// update the species count (but only if the species isn't
+				// constant)
+				// (bound cond is fine)
+				if (variableToIsConstantMap.containsKey(variable)
+						&& variableToIsConstantMap.get(variable) == false
+						|| variableToIsConstantMap.containsKey(variable) == false)
+				{
+
+					if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable)
+							&& speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+					{
+
+						double oldValue = variableToValueMap.get(variable);
+						double newValue = evaluateExpressionRecursive(assignmentRule.getMath());
+
+						if (oldValue != newValue)
+						{
+							variableToValueMap.put(
+									variable,
+									newValue
+											* variableToValueMap.get(speciesToCompartmentNameMap
+													.get(variable)));
+							changed = true;
+						}
+					}
+					else
+					{
+
+						double oldValue = variableToValueMap.get(variable);
+						double newValue = evaluateExpressionRecursive(assignmentRule.getMath());
+						if (oldValue != newValue)
+						{
+							variableToValueMap.put(variable, newValue);
+							changed = true;
+						}
+					}
+
+				}
+			}
+		}
+	}
+
 	/**
 	 * performs assignment rules that may have changed due to events or
 	 * reactions firing
@@ -6132,6 +6188,7 @@ public abstract class Simulator
 				}
 
 				++numAssignmentRules;
+				listOfAssignmentRules.add(assignmentRule);
 			}
 			else if (rule.isRate())
 			{
