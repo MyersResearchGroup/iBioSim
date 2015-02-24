@@ -1687,6 +1687,18 @@ public class Run implements ActionListener
 								"Miscellaneous FBA failure (see console for details).", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
+					else if (exitValue == -9)
+					{
+						JOptionPane.showMessageDialog(Gui.frame,
+								"Reaction in flux objective does not have a flux bound.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+					else if (exitValue == -10)
+					{
+						JOptionPane.showMessageDialog(Gui.frame,
+								"All reactions must have flux bounds for FBA.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				else if (sbml.isSelected())
 				{

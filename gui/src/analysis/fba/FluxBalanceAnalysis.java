@@ -71,7 +71,11 @@ public class FluxBalanceAnalysis {
 				if (!fbc.getActiveObjective().equals(fbc.getObjective(i).getId())) continue;
 				double [] objective = new double[sbml.getModel().getReactionCount()];				
 				for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
-					if (fbc.getObjective(i).getType().equals(Type.MINIMIZE)) {
+					if (reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())==null) {
+						// no flux bound on objective
+						return -9;
+					}
+ 					if (fbc.getObjective(i).getType().equals(Type.MINIMIZE)) {
 						objective [reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
 					} else {
 						objective [reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
@@ -123,6 +127,10 @@ public class FluxBalanceAnalysis {
 					zero[m] = 0;
 					for (int k = 0; k < sbml.getModel().getReactionCount(); k++) {
 						Reaction r = sbml.getModel().getReaction(k);
+						if (reactionIndex.get(r.getId())==null) {
+							// reaction missing flux bound
+							return -10;
+						}
 						for (int l = 0; l < r.getReactantCount(); l++) {
 							SpeciesReference sr = r.getReactant(l);
 							if (sr.getSpecies().equals(species.getId())) {
