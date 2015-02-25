@@ -100,7 +100,7 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 		setupNonConstantSpeciesReferences(getTopmodel());
 		setupSpecies(getTopmodel());
 		setupParameters(getTopmodel());
-
+		setupCompartments(getTopmodel());
 		setupConstraints(getTopmodel());
 		setupRules(getTopmodel());
 		setupInitialAssignments(getTopmodel());
@@ -116,7 +116,7 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 			setupNonConstantSpeciesReferences(model);
 			setupSpecies(model);
 			setupParameters(model);
-
+			setupCompartments(model);
 			setupConstraints(model);
 			setupRules(model);
 			setupInitialAssignments(model);
