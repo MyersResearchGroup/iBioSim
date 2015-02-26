@@ -39,6 +39,7 @@ import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -302,11 +303,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 
-	private static final String lemaVersion = "2.8.2";
+	private static final String lemaVersion = "2.8.3";
 	
 	private static final String atacsVersion = "6.1";
 	
-	private static final String iBioSimVersion = "2.8.2";
+	private static final String iBioSimVersion = "2.8.3";
 		
 	public class MacOSAboutHandler extends Application {
 
@@ -8042,6 +8043,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		catch (SecurityException e) {
 			libsbmlFound = false;
 		}
+		//System.out.println(libsbmlFound);
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 1;
 		try {
@@ -8054,11 +8056,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				reb2sacExecutable = "reb2sac.exe";
 			}
-			Process reb2sac = exec.exec(reb2sacExecutable, null);
+			ProcessBuilder   ps=new ProcessBuilder(reb2sacExecutable,"");
+			ps.redirectErrorStream(true);
+			Process reb2sac = ps.start();  
+
+			//Process reb2sac = exec.exec(reb2sacExecutable, null);
+//			BufferedReader in = new BufferedReader(new InputStreamReader(reb2sac.getInputStream()));
+//			String line;
+//			while ((line = in.readLine()) != null) {
+//			    System.out.println(line);
+//			}
+//			in.close();
 			if (reb2sac != null) {
 				exitValue = reb2sac.waitFor();
 			}
-			if (exitValue!=255) {
+			//System.out.println(reb2sacExecutable + " exitValue="+exitValue+" reb2sac="+reb2sac);
+			if (exitValue!=255 && exitValue!=-1) {
 				reb2sacFound=false;
 			}
 		}

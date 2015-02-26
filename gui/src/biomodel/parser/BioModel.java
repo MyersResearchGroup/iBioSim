@@ -87,6 +87,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
+import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.layout.TextGlyph;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
@@ -3780,6 +3781,7 @@ public class BioModel {
 	}
 
 	public void removeReaction(String id) {
+		if (SBMLutilities.variableInUse(sbml, id, false, true, true)) return;
 //		Reaction tempReaction = sbml.getModel().getReaction(id);
 //
 //		ListOf<Reaction> r = sbml.getModel().getListOfReactions();
@@ -3794,6 +3796,15 @@ public class BioModel {
 			if (port.isSetIdRef() && port.getIdRef().equals(id)) {
 				sbmlCompModel.getListOfPorts().remove(i);
 				break;
+			}
+		}
+		int i=0;
+		while (i < sbmlFBC.getFluxBoundCount()) {
+			FluxBound fluxBound = sbmlFBC.getFluxBound(i);
+			if (fluxBound.getReaction().equals(id)) {
+				sbmlFBC.removeFluxBound(i);
+			} else {
+				i++;
 			}
 		}
 		Layout layout = getLayout();
@@ -7446,6 +7457,7 @@ public class BioModel {
 					replacements.add(SbmlSBase.getListOfReplacedElements().get(j));
 				}
 				model.removeReaction(topId);
+				// TODO: need to remove flux bounds here?
 				model.addReaction(r);
 				SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getReaction(r.getId()));
 				for (ReplacedElement repl : replacements) {

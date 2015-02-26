@@ -51,6 +51,8 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
+import org.sbml.jsbml.ext.fbc.FluxObjective;
+import org.sbml.jsbml.ext.fbc.Objective;
 import org.sbml.jsbml.Compartment;
 //CompartmentType not supported in Level 3
 //import org.sbml.jsbml.CompartmentType;
@@ -1825,12 +1827,12 @@ public class SBMLutilities {
 	/**
 	 * Check if a variable is in use.
 	 */
-	public static boolean variableInUse(SBMLDocument document, String species, boolean zeroDim, boolean displayMessage, 
+	public static boolean variableInUse(SBMLDocument document, String id, boolean zeroDim, boolean displayMessage, 
 			boolean checkReactions) {
 		Model model = document.getModel();
 		boolean inUse = false;
-		boolean isSpecies = (document.getModel().getSpecies(species) != null);
-		if (species.equals("")) {
+		boolean isSpecies = (document.getModel().getSpecies(id) != null);
+		if (id.equals("")) {
 			return inUse;
 		}
 		boolean usedInModelConversionFactor = false;
@@ -1846,15 +1848,16 @@ public class SBMLutilities {
 		ArrayList<String> constraintsUsing = new ArrayList<String>();
 		ArrayList<String> eventsUsing = new ArrayList<String>();
 		ArrayList<String> speciesUsing = new ArrayList<String>();
+		ArrayList<String> fluxObjUsing = new ArrayList<String>();
 		if (document.getLevel() > 2) {
-			if (model.isSetConversionFactor() && model.getConversionFactor().equals(species)) {
+			if (model.isSetConversionFactor() && model.getConversionFactor().equals(id)) {
 				inUse = true;
 				usedInModelConversionFactor = true;
 			}
 			for (int i = 0; i < model.getSpeciesCount(); i++) {
 				Species speciesConv = model.getListOfSpecies().get(i);
 				if (speciesConv.isSetConversionFactor()) {
-					if (species.equals(speciesConv.getConversionFactor())) {
+					if (id.equals(speciesConv.getConversionFactor())) {
 						inUse = true;
 						speciesUsing.add(speciesConv.getId());
 					}
@@ -1866,14 +1869,14 @@ public class SBMLutilities {
 				Reaction reaction = model.getListOfReactions().get(i);
 				if (isSpecies && (BioModel.isDegradationReaction(reaction) || BioModel.isDiffusionReaction(reaction) ||
 						BioModel.isConstitutiveReaction(reaction))) continue;
-				if (BioModel.isProductionReaction(reaction) && BioModel.IsDefaultProductionParameter(species)) {
+				if (BioModel.isProductionReaction(reaction) && BioModel.IsDefaultProductionParameter(id)) {
 					defaultParametersNeeded.add(reaction.getId());
 					inUse = true;
 				}
 				for (int j = 0; j < reaction.getProductCount(); j++) {
 					if (reaction.getProduct(j).isSetSpecies()) {
 						String specRef = reaction.getProduct(j).getSpecies();
-						if (species.equals(specRef)) {
+						if (id.equals(specRef)) {
 							inUse = true;
 							productsUsing.add(reaction.getId());
 						}
@@ -1882,7 +1885,7 @@ public class SBMLutilities {
 				for (int j = 0; j < reaction.getReactantCount(); j++) {
 					if (reaction.getReactant(j).isSetSpecies()) {
 						String specRef = reaction.getReactant(j).getSpecies();
-						if (species.equals(specRef)) {
+						if (id.equals(specRef)) {
 							inUse = true;
 							reactantsUsing.add(reaction.getId());
 						}
@@ -1891,7 +1894,7 @@ public class SBMLutilities {
 				for (int j = 0; j < reaction.getModifierCount(); j++) {
 					if (reaction.getModifier(j).isSetSpecies()) {
 						String specRef = reaction.getModifier(j).getSpecies();
-						if (species.equals(specRef)) {
+						if (id.equals(specRef)) {
 							inUse = true;
 							modifiersUsing.add(reaction.getId());
 						}
@@ -1900,7 +1903,7 @@ public class SBMLutilities {
 				if (reaction.isSetKineticLaw()) {
 					String[] vars = SBMLutilities.myFormulaToString(reaction.getKineticLaw().getMath()).split(" |\\(|\\)|\\,");
 					for (int j = 0; j < vars.length; j++) {
-						if (vars[j].equals(species)) {
+						if (vars[j].equals(id)) {
 							kineticLawsUsing.add(reaction.getId());
 							inUse = true;
 							break;
@@ -1914,7 +1917,7 @@ public class SBMLutilities {
 			String initStr = SBMLutilities.myFormulaToString(init.getMath());
 			String[] vars = initStr.split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
-				if (vars[j].equals(species)) {
+				if (vars[j].equals(id)) {
 					initsUsing.add(init.getVariable() + " = " + SBMLutilities.myFormulaToString(init.getMath()));
 					inUse = true;
 					break;
@@ -1929,7 +1932,7 @@ public class SBMLutilities {
 			}
 			String[] vars = initStr.split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
-				if (vars[j].equals(species)) {
+				if (vars[j].equals(id)) {
 					if (rule.isAssignment()) {
 						rulesUsing.add(getVariable(rule) + " = " + SBMLutilities.myFormulaToString(rule.getMath()));
 					}
@@ -1949,7 +1952,7 @@ public class SBMLutilities {
 			String consStr = SBMLutilities.myFormulaToString(constraint.getMath());
 			String[] vars = consStr.split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
-				if (vars[j].equals(species)) {
+				if (vars[j].equals(id)) {
 					constraintsUsing.add(consStr);
 					inUse = true;
 					break;
@@ -1969,10 +1972,21 @@ public class SBMLutilities {
 			}
 			String[] vars = eventStr.split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
-				if (vars[j].equals(species)) {
+				if (vars[j].equals(id)) {
 					eventsUsing.add(event.getId());
 					inUse = true;
 					break;
+				}
+			}
+		}
+		FBCModelPlugin fbc = getFBCModelPlugin(model);
+		for (int i = 0; i < fbc.getNumObjective(); i++) {
+			Objective obj = fbc.getObjective(i);
+			for (int j = 0; j < obj.getListOfFluxObjectives().size(); j++) {
+				FluxObjective fluxObj = obj.getListOfFluxObjectives().get(j);
+				if (fluxObj.getReaction().equals(id)) {
+					fluxObjUsing.add(obj.getId());
+					inUse = true;
 				}
 			}
 		}
@@ -1988,6 +2002,9 @@ public class SBMLutilities {
 			String constraints = "";
 			String events = "";
 			String speciesConvFac = "";
+			String fluxObj = "";
+			String[] fluxObjectives = fluxObjUsing.toArray(new String[0]);
+			Utility.sort(fluxObjectives);
 			String[] speciesConvFactors = speciesUsing.toArray(new String[0]);
 			Utility.sort(speciesConvFactors);
 			String[] reacts = reactantsUsing.toArray(new String[0]);
@@ -2010,6 +2027,14 @@ public class SBMLutilities {
 			Utility.sort(consts);
 			String[] evs = eventsUsing.toArray(new String[0]);
 			Utility.sort(evs);
+			for (int i = 0; i < fluxObjectives.length; i++) {
+				if (i == fluxObjectives.length - 1) {
+					fluxObj += fluxObjectives[i];
+				}
+				else {
+					fluxObj += fluxObjectives[i] + "\n";
+				}
+			}
 			for (int i = 0; i < speciesConvFactors.length; i++) {
 				if (i == speciesConvFactors.length - 1) {
 					speciesConvFac += speciesConvFactors[i];
@@ -2140,6 +2165,9 @@ public class SBMLutilities {
 			}
 			if (eventsUsing.size() != 0) {
 				message += "\n\nIt is used in the following events:\n" + events;
+			}
+			if (fluxObjUsing.size() != 0) {
+				message += "\n\nIt is used in the following flux objectives:\n" + fluxObj;
 			}
 			if (displayMessage) {
 				JTextArea messageArea = new JTextArea(message);

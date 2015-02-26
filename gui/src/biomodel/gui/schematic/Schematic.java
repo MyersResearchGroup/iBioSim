@@ -1538,7 +1538,8 @@ public class Schematic extends JPanel implements ActionListener {
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue());
 						
 						if (r.getReactantCount()==1 && r.getProductCount()==1) {
-							Reactions.removeTheReaction(bioModel,(String)cell.getValue());
+							//Reactions.removeTheReaction(bioModel,(String)cell.getValue());
+							bioModel.removeReaction((String)cell.getValue());
 						} 
 						else if (r.getReactantCount() > 1) {
 							
