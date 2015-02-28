@@ -273,18 +273,18 @@ public class Lpn2verilog {
 				if(lpn.isContinuous(v1)){
 					sv.write("\t\treset = 0;\n");
 					sv.write("\tend\n\n");
-					sv.write("\tassign #1 fastClk = (~fastClk)&(~reset); \n\n");
+					sv.write("\talways #1 fastClk = (~fastClk)&(~reset); \n\n");
 					break;
 				}
-				}
-				for (String v1: varsList){
-					if(lpn.isContinuous(v1)){
+			}
+			for (String v1: varsList){
+				if(lpn.isContinuous(v1)){
 					sv.write("\talways @(fastClk) begin \n");
 					sv.write("\t"+v1+" <="+v1+"+rate_"+v1+";\n");
 					sv.write("\tend \n\n");
 					//break;
-					}
-				} //new code
+				}
+			} //new code
 			//sv.write("\tend\n");
 			int contiCounter =0 ;
 			for(String v1 :varsList){
