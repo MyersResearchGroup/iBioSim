@@ -1042,15 +1042,12 @@ public class LhpnFile {
 	}
 
 	public String[] getPlaceList() {
-		if (this.placeList == null) {
-			placeList = new String[places.size()];
-			int i = 0;
-			for (String t : places.keySet()) {
-				placeList[i++] = t;
-			}
-			return placeList;
+		placeList = new String[places.size()];
+		int i = 0;
+		for (String t : places.keySet()) {
+			placeList[i++] = t;
 		}
-		return this.placeList;		
+		return placeList;
 	}
 	
 //	public ArrayList<String> getAllPlaces() {

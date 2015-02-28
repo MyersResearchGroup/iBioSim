@@ -160,6 +160,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(this,
 					"There must be places and transitions to create control flow.",
 					"Control Flow Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		fields.get(GlobalConstants.ID).setValue(
 				fromBox.getSelectedItem().toString() + " " + toBox.getSelectedItem().toString());

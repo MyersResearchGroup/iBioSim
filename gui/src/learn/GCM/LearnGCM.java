@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.Preferences;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 
@@ -81,6 +82,8 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 	private JTextField backgroundField;
 
 	private JPanel advancedOptionsPanel;
+
+	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
@@ -915,7 +918,15 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 
 	public void saveModel() {
 		if (new File(directory + separator + "method.gcm").exists()) {
-			String copy = JOptionPane.showInputDialog(Gui.frame, "Enter Model Name:", "Save Model", JOptionPane.PLAIN_MESSAGE);
+			String copy = null;
+			while (copy==null) {
+				copy = JOptionPane.showInputDialog(Gui.frame, "Enter Model ID:", "Save Model", JOptionPane.PLAIN_MESSAGE);
+				if (!(IDpat.matcher(copy.replace(".xml","")).matches())) {
+					JOptionPane.showMessageDialog(Gui.frame, "A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+							JOptionPane.ERROR_MESSAGE);
+					copy = null;
+				}
+			}
 			if (copy != null) {
 				copy = copy.trim();
 			}
