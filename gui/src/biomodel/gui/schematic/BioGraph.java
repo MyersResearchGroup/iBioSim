@@ -553,7 +553,8 @@ public class BioGraph extends mxGraph {
 				String promoterId = SBMLutilities.getPromoterId(r);
 				if (bioModel.isPromoterExplicit(promoterId)) {
 					for (int j = 0; j < r.getProductCount(); j++) {
-						if (r.getProduct(j).getSpecies().endsWith("_mRNA")) continue;
+						if (BioModel.isMRNASpecies(bioModel.getSBMLDocument(), 
+								r.getProduct(j).getSpeciesInstance())) continue;
 						String product = r.getProduct(j).getSpecies();
 						String id = promoterId + "->" + product;
 						mxCell production = (mxCell)this.insertEdge(this.getDefaultParent(), id, "", 

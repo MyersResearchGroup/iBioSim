@@ -133,6 +133,7 @@ public class TSDParser extends DataParser {
 						else {
 							insert = counter % species.size();
 						}
+						word = word.replace("nan","NaN").replace("-NaN","NaN");
 						double dataPoint = Double.parseDouble(word);
 						(data.get(insert)).add(dataPoint);
 
