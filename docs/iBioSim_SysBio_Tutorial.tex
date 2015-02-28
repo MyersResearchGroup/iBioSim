@@ -205,7 +205,7 @@ At this point, you should have a model that looks like the one below (though loc
 
 \section{ODE Analysis}
 
-This section describes how to analyze the model just created.  The first step is to create an analysis view.  To do this, right-click on the model file and select Create Analysis View.  Enter the analysis ID {\tt lambda} or just press enter.  At this point, a new analysis view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
+This section describes how to analyze the model just created using \emph{ordinary differential equation} (ODE) simulation.  The first step is to create an analysis view.  To do this, right-click on the model file and select Create Analysis View.  Enter the analysis ID {\tt lambda} or just press enter.  At this point, a new analysis view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
 
 \begin{center}
 \includegraphics[height=60mm]{screenshots/GCMAnalysis}
@@ -280,7 +280,7 @@ Go back to the schematic and change the degradation rate for CII back to default
 
 \section{Stochastic Analysis}
 
-Now, select the Simulation Options tab again, select {\tt Monte Carlo}, change the number of runs to 100, set the simulation ID to {\tt ssa}, and click on the Save and Run icon.  Click on the TSD Graph tab.  Double-click on the graph to bring up the graph editor.  Open the {\tt ssa} simulation directory, and highlight {\tt run-1}.  Select CI\_Total and CII, change the title to ``SSA Simulation Results'', change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  Press the OK button.  Click on the Export icon and enter the file name {\tt ssa-1.pdf}.  Repeat these steps to generate graphs for the average ({\tt average.pdf}) and standard deviation ({\tt stddev.pdf}).  Note that you can use the ``Deselect All'' button to remove all items from the graph.
+This section describes how to analyze the model using stochastic, Monte Carlo, methods.  First, go back to the parameter tab and change kd back to Original.  Then, select the Simulation Options tab again, select {\tt Monte Carlo}, change the number of runs to 100, set the simulation ID to {\tt ssa}, and click on the Save and Run icon.  Click on the TSD Graph tab.  Double-click on the graph to bring up the graph editor.  Open the {\tt ssa} simulation directory, and highlight {\tt run-1}.  Select CI\_Total and CII, change the title to ``SSA Simulation Results'', change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  Press the OK button.  Click on the Export icon and enter the file name {\tt ssa-1.pdf}.  Repeat these steps to generate graphs for the average ({\tt average.pdf}) and standard deviation ({\tt stddev.pdf}).  Note that you can use the ``Deselect All'' button to remove all items from the graph.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/ssaSim}\\
@@ -303,19 +303,6 @@ Once you have made your selections, you can now play back the simulation.  You c
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/movieView}
-\end{center}
-
-Using the schematic tab, you can also adjust initial values and parameters allowing one to perform simulations to determine the effect of these changes.  Clicking on any species, promoter, reaction, or influence brings up the corresponding editor.  To change a value, switch the corresponding combo box to modified, which will then allow you to change the value.  For example, as shown below, we have reduced the degradation rate for CI to 0.00075.  Now, rerun the simulation and observe the change in the simulation data.
-
-\begin{center}
-\includegraphics[width=160mm]{screenshots/paramEdit}
-\end{center}
-
-In addition to making single changes, you can also sweep a value as shown below.   When you click on the Sweep button, it brings up a window where you can select the start value, the stop value, and the step value.  Using the values shown below for this example, simulations are generated using degradation rates of 0.001, 0.003, 0.005, and 0.007.  The level indicates how the sweep should perform when multiple variables are swept at the same time.  Variables at the same level are changed at the same time.  Furthermore, all variables on level 2 are stepped through all their values before changing the values of those variables on level 1.  After the values on level 1 are changed, the values on level 2 are stepped through all their values again.  Rerun the simulation and create a graph that shows the value of CI for each of the different degradation rates.
-
-\begin{center}
-\includegraphics[width=160mm]{screenshots/sweep}
-%\includegraphics[height=90mm]{screenshots/sweepPR}
 \end{center}
 
 \section{Reaction-based Abstraction}
