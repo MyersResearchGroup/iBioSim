@@ -1952,6 +1952,38 @@ public class BioModel {
 		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
 	}
 	
+	
+	public Reaction addProductToProductionReaction(String promoterId,String productId,String npStr) {
+		Reaction r = getProductionReaction(promoterId);
+		if (r.getProductForSpecies(productId)==null) {
+			SpeciesReference product = r.createProduct();
+			product.setSpecies(productId);
+			if (npStr != null) {
+				double np = Double.parseDouble(npStr);
+				product.setStoichiometry(np);
+			} else {
+				double np = sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue();
+				product.setStoichiometry(np);
+			}
+			product.setConstant(true);
+			if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(productId))) {
+				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(product);
+				sBasePluginProduct.unsetListOfIndices();
+				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+					Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+					Index index = sBasePluginProduct.createIndex();
+					index.setReferencedAttribute("species");
+					index.setArrayDimension(i);
+					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+				}
+			}
+			r.removeProduct(promoterId+"_mRNA");
+			sbml.getModel().removeSpecies(promoterId+"_mRNA");
+		}
+		return r;
+	}
+		
 	public Reaction addActivatorToProductionReaction(String promoterId,String activatorId,String productId,String npStr,
 			String ncStr,String KaStr) {
 		Reaction r = getProductionReaction(promoterId);
