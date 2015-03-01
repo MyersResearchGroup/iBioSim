@@ -897,13 +897,8 @@ public class SBMLutilities {
 		setTimeToT(mathFormula);
 		String formula;
 		Preferences biosimrc = Preferences.userRoot();
-		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
-			formula = JSBML.formulaToString(mathFormula);
-			//formula = myFormulaToStringInfix(mathFormula);
-		} else {
-			formula = JSBML.formulaToString(mathFormula);
-			//formula = myFormulaToStringInfix(mathFormula);
-		}
+		formula = JSBML.formulaToString(mathFormula);
+		//formula = myFormulaToStringInfix(mathFormula);
 		formula = formula.replaceAll("arccot", "acot");
 		formula = formula.replaceAll("arccoth", "acoth");
 		formula = formula.replaceAll("arccsc", "acsc");
@@ -949,13 +944,7 @@ public class SBMLutilities {
 		Preferences biosimrc = Preferences.userRoot();
 		try {
 			IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
-			if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
-				mathFormula = ASTNode.parseFormula(formula, parser);
-			}
-			else {
-				mathFormula = ASTNode.parseFormula(formula, parser);
-				// mathFormula = libsbml.parseL3Formula(formula);
-			}
+			mathFormula = ASTNode.parseFormula(formula, parser);
 		}
 		catch (ParseException e) {
 			return null;

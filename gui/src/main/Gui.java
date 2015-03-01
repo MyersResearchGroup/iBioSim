@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -133,6 +134,9 @@ import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.comp.*;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
+import org.sbml.jsbml.text.parser.FormulaParserLL3;
+import org.sbml.jsbml.text.parser.IFormulaParser;
+import org.sbml.jsbml.text.parser.ParseException;
 import org.jlibsedml.*;
 import org.sbolstandard.core.SBOLDocument;
 
@@ -3891,7 +3895,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				if (!(IDpat.matcher(modelID).matches())) {
-					JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+					JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.", 
+							"Invalid ID",
 							JOptionPane.ERROR_MESSAGE);
 				}
 				else {
@@ -4074,7 +4079,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						modelId += ".xml";
 					}
 					if (!(IDpat.matcher(modelId.replace(".xml","")).matches())) {
-						JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+						JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.", 
+								"Invalid ID",
 								JOptionPane.ERROR_MESSAGE);
 					}
 					else {
@@ -5589,7 +5595,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						fileName = modelID + extension;
 					}
 					if (!(IDpat.matcher(modelID).matches())) {
-						JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+						JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.", 
+								"Invalid ID",
 								JOptionPane.ERROR_MESSAGE);
 					}
 					else {
@@ -8018,6 +8025,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 * This is the main method. It excecutes the BioSim GUI FrontEnd program.
 	 */
 	public static void main(String args[]) {
+		/* TODO: test for factorial
+		IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
+		try {
+			ASTNode mathFormula = ASTNode.parseFormula("factorial(n)", parser);
+			String formula = JSBML.formulaToString(mathFormula);
+			System.out.println("formula="+formula);
+			mathFormula = ASTNode.parseFormula(formula, parser);
+		}
+		catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		*/
+		
 		boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true;
 		if (args.length > 0) {
 			for (int i = 0; i < args.length; i++) {
