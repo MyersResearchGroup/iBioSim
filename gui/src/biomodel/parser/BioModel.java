@@ -145,6 +145,8 @@ public class BioModel {
 	
 	public void createSBMLDocument(String modelId,boolean grid,boolean lema) {
 		sbml = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		modelId = modelId.replaceAll("[\\W]|_", "_");
+		if (Character.isDigit(modelId.charAt(0))) modelId = "m" + modelId;
 		Model m = sbml.createModel(modelId);
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, m, metaIDIndex); 
 		sbmlFile = modelId + ".xml";

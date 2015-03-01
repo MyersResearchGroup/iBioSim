@@ -922,7 +922,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			while (copy==null) {
 				copy = JOptionPane.showInputDialog(Gui.frame, "Enter Model ID:", "Save Model", JOptionPane.PLAIN_MESSAGE);
 				if (!(IDpat.matcher(copy.replace(".xml","")).matches())) {
-					JOptionPane.showMessageDialog(Gui.frame, "A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+					JOptionPane.showMessageDialog(Gui.frame, "A model ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.", "Invalid ID",
 							JOptionPane.ERROR_MESSAGE);
 					copy = null;
 				}

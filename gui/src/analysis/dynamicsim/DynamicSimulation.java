@@ -211,10 +211,10 @@ public class DynamicSimulation
 		if (simulator != null)
 		{
 
+			simulator.cancel();
+
 			JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled", "Canceled",
 					JOptionPane.ERROR_MESSAGE);
-
-			simulator.cancel();
 
 			cancelFlag = true;
 		}
