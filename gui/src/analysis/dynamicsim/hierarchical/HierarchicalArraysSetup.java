@@ -88,6 +88,53 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 	}
 
 	private String getIndexedObject(ModelState modelstate, String id, String var, String attribute,
+			int[] parentIndices, int[] childIndices)
+	{
+		int index;
+		ASTNode node;
+		ASTNode vector = modelstate.getValues().get(var);
+
+		if (vector == null)
+		{
+			return null;
+		}
+
+		IndexObject obj = modelstate.getIndexObjects().get(id);
+
+		HashMap<Integer, ASTNode> dimToMath = obj.getAttributes().get(attribute);
+
+		if (dimToMath == null)
+		{
+			return null;
+		}
+
+		for (int i = dimToMath.size() - 1; i >= 0; i--)
+		{
+			node = dimToMath.get(i).clone();
+
+			if (node == null)
+			{
+				return null;
+			}
+
+			replaceDimensionID(node, parentIndices);
+			replaceEventDimensionID(node, childIndices);
+
+			index = (int) evaluateExpressionRecursive(modelstate, node, false, getCurrentTime(),
+					null, null);
+
+			vector = index < vector.getChildCount() ? vector.getChild(index) : null;
+
+			if (vector == null)
+			{
+				return null;
+			}
+		}
+
+		return vector.isName() ? vector.getName() : null;
+	}
+
+	private String getIndexedObject(ModelState modelstate, String id, String var, String attribute,
 			int[] indices)
 	{
 		int index;
@@ -171,6 +218,16 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 		}
 	}
 
+	private void replaceEventDimensionID(ASTNode node, int[] indices)
+	{
+		String dimId;
+		for (int i = 0; i < indices.length; i++)
+		{
+			dimId = "ed" + i;
+			replaceArgument(node, dimId, indices[i]);
+		}
+	}
+
 	private void replaceSelector(ModelState modelstate, ASTNode node)
 	{
 		if (node == null)
@@ -238,6 +295,48 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 		{
 			modelstate.addIndex(id, index.getReferencedAttribute(), index.getArrayDimension(),
 					index.getMath());
+		}
+	}
+
+	protected void setupArrays(ModelState modelstate, Event sbase)
+	{
+		String id = sbase.getId();
+		ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension("arrays");
+
+		if (plugin == null)
+		{
+			return;
+		}
+
+		for (Dimension dimension : plugin.getListOfDimensions())
+		{
+			modelstate.addArrayedObject(id);
+			modelstate.addDimension(id, dimension.getSize(), dimension.getArrayDimension());
+		}
+
+		for (Index index : plugin.getListOfIndices())
+		{
+			modelstate.addIndex(id, index.getReferencedAttribute(), index.getArrayDimension(),
+					index.getMath());
+		}
+
+		for (EventAssignment eventAssignment : sbase.getListOfEventAssignments())
+		{
+			plugin = (ArraysSBasePlugin) eventAssignment.getExtension("arrays");
+
+			id = "_" + sbase.getId() + "_" + eventAssignment.getVariable();
+
+			for (Dimension dimension : plugin.getListOfDimensions())
+			{
+				modelstate.addArrayedObject(id);
+				modelstate.addDimension(id, dimension.getSize(), dimension.getArrayDimension());
+			}
+
+			for (Index index : plugin.getListOfIndices())
+			{
+				modelstate.addIndex(id, index.getReferencedAttribute(), index.getArrayDimension(),
+						index.getMath());
+			}
 		}
 	}
 
@@ -538,25 +637,56 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 
 	private void setupArraysEvent(ModelState modelstate, Event event, String metaId, int[] indices)
 	{
+		Event clone = event.clone();
+		clone.setId(metaId);
+		if (clone.isSetDelay())
+		{
+			replaceDimensionID(clone.getDelay().getMath(), indices);
+			replaceSelector(modelstate, clone.getDelay().getMath());
+		}
+		if (clone.isSetTrigger())
+		{
+			replaceDimensionID(clone.getTrigger().getMath(), indices);
+			replaceSelector(modelstate, clone.getTrigger().getMath());
+		}
+		if (clone.isSetPriority())
+		{
+			replaceDimensionID(clone.getPriority().getMath(), indices);
+			replaceSelector(modelstate, clone.getPriority().getMath());
+		}
+
+		for (int i = clone.getListOfEventAssignments().size() - 1; i >= 0; i--)
+		{
+			EventAssignment assignment = clone.getEventAssignment(i);
+			setupArraysEventAssignment(modelstate, clone, assignment, indices);
+		}
+
+		setupSingleEvent(modelstate, clone);
 	}
 
-	protected void setupArraysEventAssignment(ModelState modelstate, String metaID,
-			EventAssignment event)
+	protected void setupArraysEventAssignment(ModelState modelstate, Event event,
+			EventAssignment eventAssignment, int[] eventIndices)
 	{
-		if (modelstate.isArrayed(metaID))
+		String id = "_" + event.getId() + "_" + eventAssignment.getVariable();
+
+		if (modelstate.isArrayed(id))
 		{
-			int[] sizes = new int[modelstate.getDimensionCount(metaID)];
-			for (ArraysObject obj : modelstate.getDimensionObjects().get(metaID))
+			int[] sizes = new int[modelstate.getDimensionCount(id)];
+			for (ArraysObject obj : modelstate.getDimensionObjects().get(id))
 			{
 				sizes[obj.getArrayDim()] = (int) modelstate.getVariableToValue(getReplacements(),
 						obj.getSize()) - 1;
 			}
-			setupArraysEventAssignment(modelstate, event, metaID, sizes, new int[sizes.length]);
+			setupArraysEventAssignment(modelstate, event, eventAssignment, id, eventIndices, sizes,
+					new int[sizes.length]);
+
+			event.removeEventAssignment(eventAssignment);
 		}
 	}
 
-	private void setupArraysEventAssignment(ModelState modelstate, EventAssignment event,
-			String metaID, int[] sizes, int[] indices)
+	private void setupArraysEventAssignment(ModelState modelstate, Event event,
+			EventAssignment eventAssignment, String metaID, int[] eventIndices, int[] sizes,
+			int[] indices)
 	{
 		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
@@ -565,7 +695,8 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 
 			if (arrayedId != null)
 			{
-				setupArraysEventAssignment(modelstate, event, arrayedId, indices);
+				setupArraysEventAssignment(modelstate, event, eventAssignment, arrayedId,
+						eventIndices, indices);
 			}
 
 			indices[0]++;
@@ -580,9 +711,17 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 		}
 	}
 
-	private void setupArraysEventAssignment(ModelState modelstate, EventAssignment event,
-			String metaId, int[] indices)
+	private void setupArraysEventAssignment(ModelState modelstate, Event event,
+			EventAssignment eventAssignment, String metaId, int[] eventIndices, int[] indices)
 	{
+
+		EventAssignment clone = eventAssignment.clone();
+		replaceDimensionID(clone.getMath(), eventIndices);
+		replaceEventDimensionID(clone.getMath(), indices);
+		replaceSelector(modelstate, clone.getMath());
+		clone.setVariable(getIndexedObject(modelstate, metaId, clone.getVariable(), "variable",
+				eventIndices, indices));
+		event.addEventAssignment(clone);
 	}
 
 	protected void setupArraysReaction(ModelState modelstate, String id, Reaction reaction)
@@ -746,7 +885,6 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 	{
 		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
-
 			String arrayedId = getArrayedID(modelstate, id, indices);
 
 			if (arrayedId != null)
@@ -766,9 +904,10 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 		}
 	}
 
-	private void setupArraysSpeciesReference(ModelState modelstate, SpeciesReference specRef,
+	private void setupArraysSpeciesReference(ModelState modelstate, SimpleSpeciesReference specRef,
 			String id, int[] indices, int[] parentIndices)
 	{
 		// TODO
+		specRef.clone();
 	}
 }

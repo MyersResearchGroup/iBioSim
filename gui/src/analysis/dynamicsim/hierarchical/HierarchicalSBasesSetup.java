@@ -246,6 +246,9 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 			{
 				continue;
 			}
+
+			setupArrays(modelstate, event);
+
 			setupSingleEvent(modelstate, event);
 		}
 	}

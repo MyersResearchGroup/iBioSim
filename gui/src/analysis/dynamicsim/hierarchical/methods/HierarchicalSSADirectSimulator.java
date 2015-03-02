@@ -17,6 +17,9 @@ import analysis.dynamicsim.hierarchical.HierarchicalArrayModels;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 
+//TODO: assignment rules need to verify if changing a hierarchical species because they
+//		can trigger rules in other places.
+
 public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 {
 
@@ -63,6 +66,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		double r1, r2, totalPropensity, delta_t, nextReactionTime, previousTime, printTime, nextEventTime;
 		long initTime2;
+
 		if (isSbmlHasErrorsFlag())
 		{
 			return;
@@ -78,34 +82,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		while (getCurrentTime() < getTimeLimit() && !isCancelFlag())
 		{
-			if (getTopmodel().isNoEventsFlag() == false)
-			{
-				HashSet<String> affectedReactionSet = fireEvents(getTopmodel(), "reaction",
-						getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());
-				if (affectedReactionSet.size() > 0)
-				{
-					HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
-							getTopmodel());
-					perculateDown(getTopmodel(), affectedSpecies);
-				}
-			}
-
-			for (ModelState models : getSubmodels().values())
-			{
-				if (models.isNoEventsFlag() == false)
-				{
-					HashSet<String> affectedReactionSet = fireEvents(models, "reaction",
-							models.isNoRuleFlag(), models.isNoConstraintsFlag());
-					if (affectedReactionSet.size() > 0)
-					{
-						HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
-								models);
-						perculateUp(models, affectedSpecies);
-
-					}
-				}
-			}
-
+			fireEvents();
 			r1 = getRandomNumberGenerator().nextDouble();
 			r2 = getRandomNumberGenerator().nextDouble();
 			totalPropensity = getTotalPropensity();
@@ -126,88 +103,37 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			else
 			{
 				setCurrentTime(getCurrentTime() + getMaxTimeStep());
-
-				performAssignmentRules(getTopmodel());
-
-				for (ModelState modelstate : getSubmodels().values())
-				{
-					performAssignmentRules(modelstate);
-				}
-
 			}
 
 			if (getCurrentTime() > getTimeLimit())
 			{
 				setCurrentTime(getTimeLimit());
+
+				if (print)
+				{
+					print(printTime);
+				}
+
+				break;
 			}
 
 			if (print)
 			{
-				while (getCurrentTime() > printTime && printTime < getTimeLimit())
-				{
-
-					try
-					{
-						printToTSD(printTime);
-						getBufferedTSDWriter().write(",\n");
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-
-					printTime += getPrintInterval();
-					getRunning().setTitle(
-							"Progress (" + (int) ((getCurrentTime() / getTimeLimit()) * 100.0)
-									+ "%)");
-					getProgress().setValue((int) ((getCurrentTime() / getTimeLimit()) * 100.0));
-
-				}
+				printTime = print(printTime);
 			}
 
 			if (getCurrentTime() == nextReactionTime)
 			{
-				String selectedReactionID = selectReaction(r2);
-				if (!selectedReactionID.isEmpty())
-				{
-					if (modelstateID.equals("topmodel"))
-					{
-						if (!selectedReactionID.isEmpty())
-						{
-							performReaction(getTopmodel(), selectedReactionID, getTopmodel()
-									.isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());
-							HashSet<String> affectedReactionSet = getAffectedReactionSet(
-									getTopmodel(), selectedReactionID, true);
-							HashSet<String> affectedSpecies = updatePropensities(
-									affectedReactionSet, getTopmodel());
-							perculateDown(getTopmodel(), affectedSpecies);
-						}
-					}
-					else
-					{
-						if (!selectedReactionID.isEmpty())
-						{
-							ModelState modelstate = getSubmodels().get(modelstateID);
-							performReaction(modelstate, selectedReactionID,
-									modelstate.isNoRuleFlag(), modelstate.isNoConstraintsFlag());
-							HashSet<String> affectedReactionSet = getAffectedReactionSet(
-									modelstate, selectedReactionID, true);
-							HashSet<String> affectedSpecies = updatePropensities(
-									affectedReactionSet, modelstate);
-							perculateUp(modelstate, affectedSpecies);
-						}
-					}
-				}
+				printTime = print(printTime);
+				update(true, true, true, r2, previousTime);
 			}
-
-			performRateRules(getTopmodel(), getCurrentTime() - previousTime);
-
-			for (ModelState modelstate : getSubmodels().values())
+			else
 			{
-				performRateRules(modelstate, getCurrentTime() - previousTime);
+				printTime = print(printTime);
+				update(false, true, true, r2, previousTime);
 			}
 
-			updateRules();
+			// updateRules();
 		}
 
 		if (isCancelFlag() == false)
@@ -329,6 +255,11 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		setupArrayedModels();
 
+		setupVariableFromTSD();
+	}
+
+	private void setupVariableFromTSD() throws IOException
+	{
 		getBufferedTSDWriter().write("(" + "\"" + "time" + "\"");
 
 		if (getInterestingSpecies().length > 0)
@@ -627,7 +558,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 	@Override
 	public void setupForNewRun(int newRun)
 	{
-
+		setCurrentTime(0.0);
 		try
 		{
 			setupNonConstantSpeciesReferences(getTopmodel());
@@ -669,44 +600,42 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		try
 		{
-			for (String speciesID : getTopmodel().getSpeciesIDSet())
-			{
-				getBufferedTSDWriter().write(",\"" + speciesID + "\"");
-			}
-			for (String noConstantParam : getTopmodel().getVariablesToPrint())
-			{
-				getBufferedTSDWriter().write(",\"" + noConstantParam + "\"");
-			}
-			/*
-			 * for (String compartment : getTopmodel().compartmentIDSet) {
-			 * bufferedTSDWriter.write(", \"" + compartment + "\""); }
-			 */
-			for (ModelState model : getSubmodels().values())
-			{
-				for (String speciesID : model.getSpeciesIDSet())
-				{
-					getBufferedTSDWriter().write(",\"" + model.getID() + "__" + speciesID + "\"");
-				}
-				for (String noConstantParam : model.getVariablesToPrint())
-				{
-					getBufferedTSDWriter().write(
-							",\"" + model.getID() + "__" + noConstantParam + "\"");
-					/*
-					 * for (String compartment : model.compartmentIDSet)
-					 * bufferedTSDWriter.write(", \"" + model.getID() + "__" +
-					 * compartment + "\"");
-					 */
-				}
-			}
-
-			getBufferedTSDWriter().write("),\n");
-
+			setupVariableFromTSD();
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 
+	}
+
+	private void update(boolean reaction, boolean assignRule, boolean rateRule, double r2,
+			double previousTime)
+	{
+		if (reaction)
+		{
+			performReaction(r2);
+		}
+
+		if (assignRule)
+		{
+			performAssignmentRules(getTopmodel());
+
+			for (ModelState modelstate : getSubmodels().values())
+			{
+				performAssignmentRules(modelstate);
+			}
+		}
+
+		if (rateRule)
+		{
+			performRateRules(getTopmodel(), getCurrentTime() - previousTime);
+
+			for (ModelState modelstate : getSubmodels().values())
+			{
+				performRateRules(modelstate, getCurrentTime() - previousTime);
+			}
+		}
 	}
 
 	private void performAssignmentRules(ModelState modelstate)
@@ -730,5 +659,97 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 				}
 			}
 		}
+	}
+
+	private void performReaction(double r2)
+	{
+		String selectedReactionID = selectReaction(r2);
+		if (!selectedReactionID.isEmpty())
+		{
+			if (modelstateID.equals("topmodel"))
+			{
+				if (!selectedReactionID.isEmpty())
+				{
+					performReaction(getTopmodel(), selectedReactionID,
+							getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());
+					HashSet<String> affectedReactionSet = getAffectedReactionSet(getTopmodel(),
+							selectedReactionID, true);
+					HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
+							getTopmodel());
+					perculateDown(getTopmodel(), affectedSpecies);
+				}
+			}
+			else
+			{
+				if (!selectedReactionID.isEmpty())
+				{
+					ModelState modelstate = getSubmodels().get(modelstateID);
+					performReaction(modelstate, selectedReactionID, modelstate.isNoRuleFlag(),
+							modelstate.isNoConstraintsFlag());
+					HashSet<String> affectedReactionSet = getAffectedReactionSet(modelstate,
+							selectedReactionID, true);
+					HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
+							modelstate);
+					perculateUp(modelstate, affectedSpecies);
+				}
+			}
+		}
+	}
+
+	private void fireEvents()
+	{
+		if (getTopmodel().isNoEventsFlag() == false)
+		{
+			HashSet<String> affectedReactionSet = fireEvents(getTopmodel(), "reaction",
+					getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());
+			if (affectedReactionSet.size() > 0)
+			{
+				HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
+						getTopmodel());
+				perculateDown(getTopmodel(), affectedSpecies);
+			}
+		}
+
+		for (ModelState models : getSubmodels().values())
+		{
+			if (models.isNoEventsFlag() == false)
+			{
+				HashSet<String> affectedReactionSet = fireEvents(models, "reaction",
+						models.isNoRuleFlag(), models.isNoConstraintsFlag());
+				if (affectedReactionSet.size() > 0)
+				{
+					HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
+							models);
+					perculateUp(models, affectedSpecies);
+
+				}
+			}
+		}
+
+	}
+
+	private double print(double printTime)
+	{
+		while (getCurrentTime() > printTime && printTime < getTimeLimit())
+		{
+
+			try
+			{
+				printToTSD(printTime);
+				getBufferedTSDWriter().write(",\n");
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+
+			printTime += getPrintInterval();
+			getRunning().setTitle(
+					"Progress (" + (int) ((getCurrentTime() / getTimeLimit()) * 100.0) + "%)");
+			getProgress().setValue((int) ((getCurrentTime() / getTimeLimit()) * 100.0));
+
+		}
+
+		return printTime;
 	}
 }
