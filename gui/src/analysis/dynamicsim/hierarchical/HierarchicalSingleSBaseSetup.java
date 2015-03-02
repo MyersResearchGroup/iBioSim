@@ -234,6 +234,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 				modelstate.getEventToAffectedReactionSetMap().get(eventID)
 						.addAll(modelstate.getSpeciesToAffectedReactionSetMap().get(variableID));
 			}
+
 		}
 	}
 
