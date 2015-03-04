@@ -138,6 +138,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				while (fbc.getListOfObjectives().size() > 0) {
 					fbc.removeObjective(0);
 				}
+				fbc.setActiveObjective("");
 				for (int i = 0; i<objectiveStringArray.length;i++){
 					Objective objective = fbc.createObjective();
 					int m = objectiveStringArray[i].indexOf("M");
