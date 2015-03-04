@@ -58,6 +58,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.text.parser.ParseException;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 
@@ -1726,9 +1727,7 @@ public abstract class Simulator
 				String speciesID = species.getId();
 
 				// check to see if the species is arrayed
-				if (stripAnnotation(
-						species.getAnnotationString().replace("<annotation>", "")
-								.replace("</annotation>", "").trim()).contains("array:array"))
+				if (AnnotationUtility.parseSpeciesArrayAnnotation(species)!=null)
 				{
 
 					arraysExist = true;
@@ -1741,18 +1740,12 @@ public abstract class Simulator
 					int numRowsUpper = 0;
 					int numColsUpper = 0;
 
-					String[] annotationString = stripAnnotation(
-							species.getAnnotationString().replace("<annotation>", "")
-									.replace("</annotation>", "").trim()).split("=");
-
-					numColsLower = Integer.valueOf((annotationString[1].split(" "))[0].replace(
-							"\"", ""));
-					numColsUpper = Integer.valueOf((annotationString[2].split(" "))[0].replace(
-							"\"", ""));
-					numRowsLower = Integer.valueOf((annotationString[3].split(" "))[0].replace(
-							"\"", ""));
-					numRowsUpper = Integer.valueOf((annotationString[4].split(" "))[0].replace(
-							"\"", ""));
+					int[] values = AnnotationUtility.parseSpeciesArrayAnnotation(species);
+					
+					numRowsLower = values[0];
+					numColsLower = values[1];
+					numRowsUpper = values[2];
+					numColsUpper = values[3];
 
 					SpeciesDimensions speciesDimensions = new SpeciesDimensions(numRowsLower,
 							numRowsUpper, numColsLower, numColsUpper);
@@ -1971,24 +1964,8 @@ public abstract class Simulator
 
 					arraysExist = true;
 
-					String annotationString = stripAnnotation(
-							reaction.getAnnotationString().replace("<annotation>", "")
-									.replace("</annotation>", "").trim())
-							.replace("<annotation>", "").replace("</annotation>", "")
-							.replace("\"", "");
-					String[] splitAnnotation = annotationString.split("array:");
-
-					if (splitAnnotation.length <= 1)
-					{
-						continue;
-					}
-
-					splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2]
-							.split("xmlns:")[0];
-
-					for (int i = 2; i < splitAnnotation.length; ++i)
-					{
-
+					String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(reaction);	
+					for (int i = 1; i < splitAnnotation.length; i++) {
 						String compartmentID = splitAnnotation[i].split("=")[0];
 						String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0]
 								.replace("(", "");
@@ -4830,9 +4807,7 @@ public abstract class Simulator
 
 				// check to see if the species is arrayed
 
-				if (stripAnnotation(
-						species.getAnnotationString().replace("<annotation>", "")
-								.replace("</annotation>", "").trim()).contains("array:array"))
+				if (AnnotationUtility.parseSpeciesArrayAnnotation(species)!=null)
 				{
 
 					arraysExist = true;
@@ -4845,18 +4820,15 @@ public abstract class Simulator
 					int numRowsUpper = 0;
 					int numColsUpper = 0;
 
-					String[] annotationString = stripAnnotation(
-							species.getAnnotationString().replace("<annotation>", "")
-									.replace("</annotation>", "").trim()).split("=");
-
-					numColsLower = Integer.valueOf((annotationString[1].split(" "))[0].replace(
-							"\"", ""));
-					numColsUpper = Integer.valueOf((annotationString[2].split(" "))[0].replace(
-							"\"", ""));
-					numRowsLower = Integer.valueOf((annotationString[3].split(" "))[0].replace(
-							"\"", ""));
-					numRowsUpper = Integer.valueOf((annotationString[4].split(" "))[0].replace(
-							"\"", ""));
+					//String[] annotationString = stripAnnotation(
+					//		species.getAnnotationString().replace("<annotation>", "")
+					//				.replace("</annotation>", "").trim()).split("=");
+					int[] values = AnnotationUtility.parseSpeciesArrayAnnotation(species);
+					
+					numRowsLower = values[0];
+					numColsLower = values[1];
+					numRowsUpper = values[2];
+					numColsUpper = values[3];
 
 					SpeciesDimensions speciesDimensions = new SpeciesDimensions(numRowsLower,
 							numRowsUpper, numColsLower, numColsUpper);
@@ -5085,25 +5057,9 @@ public abstract class Simulator
 				{
 
 					arraysExist = true;
-
-					String annotationString = stripAnnotation(
-							reaction.getAnnotationString().replace("<annotation>", "")
-									.replace("</annotation>", "").trim())
-							.replace("<annotation>", "").replace("</annotation>", "")
-							.replace("\"", "");
-					String[] splitAnnotation = annotationString.split("array:");
-
-					if (splitAnnotation.length <= 1)
-					{
-						continue;
-					}
-
-					splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2]
-							.split("xmlns:")[0];
-
-					for (int i = 2; i < splitAnnotation.length; ++i)
-					{
-
+					
+					String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(reaction);	
+					for (int i = 1; i < splitAnnotation.length; i++) {
 						String compartmentID = splitAnnotation[i].split("=")[0];
 						String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0]
 								.replace("(", "");

@@ -10,6 +10,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Species;
 import org.sbml.jsbml.xml.XMLAttributes;
 import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.jsbml.xml.XMLToken;
@@ -460,6 +461,31 @@ public class AnnotationUtility {
 		return null;
 	}
 	
+	public static int[] parseSpeciesArrayAnnotation(Species species) {
+		String annotation;
+		try {
+			annotation = species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern arrayPattern = Pattern.compile(SPECIES_ARRAY_ANNOTATION);
+			Matcher arrayMatcher = arrayPattern.matcher(annotation);
+			if (arrayMatcher.find()) {
+				if (arrayMatcher.group(1)!=null && arrayMatcher.group(2)!=null &&
+						arrayMatcher.group(3)!=null && arrayMatcher.group(4)!=null) {
+					int[] result = new int[4];
+					result[0] = Integer.parseInt(arrayMatcher.group(1));
+					result[1] = Integer.parseInt(arrayMatcher.group(2));
+					result[2] = Integer.parseInt(arrayMatcher.group(3));
+					result[3] = Integer.parseInt(arrayMatcher.group(4));
+					return result;
+				}
+			}
+		}
+		catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static String[] parseArrayAnnotation(org.sbml.libsbml.SBase sbmlObject) {
 		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
@@ -538,6 +564,10 @@ public class AnnotationUtility {
 	private static final String GRID_ANNOTATION =
 			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\((\\d),(\\d+)\\)\"/>" + "|" +
 					"<ibiosim:ibiosim ibiosim:grid=\"\\((\\d+),(\\d+)\\)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
+	
+	private static final String SPECIES_ARRAY_ANNOTATION =
+			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" array:rowsLowerLimit=\"(\\d+)\" array:colsLowerLimit=\"(\\d+)\" array:rowsUpperLimit=\"(\\d+)\" array:colsUpperLimit=\"(\\d+)\"/>" 
+	+ "|" +	"<array:array array:rowsLowerLimit=\"(\\d+)\" array:colsLowerLimit=\"(\\d+)\" array:rowsUpperLimit=\"(\\d+)\" array:colsUpperLimit=\"(\\d+)\" xmlns:array=\"http://www\\.fakeuri\\.com\"/>"; 
 	
 	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
 	

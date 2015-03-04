@@ -1290,7 +1290,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					else {
-						bioModel.removeReaction(reactionID);//removeTheReaction(bioModel, reactionID);
+						bioModel.getSBMLDocument().getModel().removeReaction(reactionID);
+						//bioModel.removeReaction(reactionID);//removeTheReaction(bioModel, reactionID);
 					}
 				}
 				modelEditor.setDirty(true);
@@ -1304,7 +1305,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (value == JOptionPane.NO_OPTION) {
 			if (option.equals("OK")) {
 				String reactId = reactionId;
-				bioModel.removeReaction(reactId); //removeTheReaction(bioModel, reactId);
+				bioModel.getSBMLDocument().getModel().removeReaction(reactId);
+				//bioModel.removeReaction(reactId); 
 				bioModel.getSBMLDocument().getModel().addReaction(copyReact);
 			}
 			return;
