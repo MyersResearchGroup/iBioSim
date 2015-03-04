@@ -1153,18 +1153,16 @@ public class BioModel {
 			sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
 		}
 		Layout layout;
-		if (sbmlLayout.getListOfLayouts().get("iBioSim")==null) {
-			if (sbmlLayout.getLayoutCount()>0) {
-				layout = sbmlLayout.getLayout(0);
-			} else {
-				layout = sbmlLayout.createLayout();
-				layout.createDimensions(0, 0, 0);
-			}
-			layout.setId("iBioSim");
-			convertLayout(layout);
+		if (sbmlLayout.getLayoutCount()>0) {
+			layout = sbmlLayout.getLayout(0);
+			if (!layout.getId().endsWith("iBioSim")) {
+				convertLayout(layout);
+			} 
 		} else {
-			layout = sbmlLayout.getListOfLayouts().get("iBioSim");
+			layout = sbmlLayout.createLayout();
+			layout.createDimensions(0, 0, 0);
 		}
+		layout.setId("iBioSim");
 		return layout;
 	}
 		
@@ -3813,7 +3811,7 @@ public class BioModel {
 			compartmentPanel.refreshCompartmentPanel(this);
 		}
 	}
-
+	
 	public void removeReaction(String id) {
 		if (SBMLutilities.variableInUse(sbml, id, false, true, true)) return;
 //		Reaction tempReaction = sbml.getModel().getReaction(id);
@@ -5294,8 +5292,24 @@ public class BioModel {
 	public void removeGridSpecies(String componentModelRef) {
 		
 		//find the sbml file for the component
+		/*
+		System.out.println("Start:"+componentModelRef);
+		if (this.getSBMLComp()==null) {
+			System.out.println("1");
+		}
+		if (this.getSBMLComp().getListOfExternalModelDefinitions()==null) {
+			System.out.println("2");
+		}
+		if (this.getSBMLComp().getListOfExternalModelDefinitions().get(componentModelRef)==null) {
+			System.out.println("3");
+		}
+		if (this.getSBMLComp().getListOfExternalModelDefinitions().get(componentModelRef).getSource()==null) {
+			System.out.println("4");
+		}
+		*/
 		String externalModelID = 
 			this.getSBMLComp().getListOfExternalModelDefinitions().get(componentModelRef).getSource().replace("file://","").replace("file:","");
+		//System.out.println("End:"+externalModelID);
 		
 		SBMLDocument document = null;
 		
@@ -6686,6 +6700,7 @@ public class BioModel {
 	}
 
 	private void loadSBMLFile(String sbmlFile) {
+		//System.out.println("File:"+sbmlFile);
 		if (!sbmlFile.equals("")) {
 			if (new File(path + separator + sbmlFile).exists()) {
 				sbml = SBMLutilities.readSBML(path + separator + sbmlFile);

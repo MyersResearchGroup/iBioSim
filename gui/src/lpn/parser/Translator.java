@@ -1116,16 +1116,19 @@ public class Translator {
 			// When translating a fail transition into an event, that event should assign to a special "fail" variable a value of 1.  
 			// This "fail" variable should have initial value of 0.  The SBML model should have a constraint "eq(fail,0)".
 			if (lhpn.getTransition(t).isFail()){
-				Parameter failVar = m.createParameter();
-				failVar.setConstant(false);
-				failVar.setId(GlobalConstants.FAIL);
-				failVar.setValue(0);
-				EventAssignment assign6 = e.createEventAssignment();
-				assign6.setVariable(failVar.getId());
-				assign6.setMath(SBMLutilities.myParseFormula("1"));
-				Constraint failVarConstraint = m.createConstraint();
-				SBMLutilities.setMetaId(failVarConstraint, GlobalConstants.FAIL_TRANSITION);
-				failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+				Parameter failVar = m.getParameter(GlobalConstants.FAIL);
+				if (failVar==null) {
+					failVar = m.createParameter();
+					failVar.setConstant(false);
+					failVar.setId(GlobalConstants.FAIL);
+					failVar.setValue(0);
+					EventAssignment assign6 = e.createEventAssignment();
+					assign6.setVariable(failVar.getId());
+					assign6.setMath(SBMLutilities.myParseFormula("1"));
+					Constraint failVarConstraint = m.createConstraint();
+					SBMLutilities.setMetaId(failVarConstraint, GlobalConstants.FAIL_TRANSITION);
+					failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+				}
 			}
 		}
 		// Property parsing is dealt with in PropertyPanel.java
