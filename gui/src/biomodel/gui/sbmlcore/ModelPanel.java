@@ -310,10 +310,12 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		} else if (e.getActionCommand().equals("editDescriptors")) {
 //			if (bioModel.getSBOLDescriptors() != null)
 //				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(sbolField.getSBOLURIs().get(0))
+			dirty.setValue(true);
 		}
 		else if (e.getActionCommand().equals("fluxObjective")){
 			FBAObjective fbaObjective = new FBAObjective(bioModel);
 			fbaObjective.openGui();
+			dirty.setValue(true);
 		}
 		else if (e.getActionCommand().equals("comboBoxChanged")){
 			if (conversionFactor.getSelectedItem().equals("( none )")) {
@@ -327,6 +329,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					conviIndex.setEnabled(false);
 				}
 			}
+			dirty.setValue(true);
 		}
 	}
 

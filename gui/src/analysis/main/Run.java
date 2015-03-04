@@ -1699,6 +1699,24 @@ public class Run implements ActionListener
 								"All reactions must have flux bounds for FBA.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
+					else if (exitValue == -11)
+					{
+						JOptionPane.showMessageDialog(Gui.frame,
+								"No flux objectives.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}				
+					else if (exitValue == -12)
+					{
+						JOptionPane.showMessageDialog(Gui.frame,
+								"No active flux objective.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}	
+					else if (exitValue == -13)
+					{
+						JOptionPane.showMessageDialog(Gui.frame,
+								"Unknown flux balance analysis error.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}		
 				}
 				else if (sbml.isSelected())
 				{
