@@ -79,6 +79,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		JPanel modelEditorPanel;
 		modelEditorPanel = new JPanel(new GridLayout(13, 2));
 		Model model = bioModel.getSBMLDocument().getModel();
+		String annotation = AnnotationUtility.parseDynamicAnnotation(model);
 		modelName = new JTextField(model.getName(), 50);
 		modelID = new JTextField(model.getId(), 16);
 		modelName = new JTextField(model.getName(), 40);
@@ -114,8 +115,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			conversionFactor.addActionListener(this);
 			conversionFactor.addItem("( none )");
 
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
-				UnitDefinition unit = bioModel.getSBMLDocument().getModel().getUnitDefinition(i);
+			for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
+				UnitDefinition unit = model.getUnitDefinition(i);
 				if ((unit.getUnitCount() == 1)
 						&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem() || unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
 						&& (unit.getUnit(0).getExponent() == 1)) {
@@ -160,20 +161,20 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			sbolField.setSBOLURIs(sbolURIs);
 			sbolField.setSBOLStrand(sbolStrand);
 			
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-				Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			for (int i = 0; i < model.getParameterCount(); i++) {
+				Parameter param = model.getParameter(i);
 				if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
 					conversionFactor.addItem(param.getId());
 				}
 			}
 			if (option.equals("OK")) {
-				substanceUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getSubstanceUnits());
-				timeUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getTimeUnits());
-				volumeUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getVolumeUnits());
-				areaUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getAreaUnits());
-				lengthUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getLengthUnits());
-				extentUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getExtentUnits());
-				conversionFactor.setSelectedItem(bioModel.getSBMLDocument().getModel().getConversionFactor());
+				substanceUnits.setSelectedItem(model.getSubstanceUnits());
+				timeUnits.setSelectedItem(model.getTimeUnits());
+				volumeUnits.setSelectedItem(model.getVolumeUnits());
+				areaUnits.setSelectedItem(model.getAreaUnits());
+				lengthUnits.setSelectedItem(model.getLengthUnits());
+				extentUnits.setSelectedItem(model.getExtentUnits());
+				conversionFactor.setSelectedItem(model.getConversionFactor());
 				
 				String freshIndex = "";
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
@@ -197,12 +198,23 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			framework.addItem("Spatial discrete");
 			framework.addItem("Boolean logical");
 			framework.addItem("Flux balance");
-			if (bioModel.getSBMLDocument().getModel().isSetSBOTerm()) {
-				int frameworkSBO = bioModel.getSBMLDocument().getModel().getSBOTerm();
+			if (model.isSetSBOTerm()) {
+				int frameworkSBO = model.getSBOTerm();
 				framework.setSelectedItem("( unspecified )");
 				if (frameworkSBO == GlobalConstants.SBO_NONSPATIAL_CONTINUOUS) {
 					framework.setSelectedItem("Non-spatial continuous");
-				}
+				} else if (frameworkSBO == GlobalConstants.SBO_SPATIAL_CONTINUOUS) {
+					framework.setSelectedItem("Spatial continuous");
+				} else if (frameworkSBO == GlobalConstants.SBO_NONSPATIAL_DISCRETE) {
+					framework.setSelectedItem("Non-spatial discrete");
+				} else if (frameworkSBO == GlobalConstants.SBO_SPATIAL_DISCRETE) {
+					framework.setSelectedItem("Spatial discrete");
+				} else if (frameworkSBO == GlobalConstants.SBO_BOOLEAN_LOGICAL) {
+					framework.setSelectedItem("Boolean logical");
+				} 
+			}
+			if (annotation!=null && annotation.equals("fba")) {
+				framework.setSelectedItem("Flux balance");
 			}
 			
 			modelEditorPanel.add(substanceUnitsLabel);
@@ -257,48 +269,48 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			}
 			if (!error) {
 				if (substanceUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetSubstanceUnits();
+					model.unsetSubstanceUnits();
 				}
 				else {
-					bioModel.getSBMLDocument().getModel().setSubstanceUnits((String) substanceUnits.getSelectedItem());
+					model.setSubstanceUnits((String) substanceUnits.getSelectedItem());
 				}
 				if (timeUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetTimeUnits();
+					model.unsetTimeUnits();
 				}
 				else {
-					bioModel.getSBMLDocument().getModel().setTimeUnits((String) timeUnits.getSelectedItem());
+					model.setTimeUnits((String) timeUnits.getSelectedItem());
 				}
 				if (volumeUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetVolumeUnits();
+					model.unsetVolumeUnits();
 				}
 				else {
-					bioModel.getSBMLDocument().getModel().setVolumeUnits((String) volumeUnits.getSelectedItem());
+					model.setVolumeUnits((String) volumeUnits.getSelectedItem());
 				}
 				if (areaUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetAreaUnits();
+					model.unsetAreaUnits();
 				}
 				else {
-					bioModel.getSBMLDocument().getModel().setAreaUnits((String) areaUnits.getSelectedItem());
+					model.setAreaUnits((String) areaUnits.getSelectedItem());
 				}
 				if (lengthUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetLengthUnits();
+					model.unsetLengthUnits();
 				}
 				else {
-					bioModel.getSBMLDocument().getModel().setLengthUnits((String) lengthUnits.getSelectedItem());
+					model.setLengthUnits((String) lengthUnits.getSelectedItem());
 				}
 				if (extentUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetExtentUnits();
+					model.unsetExtentUnits();
 				}
 				else {
-					bioModel.getSBMLDocument().getModel().setExtentUnits((String) extentUnits.getSelectedItem());
+					model.setExtentUnits((String) extentUnits.getSelectedItem());
 				}
 				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
 				if (conversionFactor.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetConversionFactor();
+					model.unsetConversionFactor();
 					sBasePlugin.unsetListOfIndices();
 				}
 				else {
-					bioModel.getSBMLDocument().getModel().setConversionFactor((String) conversionFactor.getSelectedItem());
+					model.setConversionFactor((String) conversionFactor.getSelectedItem());
 					sBasePlugin.unsetListOfIndices();
 					for(int i = 0; dex!=null && i<dex.length-1; i++){
 						Index indexRule = new Index();
@@ -309,12 +321,25 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 						sBasePlugin.addIndex(indexRule);
 					}
 				}
+				if (annotation!=null) {
+					AnnotationUtility.removeDynamicAnnotation(model);
+				}
 				if (framework.getSelectedItem().equals("Non-spatial continuous")) {
 					model.setSBOTerm(GlobalConstants.SBO_NONSPATIAL_CONTINUOUS);
+				} else if (framework.getSelectedItem().equals("Spatial continuous")) {
+					model.setSBOTerm(GlobalConstants.SBO_SPATIAL_CONTINUOUS);
+				} else if (framework.getSelectedItem().equals("Non-spatial discrete")) {
+					model.setSBOTerm(GlobalConstants.SBO_NONSPATIAL_DISCRETE);
+				} else if (framework.getSelectedItem().equals("Spatial discrete")) {
+					model.setSBOTerm(GlobalConstants.SBO_SPATIAL_DISCRETE);
+				} else if (framework.getSelectedItem().equals("Boolean logical")) {
+					model.setSBOTerm(GlobalConstants.SBO_BOOLEAN_LOGICAL);
+				} else if (framework.getSelectedItem().equals("Flux balance")) {
+					AnnotationUtility.setDynamicAnnotation(model, "fba");
 				} else {
 					model.unsetSBOTerm();
 				}
-				bioModel.getSBMLDocument().getModel().setName(modelName.getText());
+				model.setName(modelName.getText());
 				dirty.setValue(true);
 				bioModel.makeUndoPoint();
 			}
