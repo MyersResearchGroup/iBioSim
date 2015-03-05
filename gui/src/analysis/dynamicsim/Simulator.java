@@ -2232,7 +2232,7 @@ public abstract class Simulator
 								{
 									// TODO: Is this possible?
 									System.out.println("Could not find reactant");
-									return;
+									continue;
 								}
 
 								if (reactantHeadNode.getChild(1).getType().name().equals("PLUS"))
