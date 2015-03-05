@@ -16,6 +16,7 @@ import biomodel.network.GeneticNetwork;
 import biomodel.network.Influence;
 import biomodel.network.SpasticSpecies;
 import biomodel.network.SpeciesInterface;
+import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
@@ -56,6 +57,10 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues(specie);
 		if (!complexAbstraction || (!specie.isAbstractable() && !specie.isSequesterAbstractable())) {	
+			r = document.getModel().getReaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
+			if (r!=null && BioModel.isGridReaction(r)) {
+				return;
+			}
 			String compartment = checkCompartments(specie.getId());
 			r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 			r.setCompartment(compartment);
@@ -89,7 +94,11 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		*/
 		
 		loadValues(specie);
-		String compartment = checkCompartments(specie.getId());
+		r = document.getModel().getReaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
+		if (r!=null && BioModel.isGridReaction(r)) {
+			return;
+		}
+		String compartment = checkCompartments(specie.getId());			
 		r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 		r.setCompartment(compartment);
 		r.setReversible(false);
@@ -120,6 +129,10 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
+		r = document.getModel().getReaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
+		if (r!=null && BioModel.isGridReaction(r)) {
+			return;
+		}
 		String compartment = checkCompartments(specie.getId());
 		r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 		r.setCompartment(compartment);
@@ -182,6 +195,10 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		
 		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
+		r = document.getModel().getReaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
+		if (r!=null && BioModel.isGridReaction(r)) {
+			return;
+		}
 		r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 		r.setCompartment(compartment);
 		r.setReversible(false);

@@ -88,25 +88,25 @@ public class GeneticNetwork {
 	 *            a hashmap of statename to species name
 	 * @param promoters
 	 *            a hashmap of promoters
-	 * @param gcm
+	 * @param bioModel
 	 *            a gcm file containing extra information
 	 */
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species, 
 			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap, 
-			HashMap<String, Promoter> promoters, BioModel gcm) {
+			HashMap<String, Promoter> promoters, BioModel bioModel) {
 
 		this.species = species;
 		//interestingSpecies = new String[species.size()];
 		this.promoters = promoters;
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
-		this.properties = gcm;
+		this.properties = bioModel;
 		this.compartments = new HashMap<String,Properties>(); 
-		for (int i=0; i < gcm.getSBMLDocument().getModel().getCompartmentCount(); i++) {
-			compartments.put(gcm.getSBMLDocument().getModel().getCompartment(i).getId(), null);
+		for (int i=0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
+			compartments.put(bioModel.getSBMLDocument().getModel().getCompartment(i).getId(), null);
 		}
 		
-		AbstractPrintVisitor.setGCMFile(gcm);
+		AbstractPrintVisitor.setGCMFile(bioModel);
 		
 		buildComplexes();
 		buildComplexInfluences();
@@ -246,7 +246,7 @@ public class GeneticNetwork {
 				property = prop.getString();
 				Translator.generateSBMLConstraints(document, property, lpn);
 			}
-			reformatArrayContent(document, filename);
+			reformatArrayContent(properties, document, filename);
 			p.print(writer.writeSBMLToString(document));
 			p.close();
 			// TODO: temporarily removed
@@ -360,7 +360,7 @@ public class GeneticNetwork {
 	 * 
 	 * @param document
 	 */
-	private void reformatArrayContent(SBMLDocument document, String filename) {
+	public static void reformatArrayContent(BioModel bioModel, SBMLDocument document, String filename) {
 		
 		ArrayList<Reaction> membraneDiffusionReactions = new ArrayList<Reaction>();
 		
@@ -381,12 +381,12 @@ public class GeneticNetwork {
 			ArrayList<String> validSubmodels = new ArrayList<String>();
 			
 			//loop through submodels to see if they have this same membrane diffusion reaction ID
-			for (int submodelIndex = 0; submodelIndex < properties.getSBMLCompModel().getListOfSubmodels().size(); ++submodelIndex) {
+			for (int submodelIndex = 0; submodelIndex < bioModel.getSBMLCompModel().getListOfSubmodels().size(); ++submodelIndex) {
 				
 				Model submodel = null;
 				try {
-					submodel = SBMLReader.read(new File(properties.getPath() + 
-							properties.getSBMLCompModel().getListOfSubmodels().get(submodelIndex).getModelRef() + ".xml")).getModel();
+					submodel = SBMLReader.read(new File(bioModel.getPath() + 
+							bioModel.getSBMLCompModel().getListOfSubmodels().get(submodelIndex).getModelRef() + ".xml")).getModel();
 				} catch (XMLStreamException e1) {
 					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
 					return;
@@ -405,12 +405,12 @@ public class GeneticNetwork {
 			//now go through this list of valid submodels, find their locations, and add those to the reaction's annotation
 			for (String validSubmodelID : validSubmodels) {
 				
-				if (properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations") != null) {
+				if (bioModel.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations") != null) {
 				
 					validSubmodelID = validSubmodelID.replace("GRID__","");
 					
 					if (!arrayAnnotation.equals("")) arrayAnnotation += " "; 
-					String[] annotations = AnnotationUtility.parseArrayAnnotation(properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations"));
+					String[] annotations = AnnotationUtility.parseArrayAnnotation(bioModel.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations"));
 					boolean first = true;
 					for (int i = 1; i < annotations.length; i++) {
 						if (!first) {
@@ -499,8 +499,8 @@ public class GeneticNetwork {
 			if (AnnotationUtility.parseGridAnnotation(species) != null) {
 				AnnotationUtility.removeGridAnnotation(species);
 				String arrayAnnotation = "rowsLowerLimit=\"0\" colsLowerLimit=\"0\" rowsUpperLimit=\""+
-						String.valueOf(properties.getGrid().getNumRows() - 1) + "\" colsUpperLimit=\""+
-						String.valueOf(properties.getGrid().getNumCols() - 1);
+						String.valueOf(bioModel.getGrid().getNumRows() - 1) + "\" colsUpperLimit=\""+
+						String.valueOf(bioModel.getGrid().getNumCols() - 1);
 				AnnotationUtility.setArrayAnnotation(species, arrayAnnotation);		
 			}
 		}
@@ -529,8 +529,8 @@ public class GeneticNetwork {
 			
 			Model compModel = null;
 			try {
-				compModel = SBMLReader.read(new File(properties.getPath() + 
-						properties.getModelFileName(componentID))).getModel();
+				compModel = SBMLReader.read(new File(bioModel.getPath() + 
+						bioModel.getModelFileName(componentID))).getModel();
 			} catch (XMLStreamException e1) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
 				return;

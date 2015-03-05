@@ -1209,6 +1209,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				network.markAbstractable();
 				network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
 			} else {
+				GeneticNetwork.reformatArrayContent(biomodel, sbml, 
+						path + separator + simName + separator + stem + direct + separator + modelId + ".xml");
 				SBMLWriter writer = new SBMLWriter();
 				PrintStream p;
 				try {
