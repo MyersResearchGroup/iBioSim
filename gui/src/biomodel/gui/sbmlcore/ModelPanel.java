@@ -335,6 +335,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				} else if (framework.getSelectedItem().equals("Boolean logical")) {
 					model.setSBOTerm(GlobalConstants.SBO_BOOLEAN_LOGICAL);
 				} else if (framework.getSelectedItem().equals("Flux balance")) {
+					model.unsetSBOTerm();
 					AnnotationUtility.setDynamicAnnotation(model, "fba");
 				} else {
 					model.unsetSBOTerm();
