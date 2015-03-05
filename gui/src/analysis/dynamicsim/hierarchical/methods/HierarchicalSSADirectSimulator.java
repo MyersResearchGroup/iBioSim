@@ -76,13 +76,16 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		initializationTime += System.nanoTime() - initTime2;
 
-		printTime = getPrintInterval();
+		printTime = 0;
 
 		nextEventTime = handleEvents();
 
+		fireEvents();
+
+		printTime = print(printTime);
+
 		while (getCurrentTime() < getTimeLimit() && !isCancelFlag())
 		{
-			fireEvents();
 			r1 = getRandomNumberGenerator().nextDouble();
 			r2 = getRandomNumberGenerator().nextDouble();
 			totalPropensity = getTotalPropensity();
@@ -108,29 +111,30 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			if (getCurrentTime() > getTimeLimit())
 			{
 				setCurrentTime(getTimeLimit());
-
-				if (print)
-				{
-					print(printTime);
-				}
+				update(false, true, true, r2, previousTime);
+				fireEvents();
 
 				break;
 			}
 
-			if (print)
-			{
-				printTime = print(printTime);
-			}
+			// printTime = print(printTime);
 
 			if (getCurrentTime() == nextReactionTime)
 			{
-				printTime = print(printTime);
 				update(true, true, true, r2, previousTime);
+
+				printTime = print(printTime);
+			}
+			else if (getCurrentTime() == nextEventTime)
+			{
+				update(false, true, true, r2, previousTime);
+				fireEvents();
+				printTime = print(printTime);
 			}
 			else
 			{
-				printTime = print(printTime);
 				update(false, true, true, r2, previousTime);
+				printTime = print(printTime);
 			}
 
 			// updateRules();
@@ -138,14 +142,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		if (isCancelFlag() == false)
 		{
-			try
-			{
-				printToTSD(printTime);
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+			print(printTime);
 
 			try
 			{
@@ -696,8 +693,10 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 		}
 	}
 
-	private void fireEvents()
+	private boolean fireEvents()
 	{
+
+		boolean isFired = false;
 		if (getTopmodel().isNoEventsFlag() == false)
 		{
 			HashSet<String> affectedReactionSet = fireEvents(getTopmodel(), "reaction",
@@ -707,6 +706,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 				HashSet<String> affectedSpecies = updatePropensities(affectedReactionSet,
 						getTopmodel());
 				perculateDown(getTopmodel(), affectedSpecies);
+
+				isFired = true;
 			}
 		}
 
@@ -722,34 +723,40 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 							models);
 					perculateUp(models, affectedSpecies);
 
+					isFired = true;
+
 				}
 			}
 		}
+
+		return isFired;
 
 	}
 
 	private double print(double printTime)
 	{
-		while (getCurrentTime() > printTime && printTime < getTimeLimit())
+		if (print)
 		{
-
-			try
+			while (getCurrentTime() >= printTime && printTime < getTimeLimit())
 			{
-				printToTSD(printTime);
-				getBufferedTSDWriter().write(",\n");
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
 
-			printTime += getPrintInterval();
-			getRunning().setTitle(
-					"Progress (" + (int) ((getCurrentTime() / getTimeLimit()) * 100.0) + "%)");
-			getProgress().setValue((int) ((getCurrentTime() / getTimeLimit()) * 100.0));
+				try
+				{
+					printToTSD(printTime);
+					getBufferedTSDWriter().write(",\n");
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 
+				printTime += getPrintInterval();
+				getRunning().setTitle(
+						"Progress (" + (int) ((getCurrentTime() / getTimeLimit()) * 100.0) + "%)");
+				getProgress().setValue((int) ((getCurrentTime() / getTimeLimit()) * 100.0));
+
+			}
 		}
-
 		return printTime;
 	}
 }
