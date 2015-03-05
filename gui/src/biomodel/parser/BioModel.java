@@ -4690,7 +4690,7 @@ public class BioModel {
 	
 	public static Reaction getDegradationReaction(String speciesId, Model sbmlModel) {
 		String componentId = "";
-		String shortSpeciesId = "";
+		String shortSpeciesId = speciesId;
 		if (speciesId.contains("__")) {
 			componentId = speciesId.substring(0,speciesId.lastIndexOf("__")+2);
 			shortSpeciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
@@ -4768,7 +4768,7 @@ public class BioModel {
 	
 	public static Reaction getComplexReaction(String speciesId, Model sbmlModel) {
 		String componentId = "";
-		String shortSpeciesId = "";
+		String shortSpeciesId = speciesId;
 		if (speciesId.contains("__")) {
 			componentId = speciesId.substring(0,speciesId.lastIndexOf("__")+2);
 			shortSpeciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
