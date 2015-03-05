@@ -46,7 +46,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 
 	private JButton fbaoButton;
 
-	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
+	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor, framework;
 	
 	private JTextField conviIndex;
 
@@ -77,7 +77,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	 */
 	private void modelEditor(String option) {
 		JPanel modelEditorPanel;
-		modelEditorPanel = new JPanel(new GridLayout(12, 2));
+		modelEditorPanel = new JPanel(new GridLayout(13, 2));
 		Model model = bioModel.getSBMLDocument().getModel();
 		modelName = new JTextField(model.getName(), 50);
 		modelID = new JTextField(model.getId(), 16);
@@ -136,6 +136,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					lengthUnits.addItem(unit.getId());
 				}
 			}
+			
 			substanceUnits.addItem("dimensionless");
 			substanceUnits.addItem("gram");
 			substanceUnits.addItem("item");
@@ -187,6 +188,22 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			fbaoButton = new JButton("Edit Objectives");
 			fbaoButton.setActionCommand("fluxObjective");
 			fbaoButton.addActionListener(this);
+			framework = new JComboBox();
+			framework.addActionListener(this);
+			framework.addItem("( unspecified )");
+			framework.addItem("Non-spatial continuous");
+			framework.addItem("Spatial continuous");
+			framework.addItem("Non-spatial discrete");
+			framework.addItem("Spatial discrete");
+			framework.addItem("Boolean logical");
+			framework.addItem("Flux balance");
+			if (bioModel.getSBMLDocument().getModel().isSetSBOTerm()) {
+				int frameworkSBO = bioModel.getSBMLDocument().getModel().getSBOTerm();
+				framework.setSelectedItem("( unspecified )");
+				if (frameworkSBO == GlobalConstants.SBO_NONSPATIAL_CONTINUOUS) {
+					framework.setSelectedItem("Non-spatial continuous");
+				}
+			}
 			
 			modelEditorPanel.add(substanceUnitsLabel);
 			modelEditorPanel.add(substanceUnits);
@@ -206,8 +223,10 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(conviIndex);
 			modelEditorPanel.add(new JLabel("SBOL DNA Component:"));
 			modelEditorPanel.add(sbolField);
-			modelEditorPanel.add(new JLabel("Flux Objective: "));
+			modelEditorPanel.add(new JLabel("Flux Objective:"));
 			modelEditorPanel.add(fbaoButton);
+			modelEditorPanel.add(new JLabel("Framework:"));
+			modelEditorPanel.add(framework);
 		}
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Editor", JOptionPane.YES_NO_OPTION,
@@ -289,6 +308,11 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 						indexRule.setMath(indexMath);
 						sBasePlugin.addIndex(indexRule);
 					}
+				}
+				if (framework.getSelectedItem().equals("Non-spatial continuous")) {
+					model.setSBOTerm(GlobalConstants.SBO_NONSPATIAL_CONTINUOUS);
+				} else {
+					model.unsetSBOTerm();
 				}
 				bioModel.getSBMLDocument().getModel().setName(modelName.getText());
 				dirty.setValue(true);
