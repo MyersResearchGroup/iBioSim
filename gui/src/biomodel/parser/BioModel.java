@@ -4713,7 +4713,7 @@ public class BioModel {
 	
 	public static Reaction getProductionReaction(String promoterId, Model sbmlModel) {
 		String componentId = "";
-		String shortPromoterId = "";
+		String shortPromoterId = promoterId;
 		if (promoterId.contains("__")) {
 			componentId = promoterId.substring(0, promoterId.lastIndexOf("__") + 2);
 			shortPromoterId = promoterId.substring(promoterId.lastIndexOf("__") + 2);
