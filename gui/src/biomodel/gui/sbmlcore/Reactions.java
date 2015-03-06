@@ -955,7 +955,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				else {
-					error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
+					error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reacID.getText().trim());
 				}
 			}
 			if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
@@ -1253,7 +1253,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = checkKineticLawUnits(react.getKineticLaw());
 					}
 					else{
-						error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
+						error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reacID.getText().trim());
 						if (!error)	error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
 					}
 						
