@@ -479,9 +479,16 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 			}
 			if (load.containsKey("learn.valueScaling")) {
 				globalValueScaling.setText(load.getProperty("learn.valueScaling"));
-			}
+				if (globalValueScaling.getText().matches("[\\d]+\\.??[\\d]*")){
+					valScaleFactor = Double.parseDouble(globalValueScaling.getText().trim());
+				} else
+					valScaleFactor = -1.0;
 			if (load.containsKey("learn.delayScaling")) {
 				globalDelayScaling.setText(load.getProperty("learn.delayScaling"));
+				if (globalDelayScaling.getText().matches("[\\d]+\\.??[\\d]*")){
+					delayScaleFactor = Double.parseDouble(globalDelayScaling.getText().trim());
+				} else
+					delayScaleFactor = -1.0;			}
 			}
 			if (load.containsKey("learn.bins")) {
 				numBins.setSelectedItem(load.getProperty("learn.bins"));
