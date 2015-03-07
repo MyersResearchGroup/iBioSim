@@ -2278,13 +2278,15 @@ public class LearnModel { // added ItemListener SB
 							previous = i;
 							if (markFullPrev != i)
 								out.write("Some don't care input change in b/w a bin. So referencing off " + markFullPrev + " instead of " + i + "\n");
-						} else{	// There was a glitch and you returned to the same region
+						} else if (previous!=0){	// Added extra check to ignore initial 
+							// There was a glitch and you returned to the same region
 							for (int j = 0; j < reqdVarsL.size(); j++) {
 								k = reqdVarIndices.get(j);
 								rates[j][previous] = ((data.get(k).get(mark - 1) - data.get(k).get(previous)) / (data.get(0).get(mark - 1) - data.get(0).get(previous)));
 							}
-							if (mark < data.get(0).size()) //This if condition added to fix bug on sept 25 2010
+							if (mark < data.get(0).size()) { //This if condition added to fix bug on sept 25 2010
 								duration[previous] = data.get(0).get(mark)	- data.get(0).get(previous); // changed (mark - 1) to mark on may 28,2010
+							}
 						}
 					} else if ((mark - i) <  pathLengthBin)  { // account for the glitch duration //
 						out.write("Short bin at " + data.get(0).get(i) + " until " + data.get(0).get(mark) + " due to min pathLengthBin. This delay being added to " + previous + " \n");
@@ -3934,8 +3936,7 @@ public class LearnModel { // added ItemListener SB
 		Properties p = placeInfo.get(place);
 		System.out.println(place + " " + p);
 		if (p!=null && p.getProperty(name + "_rMin") != null)
-			return ((int) Math.floor(Double.parseDouble(p.getProperty(name
-					+ "_rMin"))));
+			return ((int) Math.floor(Double.parseDouble(p.getProperty(name + "_rMin"))));
 		return 0;
 // return(rMin[i]);
 	}
@@ -3943,8 +3944,7 @@ public class LearnModel { // added ItemListener SB
 	public Integer getMaxRate(String place, String name) {
 		Properties p = placeInfo.get(place);
 		if (p!=null && p.getProperty(name + "_rMax") != null)
-			return ((int) Math.floor(Double.parseDouble(p.getProperty(name
-					+ "_rMax"))));
+			return ((int) Math.floor(Double.parseDouble(p.getProperty(name + "_rMax"))));
 		return 0;
 // return(rMin[i]);
 	}

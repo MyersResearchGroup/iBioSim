@@ -97,10 +97,10 @@ public class SBOLIdentityManager {
 	public boolean containsModelURIs() {
 		if (modelURIs.size() > 0 && !(modelURIs.size() == 1 && containsPlaceHolderURI()))
 			return true;
-		JOptionPane.showMessageDialog(Gui.frame, "There is no SBOL associated with the model itself " +
-				"(to associate SBOL with the model itself, you must associate SBOL with its elements and save " +
-				"or associate SBOL directly via the model panel).",
-				"No Model SBOL", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(Gui.frame, "There is no SBOL associated with the model itself.\n" +
+				"To associate SBOL with the model itself, you must associate SBOL\n" + 
+				"with its elements and save or associate SBOL directly via the model panel.",
+				"No SBOL Associated with Model", JOptionPane.ERROR_MESSAGE);
 		return false;
 	}
 	
