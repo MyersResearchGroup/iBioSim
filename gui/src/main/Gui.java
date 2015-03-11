@@ -139,8 +139,14 @@ import org.sbml.jsbml.text.parser.IFormulaParser;
 import org.sbml.jsbml.text.parser.ParseException;
 import org.jlibsedml.*;
 import org.sbolstandard.core.SBOLDocument;
+import org.sbolstandard.core2.Module;
+import org.sbolstandard.core2.ModuleDefinition;
+import org.sbolstandard.core2.SBOLReader;
+import org.sbolstandard.core2.SBOLWriter;
 
+import sbol.assembly.ModelGenerator;
 import sbol.browser.SBOLBrowser;
+import sbol.util.SBOLTestFactory;
 import sbol.util.SBOLUtility;
 
 import java.net.*;
@@ -1866,6 +1872,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getActionCommand().equals("browseSbol")) {
 			openSBOL();
+		}
+		else if (e.getActionCommand().equals("sbolToSBML")) {
+			generateSBMLFromSBOL();
 		}
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("modelEditor")) {
@@ -5504,6 +5513,27 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 	
+	private void generateSBMLFromSBOL() {
+		try {
+			String filePath = tree.getFile();
+			String projectDirectory = filePath.substring(0, filePath.lastIndexOf(File.separator));
+			org.sbolstandard.core2.SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(filePath));
+			for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions()) {
+				BioModel targetModel = new BioModel(projectDirectory);
+				if (!targetModel.load(projectDirectory + File.separator + ModelGenerator.getDisplayID(moduleDef) + ".xml")) {
+					List<BioModel> models = ModelGenerator.generateModel(projectDirectory, moduleDef, sbolDoc);
+					for (BioModel model : models) {
+						model.save(projectDirectory + File.separator + model.getSBMLDocument().getModel().getId()
+								+ ".xml");
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public HashSet<String> getFilePaths(String fileExtension) {
 		HashSet<String> filePaths = new HashSet<String>();
 		TreeModel tree = getFileTree().tree.getModel();
@@ -6451,10 +6481,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				delete.addActionListener(this);
 				delete.addMouseListener(this);
 				delete.setActionCommand("delete");
+				JMenuItem generate = new JMenuItem("Generate SBML");
+				generate.addActionListener(this);
+				generate.addMouseListener(this);
+				generate.setActionCommand("sbolToSBML");
 				popup.add(view);
 				popup.add(copy);
 				popup.add(rename);
 				popup.add(delete);
+				popup.add(generate);
 			}
 			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");

@@ -2,6 +2,8 @@ package biomodel.annotation;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +30,7 @@ public class AnnotationUtility {
 			removeSBOLAnnotation(sbmlObject);
 		if (SBMLutilities.appendAnnotation(sbmlObject, sbolAnnot.toXMLString()) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject));
+					+ SBMLutilities.getId(sbmlObject) + " with SBOL.");
 	}
 	
 	public static void removeSBOLAnnotation(SBase sbmlObject) {
@@ -52,7 +54,15 @@ public class AnnotationUtility {
 
 	}
 	
-	public static String parseSBOLAnnotation(SBase sbmlObject, List<URI> sbolURIs) {
+	public static String parseSBOLAnnotation(SBase sbmlObject, List<URI> dnaCompURIs) {
+		return parseSBOLAnnotation(sbmlObject, dnaCompURIs, new HashMap<String, List<URI>>());
+	}
+	
+	public static String parseSBOLAnnotation(SBase sbmlObject, HashMap<String, List<URI>> sbolElementURIs) {
+		return parseSBOLAnnotation(sbmlObject, new LinkedList<URI>(), sbolElementURIs);
+	}
+	
+	public static String parseSBOLAnnotation(SBase sbmlObject, List<URI> dnaCompURIs, HashMap<String, List<URI>> sbolElementURIs) {
 		String annotation;
 		try {
 			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
@@ -66,7 +76,25 @@ public class AnnotationUtility {
 					Matcher uriMatcher = uriPattern.matcher(componentMatcher.group(0));
 					while (uriMatcher.find())
 						try {
-							sbolURIs.add(new URI(uriMatcher.group(1)));
+							dnaCompURIs.add(new URI(uriMatcher.group(1)));
+						} catch (URISyntaxException e) {
+							e.printStackTrace();
+						}
+				}
+				Pattern sbolElementPattern = Pattern.compile(SBOL_ELEMENTS);
+				Matcher sbolElementMatcher = sbolElementPattern.matcher(sbolMatcher.group(0));
+				while (sbolElementMatcher.find()) {
+					String className = sbolElementMatcher.group(1);
+					className = className.substring(0, className.length() - 1);
+					if (!sbolElementURIs.containsKey(className)) {
+						sbolElementURIs.put(className, new LinkedList<URI>());
+					}
+					Pattern uriPattern = Pattern.compile(URI_LIST_ELEMENT);
+//					String blah = sbolElementMatcher.group(0);
+					Matcher uriMatcher = uriPattern.matcher(sbolElementMatcher.group(0));
+					while (uriMatcher.find())
+						try {
+							sbolElementURIs.get(className).add(new URI(uriMatcher.group(1)));
 						} catch (URISyntaxException e) {
 							e.printStackTrace();
 						}
@@ -81,7 +109,6 @@ public class AnnotationUtility {
 			e1.printStackTrace();
 		}
 		return null;
-	
 	}
 
 	public static void setSweepAnnotation(SBase sbmlObject, String sweep) {
@@ -543,20 +570,25 @@ public class AnnotationUtility {
 	
 	private static final String STRAND_ELEMENT = "<mts:Strand>(\\" + GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND + "|" + GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND + ")</mts:Strand>";
 	
-	private static final String SBOL_ELEMENT = 	
-			"(?:" + DNA_COMPONENTS_ELEMENT + "\\s*" + 
-					STRAND_ELEMENT + "|" + 
-					STRAND_ELEMENT + "\\s*" + 
-					DNA_COMPONENTS_ELEMENT + "|" + 
-					DNA_COMPONENTS_ELEMENT + "|" +
-					STRAND_ELEMENT + ")";
+	private static final String SBOL_ELEMENTS = 
+			"<mts:(\\w+)>\\s*" +
+				"<rdf:Bag>\\s*" +
+					"(?:" + URI_LIST_ELEMENT + "\\s*)+" +
+				"</rdf:Bag>\\s*" + 
+			"</mts:\\w+>";
+	
+	private static final String SBOL_CONTENT = 
+		"(?:" + 
+			"(?:" + SBOL_ELEMENTS + "\\s*" + ")*" + "(?:" + DNA_COMPONENTS_ELEMENT + "\\s*" + ")?" + "(?:" + SBOL_ELEMENTS + "\\s*" + ")*" + "(?:" + STRAND_ELEMENT + "\\s*" + ")?" + "(?:" + SBOL_ELEMENTS + "\\s*" + ")*" + 
+			"|" + "(?:" + SBOL_ELEMENTS + "\\s*" + ")*" + "(?:" + STRAND_ELEMENT + "\\s*" + ")?" + "(?:" + SBOL_ELEMENTS + "\\s*" + ")*" + "(?:" + DNA_COMPONENTS_ELEMENT + "\\s*" + ")?" + "(?:" + SBOL_ELEMENTS + "\\s*" + ")*" +
+		")";
 	
 	private static final String SBOL_ANNOTATION = 
 		"<ModelToSBOL xmlns=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\">\\s*" +
 			"(?:<rdf:RDF xmlns:rdf=\"http://www\\.w3\\.org/1999/02/22-rdf-syntax-ns#\" xmlns:mts=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\">|" +
 			"<rdf:RDF xmlns:mts=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\" xmlns:rdf=\"http://www\\.w3\\.org/1999/02/22-rdf-syntax-ns#\">)\\s*" +
 				"<rdf:Description rdf:about=\"#" + XML_NAME + "\">\\s*" +
-					SBOL_ELEMENT + "\\s*" +
+					SBOL_CONTENT + "\\s*" +
 				"</rdf:Description>\\s*" +
 			"</rdf:RDF>\\s*" +
 		"</ModelToSBOL>";
