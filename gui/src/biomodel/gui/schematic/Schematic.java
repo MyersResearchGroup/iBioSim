@@ -1833,7 +1833,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectComponentToSpecies(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This module has no speices output ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This module has no species output ports.");
 						graph.buildGraph();
 						return;
 					}

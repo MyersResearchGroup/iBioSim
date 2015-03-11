@@ -46,6 +46,10 @@ public class AnnotationElement {
 		return children;
 	}
 	
+	public AnnotationElement getChild(int index) {
+		return children.get(index);
+	}
+	
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
@@ -72,6 +76,10 @@ public class AnnotationElement {
 	
 	public void addChild(AnnotationElement child) {
 		children.add(child);
+	}
+	
+	public void addChild(int index, AnnotationElement child) {
+		children.add(index, child);
 	}
 	
 	public void setChildren(LinkedList<AnnotationElement> children) {

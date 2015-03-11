@@ -78,6 +78,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.ext.comp.SBaseRef;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.layout.SpeciesGlyph;
@@ -1950,7 +1951,6 @@ public class BioModel {
 		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
 	}
 	
-	
 	public Reaction addProductToProductionReaction(String promoterId,String productId,String npStr) {
 		Reaction r = getProductionReaction(promoterId);
 		if (r.getProductForSpecies(productId)==null) {
@@ -1985,6 +1985,11 @@ public class BioModel {
 	public Reaction addActivatorToProductionReaction(String promoterId,String activatorId,String productId,String npStr,
 			String ncStr,String KaStr) {
 		Reaction r = getProductionReaction(promoterId);
+		return addActivatorToProductionReaction(promoterId, activatorId, productId, r, npStr, ncStr, KaStr);
+	}
+	
+	public Reaction addActivatorToProductionReaction(String promoterId, String activatorId, String productId, 
+			Reaction r, String npStr, String ncStr, String KaStr) {
 		ModifierSpeciesReference modifier = r.getModifierForSpecies(activatorId);
 		if (!activatorId.equals("none") && modifier==null) {
 			modifier = r.createModifier();
@@ -2030,8 +2035,8 @@ public class BioModel {
 					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
 				}
 			}
-			r.removeProduct(promoterId+"_mRNA");
-			sbml.getModel().removeSpecies(promoterId+"_mRNA");
+			r.removeProduct(promoterId + "_mRNA");
+			sbml.getModel().removeSpecies(promoterId + "_mRNA");
 		}
 		addProductionParameters(r,activatorId,ncStr,KaStr,null,"a");
 		return r;
@@ -2040,6 +2045,11 @@ public class BioModel {
 	public Reaction addRepressorToProductionReaction(String promoterId,String repressorId,String productId,String npStr,
 			String ncStr,String KrStr) {
 		Reaction r = getProductionReaction(promoterId);
+		return addRepressorToProductionReaction(promoterId, repressorId, productId, r, npStr, ncStr, KrStr);
+	}
+	
+	public Reaction addRepressorToProductionReaction(String promoterId, String repressorId, String productId, 
+			Reaction r, String npStr, String ncStr, String KrStr) {
 		ModifierSpeciesReference modifier = r.getModifierForSpecies(repressorId);
 		if (!repressorId.equals("none") && modifier==null) {
 			modifier = r.createModifier();
@@ -2073,8 +2083,8 @@ public class BioModel {
 				product.setStoichiometry(np);
 			}
 			product.setConstant(true);
-			r.removeProduct(promoterId+"_mRNA");
-			sbml.getModel().removeSpecies(promoterId+"_mRNA");
+			r.removeProduct(promoterId + "_mRNA");
+			sbml.getModel().removeSpecies(promoterId + "_mRNA");
 		}
 		addProductionParameters(r,repressorId,ncStr,null,KrStr,"r");
 		return r;
@@ -2101,10 +2111,8 @@ public class BioModel {
 		}
 		react.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(react)));
 	}
-
-	public Reaction addReactantToComplexReaction(String reactantId,String productId,String KcStr,String CoopStr) {
-		boolean onPort = (getPortByIdRef(productId)!=null);
-		Reaction r = createComplexReaction(productId,KcStr,onPort);
+	
+	public Reaction addReactantToComplexReaction(String reactantId,String productId,String KcStr,String CoopStr, Reaction r) {
 		SpeciesReference reactant = r.getReactantForSpecies(reactantId);
 		if (reactant==null) {
 			reactant = r.createReactant();
@@ -2125,6 +2133,12 @@ public class BioModel {
 		}			
 		updateComplexCooperativity(reactantId, r, CoopStr, sbml.getModel());
 		return r;
+	}
+
+	public Reaction addReactantToComplexReaction(String reactantId,String productId,String KcStr,String CoopStr) {
+		boolean onPort = (getPortByIdRef(productId)!=null);
+		Reaction r = createComplexReaction(productId,KcStr,onPort);
+		return addReactantToComplexReaction(reactantId, productId, KcStr, CoopStr, r);
 	}
 	
 	public static void updateDiffusionParameters(Reaction reaction,String kmdiffStr) {
@@ -2417,11 +2431,11 @@ public class BioModel {
 	
 	public Reaction createProductionReaction(String promoterId, String ka, String np, String ko,
 			String kb, String bigKo, String bigKao, boolean onPort, String[] dimensions) {
-		return createProductionReaction(promoterId, ka, np, ko, kb, bigKo, bigKao, onPort, null, dimensions);
+		return createProductionReaction(promoterId, null, ka, np, ko, kb, bigKo, bigKao, onPort, dimensions);
 	}
 
-	public Reaction createProductionReaction(String promoterId, String ka, String np, String ko,
-			String kb, String KoStr, String KaoStr, boolean onPort, String reactionId, String[] dimensions) {
+	public Reaction createProductionReaction(String promoterId, String reactionId, String ka, String np, String ko,
+			String kb, String KoStr, String KaoStr, boolean onPort, String[] dimensions) {
 		Reaction r = getProductionReaction(promoterId);
 		KineticLaw k = null;
 		if (r == null) {
@@ -2438,7 +2452,7 @@ public class BioModel {
 			modifier.setSpecies(promoterId);
 			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
 			Species mRNA = sbml.getModel().createSpecies();
-			mRNA.setId(promoterId+"_mRNA");
+			mRNA.setId(promoterId + "_mRNA");
 			mRNA.setCompartment(r.getCompartment());
 			mRNA.setInitialAmount(0.0);
 			mRNA.setBoundaryCondition(false);
@@ -3134,12 +3148,12 @@ public class BioModel {
 		return buffer;
 	}
 	
-	public void load(String filename) {
+	public boolean load(String filename) {
 		//gcm2sbml.load(filename);
 		this.filename = filename;
 		String[] splitPath = filename.split(separator);
 		sbmlFile = splitPath[splitPath.length-1].replace(".gcm",".xml");
-		loadSBMLFile(sbmlFile);
+		return loadSBMLFile(sbmlFile);
 	}
 	
 //	public void correctPromoterToSBOLAnnotations() {
@@ -3409,15 +3423,14 @@ public class BioModel {
 			}
 		}			
 	}
-
-	public void addProductToReaction(String productId,String reactionId) {
-		Reaction r = sbml.getModel().getReaction(reactionId);
-		SpeciesReference s = r.createProduct();
-		s.setSpecies(productId);
+	
+	public void addProductToReaction(String productID, Reaction rxn) {
+		SpeciesReference s = rxn.createProduct();
+		s.setSpecies(productID);
 		s.setStoichiometry(1.0);
 		s.setConstant(true);
-		if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(productId))) {
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
+		if (SBMLutilities.dimensionsMatch(rxn,sbml.getModel().getSpecies(productID))) {
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(rxn);
 			ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(s);
 			sBasePluginProduct.unsetListOfIndices();
 			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
@@ -3427,7 +3440,12 @@ public class BioModel {
 				index.setArrayDimension(i);
 				index.setMath(SBMLutilities.myParseFormula(dim.getId()));
 			}
-		}			
+		}	
+	}
+
+	public void addProductToReaction(String productID, String rxnID) {
+		Reaction rxn = sbml.getModel().getReaction(rxnID);
+		addProductToReaction(productID, rxn);
 	}
 
 	public void addModifierToReaction(String modifierId,String reactionId) {
@@ -6120,18 +6138,21 @@ public class BioModel {
 	}
 	
 	public String createPromoter(String promoterId, float x, float y, boolean isExplicit) {
-		return createPromoter(promoterId, x, y, isExplicit, null);
+		return createPromoter(promoterId, x, y, isExplicit, true, null);
 	}
 	
 	public String createPromoter(String promoterId, float x, float y, boolean isExplicit, 
-			String reactionId) {
+			boolean createProduction, String reactionId) {
 		createProductionDefaultParameters();
 		String compartment;
 		compartment = getCompartmentByLocation(x,y,GlobalConstants.DEFAULT_SPECIES_WIDTH,GlobalConstants.DEFAULT_SPECIES_HEIGHT);
 		if (compartment.equals("")) {
-			Utility.createErrorMessage("Compartement Required", "Promoter must be placed within a compartment.");
-			return "";
-		}
+			if (sbml.getModel().getCompartmentCount()==0) {
+				Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
+				return "";
+			}
+			compartment = sbml.getModel().getCompartment(0).getId();
+		} 
 		Species promoter = sbml.getModel().createSpecies();
 		// Set default species ID
 		if (promoterId == null) {
@@ -6152,7 +6173,8 @@ public class BioModel {
 		promoter.setBoundaryCondition(false);
 		promoter.setConstant(false);
 		promoter.setHasOnlySubstanceUnits(true);
-		createProductionReaction(promoterId,null,null,null,null,null,null,false,reactionId,null);
+		if (createProduction)
+			createProductionReaction(promoterId, reactionId, null, null, null, null, null, null, false, null);
 		if (speciesPanel!=null)
 			speciesPanel.refreshSpeciesPanel(this);
 		if (isExplicit) {
@@ -6699,8 +6721,8 @@ public class BioModel {
 		}
 	}
 
-	private void loadSBMLFile(String sbmlFile) {
-		//System.out.println("File:"+sbmlFile);
+	private boolean loadSBMLFile(String sbmlFile) {
+		boolean successful = true;
 		if (!sbmlFile.equals("")) {
 			if (new File(path + separator + sbmlFile).exists()) {
 				sbml = SBMLutilities.readSBML(path + separator + sbmlFile);
@@ -6709,6 +6731,7 @@ public class BioModel {
 				createFBCPlugin();
 			} else {
 				createSBMLDocument(sbmlFile.replace(".xml",""),false,false);
+				successful = false;
 			}
 		} 
 		loadDefaultParameterMap();
@@ -6725,6 +6748,7 @@ public class BioModel {
 				updateGridSpecies(sbml.getModel().getParameter(i).getId().replace("__locations",""));
 			}
 		}
+		return successful;
 	}
 
 	private void loadSBMLFromBuffer(StringBuffer buffer) {	
@@ -7488,6 +7512,18 @@ public class BioModel {
 			for (int j = 0; j < r.getKineticLaw().getLocalParameterCount(); j++) {
 				LocalParameter l = r.getKineticLaw().getLocalParameter(j);
 				if (l.isSetMetaId()) SBMLutilities.setMetaId(l, subModelId + "___" + l.getMetaId());
+			}
+			for (int j = 0; j < r.getProductCount(); j++) {
+				SimpleSpeciesReference product  = r.getProduct(j);
+				if (product.isSetMetaId()) SBMLutilities.setMetaId(product, subModelId + "___" + product.getMetaId());
+			}
+			for (int j = 0; j < r.getReactantCount(); j++) {
+				SimpleSpeciesReference reactant  = r.getReactant(j);
+				if (reactant.isSetMetaId()) SBMLutilities.setMetaId(reactant, subModelId + "___" + reactant.getMetaId());
+			}
+			for (int j = 0; j < r.getModifierCount(); j++) {
+				SimpleSpeciesReference modifier  = r.getModifier(j);
+				if (modifier.isSetMetaId()) SBMLutilities.setMetaId(modifier, subModelId + "___" + modifier.getMetaId());
 			}
 		}
 		for (int i = 0; i < subModel.getReactionCount(); i++) {
