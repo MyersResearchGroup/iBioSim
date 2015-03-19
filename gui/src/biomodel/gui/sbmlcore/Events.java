@@ -386,10 +386,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
 								2, false);
 					}
+					String dimInID = SBMLutilities.getDimensionString(event);
+					eventID.setText(eventID.getText()+dimInID);
 				}
-				
-				String dimInID = SBMLutilities.getDimensionString(event);
-				eventID.setText(eventID.getText()+dimInID);
 			}
 		}
 		else {

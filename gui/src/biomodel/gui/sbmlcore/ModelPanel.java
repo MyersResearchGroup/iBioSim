@@ -79,7 +79,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		JPanel modelEditorPanel;
 		modelEditorPanel = new JPanel(new GridLayout(13, 2));
 		Model model = bioModel.getSBMLDocument().getModel();
-		String annotation = AnnotationUtility.parseDynamicAnnotation(model);
 		modelName = new JTextField(model.getName(), 50);
 		modelID = new JTextField(model.getId(), 16);
 		modelName = new JTextField(model.getName(), 40);
@@ -211,10 +210,9 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					framework.setSelectedItem("Spatial discrete");
 				} else if (frameworkSBO == GlobalConstants.SBO_BOOLEAN_LOGICAL) {
 					framework.setSelectedItem("Boolean logical");
-				} 
-			}
-			if (annotation!=null && annotation.equals("fba")) {
-				framework.setSelectedItem("Flux balance");
+				} else if (frameworkSBO == GlobalConstants.SBO_FLUX_BALANCE) {
+					framework.setSelectedItem("Flux balance");
+				}  
 			}
 			
 			modelEditorPanel.add(substanceUnitsLabel);
@@ -321,9 +319,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 						sBasePlugin.addIndex(indexRule);
 					}
 				}
-				if (annotation!=null) {
-					AnnotationUtility.removeDynamicAnnotation(model);
-				}
 				if (framework.getSelectedItem().equals("Non-spatial continuous")) {
 					model.setSBOTerm(GlobalConstants.SBO_NONSPATIAL_CONTINUOUS);
 				} else if (framework.getSelectedItem().equals("Spatial continuous")) {
@@ -335,8 +330,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				} else if (framework.getSelectedItem().equals("Boolean logical")) {
 					model.setSBOTerm(GlobalConstants.SBO_BOOLEAN_LOGICAL);
 				} else if (framework.getSelectedItem().equals("Flux balance")) {
-					model.unsetSBOTerm();
-					AnnotationUtility.setDynamicAnnotation(model, "fba");
+					model.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
 				} else {
 					model.unsetSBOTerm();
 				}
