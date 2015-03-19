@@ -1788,11 +1788,16 @@ public class StateGraph implements Runnable {
 			nextProb = 0.0;
 			this.variablesStr = "";
 			for (String key : variables.keySet()) {
+				String value = variables.get(key);
+				if (value.contains(",")) {
+					String[] valueSplit = value.split(",");
+					value = valueSplit[0].replace("[","");
+				}
 				if (this.variablesStr.equals("")) {
-					this.variablesStr += key + "=" + variables.get(key);
+					this.variablesStr += key + "=" + value;
 				}
 				else {
-					this.variablesStr += "," + key + "=" + variables.get(key);
+					this.variablesStr += "," + key + "=" + value;
 				}
 			}
 			transitionSum = -1;
@@ -1800,6 +1805,10 @@ public class StateGraph implements Runnable {
 		}
 
 		private void addVariable(String variable, String value) {
+			if (value.contains(",")) {
+				String[] valueSplit = value.split(",");
+				value = valueSplit[0].replace("[","");
+			}
 			if (this.variablesStr.equals("")) {
 				this.variablesStr += variable + "=" + value;
 			}

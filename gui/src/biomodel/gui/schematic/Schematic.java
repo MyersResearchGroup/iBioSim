@@ -57,6 +57,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Dimension;
+import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.layout.CompartmentGlyph;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
@@ -1928,14 +1931,26 @@ public class Schematic extends JPanel implements ActionListener {
 		} 
 		
 		if (graph.getCellType(source) == GlobalConstants.PLACE) {
-
 			Event e = bioModel.getSBMLDocument().getModel().getEvent(targetID);
 			Trigger trigger = e.getTrigger();
-			trigger.setMath(SBMLutilities.addPreset(trigger.getMath(),sourceID));
+			String sourceIDdim = SBMLutilities.getIdWithDimension(e, sourceID);
+			trigger.setMath(SBMLutilities.addPreset(trigger.getMath(),sourceIDdim));
 			EventAssignment ea = SBMLutilities.getEventAssignmentByVariable(e, sourceID);
 			if (ea == null) {
 				ea = e.createEventAssignment();
 				ea.setVariable(sourceID);
+				if (SBMLutilities.dimensionsMatch(e,bioModel.getSBMLDocument().getModel().getParameter(sourceID))) {
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
+					ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(ea);
+					sBasePluginProduct.unsetListOfIndices();
+					for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+						Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+						Index index = sBasePluginProduct.createIndex();
+						index.setReferencedAttribute("variable");
+						index.setArrayDimension(i);
+						index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+					}
+				}	
 				ea.setMath(SBMLutilities.myParseFormula("0"));
 			} else {
 				if (SBMLutilities.myFormulaToString(ea.getMath()).equals("1")) {
@@ -1955,6 +1970,18 @@ public class Schematic extends JPanel implements ActionListener {
 			if (ea == null) {
 				ea = e.createEventAssignment();
 				ea.setVariable(targetID);
+				if (SBMLutilities.dimensionsMatch(e,bioModel.getSBMLDocument().getModel().getParameter(targetID))) {
+					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
+					ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(ea);
+					sBasePluginProduct.unsetListOfIndices();
+					for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+						Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+						Index index = sBasePluginProduct.createIndex();
+						index.setReferencedAttribute("variable");
+						index.setArrayDimension(i);
+						index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+					}
+				}	
 				ea.setMath(SBMLutilities.myParseFormula("1"));
 			} else {
 				if (SBMLutilities.myFormulaToString(ea.getMath()).equals("0")) {

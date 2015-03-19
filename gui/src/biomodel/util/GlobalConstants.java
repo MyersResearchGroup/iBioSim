@@ -223,6 +223,7 @@ public class GlobalConstants {
 	public static final int SBO_NONSPATIAL_DISCRETE = 295;
 	public static final int SBO_SPATIAL_DISCRETE = 294;
 	public static final int SBO_BOOLEAN_LOGICAL = 547;
+	public static final int SBO_FLUX_BALANCE = 624;
 	
 	public static final String KISAO_GENERIC = "KISAO:0000000";
 	public static final String KISAO_MONTE_CARLO = "KISAO:0000319";

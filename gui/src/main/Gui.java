@@ -131,12 +131,14 @@ import org.antlr.runtime.TokenStream;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
+import org.sbml.jsbml.ext.arrays.flattening.ArraysFlattening;
 import org.sbml.jsbml.ext.comp.*;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.text.parser.FormulaParserLL3;
 import org.sbml.jsbml.text.parser.IFormulaParser;
 import org.sbml.jsbml.text.parser.ParseException;
+import org.sbml.jsbml.util.compilers.FormulaCompilerLibSBML;
 import org.jlibsedml.*;
 import org.sbolstandard.core.SBOLDocument;
 import org.sbolstandard.core2.Module;
@@ -8060,11 +8062,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 * This is the main method. It excecutes the BioSim GUI FrontEnd program.
 	 */
 	public static void main(String args[]) {
-		/* TODO: test for factorial
+		/* TODO: test for factorial */
+		/*
 		IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
+		FormulaCompilerLibSBML compiler = new FormulaCompilerLibSBML();
 		try {
 			ASTNode mathFormula = ASTNode.parseFormula("factorial(n)", parser);
-			String formula = JSBML.formulaToString(mathFormula);
+			String formula = ASTNode.formulaToString(mathFormula, compiler);
+			//String formula = JSBML.formulaToString(mathFormula);
 			System.out.println("formula="+formula);
 			mathFormula = ASTNode.parseFormula(formula, parser);
 		}
@@ -8073,6 +8078,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			e1.printStackTrace();
 		}
 		*/
+		/* TODO: test for FUNCTION to NAME bug */
+		/*
+		SBMLDocument doc = new SBMLDocument();
+		Model model = doc.createModel("foo");
+		FunctionDefinition function = model.createFunctionDefinition("uniform");
+		Constraint c = model.createConstraint();
+		try {
+			function.setMath(ASTNode.parseFormula("lambda(a,b,(a+b)/2)"));
+			c.setMath(ASTNode.parseFormula("uniform(0,1)"));
+		}
+		catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println(c.getMath().getType().toString());
+		doc = ArraysFlattening.convert(model.getSBMLDocument());
+		System.out.println(doc.getModel().getConstraint(0).getMath().getType().toString());
+*/
 		
 		boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true;
 		if (args.length > 0) {

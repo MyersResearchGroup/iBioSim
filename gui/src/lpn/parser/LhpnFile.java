@@ -1531,7 +1531,11 @@ public class LhpnFile {
 			return 0;
 		}
 		else if (isInteger(var)) {
-			return Integer.parseInt(integers.get(var).getInitValue());
+			String initValue = integers.get(var).getInitValue();
+			if (initValue.contains(",")) {
+				initValue = initValue.split(",")[0].replace("[", "");
+			}
+			return Integer.parseInt(initValue);
 		}
 		else {
 			// Continuous variable is not accepted here.

@@ -1301,7 +1301,7 @@ public class LearnModel { // added ItemListener SB
 						if (g.getPreset(st1).length != 0){
 							for (String t : g.getPreset(st1)) {
 								for (int k = 0; k < reqdVarsL.size(); k++) {
-									if (!reqdVarsL.get(k).isDmvc()) {
+									if (!reqdVarsL.get(k).isDmvc() && !reqdVarsL.get(k).isInput()) {
 										int minr = getMinRate(p, reqdVarsL.get(k).getName());
 										int maxr = getMaxRate(p, reqdVarsL.get(k).getName());
 										if (minr != maxr)
@@ -1387,7 +1387,7 @@ public class LearnModel { // added ItemListener SB
 				}
 				if (placeP.getProperty("type").equalsIgnoreCase("RATE")) {
 					for (int k = 0; k < reqdVarsL.size(); k++) {
-						if (!reqdVarsL.get(k).isDmvc()) {
+						if (!reqdVarsL.get(k).isDmvc() && !reqdVarsL.get(k).isInput()) {
 							//	out.write("<" + t	+ "=["	+ reqdVarsL.get(k).getName() + ":=["	+ getMinRate(p, reqdVarsL.get(k).getName())	+ "," + getMaxRate(p, reqdVarsL.get(k).getName()) + "]]>");
 							int minr = getMinRate(p, reqdVarsL.get(k).getName());
 							int maxr = getMaxRate(p, reqdVarsL.get(k).getName());
@@ -2955,8 +2955,8 @@ public class LearnModel { // added ItemListener SB
 			}
 			if (!reqdVarsL.get(i).isDmvc()){
 				//				System.out.println(key);
-				reqdVarsL.get(i).addInitRates((double)getMinRate(key, reqdVarsL.get(i).getName()));
-				reqdVarsL.get(i).addInitRates((double)getMaxRate(key, reqdVarsL.get(i).getName()));
+				reqdVarsL.get(i).addInitRates((double)getMinRateDouble(key, reqdVarsL.get(i).getName()));
+				reqdVarsL.get(i).addInitRates((double)getMaxRateDouble(key, reqdVarsL.get(i).getName()));
 			}
 			/*
  			if (placeInfo.get(key).getProperty("initiallyMarked").equalsIgnoreCase("false")) {
@@ -3949,6 +3949,23 @@ public class LearnModel { // added ItemListener SB
 // return(rMin[i]);
 	}
 
+	public Double getMinRateDouble(String place, String name) {
+		Properties p = placeInfo.get(place);
+		System.out.println(place + " " + p);
+		if (p!=null && p.getProperty(name + "_rMin") != null)
+			return (Double.parseDouble(p.getProperty(name + "_rMin")));
+		return 0.0;
+// return(rMin[i]);
+	}
+
+	public Double getMaxRateDouble(String place, String name) {
+		Properties p = placeInfo.get(place);
+		if (p!=null && p.getProperty(name + "_rMax") != null)
+			return (Double.parseDouble(p.getProperty(name + "_rMax")));
+		return 0.0;
+// return(rMin[i]);
+	}
+	
 	/*	public Double[][] getDataExtrema(ArrayList<ArrayList<Double>> data){
 		Double[][] extrema = new Double[reqdVarsL.size()][2];
 		for (int i=0; i<reqdVarsL.size(); i++){

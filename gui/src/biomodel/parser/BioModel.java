@@ -2961,6 +2961,10 @@ public class BioModel {
 					Port port = getPortByIdRef(p.getId());
 					int lower = (int)Math.floor(p.getValue());
 					int upper = (int)Math.ceil(p.getValue());
+					String bound = String.valueOf(lower);
+					if (lower!=upper) {
+						bound = "[" + lower + "," + upper + "]";
+					}
 					InitialAssignment ia = flatSBML.getModel().getInitialAssignment(p.getId());
 					if (ia != null) {
 						ASTNode math = ia.getMath();
@@ -2975,19 +2979,23 @@ public class BioModel {
 					}
 					if (port != null) {
 						if (isInputPort(port)) {
-							lpn.addInput(p.getId(),type,"[" + lower + "," +  upper + "]");
+							lpn.addInput(p.getId(),type,bound);
 						} else {
-							lpn.addOutput(p.getId(),type,"[" + lower + "," + upper + "]");
+							lpn.addOutput(p.getId(),type,bound);
 						}
 					} else {
 						if (type.equals("integer")) {
-							lpn.addInteger(p.getId(),"[" + lower + "," + upper + "]");
+							lpn.addInteger(p.getId(),bound);
 						} else {
 						    for (String key : rates.keySet()) {
 						        if (rates.get(key).equals(p.getId())) {
 						        	Parameter rp = flatSBML.getModel().getParameter(key);
 						        	int lrate = (int)Math.floor(rp.getValue());
 						        	int urate = (int)Math.ceil(rp.getValue());
+									String boundRate = String.valueOf(lrate);
+									if (lrate!=urate) {
+										boundRate = "[" + lrate + "," + urate + "]";
+									}
 									ia = flatSBML.getModel().getInitialAssignment(rp.getId());
 									if (ia != null) {
 										ASTNode math = ia.getMath();
@@ -3000,8 +3008,7 @@ public class BioModel {
 											}
 										}
 									}
-									lpn.addContinuous(p.getId(), "[" + lower + "," + upper + "]",	
-											"["+ lrate + "," + urate + "]");
+									lpn.addContinuous(p.getId(), bound,	boundRate);
 									break;
 						        }
 						    }
@@ -4652,7 +4659,7 @@ public class BioModel {
 	
 	public void createDirPort(String SId,String dir) {
 		Port port = getPortByIdRef(SId);
-		if (port!=null) return;
+		//if (port!=null) return;
 		SBase variable = SBMLutilities.getElementBySId(sbml,SId);
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(variable);
 		if (dir.equals(GlobalConstants.INPUT)) {

@@ -53,6 +53,10 @@ import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.fbc.FluxObjective;
 import org.sbml.jsbml.ext.fbc.Objective;
+import org.sbml.jsbml.ext.distrib.DistribConstants;
+import org.sbml.jsbml.ext.distrib.DistribFunctionDefinitionPlugin;
+import org.sbml.jsbml.ext.distrib.DistribInput;
+import org.sbml.jsbml.ext.distrib.DrawFromDistribution;
 import org.sbml.jsbml.Compartment;
 //CompartmentType not supported in Level 3
 //import org.sbml.jsbml.CompartmentType;
@@ -68,8 +72,12 @@ import org.sbml.jsbml.ext.layout.LayoutModelPlugin;
 import org.sbml.jsbml.text.parser.FormulaParserLL3;
 import org.sbml.jsbml.text.parser.IFormulaParser;
 import org.sbml.jsbml.text.parser.ParseException;
+import org.sbml.jsbml.util.compilers.FormulaCompilerLibSBML;
 import org.sbml.jsbml.validator.SBMLValidator;
+import org.sbml.jsbml.xml.XMLAttributes;
+import org.sbml.jsbml.xml.XMLNamespaces;
 import org.sbml.jsbml.xml.XMLNode;
+import org.sbml.jsbml.xml.XMLTriple;
 import org.sbml.jsbml.AbstractNamedSBase;
 import org.sbml.jsbml.AbstractSBase;
 import org.sbml.jsbml.ExplicitRule;
@@ -87,6 +95,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 //SpeciesType not supported in Level 3
@@ -898,6 +907,8 @@ public class SBMLutilities {
 		String formula;
 		Preferences biosimrc = Preferences.userRoot();
 		formula = JSBML.formulaToString(mathFormula);
+		//FormulaCompilerLibSBML compiler = new FormulaCompilerLibSBML();
+		//formula = ASTNode.formulaToString(mathFormula, compiler);
 		//formula = myFormulaToStringInfix(mathFormula);
 		formula = formula.replaceAll("arccot", "acot");
 		formula = formula.replaceAll("arccoth", "acoth");
@@ -2702,6 +2713,34 @@ public class SBMLutilities {
 		createFunction(model, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 		createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
 	}
+	
+	public static void createDistribution(FunctionDefinition f,String[] inputTypes,String[] inputs,
+			String distribution) {
+		DistribFunctionDefinitionPlugin distrib = SBMLutilities.getDistribFunctionDefinitionPlugin(f);
+		DrawFromDistribution draw = distrib.createDrawFromDistribution();
+		for (int i=0; i < inputs.length; i++) {
+			DistribInput input = draw.createDistribInput();
+			input.setId(inputs[i]);
+		}
+		// UncertML element
+		XMLNode xmlNode = new XMLNode(new XMLTriple("UncertML"), new XMLAttributes(), new XMLNamespaces());
+		xmlNode.addNamespace("http://www.uncertml.org/3.0");
+
+		// NormalDistribution element
+		XMLNode distNode = new XMLNode(new XMLTriple(distribution), new XMLAttributes(), new XMLNamespaces());
+		distNode.addAttr("definition", "http://www.uncertml.org/distributions");
+		xmlNode.addChild(distNode);
+    
+		for (int i=0; i < inputs.length; i++) {
+			XMLNode inputNode = new XMLNode(new XMLTriple(inputTypes[i]), new XMLAttributes(), new XMLNamespaces());
+			distNode.addChild(inputNode);
+		    XMLNode varNode = new XMLNode(new XMLTriple("var"), new XMLAttributes(), new XMLNamespaces());
+		    varNode.addAttr("varId", inputs[i]);
+		    inputNode.addChild(varNode);    
+		}
+		draw.setUncertML(xmlNode);
+	}
+
 
 	/**
 	 * Add a new function
@@ -2725,6 +2764,8 @@ public class SBMLutilities {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Uniform_distribution_(continuous)");
 			} else if (id.equals("normal")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Normal_distribution");
+				SBMLutilities.createDistribution(f, new String[] { "mean", "stddev" }, 
+						new String[] {"avg", "sd"}, "NormalDistribution");
 			} else if (id.equals("exponential")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Exponential_distribution");
 			} else if (id.equals("gamma")) {
@@ -2831,6 +2872,16 @@ public class SBMLutilities {
 			}
 		}
 		return false;
+	}
+	
+	public static String getIdWithDimension(SBase sbase,String id) {
+		String result = id;
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sbase);
+		for (int i = sBasePlugin.getListOfDimensions().size()-1; i>=0; i--) {
+			Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
+			result += "[" + dim.getId() + "]";
+		}
+		return result;
 	}
 	
 	public static ASTNode addPreset(ASTNode math,String place) {
@@ -3794,6 +3845,15 @@ public class SBMLutilities {
 		FBCModelPlugin fbc = new FBCModelPlugin(model);
 		model.addExtension(FBCConstants.namespaceURI, fbc);
 		return fbc;
+	}
+	
+	public static DistribFunctionDefinitionPlugin getDistribFunctionDefinitionPlugin(FunctionDefinition function) {
+		if (function.getExtension(DistribConstants.namespaceURI) != null) {
+			return (DistribFunctionDefinitionPlugin)function.getExtension(DistribConstants.namespaceURI);
+		}
+		DistribFunctionDefinitionPlugin distrib = new DistribFunctionDefinitionPlugin(function);
+		function.addExtension(DistribConstants.namespaceURI, distrib);
+		return distrib;
 	}
 	
 	public static LayoutModelPlugin getLayoutModelPlugin(Model model) {
