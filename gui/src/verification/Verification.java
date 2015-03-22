@@ -227,11 +227,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		} else {
 			untimedStateSearch = new JRadioButton("Untimed");
 			bdd = new JRadioButton("BDD");
-			dbm = new JRadioButton("DBM");
+			dbm = new JRadioButton("Zone (C)");
 			smt = new JRadioButton("SMT");
 			//dbm2 = new JRadioButton("DBM2");
 			octagon = new JRadioButton("Octagon");
-			splitZone = new JRadioButton("Split Zone");
+			splitZone = new JRadioButton("Zone (Java)");
 			bdd.addActionListener(this);
 			dbm.addActionListener(this);
 			smt.addActionListener(this);
@@ -317,7 +317,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		reduction.addActionListener(this);
 		resetOnce = new JCheckBox("Reset Once");
 		resetOnce.addActionListener(this);
-		noDisplayResult = new JCheckBox("Do not display time results");
+		noDisplayResult = new JCheckBox("Silence Verification Window");
 		noDisplayResult.addActionListener(this);
 		rateOptimization = new JCheckBox("Rate Optimization");
 		rateOptimization.addActionListener(this);
@@ -397,10 +397,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingRadioPanel.add(baptdc);
 		} else {
 			timingRadioPanel.add(untimedStateSearch);
-			timingRadioPanel.add(splitZone);
 			timingRadioPanel.add(bdd);
-			timingRadioPanel.add(dbm);
 			timingRadioPanel.add(smt);
+			timingRadioPanel.add(dbm);
+			timingRadioPanel.add(splitZone);
 			//timingRadioPanel.add(dbm2);
 			timingRadioPanel.add(octagon);
 		}
