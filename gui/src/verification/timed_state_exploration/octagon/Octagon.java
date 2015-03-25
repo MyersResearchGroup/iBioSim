@@ -4149,7 +4149,8 @@ public class Octagon implements Equivalence {
 				
 				// The warping is different depending on whether
 				// beta >= alpha or not.
-				if(beta >= alpha){
+				//if(beta >= alpha){
+				if(yold*xnew >= xold*ynew){
 					// This is the warping when the 'y' is greater
 					// than the x.
 					
@@ -4179,9 +4180,13 @@ public class Octagon implements Equivalence {
 //					int negb4new = (int) Math.ceil((-1)*((beta - alpha)*my + alpha*b4));
 
 					int b1new = (int) Math.ceil((yold/ynew - xold/xnew)*My + xold*b1/xnew);
-					int negb2new = (int) Math.ceil((-1)*((yold/ynew - xold/xnew)*my + xold*b2/xnew));
+					
+					// The floor since b2 is a lower bound.
+					int b2new = (int) Math.floor((yold/ynew - xold/xnew)*my + xold*b2/xnew);
 					int b3new = (int) Math.ceil((yold/ynew-xold/xnew)*My + xold*b3/xnew);
-					int negb4new = (int) Math.ceil((-1)*((yold/ynew - xold/xnew)*my + xold*b4/xnew));
+					
+					// The floor since b4 is a lower bound.
+					int b4new = (int) Math.floor((yold/ynew - xold/xnew)*my + xold*b4/xnew);
 					
 					
 					// b1
@@ -4190,9 +4195,9 @@ public class Octagon implements Equivalence {
 					this._matrix[baseToNeg(j)][baseToNeg(i)] = b1new;
 					
 					// -b2
-					this._matrix[baseToNeg(i)][baseToNeg(j)] = negb2new;
+					this._matrix[baseToNeg(i)][baseToNeg(j)] = -1*b2new;
 					
-					this._matrix[baseToPos(j)][baseToPos(i)] = negb2new;
+					this._matrix[baseToPos(j)][baseToPos(i)] = -1*b2new;
 					
 					// b3
 					this._matrix[baseToNeg(i)][baseToPos(j)] = b3new;
@@ -4200,9 +4205,9 @@ public class Octagon implements Equivalence {
 					this._matrix[baseToNeg(j)][baseToPos(i)] = b3new;
 					
 					// -b4
-					this._matrix[baseToPos(i)][baseToNeg(j)] = negb4new;
+					this._matrix[baseToPos(i)][baseToNeg(j)] = -1*b4new;
 
-					this._matrix[baseToPos(j)][baseToNeg(i)] = negb4new;
+					this._matrix[baseToPos(j)][baseToNeg(i)] = -1*b4new;
 
 				}
 				else{
@@ -4235,9 +4240,13 @@ public class Octagon implements Equivalence {
 //					int negb4new = (int) Math.ceil((-1)*((alpha - beta)*mx + beta*b4));
 					
 					int b1new = (int) Math.ceil((yold/ynew - xold/xnew)*mx + yold/ynew*b1);
-					int negb2new = (int) Math.ceil((-1)*((yold/ynew - xold/xnew)*Mx + yold/ynew*b2));
+					
+					// The floor since b2 is a lower bound.
+					int b2new = (int) Math.floor((yold/ynew - xold/xnew)*Mx + yold/ynew*b2);
 					int b3new = (int) Math.ceil((xold/xnew - yold/ynew)*Mx + yold/ynew*b3);
-					int negb4new = (int) Math.ceil((-1)*((xold/xnew - yold/ynew)*mx + yold/ynew*b4));
+					
+					// The floor since b2 is a lower bound.
+					int b4new = (int) Math.floor((xold/xnew - yold/ynew)*mx + yold/ynew*b4);
 					
 					// b1
 					this._matrix[baseToPos(i)][baseToPos(j)] = b1new;
@@ -4245,9 +4254,9 @@ public class Octagon implements Equivalence {
 					this._matrix[baseToNeg(j)][baseToNeg(i)] = b1new;
 					
 					// -b2
-					this._matrix[baseToNeg(i)][baseToNeg(j)] = negb2new;
+					this._matrix[baseToNeg(i)][baseToNeg(j)] = -1*b2new;
 							
-					this._matrix[baseToPos(j)][baseToPos(i)] = negb2new;
+					this._matrix[baseToPos(j)][baseToPos(i)] = -1*b2new;
 					
 					// b3
 					this._matrix[baseToNeg(i)][baseToPos(j)] = b3new;
@@ -4256,9 +4265,9 @@ public class Octagon implements Equivalence {
 
 					
 					// -b4
-					this._matrix[baseToPos(i)][baseToNeg(j)] = negb4new;
+					this._matrix[baseToPos(i)][baseToNeg(j)] = -1*b4new;
 
-					this._matrix[baseToPos(j)][baseToNeg(i)] = negb4new;
+					this._matrix[baseToPos(j)][baseToNeg(i)] = -1*b4new;
 				}
 			}
 		}
@@ -4288,10 +4297,10 @@ public class Octagon implements Equivalence {
 						// Undo the old warping and introduce the new warping.
 						// If the bound is infinite, then division does nothing.
 						this._matrix[baseToNeg(i)][baseToPos(i)] =
-								ContinuousUtilities.chkDiv(
+								2*ContinuousUtilities.chkDiv(
 										Math.abs(oldOctagon.getCurrentRate(i))
 										*this._matrix[baseToNeg(i)][baseToPos(i)],
-										Math.abs(getCurrentRate(i)),
+										2*Math.abs(getCurrentRate(i)),
 										true);
 
 					}
@@ -4305,10 +4314,10 @@ public class Octagon implements Equivalence {
 						// If the old rate is zero, then only need to warp
 						// for the current rate.
 						this._matrix[baseToPos(i)][baseToNeg(i)] =
-								ContinuousUtilities.chkDiv(
+								2*ContinuousUtilities.chkDiv(
 										Math.abs(oldOctagon.getCurrentRate(this._dbmVarList[i]))
 										*this._matrix[baseToPos(i)][baseToNeg(i)],
-										Math.abs(this.getCurrentRate(i)),
+										2*Math.abs(this.getCurrentRate(i)),
 										true);
 					}
 					else{
