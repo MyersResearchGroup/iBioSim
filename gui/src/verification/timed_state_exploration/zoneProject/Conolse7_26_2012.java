@@ -23,7 +23,9 @@ public class Conolse7_26_2012 {
 		boolean subset = true;
 		boolean superset = true;
 		boolean rateOptimization = false; // rate optimization is off by default
-		if(args.length > 2 || args.length == 0){
+		boolean octagons = false; // Determines whether the method is zones or octagons.
+		boolean flags = false;
+		if(args.length > 3 || args.length == 0){
 			System.out.println("Incorrect number of parameters");
 			return;
 		}
@@ -33,11 +35,14 @@ public class Conolse7_26_2012 {
 		else{
 			String commands = args[0];
 			lpnFileDirectory = args[1];
-			subset = !commands.contains("b");
-			superset = !commands.contains("p");
-			rateOptimization = commands.contains("r");
+			flags = commands.contains("-");
+			subset = !commands.contains("b") & flags;
+			superset = !commands.contains("p") & flags;
+			rateOptimization = commands.contains("r") & flags;
+			octagons = commands.contains("o") & flags;
 			System.out.println("Subset is : " + subset);
 			System.out.println("Superset is : " + superset);
+			System.out.println("Octagons is : " + octagons);
 			System.out.println("The input string was : " + commands);
 			System.out.println("The file directory was: " + lpnFileDirectory);
 		}
@@ -64,6 +69,10 @@ public class Conolse7_26_2012 {
 		LhpnFile lpn = new LhpnFile();
 
 		lpn.load(directory + Gui.separator + lpnList[0]);
+		Options.set_TimingLogFile(directory + Gui.separator
+				+ lpnList[0] + ".tlog");
+
+		
 		
 		ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
 		// Add the current LPN to the list.
@@ -87,7 +96,12 @@ public class Conolse7_26_2012 {
 		 * The method setTimingAnalysisType sets a static variable
 		 * in the Options class that is queried by the search method.
 		 */
-		Options.setTimingAnalsysisType("zone");
+		if(octagons){
+			Options.setTimingAnalsysisType("octagon");
+		}
+		else{
+			Options.setTimingAnalsysisType("zone");
+		}
 
 		Options.set_resetOnce(false);
 		
