@@ -319,7 +319,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		resetOnce.addActionListener(this);
 		noDisplayResult = new JCheckBox("Silence Verification Window");
 		noDisplayResult.addActionListener(this);
-		rateOptimization = new JCheckBox("Rate Optimization");
+		rateOptimization = new JCheckBox("Rate Optimization Off");
 		rateOptimization.addActionListener(this);
 		// Component List
 		addComponent = new JButton("Add Component");
