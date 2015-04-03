@@ -2871,7 +2871,8 @@ public class Octagon implements Equivalence {
 			// Check for a single value which indicates that zero is
 			// the only possible rate.
 			//*if(variable.getValue().get_range().singleValue()){
-			if(variable.getValue().get_range().singleValue()){
+//			if(variable.getValue().get_range().singleValue()){
+			if(variable.getKey().get_rateInterval().singleValue()){
 				// This variable only has zero as a rate so keep it
 				// in the rate zero variables.
 				//*newZone._rateZeroContinuous.insert(variable.getKey(),
