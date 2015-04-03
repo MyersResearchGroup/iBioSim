@@ -1187,6 +1187,12 @@ public class Octagon implements Equivalence {
 			*getCurrentRate(variableIndex)/2);
 		int upper = (int) Math.ceil(twiceMax(variableIndex)
 			*getCurrentRate(variableIndex)/2);
+		
+		if(getCurrentRate(ltContPair)<0){
+			int tmp = lower;
+			lower = upper;
+			upper = tmp;
+		}
 						
 		return new IntervalPair(lower, upper);
 	}
@@ -3049,7 +3055,8 @@ public class Octagon implements Equivalence {
 			
 			
 			//*for(int j=1; j<newZone.dbmSize(); j++){
-			for (int j=0; j<newOct.DBMsize(); j++){
+//			for (int j=0; j<newOct.DBMsize(); j++){
+			for(int j=0; j<newOct._dbmVarList.length; j++){
 				//*if(currentIndex == j){
 					//*continue;
 				//*}
@@ -3258,13 +3265,13 @@ public class Octagon implements Equivalence {
 			for(int i=0; i<_dbmVarList.length; i++){
 				
 				LPNTransitionPair ltpair = _dbmVarList[i];
-				
-				if(!adjustedColumns.contains(ltpair)){
-					// If this continuous variable has not
-					// had the upper bound change, then
-					// do nothing.
-					continue;
-				}
+//				
+//				if(!adjustedColumns.contains(ltpair)){
+//					// If this continuous variable has not
+//					// had the upper bound change, then
+//					// do nothing.
+//					continue;
+//				}
 				
 				for (int j=0; j<_dbmVarList.length; j++){
 					
@@ -4296,12 +4303,19 @@ public class Octagon implements Equivalence {
 					else{
 						// Undo the old warping and introduce the new warping.
 						// If the bound is infinite, then division does nothing.
+//						this._matrix[baseToNeg(i)][baseToPos(i)] =
+//								2*ContinuousUtilities.chkDiv(
+//										Math.abs(oldOctagon.getCurrentRate(i))
+//										*this._matrix[baseToNeg(i)][baseToPos(i)],
+//										2*Math.abs(getCurrentRate(i)),
+//										true);
 						this._matrix[baseToNeg(i)][baseToPos(i)] =
 								2*ContinuousUtilities.chkDiv(
-										Math.abs(oldOctagon.getCurrentRate(i))
+										Math.abs(oldOctagon.getCurrentRate(this._dbmVarList[i]))
 										*this._matrix[baseToNeg(i)][baseToPos(i)],
 										2*Math.abs(getCurrentRate(i)),
 										true);
+
 
 					}
 
@@ -4315,8 +4329,7 @@ public class Octagon implements Equivalence {
 						// for the current rate.
 						this._matrix[baseToPos(i)][baseToNeg(i)] =
 								2*ContinuousUtilities.chkDiv(
-										Math.abs(oldOctagon.getCurrentRate(this._dbmVarList[i]))
-										*this._matrix[baseToPos(i)][baseToNeg(i)],
+										this._matrix[baseToPos(i)][baseToNeg(i)],
 										2*Math.abs(this.getCurrentRate(i)),
 										true);
 					}
@@ -4954,6 +4967,10 @@ public class Octagon implements Equivalence {
 		// We assume that the rate is already zero in this case
 		// since it must be in the rate zero variables if it exists.
 		//*int index = Arrays.binarySearch(this._indexToTimerPair, firedRate);
+		
+		// Check if the variable is in the octagon.
+		// We assume that the rate is already zero in this case
+		// since it must be in the rate zero variables if it exists.
 		int index = Arrays.binarySearch(this._dbmVarList, firedRate);
 		
 		//*if(index < 0){
@@ -4969,6 +4986,7 @@ public class Octagon implements Equivalence {
 		
 		// Create new zone
 		//*Zone newZone = new Zone();
+		
 		// Create the new Octagon
 		Octagon newOct = new Octagon();
 		
@@ -4977,7 +4995,7 @@ public class Octagon implements Equivalence {
 		//*for(int i=0; i<this._lpnList.length; i++){
 			//*newZone._lpnList[i] = this._lpnList[i];
 		//*}
-		newOct._lpnList = new LhpnFile[this._dbmVarList.length];
+		newOct._lpnList = new LhpnFile[this._lpnList.length];
 		for(int i=0; i<this._lpnList.length; i++){
 			newOct._lpnList[i] = this._lpnList[i];
 		}
@@ -5020,15 +5038,26 @@ public class Octagon implements Equivalence {
 		
 		
 		//*for(int i=0; i<newZone._indexToTimerPair.length; i++){
+		
+		// Create the upper and lower bound lists.
+		newOct._lowerBounds = new int[newOct._dbmVarList.length];
+		newOct._upperBounds = new int[newOct._dbmVarList.length];
+		
+		int offset = 0;
 		for(int i=0; i<newOct._dbmVarList.length; i++){
 			//*if(i == index){
 				//*continue;
 			//*}
 			if(i == index){
-				continue;
+				offset++;
+//				continue;
 			}
 			//*newZone._indexToTimerPair[i] = this._indexToTimerPair[i].clone();
-			newOct._dbmVarList[i] = this._dbmVarList[i].clone();
+			newOct._dbmVarList[i] = this._dbmVarList[i+offset].clone();
+			
+			// Copy over the upper and lower bounds.
+			newOct._lowerBounds[i] = this._lowerBounds[i+offset];
+			newOct._upperBounds[i] = this._upperBounds[i+offset];
 		}
 		//*}
 		
@@ -5053,6 +5082,7 @@ public class Octagon implements Equivalence {
 			}
 				
 			//*for(int j=0; j<newZone.matrixSize(); j++){
+			offsetj = 0;
 			for(int j=0; j<newOct.DBMsize(); j++){
 				//*if(j == index){
 					//*offsetj++;
