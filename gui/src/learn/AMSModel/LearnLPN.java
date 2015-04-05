@@ -1,6 +1,7 @@
 package learn.AMSModel;
 
 import lpn.parser.LhpnFile;
+import lpn.parser.Translator;
 import main.*;
 import main.util.dataparser.*;
 
@@ -273,7 +274,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		encodingPanel.add(scroll2, "Center");
 
 		// Sets up the thresholds area
-		JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
+		//JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(1, 2));
 
 		JLabel backgroundLabel = new JLabel("Model File:");
@@ -287,24 +288,31 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		//Advanced Options Tab
 		JLabel epsilonLabel = new JLabel("Epsilon");
 		epsilonG = new JTextField("0.1");
+		epsilonG.addActionListener(this); 
 		JLabel pathLengthBinLabel = new JLabel("Minimum bin pathLength");
 		pathLengthBinG = new JTextField("0");
+		pathLengthBinG.addActionListener(this); 
 		JLabel pathLengthVarLabel = new JLabel("Minimum variable pathLength");
 		pathLengthVarG = new JTextField("0");
+		pathLengthVarG.addActionListener(this); 
 		JLabel rateSamplingLabel = new JLabel("Window size");
 		rateSamplingG = new JTextField("-1");
+		rateSamplingG.addActionListener(this); 
 		JLabel absTimeLabel = new JLabel("Absolute time");
 		absTimeG = new JCheckBox();
 		absTimeG.setSelected(false);
 		absTimeG.addItemListener(this); 
 		JLabel percentLabel = new JLabel("Fraction");
 		percentG = new JTextField("0.8");
+		percentG.addActionListener(this); 
 		JLabel runTimeLabel = new JLabel("DMV run time");
 		runTimeG = new JTextField("5e-6");
 		runTimeG.setEnabled(false);
+		runTimeG.addActionListener(this);
 		JLabel runLengthLabel = new JLabel("DMV run length");
 		runLengthG = new JTextField("2");
 		runLengthG.setEnabled(true);
+		runLengthG.addActionListener(this);
 		JLabel defaultEnvLabel = new JLabel("Default environment");
 		defaultEnvG = new JCheckBox();
 		defaultEnvG.setSelected(true);
@@ -312,23 +320,15 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		//JLabel unstableTimeLabel = new JLabel("Mode unstable time");
 		//unstableTimeG = new JTextField("5960.0");
 		//unstableTimeG.setEnabled(true);
+		//unstableTimeG.addActionListener(this);
 		JLabel stableToleranceLabel = new JLabel("Stable tolerance");
 		stableToleranceG = new JTextField("0.02");
 		stableToleranceG.setEnabled(true);
+		stableToleranceG.addActionListener(this);
 		JLabel pseudoEnableLabel = new JLabel("Enable pseudo-transitions");
 		pseudoEnableG = new JCheckBox();
 		pseudoEnableG.setSelected(false);
 		pseudoEnableG.addItemListener(this);
-		
-		epsilonG.addActionListener(this); 
-		pathLengthBinG.addActionListener(this); 
-		pathLengthVarG.addActionListener(this); 
-		rateSamplingG.addActionListener(this); 
-		percentG.addActionListener(this); 
-		runTimeG.addActionListener(this);
-		runLengthG.addActionListener(this);
-		//unstableTimeG.addActionListener(this);
-		stableToleranceG.addActionListener(this);
 		
 		JPanel panel4 = new JPanel();
 		((FlowLayout) panel4.getLayout()).setAlignment(FlowLayout.CENTER);
@@ -373,29 +373,32 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		selection2.add(numBins);
 		JLabel propertyLabel = new JLabel("Assertion to be Verified");
 		propertyG = new JTextField("");
+		propertyG.addActionListener(this);
 		panel3.add(propertyLabel);
 		panel3.add(propertyG);
 		JLabel valueScaleLabel = new JLabel("Scale Factor for Values");
 		globalValueScaling = new JTextField("");
+		globalValueScaling.addActionListener(this);
 		panel3.add(valueScaleLabel);
 		panel3.add(globalValueScaling);
 		JLabel delayScaleLabel = new JLabel("Scale Factor for Time");
 		globalDelayScaling = new JTextField("");
+		globalDelayScaling.addActionListener(this);
 		panel3.add(delayScaleLabel);
 		panel3.add(globalDelayScaling);
 		JPanel thresholdPanelHold1 = new JPanel();
 		thresholdPanelHold1.add(thresholdPanel1);
-		JLabel debugLabel = new JLabel("Debug Level:");
-		String[] options = new String[4];
-		options[0] = "0";
-		options[1] = "1";
-		options[2] = "2";
-		options[3] = "3";
-		debug = new JComboBox(options);
-		// debug.setSelectedItem(biosimrc.get("biosim.learn.debug", ""));
-		debug.addActionListener(this);
-		thresholdPanel2.add(debugLabel);
-		thresholdPanel2.add(debug);
+//		JLabel debugLabel = new JLabel("Debug Level:");
+//		String[] options = new String[4];
+//		options[0] = "0";
+//		options[1] = "1";
+//		options[2] = "2";
+//		options[3] = "3";
+//		debug = new JComboBox(options);
+//		// debug.setSelectedItem(biosimrc.get("biosim.learn.debug", ""));
+//		debug.addActionListener(this);
+//		thresholdPanel2.add(debugLabel);
+//		thresholdPanel2.add(debug);
 
 		// load parameters
 		// reading lrnFile twice. On the first read, only seedLpnFile (the seed lpn) is processed.
@@ -697,7 +700,11 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		try {
-			FileWriter write = new FileWriter(new File(directory + separator + "background.lpn"));
+			String extension = ".lpn";
+			if (seedLpnFile.endsWith(".xml")) {
+				extension = ".xml";
+			}
+			FileWriter write = new FileWriter(new File(directory + separator + "background"+extension));
 			BufferedReader input = new BufferedReader(new FileReader(new File(seedLpnFile)));
 			String line = null;
 			while ((line = input.readLine()) != null) {
@@ -810,9 +817,9 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		// secondTab.add(newPanel,"Center");
 		secondTab.add(panel4, "Center");
 		firstTab.add(splitPane, "Center");
-		JTabbedPane tab = new JTabbedPane();
-		tab.addTab("Basic Options", firstTab);
-		tab.addTab("Advanced Options", secondTab);
+		//JTabbedPane tab = new JTabbedPane();
+		//tab.addTab("Basic Options", firstTab);
+		//tab.addTab("Advanced Options", secondTab);
 		this.add(firstTab, "Center");
 		advancedOptionsPanel = secondTab;
 		//this.addTab("Basic", (JComponent)firstTab);
@@ -850,26 +857,10 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		/*
-		 * if (e.getActionCommand().contains("box")) { int num =
-		 * Integer.parseInt(e.getActionCommand().substring(3)) - 1; if
-		 * (!((JCheckBox) this.species.get(num).get(0)).isSelected()) {
-		 * ((JComboBox) this.species.get(num).get(2)).setSelectedItem("0");
-		 * editText(num); speciesPanel.revalidate(); speciesPanel.repaint(); for
-		 * (int i = 1; i < this.species.get(num).size(); i++) {
-		 * this.species.get(num).get(i).setEnabled(false); } } else {
-		 * this.species.get(num).get(1).setEnabled(true); if (user.isSelected()) {
-		 * for (int i = 2; i < this.species.get(num).size(); i++) {
-		 * this.species.get(num).get(i).setEnabled(true); } } } } else
-		 */
 		change = true;
 		if (e.getActionCommand().contains("text")) {
-			// int num = Integer.parseInt(e.getActionCommand().substring(4)) -
-			// 1;
 			if (variables != null && user.isSelected()) { // System.out.println("Var :"+variables);// action source is any of the variables' combobox 
 				for (int i = 0; i < variables.size(); i++) {
-					//editText(i);
-					// SB
 					String currentVar = ((JTextField) variables.get(i).get(0)).getText().trim();
 					if (findReqdVarslIndex(currentVar) != -1){ // condition added after adding allVars
 						String selected = (String) (((JComboBox) variables.get(i).get(6)).getSelectedItem()); // changed 2 to 3 after required
@@ -2213,7 +2204,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 				for (int i = 0; i < variables.size(); i++) {
 
 					if (variables.get(i).get(variables.get(i).size()-1) instanceof JTextField
-							&&(((JTextField) variables.get(i).get(7)).getText().trim().equals(""))) {
+							&&(((JTextField) variables.get(i).get(variables.get(i).size()-1)).getText().trim().equals(""))) {
 					} else if (variables.get(i).get(variables.get(i).size()-1) instanceof JTextField) { 
 						
 						String currentVar = ((JTextField) variables.get(i).get(0)).getText().trim();
@@ -2273,6 +2264,11 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 	@Override
 	public void run() {
 		/* TODO: need to update for new thresholds */
+		if (reqdVarsL.size()<=0) {
+			JOptionPane.showMessageDialog(Gui.frame,"No variables selected.",
+					"Model Generation Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		new File(directory + separator + lhpnFile).delete();
 		fail = false;
 		try {
@@ -2495,7 +2491,12 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 				delayScaleFactor = l.getDelayScaleFactor();
 				globalValueScaling.setText(Double.toString(valScaleFactor));
 				globalDelayScaling.setText(Double.toString(delayScaleFactor));
-
+				levels();
+				if (auto.isSelected()) {
+					auto.doClick();
+				}
+				change=true;
+				
 				boolean defaultStim = defaultEnvG.isSelected();
 				if (defaultStim){
 					int j = 0;
@@ -2694,6 +2695,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		}
 		return failProp;
 	}
+	
 	public boolean hasChanged() {
 		return change;
 	}

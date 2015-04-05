@@ -20,7 +20,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBMLDocument;
 
 import biomodel.parser.BioModel;
@@ -1182,6 +1185,9 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				for (int i = 0; i < model.getSpeciesCount(); i++) {
 					if (BioModel.isPromoterSpecies(model.getSpecies(i))) continue;
 					getSpecies.add(model.getSpecies(i).getId());
+				}
+				for (int i = 0; i < model.getParameterCount(); i++) {
+					getSpecies.add(model.getParameter(i).getId());
 				}
 				species = getSpecies.toArray(new String[0]);
 			}

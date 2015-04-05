@@ -730,12 +730,20 @@ public class LearnModel { // added ItemListener SB
 			for (Variable v : reqdVarsL) {
 				if (v.isDmvc()) {
 					if (v.getInitValue() != null)
-						g.addInteger(v.getName(), v.getInitValue());
+						if (v.isInput()) {
+							g.addIntegerInput(v.getName(), v.getInitValue());
+						} else {
+							g.addIntegerOutput(v.getName(), v.getInitValue());
+						}
 				} else {
 					if (v.getInitValue() != null) {
 						initCond.put("value", v.getInitValue());
 						initCond.put("rate", v.getInitRate());
-						g.addContinuous(v.getName(), initCond);
+						if (v.isInput()) {
+							g.addContinuousInput(v.getName(), initCond);
+						} else {
+							g.addContinuousOutput(v.getName(), initCond);
+						}
 					}
 				}
 			}

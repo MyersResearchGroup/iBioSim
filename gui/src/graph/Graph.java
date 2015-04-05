@@ -102,10 +102,10 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jibble.epsgraphics.EpsGraphics2D;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.w3c.dom.DOMImplementation;
-
 
 import analysis.main.AnalysisView;
 import biomodel.parser.BioModel;
@@ -8304,12 +8304,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		learnSpecs = new ArrayList<String>();
 		if (background != null) {
-			if (background.contains(".gcm")) {
+			if (background.endsWith(".gcm")) {
 				BioModel gcm = new BioModel(biomodelsim.getRoot());
 				gcm.load(background);
 				learnSpecs = gcm.getSpecies();
 			}
-			else if (background.contains(".lpn")) {
+			else if (background.endsWith(".lpn")) {
 				LhpnFile lhpn = new LhpnFile(biomodelsim.log);
 				lhpn.load(background);
 				/*
@@ -8350,6 +8350,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				ListOf<Species> ids = model.getListOfSpecies();
 				for (int i = 0; i < model.getSpeciesCount(); i++) {
 					learnSpecs.add(ids.get(i).getId());
+				}
+				ListOf<Parameter> idp = model.getListOfParameters();
+				for (int i = 0; i < model.getParameterCount(); i++) {
+					learnSpecs.add(idp.get(i).getId());
 				}
 			}
 		}

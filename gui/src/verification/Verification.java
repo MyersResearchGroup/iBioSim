@@ -62,6 +62,7 @@ import verification.platu.main.Options;
 import verification.platu.project.Project;
 import verification.timed_state_exploration.zoneProject.Zone;
 import biomodel.gui.util.PropertyList;
+import biomodel.parser.BioModel;
 import biomodel.util.Utility;
 
 
@@ -2998,6 +2999,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						JOptionPane.ERROR_MESSAGE);
 				//e.printStackTrace();
 			}
+		} else if (sourceFile.endsWith(".xml")) {
+			BioModel bioModel = new BioModel(workDir);
+			bioModel.load(workDir + separator + sourceFile);
+			bioModel.saveAsLPN(directory + separator + sourceFile.replace(".xml", ".lpn"));
 		}
 	}
 
