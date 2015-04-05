@@ -127,7 +127,7 @@ public class Translator {
 						initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
 					}
 					// For each continuous variable v, create rate rule dv/dt and set its initial value to lhpn.getInitialRate(v). 
-					if (lhpn.isContinuous(v)){
+					if (lhpn.isContinuous(v) && !lhpn.isInput(v)){
 						Parameter rateVar = m.createParameter();
 						rateVar.setConstant(false);
 						rateVar.setId(v + "_rate");
@@ -777,6 +777,11 @@ public class Translator {
 						initVarAssignRHS = initVarAssignRHS + ")";
 						initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
 					}
+					if (lhpn.isInput(v)) {
+						SBMLutilities.createDirPort(document, v, GlobalConstants.INPUT);
+					} else if (lhpn.isOutput(v)) {
+						SBMLutilities.createDirPort(document, v, GlobalConstants.OUTPUT);
+					}
 				} else if (lhpn.isBoolean(v)) { // boolean variable 
 					Parameter p = m.createParameter(); 
 					p.setConstant(false);
@@ -789,6 +794,11 @@ public class Translator {
 					}
 					else {
 						p.setValue(0);
+					}
+					if (lhpn.isInput(v)) {
+						SBMLutilities.createDirPort(document, v, GlobalConstants.INPUT);
+					} else if (lhpn.isOutput(v)) {
+						SBMLutilities.createDirPort(document, v, GlobalConstants.OUTPUT);
 					}
 				}			
 			}
@@ -825,36 +835,43 @@ public class Translator {
 				initVarAssignRHS = initVarAssignRHS + ")";
 				initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
 			}
-			Parameter rateVar = m.createParameter();
-			rateVar.setConstant(false);
-			rateVar.setId(v + "_" + GlobalConstants.RATE);
-			RateRule rateRule = m.createRateRule();
-			SBMLutilities.setMetaId(rateRule, GlobalConstants.RULE+"_"+v+"_"+GlobalConstants.RATE);
-			rateRule.setVariable(v);
-			rateRule.setMath(SBMLutilities.myParseFormula(rateVar.getId()));
-			String initRate= lhpn.getInitialRate(v);
-			boolean initRateIsInt = Pattern.matches(Int, initRate);
-			boolean initRateIsRange = Pattern.matches(Range, initRate);
-			Pattern initRateRangePattern = Pattern.compile(Range);
-			Matcher initRateRangeMatcher = initRateRangePattern.matcher(initRate); 
-			boolean initRateRangeFound = initRateRangeMatcher.find();
-			if (initRateIsInt && !initRateIsRange) {
-				double initRateDouble = Double.parseDouble(initRate);
-				rateVar.setValue(initRateDouble);
-			}
-			if (!initRateIsInt && initRateIsRange && initRateRangeFound) {
-				rateVar.setValue(0);
-				InitialAssignment initAssign = m.createInitialAssignment();
-				initAssign.setVariable(rateVar.getId());
-				initAssign.setMath(SBMLutilities.myParseFormula(initRate));
-				String initRateAssignRHS = "uniform(";
-				for (int i=1; i<=initRateRangeMatcher.groupCount();i++) {
-					initRateAssignRHS = initRateAssignRHS + initRateRangeMatcher.group(i);
-					if (i==1)
-						initRateAssignRHS = initRateAssignRHS + ",";
+			if (!lhpn.isInput(v)) {
+				Parameter rateVar = m.createParameter();
+				rateVar.setConstant(false);
+				rateVar.setId(v + "_" + GlobalConstants.RATE);
+				RateRule rateRule = m.createRateRule();
+				SBMLutilities.setMetaId(rateRule, GlobalConstants.RULE+"_"+v+"_"+GlobalConstants.RATE);
+				rateRule.setVariable(v);
+				rateRule.setMath(SBMLutilities.myParseFormula(rateVar.getId()));
+				String initRate= lhpn.getInitialRate(v);
+				boolean initRateIsInt = Pattern.matches(Int, initRate);
+				boolean initRateIsRange = Pattern.matches(Range, initRate);
+				Pattern initRateRangePattern = Pattern.compile(Range);
+				Matcher initRateRangeMatcher = initRateRangePattern.matcher(initRate); 
+				boolean initRateRangeFound = initRateRangeMatcher.find();
+				if (initRateIsInt && !initRateIsRange) {
+					double initRateDouble = Double.parseDouble(initRate);
+					rateVar.setValue(initRateDouble);
 				}
-				initRateAssignRHS = initRateAssignRHS + ")";
-				initAssign.setMath(SBMLutilities.myParseFormula(initRateAssignRHS));
+				if (!initRateIsInt && initRateIsRange && initRateRangeFound) {
+					rateVar.setValue(0);
+					InitialAssignment initAssign = m.createInitialAssignment();
+					initAssign.setVariable(rateVar.getId());
+					initAssign.setMath(SBMLutilities.myParseFormula(initRate));
+					String initRateAssignRHS = "uniform(";
+					for (int i=1; i<=initRateRangeMatcher.groupCount();i++) {
+						initRateAssignRHS = initRateAssignRHS + initRateRangeMatcher.group(i);
+						if (i==1)
+							initRateAssignRHS = initRateAssignRHS + ",";
+					}
+					initRateAssignRHS = initRateAssignRHS + ")";
+					initAssign.setMath(SBMLutilities.myParseFormula(initRateAssignRHS));
+				}
+			}
+			if (lhpn.isInput(v)) {
+				SBMLutilities.createDirPort(document, v, GlobalConstants.INPUT);
+			} else if (lhpn.isOutput(v)) {
+				SBMLutilities.createDirPort(document, v, GlobalConstants.OUTPUT);
 			}
 		}
 		
@@ -1587,16 +1604,16 @@ public class Translator {
 			convert = "(" + convertHelper(op.getChild(0)) + "=" + convertHelper(op.getChild(1)) + ")";
 			return convert;
 		}
-		else if (op.getName()!=null && op.getName().equals("PSt")) {
+		else if (op.isSetName() && op.getName().equals("PSt")) {
 			return "St=?{" + convertHelper(op.getChild(0)) + "}";
 		}
-		else if (op.getName()!=null && 
+		else if (op.isSetName() && 
 				(op.getName().equals("PG") || op.getName().equals("PF") || op.getName().equals("PU"))) {
 			String operator = "";
-			if (op.getName()!=null && op.getName().equals("PG")) {
+			if (op.isSetName() && op.getName().equals("PG")) {
 				operator += "G";
 			}
-			else if (op.getName()!=null && op.getName().equals("PF")) {
+			else if (op.isSetName() && op.getName().equals("PF")) {
 				operator += "F";
 			}
 			else {

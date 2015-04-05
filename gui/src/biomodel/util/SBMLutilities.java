@@ -2704,12 +2704,12 @@ public class SBMLutilities {
 		createFunction(model, "normal", "Normal distribution", "lambda(m,s,m)");
 		createFunction(model, "exponential", "Exponential distribution", "lambda(l,1/l)");
 		createFunction(model, "gamma", "Gamma distribution", "lambda(a,b,a*b)");
+		createFunction(model, "poisson", "Poisson distribution", "lambda(mu,mu)");
 		createFunction(model, "lognormal", "Lognormal distribution", "lambda(z,s,exp(z+s^2/2))");
 		createFunction(model, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
 		createFunction(model, "laplace", "Laplace distribution", "lambda(a,0)");
 		createFunction(model, "cauchy", "Cauchy distribution", "lambda(a,a)");
 		createFunction(model, "rayleigh", "Rayleigh distribution","lambda(s,s*sqrt(pi/2))");
-		createFunction(model, "poisson", "Poisson distribution", "lambda(mu,mu)");
 		createFunction(model, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 		createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
 	}
@@ -2721,6 +2721,7 @@ public class SBMLutilities {
 		for (int i=0; i < inputs.length; i++) {
 			DistribInput input = draw.createDistribInput();
 			input.setId(inputs[i]);
+			input.setIndex(i);
 		}
 		// UncertML element
 		XMLNode xmlNode = new XMLNode(new XMLTriple("UncertML"), new XMLAttributes(), new XMLNamespaces());
@@ -2762,31 +2763,96 @@ public class SBMLutilities {
 			}
 			if (id.equals("uniform")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Uniform_distribution_(continuous)");
+				SBMLutilities.createDistribution(f, new String[] { "minimum", "maximum" }, 
+						new String[] {"a", "b"}, "UniformDistribution");
 			} else if (id.equals("normal")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Normal_distribution");
 				SBMLutilities.createDistribution(f, new String[] { "mean", "stddev" }, 
-						new String[] {"avg", "sd"}, "NormalDistribution");
+						new String[] {"m", "s"}, "NormalDistribution");
 			} else if (id.equals("exponential")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Exponential_distribution");
+				SBMLutilities.createDistribution(f, new String[] { "rate" }, new String[] {"l"}, "ExponentialDistribution");
 			} else if (id.equals("gamma")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Gamma_distribution");
+				SBMLutilities.createDistribution(f, new String[] { "shape", "scale" }, new String[] {"a", "b"}, "GammaDistribution");
 			} else if (id.equals("poisson")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Poisson_distribution");
+				SBMLutilities.createDistribution(f, new String[] { "rate" }, new String[] {"mu"}, "PoissonDistribution");
 			} else if (id.equals("lognormal")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Log-normal_distribution");
+				// TODO: check order
+				SBMLutilities.createDistribution(f, new String[] { "shape", "logScale" }, new String[] {"sh", "lsc"}, "GammaDistribution");
 			} else if (id.equals("chisq")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Chi-squared_distribution");
+				SBMLutilities.createDistribution(f, new String[] { "degreeOfFreedom" }, new String[] {"nu"}, "ChiSquareDistribution");
 			} else if (id.equals("laplace")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Laplace_distribution");
+				// TODO: mine only has one param?
+				SBMLutilities.createDistribution(f, new String[] { "location", "scale" }, new String[] {"l", "s"}, "LaplaceDistribution");
 			} else if (id.equals("cauchy")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Cauchy_distribution");
+				// TODO: mine only has one param?
+				SBMLutilities.createDistribution(f, new String[] { "location", "scale" }, new String[] {"l", "s"}, "CauchyDistribution");
 			} else if (id.equals("rayleigh")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Rayleigh_distribution");
+				// TODO: Missing?
 			} else if (id.equals("binomial")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Binomial_distribution");
+				SBMLutilities.createDistribution(f, new String[] { "probabilityOfSuccess", "numberOfTrials" }, new String[] {"p", "n"}, "BinomialDistribution");
 			} else if (id.equals("bernoulli")) {
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Bernoulli_distribution");
+				SBMLutilities.createDistribution(f, new String[] { "categoryProb" }, new String[] {"p"}, "BernoulliDistribution");
 			}
+		}
+	}
+	
+	public static void createDirPort(SBMLDocument document,String SId,String dir) {
+		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
+		Port port = null;
+		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
+			Port curPort = sbmlCompModel.getListOfPorts().get(i);
+			if (curPort.isSetIdRef() && curPort.getIdRef().equals(SId)) {
+				port = curPort;
+			}
+		}
+		SBase variable = SBMLutilities.getElementBySId(document,SId);
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(variable);
+		if (dir.equals(GlobalConstants.INPUT)) {
+			if (port==null) {
+				port = sbmlCompModel.createPort();
+			}
+			port.setId(dir + "__" + SId);
+			port.setIdRef(SId);
+			port.setSBOTerm(GlobalConstants.SBO_INPUT_PORT);
+			ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+			sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+			sBasePluginPort.unsetListOfIndices();
+			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+				org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+				Index portIndex = sBasePluginPort.createIndex();
+				portIndex.setReferencedAttribute("comp:idRef");
+				portIndex.setArrayDimension(i);
+				portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+			}
+		} else if (dir.equals(GlobalConstants.OUTPUT)) {
+			if (port==null) {
+				port = sbmlCompModel.createPort();
+			}
+			port.setId(dir + "__" + SId);
+			port.setIdRef(SId);
+			port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
+			ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
+			sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
+			sBasePluginPort.unsetListOfIndices();
+			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
+				org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
+				Index portIndex = sBasePluginPort.createIndex();
+				portIndex.setReferencedAttribute("comp:idRef");
+				portIndex.setArrayDimension(i);
+				portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
+			}
+		} else if (port != null) {
+			sbmlCompModel.removePort(port);
 		}
 	}
 	
@@ -2926,7 +2992,7 @@ public class SBMLutilities {
 	public static ASTNode removeBoolean(ASTNode math,String boolVar) {
 		if (math==null) return null;
 		if (math.getType() == ASTNode.Type.RELATIONAL_EQ) {
-			if (math.getLeftChild().getName()!=null && math.getLeftChild().getName().equals(boolVar)) {
+			if (math.getLeftChild().isSetName() && math.getLeftChild().getName().equals(boolVar)) {
 				return deepCopy(math.getLeftChild());
 			}
 		}
@@ -3522,7 +3588,7 @@ public class SBMLutilities {
 		int n = 0;
 		for (int i = 0; i < formula.getChildCount(); i++) {
 			ASTNode child = formula.getChild(i);
-			if (child.getName() != null && child.getName().equals(bvar)) {
+			if (child.isSetName() && child.getName().equals(bvar)) {
 				formula.replaceChild(n, deepCopy(arg));
 			} else if (child.getChildCount() > 0) {
 				replaceArgument(child, bvar, arg);

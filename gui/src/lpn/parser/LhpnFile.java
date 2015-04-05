@@ -777,39 +777,6 @@ public class LhpnFile {
 	}
 
 	public void addContinuous(String name, Properties initCond) {
-//		Variable var = new Variable(name, "continuous", initCond);
-//		continuous.put(name, var);
-//		if (!variables.contains(var)) {
-//			variables.add(var);
-//		}
-		
-		// First check if this variable has already been introduced.
-		// If the variable has already been added, then just change the
-		// values of the variable.
-//		if(variables.contains(var)){
-//			// Find the index of the previous added variable.
-//			int index = variables.indexOf(var);
-//			
-//			// Get the previous created variable.
-//			Variable contVar = variables.get(index);
-//			
-//			// Set the values of the variable.
-//			contVar.addInitCond(initCond);
-//			
-//		}
-//		if(continuous.containsValue(var)){
-//			
-//		}
-//		else{
-//			// Since the variable has not already been added, then add the
-//			// variable to the fields 'continuous' and 'variables'.
-//			
-//			continuous.put(name, var);
-//			
-//			variables.add(var);
-//		}
-		
-		// Holds the Variable if it was created before.
 		Variable contVar = null;
 		
 		// Search for the Variable.
@@ -829,6 +796,47 @@ public class LhpnFile {
 			
 	}
 
+
+	public void addContinuousInput(String name, Properties initCond) {
+		Variable contVar = null;
+		
+		// Search for the Variable.
+		for(Variable var : continuous.values()){
+			if(var.getName().equals(name)){
+				contVar = var;
+			}
+		}
+		
+		// If contVar contains null, then a previous existing Variable was not found.
+		if(contVar != null){
+			contVar.addInitCond(initCond);
+		}
+		else{
+			continuous.put(name, new Variable(name, "continuous", initCond, Variable.INPUT));
+		}
+			
+	}
+	
+	public void addContinuousOutput(String name, Properties initCond) {
+		Variable contVar = null;
+		
+		// Search for the Variable.
+		for(Variable var : continuous.values()){
+			if(var.getName().equals(name)){
+				contVar = var;
+			}
+		}
+		
+		// If contVar contains null, then a previous existing Variable was not found.
+		if(contVar != null){
+			contVar.addInitCond(initCond);
+		}
+		else{
+			continuous.put(name, new Variable(name, "continuous", initCond, Variable.OUTPUT));
+		}
+			
+	}
+	
 	public void addContinuous(String name, String initVal, String initRate) {
 		Properties initCond = new Properties();
 		initCond.setProperty("value", initVal);
@@ -842,6 +850,22 @@ public class LhpnFile {
 
 	public void addInteger(String name, String ic) {
 		Variable var = new Variable(name, "integer", ic);
+		integers.put(name, var);
+		if (!variables.contains(var)) {
+			variables.add(var);
+		}
+	}
+	
+	public void addIntegerInput(String name, String ic) {
+		Variable var = new Variable(name, "integer", ic, Variable.INPUT);
+		integers.put(name, var);
+		if (!variables.contains(var)) {
+			variables.add(var);
+		}
+	}
+	
+	public void addIntegerOutput(String name, String ic) {
+		Variable var = new Variable(name, "integer", ic, Variable.OUTPUT);
 		integers.put(name, var);
 		if (!variables.contains(var)) {
 			variables.add(var);

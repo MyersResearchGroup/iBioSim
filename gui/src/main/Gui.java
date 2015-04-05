@@ -271,7 +271,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	// treeSelected
 	// = false;
 
-	public boolean atacs, lema;
+	public boolean atacs, lema, lpn;
 
 	private String viewer;
 	
@@ -387,9 +387,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 * 
 	 * @throws Exception
 	 */
-	public Gui(boolean lema, boolean atacs, boolean libsbmlFound) {
+	public Gui(boolean lema, boolean atacs, boolean libsbmlFound, boolean lpn) {
 		this.lema = lema;
 		this.atacs = atacs;
+		this.lpn = lpn;
 		Gui.libsbmlFound = libsbmlFound;
 		async = lema || atacs;
 		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
@@ -933,9 +934,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (!async) {
 			newMenu.add(newSBMLModel);
 			newMenu.add(newGridModel);
-			//newMenu.add(newLhpn);
 		}
-		else if (atacs) {
+		else if (lema) {
+			newMenu.add(newSBMLModel);
+		}
+		newMenu.add(graph);
+		newMenu.add(probGraph);
+		if (atacs) {
 			newMenu.add(newVhdl);
 			newMenu.add(newG);
 			newMenu.add(newLhpn);
@@ -945,17 +950,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			newMenu.add(newRsg);
 			newMenu.add(newProperty);
 		}
-		else {
+		else if (lema) {
 			newMenu.add(newVhdl);
 			newMenu.add(newProperty);
 			newMenu.add(newS);
 			newMenu.add(newInst);
-			newMenu.add(newSBMLModel);
-			newMenu.add(newLhpn);
+			if (lpn) {
+				newMenu.add(newLhpn);
+			}
 			// newMenu.add(newSpice);
 		}
-		newMenu.add(graph);
-		newMenu.add(probGraph);
 		file.add(openProj);
 		file.add(openRecent);
 		// openMenu.add(openProj);
@@ -1077,14 +1081,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// view.addSeparator();
 			// view.add(refresh);
 		}
-		if (libsbmlFound) {
-			tools.add(createAnal);
-			tools.add(createSynth);
-		}
+		tools.add(createAnal);
 		if (!atacs) {
 			tools.add(createLearn);
 		}
-		if (atacs) {
+		if (!lema) {
 			tools.add(createSynth);
 		}
 		if (async) {
@@ -1168,7 +1169,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
-		tree = new FileTree(null, this, lema, atacs);
+		tree = new FileTree(null, this, lema, atacs, lpn);
 		
 		EditPreferences editPreferences = new EditPreferences(frame,async,tree);
 		editPreferences.setDefaultPreferences();
@@ -5810,7 +5811,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 */
 	public void refresh() {
 		mainPanel.remove(tree);
-		tree = new FileTree(new File(root), this, lema, atacs);
+		tree = new FileTree(new File(root), this, lema, atacs, lpn);
 		topSplit.setLeftComponent(tree);
 		//mainPanel.add(tree, "West");
 		mainPanel.validate();
@@ -5821,7 +5822,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 */
 	public void refreshTree() {
 		mainPanel.remove(tree);
-		tree = new FileTree(new File(root), this, lema, atacs);
+		tree = new FileTree(new File(root), this, lema, atacs, lpn);
 		topSplit.setLeftComponent(tree);
 		//mainPanel.add(tree, "West");
 		// updateGCM();
@@ -6351,6 +6352,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				out.close();
 				addToTree(filename);
 			}
+			Translator t1 = new Translator();
+			t1.convertLPN2SBML(root + separator + filename, "");
+			t1.setFilename(root + separator + filename.replace(".lpn", ".xml"));
+			t1.outputSBML();
+			addToTree(filename.replace(".lpn", ".xml"));
 		}
 		catch (IOException e1) {
 			JOptionPane.showMessageDialog(frame, "Unable to save LPN.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -6436,6 +6442,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				createLearn.addActionListener(this);
 				createLearn.addMouseListener(this);
 				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
 				JMenuItem edit = new JMenuItem("View/Edit (graphical)");
 				edit.addActionListener(this);
 				edit.addMouseListener(this);
@@ -6457,8 +6467,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				rename.addMouseListener(this);
 				rename.setActionCommand("rename");
 				popup.add(create);
-				popup.add(createSynthesis);
+				if (!lema) {
+					popup.add(createSynthesis);
+				}
 				popup.add(createLearn);
+				popup.add(createVerification);
 				popup.addSeparator();
 				popup.add(edit);
 				popup.add(editText);
@@ -8095,8 +8108,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		doc = ArraysFlattening.convert(model.getSBMLDocument());
 		System.out.println(doc.getModel().getConstraint(0).getMath().getType().toString());
 */
+		/*
+	    try {
+	    	String filePath = "/Users/myers/Downloads/distrib-example2.xml";
+	      System.out.println("Going to read '" + filePath + "'");
+	      SBMLDocument doc = new SBMLReader().readSBML(filePath);
+	      System.out.println("Reading done.");
+	    } catch (Exception e1) {
+	      System.err.println("Error while reading the sbml file.");
+	      e1.printStackTrace();
+	    }
+*/
 		
-		boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true;
+		boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true, lpnFlag = false;
 		if (args.length > 0) {
 			for (int i = 0; i < args.length; i++) {
 				if (args[i].equals("-lema")) {
@@ -8104,6 +8128,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else if (args[i].equals("-atacs")) {
 					atacsFlag = true;
+				}
+				else if (args[i].equals("-lpn")) {
+					lpnFlag = true;
 				}
 			}
 		}
@@ -8184,7 +8211,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		*/
 		
-		new Gui(lemaFlag, atacsFlag, libsbmlFound);
+		new Gui(lemaFlag, atacsFlag, libsbmlFound, lpnFlag);
 	}
 	
 	public static boolean isLibsbmlFound() {
@@ -8219,12 +8246,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else {
 							if (lema) {
-								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new LearnLPN(root + separator + learnName, log, this));
+								LearnLPN learn = new LearnLPN(root + separator + learnName, log, this);
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j+1, learn.getAdvancedOptionsPanel());
 							}
 							else {
-								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new LearnGCM(root + separator + learnName, log, this));
+								LearnGCM learn = new LearnGCM(root + separator + learnName, log, this);
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j+1, learn.getAdvancedOptionsPanel());
 							}
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Learn Options");
+							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j+1).setName("Advanced Options");
 						}
 					}
 				}

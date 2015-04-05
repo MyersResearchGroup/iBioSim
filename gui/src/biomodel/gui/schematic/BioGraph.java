@@ -2513,6 +2513,13 @@ public class BioGraph extends mxGraph {
 	private boolean createGraphVariableFromModel(String id){
 		
 		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		if (bioModel.isInput(id)) {
+			label += '\n' + GlobalConstants.INPUT;
+		} else if (bioModel.isOutput(id)) {
+			label += '\n' + GlobalConstants.OUTPUT;
+		} else {
+			//label += '\n' + GlobalConstants.INTERNAL;
+		}
 		CellValueObject cvo = new CellValueObject(label, "Variable", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);
@@ -2531,6 +2538,13 @@ public class BioGraph extends mxGraph {
 	 */
 	private boolean createGraphPlaceFromModel(String id,boolean marked){
 		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
+		if (bioModel.isInput(id)) {
+			label += '\n' + GlobalConstants.INPUT;
+		} else if (bioModel.isOutput(id)) {
+			label += '\n' + GlobalConstants.OUTPUT;
+		} else {
+			//label += '\n' + GlobalConstants.INTERNAL;
+		}
 		CellValueObject cvo = new CellValueObject(label, "Place", null);
 		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		insertedVertex.setId(id);

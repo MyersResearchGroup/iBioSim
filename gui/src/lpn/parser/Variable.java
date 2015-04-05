@@ -41,6 +41,16 @@ public class Variable {
 		}
 	}
 	
+	public Variable(String name, String type, Properties initCond, String port) {
+		if (type.equals(CONTINUOUS)) {
+			this.name = name;
+			this.type = type;
+			this.initValue = initCond.getProperty("value");
+			this.initRate = initCond.getProperty("rate");
+			this.port = port;
+		}
+	}
+	
 	public Variable(String name, String type, String initValue, String port) {
 		this.name = name;
 		this.type = type;

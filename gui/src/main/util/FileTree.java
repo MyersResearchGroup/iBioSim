@@ -36,7 +36,7 @@ public class FileTree extends JPanel implements MouseListener {
 
 	private String separator;
 
-	private boolean lema, atacs, async;
+	private boolean lema, atacs, async, lpn;
 
 	public static ImageIcon ICON_VHDL;
 
@@ -83,9 +83,10 @@ public class FileTree extends JPanel implements MouseListener {
 	/**
 	 * Construct a FileTree
 	 */
-	public FileTree(final File dir, Gui biomodelsim, boolean lema, boolean atacs) {
+	public FileTree(final File dir, Gui biomodelsim, boolean lema, boolean atacs, boolean lpn) {
 		this.lema = lema;
 		this.atacs = atacs;
+		this.lpn = lpn;
 		async = lema || atacs;
 		separator = Gui.separator;
 
@@ -274,6 +275,7 @@ public class FileTree extends JPanel implements MouseListener {
 					bioModel.load(curPath + separator + sbmlFile);
 					GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
 					gcm2sbml.load(curPath + separator + thisObject.toString());
+					System.out.println(curPath + separator + thisObject.toString());
 					gcm2sbml.convertGCM2SBML(curPath,thisObject.toString());
 					bioModel.save(curPath + separator + sbmlFile);
 					files.add(sbmlFile);
@@ -321,7 +323,7 @@ public class FileTree extends JPanel implements MouseListener {
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".g")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
-				else if (async && files.get(fnum).toString().length() > 3
+				else if (lpn && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".lpn")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
@@ -394,7 +396,7 @@ public class FileTree extends JPanel implements MouseListener {
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".g")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
-				else if (async && files.get(fnum).toString().length() > 3
+				else if (lpn && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".lpn")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
@@ -765,7 +767,7 @@ public class FileTree extends JPanel implements MouseListener {
 			else if (atacs && item.endsWith(".g")) {
 				node = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, item));
 			}
-			else if (async && item.endsWith(".lpn")) {
+			else if (lpn && item.endsWith(".lpn")) {
 				node = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, item));
 			}
 			else if (atacs && item.endsWith(".csp")) {
