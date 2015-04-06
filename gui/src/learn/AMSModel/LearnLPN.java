@@ -1351,18 +1351,17 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 			for (String s : thresholds.keySet()){
 				if (thresholds.get(s) != null) {
 					max = Math.max(max, thresholds.get(s).size()+2);
-					//System.out.println("Max is : "+thresholds.get(s).size());
 				}
 			}
 		}
 		JPanel label = new JPanel(new FlowLayout(FlowLayout.LEADING));
 		label.add(new JLabel("Variables                   "));
-		label.add(new JLabel("Port")); 
-		label.add(new JLabel("Ctrl ")); 
-		label.add(new JLabel("Care ")); 
-		label.add(new JLabel("Epsilon  ")); 
+		label.add(new JLabel("Port                  ")); 
+		label.add(new JLabel("Ctrl")); 
+		label.add(new JLabel("Care")); 
+		label.add(new JLabel("Epsilon")); 
 		label.add(new JLabel("Type                       ")); 
-		label.add(new JLabel("# Bins          "));
+		label.add(new JLabel("# Bins "));
 		label.add(new JLabel("Interpolate"));
 		label.add(new JLabel("Levels              "));
 
@@ -1605,33 +1604,24 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 
 	public void saveLPN() {
 		try {
-			if (true) {// (new File(directory + separator +
-				// "method.gcm").exists()) {
-				String copy = JOptionPane.showInputDialog(Gui.frame,
-						"Enter Circuit Name:", "Save Circuit",
-						JOptionPane.PLAIN_MESSAGE);
-				if (copy != null) {
-					copy = copy.trim();
-				} else {
-					return;
-				}
-				if (!copy.equals("")) {
-					if (copy.length() > 1) {
-						if (copy.length() < 4 || !copy.substring(copy.length() - 4).equals(".lpn")) {
-							copy += ".lpn";
-						}
-					} else {
+			String copy = JOptionPane.showInputDialog(Gui.frame,
+					"Enter Circuit Name:", "Save Circuit",
+					JOptionPane.PLAIN_MESSAGE);
+			if (copy != null) {
+				copy = copy.trim();
+			} else {
+				return;
+			}
+			if (!copy.equals("")) {
+				if (copy.length() > 1) {
+					if (copy.length() < 4 || !copy.substring(copy.length() - 4).equals(".lpn")) {
 						copy += ".lpn";
 					}
+				} else {
+					copy += ".lpn";
 				}
-				gui.saveLPN(copy, directory + separator + lhpnFile);
-			} /* TODO: dead code
-			else {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"No circuit has been generated yet.", "Error",
-						JOptionPane.ERROR_MESSAGE);
 			}
-			*/
+			gui.saveLPN(copy, directory + separator + lhpnFile);
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame,
 					"Unable to save model.", "Error",

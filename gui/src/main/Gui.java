@@ -6341,7 +6341,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 */
 	public void saveLPN(String filename, String path) {
 		try {
-			if (overwrite(root + separator + filename, filename)) {
+			if ((lpn && overwrite(root + separator + filename, filename))||
+				(!lpn && overwrite(root + separator + filename.replace(".lpn",".xml"), filename.replace(".lpn",".xml")))) {
 				BufferedWriter out = new BufferedWriter(new FileWriter(root + separator + filename));
 				BufferedReader in = new BufferedReader(new FileReader(path));
 				String str;
@@ -6350,13 +6351,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				in.close();
 				out.close();
-				addToTree(filename);
+				if (lpn) addToTree(filename);
+				Translator t1 = new Translator();
+				t1.convertLPN2SBML(root + separator + filename, "");
+				t1.setFilename(root + separator + filename.replace(".lpn", ".xml"));
+				t1.outputSBML();
+				addToTree(filename.replace(".lpn", ".xml"));
 			}
-			Translator t1 = new Translator();
-			t1.convertLPN2SBML(root + separator + filename, "");
-			t1.setFilename(root + separator + filename.replace(".lpn", ".xml"));
-			t1.outputSBML();
-			addToTree(filename.replace(".lpn", ".xml"));
 		}
 		catch (IOException e1) {
 			JOptionPane.showMessageDialog(frame, "Unable to save LPN.", "Error", JOptionPane.ERROR_MESSAGE);
