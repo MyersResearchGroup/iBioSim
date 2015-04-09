@@ -766,16 +766,18 @@ public class Translator {
 					}
 					if (!initVarIsInt && initVarIsRange && initVarRangeFound) {
 						var.setValue(0);
-						InitialAssignment initAssign = m.createInitialAssignment();
-						initAssign.setVariable(var.getId());
-						String initVarAssignRHS = "uniform(";
-						for (int i=1; i<=initRangeBoundMatcher.groupCount();i++) {
-							initVarAssignRHS = initVarAssignRHS + initRangeBoundMatcher.group(i);
-							if (i==1)
-								initVarAssignRHS = initVarAssignRHS + ",";
+						if (!lhpn.isInput(v)) {
+							InitialAssignment initAssign = m.createInitialAssignment();
+							initAssign.setVariable(var.getId());
+							String initVarAssignRHS = "uniform(";
+							for (int i=1; i<=initRangeBoundMatcher.groupCount();i++) {
+								initVarAssignRHS = initVarAssignRHS + initRangeBoundMatcher.group(i);
+								if (i==1)
+									initVarAssignRHS = initVarAssignRHS + ",";
+							}
+							initVarAssignRHS = initVarAssignRHS + ")";
+							initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
 						}
-						initVarAssignRHS = initVarAssignRHS + ")";
-						initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
 					}
 					if (lhpn.isInput(v)) {
 						SBMLutilities.createDirPort(document, v, GlobalConstants.INPUT);
@@ -824,16 +826,18 @@ public class Translator {
 			}
 			if (!initVarIsInt && initVarIsRange && initVarRangeFound) {
 				var.setValue(0);
-				InitialAssignment initAssign = m.createInitialAssignment();
-				initAssign.setVariable(var.getId());
-				String initVarAssignRHS = "uniform(";
-				for (int i=1; i<=initRangeBoundMatcher.groupCount();i++) {
-					initVarAssignRHS = initVarAssignRHS + initRangeBoundMatcher.group(i);
-					if (i==1)
-						initVarAssignRHS = initVarAssignRHS + ",";
+				if (!lhpn.isInput(v)) {
+					InitialAssignment initAssign = m.createInitialAssignment();
+					initAssign.setVariable(var.getId());
+					String initVarAssignRHS = "uniform(";
+					for (int i=1; i<=initRangeBoundMatcher.groupCount();i++) {
+						initVarAssignRHS = initVarAssignRHS + initRangeBoundMatcher.group(i);
+						if (i==1)
+							initVarAssignRHS = initVarAssignRHS + ",";
+					}
+					initVarAssignRHS = initVarAssignRHS + ")";
+					initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
 				}
-				initVarAssignRHS = initVarAssignRHS + ")";
-				initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
 			}
 			if (!lhpn.isInput(v)) {
 				Parameter rateVar = m.createParameter();
