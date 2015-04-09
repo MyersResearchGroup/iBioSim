@@ -2944,7 +2944,8 @@ public class LearnModel { // added ItemListener SB
 					k = reqdVarIndices.get(i);
 					// addInitValues(data.get(k).get(j), i); // k or i think ??
 					// addInitRates(rates[i][j], i);// k or i think??
-					reqdVarsL.get(i).addInitValues(data.get(k).get(j)); // Do the same for initvals too??
+					// CJM: 4/8/2015 - changed this to fix initial value
+					reqdVarsL.get(i).addInitValues(data.get(k).get(0/*j*/)); // Do the same for initvals too??
 					//reqdVarsL.get(i).addInitRates(rates[i][j]);	// this just adds the first rate; not the rates of entire 1st region.
 					initMark = j;
 					break;
