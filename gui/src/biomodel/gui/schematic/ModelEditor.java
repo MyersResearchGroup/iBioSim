@@ -64,6 +64,7 @@ import biomodel.gui.sbmlcore.Reactions;
 import biomodel.gui.sbmlcore.Rules;
 import biomodel.gui.sbmlcore.SpeciesPanel;
 import biomodel.gui.sbmlcore.Units;
+import biomodel.gui.sbol.SBMLtoSBOL;
 import biomodel.gui.util.AbstractRunnableNamedButton;
 import biomodel.gui.util.PropertyList;
 import biomodel.gui.util.Runnable;
@@ -483,6 +484,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		}
+	}
+	
+	public void exportSBOL2() {
+		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(path,biomodel);
+		sbmltosbol.export();
 	}
 	
 	public void exportSBML() {

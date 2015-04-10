@@ -218,7 +218,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem pref; // The preferences menu item
 	private JMenuItem graph; // The graph menu item
 	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, 
-	exportSBML, exportFlatSBML, exportSBOL, exportAvi, exportMp4;
+	exportSBML, exportFlatSBML, exportSBOL, exportSBOL2, exportAvi, exportMp4;
 	
 	private JMenu exportDataMenu, exportMovieMenu, exportImageMenu;
 
@@ -586,6 +586,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSBML = new JMenuItem("SBML");
 		exportFlatSBML = new JMenuItem("Flat SBML");
 		exportSBOL = new JMenuItem("SBOL");
+		exportSBOL2 = new JMenuItem("SBOL2");
 		exportCsv = new JMenuItem("CSV");
 		exportDat = new JMenuItem("DAT");
 		exportEps = new JMenuItem("EPS");
@@ -696,6 +697,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSBML.addActionListener(this);
 		exportFlatSBML.addActionListener(this);
 		exportSBOL.addActionListener(this);
+		exportSBOL2.addActionListener(this);
 		exportCsv.addActionListener(this);
 		exportDat.addActionListener(this);
 		exportEps.addActionListener(this);
@@ -822,6 +824,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
 		exportSBOL.setEnabled(false);
+		exportSBOL2.setEnabled(false);
 		exportCsv.setEnabled(false);
 		exportDat.setEnabled(false);
 		exportEps.setEnabled(false);
@@ -1022,6 +1025,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportFlatSBML);
 		exportMenu.add(exportSBML);
 		exportMenu.add(exportSBOL);
+		exportMenu.add(exportSBOL2);
 		
 		exportDataMenu.add(exportTsd);
 		exportDataMenu.add(exportCsv);
@@ -1536,6 +1540,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor) {
 				((ModelEditor) comp).exportSBOL();
+			}
+		}
+		else if (e.getSource() == exportSBOL2) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).exportSBOL2();
 			}
 		}
 		else if (e.getSource() == saveSBOL) {
@@ -8576,6 +8586,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
 		exportSBOL.setEnabled(false);
+		exportSBOL2.setEnabled(false);
 		exportDataMenu.setEnabled(false);
 		exportImageMenu.setEnabled(false);
 		exportMovieMenu.setEnabled(false);
@@ -8660,6 +8671,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportSBML.setEnabled(true);
 			exportFlatSBML.setEnabled(true);
 			exportSBOL.setEnabled(true);
+			exportSBOL2.setEnabled(true);
 			exportImageMenu.setEnabled(true);
 			exportJpg.setEnabled(true);
 		}
