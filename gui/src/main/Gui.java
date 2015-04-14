@@ -1756,7 +1756,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (tree.getFile().lastIndexOf('\\') >= 0) {
 				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('\\') + 1);
 			}
-			addToTree(theFile.replace(".prop", ".lpn"));
+			addToTree(theFile.replace(".prop", ".xml"));
 		}
 		else if (e.getActionCommand().equals("createAnalysis")) {
 			try {

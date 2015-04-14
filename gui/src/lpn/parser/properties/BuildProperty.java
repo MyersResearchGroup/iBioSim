@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import lpn.parser.LhpnFile;
+import lpn.parser.Translator;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -116,8 +117,12 @@ public class BuildProperty {
 			e.printStackTrace();
 		}
 		lpnFinal.save(lpnFileName);
-
+		Translator t1 = new Translator();
+		t1.convertLPN2SBML(lpnFileName, "");
+		t1.setFilename(lpnFileName.replace(".lpn", ".xml"));
+		t1.outputSBML();
 	}
+	
 	public static void printTree(CommonTree t, int number) {
 
 		if ( t != null ) {
