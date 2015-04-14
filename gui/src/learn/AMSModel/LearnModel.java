@@ -1765,7 +1765,7 @@ public class LearnModel { // added ItemListener SB
 		int count1=0;
 		ArrayList compareBin = new ArrayList();
 
-		while (end<(data.get(0).size()-2) && endMode<(data.get(0).size()-2))
+		while (end<(data.get(0).size()) && endMode<(data.get(0).size()))
 		{// System.out.println("end Mode is : "+endMode);
 			modeBinAtStart = modeBinsCalculate(useMap,startMode);
 			//System.out.println("modeBinAtStart : "+modeBinAtStart+" at time : "+startMode);
