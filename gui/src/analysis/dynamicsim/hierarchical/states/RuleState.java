@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Model;
@@ -15,7 +16,7 @@ public abstract class RuleState extends EventState
 	private List<RateRule>			rateRulesList;
 	private List<AssignmentRule>	assignmentRulesList;
 
-	public RuleState(HashMap<String, Model> models, String bioModel, String submodelID)
+	public RuleState(Map<String, Model> models, String bioModel, String submodelID)
 	{
 
 		super(models, bioModel, submodelID);

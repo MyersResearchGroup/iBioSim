@@ -1,7 +1,7 @@
 package analysis.dynamicsim.hierarchical.states;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.sbml.jsbml.Model;
 
@@ -26,7 +26,7 @@ public abstract class ModuleState
 	private double			propensity;
 	private HashSet<String>	variablesToPrint;
 
-	public ModuleState(HashMap<String, Model> models, String bioModel, String submodelID)
+	public ModuleState(Map<String, Model> models, String bioModel, String submodelID)
 	{
 		this.model = bioModel;
 		this.ID = submodelID;

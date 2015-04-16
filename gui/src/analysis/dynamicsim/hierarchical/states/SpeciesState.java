@@ -2,6 +2,7 @@ package analysis.dynamicsim.hierarchical.states;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.sbml.jsbml.Model;
 
@@ -13,7 +14,7 @@ public abstract class SpeciesState extends VariableState
 	private final HashMap<String, Boolean>			speciesToHasOnlySubstanceUnitsMap;
 	private final HashMap<String, Boolean>			speciesToIsBoundaryConditionMap;
 
-	public SpeciesState(HashMap<String, Model> models, String bioModel, String submodelID)
+	public SpeciesState(Map<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 		speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String>>(

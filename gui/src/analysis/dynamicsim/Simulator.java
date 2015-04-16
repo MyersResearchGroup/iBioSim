@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -1727,7 +1728,7 @@ public abstract class Simulator
 				String speciesID = species.getId();
 
 				// check to see if the species is arrayed
-				if (AnnotationUtility.parseSpeciesArrayAnnotation(species)!=null)
+				if (AnnotationUtility.parseSpeciesArrayAnnotation(species) != null)
 				{
 
 					arraysExist = true;
@@ -1741,7 +1742,7 @@ public abstract class Simulator
 					int numColsUpper = 0;
 
 					int[] values = AnnotationUtility.parseSpeciesArrayAnnotation(species);
-					
+
 					numRowsLower = values[0];
 					numColsLower = values[1];
 					numRowsUpper = values[2];
@@ -1964,8 +1965,9 @@ public abstract class Simulator
 
 					arraysExist = true;
 
-					String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(reaction);	
-					for (int i = 1; i < splitAnnotation.length; i++) {
+					String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(reaction);
+					for (int i = 1; i < splitAnnotation.length; i++)
+					{
 						String compartmentID = splitAnnotation[i].split("=")[0];
 						String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0]
 								.replace("(", "");
@@ -2623,6 +2625,8 @@ public abstract class Simulator
 		// set of events to be removed due to component erasure
 		HashSet<String> deadEvents = new HashSet<String>();
 
+		List<StringDoublePair> listOfAssignments = new ArrayList<StringDoublePair>();
+
 		// fire all events whose fire time is less than the current time
 		while (triggeredEventQueue.size() > 0 && triggeredEventQueue.peek().fireTime <= currentTime)
 		{
@@ -2764,22 +2768,25 @@ public abstract class Simulator
 								.getMath());
 					}
 
+					listOfAssignments.add(new StringDoublePair(variable, assignmentValue));
 					// update the species, but only if it's not a constant
 					// (bound. cond. is fine)
-					if (variableToIsConstantMap.get(variable) == false)
-					{
-
-						if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable)
-								&& speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
-						{
-							variableToValueMap.put(variable, assignmentValue
-									* speciesToCompartmentSizeMap.get(variable));
-						}
-						else
-						{
-							variableToValueMap.put(variable, assignmentValue);
-						}
-					}
+					// if (variableToIsConstantMap.get(variable) == false)
+					// {
+					//
+					// if
+					// (speciesToHasOnlySubstanceUnitsMap.containsKey(variable)
+					// && speciesToHasOnlySubstanceUnitsMap.get(variable) ==
+					// false)
+					// {
+					// variableToValueMap.put(variable, assignmentValue
+					// * speciesToCompartmentSizeMap.get(variable));
+					// }
+					// else
+					// {
+					// variableToValueMap.put(variable, assignmentValue);
+					// }
+					// }
 
 					// if this variable that was just updated is part of an
 					// assignment rule (RHS)
@@ -2863,6 +2870,26 @@ public abstract class Simulator
 		// add the fired events back into the untriggered set
 		// this allows them to trigger/fire again later
 		// untriggeredEventSet.addAll(firedEvents);
+
+		for (int i = 0; i < listOfAssignments.size(); ++i)
+		{
+			String variable = listOfAssignments.get(i).string;
+			double assignmentValue = listOfAssignments.get(i).doub;
+			if (variableToIsConstantMap.get(variable) == false)
+			{
+
+				if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable)
+						&& speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+				{
+					variableToValueMap.put(variable,
+							assignmentValue * speciesToCompartmentSizeMap.get(variable));
+				}
+				else
+				{
+					variableToValueMap.put(variable, assignmentValue);
+				}
+			}
+		}
 
 		if (affectedAssignmentRuleSet.size() > 0)
 		{
@@ -4807,7 +4834,7 @@ public abstract class Simulator
 
 				// check to see if the species is arrayed
 
-				if (AnnotationUtility.parseSpeciesArrayAnnotation(species)!=null)
+				if (AnnotationUtility.parseSpeciesArrayAnnotation(species) != null)
 				{
 
 					arraysExist = true;
@@ -4820,11 +4847,11 @@ public abstract class Simulator
 					int numRowsUpper = 0;
 					int numColsUpper = 0;
 
-					//String[] annotationString = stripAnnotation(
-					//		species.getAnnotationString().replace("<annotation>", "")
-					//				.replace("</annotation>", "").trim()).split("=");
+					// String[] annotationString = stripAnnotation(
+					// species.getAnnotationString().replace("<annotation>", "")
+					// .replace("</annotation>", "").trim()).split("=");
 					int[] values = AnnotationUtility.parseSpeciesArrayAnnotation(species);
-					
+
 					numRowsLower = values[0];
 					numColsLower = values[1];
 					numRowsUpper = values[2];
@@ -5057,9 +5084,10 @@ public abstract class Simulator
 				{
 
 					arraysExist = true;
-					
-					String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(reaction);	
-					for (int i = 1; i < splitAnnotation.length; i++) {
+
+					String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(reaction);
+					for (int i = 1; i < splitAnnotation.length; i++)
+					{
 						String compartmentID = splitAnnotation[i].split("=")[0];
 						String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0]
 								.replace("(", "");

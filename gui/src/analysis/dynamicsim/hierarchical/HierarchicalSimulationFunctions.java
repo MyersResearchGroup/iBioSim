@@ -38,6 +38,61 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 	}
 
+	protected void setupVariableFromTSD() throws IOException
+	{
+		getBufferedTSDWriter().write("(" + "\"" + "time" + "\"");
+
+		if (getInterestingSpecies().length > 0)
+		{
+			for (String s : getInterestingSpecies())
+			{
+
+				getBufferedTSDWriter().write(",\"" + s + "\"");
+
+			}
+
+			getBufferedTSDWriter().write("),\n");
+
+			return;
+		}
+
+		for (String speciesID : getTopmodel().getSpeciesIDSet())
+		{
+			getBufferedTSDWriter().write(",\"" + speciesID + "\"");
+		}
+
+		for (String noConstantParam : getTopmodel().getVariablesToPrint())
+		{
+			getBufferedTSDWriter().write(",\"" + noConstantParam + "\"");
+		}
+		/*
+		 * for (String compartment : getTopmodel().compartmentIDSet) {
+		 * bufferedTSDWriter.write(", \"" + compartment + "\""); }
+		 */
+		for (ModelState model : getSubmodels().values())
+		{
+			for (String speciesID : model.getSpeciesIDSet())
+			{
+				if (!model.getIsHierarchical().contains(speciesID))
+				{
+					getBufferedTSDWriter().write(",\"" + model.getID() + "__" + speciesID + "\"");
+				}
+			}
+
+			for (String noConstantParam : model.getVariablesToPrint())
+			{
+				if (!model.getIsHierarchical().contains(noConstantParam))
+				{
+					getBufferedTSDWriter().write(
+							",\"" + model.getID() + "__" + noConstantParam + "\"");
+				}
+			}
+		}
+
+		getBufferedTSDWriter().write("),\n");
+
+	}
+
 	protected void printAllToTSD(double printTime) throws IOException
 	{
 		String commaSpace = "";
@@ -173,6 +228,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 	protected double getTotalPropensity()
 	{
 		double totalPropensity = 0;
+
 		totalPropensity += getTopmodel().getPropensity();
 
 		for (ModelState model : getSubmodels().values())
@@ -213,7 +269,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 	}
 
 	protected void performReaction(ModelState modelstate, String selectedReactionID,
-			final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag)
+			final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag, int[] dims)
 	{
 
 		// these are sets of things that need to be re-evaluated or tested due
@@ -228,8 +284,17 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		{
 
 			double stoichiometry = speciesAndStoichiometry.doub;
-			String speciesID = speciesAndStoichiometry.string;
 
+			String speciesID;
+			if (dims == null)
+			{
+				speciesID = speciesAndStoichiometry.string;
+			}
+			else
+			{
+				speciesID = getIndexedSpeciesReference(modelstate, selectedReactionID,
+						speciesAndStoichiometry.string, dims);
+			}
 			// this means the stoichiometry isn't constant, so look to the
 			// variableToValue map
 			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(
@@ -239,7 +304,6 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 				for (HierarchicalStringPair doubleID : modelstate
 						.getReactionToNonconstantStoichiometriesSetMap().get(selectedReactionID))
 				{
-
 					// string1 is the species ID; string2 is the
 					// speciesReference ID
 					if (doubleID.string1.equals(speciesID))
@@ -381,6 +445,40 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 	// }
 	// }
 
+	protected double handleEvents()
+	{
+		double nextEventTime = Double.POSITIVE_INFINITY;
+		if (getTopmodel().isNoEventsFlag() == false)
+		{
+			handleEvents(getTopmodel());
+			if (!getTopmodel().getTriggeredEventQueue().isEmpty()
+					&& getTopmodel().getTriggeredEventQueue().peek().getFireTime() <= nextEventTime)
+			{
+				if (getTopmodel().getTriggeredEventQueue().peek().getFireTime() < nextEventTime)
+				{
+					nextEventTime = getTopmodel().getTriggeredEventQueue().peek().getFireTime();
+				}
+			}
+		}
+
+		for (ModelState models : getSubmodels().values())
+		{
+			if (models.isNoEventsFlag() == false)
+			{
+				handleEvents(models);
+				if (!models.getTriggeredEventQueue().isEmpty()
+						&& models.getTriggeredEventQueue().peek().getFireTime() <= nextEventTime)
+				{
+					if (models.getTriggeredEventQueue().peek().getFireTime() < nextEventTime)
+					{
+						nextEventTime = models.getTriggeredEventQueue().peek().getFireTime();
+					}
+				}
+			}
+		}
+		return nextEventTime;
+	}
+
 	protected boolean testConstraints(ModelState modelstate, HashSet<ASTNode> affectedConstraintSet)
 	{
 
@@ -499,33 +597,49 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			return false;
 		}
 
-		for (String untriggeredEventID : modelstate.getUntriggeredEventSet())
+		// for (String untriggeredEventID : modelstate.getUntriggeredEventSet())
+		// {
+		// if
+		// (HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
+		// modelstate.getEventToTriggerMap().get(untriggeredEventID), true, t,
+		// y,
+		// variableToIndexMap)) == true)
+		// {
+		// if (getCurrentTime() == 0.0
+		// &&
+		// modelstate.getEventToTriggerInitiallyTrueMap().get(untriggeredEventID)
+		// == true)
+		// {
+		// continue;
+		// }
+		//
+		// if
+		// (modelstate.getEventToPreviousTriggerValueMap().get(untriggeredEventID)
+		// == true)
+		// {
+		// continue;
+		// }
+		//
+		// return true;
+		//
+		// }
+		// }
+
+		for (String event : modelstate.getUntriggeredEventSet())
 		{
-			if (HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
-					modelstate.getEventToTriggerMap().get(untriggeredEventID), true, t, y,
-					variableToIndexMap)) == true)
+			double result = evaluateExpressionRecursive(modelstate, modelstate
+					.getEventToTriggerMap().get(event), true, t, y, variableToIndexMap);
+			if (result > 0)
 			{
-				if (getCurrentTime() == 0.0
-						&& modelstate.getEventToTriggerInitiallyTrueMap().get(untriggeredEventID) == true)
-				{
-					continue;
-				}
-
-				if (modelstate.getEventToPreviousTriggerValueMap().get(untriggeredEventID) == true)
-				{
-					continue;
-				}
-
 				return true;
-
 			}
 		}
 
-		if (modelstate.getTriggeredEventQueue().peek() != null
-				&& modelstate.getTriggeredEventQueue().peek().getFireTime() <= t)
-		{
-			return true;
-		}
+		// if (modelstate.getTriggeredEventQueue().peek() != null
+		// && modelstate.getTriggeredEventQueue().peek().getFireTime() <= t)
+		// {
+		// return true;
+		// }
 
 		return false;
 	}

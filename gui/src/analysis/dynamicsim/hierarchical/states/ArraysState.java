@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
@@ -17,22 +18,17 @@ public abstract class ArraysState extends HierarchicalState
 	private HashMap<String, List<ArraysObject>>	dimensionObjects;
 	private HashMap<String, IndexObject>		indexObjects;
 
-	private HashMap<String, ASTNode>			arraysIDs;
-	private final HashMap<String, ASTNode>		arraysMetaIDs;
-
 	private HashSet<String>						arrayedObjects;
 	private HashSet<String>						arrayedMetaObjects;
 
 	private HashMap<String, String>				arraySizeToSBase;
 
-	public ArraysState(HashMap<String, Model> models, String bioModel, String submodelID)
+	public ArraysState(Map<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 		dimensionObjects = new HashMap<String, List<ArraysObject>>();
 		arrayedObjects = new HashSet<String>();
 		arrayedMetaObjects = new HashSet<String>();
-		arraysIDs = new HashMap<String, ASTNode>();
-		arraysMetaIDs = new HashMap<String, ASTNode>();
 		indexObjects = new HashMap<String, IndexObject>();
 		arraySizeToSBase = new HashMap<String, String>();
 	}
@@ -41,8 +37,6 @@ public abstract class ArraysState extends HierarchicalState
 	{
 		super(state);
 		dimensionObjects = new HashMap<String, List<ArraysObject>>(state.dimensionObjects);
-		arraysIDs = new HashMap<String, ASTNode>(state.arraysIDs);
-		arraysMetaIDs = new HashMap<String, ASTNode>(state.arraysMetaIDs);
 		arrayedObjects = new HashSet<String>(state.arrayedObjects);
 		arrayedMetaObjects = new HashSet<String>(state.arrayedMetaObjects);
 		indexObjects = new HashMap<String, IndexObject>(indexObjects);
@@ -61,55 +55,6 @@ public abstract class ArraysState extends HierarchicalState
 	public void addSizeTrigger(String parameterSize, String id)
 	{
 		arraySizeToSBase.put(parameterSize, id);
-	}
-
-	public String addValue(String id, double value, int... indices)
-	{
-		ASTNode vector = arraysIDs.get(id);
-		String newId = id;
-		ASTNode child;
-		if (vector == null)
-		{
-			vector = new ASTNode(ASTNode.Type.VECTOR);
-			arraysIDs.put(id, vector);
-		}
-		child = vector;
-		for (int i = indices.length - 1; i >= 0; i--)
-		{
-			while (child.getChildCount() <= indices[i])
-			{
-				child.addChild(new ASTNode(ASTNode.Type.VECTOR));
-			}
-			child = child.getChild(indices[i]);
-			newId += "_" + indices[i];
-		}
-		child.setType(ASTNode.Type.NAME);
-		child.setName(newId);
-		return newId;
-	}
-
-	public void addSBase(String metaid, int... indices)
-	{
-		ASTNode vector = arraysMetaIDs.get(metaid);
-		String newId = metaid;
-		ASTNode child;
-		if (vector == null)
-		{
-			vector = new ASTNode(ASTNode.Type.VECTOR);
-			arraysMetaIDs.put(metaid, vector);
-		}
-		child = vector;
-		for (int i = indices.length - 1; i >= 0; i--)
-		{
-			while (child.getChildCount() <= indices[i])
-			{
-				child.addChild(new ASTNode(ASTNode.Type.VECTOR));
-			}
-			child = child.getChild(indices[i]);
-			newId += "_" + indices[i];
-		}
-
-		child.setName(newId);
 	}
 
 	public void addDimension(String id, String size, int arrayDim)
@@ -165,16 +110,6 @@ public abstract class ArraysState extends HierarchicalState
 	public void setArrayedObjects(HashSet<String> arrayedObjects)
 	{
 		this.arrayedObjects = arrayedObjects;
-	}
-
-	public HashMap<String, ASTNode> getValues()
-	{
-		return arraysIDs;
-	}
-
-	public void setValues(HashMap<String, ASTNode> values)
-	{
-		this.arraysIDs = values;
 	}
 
 	public HashMap<String, IndexObject> getIndexObjects()

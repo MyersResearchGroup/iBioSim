@@ -5,6 +5,7 @@ import gnu.trove.map.hash.TObjectDoubleHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
@@ -23,7 +24,7 @@ public abstract class VariableState extends ModuleState
 	private HashMap<String, Boolean>					variableToIsInRateRuleMap;
 	private final TObjectDoubleHashMap<String>			variableToValueMap;
 
-	public VariableState(HashMap<String, Model> models, String bioModel, String submodelID)
+	public VariableState(Map<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 		compartmentIDSet = new LinkedHashSet<String>();

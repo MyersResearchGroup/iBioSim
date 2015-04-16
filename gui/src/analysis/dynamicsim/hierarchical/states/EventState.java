@@ -2,6 +2,7 @@ package analysis.dynamicsim.hierarchical.states;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 import org.sbml.jsbml.ASTNode;
@@ -24,7 +25,7 @@ public abstract class EventState extends ReactionState
 	private PriorityQueue<HierarchicalEventToFire>	triggeredEventQueue;
 	private HashSet<String>							untriggeredEventSet;
 
-	public EventState(HashMap<String, Model> models, String bioModel, String submodelID)
+	public EventState(Map<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 		untriggeredEventSet = new HashSet<String>();

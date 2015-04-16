@@ -21,6 +21,9 @@ public class SimulatorSSADirect extends Simulator
 	MutableBoolean		rulesFlag			= new MutableBoolean(false);
 	MutableBoolean		constraintsFlag		= new MutableBoolean(false);
 
+	private double		currentStep;
+	private double		numSteps;
+
 	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit,
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress,
 			double printInterval, double stoichAmpValue, JFrame running,
@@ -50,29 +53,30 @@ public class SimulatorSSADirect extends Simulator
 		final boolean noConstraintsFlag = (Boolean) constraintsFlag.getValue();
 
 		initializationTime += System.nanoTime() - initTime2;
-		// long initTime3 = System.nanoTime() - initTime2;
-
-		// System.err.println("initialization time: " + initializationTime /
-		// 1e9f);
-
-		// SIMULATION LOOP
-		// simulate until the time limit is reached
-
-		// long step1Time = 0;
-		// long step2Time = 0;
-		// long step3Time = 0;
-		// long step4Time = 0;
-		// long step5Time = 0;
 
 		currentTime = 0.0;
-		double printTime = printInterval;
+		double printTime = 0;
+		double oldTime = 0;
 		double nextEventTime = Double.POSITIVE_INFINITY;
+
+		numSteps = (int) (timeLimit / printInterval);
 
 		// add events to queue if they trigger
 		if (noEventsFlag == false)
 		{
 			handleEvents();
+
+			HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag,
+					noConstraintsFlag);
+
+			// recalculate propensties/groups for affected reactions
+			if (affectedReactionSet.size() > 0)
+			{
+				updatePropensities(affectedReactionSet);
+			}
 		}
+
+		printTime = print(printTime);
 
 		while (currentTime < timeLimit && cancelFlag == false)
 		{
@@ -87,63 +91,19 @@ public class SimulatorSSADirect extends Simulator
 				return;
 			}
 
-			// EVENT HANDLING
-			// trigger and/or fire events, etc.
-			if (noEventsFlag == false)
-			{
-
-				HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag,
-						noConstraintsFlag);
-
-				// recalculate propensties/groups for affected reactions
-				if (affectedReactionSet.size() > 0)
-				{
-					updatePropensities(affectedReactionSet);
-				}
-			}
-
-			// TSD PRINTING
-			// print to TSD if the next print interval arrives
-			// this obviously prints the previous timestep's data
-			// if (currentTime >= printTime) {
-			//
-			// if (printTime < 0)
-			// printTime = 0.0;
-			//
-			// try {
-			// printToTSD(printTime);
-			// bufferedTSDWriter.write(",\n");
-			// } catch (IOException e) {
-			// e.printStackTrace();
-			// }
-			//
-			// printTime += printInterval;
-			// }
-
-			// STEP 1: generate random numbers
-
-			// long step1Initial = System.nanoTime();
-
 			double r1 = randomNumberGenerator.nextDouble();
 			double r2 = randomNumberGenerator.nextDouble();
 
-			// step1Time += System.nanoTime() - step1Initial;
+			oldTime = currentTime;
 
-			// STEP 2: calculate delta_t, the time till the next reaction
-			// execution
-
-			// long step2Initial = System.nanoTime();
-			double oldTime = currentTime;
 			double delta_t = FastMath.log(1 / r1) / totalPropensity;
 			double nextReactionTime = currentTime + delta_t;
-			// add events to queue if they trigger
+
 			if (noEventsFlag == false)
 			{
 
 				handleEvents();
 				nextEventTime = Double.POSITIVE_INFINITY;
-				// step to the next event fire time if it comes before the next
-				// time step
 				if (!triggeredEventQueue.isEmpty()
 						&& triggeredEventQueue.peek().fireTime <= nextEventTime)
 				{
@@ -154,108 +114,69 @@ public class SimulatorSSADirect extends Simulator
 			if (nextReactionTime < nextEventTime && nextReactionTime < currentTime + maxTimeStep)
 			{
 				currentTime = nextReactionTime;
-				// perform reaction
 			}
 			else if (nextEventTime < currentTime + maxTimeStep)
 			{
 				currentTime = nextEventTime;
-				// print
 			}
 			else
 			{
-				currentTime += maxTimeStep;
-				performAssignmentRules();
-				// print
+				currentTime = currentTime + maxTimeStep;
 			}
+
 			if (currentTime > timeLimit)
 			{
 				currentTime = timeLimit;
+
+				fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
+
+				performRateRules(currentTime - oldTime);
+
+				break;
 			}
-			while (currentTime > printTime && printTime < timeLimit)
-			{
 
-				try
-				{
-					printToTSD(printTime);
-					bufferedTSDWriter.write(",\n");
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-
-				printTime += printInterval;
-				running.setTitle("Progress (" + (int) ((currentTime / timeLimit) * 100.0) + "%)");
-				// update progress bar
-				progress.setValue((int) ((currentTime / timeLimit) * 100.0));
-
-			}
 			if (currentTime == nextReactionTime)
 			{
+				performReaction(r2, noAssignmentRulesFlag, noConstraintsFlag);
 
-				// long step3Initial = System.nanoTime();
-				String selectedReactionID = selectReaction(r2);
+				performRateRules(currentTime - oldTime);
 
-				// step3Time += System.nanoTime() - step3Initial;
-
-				// if its length isn't positive then there aren't any reactions
-				if (selectedReactionID.isEmpty() == false)
-				{
-
-					// STEP 4: perform selected reaction and update species
-					// counts
-
-					// long step4Initial = System.nanoTime();
-
-					performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
-
-					// step4Time += System.nanoTime() - step4Initial;
-
-					// STEP 5: compute affected reactions' new propensities and
-					// update total propensity
-
-					// long step5Initial = System.nanoTime();
-
-					// create a set (precludes duplicates) of reactions that the
-					// selected reaction's species affect
-					HashSet<String> affectedReactionSet = getAffectedReactionSet(
-							selectedReactionID, noAssignmentRulesFlag);
-
-					updatePropensities(affectedReactionSet);
-
-					// step5Time += System.nanoTime() - step5Initial;
-				}
-
-				// update time for next iteration
-
-				if (variableToIsInAssignmentRuleMap != null
-						&& variableToIsInAssignmentRuleMap.containsKey("time"))
-				{
-					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
-				}
-
+				printTime = print(printTime);
 			}
+			else if (currentTime == nextEventTime)
+			{
+				HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag,
+						noConstraintsFlag);
 
-			performRateRules(currentTime - oldTime);
+				// recalculate propensties/groups for affected reactions
+				if (affectedReactionSet.size() > 0)
+				{
+					updatePropensities(affectedReactionSet);
+				}
+
+				performRateRules(currentTime - oldTime);
+
+				printTime = print(printTime);
+			}
+			else
+			{
+				performAssignmentRules();
+
+				performRateRules(currentTime - oldTime);
+
+				printTime = print(printTime);
+			}
 
 		} // end simulation loop
 
-		// System.err.println("total time: " +
-		// String.valueOf((initializationTime + System.nanoTime() -
-		// initTime2 - initTime3) / 1e9f));
-		// System.err.println("total step 1 time: " + String.valueOf(step1Time /
-		// 1e9f));
-		// System.err.println("total step 2 time: " + String.valueOf(step2Time /
-		// 1e9f));
-		// System.err.println("total step 3 time: " + String.valueOf(step3Time /
-		// 1e9f));
-		// System.err.println("total step 4 time: " + String.valueOf(step4Time /
-		// 1e9f));
-		// System.err.println("total step 5 time: " + String.valueOf(step5Time /
-		// 1e9f));
-
 		if (cancelFlag == false)
 		{
+
+			currentTime = timeLimit;
+
+			fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
+
+			performRateRules(currentTime - oldTime);
 
 			// print the final species counts
 			try
@@ -403,6 +324,77 @@ public class SimulatorSSADirect extends Simulator
 	protected void updateAfterDynamicChanges()
 	{
 
+	}
+
+	private void performReaction(double r2, boolean noAssignmentRulesFlag, boolean noConstraintsFlag)
+	{
+		// long step3Initial = System.nanoTime();
+		String selectedReactionID = selectReaction(r2);
+
+		// step3Time += System.nanoTime() - step3Initial;
+
+		// if its length isn't positive then there aren't any reactions
+		if (selectedReactionID.isEmpty() == false)
+		{
+
+			// STEP 4: perform selected reaction and update species
+			// counts
+
+			// long step4Initial = System.nanoTime();
+
+			performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
+
+			// step4Time += System.nanoTime() - step4Initial;
+
+			// STEP 5: compute affected reactions' new propensities and
+			// update total propensity
+
+			// long step5Initial = System.nanoTime();
+
+			// create a set (precludes duplicates) of reactions that the
+			// selected reaction's species affect
+			HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID,
+					noAssignmentRulesFlag);
+
+			updatePropensities(affectedReactionSet);
+
+			// step5Time += System.nanoTime() - step5Initial;
+		}
+
+		// update time for next iteration
+
+		if (variableToIsInAssignmentRuleMap != null
+				&& variableToIsInAssignmentRuleMap.containsKey("time"))
+		{
+			performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
+		}
+	}
+
+	private double print(double printTime)
+	{
+		while (currentTime >= printTime && printTime < timeLimit)
+		{
+
+			try
+			{
+				printToTSD(printTime);
+				bufferedTSDWriter.write(",\n");
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+
+			currentStep++;
+			printTime = (currentStep * timeLimit / numSteps);
+
+			running.setTitle("Progress (" + (int) ((currentTime / timeLimit) * 100.0) + "%)");
+			// update progress bar
+			progress.setValue((int) ((currentTime / timeLimit) * 100.0));
+
+		}
+
+		return printTime;
 	}
 
 	/**
