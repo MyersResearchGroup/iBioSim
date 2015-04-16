@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 import javax.swing.JFrame;
@@ -28,17 +29,17 @@ import flanagan.math.Fmath;
 public abstract class HierarchicalObjects extends HierarchicalSimState
 {
 
-	private ArrayList<String>			filesCreated;
-	private HashSet<String>				ibiosimFunctionDefinitions;
-	private HashMap<String, Double>		initReplacementState;
-	private boolean						isGrid;
-	private HashMap<String, Model>		models;
-	private int							numSubmodels;
-	private XORShiftRandom				randomNumberGenerator;
-	private HashMap<String, Double>		replacements;
-	private HashMap<String, ModelState>	submodels;
-	private HashMap<String, ModelState>	arrayModels;
-	private ModelState					topmodel;
+	private ArrayList<String>		filesCreated;
+	private HashSet<String>			ibiosimFunctionDefinitions;
+	private Map<String, Double>		initReplacementState;
+	private boolean					isGrid;
+	private Map<String, Model>		models;
+	private int						numSubmodels;
+	private XORShiftRandom			randomNumberGenerator;
+	private Map<String, Double>		replacements;
+	private Map<String, ModelState>	submodels;
+	private Map<String, ModelState>	arrayModels;
+	private ModelState				topmodel;
 
 	protected static boolean checkGrid(Model model)
 	{
@@ -138,7 +139,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	{
 		private HierarchicalEventComparator	eventComparator;
 
-		public ModelState(HashMap<String, Model> models, String bioModel, String submodelID)
+		public ModelState(Map<String, Model> models, String bioModel, String submodelID)
 		{
 			super(models, bioModel, submodelID);
 
@@ -213,7 +214,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			return getSpeciesToReplacement().get(species);
 		}
 
-		public double getVariableToValue(HashMap<String, Double> replacements, String variable)
+		public double getVariableToValue(Map<String, Double> replacements, String variable)
 		{
 			if (getIsHierarchical().contains(variable))
 			{
@@ -268,7 +269,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			this.eventComparator = eventComparator;
 		}
 
-		public void setvariableToValueMap(HashMap<String, Double> replacements, String variable,
+		public void setvariableToValueMap(Map<String, Double> replacements, String variable,
 				double value)
 		{
 			if (getIsHierarchical().contains(variable))
@@ -343,7 +344,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	}
 
 	private double evaluateBoolean(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, HashMap<String, Integer> variableToIndexMap)
+			double t, double[] y, Map<String, Integer> variableToIndexMap)
 	{
 		switch (node.getType())
 		{
@@ -461,7 +462,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	}
 
 	private double evaluateConstant(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, HashMap<String, Integer> variableToIndexMap)
+			double t, double[] y, Map<String, Integer> variableToIndexMap)
 	{
 
 		switch (node.getType())
@@ -479,9 +480,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	}
 
 	protected double evaluateExpressionRecursive(ModelState modelstate, ASTNode node,
-			boolean evaluateState, double t, double[] y, HashMap<String, Integer> variableToIndexMap)
+			boolean evaluateState, double t, double[] y, Map<String, Integer> variableToIndexMap)
 	{
-
 		if (node.isBoolean())
 		{
 
@@ -515,7 +515,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	}
 
 	private double evaluateFunction(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, HashMap<String, Integer> variableToIndexMap)
+			double t, double[] y, Map<String, Integer> variableToIndexMap)
 	{
 		switch (node.getType())
 		{
@@ -809,6 +809,29 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 							variableToIndexMap)));
 		}
 
+		case FUNCTION_SELECTOR:
+		{
+			if (node.getChild(0).isName())
+			{
+				String id = "";
+				id = node.getChild(0).getName();
+				for (int childIter = 1; childIter < node.getChildCount(); childIter++)
+				{
+					id = id
+							+ "["
+							+ (int) evaluateExpressionRecursive(modelstate,
+									node.getChild(childIter), evaluateState, t, y,
+									variableToIndexMap) + "]";
+				}
+
+				return modelstate.getVariableToValue(getReplacements(), id);
+			}
+			else
+			{
+				return 0;
+			}
+		}
+
 		default:
 			return 0.0;
 
@@ -818,13 +841,13 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	}
 
 	private double evaluateInteger(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, HashMap<String, Integer> variableToIndexMap)
+			double t, double[] y, Map<String, Integer> variableToIndexMap)
 	{
 		return node.getInteger();
 	}
 
 	private double evaluateName(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, HashMap<String, Integer> variableToIndexMap)
+			double t, double[] y, Map<String, Integer> variableToIndexMap)
 	{
 		String name = node.getName().replace("_negative_", "-");
 
@@ -874,6 +897,10 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 							.getVariableToValue(replacements, modelstate
 									.getSpeciesToCompartmentNameMap().get(name)));
 				}
+				else if (variableToIndexMap != null && variableToIndexMap.containsKey(name))
+				{
+					value = variableToIndexMap.get(name);
+				}
 				else
 				{
 					value = modelstate.getVariableToValue(replacements, name);
@@ -884,7 +911,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	}
 
 	private double evaluateOperator(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, HashMap<String, Integer> variableToIndexMap)
+			double t, double[] y, Map<String, Integer> variableToIndexMap)
 	{
 		switch (node.getType())
 		{
@@ -958,7 +985,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	}
 
 	private double evaluateReal(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, HashMap<String, Integer> variableToIndexMap)
+			double t, double[] y, Map<String, Integer> variableToIndexMap)
 	{
 		return node.getReal();
 	}
@@ -982,7 +1009,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	/**
 	 * @return the initReplacementState
 	 */
-	public HashMap<String, Double> getInitReplacementState()
+	public Map<String, Double> getInitReplacementState()
 	{
 		return initReplacementState;
 	}
@@ -999,7 +1026,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	/**
 	 * @return the models
 	 */
-	public HashMap<String, Model> getModels()
+	public Map<String, Model> getModels()
 	{
 		return models;
 	}
@@ -1023,7 +1050,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	/**
 	 * @return the replacements
 	 */
-	public HashMap<String, Double> getReplacements()
+	public Map<String, Double> getReplacements()
 	{
 		return replacements;
 	}
@@ -1031,7 +1058,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	/**
 	 * @return the submodels
 	 */
-	public HashMap<String, ModelState> getSubmodels()
+	public Map<String, ModelState> getSubmodels()
 	{
 		return submodels;
 	}
@@ -1044,12 +1071,12 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		return topmodel;
 	}
 
-	public HashMap<String, ModelState> getArrayModels()
+	public Map<String, ModelState> getArrayModels()
 	{
 		return arrayModels;
 	}
 
-	public void setArrayModels(HashMap<String, ModelState> arrayModels)
+	public void setArrayModels(Map<String, ModelState> arrayModels)
 	{
 		this.arrayModels = arrayModels;
 	}
@@ -1094,7 +1121,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 				inlinedChildren.add(inlinedFormula);
 			}
 
-			HashMap<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
+			Map<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
 
 			for (int i = 0; i < models.get(modelstate.getModel())
 					.getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
@@ -1233,7 +1260,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	 * @param initReplacementState
 	 *            the initReplacementState to set
 	 */
-	public void setInitReplacementState(HashMap<String, Double> initReplacementState)
+	public void setInitReplacementState(Map<String, Double> initReplacementState)
 	{
 		this.initReplacementState = initReplacementState;
 	}
@@ -1242,7 +1269,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	 * @param models
 	 *            the models to set
 	 */
-	public void setModels(HashMap<String, Model> models)
+	public void setModels(Map<String, Model> models)
 	{
 		this.models = models;
 	}
@@ -1269,7 +1296,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	 * @param replacements
 	 *            the replacements to set
 	 */
-	public void setReplacements(HashMap<String, Double> replacements)
+	public void setReplacements(Map<String, Double> replacements)
 	{
 		this.replacements = replacements;
 	}
@@ -1278,7 +1305,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	 * @param submodels
 	 *            the submodels to set
 	 */
-	public void setSubmodels(HashMap<String, ModelState> submodels)
+	public void setSubmodels(Map<String, ModelState> submodels)
 	{
 		this.submodels = submodels;
 	}

@@ -102,9 +102,9 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 	}
 
-	protected void setupSingleCompartment(ModelState modelstate, Compartment compartment)
+	protected void setupSingleCompartment(ModelState modelstate, Compartment compartment,
+			String compartmentID)
 	{
-		String compartmentID = compartment.getId();
 
 		if (compartment.isSetId() && modelstate.isDeletedBySID(compartment.getId()))
 		{
@@ -243,10 +243,9 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 	 * 
 	 * @param parameter
 	 */
-	protected void setupSingleParameter(ModelState modelstate, Parameter parameter, int i, int j)
+	protected void setupSingleParameter(ModelState modelstate, Parameter parameter,
+			String parameterID)
 	{
-
-		String parameterID = parameter.getId();
 		modelstate.getVariableToValueMap().put(parameterID, parameter.getValue());
 		modelstate.getVariableToIsConstantMap().put(parameterID, parameter.getConstant());
 		if (!parameter.getConstant())
@@ -301,22 +300,26 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 		setupSingleReactionPropensity(modelstate, reactionID, reactionFormula,
 				notEnoughMoleculesFlag);
+
 	}
 
 	private void setupSingleRevReaction(ModelState modelstate, Reaction reaction,
 			String reactionID, ASTNode reactionFormula, ListOf<SpeciesReference> reactantsList,
 			ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList)
 	{
+
+		String forward = reactionID + "_fd";
+		String reverse = reactionID + "_rv";
 		boolean notEnoughMoleculesFlagFd = false;
 		boolean notEnoughMoleculesFlagRv = false;
 
-		modelstate.getReactionToSpeciesAndStoichiometrySetMap().put(reactionID + "_fd",
+		modelstate.getReactionToSpeciesAndStoichiometrySetMap().put(forward,
 				new HashSet<HierarchicalStringDoublePair>());
-		modelstate.getReactionToSpeciesAndStoichiometrySetMap().put(reactionID + "_rv",
+		modelstate.getReactionToSpeciesAndStoichiometrySetMap().put(reverse,
 				new HashSet<HierarchicalStringDoublePair>());
-		modelstate.getReactionToReactantStoichiometrySetMap().put(reactionID + "_fd",
+		modelstate.getReactionToReactantStoichiometrySetMap().put(forward,
 				new HashSet<HierarchicalStringDoublePair>());
-		modelstate.getReactionToReactantStoichiometrySetMap().put(reactionID + "_rv",
+		modelstate.getReactionToReactantStoichiometrySetMap().put(reverse,
 				new HashSet<HierarchicalStringDoublePair>());
 
 		setupMath(modelstate, reactionFormula);
@@ -340,6 +343,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 		setupSingleReactionPropensity(modelstate, reactionID, reactionFormula, reactantsList,
 				productsList, notEnoughMoleculesFlagFd, notEnoughMoleculesFlagRv);
+
 	}
 
 	protected void setupSingleRule(ModelState modelstate, Rule rule)
@@ -477,26 +481,34 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 	}
 
+	protected double getStoichiometry(ModelState modelstate, String reactionID,
+			SpeciesReference reactant)
+	{
+		double reactantStoichiometry;
+
+		if (modelstate.getVariableToValueMap().containsKey(reactant.getId()))
+		{
+			reactantStoichiometry = modelstate.getVariableToValue(getReplacements(),
+					reactant.getId());
+		}
+		else
+		{
+			reactantStoichiometry = reactant.getStoichiometry();
+		}
+
+		return reactantStoichiometry;
+	}
+
 	private void setupSingleProduct(ModelState modelstate, String reactionID,
 			SpeciesReference product)
 	{
-		double productStoichiometry;
+		double productStoichiometry = getStoichiometry(modelstate, reactionID, product);
 
 		String productID = product.getSpecies();
 
 		if (modelstate.getIsHierarchical().contains(productID))
 		{
 			modelstate.getHierarchicalReactions().add(reactionID);
-		}
-
-		if (modelstate.getVariableToValueMap().containsKey(product.getId()))
-		{
-			productStoichiometry = modelstate
-					.getVariableToValue(getReplacements(), product.getId());
-		}
-		else
-		{
-			productStoichiometry = product.getStoichiometry();
 		}
 
 		modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reactionID)
@@ -543,15 +555,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			modelstate.getHierarchicalReactions().add(reactionID);
 		}
 
-		if (modelstate.getVariableToValueMap().containsKey(reactant.getId()))
-		{
-			reactantStoichiometry = modelstate.getVariableToValue(getReplacements(),
-					reactant.getId());
-		}
-		else
-		{
-			reactantStoichiometry = reactant.getStoichiometry();
-		}
+		reactantStoichiometry = getStoichiometry(modelstate, reactionID, reactant);
 
 		modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reactionID)
 				.add(new HierarchicalStringDoublePair(reactantID, -reactantStoichiometry));
@@ -605,13 +609,16 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			ListOf<SpeciesReference> productsList, boolean notEnoughMoleculesFlagFd,
 			boolean notEnoughMoleculesFlagRv)
 	{
+
 		double propensity;
+		String forward = reactionID + "_fd";
+		String reverse = reactionID + "_rv";
 
 		if (productsList.getChildCount() > 0 && reactantsList.getChildCount() > 0)
 		{
-			modelstate.getReactionToFormulaMap().put(reactionID + "_rv",
+			modelstate.getReactionToFormulaMap().put(reverse,
 					inlineFormula(modelstate, reactionFormula.getRightChild()));
-			modelstate.getReactionToFormulaMap().put(reactionID + "_fd",
+			modelstate.getReactionToFormulaMap().put(forward,
 					inlineFormula(modelstate, reactionFormula.getLeftChild()));
 			if (notEnoughMoleculesFlagFd == true)
 			{
@@ -628,20 +635,12 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 					propensity *= (1.0 / getStoichAmpGridValue());
 				}
 
-				if ((propensity < modelstate.getMinPropensity()) && (propensity > 0))
-				{
-					modelstate.setMinPropensity(propensity);
-				}
-
-				if (propensity > modelstate.getMaxPropensity())
-				{
-					modelstate.setMaxPropensity(propensity);
-				}
+				setPropensity(modelstate, reactionID, propensity);
 
 				modelstate.setPropensity(modelstate.getPropensity() + propensity);
 			}
 
-			modelstate.getReactionToPropensityMap().put(reactionID + "_fd", propensity);
+			modelstate.getReactionToPropensityMap().put(forward, propensity);
 
 			if (notEnoughMoleculesFlagRv == true)
 			{
@@ -659,26 +658,15 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 					propensity = 0.0;
 				}
 
-				if (propensity < modelstate.getMinPropensity() && propensity > 0)
-				{
-					modelstate.setMinPropensity(propensity);
-				}
-
-				if (propensity > modelstate.getMaxPropensity())
-				{
-					modelstate.setMaxPropensity(propensity);
-				}
-
-				modelstate.setMaxPropensity(modelstate.getMaxPropensity() + propensity);
 			}
 
-			modelstate.getReactionToPropensityMap().put(reactionID + "_rv", propensity);
+			setPropensity(modelstate, reverse, propensity);
 		}
 		else
 		{
 			if (reactantsList.getChildCount() > 0)
 			{
-				modelstate.getReactionToFormulaMap().put(reactionID + "_fd",
+				modelstate.getReactionToFormulaMap().put(forward,
 						inlineFormula(modelstate, reactionFormula));
 				if (notEnoughMoleculesFlagRv == true)
 				{
@@ -695,24 +683,14 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 						propensity = 0.0;
 					}
 
-					if (propensity < modelstate.getMinPropensity() && propensity > 0)
-					{
-						modelstate.setMinPropensity(propensity);
-					}
-
-					if (propensity > modelstate.getMaxPropensity())
-					{
-						modelstate.setMaxPropensity(propensity);
-					}
-
-					modelstate.setPropensity(modelstate.getPropensity() + propensity);
 				}
 
-				modelstate.getReactionToPropensityMap().put(reactionID + "_fd", propensity);
+				setPropensity(modelstate, forward, propensity);
+
 			}
 			else if (productsList.getChildCount() > 0)
 			{
-				modelstate.getReactionToFormulaMap().put(reactionID + "_fd",
+				modelstate.getReactionToFormulaMap().put(forward,
 						inlineFormula(modelstate, reactionFormula));
 				if (notEnoughMoleculesFlagFd == true)
 				{
@@ -729,21 +707,9 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 						propensity *= (1.0 / getStoichAmpGridValue());
 					}
 
-					if ((propensity < modelstate.getMinPropensity()) && (propensity > 0))
-					{
-						modelstate.setMinPropensity(propensity);
-					}
-
-					if (propensity > modelstate.getMaxPropensity())
-					{
-						modelstate.setMaxPropensity(propensity);
-					}
-
-					modelstate.setPropensity(modelstate.getPropensity() + propensity);
-					// totalPropensity += propensity;
 				}
 
-				modelstate.getReactionToPropensityMap().put(reactionID + "_fd", propensity);
+				setPropensity(modelstate, forward, propensity);
 			}
 
 		}
@@ -769,20 +735,10 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 				propensity = 0.0;
 			}
 
-			if (propensity < modelstate.getMinPropensity() && propensity > 0)
-			{
-				modelstate.setMinPropensity(propensity);
-			}
-			if (propensity > modelstate.getMaxPropensity())
-			{
-				modelstate.setMaxPropensity(propensity);
-			}
-
-			modelstate.setPropensity(modelstate.getPropensity() + propensity);
-
 		}
 
-		modelstate.getReactionToPropensityMap().put(reactionID, propensity);
+		setPropensity(modelstate, reactionID, propensity);
+
 	}
 
 	private boolean setupSingleRevProduct(ModelState modelstate, String reactionID,
@@ -790,43 +746,34 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 	{
 		String reactantID = product.getSpecies();
 
+		String forward = reactionID + "_fd";
+		String reverse = reactionID + "_rv";
+
 		if (modelstate.getIsHierarchical().contains(reactantID))
 		{
-			modelstate.getHierarchicalReactions().add(reactionID + "_fd");
-			modelstate.getHierarchicalReactions().add(reactionID + "_rv");
+			modelstate.getHierarchicalReactions().add(forward);
+			modelstate.getHierarchicalReactions().add(reverse);
 		}
 
-		double productStoichiometry;
-
-		if (modelstate.getVariableToValueMap().contains(product.getId()))
-		{
-			productStoichiometry = modelstate
-					.getVariableToValue(getReplacements(), product.getId());
-		}
-		else
-		{
-			productStoichiometry = product.getStoichiometry();
-		}
+		double productStoichiometry = getStoichiometry(modelstate, reactionID, product);
 
 		if (product.getConstant() == false && product.getId().length() > 0)
 		{
 
-			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(
-					reactionID + "_fd") == false)
+			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(forward) == false)
 			{
-				modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reactionID + "_fd",
+				modelstate.getReactionToNonconstantStoichiometriesSetMap().put(forward,
 						new HashSet<HierarchicalStringPair>());
 			}
-			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(
-					reactionID + "_rv") == false)
+			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(reverse) == false)
 			{
-				modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reactionID + "_rv",
+				modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reverse,
 						new HashSet<HierarchicalStringPair>());
 			}
 
-			modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reactionID + "_fd")
+			modelstate.getReactionToNonconstantStoichiometriesSetMap().get(forward)
 					.add(new HierarchicalStringPair(reactantID, product.getId()));
-			modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reactionID + "_rv")
+			modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reverse)
 					.add(new HierarchicalStringPair(reactantID, product.getId()));
 			if (modelstate.getVariableToValueMap().containsKey(product.getId()) == false)
 			{
@@ -836,21 +783,21 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 		else if (reactantsList.size() == 0)
 		{
-			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reactionID + "_fd")
+			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(forward)
 					.add(new HierarchicalStringDoublePair(reactantID, productStoichiometry));
 
 		}
 		else
 		{
-			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reactionID + "_fd")
+			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(forward)
 					.add(new HierarchicalStringDoublePair(reactantID, productStoichiometry));
-			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reactionID + "_rv")
+			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reverse)
 					.add(new HierarchicalStringDoublePair(reactantID, -productStoichiometry));
-			modelstate.getReactionToReactantStoichiometrySetMap().get(reactionID + "_rv")
+			modelstate.getReactionToReactantStoichiometrySetMap().get(reverse)
 					.add(new HierarchicalStringDoublePair(reactantID, productStoichiometry));
 		}
 
-		modelstate.getSpeciesToAffectedReactionSetMap().get(reactantID).add(reactionID + "_rv");
+		modelstate.getSpeciesToAffectedReactionSetMap().get(reactantID).add(reverse);
 		if (modelstate.getVariableToValue(getReplacements(), reactantID) < productStoichiometry)
 		{
 			return true;
@@ -861,48 +808,65 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 	}
 
+	private void setPropensity(ModelState modelstate, String reactionID, double propensity)
+	{
+		if (!modelstate.isArrayed(reactionID))
+		{
+			if (propensity < 0.0)
+			{
+				propensity = 0.0;
+			}
+
+			if (propensity < modelstate.getMinPropensity() && propensity > 0)
+			{
+				modelstate.setMinPropensity(propensity);
+			}
+
+			if (propensity > modelstate.getMaxPropensity())
+			{
+				modelstate.setMaxPropensity(propensity);
+			}
+
+			modelstate.setPropensity(modelstate.getPropensity() + propensity);
+
+			modelstate.getReactionToPropensityMap().put(reactionID, propensity);
+		}
+
+	}
+
 	private boolean setupSingleRevReactant(ModelState modelstate, String reactionID,
 			SpeciesReference reactant, List<SpeciesReference> productsList)
 	{
 		String reactantID = reactant.getSpecies();
 
+		String forward = reactionID + "_fd";
+		String reverse = reactionID + "_rv";
+
 		if (modelstate.getIsHierarchical().contains(reactantID))
 		{
-			modelstate.getHierarchicalReactions().add(reactionID + "_fd");
-			modelstate.getHierarchicalReactions().add(reactionID + "_rv");
+			modelstate.getHierarchicalReactions().add(forward);
+			modelstate.getHierarchicalReactions().add(reverse);
 		}
 
-		double reactantStoichiometry;
-
-		if (modelstate.getVariableToValueMap().contains(reactant.getId()))
-		{
-			reactantStoichiometry = modelstate.getVariableToValue(getReplacements(),
-					reactant.getId());
-		}
-		else
-		{
-			reactantStoichiometry = reactant.getStoichiometry();
-		}
+		double reactantStoichiometry = getStoichiometry(modelstate, reactionID, reactant);
 
 		if (reactant.getConstant() == false && reactant.getId().length() > 0)
 		{
 
-			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(
-					reactionID + "_fd") == false)
+			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(forward) == false)
 			{
-				modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reactionID + "_fd",
+				modelstate.getReactionToNonconstantStoichiometriesSetMap().put(forward,
 						new HashSet<HierarchicalStringPair>());
 			}
-			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(
-					reactionID + "_rv") == false)
+			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(reverse) == false)
 			{
-				modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reactionID + "_rv",
+				modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reverse,
 						new HashSet<HierarchicalStringPair>());
 			}
 
-			modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reactionID + "_fd")
+			modelstate.getReactionToNonconstantStoichiometriesSetMap().get(forward)
 					.add(new HierarchicalStringPair(reactantID, reactant.getId()));
-			modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reactionID + "_rv")
+			modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reverse)
 					.add(new HierarchicalStringPair(reactantID, reactant.getId()));
 			if (modelstate.getVariableToValueMap().containsKey(reactant.getId()) == false)
 			{
@@ -912,21 +876,21 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 		else if (productsList.size() == 0)
 		{
-			modelstate.getReactionToReactantStoichiometrySetMap().get(reactionID + "_fd")
+			modelstate.getReactionToReactantStoichiometrySetMap().get(forward)
 					.add(new HierarchicalStringDoublePair(reactantID, reactantStoichiometry));
 
 		}
 		else
 		{
-			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reactionID + "_fd")
+			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(forward)
 					.add(new HierarchicalStringDoublePair(reactantID, -reactantStoichiometry));
-			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reactionID + "_rv")
+			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reverse)
 					.add(new HierarchicalStringDoublePair(reactantID, reactantStoichiometry));
-			modelstate.getReactionToReactantStoichiometrySetMap().get(reactionID + "_fd")
+			modelstate.getReactionToReactantStoichiometrySetMap().get(forward)
 					.add(new HierarchicalStringDoublePair(reactantID, reactantStoichiometry));
 		}
 
-		modelstate.getSpeciesToAffectedReactionSetMap().get(reactantID).add(reactionID + "_fd");
+		modelstate.getSpeciesToAffectedReactionSetMap().get(reactantID).add(forward);
 		if (modelstate.getVariableToValue(getReplacements(), reactantID) < reactantStoichiometry)
 		{
 			return true;
@@ -941,10 +905,14 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			ASTNode reactionFormula, ModifierSpeciesReference modifier)
 	{
 		String modifierID = modifier.getSpecies();
+
+		String forward = reactionID + "_fd";
+		String reverse = reactionID + "_rv";
+
 		if (modelstate.getIsHierarchical().contains(modifierID))
 		{
-			modelstate.getHierarchicalReactions().add(reactionID + "_fd");
-			modelstate.getHierarchicalReactions().add(reactionID + "_rv");
+			modelstate.getHierarchicalReactions().add(forward);
+			modelstate.getHierarchicalReactions().add(reverse);
 		}
 		modifierID = modifierID.replace("_negative_", "-");
 
@@ -961,12 +929,12 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 		if (forwardString.contains(modifierID))
 		{
-			modelstate.getSpeciesToAffectedReactionSetMap().get(modifierID).add(reactionID + "_fd");
+			modelstate.getSpeciesToAffectedReactionSetMap().get(modifierID).add(forward);
 		}
 
 		if (reverseString.contains(modifierID))
 		{
-			modelstate.getSpeciesToAffectedReactionSetMap().get(modifierID).add(reactionID + "_rv");
+			modelstate.getSpeciesToAffectedReactionSetMap().get(modifierID).add(reverse);
 		}
 	}
 

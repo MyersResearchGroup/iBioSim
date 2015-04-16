@@ -2,6 +2,7 @@ package analysis.dynamicsim.hierarchical.states;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.sbml.jsbml.Model;
 
@@ -17,7 +18,7 @@ public abstract class HierarchicalState extends RuleState
 	private final HashMap<String, HashSet<HierarchicalStringPair>>	speciesToReplacement;
 	private final HashMap<String, String>							replacementDependency;
 
-	public HierarchicalState(HashMap<String, Model> models, String bioModel, String submodelID)
+	public HierarchicalState(Map<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 		speciesToReplacement = new HashMap<String, HashSet<HierarchicalStringPair>>();

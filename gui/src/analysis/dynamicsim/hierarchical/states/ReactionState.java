@@ -5,6 +5,7 @@ import gnu.trove.map.hash.TObjectDoubleHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
@@ -23,7 +24,7 @@ public abstract class ReactionState extends SpeciesState
 	private final HashMap<String, HashSet<HierarchicalStringDoublePair>>	reactionToReactantStoichiometrySetMap;
 	private final HashMap<String, HashSet<HierarchicalStringDoublePair>>	reactionToSpeciesAndStoichiometrySetMap;
 
-	public ReactionState(HashMap<String, Model> models, String bioModel, String submodelID)
+	public ReactionState(Map<String, Model> models, String bioModel, String submodelID)
 	{
 		super(models, bioModel, submodelID);
 
@@ -91,6 +92,12 @@ public abstract class ReactionState extends SpeciesState
 	public HashMap<String, HashSet<HierarchicalStringDoublePair>> getReactionToSpeciesAndStoichiometrySetMap()
 	{
 		return reactionToSpeciesAndStoichiometrySetMap;
+	}
+
+	public double getPropensity(String reaction)
+	{
+		return reactionToPropensityMap.contains(reaction) ? reactionToPropensityMap.get(reaction)
+				: 0;
 	}
 
 }

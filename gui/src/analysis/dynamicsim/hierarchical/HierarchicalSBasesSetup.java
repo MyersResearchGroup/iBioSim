@@ -200,7 +200,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 		for (Compartment compartment : getModels().get(modelstate.getModel())
 				.getListOfCompartments())
 		{
-			setupSingleCompartment(modelstate, compartment);
+			setupSingleCompartment(modelstate, compartment, compartment.getId());
 
 			setupArrays(modelstate, compartment);
 		}
@@ -278,7 +278,8 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 		{
 			allInitAssignment.add(initAssignment);
 			setupArrays(modelstate, initAssignment);
-			setupArraysInitialAssignment(modelstate, initAssignment.getMetaId(), initAssignment);
+			// setupArraysInitialAssignment(modelstate,
+			// initAssignment.getMetaId(), initAssignment);
 		}
 
 		allInitAssignment.addAll(getArrayedInitAssignment());
@@ -453,7 +454,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 				continue;
 			}
 
-			setupSingleParameter(modelstate, parameter, 0, 0);
+			setupSingleParameter(modelstate, parameter, parameter.getId());
 
 			setupArrays(modelstate, parameter);
 		}
@@ -468,10 +469,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 	 */
 	protected void setupReactions(ModelState modelstate)
 	{
-
-		// loop through all reactions and calculate their propensities
 		Reaction reaction;
-
 		for (int i = 0; i < modelstate.getNumReactions(); i++)
 		{
 			reaction = getModels().get(modelstate.getModel()).getReaction(i);
@@ -489,9 +487,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 			}
 
 			String reactionID = reaction.getId();
-
 			String species = reactionID;
-
 			if (reactionID.contains("Degradation") && getReplacements().containsKey(species))
 			{
 				if (modelstate.getIsHierarchical().contains(species)
@@ -502,7 +498,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 			}
 
 			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
-
+			setupArrays(modelstate, reaction);
 			setupSingleReaction(modelstate, reaction, reactionID, reactionFormula,
 					reaction.getReversible(), reaction.getListOfReactants(),
 					reaction.getListOfProducts(), reaction.getListOfModifiers());
@@ -554,28 +550,31 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 	}
 
-	protected void setupArraysSBases(ModelState modelstate)
-	{
-		for (Constraint constraint : getModels().get(modelstate.getModel()).getListOfConstraints())
-		{
-			setupArrays(modelstate, constraint);
-		}
-		for (Rule rule : getModels().get(modelstate.getModel()).getListOfRules())
-		{
-			if (rule.isAssignment())
-			{
-				setupArrays(modelstate, rule);
-				setupArraysRule(modelstate, rule.getMetaId(), (AssignmentRule) rule);
-			}
-		}
-		setupInitialAssignments(modelstate);
-		for (Reaction reaction : getModels().get(modelstate.getModel()).getListOfReactions())
-		{
-			setupArrays(modelstate, reaction);
-			setupSpeciesReferenceArrays(modelstate, reaction);
-			setupArraysReaction(modelstate, reaction.getId(), reaction);
-		}
-
-	}
+	// protected void setupArraysSBases(ModelState modelstate)
+	// {
+	// for (Constraint constraint :
+	// getModels().get(modelstate.getModel()).getListOfConstraints())
+	// {
+	// setupArrays(modelstate, constraint);
+	// }
+	// for (Rule rule : getModels().get(modelstate.getModel()).getListOfRules())
+	// {
+	// if (rule.isAssignment())
+	// {
+	// setupArrays(modelstate, rule);
+	// // setupArraysRule(modelstate, rule.getMetaId(),
+	// // (AssignmentRule) rule);
+	// }
+	// }
+	// setupInitialAssignments(modelstate);
+	// for (Reaction reaction :
+	// getModels().get(modelstate.getModel()).getListOfReactions())
+	// {
+	// setupArrays(modelstate, reaction);
+	// setupSpeciesReferenceArrays(modelstate, reaction);
+	// // setupArraysReaction(modelstate, reaction.getId(), reaction);
+	// }
+	//
+	// }
 
 }
