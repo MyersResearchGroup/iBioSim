@@ -2983,35 +2983,34 @@ public class BioModel {
 						} else {
 							lpn.addOutput(p.getId(),type,bound);
 						}
+					} 
+					if (type.equals("integer")) {
+						lpn.addInteger(p.getId(),bound);
 					} else {
-						if (type.equals("integer")) {
-							lpn.addInteger(p.getId(),bound);
-						} else {
-						    for (String key : rates.keySet()) {
-						        if (rates.get(key).equals(p.getId())) {
-						        	Parameter rp = flatSBML.getModel().getParameter(key);
-						        	int lrate = (int)Math.floor(rp.getValue());
-						        	int urate = (int)Math.ceil(rp.getValue());
-									String boundRate = String.valueOf(lrate);
-									if (lrate!=urate) {
-										boundRate = "[" + lrate + "," + urate + "]";
-									}
-									ia = flatSBML.getModel().getInitialAssignment(rp.getId());
-									if (ia != null) {
-										ASTNode math = ia.getMath();
-										if (math.getType()==ASTNode.Type.FUNCTION && math.getName().equals("uniform")) {
-											ASTNode left = math.getLeftChild();
-											ASTNode right = math.getRightChild();
-											if (left.getType()==ASTNode.Type.INTEGER && right.getType()==ASTNode.Type.INTEGER) {
-												lrate = left.getInteger();
-												urate = right.getInteger();
-											}
+						for (String key : rates.keySet()) {
+							if (rates.get(key).equals(p.getId())) {
+								Parameter rp = flatSBML.getModel().getParameter(key);
+								int lrate = (int)Math.floor(rp.getValue());
+								int urate = (int)Math.ceil(rp.getValue());
+								String boundRate = String.valueOf(lrate);
+								if (lrate!=urate) {
+									boundRate = "[" + lrate + "," + urate + "]";
+								}
+								ia = flatSBML.getModel().getInitialAssignment(rp.getId());
+								if (ia != null) {
+									ASTNode math = ia.getMath();
+									if (math.getType()==ASTNode.Type.FUNCTION && math.getName().equals("uniform")) {
+										ASTNode left = math.getLeftChild();
+										ASTNode right = math.getRightChild();
+										if (left.getType()==ASTNode.Type.INTEGER && right.getType()==ASTNode.Type.INTEGER) {
+											lrate = left.getInteger();
+											urate = right.getInteger();
 										}
 									}
-									lpn.addContinuous(p.getId(), bound,	boundRate);
-									break;
-						        }
-						    }
+								}
+								lpn.addContinuous(p.getId(), bound,	boundRate);
+								break;
+							}
 						}
 					}
 				} else {
