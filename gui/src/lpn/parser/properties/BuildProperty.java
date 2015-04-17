@@ -108,6 +108,7 @@ public class BuildProperty {
 			lpnFinal = generateLPN(r0, lpn, false, null);
 			if(loop){
 			lpnFinal.addTransition("t" + numTransitions);
+			lpnFinal.changeDelay("t" + numTransitions, "0");
 			numTransitions++;
 			lpnFinal.addMovement(pLast,"t" +(numTransitions-1));
 			lpnFinal.addMovement("t" +(numTransitions-1), pFirst); 
@@ -246,6 +247,7 @@ public class BuildProperty {
 							
 							// Create the transition that stores the variables in the the list.
 							lpnObj.addTransition("t" + numTransitions);
+							lpnObj.changeDelay("t" + numTransitions, "0");
 							numTransitions++;
 							lpnObj.addPlace("p" + numPlaces, false);
 							numPlaces++;
@@ -272,6 +274,7 @@ public class BuildProperty {
 					
 //					if(loop){
 					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.changeDelay("t" + numTransitions, "0");
 					if(stayConditions != null){
 						lpnObj.addEnabling("t" + numTransitions, stayConditions);
 					}
@@ -308,6 +311,7 @@ public class BuildProperty {
 //							enablingCond = "senalways2a1";
 //							enablingCond = sensitivityVariables[0];
 							lpnObj.addEnabling("t" + numTransitions, enablingCond);
+							lpnObj.changeDelay("t" + numTransitions, "0");
 							
 							lpnObj.addMovement("p" + (senalways_pFirst+k), "t" + numTransitions);
 							lpnObj.addMovement("t" + numTransitions, pLast);
@@ -342,6 +346,7 @@ public class BuildProperty {
 					
 					if(loop){
 						lpnObj.addTransition("t" + numTransitions);
+						lpnObj.changeDelay("t" + numTransitions, "0");
 						numTransitions++;
 //						lpnObj.addMovement(pLast,"t" +(numTransitions-1));
 						lpnObj.addMovement(always_pLast,"t" +(numTransitions-1));
@@ -400,6 +405,7 @@ public class BuildProperty {
 					numTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
 					lpnObj.addTransition("tFail" + numFailTransitions);
+					lpnObj.changeDelay("tFail" + numFailTransitions, "0");
 					lpnObj.getTransition("tFail" + numFailTransitions).setFail(true);
 					if(stayConditions != null){
 						lpnObj.addEnabling("tFail" +numFailTransitions, 
@@ -448,10 +454,12 @@ public class BuildProperty {
 					}
 					lpnObj.addTransition("t" + numTransitions);
 					lpnObj.addEnabling("t" +numTransitions, enablingCond);
+					lpnObj.changeDelay("t" + numTransitions, "0");
 					
 					numTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
 					lpnObj.addTransition("tFail" + numFailTransitions);
+					lpnObj.changeDelay("tFail" + numFailTransitions, "0");
 					lpnObj.getTransition("tFail" + numFailTransitions).setFail(true);
 					numFailTransitions++;
 					enablingCond = "~("+string1+") & "+"~("+string2+")";
@@ -517,6 +525,7 @@ public class BuildProperty {
 								numPlaces++;
 							}
 							lpnObj.addTransition("t" + numTransitions);
+							lpnObj.changeDelay("t" + numTransitions, "0");;
 							if(stayConditions != null){
 								lpnObj.addEnabling("t" +numTransitions,
 										"(" + enablingCond + ")&" + stayConditions);
@@ -541,6 +550,7 @@ public class BuildProperty {
 							numPlaces++;
 						}
 						lpnObj.addTransition("t" + numTransitions);
+						lpnObj.changeDelay("t" + numTransitions, "0");
 						if(stayConditions != null){
 							lpnObj.addEnabling("t" +numTransitions,
 									"(" + enablingCond + ")&" + stayConditions);
@@ -625,6 +635,7 @@ public class BuildProperty {
 					else{
 						pFirst= "p0";
 						lpnObj.addTransition("t" + numTransitions);
+						lpnObj.changeDelay("t" + numTransitions, "0");
 						numTransitions++;
 						lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
 						lpnObj.addPlace("pStart"+numStartPlaces, false);
@@ -642,6 +653,7 @@ public class BuildProperty {
 						if(j==0){
 							enablingCond=  generateExpression((CommonTree)switchCaseTree.getChild(0));
 							lpnObj.addTransition("t" + numTransitions);
+							lpnObj.changeDelay("t" + numTransitions, "0");
 							StringBuffer sb = new StringBuffer();
 							String newEnablingCond1= "";
 
@@ -688,6 +700,7 @@ public class BuildProperty {
 
 					}
 					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.changeDelay("t" + numTransitions, "0");
 					numTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1),"t" +(numTransitions-1));
 					lpnObj.addMovement("t" +(numTransitions-1), "pEnd"+(numEndPlaces-1));
@@ -728,6 +741,7 @@ public class BuildProperty {
 					lpnObj.addMovement("t" +(numTransitions-1),"pEnd"+(numEndPlaces-1)); 
 				}
 					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.changeDelay("t" + numTransitions, "0");
 					numTransitions++;
 					lpnObj.addMovement("pEnd"+(numEndPlaces-1),"t" +(numTransitions-1));
 					
@@ -749,6 +763,7 @@ public class BuildProperty {
 								numPlaces++;
 							}
 							lpnObj.addTransition("t" + numTransitions);
+							lpnObj.changeDelay("t" + numTransitions, "0");
 							StringBuffer sb2 = new StringBuffer();
 							String newEnablingCondition1= "";
 							int counter=-1;
@@ -803,6 +818,7 @@ public class BuildProperty {
 
 					}
 					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.changeDelay("t" + numTransitions, "0");
 					numTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1),"t" +(numTransitions-1));
 					lpnObj.addMovement("t" +(numTransitions-1), "pEnd"+(numEndPlaces-1));
@@ -829,6 +845,7 @@ public class BuildProperty {
 					String newEnablingCond2 = sb3.toString();
 					//System.out.println("newEnablinCondition in ELSE : "+newEnablingCond2+"\n");
 					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.changeDelay("t" + numTransitions, "0");
 					lpnObj.addEnabling("t" +numTransitions, newEnablingCond2);
 					numTransitions++;
 					lpnObj.addMovement("pStart"+(numStartPlaces-1), "t" +(numTransitions-1));
@@ -846,6 +863,7 @@ public class BuildProperty {
 						
 					}
 					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.changeDelay("t" + numTransitions, "0");
 					numTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1),"t" +(numTransitions-1));
 					lpnObj.addMovement("t" +(numTransitions-1), "pEnd"+(numEndPlaces-1));
@@ -861,6 +879,7 @@ public class BuildProperty {
 						numPlaces++;
 					}
 					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.changeDelay("t" + numTransitions, "0");
 					lpnObj.addEnabling("t" +numTransitions, "~("+enablingCond+")" + "&" + stayConditions);
 					numTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
@@ -869,6 +888,7 @@ public class BuildProperty {
 					numPlaces++;
 					lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
 					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.changeDelay("t" + numTransitions, "0");
 					lpnObj.addEnabling("t" +numTransitions, "(" + enablingCond + ")" + "&" + stayConditions);
 					numTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
