@@ -2045,7 +2045,7 @@ public class LearnModel { // added ItemListener SB
 					g.addMovement("p" + initPlaceNum, "t" + numTransitions);
 					g.addMovement("t" + numTransitions, "p" + transientNetPlaces.get(st).getProperty("placeNum"));
 					g.changeInitialMarking("p" + transientNetPlaces.get(st).getProperty("placeNum"), false);
-					out.write("Added transition t" + numTransitions + " b/w initPlace and transient place p" + transientNetPlaces.get(st).getProperty("placeNum") + "\n");
+					out.write("1:Added transition t" + numTransitions + " b/w initPlace and transient place p" + transientNetPlaces.get(st).getProperty("placeNum") + "\n");
 					String[] binOutgoing = st.split(",");
 					String condStr = "";
 					for (int j = 0; j < reqdVarsL.size(); j++){ // preserving the order by having reqdVarsL as outer loop rather than care
@@ -2104,7 +2104,7 @@ public class LearnModel { // added ItemListener SB
 					g.addMovement("p" + initPlaceNum, "t" + numTransitions);
 					g.addMovement("t" + numTransitions, "p" + placeInfo.get(st).getProperty("placeNum"));
 					g.changeInitialMarking("p" + placeInfo.get(st).getProperty("placeNum"), false);
-					out.write("Added transition t" + numTransitions + " b/w initPlace and transient place p" + placeInfo.get(st).getProperty("placeNum") + "\n");
+					out.write("2:Added transition t" + numTransitions + " b/w initPlace and transient place p" + placeInfo.get(st).getProperty("placeNum") + "\n");
 					String[] binOutgoing = st.split(",");
 					String condStr = "";
 					for (int j = 0; j < reqdVarsL.size(); j++){ // preserving the order by having reqdVarsL as outer loop rather than care
@@ -2445,6 +2445,15 @@ public class LearnModel { // added ItemListener SB
 		try{
 			Properties p0, p1 = null;
 			out.write("In UpdateRateInfo\n");
+			String firstKey = "";
+			for (int j = 0; j < reqdVarsL.size(); j++) {
+				if (reqdVarsL.get(j).isCare()){
+					if (firstKey.equalsIgnoreCase(""))
+						firstKey += bins[j][0];
+					else
+						firstKey += "," + bins[j][0];		
+				}
+			}
 			for (int i = 0; i < (data.get(0).size() - 1); i++) {
 				if (rates[0][i] != null) { // check if indices are ok. 0???? or 1???
 					System.out.println("#trans="+numTransitions);
@@ -2492,7 +2501,7 @@ public class LearnModel { // added ItemListener SB
 							if (!transientPlaceReqd) {
 								placeInfo.put(key, p0);
 								g.addPlace("p" + numPlaces, false);
-								startPlaces.add(key);
+								startPlaces.add(/*key*/firstKey); // CJM: 4/17/2015 - hack to fix transient
 							} else {
 								transientNetPlaces.put(key, p0);
 								g.addPlace("p" + numPlaces, true);
