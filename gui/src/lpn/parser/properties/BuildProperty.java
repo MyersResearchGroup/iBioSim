@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import lpn.parser.LhpnFile;
 import lpn.parser.Translator;
+import lpn.parser.Variable;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -366,9 +367,12 @@ public class BuildProperty {
 					lpnObj.addInput(varName, varType);
 					break;
 				case lpn.parser.properties.PropertyLexer.REAL : 
-					varType = "discrete";
+					varType = "continuous";
 					 varName = generateExpression((CommonTree)switchCaseTree.getChild(0));
-					lpnObj.addInput(varName, varType);
+//					lpnObj.addInput(varName, varType);
+					 lpnObj.addInput(varName, varType, "0");
+					 Variable newVar = lpnObj.getVariable(varName);
+					 newVar.addInitRate("0");
 					break;
 				case lpn.parser.properties.PropertyLexer.INTEGER : 
 					 varType = "int";
