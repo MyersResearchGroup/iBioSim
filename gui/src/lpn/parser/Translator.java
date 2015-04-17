@@ -788,7 +788,7 @@ public class Translator {
 					Parameter p = m.createParameter(); 
 					p.setConstant(false);
 					p.setId(v);
-					p.setSBOTerm(GlobalConstants.SBO_BOOLEAN);
+					p.setSBOTerm(GlobalConstants.SBO_LOGICAL);
 					String initValue = lhpn.getInitialVal(v);
 					// check initValue type; if boolean, set parameter value as 0 or 1.
 					if (initValue.equals("true")){
@@ -885,7 +885,7 @@ public class Translator {
 //			System.out.println(p + "=" + initMarking);
 			Parameter v = m.createParameter();
 			v.setId(p);
-			v.setSBOTerm(GlobalConstants.SBO_PLACE);
+			v.setSBOTerm(GlobalConstants.SBO_PETRI_NET_PLACE);
 			v.setConstant(false);
 			if (initMarking){
 				v.setValue(1);
@@ -898,7 +898,7 @@ public class Translator {
 		for (String t : lhpn.getTransitionList()) {
 			Event e = m.createEvent();
 			e.setId(t);
-			e.setSBOTerm(GlobalConstants.SBO_TRANSITION);
+			e.setSBOTerm(GlobalConstants.SBO_PETRI_NET_TRANSITION);
 			Trigger trigger = e.createTrigger();
 			String EnablingTestNull = lhpn.getTransition(t).getEnabling();
 			String Enabling;
@@ -1061,7 +1061,7 @@ public class Translator {
 				p.setConstant(false);
 				p.setId(extraVar);
 				p.setValue(0);
-				p.setSBOTerm(GlobalConstants.SBO_PLACE);
+				p.setSBOTerm(GlobalConstants.SBO_PETRI_NET_PLACE);
 
 				EventAssignment assign4ex = e.createEventAssignment();
 				assign4ex.setVariable(extraVar);
@@ -1085,7 +1085,7 @@ public class Translator {
 				// create a new event 
 				Event extraEvent = m.createEvent();
 				extraEvent.setId("extra_" + t);	
-				extraEvent.setSBOTerm(GlobalConstants.SBO_TRANSITION);
+				extraEvent.setSBOTerm(GlobalConstants.SBO_PETRI_NET_TRANSITION);
 				Trigger triggerExtra = extraEvent.createTrigger();
 				//triggerExtra.setMath(SBMLutilities.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
 				triggerExtra.setMath(SBMLutilities.myParseFormula("and(true,eq(" + extraVar + ",1))"));
@@ -1143,13 +1143,14 @@ public class Translator {
 					failVar.setConstant(false);
 					failVar.setId(GlobalConstants.FAIL);
 					failVar.setValue(0);
-					EventAssignment assign6 = e.createEventAssignment();
-					assign6.setVariable(failVar.getId());
-					assign6.setMath(SBMLutilities.myParseFormula("1"));
+					failVar.setSBOTerm(GlobalConstants.SBO_LOGICAL);
 					Constraint failVarConstraint = m.createConstraint();
 					SBMLutilities.setMetaId(failVarConstraint, GlobalConstants.FAIL_TRANSITION);
 					failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
 				}
+				EventAssignment assign6 = e.createEventAssignment();
+				assign6.setVariable(failVar.getId());
+				assign6.setMath(SBMLutilities.myParseFormula("1"));
 			}
 		}
 		// Property parsing is dealt with in PropertyPanel.java

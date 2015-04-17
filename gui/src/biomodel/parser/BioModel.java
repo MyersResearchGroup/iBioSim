@@ -2930,7 +2930,8 @@ public class BioModel {
 				lpn.addPlace(p.getId(), (p.getValue()==1));
 			} else if (SBMLutilities.isBoolean(p)){
 				booleans.add(p.getId());
-				if (p.getId().equals(GlobalConstants.FAIL)) continue;
+				if (p.getId().equals(GlobalConstants.FAIL)||
+						p.getId().endsWith("__"+GlobalConstants.FAIL)) continue;
 				Port port = getPortByIdRef(p.getId());
 				if (port != null) {
 					if (isInputPort(port)) {
@@ -3022,6 +3023,18 @@ public class BioModel {
 		for (int i = 0; i < flatSBML.getModel().getConstraintCount(); i++) {
 			Constraint c = flatSBML.getModel().getConstraint(i);
 			ASTNode math = c.getMath();
+			if (math.getType()==ASTNode.Type.RELATIONAL_EQ) {
+				ASTNode left = math.getLeftChild();
+				ASTNode right = math.getRightChild();
+				if (left.getType()==ASTNode.Type.NAME && 
+						(left.getName().equals(GlobalConstants.FAIL)||
+						left.getName().endsWith("__"+GlobalConstants.FAIL)) &&
+					right.getType()==ASTNode.Type.INTEGER && right.getInteger()==0) {
+					foundFail = true;
+					continue;
+				}
+			}
+			/*
 			if (math.getType()==ASTNode.Type.FUNCTION && math.getName().equals("G") && math.getChildCount()==2) {
 				ASTNode left = c.getMath().getLeftChild();
 				ASTNode right = c.getMath().getRightChild();
@@ -3030,7 +3043,7 @@ public class BioModel {
 					if (child.getType()==ASTNode.Type.RELATIONAL_EQ) {
 						left = child.getLeftChild();
 						right = child.getRightChild();
-						if (left.getType()==ASTNode.Type.NAME && left.getName().equals(GlobalConstants.FAIL) &&
+						if (left.getType()==ASTNode.Type.NAME && left.getName().endsWith(GlobalConstants.FAIL) &&
 							right.getType()==ASTNode.Type.INTEGER && right.getInteger()==1) {
 							foundFail = true;
 							continue;
@@ -3038,6 +3051,7 @@ public class BioModel {
 					}
 				}
 			} 
+			*/
 			error = true;
 			message += "Constraint: " + SBMLutilities.myFormulaToString(math) + "\n";
 			//lpn.addProperty(SBMLutilities.SBMLMathToLPNString(c.getMath(), constants, booleans));
@@ -3108,7 +3122,8 @@ public class BioModel {
 						} else if (rates.containsValue(ea.getVariable())) {
 							t.addContAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
 						} else if (booleans.contains(ea.getVariable())){
-							if (ea.getVariable().equals(GlobalConstants.FAIL) && foundFail) {
+							if ((ea.getVariable().equals(GlobalConstants.FAIL)||
+									ea.getVariable().endsWith("__"+GlobalConstants.FAIL)) && foundFail) {
 								t.setFail(true);
 							} else {
 								t.addBoolAssign(ea.getVariable(), SBMLutilities.SBMLMathToBoolLPNString(ea.getMath(),constants,booleans));
