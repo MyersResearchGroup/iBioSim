@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="verification/platu/project/DesignUnit.java" kind="src" path="gui/src"/>
+	<classpathentry excluding="verification/platu/project/DesignUnit.java|biomodel/gui/gcm/ParameterPanel.java" kind="src" path="gui/src">
+		<attributes>
+			<attribute name="ignore_optional_problems" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="gui/lib/AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-anim.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-awt-util.jar"/>
@@ -46,6 +50,7 @@
 	<classpathentry kind="lib" path="gui/lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="lib" path="gui/lib/antlr-3.4-complete.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jsbml-1.1-dev-with-dependencies-rev2178.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="gui/lib/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jdom-contrib.jar"/>
@@ -71,7 +76,6 @@
 	<classpathentry kind="lib" path="gui/lib/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/csparsej-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jsbml-1.1-dev-with-dependencies-rev2178.jar"/>
-	<classpathentry kind="lib" path="/Users/tramynguyen/Documents/iBioSim/BioSim/gui/lib/libSBOLj-core2-2.0.0-SNAPSHOT-withDependencies.jar"/>
+	<classpathentry kind="lib" path="gui/lib/libSBOLj-core2-2.0.0-SNAPSHOT-withDependencies.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
