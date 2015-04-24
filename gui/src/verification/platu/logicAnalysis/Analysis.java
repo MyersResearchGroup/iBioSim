@@ -226,6 +226,7 @@ public class Analysis {
 		else{
 			// If timing is enabled.
 			initPrjState = new TimedPrjState(initStateArray);
+			TimedPrjState.incTSCount();
 			
 			// Set the initial values of the inequality variables.
 			//((TimedPrjState) initPrjState).updateInequalityVariables();
@@ -296,6 +297,19 @@ public class Analysis {
 			firedFailure = failureTranIsEnabled(curEnabled); // Null means no failures.
 			if(firedFailure != null){
 				failure = true;
+				
+				if(Options.getTimingAnalysisFlag()&& Options.getOutputSgFlag()){
+					// Add the failure transition to the graph.
+					
+					TimedPrjState tps = (TimedPrjState) stateStackTop;
+					
+					// To have a target state, clone the last state.
+					TimedPrjState lastState = new TimedPrjState(tps.getStateArray(), tps.get_zones());
+					TimedPrjState.incTSCount();
+					
+					stateStackTop.addNextGlobalState(firedFailure, lastState);
+				}
+				
 				break main_while_loop;
 			}
 			if (Options.getDebugMode()) {
@@ -451,6 +465,20 @@ public class Analysis {
 				//prjStateSet.put(nextPrjState,nextPrjState);
 				stateStackTop.setChild(nextPrjState);
 				nextPrjState.setFather(stateStackTop);
+				if (Options.getTimingAnalysisFlag()){
+					// Assign a new id.
+					TimedPrjState tpState = (TimedPrjState) nextPrjState;
+					tpState.setCurrentId();
+					TimedPrjState.incTSCount();
+					
+					if(Options.getOutputSgFlag()){
+						// Add the current state as a previous state for the next state.
+						if(Zone.getSupersetFlag()){
+							tpState.addPreviousState((EventSet) firedTran, (TimedPrjState) stateStackTop);
+						}
+					}
+				}
+				
 				if (Options.getMarkovianModelFlag() || Options.getOutputSgFlag()) {
 					stateStackTop.addNextGlobalState(firedTran, nextPrjState);
 				}
@@ -486,7 +514,27 @@ public class Analysis {
 				}
 				else if (!Options.getMarkovianModelFlag() && Options.getOutputSgFlag()) { // non-stochastic model, but need to draw global state graph.
 					for (PrjState prjSt : prjStateSet) {
-						if (prjSt.equals(nextPrjState)) {
+						if(Options.getTimingAnalysisFlag() && Zone.getSubsetFlag()){
+							
+							TimedPrjState nextTimed = (TimedPrjState) nextPrjState;
+							
+							if(nextTimed.subset((TimedPrjState) prjSt)){
+
+								// If the subset flag is in effect, then a set can be considered
+								// 'previously seen' if the newly produced state is a subset of
+								// of the previous set and not just equal. In addition, we cannot
+								// break, since the current state could be a subset of more than
+								// one state.
+								stateStackTop.addNextGlobalState(firedTran, prjSt);
+
+								if(Zone.getSupersetFlag()){
+									// If supersets are in effect, add the previous states.
+									TimedPrjState tps = (TimedPrjState) prjSt;
+									tps.addPreviousState((EventSet) firedTran, (TimedPrjState) stateStackTop);
+								}
+							}
+						}
+						else if (prjSt.equals(nextPrjState)) {
 							stateStackTop.addNextGlobalState(firedTran, prjSt);
 							break;
 						}
@@ -549,7 +597,6 @@ public class Analysis {
 		if (Options.getOutputSgFlag()) {
 			System.out.println("outputSGPath = "  + Options.getPrjSgPath());
 			
-			// TODO: Andrew: I don't think you need the toHashSet() now.
 			//drawGlobalStateGraph(sgList, prjStateSet.toHashSet(), true);
 			drawGlobalStateGraph(initPrjState, prjStateSet);			
 		}
@@ -706,7 +753,7 @@ public class Analysis {
 				String curGlobalStateLabel = "";
 				String curGlobalStateProb = null;
 				HashMap<String, Integer> vars = new HashMap<String, Integer>();				
-				for (State curLocalState : curGlobalState.toStateArray()) {					
+				for (State curLocalState : curGlobalState.toStateArray()) {
 					curGlobalStateLabel = curGlobalStateLabel + "_" + "S" + curLocalState.getIndex();										
 					LhpnFile curLpn = curLocalState.getLpn();
 					for(int i = 0; i < curLpn.getVarIndexMap().size(); i++) {						
@@ -731,7 +778,13 @@ public class Analysis {
 					// State probability after steady state analysis.
 					curGlobalStateProb = num.format(((ProbGlobalState) curGlobalState).getCurrentProb());
 				}
-				curGlobalStateLabel = curGlobalStateLabel.substring(curGlobalStateLabel.indexOf("_")+1, curGlobalStateLabel.length());				
+				if(Options.getTimingAnalysisFlag()){
+					curGlobalStateLabel = "TS_" + ((TimedPrjState) curGlobalState).getTSID();
+				}
+				else{
+					curGlobalStateLabel = curGlobalStateLabel.substring(curGlobalStateLabel.indexOf("_")+1, curGlobalStateLabel.length());
+				}
+
 				if (curGlobalState.equals(initGlobalState)) {
 					String sgVector = ""; // sgVector is a vector of LPN labels. It shows the order of local state graph composition.
 					for (State s : initGlobalState.toStateArray()) {
@@ -759,7 +812,12 @@ public class Analysis {
 				}
 				for (Transition outTran : curGlobalState.getNextGlobalStateMap().keySet()) {					
 					PrjState nextGlobalState = curGlobalState.getNextGlobalStateMap().get(outTran);
-					String nextGlobalStateLabel = nextGlobalState.getLabel();										
+					String nextGlobalStateLabel = "";
+					if(Options.getTimingAnalysisFlag()){
+						nextGlobalStateLabel = "TS_" + ((TimedPrjState)nextGlobalState).getTSID();
+					}else{
+						nextGlobalStateLabel = nextGlobalState.getLabel();
+					}
 					String outTranName = outTran.getLabel();
 					if (!Options.getMarkovianModelFlag()) {
 						if (outTran.isFail() && !outTran.isPersistent())
