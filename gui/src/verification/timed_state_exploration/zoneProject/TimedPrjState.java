@@ -1,6 +1,8 @@
 package verification.timed_state_exploration.zoneProject;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
@@ -12,6 +14,75 @@ import verification.timed_state_exploration.octagon.Equivalence;
 import verification.timed_state_exploration.octagon.Octagon;
 
 public class TimedPrjState extends PrjState{
+	
+	/*
+	 * For state graph purposes, we need a unique id. Should be kept at
+	 * the next available number.
+	 */
+	public static int TimedStateCount = 0;
+	
+	public static int getTimeStateCount(){
+		return TimedStateCount;
+	}
+	
+	public static void incTSCount(){
+		TimedStateCount++;
+	}
+	
+	public static void decTSCount(){
+		TimedStateCount--;
+	}
+	
+	/*
+	 * The id for this state.
+	 */
+	public int _tsId;
+	
+	public int getTSID(){
+		return _tsId;
+	}
+	
+	public void setTSID(int newID){
+		_tsId = newID;
+	}
+	
+	/**
+	 * Sets the tsId to the current TimedStateCount.
+	 */
+	public void setCurrentId(){
+		_tsId = TimedStateCount;
+	}
+	
+	/*
+	 * Map states to previous state. This map needs to be maintained when
+	 * the state graph option is selected and when supersets is enabled.
+	 * The reason it is important for subsets is when a previously found
+	 * state is removed due to the current state being a superset, then
+	 * each of the states that pointed to the previous state need to
+	 * be updated to point to the current state.
+	 */
+	private HashMap<EventSet, HashSet<TimedPrjState>> _previousProjectState;
+	
+	/**
+	 * Add an element to the preset.
+	 * @param e
+	 * @param tps
+	 */
+	public void addPreviousState(EventSet e, TimedPrjState tps){
+		if (_previousProjectState.containsKey(e)){
+			_previousProjectState.get(e).add(tps);
+		}
+		else{
+			HashSet<TimedPrjState> newSet = new HashSet<TimedPrjState>();
+			newSet.add(tps);
+			_previousProjectState.put(e, newSet);
+		}
+	}
+	
+	public HashMap<EventSet, HashSet<TimedPrjState>> get_previousProjectState(){
+		return _previousProjectState;
+	}
+	
 //	protected Zone[] _zones;
 	protected Equivalence[] _zones;
 	
@@ -21,7 +92,12 @@ public class TimedPrjState extends PrjState{
 	//*}
 	public TimedPrjState(final State[] other, final Equivalence[] otherZones){
 		super(other);
+		_tsId = TimedStateCount;
 		this._zones = otherZones;
+		if(Zone.getSupersetFlag()&&Options.getOutputSgFlag()){
+			// We only need to worry about constructing this map when making the state graph.
+			_previousProjectState = new HashMap<EventSet, HashSet<TimedPrjState>>();
+		}
 	}
 	
 	
@@ -31,6 +107,11 @@ public class TimedPrjState extends PrjState{
 //		for(int i=0; i<_zones.length; i++){
 //			_zones[i] = new Zone(initStateArray[i]);
 //		}
+		
+		if(Zone.getSupersetFlag()&&Options.getOutputSgFlag()){
+			// We only need to worry about constructing this map when making the state graph.
+			_previousProjectState = new HashMap<EventSet, HashSet<TimedPrjState>>();
+		}
 		
 		if(verification.platu.main.Options.getTimingAnalysisType()
 				.equals("zone")){
@@ -88,7 +169,9 @@ public class TimedPrjState extends PrjState{
 	
 	@Override
 	public String toString(){
-		String result = super.toString();
+		String result = "TS_ID = " + _tsId + '\n';
+		
+		result += super.toString();
 		
 		result += "\nZones: \n";
 		
