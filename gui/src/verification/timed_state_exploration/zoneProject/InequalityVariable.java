@@ -58,6 +58,44 @@ public class InequalityVariable extends Variable {
 	 */
 	private boolean _isRight;
 	
+	// Cached hash code value.
+	int _hashCode;
+	
+	/**
+	 * Overrides the hashCode.
+	 */
+	@Override
+	public int hashCode()
+	{
+		// Check if the hash code has been set.
+		if(_hashCode <0)
+		{
+			_hashCode = createHashCode();
+		}
+
+		return _hashCode;
+	}
+	
+	/**
+	 * Creates a hash code for an EventSet object.
+	 * @return
+	 * 		The hash code.
+	 */
+	private int createHashCode()
+	{
+		int prime = 31;
+		
+		int newHashCode = prime;
+		
+		String name = toString();
+		
+		for(char c : name.toCharArray()){
+			newHashCode *= (int) c;
+		}
+		
+		return Math.abs(newHashCode);
+	}
+	
 //	
 //	Not needed anymore since the list of InequalityVariables is not dynamically
 //	changing.
