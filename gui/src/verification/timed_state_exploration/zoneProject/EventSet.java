@@ -57,6 +57,50 @@ public class EventSet extends Transition implements Iterable<Event>{
 	// The rate to change.
 	LPNContinuousPair  _rate;
 	
+	// Cached hash code value.
+//	int _hashCode;
+	
+	/**
+	 * Overrides the hashCode.
+	 */
+//	@Override
+//	public int hashCode()
+//	{
+//		// Check if the hash code has been set.
+//		if(_hashCode <0)
+//		{
+//			_hashCode = createHashCode();
+//		}
+//
+//		return _hashCode;
+//	}
+	
+	/**
+	 * Creates a hash code for an EventSet object.
+	 * @return
+	 * 		The hash code.
+	 */
+//	private int createHashCode()
+//	{
+//		int newHashCode = 37;
+//		
+//		if(!(_transition == null)){
+//			newHashCode ^= _transition.hashCode();
+//		}
+//		
+//		if(!(_inequalities == null)){
+//			for(InequalityVariable ineq : _inequalities){
+//				newHashCode ^= ineq.hashCode();
+//			}
+//		}
+//		
+//		if(!(_rate == null)){
+//			newHashCode ^= _rate.hashCode();
+//		}
+//		
+//		return Math.abs(newHashCode);
+//	}
+	
 	/**
 	 * Creates an uninitialized EventSet. The mode of the EventSet is determined by the first use
 	 * of the insert method. If a Transition event is added, then the EventSet will be in the Transition mode.
@@ -501,4 +545,104 @@ public class EventSet extends Transition implements Iterable<Event>{
 		
 	}
 	
+	/**
+	 * Tests for equality. Overrides inherited equals method.
+	 * @return True if o is equal to this object, false otherwise.
+	 */
+	@Override
+	public boolean equals(Object o)
+	{	
+		// Check if the reference is null.
+		if(o == null)
+		{
+			return false;
+		}
+		
+		// Check that the type is correct.
+		if(!(o instanceof EventSet))
+		{
+			return false;
+		}
+		
+		// Check for equality using the Zone equality.
+		return equals((EventSet) o);
+	}
+	
+	
+	/**
+	 * Tests for equality.
+	 * @param
+	 * 		The EventSet
+	 * @return 
+	 * 		True if the other EventSet is non-null and is equal.
+	 */
+	public boolean equals(EventSet otherEventSet)
+	{
+		// Check if the reference is null first.
+		if(otherEventSet == null)
+		{
+			return false;
+		}
+		
+		// Check for reference equality.
+		if(this == otherEventSet)
+		{
+			return true;
+		}
+		
+		// If the hash codes are different, then the objects are not equal. 
+		if(this.hashCode() != otherEventSet.hashCode())
+		{
+			return false;
+		}
+		
+		if(isTransition()){
+			if(otherEventSet.isTransition()){
+				// The other is also a transition, so compare the transition.
+				return _transition.equals(otherEventSet._transition);
+			}
+			else{
+				// The other is not a transition so they are not equal.
+				return false;
+			}
+		}
+
+		if(isRate()){
+			if(otherEventSet.isRate()){
+				// The other is also a rate rate transition, so compare.
+				return _rate.equals(otherEventSet._rate);
+			}
+			else{
+				// They are not equal.
+				return false;
+			}
+		}
+		
+		if(isInequalities()){
+			if(otherEventSet.isInequalities()){
+				// The other is also a set of inequalities.
+				
+				if(_inequalities.size() != otherEventSet._inequalities.size()){
+					return false;
+				}
+				
+				boolean result = true;
+				
+				for(InequalityVariable ineq: _inequalities){
+					result &= otherEventSet._inequalities.contains(ineq);
+				}
+				
+				for(InequalityVariable ineq: otherEventSet._inequalities){
+					result &= _inequalities.contains(ineq);
+				}
+				return result;
+			}
+			else{
+				return false;
+			}
+		}
+		
+		System.err.print("Warning: EventSet equality reached end of equality.");
+		return false;
+	}
 }
