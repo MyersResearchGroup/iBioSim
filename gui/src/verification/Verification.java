@@ -320,7 +320,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		resetOnce.addActionListener(this);
 		noDisplayResult = new JCheckBox("Silence Verification Window");
 		noDisplayResult.addActionListener(this);
-		rateOptimization = new JCheckBox("Rate Optimization Off");
+		rateOptimization = new JCheckBox("Rate Optimization On");
 		rateOptimization.addActionListener(this);
 		// Component List
 		addComponent = new JButton("Add Component");
@@ -1808,7 +1808,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			Options.set_resetOnce(resetOnce.isSelected());
 			Options.set_displayResults(!noDisplayResult.isSelected());
 			// Checking the rate optimization flag turns the optimization on.
-			Options.set_rateOptimization(!rateOptimization.isSelected());
+			Options.set_rateOptimization(rateOptimization.isSelected());
 			
 			Zone.setSubsetFlag(!timsubset.isSelected());
 			Zone.setSupersetFlag(!superset.isSelected());
@@ -1819,7 +1819,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				Options.setPrjSgPath(directory + separator);				
 			}
 			timedStateSearch.search();
-			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
+//			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
+			String graphFileName = "full_sg.dot";
 
 //			if (dot.isSelected()) {
 //				stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
