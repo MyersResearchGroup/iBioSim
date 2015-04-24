@@ -2501,6 +2501,8 @@ public class LearnModel { // added ItemListener SB
 							if (!transientPlaceReqd) {
 								placeInfo.put(key, p0);
 								g.addPlace("p" + numPlaces, false);
+								placeInfo.put(firstKey, p0); // CJM: 4/17/2015 - hack to fix transient
+								g.addPlace("p" + (numPlaces+1), false); // CJM: 4/17/2015 - hack to fix transient
 								startPlaces.add(/*key*/firstKey); // CJM: 4/17/2015 - hack to fix transient
 							} else {
 								transientNetPlaces.put(key, p0);
