@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
+import lpn.parser.Transition;
 import verification.platu.logicAnalysis.StateSetInterface;
 import verification.platu.main.Options;
 import verification.platu.project.PrjState;
@@ -158,10 +160,72 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 				return true;
 			}
 			
-			if(list.contains(ts)){
-				// The set already contains the timed project state. So nothing changes.
-				return false;
+//			if(list.contains(ts)){
+//				// The set already contains the timed project state. So nothing changes.
+//				return false;
+//			}
+			
+			// Get an iterator from the list to allow removal of elements as the list is 
+			// traversed.
+			Iterator<TimedPrjState> iterate = list.iterator();
+			
+			while(iterate.hasNext()){
+				TimedPrjState listState = iterate.next();
+
+				// If subsets are selected and the state is a subset, then no need to add the
+				// state. Return false.
+				if(subsets && ts.subset(listState)){
+					return false;
+				}
+
+				if(ts.equals(listState)){
+					return false;
+				}
+
+				// If supersets are selected, items that are subsets of the new state may be
+				// removed.
+				if(supersets){
+					
+					// We may remove any state that the current state is a superset of.
+					// If this state is not present, then it will eventually make it
+					// to the add.
+					if(ts.superset(listState)){
+						
+						if(Options.getOutputSgFlag()){
+							// Need to move the transitions form the old state and put it on
+							// the new state.
+							
+							// Update the transitions from the old state.
+							HashMap<Transition, PrjState> nextStates = listState.getNextGlobalStateMap();
+							
+							// Add these transitions to the new state.
+							for(Entry<Transition, PrjState> e : nextStates.entrySet()){
+								ts.addNextGlobalState(e.getKey(), e.getValue());
+							}
+							
+							// Update the previous states.
+							HashMap<EventSet, HashSet<TimedPrjState>> previousStates =
+									listState.get_previousProjectState();
+							
+							// Each state in the HashSet<TimedPrjState>, need to replace the previous
+							// reference to the old state with the new state.
+							for(EventSet es: previousStates.keySet()){
+								for (TimedPrjState tps : previousStates.get(es)){
+									// Add this previous state to the list of the new state.
+									ts.addPreviousState(es, tps);
+									
+									// Replace the edge to the old state with the new state.
+									tps.getNextGlobalStateMap().put(es, ts);
+								}
+							}
+							
+						}
+						
+						iterate.remove();
+					}
+				}
 			}
+			
 			// The set does not already contain the timed project state. So add it.
 			list.add(ts);
 			
@@ -287,26 +351,30 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 				if(subsets && ts.subset(listState)){
 					return true;
 				}
+				
+				if(ts.equals(listState)){
+					return true;
+				}
 
 				// If supersets are selected, items that are subsets of the new state may be
 				// removed.
-				if(supersets){
-					if(!subsets && ts.equals(listState)){
-						// When an equal state is found, the return value must be true and the
-						// state should not be removed. When not doing subsets, the superset check
-						// cannot end here (since other sets that are supersets may exist further in the
-						// list). If control has passed here, it can be deduced that subsets has not
-						// been selected even without the subset flag since the 
-						// if(subsets && s.subset(listState) would have already been taken.
-						// The subset flag is added here to allow a quick out of the extra equality check.
-						result |= true;
-					}
-					else if(ts.superset(listState)){
-						// The new state (s) is a strict superset of an existing state.
-						// Remove the existing state.
-						iterate.remove();
-					}
-				}
+//				if(supersets){
+//					if(!subsets && ts.equals(listState)){
+//						// When an equal state is found, the return value must be true and the
+//						// state should not be removed. When not doing subsets, the superset check
+//						// cannot end here (since other sets that are supersets may exist further in the
+//						// list). If control has passed here, it can be deduced that subsets has not
+//						// been selected even without the subset flag since the 
+//						// if(subsets && s.subset(listState) would have already been taken.
+//						// The subset flag is added here to allow a quick out of the extra equality check.
+//						result |= true;
+//					}
+//					else if(ts.superset(listState)){
+//						// The new state (s) is a strict superset of an existing state.
+//						// Remove the existing state.
+//						iterate.remove();
+//					}
+//				}
 
 			}
 
