@@ -25,9 +25,11 @@ import org.sbolstandard.core2.MapsTo;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
-import org.sbolstandard.core2.RefinementType;
+//import org.sbolstandard.core2.RefinementType; //OLD VERSION
+import org.sbolstandard.core2.MapsTo.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
-import org.sbolstandard.core2.abstract_classes.Identified;
+//import org.sbolstandard.core2.abstract_classes.Identified; //OLD VERSION
+import org.sbolstandard.core2.Identified;
 
 import sbol.util.ChEBI;
 import sbol.util.MyersOntology;
@@ -62,7 +64,8 @@ public class ModelGenerator {
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity());
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
 		
-		for (FunctionalComponent comp : moduleDef.getComponents()) {
+//		for (FunctionalComponent comp : moduleDef.getComponents()) { //OLD VERSION
+		for (FunctionalComponent comp : moduleDef.getFunctionalComponents()) { 
 			if (isSpeciesComponent(comp, sbolDoc)) {
 				generateSpecies(comp, sbolDoc, targetModel);
 				if (isInputComponent(comp)) {
@@ -101,7 +104,8 @@ public class ModelGenerator {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
 					if (partici.containsRole(SBO.PROMOTER)) {
-						promoter = moduleDef.getComponent(partici.getParticipant());
+//						promoter = moduleDef.getComponent(partici.getParticipant()); //OLD VERSION
+						promoter = moduleDef.getFunctionalComponent(partici.getParticipant());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
 						promoterToPartici.get(promoter).add(partici);
@@ -131,7 +135,8 @@ public class ModelGenerator {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
 					if (partici.containsRole(MyersOntology.ACTIVATED)) {
-						promoter = moduleDef.getComponent(partici.getParticipant());
+//						promoter = moduleDef.getComponent(partici.getParticipant()); //OLD VERSION
+						promoter = moduleDef.getFunctionalComponent(partici.getParticipant());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
 						promoterToPartici.get(promoter).add(partici);
@@ -148,7 +153,8 @@ public class ModelGenerator {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
 					if (partici.containsRole(MyersOntology.REPRESSED)) {
-						promoter = moduleDef.getComponent(partici.getParticipant());
+//						promoter = moduleDef.getComponent(partici.getParticipant()); //OLD VERSION
+						promoter = moduleDef.getFunctionalComponent(partici.getParticipant());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
 						promoterToPartici.get(promoter).add(partici);
@@ -171,7 +177,8 @@ public class ModelGenerator {
 					promoterToRepressors.get(promoter), moduleDef, sbolDoc, targetModel);
 		}
 		
-		for (Module subModule : moduleDef.getSubModule()) {
+//		for (Module subModule : moduleDef.getSubModule()) { //OLD VERSION
+		for (Module subModule : moduleDef.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinition());
 			BioModel subTargetModel = new BioModel(projectDirectory);
 			if (subTargetModel.load(projectDirectory + File.separator + getDisplayID(subModuleDef) + ".xml")) {
@@ -193,13 +200,17 @@ public class ModelGenerator {
 				subTargetModel.IsWithinCompartment(), subTargetModel.getCompartmentPorts(), 
 				-1, -1, 0, 0, md5);
 		annotateSubModel(targetModel.getSBMLCompModel().getSubmodel(getDisplayID(subModule)), subModule);
-		for (MapsTo mapping : subModule.getMappings()) 
+//		for (MapsTo mapping : subModule.getMappings()) //OLD VERSION
+		for (MapsTo mapping : subModule.getMapsTos()) 
 			if (isIOMapping(mapping, subModule, sbolDoc)) {
 				RefinementType refinement = mapping.getRefinement();
-				if (refinement == RefinementType.verifyIdentical || refinement == RefinementType.merge
-						|| refinement == RefinementType.useLocal) {
+				if (refinement == RefinementType.VERIFYIDENTICAL || refinement == RefinementType.MERGE
+						|| refinement == RefinementType.USELOCAL) {
+					//OLD VERSION
+//				if (refinement == RefinementType.verifyIdentical || refinement == RefinementType.merge
+//						|| refinement == RefinementType.useLocal) {
 					generateReplacement(mapping, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
-				} else if (refinement == RefinementType.useRemote) {
+				} else if (refinement == RefinementType.USEREMOTE) {
 					generateReplacedBy(mapping, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
 				}
 			}
@@ -217,8 +228,11 @@ public class ModelGenerator {
 	public static void generateReplacement(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinition());
-		FunctionalComponent remoteSpecies = subModuleDef.getComponent(mapping.getRemote());
-		FunctionalComponent localSpecies = moduleDef.getComponent(mapping.getLocal());
+		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemote());
+		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocal());
+		// OLD VERSION
+//		FunctionalComponent remoteSpecies = subModuleDef.getComponent(mapping.getRemote());
+//		FunctionalComponent localSpecies = moduleDef.getComponent(mapping.getLocal());
 		
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(localSpecies));
 		Port port = subTargetModel.getPortByIdRef(getDisplayID(remoteSpecies));
@@ -236,8 +250,11 @@ public class ModelGenerator {
 	public static void generateReplacedBy(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinition());
-		FunctionalComponent remoteSpecies = subModuleDef.getComponent(mapping.getRemote());
-		FunctionalComponent localSpecies = moduleDef.getComponent(mapping.getLocal());
+		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemote());
+		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocal());
+		//OLD VERSION
+//		FunctionalComponent remoteSpecies = subModuleDef.getComponent(mapping.getRemote());
+//		FunctionalComponent localSpecies = moduleDef.getComponent(mapping.getLocal());
 		
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(localSpecies));
 		Port port = subTargetModel.getPortByIdRef(getDisplayID(remoteSpecies));
@@ -276,7 +293,8 @@ public class ModelGenerator {
 
 	public static void generateDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) {
 		Participation degraded = degradation.getParticipations().get(0);
-		FunctionalComponent species = moduleDef.getComponent(degraded.getParticipant());
+//		FunctionalComponent species = moduleDef.getComponent(degraded.getParticipant()); //OLD VERSION
+		FunctionalComponent species = moduleDef.getFunctionalComponent(degraded.getParticipant());
 		boolean onPort = (species.getDirection().equals(SBOLOntology.INPUT) 
 				|| species.getDirection().equals(SBOLOntology.OUTPUT));
 		Reaction degradationRxn = targetModel.createDegradationReaction(getDisplayID(species), -1, null, onPort, null);
@@ -292,7 +310,8 @@ public class ModelGenerator {
 	
 	public static void generateComplexFormationRxn(Interaction complexFormation, Participation complex,
 			List<Participation> ligands, ModuleDefinition moduleDef, BioModel targetModel) {
-		FunctionalComponent complexSpecies = moduleDef.getComponent(complex.getParticipant());
+//		FunctionalComponent complexSpecies = moduleDef.getComponent(complex.getParticipant()); //OLD VERSION
+		FunctionalComponent complexSpecies = moduleDef.getFunctionalComponent(complex.getParticipant());
 		boolean onPort = (complexSpecies.getDirection().equals(SBOLOntology.INPUT) 
 				|| complexSpecies.getDirection().equals(SBOLOntology.OUTPUT));
 		Reaction complexFormationRxn = targetModel.createComplexReaction(getDisplayID(complexSpecies), null, onPort);
@@ -308,7 +327,8 @@ public class ModelGenerator {
 		annotateSpeciesReference(complexRef, complex);
 
 		for (Participation ligand : ligands) {
-			FunctionalComponent ligandSpecies = moduleDef.getComponent(ligand.getParticipant());
+//			FunctionalComponent ligandSpecies = moduleDef.getComponent(ligand.getParticipant()); //OLD VERSION
+			FunctionalComponent ligandSpecies = moduleDef.getFunctionalComponent(ligand.getParticipant());
 			targetModel.addReactantToComplexReaction(getDisplayID(ligandSpecies), getDisplayID(complexSpecies), 
 					null, null, complexFormationRxn);
 			
@@ -350,8 +370,11 @@ public class ModelGenerator {
 			generateProductReference(product, promoter, moduleDef, productionRxn, targetModel);
 		
 		for (int i = 0; i < transcribed.size(); i++) {
-			FunctionalComponent gene = moduleDef.getComponent(transcribed.get(i).getParticipant());
-			FunctionalComponent protein = moduleDef.getComponent(products.get(i).getParticipant());
+			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(i).getParticipant());
+			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(i).getParticipant());
+			//OLD VERSION
+//			FunctionalComponent gene = moduleDef.getComponent(transcribed.get(i).getParticipant());
+//			FunctionalComponent protein = moduleDef.getComponent(products.get(i).getParticipant());
 			annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(protein)), 
 					sbolDoc.getComponentDefinition(gene.getDefinition()));
 		}
@@ -359,7 +382,8 @@ public class ModelGenerator {
 	
 	public static void generateActivatorReference(Participation activator, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
-		FunctionalComponent tf = moduleDef.getComponent(activator.getParticipant());
+		FunctionalComponent tf = moduleDef.getFunctionalComponent(activator.getParticipant());
+//		FunctionalComponent tf = moduleDef.getComponent(activator.getParticipant()); //OLD VERSION
 		targetModel.addActivatorToProductionReaction(getDisplayID(promoter),  
 				getDisplayID(tf), "none", productionRxn, null, null, null);
 		
@@ -371,7 +395,8 @@ public class ModelGenerator {
 	
 	public static void generateRepressorReference(Participation repressor, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
-		FunctionalComponent tf = moduleDef.getComponent(repressor.getParticipant());
+//		FunctionalComponent tf = moduleDef.getComponent(repressor.getParticipant()); //OLD VERSION
+		FunctionalComponent tf = moduleDef.getFunctionalComponent(repressor.getParticipant());
 		targetModel.addRepressorToProductionReaction(getDisplayID(promoter),  
 				getDisplayID(tf), "none", productionRxn, null, null, null);
 		
@@ -383,7 +408,8 @@ public class ModelGenerator {
 	
 	public static void generateProductReference(Participation product, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
-		FunctionalComponent protein = moduleDef.getComponent(product.getParticipant());
+//		FunctionalComponent protein = moduleDef.getComponent(product.getParticipant()); //OLD VERSION
+		FunctionalComponent protein = moduleDef.getFunctionalComponent(product.getParticipant());
 		targetModel.addActivatorToProductionReaction(getDisplayID(promoter),  
 				"none", getDisplayID(protein), productionRxn, null, null, null);
 		
@@ -491,14 +517,18 @@ public class ModelGenerator {
 	
 	public static boolean isIOMapping(MapsTo mapping, Module subModule, SBOLDocument sbolDoc) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinition());
-		FunctionalComponent remoteComp = subModuleDef.getComponent(mapping.getRemote());
+//		FunctionalComponent remoteComp = subModuleDef.getComponent(mapping.getRemote()); //OLD VERSION
+		FunctionalComponent remoteComp = subModuleDef.getFunctionalComponent(mapping.getRemote()); 
 		return isInputComponent(remoteComp) || isOutputComponent(remoteComp);
 	}
 	
 	public static boolean isTopDownMapping(MapsTo mapping) { 
 		RefinementType refinement = mapping.getRefinement();
-		return refinement == RefinementType.verifyIdentical || refinement == RefinementType.merge
-				|| refinement == RefinementType.useLocal;
+		return refinement == RefinementType.VERIFYIDENTICAL || refinement == RefinementType.MERGE
+				|| refinement == RefinementType.USELOCAL;
+		//OLD VERSION
+//		return refinement == RefinementType.verifyIdentical || refinement == RefinementType.merge
+//				|| refinement == RefinementType.useLocal;
 	}
 	
 	public static boolean isInputComponent(FunctionalComponent comp) {
@@ -575,7 +605,8 @@ public class ModelGenerator {
 		if (interact.containsType(SBO.DEGRADATION) && interact.getParticipations().size() == 1) {
 			Participation partici = interact.getParticipations().get(0);
 			if (partici.containsRole(MyersOntology.DEGRADED)) {
-				FunctionalComponent comp = moduleDef.getComponent(partici.getParticipant());
+//				FunctionalComponent comp = moduleDef.getComponent(partici.getParticipant()); //OLD VERSION
+				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipant());
 				if (isSpeciesComponent(comp, sbolDoc))
 					return true;
 			}
@@ -589,7 +620,8 @@ public class ModelGenerator {
 			int complexCount = 0;
 			int ligandCount = 0;
 			for (Participation partici: interact.getParticipations()) {
-				FunctionalComponent comp = moduleDef.getComponent(partici.getParticipant());
+//				FunctionalComponent comp = moduleDef.getComponent(partici.getParticipant()); //OLD VERSION
+				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipant());
 				if (partici.containsRole(SBO.COMPLEX) && isComplexComponent(comp, sbolDoc)) 
 					complexCount++;
 				else if (partici.containsRole(SBO.LIGAND) && isSpeciesComponent(comp, sbolDoc))
@@ -610,7 +642,8 @@ public class ModelGenerator {
 			boolean hasProduct = false;
 			boolean hasTranscribed = false;
 			for (Participation partici : interact.getParticipations()) {
-				FunctionalComponent comp = moduleDef.getComponent(partici.getParticipant());
+//				FunctionalComponent comp = moduleDef.getComponent(partici.getParticipant()); //OLD VERSION
+				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipant());
 				if (partici.containsRole(SBO.PROMOTER) && isPromoterComponent(comp, sbolDoc))
 					hasPromoter = true;
 				else if (partici.containsRole(SBO.PRODUCT) && isProteinComponent(comp, sbolDoc))
@@ -630,7 +663,8 @@ public class ModelGenerator {
 			boolean hasActivated = false;
 			boolean hasActivator = false;
 			for (Participation partici : interact.getParticipations()) {
-				FunctionalComponent comp = moduleDef.getComponent(partici.getParticipant());
+//				FunctionalComponent comp = moduleDef.getComponent(partici.getParticipant()); //OLD VERSION
+				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipant());
 				if (partici.containsRole(MyersOntology.ACTIVATED) && isPromoterComponent(comp, sbolDoc))
 					hasActivated = true;
 				else if (partici.containsRole(SBO.ACTIVATOR) && isTFComponent(comp, sbolDoc))
@@ -648,7 +682,8 @@ public class ModelGenerator {
 			boolean hasRepressed = false;
 			boolean hasRepressor = false;
 			for (Participation partici : interact.getParticipations()) {
-				FunctionalComponent comp = moduleDef.getComponent(partici.getParticipant());
+//				FunctionalComponent comp = moduleDef.getComponent(partici.getParticipant()); //OLD VERSION
+				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipant());
 				if (partici.containsRole(MyersOntology.REPRESSED) && isPromoterComponent(comp, sbolDoc))
 					hasRepressed = true;
 				else if (partici.containsRole(SBO.REPRESSOR) && isTFComponent(comp, sbolDoc))
