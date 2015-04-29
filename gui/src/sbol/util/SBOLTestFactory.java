@@ -291,7 +291,7 @@ public class SBOLTestFactory {
 					DirectionType.INPUT, andSensorDef, sbolDoc);
 		}
 		for (FunctionalComponent remoteOutput : remoteOutputs1) {
-			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition());
+			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition().getIdentity());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
 						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
@@ -303,7 +303,7 @@ public class SBOLTestFactory {
 			}
 		}
 		for (FunctionalComponent remoteOutput : remoteOutputs1) {
-			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition());
+			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition().getIdentity());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
 						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
@@ -317,7 +317,7 @@ public class SBOLTestFactory {
 			}
 		}
 		for (FunctionalComponent remoteOutput : remoteOutputs2) {
-			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition());
+			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition().getIdentity());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
 						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
@@ -331,7 +331,7 @@ public class SBOLTestFactory {
 			}
 		}
 		for (FunctionalComponent remoteOutput : remoteOutputs3) {
-			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition());
+			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition().getIdentity());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
 						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
@@ -514,7 +514,7 @@ public class SBOLTestFactory {
 			ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
 		FunctionalComponent gene = createDNAComponent(geneID, MyersOntology.GENE, access, direction,
 				moduleDef, sbolDoc);
-		ComponentDefinition geneDef = sbolDoc.getComponentDefinition(gene.getDefinition());
+		ComponentDefinition geneDef = sbolDoc.getComponentDefinition(gene.getDefinition().getIdentity());
 //		Component rbs = createRBSComponent("RBS", SBOLOntology.PRIVATE, geneDef, sbolDoc);//OLD VERSION
 		Component rbs = createRBSComponent("RBS", AccessType.PRIVATE, geneDef, sbolDoc);
 //		geneDef.addSubComponent(rbs); //OLD VERSION
@@ -720,11 +720,9 @@ public class SBOLTestFactory {
 			SBOLDocument sbolDoc) {
 		int mappingCount = 1;
 		Set<MapsTo> mappings = new HashSet<MapsTo>();
-		ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(module.getDefinition());
-//		for (FunctionalComponent remoteComp : moduleDef.getComponents()) { //OLD VERSION
+		ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(module.getDefinition().getIdentity());
 		for (FunctionalComponent remoteComp : moduleDef.getFunctionalComponents()) { 
 			if (remoteComp.getAccess().equals(SBOLOntology.PUBLIC)) {
-//				for (FunctionalComponent localComp : parentModuleDef.getComponents()) { //OLD VERSION
 				for (FunctionalComponent localComp : parentModuleDef.getFunctionalComponents()) {
 					if (remoteComp.getDefinition().equals(localComp.getDefinition())) {
 						mappings.add(createMapping(mappingCount, localComp.getIdentity(), remoteComp.getIdentity(),
@@ -818,7 +816,8 @@ public class SBOLTestFactory {
 			if (moduleDef == null) {
 				Set<URI> moduleDefRoles = new HashSet<URI>();
 				moduleDefRoles.add(role);
-				moduleDef = sbolDoc.createModuleDefinition(moduleDefIdentity, moduleDefRoles);
+				moduleDef = sbolDoc.createModuleDefinition(moduleDefIdentity);
+				moduleDef.setRoles(moduleDefRoles);
 				moduleDef.setDisplayId(moduleDefID);
 				return moduleDef;
 			} else {
@@ -897,7 +896,8 @@ public class SBOLTestFactory {
 			if (interact == null) {
 				Set<URI> interactType = new HashSet<URI>();
 				interactType.add(type);
-				interact = moduleDef.createInteraction(interactIdentity, interactType, new LinkedList<Participation>());
+//				interact = moduleDef.createInteraction(interactIdentity, interactType, new LinkedList<Participation>()); //OLD VERSION
+				interact = moduleDef.createInteraction(interactIdentity, interactType);
 				return interact;
 			} else {
 				return interact;
@@ -916,7 +916,8 @@ public class SBOLTestFactory {
 			if (partici == null) {
 				Set<URI> particiRoles = new HashSet<URI>();
 				particiRoles.add(role);
-				partici = interact.createParticipation(particiIdentity, particiRoles, participant);
+				partici = interact.createParticipation(particiIdentity, participant);
+				partici.addRole(role);
 				return partici;
 			} else {
 				return partici;
