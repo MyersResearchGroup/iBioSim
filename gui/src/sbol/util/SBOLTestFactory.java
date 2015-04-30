@@ -137,14 +137,14 @@ public class SBOLTestFactory {
 //		for (FunctionalComponent remoteComp : inverterDef1.getComponents()) {//OLD VERSION
 		for (FunctionalComponent remoteComp : inverterDef1.getFunctionalComponents()) {
 			if (remoteComp.getDirection().equals(SBOLOntology.OUTPUT) 
-					&& !remoteComp.getDefinition().equals(remoteTF2.getDefinition())) {
+					&& !remoteComp.getDefinitionURI().equals(remoteTF2.getDefinitionURI())) {
 				return null;
 			}
 		}
 //		for (FunctionalComponent remoteComp : inverterDef2.getComponents()) {//OLD VERSION
 		for (FunctionalComponent remoteComp : inverterDef2.getFunctionalComponents()) {
 			if (remoteComp.getDirection().equals(SBOLOntology.OUTPUT) 
-					&& !remoteComp.getDefinition().equals(remoteTF1.getDefinition())) {
+					&& !remoteComp.getDefinitionURI().equals(remoteTF1.getDefinitionURI())) {
 				return null;
 			}
 		}
@@ -260,7 +260,7 @@ public class SBOLTestFactory {
 		for (FunctionalComponent remoteOutput1 : remoteOutputs1) {
 			int connectCount = 0;
 			for (FunctionalComponent remoteInput2 : remoteInputs2) {
-				if (remoteOutput1.getDefinition().equals(remoteInput2.getDefinition())) {
+				if (remoteOutput1.getDefinitionURI().equals(remoteInput2.getDefinitionURI())) {
 					connectCount++;
 				}
 			}
@@ -271,7 +271,7 @@ public class SBOLTestFactory {
 		for (FunctionalComponent remoteOutput2 : remoteOutputs2) {
 			int connectCount = 0;
 			for (FunctionalComponent remoteInput3 : remoteInputs3) {
-				if (remoteOutput2.getDefinition().equals(remoteInput3.getDefinition())) {
+				if (remoteOutput2.getDefinitionURI().equals(remoteInput3.getDefinitionURI())) {
 					connectCount++;
 				}
 			}
@@ -291,7 +291,7 @@ public class SBOLTestFactory {
 					DirectionType.INPUT, andSensorDef, sbolDoc);
 		}
 		for (FunctionalComponent remoteOutput : remoteOutputs1) {
-			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition().getIdentity());
+			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinitionURI());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
 						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
@@ -303,7 +303,7 @@ public class SBOLTestFactory {
 			}
 		}
 		for (FunctionalComponent remoteOutput : remoteOutputs1) {
-			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition().getIdentity());
+			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinitionURI());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
 						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
@@ -317,7 +317,7 @@ public class SBOLTestFactory {
 			}
 		}
 		for (FunctionalComponent remoteOutput : remoteOutputs2) {
-			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition().getIdentity());
+			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinitionURI());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
 						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
@@ -331,7 +331,7 @@ public class SBOLTestFactory {
 			}
 		}
 		for (FunctionalComponent remoteOutput : remoteOutputs3) {
-			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinition().getIdentity());
+			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinitionURI());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
 						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
@@ -514,7 +514,7 @@ public class SBOLTestFactory {
 			ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
 		FunctionalComponent gene = createDNAComponent(geneID, MyersOntology.GENE, access, direction,
 				moduleDef, sbolDoc);
-		ComponentDefinition geneDef = sbolDoc.getComponentDefinition(gene.getDefinition().getIdentity());
+		ComponentDefinition geneDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
 //		Component rbs = createRBSComponent("RBS", SBOLOntology.PRIVATE, geneDef, sbolDoc);//OLD VERSION
 		Component rbs = createRBSComponent("RBS", AccessType.PRIVATE, geneDef, sbolDoc);
 //		geneDef.addSubComponent(rbs); //OLD VERSION
@@ -724,7 +724,7 @@ public class SBOLTestFactory {
 		for (FunctionalComponent remoteComp : moduleDef.getFunctionalComponents()) { 
 			if (remoteComp.getAccess().equals(SBOLOntology.PUBLIC)) {
 				for (FunctionalComponent localComp : parentModuleDef.getFunctionalComponents()) {
-					if (remoteComp.getDefinition().equals(localComp.getDefinition())) {
+					if (remoteComp.getDefinitionURI().equals(localComp.getDefinitionURI())) {
 						mappings.add(createMapping(mappingCount, localComp.getIdentity(), remoteComp.getIdentity(),
 								RefinementType.VERIFYIDENTICAL, module));
 						mappingCount++;

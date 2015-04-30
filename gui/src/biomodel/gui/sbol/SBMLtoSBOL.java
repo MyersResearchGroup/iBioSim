@@ -85,6 +85,7 @@ public class SBMLtoSBOL {
 		// OR read existing 1.1 document in the project to get sequences etc.
 		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 		SBOLDocument sbolDoc = new SBOLDocument();
+		sbolDoc.setDefaultURIprefix("http://www.async.ece.utah.edu");
 		
 		URI collection_id = URI.create(PREFIX + "collection__" + bioModel.getSBMLDocument().getModel().getId() + VERSION);
 		Collection collection = sbolDoc.createCollection(collection_id);
@@ -104,12 +105,12 @@ public class SBMLtoSBOL {
 	public void export_recurse(String source,SBMLDocument sbmlDoc,SBOLDocument sbolDoc,Collection collection) 
 	{
 		Model model    = sbmlDoc.getModel();
-		URI modelId    = URI.create("model__" + model.getId() + VERSION);
+		String modelId = model.getId();
 		URI sourceURI  = URI.create(source);
 		
 		Set<URI> roles = new HashSet<URI>();
 		roles.add(URI.create(SOME_ONTOLOGY + "ROLE"));
-		org.sbolstandard.core2.Model sbolModel = sbolDoc.createModel(modelId, sourceURI, LANGUAGE, FRAMEWORK);
+		org.sbolstandard.core2.Model sbolModel = sbolDoc.createModel(model.getId(), "1.0", sourceURI, LANGUAGE, FRAMEWORK);
 //		sbolModel.setRoles(roles); //TODO MODEL no longer has roles?
 		
 		collection.addMember(sbolModel.getIdentity());	
