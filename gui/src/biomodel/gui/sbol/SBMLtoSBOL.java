@@ -86,6 +86,7 @@ public class SBMLtoSBOL {
 		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 		SBOLDocument sbolDoc = new SBOLDocument();
 		sbolDoc.setDefaultURIprefix("http://www.async.ece.utah.edu");
+		sbolDoc.setComplete(true);
 		
 		URI collection_id = URI.create(PREFIX + "collection__" + bioModel.getSBMLDocument().getModel().getId() + VERSION);
 		Collection collection = sbolDoc.createCollection(collection_id);
@@ -543,8 +544,8 @@ public class SBMLtoSBOL {
 							} 
 						}
 					}
-					moduleDef.addModule(m);
 				}
+				moduleDef.addModule(m);
 				if (!comps.contains(extModel)) 
 				{
 					comps.add(extModel);
