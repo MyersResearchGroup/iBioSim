@@ -2480,6 +2480,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				if (newName.endsWith(".lpn")) {
 					((ModelEditor) comp).saveAsLPN(newName);
+				} else if (newName.endsWith(".sv")) {
+					((ModelEditor) comp).saveAsVerilog(newName);
 				} else {
 					((ModelEditor) comp).saveAs(newName);
 				}
