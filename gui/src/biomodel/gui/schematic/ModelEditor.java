@@ -24,6 +24,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.stream.XMLStreamException;
 
+import lpn.parser.Lpn2verilog;
 import main.Gui;
 import main.Log;
 import main.util.MutableBoolean;
@@ -530,6 +531,22 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			network.loadProperties(biomodel);
 			network.mergeSBML(exportPath);
 			log.addText("Exporting flat SBML file:\n" + exportPath + "\n");
+		}
+	}
+	
+	public void saveAsVerilog(String newName) {
+		if (new File(path + separator + newName).exists()) {
+			int value = JOptionPane.showOptionDialog(Gui.frame, newName
+					+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.NO_OPTION) {
+				return;
+			}
+		}
+		log.addText("Saving SBML file as SystemVerilog file:\n" + path + separator + newName + "\n");
+		if (biomodel.saveAsLPN(path + separator + newName.replace(".sv", ".lpn"))) {
+			Lpn2verilog.convert(path + separator + newName.replace(".sv", ".lpn"));
+			biosim.addToTree(newName);
 		}
 	}
 	
