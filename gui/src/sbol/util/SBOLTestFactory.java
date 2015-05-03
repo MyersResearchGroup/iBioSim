@@ -49,6 +49,7 @@ public class SBOLTestFactory {
 	
 	public static void testWrite() {
 		SBOLDocument sbolDoc = new SBOLDocument();
+		sbolDoc.setDefaultURIprefix(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 		ModuleDefinition lacIInverter = createInverterDefinition("LacI", "pLac", "cTetR", "TetR", 
 				MyersOntology.TF, sbolDoc);
 		ModuleDefinition tetRInverter = createInverterDefinition("TetR", "pTet", "cLacI", "LacI", 
@@ -518,7 +519,8 @@ public class SBOLTestFactory {
 //		Component rbs = createRBSComponent("RBS", SBOLOntology.PRIVATE, geneDef, sbolDoc);//OLD VERSION
 		Component rbs = createRBSComponent("RBS", AccessType.PRIVATE, geneDef, sbolDoc);
 //		geneDef.addSubComponent(rbs); //OLD VERSION
-		geneDef.addComponent(rbs);
+		// TODO: NIC PLEASE CHECK THIS IS NEEDED
+		//geneDef.addComponent(rbs);
 		String cdsID = geneID;
 		if (cdsID.equals("rfp")) {
 			cdsID = "c" + cdsID.toUpperCase();
@@ -527,10 +529,12 @@ public class SBOLTestFactory {
 		}
 		Component cds = createCDSComponent(cdsID, AccessType.PRIVATE, geneDef, sbolDoc);
 //		geneDef.addSubComponent(cds); //OLD VERSION
-		geneDef.addComponent(cds);
+		// TODO: NIC PLEASE CHECK THIS IS NEEDED
+		//geneDef.addComponent(cds);
 		Component terminator = createTerminatorComponent("Terminator", AccessType.PRIVATE, geneDef, sbolDoc);
 //		geneDef.addSubComponent(terminator); //OLD VERSION
-		geneDef.addComponent(terminator);
+		// TODO: NIC PLEASE CHECK THIS IS NEEDED
+		//geneDef.addComponent(terminator);
 		int constraintCount = 1;
 		createPrecedes(constraintCount, rbs, cds, geneDef);
 		constraintCount++;
@@ -745,17 +749,15 @@ public class SBOLTestFactory {
 	
 	public static ComponentDefinition createComponentDefinition(String compDefID, URI role, URI type, SBOLDocument sbolDoc) {
 		try {
-			URI compDefIdentity = new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/" + compDefID);
+			URI compDefIdentity = new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/cd/" + compDefID);
 			ComponentDefinition compDef = sbolDoc.getComponentDefinition(compDefIdentity);
 			if (compDef == null) {
 				Set<URI> compDefRoles = new HashSet<URI>();
 				compDefRoles.add(role);
 				Set<URI> compDefType = new HashSet<URI>();
 				compDefType.add(type);
-//				compDef = sbolDoc.createComponentDefinition(compDefIdentity, compDefType, compDefRoles); //OLD VERSION
-				compDef = sbolDoc.createComponentDefinition(compDefIdentity, compDefType);
+				compDef = sbolDoc.createComponentDefinition(compDefID, "", compDefType);
 				compDef.setTypes(compDefType);
-				compDef.setDisplayId(compDefID);
 				return compDef;
 			} else {
 				return compDef;
@@ -775,8 +777,7 @@ public class SBOLTestFactory {
 			FunctionalComponent comp = moduleDef.getFunctionalComponent(compIdentity);
 			if (comp == null) {
 //				comp = moduleDef.createComponent(compIdentity, access, compDefIdentity, direction); //OLD VERSION
-				comp = moduleDef.createFunctionalComponent(compDefIdentity, access, compDefIdentity, direction);
-				comp.setDisplayId(compID);
+				comp = moduleDef.createFunctionalComponent(compID, access, compDefIdentity, direction);
 				return comp;
 			} else {
 				return comp;
@@ -796,8 +797,7 @@ public class SBOLTestFactory {
 			Component comp = parentCompDef.getComponent(compIdentity);
 			if (comp == null) {
 //				comp = parentCompDef.createSubComponent(compIdentity, access, compDefIdentity); //OLD VERSION
-				comp = parentCompDef.createComponent(compIdentity, access, compDefIdentity);
-				comp.setDisplayId(compID);
+				comp = parentCompDef.createComponent(compID, access, compDefIdentity);
 				return comp;
 			} else {
 				return comp;
@@ -811,14 +811,13 @@ public class SBOLTestFactory {
 	
 	public static ModuleDefinition createModuleDefinition(String moduleDefID, URI role, SBOLDocument sbolDoc) {
 		try {
-			URI moduleDefIdentity = new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/" + moduleDefID);
+			URI moduleDefIdentity = new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/md/" + moduleDefID);
 			ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(moduleDefIdentity);
 			if (moduleDef == null) {
 				Set<URI> moduleDefRoles = new HashSet<URI>();
 				moduleDefRoles.add(role);
-				moduleDef = sbolDoc.createModuleDefinition(moduleDefIdentity);
+				moduleDef = sbolDoc.createModuleDefinition(moduleDefID,"");
 				moduleDef.setRoles(moduleDefRoles);
-				moduleDef.setDisplayId(moduleDefID);
 				return moduleDef;
 			} else {
 				return moduleDef;
@@ -837,8 +836,7 @@ public class SBOLTestFactory {
 			Module module = parentModuleDef.getModule(moduleIdentity);
 			if (module == null) {
 //				module = parentModuleDef.createSubModule(moduleIdentity, moduleDefIdentity); //OLD VERSION
-				module = parentModuleDef.createModule(moduleIdentity, moduleDefIdentity);
-				module.setDisplayId(moduleID);
+				module = parentModuleDef.createModule(moduleID, moduleDefIdentity);
 				return module;
 			} else {
 				return module;
@@ -858,7 +856,7 @@ public class SBOLTestFactory {
 			MapsTo mapping = module.getMapsTo(mappingIdentity);
 			if (mapping == null) {
 //				return module.createMapping(mappingIdentity, type, localIdentity, remoteIdentity); //OLD VERSION
-				return module.createMapsTo(mappingIdentity, type, localIdentity, remoteIdentity);
+				return module.createMapsTo("mapping_"+mappingCount, type, localIdentity, remoteIdentity);
 			} else {
 				return mapping;
 			}
@@ -878,7 +876,7 @@ public class SBOLTestFactory {
 			SequenceConstraint constraint = compDef.getSequenceConstraint(constraintIdentity);
 			if (constraint == null) {
 //				return compDef.createSequenceConstraint(constraintIdentity, restriction, subject, object); //OLD VERSION
-				return compDef.createSequenceConstraint(constraintIdentity, restriction, subject, object);
+				return compDef.createSequenceConstraint("constraint"+constraintCount, restriction, subject, object);
 			} else {
 				return constraint;
 			}
@@ -897,7 +895,7 @@ public class SBOLTestFactory {
 				Set<URI> interactType = new HashSet<URI>();
 				interactType.add(type);
 //				interact = moduleDef.createInteraction(interactIdentity, interactType, new LinkedList<Participation>()); //OLD VERSION
-				interact = moduleDef.createInteraction(interactIdentity, interactType);
+				interact = moduleDef.createInteraction(interactID, interactType);
 				return interact;
 			} else {
 				return interact;
@@ -916,7 +914,7 @@ public class SBOLTestFactory {
 			if (partici == null) {
 				Set<URI> particiRoles = new HashSet<URI>();
 				particiRoles.add(role);
-				partici = interact.createParticipation(particiIdentity, participant);
+				partici = interact.createParticipation("participation_"+particiCount, participant);
 				partici.addRole(role);
 				return partici;
 			} else {
