@@ -807,9 +807,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								p.setValue(0);
 								Constraint c = bioModel.getSBMLDocument().getModel().createConstraint();
 								SBMLutilities.setMetaId(c, GlobalConstants.FAIL_TRANSITION);
+								/*
 								SBMLutilities.createFunction(bioModel.getSBMLDocument().getModel(), "G", "Globally Property", 
 										"lambda(t,x,or(not(t),x))");
-								c.setMath(SBMLutilities.myParseFormula("G(true,!(eq(fail,1)))"));
+										*/
+								c.setMath(SBMLutilities.myParseFormula("eq("+GlobalConstants.FAIL+",0)"));
 							}
 							EventAssignment ea = e.getListOfEventAssignments().get(GlobalConstants.FAIL);
 							if (ea==null) {
@@ -1053,9 +1055,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								p.setValue(0);
 								Constraint c = bioModel.getSBMLDocument().getModel().createConstraint();
 								SBMLutilities.setMetaId(c, GlobalConstants.FAIL_TRANSITION);
+								/*
 								SBMLutilities.createFunction(bioModel.getSBMLDocument().getModel(), "G", "Globally Property", 
 										"lambda(t,x,or(not(t),x))");
-								c.setMath(SBMLutilities.myParseFormula("G(true,!(eq(fail,1)))"));
+										*/
+								c.setMath(SBMLutilities.myParseFormula("eq("+GlobalConstants.FAIL+",0)"));
 							}
 							EventAssignment ea = e.getListOfEventAssignments().get(GlobalConstants.FAIL);
 							if (ea==null) {

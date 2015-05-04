@@ -3032,6 +3032,9 @@ public class BioModel {
 					right.getType()==ASTNode.Type.INTEGER && right.getInteger()==0) {
 					foundFail = true;
 					continue;
+				} else {
+					error = true;
+					message += "Constraint: " + SBMLutilities.myFormulaToString(math) + "\n";
 				}
 			}
 			/*
@@ -3052,8 +3055,6 @@ public class BioModel {
 				}
 			} 
 			*/
-			error = true;
-			message += "Constraint: " + SBMLutilities.myFormulaToString(math) + "\n";
 			//lpn.addProperty(SBMLutilities.SBMLMathToLPNString(c.getMath(), constants, booleans));
 		}
 		for (int i = 0; i < flatSBML.getModel().getEventCount(); i++) {
