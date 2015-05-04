@@ -111,7 +111,7 @@ public class SBOLTestFactory {
 			return createModule(toggleDef.getDisplayId(), toggleDef.getIdentity(), parentModuleDef);
 		} else {
 			return null;
-		}
+		} 
 		
 	}
 	
@@ -183,7 +183,7 @@ public class SBOLTestFactory {
 		if (inverterDef.containsRole(MyersOntology.INVERTER)) {
 			return createModule(inverterDef.getDisplayId(), inverterDef.getIdentity(), parentModuleDef);
 		} else {
-			return null;
+			return null; 
 		}
 	}
 	
@@ -597,7 +597,7 @@ public class SBOLTestFactory {
 			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
 		ComponentDefinition proteinDef = createProteinDefinition(id, role, sbolDoc);
 		return createFunctionalComponent(id, proteinDef.getIdentity(), access, direction, moduleDef);
-	}
+	} 
 	
 	public static ComponentDefinition createProteinDefinition(String id, URI role, SBOLDocument sbolDoc) {
 		return createComponentDefinition(id, role, ChEBI.PROTEIN, sbolDoc);
@@ -640,7 +640,7 @@ public class SBOLTestFactory {
 			complexID = ligandID + "_" + complexID;
 		}
 		return createFunctionalComponent(complexID, complexDef.getIdentity(), access, direction, 
-				moduleDef);
+				moduleDef); 
 	}
 	
 	public static ComponentDefinition createComplexDefinition(Set<String> ligandIDs, URI complexRole, 
@@ -670,11 +670,11 @@ public class SBOLTestFactory {
 		Interaction binding = createInteraction(bindingID, SBO.BINDING, moduleDef);
 		int particiCount = 1;
 		for (FunctionalComponent ligand : ligands) {
-			createParticipation(particiCount, ligand.getIdentity(), SBO.LIGAND, binding);
+			createParticipation(particiCount, ligand.getDefinitionURI(), SBO.LIGAND, binding);
 			particiCount++;
 		}
-		createParticipation(particiCount, complex.getIdentity(), SBO.COMPLEX, binding);
-		return binding;
+		createParticipation(particiCount, complex.getDefinitionURI(), SBO.COMPLEX, binding);
+		return binding; 
 	}
 	
 	public static Interaction createRepressionInteraction(FunctionalComponent repressor, FunctionalComponent promoter, 
@@ -682,9 +682,9 @@ public class SBOLTestFactory {
 		Interaction repression = createInteraction(promoter.getDisplayId() + "_Repression_via_" + repressor.getDisplayId(), 
 				SBO.REPRESSION, moduleDef);
 		int particiCount = 1;
-		createParticipation(particiCount, repressor.getIdentity(), SBO.REPRESSOR, repression);
+		createParticipation(particiCount, repressor.getDefinitionURI(), SBO.REPRESSOR, repression);
 		particiCount++;
-		createParticipation(particiCount, promoter.getIdentity(), MyersOntology.REPRESSED, repression);
+		createParticipation(particiCount, promoter.getDefinitionURI(), MyersOntology.REPRESSED, repression);
 		return repression;
 	}
 	
@@ -693,9 +693,9 @@ public class SBOLTestFactory {
 		Interaction activation = createInteraction(promoter.getDisplayId() + "_Activation_via_" + activator.getDisplayId(), 
 				SBO.ACTIVATION, moduleDef);
 		int particiCount = 1;
-		createParticipation(particiCount, activator.getIdentity(), SBO.ACTIVATOR, activation);
+		createParticipation(particiCount, activator.getDefinitionURI(), SBO.ACTIVATOR, activation);
 		particiCount++;
-		createParticipation(particiCount, promoter.getIdentity(), MyersOntology.ACTIVATED, activation);
+		createParticipation(particiCount, promoter.getDefinitionURI(), MyersOntology.ACTIVATED, activation);
 		return activation;
 	}
 	
@@ -703,7 +703,7 @@ public class SBOLTestFactory {
 		Interaction degradation = createInteraction(degraded.getDisplayId() + "_Degradation", 
 				SBO.DEGRADATION, moduleDef);
 		int particiCount = 1;
-		createParticipation(particiCount, degraded.getIdentity(), MyersOntology.DEGRADED, degradation);
+		createParticipation(particiCount, degraded.getDefinitionURI(), MyersOntology.DEGRADED, degradation);
 		return degradation;
 	}
 	
@@ -712,11 +712,11 @@ public class SBOLTestFactory {
 		Interaction production = createInteraction(protein.getDisplayId() + "_Production_via_" + promoter.getDisplayId(), 
 				SBO.PRODUCTION, moduleDef);
 		int particiCount = 1;
-		createParticipation(particiCount, promoter.getIdentity(), SBO.PROMOTER, production);
+		createParticipation(particiCount, promoter.getDefinitionURI(), SBO.PROMOTER, production);
 		particiCount++;
-		createParticipation(particiCount, gene.getIdentity(), MyersOntology.TRANSCRIBED, production);
+		createParticipation(particiCount, gene.getDefinitionURI(), MyersOntology.TRANSCRIBED, production);
 		particiCount++;
-		createParticipation(particiCount, protein.getIdentity(), SBO.PRODUCT, production);
+		createParticipation(particiCount, protein.getDefinitionURI(), SBO.PRODUCT, production);
 		return production;
 	}
 	
@@ -724,12 +724,12 @@ public class SBOLTestFactory {
 			SBOLDocument sbolDoc) {
 		int mappingCount = 1;
 		Set<MapsTo> mappings = new HashSet<MapsTo>();
-		ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(module.getDefinition().getIdentity());
+		ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(module.getDefinitionURI());
 		for (FunctionalComponent remoteComp : moduleDef.getFunctionalComponents()) { 
 			if (remoteComp.getAccess().equals(SBOLOntology.PUBLIC)) {
 				for (FunctionalComponent localComp : parentModuleDef.getFunctionalComponents()) {
 					if (remoteComp.getDefinitionURI().equals(localComp.getDefinitionURI())) {
-						mappings.add(createMapping(mappingCount, localComp.getIdentity(), remoteComp.getIdentity(),
+						mappings.add(createMapping(mappingCount, localComp.getDefinitionURI(), remoteComp.getDefinitionURI(),
 								RefinementType.VERIFYIDENTICAL, module));
 						mappingCount++;
 					}
@@ -743,8 +743,8 @@ public class SBOLTestFactory {
 			Component subjectComp, Component objectComp, ComponentDefinition compDef) {
 //		return createConstraint(constraintCount, MyersOntology.PRECEDES, subjectComp.getIdentity(),
 //				objectComp.getIdentity(), compDef); //OLD VERSION
-		return createConstraint(constraintCount, RestrictionType.PRECEDES, subjectComp.getIdentity(),
-				objectComp.getIdentity(), compDef);
+		return createConstraint(constraintCount, RestrictionType.PRECEDES, subjectComp.getDefinitionURI(),
+				objectComp.getDefinitionURI(), compDef);
 	}
 	
 	public static ComponentDefinition createComponentDefinition(String compDefID, URI role, URI type, SBOLDocument sbolDoc) {

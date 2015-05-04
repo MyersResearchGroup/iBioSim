@@ -45,7 +45,7 @@ public class ModelGenerator {
 	public ModelGenerator() {
 	}
 	
-	public static String getDisplayID(Identified sbolElement) {
+	public static String getDisplayID(Identified sbolElement) { 
 		String identity = sbolElement.getIdentity().toString();
 		return identity.substring(identity.lastIndexOf("/") + 1);
 	}
@@ -59,7 +59,7 @@ public class ModelGenerator {
 		// Annotate SBML model with SBOL module definition
 		Model sbmlModel = targetModel.getSBMLDocument().getModel();
 		SBOLAnnotation modelAnno = new SBOLAnnotation(sbmlModel.getMetaId(), 
-				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity());
+				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
 		
 //		for (FunctionalComponent comp : moduleDef.getComponents()) { //OLD VERSION
@@ -173,7 +173,7 @@ public class ModelGenerator {
 		}
 		
 		for (Module subModule : moduleDef.getModules()) {
-			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinition().getIdentity());
+			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 			BioModel subTargetModel = new BioModel(projectDirectory);
 			if (subTargetModel.load(projectDirectory + File.separator + getDisplayID(subModuleDef) + ".xml")) {
 				generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
@@ -188,7 +188,7 @@ public class ModelGenerator {
 	
 	public static void generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel subTargetModel, BioModel targetModel) {
-		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinition().getIdentity());
+		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		String md5 = Utility.MD5(subTargetModel.getSBMLDocument());
 		targetModel.addComponent(getDisplayID(subModule), getDisplayID(subModuleDef) + ".xml", 
 				subTargetModel.IsWithinCompartment(), subTargetModel.getCompartmentPorts(), 
@@ -208,7 +208,7 @@ public class ModelGenerator {
 	
 	public static List<BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel targetModel) {
-		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinition().getIdentity());
+		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		List<BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
 		BioModel subTargetModel = subModels.get(0);
 		generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
@@ -217,9 +217,9 @@ public class ModelGenerator {
 	
 	public static void generateReplacement(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
-		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinition().getIdentity());
-		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemote().getIdentity());
-		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocal().getIdentity());
+		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI()); 
+		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemote().getDefinitionURI());
+		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocal().getDefinitionURI());
 		
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(localSpecies));
 		Port port = subTargetModel.getPortByIdRef(getDisplayID(remoteSpecies));
@@ -236,9 +236,9 @@ public class ModelGenerator {
 	
 	public static void generateReplacedBy(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
-		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinition().getIdentity());
-		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemote().getIdentity());
-		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocal().getIdentity());
+		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
+		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemote().getDefinitionURI());
+		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocal().getDefinitionURI());
 		//OLD VERSION
 //		FunctionalComponent remoteSpecies = subModuleDef.getComponent(mapping.getRemote());
 //		FunctionalComponent localSpecies = moduleDef.getComponent(mapping.getLocal());
@@ -409,7 +409,7 @@ public class ModelGenerator {
 			SBOLDocument sbolDoc) {
 		SBOLAnnotation speciesAnno = new SBOLAnnotation(species.getMetaId(), compDef.getIdentity());
 		speciesAnno.createSBOLElementsDescription(comp.getClass().getSimpleName(), 
-				comp.getIdentity());
+				comp.getDefinitionURI()); 
 		speciesAnno.createSBOLElementsDescription(compDef.getClass().getSimpleName(), 
 				compDef.getIdentity());
 		AnnotationUtility.setSBOLAnnotation(species, speciesAnno);	
@@ -423,12 +423,12 @@ public class ModelGenerator {
 		String strand = AnnotationUtility.parseSBOLAnnotation(species, dnaCompIdentities);
 		if (strand != null && dnaCompIdentities.size() > 0) {
 			List<URI> sbolElementIdentities = new LinkedList<URI>();
-			sbolElementIdentities.add(comp.getIdentity());
+			sbolElementIdentities.add(comp.getDefinitionURI()); 
 			speciesAnno = new SBOLAnnotation(species.getMetaId(), comp.getClass().getSimpleName(), 
 					sbolElementIdentities, dnaCompIdentities, strand);
 		} else {
 			speciesAnno = new SBOLAnnotation(species.getMetaId(), comp.getClass().getSimpleName(), 
-					comp.getIdentity());
+					comp.getDefinitionURI());
 		}
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		speciesAnno.createSBOLElementsDescription(compDef.getClass().getSimpleName(), 
@@ -467,7 +467,7 @@ public class ModelGenerator {
 	// Annotate SBML species reference with SBOL participation
 	public static void annotateSpeciesReference(SimpleSpeciesReference speciesRef, Participation partici) {
 		SBOLAnnotation speciesRefAnno = new SBOLAnnotation(speciesRef.getMetaId(),
-				partici.getClass().getSimpleName(), partici.getIdentity());
+				partici.getClass().getSimpleName(), partici.getParticipantURI());
 		AnnotationUtility.setSBOLAnnotation(speciesRef, speciesRefAnno);
 	}
 	
@@ -491,19 +491,19 @@ public class ModelGenerator {
 	
 	public static void annotateReplacement(ReplacedElement replacement, MapsTo mapping) {
 		SBOLAnnotation replacementAnno = new SBOLAnnotation(replacement.getMetaId(),
-				mapping.getClass().getSimpleName(), mapping.getIdentity());
+				mapping.getClass().getSimpleName(), mapping.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(replacement, replacementAnno);
 	}
 	
 	public static void annotateSubModel(Submodel subModel, Module subModule) {
 		SBOLAnnotation subModelAnno = new SBOLAnnotation(subModel.getMetaId(),
-				subModule.getClass().getSimpleName(), subModule.getIdentity());
+				subModule.getClass().getSimpleName(), subModule.getDefinitionURI()); 
 		AnnotationUtility.setSBOLAnnotation(subModel, subModelAnno);
 	}
 	
 	public static boolean isIOMapping(MapsTo mapping, Module subModule, SBOLDocument sbolDoc) {
-		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinition().getIdentity());
-		FunctionalComponent remoteComp = subModuleDef.getFunctionalComponent(mapping.getRemote().getIdentity()); 
+		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
+		FunctionalComponent remoteComp = subModuleDef.getFunctionalComponent(mapping.getRemote().getDefinitionURI()); 
 		return isInputComponent(remoteComp) || isOutputComponent(remoteComp);
 	}
 	
