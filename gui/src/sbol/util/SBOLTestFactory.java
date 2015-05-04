@@ -29,7 +29,6 @@ import org.sbolstandard.core2.MapsTo;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
-//import org.sbolstandard.core2.RefinementType;//OLD VERSION
 import org.sbolstandard.core2.MapsTo.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLWriter;
@@ -123,26 +122,22 @@ public class SBOLTestFactory {
 		}
 		FunctionalComponent remoteTF1 = null;
 		FunctionalComponent remoteTF2 = null;
-//		for (FunctionalComponent remoteComp : inverterDef1.getComponents()) {//OLD VERSION
 		for (FunctionalComponent remoteComp : inverterDef1.getFunctionalComponents()) {
 			if (remoteComp.getDirection().equals(SBOLOntology.INPUT)) {
 				remoteTF1 = remoteComp;
 			} 
 		}
-//		for (FunctionalComponent remoteComp : inverterDef2.getComponents()) { //OLD VERSION
 		for (FunctionalComponent remoteComp : inverterDef2.getFunctionalComponents()) {
 			if (remoteComp.getDirection().equals(SBOLOntology.INPUT)) {
 				remoteTF2 = remoteComp;
 			} 
 		}
-//		for (FunctionalComponent remoteComp : inverterDef1.getComponents()) {//OLD VERSION
 		for (FunctionalComponent remoteComp : inverterDef1.getFunctionalComponents()) {
 			if (remoteComp.getDirection().equals(SBOLOntology.OUTPUT) 
 					&& !remoteComp.getDefinitionURI().equals(remoteTF2.getDefinitionURI())) {
 				return null;
 			}
 		}
-//		for (FunctionalComponent remoteComp : inverterDef2.getComponents()) {//OLD VERSION
 		for (FunctionalComponent remoteComp : inverterDef2.getFunctionalComponents()) {
 			if (remoteComp.getDirection().equals(SBOLOntology.OUTPUT) 
 					&& !remoteComp.getDefinitionURI().equals(remoteTF1.getDefinitionURI())) {
@@ -231,7 +226,6 @@ public class SBOLTestFactory {
 		List<FunctionalComponent> remoteInputs3 = new LinkedList<FunctionalComponent>();
 		List<FunctionalComponent> remoteOutputs3 = new LinkedList<FunctionalComponent>();
 		for (ModuleDefinition sensorDef : sensorDefs) {
-//			for (FunctionalComponent remoteComp : sensorDef.getComponents()) { //OLD VERSION
 			for (FunctionalComponent remoteComp : sensorDef.getFunctionalComponents()) {
 				if (remoteComp.getDirection().equals(SBOLOntology.INPUT)) {
 					remoteInputs1.add(remoteComp);
@@ -241,7 +235,6 @@ public class SBOLTestFactory {
 			}
 		}
 		for (int i = 0; i < andDefs.size() - 1; i++) {
-//			for (FunctionalComponent remoteComp : andDefs.get(i).getComponents()) { //OLD VERSION
 			for (FunctionalComponent remoteComp : andDefs.get(i).getFunctionalComponents()) {
 				if (remoteComp.getDirection().equals(SBOLOntology.INPUT)) {
 					remoteInputs2.add(remoteComp);
@@ -250,7 +243,6 @@ public class SBOLTestFactory {
 				} 
 			}
 		}
-//		for (FunctionalComponent remoteComp : andDefs.get(2).getComponents()) { //OLD VERSION
 		for (FunctionalComponent remoteComp : andDefs.get(2).getFunctionalComponents()) {
 			if (remoteComp.getDirection().equals(SBOLOntology.INPUT)) {
 				remoteInputs3.add(remoteComp);
@@ -516,11 +508,7 @@ public class SBOLTestFactory {
 		FunctionalComponent gene = createDNAComponent(geneID, MyersOntology.GENE, access, direction,
 				moduleDef, sbolDoc);
 		ComponentDefinition geneDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
-//		Component rbs = createRBSComponent("RBS", SBOLOntology.PRIVATE, geneDef, sbolDoc);//OLD VERSION
 		Component rbs = createRBSComponent("RBS", AccessType.PRIVATE, geneDef, sbolDoc);
-//		geneDef.addSubComponent(rbs); //OLD VERSION
-		// TODO: NIC PLEASE CHECK THIS IS NEEDED
-		//geneDef.addComponent(rbs);
 		String cdsID = geneID;
 		if (cdsID.equals("rfp")) {
 			cdsID = "c" + cdsID.toUpperCase();
@@ -528,13 +516,7 @@ public class SBOLTestFactory {
 			cdsID = "c" + cdsID.substring(0, 1).toUpperCase() + geneID.substring(1);
 		}
 		Component cds = createCDSComponent(cdsID, AccessType.PRIVATE, geneDef, sbolDoc);
-//		geneDef.addSubComponent(cds); //OLD VERSION
-		// TODO: NIC PLEASE CHECK THIS IS NEEDED
-		//geneDef.addComponent(cds);
 		Component terminator = createTerminatorComponent("Terminator", AccessType.PRIVATE, geneDef, sbolDoc);
-//		geneDef.addSubComponent(terminator); //OLD VERSION
-		// TODO: NIC PLEASE CHECK THIS IS NEEDED
-		//geneDef.addComponent(terminator);
 		int constraintCount = 1;
 		createPrecedes(constraintCount, rbs, cds, geneDef);
 		constraintCount++;
@@ -741,8 +723,6 @@ public class SBOLTestFactory {
 	
 	public static SequenceConstraint createPrecedes(int constraintCount,
 			Component subjectComp, Component objectComp, ComponentDefinition compDef) {
-//		return createConstraint(constraintCount, MyersOntology.PRECEDES, subjectComp.getIdentity(),
-//				objectComp.getIdentity(), compDef); //OLD VERSION
 		return createConstraint(constraintCount, RestrictionType.PRECEDES, subjectComp.getDefinitionURI(),
 				objectComp.getDefinitionURI(), compDef);
 	}
@@ -773,10 +753,8 @@ public class SBOLTestFactory {
 			ModuleDefinition moduleDef) {
 		try {
 			URI compIdentity = new URI(moduleDef.getIdentity().toString() + "/" + compID);
-//			FunctionalComponent comp = moduleDef.getComponent(compIdentity); //OLD VERSION
 			FunctionalComponent comp = moduleDef.getFunctionalComponent(compIdentity);
 			if (comp == null) {
-//				comp = moduleDef.createComponent(compIdentity, access, compDefIdentity, direction); //OLD VERSION
 				comp = moduleDef.createFunctionalComponent(compID, access, compDefIdentity, direction);
 				return comp;
 			} else {
@@ -793,10 +771,8 @@ public class SBOLTestFactory {
 			ComponentDefinition parentCompDef) {
 		try {
 			URI compIdentity = new URI(parentCompDef.getIdentity().toString() + "/" + compID);
-//			Component comp = parentCompDef.getSubComponent(compIdentity); //OLD VERSION
 			Component comp = parentCompDef.getComponent(compIdentity);
 			if (comp == null) {
-//				comp = parentCompDef.createSubComponent(compIdentity, access, compDefIdentity); //OLD VERSION
 				comp = parentCompDef.createComponent(compID, access, compDefIdentity);
 				return comp;
 			} else {
@@ -832,10 +808,8 @@ public class SBOLTestFactory {
 	public static Module createModule(String moduleID, URI moduleDefIdentity, ModuleDefinition parentModuleDef) {
 		try {
 			URI moduleIdentity = new URI(parentModuleDef.getIdentity().toString() + "/" + moduleID);
-//			Module module = parentModuleDef.getSubModule(moduleIdentity); //OLD VERSION
 			Module module = parentModuleDef.getModule(moduleIdentity);
 			if (module == null) {
-//				module = parentModuleDef.createSubModule(moduleIdentity, moduleDefIdentity); //OLD VERSION
 				module = parentModuleDef.createModule(moduleID, moduleDefIdentity);
 				return module;
 			} else {
@@ -852,10 +826,8 @@ public class SBOLTestFactory {
 			Module module) {
 		try {
 			URI mappingIdentity = new URI(module.getIdentity().toString() + "/mapping_" + mappingCount );
-//			MapsTo mapping = module.getMapping(mappingIdentity); //OLD VERSION
 			MapsTo mapping = module.getMapsTo(mappingIdentity);
 			if (mapping == null) {
-//				return module.createMapping(mappingIdentity, type, localIdentity, remoteIdentity); //OLD VERSION
 				return module.createMapsTo("mapping_"+mappingCount, type, localIdentity, remoteIdentity);
 			} else {
 				return mapping;
@@ -867,15 +839,12 @@ public class SBOLTestFactory {
 		return null;
 	}
 	
-//	public static SequenceConstraint createConstraint(int constraintCount, URI restriction, 
-//			URI subject, URI object, ComponentDefinition compDef) { //OLD VERSION
 	public static SequenceConstraint createConstraint(int constraintCount, RestrictionType restriction, 
 			URI subject, URI object, ComponentDefinition compDef) {
 		try {
 			URI constraintIdentity = new URI(compDef.getIdentity().toString() + "/constraint" + constraintCount);
 			SequenceConstraint constraint = compDef.getSequenceConstraint(constraintIdentity);
 			if (constraint == null) {
-//				return compDef.createSequenceConstraint(constraintIdentity, restriction, subject, object); //OLD VERSION
 				return compDef.createSequenceConstraint("constraint"+constraintCount, restriction, subject, object);
 			} else {
 				return constraint;
@@ -894,7 +863,6 @@ public class SBOLTestFactory {
 			if (interact == null) {
 				Set<URI> interactType = new HashSet<URI>();
 				interactType.add(type);
-//				interact = moduleDef.createInteraction(interactIdentity, interactType, new LinkedList<Participation>()); //OLD VERSION
 				interact = moduleDef.createInteraction(interactID, interactType);
 				return interact;
 			} else {
