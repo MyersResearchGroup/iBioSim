@@ -123,23 +123,23 @@ public class SBOLTestFactory {
 		FunctionalComponent remoteTF1 = null;
 		FunctionalComponent remoteTF2 = null;
 		for (FunctionalComponent remoteComp : inverterDef1.getFunctionalComponents()) {
-			if (remoteComp.getDirection().equals(SBOLOntology.INPUT)) {
+			if (remoteComp.getDirection().equals(DirectionType.INPUT)) {
 				remoteTF1 = remoteComp;
 			} 
 		}
 		for (FunctionalComponent remoteComp : inverterDef2.getFunctionalComponents()) {
-			if (remoteComp.getDirection().equals(SBOLOntology.INPUT)) {
+			if (remoteComp.getDirection().equals(DirectionType.INPUT)) {
 				remoteTF2 = remoteComp;
 			} 
 		}
 		for (FunctionalComponent remoteComp : inverterDef1.getFunctionalComponents()) {
-			if (remoteComp.getDirection().equals(SBOLOntology.OUTPUT) 
+			if (remoteComp.getDirection().equals(DirectionType.OUTPUT) 
 					&& !remoteComp.getDefinitionURI().equals(remoteTF2.getDefinitionURI())) {
 				return null;
 			}
 		}
 		for (FunctionalComponent remoteComp : inverterDef2.getFunctionalComponents()) {
-			if (remoteComp.getDirection().equals(SBOLOntology.OUTPUT) 
+			if (remoteComp.getDirection().equals(DirectionType.OUTPUT) 
 					&& !remoteComp.getDefinitionURI().equals(remoteTF1.getDefinitionURI())) {
 				return null;
 			}
@@ -227,26 +227,26 @@ public class SBOLTestFactory {
 		List<FunctionalComponent> remoteOutputs3 = new LinkedList<FunctionalComponent>();
 		for (ModuleDefinition sensorDef : sensorDefs) {
 			for (FunctionalComponent remoteComp : sensorDef.getFunctionalComponents()) {
-				if (remoteComp.getDirection().equals(SBOLOntology.INPUT)) {
+				if (remoteComp.getDirection().equals(DirectionType.INPUT)) {
 					remoteInputs1.add(remoteComp);
-				} else if (remoteComp.getDirection().equals(SBOLOntology.OUTPUT)) {
+				} else if (remoteComp.getDirection().equals(DirectionType.OUTPUT)) {
 					remoteOutputs1.add(remoteComp);
 				} 
 			}
 		}
 		for (int i = 0; i < andDefs.size() - 1; i++) {
 			for (FunctionalComponent remoteComp : andDefs.get(i).getFunctionalComponents()) {
-				if (remoteComp.getDirection().equals(SBOLOntology.INPUT)) {
+				if (remoteComp.getDirection().equals(DirectionType.INPUT)) {
 					remoteInputs2.add(remoteComp);
-				} else if (remoteComp.getDirection().equals(SBOLOntology.OUTPUT)) {
+				} else if (remoteComp.getDirection().equals(DirectionType.OUTPUT)) {
 					remoteOutputs2.add(remoteComp);
 				} 
 			}
 		}
 		for (FunctionalComponent remoteComp : andDefs.get(2).getFunctionalComponents()) {
-			if (remoteComp.getDirection().equals(SBOLOntology.INPUT)) {
+			if (remoteComp.getDirection().equals(DirectionType.INPUT)) {
 				remoteInputs3.add(remoteComp);
-			} else if (remoteComp.getDirection().equals(SBOLOntology.OUTPUT)) {
+			} else if (remoteComp.getDirection().equals(DirectionType.OUTPUT)) {
 				remoteOutputs3.add(remoteComp);
 			} 
 		}
