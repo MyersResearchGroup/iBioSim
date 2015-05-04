@@ -373,8 +373,7 @@ public class SBMLtoSBOL {
 					export_recurse(sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
 							.getModelRef()).getSource(),subDocument,sbolDoc,collection);
 				}
-				URI instantiatedModule = URI.create(PREFIX + "/md/" + subDocument.getModel().getId());
-				Module m = moduleDef.createModule(subModelId, instantiatedModule);
+				Module m = moduleDef.createModule(subModelId, subDocument.getModel().getId(), "1.0");
 				
 				for (int j = 0; j < model.getSpeciesCount(); j++) 
 				{
