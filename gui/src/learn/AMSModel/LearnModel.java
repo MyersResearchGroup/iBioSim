@@ -2184,7 +2184,7 @@ public class LearnModel { // added ItemListener SB
 		return transProp;
 	}
 
-	public void genBinsRates(HashMap<String, ArrayList<Double>> localThresholds) { 
+	private void genBinsRates(HashMap<String, ArrayList<Double>> localThresholds) { 
 		//			TSDParser tsd = new TSDParser(directory + separator + datFile, biosim,false);
 		// genBins data = tsd.getData();
 		try{

@@ -162,7 +162,7 @@ public class SBMLtoSBOL {
 			AccessType access; 
 			DirectionType direction;
 			// create FunctionalComponents for these within the module
-			String funcComp_identity =  model.getId() + "/" + species.getId();
+			String funcComp_identity =  species.getId();
 			
 			if (bioModel.isInput(species.getId())) 
 			{
@@ -180,13 +180,10 @@ public class SBMLtoSBOL {
 				direction = DirectionType.NONE;
 			}
 			
-			if(access != null && direction != null)
-			{
-				funcComp = moduleDef.createFunctionalComponent(funcComp_identity, access, compDef.getIdentity(), direction);
-				//OLD VERSION
+			funcComp = moduleDef.createFunctionalComponent(funcComp_identity, access, compDef.getIdentity(), direction);
+			//OLD VERSION
 //				funcComp = moduleDef.createComponent(URI.create(funcComp_identity), 
 //					access, URI.create(compDef_identity), direction);
-			}
 		
 		}
 		
@@ -234,8 +231,8 @@ public class SBMLtoSBOL {
 					
 					Interaction interaction = moduleDef.createInteraction(inter_id, types);
 					
-					String p1_participant = PREFIX + modelId + "/"+ promoterId;
-					String p2_participant = PREFIX + modelId + "/"+r.getSpecies();
+					String p1_participant = PREFIX + "md/" + modelId + "/"+ promoterId;
+					String p2_participant = PREFIX + "md/" + modelId + "/"+r.getSpecies();
 					
 					Participation p1 = interaction.createParticipation(promoterId, URI.create(p1_participant));
 					Participation p2 = interaction.createParticipation(r.getSpecies(), URI.create(p2_participant));
@@ -349,8 +346,8 @@ public class SBMLtoSBOL {
 					type.add(URI.create(SOME_ONTOLOGY + "production"));
 					
 					Interaction interaction = moduleDef.createInteraction(i_id, type);
-					String p1_participant = PREFIX + modelId + "/"+ promoterId;
-					String p2_participant = PREFIX + modelId + "/"+ product.getSpecies();
+					String p1_participant = PREFIX + "md/" + modelId + "/"+ promoterId;
+					String p2_participant = PREFIX + "md/" + modelId + "/"+ product.getSpecies();
 					Participation p1 = interaction.createParticipation(promoterId, URI.create(p1_participant));
 					Participation p2 = interaction.createParticipation(product.getSpecies(), URI.create(p2_participant));
 					
@@ -413,7 +410,7 @@ public class SBMLtoSBOL {
 				
 				for(SpeciesReference reactant : reaction.getListOfReactants())
 				{
-					String p_participant = PREFIX + reactant.getSpecies();
+					String p_participant = PREFIX + "md/" + modelId + "/" + reactant.getSpecies();
 					Participation p = inter.createParticipation(reactant.getSpecies(), URI.create(p_participant));
 					
 					Set<URI> roles_reac = new HashSet<URI>();
@@ -423,7 +420,7 @@ public class SBMLtoSBOL {
 				}
 				for(SpeciesReference product : reaction.getListOfProducts())
 				{
-					String p_participant = PREFIX + modelId + "/"+product.getSpecies();
+					String p_participant = PREFIX + "md/" + modelId + "/"+product.getSpecies();
 					Participation p = inter.createParticipation(product.getSpecies(), URI.create(p_participant));
 					
 					Set<URI> roles_prod = new HashSet<URI>();
@@ -491,7 +488,7 @@ public class SBMLtoSBOL {
 					Set<URI> roles_sp = new HashSet<URI>();
 					roles_sp.add(URI.create(SOME_ONTOLOGY + "reactant"));
 					String p_id = sp.getSpecies();
-					String p_participant = PREFIX + modelId + "/"+ sp.getSpecies() + "/" + VERSION;
+					String p_participant = PREFIX + "md/" + modelId + "/"+ sp.getSpecies() + "/" + VERSION;
 					Participation p = inter.createParticipation(p_id, URI.create(p_participant));
 					p.setRoles(roles_sp);
 				}
@@ -536,7 +533,7 @@ public class SBMLtoSBOL {
 				{
 					Set<URI> roles_r = new HashSet<URI>();
 					roles_r.add(URI.create(SOME_ONTOLOGY + "reactant"));
-					String p_participant = PREFIX + modelId + "/"+reactant.getSpecies();
+					String p_participant = PREFIX + "md/" + modelId + "/"+reactant.getSpecies();
 					Participation p = inter.createParticipation(reactant.getSpecies(), URI.create(p_participant));
 					p.setRoles(roles_r);
 				}
@@ -546,7 +543,7 @@ public class SBMLtoSBOL {
 					
 					Set<URI> roles_p = new HashSet<URI>();
 					roles_p.add(URI.create(SOME_ONTOLOGY + "product"));
-					String p_participant = PREFIX + modelId + "/" + product.getSpecies();
+					String p_participant = PREFIX + "md/" + modelId + "/" + product.getSpecies();
 					Participation p = inter.createParticipation(product.getSpecies(), URI.create(p_participant));
 					p.setRoles(roles_p);
 				}
@@ -610,9 +607,16 @@ public class SBMLtoSBOL {
 				// TODO: create a module, parent + "/" + subModelId + version
 				// definition: prefix + / + subDocument.getModel().getId()
 				// create mappings by looking at the replacements for the species
-				URI moduleId = URI.create(PREFIX + model.getId() + "/" + subModelId);
-				URI instantiatedModule = URI.create(PREFIX + subDocument.getModel().getId());
-				Module m = new Module(moduleId, instantiatedModule);
+				if (!comps.contains(extModel)) 
+				{
+					comps.add(extModel);
+					export_recurse(sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
+							.getModelRef()).getSource(),subDocument,sbolDoc,collection);
+				}
+				//URI moduleId = URI.create(PREFIX + model.getId() + "/" + subModelId);
+				URI instantiatedModule = URI.create(PREFIX + "md/" + subDocument.getModel().getId());
+				Module m = moduleDef.createModule(subModelId, instantiatedModule);
+				//Module m = new Module(moduleId, instantiatedModule);
 				
 				
 				for (int j = 0; j < model.getSpeciesCount(); j++) 
@@ -632,14 +636,10 @@ public class SBMLtoSBOL {
 								String mapId = PREFIX + model.getId() +"/" + subModelId + "/" + model.getSpecies(j).getId();
 					
 								RefinementType refinement = RefinementType.USELOCAL;
-								URI local = URI.create(PREFIX + model.getId() + "/" + model.getSpecies(j).getId()); 
-								URI remote = URI.create(PREFIX + subDocument.getModel().getId() + "/"+ 
+								URI local = URI.create(PREFIX + "md/" + model.getId() + "/" + model.getSpecies(j).getId()); 
+								URI remote = URI.create(PREFIX + "md/" + subDocument.getModel().getId() + "/"+ 
 										replacement.getPortRef().replace("output__","").replace("input__",""));
-								
-								MapsTo map = new MapsTo(URI.create(mapId), refinement, local, remote);
-
-								m.addMapsTo(map);
-								
+								m.createMapsTo(mapId, refinement, local, remote);
 							}
 						}
 					}
@@ -657,24 +657,15 @@ public class SBMLtoSBOL {
 								String mapId = PREFIX + model.getId() +"/" + subModelId + "/" + model.getSpecies(j).getId(); 
 
 								RefinementType refinement = RefinementType.USEREMOTE;
-								URI local = URI.create(PREFIX + model.getId() + "/" + model.getSpecies(j).getId()); 
-								URI remote = URI.create(PREFIX + subDocument.getModel().getId() + "/"+ 
+								URI local = URI.create(PREFIX + "md/" + model.getId() + "/" + model.getSpecies(j).getId()); 
+								URI remote = URI.create(PREFIX + "md/" + subDocument.getModel().getId() + "/"+ 
 										replacement.getPortRef().replace("output__","").replace("input__",""));
-								
-								MapsTo map = new MapsTo(URI.create(mapId), refinement, local, remote);
-
-								m.addMapsTo(map);
+								m.createMapsTo(mapId, refinement, local, remote);
 							} 
 						}
 					}
 				}
-				moduleDef.addModule(m);
-				if (!comps.contains(extModel)) 
-				{
-					comps.add(extModel);
-					export_recurse(sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
-							.getModelRef()).getSource(),subDocument,sbolDoc,collection);
-				}
+				//moduleDef.addModule(m);
 			}
 		}
 	}

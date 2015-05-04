@@ -3008,7 +3008,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		}
 	}
 
-	public void genBinsRates(HashMap<String, ArrayList<Double>> localThresholds) { 
+	private void genBinsRates(HashMap<String, ArrayList<Double>> localThresholds) { 
 		try{
 			// generate bins
 			reqdVarIndices = new ArrayList<Integer>();
@@ -3149,7 +3149,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 
 		}
 
-	public static int getRegion(double value, ArrayList<Double> varThresholds){
+	private static int getRegion(double value, ArrayList<Double> varThresholds){
 		int bin = 0;
 		for (int l = 0; l < varThresholds.size(); l++) {
 			if (value <= varThresholds.get(l)) {
@@ -4142,7 +4142,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		return localThresholds;
 	}
 	
-	public HashMap<String,ArrayList<Double>> getExtremes(JFrame running){
+	private HashMap<String,ArrayList<Double>> getExtremes(JFrame running){
 	//int iterations = Integer.parseInt(iteration.getText());
 	ArrayList<ArrayList<Double>> fullData = new ArrayList<ArrayList<Double>>();
 	ArrayList<ArrayList<Double>> singleFileData = new ArrayList<ArrayList<Double>>();
@@ -5646,7 +5646,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 	}
 	//T[] aux = (T[])a.clone();
 	 */	
-	public LhpnFile mergeLhpns(LhpnFile l1,LhpnFile l2){//(LhpnFile l1, LhpnFile l2){
+	private LhpnFile mergeLhpns(LhpnFile l1,LhpnFile l2){//(LhpnFile l1, LhpnFile l2){
 		String place1 = "p([-\\d]+)", place2 = "P([-\\d]+)";
 		String transition1 = "t([-\\d]+)", transition2 = "T([-\\d]+)";
 		int placeNum, transitionNum;
