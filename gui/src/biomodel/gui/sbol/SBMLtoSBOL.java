@@ -42,6 +42,7 @@ import org.sbolstandard.core2.MapsTo.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceOntology;
+import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import uk.ac.ncl.intbio.core.io.CoreIoException;
 
@@ -56,21 +57,12 @@ public class SBMLtoSBOL {
 	BioModel bioModel;
 	String path;
 	
-	String PREFIX 		 = GlobalConstants.SBOL_AUTHORITY_DEFAULT; 
-	String SBOL 		 = "http://sbols.org/";
-	String SOME_ONTOLOGY = "http://some.ontology.org/"; 
 	String VERSION 		 = "1.0";
 	
 	//------------URI CONSTANTS
 	URI COLLECTION_ID ;
 	URI LANGUAGE   	  = URI.create("http://co.mbine.org/standards/sbml/level-3/version-1/core/release-1");
-	URI FRAMEWORK  	  = URI.create(SOME_ONTOLOGY + "ODE");
-	
-	URI ROLE_PROMOTER 			 = URI.create(SOME_ONTOLOGY + "Promoter");
-	URI ROLE_TRANSCRIPTIONFACTOR = URI.create(SOME_ONTOLOGY + "TranscriptionFactor");
-	
-	URI TYPE_DNA   	  = URI.create(SOME_ONTOLOGY + "DNA");
-	URI TYPE_PROTEIN  = URI.create(SOME_ONTOLOGY + "Protein");
+	URI FRAMEWORK  	  = URI.create("http://some.ontology.org/ODE");
 	
 	public SBMLtoSBOL(String path,BioModel bioModel) 
 	{
@@ -134,23 +126,14 @@ public class SBMLtoSBOL {
 			
 			if (BioModel.isPromoterSpecies(species)) 
 			{
-				compDef_type.add(TYPE_DNA);
+				compDef_type.add(ComponentDefinition.DNA);
 				compDef_role.add(SequenceOntology.PROMOTER);
 			} 
 			else 
 			{
-				compDef_type.add(TYPE_PROTEIN);
-				compDef_role.add(ROLE_TRANSCRIPTIONFACTOR);
+				compDef_type.add(ComponentDefinition.PROTEIN);
 			}
-//			ComponentDefinition compDef = sbolDoc.createComponentDefinition(URI.create(compDef_identity), compDef_type);
 			ComponentDefinition compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
-			
-			if(compDef_role != null || !compDef_role.isEmpty())
-			{
-				compDef.setRoles(compDef_role);
-			}
-			//OLD VERSION
-//			ComponentDefinition compDef = sbolDoc.createComponentDefinition(URI.create(compDef_identity), compDef_type, compDef_role);
 			collection.addMember(compDef.getIdentity());
 			
 			AccessType access; 
@@ -221,7 +204,7 @@ public class SBMLtoSBOL {
 					String inter_id = r.getSpecies() + "_rep_" + promoterId;
 					
 					Set<URI> types = new HashSet<URI>();
-					types.add(URI.create(SOME_ONTOLOGY + "repression"));
+					types.add(SystemsBiologyOntology.GENETIC_SUPPRESSION);
 					
 					Interaction interaction = moduleDef.createInteraction(inter_id, types);
 					
@@ -229,10 +212,10 @@ public class SBMLtoSBOL {
 					Participation p2 = interaction.createParticipation(r.getSpecies(), r.getSpecies());
 					
 					Set<URI> roles1 = new HashSet<URI>();
-					roles1.add(URI.create(SOME_ONTOLOGY + "repressed"));
+					roles1.add(SystemsBiologyOntology.PROMOTER);
 					
 					Set<URI> roles2 = new HashSet<URI>();
-					roles2.add(URI.create(SOME_ONTOLOGY + "repressor"));
+					roles2.add(SystemsBiologyOntology.INHIBITOR);
 					
 					p1.setRoles(roles1);
 					p2.setRoles(roles2);
@@ -244,7 +227,7 @@ public class SBMLtoSBOL {
 					String inter_id ="_act_" + a.getSpecies();
 					
 					Set<URI> types = new HashSet<URI>();
-					types.add(URI.create(SOME_ONTOLOGY + "activation")); 
+					types.add(SystemsBiologyOntology.GENETIC_ENHANCEMENT); 
 					
 					Interaction interaction = moduleDef.createInteraction(inter_id, types);
 					
@@ -252,10 +235,10 @@ public class SBMLtoSBOL {
 					Participation p2 = interaction.createParticipation(a.getSpecies(), a.getSpecies());
 					
 					Set<URI> roles1 = new HashSet<URI>();
-					roles1.add(URI.create(SOME_ONTOLOGY + "activated")); 
+					roles1.add(SystemsBiologyOntology.PROMOTER);
 					
 					Set<URI> roles2 = new HashSet<URI>();
-					roles2.add(URI.create(SOME_ONTOLOGY + "activator"));
+					roles2.add(SystemsBiologyOntology.STIMULATOR);
 					
 					p1.setRoles(roles1);
 					p2.setRoles(roles2);
@@ -267,17 +250,17 @@ public class SBMLtoSBOL {
 					String i_id = promoterId + "_prod_" + product.getSpecies();
 					
 					Set<URI> type = new HashSet<URI>();
-					type.add(URI.create(SOME_ONTOLOGY + "production"));
+					type.add(SystemsBiologyOntology.GENETIC_PRODUCTION);
 					
 					Interaction interaction = moduleDef.createInteraction(i_id, type);
 					Participation p1 = interaction.createParticipation(promoterId, promoterId);
 					Participation p2 = interaction.createParticipation(product.getSpecies(), product.getSpecies());
 					
 					Set<URI> roles1 = new HashSet<URI>();
-					roles1.add(URI.create(SOME_ONTOLOGY + "promoter"));
+					roles1.add(SystemsBiologyOntology.PROMOTER);
 					
 					Set<URI> roles2 = new HashSet<URI>();
-					roles2.add(URI.create(SOME_ONTOLOGY + "product"));
+					roles2.add(SystemsBiologyOntology.PRODUCT);
 					
 					p1.setRoles(roles1);
 					p2.setRoles(roles2);
@@ -287,7 +270,7 @@ public class SBMLtoSBOL {
 			else if(bioModel.isComplexReaction(reaction))
 			{	
 				Set<URI> type = new HashSet<URI>();
-				type.add(URI.create(SOME_ONTOLOGY + "ComplexFormation"));
+				type.add(SystemsBiologyOntology.NON_COVALENT_BINDING);
 				
 				Interaction inter = moduleDef.createInteraction(reaction.getId(), type);
 				
@@ -299,7 +282,7 @@ public class SBMLtoSBOL {
 					Participation p = inter.createParticipation(reactant.getSpecies(), reactant.getSpecies());
 					
 					Set<URI> roles_reac = new HashSet<URI>();
-					roles_reac.add(URI.create(SOME_ONTOLOGY + "reactant"));
+					roles_reac.add(SystemsBiologyOntology.REACTANT);
 					
 					p.setRoles(roles_reac);
 				}
@@ -308,7 +291,7 @@ public class SBMLtoSBOL {
 					Participation p = inter.createParticipation(product.getSpecies(), product.getSpecies());
 					
 					Set<URI> roles_prod = new HashSet<URI>();
-					roles_prod.add(URI.create(SOME_ONTOLOGY + "product"));
+					roles_prod.add(SystemsBiologyOntology.PRODUCT);
 					
 					p.setRoles(roles_prod); 
 				}
@@ -317,14 +300,14 @@ public class SBMLtoSBOL {
 			else if(bioModel.isDegradationReaction(reaction))
 			{
 				Set<URI> types = new HashSet<URI>();
-				types.add(URI.create(SOME_ONTOLOGY + "Degradation"));
+				types.add(SystemsBiologyOntology.DEGRADATION);
 				
 				Interaction inter = moduleDef.createInteraction(reaction.getId(), types);
 				
 				for(SpeciesReference sp : reaction.getListOfReactants())
 				{
 					Set<URI> roles_sp = new HashSet<URI>();
-					roles_sp.add(URI.create(SOME_ONTOLOGY + "reactant"));
+					roles_sp.add(SystemsBiologyOntology.REACTANT);
 					String p_id = sp.getSpecies();
 					Participation p = inter.createParticipation(p_id, sp.getSpecies());
 					p.setRoles(roles_sp);
@@ -333,15 +316,22 @@ public class SBMLtoSBOL {
 			else 
 			{
 				Set<URI> types = new HashSet<URI>();
-				types.add(URI.create(SOME_ONTOLOGY + "Reaction"));
+				types.add(SystemsBiologyOntology.BIOCHEMICAL_REACTION);
 				
 				Interaction inter = moduleDef.createInteraction(reaction.getId(), types);
 				
 				for(SpeciesReference reactant : reaction.getListOfReactants())
 				{
 					Set<URI> roles_r = new HashSet<URI>();
-					roles_r.add(URI.create(SOME_ONTOLOGY + "reactant"));
+					roles_r.add(SystemsBiologyOntology.REACTANT);
 					Participation p = inter.createParticipation(reactant.getSpecies(), reactant.getSpecies());
+					p.setRoles(roles_r);
+				}
+				for(ModifierSpeciesReference modifier : reaction.getListOfModifiers())
+				{
+					Set<URI> roles_r = new HashSet<URI>();
+					roles_r.add(SystemsBiologyOntology.MODIFIER);
+					Participation p = inter.createParticipation(modifier.getSpecies(), modifier.getSpecies());
 					p.setRoles(roles_r);
 				}
 				for(SpeciesReference product : reaction.getListOfProducts())
@@ -349,7 +339,7 @@ public class SBMLtoSBOL {
 					// create participation from product.getSpecies() as type product
 					
 					Set<URI> roles_p = new HashSet<URI>();
-					roles_p.add(URI.create(SOME_ONTOLOGY + "product"));
+					roles_p.add(SystemsBiologyOntology.PRODUCT);
 					Participation p = inter.createParticipation(product.getSpecies(), product.getSpecies());
 					p.setRoles(roles_p);
 				}
