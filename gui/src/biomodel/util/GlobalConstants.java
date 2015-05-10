@@ -218,6 +218,7 @@ public class GlobalConstants {
 	public static final int SBO_PRODUCTION = 183;
 	public static final int SBO_COMPLEX = 526;
 
+	// Model frameworks
 	public static final int SBO_NONSPATIAL_CONTINUOUS = 293;
 	public static final int SBO_SPATIAL_CONTINUOUS = 292;
 	public static final int SBO_NONSPATIAL_DISCRETE = 295;
