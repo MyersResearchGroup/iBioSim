@@ -61,8 +61,8 @@ public class SBMLtoSBOL {
 	
 	//------------URI CONSTANTS
 	URI COLLECTION_ID ;
-	URI LANGUAGE   	  = URI.create("http://co.mbine.org/standards/sbml/level-3/version-1/core/release-1");
-	URI FRAMEWORK  	  = URI.create("http://some.ontology.org/ODE");
+	URI LANGUAGE   	  = org.sbolstandard.core2.Model.SBML;
+	URI FRAMEWORK  	  = SystemsBiologyOntology.DISCRETE_FRAMEWORK;
 	
 	public SBMLtoSBOL(String path,BioModel bioModel) 
 	{
