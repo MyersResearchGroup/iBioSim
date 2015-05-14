@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical;
+package analysis.dynamicsim.hierarchical.simulator;
 
 /**
  * The interface to simulators in iBioSim.

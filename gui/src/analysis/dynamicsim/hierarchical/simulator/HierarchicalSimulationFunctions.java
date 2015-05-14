@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical;
+package analysis.dynamicsim.hierarchical.simulator;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -17,7 +17,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.EventAssignment;
 
-import analysis.dynamicsim.XORShiftRandom;
+import analysis.dynamicsim.flattened.XORShiftRandom;
 import analysis.dynamicsim.hierarchical.util.HierarchicalEventToFire;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
@@ -481,14 +481,8 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 	protected boolean testConstraints(ModelState modelstate, HashSet<ASTNode> affectedConstraintSet)
 	{
-
-		// check all of the affected constraints
-		// if one evaluates to true, then the simulation halts
 		for (ASTNode constraint : affectedConstraintSet)
 		{
-			// System.out.println("Node: " +
-			// libsbml.formulaToString(constraint));
-
 			if (HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
 					constraint, false, getCurrentTime(), null, null)))
 			{
@@ -588,48 +582,56 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 						.getEventToAssignmentSetMap().get(untriggeredEventID), fireTime));
 	}
 
+	protected void updatePreviosTriggerEvent(ModelState modelstate, double t, double[] y,
+			HashMap<String, Integer> variableToIndexMap)
+	{
+
+		if (!modelstate.isNoEventsFlag())
+		{
+
+			for (String event : modelstate.getUntriggeredEventSet())
+			{
+				double result = evaluateExpressionRecursive(modelstate, modelstate
+						.getEventToTriggerMap().get(event), true, t, y, variableToIndexMap);
+
+				modelstate.getEventToPreviousTriggerValueMap().put(event, result > 0);
+
+			}
+		}
+	}
+
+	protected boolean isEventTriggered(ModelState modelstate, String event, double t, double[] y,
+			HashMap<String, Integer> variableToIndexMap, boolean checkPrevious)
+	{
+		double result = evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap()
+				.get(event), true, t, y, variableToIndexMap);
+		if (result > 0)
+		{
+			if (!checkPrevious)
+			{
+				return true;
+			}
+			else if (!modelstate.getEventToPreviousTriggerValueMap().get(event))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	protected boolean checkModelTriggerEvent(ModelState modelstate, double t, double[] y,
 			HashMap<String, Integer> variableToIndexMap)
 	{
 
-		if (modelstate.isNoEventsFlag() == true)
+		if (modelstate.isNoEventsFlag())
 		{
 			return false;
 		}
 
-		// for (String untriggeredEventID : modelstate.getUntriggeredEventSet())
-		// {
-		// if
-		// (HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
-		// modelstate.getEventToTriggerMap().get(untriggeredEventID), true, t,
-		// y,
-		// variableToIndexMap)) == true)
-		// {
-		// if (getCurrentTime() == 0.0
-		// &&
-		// modelstate.getEventToTriggerInitiallyTrueMap().get(untriggeredEventID)
-		// == true)
-		// {
-		// continue;
-		// }
-		//
-		// if
-		// (modelstate.getEventToPreviousTriggerValueMap().get(untriggeredEventID)
-		// == true)
-		// {
-		// continue;
-		// }
-		//
-		// return true;
-		//
-		// }
-		// }
-
 		for (String event : modelstate.getUntriggeredEventSet())
 		{
-			double result = evaluateExpressionRecursive(modelstate, modelstate
-					.getEventToTriggerMap().get(event), true, t, y, variableToIndexMap);
-			if (result > 0)
+
+			if (isEventTriggered(modelstate, event, t, y, variableToIndexMap, true))
 			{
 				return true;
 			}

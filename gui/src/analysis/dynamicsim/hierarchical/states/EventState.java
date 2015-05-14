@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
@@ -191,6 +192,11 @@ public abstract class EventState extends ReactionState
 	public void setTriggeredEventQueue(PriorityQueue<HierarchicalEventToFire> triggeredEventQueue)
 	{
 		this.triggeredEventQueue = triggeredEventQueue;
+	}
+
+	public Set<String> getSetOfEvents()
+	{
+		return eventToTriggerMap.keySet();
 	}
 
 }

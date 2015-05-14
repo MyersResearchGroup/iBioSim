@@ -1,4 +1,4 @@
-package analysis.dynamicsim;
+package analysis.dynamicsim.flattened;
 
 /*
  * adapted from http://www.javamex.com/tutorials/random_numbers/java_util_random_subclassing.shtml

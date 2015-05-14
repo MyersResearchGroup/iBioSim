@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical;
+package analysis.dynamicsim.hierarchical.simulator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 
-import analysis.dynamicsim.XORShiftRandom;
+import analysis.dynamicsim.flattened.XORShiftRandom;
 import analysis.dynamicsim.hierarchical.states.ArraysState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalEventToFire;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
@@ -526,8 +526,6 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			// though
 			String nodeName = node.getName();
 
-			// generates a uniform random number between the upper and lower
-			// bound
 			if (nodeName.equals("uniform"))
 			{
 
@@ -690,11 +688,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		case FUNCTION_PIECEWISE:
 		{
 
-			// loop through child triples
-			// if child 1 is true, return child 0, else return child 2
 			for (int childIter = 0; childIter < node.getChildCount(); childIter += 3)
 			{
-
 				if ((childIter + 1) < node.getChildCount()
 						&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
 								modelstate, node.getChild(childIter + 1), evaluateState, t, y,
@@ -782,8 +777,6 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 					y, variableToIndexMap);
 			return FastMath.log(1 / x + FastMath.sqrt(1 + 1 / (x * x)));
 		}
-		// return Fmath.acsch(evaluateExpressionRecursive(modelstate,
-		// node.getChild(0)));
 
 		case FUNCTION_ARCSEC:
 		{
@@ -849,7 +842,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 	private double evaluateName(ModelState modelstate, ASTNode node, boolean evaluateState,
 			double t, double[] y, Map<String, Integer> variableToIndexMap)
 	{
-		String name = node.getName().replace("_negative_", "-");
+		String name = node.getName();
 
 		if (node.getType() == org.sbml.jsbml.ASTNode.Type.NAME_TIME)
 		{
@@ -869,21 +862,17 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			if (evaluateState)
 			{
 				int i, j;
+
+				i = variableToIndexMap.get(name);
 				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(name)
 						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(name) == false)
 				{
-					// value = (modelstate.variableToValueMap.get(name) /
-					// modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(name)));
-					// value = (modelstate.getVariableToValue(name) /
-					// modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(name)));
-					i = variableToIndexMap.get(name);
 					j = variableToIndexMap.get(modelstate.getSpeciesToCompartmentNameMap()
 							.get(name));
 					value = y[i] / y[j];
 				}
 				else
 				{
-					i = variableToIndexMap.get(name);
 					value = y[i];
 				}
 				return value;

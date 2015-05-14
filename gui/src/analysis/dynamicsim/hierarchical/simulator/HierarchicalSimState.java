@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical;
+package analysis.dynamicsim.hierarchical.simulator;
 
 import java.io.BufferedWriter;
 import java.io.File;

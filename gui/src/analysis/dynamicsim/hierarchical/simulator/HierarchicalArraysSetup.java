@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical;
+package analysis.dynamicsim.hierarchical.simulator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -413,7 +413,7 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 		{
 			double value = modelstate.getVariableToValue(getReplacements(), id);
 			int[] sizes = new int[modelstate.getDimensionCount(id)];
-
+			int[] indices = new int[sizes.length];
 			for (ArraysObject obj : modelstate.getDimensionObjects().get(id))
 			{
 				sizes[obj.getArrayDim()] = (int) modelstate.getVariableToValue(getReplacements(),
@@ -423,20 +423,23 @@ public abstract class HierarchicalArraysSetup extends HierarchicalSingleSBaseSet
 			if (modelstate.getSpeciesIDSet().contains(id))
 			{
 				Species species = getModels().get(modelstate.getModel()).getSpecies(id);
-				setupArrayValue(modelstate, species, id, value, sizes, new int[sizes.length]);
+
+				setupArrayValue(modelstate, species, id, value, sizes, indices);
 			}
 			else if (modelstate.getCompartmentIDSet().contains(id))
 			{
 				Compartment compartment = getModels().get(modelstate.getModel()).getCompartment(id);
 
-				setupArrayValue(modelstate, compartment, id, value, sizes, new int[sizes.length]);
+				setupArrayValue(modelstate, compartment, id, value, sizes, indices);
 			}
 			else if (modelstate.getVariablesToPrint().contains(id))
 			{
 				Parameter parameter = getModels().get(modelstate.getModel()).getParameter(id);
 
-				setupArrayValue(modelstate, parameter, id, value, sizes, new int[sizes.length]);
+				setupArrayValue(modelstate, parameter, id, value, sizes, indices);
 			}
+
+			indices = null;
 
 		}
 

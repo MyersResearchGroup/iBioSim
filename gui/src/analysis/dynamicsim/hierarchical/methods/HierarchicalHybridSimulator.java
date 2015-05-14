@@ -31,8 +31,8 @@ import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
 
-import analysis.dynamicsim.hierarchical.HierarchicalArrayModels;
-import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalArrayModels;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 import analysis.dynamicsim.hierarchical.util.Evaluator;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;

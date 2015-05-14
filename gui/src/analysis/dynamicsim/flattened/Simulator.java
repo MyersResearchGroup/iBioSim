@@ -1,4 +1,4 @@
-package analysis.dynamicsim;
+package analysis.dynamicsim.flattened;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
@@ -236,7 +236,7 @@ public abstract class Simulator
 	protected int											totalCount									= 0;
 	protected int											memCount									= 0;
 
-	protected JFrame										running										= new JFrame();
+	protected JFrame										running										= null;
 
 	PsRandom												prng										= new PsRandom();
 
@@ -512,12 +512,12 @@ public abstract class Simulator
 	/**
 	 * cancels the current run
 	 */
-	protected abstract void cancel();
+	public abstract void cancel();
 
 	/**
 	 * clears data structures for new run
 	 */
-	protected abstract void clear();
+	public abstract void clear();
 
 	/**
 	 * copies parts of the model that may change during a dynamic run
@@ -4630,7 +4630,7 @@ public abstract class Simulator
 	 * 
 	 * @throws IOException
 	 */
-	protected void printStatisticsTSD() throws IOException
+	public void printStatisticsTSD() throws IOException
 	{
 
 		// the last run is the number of runs
@@ -6354,7 +6354,7 @@ public abstract class Simulator
 	/**
 	 * does a minimized initialization process to prepare for a new run
 	 */
-	protected abstract void setupForNewRun(int newRun);
+	public abstract void setupForNewRun(int newRun);
 
 	/**
 	 * opens output file and seeds rng for new run
@@ -6928,7 +6928,7 @@ public abstract class Simulator
 	/**
 	 * abstract simulate method each simulator needs a simulate method
 	 */
-	protected abstract void simulate();
+	public abstract void simulate();
 
 	/**
 	 * returns an annotation with only array information remaining

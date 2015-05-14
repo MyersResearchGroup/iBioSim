@@ -1,4 +1,4 @@
-package analysis.dynamicsim;
+package analysis.dynamicsim.flattened;
 
 public class SpeciesDimensions {
 		

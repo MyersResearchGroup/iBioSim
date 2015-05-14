@@ -1,4 +1,4 @@
-package analysis.dynamicsim;
+package analysis.dynamicsim.flattened;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -128,7 +128,10 @@ public class SimulatorSSADirect extends Simulator
 			{
 				currentTime = timeLimit;
 
-				fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
+				if (noEventsFlag == false)
+				{
+					fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
+				}
 
 				performRateRules(currentTime - oldTime);
 
@@ -174,7 +177,10 @@ public class SimulatorSSADirect extends Simulator
 
 			currentTime = timeLimit;
 
-			fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
+			if (noEventsFlag == false)
+			{
+				fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
+			}
 
 			performRateRules(currentTime - oldTime);
 
@@ -388,9 +394,12 @@ public class SimulatorSSADirect extends Simulator
 			currentStep++;
 			printTime = (currentStep * timeLimit / numSteps);
 
-			running.setTitle("Progress (" + (int) ((currentTime / timeLimit) * 100.0) + "%)");
-			// update progress bar
-			progress.setValue((int) ((currentTime / timeLimit) * 100.0));
+			if (running != null && progress != null)
+			{
+				running.setTitle("Progress (" + (int) ((currentTime / timeLimit) * 100.0) + "%)");
+				// update progress bar
+				progress.setValue((int) ((currentTime / timeLimit) * 100.0));
+			}
 
 		}
 
@@ -489,7 +498,7 @@ public class SimulatorSSADirect extends Simulator
 	 * cancels the current run
 	 */
 	@Override
-	protected void cancel()
+	public void cancel()
 	{
 
 		cancelFlag = true;
@@ -499,7 +508,7 @@ public class SimulatorSSADirect extends Simulator
 	 * clears data structures for new run
 	 */
 	@Override
-	protected void clear()
+	public void clear()
 	{
 
 		variableToValueMap.clear();
@@ -539,7 +548,7 @@ public class SimulatorSSADirect extends Simulator
 	 * does minimized initalization process to prepare for a new run
 	 */
 	@Override
-	protected void setupForNewRun(int newRun)
+	public void setupForNewRun(int newRun)
 	{
 
 		try
