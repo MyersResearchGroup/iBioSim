@@ -14,10 +14,14 @@ import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.Log;
-import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import analysis.dynamicsim.flattened.Simulator;
+import analysis.dynamicsim.flattened.SimulatorODERK;
+import analysis.dynamicsim.flattened.SimulatorSSACR;
+import analysis.dynamicsim.flattened.SimulatorSSADirect;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalHybridSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 
 public class DynamicSimulation
 {
@@ -48,16 +52,22 @@ public class DynamicSimulation
 			JTabbedPane simTab, String abstraction, Log log)
 	{
 
-		String progressText = progressLabel.getText();
-		statisticsFlag = genStats;
+		String progressText = "";
 
+		if (progressLabel != null)
+		{
+			progressText = progressLabel.getText();
+			statisticsFlag = genStats;
+		}
 		try
 		{
 
-			progressLabel.setText("Generating Model . . .");
-			running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20,
-					(int) running.getSize().getHeight()));
-
+			if (progressLabel != null)
+			{
+				progressLabel.setText("Generating Model . . .");
+				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20,
+						(int) running.getSize().getHeight()));
+			}
 			if (simulatorType.equals("cr"))
 			{
 				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit,
@@ -124,15 +134,24 @@ public class DynamicSimulation
 				break;
 			}
 
-			progressLabel.setText(progressText.replace(" (" + (run - 1) + ")", "") + " (" + run
-					+ ")");
-			running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20,
-					(int) running.getSize().getHeight()));
+			if (progressLabel != null && running != null)
+			{
+
+				progressLabel.setText(progressText.replace(" (" + (run - 1) + ")", "") + " (" + run
+						+ ")");
+				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20,
+						(int) running.getSize().getHeight()));
+			}
+			Runtime runtime = Runtime.getRuntime();
+			double mb = 1024 * 1024;
 			if (simulator != null)
 			{
-				simulator.simulate();
-				simulator.clear();
 				hSimulator = null;
+				simulator.simulate();
+				System.gc();
+				double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
+				System.out.println("Memory used: " + (mem));
+				simulator.clear();
 				if ((runs - run) >= 1)
 				{
 					simulator.setupForNewRun(run + 1);
@@ -140,14 +159,19 @@ public class DynamicSimulation
 			}
 			else if (hSimulator != null)
 			{
-				hSimulator.simulate();
-				hSimulator.clear();
 				simulator = null;
+				hSimulator.simulate();
+
+				System.gc();
+				double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
+				System.out.println("Memory used: " + (mem));
+				hSimulator.clear();
 				if ((runs - run) >= 1)
 				{
 					hSimulator.setupForNewRun(run + 1);
 				}
 			}
+
 			// //garbage collect every twenty-five runs
 			// if ((run % 25) == 0)
 			// {
@@ -155,10 +179,14 @@ public class DynamicSimulation
 			// System.runFinalization();
 			// }
 		}
+
+		double val2 = System.currentTimeMillis();
+
+		hSimulator = null;
+		simulator = null;
 		System.gc();
 		System.runFinalization();
 
-		double val2 = System.currentTimeMillis();
 		if (log == null)
 		{
 			System.out.println("Simulation Time: " + (val2 - val1) / 1000);
@@ -169,10 +197,12 @@ public class DynamicSimulation
 		}
 		if (cancelFlag == false && statisticsFlag == true)
 		{
+			if (progressLabel != null && running != null)
+			{
 
-			progressLabel.setText("Generating Statistics . . .");
-			running.setMinimumSize(new Dimension(200, 100));
-
+				progressLabel.setText("Generating Statistics . . .");
+				running.setMinimumSize(new Dimension(200, 100));
+			}
 			try
 			{
 				if (simulator != null)

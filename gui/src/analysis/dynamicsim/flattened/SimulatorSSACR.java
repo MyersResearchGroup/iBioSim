@@ -1,4 +1,4 @@
-package analysis.dynamicsim;
+package analysis.dynamicsim.flattened;
 
 import gnu.trove.map.hash.TIntDoubleHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
@@ -658,7 +658,7 @@ public class SimulatorSSACR extends Simulator
 	 * cancels the current run
 	 */
 	@Override
-	protected void cancel()
+	public void cancel()
 	{
 
 		cancelFlag = true;
@@ -668,7 +668,7 @@ public class SimulatorSSACR extends Simulator
 	 * clears data structures for new run
 	 */
 	@Override
-	protected void clear()
+	public void clear()
 	{
 
 		variableToValueMap.clear();
@@ -950,7 +950,7 @@ public class SimulatorSSACR extends Simulator
 	 * does a minimized initialization process to prepare for a new run
 	 */
 	@Override
-	protected void setupForNewRun(int newRun)
+	public void setupForNewRun(int newRun)
 	{
 
 		try

@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical;
+package analysis.dynamicsim.hierarchical.simulator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -322,7 +322,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		modelstate.getReactionToReactantStoichiometrySetMap().put(reverse,
 				new HashSet<HierarchicalStringDoublePair>());
 
-		setupMath(modelstate, reactionFormula);
+		reactionFormula = setupMath(modelstate, reactionFormula);
 
 		for (SpeciesReference reactant : reactantsList)
 		{
@@ -938,8 +938,9 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 	}
 
-	private void setupMath(ModelState modelstate, ASTNode reactionFormula)
+	private ASTNode setupMath(ModelState modelstate, ASTNode reactionFormula)
 	{
+		// TODO:fix this
 		if (reactionFormula.getType().equals(ASTNode.Type.TIMES))
 		{
 
@@ -1035,6 +1036,6 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			}
 
 		}
-
+		return reactionFormula;
 	}
 }

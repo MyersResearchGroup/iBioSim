@@ -1,4 +1,4 @@
-package analysis.dynamicsim;
+package analysis.dynamicsim.flattened;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,17 +7,15 @@ import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
-import main.Gui;
 import main.util.dataparser.TSDParser;
 
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLWriter;
 
-import biomodel.network.GeneticNetwork;
+import analysis.dynamicsim.DynamicSimulation;
 import biomodel.parser.BioModel;
-import biomodel.parser.GCMParser;
 
 public class DynSim
 {
@@ -35,6 +33,8 @@ public class DynSim
 	static boolean				genStats			= false;
 	static String				selectedSimulator	= "";
 	static ArrayList<String>	interestingSpecies	= new ArrayList<String>();
+	static String				separator			= (File.separator.equals("\\")) ? "\\\\"
+															: File.separator;
 	// static String[] amountSpecies = new String[0];
 	// static String[] concSpecies = new String[0];
 	static String				quantityType		= "amount";
@@ -48,76 +48,61 @@ public class DynSim
 	{
 
 		boolean testSuite = true;
-		String varname;
-		if (System.getProperty("mrj.version") != null)
-		{
-			varname = "DYLD_LIBRARY_PATH"; // We're on a Mac.
-		}
-		else
-		{
-			varname = "LD_LIBRARY_PATH"; // We're not on a Mac.
-		}
-		try
-		{
-			System.loadLibrary("sbmlj");
-			// For extra safety, check that the jar file is in the
-			// classpath.
-			Class.forName("org.sbml.jsbml.libsbml");
-		}
-		catch (UnsatisfiedLinkError e)
-		{
-			e.printStackTrace();
-			System.err.println("Error: could not link with the libSBML library."
-					+ "  It is likely\nyour " + varname
-					+ " environment variable does not include\nthe"
-					+ " directory containing the libsbml library file.");
-			System.exit(1);
-		}
-		catch (ClassNotFoundException e)
-		{
-			System.err.println("Error: unable to load the file libsbmlj.jar."
-					+ "  It is likely\nyour " + varname + " environment"
-					+ " variable or CLASSPATH variable\ndoes not include"
-					+ " the directory containing the libsbmlj.jar file.");
-			System.exit(1);
-		}
-		catch (SecurityException e)
-		{
-			System.err.println("Could not load the libSBML library files due to a"
-					+ " security exception.");
-			System.exit(1);
-		}
+		// try
+		// {
+		// System.loadLibrary("sbmlj");
+		// // For extra safety, check that the jar file is in the
+		// // classpath.
+		// Class.forName("org.sbml.jsbml.libsbml");
+		// }
+		// catch (UnsatisfiedLinkError e)
+		// {
+		// e.printStackTrace();
+		// System.err.println("Error: could not link with the libSBML library."
+		// + "  It is likely\nyour " + varname
+		// + " environment variable does not include\nthe"
+		// + " directory containing the libsbml library file.");
+		// System.exit(1);
+		// }
+		// catch (ClassNotFoundException e)
+		// {
+		// System.err.println("Error: unable to load the file libsbmlj.jar."
+		// + "  It is likely\nyour " + varname + " environment"
+		// + " variable or CLASSPATH variable\ndoes not include"
+		// + " the directory containing the libsbmlj.jar file.");
+		// System.exit(1);
+		// }
+		// catch (SecurityException e)
+		// {
+		// System.err.println("Could not load the libSBML library files due to a"
+		// + " security exception.");
+		// System.exit(1);
+		// }
 
 		if (args.length == 0)
 		{
-			// this is for the sbml test suite
-
-			String caseNum = "00068";
-
-			args = new String[3];
-
-			// model
-			args[0] = "/home/leandro/cases/semantic/" + caseNum + "/" + caseNum + "-sbml-l2v4.xml";
-
-			// output dir
-			args[1] = "/home/leandro/cases/semantic/" + caseNum + "/";
-			// args[1] = "/home/leandro/cases/semantic/" + caseNum;
-
-			// properties file
-			args[2] = "/home/leandro/cases/semantic/" + caseNum + "/" + caseNum + "-settings.txt";
+			System.out.println("Not enough arguments");
+			return;
 		}
 
-		String filename = args[0];
-		String outputDirectory = args[1];
-		String settingsFile = args[2];
-		JLabel progressLabel = new JLabel();
-		JProgressBar progress = new JProgressBar();
-		JFrame running = new JFrame();
+		String filename = "";
+		String outputDirectory = "";
+		String testcase = "";
+		String settingsFile = "";
+
+		String newFilename;
+		JLabel progressLabel = null;
+		JProgressBar progress = null;
+		JFrame running = null;
 		DynamicSimulation simulator = null;
 
 		if (testSuite)
 		{
-
+			testcase = args[1];
+			filename = args[0] + separator + testcase + separator + testcase + "-sbml-l3v1.xml";
+			outputDirectory = args[2];
+			settingsFile = args[0] + separator + testcase + separator + testcase + "-settings.txt";
+			newFilename = outputDirectory + separator + testcase + "_flatten.xml";
 			readSettings(settingsFile);
 			printInterval = timeLimit / numSteps;
 			simulator = new DynamicSimulation("rk");
@@ -125,6 +110,10 @@ public class DynSim
 		else
 		{
 
+			filename = args[0];
+			outputDirectory = args[1];
+			settingsFile = args[2];
+			newFilename = filename.replace(".xml", "_flatten.xml");
 			readProperties(settingsFile);
 
 			if (selectedSimulator.contains("SSA-CR"))
@@ -142,8 +131,8 @@ public class DynSim
 		}
 
 		String[] intSpecies = new String[interestingSpecies.size()];
-		int i = 0;
 
+		int i = 0;
 		for (String intSpec : interestingSpecies)
 		{
 			intSpecies[i] = intSpec;
@@ -152,28 +141,36 @@ public class DynSim
 
 		try
 		{
-
+			double t1 = System.currentTimeMillis();
 			BioModel biomodel = new BioModel(outputDirectory);
 			biomodel.load(filename);
-			SBMLDocument sbml = biomodel.flattenModel(true);
-			GCMParser parser = new GCMParser(biomodel);
-			GeneticNetwork network = parser.buildNetwork(sbml);
-			sbml = network.getSBML();
-			network.mergeSBML(filename, sbml);
-			simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep,
-					minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running,
-					stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError,
-					quantityType, genStats, null, null, null);
+			SBMLDocument flatten = biomodel.flattenModel(true);
+			SBMLWriter.write(flatten, newFilename, ' ', (short) 2);
+			double t2 = System.currentTimeMillis();
 
-			TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
-			tsdp.outputCSV(outputDirectory + "run-1.csv");
+			System.out.println("Flattening time: " + (t2 - t1) / 1000);
+			if (testSuite)
+			{
+				simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit,
+						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs,
+						progressLabel, running, stoichAmpValue, intSpecies, numSteps,
+						relativeError, absoluteError, quantityType, genStats, null, null, null);
+
+				TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
+				tsdp.outputCSV(outputDirectory + testcase + ".csv");
+			}
+			else
+			{
+				simulator.simulate(newFilename, outputDirectory, outputDirectory, timeLimit,
+						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs,
+						progressLabel, running, stoichAmpValue, intSpecies, numSteps,
+						relativeError, absoluteError, quantityType, genStats, null, null, null);
+			}
 
 		}
 		catch (Exception e1)
 		{
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
-					"Error Creating File", JOptionPane.ERROR_MESSAGE);
 		}
 
 	}
@@ -209,7 +206,15 @@ public class DynSim
 		}
 		if (properties.containsKey(prefix + "simulation.time.step"))
 		{
-			maxTimeStep = Double.valueOf(properties.getProperty(prefix + "simulation.time.step"));
+			if (properties.getProperty(prefix + "simulation.time.step").equals("inf"))
+			{
+				maxTimeStep = Double.POSITIVE_INFINITY;
+			}
+			else
+			{
+				maxTimeStep = Double.valueOf(properties
+						.getProperty(prefix + "simulation.time.step"));
+			}
 		}
 		if (properties.containsKey(prefix + "simulation.print.interval"))
 		{
