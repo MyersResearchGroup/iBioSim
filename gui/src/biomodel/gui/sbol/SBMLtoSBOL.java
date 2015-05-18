@@ -71,8 +71,7 @@ public class SBMLtoSBOL {
 	}
 	
 	public void export() {
-
-		// OR read existing 1.1 document in the project to get sequences etc.
+		// TODO read existing 1.1 document in the project to get sequences etc.
 		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 		SBOLDocument sbolDoc = new SBOLDocument();
 		sbolDoc.setDefaultURIprefix("http://www.async.ece.utah.edu");
