@@ -107,18 +107,13 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 					return 1;
 				}
 
-				if (evaluateExpressionRecursive(state1,
-						state1.getEventToPriorityMap().get(event1.getEventID()), false,
-						getCurrentTime(), null, null) > evaluateExpressionRecursive(state2, state2
-						.getEventToPriorityMap().get(event2.getEventID()), false, getCurrentTime(),
-						null, null))
+				if (evaluateExpressionRecursive(state1, state1.getEventToPriorityMap().get(event1.getEventID()), false, getCurrentTime(), null, null) > evaluateExpressionRecursive(
+						state2, state2.getEventToPriorityMap().get(event2.getEventID()), false, getCurrentTime(), null, null))
 				{
 					return -1;
 				}
-				else if (evaluateExpressionRecursive(state1,
-						state1.getEventToPriorityMap().get(event1.getEventID()), false,
-						getCurrentTime(), null, null) < evaluateExpressionRecursive(state2, state2
-						.getEventToPriorityMap().get(event2.getEventID()), false, getCurrentTime(),
+				else if (evaluateExpressionRecursive(state1, state1.getEventToPriorityMap().get(event1.getEventID()), false, getCurrentTime(), null,
+						null) < evaluateExpressionRecursive(state2, state2.getEventToPriorityMap().get(event2.getEventID()), false, getCurrentTime(),
 						null, null))
 				{
 					return 1;
@@ -145,8 +140,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 
 			if (getNumEvents() > 0)
 			{
-				setTriggeredEventQueue(new PriorityQueue<HierarchicalEventToFire>(
-						(int) getNumEvents(), getEventComparator()));
+				setTriggeredEventQueue(new PriorityQueue<HierarchicalEventToFire>((int) getNumEvents(), getEventComparator()));
 			}
 		}
 
@@ -269,8 +263,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			this.eventComparator = eventComparator;
 		}
 
-		public void setvariableToValueMap(Map<String, Double> replacements, String variable,
-				double value)
+		public void setvariableToValueMap(Map<String, Double> replacements, String variable, double value)
 		{
 			if (getIsHierarchical().contains(variable))
 			{
@@ -300,15 +293,12 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		}
 	}
 
-	public HierarchicalObjects(String SBMLFileName, String rootDirectory, String outputDirectory,
-			double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress,
-			double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType, String abstraction)
-			throws IOException, XMLStreamException
+	public HierarchicalObjects(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, double maxTimeStep,
+			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
+			String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
-		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
-				progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
-				abstraction);
+		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running,
+				interestingSpecies, quantityType, abstraction);
 		replacements = new HashMap<String, Double>();
 		initReplacementState = new HashMap<String, Double>();
 		models = new HashMap<String, Model>();
@@ -343,8 +333,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		ibiosimFunctionDefinitions.add("normal");
 	}
 
-	private double evaluateBoolean(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, Map<String, Integer> variableToIndexMap)
+	private double evaluateBoolean(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap)
 	{
 		switch (node.getType())
 		{
@@ -356,9 +346,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			return 0.0;
 
 		case LOGICAL_NOT:
-			return HierarchicalUtilities.getDoubleFromBoolean(!(HierarchicalUtilities
-					.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
-							node.getLeftChild(), evaluateState, t, y, variableToIndexMap))));
+			return HierarchicalUtilities.getDoubleFromBoolean(!(HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
+					node.getLeftChild(), evaluateState, t, y, variableToIndexMap))));
 
 		case LOGICAL_AND:
 		{
@@ -368,9 +357,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 			{
 				andResult = andResult
-						&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
-								modelstate, node.getChild(childIter), evaluateState, t, y,
-								variableToIndexMap));
+						&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter),
+								evaluateState, t, y, variableToIndexMap));
 			}
 
 			return HierarchicalUtilities.getDoubleFromBoolean(andResult);
@@ -384,9 +372,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 			{
 				orResult = orResult
-						|| HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
-								modelstate, node.getChild(childIter), evaluateState, t, y,
-								variableToIndexMap));
+						|| HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter),
+								evaluateState, t, y, variableToIndexMap));
 			}
 
 			return HierarchicalUtilities.getDoubleFromBoolean(orResult);
@@ -395,64 +382,44 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		case LOGICAL_XOR:
 		{
 
-			boolean xorResult = (node.getChildCount() == 0) ? false : HierarchicalUtilities
-					.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(0),
-							evaluateState, t, y, variableToIndexMap));
+			boolean xorResult = (node.getChildCount() == 0) ? false : HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
+					modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 			for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
 			{
 				xorResult = xorResult
-						^ HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
-								modelstate, node.getChild(childIter), evaluateState, t, y,
-								variableToIndexMap));
+						^ HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState,
+								t, y, variableToIndexMap));
 			}
 
 			return HierarchicalUtilities.getDoubleFromBoolean(xorResult);
 		}
 
 		case RELATIONAL_EQ:
-			return HierarchicalUtilities
-					.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate,
-							node.getLeftChild(), evaluateState, t, y, variableToIndexMap) == evaluateExpressionRecursive(
-							modelstate, node.getRightChild(), evaluateState, t, y,
-							variableToIndexMap));
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap) == evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap));
 
 		case RELATIONAL_NEQ:
-			return HierarchicalUtilities
-					.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate,
-							node.getLeftChild(), evaluateState, t, y, variableToIndexMap) != evaluateExpressionRecursive(
-							modelstate, node.getRightChild(), evaluateState, t, y,
-							variableToIndexMap));
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap) != evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap));
 
 		case RELATIONAL_GEQ:
 		{
-			return HierarchicalUtilities
-					.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate,
-							node.getLeftChild(), evaluateState, t, y, variableToIndexMap) >= evaluateExpressionRecursive(
-							modelstate, node.getRightChild(), evaluateState, t, y,
-							variableToIndexMap));
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap) >= evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap));
 		}
 		case RELATIONAL_LEQ:
-			return HierarchicalUtilities
-					.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate,
-							node.getLeftChild(), evaluateState, t, y, variableToIndexMap) <= evaluateExpressionRecursive(
-							modelstate, node.getRightChild(), evaluateState, t, y,
-							variableToIndexMap));
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap) <= evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap));
 
 		case RELATIONAL_GT:
-			return HierarchicalUtilities
-					.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate,
-							node.getLeftChild(), evaluateState, t, y, variableToIndexMap) > evaluateExpressionRecursive(
-							modelstate, node.getRightChild(), evaluateState, t, y,
-							variableToIndexMap));
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap) > evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap));
 
 		case RELATIONAL_LT:
 		{
-			return HierarchicalUtilities
-					.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate,
-							node.getLeftChild(), evaluateState, t, y, variableToIndexMap) < evaluateExpressionRecursive(
-							modelstate, node.getRightChild(), evaluateState, t, y,
-							variableToIndexMap));
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap) < evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap));
 		}
 
 		default:
@@ -461,8 +428,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		}
 	}
 
-	private double evaluateConstant(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, Map<String, Integer> variableToIndexMap)
+	private double evaluateConstant(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap)
 	{
 
 		switch (node.getType())
@@ -479,12 +446,11 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		}
 	}
 
-	protected double evaluateExpressionRecursive(ModelState modelstate, ASTNode node,
-			boolean evaluateState, double t, double[] y, Map<String, Integer> variableToIndexMap)
+	protected double evaluateExpressionRecursive(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap)
 	{
 		if (node.isBoolean())
 		{
-
 			return evaluateBoolean(modelstate, node, evaluateState, t, y, variableToIndexMap);
 		}
 		else if (node.isConstant())
@@ -514,8 +480,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		}
 	}
 
-	private double evaluateFunction(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, Map<String, Integer> variableToIndexMap)
+	private double evaluateFunction(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap)
 	{
 		switch (node.getType())
 		{
@@ -529,10 +495,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			if (nodeName.equals("uniform"))
 			{
 
-				double leftChildValue = evaluateExpressionRecursive(modelstate,
-						node.getLeftChild(), evaluateState, t, y, variableToIndexMap);
-				double rightChildValue = evaluateExpressionRecursive(modelstate,
-						node.getRightChild(), evaluateState, t, y, variableToIndexMap);
+				double leftChildValue = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap);
+				double rightChildValue = evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap);
 				double lowerBound = FastMath.min(leftChildValue, rightChildValue);
 				double upperBound = FastMath.max(leftChildValue, rightChildValue);
 
@@ -542,34 +506,25 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			{
 
 				return getPrng().nextExponential(
-						evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState,
-								t, y, variableToIndexMap), 1);
+						evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap), 1);
 			}
 			else if (nodeName.equals("gamma"))
 			{
 
-				return getPrng().nextGamma(
-						1,
-						evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState,
-								t, y, variableToIndexMap),
-						evaluateExpressionRecursive(modelstate, node.getRightChild(),
-								evaluateState, t, y, variableToIndexMap));
+				return getPrng().nextGamma(1, evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap),
+						evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap));
 			}
 			else if (nodeName.equals("chisq"))
 			{
 
 				return getPrng().nextChiSquare(
-						(int) evaluateExpressionRecursive(modelstate, node.getLeftChild(),
-								evaluateState, t, y, variableToIndexMap));
+						(int) evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap));
 			}
 			else if (nodeName.equals("lognormal"))
 			{
 
-				return getPrng().nextLogNormal(
-						evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState,
-								t, y, variableToIndexMap),
-						evaluateExpressionRecursive(modelstate, node.getRightChild(),
-								evaluateState, t, y, variableToIndexMap));
+				return getPrng().nextLogNormal(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap),
+						evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap));
 			}
 			else if (nodeName.equals("laplace"))
 			{
@@ -580,110 +535,84 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			else if (nodeName.equals("cauchy"))
 			{
 
-				return getPrng().nextLorentzian(
-						0,
-						evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState,
-								t, y, variableToIndexMap));
+				return getPrng().nextLorentzian(0,
+						evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap));
 			}
 			else if (nodeName.equals("poisson"))
 			{
 
-				return getPrng().nextPoissonian(
-						evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState,
-								t, y, variableToIndexMap));
+				return getPrng()
+						.nextPoissonian(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap));
 			}
 			else if (nodeName.equals("binomial"))
 			{
 
-				return getPrng().nextBinomial(
-						evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState,
-								t, y, variableToIndexMap),
-						(int) evaluateExpressionRecursive(modelstate, node.getRightChild(),
-								evaluateState, t, y, variableToIndexMap));
+				return getPrng().nextBinomial(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap),
+						(int) evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap));
 			}
 			else if (nodeName.equals("bernoulli"))
 			{
 
-				return getPrng().nextBinomial(
-						evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState,
-								t, y, variableToIndexMap), 1);
+				return getPrng().nextBinomial(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap),
+						1);
 			}
 			else if (nodeName.equals("normal"))
 			{
 
-				return getPrng().nextGaussian(
-						evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState,
-								t, y, variableToIndexMap),
-						evaluateExpressionRecursive(modelstate, node.getRightChild(),
-								evaluateState, t, y, variableToIndexMap));
+				return getPrng().nextGaussian(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap),
+						evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap));
 			}
 
 			break;
 		}
 
 		case FUNCTION_ABS:
-			return FastMath.abs(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.abs(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_ARCCOS:
-			return FastMath.acos(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.acos(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_ARCSIN:
-			return FastMath.asin(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.asin(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_ARCTAN:
-			return FastMath.atan(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.atan(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_CEILING:
-			return FastMath.ceil(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.ceil(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_COS:
-			return FastMath.cos(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.cos(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_COSH:
-			return FastMath.cosh(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.cosh(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_EXP:
-			return FastMath.exp(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.exp(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_FLOOR:
-			return FastMath.floor(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.floor(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_LN:
-			return FastMath.log(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.log(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_LOG:
-			double base = FastMath.log10(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
-			double var = FastMath.log10(evaluateExpressionRecursive(modelstate, node.getChild(1),
-					evaluateState, t, y, variableToIndexMap));
+			double base = FastMath.log10(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
+			double var = FastMath.log10(evaluateExpressionRecursive(modelstate, node.getChild(1), evaluateState, t, y, variableToIndexMap));
 			return var / base;
 
 		case FUNCTION_SIN:
 
-			return FastMath.sin(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.sin(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_SINH:
-			return FastMath.sinh(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.sinh(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_TAN:
-			return FastMath.tan(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.tan(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_TANH:
-			return FastMath.tanh(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return FastMath.tanh(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_PIECEWISE:
 		{
@@ -691,17 +620,14 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			for (int childIter = 0; childIter < node.getChildCount(); childIter += 3)
 			{
 				if ((childIter + 1) < node.getChildCount()
-						&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
-								modelstate, node.getChild(childIter + 1), evaluateState, t, y,
-								variableToIndexMap)))
+						&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter + 1),
+								evaluateState, t, y, variableToIndexMap)))
 				{
-					return evaluateExpressionRecursive(modelstate, node.getChild(childIter),
-							evaluateState, t, y, variableToIndexMap);
+					return evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap);
 				}
 				else if ((childIter + 2) < node.getChildCount())
 				{
-					return evaluateExpressionRecursive(modelstate, node.getChild(childIter + 2),
-							evaluateState, t, y, variableToIndexMap);
+					return evaluateExpressionRecursive(modelstate, node.getChild(childIter + 2), evaluateState, t, y, variableToIndexMap);
 				}
 			}
 
@@ -709,85 +635,66 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		}
 
 		case FUNCTION_ROOT:
-			return FastMath.pow(
-					evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t,
-							y, variableToIndexMap),
-					1 / evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState,
-							t, y, variableToIndexMap));
+			return FastMath.pow(evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap),
+					1 / evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_SEC:
-			return Fmath.sec(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.sec(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_SECH:
-			return Fmath.sech(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.sech(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_FACTORIAL:
-			return Fmath.factorial(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.factorial(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_COT:
-			return Fmath.cot(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.cot(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_COTH:
-			return Fmath.coth(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.coth(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_CSC:
-			return Fmath.csc(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.csc(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_CSCH:
-			return Fmath.csch(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.csch(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_DELAY:
 			// NOT PLANNING TO SUPPORT THIS
 			return 0;
 
 		case FUNCTION_ARCTANH:
-			return Fmath.atanh(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.atanh(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_ARCSINH:
-			return Fmath.asinh(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.asinh(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_ARCCOSH:
-			return Fmath.acosh(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.acosh(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_ARCCOT:
-			return Fmath.acot(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.acot(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_ARCCOTH:
-			return Fmath.acoth(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.acoth(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_ARCCSC:
-			return Fmath.acsc(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.acsc(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 
 		case FUNCTION_ARCCSCH:
 		{
-			double x = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t,
-					y, variableToIndexMap);
+			double x = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap);
 			return FastMath.log(1 / x + FastMath.sqrt(1 + 1 / (x * x)));
 		}
 
 		case FUNCTION_ARCSEC:
 		{
-			return Fmath.asec(evaluateExpressionRecursive(modelstate, node.getChild(0),
-					evaluateState, t, y, variableToIndexMap));
+			return Fmath.asec(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap));
 		}
 
 		case FUNCTION_ARCSECH:
 		{
-			double x = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t,
-					y, variableToIndexMap);
+			double x = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap);
 			return FastMath.log((1 + FastMath.sqrt(1 - x * x)) / x);
 		}
 		case FUNCTION_POWER:
@@ -795,11 +702,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			ASTNode leftChild = node.getLeftChild();
 			ASTNode rightChild = node.getRightChild();
 
-			return (FastMath.pow(
-					evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y,
-							variableToIndexMap),
-					evaluateExpressionRecursive(modelstate, rightChild, evaluateState, t, y,
-							variableToIndexMap)));
+			return (FastMath.pow(evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y, variableToIndexMap),
+					evaluateExpressionRecursive(modelstate, rightChild, evaluateState, t, y, variableToIndexMap)));
 		}
 
 		case FUNCTION_SELECTOR:
@@ -810,11 +714,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 				id = node.getChild(0).getName();
 				for (int childIter = 1; childIter < node.getChildCount(); childIter++)
 				{
-					id = id
-							+ "["
-							+ (int) evaluateExpressionRecursive(modelstate,
-									node.getChild(childIter), evaluateState, t, y,
-									variableToIndexMap) + "]";
+					id = id + "[" + (int) evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap)
+							+ "]";
 				}
 
 				return modelstate.getVariableToValue(getReplacements(), id);
@@ -833,23 +734,21 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		return 0;
 	}
 
-	private double evaluateInteger(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, Map<String, Integer> variableToIndexMap)
+	private double evaluateInteger(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap)
 	{
 		return node.getInteger();
 	}
 
-	private double evaluateName(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, Map<String, Integer> variableToIndexMap)
+	private double evaluateName(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap)
 	{
 		String name = node.getName();
 
 		if (node.getType() == org.sbml.jsbml.ASTNode.Type.NAME_TIME)
 		{
-
 			return t;
 		}
-
 		else if (modelstate.getReactionToPropensityMap().keySet().contains(node.getName()))
 		{
 			return modelstate.getReactionToPropensityMap().get(node.getName());
@@ -867,8 +766,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(name)
 						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(name) == false)
 				{
-					j = variableToIndexMap.get(modelstate.getSpeciesToCompartmentNameMap()
-							.get(name));
+					j = variableToIndexMap.get(modelstate.getSpeciesToCompartmentNameMap().get(name));
 					value = y[i] / y[j];
 				}
 				else
@@ -882,9 +780,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(name)
 						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(name) == false)
 				{
-					value = (modelstate.getVariableToValue(replacements, name) / modelstate
-							.getVariableToValue(replacements, modelstate
-									.getSpeciesToCompartmentNameMap().get(name)));
+					value = (modelstate.getVariableToValue(replacements, name) / modelstate.getVariableToValue(replacements, modelstate
+							.getSpeciesToCompartmentNameMap().get(name)));
 				}
 				else if (variableToIndexMap != null && variableToIndexMap.containsKey(name))
 				{
@@ -899,8 +796,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		}
 	}
 
-	private double evaluateOperator(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, Map<String, Integer> variableToIndexMap)
+	private double evaluateOperator(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap)
 	{
 		switch (node.getType())
 		{
@@ -911,8 +808,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 
 			for (int childIter = 0; childIter < node.getChildCount(); childIter++)
 			{
-				sum += evaluateExpressionRecursive(modelstate, node.getChild(childIter),
-						evaluateState, t, y, variableToIndexMap);
+				sum += evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap);
 			}
 
 			return sum;
@@ -921,13 +817,11 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		case MINUS:
 		{
 			ASTNode leftChild = node.getLeftChild();
-			double sum = evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y,
-					variableToIndexMap);
+			double sum = evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y, variableToIndexMap);
 
 			for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
 			{
-				sum -= evaluateExpressionRecursive(modelstate, node.getChild(childIter),
-						evaluateState, t, y, variableToIndexMap);
+				sum -= evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap);
 			}
 
 			return sum;
@@ -940,8 +834,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 
 			for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 			{
-				product *= evaluateExpressionRecursive(modelstate, node.getChild(childIter),
-						evaluateState, t, y, variableToIndexMap);
+				product *= evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap);
 			}
 
 			return product;
@@ -952,9 +845,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			ASTNode leftChild = node.getLeftChild();
 			ASTNode rightChild = node.getRightChild();
 
-			return (evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y,
-					variableToIndexMap) / evaluateExpressionRecursive(modelstate, rightChild,
-					evaluateState, t, y, variableToIndexMap));
+			return (evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y, variableToIndexMap) / evaluateExpressionRecursive(
+					modelstate, rightChild, evaluateState, t, y, variableToIndexMap));
 
 		}
 		case POWER:
@@ -962,19 +854,16 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			ASTNode leftChild = node.getLeftChild();
 			ASTNode rightChild = node.getRightChild();
 
-			return (FastMath.pow(
-					evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y,
-							variableToIndexMap),
-					evaluateExpressionRecursive(modelstate, rightChild, evaluateState, t, y,
-							variableToIndexMap)));
+			return (FastMath.pow(evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y, variableToIndexMap),
+					evaluateExpressionRecursive(modelstate, rightChild, evaluateState, t, y, variableToIndexMap)));
 		}
 		default:
 			return 0.0;
 		}
 	}
 
-	private double evaluateReal(ModelState modelstate, ASTNode node, boolean evaluateState,
-			double t, double[] y, Map<String, Integer> variableToIndexMap)
+	private double evaluateReal(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap)
 	{
 		return node.getReal();
 	}
@@ -1088,8 +977,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 			}
 		}
 
-		if (formula.isFunction()
-				&& models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()) != null)
+		if (formula.isFunction() && models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()) != null)
 		{
 
 			if (getIbiosimFunctionDefinitions().contains(formula.getName()))
@@ -1097,8 +985,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 				return formula;
 			}
 
-			ASTNode inlinedFormula = models.get(modelstate.getModel())
-					.getFunctionDefinition(formula.getName()).getBody().clone();
+			ASTNode inlinedFormula = models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getBody().clone();
 
 			ASTNode oldFormula = formula.clone();
 
@@ -1112,11 +999,9 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 
 			Map<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
 
-			for (int i = 0; i < models.get(modelstate.getModel())
-					.getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
+			for (int i = 0; i < models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
 			{
-				inlinedChildToOldIndexMap.put(models.get(modelstate.getModel())
-						.getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
+				inlinedChildToOldIndexMap.put(models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
 			}
 
 			for (int i = 0; i < inlinedChildren.size(); ++i)
@@ -1129,8 +1014,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 				{
 
 					int index = inlinedChildToOldIndexMap.get(child.getName());
-					HierarchicalUtilities.replaceArgument(inlinedFormula, child.toFormula(),
-							oldFormula.getChild(index));
+					HierarchicalUtilities.replaceArgument(inlinedFormula, child.toFormula(), oldFormula.getChild(index));
 
 					if (inlinedFormula.getChildCount() == 0)
 					{
@@ -1159,12 +1043,10 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
 				&& !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable))
 		{
-			double compartment = modelstate.getVariableToValue(replacements, modelstate
-					.getSpeciesToCompartmentNameMap().get(variable));
+			double compartment = modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable));
 
 			double oldValue = modelstate.getVariableToValue(replacements, variable);
-			double newValue = evaluateExpressionRecursive(modelstate, math, false,
-					getCurrentTime(), null, null);
+			double newValue = evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(), null, null);
 
 			// TODO: is this correct?
 			if (oldValue != newValue)
@@ -1176,25 +1058,20 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 		else
 		{
 			double oldValue = modelstate.getVariableToValue(replacements, variable);
-			double newValue = evaluateExpressionRecursive(modelstate, math, false,
-					getCurrentTime(), null, null);
+			double newValue = evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(), null, null);
 
 			if (oldValue != newValue)
 			{
 				changed = true;
-				modelstate.setvariableToValueMap(
-						replacements,
-						variable,
-						evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(),
-								null, null));
+				modelstate.setvariableToValueMap(replacements, variable,
+						evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(), null, null));
 			}
 		}
 
 		return changed;
 	}
 
-	protected HashSet<String> performAssignmentRules(ModelState modelstate,
-			HashSet<AssignmentRule> affectedAssignmentRuleSet)
+	protected HashSet<String> performAssignmentRules(ModelState modelstate, HashSet<AssignmentRule> affectedAssignmentRuleSet)
 	{
 
 		HashSet<String> affectedVariables = new HashSet<String>();
@@ -1204,8 +1081,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimState
 
 			String variable = assignmentRule.getVariable();
 
-			if (modelstate.getVariableToIsConstantMap().containsKey(variable)
-					&& modelstate.getVariableToIsConstantMap().get(variable) == false
+			if (modelstate.getVariableToIsConstantMap().containsKey(variable) && modelstate.getVariableToIsConstantMap().get(variable) == false
 					|| modelstate.getVariableToIsConstantMap().containsKey(variable) == false)
 			{
 

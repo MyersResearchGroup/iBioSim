@@ -26,15 +26,12 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 public abstract class HierarchicalSimulationFunctions extends HierarchicalSBasesSetup
 {
 
-	public HierarchicalSimulationFunctions(String SBMLFileName, String rootDirectory,
-			String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep,
-			JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType, String abstraction)
-			throws IOException, XMLStreamException
+	public HierarchicalSimulationFunctions(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, double maxTimeStep,
+			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
+			String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
-		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
-				progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
-				abstraction);
+		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running,
+				interestingSpecies, quantityType, abstraction);
 
 	}
 
@@ -83,8 +80,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			{
 				if (!model.getIsHierarchical().contains(noConstantParam))
 				{
-					getBufferedTSDWriter().write(
-							",\"" + model.getID() + "__" + noConstantParam + "\"");
+					getBufferedTSDWriter().write(",\"" + model.getID() + "__" + noConstantParam + "\"");
 				}
 			}
 		}
@@ -108,8 +104,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		for (String speciesID : getTopmodel().getSpeciesIDSet())
 		{
 
-			getBufferedTSDWriter().write(
-					commaSpace + getTopmodel().getVariableToValue(getReplacements(), speciesID));
+			getBufferedTSDWriter().write(commaSpace + getTopmodel().getVariableToValue(getReplacements(), speciesID));
 			commaSpace = ",";
 
 		}
@@ -117,9 +112,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		for (String noConstantParam : getTopmodel().getVariablesToPrint())
 		{
 
-			getBufferedTSDWriter().write(
-					commaSpace
-							+ getTopmodel().getVariableToValue(getReplacements(), noConstantParam));
+			getBufferedTSDWriter().write(commaSpace + getTopmodel().getVariableToValue(getReplacements(), noConstantParam));
 			commaSpace = ",";
 
 		}
@@ -130,8 +123,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			{
 				if (!models.getIsHierarchical().contains(speciesID))
 				{
-					getBufferedTSDWriter().write(
-							commaSpace + models.getVariableToValue(getReplacements(), speciesID));
+					getBufferedTSDWriter().write(commaSpace + models.getVariableToValue(getReplacements(), speciesID));
 					commaSpace = ",";
 				}
 			}
@@ -140,9 +132,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			{
 				if (!models.getIsHierarchical().contains(noConstantParam))
 				{
-					getBufferedTSDWriter()
-							.write(commaSpace
-									+ models.getVariableToValue(getReplacements(), noConstantParam));
+					getBufferedTSDWriter().write(commaSpace + models.getVariableToValue(getReplacements(), noConstantParam));
 					commaSpace = ",";
 				}
 			}
@@ -204,16 +194,13 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			ModelState ms = (id.equals(s)) ? getTopmodel() : getSubmodels().get(id);
 			if (getPrintConcentrationSpecies().contains(s))
 			{
-				temp = ms.getVariableToValue(getReplacements(), ms.getSpeciesToCompartmentNameMap()
-						.get(element));
-				getBufferedTSDWriter().write(
-						commaSpace + ms.getVariableToValue(getReplacements(), element) / temp);
+				temp = ms.getVariableToValue(getReplacements(), ms.getSpeciesToCompartmentNameMap().get(element));
+				getBufferedTSDWriter().write(commaSpace + ms.getVariableToValue(getReplacements(), element) / temp);
 				commaSpace = ",";
 			}
 			else
 			{
-				getBufferedTSDWriter().write(
-						commaSpace + ms.getVariableToValue(getReplacements(), element));
+				getBufferedTSDWriter().write(commaSpace + ms.getVariableToValue(getReplacements(), element));
 				commaSpace = ",";
 			}
 		}
@@ -239,8 +226,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		return totalPropensity;
 	}
 
-	protected boolean isEventTriggered(ModelState modelstate, double t, double[] y,
-			HashMap<String, Integer> variableToIndexMap)
+	protected boolean isEventTriggered(ModelState modelstate, double t, double[] y, HashMap<String, Integer> variableToIndexMap)
 	{
 
 		if (checkModelTriggerEvent(getTopmodel(), t, y, variableToIndexMap))
@@ -268,8 +254,8 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 	}
 
-	protected void performReaction(ModelState modelstate, String selectedReactionID,
-			final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag, int[] dims)
+	protected void performReaction(ModelState modelstate, String selectedReactionID, final boolean noAssignmentRulesFlag,
+			final boolean noConstraintsFlag, int[] dims)
 	{
 
 		// these are sets of things that need to be re-evaluated or tested due
@@ -279,8 +265,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 		// loop through the reaction's reactants and products and update their
 		// amounts
-		for (HierarchicalStringDoublePair speciesAndStoichiometry : modelstate
-				.getReactionToSpeciesAndStoichiometrySetMap().get(selectedReactionID))
+		for (HierarchicalStringDoublePair speciesAndStoichiometry : modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(selectedReactionID))
 		{
 
 			double stoichiometry = speciesAndStoichiometry.doub;
@@ -292,32 +277,27 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			}
 			else
 			{
-				speciesID = getIndexedSpeciesReference(modelstate, selectedReactionID,
-						speciesAndStoichiometry.string, dims);
+				speciesID = getIndexedSpeciesReference(modelstate, selectedReactionID, speciesAndStoichiometry.string, dims);
 			}
 			// this means the stoichiometry isn't constant, so look to the
 			// variableToValue map
-			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(
-					selectedReactionID))
+			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(selectedReactionID))
 			{
 
-				for (HierarchicalStringPair doubleID : modelstate
-						.getReactionToNonconstantStoichiometriesSetMap().get(selectedReactionID))
+				for (HierarchicalStringPair doubleID : modelstate.getReactionToNonconstantStoichiometriesSetMap().get(selectedReactionID))
 				{
 					// string1 is the species ID; string2 is the
 					// speciesReference ID
 					if (doubleID.string1.equals(speciesID))
 					{
 
-						stoichiometry = modelstate.getVariableToValue(getReplacements(),
-								doubleID.string2);
+						stoichiometry = modelstate.getVariableToValue(getReplacements(), doubleID.string2);
 
 						// this is to get the plus/minus correct, as the
 						// variableToValueMap has
 						// a stoichiometry without the reactant/product
 						// plus/minus data
-						stoichiometry *= (int) (speciesAndStoichiometry.doub / Math
-								.abs(speciesAndStoichiometry.doub));
+						stoichiometry *= (int) (speciesAndStoichiometry.doub / Math.abs(speciesAndStoichiometry.doub));
 						break;
 					}
 				}
@@ -332,8 +312,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			if (!cond1 && !cond2)
 			{
 
-				double val = modelstate.getVariableToValue(getReplacements(), speciesID)
-						+ stoichiometry;
+				double val = modelstate.getVariableToValue(getReplacements(), speciesID) + stoichiometry;
 				if (val >= 0)
 				{
 					modelstate.setvariableToValueMap(getReplacements(), speciesID, val);
@@ -344,18 +323,14 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			// if this variable that was just updated is part of an assignment
 			// rule (RHS)
 			// then re-evaluate that assignment rule
-			if (noAssignmentRulesFlag == false
-					&& modelstate.getVariableToIsInAssignmentRuleMap().get(speciesID) == true)
+			if (noAssignmentRulesFlag == false && modelstate.getVariableToIsInAssignmentRuleMap().get(speciesID) == true)
 			{
-				affectedAssignmentRuleSet.addAll(modelstate
-						.getVariableToAffectedAssignmentRuleSetMap().get(speciesID));
+				affectedAssignmentRuleSet.addAll(modelstate.getVariableToAffectedAssignmentRuleSetMap().get(speciesID));
 			}
 
-			if (noConstraintsFlag == false
-					&& modelstate.getVariableToIsInConstraintMap().get(speciesID) == true)
+			if (noConstraintsFlag == false && modelstate.getVariableToIsInConstraintMap().get(speciesID) == true)
 			{
-				affectedConstraintSet.addAll(modelstate.getVariableToAffectedConstraintSetMap()
-						.get(speciesID));
+				affectedConstraintSet.addAll(modelstate.getVariableToAffectedConstraintSetMap().get(speciesID));
 			}
 		}
 
@@ -371,38 +346,31 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 	}
 
-	protected static HashSet<String> getAffectedReactionSet(ModelState modelstate,
-			String selectedReactionID, boolean noAssignmentRulesFlag)
+	protected static HashSet<String> getAffectedReactionSet(ModelState modelstate, String selectedReactionID, boolean noAssignmentRulesFlag)
 	{
 
 		HashSet<String> affectedReactionSet = new HashSet<String>(20);
 		affectedReactionSet.add(selectedReactionID);
 
 		// loop through the reaction's reactants and products
-		for (HierarchicalStringDoublePair speciesAndStoichiometry : modelstate
-				.getReactionToSpeciesAndStoichiometrySetMap().get(selectedReactionID))
+		for (HierarchicalStringDoublePair speciesAndStoichiometry : modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(selectedReactionID))
 		{
 
 			String speciesID = speciesAndStoichiometry.string;
-			affectedReactionSet.addAll(modelstate.getSpeciesToAffectedReactionSetMap().get(
-					speciesID));
+			affectedReactionSet.addAll(modelstate.getSpeciesToAffectedReactionSetMap().get(speciesID));
 
 			// if the species is involved in an assignment rule then it its
 			// changing may affect a reaction's propensity
-			if (noAssignmentRulesFlag == false
-					&& modelstate.getVariableToIsInAssignmentRuleMap().get(speciesID))
+			if (noAssignmentRulesFlag == false && modelstate.getVariableToIsInAssignmentRuleMap().get(speciesID))
 			{
 
 				// this assignment rule is going to be evaluated, so the rule's
 				// variable's value will change
-				for (AssignmentRule assignmentRule : modelstate
-						.getVariableToAffectedAssignmentRuleSetMap().get(speciesID))
+				for (AssignmentRule assignmentRule : modelstate.getVariableToAffectedAssignmentRuleSetMap().get(speciesID))
 				{
-					if (modelstate.getSpeciesToAffectedReactionSetMap().get(
-							assignmentRule.getVariable()) != null)
+					if (modelstate.getSpeciesToAffectedReactionSetMap().get(assignmentRule.getVariable()) != null)
 					{
-						affectedReactionSet.addAll(modelstate.getSpeciesToAffectedReactionSetMap()
-								.get(assignmentRule.getVariable()));
+						affectedReactionSet.addAll(modelstate.getSpeciesToAffectedReactionSetMap().get(assignmentRule.getVariable()));
 					}
 				}
 			}
@@ -451,8 +419,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		if (getTopmodel().isNoEventsFlag() == false)
 		{
 			handleEvents(getTopmodel());
-			if (!getTopmodel().getTriggeredEventQueue().isEmpty()
-					&& getTopmodel().getTriggeredEventQueue().peek().getFireTime() <= nextEventTime)
+			if (!getTopmodel().getTriggeredEventQueue().isEmpty() && getTopmodel().getTriggeredEventQueue().peek().getFireTime() <= nextEventTime)
 			{
 				if (getTopmodel().getTriggeredEventQueue().peek().getFireTime() < nextEventTime)
 				{
@@ -466,8 +433,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			if (models.isNoEventsFlag() == false)
 			{
 				handleEvents(models);
-				if (!models.getTriggeredEventQueue().isEmpty()
-						&& models.getTriggeredEventQueue().peek().getFireTime() <= nextEventTime)
+				if (!models.getTriggeredEventQueue().isEmpty() && models.getTriggeredEventQueue().peek().getFireTime() <= nextEventTime)
 				{
 					if (models.getTriggeredEventQueue().peek().getFireTime() < nextEventTime)
 					{
@@ -483,8 +449,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 	{
 		for (ASTNode constraint : affectedConstraintSet)
 		{
-			if (HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
-					constraint, false, getCurrentTime(), null, null)))
+			if (HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, constraint, false, getCurrentTime(), null, null)))
 			{
 				return true;
 			}
@@ -501,16 +466,13 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		for (String untriggeredEventID : modelstate.getUntriggeredEventSet())
 		{
 
-			boolean eventTrigger = HierarchicalUtilities
-					.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate
-							.getEventToTriggerMap().get(untriggeredEventID), false,
-							getCurrentTime(), null, null));
+			boolean eventTrigger = HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate
+					.getEventToTriggerMap().get(untriggeredEventID), false, getCurrentTime(), null, null));
 
 			if (eventTrigger)
 			{
 
-				if (getCurrentTime() == 0.0
-						&& modelstate.getEventToTriggerInitiallyTrueMap().get(untriggeredEventID) == true)
+				if (getCurrentTime() == 0.0 && modelstate.getEventToTriggerInitiallyTrueMap().get(untriggeredEventID) == true)
 				{
 					continue;
 				}
@@ -549,22 +511,19 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		{
 
 			EventAssignment eventAssignment = (EventAssignment) evAssignment;
-			evaluatedAssignments.add(new HierarchicalStringDoublePair(
-					eventAssignment.getVariable(), evaluateExpressionRecursive(modelstate,
-							eventAssignment.getMath(), false, getCurrentTime(), null, null)));
+			evaluatedAssignments.add(new HierarchicalStringDoublePair(eventAssignment.getVariable(), evaluateExpressionRecursive(modelstate,
+					eventAssignment.getMath(), false, getCurrentTime(), null, null)));
 		}
 
 		double fireTime = getCurrentTime();
 
 		if (modelstate.getEventToHasDelayMap().get(untriggeredEventID))
 		{
-			fireTime += evaluateExpressionRecursive(modelstate, modelstate.getEventToDelayMap()
-					.get(untriggeredEventID), false, getCurrentTime(), null, null);
+			fireTime += evaluateExpressionRecursive(modelstate, modelstate.getEventToDelayMap().get(untriggeredEventID), false, getCurrentTime(),
+					null, null);
 		}
 
-		modelstate.getTriggeredEventQueue().add(
-				new HierarchicalEventToFire(modelstate.getID(), untriggeredEventID,
-						evaluatedAssignments, fireTime));
+		modelstate.getTriggeredEventQueue().add(new HierarchicalEventToFire(modelstate.getID(), untriggeredEventID, evaluatedAssignments, fireTime));
 	}
 
 	private void handleEventsValueAtFire(ModelState modelstate, String untriggeredEventID)
@@ -573,17 +532,16 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 		if (modelstate.getEventToHasDelayMap().get(untriggeredEventID) == true)
 		{
-			fireTime += evaluateExpressionRecursive(modelstate, modelstate.getEventToDelayMap()
-					.get(untriggeredEventID), false, getCurrentTime(), null, null);
+			fireTime += evaluateExpressionRecursive(modelstate, modelstate.getEventToDelayMap().get(untriggeredEventID), false, getCurrentTime(),
+					null, null);
 		}
 
 		modelstate.getTriggeredEventQueue().add(
-				new HierarchicalEventToFire(modelstate.getID(), untriggeredEventID, modelstate
-						.getEventToAssignmentSetMap().get(untriggeredEventID), fireTime));
+				new HierarchicalEventToFire(modelstate.getID(), untriggeredEventID, modelstate.getEventToAssignmentSetMap().get(untriggeredEventID),
+						fireTime));
 	}
 
-	protected void updatePreviosTriggerEvent(ModelState modelstate, double t, double[] y,
-			HashMap<String, Integer> variableToIndexMap)
+	protected void updatePreviosTriggerEvent(ModelState modelstate, double t, double[] y, HashMap<String, Integer> variableToIndexMap)
 	{
 
 		if (!modelstate.isNoEventsFlag())
@@ -591,8 +549,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 			for (String event : modelstate.getUntriggeredEventSet())
 			{
-				double result = evaluateExpressionRecursive(modelstate, modelstate
-						.getEventToTriggerMap().get(event), true, t, y, variableToIndexMap);
+				double result = evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(event), true, t, y, variableToIndexMap);
 
 				modelstate.getEventToPreviousTriggerValueMap().put(event, result > 0);
 
@@ -600,11 +557,10 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		}
 	}
 
-	protected boolean isEventTriggered(ModelState modelstate, String event, double t, double[] y,
-			HashMap<String, Integer> variableToIndexMap, boolean checkPrevious)
+	protected boolean isEventTriggered(ModelState modelstate, String event, double t, double[] y, Map<String, Integer> variableToIndexMap,
+			boolean checkPrevious)
 	{
-		double result = evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap()
-				.get(event), true, t, y, variableToIndexMap);
+		double result = evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(event), true, t, y, variableToIndexMap);
 		if (result > 0)
 		{
 			if (!checkPrevious)
@@ -619,8 +575,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		return false;
 	}
 
-	protected boolean checkModelTriggerEvent(ModelState modelstate, double t, double[] y,
-			HashMap<String, Integer> variableToIndexMap)
+	protected boolean checkModelTriggerEvent(ModelState modelstate, double t, double[] y, HashMap<String, Integer> variableToIndexMap)
 	{
 
 		if (modelstate.isNoEventsFlag())
@@ -653,9 +608,8 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			String triggeredEventID = triggeredEvent.getEventID();
 
 			if (modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID) == false
-					&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
-							modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID),
-							false, getCurrentTime(), null, null)) == false)
+					&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
+							modelstate.getEventToTriggerMap().get(triggeredEventID), false, getCurrentTime(), null, null)) == false)
 			{
 
 				untriggeredEvents.add(triggeredEventID);
@@ -663,29 +617,26 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			}
 
 			if (modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID) == true
-					&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
-							modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID),
-							false, getCurrentTime(), null, null)) == false)
+					&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
+							modelstate.getEventToTriggerMap().get(triggeredEventID), false, getCurrentTime(), null, null)) == false)
 			{
 				modelstate.getUntriggeredEventSet().add(triggeredEventID);
 			}
 		}
 	}
 
-	private PriorityQueue<HierarchicalEventToFire> constructPriorityQueue(ModelState modelstate,
-			Set<String> untriggeredEvents)
+	private PriorityQueue<HierarchicalEventToFire> constructPriorityQueue(ModelState modelstate, Set<String> untriggeredEvents)
 	{
-		PriorityQueue<HierarchicalEventToFire> newTriggeredEventQueue = new PriorityQueue<HierarchicalEventToFire>(
-				(int) modelstate.getNumEvents(), modelstate.getEventComparator());
+		PriorityQueue<HierarchicalEventToFire> newTriggeredEventQueue = new PriorityQueue<HierarchicalEventToFire>((int) modelstate.getNumEvents(),
+				modelstate.getEventComparator());
 
 		while (modelstate.getTriggeredEventQueue().size() > 0)
 		{
 
 			HierarchicalEventToFire event = modelstate.getTriggeredEventQueue().poll();
 
-			HierarchicalEventToFire eventToAdd = new HierarchicalEventToFire(modelstate.getID(),
-					event.getEventID(), (HashSet<Object>) event.getEventAssignmentSet().clone(),
-					event.getFireTime());
+			HierarchicalEventToFire eventToAdd = new HierarchicalEventToFire(modelstate.getID(), event.getEventID(), (HashSet<Object>) event
+					.getEventAssignmentSet().clone(), event.getFireTime());
 
 			if (!untriggeredEvents.contains(event.getEventID()))
 			{
@@ -707,19 +658,16 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		{
 
 			if (modelstate.getEventToTriggerPersistenceMap().get(untriggeredEventID) == false
-					&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
-							modelstate, modelstate.getEventToTriggerMap().get(untriggeredEventID),
-							false, getCurrentTime(), null, null)) == false)
+					&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
+							modelstate.getEventToTriggerMap().get(untriggeredEventID), false, getCurrentTime(), null, null)) == false)
 			{
 				modelstate.getEventToPreviousTriggerValueMap().put(untriggeredEventID, false);
 			}
 		}
 	}
 
-	private void fireSingleEvent(ModelState modelstate,
-			Set<AssignmentRule> affectedAssignmentRuleSet, Set<ASTNode> affectedConstraintSet,
-			Set<String> affectedReactionSet, Set<String> variableInFiredEvents,
-			Set<String> untriggeredEvents, final boolean noAssignmentRulesFlag,
+	private void fireSingleEvent(ModelState modelstate, Set<AssignmentRule> affectedAssignmentRuleSet, Set<ASTNode> affectedConstraintSet,
+			Set<String> affectedReactionSet, Set<String> variableInFiredEvents, Set<String> untriggeredEvents, final boolean noAssignmentRulesFlag,
 			final boolean noConstraintsFlag)
 	{
 
@@ -728,15 +676,14 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 		if (modelstate.getEventToAffectedReactionSetMap().get(eventToFireID) != null)
 		{
-			affectedReactionSet.addAll(modelstate.getEventToAffectedReactionSetMap().get(
-					eventToFireID));
+			affectedReactionSet.addAll(modelstate.getEventToAffectedReactionSetMap().get(eventToFireID));
 		}
 
 		modelstate.getUntriggeredEventSet().add(eventToFireID);
-		modelstate.addEventToPreviousTriggerValueMap(eventToFireID, HierarchicalUtilities
-				.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate
-						.getEventToTriggerMap().get(eventToFireID), false, getCurrentTime(), null,
-						null)));
+		modelstate.addEventToPreviousTriggerValueMap(
+				eventToFireID,
+				HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
+						modelstate.getEventToTriggerMap().get(eventToFireID), false, getCurrentTime(), null, null)));
 
 		Map<String, Double> assignments = new HashMap<String, Double>();
 
@@ -754,8 +701,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			else
 			{
 				variable = ((EventAssignment) eventAssignment).getVariable();
-				assignmentValue = evaluateExpressionRecursive(modelstate,
-						((EventAssignment) eventAssignment).getMath(), false, getCurrentTime(),
+				assignmentValue = evaluateExpressionRecursive(modelstate, ((EventAssignment) eventAssignment).getMath(), false, getCurrentTime(),
 						null, null);
 			}
 
@@ -766,17 +712,13 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 				assignments.put(variable, assignmentValue);
 			}
 
-			if (noAssignmentRulesFlag == false
-					&& modelstate.getVariableToIsInAssignmentRuleMap().get(variable) == true)
+			if (noAssignmentRulesFlag == false && modelstate.getVariableToIsInAssignmentRuleMap().get(variable) == true)
 			{
-				affectedAssignmentRuleSet.addAll(modelstate
-						.getVariableToAffectedAssignmentRuleSetMap().get(variable));
+				affectedAssignmentRuleSet.addAll(modelstate.getVariableToAffectedAssignmentRuleSetMap().get(variable));
 			}
-			if (noConstraintsFlag == false
-					&& modelstate.getVariableToIsInConstraintMap().get(variable) == true)
+			if (noConstraintsFlag == false && modelstate.getVariableToIsInConstraintMap().get(variable) == true)
 			{
-				affectedConstraintSet.addAll(modelstate.getVariableToAffectedConstraintSetMap()
-						.get(variable));
+				affectedConstraintSet.addAll(modelstate.getVariableToAffectedConstraintSetMap().get(variable));
 			}
 
 		}
@@ -795,9 +737,8 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			String triggeredEventID = triggeredEvent.getEventID();
 
 			if (modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID) == false
-					&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
-							modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID),
-							false, getCurrentTime(), null, null)) == false)
+					&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
+							modelstate.getEventToTriggerMap().get(triggeredEventID), false, getCurrentTime(), null, null)) == false)
 			{
 
 				untriggeredEvents.add(triggeredEventID);
@@ -805,25 +746,23 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 			}
 
 			if (modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID) == true
-					&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
-							modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID),
-							false, getCurrentTime(), null, null)) == false)
+					&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
+							modelstate.getEventToTriggerMap().get(triggeredEventID), false, getCurrentTime(), null, null)) == false)
 			{
 				modelstate.getUntriggeredEventSet().add(triggeredEventID);
 			}
 		}
 
-		PriorityQueue<HierarchicalEventToFire> newTriggeredEventQueue = new PriorityQueue<HierarchicalEventToFire>(
-				(int) modelstate.getNumEvents(), modelstate.getEventComparator());
+		PriorityQueue<HierarchicalEventToFire> newTriggeredEventQueue = new PriorityQueue<HierarchicalEventToFire>((int) modelstate.getNumEvents(),
+				modelstate.getEventComparator());
 
 		while (modelstate.getTriggeredEventQueue().size() > 0)
 		{
 
 			HierarchicalEventToFire event = modelstate.getTriggeredEventQueue().poll();
 
-			HierarchicalEventToFire eventToAdd = new HierarchicalEventToFire(modelstate.getID(),
-					event.getEventID(), (HashSet<Object>) event.getEventAssignmentSet().clone(),
-					event.getFireTime());
+			HierarchicalEventToFire eventToAdd = new HierarchicalEventToFire(modelstate.getID(), event.getEventID(), (HashSet<Object>) event
+					.getEventAssignmentSet().clone(), event.getFireTime());
 
 			if (!untriggeredEvents.contains(event.getEventID()))
 			{
@@ -844,8 +783,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 	 * @param noAssignmentRulesFlag
 	 * @param noConstraintsFlag
 	 */
-	protected HashSet<String> fireEvents(ModelState modelstate, String selector,
-			final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag)
+	protected HashSet<String> fireEvents(ModelState modelstate, String selector, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag)
 	{
 
 		HashSet<String> untriggeredEvents = new HashSet<String>();
@@ -856,20 +794,17 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 		checkTriggeredEvents(modelstate, untriggeredEvents);
 
-		PriorityQueue<HierarchicalEventToFire> newTriggeredEventQueue = constructPriorityQueue(
-				modelstate, untriggeredEvents);
+		PriorityQueue<HierarchicalEventToFire> newTriggeredEventQueue = constructPriorityQueue(modelstate, untriggeredEvents);
 
 		modelstate.setTriggeredEventQueue(newTriggeredEventQueue);
 
 		updatePreviousTriggerValue(modelstate);
 
-		while (modelstate.getTriggeredEventQueue().size() > 0
-				&& modelstate.getTriggeredEventQueue().peek().getFireTime() <= getCurrentTime())
+		while (modelstate.getTriggeredEventQueue().size() > 0 && modelstate.getTriggeredEventQueue().peek().getFireTime() <= getCurrentTime())
 		{
 
-			fireSingleEvent(modelstate, affectedAssignmentRuleSet, affectedConstraintSet,
-					affectedReactionSet, variableInFiredEvents, untriggeredEvents,
-					noAssignmentRulesFlag, noConstraintsFlag);
+			fireSingleEvent(modelstate, affectedAssignmentRuleSet, affectedConstraintSet, affectedReactionSet, variableInFiredEvents,
+					untriggeredEvents, noAssignmentRulesFlag, noConstraintsFlag);
 			handleEvents(modelstate);
 		}
 

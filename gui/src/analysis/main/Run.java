@@ -39,7 +39,7 @@ import org.sbml.jsbml.Model;
 
 import verification.AbstPane;
 import analysis.dynamicsim.DynamicSimulation;
-import analysis.dynamicsim.Simulator;
+import analysis.dynamicsim.flattened.Simulator;
 import analysis.fba.FluxBalanceAnalysis;
 import analysis.incrementalsim.GillespieSSAJavaSingleStep;
 import analysis.markov.BuildStateGraphThread;
