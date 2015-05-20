@@ -136,7 +136,8 @@ public class SimulatorSSACR extends Simulator
 		double printTime = 0;
 		double nextEventTime = Double.POSITIVE_INFINITY;
 		numSteps = (int) (timeLimit / printInterval);
-
+		currentStep = 0;
+		
 		// add events to queue if they trigger
 		if (noEventsFlag == false)
 		{
