@@ -75,6 +75,7 @@ public class SBMLtoSBOL {
 		SBOLDocument sbolDoc = new SBOLDocument();
 		sbolDoc.setDefaultURIprefix("http://www.async.ece.utah.edu");
 		sbolDoc.setComplete(true);
+		sbolDoc.setTypesInURIs(true);
 		
 		String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
 		Collection collection = sbolDoc.createCollection(collection_id, VERSION);
@@ -151,7 +152,7 @@ public class SBMLtoSBOL {
 			} 
 			else 
 			{
-				access    = AccessType.PRIVATE;
+				access    = AccessType.PUBLIC; // TODO: why not private?
 				direction = DirectionType.NONE;
 			}
 			
