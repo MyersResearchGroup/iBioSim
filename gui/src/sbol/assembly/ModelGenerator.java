@@ -25,7 +25,7 @@ import org.sbolstandard.core2.MapsTo;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
-import org.sbolstandard.core2.MapsTo.RefinementType;
+import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.Identified;
 
