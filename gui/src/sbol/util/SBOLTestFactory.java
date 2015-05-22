@@ -123,23 +123,23 @@ public class SBOLTestFactory {
 		FunctionalComponent remoteTF1 = null;
 		FunctionalComponent remoteTF2 = null;
 		for (FunctionalComponent remoteComp : inverterDef1.getFunctionalComponents()) {
-			if (remoteComp.getDirection().equals(DirectionType.INPUT)) {
+			if (remoteComp.getDirection().equals(DirectionType.IN)) {
 				remoteTF1 = remoteComp;
 			} 
 		}
 		for (FunctionalComponent remoteComp : inverterDef2.getFunctionalComponents()) {
-			if (remoteComp.getDirection().equals(DirectionType.INPUT)) {
+			if (remoteComp.getDirection().equals(DirectionType.IN)) {
 				remoteTF2 = remoteComp;
 			} 
 		}
 		for (FunctionalComponent remoteComp : inverterDef1.getFunctionalComponents()) {
-			if (remoteComp.getDirection().equals(DirectionType.OUTPUT) 
+			if (remoteComp.getDirection().equals(DirectionType.OUT) 
 					&& !remoteComp.getDefinitionURI().equals(remoteTF2.getDefinitionURI())) {
 				return null;
 			}
 		}
 		for (FunctionalComponent remoteComp : inverterDef2.getFunctionalComponents()) {
-			if (remoteComp.getDirection().equals(DirectionType.OUTPUT) 
+			if (remoteComp.getDirection().equals(DirectionType.OUT) 
 					&& !remoteComp.getDefinitionURI().equals(remoteTF1.getDefinitionURI())) {
 				return null;
 			}
@@ -147,13 +147,13 @@ public class SBOLTestFactory {
 		ModuleDefinition toggleDef = createModuleDefinition(remoteTF1.getDisplayId() + "_" + remoteTF2.getDisplayId() + "_" + "Toggle_Switch", 
 				MyersOntology.TOGGLE, sbolDoc);
 		FunctionalComponent inducer1 = createInducerComponent(inducerID1, AccessType.PUBLIC, 
-				DirectionType.INPUT, toggleDef, sbolDoc);
+				DirectionType.IN, toggleDef, sbolDoc);
 		FunctionalComponent inducer2 = createInducerComponent(inducerID2, AccessType.PUBLIC, 
-				DirectionType.INPUT, toggleDef, sbolDoc);
+				DirectionType.IN, toggleDef, sbolDoc);
 		FunctionalComponent localTF1 = createTFComponent(remoteTF1.getDisplayId(), AccessType.PUBLIC, 
-				DirectionType.OUTPUT, toggleDef, sbolDoc);
+				DirectionType.OUT, toggleDef, sbolDoc);
 		FunctionalComponent localTF2 = createTFComponent(remoteTF2.getDisplayId(), AccessType.PUBLIC, 
-				DirectionType.OUTPUT, toggleDef, sbolDoc);
+				DirectionType.OUT, toggleDef, sbolDoc);
 		Set<String> ligandIDs1 = new HashSet<String>();
 		ligandIDs1.add(inducerID1);
 		ligandIDs1.add(remoteTF1.getDisplayId());
@@ -185,14 +185,14 @@ public class SBOLTestFactory {
 	public static ModuleDefinition createInverterDefinition(String tfID, String promoterID, 
 			String geneID, String proteinID, URI proteinRole, SBOLDocument sbolDoc) {
 		ModuleDefinition inverterDef = createModuleDefinition(tfID + "_Inverter", MyersOntology.INVERTER, sbolDoc);
-		FunctionalComponent tf = createTFComponent(tfID, AccessType.PUBLIC, DirectionType.INPUT,
+		FunctionalComponent tf = createTFComponent(tfID, AccessType.PUBLIC, DirectionType.IN,
 				inverterDef, sbolDoc);
 		FunctionalComponent promoter = createPromoterComponent(promoterID, AccessType.PRIVATE, DirectionType.NONE,
 				inverterDef, sbolDoc);
 		FunctionalComponent gene = createGeneComponent(geneID, AccessType.PRIVATE, DirectionType.NONE,
 				inverterDef, sbolDoc);
 		FunctionalComponent protein = createProteinComponent(proteinID, proteinRole, 
-				AccessType.PUBLIC, DirectionType.OUTPUT, inverterDef, sbolDoc);
+				AccessType.PUBLIC, DirectionType.OUT, inverterDef, sbolDoc);
 		createRepressionInteraction(tf, promoter, inverterDef);
 		createProductionInteraction(promoter, gene, protein, inverterDef);
 		createDegradationInteraction(protein, inverterDef);
@@ -227,26 +227,26 @@ public class SBOLTestFactory {
 		List<FunctionalComponent> remoteOutputs3 = new LinkedList<FunctionalComponent>();
 		for (ModuleDefinition sensorDef : sensorDefs) {
 			for (FunctionalComponent remoteComp : sensorDef.getFunctionalComponents()) {
-				if (remoteComp.getDirection().equals(DirectionType.INPUT)) {
+				if (remoteComp.getDirection().equals(DirectionType.IN)) {
 					remoteInputs1.add(remoteComp);
-				} else if (remoteComp.getDirection().equals(DirectionType.OUTPUT)) {
+				} else if (remoteComp.getDirection().equals(DirectionType.OUT)) {
 					remoteOutputs1.add(remoteComp);
 				} 
 			}
 		}
 		for (int i = 0; i < andDefs.size() - 1; i++) {
 			for (FunctionalComponent remoteComp : andDefs.get(i).getFunctionalComponents()) {
-				if (remoteComp.getDirection().equals(DirectionType.INPUT)) {
+				if (remoteComp.getDirection().equals(DirectionType.IN)) {
 					remoteInputs2.add(remoteComp);
-				} else if (remoteComp.getDirection().equals(DirectionType.OUTPUT)) {
+				} else if (remoteComp.getDirection().equals(DirectionType.OUT)) {
 					remoteOutputs2.add(remoteComp);
 				} 
 			}
 		}
 		for (FunctionalComponent remoteComp : andDefs.get(2).getFunctionalComponents()) {
-			if (remoteComp.getDirection().equals(DirectionType.INPUT)) {
+			if (remoteComp.getDirection().equals(DirectionType.IN)) {
 				remoteInputs3.add(remoteComp);
-			} else if (remoteComp.getDirection().equals(DirectionType.OUTPUT)) {
+			} else if (remoteComp.getDirection().equals(DirectionType.OUT)) {
 				remoteOutputs3.add(remoteComp);
 			} 
 		}
@@ -281,7 +281,7 @@ public class SBOLTestFactory {
 		andSensorDef.addRole(MyersOntology.AND);
 		for (FunctionalComponent remoteInducer : remoteInputs1) {
 			createInducerComponent(remoteInducer.getDisplayId(), AccessType.PUBLIC, 
-					DirectionType.INPUT, andSensorDef, sbolDoc);
+					DirectionType.IN, andSensorDef, sbolDoc);
 		}
 		for (FunctionalComponent remoteOutput : remoteOutputs1) {
 			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinitionURI());
@@ -335,7 +335,7 @@ public class SBOLTestFactory {
 				createDegradationInteraction(tf, andSensorDef);
 			} else if (remoteOutputDef.containsRole(MyersOntology.REPORTER)) {
 				FunctionalComponent reporter = createReporterComponent(remoteOutput.getDisplayId(), 
-						AccessType.PUBLIC, DirectionType.OUTPUT, andSensorDef, sbolDoc);
+						AccessType.PUBLIC, DirectionType.OUT, andSensorDef, sbolDoc);
 				createDegradationInteraction(reporter, andSensorDef);
 			}
 		}
@@ -378,7 +378,7 @@ public class SBOLTestFactory {
 		ModuleDefinition sensorDef = createModuleDefinition(inducerID + "_Sensor", MyersOntology.SENSOR, 
 				sbolDoc);
 		FunctionalComponent inducer = createInducerComponent(inducerID, AccessType.PUBLIC, 
-				DirectionType.INPUT, sensorDef, sbolDoc);
+				DirectionType.IN, sensorDef, sbolDoc);
 		FunctionalComponent promoter1 = createPromoterComponent(promoterID1, AccessType.PRIVATE, 
 				DirectionType.NONE, sensorDef, sbolDoc);
 		FunctionalComponent gene1 = createGeneComponent(geneID1, AccessType.PRIVATE, DirectionType.NONE,
@@ -400,7 +400,7 @@ public class SBOLTestFactory {
 		List<FunctionalComponent> proteins = new LinkedList<FunctionalComponent>();
 		for (int i = 0; i < proteinIDs.size(); i++) {
 			proteins.add(createProteinComponent(proteinIDs.get(i), proteinRoles.get(i), AccessType.PUBLIC,
-					DirectionType.OUTPUT, sensorDef, sbolDoc));
+					DirectionType.OUT, sensorDef, sbolDoc));
 		}
 		createProductionInteraction(promoter1, gene1, tf, sensorDef);
 		createDegradationInteraction(tf, sensorDef);
@@ -431,8 +431,8 @@ public class SBOLTestFactory {
 		ModuleDefinition andDef = createModuleDefinition(chapID + "_AND_" + tfID, MyersOntology.AND, 
 				sbolDoc);
 		FunctionalComponent chaperone = createChaperoneComponent(chapID, AccessType.PUBLIC, 
-				DirectionType.INPUT, andDef, sbolDoc);
-		FunctionalComponent tf = createTFComponent(tfID, AccessType.PUBLIC, DirectionType.INPUT,
+				DirectionType.IN, andDef, sbolDoc);
+		FunctionalComponent tf = createTFComponent(tfID, AccessType.PUBLIC, DirectionType.IN,
 				andDef, sbolDoc);
 		Set<String> ligandIDs = new HashSet<String>();
 		ligandIDs.add(chapID);
@@ -444,7 +444,7 @@ public class SBOLTestFactory {
 		FunctionalComponent gene = createGeneComponent(geneID, AccessType.PRIVATE, DirectionType.NONE,
 				andDef, sbolDoc);
 		FunctionalComponent protein = createProteinComponent(proteinID, proteinRole, AccessType.PUBLIC,
-				DirectionType.OUTPUT, andDef, sbolDoc);
+				DirectionType.OUT, andDef, sbolDoc);
 		createBindingInteraction(chaperone, tf, complexTF, andDef);
 		createDegradationInteraction(complexTF, andDef);
 		createActivationInteraction(complexTF, promoter, andDef);
@@ -458,10 +458,10 @@ public class SBOLTestFactory {
 		ModuleDefinition andDef = createModuleDefinition(chapID1 + "_AND_" + tfID, MyersOntology.AND, 
 				sbolDoc);
 		FunctionalComponent chap1 = createChaperoneComponent(chapID1, AccessType.PUBLIC, 
-				DirectionType.INPUT, andDef, sbolDoc);
+				DirectionType.IN, andDef, sbolDoc);
 		FunctionalComponent chap2 = createChaperoneComponent(chapID2, AccessType.PUBLIC, 
-				DirectionType.INPUT, andDef, sbolDoc);
-		FunctionalComponent tf = createTFComponent(tfID, AccessType.PUBLIC, DirectionType.INPUT,
+				DirectionType.IN, andDef, sbolDoc);
+		FunctionalComponent tf = createTFComponent(tfID, AccessType.PUBLIC, DirectionType.IN,
 				andDef, sbolDoc);
 		Set<String> ligandIDs1 = new HashSet<String>();
 		ligandIDs1.add(chapID2);
@@ -484,7 +484,7 @@ public class SBOLTestFactory {
 		FunctionalComponent gene = createGeneComponent(geneID, AccessType.PRIVATE, DirectionType.NONE,
 				andDef, sbolDoc);
 		FunctionalComponent protein = createProteinComponent(proteinID, proteinRole, AccessType.PUBLIC,
-				DirectionType.OUTPUT, andDef, sbolDoc);
+				DirectionType.OUT, andDef, sbolDoc);
 		createBindingInteraction(chap2, tf, complex1, andDef);
 		createBindingInteraction(chap1, chap2, complex2, andDef);
 		createDegradationInteraction(complex1, andDef);
