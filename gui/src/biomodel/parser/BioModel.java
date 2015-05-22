@@ -2934,7 +2934,7 @@ public class BioModel {
 						p.getId().endsWith("__"+GlobalConstants.FAIL)) continue;
 				Port port = getPortByIdRef(p.getId());
 				if (port != null) {
-					if (isInputPort(port)) {
+					if (SBMLutilities.isInputPort(port)) {
 						if (p.getValue()==0) {	
 							lpn.addInput(p.getId(), "boolean", "false");
 						} else {
@@ -2979,7 +2979,7 @@ public class BioModel {
 						}
 					}
 					if (port != null) {
-						if (isInputPort(port)) {
+						if (SBMLutilities.isInputPort(port)) {
 							lpn.addInput(p.getId(),type,bound);
 						} else {
 							lpn.addOutput(p.getId(),type,bound);
@@ -4160,58 +4160,21 @@ public class BioModel {
 	}
 	
 	public Port getPortByIdRef(String idRef) {
-		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
-			Port port = sbmlCompModel.getListOfPorts().get(i);
-			if (port.isSetIdRef() && port.getIdRef().equals(idRef)) {
-				return port;
-			}
-		}
-		return null;
+		return SBMLutilities.getPortByIdRef(sbmlCompModel, idRef);
 	}
 	
 	public Port getPortByMetaIdRef(String metaIdRef) {
-		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
-			Port port = sbmlCompModel.getListOfPorts().get(i);
-			if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(metaIdRef)) {
-				return port;
-			}
-		}
-		return null;
+		return SBMLutilities.getPortByMetaIdRef(sbmlCompModel, metaIdRef);
 	}
 	
 	public Port getPortByUnitRef(String unitIdRef) {
-		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
-			Port port = sbmlCompModel.getListOfPorts().get(i);
-			if (port.isSetUnitRef() && port.getUnitRef().equals(unitIdRef)) {
-				return port;
-			}
-		}
-		return null;
+		return SBMLutilities.getPortByUnitRef(sbmlCompModel, unitIdRef);
 	}
 	
 	public Port getPortBySBaseRef(SBaseRef sbaseRef) {
-		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
-			Port port = sbmlCompModel.getListOfPorts().get(i);
-			if (port.isSetIdRef() && port.getIdRef().equals(sbaseRef.getIdRef()) &&
-				((!port.isSetSBaseRef() && !sbaseRef.isSetSBaseRef()) ||
-				(port.getSBaseRef().isSetPortRef() && sbaseRef.getSBaseRef().isSetPortRef() &&
-					port.getSBaseRef().getPortRef().equals(sbaseRef.getSBaseRef().getPortRef())))) {
-				return port;
-			}
-		}
-		return null;
+		return SBMLutilities.getPortBySBaseRef(sbmlCompModel, sbaseRef);
 	}
-	
-	public static Port getPortByIdRef(CompModelPlugin sbmlCompModel, String idRef) {
-		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
-			Port port = sbmlCompModel.getListOfPorts().get(i);
-			if (port.isSetIdRef() && port.getIdRef().equals(idRef)) {
-				return port;
-			}
-		}
-		return null;
-	}
-	
+
 	public ArrayList<String> getPorts() {
 		ArrayList<String> ports = new ArrayList<String>();
 		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
@@ -4351,7 +4314,7 @@ public class BioModel {
 						sbmlSBase.getListOfReplacedElements().remove(j);
 						continue;
 					}
-					if (BioModel.isInputPort(port)) {
+					if (SBMLutilities.isInputPort(port)) {
 						replacement.unsetIdRef();
 						replacement.setPortRef(port.getId());
 						AnnotationUtility.removeObsoleteAnnotation(replacement);
@@ -4363,7 +4326,7 @@ public class BioModel {
 						sbmlSBase.getListOfReplacedElements().remove(j);
 						continue;
 					}
-					if (BioModel.isInputPort(port)) {
+					if (SBMLutilities.isInputPort(port)) {
 						inputs.put(port.getId().replace(GlobalConstants.INPUT+"__",""),sbml.getModel().getSpecies(i).getId());
 					}
 				}
@@ -4376,7 +4339,7 @@ public class BioModel {
 						sbmlSBase.unsetReplacedBy();
 						continue;
 					}
-					if (BioModel.isInputPort(port)) {
+					if (SBMLutilities.isInputPort(port)) {
 						inputs.put(port.getId().replace(GlobalConstants.INPUT+"__",""),sbml.getModel().getSpecies(i).getId());
 					}
 				}
@@ -4399,7 +4362,7 @@ public class BioModel {
 						sbmlSBase.getListOfReplacedElements().remove(j);
 						continue;
 					}
-					if (BioModel.isOutputPort(port)) {
+					if (SBMLutilities.isOutputPort(port)) {
 						replacement.unsetIdRef();
 						replacement.setPortRef(port.getId());
 						AnnotationUtility.removeObsoleteAnnotation(replacement);
@@ -4411,7 +4374,7 @@ public class BioModel {
 						sbmlSBase.getListOfReplacedElements().remove(j);
 						continue;
 					}
-					if (BioModel.isOutputPort(port)) {
+					if (SBMLutilities.isOutputPort(port)) {
 						outputs.put(port.getId().replace(GlobalConstants.OUTPUT+"__",""),sbml.getModel().getSpecies(i).getId());
 					}
 				}
@@ -4424,7 +4387,7 @@ public class BioModel {
 						sbmlSBase.unsetReplacedBy();
 						continue;
 					}
-					if (BioModel.isOutputPort(port)) {
+					if (SBMLutilities.isOutputPort(port)) {
 						outputs.put(port.getId().replace(GlobalConstants.OUTPUT+"__",""),sbml.getModel().getSpecies(i).getId());
 					}
 				}
@@ -4447,7 +4410,7 @@ public class BioModel {
 							sbmlSBase.getListOfReplacedElements().remove(j);
 							continue;
 						}
-						if (BioModel.isInputPort(port)) {
+						if (SBMLutilities.isInputPort(port)) {
 							variables.put(port.getId().replace(GlobalConstants.INPUT+"__",""),
 									sbml.getModel().getParameter(i).getId());
 						}
@@ -4461,7 +4424,7 @@ public class BioModel {
 							sbmlSBase.unsetReplacedBy();
 							continue;
 						}
-						if (BioModel.isInputPort(port)) {
+						if (SBMLutilities.isInputPort(port)) {
 							variables.put(port.getId().replace(GlobalConstants.INPUT+"__",""),
 									sbml.getModel().getParameter(i).getId());
 						}
@@ -4486,7 +4449,7 @@ public class BioModel {
 							sbmlSBase.getListOfReplacedElements().remove(j);
 							continue;
 						}
-						if (BioModel.isOutputPort(port)) {
+						if (SBMLutilities.isOutputPort(port)) {
 							variables.put(port.getId().replace(GlobalConstants.OUTPUT+"__",""),
 									sbml.getModel().getParameter(i).getId());
 						}
@@ -4500,7 +4463,7 @@ public class BioModel {
 							sbmlSBase.unsetReplacedBy();
 							continue;
 						}
-						if (BioModel.isOutputPort(port)) {
+						if (SBMLutilities.isOutputPort(port)) {
 							variables.put(port.getId().replace(GlobalConstants.OUTPUT+"__",""),
 									sbml.getModel().getParameter(i).getId());
 						}
@@ -4606,7 +4569,7 @@ public class BioModel {
 		ArrayList<String> ports = new ArrayList<String>();
 		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
 			Port port = sbmlCompModel.getListOfPorts().get(i);
-			if (!isInputPort(port)) continue;
+			if (!SBMLutilities.isInputPort(port)) continue;
 			if (port.isSetIdRef()) {
 				String idRef = port.getIdRef();
 				SBase sbase = SBMLutilities.getElementBySId(sbml, idRef);
@@ -4641,7 +4604,7 @@ public class BioModel {
 		ArrayList<String> ports = new ArrayList<String>();
 		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
 			Port port = sbmlCompModel.getListOfPorts().get(i);
-			if (!isOutputPort(port)) continue;
+			if (!SBMLutilities.isOutputPort(port)) continue;
 			if (port.isSetIdRef()) {
 				String idRef = port.getIdRef();
 				SBase sbase = SBMLutilities.getElementBySId(sbml, idRef);
@@ -6560,8 +6523,8 @@ public class BioModel {
 				sbmlCompModel.removePort(port);
 			} else {
 				/* TODO: temporary to restore SBO terms */
-				isInputPort(port);
-				isOutputPort(port);
+				SBMLutilities.isInputPort(port);
+				SBMLutilities.isOutputPort(port);
 				j++;
 			}
 		}
@@ -6639,43 +6602,19 @@ public class BioModel {
 	public boolean isInput(String id) {
 		Port port = getPortByIdRef(id);
 		if (port != null) {
-			return isInputPort(port);
+			return SBMLutilities.isInputPort(port);
 		}
 		return false;
 	}
 	
-	public static boolean isInputPort(Port port) {
-		if (port.isSetSBOTerm() && port.getSBOTerm()==GlobalConstants.SBO_INPUT_PORT) {
-			return true;
-		} else if (port.isSetSBOTerm() && port.getSBOTerm()==GlobalConstants.SBO_OUTPUT_PORT) {
-			return false;
-		} else if (port.getId().startsWith(GlobalConstants.INPUT + "__")){
-			port.setSBOTerm(GlobalConstants.SBO_INPUT_PORT);
-			return true;
-		}
-		return false;
-	}
-
 	public boolean isOutput(String id) {
 		Port port = getPortByIdRef(id);
 		if (port != null) {
-			return isOutputPort(port);
+			return SBMLutilities.isOutputPort(port);
 		}
 		return false;
 	}
 		
-	public static boolean isOutputPort(Port port) {
-		if (port.isSetSBOTerm() && port.getSBOTerm()==GlobalConstants.SBO_OUTPUT_PORT) {
-			return true;
-		} else if (port.isSetSBOTerm() && port.getSBOTerm()==GlobalConstants.SBO_INPUT_PORT) {
-			return false;
-		} else if (port.getId().startsWith(GlobalConstants.INPUT + "__")){
-			return false;
-		}
-		port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
-		return true;
-	}
-	
 	public void removeStaleLayout() {
 		Layout layout = getLayout();
 		Model model = sbml.getSBMLDocument().getModel();

@@ -140,19 +140,19 @@ public class SBMLtoSBOL {
 			// create FunctionalComponents for these within the module
 			String funcComp_identity =  species.getId();
 			
-			if (bioModel.isInput(species.getId())) 
+			if (SBMLutilities.isInput(sbmlDoc,species.getId())) 
 			{
 				access    = AccessType.PUBLIC;
-				direction = DirectionType.INPUT;
+				direction = DirectionType.IN;
 			} 
-			else if (bioModel.isOutput(species.getId())) 
+			else if (SBMLutilities.isOutput(sbmlDoc,species.getId())) 
 			{
 				access    = AccessType.PUBLIC;
-				direction = DirectionType.OUTPUT;
+				direction = DirectionType.OUT;
 			} 
 			else 
 			{
-				access    = AccessType.PUBLIC; // TODO: why not private?
+				access    = AccessType.PRIVATE; 
 				direction = DirectionType.NONE;
 			}
 			

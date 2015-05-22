@@ -5025,4 +5025,90 @@ public class SBMLutilities {
 		
 		return true;
 	}
+	
+	public static boolean isInput(SBMLDocument sbmlDoc,String id) {
+		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
+		Port port = getPortByIdRef(sbmlCompModel,id);
+		if (port != null) {
+			return SBMLutilities.isInputPort(port);
+		}
+		return false;
+	}
+		
+	public static boolean isOutput(SBMLDocument sbmlDoc,String id) {
+		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
+		Port port = getPortByIdRef(sbmlCompModel,id);
+		if (port != null) {
+			return SBMLutilities.isOutputPort(port);
+		}
+		return false;
+	}
+	
+	public static Port getPortByIdRef(CompModelPlugin sbmlCompModel,String idRef) {
+		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
+			Port port = sbmlCompModel.getListOfPorts().get(i);
+			if (port.isSetIdRef() && port.getIdRef().equals(idRef)) {
+				return port;
+			}
+		}
+		return null;
+	}
+	
+	public static Port getPortByMetaIdRef(CompModelPlugin sbmlCompModel,String metaIdRef) {
+		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
+			Port port = sbmlCompModel.getListOfPorts().get(i);
+			if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(metaIdRef)) {
+				return port;
+			}
+		}
+		return null;
+	}
+	
+	public static Port getPortByUnitRef(CompModelPlugin sbmlCompModel,String unitIdRef) {
+		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
+			Port port = sbmlCompModel.getListOfPorts().get(i);
+			if (port.isSetUnitRef() && port.getUnitRef().equals(unitIdRef)) {
+				return port;
+			}
+		}
+		return null;
+	}
+	
+	public static Port getPortBySBaseRef(CompModelPlugin sbmlCompModel,SBaseRef sbaseRef) {
+		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
+			Port port = sbmlCompModel.getListOfPorts().get(i);
+			if (port.isSetIdRef() && port.getIdRef().equals(sbaseRef.getIdRef()) &&
+				((!port.isSetSBaseRef() && !sbaseRef.isSetSBaseRef()) ||
+				(port.getSBaseRef().isSetPortRef() && sbaseRef.getSBaseRef().isSetPortRef() &&
+					port.getSBaseRef().getPortRef().equals(sbaseRef.getSBaseRef().getPortRef())))) {
+				return port;
+			}
+		}
+		return null;
+	}
+
+	public static boolean isInputPort(Port port) {
+		if (port.isSetSBOTerm() && port.getSBOTerm()==GlobalConstants.SBO_INPUT_PORT) {
+			return true;
+		} else if (port.isSetSBOTerm() && port.getSBOTerm()==GlobalConstants.SBO_OUTPUT_PORT) {
+			return false;
+		} else if (port.getId().startsWith(GlobalConstants.INPUT + "__")){
+			port.setSBOTerm(GlobalConstants.SBO_INPUT_PORT);
+			return true;
+		}
+		return false;
+	}
+
+
+	public static boolean isOutputPort(Port port) {
+		if (port.isSetSBOTerm() && port.getSBOTerm()==GlobalConstants.SBO_OUTPUT_PORT) {
+			return true;
+		} else if (port.isSetSBOTerm() && port.getSBOTerm()==GlobalConstants.SBO_INPUT_PORT) {
+			return false;
+		} else if (port.getId().startsWith(GlobalConstants.INPUT + "__")){
+			return false;
+		}
+		port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
+		return true;
+	}
 }

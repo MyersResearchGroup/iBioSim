@@ -483,7 +483,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 				if (bioModel.getPortByIdRef(paramet.getId())!=null) {
 					Port port = bioModel.getPortByIdRef(paramet.getId());
-					if (BioModel.isInputPort(port)) {
+					if (SBMLutilities.isInputPort(port)) {
 						portDir.setSelectedItem(GlobalConstants.INPUT); 
 					} else {
 						portDir.setSelectedItem(GlobalConstants.OUTPUT); 
