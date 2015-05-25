@@ -44,15 +44,14 @@ import biomodel.util.SBMLutilities;
 public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 {
 
-	public HierarchicalReplacemenHandler(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, double maxTimeStep,
-			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
-			String quantityType, String abstraction) throws IOException, XMLStreamException
+	public HierarchicalReplacemenHandler(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit,
+			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
+			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
-		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running,
-				interestingSpecies, quantityType, abstraction);
+		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue,
+				running, interestingSpecies, quantityType, abstraction);
 
 		setTopmodel(new ModelState(getModels(), getDocument().getModel().getId(), "topmodel"));
-
 		setNumSubmodels((int) setupSubmodels(getDocument()));
 
 		if (getNumSubmodels() < 0)
@@ -68,7 +67,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 	/**
 	 * Initializes the modelstate array
 	 */
-	protected long setupSubmodels(SBMLDocument document)
+	public long setupSubmodels(SBMLDocument document)
 	{
 		String path = getRootDirectory();
 		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getPlugin(CompConstants.namespaceURI);
@@ -331,7 +330,7 @@ public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
 		}
 	}
 
-	protected void getComponentPortMap(SBMLDocument sbml)
+	private void getComponentPortMap(SBMLDocument sbml)
 	{
 		CompModelPlugin sbmlCompModel = (CompModelPlugin) sbml.getModel().getPlugin(CompConstants.namespaceURI);
 		setupReplacement(sbml.getModel(), sbmlCompModel);

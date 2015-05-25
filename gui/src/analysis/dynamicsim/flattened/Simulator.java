@@ -59,11 +59,12 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.text.parser.ParseException;
 
+import analysis.dynamicsim.ParentSimulator;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 
-public abstract class Simulator
+public abstract class Simulator implements ParentSimulator
 {
 
 	// SBML model
@@ -252,10 +253,9 @@ public abstract class Simulator
 	 * @param printInterval
 	 * @param initializationTime
 	 */
-	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit,
-			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress,
-			double printInterval, Long initializationTime, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType)
+	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed,
+			JProgressBar progress, double printInterval, Long initializationTime, double stoichAmpValue, JFrame running, String[] interestingSpecies,
+			String quantityType)
 	{
 
 		long initTime1 = System.nanoTime();
@@ -318,9 +318,8 @@ public abstract class Simulator
 				errorString += errors.getError(i);
 			}
 
-			JOptionPane.showMessageDialog(Gui.frame,
-					"The SBML file contains " + document.getErrorCount() + " error(s):\n"
-							+ errorString, "SBML Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString,
+					"SBML Error", JOptionPane.ERROR_MESSAGE);
 
 			sbmlHasErrorsFlag = true;
 		}
@@ -347,14 +346,11 @@ public abstract class Simulator
 		speciesToCompartmentSizeMap = new TObjectDoubleHashMap<String>((int) numSpecies);
 		speciesIDSet = new LinkedHashSet<String>((int) numSpecies);
 		reactionToNonconstantStoichiometriesSetMap = new HashMap<String, HashSet<StringStringPair>>();
-		variableToValueMap = new TObjectDoubleHashMap<String>((int) numSpecies
-				+ (int) numParameters);
+		variableToValueMap = new TObjectDoubleHashMap<String>((int) numSpecies + (int) numParameters);
 
 		reactionToPropensityMap = new TObjectDoubleHashMap<String>((int) (numReactions * 1.5));
-		reactionToSpeciesAndStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair>>(
-				(int) (numReactions * 1.5));
-		reactionToReactantStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair>>(
-				(int) (numReactions * 1.5));
+		reactionToSpeciesAndStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair>>((int) (numReactions * 1.5));
+		reactionToReactantStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair>>((int) (numReactions * 1.5));
 		reactionToFormulaMap = new HashMap<String, ASTNode>((int) (numReactions * 1.5));
 
 		componentToLocationMap = new LinkedHashMap<String, Point>();
@@ -385,21 +381,16 @@ public abstract class Simulator
 		if (numRules > 0)
 		{
 
-			variableToAffectedAssignmentRuleSetMap = new HashMap<String, HashSet<AssignmentRule>>(
-					(int) numRules);
-			variableToIsInAssignmentRuleMap = new HashMap<String, Boolean>(
-					(int) (numSpecies + numParameters));
-			variableToIsInRateRuleMap = new HashMap<String, Boolean>(
-					(int) (numSpecies + numParameters));
+			variableToAffectedAssignmentRuleSetMap = new HashMap<String, HashSet<AssignmentRule>>((int) numRules);
+			variableToIsInAssignmentRuleMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
+			variableToIsInRateRuleMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 		}
 
 		if (numConstraints > 0)
 		{
 
-			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode>>(
-					(int) numConstraints);
-			variableToIsInConstraintMap = new HashMap<String, Boolean>(
-					(int) (numSpecies + numParameters));
+			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode>>((int) numConstraints);
+			variableToIsInConstraintMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 		}
 
 		ibiosimFunctionDefinitions.add("uniform");
@@ -452,8 +443,7 @@ public abstract class Simulator
 	 * @param oldString
 	 * @param newString
 	 */
-	private void alterLocalParameter(ASTNode node, Reaction reaction, String oldString,
-			String newString)
+	private void alterLocalParameter(ASTNode node, Reaction reaction, String oldString, String newString)
 	{
 
 		// String reactionID = reaction.getId();
@@ -512,11 +502,13 @@ public abstract class Simulator
 	/**
 	 * cancels the current run
 	 */
+	@Override
 	public abstract void cancel();
 
 	/**
 	 * clears data structures for new run
 	 */
+	@Override
 	public abstract void clear();
 
 	/**
@@ -548,8 +540,7 @@ public abstract class Simulator
 		int componentNumber = componentToReactionSetMap.size() + 1;
 		String childComponentID = "C" + String.valueOf(componentNumber);
 
-		while (componentToReactionSetMap.keySet().contains(childComponentID) == true
-				|| componentIDSet.contains(childComponentID) == true)
+		while (componentToReactionSetMap.keySet().contains(childComponentID) == true || componentIDSet.contains(childComponentID) == true)
 		{
 
 			++componentNumber;
@@ -598,8 +589,7 @@ public abstract class Simulator
 
 		// MOVE COMPONENTS
 		// this places the child and shuffles others around as needed
-		moveComponent(parentComponentID, childComponentID, childLocation, randomDirection,
-				reactionsToAdjust);
+		moveComponent(parentComponentID, childComponentID, childLocation, randomDirection, reactionsToAdjust);
 
 		// DUPLICATE VARIABLES and alter them to coincide with the new ID
 
@@ -624,8 +614,7 @@ public abstract class Simulator
 				if (model.getSpecies(parentVariableID).isSetSBOTerm()
 						&& model.getSpecies(parentVariableID).getSBOTerm() == GlobalConstants.SBO_PROMOTER_SPECIES)
 				{
-					variableToValueMap.put(parentVariableID,
-							variableToValueMap.get(parentVariableID) * 2);
+					variableToValueMap.put(parentVariableID, variableToValueMap.get(parentVariableID) * 2);
 				}
 
 				// duplicate species into the model
@@ -636,35 +625,28 @@ public abstract class Simulator
 
 				if (speciesToHasOnlySubstanceUnitsMap.get(parentVariableID) == false)
 				{
-					speciesToCompartmentSizeMap.put(childVariableID,
-							speciesToCompartmentSizeMap.get(parentVariableID));
+					speciesToCompartmentSizeMap.put(childVariableID, speciesToCompartmentSizeMap.get(parentVariableID));
 				}
 
 				if (speciesToHasOnlySubstanceUnitsMap.get(parentVariableID) == false)
 				{
-					speciesToCompartmentNameMap.put(childVariableID,
-							speciesToCompartmentNameMap.get(parentVariableID));
+					speciesToCompartmentNameMap.put(childVariableID, speciesToCompartmentNameMap.get(parentVariableID));
 				}
 
 				// the speciesToAffectedReactionSetMap gets filled-in later
 				speciesToAffectedReactionSetMap.put(childVariableID, new HashSet<String>(20));
-				speciesToIsBoundaryConditionMap.put(childVariableID,
-						speciesToIsBoundaryConditionMap.get(parentVariableID));
-				variableToIsConstantMap.put(childVariableID,
-						variableToIsConstantMap.get(parentVariableID));
-				speciesToHasOnlySubstanceUnitsMap.put(childVariableID,
-						speciesToHasOnlySubstanceUnitsMap.get(parentVariableID));
+				speciesToIsBoundaryConditionMap.put(childVariableID, speciesToIsBoundaryConditionMap.get(parentVariableID));
+				variableToIsConstantMap.put(childVariableID, variableToIsConstantMap.get(parentVariableID));
+				speciesToHasOnlySubstanceUnitsMap.put(childVariableID, speciesToHasOnlySubstanceUnitsMap.get(parentVariableID));
 				speciesIDSet.add(childVariableID);
 
 				// divide the parent species amount by two by default
 				// unless there is an event assignment or if the species is
 				// constant/bc
-				if (variableToIsConstantMap.get(parentVariableID) == true
-						|| speciesToIsBoundaryConditionMap.get(parentVariableID))
+				if (variableToIsConstantMap.get(parentVariableID) == true || speciesToIsBoundaryConditionMap.get(parentVariableID))
 				{
 
-					variableToValueMap.put(childVariableID,
-							variableToValueMap.get(parentVariableID));
+					variableToValueMap.put(childVariableID, variableToValueMap.get(parentVariableID));
 				}
 				else
 				{
@@ -683,8 +665,7 @@ public abstract class Simulator
 						{
 
 							double totalAmount = variableToValueMap.get(parentVariableID);
-							double afterEventAmount = evaluateExpressionRecursive(((EventAssignment) assignment)
-									.getMath());
+							double afterEventAmount = evaluateExpressionRecursive(((EventAssignment) assignment).getMath());
 							double childAmount = totalAmount - afterEventAmount;
 
 							variableToValueMap.put(childVariableID, childAmount);
@@ -697,10 +678,8 @@ public abstract class Simulator
 					if (setInAssignment == false)
 					{
 
-						variableToValueMap.put(childVariableID,
-								(int) ((variableToValueMap.get(parentVariableID) / 2) + 1));
-						variableToValueMap.put(parentVariableID,
-								(int) ((variableToValueMap.get(parentVariableID) / 2) + 1));
+						variableToValueMap.put(childVariableID, (int) ((variableToValueMap.get(parentVariableID) / 2) + 1));
+						variableToValueMap.put(parentVariableID, (int) ((variableToValueMap.get(parentVariableID) / 2) + 1));
 					}
 				}
 			}
@@ -738,16 +717,13 @@ public abstract class Simulator
 			try
 			{
 
-				String childReactionFormula = parentReactionFormula.replace(parentComponentID,
-						childComponentID);
+				String childReactionFormula = parentReactionFormula.replace(parentComponentID, childComponentID);
 
 				if (parentReactionID.contains("MembraneDiffusion"))
 				{
 
-					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL"
-							+ (int) parentLocation.getY();
-					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL"
-							+ (int) childLocation.getY();
+					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL" + (int) parentLocation.getY();
+					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL" + (int) childLocation.getY();
 
 					// formulas as ASTNodes can't have negative numbers in
 					// species IDs
@@ -756,8 +732,7 @@ public abstract class Simulator
 					childRowCol = childRowCol.replace("ROW-", "ROW_negative_");
 					childRowCol = childRowCol.replace("COL-", "COL_negative_");
 
-					if (childReactionFormula.contains("ROW")
-							&& childReactionFormula.contains("COL"))
+					if (childReactionFormula.contains("ROW") && childReactionFormula.contains("COL"))
 					{
 						alterNode(childFormulaNode, parentRowCol, childRowCol);
 					}
@@ -765,14 +740,12 @@ public abstract class Simulator
 					{
 
 						String childSpeciesID = childReactionFormula.split("\\*")[1];
-						String underlyingSpeciesID = childSpeciesID.split("__")[childSpeciesID
-								.split("__").length - 1];
+						String underlyingSpeciesID = childSpeciesID.split("__")[childSpeciesID.split("__").length - 1];
 
 						// we want the parent's kmdiff parameter, as the child's
 						// doesn't exist
-						childReactionFormula = childReactionFormula.replace(childSpeciesID
-								+ "__kmdiff", parentComponentID + "__" + underlyingSpeciesID
-								+ "__kmdiff");
+						childReactionFormula = childReactionFormula.replace(childSpeciesID + "__kmdiff", parentComponentID + "__"
+								+ underlyingSpeciesID + "__kmdiff");
 
 						thing = childReactionFormula;
 
@@ -791,50 +764,39 @@ public abstract class Simulator
 				e.printStackTrace();
 			}
 
-			reactionToSpeciesAndStoichiometrySetMap.put(childReactionID,
-					new HashSet<StringDoublePair>());
-			reactionToReactantStoichiometrySetMap.put(childReactionID,
-					new HashSet<StringDoublePair>());
+			reactionToSpeciesAndStoichiometrySetMap.put(childReactionID, new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(childReactionID, new HashSet<StringDoublePair>());
 
 			boolean notEnoughMoleculesFlag = false;
 			if (reactionToSpeciesAndStoichiometrySetMap.containsKey(parentReactionID) == false)
 			{
-				reactionToSpeciesAndStoichiometrySetMap.put(parentReactionID,
-						new HashSet<StringDoublePair>());
+				reactionToSpeciesAndStoichiometrySetMap.put(parentReactionID, new HashSet<StringDoublePair>());
 			}
 
 			// add species/stoichiometry pairs for this new reaction
-			for (StringDoublePair parentSpeciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap
-					.get(parentReactionID))
+			for (StringDoublePair parentSpeciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(parentReactionID))
 			{
 
 				double childStoichiometry = parentSpeciesAndStoichiometry.doub;
 
 				String childSpeciesID = "";
 
-				if (parentSpeciesAndStoichiometry.string.contains("ROW")
-						&& parentSpeciesAndStoichiometry.string.contains("COL"))
+				if (parentSpeciesAndStoichiometry.string.contains("ROW") && parentSpeciesAndStoichiometry.string.contains("COL"))
 				{
 
-					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL"
-							+ (int) parentLocation.getY();
-					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL"
-							+ (int) childLocation.getY();
+					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL" + (int) parentLocation.getY();
+					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL" + (int) childLocation.getY();
 
-					childSpeciesID = parentSpeciesAndStoichiometry.string.replace(parentRowCol,
-							childRowCol);
+					childSpeciesID = parentSpeciesAndStoichiometry.string.replace(parentRowCol, childRowCol);
 				}
 				else
 				{
-					childSpeciesID = parentSpeciesAndStoichiometry.string.replace(
-							parentComponentID, childComponentID);
+					childSpeciesID = parentSpeciesAndStoichiometry.string.replace(parentComponentID, childComponentID);
 				}
 
-				reactionToSpeciesAndStoichiometrySetMap.get(childReactionID).add(
-						new StringDoublePair(childSpeciesID, childStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(childReactionID).add(new StringDoublePair(childSpeciesID, childStoichiometry));
 
-				if (speciesToAffectedReactionSetMap
-						.containsKey(parentSpeciesAndStoichiometry.string))
+				if (speciesToAffectedReactionSetMap.containsKey(parentSpeciesAndStoichiometry.string))
 				{
 					speciesToAffectedReactionSetMap.get(childSpeciesID).add(childReactionID);
 				}
@@ -843,8 +805,7 @@ public abstract class Simulator
 				// (if the molecule is a reactant -- if it's a product then it's
 				// being added)
 				if (variableToValueMap.get(childSpeciesID) < childStoichiometry
-						&& reactionToReactantStoichiometrySetMap.get(parentReactionID).contains(
-								childSpeciesID))
+						&& reactionToReactantStoichiometrySetMap.get(parentReactionID).contains(childSpeciesID))
 				{
 					notEnoughMoleculesFlag = true;
 				}
@@ -852,38 +813,30 @@ public abstract class Simulator
 
 			if (reactionToReactantStoichiometrySetMap.containsKey(parentReactionID) == false)
 			{
-				reactionToReactantStoichiometrySetMap.put(parentReactionID,
-						new HashSet<StringDoublePair>());
+				reactionToReactantStoichiometrySetMap.put(parentReactionID, new HashSet<StringDoublePair>());
 			}
 
 			// add reactant/stoichiometry pairs for this new reactions
-			for (StringDoublePair parentReactantAndStoichiometry : reactionToReactantStoichiometrySetMap
-					.get(parentReactionID))
+			for (StringDoublePair parentReactantAndStoichiometry : reactionToReactantStoichiometrySetMap.get(parentReactionID))
 			{
 
 				double childStoichiometry = parentReactantAndStoichiometry.doub;
 				String childSpeciesID = "";
 
-				if (parentReactantAndStoichiometry.string.contains("ROW")
-						&& parentReactantAndStoichiometry.string.contains("COL"))
+				if (parentReactantAndStoichiometry.string.contains("ROW") && parentReactantAndStoichiometry.string.contains("COL"))
 				{
 
-					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL"
-							+ (int) parentLocation.getY();
-					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL"
-							+ (int) childLocation.getY();
+					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL" + (int) parentLocation.getY();
+					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL" + (int) childLocation.getY();
 
-					childSpeciesID = parentReactantAndStoichiometry.string.replace(parentRowCol,
-							childRowCol);
+					childSpeciesID = parentReactantAndStoichiometry.string.replace(parentRowCol, childRowCol);
 				}
 				else
 				{
-					childSpeciesID = parentReactantAndStoichiometry.string.replace(
-							parentComponentID, childComponentID);
+					childSpeciesID = parentReactantAndStoichiometry.string.replace(parentComponentID, childComponentID);
 				}
 
-				reactionToReactantStoichiometrySetMap.get(childReactionID).add(
-						new StringDoublePair(childSpeciesID, childStoichiometry));
+				reactionToReactantStoichiometrySetMap.get(childReactionID).add(new StringDoublePair(childSpeciesID, childStoichiometry));
 			}
 
 			reactionToFormulaMap.put(childReactionID, childFormulaNode);
@@ -946,15 +899,11 @@ public abstract class Simulator
 			eventToPriorityMap.put(childEventID, eventToPriorityMap.get(parentEventID));
 			eventToDelayMap.put(childEventID, eventToDelayMap.get(parentEventID).clone());
 			eventToHasDelayMap.put(childEventID, eventToHasDelayMap.get(parentEventID));
-			eventToTriggerPersistenceMap.put(childEventID,
-					eventToTriggerPersistenceMap.get(parentEventID));
-			eventToUseValuesFromTriggerTimeMap.put(childEventID,
-					eventToUseValuesFromTriggerTimeMap.get(parentEventID));
+			eventToTriggerPersistenceMap.put(childEventID, eventToTriggerPersistenceMap.get(parentEventID));
+			eventToUseValuesFromTriggerTimeMap.put(childEventID, eventToUseValuesFromTriggerTimeMap.get(parentEventID));
 			eventToTriggerMap.put(childEventID, eventToTriggerMap.get(parentEventID).clone());
-			eventToTriggerInitiallyTrueMap.put(childEventID,
-					eventToTriggerInitiallyTrueMap.get(parentEventID));
-			eventToPreviousTriggerValueMap.put(childEventID,
-					eventToTriggerInitiallyTrueMap.get(childEventID));
+			eventToTriggerInitiallyTrueMap.put(childEventID, eventToTriggerInitiallyTrueMap.get(parentEventID));
+			eventToPreviousTriggerValueMap.put(childEventID, eventToTriggerInitiallyTrueMap.get(childEventID));
 
 			// symmetric division creates two new things essentially: there are
 			// two children, not a parent and child
@@ -964,20 +913,17 @@ public abstract class Simulator
 
 				// untrigger the event
 				untriggeredEventSet.add(parentEventID);
-				eventToPreviousTriggerValueMap.put(parentEventID,
-						eventToTriggerInitiallyTrueMap.get(parentEventID));
+				eventToPreviousTriggerValueMap.put(parentEventID, eventToTriggerInitiallyTrueMap.get(parentEventID));
 
 				// remove the event from the queue
 				// copy the triggered event queue -- except the parent event
-				PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>(
-						5, eventComparator);
+				PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>(5, eventComparator);
 
 				while (triggeredEventQueue.size() > 0)
 				{
 
 					EventToFire event = triggeredEventQueue.poll();
-					EventToFire eventToAdd = new EventToFire(event.eventID,
-							(HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+					EventToFire eventToAdd = new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 
 					if (parentEventID.equals(event.eventID) == false)
 					{
@@ -1004,13 +950,12 @@ public abstract class Simulator
 				variableToEventSetMap.get(variableID).add(childEventID);
 
 				EventAssignment ea = ((EventAssignment) assignment).clone();
-				ea.setVariable(((EventAssignment) assignment).getVariable().replace(
-						parentComponentID, childComponentID));
+				ea.setVariable(((EventAssignment) assignment).getVariable().replace(parentComponentID, childComponentID));
 
 				// ea.setMath(ASTNode.parseFormula(((EventAssignment)assignment).getMath().toFormula()
 				// .replace(parentComponentID, childComponentID)));
-				ea.setMath(SBMLutilities.myParseFormula(((EventAssignment) assignment).getMath()
-						.toFormula().replace(parentComponentID, childComponentID)));
+				ea.setMath(SBMLutilities.myParseFormula(((EventAssignment) assignment).getMath().toFormula()
+						.replace(parentComponentID, childComponentID)));
 
 				assignmentSetMap.add(ea);
 
@@ -1018,8 +963,7 @@ public abstract class Simulator
 				{
 
 					eventToAffectedReactionSetMap.put(childEventID, new HashSet<String>());
-					eventToAffectedReactionSetMap.get(childEventID).addAll(
-							speciesToAffectedReactionSetMap.get(variableID));
+					eventToAffectedReactionSetMap.get(childEventID).addAll(speciesToAffectedReactionSetMap.get(variableID));
 				}
 			}
 
@@ -1192,8 +1136,7 @@ public abstract class Simulator
 				return 0.0;
 
 			case LOGICAL_NOT:
-				return getDoubleFromBoolean(!(getBooleanFromDouble(evaluateExpressionRecursive(node
-						.getLeftChild()))));
+				return getDoubleFromBoolean(!(getBooleanFromDouble(evaluateExpressionRecursive(node.getLeftChild()))));
 
 			case LOGICAL_AND:
 			{
@@ -1202,9 +1145,7 @@ public abstract class Simulator
 
 				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 				{
-					andResult = andResult
-							&& getBooleanFromDouble(evaluateExpressionRecursive(node
-									.getChild(childIter)));
+					andResult = andResult && getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(childIter)));
 				}
 
 				return getDoubleFromBoolean(andResult);
@@ -1217,9 +1158,7 @@ public abstract class Simulator
 
 				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 				{
-					orResult = orResult
-							|| getBooleanFromDouble(evaluateExpressionRecursive(node
-									.getChild(childIter)));
+					orResult = orResult || getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(childIter)));
 				}
 
 				return getDoubleFromBoolean(orResult);
@@ -1228,42 +1167,33 @@ public abstract class Simulator
 			case LOGICAL_XOR:
 			{
 
-				boolean xorResult = getBooleanFromDouble(evaluateExpressionRecursive(node
-						.getChild(0)));
+				boolean xorResult = getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(0)));
 
 				for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
 				{
-					xorResult = xorResult
-							^ getBooleanFromDouble(evaluateExpressionRecursive(node
-									.getChild(childIter)));
+					xorResult = xorResult ^ getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(childIter)));
 				}
 
 				return getDoubleFromBoolean(xorResult);
 			}
 
 			case RELATIONAL_EQ:
-				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) == evaluateExpressionRecursive(node
-						.getRightChild()));
+				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) == evaluateExpressionRecursive(node.getRightChild()));
 
 			case RELATIONAL_NEQ:
-				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) != evaluateExpressionRecursive(node
-						.getRightChild()));
+				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) != evaluateExpressionRecursive(node.getRightChild()));
 
 			case RELATIONAL_GEQ:
-				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) >= evaluateExpressionRecursive(node
-						.getRightChild()));
+				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) >= evaluateExpressionRecursive(node.getRightChild()));
 
 			case RELATIONAL_LEQ:
-				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) <= evaluateExpressionRecursive(node
-						.getRightChild()));
+				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) <= evaluateExpressionRecursive(node.getRightChild()));
 
 			case RELATIONAL_GT:
-				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) > evaluateExpressionRecursive(node
-						.getRightChild()));
+				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) > evaluateExpressionRecursive(node.getRightChild()));
 
 			case RELATIONAL_LT:
-				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) < evaluateExpressionRecursive(node
-						.getRightChild()));
+				return getDoubleFromBoolean(evaluateExpressionRecursive(node.getLeftChild()) < evaluateExpressionRecursive(node.getRightChild()));
 			default:
 			}
 		}
@@ -1310,12 +1240,10 @@ public abstract class Simulator
 
 				double value;
 
-				if (this.speciesToHasOnlySubstanceUnitsMap.containsKey(name)
-						&& this.speciesToHasOnlySubstanceUnitsMap.get(name) == false)
+				if (this.speciesToHasOnlySubstanceUnitsMap.containsKey(name) && this.speciesToHasOnlySubstanceUnitsMap.get(name) == false)
 				{
 
-					value = (variableToValueMap.get(name) / variableToValueMap
-							.get(speciesToCompartmentNameMap.get(name)));
+					value = (variableToValueMap.get(name) / variableToValueMap.get(speciesToCompartmentNameMap.get(name)));
 				}
 				else
 				{
@@ -1378,8 +1306,7 @@ public abstract class Simulator
 				return (evaluateExpressionRecursive(leftChild) / evaluateExpressionRecursive(rightChild));
 
 			case FUNCTION_POWER:
-				return (FastMath.pow(evaluateExpressionRecursive(leftChild),
-						evaluateExpressionRecursive(rightChild)));
+				return (FastMath.pow(evaluateExpressionRecursive(leftChild), evaluateExpressionRecursive(rightChild)));
 
 			case FUNCTION:
 			{
@@ -1403,26 +1330,22 @@ public abstract class Simulator
 				else if (nodeName.equals("exponential"))
 				{
 
-					return prng
-							.nextExponential(evaluateExpressionRecursive(node.getLeftChild()), 1);
+					return prng.nextExponential(evaluateExpressionRecursive(node.getLeftChild()), 1);
 				}
 				else if (nodeName.equals("gamma"))
 				{
 
-					return prng.nextGamma(1, evaluateExpressionRecursive(node.getLeftChild()),
-							evaluateExpressionRecursive(node.getRightChild()));
+					return prng.nextGamma(1, evaluateExpressionRecursive(node.getLeftChild()), evaluateExpressionRecursive(node.getRightChild()));
 				}
 				else if (nodeName.equals("chisq"))
 				{
 
-					return prng
-							.nextChiSquare((int) evaluateExpressionRecursive(node.getLeftChild()));
+					return prng.nextChiSquare((int) evaluateExpressionRecursive(node.getLeftChild()));
 				}
 				else if (nodeName.equals("lognormal"))
 				{
 
-					return prng.nextLogNormal(evaluateExpressionRecursive(node.getLeftChild()),
-							evaluateExpressionRecursive(node.getRightChild()));
+					return prng.nextLogNormal(evaluateExpressionRecursive(node.getLeftChild()), evaluateExpressionRecursive(node.getRightChild()));
 				}
 				else if (nodeName.equals("laplace"))
 				{
@@ -1454,8 +1377,7 @@ public abstract class Simulator
 				else if (nodeName.equals("normal"))
 				{
 
-					return prng.nextGaussian(evaluateExpressionRecursive(node.getLeftChild()),
-							evaluateExpressionRecursive(node.getRightChild()));
+					return prng.nextGaussian(evaluateExpressionRecursive(node.getLeftChild()), evaluateExpressionRecursive(node.getRightChild()));
 				}
 				else if (nodeName.equals("get2DArrayElement"))
 				{
@@ -1475,10 +1397,8 @@ public abstract class Simulator
 
 					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
 					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-					String specName = node.getChild(0).getName().split("__")[node.getChild(0)
-							.getName().split("__").length - 1];
-					String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex - 1) + "__"
-							+ specName;
+					String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
+					String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex - 1) + "__" + specName;
 
 					if (variableToValueMap.containsKey(speciesName))
 					{
@@ -1491,10 +1411,8 @@ public abstract class Simulator
 
 					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
 					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-					String specName = node.getChild(0).getName().split("__")[node.getChild(0)
-							.getName().split("__").length - 1];
-					String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex + 1) + "__"
-							+ specName;
+					String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
+					String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex + 1) + "__" + specName;
 
 					if (variableToValueMap.containsKey(speciesName))
 					{
@@ -1507,10 +1425,8 @@ public abstract class Simulator
 
 					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
 					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-					String specName = node.getChild(0).getName().split("__")[node.getChild(0)
-							.getName().split("__").length - 1];
-					String speciesName = "ROW" + (leftIndex - 1) + "_COL" + rightIndex + "__"
-							+ specName;
+					String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
+					String speciesName = "ROW" + (leftIndex - 1) + "_COL" + rightIndex + "__" + specName;
 
 					if (variableToValueMap.containsKey(speciesName))
 					{
@@ -1523,10 +1439,8 @@ public abstract class Simulator
 
 					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
 					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-					String specName = node.getChild(0).getName().split("__")[node.getChild(0)
-							.getName().split("__").length - 1];
-					String speciesName = "ROW" + (leftIndex + 1) + "_COL" + rightIndex + "__"
-							+ specName;
+					String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
+					String speciesName = "ROW" + (leftIndex + 1) + "_COL" + rightIndex + "__" + specName;
 
 					if (variableToValueMap.containsKey(speciesName))
 					{
@@ -1537,14 +1451,12 @@ public abstract class Simulator
 				else if (nodeName.equals("getCompartmentLocationX"))
 				{
 
-					return this.componentToLocationMap.get(
-							node.getChild(0).getName().split("__")[0]).getX();
+					return this.componentToLocationMap.get(node.getChild(0).getName().split("__")[0]).getX();
 				}
 				else if (nodeName.equals("getCompartmentLocationY"))
 				{
 
-					return this.componentToLocationMap.get(
-							node.getChild(0).getName().split("__")[0]).getY();
+					return this.componentToLocationMap.get(node.getChild(0).getName().split("__")[0]).getY();
 				}
 
 				break;
@@ -1603,9 +1515,7 @@ public abstract class Simulator
 				for (int childIter = 0; childIter < node.getChildCount(); childIter += 3)
 				{
 
-					if ((childIter + 1) < node.getChildCount()
-							&& getBooleanFromDouble(evaluateExpressionRecursive(node
-									.getChild(childIter + 1))))
+					if ((childIter + 1) < node.getChildCount() && getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(childIter + 1))))
 					{
 						return evaluateExpressionRecursive(node.getChild(childIter));
 					}
@@ -1619,8 +1529,7 @@ public abstract class Simulator
 			}
 
 			case FUNCTION_ROOT:
-				return FastMath.pow(evaluateExpressionRecursive(node.getRightChild()),
-						1 / evaluateExpressionRecursive(node.getLeftChild()));
+				return FastMath.pow(evaluateExpressionRecursive(node.getRightChild()), 1 / evaluateExpressionRecursive(node.getLeftChild()));
 
 			case FUNCTION_SEC:
 				return Fmath.sec(evaluateExpressionRecursive(node.getChild(0)));
@@ -1748,8 +1657,7 @@ public abstract class Simulator
 					numRowsUpper = values[2];
 					numColsUpper = values[3];
 
-					SpeciesDimensions speciesDimensions = new SpeciesDimensions(numRowsLower,
-							numRowsUpper, numColsLower, numColsUpper);
+					SpeciesDimensions speciesDimensions = new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper);
 
 					arrayedSpeciesToDimensionsMap.put(speciesID, speciesDimensions);
 
@@ -1791,9 +1699,7 @@ public abstract class Simulator
 			for (Event event : model.getListOfEvents())
 			{
 
-				if (stripAnnotation(
-						event.getAnnotationString().replace("<annotation>", "")
-								.replace("</annotation>", "").trim()).contains("array"))
+				if (stripAnnotation(event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).contains("array"))
 				{
 
 					arraysExist = true;
@@ -1801,15 +1707,12 @@ public abstract class Simulator
 					eventsToRemove.add(event.getId());
 
 					String annotationString = stripAnnotation(
-							event.getAnnotationString().replace("<annotation>", "")
-									.replace("</annotation>", "").trim())
-							.replace("<annotation>", "").replace("</annotation>", "")
-							.replace("\"", "");
+							event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).replace("<annotation>", "")
+							.replace("</annotation>", "").replace("\"", "");
 					String[] splitAnnotation = annotationString.split("array:");
 					ArrayList<String> eventCompartments = new ArrayList<String>();
 
-					splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2]
-							.split("xmlns:")[0];
+					splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2].split("xmlns:")[0];
 
 					for (int i = 2; i < splitAnnotation.length; ++i)
 					{
@@ -1920,13 +1823,11 @@ public abstract class Simulator
 						for (EventAssignment eventAssignment : newEvent.getListOfEventAssignments())
 						{
 
-							eventAssignment.setVariable(compartmentID + "__"
-									+ eventAssignment.getVariable());
+							eventAssignment.setVariable(compartmentID + "__" + eventAssignment.getVariable());
 
 							// prepends the compartment ID to all variables in
 							// the event assignment
-							prependToVariableNodes(eventAssignment.getMath(), compartmentID + "__",
-									model);
+							prependToVariableNodes(eventAssignment.getMath(), compartmentID + "__", model);
 						}
 
 						eventsToAdd.add(newEvent);
@@ -1969,10 +1870,8 @@ public abstract class Simulator
 					for (int i = 1; i < splitAnnotation.length; i++)
 					{
 						String compartmentID = splitAnnotation[i].split("=")[0];
-						String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0]
-								.replace("(", "");
-						String col = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[1]
-								.replace(")", "");
+						String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0].replace("(", "");
+						String col = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[1].replace(")", "");
 
 						membraneDiffusionRows.add(Integer.valueOf(row.trim()));
 						membraneDiffusionCols.add(Integer.valueOf(col.trim()));
@@ -2011,8 +1910,7 @@ public abstract class Simulator
 						// get2DArrayElement method)
 						ArrayList<ASTNode> get2DArrayElementNodes = new ArrayList<ASTNode>();
 
-						getSatisfyingNodes(newReaction.getKineticLaw().getMath(),
-								"get2DArrayElement", get2DArrayElementNodes);
+						getSatisfyingNodes(newReaction.getKineticLaw().getMath(), "get2DArrayElement", get2DArrayElementNodes);
 
 						boolean reactantBool = false;
 
@@ -2033,15 +1931,13 @@ public abstract class Simulator
 
 								String speciesID = reactionID.replace("MembraneDiffusion_", "");
 
-								if (model.getParameter(compartmentID + "__" + speciesID + "__"
-										+ parameterName) == null)
+								if (model.getParameter(compartmentID + "__" + speciesID + "__" + parameterName) == null)
 								{
 									node.setVariable(model.getParameter(parameterName));
 								}
 								else
 								{
-									node.setVariable(model.getParameter(compartmentID + "__"
-											+ speciesID + "__" + parameterName));
+									node.setVariable(model.getParameter(compartmentID + "__" + speciesID + "__" + parameterName));
 								}
 
 								for (int i = 0; i < node.getChildCount(); ++i)
@@ -2059,23 +1955,20 @@ public abstract class Simulator
 							else
 							{
 
-								if (node.getChildCount() > 0
-										&& model.getParameter(node.getLeftChild().getName()) == null)
+								if (node.getChildCount() > 0 && model.getParameter(node.getLeftChild().getName()) == null)
 								{
 
 									// reactant
 									if (reactantBool == true)
 									{
 
-										node.setVariable(model.getSpecies("ROW" + row + "_COL"
-												+ col + "__" + node.getLeftChild().getName()));
+										node.setVariable(model.getSpecies("ROW" + row + "_COL" + col + "__" + node.getLeftChild().getName()));
 									}
 									// product
 									else
 									{
 
-										node.setVariable(model.getSpecies(compartmentID + "__"
-												+ node.getLeftChild().getName()));
+										node.setVariable(model.getSpecies(compartmentID + "__" + node.getLeftChild().getName()));
 										reactantBool = true;
 									}
 								}
@@ -2113,16 +2006,14 @@ public abstract class Simulator
 							// reaction
 							SpeciesReference newProduct = new SpeciesReference();
 							newProduct = product.clone();
-							newProduct.setSpecies("ROW" + row + "_COL" + col + "__"
-									+ newProduct.getSpecies());
+							newProduct.setSpecies("ROW" + row + "_COL" + col + "__" + newProduct.getSpecies());
 							newProduct.setAnnotation(new Annotation());
 							newReaction.addProduct(newProduct);
 						}
 
 						boolean i = false, j = false;
 
-						for (LocalParameter lp : newReaction.getKineticLaw()
-								.getListOfLocalParameters())
+						for (LocalParameter lp : newReaction.getKineticLaw().getListOfLocalParameters())
 						{
 
 							if (lp.getId().equals("i"))
@@ -2158,10 +2049,8 @@ public abstract class Simulator
 				// to a bad assumption
 				// about the homogeneity of the arrayed reaction (ie, if one
 				// species is arrayed, they all are)
-				else if (reaction.getReactantCount() > 0
-						&& reaction.getReactant(0).getSpeciesInstance() != null
-						&& speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance()
-								.getId()) == true)
+				else if (reaction.getReactantCount() > 0 && reaction.getReactant(0).getSpeciesInstance() != null
+						&& speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance().getId()) == true)
 				{
 
 					arraysExist = true;
@@ -2170,8 +2059,7 @@ public abstract class Simulator
 
 					// get the reactant dimensions, which tells us how many new
 					// reactions are going to be created
-					SpeciesDimensions reactantDimensions = arrayedSpeciesToDimensionsMap
-							.get(reaction.getReactant(0).getSpeciesInstance().getId());
+					SpeciesDimensions reactantDimensions = arrayedSpeciesToDimensionsMap.get(reaction.getReactant(0).getSpeciesInstance().getId());
 
 					boolean abort = false;
 
@@ -2188,8 +2076,7 @@ public abstract class Simulator
 							newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 							newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 							newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
-							SBMLutilities.setMetaId(newReaction, "ROW" + row + "_COL" + col + "_"
-									+ reactionID);
+							SBMLutilities.setMetaId(newReaction, "ROW" + row + "_COL" + col + "_" + reactionID);
 							newReaction.setReversible(false);
 							newReaction.setFast(false);
 							newReaction.setCompartment(reaction.getCompartment());
@@ -2199,8 +2086,7 @@ public abstract class Simulator
 
 							// return the head node of the get2DArrayElement
 							// function
-							getSatisfyingNodes(newReaction.getKineticLaw().getMath(),
-									"get2DArrayElement", get2DArrayElementNodes);
+							getSatisfyingNodes(newReaction.getKineticLaw().getMath(), "get2DArrayElement", get2DArrayElementNodes);
 
 							// loop through all reactants
 							for (SpeciesReference reactant : reaction.getListOfReactants())
@@ -2222,8 +2108,7 @@ public abstract class Simulator
 								{
 
 									// make sure it's a reactant node
-									if (headNode.getChildCount() > 0
-											&& model.getParameter(headNode.getLeftChild().getName()) == null)
+									if (headNode.getChildCount() > 0 && model.getParameter(headNode.getLeftChild().getName()) == null)
 									{
 
 										reactantHeadNode = headNode;
@@ -2239,36 +2124,27 @@ public abstract class Simulator
 
 								if (reactantHeadNode.getChild(1).getType().name().equals("PLUS"))
 								{
-									rowOffset = reactantHeadNode.getChild(1).getRightChild()
-											.getInteger();
+									rowOffset = reactantHeadNode.getChild(1).getRightChild().getInteger();
 								}
-								else if (reactantHeadNode.getChild(1).getType().name()
-										.equals("MINUS"))
+								else if (reactantHeadNode.getChild(1).getType().name().equals("MINUS"))
 								{
-									rowOffset = -1
-											* reactantHeadNode.getChild(1).getRightChild()
-													.getInteger();
+									rowOffset = -1 * reactantHeadNode.getChild(1).getRightChild().getInteger();
 								}
 
 								if (reactantHeadNode.getChild(2).getType().name().equals("PLUS"))
 								{
-									colOffset = reactantHeadNode.getChild(2).getRightChild()
-											.getInteger();
+									colOffset = reactantHeadNode.getChild(2).getRightChild().getInteger();
 								}
-								else if (reactantHeadNode.getChild(2).getType().name()
-										.equals("MINUS"))
+								else if (reactantHeadNode.getChild(2).getType().name().equals("MINUS"))
 								{
-									colOffset = -1
-											* reactantHeadNode.getChild(2).getRightChild()
-													.getInteger();
+									colOffset = -1 * reactantHeadNode.getChild(2).getRightChild().getInteger();
 								}
 
 								// create a new reactant and add it to the new
 								// reaction
 								SpeciesReference newReactant = new SpeciesReference();
 								newReactant = reactant.clone();
-								newReactant.setSpecies(model.getSpecies("ROW" + (row + rowOffset)
-										+ "_COL" + (col + colOffset) + "__"
+								newReactant.setSpecies(model.getSpecies("ROW" + (row + rowOffset) + "_COL" + (col + colOffset) + "__"
 										+ newReactant.getSpecies()));
 								newReactant.setAnnotation(new Annotation());
 								newReaction.addReactant(newReactant);
@@ -2285,8 +2161,7 @@ public abstract class Simulator
 									reactantHeadNode.removeChild(i);
 								}
 
-								reactantHeadNode.setVariable(model.getSpecies(newReactant
-										.getSpecies()));
+								reactantHeadNode.setVariable(model.getSpecies(newReactant.getSpecies()));
 							}// end looping through reactants
 
 							// loop through all modifiers
@@ -2315,8 +2190,7 @@ public abstract class Simulator
 									// make sure it's a product node
 									// only the product has children, as the
 									// reactant's children get deleted
-									if (headNode.getChildCount() > 0
-											&& model.getParameter(headNode.getLeftChild().getName()) == null)
+									if (headNode.getChildCount() > 0 && model.getParameter(headNode.getLeftChild().getName()) == null)
 									{
 
 										productHeadNode = headNode;
@@ -2332,36 +2206,26 @@ public abstract class Simulator
 
 								if (productHeadNode.getChild(1).getType().name().equals("PLUS"))
 								{
-									rowOffset = productHeadNode.getChild(1).getRightChild()
-											.getInteger();
+									rowOffset = productHeadNode.getChild(1).getRightChild().getInteger();
 								}
-								else if (productHeadNode.getChild(1).getType().name()
-										.equals("MINUS"))
+								else if (productHeadNode.getChild(1).getType().name().equals("MINUS"))
 								{
-									rowOffset = -1
-											* productHeadNode.getChild(1).getRightChild()
-													.getInteger();
+									rowOffset = -1 * productHeadNode.getChild(1).getRightChild().getInteger();
 								}
 
 								if (productHeadNode.getChild(2).getType().name().equals("PLUS"))
 								{
-									colOffset = productHeadNode.getChild(2).getRightChild()
-											.getInteger();
+									colOffset = productHeadNode.getChild(2).getRightChild().getInteger();
 								}
-								else if (productHeadNode.getChild(2).getType().name()
-										.equals("MINUS"))
+								else if (productHeadNode.getChild(2).getType().name().equals("MINUS"))
 								{
-									colOffset = -1
-											* productHeadNode.getChild(2).getRightChild()
-													.getInteger();
+									colOffset = -1 * productHeadNode.getChild(2).getRightChild().getInteger();
 								}
 
 								// don't create reactions with products that
 								// don't exist
-								if (row + rowOffset < reactantDimensions.numRowsLower
-										|| col + colOffset < reactantDimensions.numColsLower
-										|| row + rowOffset > reactantDimensions.numRowsUpper
-										|| col + colOffset > reactantDimensions.numColsUpper)
+								if (row + rowOffset < reactantDimensions.numRowsLower || col + colOffset < reactantDimensions.numColsLower
+										|| row + rowOffset > reactantDimensions.numRowsUpper || col + colOffset > reactantDimensions.numColsUpper)
 								{
 
 									abort = true;
@@ -2372,8 +2236,7 @@ public abstract class Simulator
 								// reaction
 								SpeciesReference newProduct = new SpeciesReference();
 								newProduct = product.clone();
-								newProduct.setSpecies(model.getSpecies("ROW" + (row + rowOffset)
-										+ "_COL" + (col + colOffset) + "__"
+								newProduct.setSpecies(model.getSpecies("ROW" + (row + rowOffset) + "_COL" + (col + colOffset) + "__"
 										+ newProduct.getSpecies()));
 								newProduct.setAnnotation(new Annotation());
 								newReaction.addProduct(newProduct);
@@ -2392,8 +2255,7 @@ public abstract class Simulator
 									productHeadNode.removeChild(i);
 								}
 
-								productHeadNode.setVariable(model.getSpecies(newProduct
-										.getSpecies()));
+								productHeadNode.setVariable(model.getSpecies(newProduct.getSpecies()));
 							} // end looping through products
 
 							if (abort == false)
@@ -2403,8 +2265,7 @@ public abstract class Simulator
 
 								// checking for these local parameters using
 								// getLocalParameters() doesn't seem to work
-								for (LocalParameter lp : newReaction.getKineticLaw()
-										.getListOfLocalParameters())
+								for (LocalParameter lp : newReaction.getKineticLaw().getListOfLocalParameters())
 								{
 									lp.unsetMetaId();
 									if (lp.getId().equals("i"))
@@ -2419,22 +2280,19 @@ public abstract class Simulator
 
 								if (i)
 								{
-									newReaction.getKineticLaw().getListOfLocalParameters()
-											.remove("i");
+									newReaction.getKineticLaw().getListOfLocalParameters().remove("i");
 								}
 
 								if (j)
 								{
-									newReaction.getKineticLaw().getListOfLocalParameters()
-											.remove("j");
+									newReaction.getKineticLaw().getListOfLocalParameters().remove("j");
 								}
 
 								// this isn't a reversible reaction; only take
 								// the left side
 								if (newReaction.getId().contains(GlobalConstants.DEGRADATION) == false)
 								{
-									newReaction.getKineticLaw().setMath(
-											newReaction.getKineticLaw().getMath().getLeftChild());
+									newReaction.getKineticLaw().setMath(newReaction.getKineticLaw().getMath().getLeftChild());
 								}
 
 								reactionsToAdd.add(newReaction);
@@ -2538,8 +2396,7 @@ public abstract class Simulator
 	 * @param noAssignmentRulesFlag
 	 * @param noConstraintsFlag
 	 */
-	protected HashSet<String> fireEvents(final boolean noAssignmentRulesFlag,
-			final boolean noConstraintsFlag)
+	protected HashSet<String> fireEvents(final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag)
 	{
 
 		// temporary set of events to remove from the triggeredEventQueue
@@ -2556,8 +2413,7 @@ public abstract class Simulator
 			// if the trigger evaluates to false and the trigger isn't
 			// persistent
 			if (eventToTriggerPersistenceMap.get(triggeredEventID) == false
-					&& getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap
-							.get(triggeredEventID))) == false)
+					&& getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(triggeredEventID))) == false)
 			{
 
 				untriggeredEvents.add(triggeredEventID);
@@ -2565,8 +2421,7 @@ public abstract class Simulator
 			}
 
 			if (eventToTriggerPersistenceMap.get(triggeredEventID) == true
-					&& getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap
-							.get(triggeredEventID))) == false)
+					&& getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(triggeredEventID))) == false)
 			{
 				untriggeredEventSet.add(triggeredEventID);
 			}
@@ -2577,15 +2432,13 @@ public abstract class Simulator
 		// this is done because the remove function can't work with just a
 		// string; it needs to match events
 		// this also re-evaluates the priorities in case they have changed
-		PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>(5,
-				eventComparator);
+		PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>(5, eventComparator);
 
 		while (triggeredEventQueue.size() > 0)
 		{
 
 			EventToFire event = triggeredEventQueue.poll();
-			EventToFire eventToAdd = new EventToFire(event.eventID,
-					(HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+			EventToFire eventToAdd = new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 
 			if (untriggeredEvents.contains(event.eventID) == false)
 			{
@@ -2606,8 +2459,7 @@ public abstract class Simulator
 		{
 
 			if (eventToTriggerPersistenceMap.get(untriggeredEventID) == false
-					&& getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap
-							.get(untriggeredEventID))) == false)
+					&& getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(untriggeredEventID))) == false)
 			{
 				eventToPreviousTriggerValueMap.put(untriggeredEventID, false);
 			}
@@ -2696,8 +2548,7 @@ public abstract class Simulator
 					{
 
 						EventToFire event = triggeredEventQueue.poll();
-						EventToFire eventToAdd = new EventToFire(event.eventID,
-								(HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+						EventToFire eventToAdd = new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 
 						if (deadEvents.contains(event.eventID) == false)
 						{
@@ -2764,8 +2615,7 @@ public abstract class Simulator
 					{
 
 						variable = ((EventAssignment) eventAssignment).getVariable();
-						assignmentValue = evaluateExpressionRecursive(((EventAssignment) eventAssignment)
-								.getMath());
+						assignmentValue = evaluateExpressionRecursive(((EventAssignment) eventAssignment).getMath());
 					}
 
 					listOfAssignments.add(new StringDoublePair(variable, assignmentValue));
@@ -2791,18 +2641,14 @@ public abstract class Simulator
 					// if this variable that was just updated is part of an
 					// assignment rule (RHS)
 					// then re-evaluate that assignment rule
-					if (noAssignmentRulesFlag == false
-							&& variableToIsInAssignmentRuleMap.get(variable) == true)
+					if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(variable) == true)
 					{
-						affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap
-								.get(variable));
+						affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(variable));
 					}
 
-					if (noConstraintsFlag == false
-							&& variableToIsInConstraintMap.get(variable) == true)
+					if (noConstraintsFlag == false && variableToIsInConstraintMap.get(variable) == true)
 					{
-						affectedConstraintSet.addAll(variableToAffectedConstraintSetMap
-								.get(variable));
+						affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(variable));
 					}
 				} // end loop through assignments
 			}
@@ -2821,8 +2667,7 @@ public abstract class Simulator
 				// if the trigger evaluates to false and the trigger isn't
 				// persistent
 				if (eventToTriggerPersistenceMap.get(triggeredEventID) == false
-						&& getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap
-								.get(triggeredEventID))) == false)
+						&& getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(triggeredEventID))) == false)
 				{
 
 					untriggeredEvents.add(triggeredEventID);
@@ -2830,8 +2675,7 @@ public abstract class Simulator
 				}
 
 				if (eventToTriggerPersistenceMap.get(triggeredEventID) == true
-						&& getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap
-								.get(triggeredEventID))) == false)
+						&& getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(triggeredEventID))) == false)
 				{
 					untriggeredEventSet.add(triggeredEventID);
 				}
@@ -2848,8 +2692,7 @@ public abstract class Simulator
 			{
 
 				EventToFire event = triggeredEventQueue.poll();
-				EventToFire eventToAdd = new EventToFire(event.eventID,
-						(HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+				EventToFire eventToAdd = new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 
 				if (untriggeredEvents.contains(event.eventID) == false)
 				{
@@ -2878,11 +2721,9 @@ public abstract class Simulator
 			if (variableToIsConstantMap.get(variable) == false)
 			{
 
-				if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable)
-						&& speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+				if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable) && speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
 				{
-					variableToValueMap.put(variable,
-							assignmentValue * speciesToCompartmentSizeMap.get(variable));
+					variableToValueMap.put(variable, assignmentValue * speciesToCompartmentSizeMap.get(variable));
 				}
 				else
 				{
@@ -2942,16 +2783,14 @@ public abstract class Simulator
 	 * @return the set of all reactions that the performed reaction affects the
 	 *         propensity of
 	 */
-	protected HashSet<String> getAffectedReactionSet(String selectedReactionID,
-			final boolean noAssignmentRulesFlag)
+	protected HashSet<String> getAffectedReactionSet(String selectedReactionID, final boolean noAssignmentRulesFlag)
 	{
 
 		HashSet<String> affectedReactionSet = new HashSet<String>(20);
 		affectedReactionSet.add(selectedReactionID);
 
 		// loop through the reaction's reactants and products
-		for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap
-				.get(selectedReactionID))
+		for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID))
 		{
 
 			String speciesID = speciesAndStoichiometry.string;
@@ -2964,13 +2803,11 @@ public abstract class Simulator
 
 				// this assignment rule is going to be evaluated, so the rule's
 				// variable's value will change
-				for (AssignmentRule assignmentRule : variableToAffectedAssignmentRuleSetMap
-						.get(speciesID))
+				for (AssignmentRule assignmentRule : variableToAffectedAssignmentRuleSetMap.get(speciesID))
 				{
 					if (speciesToAffectedReactionSetMap.get(assignmentRule.getVariable()) != null)
 					{
-						affectedReactionSet.addAll(speciesToAffectedReactionSetMap
-								.get(assignmentRule.getVariable()));
+						affectedReactionSet.addAll(speciesToAffectedReactionSetMap.get(assignmentRule.getVariable()));
 					}
 				}
 			}
@@ -3100,13 +2937,11 @@ public abstract class Simulator
 			// System.err.println(eventToTriggerMap.get(untriggeredEventID));
 
 			// if the trigger evaluates to true
-			if (getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap
-					.get(untriggeredEventID))) == true)
+			if (getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(untriggeredEventID))) == true)
 			{
 
 				// skip the event if it's initially true and this is time == 0
-				if (currentTime == 0.0
-						&& eventToTriggerInitiallyTrueMap.get(untriggeredEventID) == true)
+				if (currentTime == 0.0 && eventToTriggerInitiallyTrueMap.get(untriggeredEventID) == true)
 				{
 					continue;
 				}
@@ -3131,21 +2966,18 @@ public abstract class Simulator
 					{
 
 						EventAssignment eventAssignment = (EventAssignment) evAssignment;
-						evaluatedAssignments.add(new StringDoublePair(
-								eventAssignment.getVariable(),
-								evaluateExpressionRecursive(eventAssignment.getMath())));
+						evaluatedAssignments.add(new StringDoublePair(eventAssignment.getVariable(), evaluateExpressionRecursive(eventAssignment
+								.getMath())));
 					}
 
 					double fireTime = currentTime;
 
 					if (eventToHasDelayMap.get(untriggeredEventID) == true)
 					{
-						fireTime += evaluateExpressionRecursive(eventToDelayMap
-								.get(untriggeredEventID));
+						fireTime += evaluateExpressionRecursive(eventToDelayMap.get(untriggeredEventID));
 					}
 
-					triggeredEventQueue.add(new EventToFire(untriggeredEventID,
-							evaluatedAssignments, fireTime));
+					triggeredEventQueue.add(new EventToFire(untriggeredEventID, evaluatedAssignments, fireTime));
 				}
 				else
 				{
@@ -3154,12 +2986,10 @@ public abstract class Simulator
 
 					if (eventToHasDelayMap.get(untriggeredEventID) == true)
 					{
-						fireTime += evaluateExpressionRecursive(eventToDelayMap
-								.get(untriggeredEventID));
+						fireTime += evaluateExpressionRecursive(eventToDelayMap.get(untriggeredEventID));
 					}
 
-					triggeredEventQueue.add(new EventToFire(untriggeredEventID,
-							eventToAssignmentSetMap.get(untriggeredEventID), fireTime));
+					triggeredEventQueue.add(new EventToFire(untriggeredEventID, eventToAssignmentSetMap.get(untriggeredEventID), fireTime));
 				}
 			}
 			else
@@ -3218,8 +3048,7 @@ public abstract class Simulator
 				return formula;
 			}
 
-			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody()
-					.clone();
+			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody().clone();
 			ASTNode oldFormula = formula.clone();
 
 			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
@@ -3234,8 +3063,7 @@ public abstract class Simulator
 
 			for (int i = 0; i < model.getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
 			{
-				inlinedChildToOldIndexMap.put(model.getFunctionDefinition(formula.getName())
-						.getArgument(i).getName(), i);
+				inlinedChildToOldIndexMap.put(model.getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
 			}
 
 			for (int i = 0; i < inlinedChildren.size(); ++i)
@@ -3268,8 +3096,8 @@ public abstract class Simulator
 	 * @param parentComponentID
 	 * @param direction
 	 */
-	protected void moveComponent(String parentComponentID, String childComponentID,
-			Point childLocation, int direction, HashSet<String> reactionsToAdjust)
+	protected void moveComponent(String parentComponentID, String childComponentID, Point childLocation, int direction,
+			HashSet<String> reactionsToAdjust)
 	{
 
 		HashSet<Integer> newRows = new HashSet<Integer>();
@@ -3401,12 +3229,10 @@ public abstract class Simulator
 				}
 			}
 
-			LinkedHashMap<String, Point> componentToLocationMapCopy = (LinkedHashMap<String, Point>) componentToLocationMap
-					.clone();
+			LinkedHashMap<String, Point> componentToLocationMapCopy = (LinkedHashMap<String, Point>) componentToLocationMap.clone();
 
 			// move the cells that are in the way
-			for (Map.Entry<String, Point> componentAndLocation : componentToLocationMapCopy
-					.entrySet())
+			for (Map.Entry<String, Point> componentAndLocation : componentToLocationMapCopy.entrySet())
 			{
 
 				String compID = componentAndLocation.getKey();
@@ -3564,10 +3390,8 @@ public abstract class Simulator
 							nonnegCol = nonnegCol.replace("-", "_negative_");
 						}
 
-						String newID = "ROW" + nonnegRow + "_COL" + nonnegCol + "__"
-								+ underlyingSpeciesID;
-						String newIDWithNegatives = "ROW" + newRow + "_COL" + col + "__"
-								+ underlyingSpeciesID;
+						String newID = "ROW" + nonnegRow + "_COL" + nonnegCol + "__" + underlyingSpeciesID;
+						String newIDWithNegatives = "ROW" + newRow + "_COL" + col + "__" + underlyingSpeciesID;
 
 						if (model.getSpecies(newID) != null)
 						{
@@ -3577,10 +3401,8 @@ public abstract class Simulator
 						newGridSpeciesIDs.add(newIDWithNegatives);
 						newGridSpeciesIDToOldRowSubstring.put(newIDWithNegatives, "ROW" + newRow);
 						newGridSpeciesIDToOldColSubstring.put(newIDWithNegatives, "COL" + col);
-						newGridSpeciesIDToNewRowSubstring
-								.put(newIDWithNegatives, "ROW" + nonnegRow);
-						newGridSpeciesIDToNewColSubstring
-								.put(newIDWithNegatives, "COL" + nonnegCol);
+						newGridSpeciesIDToNewRowSubstring.put(newIDWithNegatives, "ROW" + nonnegRow);
+						newGridSpeciesIDToNewColSubstring.put(newIDWithNegatives, "COL" + nonnegCol);
 
 						Species gridSpecies = null;
 
@@ -3588,8 +3410,7 @@ public abstract class Simulator
 						for (Species species : model.getListOfSpecies())
 						{
 
-							if (species.getId().contains("__" + underlyingSpeciesID)
-									&& species.getId().contains("ROW")
+							if (species.getId().contains("__" + underlyingSpeciesID) && species.getId().contains("ROW")
 									&& species.getId().contains("COL"))
 							{
 								gridSpecies = species;
@@ -3613,8 +3434,7 @@ public abstract class Simulator
 						// add a new species to the simulation data structures
 						setupSingleSpecies(gridSpecies, newIDWithNegatives);
 						variableToValueMap.put(newID.replace("_negative_", "-"), 0);
-						speciesToAffectedReactionSetMap.put(newID.replace("_negative_", "-"),
-								new HashSet<String>());
+						speciesToAffectedReactionSetMap.put(newID.replace("_negative_", "-"), new HashSet<String>());
 					}
 				}
 			}
@@ -3645,17 +3465,13 @@ public abstract class Simulator
 							nonnegCol = nonnegCol.replace("-", "_negative_");
 						}
 
-						String newID = "ROW" + nonnegRow + "_COL" + nonnegCol + "__"
-								+ underlyingSpeciesID;
-						String newIDWithNegatives = "ROW" + row + "_COL" + newCol + "__"
-								+ underlyingSpeciesID;
+						String newID = "ROW" + nonnegRow + "_COL" + nonnegCol + "__" + underlyingSpeciesID;
+						String newIDWithNegatives = "ROW" + row + "_COL" + newCol + "__" + underlyingSpeciesID;
 						newGridSpeciesIDs.add(newIDWithNegatives);
 						newGridSpeciesIDToOldRowSubstring.put(newIDWithNegatives, "ROW" + row);
 						newGridSpeciesIDToOldColSubstring.put(newIDWithNegatives, "COL" + newCol);
-						newGridSpeciesIDToNewRowSubstring
-								.put(newIDWithNegatives, "ROW" + nonnegRow);
-						newGridSpeciesIDToNewColSubstring
-								.put(newIDWithNegatives, "COL" + nonnegCol);
+						newGridSpeciesIDToNewRowSubstring.put(newIDWithNegatives, "ROW" + nonnegRow);
+						newGridSpeciesIDToNewColSubstring.put(newIDWithNegatives, "COL" + nonnegCol);
 
 						if (model.getSpecies(newID) != null)
 						{
@@ -3668,8 +3484,7 @@ public abstract class Simulator
 						for (Species species : model.getListOfSpecies())
 						{
 
-							if (species.getId().contains("__" + underlyingSpeciesID)
-									&& species.getId().contains("ROW")
+							if (species.getId().contains("__" + underlyingSpeciesID) && species.getId().contains("ROW")
 									&& species.getId().contains("COL"))
 							{
 								gridSpecies = species;
@@ -3693,8 +3508,7 @@ public abstract class Simulator
 						// add a new species to the simulation data structures
 						setupSingleSpecies(gridSpecies, newIDWithNegatives);
 						variableToValueMap.put(newID.replace("_negative_", "-"), 0);
-						speciesToAffectedReactionSetMap.put(newID.replace("_negative_", "-"),
-								new HashSet<String>());
+						speciesToAffectedReactionSetMap.put(newID.replace("_negative_", "-"), new HashSet<String>());
 					}
 				}
 			}
@@ -3705,10 +3519,8 @@ public abstract class Simulator
 		for (String speciesID : newGridSpeciesIDs)
 		{
 
-			String newGridSpeciesID = speciesID.replace(
-					newGridSpeciesIDToOldRowSubstring.get(speciesID),
-					newGridSpeciesIDToNewRowSubstring.get(speciesID)).replace(
-					newGridSpeciesIDToOldColSubstring.get(speciesID),
+			String newGridSpeciesID = speciesID.replace(newGridSpeciesIDToOldRowSubstring.get(speciesID),
+					newGridSpeciesIDToNewRowSubstring.get(speciesID)).replace(newGridSpeciesIDToOldColSubstring.get(speciesID),
 					newGridSpeciesIDToNewColSubstring.get(speciesID));
 
 			String[] splitID = speciesID.split("_");
@@ -3782,36 +3594,30 @@ public abstract class Simulator
 
 					if (nRow < 0)
 					{
-						neighborID = neighborID.replace("ROW" + nRow, "ROW" + "_negative_"
-								+ (-1 * nRow));
+						neighborID = neighborID.replace("ROW" + nRow, "ROW" + "_negative_" + (-1 * nRow));
 					}
 					if (nCol < 0)
 					{
-						neighborID = neighborID.replace("COL" + nCol, "COL" + "_negative_"
-								+ (-1 * nCol));
+						neighborID = neighborID.replace("COL" + nCol, "COL" + "_negative_" + (-1 * nCol));
 					}
 
 					// create forward reaction (to the neighbor) if it doesn't
 					// exist already
-					if (reactionToPropensityMap.containsKey("ROW" + row + "_COL" + col
-							+ "_Diffusion_" + underlyingSpeciesID + "_" + fdString) == false)
+					if (reactionToPropensityMap.containsKey("ROW" + row + "_COL" + col + "_Diffusion_" + underlyingSpeciesID + "_" + fdString) == false)
 					{
 
 						// alter kinetic law for forward reaction
 						newNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));
 
-						String newReactionID = "ROW" + row + "_COL" + col + "_Diffusion_"
-								+ underlyingSpeciesID + "_" + fdString;
+						String newReactionID = "ROW" + row + "_COL" + col + "_Diffusion_" + underlyingSpeciesID + "_" + fdString;
 
 						if (row < 0)
 						{
-							newReactionID = newReactionID.replace("ROW" + row, "ROW" + "_negative_"
-									+ (-1 * row));
+							newReactionID = newReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
 						}
 						if (col < 0)
 						{
-							newReactionID = newReactionID.replace("COL" + col, "COL" + "_negative_"
-									+ (-1 * col));
+							newReactionID = newReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
 						}
 
 						Reaction fdReaction = model.createReaction(newReactionID);
@@ -3820,46 +3626,39 @@ public abstract class Simulator
 						fdReaction.setKineticLaw(fdKineticLaw);
 						if (model.getSpecies(newGridSpeciesID) != null)
 						{
-							SpeciesReference reactant = new SpeciesReference(
-									model.getSpecies(newGridSpeciesID));
+							SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
 							reactant.setStoichiometry(1);
 							fdReaction.addReactant(reactant);
 						}
 						if (model.getSpecies(neighborID) != null)
 						{
-							SpeciesReference product = new SpeciesReference(
-									model.getSpecies(neighborID));
+							SpeciesReference product = new SpeciesReference(model.getSpecies(neighborID));
 							product.setStoichiometry(1);
 							fdReaction.addProduct(product);
 						}
 						setupLocalParameters(fdReaction.getKineticLaw(), fdReaction);
 
-						setupSingleReaction(fdReaction.getId(), fdReaction.getKineticLaw()
-								.getMath(), false, fdReaction.getListOfReactants(),
+						setupSingleReaction(fdReaction.getId(), fdReaction.getKineticLaw().getMath(), false, fdReaction.getListOfReactants(),
 								fdReaction.getListOfProducts(), fdReaction.getListOfModifiers());
 					}
 
 					// create the reverse reaction (from the neighbor) if it
 					// doesn't already exist
-					if (reactionToPropensityMap.containsKey("ROW" + nRow + "_COL" + nCol
-							+ "_Diffusion_" + underlyingSpeciesID + "_" + rvString) == false)
+					if (reactionToPropensityMap.containsKey("ROW" + nRow + "_COL" + nCol + "_Diffusion_" + underlyingSpeciesID + "_" + rvString) == false)
 					{
 
 						// alter kinetic law for reverse reaction
 						newNode.getRightChild().setVariable(model.getSpecies(neighborID));
 
-						String newReactionID = "ROW" + nRow + "_COL" + nCol + "_Diffusion_"
-								+ underlyingSpeciesID + "_" + rvString;
+						String newReactionID = "ROW" + nRow + "_COL" + nCol + "_Diffusion_" + underlyingSpeciesID + "_" + rvString;
 
 						if (nRow < 0)
 						{
-							newReactionID = newReactionID.replace("ROW" + nRow, "ROW"
-									+ "_negative_" + (-1 * nRow));
+							newReactionID = newReactionID.replace("ROW" + nRow, "ROW" + "_negative_" + (-1 * nRow));
 						}
 						if (nCol < 0)
 						{
-							newReactionID = newReactionID.replace("COL" + nCol, "COL"
-									+ "_negative_" + (-1 * nCol));
+							newReactionID = newReactionID.replace("COL" + nCol, "COL" + "_negative_" + (-1 * nCol));
 						}
 
 						// create reverse reaction
@@ -3869,22 +3668,19 @@ public abstract class Simulator
 						rvReaction.setKineticLaw(rvKineticLaw);
 						if (model.getSpecies(neighborID) != null)
 						{
-							SpeciesReference reactant = new SpeciesReference(
-									model.getSpecies(neighborID));
+							SpeciesReference reactant = new SpeciesReference(model.getSpecies(neighborID));
 							reactant.setStoichiometry(1);
 							rvReaction.addReactant(reactant);
 						}
 						if (model.getSpecies(newGridSpeciesID) != null)
 						{
-							SpeciesReference product = new SpeciesReference(
-									model.getSpecies(newGridSpeciesID));
+							SpeciesReference product = new SpeciesReference(model.getSpecies(newGridSpeciesID));
 							product.setStoichiometry(1);
 							rvReaction.addProduct(product);
 						}
 						setupLocalParameters(rvReaction.getKineticLaw(), rvReaction);
 
-						setupSingleReaction(rvReaction.getId(), rvReaction.getKineticLaw()
-								.getMath(), false, rvReaction.getListOfReactants(),
+						setupSingleReaction(rvReaction.getId(), rvReaction.getKineticLaw().getMath(), false, rvReaction.getListOfReactants(),
 								rvReaction.getListOfProducts(), rvReaction.getListOfModifiers());
 					}
 				}
@@ -3922,18 +3718,15 @@ public abstract class Simulator
 			if (isDegradable)
 			{
 
-				String newDegReactionID = "ROW" + row + "_COL" + col + "_"
-						+ GlobalConstants.DEGRADATION + "_" + underlyingSpeciesID;
+				String newDegReactionID = "ROW" + row + "_COL" + col + "_" + GlobalConstants.DEGRADATION + "_" + underlyingSpeciesID;
 
 				if (row < 0)
 				{
-					newDegReactionID = newDegReactionID.replace("ROW" + row, "ROW" + "_negative_"
-							+ (-1 * row));
+					newDegReactionID = newDegReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
 				}
 				if (col < 0)
 				{
-					newDegReactionID = newDegReactionID.replace("COL" + col, "COL" + "_negative_"
-							+ (-1 * col));
+					newDegReactionID = newDegReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
 				}
 
 				if (reactionToPropensityMap.containsKey(newDegReactionID) == false)
@@ -3945,14 +3738,12 @@ public abstract class Simulator
 					degReaction.setKineticLaw(degKineticLaw);
 					if (model.getSpecies(newGridSpeciesID) != null)
 					{
-						SpeciesReference reactant = new SpeciesReference(
-								model.getSpecies(newGridSpeciesID));
+						SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
 						reactant.setStoichiometry(1);
 						degReaction.addReactant(reactant);
 					}
 					setupLocalParameters(degReaction.getKineticLaw(), degReaction);
-					setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(),
-							false, degReaction.getListOfReactants(),
+					setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false, degReaction.getListOfReactants(),
 							degReaction.getListOfProducts(), degReaction.getListOfModifiers());
 				}
 			}
@@ -4089,14 +3880,12 @@ public abstract class Simulator
 								oldRowCol = oldRowCol.replace("ROW-", "ROW_negative_");
 								oldRowCol = oldRowCol.replace("COL-", "COL_negative_");
 
-								String newRowCol = "ROW" + locationToMove.x + "_COL"
-										+ locationToMove.y;
+								String newRowCol = "ROW" + locationToMove.x + "_COL" + locationToMove.y;
 								newRowCol = newRowCol.replace("ROW-", "ROW_negative_");
 								newRowCol = newRowCol.replace("COL-", "COL_negative_");
 
 								// adjust kinetic law
-								speciesNode.setVariable(model.getSpecies(speciesNode.getName()
-										.replace(oldRowCol, newRowCol)));
+								speciesNode.setVariable(model.getSpecies(speciesNode.getName().replace(oldRowCol, newRowCol)));
 
 								newRowCol = newRowCol.replace("ROW_negative_", "ROW-");
 								newRowCol = newRowCol.replace("COL_negative_", "COL-");
@@ -4104,20 +3893,16 @@ public abstract class Simulator
 								oldRowCol = oldRowCol.replace("COL_negative_", "COL-");
 
 								// adjust reactants/products
-								for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap
-										.get(reactionID))
+								for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(reactionID))
 								{
 
-									speciesAndStoichiometry.string = speciesAndStoichiometry.string
-											.replace(oldRowCol, newRowCol);
+									speciesAndStoichiometry.string = speciesAndStoichiometry.string.replace(oldRowCol, newRowCol);
 								}
 
-								for (StringDoublePair reactantAndStoichiometry : reactionToReactantStoichiometrySetMap
-										.get(reactionID))
+								for (StringDoublePair reactantAndStoichiometry : reactionToReactantStoichiometrySetMap.get(reactionID))
 								{
 
-									reactantAndStoichiometry.string = reactantAndStoichiometry.string
-											.replace(oldRowCol, newRowCol);
+									reactantAndStoichiometry.string = reactantAndStoichiometry.string.replace(oldRowCol, newRowCol);
 								}
 
 								// remove the old, now out-dated species to
@@ -4131,8 +3916,7 @@ public abstract class Simulator
 
 										HashSet<String> reactionsToRemove = new HashSet<String>();
 
-										for (String reaction : speciesToAffectedReactionSetMap
-												.get(speciesID))
+										for (String reaction : speciesToAffectedReactionSetMap.get(speciesID))
 										{
 											if (reaction.contains("MembraneDiffusion"))
 											{
@@ -4142,16 +3926,14 @@ public abstract class Simulator
 
 										for (String reactionToRemove : reactionsToRemove)
 										{
-											speciesToAffectedReactionSetMap.get(speciesID).remove(
-													reactionToRemove);
+											speciesToAffectedReactionSetMap.get(speciesID).remove(reactionToRemove);
 										}
 									}
 
 									if (speciesID.contains(newRowCol + "_"))
 									{
 
-										speciesToAffectedReactionSetMap.get(speciesID).add(
-												reactionID);
+										speciesToAffectedReactionSetMap.get(speciesID).add(reactionID);
 									}
 								}
 
@@ -4180,13 +3962,11 @@ public abstract class Simulator
 				// update the species count (but only if the species isn't
 				// constant)
 				// (bound cond is fine)
-				if (variableToIsConstantMap.containsKey(variable)
-						&& variableToIsConstantMap.get(variable) == false
+				if (variableToIsConstantMap.containsKey(variable) && variableToIsConstantMap.get(variable) == false
 						|| variableToIsConstantMap.containsKey(variable) == false)
 				{
 
-					if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable)
-							&& speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+					if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable) && speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
 					{
 
 						double oldValue = variableToValueMap.get(variable);
@@ -4194,11 +3974,7 @@ public abstract class Simulator
 
 						if (oldValue != newValue)
 						{
-							variableToValueMap.put(
-									variable,
-									newValue
-											* variableToValueMap.get(speciesToCompartmentNameMap
-													.get(variable)));
+							variableToValueMap.put(variable, newValue * variableToValueMap.get(speciesToCompartmentNameMap.get(variable)));
 							changed = true;
 						}
 					}
@@ -4226,8 +4002,7 @@ public abstract class Simulator
 	 * @param affectedAssignmentRuleSet
 	 *            the set of assignment rules that have been affected
 	 */
-	protected HashSet<String> performAssignmentRules(
-			HashSet<AssignmentRule> affectedAssignmentRuleSet)
+	protected HashSet<String> performAssignmentRules(HashSet<AssignmentRule> affectedAssignmentRuleSet)
 	{
 
 		HashSet<String> affectedVariables = new HashSet<String>();
@@ -4239,25 +4014,21 @@ public abstract class Simulator
 
 			// update the species count (but only if the species isn't constant)
 			// (bound cond is fine)
-			if (variableToIsConstantMap.containsKey(variable)
-					&& variableToIsConstantMap.get(variable) == false
+			if (variableToIsConstantMap.containsKey(variable) && variableToIsConstantMap.get(variable) == false
 					|| variableToIsConstantMap.containsKey(variable) == false)
 			{
 
-				if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable)
-						&& speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+				if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable) && speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
 				{
 
-					variableToValueMap.put(
-							variable,
-							evaluateExpressionRecursive(assignmentRule.getMath())
-									* variableToValueMap.get(speciesToCompartmentNameMap
-											.get(variable)));
+					variableToValueMap
+							.put(variable,
+									evaluateExpressionRecursive(assignmentRule.getMath())
+											* variableToValueMap.get(speciesToCompartmentNameMap.get(variable)));
 				}
 				else
 				{
-					variableToValueMap.put(variable,
-							evaluateExpressionRecursive(assignmentRule.getMath()));
+					variableToValueMap.put(variable, evaluateExpressionRecursive(assignmentRule.getMath()));
 				}
 
 				affectedVariables.add(variable);
@@ -4289,26 +4060,21 @@ public abstract class Simulator
 
 				// update the species count (but only if the species isn't
 				// constant) (bound cond is fine)
-				if (variableToIsConstantMap.containsKey(variable)
-						&& variableToIsConstantMap.get(variable) == false)
+				if (variableToIsConstantMap.containsKey(variable) && variableToIsConstantMap.get(variable) == false)
 				{
 
-					if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable)
-							&& speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+					if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable) && speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
 					{
 
-						variableToValueMap
-								.adjustValue(
-										variable,
-										delta_t
-												* (evaluateExpressionRecursive(rateRule.getMath()) * variableToValueMap
-														.get(speciesToCompartmentNameMap
-																.get(variable))));
+						variableToValueMap.adjustValue(
+								variable,
+								delta_t
+										* (evaluateExpressionRecursive(rateRule.getMath()) * variableToValueMap.get(speciesToCompartmentNameMap
+												.get(variable))));
 					}
 					else
 					{
-						variableToValueMap.adjustValue(variable, delta_t
-								* evaluateExpressionRecursive(rateRule.getMath()));
+						variableToValueMap.adjustValue(variable, delta_t * evaluateExpressionRecursive(rateRule.getMath()));
 					}
 
 					affectedVariables.add(variable);
@@ -4325,8 +4091,7 @@ public abstract class Simulator
 	 * @param selectedReactionID
 	 *            the reaction to perform
 	 */
-	protected void performReaction(String selectedReactionID, final boolean noAssignmentRulesFlag,
-			final boolean noConstraintsFlag)
+	protected void performReaction(String selectedReactionID, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag)
 	{
 
 		// these are sets of things that need to be re-evaluated or tested due
@@ -4336,8 +4101,7 @@ public abstract class Simulator
 
 		// loop through the reaction's reactants and products and update their
 		// amounts
-		for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap
-				.get(selectedReactionID))
+		for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID))
 		{
 
 			double stoichiometry = speciesAndStoichiometry.doub;
@@ -4348,8 +4112,7 @@ public abstract class Simulator
 			if (reactionToNonconstantStoichiometriesSetMap.containsKey(selectedReactionID))
 			{
 
-				for (StringStringPair doubleID : reactionToNonconstantStoichiometriesSetMap
-						.get(selectedReactionID))
+				for (StringStringPair doubleID : reactionToNonconstantStoichiometriesSetMap.get(selectedReactionID))
 				{
 
 					// string1 is the species ID; string2 is the
@@ -4363,8 +4126,7 @@ public abstract class Simulator
 						// variableToValueMap has
 						// a stoichiometry without the reactant/product
 						// plus/minus data
-						stoichiometry *= (int) (speciesAndStoichiometry.doub / Math
-								.abs(speciesAndStoichiometry.doub));
+						stoichiometry *= (int) (speciesAndStoichiometry.doub / Math.abs(speciesAndStoichiometry.doub));
 						break;
 					}
 				}
@@ -4374,17 +4136,12 @@ public abstract class Simulator
 			// condition or constant
 			// note that the stoichiometries are earlier modified with the
 			// correct +/- sign
-			if (speciesToIsBoundaryConditionMap.get(speciesID) == false
-					&& variableToIsConstantMap.get(speciesID) == false)
+			if (speciesToIsBoundaryConditionMap.get(speciesID) == false && variableToIsConstantMap.get(speciesID) == false)
 			{
 
 				if (speciesToConversionFactorMap.containsKey(speciesID))
 				{
-					variableToValueMap.adjustValue(
-							speciesID,
-							stoichiometry
-									* variableToValueMap.get(speciesToConversionFactorMap
-											.get(speciesID)));
+					variableToValueMap.adjustValue(speciesID, stoichiometry * variableToValueMap.get(speciesToConversionFactorMap.get(speciesID)));
 				}
 				else
 				{
@@ -4395,11 +4152,9 @@ public abstract class Simulator
 			// if this variable that was just updated is part of an assignment
 			// rule (RHS)
 			// then re-evaluate that assignment rule
-			if (noAssignmentRulesFlag == false
-					&& variableToIsInAssignmentRuleMap.get(speciesID) == true)
+			if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(speciesID) == true)
 			{
-				affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap
-						.get(speciesID));
+				affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(speciesID));
 			}
 
 			if (noConstraintsFlag == false && variableToIsInConstraintMap.get(speciesID) == true)
@@ -4490,8 +4245,7 @@ public abstract class Simulator
 					String locationX = componentLocationID + "__locationX";
 					String locationY = componentLocationID + "__locationY";
 
-					bufferedTSDWriter.write(commaSpace + "\"" + locationX + "\", \"" + locationY
-							+ "\"");
+					bufferedTSDWriter.write(commaSpace + "\"" + locationX + "\", \"" + locationY + "\"");
 				}
 			}
 			else
@@ -4510,8 +4264,7 @@ public abstract class Simulator
 					String locationX = componentLocationID + "__locationX";
 					String locationY = componentLocationID + "__locationY";
 
-					bufferedTSDWriter.write(commaSpace + "\"" + locationX + "\", \"" + locationY
-							+ "\"");
+					bufferedTSDWriter.write(commaSpace + "\"" + locationX + "\", \"" + locationY + "\"");
 				}
 
 				// print compartment IDs (for sizes)
@@ -4564,8 +4317,7 @@ public abstract class Simulator
 				{
 
 					bufferedTSDWriter.write(commaSpace
-							+ (variableToValueMap.get(speciesID) / variableToValueMap
-									.get(speciesToCompartmentNameMap.get(speciesID))));
+							+ (variableToValueMap.get(speciesID) / variableToValueMap.get(speciesToCompartmentNameMap.get(speciesID))));
 				}
 				else
 				{
@@ -4578,10 +4330,8 @@ public abstract class Simulator
 			// always print component location values
 			for (String componentID : componentToLocationMap.keySet())
 			{
-				bufferedTSDWriter.write(commaSpace
-						+ (int) componentToLocationMap.get(componentID).getX());
-				bufferedTSDWriter.write(commaSpace
-						+ (int) componentToLocationMap.get(componentID).getY());
+				bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getX());
+				bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getY());
 			}
 		}
 		else
@@ -4599,11 +4349,9 @@ public abstract class Simulator
 			// print component location values
 			for (String componentID : componentToLocationMap.keySet())
 			{
-				bufferedTSDWriter.write(commaSpace
-						+ (int) componentToLocationMap.get(componentID).getX());
+				bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getX());
 				commaSpace = ",";
-				bufferedTSDWriter.write(commaSpace
-						+ (int) componentToLocationMap.get(componentID).getY());
+				bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getY());
 			}
 
 			// print compartment sizes
@@ -4630,7 +4378,8 @@ public abstract class Simulator
 	 * 
 	 * @throws IOException
 	 */
-	public void printStatisticsTSD() throws IOException
+	@Override
+	public void printStatisticsTSD()
 	{
 
 		// the last run is the number of runs
@@ -4747,8 +4496,7 @@ public abstract class Simulator
 
 				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
 				{
-					speciesData.add(speciesStatistics.get(species).get(index)
-							.getStandardDeviation());
+					speciesData.add(speciesStatistics.get(species).get(index).getStandardDeviation());
 				}
 			}
 
@@ -4857,8 +4605,7 @@ public abstract class Simulator
 					numRowsUpper = values[2];
 					numColsUpper = values[3];
 
-					SpeciesDimensions speciesDimensions = new SpeciesDimensions(numRowsLower,
-							numRowsUpper, numColsLower, numColsUpper);
+					SpeciesDimensions speciesDimensions = new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper);
 
 					arrayedSpeciesToDimensionsMap.put(speciesID, speciesDimensions);
 
@@ -4900,9 +4647,7 @@ public abstract class Simulator
 			for (Event event : model.getListOfEvents())
 			{
 
-				if (stripAnnotation(
-						event.getAnnotationString().replace("<annotation>", "")
-								.replace("</annotation>", "").trim()).contains("array"))
+				if (stripAnnotation(event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).contains("array"))
 				{
 
 					arraysExist = true;
@@ -4910,15 +4655,12 @@ public abstract class Simulator
 					eventsToRemove.add(event.getId());
 
 					String annotationString = stripAnnotation(
-							event.getAnnotationString().replace("<annotation>", "")
-									.replace("</annotation>", "").trim())
-							.replace("<annotation>", "").replace("</annotation>", "")
-							.replace("\"", "");
+							event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).replace("<annotation>", "")
+							.replace("</annotation>", "").replace("\"", "");
 					String[] splitAnnotation = annotationString.split("array:");
 					ArrayList<String> eventCompartments = new ArrayList<String>();
 
-					splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2]
-							.split("xmlns:")[0];
+					splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2].split("xmlns:")[0];
 
 					for (int i = 2; i < splitAnnotation.length; ++i)
 					{
@@ -4945,15 +4687,13 @@ public abstract class Simulator
 						// this needs to become neighborQuantity(Species1,
 						// CompartmentLocationX(Comp1),
 						// CompartmentLocationY(Comp1))
-						if (newEvent.getTrigger().getMath().toFormula()
-								.contains("neighborQuantity"))
+						if (newEvent.getTrigger().getMath().toFormula().contains("neighborQuantity"))
 						{
 
 							String triggerMath = newEvent.getTrigger().getMath().toFormula();
 							ArrayList<ASTNode> nqNodes = new ArrayList<ASTNode>();
 
-							this.getSatisfyingNodesLax(newEvent.getTrigger().getMath(),
-									"neighborQuantity", nqNodes);
+							this.getSatisfyingNodesLax(newEvent.getTrigger().getMath(), "neighborQuantity", nqNodes);
 
 							// loop through all neighbor quantity nodes in the
 							// trigger formula
@@ -4979,32 +4719,23 @@ public abstract class Simulator
 									direction = "Below";
 								}
 
-								String speciesID = nqNode.toFormula().split(
-										"neighborQuantity" + direction)[1].replace("(", "")
-										.replace(")", "");
+								String speciesID = nqNode.toFormula().split("neighborQuantity" + direction)[1].replace("(", "").replace(")", "");
 
 								try
 								{
-									ASTNode newFormula = ASTNode.parseFormula("neighborQuantity"
-											+ direction + "Full(" + compartmentID + "__"
-											+ speciesID + ", getCompartmentLocationX("
-											+ compartmentID + "__Cell"
-											+ "), getCompartmentLocationY(" + compartmentID
-											+ "__Cell" + "))");
+									ASTNode newFormula = ASTNode.parseFormula("neighborQuantity" + direction + "Full(" + compartmentID + "__"
+											+ speciesID + ", getCompartmentLocationX(" + compartmentID + "__Cell" + "), getCompartmentLocationY("
+											+ compartmentID + "__Cell" + "))");
 
-									for (int i = 0; i < ((ASTNode) nqNode.getParent())
-											.getChildCount(); ++i)
+									for (int i = 0; i < ((ASTNode) nqNode.getParent()).getChildCount(); ++i)
 									{
 
-										if (((ASTNode) nqNode.getParent().getChildAt(i))
-												.isFunction()
-												&& ((ASTNode) nqNode.getParent().getChildAt(i))
-														.getVariable().toString()
+										if (((ASTNode) nqNode.getParent().getChildAt(i)).isFunction()
+												&& ((ASTNode) nqNode.getParent().getChildAt(i)).getVariable().toString()
 														.contains("neighborQuantity" + direction))
 										{
 
-											((ASTNode) nqNode.getParent()).replaceChild(i,
-													newFormula);
+											((ASTNode) nqNode.getParent()).replaceChild(i, newFormula);
 											break;
 										}
 									}
@@ -5040,13 +4771,11 @@ public abstract class Simulator
 						for (EventAssignment eventAssignment : newEvent.getListOfEventAssignments())
 						{
 
-							eventAssignment.setVariable(compartmentID + "__"
-									+ eventAssignment.getVariable());
+							eventAssignment.setVariable(compartmentID + "__" + eventAssignment.getVariable());
 
 							// prepends the compartment ID to all variables in
 							// the event assignment
-							prependToVariableNodes(eventAssignment.getMath(), compartmentID + "__",
-									model);
+							prependToVariableNodes(eventAssignment.getMath(), compartmentID + "__", model);
 						}
 
 						eventsToAdd.add(newEvent);
@@ -5089,10 +4818,8 @@ public abstract class Simulator
 					for (int i = 1; i < splitAnnotation.length; i++)
 					{
 						String compartmentID = splitAnnotation[i].split("=")[0];
-						String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0]
-								.replace("(", "");
-						String col = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[1]
-								.replace(")", "");
+						String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0].replace("(", "");
+						String col = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[1].replace(")", "");
 
 						membraneDiffusionRows.add(Integer.valueOf(row.trim()));
 						membraneDiffusionCols.add(Integer.valueOf(col.trim()));
@@ -5131,8 +4858,7 @@ public abstract class Simulator
 						// get2DArrayElement method)
 						ArrayList<ASTNode> get2DArrayElementNodes = new ArrayList<ASTNode>();
 
-						getSatisfyingNodes(newReaction.getKineticLaw().getMath(),
-								"get2DArrayElement", get2DArrayElementNodes);
+						getSatisfyingNodes(newReaction.getKineticLaw().getMath(), "get2DArrayElement", get2DArrayElementNodes);
 
 						boolean reactantBool = false;
 
@@ -5153,15 +4879,13 @@ public abstract class Simulator
 
 								String speciesID = reactionID.replace("MembraneDiffusion_", "");
 
-								if (model.getParameter(compartmentID + "__" + speciesID + "__"
-										+ parameterName) == null)
+								if (model.getParameter(compartmentID + "__" + speciesID + "__" + parameterName) == null)
 								{
 									node.setVariable(model.getParameter(parameterName));
 								}
 								else
 								{
-									node.setVariable(model.getParameter(compartmentID + "__"
-											+ speciesID + "__" + parameterName));
+									node.setVariable(model.getParameter(compartmentID + "__" + speciesID + "__" + parameterName));
 								}
 
 								for (int i = 0; i < node.getChildCount(); ++i)
@@ -5179,23 +4903,20 @@ public abstract class Simulator
 							else
 							{
 
-								if (node.getChildCount() > 0
-										&& model.getParameter(node.getLeftChild().getName()) == null)
+								if (node.getChildCount() > 0 && model.getParameter(node.getLeftChild().getName()) == null)
 								{
 
 									// reactant
 									if (reactantBool == true)
 									{
 
-										node.setVariable(model.getSpecies("ROW" + row + "_COL"
-												+ col + "__" + node.getLeftChild().getName()));
+										node.setVariable(model.getSpecies("ROW" + row + "_COL" + col + "__" + node.getLeftChild().getName()));
 									}
 									// product
 									else
 									{
 
-										node.setVariable(model.getSpecies(compartmentID + "__"
-												+ node.getLeftChild().getName()));
+										node.setVariable(model.getSpecies(compartmentID + "__" + node.getLeftChild().getName()));
 										reactantBool = true;
 									}
 								}
@@ -5233,16 +4954,14 @@ public abstract class Simulator
 							// reaction
 							SpeciesReference newProduct = new SpeciesReference();
 							newProduct = product.clone();
-							newProduct.setSpecies("ROW" + row + "_COL" + col + "__"
-									+ newProduct.getSpecies());
+							newProduct.setSpecies("ROW" + row + "_COL" + col + "__" + newProduct.getSpecies());
 							newProduct.setAnnotation(new Annotation());
 							newReaction.addProduct(newProduct);
 						}
 
 						boolean i = false, j = false;
 
-						for (LocalParameter lp : newReaction.getKineticLaw()
-								.getListOfLocalParameters())
+						for (LocalParameter lp : newReaction.getKineticLaw().getListOfLocalParameters())
 						{
 
 							if (lp.getId().equals("i"))
@@ -5278,9 +4997,7 @@ public abstract class Simulator
 				// to a bad assumption
 				// about the homogeneity of the arrayed reaction (ie, if one
 				// species is arrayed, they all are)
-				else if (reaction.getReactantCount() > 0
-						&& speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance()
-								.getId()) == true)
+				else if (reaction.getReactantCount() > 0 && speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance().getId()) == true)
 				{
 
 					arraysExist = true;
@@ -5289,8 +5006,7 @@ public abstract class Simulator
 
 					// get the reactant dimensions, which tells us how many new
 					// reactions are going to be created
-					SpeciesDimensions reactantDimensions = arrayedSpeciesToDimensionsMap
-							.get(reaction.getReactant(0).getSpeciesInstance().getId());
+					SpeciesDimensions reactantDimensions = arrayedSpeciesToDimensionsMap.get(reaction.getReactant(0).getSpeciesInstance().getId());
 
 					boolean abort = false;
 
@@ -5307,8 +5023,7 @@ public abstract class Simulator
 							newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 							newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 							newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
-							SBMLutilities.setMetaId(newReaction, "ROW" + row + "_COL" + col + "_"
-									+ reactionID);
+							SBMLutilities.setMetaId(newReaction, "ROW" + row + "_COL" + col + "_" + reactionID);
 							newReaction.setReversible(false);
 							newReaction.setFast(false);
 							newReaction.setCompartment(reaction.getCompartment());
@@ -5318,8 +5033,7 @@ public abstract class Simulator
 
 							// return the head node of the get2DArrayElement
 							// function
-							getSatisfyingNodes(newReaction.getKineticLaw().getMath(),
-									"get2DArrayElement", get2DArrayElementNodes);
+							getSatisfyingNodes(newReaction.getKineticLaw().getMath(), "get2DArrayElement", get2DArrayElementNodes);
 
 							// loop through all reactants
 							for (SpeciesReference reactant : reaction.getListOfReactants())
@@ -5339,8 +5053,7 @@ public abstract class Simulator
 								{
 
 									// make sure it's a reactant node
-									if (headNode.getChildCount() > 0
-											&& model.getParameter(headNode.getLeftChild().getName()) == null)
+									if (headNode.getChildCount() > 0 && model.getParameter(headNode.getLeftChild().getName()) == null)
 									{
 
 										reactantHeadNode = headNode;
@@ -5356,36 +5069,27 @@ public abstract class Simulator
 
 								if (reactantHeadNode.getChild(1).getType().name().equals("PLUS"))
 								{
-									rowOffset = reactantHeadNode.getChild(1).getRightChild()
-											.getInteger();
+									rowOffset = reactantHeadNode.getChild(1).getRightChild().getInteger();
 								}
-								else if (reactantHeadNode.getChild(1).getType().name()
-										.equals("MINUS"))
+								else if (reactantHeadNode.getChild(1).getType().name().equals("MINUS"))
 								{
-									rowOffset = -1
-											* reactantHeadNode.getChild(1).getRightChild()
-													.getInteger();
+									rowOffset = -1 * reactantHeadNode.getChild(1).getRightChild().getInteger();
 								}
 
 								if (reactantHeadNode.getChild(2).getType().name().equals("PLUS"))
 								{
-									colOffset = reactantHeadNode.getChild(2).getRightChild()
-											.getInteger();
+									colOffset = reactantHeadNode.getChild(2).getRightChild().getInteger();
 								}
-								else if (reactantHeadNode.getChild(2).getType().name()
-										.equals("MINUS"))
+								else if (reactantHeadNode.getChild(2).getType().name().equals("MINUS"))
 								{
-									colOffset = -1
-											* reactantHeadNode.getChild(2).getRightChild()
-													.getInteger();
+									colOffset = -1 * reactantHeadNode.getChild(2).getRightChild().getInteger();
 								}
 
 								// create a new reactant and add it to the new
 								// reaction
 								SpeciesReference newReactant = new SpeciesReference();
 								newReactant = reactant.clone();
-								newReactant.setSpecies(model.getSpecies("ROW" + (row + rowOffset)
-										+ "_COL" + (col + colOffset) + "__"
+								newReactant.setSpecies(model.getSpecies("ROW" + (row + rowOffset) + "_COL" + (col + colOffset) + "__"
 										+ newReactant.getSpecies()));
 								newReactant.setAnnotation(new Annotation());
 								newReaction.addReactant(newReactant);
@@ -5402,8 +5106,7 @@ public abstract class Simulator
 									reactantHeadNode.removeChild(i);
 								}
 
-								reactantHeadNode.setVariable(model.getSpecies(newReactant
-										.getSpecies()));
+								reactantHeadNode.setVariable(model.getSpecies(newReactant.getSpecies()));
 							}// end looping through reactants
 
 							// loop through all modifiers
@@ -5430,8 +5133,7 @@ public abstract class Simulator
 									// make sure it's a product node
 									// only the product has children, as the
 									// reactant's children get deleted
-									if (headNode.getChildCount() > 0
-											&& model.getParameter(headNode.getLeftChild().getName()) == null)
+									if (headNode.getChildCount() > 0 && model.getParameter(headNode.getLeftChild().getName()) == null)
 									{
 
 										productHeadNode = headNode;
@@ -5447,36 +5149,26 @@ public abstract class Simulator
 
 								if (productHeadNode.getChild(1).getType().name().equals("PLUS"))
 								{
-									rowOffset = productHeadNode.getChild(1).getRightChild()
-											.getInteger();
+									rowOffset = productHeadNode.getChild(1).getRightChild().getInteger();
 								}
-								else if (productHeadNode.getChild(1).getType().name()
-										.equals("MINUS"))
+								else if (productHeadNode.getChild(1).getType().name().equals("MINUS"))
 								{
-									rowOffset = -1
-											* productHeadNode.getChild(1).getRightChild()
-													.getInteger();
+									rowOffset = -1 * productHeadNode.getChild(1).getRightChild().getInteger();
 								}
 
 								if (productHeadNode.getChild(2).getType().name().equals("PLUS"))
 								{
-									colOffset = productHeadNode.getChild(2).getRightChild()
-											.getInteger();
+									colOffset = productHeadNode.getChild(2).getRightChild().getInteger();
 								}
-								else if (productHeadNode.getChild(2).getType().name()
-										.equals("MINUS"))
+								else if (productHeadNode.getChild(2).getType().name().equals("MINUS"))
 								{
-									colOffset = -1
-											* productHeadNode.getChild(2).getRightChild()
-													.getInteger();
+									colOffset = -1 * productHeadNode.getChild(2).getRightChild().getInteger();
 								}
 
 								// don't create reactions with products that
 								// don't exist
-								if (row + rowOffset < reactantDimensions.numRowsLower
-										|| col + colOffset < reactantDimensions.numColsLower
-										|| row + rowOffset > reactantDimensions.numRowsUpper
-										|| col + colOffset > reactantDimensions.numColsUpper)
+								if (row + rowOffset < reactantDimensions.numRowsLower || col + colOffset < reactantDimensions.numColsLower
+										|| row + rowOffset > reactantDimensions.numRowsUpper || col + colOffset > reactantDimensions.numColsUpper)
 								{
 
 									abort = true;
@@ -5487,8 +5179,7 @@ public abstract class Simulator
 								// reaction
 								SpeciesReference newProduct = new SpeciesReference();
 								newProduct = product.clone();
-								newProduct.setSpecies(model.getSpecies("ROW" + (row + rowOffset)
-										+ "_COL" + (col + colOffset) + "__"
+								newProduct.setSpecies(model.getSpecies("ROW" + (row + rowOffset) + "_COL" + (col + colOffset) + "__"
 										+ newProduct.getSpecies()));
 								newProduct.setAnnotation(new Annotation());
 								newReaction.addProduct(newProduct);
@@ -5507,8 +5198,7 @@ public abstract class Simulator
 									productHeadNode.removeChild(i);
 								}
 
-								productHeadNode.setVariable(model.getSpecies(newProduct
-										.getSpecies()));
+								productHeadNode.setVariable(model.getSpecies(newProduct.getSpecies()));
 							} // end looping through products
 
 							if (abort == false)
@@ -5518,8 +5208,7 @@ public abstract class Simulator
 
 								// checking for these local parameters using
 								// getLocalParameters() doesn't seem to work
-								for (LocalParameter lp : newReaction.getKineticLaw()
-										.getListOfLocalParameters())
+								for (LocalParameter lp : newReaction.getKineticLaw().getListOfLocalParameters())
 								{
 
 									if (lp.getId().equals("i"))
@@ -5534,22 +5223,19 @@ public abstract class Simulator
 
 								if (i)
 								{
-									newReaction.getKineticLaw().getListOfLocalParameters()
-											.remove("i");
+									newReaction.getKineticLaw().getListOfLocalParameters().remove("i");
 								}
 
 								if (j)
 								{
-									newReaction.getKineticLaw().getListOfLocalParameters()
-											.remove("j");
+									newReaction.getKineticLaw().getListOfLocalParameters().remove("j");
 								}
 
 								// this isn't a reversible reaction; only take
 								// the left side
 								if (newReaction.getId().contains(GlobalConstants.DEGRADATION) == false)
 								{
-									newReaction.getKineticLaw().setMath(
-											newReaction.getKineticLaw().getMath().getLeftChild());
+									newReaction.getKineticLaw().setMath(newReaction.getKineticLaw().getMath().getLeftChild());
 								}
 
 								reactionsToAdd.add(newReaction);
@@ -5615,11 +5301,8 @@ public abstract class Simulator
 				{
 					if (parameter.getId().contains("_locations"))
 					{
-						this.submodelIDToLocationsMap.put(
-								parameter.getId().replace("__locations", ""),
-								stripAnnotation(parameter.getAnnotationString()
-										.replace("<annotation>", "").replace("</annotation>", "")
-										.trim()));
+						this.submodelIDToLocationsMap.put(parameter.getId().replace("__locations", ""), stripAnnotation(parameter
+								.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()));
 					}
 
 					parametersToRemove.add(parameter.getId());
@@ -5785,24 +5468,19 @@ public abstract class Simulator
 			for (String annotationString : this.submodelIDToLocationsMap.values())
 			{
 
-				annotationString = annotationString.replace("<annotation>", "")
-						.replace("</annotation>", "").replace("\"", "");
+				annotationString = annotationString.replace("<annotation>", "").replace("</annotation>", "").replace("\"", "");
 				String[] splitAnnotation = annotationString.split("array:");
 
-				splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2]
-						.split("xmlns:")[0];
+				splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2].split("xmlns:")[0];
 
 				for (int i = 2; i < splitAnnotation.length; ++i)
 				{
 
 					String compartmentID = splitAnnotation[i].split("=")[0];
-					String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0]
-							.replace("(", "");
-					String col = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[1]
-							.replace(")", "");
+					String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0].replace("(", "");
+					String col = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[1].replace(")", "");
 
-					componentToLocationMap.put(compartmentID, new Point(
-							Integer.valueOf(row.trim()), Integer.valueOf(col.trim())));
+					componentToLocationMap.put(compartmentID, new Point(Integer.valueOf(row.trim()), Integer.valueOf(col.trim())));
 				}
 			}
 		}
@@ -5831,8 +5509,7 @@ public abstract class Simulator
 		else if (species.isSetInitialConcentration())
 		{
 
-			variableToValueMap.put(speciesID, species.getInitialConcentration()
-					* species.getCompartmentInstance().getSize());
+			variableToValueMap.put(speciesID, species.getInitialConcentration() * species.getCompartmentInstance().getSize());
 		}
 
 		if (species.getConversionFactor() != null)
@@ -5921,20 +5598,17 @@ public abstract class Simulator
 				String variable = initialAssignment.getVariable().replace("_negative_", "-");
 				initialAssignment.setMath(inlineFormula(initialAssignment.getMath()));
 
-				if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable)
-						&& speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+				if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable) && speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
 				{
 
 					variableToValueMap.put(
 							variable,
 							evaluateExpressionRecursive(initialAssignment.getMath())
-									* variableToValueMap.get(speciesToCompartmentNameMap
-											.get(variable)));
+									* variableToValueMap.get(speciesToCompartmentNameMap.get(variable)));
 				}
 				else
 				{
-					variableToValueMap.put(variable,
-							evaluateExpressionRecursive(initialAssignment.getMath()));
+					variableToValueMap.put(variable, evaluateExpressionRecursive(initialAssignment.getMath()));
 				}
 
 				affectedVariables.add(variable);
@@ -5961,8 +5635,7 @@ public abstract class Simulator
 				// revert to the initial concentration value
 				if (Double.isNaN(variableToValueMap.get(speciesID)) == false)
 				{
-					variableToValueMap.put(speciesID, variableToValueMap.get(speciesID)
-							/ species.getCompartmentInstance().getSize());
+					variableToValueMap.put(speciesID, variableToValueMap.get(speciesID) / species.getCompartmentInstance().getSize());
 				}
 				else
 				{
@@ -5970,8 +5643,8 @@ public abstract class Simulator
 				}
 
 				// multiply by the new compartment size to get into amount
-				variableToValueMap.put(speciesID, variableToValueMap.get(speciesID)
-						* variableToValueMap.get(speciesToCompartmentNameMap.get(speciesID)));
+				variableToValueMap.put(speciesID,
+						variableToValueMap.get(speciesID) * variableToValueMap.get(speciesToCompartmentNameMap.get(speciesID)));
 			}
 		}
 	}
@@ -6164,8 +5837,7 @@ public abstract class Simulator
 
 						String nodeName = ruleNode.getName();
 
-						variableToAffectedAssignmentRuleSetMap.put(nodeName,
-								new HashSet<AssignmentRule>());
+						variableToAffectedAssignmentRuleSetMap.put(nodeName, new HashSet<AssignmentRule>());
 						variableToAffectedAssignmentRuleSetMap.get(nodeName).add(assignmentRule);
 						variableToIsInAssignmentRuleMap.put(nodeName, true);
 					}
@@ -6270,8 +5942,7 @@ public abstract class Simulator
 		String eventID = event.getId();
 
 		// these events are what determines if a model is dynamic or not
-		if (eventID.contains("Division__") || eventID.contains("Death__")
-				|| eventID.contains("__Move"))
+		if (eventID.contains("Division__") || eventID.contains("Death__") || eventID.contains("__Move"))
 		{
 			dynamicBoolean = true;
 		}
@@ -6329,8 +6000,7 @@ public abstract class Simulator
 			if (speciesToAffectedReactionSetMap.containsKey(variableID))
 			{
 
-				eventToAffectedReactionSetMap.get(eventID).addAll(
-						speciesToAffectedReactionSetMap.get(variableID));
+				eventToAffectedReactionSetMap.get(eventID).addAll(speciesToAffectedReactionSetMap.get(variableID));
 			}
 		}
 	}
@@ -6354,6 +6024,7 @@ public abstract class Simulator
 	/**
 	 * does a minimized initialization process to prepare for a new run
 	 */
+	@Override
 	public abstract void setupForNewRun(int newRun);
 
 	/**
@@ -6454,8 +6125,7 @@ public abstract class Simulator
 	 * @param productsList
 	 * @param modifiersList
 	 */
-	private void setupSingleReaction(String reactionID, ASTNode reactionFormula,
-			boolean reversible, ListOf<SpeciesReference> reactantsList,
+	private void setupSingleReaction(String reactionID, ASTNode reactionFormula, boolean reversible, ListOf<SpeciesReference> reactantsList,
 			ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList)
 	{
 
@@ -6480,34 +6150,24 @@ public abstract class Simulator
 
 				reactionFormula = inlineFormula(reactionFormula);
 
-				if (reactionFormula.getChildCount() >= 2
-						&& reactionFormula.getChild(1).getType().equals(ASTNode.Type.PLUS))
+				if (reactionFormula.getChildCount() >= 2 && reactionFormula.getChild(1).getType().equals(ASTNode.Type.PLUS))
 				{
-					distributedNode = ASTNode.sum(ASTNode.times(reactionFormula.getLeftChild(),
-							reactionFormula.getRightChild().getLeftChild()), ASTNode.times(
-							new ASTNode(-1), reactionFormula.getLeftChild(), reactionFormula
-									.getRightChild().getRightChild()));
+					distributedNode = ASTNode.sum(ASTNode.times(reactionFormula.getLeftChild(), reactionFormula.getRightChild().getLeftChild()),
+							ASTNode.times(new ASTNode(-1), reactionFormula.getLeftChild(), reactionFormula.getRightChild().getRightChild()));
 				}
-				else if (reactionFormula.getChildCount() >= 2
-						&& reactionFormula.getChild(1).getType().equals(ASTNode.Type.MINUS))
+				else if (reactionFormula.getChildCount() >= 2 && reactionFormula.getChild(1).getType().equals(ASTNode.Type.MINUS))
 				{
-					distributedNode = ASTNode.diff(ASTNode.times(reactionFormula.getLeftChild(),
-							reactionFormula.getRightChild().getLeftChild()), ASTNode.times(
-							reactionFormula.getLeftChild(), reactionFormula.getRightChild()
-									.getRightChild()));
+					distributedNode = ASTNode.diff(ASTNode.times(reactionFormula.getLeftChild(), reactionFormula.getRightChild().getLeftChild()),
+							ASTNode.times(reactionFormula.getLeftChild(), reactionFormula.getRightChild().getRightChild()));
 				}
 
 				reactionFormula = distributedNode;
 			}
 
-			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_fd",
-					new HashSet<StringDoublePair>());
-			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_rv",
-					new HashSet<StringDoublePair>());
-			reactionToReactantStoichiometrySetMap.put(reactionID + "_fd",
-					new HashSet<StringDoublePair>());
-			reactionToReactantStoichiometrySetMap.put(reactionID + "_rv",
-					new HashSet<StringDoublePair>());
+			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
+			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
 
 			for (SpeciesReference reactant : reactantsList)
 			{
@@ -6533,37 +6193,30 @@ public abstract class Simulator
 					reactantStoichiometry = reactant.getStoichiometry();
 				}
 
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
-						new StringDoublePair(reactantID, -reactantStoichiometry));
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(
-						new StringDoublePair(reactantID, reactantStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(new StringDoublePair(reactantID, -reactantStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(new StringDoublePair(reactantID, reactantStoichiometry));
 
 				// not having a minus sign is intentional as this isn't used for
 				// calculations
-				reactionToReactantStoichiometrySetMap.get(reactionID + "_fd").add(
-						new StringDoublePair(reactantID, reactantStoichiometry));
+				reactionToReactantStoichiometrySetMap.get(reactionID + "_fd").add(new StringDoublePair(reactantID, reactantStoichiometry));
 
 				// if there was not initial assignment for the reactant
-				if (reactant.getConstant() == false
-						&& variableToValueMap.containsKey(reactant.getId()) == false
-						&& reactant.getId().length() > 0)
+				if (reactant.getConstant() == false && variableToValueMap.containsKey(reactant.getId()) == false && reactant.getId().length() > 0)
 				{
 
 					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID + "_fd") == false)
 					{
-						reactionToNonconstantStoichiometriesSetMap.put(reactionID + "_fd",
-								new HashSet<StringStringPair>());
+						reactionToNonconstantStoichiometriesSetMap.put(reactionID + "_fd", new HashSet<StringStringPair>());
 					}
 					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID + "_rv") == false)
 					{
-						reactionToNonconstantStoichiometriesSetMap.put(reactionID + "_rv",
-								new HashSet<StringStringPair>());
+						reactionToNonconstantStoichiometriesSetMap.put(reactionID + "_rv", new HashSet<StringStringPair>());
 					}
 
-					reactionToNonconstantStoichiometriesSetMap.get(reactionID + "_fd").add(
-							new StringStringPair(reactantID + "_fd", reactant.getId()));
-					reactionToNonconstantStoichiometriesSetMap.get(reactionID + "_rv").add(
-							new StringStringPair(reactantID + "_rv", reactant.getId()));
+					reactionToNonconstantStoichiometriesSetMap.get(reactionID + "_fd")
+							.add(new StringStringPair(reactantID + "_fd", reactant.getId()));
+					reactionToNonconstantStoichiometriesSetMap.get(reactionID + "_rv")
+							.add(new StringStringPair(reactantID + "_rv", reactant.getId()));
 
 					variableToValueMap.put(reactant.getId(), reactantStoichiometry);
 				}
@@ -6604,30 +6257,23 @@ public abstract class Simulator
 					productStoichiometry = product.getStoichiometry();
 				}
 
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
-						new StringDoublePair(productID, productStoichiometry));
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(
-						new StringDoublePair(productID, -productStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(new StringDoublePair(productID, productStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(new StringDoublePair(productID, -productStoichiometry));
 
 				// not having a minus sign is intentional as this isn't used for
 				// calculations
-				reactionToReactantStoichiometrySetMap.get(reactionID + "_rv").add(
-						new StringDoublePair(productID, productStoichiometry));
+				reactionToReactantStoichiometrySetMap.get(reactionID + "_rv").add(new StringDoublePair(productID, productStoichiometry));
 
 				// if there wasn't an initial assignment
-				if (product.getConstant() == false
-						&& variableToValueMap.containsKey(product.getId()) == false
-						&& product.getId().length() > 0)
+				if (product.getConstant() == false && variableToValueMap.containsKey(product.getId()) == false && product.getId().length() > 0)
 				{
 
 					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
 					{
-						reactionToNonconstantStoichiometriesSetMap.put(reactionID,
-								new HashSet<StringStringPair>());
+						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
 					}
 
-					reactionToNonconstantStoichiometriesSetMap.get(reactionID).add(
-							new StringStringPair(productID, product.getId()));
+					reactionToNonconstantStoichiometriesSetMap.get(reactionID).add(new StringStringPair(productID, product.getId()));
 					variableToValueMap.put(product.getId(), productStoichiometry);
 				}
 
@@ -6677,10 +6323,8 @@ public abstract class Simulator
 
 			double propensity;
 
-			reactionToFormulaMap.put(reactionID + "_rv",
-					inlineFormula(reactionFormula.getRightChild()));
-			reactionToFormulaMap.put(reactionID + "_fd",
-					inlineFormula(reactionFormula.getLeftChild()));
+			reactionToFormulaMap.put(reactionID + "_rv", inlineFormula(reactionFormula.getRightChild()));
+			reactionToFormulaMap.put(reactionID + "_fd", inlineFormula(reactionFormula.getLeftChild()));
 
 			// calculate forward reaction propensity
 			if (notEnoughMoleculesFlagFd == true)
@@ -6690,8 +6334,7 @@ public abstract class Simulator
 			else
 			{
 				// the left child is what's left of the minus sign
-				propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula
-						.getLeftChild()));
+				propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula.getLeftChild()));
 
 				// stoichiometry amplification -- alter the propensity
 				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
@@ -6722,8 +6365,7 @@ public abstract class Simulator
 			else
 			{
 				// the right child is what's right of the minus sign
-				propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula
-						.getRightChild()));
+				propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula.getRightChild()));
 
 				// stoichiometry amplification -- alter the propensity
 				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
@@ -6749,8 +6391,7 @@ public abstract class Simulator
 		// if it's not a reversible reaction
 		else
 		{
-			reactionToSpeciesAndStoichiometrySetMap
-					.put(reactionID, new HashSet<StringDoublePair>());
+			reactionToSpeciesAndStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
 			reactionToReactantStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
 
 			for (SpeciesReference reactant : reactantsList)
@@ -6776,25 +6417,19 @@ public abstract class Simulator
 					reactantStoichiometry = reactant.getStoichiometry();
 				}
 
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
-						new StringDoublePair(reactantID, -reactantStoichiometry));
-				reactionToReactantStoichiometrySetMap.get(reactionID).add(
-						new StringDoublePair(reactantID, reactantStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(new StringDoublePair(reactantID, -reactantStoichiometry));
+				reactionToReactantStoichiometrySetMap.get(reactionID).add(new StringDoublePair(reactantID, reactantStoichiometry));
 
 				// if there wasn't an initial assignment
-				if (reactant.getConstant() == false
-						&& variableToValueMap.containsKey(reactant.getId()) == false
-						&& reactant.getId().length() > 0)
+				if (reactant.getConstant() == false && variableToValueMap.containsKey(reactant.getId()) == false && reactant.getId().length() > 0)
 				{
 
 					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
 					{
-						reactionToNonconstantStoichiometriesSetMap.put(reactionID,
-								new HashSet<StringStringPair>());
+						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
 					}
 
-					reactionToNonconstantStoichiometriesSetMap.get(reactionID).add(
-							new StringStringPair(reactantID, reactant.getId()));
+					reactionToNonconstantStoichiometriesSetMap.get(reactionID).add(new StringStringPair(reactantID, reactant.getId()));
 					variableToValueMap.put(reactant.getId(), reactantStoichiometry);
 				}
 
@@ -6830,22 +6465,17 @@ public abstract class Simulator
 					productStoichiometry = product.getStoichiometry();
 				}
 
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
-						new StringDoublePair(productID, productStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(new StringDoublePair(productID, productStoichiometry));
 
-				if (product.getConstant() == false
-						&& variableToValueMap.containsKey(product.getId()) == false
-						&& product.getId().length() > 0)
+				if (product.getConstant() == false && variableToValueMap.containsKey(product.getId()) == false && product.getId().length() > 0)
 				{
 
 					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
 					{
-						reactionToNonconstantStoichiometriesSetMap.put(reactionID,
-								new HashSet<StringStringPair>());
+						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
 					}
 
-					reactionToNonconstantStoichiometriesSetMap.get(reactionID).add(
-							new StringStringPair(productID, product.getId()));
+					reactionToNonconstantStoichiometriesSetMap.get(reactionID).add(new StringStringPair(productID, product.getId()));
 					variableToValueMap.put(product.getId(), productStoichiometry);
 				}
 
@@ -6919,8 +6549,7 @@ public abstract class Simulator
 			String reactionID = reaction.getId();
 			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
 
-			setupSingleReaction(reactionID, reactionFormula, reaction.getReversible(),
-					reaction.getListOfReactants(), reaction.getListOfProducts(),
+			setupSingleReaction(reactionID, reactionFormula, reaction.getReversible(), reaction.getListOfReactants(), reaction.getListOfProducts(),
 					reaction.getListOfModifiers());
 		}
 	}
@@ -6928,6 +6557,7 @@ public abstract class Simulator
 	/**
 	 * abstract simulate method each simulator needs a simulate method
 	 */
+	@Override
 	public abstract void simulate();
 
 	/**
@@ -7042,8 +6672,7 @@ public abstract class Simulator
 
 			boolean notEnoughMoleculesFlag = false;
 
-			HashSet<StringDoublePair> reactantStoichiometrySet = reactionToReactantStoichiometrySetMap
-					.get(reactionID);
+			HashSet<StringDoublePair> reactantStoichiometrySet = reactionToReactantStoichiometrySetMap.get(reactionID);
 
 			// check for enough molecules for the reaction to occur
 			for (StringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
@@ -7055,8 +6684,7 @@ public abstract class Simulator
 				if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID))
 				{
 
-					for (StringStringPair doubleID : reactionToNonconstantStoichiometriesSetMap
-							.get(reactionID))
+					for (StringStringPair doubleID : reactionToNonconstantStoichiometriesSetMap.get(reactionID))
 					{
 
 						// string1 is the species ID; string2 is the

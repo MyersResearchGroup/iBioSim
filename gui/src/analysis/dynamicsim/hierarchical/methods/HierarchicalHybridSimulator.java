@@ -31,22 +31,19 @@ import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
 
+import analysis.dynamicsim.ParentSimulator;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalArrayModels;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
-import analysis.dynamicsim.hierarchical.util.Evaluator;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
-public class HierarchicalHybridSimulator implements HierarchicalSimulation
+public class HierarchicalHybridSimulator implements ParentSimulator
 {
 
 	private final SBMLDocument								document;
-	private final String									rootDirectory, outputDirectory,
-			quantityType, abstraction;
+	private final String									rootDirectory, outputDirectory, quantityType, abstraction;
 	private String											separator;
 	private final JProgressBar								progress;
-	private final double									timeLimit, maxTimeStep, minTimeStep,
-			printInterval, stoichAmpValue;
+	private final double									timeLimit, maxTimeStep, minTimeStep, printInterval, stoichAmpValue;
 	private double											currentTime;
 	private final JFrame									running;
 	private final String[]									interestingSpecies;
@@ -61,11 +58,9 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 	private final Map<String, Model>						idToModel;
 	private FileWriter										tsdWriter;
 
-	public HierarchicalHybridSimulator(String SBMLFileName, String rootDirectory,
-			String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep,
-			long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue,
-			JFrame running, String[] interestingSpecies, String quantityType, String abstraction)
-			throws IOException, XMLStreamException
+	public HierarchicalHybridSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, double maxTimeStep,
+			double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
+			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
 		this.rootDirectory = rootDirectory;
 		this.outputDirectory = outputDirectory;
@@ -104,18 +99,15 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 
 	private void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException
 	{
-		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getPlugin(
-				CompConstants.namespaceURI);
-		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document
-				.getPlugin(CompConstants.namespaceURI);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getPlugin(CompConstants.namespaceURI);
+		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document.getPlugin(CompConstants.namespaceURI);
 
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels())
 		{
 			if (sbmlComp.getListOfExternalModelDefinitions() != null
 					&& sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null)
 			{
-				String source = sbmlComp.getListOfExternalModelDefinitions()
-						.get(submodel.getModelRef()).getSource().replace("file:", "");
+				String source = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource().replace("file:", "");
 
 				String extDef = rootDirectory + separator + source;
 
@@ -124,10 +116,8 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 
 				SBMLDocument subDoc = SBMLReader.read(new File(extDef));
 				idToModel.put(submodel.getId(), subDoc.getModel());
-				sims.add(new HierarchicalSSADirectSimulator(extDef, rootDirectory, outputDirectory,
-						timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval,
-						stoichAmpValue, running, interestingSpecies, quantityType, abstraction,
-						false));
+				sims.add(new HierarchicalSSADirectSimulator(extDef, rootDirectory, outputDirectory, 1, timeLimit, maxTimeStep, minTimeStep,
+						randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, false));
 
 			}
 
@@ -209,14 +199,15 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 
 			for (String key : listOfAssignmentRules.keySet())
 			{
-				double oldValue = values.get(key);
-				double newValue = Evaluator.evaluate(listOfAssignmentRules.get(key), values);
-
-				if (oldValue != newValue)
-				{
-					values.put(key, newValue);
-					changed = true;
-				}
+				// double oldValue = values.get(key);
+				// double newValue =
+				// Evaluator.evaluate(listOfAssignmentRules.get(key), values);
+				//
+				// if (oldValue != newValue)
+				// {
+				// values.put(key, newValue);
+				// changed = true;
+				// }
 			}
 		}
 	}
@@ -267,8 +258,7 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 	private void setupSpecies(Model model)
 	{
 
-		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getPlugin(
-				CompConstants.namespaceURI);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getPlugin(CompConstants.namespaceURI);
 
 		for (Species species : model.getListOfSpecies())
 		{
@@ -280,8 +270,7 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 	private void setupParameters(Model model)
 	{
 
-		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getPlugin(
-				CompConstants.namespaceURI);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin) document.getModel().getPlugin(CompConstants.namespaceURI);
 
 		for (Parameter parameter : model.getListOfParameters())
 		{
@@ -297,8 +286,7 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 			return;
 		}
 
-		CompSBasePlugin sbmlSBase = (CompSBasePlugin) quantity
-				.getExtension(CompConstants.namespaceURI);
+		CompSBasePlugin sbmlSBase = (CompSBasePlugin) quantity.getExtension(CompConstants.namespaceURI);
 
 		String id = quantity.getId();
 
@@ -309,8 +297,7 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 				for (ReplacedElement element : sbmlSBase.getListOfReplacedElements())
 				{
 					String submodel = element.getSubmodelRef();
-					sbmlCompModel = (CompModelPlugin) idToModel.get(submodel).getPlugin(
-							CompConstants.namespaceURI);
+					sbmlCompModel = (CompModelPlugin) idToModel.get(submodel).getPlugin(CompConstants.namespaceURI);
 					if (element.isSetPortRef())
 					{
 						Port port = sbmlCompModel.getListOfPorts().get(element.getPortRef());
@@ -319,8 +306,7 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 						{
 							quantityToReplaces.put(id, new ArrayList<HierarchicalStringPair>());
 						}
-						quantityToReplaces.get(id).add(
-								new HierarchicalStringPair(submodel, replacing));
+						quantityToReplaces.get(id).add(new HierarchicalStringPair(submodel, replacing));
 					}
 				}
 			}
@@ -329,8 +315,7 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 			{
 				ReplacedBy replacement = sbmlSBase.getReplacedBy();
 				String submodel = replacement.getSubmodelRef();
-				sbmlCompModel = (CompModelPlugin) idToModel.get(submodel).getPlugin(
-						CompConstants.namespaceURI);
+				sbmlCompModel = (CompModelPlugin) idToModel.get(submodel).getPlugin(CompConstants.namespaceURI);
 				if (replacement.isSetPortRef())
 				{
 					Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
@@ -386,8 +371,7 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 			for (String speciesID : sim.getTopmodel().getSpeciesIDSet())
 			{
 
-				bufferedTSDWriter.write(commaSpace
-						+ sim.getTopmodel().getVariableToValue(sim.getReplacements(), speciesID));
+				bufferedTSDWriter.write(commaSpace + sim.getTopmodel().getVariableToValue(sim.getReplacements(), speciesID));
 				commaSpace = ",";
 
 			}
@@ -424,12 +408,10 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 			}
 		}
 
-		if (formula.isFunction()
-				&& document.getModel().getFunctionDefinition(formula.getName()) != null)
+		if (formula.isFunction() && document.getModel().getFunctionDefinition(formula.getName()) != null)
 		{
 
-			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody()
-					.clone();
+			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody().clone();
 
 			ASTNode oldFormula = formula.clone();
 
@@ -445,8 +427,7 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 
 			for (int i = 0; i < model.getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
 			{
-				inlinedChildToOldIndexMap.put(model.getFunctionDefinition(formula.getName())
-						.getArgument(i).getName(), i);
+				inlinedChildToOldIndexMap.put(model.getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
 			}
 
 			for (int i = 0; i < inlinedChildren.size(); ++i)
@@ -457,8 +438,7 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 				{
 
 					int index = inlinedChildToOldIndexMap.get(child.getName());
-					HierarchicalUtilities.replaceArgument(inlinedFormula, child.toFormula(),
-							oldFormula.getChild(index));
+					HierarchicalUtilities.replaceArgument(inlinedFormula, child.toFormula(), oldFormula.getChild(index));
 
 					if (inlinedFormula.getChildCount() == 0)
 					{
@@ -470,6 +450,13 @@ public class HierarchicalHybridSimulator implements HierarchicalSimulation
 			return inlinedFormula;
 		}
 		return formula;
+	}
+
+	@Override
+	public void printStatisticsTSD()
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

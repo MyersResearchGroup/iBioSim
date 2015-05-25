@@ -2,46 +2,61 @@ package analysis.dynamicsim.hierarchical.util;
 
 import java.util.Map;
 
+import odk.lang.FastMath;
+
+import org.apache.commons.math3.distribution.BinomialDistribution;
+import org.apache.commons.math3.distribution.CauchyDistribution;
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
+import org.apache.commons.math3.distribution.GammaDistribution;
+import org.apache.commons.math3.distribution.LaplaceDistribution;
+import org.apache.commons.math3.distribution.LogNormalDistribution;
+import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.distribution.PoissonDistribution;
+import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.sbml.jsbml.ASTNode;
+
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
 
 public class Evaluator
 {
 
-	public static double evaluate(ASTNode node, Map<String, Double> idToValue)
+	public static double evaluateExpressionRecursive(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
-
 		if (node.isBoolean())
 		{
-			return evaluateBoolean(node, idToValue);
+			return evaluateBoolean(modelstate, node, evaluateState, t, y, variableToIndexMap, replacements);
 		}
 		else if (node.isConstant())
 		{
-			return evaluateConstant(node, idToValue);
+			return evaluateConstant(modelstate, node, evaluateState, t, y, variableToIndexMap, replacements);
 		}
 		else if (node.isInteger())
 		{
-			return evaluateInteger(node, idToValue);
+			return evaluateInteger(modelstate, node, evaluateState, t, y, variableToIndexMap, replacements);
 		}
 
 		else if (node.isReal())
 		{
-			return evaluateReal(node, idToValue);
+			return evaluateReal(modelstate, node, evaluateState, t, y, variableToIndexMap, replacements);
 		}
 		else if (node.isName())
 		{
-			return evaluateName(node, idToValue);
+			return evaluateName(modelstate, node, evaluateState, t, y, variableToIndexMap, replacements);
 		}
 		else if (node.isOperator())
 		{
-			return evaluateOperator(node, idToValue);
+			return evaluateOperator(modelstate, node, evaluateState, t, y, variableToIndexMap, replacements);
 		}
 		else
 		{
-			return evaluateFunction(node, idToValue);
+			return evaluateFunction(modelstate, node, evaluateState, t, y, variableToIndexMap, replacements);
 		}
 	}
 
-	private static double evaluateBoolean(ASTNode node, Map<String, Double> idToValue)
+	private static double evaluateBoolean(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		switch (node.getType())
 		{
@@ -56,107 +71,86 @@ public class Evaluator
 		}
 		case LOGICAL_NOT:
 		{
-
-			double value = evaluate(node, idToValue);
-
-			if (value == 1)
-			{
-				return 0;
-			}
-			else
-			{
-				return 1;
-			}
+			return HierarchicalUtilities.getDoubleFromBoolean(!(HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
+					node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements))));
 		}
 		case LOGICAL_AND:
 		{
+
+			boolean andResult = true;
+
 			for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 			{
-				double value = evaluate(node.getChild(childIter), idToValue);
-
-				if (value == 0)
-				{
-					return 0;
-				}
+				andResult = andResult
+						&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter),
+								evaluateState, t, y, variableToIndexMap, replacements));
 			}
 
-			return 1;
+			return HierarchicalUtilities.getDoubleFromBoolean(andResult);
 		}
 
 		case LOGICAL_OR:
 		{
+
+			boolean orResult = false;
+
 			for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 			{
-				double value = evaluate(node.getChild(childIter), idToValue);
-
-				if (value == 1)
-				{
-					return 1;
-				}
+				orResult = orResult
+						|| HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter),
+								evaluateState, t, y, variableToIndexMap, replacements));
 			}
 
-			return 0;
+			return HierarchicalUtilities.getDoubleFromBoolean(orResult);
 		}
 
 		case LOGICAL_XOR:
 		{
-			int count_0 = 0;
-			int count_1 = 0;
-			for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
-			{
-				double value = evaluate(node, idToValue);
 
-				if (value == 0)
-				{
-					count_0++;
-				}
-				else
-				{
-					count_1++;
-				}
+			boolean xorResult = (node.getChildCount() == 0) ? false : HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
+					modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements));
+
+			for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
+			{
+				xorResult = xorResult
+						^ HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState,
+								t, y, variableToIndexMap, replacements));
 			}
 
-			return count_0 == count_1 ? 0 : 1;
+			return HierarchicalUtilities.getDoubleFromBoolean(xorResult);
 		}
 
 		case RELATIONAL_EQ:
-		{
-			double left = evaluate(node.getLeftChild(), idToValue);
-			double right = evaluate(node.getRightChild(), idToValue);
-			return left == right ? 1 : 0;
-		}
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap, replacements) == evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y,
+					variableToIndexMap, replacements));
+
 		case RELATIONAL_NEQ:
-		{
-			double left = evaluate(node.getLeftChild(), idToValue);
-			double right = evaluate(node.getRightChild(), idToValue);
-			return left != right ? 1 : 0;
-		}
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap, replacements) != evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y,
+					variableToIndexMap, replacements));
 
 		case RELATIONAL_GEQ:
 		{
-			double left = evaluate(node.getLeftChild(), idToValue);
-			double right = evaluate(node.getRightChild(), idToValue);
-			return left >= right ? 1 : 0;
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap, replacements) >= evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y,
+					variableToIndexMap, replacements));
 		}
 		case RELATIONAL_LEQ:
-		{
-			double left = evaluate(node.getLeftChild(), idToValue);
-			double right = evaluate(node.getRightChild(), idToValue);
-			return left <= right ? 1 : 0;
-		}
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap, replacements) <= evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y,
+					variableToIndexMap, replacements));
 
 		case RELATIONAL_GT:
-		{
-			double left = evaluate(node.getLeftChild(), idToValue);
-			double right = evaluate(node.getRightChild(), idToValue);
-			return left > right ? 1 : 0;
-		}
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap, replacements) > evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y,
+					variableToIndexMap, replacements));
 
 		case RELATIONAL_LT:
 		{
-			double left = evaluate(node.getLeftChild(), idToValue);
-			double right = evaluate(node.getRightChild(), idToValue);
-			return left < right ? 1 : 0;
+			return HierarchicalUtilities.getDoubleFromBoolean(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y,
+					variableToIndexMap, replacements) < evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y,
+					variableToIndexMap, replacements));
 		}
 
 		default:
@@ -165,7 +159,8 @@ public class Evaluator
 		}
 	}
 
-	private static double evaluateConstant(ASTNode node, Map<String, Double> idToValue)
+	private static double evaluateConstant(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 
 		switch (node.getType())
@@ -179,98 +174,181 @@ public class Evaluator
 		{
 			return Math.PI;
 		}
-		default:
-			return 0.0;
 		}
+		return 0;
 	}
 
-	private static double evaluateFunction(ASTNode node, Map<String, Double> idToValue)
+	private static double evaluateFunction(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		switch (node.getType())
 		{
-		// TODO: distribution
+		case FUNCTION:
+		{
+			// use node name to determine function
+			// i'm not sure what to do with completely user-defined functions,
+			// though
+			String nodeName = node.getName();
+
+			if (nodeName.equals("uniform"))
+			{
+				double leftChildValue = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap,
+						replacements);
+				double rightChildValue = evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap,
+						replacements);
+				double lowerBound = Math.min(leftChildValue, rightChildValue);
+				double upperBound = Math.max(leftChildValue, rightChildValue);
+				UniformRealDistribution distrib = new UniformRealDistribution(lowerBound, upperBound);
+				return distrib.sample();
+			}
+			else if (nodeName.equals("exponential"))
+			{
+				double mean = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				ExponentialDistribution distrib = new ExponentialDistribution(mean);
+				return distrib.sample();
+			}
+			else if (nodeName.equals("gamma"))
+			{
+				double shape = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				double scale = evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap, replacements);
+
+				GammaDistribution distrib = new GammaDistribution(shape, scale);
+				return distrib.sample();
+			}
+			else if (nodeName.equals("chisq"))
+			{
+				double deg = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				ChiSquaredDistribution distrib = new ChiSquaredDistribution(deg);
+				return distrib.sample();
+			}
+			else if (nodeName.equals("lognormal"))
+			{
+				double scale = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				double shape = evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				LogNormalDistribution distrib = new LogNormalDistribution(scale, shape);
+				return distrib.sample();
+			}
+			else if (nodeName.equals("laplace"))
+			{
+				double mu = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				double beta = evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				LaplaceDistribution distrib = new LaplaceDistribution(mu, beta);
+				return distrib.sample();
+			}
+			else if (nodeName.equals("cauchy"))
+			{
+				double median = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				double scale = evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				CauchyDistribution distrib = new CauchyDistribution(median, scale);
+				return distrib.sample();
+			}
+			else if (nodeName.equals("poisson"))
+			{
+				double p = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				PoissonDistribution distrib = new PoissonDistribution(p);
+				return distrib.sample();
+			}
+			else if (nodeName.equals("binomial"))
+			{
+				int p = (int) evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				double b = evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				BinomialDistribution distrib = new BinomialDistribution(p, b);
+				return distrib.sample();
+			}
+			else if (nodeName.equals("bernoulli"))
+			{
+				// TODO:
+				return 0;
+			}
+			else if (nodeName.equals("normal"))
+			{
+				double mean = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				double std = evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap, replacements);
+
+				NormalDistribution distrib = new NormalDistribution(mean, std);
+				return distrib.sample();
+			}
+			else
+			{
+				return 0;
+			}
+		}
 
 		case FUNCTION_ABS:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.abs(value);
 		}
 		case FUNCTION_ARCCOS:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.acos(value);
 		}
 		case FUNCTION_ARCSIN:
 		{
-			double value = evaluate(node, idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.asin(value);
 		}
 		case FUNCTION_ARCTAN:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.atan(value);
 		}
 		case FUNCTION_CEILING:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.ceil(value);
 		}
 		case FUNCTION_COS:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.cos(value);
 		}
 		case FUNCTION_COSH:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.cosh(value);
 		}
 		case FUNCTION_EXP:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.exp(value);
 		}
 		case FUNCTION_FLOOR:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.floor(value);
 		}
 		case FUNCTION_LN:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.log(value);
 		}
 		case FUNCTION_LOG:
 		{
-
-			ASTNode leftChild = node.getLeftChild();
-			ASTNode rightChild = node.getRightChild();
-
-			double LHS = evaluate(leftChild, idToValue);
-			double RHS = evaluate(rightChild, idToValue);
-
-			double base = Math.log(LHS);
-			double var = Math.log(RHS);
-			return var / base;
+			double base = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double var = evaluateExpressionRecursive(modelstate, node.getChild(1), evaluateState, t, y, variableToIndexMap, replacements);
+			double value = Math.log(var) / Math.log(base);
+			return value;
 		}
 		case FUNCTION_SIN:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.sin(value);
 		}
 		case FUNCTION_SINH:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.sinh(value);
 		}
 		case FUNCTION_TAN:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.tan(value);
 		}
 		case FUNCTION_TANH:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
 			return Math.tanh(value);
 		}
 		case FUNCTION_PIECEWISE:
@@ -278,134 +356,237 @@ public class Evaluator
 
 			for (int childIter = 0; childIter < node.getChildCount(); childIter += 3)
 			{
-
-				// TODO;
+				if ((childIter + 1) < node.getChildCount()
+						&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter + 1),
+								evaluateState, t, y, variableToIndexMap, replacements)))
+				{
+					return evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements);
+				}
+				else if ((childIter + 2) < node.getChildCount())
+				{
+					return evaluateExpressionRecursive(modelstate, node.getChild(childIter + 2), evaluateState, t, y, variableToIndexMap,
+							replacements);
+				}
 			}
 
 			return 0;
 		}
 
 		case FUNCTION_ROOT:
-		{
-			double value = evaluate(node.getChild(0), idToValue);
-			return Math.pow(value, 0.5);
-		}
+			return FastMath.pow(evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap, replacements),
+					1 / evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements));
 
 		case FUNCTION_SEC:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
-			return 1 / Math.cos(value);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = 1 / Math.cos(value);
+			return result;
 		}
-
 		case FUNCTION_SECH:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
-			return 1 / Math.cosh(value);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = 1 / Math.cosh(value);
+			return result;
 		}
 		case FUNCTION_FACTORIAL:
 		{
-			double value = evaluate(node, idToValue);
-			return Math.abs(value);
+			ASTNode leftChild = node.getLeftChild();
+			int leftValue = (int) evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y, variableToIndexMap, replacements);
+			double result = 1;
+			while (leftValue > 0)
+			{
+				result = result * leftValue;
+				leftValue--;
+			}
+			return result;
+
 		}
 		case FUNCTION_COT:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
-			return Math.tan(value);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = 1 / Math.tan(value);
+			return result;
 		}
 		case FUNCTION_COTH:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
-			return 1 / Math.tanh(value);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = Math.sinh(value) / Math.cosh(value);
+			return result;
 		}
 		case FUNCTION_CSC:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
-			return 1 / Math.sin(value);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = 1 / Math.sin(value);
+			return result;
 		}
 		case FUNCTION_CSCH:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
-			return 1 / Math.sinh(value);
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = 1 / Math.sinh(value);
+			return result;
 		}
 		case FUNCTION_DELAY:
-			// NOT PLANNING TO SUPPORT THIS
+		{
+			// TODO:
 			return 0;
-
+		}
 		case FUNCTION_ARCTANH:
 		{
-			double value = evaluate(node.getChild(0), idToValue);
-			return 0.5 * (Math.log(1 + value) - Math.log(1 - value));
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = 0.5 * (Math.log(value + 1) - Math.log(1 - value));
+			return result;
 		}
 		case FUNCTION_ARCSINH:
 		{
-			// TODO
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = Math.log(value + Math.sqrt(value * value + 1));
+			return result;
 		}
 		case FUNCTION_ARCCOSH:
 		{
-			// TODO
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = Math.log(value + Math.sqrt(value + 1) * Math.sqrt(value - 1));
+			return result;
 		}
 		case FUNCTION_ARCCOT:
 		{
-			// TODO
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = Math.atan(1 / value);
+			return result;
 		}
 		case FUNCTION_ARCCOTH:
 		{
-			// TODO
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = 0.5 * (Math.log(1 + 1 / value) - Math.log(1 - 1 / value));
+			return result;
 		}
 		case FUNCTION_ARCCSC:
 		{
-			// TODO
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = Math.asin(1 / value);
+			return result;
 		}
+
 		case FUNCTION_ARCCSCH:
 		{
-			// TODO
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = Math.log(1 / value + Math.sqrt(1 / (value * value) + 1));
+			return result;
 		}
-		// return Fmath.acsch(evaluateExpressionRecursive(modelstate,
-		// node.getChild(0)));
-
 		case FUNCTION_ARCSEC:
 		{
-			// TODO
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = Math.acos(1 / value);
+			return result;
 		}
 
 		case FUNCTION_ARCSECH:
 		{
-			// TODO
+			double value = evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements);
+			double result = Math.log(1 / value + Math.sqrt(1 / value + 1) * Math.sqrt(1 / value - 1));
+			return result;
 		}
 		case FUNCTION_POWER:
 		{
 			ASTNode leftChild = node.getLeftChild();
 			ASTNode rightChild = node.getRightChild();
+			double leftValue = evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y, variableToIndexMap, replacements);
+			double rightValue = evaluateExpressionRecursive(modelstate, rightChild, evaluateState, t, y, variableToIndexMap, replacements);
+			double result = Math.pow(leftValue, rightValue);
+			return result;
 
-			double LHS = evaluate(leftChild, idToValue);
-			double RHS = evaluate(rightChild, idToValue);
+		}
+		case FUNCTION_SELECTOR:
+		{
+			if (node.getChild(0).isName())
+			{
+				String id = "";
+				id = node.getChild(0).getName();
+				for (int childIter = 1; childIter < node.getChildCount(); childIter++)
+				{
+					id = id
+							+ "["
+							+ (int) evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap,
+									replacements) + "]";
+				}
 
-			return Math.pow(LHS, RHS);
+				return modelstate.getVariableToValue(replacements, id);
+			}
+			else
+			{
+				return 0;
+			}
 		}
 
 		default:
 			return 0.0;
-
 		}
-
 	}
 
-	private static double evaluateInteger(ASTNode node, Map<String, Double> idToValue)
+	private static double evaluateInteger(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		return node.getInteger();
 	}
 
-	private static double evaluateName(ASTNode node, Map<String, Double> idToValue)
+	private static double evaluateName(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
-		if (idToValue.containsKey(node.getName()))
-		{
-			return idToValue.get(node.getName());
-		}
+		String name = node.getName();
 
-		return 0;
+		if (node.getType() == org.sbml.jsbml.ASTNode.Type.NAME_TIME)
+		{
+			return t;
+		}
+		else if (modelstate.getReactionToPropensityMap().keySet().contains(node.getName()))
+		{
+			return modelstate.getReactionToPropensityMap().get(node.getName());
+		}
+		else
+		{
+
+			double value;
+
+			if (evaluateState)
+			{
+				int i, j;
+
+				i = variableToIndexMap.get(name);
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(name)
+						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(name) == false)
+				{
+					j = variableToIndexMap.get(modelstate.getSpeciesToCompartmentNameMap().get(name));
+					value = y[i] / y[j];
+				}
+				else
+				{
+					value = y[i];
+				}
+				return value;
+			}
+			else
+			{
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(name)
+						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(name) == false)
+				{
+					value = (modelstate.getVariableToValue(replacements, name) / modelstate.getVariableToValue(replacements, modelstate
+							.getSpeciesToCompartmentNameMap().get(name)));
+				}
+				else if (variableToIndexMap != null && variableToIndexMap.containsKey(name))
+				{
+					value = variableToIndexMap.get(name);
+				}
+				else
+				{
+					value = modelstate.getVariableToValue(replacements, name);
+				}
+				return value;
+			}
+		}
 	}
 
-	private static double evaluateOperator(ASTNode node, Map<String, Double> idToValue)
+	private static double evaluateOperator(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		switch (node.getType())
 		{
@@ -413,12 +594,10 @@ public class Evaluator
 		{
 
 			double sum = 0.0;
-			int numChildren = node.getChildCount();
 
-			for (int childIter = 0; childIter < numChildren; childIter++)
+			for (int childIter = 0; childIter < node.getChildCount(); childIter++)
 			{
-				double value = evaluate(node.getChild(childIter), idToValue);
-				sum = sum + value;
+				sum += evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements);
 			}
 
 			return sum;
@@ -426,13 +605,18 @@ public class Evaluator
 
 		case MINUS:
 		{
-			int numChildren = node.getChildCount();
-			double sum = evaluate(node.getLeftChild(), idToValue);
+			ASTNode leftChild = node.getLeftChild();
 
-			for (int childIter = 1; childIter < numChildren; ++childIter)
+			double sum = evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y, variableToIndexMap, replacements);
+
+			if (node.getNumChildren() == 1)
 			{
-				double value = evaluate(node.getChild(childIter), idToValue);
-				sum = sum - value;
+				return -sum;
+			}
+
+			for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
+			{
+				sum -= evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements);
 			}
 
 			return sum;
@@ -441,13 +625,11 @@ public class Evaluator
 		case TIMES:
 		{
 
-			int numChildren = node.getChildCount();
 			double product = 1.0;
 
-			for (int childIter = 0; childIter < numChildren; ++childIter)
+			for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 			{
-				double value = evaluate(node.getChild(childIter), idToValue);
-				product = product * value;
+				product *= evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements);
 			}
 
 			return product;
@@ -457,30 +639,31 @@ public class Evaluator
 		{
 			ASTNode leftChild = node.getLeftChild();
 			ASTNode rightChild = node.getRightChild();
-
-			double LHS = evaluate(leftChild, idToValue);
-			double RHS = evaluate(rightChild, idToValue);
-
-			return LHS / RHS;
+			double leftValue = evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y, variableToIndexMap, replacements);
+			double rightValue = evaluateExpressionRecursive(modelstate, rightChild, evaluateState, t, y, variableToIndexMap, replacements);
+			double result = leftValue / rightValue;
+			return result;
 
 		}
 		case POWER:
 		{
 			ASTNode leftChild = node.getLeftChild();
 			ASTNode rightChild = node.getRightChild();
+			double leftValue = evaluateExpressionRecursive(modelstate, leftChild, evaluateState, t, y, variableToIndexMap, replacements);
+			double rightValue = evaluateExpressionRecursive(modelstate, rightChild, evaluateState, t, y, variableToIndexMap, replacements);
+			double result = Math.pow(leftValue, rightValue);
+			return result;
 
-			double LHS = evaluate(leftChild, idToValue);
-			double RHS = evaluate(rightChild, idToValue);
-
-			return Math.pow(LHS, RHS);
 		}
 		default:
 			return 0.0;
 		}
 	}
 
-	private static double evaluateReal(ASTNode node, Map<String, Double> idToValue)
+	private static double evaluateReal(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		return node.getReal();
 	}
+
 }
