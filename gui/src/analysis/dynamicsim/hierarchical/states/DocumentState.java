@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.sbml.jsbml.Model;
 
-public abstract class ModuleState
+public abstract class DocumentState implements State
 {
 	private String			ID;
 	private double			maxPropensity;
@@ -26,7 +26,7 @@ public abstract class ModuleState
 	private double			propensity;
 	private HashSet<String>	variablesToPrint;
 
-	public ModuleState(Map<String, Model> models, String bioModel, String submodelID)
+	public DocumentState(Map<String, Model> models, String bioModel, String submodelID)
 	{
 		this.model = bioModel;
 		this.ID = submodelID;
@@ -39,7 +39,7 @@ public abstract class ModuleState
 		variablesToPrint = new HashSet<String>();
 	}
 
-	public ModuleState(ModuleState state)
+	public DocumentState(DocumentState state)
 	{
 		this.ID = state.ID;
 		this.model = state.model;
@@ -132,6 +132,11 @@ public abstract class ModuleState
 	public HashSet<String> getVariablesToPrint()
 	{
 		return variablesToPrint;
+	}
+
+	public void addVariableToPrint(String id)
+	{
+		variablesToPrint.add(id);
 	}
 
 	public boolean isNoConstraintsFlag()

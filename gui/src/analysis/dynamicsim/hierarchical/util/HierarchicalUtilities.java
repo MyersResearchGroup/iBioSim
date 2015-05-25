@@ -38,6 +38,15 @@ import biomodel.util.SBMLutilities;
 public class HierarchicalUtilities
 {
 
+	public static boolean checkGrid(Model model)
+	{
+		if (model.getCompartment("Grid") != null)
+		{
+			return true;
+		}
+		return false;
+	}
+
 	public static boolean getBooleanFromDouble(double value)
 	{
 
@@ -58,13 +67,12 @@ public class HierarchicalUtilities
 		return 0.0;
 	}
 
-	public static void alterLocalParameter(ASTNode node, Reaction reaction, String oldString,
-			String newString)
+	public static void alterLocalParameter(ASTNode node, Reaction reaction, String newString)
 	{
 		// String reactionID = reaction.getId();
-		if (node.isName() && node.getName().equals(oldString))
+		if (node.isName() && node.getName().equals(newString))
 		{
-			node.setVariable(reaction.getKineticLaw().getLocalParameter(newString));
+			node.setName(newString);
 		}
 		else
 		{
@@ -72,7 +80,7 @@ public class HierarchicalUtilities
 			for (int i = 0; i < node.getChildCount(); i++)
 			{
 				childNode = node.getChild(i);
-				alterLocalParameter(childNode, reaction, oldString, newString);
+				alterLocalParameter(childNode, reaction, newString);
 			}
 		}
 	}
@@ -144,18 +152,15 @@ public class HierarchicalUtilities
 		return network.mergeSBML(filename, sbml);
 	}
 
-	private static String changeIdToPortRef(SBaseRef sbaseRef, BioModel bioModel, String root,
-			String separator)
+	private static String changeIdToPortRef(SBaseRef sbaseRef, BioModel bioModel, String root, String separator)
 	{
 		String id = "";
 		if (sbaseRef.isSetSBaseRef())
 		{
 			BioModel subModel = new BioModel(root);
-			Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels()
-					.get(sbaseRef.getIdRef());
-			String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions()
-					.get(submodel.getModelRef()).getSource().replace("file://", "")
-					.replace("file:", "").replace(".gcm", ".xml");
+			Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(sbaseRef.getIdRef());
+			String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()
+					.replace("file://", "").replace("file:", "").replace(".gcm", ".xml");
 			subModel.load(root + separator + extModel);
 			id += changeIdToPortRef(sbaseRef.getSBaseRef(), subModel, root, separator);
 			subModel.save(root + separator + extModel);
@@ -163,8 +168,7 @@ public class HierarchicalUtilities
 		if (sbaseRef.isSetIdRef())
 		{
 			Port port = bioModel.getPortBySBaseRef(sbaseRef);
-			SBase sbase = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(),
-					sbaseRef.getIdRef());
+			SBase sbase = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), sbaseRef.getIdRef());
 			if (sbase != null)
 			{
 				if (id.equals(""))
@@ -192,8 +196,7 @@ public class HierarchicalUtilities
 		if (sbaseRef.isSetMetaIdRef())
 		{
 			Port port = bioModel.getPortBySBaseRef(sbaseRef);
-			SBase sbase = SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument(),
-					sbaseRef.getMetaIdRef());
+			SBase sbase = SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument(), sbaseRef.getMetaIdRef());
 			if (id.equals(""))
 			{
 				id = sbase.getElementName() + "__" + sbaseRef.getMetaIdRef();
@@ -220,8 +223,7 @@ public class HierarchicalUtilities
 		return "";
 	}
 
-	private static boolean updatePortMap(CompSBasePlugin sbmlSBase, BioModel subModel,
-			String subModelId, String root, String separator)
+	private static boolean updatePortMap(CompSBasePlugin sbmlSBase, BioModel subModel, String subModelId, String root, String separator)
 	{
 		boolean updated = false;
 		if (sbmlSBase.isSetListOfReplacedElements())
@@ -248,24 +250,21 @@ public class HierarchicalUtilities
 		return updated;
 	}
 
-	private static boolean updateReplacementsDeletions(SBMLDocument document,
-			CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel, String root,
-			String separator)
+	private static boolean updateReplacementsDeletions(SBMLDocument document, CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel,
+			String root, String separator)
 	{
 		for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++)
 		{
 			BioModel subModel = new BioModel(root);
 			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
-			String extModel = sbmlComp.getListOfExternalModelDefinitions()
-					.get(submodel.getModelRef()).getSource().replace("file://", "")
+			String extModel = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource().replace("file://", "")
 					.replace("file:", "").replace(".gcm", ".xml");
 			subModel.load(root + separator + extModel);
 			ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(document.getModel());
 			for (int j = 0; j < elements.size(); j++)
 			{
 				SBase sbase = elements.get(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin) sbase
-						.getExtension(CompConstants.namespaceURI);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin) sbase.getExtension(CompConstants.namespaceURI);
 				if (sbmlSBase != null)
 				{
 					if (updatePortMap(sbmlSBase, subModel, submodel.getId(), root, separator))
@@ -285,8 +284,7 @@ public class HierarchicalUtilities
 		return true;
 	}
 
-	public static boolean extractModelDefinitions(CompSBMLDocumentPlugin sbmlComp,
-			CompModelPlugin sbmlCompModel, String root, String separator)
+	public static boolean extractModelDefinitions(CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel, String root, String separator)
 	{
 		for (int i = 0; i < sbmlComp.getListOfModelDefinitions().size(); i++)
 		{

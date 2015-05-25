@@ -2,6 +2,7 @@ package analysis.dynamicsim.hierarchical.simulator;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
@@ -20,185 +21,24 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
+import analysis.dynamicsim.hierarchical.util.Evaluator;
+
 public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 {
 
-	public HierarchicalSBasesSetup(String SBMLFileName, String rootDirectory,
-			String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep,
-			JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType, String abstraction)
-			throws IOException, XMLStreamException
+	public HierarchicalSBasesSetup(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
+			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
+			String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
-		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
-				progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
-				abstraction);
+		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue,
+				running, interestingSpecies, quantityType, abstraction);
 
-	}
-
-	private boolean calcAssignmentRules(ModelState modelstate,
-			HashSet<AssignmentRule> affectedAssignmentRuleSet)
-	{
-
-		boolean changed = false;
-		boolean temp = false;
-		double newResult, oldResult;
-		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet)
-		{
-
-			String variable = assignmentRule.getVariable();
-
-			// update the species count (but only if the species isn't constant)
-			// (bound cond is fine)
-			if (modelstate.getVariableToIsConstantMap().containsKey(variable)
-					&& modelstate.getVariableToIsConstantMap().get(variable) == false
-					|| modelstate.getVariableToIsConstantMap().containsKey(variable) == false)
-			{
-
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
-						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
-				{
-
-					oldResult = modelstate.getVariableToValue(getReplacements(), variable);
-					newResult = evaluateExpressionRecursive(modelstate, assignmentRule.getMath(),
-							false, getCurrentTime(), null, null)
-							* modelstate.getVariableToValue(getReplacements(), modelstate
-									.getSpeciesToCompartmentNameMap().get(variable));
-					if (oldResult != newResult)
-					{
-						modelstate.setvariableToValueMap(getReplacements(), variable, newResult);
-						temp = true;
-					}
-				}
-				else
-				{
-					oldResult = modelstate.getVariableToValue(getReplacements(), variable);
-					newResult = evaluateExpressionRecursive(modelstate, assignmentRule.getMath(),
-							false, getCurrentTime(), null, null);
-
-					if (oldResult != newResult)
-					{
-						modelstate.setvariableToValueMap(getReplacements(), variable, newResult);
-						temp = true;
-					}
-				}
-
-				changed |= temp;
-			}
-		}
-
-		return changed;
-	}
-
-	private boolean calcCompInitAssign(ModelState modelstate, String variable,
-			InitialAssignment initialAssignment)
-	{
-		double newResult = evaluateExpressionRecursive(modelstate, initialAssignment.getMath(),
-				false, getCurrentTime(), null, null);
-		double oldResult = modelstate.getVariableToValue(getReplacements(), variable);
-		// double speciesVal = 0;
-		if (newResult != oldResult)
-		{
-			if (oldResult == Double.NaN)
-			{
-				oldResult = 1.0;
-			}
-
-			modelstate.setvariableToValueMap(getReplacements(), variable, newResult);
-			if (modelstate.getNumRules() > 0)
-			{
-				HashSet<AssignmentRule> rules = modelstate
-						.getVariableToAffectedAssignmentRuleSetMap().get(variable);
-
-				performAssignmentRules(modelstate, rules);
-			}
-			// TODO: NEED TO FIX THIS
-			/*
-			 * for(String species : modelstate.getSpeciesIDSet()) {
-			 * 
-			 * 
-			 * if(modelstate.getSpeciesToCompartmentNameMap().get(species).equals
-			 * ( variable)) if
-			 * (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey
-			 * (species) &&
-			 * modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(species) ==
-			 * false) { speciesVal =
-			 * modelstate.getVariableToValue(getReplacements(),species);
-			 * 
-			 * if(getModels().get(modelstate.getModel()).getSpecies(species).
-			 * isSetInitialConcentration()) speciesVal =
-			 * getModels().get(modelstate.getModel()
-			 * ).getSpecies(species).getInitialConcentration();
-			 * 
-			 * newResult = (speciesVal) *
-			 * modelstate.getVariableToValue(getReplacements(),modelstate
-			 * .getSpeciesToCompartmentNameMap().get(species));
-			 * modelstate.setvariableToValueMap(getReplacements(),species,
-			 * newResult); } }
-			 */
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean calcParamInitAssign(ModelState modelstate, String variable,
-			InitialAssignment initialAssignment)
-	{
-		double newResult = evaluateExpressionRecursive(modelstate, initialAssignment.getMath(),
-				false, getCurrentTime(), null, null);
-		double oldResult = modelstate.getVariableToValue(getReplacements(), variable);
-
-		// if(Double.compare(newResult, oldResult) == 0)
-		// return false;
-
-		if (newResult != oldResult)
-		{
-			modelstate.setvariableToValueMap(getReplacements(), variable, newResult);
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean calcSpeciesInitAssign(ModelState modelstate, String variable,
-			InitialAssignment initialAssignment)
-	{
-		double newResult;
-		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
-				&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
-		{
-
-			newResult = evaluateExpressionRecursive(modelstate, initialAssignment.getMath(), false,
-					getCurrentTime(), null, null)
-					* modelstate.getVariableToValue(getReplacements(), modelstate
-							.getSpeciesToCompartmentNameMap().get(variable));
-			if (newResult != modelstate.getVariableToValue(getReplacements(), variable))
-			{
-				modelstate.setvariableToValueMap(getReplacements(), variable, newResult);
-				return true;
-			}
-
-		}
-		else
-		{
-			newResult = evaluateExpressionRecursive(modelstate, initialAssignment.getMath(), false,
-					getCurrentTime(), null, null);
-
-			if (newResult != modelstate.getVariableToValue(getReplacements(), variable))
-			{
-				modelstate.setvariableToValueMap(getReplacements(), variable, newResult);
-				return true;
-			}
-		}
-		return false;
 	}
 
 	protected void setupCompartments(ModelState modelstate)
 	{
 
-		for (Compartment compartment : getModels().get(modelstate.getModel())
-				.getListOfCompartments())
+		for (Compartment compartment : getModels().get(modelstate.getModel()).getListOfCompartments())
 		{
 			setupSingleCompartment(modelstate, compartment, compartment.getId());
 
@@ -273,8 +113,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 			allAssignmentRules.add(rule);
 		}
 
-		for (InitialAssignment initAssignment : getModels().get(modelstate.getModel())
-				.getListOfInitialAssignments())
+		for (InitialAssignment initAssignment : getModels().get(modelstate.getModel()).getListOfInitialAssignments())
 		{
 			allInitAssignment.add(initAssignment);
 			setupArrays(modelstate, initAssignment);
@@ -284,60 +123,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 		allInitAssignment.addAll(getArrayedInitAssignment());
 
-		long maxIterations = modelstate.getVariableToValueMap().size();
-		long numIterations = 0;
-		double newResult = 0;
-		boolean changed = true, temp = false;
-
-		while (changed)
-		{
-			if (numIterations > maxIterations)
-			{
-				System.out.println("Error: circular dependency");
-				return;
-			}
-
-			changed = false;
-			numIterations++;
-			for (InitialAssignment initialAssignment : allInitAssignment)
-			{
-				if (initialAssignment.isSetMetaId()
-						&& modelstate.isDeletedBySID(initialAssignment.getMetaId()))
-				{
-					continue;
-				}
-				String variable = initialAssignment.getVariable().replace("_negative_", "-");
-				initialAssignment.setMath(inlineFormula(modelstate, initialAssignment.getMath()));
-				if (getModels().get(modelstate.getModel()).containsSpecies(variable))
-				{
-					temp = calcSpeciesInitAssign(modelstate, variable, initialAssignment);
-				}
-				else if (getModels().get(modelstate.getModel()).containsCompartment(variable))
-				{
-					temp = calcCompInitAssign(modelstate, variable, initialAssignment);
-				}
-				else if (getModels().get(modelstate.getModel()).containsParameter(variable))
-				{
-					temp = calcParamInitAssign(modelstate, variable, initialAssignment);
-				}
-				else
-				{
-					newResult = evaluateExpressionRecursive(modelstate,
-							initialAssignment.getMath(), false, getCurrentTime(), null, null);
-					if (newResult != modelstate.getVariableToValue(getReplacements(), variable))
-					{
-						modelstate.setvariableToValueMap(getReplacements(), variable, newResult);
-						temp = true;
-					}
-				}
-
-				changed |= temp;
-
-				affectedVariables.add(variable);
-			}
-
-			changed |= calcAssignmentRules(modelstate, allAssignmentRules);
-		}
+		calculateInitAssignments(modelstate, allInitAssignment, allAssignmentRules, affectedVariables);
 
 	}
 
@@ -357,24 +143,21 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 				{
 					continue;
 				}
-				else if (reactant.isSetMetaId()
-						&& modelstate.isDeletedByMetaID(reactant.getMetaId()))
+				else if (reactant.isSetMetaId() && modelstate.isDeletedByMetaID(reactant.getMetaId()))
 				{
 					continue;
 				}
 
 				if (reactant.getId().length() > 0)
 				{
-					modelstate.getVariableToIsConstantMap().put(reactant.getId(),
-							reactant.getConstant());
+					modelstate.getVariableToIsConstantMap().put(reactant.getId(), reactant.getConstant());
 					if (reactant.getConstant() == false)
 					{
 						modelstate.getVariablesToPrint().add(reactant.getId());
-						if (modelstate.getVariableToValueMap().containsKey(reactant.getId()) == false)
-						{
-							modelstate.setvariableToValueMap(getReplacements(), reactant.getId(),
-									reactant.getStoichiometry());
-						}
+					}
+					if (modelstate.getVariableToValueMap().containsKey(reactant.getId()) == false)
+					{
+						modelstate.setVariableToValue(getReplacements(), reactant.getId(), reactant.getStoichiometry());
 					}
 				}
 			}
@@ -391,16 +174,14 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 				}
 				if (product.getId().length() > 0)
 				{
-					modelstate.getVariableToIsConstantMap().put(product.getId(),
-							product.getConstant());
+					modelstate.getVariableToIsConstantMap().put(product.getId(), product.getConstant());
 					if (product.getConstant() == false)
 					{
 						modelstate.getVariablesToPrint().add(product.getId());
-						if (modelstate.getVariableToValueMap().containsKey(product.getId()) == false)
-						{
-							modelstate.setvariableToValueMap(getReplacements(), product.getId(),
-									product.getStoichiometry());
-						}
+					}
+					if (modelstate.getVariableToValueMap().containsKey(product.getId()) == false)
+					{
+						modelstate.setVariableToValue(getReplacements(), product.getId(), product.getStoichiometry());
 					}
 				}
 			}
@@ -461,6 +242,16 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 	}
 
+	protected void setupPropensities(ModelState modelstate)
+	{
+		for (String reaction : modelstate.getSetOfReactions())
+		{
+			setupSingleReactionPropensity(modelstate, reaction, modelstate.getReactionToFormulaMap().get(reaction), modelstate
+					.getReactionToHasEnoughMolecules().get(reaction));
+		}
+
+	}
+
 	/**
 	 * calculates the initial propensities for each reaction in the getModel()
 	 * 
@@ -490,8 +281,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 			String species = reactionID;
 			if (reactionID.contains("Degradation") && getReplacements().containsKey(species))
 			{
-				if (modelstate.getIsHierarchical().contains(species)
-						&& !modelstate.getID().equals("topmodel"))
+				if (modelstate.getIsHierarchical().contains(species) && !modelstate.getID().equals("topmodel"))
 				{
 					continue;
 				}
@@ -499,8 +289,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
 			setupArrays(modelstate, reaction);
-			setupSingleReaction(modelstate, reaction, reactionID, reactionFormula,
-					reaction.getReversible(), reaction.getListOfReactants(),
+			setupSingleReaction(modelstate, reaction, reactionID, reactionFormula, reaction.getReversible(), reaction.getListOfReactants(),
 					reaction.getListOfProducts(), reaction.getListOfModifiers());
 		}
 	}
@@ -548,6 +337,214 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 			setupArrays(modelstate, species);
 		}
 
+	}
+
+	private boolean calcAssignmentRules(ModelState modelstate, Set<AssignmentRule> affectedAssignmentRuleSet)
+	{
+
+		boolean changed = false;
+		boolean temp = false;
+		double newResult, oldResult;
+		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet)
+		{
+
+			String variable = assignmentRule.getVariable();
+
+			// update the species count (but only if the species isn't constant)
+			// (bound cond is fine)
+			if (modelstate.getVariableToIsConstantMap().containsKey(variable) && modelstate.getVariableToIsConstantMap().get(variable) == false
+					|| modelstate.getVariableToIsConstantMap().containsKey(variable) == false)
+			{
+
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
+						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
+				{
+
+					oldResult = modelstate.getVariableToValue(getReplacements(), variable);
+					newResult = Evaluator.evaluateExpressionRecursive(modelstate, assignmentRule.getMath(), false, getCurrentTime(), null, null,
+							getReplacements())
+							* modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable));
+					if (oldResult != newResult)
+					{
+						modelstate.setVariableToValue(getReplacements(), variable, newResult);
+						temp = true;
+					}
+				}
+				else
+				{
+					oldResult = modelstate.getVariableToValue(getReplacements(), variable);
+					newResult = Evaluator.evaluateExpressionRecursive(modelstate, assignmentRule.getMath(), false, getCurrentTime(), null, null,
+							getReplacements());
+
+					if (oldResult != newResult)
+					{
+						modelstate.setVariableToValue(getReplacements(), variable, newResult);
+						temp = true;
+					}
+				}
+
+				changed |= temp;
+			}
+		}
+
+		return changed;
+	}
+
+	private boolean calcCompInitAssign(ModelState modelstate, String variable, InitialAssignment initialAssignment)
+	{
+		double newResult = Evaluator.evaluateExpressionRecursive(modelstate, initialAssignment.getMath(), false, getCurrentTime(), null, null,
+				getReplacements());
+		double oldResult = modelstate.getVariableToValue(getReplacements(), variable);
+		// double speciesVal = 0;
+		if (newResult != oldResult)
+		{
+			if (oldResult == Double.NaN)
+			{
+				oldResult = 1.0;
+			}
+
+			modelstate.setVariableToValue(getReplacements(), variable, newResult);
+			if (modelstate.getNumRules() > 0)
+			{
+				HashSet<AssignmentRule> rules = modelstate.getVariableToAffectedAssignmentRuleSetMap().get(variable);
+
+				performAssignmentRules(modelstate, rules);
+			}
+			// TODO: NEED TO FIX THIS
+			/*
+			 * for(String species : modelstate.getSpeciesIDSet()) {
+			 * 
+			 * 
+			 * if(modelstate.getSpeciesToCompartmentNameMap().get(species).equals
+			 * ( variable)) if
+			 * (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey
+			 * (species) &&
+			 * modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(species) ==
+			 * false) { speciesVal =
+			 * modelstate.getVariableToValue(getReplacements(),species);
+			 * 
+			 * if(getModels().get(modelstate.getModel()).getSpecies(species).
+			 * isSetInitialConcentration()) speciesVal =
+			 * getModels().get(modelstate.getModel()
+			 * ).getSpecies(species).getInitialConcentration();
+			 * 
+			 * newResult = (speciesVal) *
+			 * modelstate.getVariableToValue(getReplacements(),modelstate
+			 * .getSpeciesToCompartmentNameMap().get(species));
+			 * modelstate.setvariableToValueMap(getReplacements(),species,
+			 * newResult); } }
+			 */
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean calcParamInitAssign(ModelState modelstate, String variable, InitialAssignment initialAssignment)
+	{
+		double newResult = Evaluator.evaluateExpressionRecursive(modelstate, initialAssignment.getMath(), false, getCurrentTime(), null, null,
+				getReplacements());
+		double oldResult = modelstate.getVariableToValue(getReplacements(), variable);
+
+		// if(Double.compare(newResult, oldResult) == 0)
+		// return false;
+
+		if (newResult != oldResult)
+		{
+			modelstate.setVariableToValue(getReplacements(), variable, newResult);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean calcSpeciesInitAssign(ModelState modelstate, String variable, InitialAssignment initialAssignment)
+	{
+		double newResult;
+		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
+				&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
+		{
+
+			newResult = Evaluator.evaluateExpressionRecursive(modelstate, initialAssignment.getMath(), false, getCurrentTime(), null, null,
+					getReplacements()) * modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable));
+			if (newResult != modelstate.getVariableToValue(getReplacements(), variable))
+			{
+				modelstate.setVariableToValue(getReplacements(), variable, newResult);
+				return true;
+			}
+
+		}
+		else
+		{
+			newResult = Evaluator.evaluateExpressionRecursive(modelstate, initialAssignment.getMath(), false, getCurrentTime(), null, null,
+					getReplacements());
+
+			if (newResult != modelstate.getVariableToValue(getReplacements(), variable))
+			{
+				modelstate.setVariableToValue(getReplacements(), variable, newResult);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void calculateInitAssignments(ModelState modelstate, Set<InitialAssignment> allInitAssignment, Set<AssignmentRule> allAssignmentRules,
+			Set<String> affectedVariables)
+	{
+		long maxIterations = 1000;
+		long numIterations = 0;
+		double newResult = 0;
+		boolean changed = true, temp = false;
+
+		while (changed)
+		{
+			if (numIterations > maxIterations)
+			{
+				System.out.println("Error: circular dependency");
+				return;
+			}
+
+			changed = false;
+			numIterations++;
+			for (InitialAssignment initialAssignment : allInitAssignment)
+			{
+				if (initialAssignment.isSetMetaId() && modelstate.isDeletedBySID(initialAssignment.getMetaId()))
+				{
+					continue;
+				}
+				String variable = initialAssignment.getVariable().replace("_negative_", "-");
+				initialAssignment.setMath(inlineFormula(modelstate, initialAssignment.getMath()));
+				if (getModels().get(modelstate.getModel()).containsSpecies(variable))
+				{
+					temp = calcSpeciesInitAssign(modelstate, variable, initialAssignment);
+				}
+				else if (getModels().get(modelstate.getModel()).containsCompartment(variable))
+				{
+					temp = calcCompInitAssign(modelstate, variable, initialAssignment);
+				}
+				else if (getModels().get(modelstate.getModel()).containsParameter(variable))
+				{
+					temp = calcParamInitAssign(modelstate, variable, initialAssignment);
+				}
+				else
+				{
+					newResult = Evaluator.evaluateExpressionRecursive(modelstate, initialAssignment.getMath(), false, getCurrentTime(), null, null,
+							getReplacements());
+					if (newResult != modelstate.getVariableToValue(getReplacements(), variable))
+					{
+						modelstate.setVariableToValue(getReplacements(), variable, newResult);
+						temp = true;
+					}
+				}
+
+				changed |= temp;
+
+				affectedVariables.add(variable);
+			}
+
+			changed |= calcAssignmentRules(modelstate, allAssignmentRules);
+		}
 	}
 
 	// protected void setupArraysSBases(ModelState modelstate)

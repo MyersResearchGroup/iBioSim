@@ -14,26 +14,23 @@ import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.Log;
-import analysis.dynamicsim.flattened.Simulator;
 import analysis.dynamicsim.flattened.SimulatorODERK;
 import analysis.dynamicsim.flattened.SimulatorSSACR;
 import analysis.dynamicsim.flattened.SimulatorSSADirect;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalHybridSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 
 public class DynamicSimulation
 {
 
 	// simulator type
-	private final String			simulatorType;
+	private final String	simulatorType;
 
 	// the simulator object
-	private Simulator				simulator;
-	private HierarchicalSimulation	hSimulator;
-	private boolean					cancelFlag;
-	private boolean					statisticsFlag;
+	private ParentSimulator	simulator;
+	private boolean			cancelFlag;
+	private boolean			statisticsFlag;
 
 	/**
 	 * constructor; sets the simulator type
@@ -44,12 +41,10 @@ public class DynamicSimulation
 		simulatorType = type;
 	}
 
-	public void simulate(String SBMLFileName, String rootDirectory, String outputDirectory,
-			double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed,
-			JProgressBar progress, double printInterval, int runs, JLabel progressLabel,
-			JFrame running, double stoichAmpValue, String[] interestingSpecies, int numSteps,
-			double relError, double absError, String quantityType, Boolean genStats,
-			JTabbedPane simTab, String abstraction, Log log)
+	public void simulate(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep,
+			long randomSeed, JProgressBar progress, double printInterval, int runs, JLabel progressLabel, JFrame running, double stoichAmpValue,
+			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType, Boolean genStats, JTabbedPane simTab,
+			String abstraction, Log log)
 	{
 
 		String progressText = "";
@@ -65,47 +60,37 @@ public class DynamicSimulation
 			if (progressLabel != null)
 			{
 				progressLabel.setText("Generating Model . . .");
-				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20,
-						(int) running.getSize().getHeight()));
+				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
 			}
 			if (simulatorType.equals("cr"))
 			{
-				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit,
-						maxTimeStep, minTimeStep, randomSeed, progress, printInterval,
-						stoichAmpValue, running, interestingSpecies, quantityType);
+				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
+						printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
 			}
 			else if (simulatorType.equals("direct"))
 			{
-				simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit,
-						maxTimeStep, minTimeStep, randomSeed, progress, printInterval,
-						stoichAmpValue, running, interestingSpecies, quantityType);
+				simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
+						printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
 			}
 			else if (simulatorType.equals("rk"))
 			{
-				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, timeLimit,
-						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running,
-						interestingSpecies, numSteps, relError, absError, quantityType);
+				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed, progress, printInterval,
+						stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType);
 			}
 			else if (simulatorType.equals("hierarchical-direct"))
 			{
-				hSimulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory,
-						outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
-						printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
-						abstraction);
+				simulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep,
+						minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
 			}
 			else if (simulatorType.equals("hierarchical-hybrid"))
 			{
-				hSimulator = new HierarchicalHybridSimulator(SBMLFileName, rootDirectory,
-						outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
-						printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
-						abstraction);
+				simulator = new HierarchicalHybridSimulator(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
+						randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
 			}
 			else if (simulatorType.equals("hierarchical-rk"))
 			{
-				hSimulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory,
-						outputDirectory, timeLimit, maxTimeStep, randomSeed, progress,
-						printInterval, stoichAmpValue, running, interestingSpecies, numSteps,
-						relError, absError, quantityType, abstraction);
+				simulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed,
+						progress, printInterval, stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType, abstraction);
 			}
 		}
 		catch (IOException e)
@@ -118,14 +103,12 @@ public class DynamicSimulation
 			e.printStackTrace();
 			return;
 		}
-		finally
-		{
-			// if(hSimulator != null)
-			// {
-			// hSimulator.deleteFiles();
-			// }
-		}
+
 		double val1 = System.currentTimeMillis();
+
+		Runtime runtime = Runtime.getRuntime();
+		double mb = 1024 * 1024;
+
 		for (int run = 1; run <= runs; ++run)
 		{
 
@@ -136,53 +119,24 @@ public class DynamicSimulation
 
 			if (progressLabel != null && running != null)
 			{
-
-				progressLabel.setText(progressText.replace(" (" + (run - 1) + ")", "") + " (" + run
-						+ ")");
-				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20,
-						(int) running.getSize().getHeight()));
+				progressLabel.setText(progressText.replace(" (" + (run - 1) + ")", "") + " (" + run + ")");
+				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
 			}
-			Runtime runtime = Runtime.getRuntime();
-			double mb = 1024 * 1024;
 			if (simulator != null)
 			{
-				hSimulator = null;
 				simulator.simulate();
-				System.gc();
-				double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
-				System.out.println("Memory used: " + (mem));
-				simulator.clear();
 				if ((runs - run) >= 1)
 				{
 					simulator.setupForNewRun(run + 1);
 				}
 			}
-			else if (hSimulator != null)
-			{
-				simulator = null;
-				hSimulator.simulate();
-
-				System.gc();
-				double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
-				System.out.println("Memory used: " + (mem));
-				hSimulator.clear();
-				if ((runs - run) >= 1)
-				{
-					hSimulator.setupForNewRun(run + 1);
-				}
-			}
-
-			// //garbage collect every twenty-five runs
-			// if ((run % 25) == 0)
-			// {
-			// System.gc();
-			// System.runFinalization();
-			// }
 		}
+
+		double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
+		System.out.println("Memory used: " + (mem));
 
 		double val2 = System.currentTimeMillis();
 
-		hSimulator = null;
 		simulator = null;
 		System.gc();
 		System.runFinalization();
@@ -203,18 +157,12 @@ public class DynamicSimulation
 				progressLabel.setText("Generating Statistics . . .");
 				running.setMinimumSize(new Dimension(200, 100));
 			}
-			try
+
+			if (simulator != null)
 			{
-				if (simulator != null)
-				{
-					simulator.printStatisticsTSD();
-				}
+				simulator.printStatisticsTSD();
 			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-				return;
-			}
+
 		}
 		if (simTab != null)
 		{
@@ -243,8 +191,7 @@ public class DynamicSimulation
 
 			simulator.cancel();
 
-			JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled", "Canceled",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled", "Canceled", JOptionPane.ERROR_MESSAGE);
 
 			cancelFlag = true;
 		}

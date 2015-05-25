@@ -16,19 +16,19 @@ import org.sbml.jsbml.ext.comp.Submodel;
 public abstract class HierarchicalArrayModels extends HierarchicalSimulationFunctions
 {
 
-	public HierarchicalArrayModels(String SBMLFileName, String rootDirectory,
-			String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep,
-			JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType, String abstraction)
-			throws IOException, XMLStreamException
+	public HierarchicalArrayModels(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
+			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
+			String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
-		super(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
-				progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType,
-				abstraction);
+		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue,
+				running, interestingSpecies, quantityType, abstraction);
 
 	}
 
-	public void setupArrayedModels()
+	/**
+	 * 
+	 */
+	protected void setupArrayedModels()
 	{
 		ArraysSBasePlugin arrays;
 
@@ -52,6 +52,12 @@ public abstract class HierarchicalArrayModels extends HierarchicalSimulationFunc
 		}
 	}
 
+	/**
+	 * 
+	 * @param arrays
+	 * @param model
+	 * @param id
+	 */
 	private void addValue(ArraysSBasePlugin arrays, Model model, String id)
 	{
 		ModelState state = getSubmodels().get(id);
@@ -68,6 +74,13 @@ public abstract class HierarchicalArrayModels extends HierarchicalSimulationFunc
 		setupArrayValue(state, id, sizes, new int[sizes.length]);
 	}
 
+	/**
+	 * 
+	 * @param state
+	 * @param id
+	 * @param sizes
+	 * @param indices
+	 */
 	private void setupArrayValue(ModelState state, String id, int[] sizes, int[] indices)
 	{
 		String newId = id;
