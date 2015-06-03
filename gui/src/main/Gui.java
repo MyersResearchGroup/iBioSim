@@ -98,6 +98,7 @@ import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.movie.MovieContainer;
 import biomodel.gui.sbmlcore.ElementsPanel;
+import biomodel.gui.sbol.SBMLtoSBOL;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.parser.GCM2SBML;
@@ -5528,6 +5529,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 	
+//	private void openSBOL2() {
+//		String filePath = tree.getFile();
+//		String fileName = "";
+//		fileName = filePath.substring(filePath.lastIndexOf(Gui.separator) + 1);
+//		int i = getTab(fileName);
+//		if (i != -1) {
+//			tab.setSelectedIndex(i);
+//		}
+//		else {
+////			SBOL2Browser sbol2Browser = new SBOL2Browser(this, filePath);
+////			sbol2Browser.open();
+////			SBMLtoSBOL sbolDoc = new SBMLtoSBOL(filePath, this.); 
+//		}
+//	}
+	
 	private void generateSBMLFromSBOL() {
 		try {
 			String filePath = tree.getFile();
@@ -7104,6 +7120,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol")) {
 				openSBOL();
 			}
+//			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".rdf")) {
+//				openSBOL2(); //TODO: SBOL2 extensions 
+//			}
+//			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".xml")) {
+//				openSBOL2(); //TODO: SBOL2 extensions 
+//			}
+//			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".ttl")) {
+//				openSBOL2(); //TODO: SBOL2 extensions 
+//			}
+//			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".json")) {
+//				openSBOL2(); //TODO: SBOL2 extensions 
+//			}
 			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 				openModel("VHDL");
 			}

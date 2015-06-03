@@ -1,5 +1,6 @@
 package biomodel.gui.sbol;
 
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -69,7 +70,7 @@ public class SBMLtoSBOL {
 		this.bioModel = bioModel;
 	}
 	
-	public void export() {
+	public void export(String exportFilePath) {
 		// TODO read existing 1.1 document in the project to get sequences etc.
 		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 		SBOLDocument sbolDoc = new SBOLDocument();
@@ -84,6 +85,12 @@ public class SBMLtoSBOL {
 		try 
 	    {
 			SBOLWriter.writeRDF(sbolDoc, (System.out));
+			try {
+				SBOLWriter.writeRDF(sbolDoc, exportFilePath);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    }
 		catch (XMLStreamException e) { e.printStackTrace(); }
 		catch (FactoryConfigurationError e) { e.printStackTrace(); } 

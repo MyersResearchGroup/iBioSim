@@ -62,7 +62,6 @@ public class ModelGenerator {
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
 		
-//		for (FunctionalComponent comp : moduleDef.getComponents()) { //OLD VERSION
 		for (FunctionalComponent comp : moduleDef.getFunctionalComponents()) { 
 			if (isSpeciesComponent(comp, sbolDoc)) {
 				generateSpecies(comp, sbolDoc, targetModel);
