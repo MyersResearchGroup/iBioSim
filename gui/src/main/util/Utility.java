@@ -203,6 +203,18 @@ public class Utility {
 						public boolean accept(File dir, String name) {
 							return name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
 									|| name.endsWith(GlobalConstants.RDF_FILE_EXTENSION);
+									
+						}
+					});
+				}
+				else if (approve.equals("Export SBOL2")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
+									|| name.endsWith(GlobalConstants.RDF_FILE_EXTENSION )
+									|| name.endsWith(".ttl") || name.endsWith(".json");
 						}
 					});
 				}

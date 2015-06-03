@@ -489,7 +489,26 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	public void exportSBOL2() {
 		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(path,biomodel);
-		sbmltosbol.export();
+//		sbmltosbol.export();
+		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
+//		if (identityManager.containsModelURIs()) {
+//			SBOLFileManager fileManager = new SBOLFileManager(
+//					biosim.getFilePaths(GlobalConstants.RDF_FILE_EXTENSION));
+//			if (fileManager.sbolFilesAreLoaded() && identityManager.loadModelComponents(fileManager)) {
+				File lastFilePath;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.export_dir", "").equals(""))
+					lastFilePath = null;
+				else 
+					lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+				String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL2", -1);
+				if (!exportFilePath.equals("")) {
+					biosimrc.put("biosim.general.export_dir", exportFilePath);
+					sbmltosbol.export(exportFilePath);
+//					SBOLFileManager.exportDNAComponents(identityManager.getModelComponents(), exportFilePath);
+				}
+//			}
+//		}
 	}
 	
 	public void exportSBML() {
