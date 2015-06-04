@@ -2883,6 +2883,11 @@ public class Zone implements Equivalence{
 					.getTransition(pair.get_transitionIndex()).getLabel();
 			ExprTree delay = _lpnList[pair.get_lpnIndex()].getDelayTree(tranName);
 
+			if(delay == null){
+				_lpnList[pair.get_lpnIndex()].changeDelay(tranName, "0");
+				delay = _lpnList[pair.get_lpnIndex()].getDelayTree(tranName);
+			}
+			
 			// Get the values of the variables for evaluating the ExprTree.
 			HashMap<String, String> varValues = 
 				_lpnList[pair.get_lpnIndex()]
