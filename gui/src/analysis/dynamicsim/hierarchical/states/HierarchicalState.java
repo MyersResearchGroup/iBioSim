@@ -77,4 +77,8 @@ public abstract class HierarchicalState extends RuleState
 		return replacementDependency;
 	}
 
+	public boolean isHierarchical(String id)
+	{
+		return isHierarchical.contains(id);
+	}
 }

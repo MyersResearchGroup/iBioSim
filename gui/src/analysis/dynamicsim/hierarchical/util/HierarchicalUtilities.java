@@ -10,7 +10,6 @@ import main.Gui;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
@@ -67,10 +66,10 @@ public class HierarchicalUtilities
 		return 0.0;
 	}
 
-	public static void alterLocalParameter(ASTNode node, Reaction reaction, String newString)
+	public static void alterLocalParameter(ASTNode node, String oldString, String newString)
 	{
 		// String reactionID = reaction.getId();
-		if (node.isName() && node.getName().equals(newString))
+		if (node.isName() && node.getName().equals(oldString))
 		{
 			node.setName(newString);
 		}
@@ -80,7 +79,7 @@ public class HierarchicalUtilities
 			for (int i = 0; i < node.getChildCount(); i++)
 			{
 				childNode = node.getChild(i);
-				alterLocalParameter(childNode, reaction, newString);
+				alterLocalParameter(childNode, oldString, newString);
 			}
 		}
 	}

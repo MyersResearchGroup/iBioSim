@@ -40,6 +40,15 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 		for (Compartment compartment : getModels().get(modelstate.getModel()).getListOfCompartments())
 		{
+			if (compartment.isSetId() && modelstate.isDeletedBySID(compartment.getId()))
+			{
+				continue;
+			}
+			else if (compartment.isSetMetaId() && modelstate.isDeletedByMetaID(compartment.getMetaId()))
+			{
+				continue;
+			}
+
 			setupSingleCompartment(modelstate, compartment, compartment.getId());
 
 			setupArrays(modelstate, compartment);
@@ -58,6 +67,10 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 		for (Constraint constraint : getModels().get(modelstate.getModel()).getListOfConstraints())
 		{
+			if (constraint.isSetMetaId() && modelstate.isDeletedByMetaID(constraint.getMetaId()))
+			{
+				continue;
+			}
 			setupSingleConstraint(modelstate, constraint);
 		}
 	}
@@ -102,6 +115,11 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 		// perform all assignment rules
 		for (Rule rule : getModels().get(modelstate.getModel()).getListOfRules())
 		{
+			if (rule.isSetMetaId() && modelstate.isDeletedByMetaID(rule.getMetaId()))
+			{
+				continue;
+			}
+
 			if (rule.isAssignment() && !modelstate.isArrayed(rule.getMetaId()))
 			{
 				allAssignmentRules.add((AssignmentRule) rule);
@@ -115,6 +133,11 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 		for (InitialAssignment initAssignment : getModels().get(modelstate.getModel()).getListOfInitialAssignments())
 		{
+			if (initAssignment.isSetMetaId() && modelstate.isDeletedByMetaID(initAssignment.getMetaId()))
+			{
+				continue;
+			}
+
 			allInitAssignment.add(initAssignment);
 			setupArrays(modelstate, initAssignment);
 			// setupArraysInitialAssignment(modelstate,
@@ -150,10 +173,13 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 				if (reactant.getId().length() > 0)
 				{
-					modelstate.getVariableToIsConstantMap().put(reactant.getId(), reactant.getConstant());
 					if (reactant.getConstant() == false)
 					{
 						modelstate.getVariablesToPrint().add(reactant.getId());
+					}
+					else
+					{
+						modelstate.addVariableToIsConstant(reactant.getId());
 					}
 					if (modelstate.getVariableToValueMap().containsKey(reactant.getId()) == false)
 					{
@@ -174,10 +200,13 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 				}
 				if (product.getId().length() > 0)
 				{
-					modelstate.getVariableToIsConstantMap().put(product.getId(), product.getConstant());
 					if (product.getConstant() == false)
 					{
 						modelstate.getVariablesToPrint().add(product.getId());
+					}
+					else
+					{
+						modelstate.addVariableToIsConstant(product.getId());
 					}
 					if (modelstate.getVariableToValueMap().containsKey(product.getId()) == false)
 					{
@@ -216,12 +245,8 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 			setupLocalParameters(modelstate, kineticLaw, reaction);
 		}
 
-		// add values to hashmap for easy access to global parameter values
-		// NOTE: the IDs for the parameters and species must be unique, so
-		// putting them in the
-		// same hashmap is okay
-
 		size = getModels().get(modelstate.getModel()).getListOfParameters().size();
+
 		for (int i = 0; i < size; i++)
 		{
 			parameter = getModels().get(modelstate.getModel()).getParameter(i);
@@ -264,6 +289,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 		for (int i = 0; i < modelstate.getNumReactions(); i++)
 		{
 			reaction = getModels().get(modelstate.getModel()).getReaction(i);
+
 			if (reaction.isSetId() && modelstate.isDeletedBySID(reaction.getId()))
 			{
 				continue;
@@ -272,6 +298,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 			{
 				continue;
 			}
+
 			if (!reaction.isSetKineticLaw())
 			{
 				continue;
@@ -305,6 +332,10 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 		for (Rule rule : getModels().get(modelstate.getModel()).getListOfRules())
 		{
+			if (rule.isSetMetaId() && modelstate.isDeletedByMetaID(rule.getMetaId()))
+			{
+				continue;
+			}
 			setupSingleRule(modelstate, rule);
 		}
 	}
@@ -352,8 +383,7 @@ public abstract class HierarchicalSBasesSetup extends HierarchicalArraysSetup
 
 			// update the species count (but only if the species isn't constant)
 			// (bound cond is fine)
-			if (modelstate.getVariableToIsConstantMap().containsKey(variable) && modelstate.getVariableToIsConstantMap().get(variable) == false
-					|| modelstate.getVariableToIsConstantMap().containsKey(variable) == false)
+			if (modelstate.isConstant(variable) == false)
 			{
 
 				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)

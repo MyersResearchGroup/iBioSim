@@ -354,19 +354,21 @@ public class Evaluator
 		case FUNCTION_PIECEWISE:
 		{
 
-			for (int childIter = 0; childIter < node.getChildCount(); childIter += 3)
+			int childIter = 0;
+			for (; childIter < node.getChildCount() - 1; childIter += 2)
 			{
-				if ((childIter + 1) < node.getChildCount()
-						&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter + 1),
-								evaluateState, t, y, variableToIndexMap, replacements)))
+				boolean condition = HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter + 1),
+						evaluateState, t, y, variableToIndexMap, replacements));
+				if (condition)
 				{
 					return evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements);
 				}
-				else if ((childIter + 2) < node.getChildCount())
-				{
-					return evaluateExpressionRecursive(modelstate, node.getChild(childIter + 2), evaluateState, t, y, variableToIndexMap,
-							replacements);
-				}
+
+			}
+			if (node.getChildCount() % 2 == 1)
+			{
+				return evaluateExpressionRecursive(modelstate, node.getChild(node.getChildCount() - 1), evaluateState, t, y, variableToIndexMap,
+						replacements);
 			}
 
 			return 0;

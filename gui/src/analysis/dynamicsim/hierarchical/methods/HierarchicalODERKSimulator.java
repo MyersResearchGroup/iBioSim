@@ -259,36 +259,44 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 
 	private void initialize(long randomSeed, int runNumber) throws IOException
 	{
-
-		setupNonConstantSpeciesReferences(getTopmodel());
-		setupSpecies(getTopmodel());
-		setupParameters(getTopmodel());
-		setupCompartments(getTopmodel());
-		setupConstraints(getTopmodel());
-		setupRules(getTopmodel());
-		setupInitialAssignments(getTopmodel());
-		setupReactions(getTopmodel());
-		setupEvents(getTopmodel());
+		initializeModelStates();
+		initializeODEStates();
 		setupForOutput(runNumber);
-		this.function.state.addState(getTopmodel());
-		this.triggerValues.put(getTopmodel().getID(), new HashMap<String, Map<Double, Boolean>>());
+		setupVariableFromTSD();
+	}
+
+	private void initializeModelStates() throws IOException
+	{
+		initialize(getTopmodel());
 		for (ModelState model : getSubmodels().values())
 		{
-			setupNonConstantSpeciesReferences(model);
-			setupSpecies(model);
-			setupParameters(model);
-			setupCompartments(model);
-			setupConstraints(model);
-			setupRules(model);
-			setupInitialAssignments(model);
-			setupReactions(model);
-			setupEvents(model);
-			setupForOutput(runNumber);
+			initialize(model);
+		}
+	}
+
+	private void initializeODEStates()
+	{
+		this.function.state.addState(getTopmodel());
+		this.triggerValues.put(getTopmodel().getID(), new HashMap<String, Map<Double, Boolean>>());
+
+		for (ModelState model : getSubmodels().values())
+		{
 			this.function.state.addState(model);
 			this.triggerValues.put(model.getID(), new HashMap<String, Map<Double, Boolean>>());
 		}
-		setupForOutput(runNumber);
-		setupVariableFromTSD();
+	}
+
+	private void initialize(ModelState model) throws IOException
+	{
+		setupNonConstantSpeciesReferences(model);
+		setupParameters(model);
+		setupCompartments(model);
+		setupSpecies(model);
+		setupConstraints(model);
+		setupRules(model);
+		setupInitialAssignments(model);
+		setupReactions(model);
+		setupEvents(model);
 	}
 
 	private void updateStateAndFireReaction(double t, double[] y)
@@ -384,11 +392,19 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 		{
 
 			setCurrentTime(t);
+
 			computeDerivatives(getTopmodel(), t, y, currValueChanges);
+
+			computeRateRules(getTopmodel(), t, currValueChanges);
 			for (ModelState model : getSubmodels().values())
 			{
 				computeDerivatives(model, t, y, currValueChanges);
+
+				computeRateRules(model, t, currValueChanges);
 			}
+
+			computeDependencies(currValueChanges);
+
 		}
 
 		@Override
@@ -409,22 +425,20 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 				modelstate.setVariableToValue(getReplacements(), state.indexToVariableMap.get(modelstateId).get(i), y[i]);
 			}
 
-			for (int i = 0; i < currValueChanges.length; i++)
+			for (int i : function.state.indexToVariableMap.get(modelstateId).keySet())
 			{
-
 				String currentVar = state.indexToVariableMap.get(modelstateId).get(i);
 
-				if ((modelstate.getSpeciesIDSet().contains(currentVar) && modelstate.getSpeciesToIsBoundaryConditionMap().get(currentVar) == false)
-						&& (modelstate.getVariableToValueMap().containsKey(currentVar))
-						&& modelstate.getVariableToIsConstantMap().get(currentVar) == false)
+				if (!modelstate.isConstant(currentVar))
 				{
-					currValueChanges[i] = Evaluator.evaluateExpressionRecursive(modelstate, state.dvariablesdtime.get(i), false, t, null, null,
-							getReplacements());
+					if (modelstate.getSpeciesIDSet().contains(currentVar) && modelstate.getSpeciesToIsBoundaryConditionMap().get(currentVar))
+					{
+						continue;
+					}
+
+					currValueChanges[i] = Evaluator.evaluateExpressionRecursive(modelstate, state.dvariablesdtime.get(modelstateId).get(currentVar),
+							false, t, null, null, getReplacements());
 					revaluateVariables.add(currentVar);
-				}
-				else
-				{
-					currValueChanges[i] = 0;
 				}
 
 				if (modelstate.getVariableToIsInAssignmentRuleMap() != null
@@ -444,62 +458,71 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 
 			if (affectedAssignmentRuleSet.size() > 0)
 			{
-				boolean changed = true;
+				computeAssignmentRules(modelstate, y, currValueChanges, affectedAssignmentRuleSet, revaluateVariables);
+				affectedAssignmentRuleSet = null;
+				revaluateVariables = null;
+			}
 
-				while (changed)
+		}
+
+		private void computeAssignmentRules(ModelState modelstate, double[] y, double[] currValueChanges,
+				HashSet<AssignmentRule> affectedAssignmentRuleSet, HashSet<String> revaluateVariables)
+		{
+			boolean changed = true;
+
+			while (changed)
+			{
+				HashSet<String> affectedVariables = performAssignmentRules(modelstate, affectedAssignmentRuleSet);
+				changed = false;
+				for (String affectedVariable : affectedVariables)
 				{
-					HashSet<String> affectedVariables = performAssignmentRules(modelstate, affectedAssignmentRuleSet);
-					changed = false;
-					for (String affectedVariable : affectedVariables)
+					int index = state.variableToIndexMap.get(modelstate.getID()).get(affectedVariable);
+
+					double oldValue = y[index];
+					double newValue = modelstate.getVariableToValue(getReplacements(), affectedVariable);
+
+					if (Double.isNaN(newValue))
 					{
-						int index = state.variableToIndexMap.get(modelstateId).get(affectedVariable);
-
-						double oldValue = y[index];
-						double newValue = modelstate.getVariableToValue(getReplacements(), affectedVariable);
-
-						if (Double.isNaN(newValue))
-						{
-							continue;
-						}
-
-						if (newValue != oldValue)
-						{
-							changed |= true;
-							y[index] = newValue;
-						}
+						continue;
 					}
 
-					for (String affectedVariable : revaluateVariables)
+					if (newValue != oldValue)
 					{
-						int index = state.variableToIndexMap.get(modelstateId).get(affectedVariable);
-						double oldValue = currValueChanges[index];
-						double newValue = Evaluator.evaluateExpressionRecursive(modelstate, state.dvariablesdtime.get(index), false,
-								getCurrentTime(), null, null, getReplacements());
+						changed |= true;
+						y[index] = newValue;
+					}
+				}
 
-						if (newValue != oldValue)
-						{
-							changed |= true;
-							currValueChanges[index] = newValue;
-						}
+				for (String affectedVariable : revaluateVariables)
+				{
+					int index = state.variableToIndexMap.get(modelstate.getID()).get(affectedVariable);
+					double oldValue = currValueChanges[index];
+					double newValue = Evaluator.evaluateExpressionRecursive(modelstate,
+							state.dvariablesdtime.get(modelstate.getID()).get(affectedVariable), false, getCurrentTime(), null, null,
+							getReplacements());
+
+					if (newValue != oldValue)
+					{
+						changed |= true;
+						currValueChanges[index] = newValue;
 					}
 				}
 			}
-			performRateRules(modelstate, t, state.variableToIndexMap.get(modelstateId), currValueChanges);
 		}
 
 		/**
 		 * performs every rate rule using the current time step
 		 */
-		private HashSet<String> performRateRules(ModelState modelstate, double t, Map<String, Integer> variableToIndexMap, double[] currValueChanges)
+		private void computeRateRules(ModelState modelstate, double t, double[] currValueChanges)
 		{
+			Map<String, Integer> variableToIndexMap = state.variableToIndexMap.get(modelstate.getID());
 
-			HashSet<String> affectedVariables = new HashSet<String>();
 			for (RateRule rateRule : modelstate.getRateRulesList())
 			{
 				String variable = rateRule.getVariable();
 				ASTNode formula = inlineFormula(modelstate, rateRule.getMath());
 
-				if (modelstate.getVariableToIsConstantMap().containsKey(variable) && modelstate.getVariableToIsConstantMap().get(variable) == false)
+				if (!modelstate.isConstant(variable))
 				{
 
 					if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
@@ -517,8 +540,8 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 							continue;
 						}
 
-						double newValue = (Evaluator.evaluateExpressionRecursive(modelstate, formula, false, t, null, null, getReplacements()) * modelstate
-								.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable)));
+						double newValue = Evaluator.evaluateExpressionRecursive(modelstate, formula, false, t, null, null, getReplacements())
+								* modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable));
 
 						currValueChanges[index] = newValue;
 					}
@@ -534,14 +557,42 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 							continue;
 						}
 						double newValue = Evaluator.evaluateExpressionRecursive(modelstate, formula, false, t, null, null, getReplacements());
-						currValueChanges[index] = newValue;
-					}
+						if (modelstate.isHierarchical(variable))
+						{
+							String dependency = modelstate.getReplacementDependency().get(variable);
 
-					affectedVariables.add(variable);
+							for (String modelstateId : state.dependencyToDependents.get(dependency).keySet())
+							{
+								index = state.dependencyToDependents.get(dependency).get(modelstateId);
+								currValueChanges[index] = 0;
+							}
+						}
+						currValueChanges[index] = newValue;
+
+					}
 				}
 			}
 
-			return affectedVariables;
+		}
+
+		private void computeDependencies(double[] currValueChanges)
+		{
+			for (String dependency : state.dependencyToDependents.keySet())
+			{
+				double total = 0;
+
+				for (String modelstate : state.dependencyToDependents.get(dependency).keySet())
+				{
+					int index = state.dependencyToDependents.get(dependency).get(modelstate);
+					total = total + currValueChanges[index];
+				}
+
+				for (String modelstate : state.dependencyToDependents.get(dependency).keySet())
+				{
+					int index = state.dependencyToDependents.get(dependency).get(modelstate);
+					currValueChanges[index] = total;
+				}
+			}
 		}
 	}
 
@@ -682,18 +733,20 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 			{
 				return true;
 			}
+
 			return false;
 		}
 	}
 
 	private class VariableState
 	{
-		private List<ASTNode>						dvariablesdtime;
-		private Map<String, ModelState>				idToModelState;
-		private Map<String, Map<Integer, String>>	indexToVariableMap;
 		private List<Double>						values;
 		private List<String>						variables;
+		private Map<String, ModelState>				idToModelState;
+		private Map<String, Map<Integer, String>>	indexToVariableMap;
 		private Map<String, Map<String, Integer>>	variableToIndexMap;
+		private Map<String, Map<String, ASTNode>>	dvariablesdtime;
+		private Map<String, Map<String, Integer>>	dependencyToDependents;
 
 		public VariableState()
 		{
@@ -702,7 +755,9 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 			this.indexToVariableMap = new HashMap<String, Map<Integer, String>>();
 			this.variables = new ArrayList<String>();
 			this.values = new ArrayList<Double>();
-			this.dvariablesdtime = new ArrayList<ASTNode>();
+			this.dvariablesdtime = new HashMap<String, Map<String, ASTNode>>();
+			this.dependencyToDependents = new HashMap<String, Map<String, Integer>>();
+
 		}
 
 		public void addState(ModelState modelstate)
@@ -710,6 +765,7 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 			idToModelState.put(modelstate.getID(), modelstate);
 			variableToIndexMap.put(modelstate.getID(), new HashMap<String, Integer>());
 			indexToVariableMap.put(modelstate.getID(), new HashMap<Integer, String>());
+			dvariablesdtime.put(modelstate.getID(), new HashMap<String, ASTNode>());
 
 			for (String variable : modelstate.getVariableToValueMap().keySet())
 			{
@@ -725,11 +781,6 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 		public int getDimensions()
 		{
 			return values.size();
-		}
-
-		public ASTNode[] getRateArray()
-		{
-			return dvariablesdtime.toArray(new ASTNode[dvariablesdtime.size()]);
 		}
 
 		public double[] getValuesArray()
@@ -750,16 +801,30 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 		private void addVariable(ModelState modelstate, String variable)
 		{
 			int index = variables.size();
+
+			if (modelstate.isHierarchical(variable))
+			{
+				String dependency = modelstate.getReplacementDependency().get(variable);
+
+				if (!dependencyToDependents.containsKey(dependency))
+				{
+					dependencyToDependents.put(dependency, new HashMap<String, Integer>());
+				}
+
+				dependencyToDependents.get(dependency).put(modelstate.getID(), index);
+			}
+
 			variables.add(variable);
 			values.add(modelstate.getVariableToValue(getReplacements(), variable));
 			variableToIndexMap.get(modelstate.getID()).put(variable, index);
 			indexToVariableMap.get(modelstate.getID()).put(index, variable);
-			dvariablesdtime.add(new ASTNode());
-			dvariablesdtime.get(index).setValue(0);
+			dvariablesdtime.get(modelstate.getID()).put(variable, new ASTNode(0));
 		}
 
 		private void addReaction(ModelState modelstate, String reaction)
 		{
+			String modelstateID = modelstate.getID();
+
 			ASTNode formula = modelstate.getReactionToFormulaMap().get(reaction);
 			Set<HierarchicalStringDoublePair> reactantAndStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(reaction);
 			Set<HierarchicalStringDoublePair> speciesAndStoichiometrySet = modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reaction);
@@ -771,10 +836,12 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 				{
 					String reactant = reactantAndStoichiometry.string;
 					double stoichiometry = reactantAndStoichiometry.doub;
-					int varIndex = variableToIndexMap.get(modelstate.getID()).get(reactant);
+					// int varIndex =
+					// variableToIndexMap.get(modelstateID).get(reactant);
 					ASTNode stoichNode = new ASTNode();
 					stoichNode.setValue(-1 * stoichiometry);
-					dvariablesdtime.set(varIndex, ASTNode.sum(dvariablesdtime.get(varIndex), ASTNode.times(formula, stoichNode)));
+					dvariablesdtime.get(modelstateID).put(reactant,
+							ASTNode.sum(dvariablesdtime.get(modelstateID).get(reactant), ASTNode.times(formula, stoichNode)));
 				}
 			}
 
@@ -787,10 +854,12 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 
 					if (stoichiometry > 0)
 					{
-						int varIndex = variableToIndexMap.get(modelstate.getID()).get(species);
+						// int varIndex =
+						// variableToIndexMap.get(modelstate.getID()).get(species);
 						ASTNode stoichNode = new ASTNode();
 						stoichNode.setValue(stoichiometry);
-						dvariablesdtime.set(varIndex, ASTNode.sum(dvariablesdtime.get(varIndex), ASTNode.times(formula, stoichNode)));
+						dvariablesdtime.get(modelstateID).put(species,
+								ASTNode.sum(dvariablesdtime.get(modelstateID).get(species), ASTNode.times(formula, stoichNode)));
 					}
 				}
 			}
@@ -801,16 +870,19 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 				{
 					String reactant = reactantAndStoichiometry.string1;
 					String stoichiometry = reactantAndStoichiometry.string2;
-					int varIndex = variableToIndexMap.get(modelstate.getID()).get(reactant);
+					// int varIndex =
+					// variableToIndexMap.get(modelstate.getID()).get(reactant);
 					if (stoichiometry.startsWith("-"))
 					{
 						ASTNode stoichNode = new ASTNode(stoichiometry.substring(1, stoichiometry.length()));
-						dvariablesdtime.set(varIndex, ASTNode.diff(dvariablesdtime.get(varIndex), ASTNode.times(formula, stoichNode)));
+						dvariablesdtime.get(modelstateID).put(reactant,
+								ASTNode.diff(dvariablesdtime.get(modelstateID).get(reactant), ASTNode.times(formula, stoichNode)));
 					}
 					else
 					{
 						ASTNode stoichNode = new ASTNode(stoichiometry);
-						dvariablesdtime.set(varIndex, ASTNode.sum(dvariablesdtime.get(varIndex), ASTNode.times(formula, stoichNode)));
+						dvariablesdtime.get(modelstateID).put(reactant,
+								ASTNode.sum(dvariablesdtime.get(modelstateID).get(reactant), ASTNode.times(formula, stoichNode)));
 					}
 				}
 			}

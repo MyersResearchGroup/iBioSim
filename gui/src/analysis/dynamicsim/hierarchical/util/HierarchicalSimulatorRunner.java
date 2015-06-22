@@ -53,9 +53,8 @@ public class HierarchicalSimulatorRunner
 		{
 			String testcase = args[1];
 
-			String[] casesNeedToChangeTimeStep = new String[] { "00028", "00080", "00128", "00173",
-					"00194", "00196", "00197", "00198", "00200", "00201", "00269", "00274",
-					"00400", "00460", "00276", "00278", "00279", "00870", "00872" };
+			String[] casesNeedToChangeTimeStep = new String[] { "00028", "00080", "00128", "00173", "00194", "00196", "00197", "00198", "00200",
+					"00201", "00269", "00274", "00400", "00460", "00276", "00278", "00279", "00870", "00872" };
 
 			for (String s : casesNeedToChangeTimeStep)
 			{
@@ -66,12 +65,13 @@ public class HierarchicalSimulatorRunner
 				}
 			}
 
-			String filename = args[0] + separator + testcase + separator + testcase
-					+ "-sbml-l3v1.xml";
+			String root = args[0] + separator + testcase + separator;
+
+			String filename = root + testcase + "-sbml-l3v1.xml";
+
 			String outputDirectory = args[2];
 
-			String settingsFile = args[0] + separator + testcase + separator + testcase
-					+ "-settings.txt";
+			String settingsFile = args[0] + separator + testcase + separator + testcase + "-settings.txt";
 
 			simulator = new DynamicSimulation("hierarchical-rk");
 
@@ -98,10 +98,9 @@ public class HierarchicalSimulatorRunner
 			try
 			{
 
-				simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit,
-						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs,
-						progressLabel, running, stoichAmpValue, intSpecies, numSteps,
-						relativeError, absoluteError, quantityType, false, null, null, null);
+				simulator.simulate(filename, root, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs,
+						progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null,
+						null);
 
 				TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
 				tsdp.outputCSV(outputDirectory + testcase + ".csv");
@@ -144,10 +143,9 @@ public class HierarchicalSimulatorRunner
 			try
 			{
 
-				simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit,
-						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs,
-						progressLabel, running, stoichAmpValue, intSpecies, numSteps,
-						relativeError, absoluteError, quantityType, false, null, null, null);
+				simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
+						printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError,
+						quantityType, false, null, null, null);
 
 			}
 			catch (Exception e1)
@@ -175,8 +173,7 @@ public class HierarchicalSimulatorRunner
 			e.printStackTrace();
 		}
 
-		timeLimit = Double.valueOf(properties.getProperty("duration"))
-				- Double.valueOf(properties.getProperty("start"));
+		timeLimit = Double.valueOf(properties.getProperty("duration")) - Double.valueOf(properties.getProperty("start"));
 		relativeError = Double.valueOf(properties.getProperty("relative"));
 		absoluteError = Double.valueOf(properties.getProperty("absolute"));
 		numSteps = Integer.valueOf(properties.getProperty("steps"));
@@ -226,14 +223,12 @@ public class HierarchicalSimulatorRunner
 			}
 			else
 			{
-				maxTimeStep = Double.valueOf(properties
-						.getProperty(prefix + "simulation.time.step"));
+				maxTimeStep = Double.valueOf(properties.getProperty(prefix + "simulation.time.step"));
 			}
 		}
 		if (properties.containsKey(prefix + "simulation.print.interval"))
 		{
-			printInterval = Double.valueOf(properties.getProperty(prefix
-					+ "simulation.print.interval"));
+			printInterval = Double.valueOf(properties.getProperty(prefix + "simulation.print.interval"));
 		}
 		if (properties.containsKey("monte.carlo.simulation.runs"))
 		{
@@ -253,13 +248,11 @@ public class HierarchicalSimulatorRunner
 		}
 		if (properties.containsKey("monte.carlo.simulation.min.time.step"))
 		{
-			minTimeStep = Double.valueOf(properties
-					.getProperty("monte.carlo.simulation.min.time.step"));
+			minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 		}
 		if (properties.containsKey("reb2sac.diffusion.stoichiometry.amplification.value"))
 		{
-			stoichAmpValue = Double.valueOf(properties
-					.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
+			stoichAmpValue = Double.valueOf(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
 		}
 		if (properties.containsKey("selected.simulator"))
 		{
@@ -280,8 +273,7 @@ public class HierarchicalSimulatorRunner
 		while (properties.containsKey("reb2sac.interesting.species." + intSpecies))
 		{
 
-			interestingSpecies.add(properties.getProperty("reb2sac.interesting.species."
-					+ intSpecies));
+			interestingSpecies.add(properties.getProperty("reb2sac.interesting.species." + intSpecies));
 			++intSpecies;
 		}
 	}
