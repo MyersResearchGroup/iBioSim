@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
@@ -16,7 +17,7 @@ public abstract class VariableState extends DocumentState
 	private HashMap<String, HashSet<AssignmentRule>>	variableToAffectedAssignmentRuleSetMap;
 	private final HashMap<String, HashSet<ASTNode>>		variableToAffectedConstraintSetMap;
 	private HashMap<String, HashSet<String>>			variableToEventSetMap;
-	private final HashMap<String, Boolean>				variableToIsConstantMap;
+	private final Set<String>							variableToIsConstant;
 	private HashMap<String, Boolean>					variableToIsInAssignmentRuleMap;
 	private final HashMap<String, Boolean>				variableToIsInConstraintMap;
 	private HashMap<String, Boolean>					variableToIsInRateRuleMap;
@@ -27,7 +28,7 @@ public abstract class VariableState extends DocumentState
 		super(models, bioModel, submodelID);
 		compartmentIDSet = new LinkedHashSet<String>();
 		speciesIDSet = new LinkedHashSet<String>((int) getNumSpecies());
-		variableToIsConstantMap = new HashMap<String, Boolean>((int) (getNumSpecies() + getNumParameters()));
+		variableToIsConstant = new HashSet<String>((int) (getNumSpecies() + getNumParameters()));
 		variableToValueMap = new HashMap<String, Double>((int) getNumSpecies() + (int) getNumParameters());
 		variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode>>((int) getNumConstraints());
 		variableToIsInConstraintMap = new HashMap<String, Boolean>((int) (getNumSpecies() + getNumParameters()));
@@ -38,7 +39,7 @@ public abstract class VariableState extends DocumentState
 		super(state);
 		compartmentIDSet = state.compartmentIDSet;
 		speciesIDSet = state.speciesIDSet;
-		variableToIsConstantMap = state.variableToIsConstantMap;
+		variableToIsConstant = state.variableToIsConstant;
 		variableToValueMap = new HashMap<String, Double>(state.variableToValueMap);
 		variableToAffectedConstraintSetMap = state.variableToAffectedConstraintSetMap;
 		variableToIsInConstraintMap = state.variableToIsInConstraintMap;
@@ -114,14 +115,14 @@ public abstract class VariableState extends DocumentState
 		return variableToAffectedConstraintSetMap;
 	}
 
-	public HashMap<String, Boolean> getVariableToIsConstantMap()
+	public boolean isConstant(String variable)
 	{
-		return variableToIsConstantMap;
+		return variableToIsConstant.contains(variable);
 	}
 
-	public void addVariableToIsConstant(String key, boolean value)
+	public void addVariableToIsConstant(String id)
 	{
-		variableToIsConstantMap.put(key, value);
+		variableToIsConstant.add(id);
 	}
 
 	public void addVariableToIsInConstraint(String key, boolean value)

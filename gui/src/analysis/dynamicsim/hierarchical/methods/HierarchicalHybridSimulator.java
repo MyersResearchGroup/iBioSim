@@ -32,7 +32,7 @@ import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
 
 import analysis.dynamicsim.ParentSimulator;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalArrayModels;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
@@ -48,7 +48,7 @@ public class HierarchicalHybridSimulator implements ParentSimulator
 	private final JFrame									running;
 	private final String[]									interestingSpecies;
 	private BufferedWriter									bufferedTSDWriter;
-	private final List<HierarchicalArrayModels>				sims;
+	private final List<HierarchicalSimulation>				sims;
 	private final Map<String, Double>						values;
 	private final Map<String, ASTNode>						listOfAssignmentRules;
 	private final Map<String, List<HierarchicalStringPair>>	quantityToReplaces;
@@ -75,7 +75,7 @@ public class HierarchicalHybridSimulator implements ParentSimulator
 		this.quantityType = quantityType;
 		this.abstraction = abstraction;
 		this.document = SBMLReader.read(new File(SBMLFileName));
-		this.sims = new ArrayList<HierarchicalArrayModels>();
+		this.sims = new ArrayList<HierarchicalSimulation>();
 		this.values = new HashMap<String, Double>();
 		this.quantityToReplaces = new HashMap<String, List<HierarchicalStringPair>>();
 		this.quantityToReplacedBy = new HashMap<String, HierarchicalStringPair>();
@@ -139,7 +139,7 @@ public class HierarchicalHybridSimulator implements ParentSimulator
 
 		while (currentTime <= timeLimit)
 		{
-			for (HierarchicalArrayModels sim : sims)
+			for (HierarchicalSimulation sim : sims)
 			{
 				sim.setTimeLimit(currentTime + 1);
 				sim.simulate();
@@ -222,9 +222,7 @@ public class HierarchicalHybridSimulator implements ParentSimulator
 			if (replacedBy != null)
 			{
 				String submodel = replacedBy.string1;
-				String variable = replacedBy.string2;
-				int index = idToIndex.get(submodel);
-				values.put(species, sims.get(index).getTopLevelValue(variable));
+				idToIndex.get(submodel);
 			}
 
 			if (replaces != null)
@@ -232,10 +230,8 @@ public class HierarchicalHybridSimulator implements ParentSimulator
 				for (HierarchicalStringPair pair : replaces)
 				{
 					String submodel = pair.string1;
-					String variable = pair.string2;
-					double value = values.get(species);
-					int index = idToIndex.get(submodel);
-					sims.get(index).setTopLevelValue(variable, value);
+					values.get(species);
+					idToIndex.get(submodel);
 				}
 			}
 
@@ -337,12 +333,13 @@ public class HierarchicalHybridSimulator implements ParentSimulator
 
 		for (int i = 0; i < sims.size(); i++)
 		{
-			HierarchicalArrayModels sim = sims.get(i);
-			String submodel = indexToId.get(i);
-			for (String speciesID : sim.getTopmodel().getSpeciesIDSet())
-			{
-				bufferedTSDWriter.write(",\"" + submodel + "_" + speciesID + "\"");
-			}
+			// HierarchicalSimulation sim = sims.get(i);
+			// String submodel = indexToId.get(i);
+			// for (String speciesID : sim.getTopmodel().getSpeciesIDSet())
+			// {
+			// bufferedTSDWriter.write(",\"" + submodel + "_" + speciesID +
+			// "\"");
+			// }
 		}
 
 		bufferedTSDWriter.write("),\n");
@@ -350,8 +347,6 @@ public class HierarchicalHybridSimulator implements ParentSimulator
 
 	private void printValueToTSD(double printTime) throws IOException
 	{
-		String commaSpace = "";
-
 		bufferedTSDWriter.write("(");
 
 		// print the current time
@@ -366,15 +361,17 @@ public class HierarchicalHybridSimulator implements ParentSimulator
 
 		for (int i = 0; i < sims.size(); i++)
 		{
-			HierarchicalArrayModels sim = sims.get(i);
-
-			for (String speciesID : sim.getTopmodel().getSpeciesIDSet())
-			{
-
-				bufferedTSDWriter.write(commaSpace + sim.getTopmodel().getVariableToValue(sim.getReplacements(), speciesID));
-				commaSpace = ",";
-
-			}
+			// HierarchicalSimulation sim = sims.get(i);
+			//
+			// for (String speciesID : sim.getTopmodel().getSpeciesIDSet())
+			// {
+			//
+			// bufferedTSDWriter.write(commaSpace +
+			// sim.getTopmodel().getVariableToValue(sim.getReplacements(),
+			// speciesID));
+			// commaSpace = ",";
+			//
+			// }
 		}
 
 		bufferedTSDWriter.write(")\n");

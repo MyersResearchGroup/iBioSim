@@ -28,17 +28,18 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 public abstract class HierarchicalObjects extends HierarchicalSimulation
 {
 
-	private int						numSubmodels;
-	private boolean					isGrid;
-	private Random					randomNumberGenerator;
-	private ModelState				topmodel;
-	private ArrayList<String>		filesCreated;
-	private HashSet<String>			ibiosimFunctionDefinitions;
-	private Map<String, Double>		replacements;
-	private Map<String, Model>		models;
-	private Map<String, Double>		initReplacementState;
-	private Map<String, ModelState>	arrayModels;
-	private Map<String, ModelState>	submodels;
+	private int									numSubmodels;
+	private boolean								isGrid;
+	private Random								randomNumberGenerator;
+	private ModelState							topmodel;
+	private ArrayList<String>					filesCreated;
+	private HashSet<String>						ibiosimFunctionDefinitions;
+	private Map<String, Double>					replacements;
+	private Map<String, Model>					models;
+	private Map<String, Double>					initReplacementState;
+	private Map<String, ModelState>				arrayModels;
+	private Map<String, ModelState>				submodels;
+	private Map<String, HierarchicalStringPair>	nameToReplacement;
 
 	public HierarchicalObjects(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
 			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
@@ -53,6 +54,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 		models = new HashMap<String, Model>();
 		isGrid = HierarchicalUtilities.checkGrid(document.getModel());
 		models.put(document.getModel().getId(), document.getModel().clone());
+		nameToReplacement = new HashMap<String, HierarchicalStringPair>();
 		filesCreated = new ArrayList<String>();
 		arrayModels = new HashMap<String, ModelState>();
 		ibiosimFunctionDefinitions = new HashSet<String>(Arrays.asList("uniform", "exponential", "gamma", "chisq", "lognormal", "laplace", "cauchy",
@@ -94,6 +96,16 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 	public Map<String, Model> getModels()
 	{
 		return models;
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @return
+	 */
+	public Model getModel(String model)
+	{
+		return models.get(model);
 	}
 
 	/**
@@ -157,6 +169,11 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 	public boolean isGrid()
 	{
 		return isGrid;
+	}
+
+	public Map<String, HierarchicalStringPair> getNameToReplacement()
+	{
+		return nameToReplacement;
 	}
 
 	public void setArrayModels(Map<String, ModelState> arrayModels)
@@ -268,7 +285,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 		this.topmodel = topmodel;
 	}
 
-	public ModelState getModel(String id)
+	public ModelState getModelState(String id)
 	{
 		if (id.equals("topmodel"))
 		{
@@ -356,8 +373,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			{
 				String variable = assignmentRule.getVariable();
 
-				if (modelstate.getVariableToIsConstantMap().containsKey(variable) && !modelstate.getVariableToIsConstantMap().get(variable)
-						|| !modelstate.getVariableToIsConstantMap().containsKey(variable))
+				if (!modelstate.isConstant(variable))
 				{
 					changed |= updateVariableValue(modelstate, variable, assignmentRule.getMath());
 				}
@@ -375,8 +391,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 
 			String variable = assignmentRule.getVariable();
 
-			if (modelstate.getVariableToIsConstantMap().containsKey(variable) && modelstate.getVariableToIsConstantMap().get(variable) == false
-					|| modelstate.getVariableToIsConstantMap().containsKey(variable) == false)
+			if (!modelstate.isConstant(variable))
 			{
 
 				updateVariableValue(modelstate, variable, assignmentRule.getMath());
@@ -461,7 +476,6 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 		{
 			getSpeciesToAffectedReactionSetMap().clear();
 			getSpeciesToIsBoundaryConditionMap().clear();
-			getVariableToIsConstantMap().clear();
 			getSpeciesToHasOnlySubstanceUnitsMap().clear();
 			getSpeciesToCompartmentNameMap().clear();
 			getSpeciesIDSet().clear();

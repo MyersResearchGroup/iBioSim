@@ -20,6 +20,7 @@ import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Rule;
 
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalArrayModels;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
 import analysis.dynamicsim.hierarchical.util.ArraysObject;
 import analysis.dynamicsim.hierarchical.util.Evaluator;
 import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
@@ -292,9 +293,9 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 	private void initialize(ModelState model) throws IOException
 	{
 		setupNonConstantSpeciesReferences(model);
-		setupSpecies(model);
 		setupParameters(model);
 		setupCompartments(model);
+		setupSpecies(model);
 		setupArraysValues(model);
 		setupReactions(model);
 		setupEvents(model);
@@ -351,7 +352,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			RateRule rateRule = (RateRule) rule;
 			String variable = rateRule.getVariable();
 
-			if (modelstate.getVariableToIsConstantMap().containsKey(variable) && modelstate.getVariableToIsConstantMap().get(variable) == false)
+			if (!modelstate.isConstant(variable))
 			{
 				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
 						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
@@ -470,7 +471,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			// note that the stoichiometries are earlier modified with the
 			// correct +/- sign
 			boolean cond1 = modelstate.getSpeciesToIsBoundaryConditionMap().get(speciesID);
-			boolean cond2 = modelstate.getVariableToIsConstantMap().get(speciesID);
+			boolean cond2 = modelstate.isConstant(speciesID);
 			if (!cond1 && !cond2)
 			{
 
@@ -891,7 +892,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 	private void updatePropensity(String modelstate, String species)
 	{
-		ModelState model = getModel(modelstate);
+		ModelState model = getModelState(modelstate);
 		Set<String> reactions = model.getSpeciesToAffectedReactionSetMap().get(species);
 		updatePropensities(reactions, model);
 

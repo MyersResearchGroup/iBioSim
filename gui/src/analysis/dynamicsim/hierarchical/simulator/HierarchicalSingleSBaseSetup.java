@@ -13,6 +13,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.Delay;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.KineticLaw;
@@ -20,6 +21,7 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Priority;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
@@ -60,6 +62,8 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 			LocalParameter localParameter = kineticLaw.getLocalParameter(i);
 
+			String id = localParameter.getId();
+
 			if (localParameter.isSetId() && modelstate.isDeletedBySID(localParameter.getId()))
 			{
 				continue;
@@ -69,13 +73,13 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 				continue;
 			}
 
-			String parameterID = reactionID + "_" + localParameter.getId();
+			String parameterID = reactionID + "_" + id;
 
 			modelstate.addVariableToValueMap(parameterID, localParameter.getValue());
 			localParameter.setId(parameterID);
 			SBMLutilities.setMetaId(localParameter, parameterID);
 
-			HierarchicalUtilities.alterLocalParameter(kineticLaw.getMath(), reaction, parameterID);
+			HierarchicalUtilities.alterLocalParameter(kineticLaw.getMath(), id, parameterID);
 		}
 	}
 
@@ -100,7 +104,10 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			modelstate.setVariableToValue(getReplacements(), compartmentID, 1.0);
 		}
 
-		modelstate.addVariableToIsConstant(compartmentID, compartment.getConstant());
+		if (compartment.getConstant())
+		{
+			modelstate.addVariableToIsConstant(compartmentID);
+		}
 
 		if (!compartment.getConstant())
 		{
@@ -154,14 +161,38 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 		if (event.isSetPriority())
 		{
-			modelstate.getEventToPriorityMap().put(eventID, inlineFormula(modelstate, event.getPriority().getMath()));
+			Priority priority = event.getPriority();
+
+			if (!priority.isSetMetaId())
+			{
+				modelstate.getEventToPriorityMap().put(eventID, inlineFormula(modelstate, event.getPriority().getMath()));
+			}
+			else if (!modelstate.isDeletedByMetaID(priority.getMetaId()))
+			{
+				modelstate.getEventToPriorityMap().put(eventID, inlineFormula(modelstate, event.getPriority().getMath()));
+			}
 		}
 
 		if (event.isSetDelay())
 		{
 
-			modelstate.getEventToDelayMap().put(eventID, inlineFormula(modelstate, event.getDelay().getMath()));
-			modelstate.getEventToHasDelayMap().put(eventID, true);
+			Delay delay = event.getDelay();
+
+			if (!delay.isSetMetaId())
+			{
+				modelstate.getEventToDelayMap().put(eventID, inlineFormula(modelstate, delay.getMath()));
+				modelstate.getEventToHasDelayMap().put(eventID, true);
+			}
+			else if (!modelstate.isDeletedByMetaID(delay.getMetaId()))
+			{
+				modelstate.getEventToDelayMap().put(eventID, inlineFormula(modelstate, delay.getMath()));
+				modelstate.getEventToHasDelayMap().put(eventID, true);
+			}
+			else
+			{
+				modelstate.getEventToHasDelayMap().put(eventID, false);
+			}
+
 		}
 		else
 		{
@@ -182,6 +213,11 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 		for (EventAssignment assignment : event.getListOfEventAssignments())
 		{
+
+			if (assignment.isSetMetaId() && modelstate.isDeletedByMetaID(assignment.getMetaId()))
+			{
+				continue;
+			}
 
 			String variableID = assignment.getVariable();
 
@@ -216,7 +252,11 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 	protected void setupSingleParameter(ModelState modelstate, Parameter parameter, String parameterID)
 	{
 		modelstate.getVariableToValueMap().put(parameterID, parameter.getValue());
-		modelstate.getVariableToIsConstantMap().put(parameterID, parameter.getConstant());
+
+		if (parameter.isConstant())
+		{
+			modelstate.addVariableToIsConstant(parameterID);
+		}
 		if (!parameter.getConstant())
 		{
 			modelstate.getVariablesToPrint().add(parameterID);
@@ -302,8 +342,10 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 		if (productsList.getChildCount() > 0 && reactantsList.getChildCount() > 0)
 		{
+
 			modelstate.getReactionToFormulaMap().put(reverse, inlineFormula(modelstate, reactionFormula.getRightChild()));
 			modelstate.getReactionToFormulaMap().put(forward, inlineFormula(modelstate, reactionFormula.getLeftChild()));
+
 			if (notEnoughMoleculesFlagFd == true)
 			{
 				propensity = 0.0;
@@ -467,10 +509,19 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			modelstate.getVariableToIsInConstraintMap().put(speciesID, false);
 		}
 
-		if (!modelstate.getIsHierarchical().contains(speciesID) && species.isSetInitialAmount())
+		if (modelstate.isHierarchical(speciesID))
+		{
+			if (species.isSetInitialConcentration())
+			{
+				initValue = modelstate.getVariableToValue(getReplacements(), speciesID)
+						* modelstate.getVariableToValue(getReplacements(), species.getCompartment());
+				modelstate.setVariableToValue(getReplacements(), speciesID, initValue);
+			}
+		}
+		else if (species.isSetInitialAmount())
 		{
 			initValue = species.getInitialAmount();
-			modelstate.setVariableToValue(getReplacements(), speciesID, species.getInitialAmount());
+			modelstate.getVariableToValueMap().put(speciesID, initValue);
 		}
 
 		else if (species.isSetInitialConcentration())
@@ -495,7 +546,11 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		modelstate.getSpeciesToAffectedReactionSetMap().put(speciesID, new HashSet<String>(20));
 
 		modelstate.getSpeciesToIsBoundaryConditionMap().put(speciesID, species.getBoundaryCondition());
-		modelstate.getVariableToIsConstantMap().put(speciesID, species.getConstant());
+
+		if (species.getConstant())
+		{
+			modelstate.addVariableToIsConstant(speciesID);
+		}
 		modelstate.getSpeciesToHasOnlySubstanceUnitsMap().put(speciesID, species.getHasOnlySubstanceUnits());
 		modelstate.getSpeciesIDSet().add(speciesID);
 
@@ -548,7 +603,6 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		// TODO:fix this
 		if (reactionFormula.getType().equals(ASTNode.Type.TIMES))
 		{
-
 			ASTNode distributedNode = new ASTNode();
 
 			reactionFormula = inlineFormula(modelstate, reactionFormula);
@@ -630,8 +684,12 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 				reactionFormula = distributedNode;
 			}
-
 		}
+		else
+		{
+			reactionFormula = ASTNode.sum(reactionFormula, new ASTNode(0));
+		}
+
 		return reactionFormula;
 	}
 
@@ -698,7 +756,6 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 			if (product.getId().length() > 0)
 			{
-				modelstate.getVariableToIsConstantMap().put(product.getId(), false);
 				if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(reactionID) == false)
 				{
 					modelstate.getReactionToNonconstantStoichiometriesSetMap().put(reactionID, new HashSet<HierarchicalStringPair>());
@@ -911,6 +968,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 
 		modelstate.getSpeciesToAffectedReactionSetMap().get(reactantID).add(forward);
+
 		if (modelstate.getVariableToValue(getReplacements(), reactantID) < reactantStoichiometry)
 		{
 			return true;

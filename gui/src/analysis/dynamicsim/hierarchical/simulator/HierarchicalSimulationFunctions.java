@@ -210,8 +210,8 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 		for (String s : getInterestingSpecies())
 		{
-			String id = s.replaceAll("__[\\w]+", "");
-			String element = s.replace(id + "__", "");
+			String element = s.replaceAll("(.+)__", "");
+			String id = s.replace("__" + element, "");
 			ModelState ms = (id.equals(s)) ? getTopmodel() : getSubmodels().get(id);
 			if (getPrintConcentrationSpecies().contains(s))
 			{
@@ -438,7 +438,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 			variableInFiredEvents.add(variable);
 
-			if (modelstate.getVariableToIsConstantMap().get(variable) == false)
+			if (modelstate.isConstant(variable) == false)
 			{
 				assignments.put(variable, assignmentValue);
 			}
