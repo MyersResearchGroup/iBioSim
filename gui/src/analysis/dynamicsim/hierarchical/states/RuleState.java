@@ -2,37 +2,33 @@ package analysis.dynamicsim.hierarchical.states;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
-import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.RateRule;
 
 public abstract class RuleState extends EventState
 {
 
-	private List<RateRule>			rateRulesList;
-	private List<AssignmentRule>	assignmentRulesList;
+	private Map<String, ASTNode>	rateRules;
+	private Map<String, ASTNode>	assignmentRules;
+	private Map<String, ASTNode>	initAssignment;
 
 	public RuleState(Map<String, Model> models, String bioModel, String submodelID)
 	{
 
 		super(models, bioModel, submodelID);
 
-		rateRulesList = new LinkedList<RateRule>();
-		assignmentRulesList = new LinkedList<AssignmentRule>();
+		rateRules = new HashMap<String, ASTNode>();
+		assignmentRules = new HashMap<String, ASTNode>();
+		initAssignment = new HashMap<String, ASTNode>();
 
 		if (getNumRules() > 0)
 		{
 
-			setVariableToAffectedAssignmentRuleSetMap(new HashMap<String, HashSet<AssignmentRule>>(
-					(int) getNumRules()));
-			setVariableToIsInAssignmentRuleMap(new HashMap<String, Boolean>(
-					(int) (getNumRules() + getNumParameters())));
-			setVariableToIsInRateRuleMap(new HashMap<String, Boolean>(
-					(int) (getNumRules() + getNumParameters())));
+			setVariableToAffectedAssignmentRuleSetMap(new HashMap<String, HashSet<String>>((int) getNumRules()));
+			setVariableToIsInAssignmentRuleMap(new HashMap<String, Boolean>((int) (getNumRules() + getNumParameters())));
+			setVariableToIsInRateRuleMap(new HashMap<String, Boolean>((int) (getNumRules() + getNumParameters())));
 		}
 
 	}
@@ -40,27 +36,36 @@ public abstract class RuleState extends EventState
 	public RuleState(RuleState state)
 	{
 		super(state);
-		rateRulesList = state.rateRulesList;
+		rateRules = state.rateRules;
 	}
 
-	public List<RateRule> getRateRulesList()
+	public Map<String, ASTNode> getRateRulesList()
 	{
-		return rateRulesList;
+		return rateRules;
 	}
 
-	public void setRateRulesList(List<RateRule> rateRulesList)
+	public void setRateRulesList(Map<String, ASTNode> rateRules)
 	{
-		this.rateRulesList = rateRulesList;
+		this.rateRules = rateRules;
 	}
 
-	public List<AssignmentRule> getAssignmentRulesList()
+	public Map<String, ASTNode> getAssignmentRulesList()
 	{
-		return assignmentRulesList;
+		return assignmentRules;
 	}
 
-	public void setAssignmentRulesList(List<AssignmentRule> assignmentRulesList)
+	public void setAssignmentRulesList(Map<String, ASTNode> assignmentRules)
 	{
-		this.assignmentRulesList = assignmentRulesList;
+		this.assignmentRules = assignmentRules;
 	}
 
+	public Map<String, ASTNode> getInitAssignment()
+	{
+		return initAssignment;
+	}
+
+	public void setInitAssignment(Map<String, ASTNode> initAssignment)
+	{
+		this.initAssignment = initAssignment;
+	}
 }
