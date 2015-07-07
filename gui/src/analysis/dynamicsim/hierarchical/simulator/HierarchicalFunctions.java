@@ -14,20 +14,19 @@ import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.EventAssignment;
 
 import analysis.dynamicsim.hierarchical.util.Evaluator;
-import analysis.dynamicsim.hierarchical.util.HierarchicalEventToFire;
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventToFire;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
 
-public abstract class HierarchicalSimulationFunctions extends HierarchicalSBasesSetup
+public abstract class HierarchicalFunctions extends HierarchicalSetup
 {
 
-	public HierarchicalSimulationFunctions(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit,
-			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException
+	public HierarchicalFunctions(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
+			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
+			String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
 		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue,
 				running, interestingSpecies, quantityType, abstraction);
@@ -46,7 +45,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 		HashSet<String> untriggeredEvents = new HashSet<String>();
 		HashSet<String> variableInFiredEvents = new HashSet<String>();
 		HashSet<String> affectedReactionSet = new HashSet<String>();
-		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+		HashSet<String> affectedAssignmentRuleSet = new HashSet<String>();
 		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
 
 		checkTriggeredEvents(modelstate, untriggeredEvents);
@@ -397,7 +396,7 @@ public abstract class HierarchicalSimulationFunctions extends HierarchicalSBases
 
 	}
 
-	private void fireSingleEvent(ModelState modelstate, Set<AssignmentRule> affectedAssignmentRuleSet, Set<ASTNode> affectedConstraintSet,
+	private void fireSingleEvent(ModelState modelstate, Set<String> affectedAssignmentRuleSet, Set<ASTNode> affectedConstraintSet,
 			Set<String> affectedReactionSet, Set<String> variableInFiredEvents, Set<String> untriggeredEvents, final boolean noAssignmentRulesFlag,
 			final boolean noConstraintsFlag)
 	{

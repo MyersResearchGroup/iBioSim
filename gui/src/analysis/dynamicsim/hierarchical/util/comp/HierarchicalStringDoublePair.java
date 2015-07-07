@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical.util;
+package analysis.dynamicsim.hierarchical.util.comp;
 
 public class HierarchicalStringDoublePair {
 	public String string;

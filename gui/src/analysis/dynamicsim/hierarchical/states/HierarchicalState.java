@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.sbml.jsbml.Model;
 
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
 public abstract class HierarchicalState extends RuleState
 {

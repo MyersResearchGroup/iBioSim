@@ -19,15 +19,14 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.AssignmentRule;
-import org.sbml.jsbml.RateRule;
 
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalArrayModels;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalFunctions;
 import analysis.dynamicsim.hierarchical.util.Evaluator;
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
+import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
-public class HierarchicalODERKSimulator extends HierarchicalArrayModels
+public final class HierarchicalODERKSimulator extends HierarchicalFunctions
 {
 
 	private final DiffEquations										function;
@@ -322,6 +321,13 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 			modelstate.setVariableToValue(getReplacements(), function.state.indexToVariableMap.get(modelstateId).get(i), y[i]);
 		}
 
+		fireEvents(modelstate, y, t);
+
+	}
+
+	private void fireEvents(ModelState modelstate, double[] y, double t)
+	{
+		String modelstateId = modelstate.getID();
 		nextEventTime = handleEvents();
 
 		updateTriggerState(modelstate, t);
@@ -339,12 +345,15 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 
 		for (String event : modelstate.getUntriggeredEventSet())
 		{
-			boolean state = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(event), false, t, null, null,
-					getReplacements()) > 0;
+			if (triggerValues.get(modelstate.getID()).containsKey(event))
+			{
+				boolean state = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(event), false, t, null, null,
+						getReplacements()) > 0;
 
-			triggerValues.get(modelstate.getID()).get(event).clear();
+				triggerValues.get(modelstate.getID()).get(event).clear();
 
-			triggerValues.get(modelstate.getID()).get(event).put(t, state);
+				triggerValues.get(modelstate.getID()).get(event).put(t, state);
+			}
 		}
 	}
 
@@ -417,12 +426,13 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 		{
 
 			String modelstateId = modelstate.getID();
-			HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+			HashSet<String> affectedAssignmentRuleSet = new HashSet<String>();
 			HashSet<String> revaluateVariables = new HashSet<String>();
 
 			for (int i : function.state.indexToVariableMap.get(modelstateId).keySet())
 			{
-				modelstate.setVariableToValue(getReplacements(), state.indexToVariableMap.get(modelstateId).get(i), y[i]);
+				String variable = state.indexToVariableMap.get(modelstateId).get(i);
+				modelstate.setVariableToValue(getReplacements(), variable, y[i]);
 			}
 
 			for (int i : function.state.indexToVariableMap.get(modelstateId).keySet())
@@ -431,14 +441,12 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 
 				if (!modelstate.isConstant(currentVar))
 				{
-					if (modelstate.getSpeciesIDSet().contains(currentVar) && modelstate.getSpeciesToIsBoundaryConditionMap().get(currentVar))
+					if (modelstate.getSpeciesIDSet().contains(currentVar) && !modelstate.getSpeciesToIsBoundaryConditionMap().get(currentVar))
 					{
-						continue;
+						currValueChanges[i] = Evaluator.evaluateExpressionRecursive(modelstate,
+								state.dvariablesdtime.get(modelstateId).get(currentVar), false, t, null, null, getReplacements());
+						revaluateVariables.add(currentVar);
 					}
-
-					currValueChanges[i] = Evaluator.evaluateExpressionRecursive(modelstate, state.dvariablesdtime.get(modelstateId).get(currentVar),
-							false, t, null, null, getReplacements());
-					revaluateVariables.add(currentVar);
 				}
 
 				if (modelstate.getVariableToIsInAssignmentRuleMap() != null
@@ -447,7 +455,7 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 						&& modelstate.getVariableToIsInAssignmentRuleMap().get(currentVar))
 				{
 					affectedAssignmentRuleSet.addAll(modelstate.getVariableToAffectedAssignmentRuleSetMap().get(currentVar));
-					revaluateVariables.add(currentVar);
+					// revaluateVariables.add(currentVar);
 				}
 			}
 
@@ -465,14 +473,15 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 
 		}
 
-		private void computeAssignmentRules(ModelState modelstate, double[] y, double[] currValueChanges,
-				HashSet<AssignmentRule> affectedAssignmentRuleSet, HashSet<String> revaluateVariables)
+		private void computeAssignmentRules(ModelState modelstate, double[] y, double[] currValueChanges, HashSet<String> affectedAssignmentRuleSet,
+				HashSet<String> revaluateVariables)
 		{
 			boolean changed = true;
 
 			while (changed)
 			{
-				HashSet<String> affectedVariables = performAssignmentRules(modelstate, affectedAssignmentRuleSet);
+				HashSet<String> affectedVariables = HierarchicalUtilities.performAssignmentRules(modelstate, affectedAssignmentRuleSet,
+						getReplacements(), getCurrentTime());
 				changed = false;
 				for (String affectedVariable : affectedVariables)
 				{
@@ -517,10 +526,10 @@ public class HierarchicalODERKSimulator extends HierarchicalArrayModels
 		{
 			Map<String, Integer> variableToIndexMap = state.variableToIndexMap.get(modelstate.getID());
 
-			for (RateRule rateRule : modelstate.getRateRulesList())
+			for (String variable : modelstate.getRateRulesList().keySet())
 			{
-				String variable = rateRule.getVariable();
-				ASTNode formula = inlineFormula(modelstate, rateRule.getMath());
+				ASTNode rateRule = modelstate.getRateRulesList().get(variable);
+				ASTNode formula = HierarchicalUtilities.inlineFormula(modelstate, rateRule, getModels(), getIbiosimFunctionDefinitions());
 
 				if (!modelstate.isConstant(variable))
 				{

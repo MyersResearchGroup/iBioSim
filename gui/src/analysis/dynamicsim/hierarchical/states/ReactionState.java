@@ -9,8 +9,8 @@ import java.util.Set;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
 public abstract class ReactionState extends SpeciesState
 {

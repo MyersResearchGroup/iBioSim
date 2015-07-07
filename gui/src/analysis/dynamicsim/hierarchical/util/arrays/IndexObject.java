@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical.util;
+package analysis.dynamicsim.hierarchical.util.arrays;
 
 import java.util.HashMap;
 

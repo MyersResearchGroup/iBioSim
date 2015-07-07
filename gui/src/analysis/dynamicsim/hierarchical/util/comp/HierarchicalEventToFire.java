@@ -1,17 +1,16 @@
-package analysis.dynamicsim.hierarchical.util;
+package analysis.dynamicsim.hierarchical.util.comp;
 
 import java.util.HashSet;
 
 public class HierarchicalEventToFire
 {
 
-	private HashSet<Object> eventAssignmentSet = null;
-	private String eventID = "";
-	private double fireTime = 0.0;
-	private String modelID;
+	private HashSet<Object>	eventAssignmentSet	= null;
+	private String			eventID				= "";
+	private double			fireTime			= 0.0;
+	private String			modelID;
 
-	public HierarchicalEventToFire(String modelID, String eventID,
-			HashSet<Object> eventAssignmentSet, double fireTime)
+	public HierarchicalEventToFire(String modelID, String eventID, HashSet<Object> eventAssignmentSet, double fireTime)
 	{
 
 		this.eventID = eventID;

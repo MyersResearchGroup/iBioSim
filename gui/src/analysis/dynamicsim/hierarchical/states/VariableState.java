@@ -7,21 +7,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Model;
 
 public abstract class VariableState extends DocumentState
 {
-	private final LinkedHashSet<String>					compartmentIDSet;
-	private final LinkedHashSet<String>					speciesIDSet;
-	private HashMap<String, HashSet<AssignmentRule>>	variableToAffectedAssignmentRuleSetMap;
-	private final HashMap<String, HashSet<ASTNode>>		variableToAffectedConstraintSetMap;
-	private HashMap<String, HashSet<String>>			variableToEventSetMap;
-	private final Set<String>							variableToIsConstant;
-	private HashMap<String, Boolean>					variableToIsInAssignmentRuleMap;
-	private final HashMap<String, Boolean>				variableToIsInConstraintMap;
-	private HashMap<String, Boolean>					variableToIsInRateRuleMap;
-	private Map<String, Double>							variableToValueMap;
+	private final LinkedHashSet<String>				compartmentIDSet;
+	private final LinkedHashSet<String>				speciesIDSet;
+	private HashMap<String, HashSet<String>>		variableToAffectedAssignmentRuleSetMap;
+	private final HashMap<String, HashSet<ASTNode>>	variableToAffectedConstraintSetMap;
+	private HashMap<String, HashSet<String>>		variableToEventSetMap;
+	private final Set<String>						variableToIsConstant;
+	private HashMap<String, Boolean>				variableToIsInAssignmentRuleMap;
+	private final HashMap<String, Boolean>			variableToIsInConstraintMap;
+	private HashMap<String, Boolean>				variableToIsInRateRuleMap;
+	private Map<String, Double>						variableToValueMap;
 
 	public VariableState(Map<String, Model> models, String bioModel, String submodelID)
 	{
@@ -50,12 +49,12 @@ public abstract class VariableState extends DocumentState
 		return variableToAffectedAssignmentRuleSetMap != null;
 	}
 
-	public HashMap<String, HashSet<AssignmentRule>> getVariableToAffectedAssignmentRuleSetMap()
+	public HashMap<String, HashSet<String>> getVariableToAffectedAssignmentRuleSetMap()
 	{
 		return variableToAffectedAssignmentRuleSetMap;
 	}
 
-	public void setVariableToAffectedAssignmentRuleSetMap(HashMap<String, HashSet<AssignmentRule>> variableToAffectedAssignmentRuleSetMap)
+	public void setVariableToAffectedAssignmentRuleSetMap(HashMap<String, HashSet<String>> variableToAffectedAssignmentRuleSetMap)
 	{
 		this.variableToAffectedAssignmentRuleSetMap = variableToAffectedAssignmentRuleSetMap;
 	}

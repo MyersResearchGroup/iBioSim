@@ -28,14 +28,14 @@ import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
 
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
-public abstract class HierarchicalReplacemenHandler extends HierarchicalObjects
+public abstract class HierarchicalReplacement extends HierarchicalObjects
 {
 
 	private Set<String>	cache;
 
-	public HierarchicalReplacemenHandler(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit,
+	public HierarchicalReplacement(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit,
 			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
 			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException
 	{

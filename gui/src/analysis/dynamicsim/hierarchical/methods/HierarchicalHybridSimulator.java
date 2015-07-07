@@ -33,10 +33,10 @@ import org.sbml.jsbml.ext.comp.Submodel;
 
 import analysis.dynamicsim.ParentSimulator;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
-public class HierarchicalHybridSimulator implements ParentSimulator
+public final class HierarchicalHybridSimulator implements ParentSimulator
 {
 
 	private final SBMLDocument								document;

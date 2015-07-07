@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical.util;
+package analysis.dynamicsim.hierarchical.util.scripts;
 
 import java.io.File;
 import java.io.FileInputStream;

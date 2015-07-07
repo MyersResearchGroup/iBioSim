@@ -1,50 +1,35 @@
-package analysis.dynamicsim.hierarchical.simulator;
+package analysis.dynamicsim.hierarchical.util;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
-import javax.xml.stream.XMLStreamException;
+import java.util.Map;
+import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Delay;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Priority;
-import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
-import analysis.dynamicsim.hierarchical.util.Evaluator;
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
-import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 import biomodel.util.SBMLutilities;
 
-public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplacemenHandler
+public class Setup
 {
-
-	public HierarchicalSingleSBaseSetup(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit,
-			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException
-	{
-		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue,
-				running, interestingSpecies, quantityType, abstraction);
-	}
 
 	/**
 	 * sets up the local parameters in a single kinetic law
@@ -52,7 +37,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 	 * @param kineticLaw
 	 * @param reactionID
 	 */
-	protected void setupLocalParameters(ModelState modelstate, KineticLaw kineticLaw, Reaction reaction)
+	public static void setupLocalParameters(ModelState modelstate, KineticLaw kineticLaw, Reaction reaction)
 	{
 
 		String reactionID = reaction.getId();
@@ -83,7 +68,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 	}
 
-	protected void setupSingleCompartment(ModelState modelstate, Compartment compartment, String compartmentID)
+	public static void setupSingleCompartment(ModelState modelstate, Compartment compartment, String compartmentID, Map<String, Double> replacements)
 	{
 
 		if (compartment.isSetId() && modelstate.isDeletedBySID(compartment.getId()))
@@ -101,7 +86,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 		if (Double.isNaN(compartment.getSize()))
 		{
-			modelstate.setVariableToValue(getReplacements(), compartmentID, 1.0);
+			modelstate.setVariableToValue(replacements, compartmentID, 1.0);
 		}
 
 		if (compartment.getConstant())
@@ -125,16 +110,12 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 	}
 
-	protected void setupSingleConstraint(ModelState modelstate, Constraint constraint)
+	public static void setupSingleConstraint(ModelState modelstate, ASTNode math, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions)
 	{
-		if (constraint.isSetMetaId() && modelstate.isDeletedByMetaID(constraint.getMetaId()))
-		{
-			return;
-		}
 
-		constraint.setMath(inlineFormula(modelstate, constraint.getMath()));
+		math = HierarchicalUtilities.inlineFormula(modelstate, math, models, iBioSimFunctionDefinitions);
 
-		for (ASTNode constraintNode : constraint.getMath().getListOfNodes())
+		for (ASTNode constraintNode : math.getListOfNodes())
 		{
 
 			if (constraintNode.isName())
@@ -142,7 +123,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 				String nodeName = constraintNode.getName();
 				modelstate.getVariableToAffectedConstraintSetMap().put(nodeName, new HashSet<ASTNode>());
-				modelstate.getVariableToAffectedConstraintSetMap().get(nodeName).add(constraint.getMath());
+				modelstate.getVariableToAffectedConstraintSetMap().get(nodeName).add(math);
 				modelstate.getVariableToIsInConstraintMap().put(nodeName, true);
 			}
 		}
@@ -154,7 +135,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 	 * 
 	 * @param event
 	 */
-	protected void setupSingleEvent(ModelState modelstate, Event event)
+	public static void setupSingleEvent(ModelState modelstate, Event event, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions)
 	{
 
 		String eventID = event.getId();
@@ -165,11 +146,13 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 			if (!priority.isSetMetaId())
 			{
-				modelstate.getEventToPriorityMap().put(eventID, inlineFormula(modelstate, event.getPriority().getMath()));
+				modelstate.getEventToPriorityMap().put(eventID,
+						HierarchicalUtilities.inlineFormula(modelstate, event.getPriority().getMath(), models, iBioSimFunctionDefinitions));
 			}
 			else if (!modelstate.isDeletedByMetaID(priority.getMetaId()))
 			{
-				modelstate.getEventToPriorityMap().put(eventID, inlineFormula(modelstate, event.getPriority().getMath()));
+				modelstate.getEventToPriorityMap().put(eventID,
+						HierarchicalUtilities.inlineFormula(modelstate, event.getPriority().getMath(), models, iBioSimFunctionDefinitions));
 			}
 		}
 
@@ -180,12 +163,14 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 			if (!delay.isSetMetaId())
 			{
-				modelstate.getEventToDelayMap().put(eventID, inlineFormula(modelstate, delay.getMath()));
+				modelstate.getEventToDelayMap().put(eventID,
+						HierarchicalUtilities.inlineFormula(modelstate, delay.getMath(), models, iBioSimFunctionDefinitions));
 				modelstate.getEventToHasDelayMap().put(eventID, true);
 			}
 			else if (!modelstate.isDeletedByMetaID(delay.getMetaId()))
 			{
-				modelstate.getEventToDelayMap().put(eventID, inlineFormula(modelstate, delay.getMath()));
+				modelstate.getEventToDelayMap().put(eventID,
+						HierarchicalUtilities.inlineFormula(modelstate, delay.getMath(), models, iBioSimFunctionDefinitions));
 				modelstate.getEventToHasDelayMap().put(eventID, true);
 			}
 			else
@@ -199,7 +184,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			modelstate.getEventToHasDelayMap().put(eventID, false);
 		}
 
-		event.getTrigger().setMath(inlineFormula(modelstate, event.getTrigger().getMath()));
+		event.getTrigger().setMath(HierarchicalUtilities.inlineFormula(modelstate, event.getTrigger().getMath(), models, iBioSimFunctionDefinitions));
 
 		modelstate.getEventToTriggerMap().put(eventID, event.getTrigger().getMath());
 		modelstate.getEventToTriggerInitiallyTrueMap().put(eventID, event.getTrigger().getInitialValue());
@@ -210,37 +195,30 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		modelstate.getEventToAffectedReactionSetMap().put(eventID, new HashSet<String>());
 
 		modelstate.getUntriggeredEventSet().add(eventID);
+	}
 
-		for (EventAssignment assignment : event.getListOfEventAssignments())
+	public static void setupEventAssignment(ModelState modelstate, String variableID, String eventID, ASTNode math, EventAssignment assignment,
+			Map<String, Model> models, Set<String> iBioSimFunctionDefinitions)
+	{
+
+		math = HierarchicalUtilities.inlineFormula(modelstate, math, models, iBioSimFunctionDefinitions);
+
+		modelstate.getEventToAssignmentSetMap().get(eventID).add(assignment);
+
+		if (modelstate.getVariableToEventSetMap().containsKey(variableID) == false)
+		{
+			modelstate.getVariableToEventSetMap().put(variableID, new HashSet<String>());
+		}
+
+		modelstate.getVariableToEventSetMap().get(variableID).add(eventID);
+
+		// if the variable is a species, add the reactions it's in
+		// to the event to affected reaction hashmap, which is used
+		// for updating propensities after an event fires
+		if (modelstate.getSpeciesToAffectedReactionSetMap().containsKey(variableID))
 		{
 
-			if (assignment.isSetMetaId() && modelstate.isDeletedByMetaID(assignment.getMetaId()))
-			{
-				continue;
-			}
-
-			String variableID = assignment.getVariable();
-
-			assignment.setMath(inlineFormula(modelstate, assignment.getMath()));
-
-			modelstate.getEventToAssignmentSetMap().get(eventID).add(assignment);
-
-			if (modelstate.getVariableToEventSetMap().containsKey(variableID) == false)
-			{
-				modelstate.getVariableToEventSetMap().put(variableID, new HashSet<String>());
-			}
-
-			modelstate.getVariableToEventSetMap().get(variableID).add(eventID);
-
-			// if the variable is a species, add the reactions it's in
-			// to the event to affected reaction hashmap, which is used
-			// for updating propensities after an event fires
-			if (modelstate.getSpeciesToAffectedReactionSetMap().containsKey(variableID))
-			{
-
-				modelstate.getEventToAffectedReactionSetMap().get(eventID).addAll(modelstate.getSpeciesToAffectedReactionSetMap().get(variableID));
-			}
-
+			modelstate.getEventToAffectedReactionSetMap().get(eventID).addAll(modelstate.getSpeciesToAffectedReactionSetMap().get(variableID));
 		}
 	}
 
@@ -249,7 +227,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 	 * 
 	 * @param parameter
 	 */
-	protected void setupSingleParameter(ModelState modelstate, Parameter parameter, String parameterID)
+	public static void setupSingleParameter(ModelState modelstate, Parameter parameter, String parameterID)
 	{
 		modelstate.getVariableToValueMap().put(parameterID, parameter.getValue());
 
@@ -289,21 +267,26 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 	 * @param productsList
 	 * @param modifiersList
 	 */
-	protected void setupSingleReaction(ModelState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula, boolean reversible,
-			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList)
+	public static void setupSingleReaction(ModelState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula, boolean reversible,
+			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList,
+			Map<String, Model> models, Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
 	{
 		if (reversible)
 		{
-			setupSingleRevReaction(modelstate, reaction, reactionID, reactionFormula, reactantsList, productsList, modifiersList);
+			setupSingleRevReaction(modelstate, reaction, reactionID, reactionFormula, reactantsList, productsList, modifiersList, models,
+					iBioSimFunctionDefinitions, replacements, currentTime);
 		}
 		else
 		{
-			setupSingleNonRevReaction(modelstate, reaction, reactionID, reactionFormula, reactantsList, productsList, modifiersList);
+			setupSingleNonRevReaction(modelstate, reaction, reactionID, reactionFormula, reactantsList, productsList, modifiersList, models,
+					iBioSimFunctionDefinitions, replacements, currentTime);
 		}
 
 	}
 
-	protected void setupSingleReactionPropensity(ModelState modelstate, String reactionID, ASTNode reactionFormula, boolean notEnoughMoleculesFlag)
+	public static void setupSingleReactionPropensity(ModelState modelstate, String reactionID, ASTNode reactionFormula,
+			boolean notEnoughMoleculesFlag, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements,
+			double currentTime)
 	{
 
 		double propensity;
@@ -315,8 +298,9 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		else
 		{
 
-			propensity = Evaluator.evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula), false, getCurrentTime(), null,
-					null, getReplacements());
+			propensity = Evaluator.evaluateExpressionRecursive(modelstate,
+					HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, models, iBioSimFunctionDefinitions), false, currentTime, null,
+					null, replacements);
 			if (propensity < 0.0)
 			{
 				propensity = 0.0;
@@ -328,9 +312,10 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 	}
 
-	protected void setupSingleReactionPropensity(ModelState modelstate, String reactionID, ASTNode reactionFormula,
+	public static void setupSingleReactionPropensity(ModelState modelstate, String reactionID, ASTNode reactionFormula,
 			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, boolean notEnoughMoleculesFlagFd,
-			boolean notEnoughMoleculesFlagRv)
+			boolean notEnoughMoleculesFlagRv, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements,
+			double currentTime)
 	{
 
 		double propensity;
@@ -343,8 +328,10 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		if (productsList.getChildCount() > 0 && reactantsList.getChildCount() > 0)
 		{
 
-			modelstate.getReactionToFormulaMap().put(reverse, inlineFormula(modelstate, reactionFormula.getRightChild()));
-			modelstate.getReactionToFormulaMap().put(forward, inlineFormula(modelstate, reactionFormula.getLeftChild()));
+			modelstate.getReactionToFormulaMap().put(reverse,
+					HierarchicalUtilities.inlineFormula(modelstate, reactionFormula.getRightChild(), models, iBioSimFunctionDefinitions));
+			modelstate.getReactionToFormulaMap().put(forward,
+					HierarchicalUtilities.inlineFormula(modelstate, reactionFormula.getLeftChild(), models, iBioSimFunctionDefinitions));
 
 			if (notEnoughMoleculesFlagFd == true)
 			{
@@ -352,13 +339,15 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			}
 			else
 			{
-				propensity = Evaluator.evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula.getLeftChild()), false,
-						getCurrentTime(), null, null, getReplacements());
+				propensity = Evaluator.evaluateExpressionRecursive(modelstate,
+						HierarchicalUtilities.inlineFormula(modelstate, reactionFormula.getLeftChild(), models, iBioSimFunctionDefinitions), false,
+						currentTime, null, null, replacements);
 
-				if (reactionID.contains("_Diffusion_") && isStoichAmpBoolean() == true)
-				{
-					propensity *= (1.0 / getStoichAmpGridValue());
-				}
+				// if (reactionID.contains("_Diffusion_") &&
+				// isStoichAmpBoolean() == true)
+				// {
+				// propensity *= (1.0 / getStoichAmpGridValue());
+				// }
 
 				setPropensity(modelstate, reactionID, propensity);
 
@@ -374,8 +363,9 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			else
 			{
 
-				propensity = Evaluator.evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula.getRightChild()), false,
-						getCurrentTime(), null, null, getReplacements());
+				propensity = Evaluator.evaluateExpressionRecursive(modelstate,
+						HierarchicalUtilities.inlineFormula(modelstate, reactionFormula.getRightChild(), models, iBioSimFunctionDefinitions), false,
+						currentTime, null, null, replacements);
 
 				if (propensity < 0.0)
 				{
@@ -390,15 +380,17 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		{
 			if (reactantsList.getChildCount() > 0)
 			{
-				modelstate.getReactionToFormulaMap().put(forward, inlineFormula(modelstate, reactionFormula));
+				modelstate.getReactionToFormulaMap().put(forward,
+						HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, models, iBioSimFunctionDefinitions));
 				if (notEnoughMoleculesFlagRv == true)
 				{
 					propensity = 0.0;
 				}
 				else
 				{
-					propensity = Evaluator.evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula), false,
-							getCurrentTime(), null, null, getReplacements());
+					propensity = Evaluator.evaluateExpressionRecursive(modelstate,
+							HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, models, iBioSimFunctionDefinitions), false, currentTime,
+							null, null, replacements);
 
 					if (propensity < 0.0)
 					{
@@ -412,20 +404,23 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			}
 			else if (productsList.getChildCount() > 0)
 			{
-				modelstate.getReactionToFormulaMap().put(forward, inlineFormula(modelstate, reactionFormula));
+				modelstate.getReactionToFormulaMap().put(forward,
+						HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, models, iBioSimFunctionDefinitions));
 				if (notEnoughMoleculesFlagFd == true)
 				{
 					propensity = 0.0;
 				}
 				else
 				{
-					propensity = Evaluator.evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula), false,
-							getCurrentTime(), null, null, getReplacements());
+					propensity = Evaluator.evaluateExpressionRecursive(modelstate,
+							HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, models, iBioSimFunctionDefinitions), false, currentTime,
+							null, null, replacements);
 
-					if (reactionID.contains("_Diffusion_") && isStoichAmpBoolean() == true)
-					{
-						propensity *= (1.0 / getStoichAmpGridValue());
-					}
+					// if (reactionID.contains("_Diffusion_") &&
+					// isStoichAmpBoolean() == true)
+					// {
+					// propensity *= (1.0 / getStoichAmpGridValue());
+					// }
 
 				}
 
@@ -435,58 +430,53 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 	}
 
-	protected void setupSingleRule(ModelState modelstate, Rule rule)
+	public static void setupSingleAssignmentRule(ModelState modelstate, String variable, ASTNode math, Map<String, Model> models,
+			Set<String> iBioSimFunctionDefinitions)
 	{
-		if (rule.isSetMetaId() && modelstate.isDeletedByMetaID(rule.getMetaId()))
+		math = HierarchicalUtilities.inlineFormula(modelstate, math, models, iBioSimFunctionDefinitions);
+
+		modelstate.getAssignmentRulesList().put(variable, math);
+
+		ArrayList<ASTNode> formulaChildren = new ArrayList<ASTNode>();
+
+		if (math.getChildCount() == 0)
 		{
-			return;
+			formulaChildren.add(math);
+		}
+		else
+		{
+			HierarchicalUtilities.getAllASTNodeChildren(math, formulaChildren);
 		}
 
-		if (rule.isAssignment())
+		for (ASTNode ruleNode : formulaChildren)
 		{
-			rule.setMath(inlineFormula(modelstate, rule.getMath()));
-			AssignmentRule assignmentRule = (AssignmentRule) rule;
-			ArrayList<ASTNode> formulaChildren = new ArrayList<ASTNode>();
 
-			if (assignmentRule.getMath().getChildCount() == 0)
-			{
-				formulaChildren.add(assignmentRule.getMath());
-			}
-			else
-			{
-				HierarchicalUtilities.getAllASTNodeChildren(assignmentRule.getMath(), formulaChildren);
-			}
-
-			for (ASTNode ruleNode : formulaChildren)
+			if (ruleNode.isName())
 			{
 
-				if (ruleNode.isName())
+				String nodeName = ruleNode.getName();
+				if (ruleNode.getType() == ASTNode.Type.NAME_TIME)
 				{
-
-					String nodeName = ruleNode.getName();
-					if (ruleNode.getType() == ASTNode.Type.NAME_TIME)
-					{
-						nodeName = "_time";
-					}
-					if (!modelstate.getVariableToAffectedAssignmentRuleSetMap().containsKey(nodeName))
-					{
-						modelstate.getVariableToAffectedAssignmentRuleSetMap().put(nodeName, new HashSet<AssignmentRule>());
-						modelstate.getVariableToIsInAssignmentRuleMap().put(nodeName, true);
-					}
-
-					modelstate.getVariableToAffectedAssignmentRuleSetMap().get(nodeName).add(assignmentRule);
-
+					nodeName = "_time";
+				}
+				if (!modelstate.getVariableToAffectedAssignmentRuleSetMap().containsKey(nodeName))
+				{
+					modelstate.getVariableToAffectedAssignmentRuleSetMap().put(nodeName, new HashSet<String>());
+					modelstate.getVariableToIsInAssignmentRuleMap().put(nodeName, true);
 				}
 
+				modelstate.getVariableToAffectedAssignmentRuleSetMap().get(nodeName).add(variable);
+
 			}
 
-			modelstate.getAssignmentRulesList().add(assignmentRule);
 		}
-		else if (rule.isRate())
-		{
-			RateRule rateRule = (RateRule) rule;
-			modelstate.getRateRulesList().add(rateRule);
-		}
+
+	}
+
+	public static void setupSingleRateRule(ModelState modelstate, String variable, ASTNode math, Map<String, Model> models,
+			Set<String> iBioSimFunctionDefinitions)
+	{
+		modelstate.getRateRulesList().put(variable, math);
 	}
 
 	/**
@@ -495,7 +485,8 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 	 * @param species
 	 * @param speciesID
 	 */
-	protected void setupSingleSpecies(ModelState modelstate, Species species, String speciesID)
+	public static void setupSingleSpecies(ModelState modelstate, Species species, String speciesID, Map<String, Model> models,
+			Map<String, Double> replacements)
 	{
 
 		double initValue = 0;
@@ -513,9 +504,9 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		{
 			if (species.isSetInitialConcentration())
 			{
-				initValue = modelstate.getVariableToValue(getReplacements(), speciesID)
-						* modelstate.getVariableToValue(getReplacements(), species.getCompartment());
-				modelstate.setVariableToValue(getReplacements(), speciesID, initValue);
+				initValue = modelstate.getVariableToValue(replacements, speciesID)
+						* modelstate.getVariableToValue(replacements, species.getCompartment());
+				modelstate.setVariableToValue(replacements, speciesID, initValue);
 			}
 		}
 		else if (species.isSetInitialAmount())
@@ -526,7 +517,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 		else if (species.isSetInitialConcentration())
 		{
-			initValue = species.getInitialConcentration() * getModels().get(modelstate.getModel()).getCompartment(species.getCompartment()).getSize();
+			initValue = species.getInitialConcentration() * models.get(modelstate.getModel()).getCompartment(species.getCompartment()).getSize();
 			modelstate.getVariableToValueMap().put(speciesID, initValue);
 		}
 		else
@@ -556,13 +547,13 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 	}
 
-	private double getStoichiometry(ModelState modelstate, String reactionID, SpeciesReference reactant)
+	private static double getStoichiometry(ModelState modelstate, String reactionID, SpeciesReference reactant, Map<String, Double> replacements)
 	{
 		double reactantStoichiometry;
 
 		if (modelstate.getVariableToValueMap().containsKey(reactant.getId()))
 		{
-			reactantStoichiometry = modelstate.getVariableToValue(getReplacements(), reactant.getId());
+			reactantStoichiometry = modelstate.getVariableToValue(replacements, reactant.getId());
 		}
 		else
 		{
@@ -572,9 +563,9 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		return reactantStoichiometry;
 	}
 
-	private void setPropensity(ModelState modelstate, String reactionID, double propensity)
+	private static void setPropensity(ModelState modelstate, String reactionID, double propensity)
 	{
-		if (!modelstate.isArrayed(reactionID))
+		if (!modelstate.isArrayedObject(reactionID))
 		{
 			if (propensity < 0.0)
 			{
@@ -598,14 +589,14 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 	}
 
-	private ASTNode setupMath(ModelState modelstate, ASTNode reactionFormula)
+	private static ASTNode setupMath(ModelState modelstate, ASTNode reactionFormula, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions)
 	{
 		// TODO:fix this
 		if (reactionFormula.getType().equals(ASTNode.Type.TIMES))
 		{
 			ASTNode distributedNode = new ASTNode();
 
-			reactionFormula = inlineFormula(modelstate, reactionFormula);
+			reactionFormula = HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, models, iBioSimFunctionDefinitions);
 			ASTNode temp = new ASTNode(1);
 			if (reactionFormula.getChildCount() == 2 && reactionFormula.getChild(1).getType().equals(ASTNode.Type.PLUS))
 			{
@@ -656,7 +647,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 			ASTNode distributedNode = new ASTNode();
 			ASTNode temp = new ASTNode(1);
-			reactionFormula = inlineFormula(modelstate, reactionFormula);
+			reactionFormula = HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, models, iBioSimFunctionDefinitions);
 
 			if (reactionFormula.getChildCount() == 1)
 			{
@@ -693,7 +684,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		return reactionFormula;
 	}
 
-	private void setupSingleModifier(ModelState modelstate, String reactionID, ModifierSpeciesReference modifier)
+	private static void setupSingleModifier(ModelState modelstate, String reactionID, ModifierSpeciesReference modifier)
 	{
 
 		String modifierID = modifier.getSpecies();
@@ -706,8 +697,9 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		modelstate.getSpeciesToAffectedReactionSetMap().get(modifierID).add(reactionID);
 	}
 
-	private void setupSingleNonRevReaction(ModelState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula,
-			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList)
+	private static void setupSingleNonRevReaction(ModelState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula,
+			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList,
+			Map<String, Model> models, Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
 	{
 		boolean notEnoughMoleculesFlag;
 		notEnoughMoleculesFlag = false;
@@ -717,29 +709,30 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 		for (SpeciesReference reactant : reactantsList)
 		{
-			notEnoughMoleculesFlag = setupSingleReactant(modelstate, reactionID, reactant);
+			notEnoughMoleculesFlag = setupSingleReactant(modelstate, reactionID, reactant, replacements);
 		}
 
 		for (SpeciesReference product : productsList)
 		{
-			setupSingleProduct(modelstate, reactionID, product);
+			setupSingleProduct(modelstate, reactionID, product, replacements);
 		}
 
 		for (ModifierSpeciesReference modifier : modifiersList)
 		{
 			setupSingleModifier(modelstate, reactionID, modifier);
 		}
-		reactionFormula = inlineFormula(modelstate, reactionFormula);
+		reactionFormula = HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, models, iBioSimFunctionDefinitions);
 		modelstate.getReactionToFormulaMap().put(reactionID, reactionFormula);
 		modelstate.getReactionToHasEnoughMolecules().put(reactionID, notEnoughMoleculesFlag);
 
-		setupSingleReactionPropensity(modelstate, reactionID, reactionFormula, notEnoughMoleculesFlag);
+		setupSingleReactionPropensity(modelstate, reactionID, reactionFormula, notEnoughMoleculesFlag, models, iBioSimFunctionDefinitions,
+				replacements, currentTime);
 
 	}
 
-	private void setupSingleProduct(ModelState modelstate, String reactionID, SpeciesReference product)
+	private static void setupSingleProduct(ModelState modelstate, String reactionID, SpeciesReference product, Map<String, Double> replacements)
 	{
-		double productStoichiometry = getStoichiometry(modelstate, reactionID, product);
+		double productStoichiometry = getStoichiometry(modelstate, reactionID, product, replacements);
 
 		String productID = product.getSpecies();
 
@@ -766,7 +759,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 				if (modelstate.getVariableToValueMap().containsKey(product.getId()) == false)
 				{
-					modelstate.setVariableToValue(getReplacements(), product.getId(), productStoichiometry);
+					modelstate.setVariableToValue(replacements, product.getId(), productStoichiometry);
 				}
 			}
 		}
@@ -774,7 +767,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		modelstate.getSpeciesToAffectedReactionSetMap().get(productID).add(reactionID);
 	}
 
-	private boolean setupSingleReactant(ModelState modelstate, String reactionID, SpeciesReference reactant)
+	private static boolean setupSingleReactant(ModelState modelstate, String reactionID, SpeciesReference reactant, Map<String, Double> replacements)
 	{
 		double reactantStoichiometry;
 		boolean notEnoughMoleculesFlag;
@@ -787,7 +780,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			modelstate.getHierarchicalReactions().add(reactionID);
 		}
 
-		reactantStoichiometry = getStoichiometry(modelstate, reactionID, reactant);
+		reactantStoichiometry = getStoichiometry(modelstate, reactionID, reactant, replacements);
 
 		modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reactionID)
 				.add(new HierarchicalStringDoublePair(reactantID, -reactantStoichiometry));
@@ -796,7 +789,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		modelstate.getReactionToReactantStoichiometrySetMap().get(reactionID)
 				.add(new HierarchicalStringDoublePair(reactantID, reactantStoichiometry));
 
-		if (modelstate.getVariableToValue(getReplacements(), reactantID) < reactantStoichiometry)
+		if (modelstate.getVariableToValue(replacements, reactantID) < reactantStoichiometry)
 		{
 			notEnoughMoleculesFlag = true;
 		}
@@ -813,14 +806,14 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 					.add(new HierarchicalStringPair(reactantID, "-" + reactant.getId()));
 			if (!modelstate.getVariableToValueMap().containsKey(reactant.getId()))
 			{
-				modelstate.setVariableToValue(getReplacements(), reactant.getId(), reactantStoichiometry);
+				modelstate.setVariableToValue(replacements, reactant.getId(), reactantStoichiometry);
 			}
 		}
 
 		return notEnoughMoleculesFlag;
 	}
 
-	private void setupSingleRevModifier(ModelState modelstate, String reactionID, ASTNode reactionFormula, ModifierSpeciesReference modifier)
+	private static void setupSingleRevModifier(ModelState modelstate, String reactionID, ASTNode reactionFormula, ModifierSpeciesReference modifier)
 	{
 		String modifierID = modifier.getSpecies();
 
@@ -856,7 +849,8 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 	}
 
-	private boolean setupSingleRevProduct(ModelState modelstate, String reactionID, SpeciesReference product, List<SpeciesReference> reactantsList)
+	private static boolean setupSingleRevProduct(ModelState modelstate, String reactionID, SpeciesReference product,
+			List<SpeciesReference> reactantsList, Map<String, Double> replacements)
 	{
 		String reactantID = product.getSpecies();
 
@@ -869,7 +863,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			modelstate.getHierarchicalReactions().add(reverse);
 		}
 
-		double productStoichiometry = getStoichiometry(modelstate, reactionID, product);
+		double productStoichiometry = getStoichiometry(modelstate, reactionID, product, replacements);
 
 		if (product.getConstant() == false && product.getId().length() > 0)
 		{
@@ -887,7 +881,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reverse).add(new HierarchicalStringPair(reactantID, product.getId()));
 			if (modelstate.getVariableToValueMap().containsKey(product.getId()) == false)
 			{
-				modelstate.setVariableToValue(getReplacements(), product.getId(), productStoichiometry);
+				modelstate.setVariableToValue(replacements, product.getId(), productStoichiometry);
 			}
 		}
 		else if (reactantsList.size() == 0)
@@ -907,7 +901,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 
 		modelstate.getSpeciesToAffectedReactionSetMap().get(reactantID).add(reverse);
-		if (modelstate.getVariableToValue(getReplacements(), reactantID) < productStoichiometry)
+		if (modelstate.getVariableToValue(replacements, reactantID) < productStoichiometry)
 		{
 			return true;
 		}
@@ -917,7 +911,8 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 	}
 
-	private boolean setupSingleRevReactant(ModelState modelstate, String reactionID, SpeciesReference reactant, List<SpeciesReference> productsList)
+	private static boolean setupSingleRevReactant(ModelState modelstate, String reactionID, SpeciesReference reactant,
+			List<SpeciesReference> productsList, Map<String, Double> replacements)
 	{
 		String reactantID = reactant.getSpecies();
 
@@ -930,7 +925,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			modelstate.getHierarchicalReactions().add(reverse);
 		}
 
-		double reactantStoichiometry = getStoichiometry(modelstate, reactionID, reactant);
+		double reactantStoichiometry = getStoichiometry(modelstate, reactionID, reactant, replacements);
 
 		if (reactant.getConstant() == false && reactant.getId().length() > 0)
 		{
@@ -948,7 +943,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 			modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reverse).add(new HierarchicalStringPair(reactantID, reactant.getId()));
 			if (modelstate.getVariableToValueMap().containsKey(reactant.getId()) == false)
 			{
-				modelstate.setVariableToValue(getReplacements(), reactant.getId(), reactantStoichiometry);
+				modelstate.setVariableToValue(replacements, reactant.getId(), reactantStoichiometry);
 			}
 		}
 		else if (productsList.size() == 0)
@@ -969,7 +964,7 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 
 		modelstate.getSpeciesToAffectedReactionSetMap().get(reactantID).add(forward);
 
-		if (modelstate.getVariableToValue(getReplacements(), reactantID) < reactantStoichiometry)
+		if (modelstate.getVariableToValue(replacements, reactantID) < reactantStoichiometry)
 		{
 			return true;
 		}
@@ -979,8 +974,9 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 	}
 
-	private void setupSingleRevReaction(ModelState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula,
-			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList)
+	private static void setupSingleRevReaction(ModelState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula,
+			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList,
+			Map<String, Model> models, Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
 	{
 
 		String forward = reactionID + "_fd";
@@ -993,16 +989,16 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		modelstate.getReactionToReactantStoichiometrySetMap().put(forward, new HashSet<HierarchicalStringDoublePair>());
 		modelstate.getReactionToReactantStoichiometrySetMap().put(reverse, new HashSet<HierarchicalStringDoublePair>());
 
-		reactionFormula = setupMath(modelstate, reactionFormula);
+		reactionFormula = setupMath(modelstate, reactionFormula, models, iBioSimFunctionDefinitions);
 
 		for (SpeciesReference reactant : reactantsList)
 		{
-			notEnoughMoleculesFlagFd = setupSingleRevReactant(modelstate, reactionID, reactant, productsList);
+			notEnoughMoleculesFlagFd = setupSingleRevReactant(modelstate, reactionID, reactant, productsList, replacements);
 		}
 
 		for (SpeciesReference product : productsList)
 		{
-			notEnoughMoleculesFlagRv = setupSingleRevProduct(modelstate, reactionID, product, reactantsList);
+			notEnoughMoleculesFlagRv = setupSingleRevProduct(modelstate, reactionID, product, reactantsList, replacements);
 		}
 
 		for (ModifierSpeciesReference modifier : modifiersList)
@@ -1011,7 +1007,182 @@ public abstract class HierarchicalSingleSBaseSetup extends HierarchicalReplaceme
 		}
 
 		setupSingleReactionPropensity(modelstate, reactionID, reactionFormula, reactantsList, productsList, notEnoughMoleculesFlagFd,
-				notEnoughMoleculesFlagRv);
+				notEnoughMoleculesFlagRv, models, iBioSimFunctionDefinitions, replacements, currentTime);
 
+	}
+
+	public static boolean calcAssignmentRules(ModelState modelstate, Map<String, ASTNode> affectedAssignmentRuleSet, Map<String, Model> models,
+			Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
+	{
+
+		boolean changed = false;
+		boolean temp = false;
+		double newResult, oldResult;
+		for (String variable : affectedAssignmentRuleSet.keySet())
+		{
+
+			ASTNode math = affectedAssignmentRuleSet.get(variable);
+
+			// update the species count (but only if the species isn't constant)
+			// (bound cond is fine)
+			if (modelstate.isConstant(variable) == false)
+			{
+
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
+						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
+				{
+
+					oldResult = modelstate.getVariableToValue(replacements, variable);
+					newResult = Evaluator.evaluateExpressionRecursive(modelstate, math, false, currentTime, null, null, replacements)
+							* modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable));
+					if (oldResult != newResult)
+					{
+						modelstate.setVariableToValue(replacements, variable, newResult);
+						temp = true;
+					}
+				}
+				else
+				{
+					oldResult = modelstate.getVariableToValue(replacements, variable);
+					newResult = Evaluator.evaluateExpressionRecursive(modelstate, math, false, currentTime, null, null, replacements);
+
+					if (oldResult != newResult)
+					{
+						modelstate.setVariableToValue(replacements, variable, newResult);
+						temp = true;
+					}
+				}
+
+				changed |= temp;
+			}
+		}
+
+		return changed;
+	}
+
+	public static boolean calcCompInitAssign(ModelState modelstate, String variable, ASTNode initialAssignment, Map<String, Model> models,
+			Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
+	{
+		double newResult = Evaluator.evaluateExpressionRecursive(modelstate, initialAssignment, false, currentTime, null, null, replacements);
+		double oldResult = modelstate.getVariableToValue(replacements, variable);
+
+		if (newResult != oldResult)
+		{
+			if (oldResult == Double.NaN)
+			{
+				oldResult = 1.0;
+			}
+
+			modelstate.setVariableToValue(replacements, variable, newResult);
+			if (modelstate.getNumRules() > 0)
+			{
+				HashSet<String> rules = modelstate.getVariableToAffectedAssignmentRuleSetMap().get(variable);
+
+				HierarchicalUtilities.performAssignmentRules(modelstate, rules, replacements, currentTime);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean calcParamInitAssign(ModelState modelstate, String variable, ASTNode initialAssignment, Map<String, Model> models,
+			Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
+	{
+		double newResult = Evaluator.evaluateExpressionRecursive(modelstate, initialAssignment, false, currentTime, null, null, replacements);
+		double oldResult = modelstate.getVariableToValue(replacements, variable);
+
+		if (newResult != oldResult)
+		{
+			modelstate.setVariableToValue(replacements, variable, newResult);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean calcSpeciesInitAssign(ModelState modelstate, String variable, ASTNode initialAssignment, Map<String, Model> models,
+			Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
+	{
+		double newResult;
+		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
+				&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
+		{
+
+			newResult = Evaluator.evaluateExpressionRecursive(modelstate, initialAssignment, false, currentTime, null, null, replacements)
+					* modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable));
+			if (newResult != modelstate.getVariableToValue(replacements, variable))
+			{
+				modelstate.setVariableToValue(replacements, variable, newResult);
+				return true;
+			}
+
+		}
+		else
+		{
+			newResult = Evaluator.evaluateExpressionRecursive(modelstate, initialAssignment, false, currentTime, null, null, replacements);
+
+			if (newResult != modelstate.getVariableToValue(replacements, variable))
+			{
+				modelstate.setVariableToValue(replacements, variable, newResult);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void calculateInitAssignments(ModelState modelstate, Map<String, ASTNode> allInitAssignment,
+			Map<String, ASTNode> allAssignmentRules, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions,
+			Map<String, Double> replacements, double currentTime)
+	{
+		long maxIterations = 1000;
+		long numIterations = 0;
+		double newResult = 0;
+		boolean changed = true, temp = false;
+
+		while (changed)
+		{
+			if (numIterations > maxIterations)
+			{
+				System.out.println("Error: not converging");
+				return;
+			}
+
+			changed = false;
+			temp = false;
+			numIterations++;
+			for (String variable : allInitAssignment.keySet())
+			{
+				ASTNode math = allInitAssignment.get(variable);
+
+				if (models.get(modelstate.getModel()).containsSpecies(variable))
+				{
+					temp = calcSpeciesInitAssign(modelstate, variable, math, models, iBioSimFunctionDefinitions, replacements, currentTime);
+				}
+				else if (models.get(modelstate.getModel()).containsCompartment(variable))
+				{
+					temp = calcCompInitAssign(modelstate, variable, math, models, iBioSimFunctionDefinitions, replacements, currentTime);
+				}
+				else if (models.get(modelstate.getModel()).containsParameter(variable))
+				{
+					temp = calcParamInitAssign(modelstate, variable, math, models, iBioSimFunctionDefinitions, replacements, currentTime);
+				}
+				else
+				{
+					newResult = Evaluator.evaluateExpressionRecursive(modelstate, math, false, currentTime, null, null, replacements);
+					if (newResult != modelstate.getVariableToValue(replacements, variable))
+					{
+						modelstate.setVariableToValue(replacements, variable, newResult);
+						temp = true;
+					}
+				}
+
+				changed |= temp;
+			}
+
+			changed |= calcAssignmentRules(modelstate, allAssignmentRules, models, iBioSimFunctionDefinitions, replacements, currentTime);
+		}
 	}
 }

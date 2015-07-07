@@ -1,38 +1,20 @@
 package analysis.dynamicsim.hierarchical.util;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-
-import javax.xml.stream.XMLStreamException;
-
-import main.Gui;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLWriter;
-import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.ext.comp.CompConstants;
-import org.sbml.jsbml.ext.comp.CompModelPlugin;
-import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
-import org.sbml.jsbml.ext.comp.CompSBasePlugin;
-import org.sbml.jsbml.ext.comp.Deletion;
-import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
-import org.sbml.jsbml.ext.comp.ModelDefinition;
-import org.sbml.jsbml.ext.comp.Port;
-import org.sbml.jsbml.ext.comp.ReplacedBy;
-import org.sbml.jsbml.ext.comp.ReplacedElement;
-import org.sbml.jsbml.ext.comp.SBaseRef;
-import org.sbml.jsbml.ext.comp.Submodel;
-import org.sbml.jsbml.ext.fbc.FBCConstants;
-import org.sbml.jsbml.ext.layout.LayoutConstants;
 
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
+import analysis.dynamicsim.hierarchical.util.arrays.IndexObject;
 import biomodel.network.GeneticNetwork;
 import biomodel.parser.BioModel;
 import biomodel.parser.GCMParser;
-import biomodel.util.SBMLutilities;
 
 public class HierarchicalUtilities
 {
@@ -105,40 +87,94 @@ public class HierarchicalUtilities
 		}
 	}
 
+	public static void replaceSelector(ModelState modelstate, Map<String, Double> replacements, ASTNode formula)
+	{
+		if (formula.getType() == ASTNode.Type.FUNCTION_SELECTOR)
+		{
+			if (formula.getChild(0).isName())
+			{
+				int[] indices = new int[formula.getChildCount() - 1];
+				String id = formula.getChild(0).getName();
+
+				for (int i = 1; i < formula.getChildCount() - 1; i++)
+				{
+					indices[i - 1] = (int) Evaluator.evaluateExpressionRecursive(modelstate, formula.getChild(i), false, 0, null, null, replacements);
+				}
+
+				String newId = getArrayedID(modelstate, id, indices);
+
+				formula.setName(newId);
+			}
+		}
+		else
+		{
+			for (int i = 0; i < formula.getChildCount(); i++)
+			{
+				replaceSelector(modelstate, replacements, formula.getChild(i));
+			}
+		}
+	}
+
+	public static void replaceArgument(ASTNode formula, String bvar, int arg)
+	{
+		if (formula.isString() && formula.getName().equals(bvar))
+		{
+			formula.setValue(arg);
+		}
+		for (int i = 0; i < formula.getChildCount(); i++)
+		{
+			ASTNode child = formula.getChild(i);
+
+			replaceArgument(child, bvar, arg);
+
+		}
+	}
+
 	public static void replaceArgument(ASTNode formula, String bvar, ASTNode arg)
 	{
-		int n = 0;
 		for (int i = 0; i < formula.getChildCount(); i++)
 		{
 			ASTNode child = formula.getChild(i);
 			if (child.isString() && child.getName().equals(bvar))
 			{
-				formula.replaceChild(n, arg.clone());
+				formula.replaceChild(i, arg.clone());
 			}
 			else if (child.getChildCount() > 0)
 			{
 				replaceArgument(child, bvar, arg);
 			}
-			n++;
 		}
 	}
 
-	public static Model flattenModel(String path, String filename, String abstraction)
+	public static String getIndexedObject(ModelState modelstate, String id, String variable, String attribute, int[] indices,
+			Map<String, Double> replacements)
 	{
 
-		BioModel biomodel = new BioModel(path);
+		Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
+		IndexObject index = modelstate.getIndexObjects().get(id);
+		Map<Integer, ASTNode> indexMap = index.getAttributes().get(attribute);
+		int[] newIndices = new int[indices.length];
 
-		biomodel.load(filename);
-		// SBMLDocument sbml = biomodel.getSBMLDocument();
-		SBMLDocument sbml = biomodel.flattenModel(false);
-		if ("expandReaction".equals(abstraction))
+		for (int i = 0; i < indices.length; i++)
 		{
-			GCMParser parser = new GCMParser(biomodel);
-			GeneticNetwork network = parser.buildNetwork(sbml);
-			sbml = network.getSBML();
-			network.mergeSBML(filename, sbml);
+			dimensionIdMap.put("d" + i, indices[i]);
 		}
-		return sbml.getModel();
+
+		for (int i = 0; i < newIndices.length; i++)
+		{
+			newIndices[i] = (int) Evaluator.evaluateExpressionRecursive(modelstate, indexMap.get(i), false, 0, null, dimensionIdMap, replacements);
+		}
+
+		return getArrayedID(modelstate, variable, newIndices);
+	}
+
+	public static String getArrayedID(ModelState modelstate, String id, int[] indices)
+	{
+		for (int i = indices.length - 1; i >= 0; i--)
+		{
+			id = id + "[" + indices[i] + "]";
+		}
+		return id;
 	}
 
 	public static SBMLDocument getFlattenedRegulations(String path, String filename)
@@ -151,233 +187,154 @@ public class HierarchicalUtilities
 		return network.mergeSBML(filename, sbml);
 	}
 
-	private static String changeIdToPortRef(SBaseRef sbaseRef, BioModel bioModel, String root, String separator)
+	/**
+	 * inlines a formula with function definitions
+	 * 
+	 * @param formula
+	 * @return
+	 */
+	public static ASTNode inlineFormula(ModelState modelstate, ASTNode formula, Map<String, Model> models, Set<String> ibiosimFunctionDefinitions)
 	{
-		String id = "";
-		if (sbaseRef.isSetSBaseRef())
+		// TODO: Avoid calling this method
+		if (formula.isFunction() == false || formula.isLeaf() == false)
 		{
-			BioModel subModel = new BioModel(root);
-			Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(sbaseRef.getIdRef());
-			String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()
-					.replace("file://", "").replace("file:", "").replace(".gcm", ".xml");
-			subModel.load(root + separator + extModel);
-			id += changeIdToPortRef(sbaseRef.getSBaseRef(), subModel, root, separator);
-			subModel.save(root + separator + extModel);
-		}
-		if (sbaseRef.isSetIdRef())
-		{
-			Port port = bioModel.getPortBySBaseRef(sbaseRef);
-			SBase sbase = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), sbaseRef.getIdRef());
-			if (sbase != null)
-			{
-				if (id.equals(""))
-				{
-					id = sbase.getElementName() + "__" + sbaseRef.getIdRef();
-				}
-				else
-				{
-					id = id + "__" + sbaseRef.getIdRef();
-				}
-				if (port == null)
-				{
-					port = bioModel.getSBMLCompModel().createPort();
-					port.setId(id);
-					port.setIdRef(sbaseRef.getIdRef());
-					port.setSBaseRef(sbaseRef.getSBaseRef());
-				}
-				sbaseRef.unsetIdRef();
-				sbaseRef.unsetSBaseRef();
-				sbaseRef.setPortRef(port.getId());
-				return id;
-			}
-			return "";
-		}
-		if (sbaseRef.isSetMetaIdRef())
-		{
-			Port port = bioModel.getPortBySBaseRef(sbaseRef);
-			SBase sbase = SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument(), sbaseRef.getMetaIdRef());
-			if (id.equals(""))
-			{
-				id = sbase.getElementName() + "__" + sbaseRef.getMetaIdRef();
-			}
-			else
-			{
-				id = id + "__" + sbaseRef.getMetaIdRef();
-			}
-			if (sbase != null)
-			{
-				if (port == null)
-				{
-					port = bioModel.getSBMLCompModel().createPort();
-					port.setId(id);
-					port.setMetaIdRef(sbaseRef.getMetaIdRef());
-					port.setSBaseRef(sbaseRef.getSBaseRef());
-				}
-				sbaseRef.unsetMetaIdRef();
-				sbaseRef.unsetSBaseRef();
-				sbaseRef.setPortRef(port.getId());
-				return id;
-			}
-		}
-		return "";
-	}
 
-	private static boolean updatePortMap(CompSBasePlugin sbmlSBase, BioModel subModel, String subModelId, String root, String separator)
-	{
-		boolean updated = false;
-		if (sbmlSBase.isSetListOfReplacedElements())
-		{
-			for (int k = 0; k < sbmlSBase.getListOfReplacedElements().size(); k++)
+			for (int i = 0; i < formula.getChildCount(); ++i)
 			{
-				ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(k);
-				if (replacement.getSubmodelRef().equals(subModelId))
-				{
-					changeIdToPortRef(replacement, subModel, root, separator);
-					updated = true;
-				}
+				formula.replaceChild(i, inlineFormula(modelstate, formula.getChild(i), models, ibiosimFunctionDefinitions));// .clone()));
 			}
 		}
-		if (sbmlSBase.isSetReplacedBy())
-		{
-			ReplacedBy replacement = sbmlSBase.getReplacedBy();
-			if (replacement.getSubmodelRef().equals(subModelId))
-			{
-				changeIdToPortRef(replacement, subModel, root, separator);
-				updated = true;
-			}
-		}
-		return updated;
-	}
 
-	private static boolean updateReplacementsDeletions(SBMLDocument document, CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel,
-			String root, String separator)
-	{
-		for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++)
+		if (formula.isFunction() && models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()) != null)
 		{
-			BioModel subModel = new BioModel(root);
-			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
-			String extModel = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource().replace("file://", "")
-					.replace("file:", "").replace(".gcm", ".xml");
-			subModel.load(root + separator + extModel);
-			ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(document.getModel());
-			for (int j = 0; j < elements.size(); j++)
+
+			if (ibiosimFunctionDefinitions.contains(formula.getName()))
 			{
-				SBase sbase = elements.get(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin) sbase.getExtension(CompConstants.namespaceURI);
-				if (sbmlSBase != null)
+				return formula;
+			}
+
+			ASTNode inlinedFormula = models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getBody().clone();
+
+			ASTNode oldFormula = formula.clone();
+
+			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
+			HierarchicalUtilities.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
+
+			if (inlinedChildren.size() == 0)
+			{
+				inlinedChildren.add(inlinedFormula);
+			}
+
+			Map<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
+
+			for (int i = 0; i < models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
+			{
+				inlinedChildToOldIndexMap.put(models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
+			}
+
+			for (int i = 0; i < inlinedChildren.size(); ++i)
+			{
+
+				ASTNode child = inlinedChildren.get(i);
+				if ((child.getChildCount() == 0) && child.isName())
 				{
-					if (updatePortMap(sbmlSBase, subModel, submodel.getId(), root, separator))
+
+					int index = inlinedChildToOldIndexMap.get(child.getName());
+					HierarchicalUtilities.replaceArgument(inlinedFormula, child.toFormula(), oldFormula.getChild(index));
+
+					if (inlinedFormula.getChildCount() == 0)
 					{
-						elements = SBMLutilities.getListOfAllElements(document.getModel());
-					}
-				}
-			}
-			for (int j = 0; j < submodel.getListOfDeletions().size(); j++)
-			{
-				Deletion deletion = submodel.getListOfDeletions().get(j);
-				changeIdToPortRef(deletion, subModel, root, separator);
-			}
-			subModel.save(root + separator + extModel);
-		}
-
-		return true;
-	}
-
-	public static boolean extractModelDefinitions(CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel, String root, String separator)
-	{
-		for (int i = 0; i < sbmlComp.getListOfModelDefinitions().size(); i++)
-		{
-			ModelDefinition md = sbmlComp.getListOfModelDefinitions().get(i);
-			String extId = md.getId();
-
-			Model model = new Model(md);
-			model.getDeclaredNamespaces().clear();
-			SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-			document.enablePackage(LayoutConstants.namespaceURI);
-			document.enablePackage(CompConstants.namespaceURI);
-			document.enablePackage(FBCConstants.namespaceURI);
-			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
-			CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
-			document.setModel(model);
-			ArrayList<String> comps = new ArrayList<String>();
-			for (int j = 0; j < documentCompModel.getListOfSubmodels().size(); j++)
-			{
-				String subModelType = documentCompModel.getListOfSubmodels().get(j).getModelRef();
-				if (!comps.contains(subModelType))
-				{
-					ExternalModelDefinition extModel = documentComp.createExternalModelDefinition();
-					extModel.setId(subModelType);
-					extModel.setSource("file:" + subModelType + ".xml");
-					comps.add(subModelType);
-				}
-			}
-			// Make compartment enclosing
-			if (document.getModel().getCompartmentCount() == 0)
-			{
-				Compartment c = document.getModel().createCompartment();
-				c.setId("default");
-				c.setSize(1);
-				c.setSpatialDimensions(3);
-				c.setConstant(true);
-			}
-			updateReplacementsDeletions(document, documentComp, documentCompModel, root, separator);
-			SBMLWriter writer = new SBMLWriter();
-			try
-			{
-				writer.writeSBMLToFile(document, root + separator + extId + ".xml");
-			}
-			catch (SBMLException e)
-			{
-				e.printStackTrace();
-			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
-			catch (XMLStreamException e)
-			{
-				e.printStackTrace();
-			}
-			if (sbmlComp.getListOfExternalModelDefinitions().get(extId) == null)
-			{
-				for (int j = 0; j < sbmlCompModel.getListOfSubmodels().size(); j++)
-				{
-					Submodel submodel = sbmlCompModel.getListOfSubmodels().get(j);
-					if (submodel.getModelRef().equals(extId))
-					{
-						ExternalModelDefinition extModel = sbmlComp.createExternalModelDefinition();
-						extModel.setSource("file:" + extId + ".xml");
-						extModel.setId(extId);
-						break;
+						inlinedFormula = oldFormula.getChild(index);
 					}
 				}
 			}
 
+			return inlinedFormula;
 		}
-		while (sbmlComp.getListOfModelDefinitions().size() > 0)
+		return formula;
+	}
+
+	public static void performAssignmentRules(ModelState modelstate, Map<String, Double> replacements, double currentTime)
+	{
+		boolean changed = true;
+		while (changed)
 		{
-			sbmlComp.removeModelDefinition(0);
-		}
-		for (int i = 0; i < sbmlComp.getListOfExternalModelDefinitions().size(); i++)
-		{
-			ExternalModelDefinition extModel = sbmlComp.getListOfExternalModelDefinitions().get(i);
-			if (extModel.isSetModelRef())
+			changed = false;
+
+			for (String variable : modelstate.getAssignmentRulesList().keySet())
 			{
-				String oldId = extModel.getId();
-				extModel.setSource("file:" + extModel.getModelRef() + ".xml");
-				extModel.setId(extModel.getModelRef());
-				extModel.unsetModelRef();
-				for (int j = 0; j < sbmlCompModel.getListOfSubmodels().size(); j++)
+				ASTNode assignmentRule = modelstate.getAssignmentRulesList().get(variable);
+				if (!modelstate.isConstant(variable))
 				{
-					Submodel submodel = sbmlCompModel.getListOfSubmodels().get(j);
-					if (submodel.getModelRef().equals(oldId))
-					{
-						submodel.setModelRef(extModel.getId());
-					}
+					changed |= updateVariableValue(modelstate, variable, assignmentRule, replacements, currentTime);
 				}
 			}
 		}
-		return true;
+	}
+
+	public static void replaceDimensionIds(ASTNode math, int[] indices)
+	{
+		for (int i = 0; i < indices.length; i++)
+		{
+			HierarchicalUtilities.replaceArgument(math, "d" + i, indices[i]);
+		}
+	}
+
+	public static HashSet<String> performAssignmentRules(ModelState modelstate, HashSet<String> affectedAssignmentRuleSet,
+			Map<String, Double> replacements, double currentTime)
+	{
+
+		HashSet<String> affectedVariables = new HashSet<String>();
+
+		for (String variable : affectedAssignmentRuleSet)
+		{
+
+			if (!modelstate.isConstant(variable))
+			{
+
+				updateVariableValue(modelstate, variable, modelstate.getAssignmentRulesList().get(variable), replacements, currentTime);
+
+				affectedVariables.add(variable);
+			}
+		}
+
+		return affectedVariables;
+	}
+
+	public static boolean updateVariableValue(ModelState modelstate, String variable, ASTNode math, Map<String, Double> replacements,
+			double currentTime)
+	{
+
+		boolean changed = false;
+		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
+				&& !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable))
+		{
+			double compartment = modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable));
+
+			double oldValue = modelstate.getVariableToValue(replacements, variable);
+			double newValue = Evaluator.evaluateExpressionRecursive(modelstate, math, false, currentTime, null, null, replacements);
+
+			// TODO: is this correct?
+			if (oldValue != newValue)
+			{
+				changed = true;
+				modelstate.setVariableToValue(replacements, variable, newValue * compartment);
+			}
+		}
+		else
+		{
+			double oldValue = modelstate.getVariableToValue(replacements, variable);
+			double newValue = Evaluator.evaluateExpressionRecursive(modelstate, math, false, currentTime, null, null, replacements);
+
+			if (oldValue != newValue)
+			{
+				changed = true;
+				modelstate.setVariableToValue(replacements, variable,
+						Evaluator.evaluateExpressionRecursive(modelstate, math, false, currentTime, null, null, replacements));
+			}
+		}
+
+		return changed;
 	}
 
 }

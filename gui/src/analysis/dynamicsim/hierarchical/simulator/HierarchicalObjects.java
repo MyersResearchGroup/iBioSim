@@ -15,15 +15,14 @@ import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 
 import analysis.dynamicsim.hierarchical.states.ArraysState;
 import analysis.dynamicsim.hierarchical.util.Evaluator;
-import analysis.dynamicsim.hierarchical.util.HierarchicalEventToFire;
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventToFire;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
 public abstract class HierarchicalObjects extends HierarchicalSimulation
 {
@@ -292,150 +291,6 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			return topmodel;
 		}
 		return submodels.get(id);
-	}
-
-	/**
-	 * inlines a formula with function definitions
-	 * 
-	 * @param formula
-	 * @return
-	 */
-	public ASTNode inlineFormula(ModelState modelstate, ASTNode formula)
-	{
-		// TODO: Avoid calling this method
-		if (formula.isFunction() == false || formula.isLeaf() == false)
-		{
-
-			for (int i = 0; i < formula.getChildCount(); ++i)
-			{
-				formula.replaceChild(i, inlineFormula(modelstate, formula.getChild(i)));// .clone()));
-			}
-		}
-
-		if (formula.isFunction() && models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()) != null)
-		{
-
-			if (getIbiosimFunctionDefinitions().contains(formula.getName()))
-			{
-				return formula;
-			}
-
-			ASTNode inlinedFormula = models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getBody().clone();
-
-			ASTNode oldFormula = formula.clone();
-
-			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
-			HierarchicalUtilities.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
-
-			if (inlinedChildren.size() == 0)
-			{
-				inlinedChildren.add(inlinedFormula);
-			}
-
-			Map<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
-
-			for (int i = 0; i < models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
-			{
-				inlinedChildToOldIndexMap.put(models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
-			}
-
-			for (int i = 0; i < inlinedChildren.size(); ++i)
-			{
-
-				ASTNode child = inlinedChildren.get(i);
-				// if ((child.getLeftChild() == null && child.getRightChild() ==
-				// null) && child.isName()) {
-				if ((child.getChildCount() == 0) && child.isName())
-				{
-
-					int index = inlinedChildToOldIndexMap.get(child.getName());
-					HierarchicalUtilities.replaceArgument(inlinedFormula, child.toFormula(), oldFormula.getChild(index));
-
-					if (inlinedFormula.getChildCount() == 0)
-					{
-						inlinedFormula = oldFormula.getChild(index);
-					}
-				}
-			}
-
-			return inlinedFormula;
-		}
-		return formula;
-	}
-
-	protected void performAssignmentRules(ModelState modelstate)
-	{
-		boolean changed = true;
-		while (changed)
-		{
-			changed = false;
-			for (AssignmentRule assignmentRule : modelstate.getAssignmentRulesList())
-			{
-				String variable = assignmentRule.getVariable();
-
-				if (!modelstate.isConstant(variable))
-				{
-					changed |= updateVariableValue(modelstate, variable, assignmentRule.getMath());
-				}
-			}
-		}
-	}
-
-	protected HashSet<String> performAssignmentRules(ModelState modelstate, HashSet<AssignmentRule> affectedAssignmentRuleSet)
-	{
-
-		HashSet<String> affectedVariables = new HashSet<String>();
-
-		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet)
-		{
-
-			String variable = assignmentRule.getVariable();
-
-			if (!modelstate.isConstant(variable))
-			{
-
-				updateVariableValue(modelstate, variable, assignmentRule.getMath());
-
-				affectedVariables.add(variable);
-			}
-		}
-
-		return affectedVariables;
-	}
-
-	protected boolean updateVariableValue(ModelState modelstate, String variable, ASTNode math)
-	{
-
-		boolean changed = false;
-		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
-				&& !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable))
-		{
-			double compartment = modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable));
-
-			double oldValue = modelstate.getVariableToValue(replacements, variable);
-			double newValue = Evaluator.evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(), null, null, getReplacements());
-
-			// TODO: is this correct?
-			if (oldValue != newValue)
-			{
-				changed = true;
-				modelstate.setVariableToValue(replacements, variable, newValue * compartment);
-			}
-		}
-		else
-		{
-			double oldValue = modelstate.getVariableToValue(replacements, variable);
-			double newValue = Evaluator.evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(), null, null, getReplacements());
-
-			if (oldValue != newValue)
-			{
-				changed = true;
-				modelstate.setVariableToValue(replacements, variable,
-						Evaluator.evaluateExpressionRecursive(modelstate, math, false, getCurrentTime(), null, null, getReplacements()));
-			}
-		}
-
-		return changed;
 	}
 
 	public class ModelState extends ArraysState

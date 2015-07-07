@@ -15,21 +15,18 @@ import javax.xml.stream.XMLStreamException;
 import odk.lang.FastMath;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.AssignmentRule;
-import org.sbml.jsbml.RateRule;
-import org.sbml.jsbml.Rule;
 
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalArrayModels;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
-import analysis.dynamicsim.hierarchical.util.ArraysObject;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalFunctions;
 import analysis.dynamicsim.hierarchical.util.Evaluator;
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringDoublePair;
-import analysis.dynamicsim.hierarchical.util.HierarchicalStringPair;
+import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import analysis.dynamicsim.hierarchical.util.arrays.ArraysObject;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
 //TODO: assignment rules need to verify if changing a hierarchical species because they
 //		can trigger rules in other places.
 
-public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
+public final class HierarchicalSSADirectSimulator extends HierarchicalFunctions
 {
 
 	private final Map<Double, List<Double>>	buffer;
@@ -296,7 +293,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 		setupParameters(model);
 		setupCompartments(model);
 		setupSpecies(model);
-		setupArraysValues(model);
 		setupReactions(model);
 		setupEvents(model);
 		setupConstraints(model);
@@ -347,10 +343,10 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 	 */
 	private void performRateRules(ModelState modelstate, double delta_t)
 	{
-		for (Rule rule : modelstate.getRateRulesList())
+
+		for (String variable : modelstate.getRateRulesList().keySet())
 		{
-			RateRule rateRule = (RateRule) rule;
-			String variable = rateRule.getVariable();
+			ASTNode rateRule = modelstate.getRateRulesList().get(variable);
 
 			if (!modelstate.isConstant(variable))
 			{
@@ -359,17 +355,15 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 				{
 					double currVal = modelstate.getVariableToValue(getReplacements(), variable);
 					double incr = delta_t
-							* (Evaluator.evaluateExpressionRecursive(modelstate, rateRule.getMath(), false, getCurrentTime(), null, null,
-									getReplacements()) * modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap()
-									.get(variable)));
+							* (Evaluator.evaluateExpressionRecursive(modelstate, rateRule, false, getCurrentTime(), null, null, getReplacements()) * modelstate
+									.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable)));
 					modelstate.setVariableToValue(getReplacements(), variable, currVal + incr);
 				}
 				else
 				{
 					double currVal = modelstate.getVariableToValue(getReplacements(), variable);
 					double incr = delta_t
-							* Evaluator.evaluateExpressionRecursive(modelstate, rateRule.getMath(), false, getCurrentTime(), null, null,
-									getReplacements());
+							* Evaluator.evaluateExpressionRecursive(modelstate, rateRule, false, getCurrentTime(), null, null, getReplacements());
 
 					modelstate.setVariableToValue(getReplacements(), variable, currVal + incr);
 				}
@@ -400,25 +394,20 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 		HashSet<String> affectedReactionSet = new HashSet<String>(20);
 		affectedReactionSet.add(selectedReactionID);
 
-		// loop through the reaction's reactants and products
 		for (HierarchicalStringDoublePair speciesAndStoichiometry : modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(selectedReactionID))
 		{
 
 			String speciesID = speciesAndStoichiometry.string;
 			affectedReactionSet.addAll(modelstate.getSpeciesToAffectedReactionSetMap().get(speciesID));
 
-			// if the species is involved in an assignment rule then it its
-			// changing may affect a reaction's propensity
 			if (noAssignmentRulesFlag == false && modelstate.getVariableToIsInAssignmentRuleMap().get(speciesID))
 			{
 
-				// this assignment rule is going to be evaluated, so the rule's
-				// variable's value will change
-				for (AssignmentRule assignmentRule : modelstate.getVariableToAffectedAssignmentRuleSetMap().get(speciesID))
+				for (String variable : modelstate.getVariableToAffectedAssignmentRuleSetMap().get(speciesID))
 				{
-					if (modelstate.getSpeciesToAffectedReactionSetMap().get(assignmentRule.getVariable()) != null)
+					if (modelstate.getSpeciesToAffectedReactionSetMap().get(variable) != null)
 					{
-						affectedReactionSet.addAll(modelstate.getSpeciesToAffectedReactionSetMap().get(assignmentRule.getVariable()));
+						affectedReactionSet.addAll(modelstate.getSpeciesToAffectedReactionSetMap().get(variable));
 					}
 				}
 			}
@@ -431,7 +420,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			final boolean noConstraintsFlag, int[] dims)
 	{
 
-		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+		HashSet<String> affectedAssignmentRuleSet = new HashSet<String>();
 		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
 
 		for (HierarchicalStringDoublePair speciesAndStoichiometry : modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(selectedReactionID))
@@ -499,7 +488,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		if (affectedAssignmentRuleSet.size() > 0)
 		{
-			performAssignmentRules(modelstate, affectedAssignmentRuleSet);
+			HierarchicalUtilities.performAssignmentRules(modelstate, affectedAssignmentRuleSet, getReplacements(), getCurrentTime());
 		}
 
 		if (affectedConstraintSet.size() > 0)
@@ -564,7 +553,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 			dims[i - 1] = Integer.parseInt(dimensions[i]);
 		}
 
-		String arrayedId = getArrayedID(getTopmodel(), selectedReactionID, dims);
+		String arrayedId = HierarchicalUtilities.getArrayedID(getTopmodel(), selectedReactionID, dims);
 
 		performReaction(getTopmodel(), selectedReactionID, getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag(), dims);
 
@@ -656,7 +645,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 	private void setupArraysPropensity(ModelState modelstate, String reactionId)
 	{
-		if (modelstate.isArrayed(reactionId))
+		if (modelstate.isArrayedObject(reactionId))
 		{
 			int[] sizes = new int[modelstate.getDimensionCount(reactionId)];
 			for (ArraysObject obj : modelstate.getDimensionObjects().get(reactionId))
@@ -669,16 +658,16 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 		}
 	}
 
-	private void setupArraysPropensity(ModelState modelstate, String reactionId, int[] sizes, int[] indices)
+	private void setupArraysPropensity(ModelState modelstate, String id, int[] sizes, int[] indices)
 	{
 		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
 
-			String arrayedId = getArrayedID(modelstate, reactionId, indices);
+			String arrayedId = HierarchicalUtilities.getArrayedID(modelstate, id, indices);
 
 			if (arrayedId != null)
 			{
-				setupPropensity(modelstate, reactionId, indices);
+				setupArray(modelstate, id, indices);
 			}
 
 			indices[0]++;
@@ -693,9 +682,9 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 		}
 	}
 
-	private void setupPropensity(ModelState modelstate, String id, int[] indices)
+	private void setupArray(ModelState modelstate, String id, int[] indices)
 	{
-		String arrayedId = getArrayedID(modelstate, id, indices);
+		String arrayedId = HierarchicalUtilities.getArrayedID(modelstate, id, indices);
 
 		Set<HierarchicalStringDoublePair> speciesSet = modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(id);
 
@@ -731,11 +720,11 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 		if (assignRule)
 		{
-			performAssignmentRules(getTopmodel());
+			HierarchicalUtilities.performAssignmentRules(getTopmodel(), getReplacements(), getCurrentTime());
 
 			for (ModelState modelstate : getSubmodels().values())
 			{
-				performAssignmentRules(modelstate);
+				HierarchicalUtilities.performAssignmentRules(modelstate, getReplacements(), getCurrentTime());
 			}
 		}
 
@@ -765,7 +754,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 			String[] dimensions = affectedReactionID.contains("[") ? affectedReactionID.replace("]", "").split("\\[") : null;
 
-			if (modelstate.isArrayed(affectedReactionID))
+			if (modelstate.isArrayedObject(affectedReactionID))
 			{
 				continue;
 			}
@@ -793,7 +782,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalArrayModels
 
 	private void updatePropensity(ModelState modelstate, String id, int[] indices)
 	{
-		String arrayedId = getArrayedID(modelstate, id, indices);
+		String arrayedId = HierarchicalUtilities.getArrayedID(modelstate, id, indices);
 
 		Set<HierarchicalStringDoublePair> reactantStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(id);
 

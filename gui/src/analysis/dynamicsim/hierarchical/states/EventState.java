@@ -9,7 +9,7 @@ import java.util.Set;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 
-import analysis.dynamicsim.hierarchical.util.HierarchicalEventToFire;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventToFire;
 
 public abstract class EventState extends ReactionState
 {
@@ -42,8 +42,7 @@ public abstract class EventState extends ReactionState
 			eventToTriggerPersistenceMap = new HashMap<String, Boolean>((int) getNumEvents());
 			eventToUseValuesFromTriggerTimeMap = new HashMap<String, Boolean>((int) getNumEvents());
 			eventToAssignmentSetMap = new HashMap<String, HashSet<Object>>((int) getNumEvents());
-			eventToAffectedReactionSetMap = new HashMap<String, HashSet<String>>(
-					(int) getNumEvents());
+			eventToAffectedReactionSetMap = new HashMap<String, HashSet<String>>((int) getNumEvents());
 			eventToPreviousTriggerValueMap = new HashMap<String, Boolean>((int) getNumEvents());
 			setVariableToEventSetMap(new HashMap<String, HashSet<String>>((int) getNumEvents()));
 		}
@@ -56,17 +55,15 @@ public abstract class EventState extends ReactionState
 		eventToAssignmentSetMap = state.eventToAssignmentSetMap;
 		eventToDelayMap = state.eventToDelayMap;
 		eventToHasDelayMap = state.eventToHasDelayMap;
-		eventToPreviousTriggerValueMap = state.eventToPreviousTriggerValueMap == null ? null
-				: new HashMap<String, Boolean>(state.eventToPreviousTriggerValueMap);
+		eventToPreviousTriggerValueMap = state.eventToPreviousTriggerValueMap == null ? null : new HashMap<String, Boolean>(
+				state.eventToPreviousTriggerValueMap);
 		eventToPriorityMap = state.eventToPriorityMap;
 		eventToTriggerInitiallyTrueMap = state.eventToTriggerInitiallyTrueMap;
 		eventToTriggerMap = state.eventToTriggerMap;
 		eventToTriggerPersistenceMap = state.eventToTriggerPersistenceMap;
 		eventToUseValuesFromTriggerTimeMap = state.eventToUseValuesFromTriggerTimeMap;
-		triggeredEventQueue = state.triggeredEventQueue == null ? null
-				: new PriorityQueue<HierarchicalEventToFire>(state.triggeredEventQueue);
-		untriggeredEventSet = state.untriggeredEventSet == null ? null : new HashSet<String>(
-				state.untriggeredEventSet);
+		triggeredEventQueue = state.triggeredEventQueue == null ? null : new PriorityQueue<HierarchicalEventToFire>(state.triggeredEventQueue);
+		untriggeredEventSet = state.untriggeredEventSet == null ? null : new HashSet<String>(state.untriggeredEventSet);
 	}
 
 	public HashMap<String, HashSet<String>> getEventToAffectedReactionSetMap()
@@ -74,8 +71,7 @@ public abstract class EventState extends ReactionState
 		return eventToAffectedReactionSetMap;
 	}
 
-	public void setEventToAffectedReactionSetMap(
-			HashMap<String, HashSet<String>> eventToAffectedReactionSetMap)
+	public void setEventToAffectedReactionSetMap(HashMap<String, HashSet<String>> eventToAffectedReactionSetMap)
 	{
 		this.eventToAffectedReactionSetMap = eventToAffectedReactionSetMap;
 	}
@@ -115,8 +111,7 @@ public abstract class EventState extends ReactionState
 		return eventToPreviousTriggerValueMap;
 	}
 
-	public void setEventToPreviousTriggerValueMap(
-			HashMap<String, Boolean> eventToPreviousTriggerValueMap)
+	public void setEventToPreviousTriggerValueMap(HashMap<String, Boolean> eventToPreviousTriggerValueMap)
 	{
 		this.eventToPreviousTriggerValueMap = eventToPreviousTriggerValueMap;
 	}
@@ -136,8 +131,7 @@ public abstract class EventState extends ReactionState
 		return eventToTriggerInitiallyTrueMap;
 	}
 
-	public void setEventToTriggerInitiallyTrueMap(
-			HashMap<String, Boolean> eventToTriggerInitiallyTrueMap)
+	public void setEventToTriggerInitiallyTrueMap(HashMap<String, Boolean> eventToTriggerInitiallyTrueMap)
 	{
 		this.eventToTriggerInitiallyTrueMap = eventToTriggerInitiallyTrueMap;
 	}
@@ -157,8 +151,7 @@ public abstract class EventState extends ReactionState
 		return eventToTriggerPersistenceMap;
 	}
 
-	public void setEventToTriggerPersistenceMap(
-			HashMap<String, Boolean> eventToTriggerPersistenceMap)
+	public void setEventToTriggerPersistenceMap(HashMap<String, Boolean> eventToTriggerPersistenceMap)
 	{
 		this.eventToTriggerPersistenceMap = eventToTriggerPersistenceMap;
 	}
@@ -168,8 +161,7 @@ public abstract class EventState extends ReactionState
 		return eventToUseValuesFromTriggerTimeMap;
 	}
 
-	public void setEventToUseValuesFromTriggerTimeMap(
-			HashMap<String, Boolean> eventToUseValuesFromTriggerTimeMap)
+	public void setEventToUseValuesFromTriggerTimeMap(HashMap<String, Boolean> eventToUseValuesFromTriggerTimeMap)
 	{
 		this.eventToUseValuesFromTriggerTimeMap = eventToUseValuesFromTriggerTimeMap;
 	}

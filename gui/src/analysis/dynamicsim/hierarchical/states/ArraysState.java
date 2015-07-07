@@ -9,18 +9,15 @@ import java.util.Map;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 
-import analysis.dynamicsim.hierarchical.util.ArraysObject;
-import analysis.dynamicsim.hierarchical.util.IndexObject;
+import analysis.dynamicsim.hierarchical.util.arrays.ArraysObject;
+import analysis.dynamicsim.hierarchical.util.arrays.IndexObject;
 
 public abstract class ArraysState extends HierarchicalState
 {
 
 	private HashMap<String, List<ArraysObject>>	dimensionObjects;
 	private HashMap<String, IndexObject>		indexObjects;
-
 	private HashSet<String>						arrayedObjects;
-	private HashSet<String>						arrayedMetaObjects;
-
 	private HashMap<String, String>				arraySizeToSBase;
 
 	public ArraysState(Map<String, Model> models, String bioModel, String submodelID)
@@ -28,9 +25,9 @@ public abstract class ArraysState extends HierarchicalState
 		super(models, bioModel, submodelID);
 		dimensionObjects = new HashMap<String, List<ArraysObject>>();
 		arrayedObjects = new HashSet<String>();
-		arrayedMetaObjects = new HashSet<String>();
 		indexObjects = new HashMap<String, IndexObject>();
 		arraySizeToSBase = new HashMap<String, String>();
+
 	}
 
 	public ArraysState(ArraysState state)
@@ -38,18 +35,12 @@ public abstract class ArraysState extends HierarchicalState
 		super(state);
 		dimensionObjects = new HashMap<String, List<ArraysObject>>(state.dimensionObjects);
 		arrayedObjects = new HashSet<String>(state.arrayedObjects);
-		arrayedMetaObjects = new HashSet<String>(state.arrayedMetaObjects);
 		indexObjects = new HashMap<String, IndexObject>(indexObjects);
 	}
 
 	public void addArrayedObject(String id)
 	{
 		arrayedObjects.add(id);
-	}
-
-	public void addArrayedMetaObject(String id)
-	{
-		arrayedMetaObjects.add(id);
 	}
 
 	public void addSizeTrigger(String parameterSize, String id)
@@ -102,9 +93,9 @@ public abstract class ArraysState extends HierarchicalState
 		return arrayedObjects;
 	}
 
-	public boolean isArrayed(String id)
+	public boolean isArrayedObject(String id)
 	{
-		return arrayedObjects.contains(id) || arrayedMetaObjects.contains(id);
+		return arrayedObjects.contains(id);
 	}
 
 	public void setArrayedObjects(HashSet<String> arrayedObjects)
@@ -120,16 +111,6 @@ public abstract class ArraysState extends HierarchicalState
 	public void setIndexObjects(HashMap<String, IndexObject> indexObjects)
 	{
 		this.indexObjects = indexObjects;
-	}
-
-	public HashSet<String> getArrayedMetaObjects()
-	{
-		return arrayedMetaObjects;
-	}
-
-	public void setArrayedMetaObjects(HashSet<String> arrayedMetaObjects)
-	{
-		this.arrayedMetaObjects = arrayedMetaObjects;
 	}
 
 	public HashMap<String, String> getArraySizeToSBase()
