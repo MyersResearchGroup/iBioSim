@@ -307,17 +307,19 @@ Once you have made your selections, you can now play back the simulation.  You c
 
 \section{Reaction-based Abstraction}
 
-The efficiency of simulation can be improved by employing various automatic abstraction techniques.  Go back to the Schematic tab and change the degradation rate of CI back to the default value.  Also, go to the SBML elements tab and uncheck the rule for CI\_total.  To activate abstraction, click on the Simulation Options tab, select Abstraction and change the simulation ID to {\tt abs}.  Press the Save and Run icon and note that the simulation time is substantially faster.  Plot both the SSA results for CI\_total and CII with the abstraction results for CI (note this is now equivalent to CI\_total after abstraction) and CII.
+The efficiency of simulation can be improved by employing various automatic abstraction techniques.  Go back to the Schematic tab and click on the Total\_CI rule to exclude it from the analysis.  To activate abstraction, click on the Simulation Options tab, select Reaction-based Abstraction and change the simulation ID to {\tt abs}.  Press the Save and Run icon and note that the simulation time is substantially faster.  Plot both the SSA results for CI\_total and CII with the abstraction results for CI (note this is now equivalent to CI\_total after abstraction) and CII.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/absResults}
 \end{center}
 
-One way to understand why abstraction is so much faster is by looking at the complexity of the reaction-based model before and after abstraction.  The reaction-based model after abstraction is shown below which is clearly much simpler than the full model shown earlier.
+One way to understand why abstraction is so much faster is by looking at the complexity of the reaction-based model before and after abstraction.  To see the difference, select the Network option, then generate the graph for None, Expand Reactions, and Reaction-based Abstraction options.  The reaction-based model after abstraction is shown below which is clearly much simpler than the full model shown earlier.
 
 \begin{center}
 \includegraphics[width=100mm]{screenshots/viewNetworkAbs}
 \end{center}
+
+\section{State-based Abstraction}
 
 Next, let's try checking some properties.  To do this, go to the SBML Elements tab and check the boxes next to the constraints.  Recall that these constraints terminate simulation whenever CI goes above 20 molecules or CII goes above 50 molecules.  Go back to the Simulation Options tab and change abstraction back to none, the Simulation Type to Monte Carlo, and Simulation ID to prob, then press the Save and Run icon.  Now, let's plot the results on a histogram by clicking on the Histogram tab and then double-clicking on the graph to bring up the histogram graph editor shown below.  Open the prob folder, select the sim-rep file, and check the Use check box to get all fields.  
 

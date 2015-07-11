@@ -1,0 +1,9 @@
+Executing:
+reb2sac.mac64 --target.encoding=xhtml --out=GeneticToggle.xhtml /Users/myers/research/nobackup/workspace/BioSim/docs//SynBioTutorial/GeneticToggle/GeneticToggle.xml
+
+Total Simulation Time: 0.072144 seconds for GeneticToggle
+
+
+Executing:
+open /Users/myers/research/nobackup/workspace/BioSim/docs//SynBioTutorial/GeneticToggle/GeneticToggle.xhtml
+

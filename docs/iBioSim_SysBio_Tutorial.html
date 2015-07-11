@@ -39,9 +39,11 @@
 <a href="#tth_sEc6"
 >6&nbsp; Reaction-based Abstraction</a><br />
 <a href="#tth_sEc7"
->7&nbsp; Learn Tool</a><br />
+>7&nbsp; State-based Abstraction</a><br />
 <a href="#tth_sEc8"
->8&nbsp; Advanced Modeling</a><br />
+>8&nbsp; Learn Tool</a><br />
+<a href="#tth_sEc9"
+>9&nbsp; Advanced Modeling</a><br />
 
 
 <div class="p"><!----></div>
@@ -453,7 +455,7 @@ Once you have made your selections, you can now play back the simulation.  You c
 6</a>&nbsp;&nbsp;Reaction-based Abstraction</h2>
 
 <div class="p"><!----></div>
-The efficiency of simulation can be improved by employing various automatic abstraction techniques.  Go back to the Schematic tab and change the degradation rate of CI back to the default value.  Also, go to the SBML elements tab and uncheck the rule for CI_total.  To activate abstraction, click on the Simulation Options tab, select Abstraction and change the simulation ID to <tt>abs</tt>.  Press the Save and Run icon and note that the simulation time is substantially faster.  Plot both the SSA results for CI_total and CII with the abstraction results for CI (note this is now equivalent to CI_total after abstraction) and CII.
+The efficiency of simulation can be improved by employing various automatic abstraction techniques.  Go back to the Schematic tab and click on the Total_CI rule to exclude it from the analysis.  To activate abstraction, click on the Simulation Options tab, select Reaction-based Abstraction and change the simulation ID to <tt>abs</tt>.  Press the Save and Run icon and note that the simulation time is substantially faster.  Plot both the SSA results for CI_total and CII with the abstraction results for CI (note this is now equivalent to CI_total after abstraction) and CII.
 
 <div class="p"><!----></div>
 
@@ -461,12 +463,16 @@ The efficiency of simulation can be improved by employing various automatic abst
 </center>
 
 <div class="p"><!----></div>
-One way to understand why abstraction is so much faster is by looking at the complexity of the reaction-based model before and after abstraction.  The reaction-based model after abstraction is shown below which is clearly much simpler than the full model shown earlier.
+One way to understand why abstraction is so much faster is by looking at the complexity of the reaction-based model before and after abstraction.  To see the difference, select the Network option, then generate the graph for None, Expand Reactions, and Reaction-based Abstraction options.  The reaction-based model after abstraction is shown below which is clearly much simpler than the full model shown earlier.
 
 <div class="p"><!----></div>
 
 <center><img src="screenshots/viewNetworkAbs.png" alt="screenshots/viewNetworkAbs.png" />
 </center>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc7">
+7</a>&nbsp;&nbsp;State-based Abstraction</h2>
 
 <div class="p"><!----></div>
 Next, let's try checking some properties.  To do this, go to the SBML Elements tab and check the boxes next to the constraints.  Recall that these constraints terminate simulation whenever CI goes above 20 molecules or CII goes above 50 molecules.  Go back to the Simulation Options tab and change abstraction back to none, the Simulation Type to Monte Carlo, and Simulation ID to prob, then press the Save and Run icon.  Now, let's plot the results on a histogram by clicking on the Histogram tab and then double-clicking on the graph to bring up the histogram graph editor shown below.  Open the prob folder, select the sim-rep file, and check the Use check box to get all fields.  
@@ -493,8 +499,8 @@ These results can also be visualized using the TSD graph tool.  Click on the TSD
 </center>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc7">
-7</a>&nbsp;&nbsp;Learn Tool</h2>
+ <h2><a name="tth_sEc8">
+8</a>&nbsp;&nbsp;Learn Tool</h2>
 
 <div class="p"><!----></div>
 This section describes how a model can be learned from time series data using <tt>iBioSim</tt>'s Learn Tool.  To demonstrate the Learn Tool, first create a simple model, <tt>learnModel</tt>, which just includes the two species CI and CII as shown below.  This model represents any background knowledge you have about the model that you wish to learn.  Any influences that you add between species will be assumed as part of the final learned model.  You can also indicate definite knowledge about there not being any influence between two species by selecting the No Influence icon 
@@ -530,8 +536,8 @@ Now, click on the Learn tab.  Here you can edit the various learning options.  F
 </center>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc8">
-8</a>&nbsp;&nbsp;Advanced Modeling</h2>
+ <h2><a name="tth_sEc9">
+9</a>&nbsp;&nbsp;Advanced Modeling</h2>
 
 <div class="p"><!----></div>
 This section is less detailed than the others but it gives some intuition about modeling using reactions, components, and grids.  
@@ -642,5 +648,5 @@ is available in the <tt>docs</tt> directory that comes with the distribution.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 26 Feb 2015, 21:48.</small>
+version 3.81.<br />On 27 Mar 2015, 14:47.</small>
 </html>

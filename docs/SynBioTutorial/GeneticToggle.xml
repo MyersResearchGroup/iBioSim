@@ -4,18 +4,18 @@
     <comp:externalModelDefinition comp:md5="f1aec8d614b2cf9419a189c03d413468" comp:source="file:LacI_Inverter.xml" comp:id="LacI_Inverter"/>
     <comp:externalModelDefinition comp:md5="d34b0aad693c9a48a4754bbfabb6189c" comp:source="file:TetR_Inverter.xml" comp:id="TetR_Inverter"/>
   </comp:listOfExternalModelDefinitions>
-  <model id="GeneticToggle" metaid="iBioSim2">
+  <model id="GeneticToggle" metaid="iBioSim30">
     <annotation>
       <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
-          <rdf:Description rdf:about="#iBioSim2">
+          <rdf:Description rdf:about="#iBioSim30">
             <mts:DNAComponents>
               <rdf:Seq>
-                <rdf:li rdf:resource="http://www.async.ece.utah.edu#comp_10_2_2014_15_7_48_611_iBioSim"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+                <rdf:li rdf:resource="http://www.async.ece.utah.edu#comp_5_4_2015_20_2_22_118_iBioSim"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
     </annotation>
       <comp:listOfSubmodels xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-      <comp:submodel comp:modelRef="LacI_Inverter" metaid="iBioSim1" comp:id="C1"/>
-      <comp:submodel comp:modelRef="TetR_Inverter" metaid="iBioSim29" comp:id="C2"/>
+      <comp:submodel comp:modelRef="LacI_Inverter" metaid="iBioSim2" comp:id="C1"/>
+      <comp:submodel comp:modelRef="TetR_Inverter" metaid="iBioSim31" comp:id="C2"/>
     </comp:listOfSubmodels>
     <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <layout:layout layout:id="iBioSim">
@@ -161,8 +161,8 @@
         <layout:listOfReactionGlyphs>
           <layout:reactionGlyph layout:id="Glyph__IPTG__complex__IPTG_LacI">
             <layout:boundingBox>
-              <layout:position/>
-              <layout:dimensions/>
+              <layout:position layout:x="310" layout:y="375"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
             </layout:boundingBox>
             <layout:listOfSpeciesReferenceGlyphs>
               <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__IPTG__complex__IPTG_LacI" layout:role="product" layout:speciesGlyph="Glyph__IPTG_LacI">
@@ -179,8 +179,8 @@
           </layout:reactionGlyph>
           <layout:reactionGlyph layout:id="Glyph__LacI__complex__IPTG_LacI">
             <layout:boundingBox>
-              <layout:position/>
-              <layout:dimensions/>
+              <layout:position layout:x="310" layout:y="375"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
             </layout:boundingBox>
             <layout:listOfSpeciesReferenceGlyphs>
               <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__LacI__complex__IPTG_LacI" layout:role="product" layout:speciesGlyph="Glyph__IPTG_LacI">
@@ -197,8 +197,8 @@
           </layout:reactionGlyph>
           <layout:reactionGlyph layout:id="Glyph__TetR__complex__aTc_TetR">
             <layout:boundingBox>
-              <layout:position/>
-              <layout:dimensions/>
+              <layout:position layout:x="740" layout:y="55"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
             </layout:boundingBox>
             <layout:listOfSpeciesReferenceGlyphs>
               <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__TetR__complex__aTc_TetR" layout:role="product" layout:speciesGlyph="Glyph__aTc_TetR">
@@ -215,8 +215,8 @@
           </layout:reactionGlyph>
           <layout:reactionGlyph layout:id="Glyph__aTc__complex__aTc_TetR">
             <layout:boundingBox>
-              <layout:position/>
-              <layout:dimensions/>
+              <layout:position layout:x="740" layout:y="55"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
             </layout:boundingBox>
             <layout:listOfSpeciesReferenceGlyphs>
               <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__aTc__complex__aTc_TetR" layout:role="product" layout:speciesGlyph="Glyph__aTc_TetR">
