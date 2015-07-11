@@ -1,25 +1,143 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
-  <model id="GeneticToggle" name="Created by iBioSim flatten routine" metaid="iBioSim1">
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" level="3" arrays:required="true" fbc:required="false" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version1" comp:required="true" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" version="1" layout:required="false">
+  <model id="GeneticToggle" name="Created by libsbml flatten routine" metaid="iBioSim1">
     <annotation>
       <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
           <rdf:Description rdf:about="#iBioSim2">
             <mts:DNAComponents>
               <rdf:Seq>
-                <rdf:li rdf:resource="http://www.async.ece.utah.edu#comp_10_2_2014_15_7_48_611_iBioSim"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+                <rdf:li rdf:resource="http://www.async.ece.utah.edu#comp_10_2_2014_15_7_48_611_iBioSim"/>
+              </rdf:Seq>
+            </mts:DNAComponents>
+            <mts:Strand>+</mts:Strand>
+          </rdf:Description>
+        </rdf:RDF>
+      </ModelToSBOL>
     </annotation>
-      <listOfCompartments>
-      <compartment id="Cell" constant="true" spatialDimensions="3" size="1">
-      </compartment>
+      <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="1070" layout:height="425"/>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:id="C1__Glyph__Cell" layout:compartment="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="C1__Glyph__LacI" layout:species="LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="98" layout:y="66"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="C1__Glyph__TetR" layout:species="TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="90" layout:y="290"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="C1__Glyph__GFP" layout:species="GFP">
+            <layout:boundingBox>
+              <layout:position layout:x="290" layout:y="290"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="C1__Glyph__pLac" layout:species="C1__pLac">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="170"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="C1__Glyph__Cell" layout:id="C1__TextGlyph__Cell" layout:text="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="C1__Glyph__LacI" layout:id="C1__TextGlyph__LacI" layout:text="LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="98" layout:y="66"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="C1__Glyph__TetR" layout:id="C1__TextGlyph__TetR" layout:text="TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="90" layout:y="290"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="C1__Glyph__GFP" layout:id="C1__TextGlyph__GFP" layout:text="GFP">
+            <layout:boundingBox>
+              <layout:position layout:x="290" layout:y="290"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="C1__Glyph__pLac" layout:id="C1__TextGlyph__pLac" layout:text="pLac">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="170"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+      <layout:layout layout:id="C2__iBioSim">
+        <layout:dimensions layout:width="1070" layout:height="425"/>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:id="C2__Glyph__Cell" layout:compartment="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="C2__Glyph__TetR" layout:species="TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="123" layout:y="65"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="C2__Glyph__LacI" layout:species="LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="138" layout:y="216"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="C2__Glyph__Cell" layout:id="C2__TextGlyph__Cell" layout:text="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="C2__Glyph__TetR" layout:id="C2__TextGlyph__TetR" layout:text="TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="123" layout:y="65"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="C2__Glyph__LacI" layout:id="C2__TextGlyph__LacI" layout:text="LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="138" layout:y="216"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfCompartments>
+      <compartment id="Cell" constant="true" spatialDimensions="3" size="1"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="GFP" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim11" boundaryCondition="false" compartment="Cell">
-      </species>
-      <species id="LacI" constant="false" initialAmount="60" hasOnlySubstanceUnits="true" metaid="iBioSim12" boundaryCondition="false" compartment="Cell">
-      </species>
-      <species id="TetR" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim13" boundaryCondition="false" compartment="Cell">
-      </species>
+      <species id="GFP" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim11" boundaryCondition="false" compartment="Cell"/>
+      <species id="LacI" constant="false" initialAmount="60" hasOnlySubstanceUnits="true" metaid="iBioSim12" boundaryCondition="false" compartment="Cell"/>
+      <species id="TetR" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim13" boundaryCondition="false" compartment="Cell"/>
       <species id="IPTG" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim14" boundaryCondition="true" compartment="Cell"/>
       <species id="aTc" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim15" boundaryCondition="true" compartment="Cell"/>
       <species id="IPTG_LacI" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim16" boundaryCondition="false" compartment="Cell"/>
@@ -138,14 +256,11 @@
               <minus/>
               <apply>
                 <times/>
+                <ci> kc_f </ci>
                 <apply>
-                  <times/>
-                  <ci> kc_f </ci>
-                  <apply>
-                    <power/>
-                    <ci> IPTG </ci>
-                    <ci> nc_IPTG </ci>
-                  </apply>
+                  <power/>
+                  <ci> IPTG </ci>
+                  <ci> nc_IPTG </ci>
                 </apply>
                 <apply>
                   <power/>
@@ -180,14 +295,11 @@
               <minus/>
               <apply>
                 <times/>
+                <ci> kc_f </ci>
                 <apply>
-                  <times/>
-                  <ci> kc_f </ci>
-                  <apply>
-                    <power/>
-                    <ci> TetR </ci>
-                    <ci> nc_TetR </ci>
-                  </apply>
+                  <power/>
+                  <ci> TetR </ci>
+                  <ci> nc_TetR </ci>
                 </apply>
                 <apply>
                   <power/>
@@ -237,35 +349,26 @@
               <divide/>
               <apply>
                 <times/>
+                <ci> C1__pLac </ci>
+                <ci> C1__ko </ci>
                 <apply>
                   <divide/>
-                  <apply>
-                    <times/>
-                    <apply>
-                      <times/>
-                      <ci> C1__pLac </ci>
-                      <ci> C1__ko </ci>
-                    </apply>
-                    <ci> C1__ko_f </ci>
-                  </apply>
+                  <ci> C1__ko_f </ci>
                   <ci> C1__ko_r </ci>
                 </apply>
                 <ci> C1__nr </ci>
               </apply>
               <apply>
                 <plus/>
+                <cn type="integer"> 1 </cn>
                 <apply>
-                  <plus/>
-                  <cn type="integer"> 1 </cn>
+                  <times/>
                   <apply>
-                    <times/>
-                    <apply>
-                      <divide/>
-                      <ci> C1__ko_f </ci>
-                      <ci> C1__ko_r </ci>
-                    </apply>
-                    <ci> C1__nr </ci>
+                    <divide/>
+                    <ci> C1__ko_f </ci>
+                    <ci> C1__ko_r </ci>
                   </apply>
+                  <ci> C1__nr </ci>
                 </apply>
                 <apply>
                   <power/>
@@ -278,7 +381,7 @@
                     </apply>
                     <ci> LacI </ci>
                   </apply>
-                  <ci> nc </ci>
+                  <ci> C1__nc </ci>
                 </apply>
               </apply>
             </apply>
@@ -299,35 +402,26 @@
               <divide/>
               <apply>
                 <times/>
+                <ci> C2__P0 </ci>
+                <ci> C2__ko </ci>
                 <apply>
                   <divide/>
-                  <apply>
-                    <times/>
-                    <apply>
-                      <times/>
-                      <ci> C2__P0 </ci>
-                      <ci> C2__ko </ci>
-                    </apply>
-                    <ci> C2__ko_f </ci>
-                  </apply>
+                  <ci> C2__ko_f </ci>
                   <ci> C2__ko_r </ci>
                 </apply>
                 <ci> C2__nr </ci>
               </apply>
               <apply>
                 <plus/>
+                <cn type="integer"> 1 </cn>
                 <apply>
-                  <plus/>
-                  <cn type="integer"> 1 </cn>
+                  <times/>
                   <apply>
-                    <times/>
-                    <apply>
-                      <divide/>
-                      <ci> C2__ko_f </ci>
-                      <ci> C2__ko_r </ci>
-                    </apply>
-                    <ci> C2__nr </ci>
+                    <divide/>
+                    <ci> C2__ko_f </ci>
+                    <ci> C2__ko_r </ci>
                   </apply>
+                  <ci> C2__nr </ci>
                 </apply>
                 <apply>
                   <power/>
@@ -340,7 +434,7 @@
                     </apply>
                     <ci> TetR </ci>
                   </apply>
-                  <ci> nc </ci>
+                  <ci> C2__nc </ci>
                 </apply>
               </apply>
             </apply>
