@@ -43,7 +43,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 
 	protected enum SetupType
 	{
-		PARAMETER, SPECIES, COMPARTMENT, ASSIGNMENT_RULE, RATE_RULE, EVENT, CONSTRAINT, INITIAL_ASSIGNMENT, REACTION, EVENT_ASSIGNMENT;
+		PARAMETER, SPECIES, COMPARTMENT, ASSIGNMENT_RULE, RATE_RULE, EVENT, CONSTRAINT, INITIAL_ASSIGNMENT, REACTION, EVENT_ASSIGNMENT, SPECIES_REFERENCE;
 	}
 
 	public HierarchicalArrays(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
@@ -144,6 +144,21 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 			modelstate.addIndex(id, index.getReferencedAttribute(), index.getArrayDimension(), index.getMath());
 		}
 
+		if (type == SetupType.EVENT)
+		{
+			String eventAssignmentId;
+			Event event = (Event) sbase;
+			for (EventAssignment assignment : event.getListOfEventAssignments())
+			{
+				eventAssignmentId = id + "_" + assignment.getVariable();
+				setupArrays(modelstate, eventAssignmentId, assignment, SetupType.EVENT_ASSIGNMENT);
+			}
+		}
+
+		if (type == SetupType.REACTION)
+		{
+			setupSpeciesReferenceArrays(modelstate, (Reaction) sbase);
+		}
 	}
 
 	protected void setupArrayValue(ModelState modelstate, Variable variable, SetupType type)
@@ -167,12 +182,16 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 		setupArrayValue(modelstate, variable, variable.getId(), value, sizes, indices, type);
 	}
 
-	protected void setupArrayObject(ModelState modelstate, String id, SBase sbase, SetupType type)
+	protected void setupArrayObject(ModelState modelstate, String id, String parent, SBase sbase, int[] parentIndices, SetupType type)
 	{
 		int size = modelstate.getDimensionCount(id);
 
 		if (size <= 0)
 		{
+			if (parentIndices != null)
+			{
+				setupArrayObject(modelstate, sbase, id, parent, null, null, parentIndices, type);
+			}
 			return;
 		}
 
@@ -184,29 +203,8 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 			sizes[obj.getArrayDim()] = (int) modelstate.getVariableToValue(getReplacements(), obj.getSize()) - 1;
 		}
 
-		setupArrayObject(modelstate, sbase, id, sizes, indices, type);
+		setupArrayObject(modelstate, sbase, id, parent, sizes, indices, null, type);
 
-	}
-
-	protected void setupArrayEventAssignments(ModelState modelstate, Event event, String eventId)
-	{
-		for (EventAssignment assignment : event.getListOfEventAssignments())
-		{
-			if (assignment.isSetMetaId() && modelstate.isDeletedByMetaID(assignment.getMetaId()))
-			{
-				continue;
-			}
-
-			String assignmentId = eventId + "_" + assignment.getVariable();
-
-			setupArrays(modelstate, assignmentId, assignment, SetupType.EVENT_ASSIGNMENT);
-
-			if (!modelstate.isArrayedObject(assignmentId))
-			{
-				Setup.setupEventAssignment(modelstate, assignment.getVariable(), event.getId(), assignment.getMath(), assignment, getModels(),
-						getIbiosimFunctionDefinitions());
-			}
-		}
 	}
 
 	protected void setupSpeciesReferenceArrays(ModelState modelstate, Reaction reaction)
@@ -270,10 +268,30 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 		}
 	}
 
-	private void setupArrayObject(ModelState modelstate, SBase sbase, String id, int[] sizes, int[] indices, SetupType type)
+	private void setupArrayObject(ModelState modelstate, SBase sbase, String id, String parent, int[] sizes, int[] indices, int[] parentIndices,
+			SetupType type)
 	{
 		ASTNode clone;
 		String variable;
+
+		if (sizes == null)
+		{
+			switch (type)
+			{
+			case EVENT_ASSIGNMENT:
+				EventAssignment eventAssignment = (EventAssignment) sbase;
+				clone = eventAssignment.getMath().clone();
+				variable = HierarchicalUtilities.getIndexedObject(modelstate, id, eventAssignment.getVariable(), "variable", parentIndices,
+						getReplacements());
+				HierarchicalUtilities.replaceDimensionIds(clone, "d", parentIndices);
+				HierarchicalUtilities.replaceSelector(modelstate, getReplacements(), clone);
+				Setup.setupEventAssignment(modelstate, variable, parent, clone, eventAssignment, getModels(), getIbiosimFunctionDefinitions());
+				break;
+			}
+
+			return;
+		}
+
 		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
 		{
 			switch (type)
@@ -281,30 +299,71 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 			case CONSTRAINT:
 				Constraint constraint = (Constraint) sbase;
 				clone = constraint.getMath().clone();
-				HierarchicalUtilities.replaceDimensionIds(clone, indices);
+				HierarchicalUtilities.replaceDimensionIds(clone, "d", indices);
 				Setup.setupSingleConstraint(modelstate, clone, getModels(), getIbiosimFunctionDefinitions());
 				break;
 			case RATE_RULE:
 				RateRule rateRule = (RateRule) sbase;
 				clone = rateRule.getMath().clone();
 				variable = HierarchicalUtilities.getIndexedObject(modelstate, id, rateRule.getVariable(), "variable", indices, getReplacements());
-				HierarchicalUtilities.replaceDimensionIds(clone, indices);
+				HierarchicalUtilities.replaceDimensionIds(clone, "d", indices);
 				Setup.setupSingleRateRule(modelstate, variable, clone, getModels(), getIbiosimFunctionDefinitions());
 				break;
 			case ASSIGNMENT_RULE:
 				AssignmentRule assignRule = (AssignmentRule) sbase;
 				clone = assignRule.getMath().clone();
 				variable = HierarchicalUtilities.getIndexedObject(modelstate, id, assignRule.getVariable(), "variable", indices, getReplacements());
-				HierarchicalUtilities.replaceDimensionIds(clone, indices);
+				HierarchicalUtilities.replaceDimensionIds(clone, "d", indices);
 				Setup.setupSingleAssignmentRule(modelstate, variable, clone, getModels(), getIbiosimFunctionDefinitions());
 				break;
 			case INITIAL_ASSIGNMENT:
 				InitialAssignment init = (InitialAssignment) sbase;
 				clone = init.getMath().clone();
 				variable = HierarchicalUtilities.getIndexedObject(modelstate, id, init.getVariable(), "symbol", indices, getReplacements());
-				HierarchicalUtilities.replaceDimensionIds(clone, indices);
+				HierarchicalUtilities.replaceDimensionIds(clone, "d", indices);
 				HierarchicalUtilities.replaceSelector(modelstate, getReplacements(), clone);
 				modelstate.getInitAssignment().put(variable, clone);
+				break;
+			case EVENT:
+				Event event = (Event) sbase;
+				String newId = HierarchicalUtilities.getArrayedID(modelstate, event.getId(), indices);
+				clone = event.getTrigger().getMath().clone();
+				HierarchicalUtilities.replaceDimensionIds(clone, "d", indices);
+				HierarchicalUtilities.replaceSelector(modelstate, getReplacements(), clone);
+				Setup.setupSingleEvent(modelstate, newId, clone, event.getUseValuesFromTriggerTime(), event.getTrigger().getInitialValue(), event
+						.getTrigger().getPersistent(), getModels(), getIbiosimFunctionDefinitions());
+				if (event.isSetPriority())
+				{
+					clone = event.getPriority().getMath().clone();
+					HierarchicalUtilities.replaceDimensionIds(clone, "d", indices);
+					Setup.setupSinglePriority(modelstate, newId, event.getPriority().getMetaId(), clone, getModels(), getIbiosimFunctionDefinitions());
+				}
+				if (event.isSetDelay())
+				{
+					clone = event.getDelay().getMath().clone();
+					HierarchicalUtilities.replaceDimensionIds(clone, "d", indices);
+					Setup.setupSingleDelay(modelstate, newId, event.getDelay().getMetaId(), clone, getModels(), getIbiosimFunctionDefinitions());
+				}
+				for (EventAssignment eventAssignment : event.getListOfEventAssignments())
+				{
+					String eventAssignmentId = event.getId() + "_" + eventAssignment.getVariable();
+					setupArrayObject(modelstate, eventAssignmentId, newId, eventAssignment, indices, SetupType.EVENT_ASSIGNMENT);
+				}
+				break;
+			case EVENT_ASSIGNMENT:
+				EventAssignment eventAssignment = (EventAssignment) sbase;
+				clone = eventAssignment.getMath().clone();
+				variable = HierarchicalUtilities.getIndexedObject(modelstate, id, eventAssignment.getVariable(), "variable", indices,
+						getReplacements());
+				// TODO: replace both event assignment's and event's dimension
+				// ids
+				if (parentIndices != null)
+				{
+					HierarchicalUtilities.replaceDimensionIds(clone, "d", parentIndices);
+				}
+				HierarchicalUtilities.replaceDimensionIds(clone, "ed", indices);
+				HierarchicalUtilities.replaceSelector(modelstate, getReplacements(), clone);
+				Setup.setupEventAssignment(modelstate, variable, parent, clone, eventAssignment, getModels(), getIbiosimFunctionDefinitions());
 				break;
 			}
 

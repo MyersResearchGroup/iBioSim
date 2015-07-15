@@ -1,6 +1,7 @@
 package analysis.dynamicsim.hierarchical.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +9,6 @@ import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.Delay;
-import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
@@ -17,7 +16,6 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
-import org.sbml.jsbml.Priority;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
@@ -26,7 +24,6 @@ import org.sbml.jsbml.SpeciesReference;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
-import biomodel.util.SBMLutilities;
 
 public class Setup
 {
@@ -61,8 +58,6 @@ public class Setup
 			String parameterID = reactionID + "_" + id;
 
 			modelstate.addVariableToValueMap(parameterID, localParameter.getValue());
-			localParameter.setId(parameterID);
-			SBMLutilities.setMetaId(localParameter, parameterID);
 
 			HierarchicalUtilities.alterLocalParameter(kineticLaw.getMath(), id, parameterID);
 		}
@@ -130,70 +125,50 @@ public class Setup
 
 	}
 
+	public static void setupSinglePriority(ModelState modelstate, String eventID, String priorityID, ASTNode math, Map<String, Model> models,
+			Set<String> iBioSimFunctionDefinitions)
+	{
+
+		if (priorityID != null && modelstate.isDeletedByMetaID(priorityID))
+		{
+			return;
+		}
+
+		modelstate.getEventToPriorityMap().put(eventID, HierarchicalUtilities.inlineFormula(modelstate, math, models, iBioSimFunctionDefinitions));
+	}
+
+	public static void setupSingleDelay(ModelState modelstate, String eventID, String delayID, ASTNode math, Map<String, Model> models,
+			Set<String> iBioSimFunctionDefinitions)
+	{
+
+		if (delayID != null && modelstate.isDeletedByMetaID(delayID))
+		{
+			return;
+		}
+		else
+		{
+			modelstate.getEventToDelayMap().put(eventID, HierarchicalUtilities.inlineFormula(modelstate, math, models, iBioSimFunctionDefinitions));
+			modelstate.getEventToHasDelayMap().add(eventID);
+		}
+
+	}
+
 	/**
 	 * sets up a single event
 	 * 
 	 * @param event
 	 */
-	public static void setupSingleEvent(ModelState modelstate, Event event, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions)
+	public static void setupSingleEvent(ModelState modelstate, String eventID, ASTNode trigger, boolean useFromTrigger, boolean initValue,
+			boolean persistent, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions)
 	{
-
-		String eventID = event.getId();
-
-		if (event.isSetPriority())
-		{
-			Priority priority = event.getPriority();
-
-			if (!priority.isSetMetaId())
-			{
-				modelstate.getEventToPriorityMap().put(eventID,
-						HierarchicalUtilities.inlineFormula(modelstate, event.getPriority().getMath(), models, iBioSimFunctionDefinitions));
-			}
-			else if (!modelstate.isDeletedByMetaID(priority.getMetaId()))
-			{
-				modelstate.getEventToPriorityMap().put(eventID,
-						HierarchicalUtilities.inlineFormula(modelstate, event.getPriority().getMath(), models, iBioSimFunctionDefinitions));
-			}
-		}
-
-		if (event.isSetDelay())
-		{
-
-			Delay delay = event.getDelay();
-
-			if (!delay.isSetMetaId())
-			{
-				modelstate.getEventToDelayMap().put(eventID,
-						HierarchicalUtilities.inlineFormula(modelstate, delay.getMath(), models, iBioSimFunctionDefinitions));
-				modelstate.getEventToHasDelayMap().put(eventID, true);
-			}
-			else if (!modelstate.isDeletedByMetaID(delay.getMetaId()))
-			{
-				modelstate.getEventToDelayMap().put(eventID,
-						HierarchicalUtilities.inlineFormula(modelstate, delay.getMath(), models, iBioSimFunctionDefinitions));
-				modelstate.getEventToHasDelayMap().put(eventID, true);
-			}
-			else
-			{
-				modelstate.getEventToHasDelayMap().put(eventID, false);
-			}
-
-		}
-		else
-		{
-			modelstate.getEventToHasDelayMap().put(eventID, false);
-		}
-
-		event.getTrigger().setMath(HierarchicalUtilities.inlineFormula(modelstate, event.getTrigger().getMath(), models, iBioSimFunctionDefinitions));
-
-		modelstate.getEventToTriggerMap().put(eventID, event.getTrigger().getMath());
-		modelstate.getEventToTriggerInitiallyTrueMap().put(eventID, event.getTrigger().getInitialValue());
-		modelstate.getEventToPreviousTriggerValueMap().put(eventID, event.getTrigger().getInitialValue());
-		modelstate.getEventToTriggerPersistenceMap().put(eventID, event.getTrigger().getPersistent());
-		modelstate.getEventToUseValuesFromTriggerTimeMap().put(eventID, event.getUseValuesFromTriggerTime());
-		modelstate.getEventToAssignmentSetMap().put(eventID, new HashSet<Object>());
+		trigger = HierarchicalUtilities.inlineFormula(modelstate, trigger, models, iBioSimFunctionDefinitions);
+		modelstate.getEventToTriggerMap().put(eventID, trigger);
+		modelstate.getEventToTriggerInitiallyTrueMap().put(eventID, initValue);
+		modelstate.getEventToPreviousTriggerValueMap().put(eventID, initValue);
+		modelstate.getEventToTriggerPersistenceMap().put(eventID, persistent);
+		modelstate.getEventToUseValuesFromTriggerTimeMap().put(eventID, useFromTrigger);
+		modelstate.getEventToAssignmentSetMap().put(eventID, new HashMap<String, ASTNode>());
 		modelstate.getEventToAffectedReactionSetMap().put(eventID, new HashSet<String>());
-
 		modelstate.getUntriggeredEventSet().add(eventID);
 	}
 
@@ -203,7 +178,7 @@ public class Setup
 
 		math = HierarchicalUtilities.inlineFormula(modelstate, math, models, iBioSimFunctionDefinitions);
 
-		modelstate.getEventToAssignmentSetMap().get(eventID).add(assignment);
+		modelstate.addEventAssignment(eventID, variableID, math);
 
 		if (modelstate.getVariableToEventSetMap().containsKey(variableID) == false)
 		{
@@ -433,6 +408,7 @@ public class Setup
 	public static void setupSingleAssignmentRule(ModelState modelstate, String variable, ASTNode math, Map<String, Model> models,
 			Set<String> iBioSimFunctionDefinitions)
 	{
+
 		math = HierarchicalUtilities.inlineFormula(modelstate, math, models, iBioSimFunctionDefinitions);
 
 		modelstate.getAssignmentRulesList().put(variable, math);
