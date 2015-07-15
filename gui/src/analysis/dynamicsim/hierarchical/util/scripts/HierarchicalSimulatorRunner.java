@@ -54,7 +54,7 @@ public class HierarchicalSimulatorRunner
 			String testcase = args[1];
 
 			String[] casesNeedToChangeTimeStep = new String[] { "00028", "00080", "00128", "00173", "00194", "00196", "00197", "00198", "00200",
-					"00201", "00269", "00274", "00400", "00460", "00276", "00278", "00279", "00870", "00872" };
+					"00201", "00269", "00274", "00400", "00460", "00276", "00278", "00279", "00870", "00872", "01159", "01160", "01161" };
 
 			for (String s : casesNeedToChangeTimeStep)
 			{

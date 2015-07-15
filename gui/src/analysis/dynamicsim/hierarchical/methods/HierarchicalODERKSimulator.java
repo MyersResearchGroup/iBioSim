@@ -20,13 +20,14 @@ import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 import org.sbml.jsbml.ASTNode;
 
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalFunctions;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalSetup;
 import analysis.dynamicsim.hierarchical.util.Evaluator;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
+import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
 
-public final class HierarchicalODERKSimulator extends HierarchicalFunctions
+public final class HierarchicalODERKSimulator extends HierarchicalSetup
 {
 
 	private final DiffEquations										function;
@@ -146,7 +147,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalFunctions
 			numSteps = (int) (getTimeLimit() / getPrintInterval());
 		}
 
-		nextEventTime = handleEvents();
+		nextEventTime = HierarchicalUtilities.handleEvents(getCurrentTime(), getReplacements(), getTopmodel(), getSubmodels());
 
 		HighamHall54Integrator odecalc = new HighamHall54Integrator(getMinTimeStep(), getMaxTimeStep(), absoluteError, relativeError);
 		TriggerEventHandlerObject trigger = new TriggerEventHandlerObject();
@@ -187,7 +188,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalFunctions
 				{
 					try
 					{
-						printToTSD(printTime);
+						HierarchicalWriter.printToTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getReplacements(),
+								getInterestingSpecies(), getPrintConcentrationSpecies(), printTime);
 						getBufferedTSDWriter().write(",\n");
 					}
 					catch (IOException e)
@@ -231,7 +233,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalFunctions
 		if (!modelstate.isNoEventsFlag())
 		{
 			int sizeBefore = modelstate.getTriggeredEventQueue().size();
-			vars = fireEvents(modelstate, "variable", modelstate.isNoRuleFlag(), modelstate.isNoConstraintsFlag());
+			vars = HierarchicalUtilities.fireEvents(modelstate, HierarchicalUtilities.Selector.VARIABLE, modelstate.isNoRuleFlag(),
+					modelstate.isNoConstraintsFlag(), getCurrentTime(), getReplacements());
 			int sizeAfter = modelstate.getTriggeredEventQueue().size();
 
 			if (sizeAfter != sizeBefore)
@@ -261,7 +264,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalFunctions
 		initializeModelStates();
 		initializeODEStates();
 		setupForOutput(runNumber);
-		setupVariableFromTSD();
+		HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
 	}
 
 	private void initializeModelStates() throws IOException
@@ -328,7 +331,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalFunctions
 	private void fireEvents(ModelState modelstate, double[] y, double t)
 	{
 		String modelstateId = modelstate.getID();
-		nextEventTime = handleEvents();
+		nextEventTime = HierarchicalUtilities.handleEvents(getCurrentTime(), getReplacements(), getTopmodel(), getSubmodels());
 
 		updateTriggerState(modelstate, t);
 
@@ -341,7 +344,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalFunctions
 
 		}
 
-		nextEventTime = handleEvents();
+		nextEventTime = HierarchicalUtilities.handleEvents(getCurrentTime(), getReplacements(), getTopmodel(), getSubmodels());
 
 		for (String event : modelstate.getUntriggeredEventSet())
 		{
@@ -447,16 +450,16 @@ public final class HierarchicalODERKSimulator extends HierarchicalFunctions
 								state.dvariablesdtime.get(modelstateId).get(currentVar), false, t, null, null, getReplacements());
 						revaluateVariables.add(currentVar);
 					}
+					if (modelstate.getVariableToIsInAssignmentRuleMap() != null
+							&& modelstate.getVariableToIsInAssignmentRuleMap().containsKey(currentVar)
+							&& modelstate.getVariableToValueMap().containsKey(currentVar)
+							&& modelstate.getVariableToIsInAssignmentRuleMap().get(currentVar))
+					{
+						affectedAssignmentRuleSet.addAll(modelstate.getVariableToAffectedAssignmentRuleSetMap().get(currentVar));
+						// revaluateVariables.add(currentVar);
+					}
 				}
 
-				if (modelstate.getVariableToIsInAssignmentRuleMap() != null
-						&& modelstate.getVariableToIsInAssignmentRuleMap().containsKey(currentVar)
-						&& modelstate.getVariableToValueMap().containsKey(currentVar)
-						&& modelstate.getVariableToIsInAssignmentRuleMap().get(currentVar))
-				{
-					affectedAssignmentRuleSet.addAll(modelstate.getVariableToAffectedAssignmentRuleSetMap().get(currentVar));
-					// revaluateVariables.add(currentVar);
-				}
 			}
 
 			if (modelstate.isSetVariableToAffectedAssignmentRule() && modelstate.getVariableToAffectedAssignmentRuleSetMap().containsKey("_time"))
@@ -863,8 +866,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalFunctions
 
 					if (stoichiometry > 0)
 					{
-						// int varIndex =
-						// variableToIndexMap.get(modelstate.getID()).get(species);
 						ASTNode stoichNode = new ASTNode();
 						stoichNode.setValue(stoichiometry);
 						dvariablesdtime.get(modelstateID).put(species,
@@ -879,8 +880,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalFunctions
 				{
 					String reactant = reactantAndStoichiometry.string1;
 					String stoichiometry = reactantAndStoichiometry.string2;
-					// int varIndex =
-					// variableToIndexMap.get(modelstate.getID()).get(reactant);
 					if (stoichiometry.startsWith("-"))
 					{
 						ASTNode stoichNode = new ASTNode(stoichiometry.substring(1, stoichiometry.length()));

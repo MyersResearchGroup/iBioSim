@@ -1,5 +1,7 @@
 package analysis.dynamicsim.hierarchical.simulator;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.swing.JFrame;
@@ -33,6 +35,31 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue,
 				running, interestingSpecies, quantityType, abstraction);
 
+	}
+
+	/**
+	 * opens output file and seeds rng for new run
+	 * 
+	 * @param randomSeed
+	 * @param currentRun
+	 * @throws IOException
+	 */
+	protected void setupForOutput(int currentRun)
+	{
+		setCurrentRun(currentRun);
+
+		try
+		{
+
+			setTSDWriter(new FileWriter(getOutputDirectory() + "run-" + currentRun + ".tsd"));
+			setBufferedTSDWriter(new BufferedWriter(getTSDWriter()));
+			getBufferedTSDWriter().write('(');
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	protected void setupCompartments(ModelState modelstate)
@@ -78,7 +105,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			}
 			String id = "constraint_" + count++;
 			setupArrays(modelstate, id, constraint, SetupType.CONSTRAINT);
-			setupArrayObject(modelstate, id, constraint, SetupType.CONSTRAINT);
+			setupArrayObject(modelstate, id, null, constraint, null, SetupType.CONSTRAINT);
 			if (!modelstate.isArrayedObject(id))
 			{
 				Setup.setupSingleConstraint(modelstate, constraint.getMath(), getModels(), getIbiosimFunctionDefinitions());
@@ -92,11 +119,6 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 	 */
 	protected void setupEvents(ModelState modelstate)
 	{
-
-		// add event information to hashmaps for easy/fast access
-		// this needs to happen after calculating initial propensities
-		// so that the getSpeciesToAffectedReactionSetMap() is populated
-
 		long size = getModels().get(modelstate.getModel()).getEventCount();
 
 		for (int i = 0; i < size; i++)
@@ -116,20 +138,25 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 
 			setupArrays(modelstate, id, event, SetupType.EVENT);
 
-			for (EventAssignment assignment : event.getListOfEventAssignments())
-			{
-
-				if (assignment.isSetMetaId() && modelstate.isDeletedByMetaID(assignment.getMetaId()))
-				{
-					continue;
-				}
-			}
-			setupArrayObject(modelstate, id, event, SetupType.EVENT);
+			setupArrayObject(modelstate, id, null, event, null, SetupType.EVENT);
 
 			if (!modelstate.isArrayedObject(id))
 			{
-				Setup.setupSingleEvent(modelstate, event, getModels(), getIbiosimFunctionDefinitions());
-				setupArrayEventAssignments(modelstate, event, id);
+				Setup.setupSingleEvent(modelstate, id, event.getTrigger().getMath(), event.getUseValuesFromTriggerTime(), event.getTrigger()
+						.getInitialValue(), event.getTrigger().getPersistent(), getModels(), getIbiosimFunctionDefinitions());
+
+				if (event.isSetPriority())
+				{
+					Setup.setupSinglePriority(modelstate, id, event.getPriority().getMetaId(), event.getPriority().getMath(), getModels(),
+							getIbiosimFunctionDefinitions());
+				}
+				if (event.isSetDelay())
+				{
+					Setup.setupSingleDelay(modelstate, id, event.getDelay().getMetaId(), event.getDelay().getMath(), getModels(),
+							getIbiosimFunctionDefinitions());
+				}
+
+				setupEventAssignments(modelstate, event, id);
 			}
 
 		}
@@ -146,7 +173,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			}
 			String id = "initial_" + initAssignment.getVariable();
 			setupArrays(modelstate, id, initAssignment, SetupType.INITIAL_ASSIGNMENT);
-			setupArrayObject(modelstate, id, initAssignment, SetupType.INITIAL_ASSIGNMENT);
+			setupArrayObject(modelstate, id, null, initAssignment, null, SetupType.INITIAL_ASSIGNMENT);
 			if (!modelstate.isArrayedObject(id))
 			{
 				modelstate.getInitAssignment().put(initAssignment.getVariable(), initAssignment.getMath());
@@ -220,6 +247,26 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 						modelstate.setVariableToValue(getReplacements(), product.getId(), product.getStoichiometry());
 					}
 				}
+			}
+		}
+	}
+
+	protected void setupEventAssignments(ModelState modelstate, Event event, String eventId)
+	{
+		for (EventAssignment assignment : event.getListOfEventAssignments())
+		{
+			if (assignment.isSetMetaId() && modelstate.isDeletedByMetaID(assignment.getMetaId()))
+			{
+				continue;
+			}
+
+			String assignmentId = event.getId() + "_" + assignment.getVariable();
+			setupArrayObject(modelstate, assignmentId, assignmentId, assignment, null, SetupType.EVENT_ASSIGNMENT);
+
+			if (!modelstate.isArrayedObject(assignmentId))
+			{
+				Setup.setupEventAssignment(modelstate, assignment.getVariable(), event.getId(), assignment.getMath(), assignment, getModels(),
+						getIbiosimFunctionDefinitions());
 			}
 		}
 	}
@@ -358,7 +405,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 				AssignmentRule assignRule = (AssignmentRule) rule;
 				String id = "assignment_" + assignRule.getVariable();
 				setupArrays(modelstate, id, assignRule, SetupType.ASSIGNMENT_RULE);
-				setupArrayObject(modelstate, id, assignRule, SetupType.ASSIGNMENT_RULE);
+				setupArrayObject(modelstate, id, null, assignRule, null, SetupType.ASSIGNMENT_RULE);
 				if (!modelstate.isArrayedObject(id))
 				{
 					Setup.setupSingleAssignmentRule(modelstate, assignRule.getVariable(), assignRule.getMath(), getModels(),
@@ -370,7 +417,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 				RateRule rateRule = (RateRule) rule;
 				String id = "rate_" + rateRule.getVariable();
 				setupArrays(modelstate, id, rateRule, SetupType.RATE_RULE);
-				setupArrayObject(modelstate, id, rateRule, SetupType.RATE_RULE);
+				setupArrayObject(modelstate, id, null, rateRule, null, SetupType.RATE_RULE);
 				if (!modelstate.isArrayedObject(id))
 				{
 					Setup.setupSingleRateRule(modelstate, rateRule.getVariable(), rateRule.getMath(), getModels(), getIbiosimFunctionDefinitions());

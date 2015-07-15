@@ -14,9 +14,9 @@ import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventToFire;
 public abstract class EventState extends ReactionState
 {
 	private HashMap<String, HashSet<String>>		eventToAffectedReactionSetMap;
-	private HashMap<String, HashSet<Object>>		eventToAssignmentSetMap;
+	private HashMap<String, Map<String, ASTNode>>	eventToAssignmentSetMap;
 	private HashMap<String, ASTNode>				eventToDelayMap;
-	private HashMap<String, Boolean>				eventToHasDelayMap;
+	private Set<String>								eventToHasDelayMap;
 	private HashMap<String, Boolean>				eventToPreviousTriggerValueMap;
 	private HashMap<String, ASTNode>				eventToPriorityMap;
 	private HashMap<String, Boolean>				eventToTriggerInitiallyTrueMap;
@@ -36,12 +36,12 @@ public abstract class EventState extends ReactionState
 			untriggeredEventSet = new HashSet<String>((int) getNumEvents());
 			eventToPriorityMap = new HashMap<String, ASTNode>((int) getNumEvents());
 			eventToDelayMap = new HashMap<String, ASTNode>((int) getNumEvents());
-			eventToHasDelayMap = new HashMap<String, Boolean>((int) getNumEvents());
+			eventToHasDelayMap = new HashSet<String>((int) getNumEvents());
 			eventToTriggerMap = new HashMap<String, ASTNode>((int) getNumEvents());
 			eventToTriggerInitiallyTrueMap = new HashMap<String, Boolean>((int) getNumEvents());
 			eventToTriggerPersistenceMap = new HashMap<String, Boolean>((int) getNumEvents());
 			eventToUseValuesFromTriggerTimeMap = new HashMap<String, Boolean>((int) getNumEvents());
-			eventToAssignmentSetMap = new HashMap<String, HashSet<Object>>((int) getNumEvents());
+			eventToAssignmentSetMap = new HashMap<String, Map<String, ASTNode>>((int) getNumEvents());
 			eventToAffectedReactionSetMap = new HashMap<String, HashSet<String>>((int) getNumEvents());
 			eventToPreviousTriggerValueMap = new HashMap<String, Boolean>((int) getNumEvents());
 			setVariableToEventSetMap(new HashMap<String, HashSet<String>>((int) getNumEvents()));
@@ -76,12 +76,21 @@ public abstract class EventState extends ReactionState
 		this.eventToAffectedReactionSetMap = eventToAffectedReactionSetMap;
 	}
 
-	public HashMap<String, HashSet<Object>> getEventToAssignmentSetMap()
+	public HashMap<String, Map<String, ASTNode>> getEventToAssignmentSetMap()
 	{
 		return eventToAssignmentSetMap;
 	}
 
-	public void setEventToAssignmentSetMap(HashMap<String, HashSet<Object>> eventToAssignmentSetMap)
+	public void addEventAssignment(String event, String variable, ASTNode math)
+	{
+		if (!eventToAssignmentSetMap.containsKey(event))
+		{
+			eventToAssignmentSetMap.put(event, new HashMap<String, ASTNode>());
+		}
+		eventToAssignmentSetMap.get(event).put(variable, math);
+	}
+
+	public void setEventToAssignmentSetMap(HashMap<String, Map<String, ASTNode>> eventToAssignmentSetMap)
 	{
 		this.eventToAssignmentSetMap = eventToAssignmentSetMap;
 	}
@@ -96,12 +105,17 @@ public abstract class EventState extends ReactionState
 		this.eventToDelayMap = eventToDelayMap;
 	}
 
-	public HashMap<String, Boolean> getEventToHasDelayMap()
+	public Set<String> getEventToHasDelayMap()
 	{
 		return eventToHasDelayMap;
 	}
 
-	public void setEventToHasDelayMap(HashMap<String, Boolean> eventToHasDelayMap)
+	public boolean hasDelay(String eventId)
+	{
+		return eventToHasDelayMap.contains(eventId);
+	}
+
+	public void setEventToHasDelayMap(Set<String> eventToHasDelayMap)
 	{
 		this.eventToHasDelayMap = eventToHasDelayMap;
 	}

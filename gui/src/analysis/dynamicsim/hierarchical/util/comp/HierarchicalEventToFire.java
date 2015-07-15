@@ -1,16 +1,16 @@
 package analysis.dynamicsim.hierarchical.util.comp;
 
-import java.util.HashSet;
+import java.util.Map;
 
 public class HierarchicalEventToFire
 {
 
-	private HashSet<Object>	eventAssignmentSet	= null;
-	private String			eventID				= "";
-	private double			fireTime			= 0.0;
-	private String			modelID;
+	private Map<String, Double>	eventAssignmentSet	= null;
+	private String				eventID				= "";
+	private double				fireTime			= 0.0;
+	private String				modelID;
 
-	public HierarchicalEventToFire(String modelID, String eventID, HashSet<Object> eventAssignmentSet, double fireTime)
+	public HierarchicalEventToFire(String modelID, String eventID, Map<String, Double> eventAssignmentSet, double fireTime)
 	{
 
 		this.eventID = eventID;
@@ -22,7 +22,7 @@ public class HierarchicalEventToFire
 	/**
 	 * @return the eventAssignmentSet
 	 */
-	public HashSet<Object> getEventAssignmentSet()
+	public Map<String, Double> getEventAssignmentSet()
 	{
 		return eventAssignmentSet;
 	}
@@ -55,7 +55,7 @@ public class HierarchicalEventToFire
 	 * @param eventAssignmentSet
 	 *            the eventAssignmentSet to set
 	 */
-	public void setEventAssignmentSet(HashSet<Object> eventAssignmentSet)
+	public void setEventAssignmentSet(Map<String, Double> eventAssignmentSet)
 	{
 		this.eventAssignmentSet = eventAssignmentSet;
 	}

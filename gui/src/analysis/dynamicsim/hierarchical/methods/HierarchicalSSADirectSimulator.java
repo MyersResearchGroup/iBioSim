@@ -16,17 +16,18 @@ import odk.lang.FastMath;
 
 import org.sbml.jsbml.ASTNode;
 
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalFunctions;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalSetup;
 import analysis.dynamicsim.hierarchical.util.Evaluator;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.arrays.ArraysObject;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
+import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
 
 //TODO: assignment rules need to verify if changing a hierarchical species because they
 //		can trigger rules in other places.
 
-public final class HierarchicalSSADirectSimulator extends HierarchicalFunctions
+public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 {
 
 	private final Map<Double, List<Double>>	buffer;
@@ -120,7 +121,7 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalFunctions
 
 		try
 		{
-			setupVariableFromTSD();
+			HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
 		}
 		catch (IOException e)
 		{
@@ -144,7 +145,7 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalFunctions
 
 		previousTime = 0;
 
-		nextEventTime = handleEvents();
+		nextEventTime = HierarchicalUtilities.handleEvents(getCurrentTime(), getReplacements(), getTopmodel(), getSubmodels());
 
 		fireEvents();
 
@@ -160,7 +161,7 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalFunctions
 			delta_t = FastMath.log(1 / r1) / totalPropensity;
 
 			nextReactionTime = getCurrentTime() + delta_t;
-			nextEventTime = handleEvents();
+			nextEventTime = HierarchicalUtilities.handleEvents(getCurrentTime(), getReplacements(), getTopmodel(), getSubmodels());
 			previousTime = getCurrentTime();
 
 			if (nextReactionTime < nextEventTime && nextReactionTime < getCurrentTime() + getMaxTimeStep())
@@ -223,7 +224,8 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalFunctions
 		boolean isFired = false;
 		if (getTopmodel().isNoEventsFlag() == false)
 		{
-			Set<String> affectedReactionSet = fireEvents(getTopmodel(), "reaction", getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag());
+			Set<String> affectedReactionSet = HierarchicalUtilities.fireEvents(getTopmodel(), HierarchicalUtilities.Selector.REACTION, getTopmodel()
+					.isNoRuleFlag(), getTopmodel().isNoConstraintsFlag(), getCurrentTime(), getReplacements());
 			if (affectedReactionSet.size() > 0)
 			{
 				Set<String> affectedSpecies = updatePropensities(affectedReactionSet, getTopmodel());
@@ -236,7 +238,8 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalFunctions
 		{
 			if (models.isNoEventsFlag() == false)
 			{
-				Set<String> affectedReactionSet = fireEvents(models, "reaction", models.isNoRuleFlag(), models.isNoConstraintsFlag());
+				Set<String> affectedReactionSet = HierarchicalUtilities.fireEvents(models, HierarchicalUtilities.Selector.REACTION,
+						models.isNoRuleFlag(), models.isNoConstraintsFlag(), getCurrentTime(), getReplacements());
 				if (affectedReactionSet.size() > 0)
 				{
 					Set<String> affectedSpecies = updatePropensities(affectedReactionSet, models);
@@ -284,7 +287,7 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalFunctions
 
 		setupArrayedModels();
 		setupForOutput(runNumber);
-		setupVariableFromTSD();
+		HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
 	}
 
 	private void initialize(ModelState model) throws IOException
@@ -493,7 +496,7 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalFunctions
 
 		if (affectedConstraintSet.size() > 0)
 		{
-			setConstraintFlag(testConstraints(modelstate, affectedConstraintSet));
+			setConstraintFlag(HierarchicalUtilities.testConstraints(modelstate, affectedConstraintSet, getCurrentTime(), getReplacements()));
 		}
 		affectedAssignmentRuleSet = null;
 		affectedConstraintSet = null;
@@ -569,7 +572,8 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalFunctions
 			{
 				try
 				{
-					printToTSD(printTime);
+					HierarchicalWriter.printToTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getReplacements(), getInterestingSpecies(),
+							getPrintConcentrationSpecies(), printTime);
 					getBufferedTSDWriter().write(",\n");
 				}
 				catch (IOException e)
