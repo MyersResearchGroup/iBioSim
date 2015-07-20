@@ -311,11 +311,6 @@ public class Octagon implements Equivalence {
 		//* Zone.recononicalize();
 		recononicalize();
 		
-		// Get the max value of the first
-		// entry for calculating how
-		// much time has advanced.
-		int initial = getUpperBound(0);
-		
 		// Advance Time
 		//* Zone.advance(localStates);
 		advance(localStates);
@@ -325,10 +320,19 @@ public class Octagon implements Equivalence {
 		recononicalize();
 		
 		// Get the amount of time that has
-		// advanced.
-		int time = (int)Math.ceil((this.getUpperBound(0) - initial)/2);
+		// advanced. If there is a variable in the octagon.
+		if(this._dbmVarList.length != 0){
+			
+			// Get the max value of the first
+			// entry for calculating how
+			// much time has advanced.
+			int initial = getUpperBound(0);
+			
+			
+			int time = (int)Math.ceil((this.getUpperBound(0) - initial)/2);
 				
-		adjustB3(this, time);
+			adjustB3(this, time);
+		}
 		
 		// Check the size of the DBM.
 		//* Zone.checkZoneMaxSize();
@@ -759,8 +763,17 @@ public class Octagon implements Equivalence {
 				/*
 				 * Set the lower and upper bounds for the continuous variable.
 				 */
-				setMin(i, bound.get_LowerBound());
-				setMax(i, bound.get_UpperBound());
+//				setMin(i, ContinuousUtilities.chkDiv(bound.get_LowerBound(), 2, false));
+//				setMax(i, ContinuousUtilities.chkDiv(bound.get_UpperBound(), 2, true));
+				
+				if(range.get_LowerBound() >= 0){
+					setMin(i, ContinuousUtilities.chkDiv(bound.get_LowerBound(), range.get_LowerBound(), false));
+					setMax(i, ContinuousUtilities.chkDiv(bound.get_UpperBound(), range.get_LowerBound(), true));
+				}
+				else{
+					setMax(i, ContinuousUtilities.chkDiv(bound.get_LowerBound(), range.get_LowerBound(), true));
+					setMin(i, ContinuousUtilities.chkDiv(bound.get_UpperBound(), range.get_LowerBound(), false));
+				}
 			}
 			//*}
 			//*else{
@@ -1086,9 +1099,12 @@ public class Octagon implements Equivalence {
 		// Else find the upper and lower bounds.
 		//* int lower = (-1)*getDbmEntry(i, 0);
 		//* int upper = getDbmEntry(0, i);
-		double preupper = (double) twiceMax(base)*getCurrentRate(base);
-		double prelower = (double) twiceMin(base)*getCurrentRate(base);
+//		double preupper = (double) twiceMax(base)*getCurrentRate(base);
+//		double prelower = (double) twiceMin(base)*getCurrentRate(base);
 		
+		double preupper = (double) twiceMax(base);
+		double prelower = (double) twiceMin(base);
+//		
 		int upper = (int) Math.ceil(preupper/2);
 		int lower = (int) Math.floor(prelower/2);
 		
@@ -1657,11 +1673,6 @@ public class Octagon implements Equivalence {
 		newOct.recononicalize();
 		
 		
-		// Get the max value of the first
-		// entry for calculating how
-		// much time has advanced.
-		int initial = newOct.getUpperBound(0);
-		
 		//*newZone.advance(localStates);
 		newOct.advance(localStates);
 		
@@ -1670,10 +1681,18 @@ public class Octagon implements Equivalence {
 		newOct.recononicalize();
 		
 		// Get the amount of time that has
-		// advanced.
-		int time = (int)Math.ceil((newOct.getUpperBound(0) - initial)/2);
+		// advanced. If there is a variable left in the octagon.
+		if(newOct._dbmVarList.length != 0){
+			
+			// Get the max value of the first
+			// entry for calculating how
+			// much time has advanced.
+			int initial = newOct.getUpperBound(0);
+			
+			int time = (int)Math.ceil((newOct.getUpperBound(0) - initial)/2);
 		
-		newOct.adjustB3(newOct, time);
+			newOct.adjustB3(newOct, time);
+		}
 		
 		//*newZone.checkZoneMaxSize();
 		
@@ -2177,8 +2196,11 @@ public class Octagon implements Equivalence {
 					_lpnList[pair.get_lpnIndex()]
 							.getAllVarsWithValuesAsString(localStates[pair.get_lpnIndex()]
 									.getVariableVector());
-							
 			
+			if(delay == null){
+				_lpnList[pair.get_lpnIndex()].changeDelay(tranName, "0");
+				delay = _lpnList[pair.get_lpnIndex()].getDelayTree(tranName);
+			}
 			
 			// Set the upper and lower bound.
 			//*int upper, lower;
