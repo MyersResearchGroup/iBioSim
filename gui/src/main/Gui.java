@@ -149,6 +149,7 @@ import org.sbolstandard.core2.SBOLWriter;
 
 import sbol.assembly.ModelGenerator;
 import sbol.browser.SBOLBrowser;
+import sbol.browser.SBOLBrowser2;
 import sbol.util.SBOLTestFactory;
 import sbol.util.SBOLUtility;
 
@@ -5523,8 +5524,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			tab.setSelectedIndex(i);
 		}
 		else {
-			//SBOLBrowser browser = new SBOLBrowser(this, filePath);
-			SBOLBrowser sbolBrowser = new SBOLBrowser(this, filePath);
+//			SBOLBrowser sbolBrowser = new SBOLBrowser(this, filePath);
+//			sbolBrowser.open();
+			
+			SBOLBrowser2 sbolBrowser = new SBOLBrowser2(this, filePath);
 			sbolBrowser.open();
 		}
 	}
