@@ -124,7 +124,6 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 					else 
 						viewArea.append("Description:  NA\n");
 					
-					//TODO: if all sequence annotation are added into one global sboldoc, is there a need to resolve any conflicting URIs? 
 //					LinkedList<SequenceAnnotation> unsortedSA = new LinkedList<SequenceAnnotation>();
 //					if (dnac.getAnnotations() != null) {
 //						for (SequenceAnnotation sa : dnac.getAnnotations()) {

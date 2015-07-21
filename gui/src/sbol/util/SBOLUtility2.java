@@ -28,14 +28,14 @@ import biomodel.util.GlobalConstants;
 
 public class SBOLUtility2 {
 
-	private static String DEFAULTPREFIX = "http://www.async.ece.utah.edu";
+	private static String DEFAULTURI = "http://www.async.ece.utah.edu";
 	
 	public static SBOLDocument loadSBOLFile(String filePath) 
 	{
 		SBOLDocument sbolDoc = null;
 		try 
 		{
-			SBOLReader.setURIPrefix(DEFAULTPREFIX);
+			SBOLReader.setURIPrefix(DEFAULTURI);
 			sbolDoc = SBOLFactory.read(new FileInputStream(filePath));	
 			
 		} 
@@ -518,6 +518,26 @@ public class SBOLUtility2 {
 			return "ribosome entry site";
 		else if (uri.equals(SequenceOntology.CDS))
 			return "coding sequence";
+		else if (uri.equals(SequenceOntology.ENGINEERED_GENE))
+			return "engineered gene";
+		else if (uri.equals(SequenceOntology.FIVE_PRIME_UTR))
+			return "five prime utr";
+		else if (uri.equals(SequenceOntology.GENE))
+			return "gene";
+		else if (uri.equals(SequenceOntology.INSULATOR))
+			return "insulator";
+		else if (uri.equals(SequenceOntology.MRNA))
+			return "messenger RNA";
+		else if (uri.equals(SequenceOntology.OPERATOR))
+			return "operator";
+		else if (uri.equals(SequenceOntology.ORIGIN_OF_REPLICATION))
+			return "origin of replication";
+		else if (uri.equals(SequenceOntology.PRIMER_BINDING_SITE))
+			return "primer binding site";
+		else if (uri.equals(SequenceOntology.RESTRICTION_ENZYME_RECOGNITION_SITE))
+			return "restriction enzyme recognition site";
+		else if (uri.equals(SequenceOntology.RIBOSOME_ENTRY_SITE))
+			return "ribosome entry site";
 		else if (uri.equals(SequenceOntology.TERMINATOR))
 			return "terminator";
 		else if (uri.equals(SequenceOntology.type("SO_0000804")))
@@ -526,7 +546,7 @@ public class SBOLUtility2 {
 			return "RNA polymerase promoter";
 		else if (uri.equals(SequenceOntology.type("SO_0000552")))
 			return "Shine Dalgarno sequence";
-		else if (uri.equals(SequenceOntology.type("SO_0000614")))
+		else if (uri.equals(SequenceOntology.type("SO_0000614"))) 
 			return "bacterial terminator";
 		else 
 		{
