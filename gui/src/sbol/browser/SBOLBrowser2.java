@@ -135,7 +135,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 	{
 		String browseFile = browsePath.substring(browsePath.lastIndexOf(Gui.separator) + 1);
 		
-		boolean first = true;
+		boolean first = false;
 		for (String filePath : sbolFilePaths) 
 		{
 			String file = filePath.substring(filePath.lastIndexOf(Gui.separator) + 1);
