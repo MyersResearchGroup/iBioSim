@@ -44,6 +44,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import learn.genenet.Run;
+import learn.parameterestimator.ParamEstimatorPanel;
 import main.Gui;
 import main.Log;
 
@@ -130,6 +132,8 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 
 	private JPanel							advancedOptionsPanel;
 
+	private ParamEstimatorPanel				estimator;
+
 	private Pattern							IDpat				= Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
 	/**
@@ -146,7 +150,6 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		String[] getFilename = directory.split(separator);
 		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
 		Preferences biosimrc = Preferences.userRoot();
-
 		// Sets up the encodings area
 		JPanel radioPanel = new JPanel(new BorderLayout());
 		JPanel selection1 = new JPanel();
@@ -603,6 +606,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		JPanel firstTab = new JPanel(new BorderLayout());
 		JPanel firstTab1 = new JPanel(new BorderLayout());
 		JPanel secondTab = new JPanel(new BorderLayout());
+
 		middlePanel.add(radioPanel, "Center");
 		// firstTab1.add(initNet, "North");
 		firstTab1.add(thresholdPanelHold1, "Center");
@@ -611,10 +615,10 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		splitPane.setDividerSize(0);
 		secondTab.add(thresholdPanelHold2, "North");
 		firstTab.add(splitPane, "Center");
-
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Basic Options", firstTab);
 		tab.addTab("Advanced Options", secondTab);
+
 		advancedOptionsPanel = secondTab;
 		this.add(firstTab, "Center");
 		// this.add(runHolder, "South");
@@ -631,6 +635,12 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		}
 		firstRead = false;
 		change = false;
+		estimator = new ParamEstimatorPanel(getLearnFile(), directory, biosim);
+	}
+
+	public ParamEstimatorPanel getParamEstimator()
+	{
+		return estimator;
 	}
 
 	public JPanel getAdvancedOptionsPanel()
@@ -1392,6 +1402,19 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 	@Override
 	public void run()
 	{
+		if (methods.getSelectedItem().equals("GeneNet"))
+		{
+			runGeneNet();
+		}
+		else
+		{
+			Run.run(learnFile, directory);
+			opendot(Runtime.getRuntime(), new File(directory));
+		}
+	}
+
+	private void runGeneNet()
+	{
 		String geneNet = "";
 		if (System.getProperty("os.name").contentEquals("Linux"))
 		{
@@ -1663,43 +1686,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		}
 		else
 		{
-			if (new File(directory + separator + "method.gcm").exists())
-			{
-				try
-				{
-					if (System.getProperty("os.name").contentEquals("Linux"))
-					{
-						String command = "dotty method.gcm";
-						log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
-						exec = Runtime.getRuntime();
-						exec.exec(command, null, work);
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
-					{
-						String command = "open method.dot";
-						log.addText("Executing:\n" + "open " + directory + separator + "method.dot\n");
-						exec = Runtime.getRuntime();
-						exec.exec("cp method.gcm method.dot", null, work);
-						exec = Runtime.getRuntime();
-						exec.exec(command, null, work);
-					}
-					else
-					{
-						String command = "dotty method.gcm";
-						log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
-						exec = Runtime.getRuntime();
-						exec.exec(command, null, work);
-					}
-				}
-				catch (IOException e)
-				{
-				}
-			}
-			else
-			{
-				JOptionPane.showMessageDialog(Gui.frame, "A model was not generated." + "\nPlease see the run.log file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
+			opendot(exec, work);
 			running.setCursor(null);
 			running.dispose();
 			if (new File(directory + separator + "method.gcm").exists())
@@ -1713,6 +1700,47 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 				viewLog.setEnabled(true);
 			}
 			biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
+		}
+	}
+
+	private void opendot(Runtime exec, File work)
+	{
+		if (new File(directory + separator + "method.gcm").exists())
+		{
+			try
+			{
+				if (System.getProperty("os.name").contentEquals("Linux"))
+				{
+					String command = "dotty method.gcm";
+					log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+					exec = Runtime.getRuntime();
+					exec.exec(command, null, work);
+				}
+				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
+				{
+					String command = "open method.dot";
+					log.addText("Executing:\n" + "open " + directory + separator + "method.dot\n");
+					exec = Runtime.getRuntime();
+					exec.exec("cp method.gcm method.dot", null, work);
+					exec = Runtime.getRuntime();
+					exec.exec(command, null, work);
+				}
+				else
+				{
+					String command = "dotty method.gcm";
+					log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+					exec = Runtime.getRuntime();
+					exec.exec(command, null, work);
+				}
+			}
+			catch (IOException e)
+			{
+			}
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "A model was not generated." + "\nPlease see the run.log file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -1897,5 +1925,10 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 	public String getBackgroundFile()
 	{
 		return backgroundField.getText();
+	}
+
+	public String getLearnFile()
+	{
+		return learnFile;
 	}
 }

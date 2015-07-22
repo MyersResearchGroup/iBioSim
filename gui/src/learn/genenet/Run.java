@@ -5,62 +5,69 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner;
 
-public class Main
+import javax.xml.stream.XMLStreamException;
+
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.Species;
+
+public class Run
 {
 
-	static int	experiment	= 0;
+	private static int	experiment;
 
-	public static void main(String[] args)
+	public static void run(String filename, String directory)
 	{
-
-		if (args.length < 2)
-		{
-			System.out.println("Not enough arguments");
-			return;
-		}
 		SpeciesCollection S = new SpeciesCollection();
 		Experiments E = new Experiments();
 		Encodings L = new Encodings();
 		Thresholds T = new Thresholds();
 		NetCon C = new NetCon();
 
-		init(args[0], S);
+		init(filename, S);
 
-		for (int i = 1; i < args.length - 1; i++)
+		File path = new File(directory);
+
+		experiment = 0;
+
+		for (File file : path.listFiles())
 		{
-			parse(args[i], S, E);
-			experiment++;
+			String name = file.getAbsolutePath();
+			if (name.endsWith(".tsd"))
+			{
+				parse(name, S, E);
+				experiment++;
+			}
 		}
 
 		Learn learn = new Learn(3);
 		learn.learnNetwork(S, E, C, T, L);
-		learn.getDotFile("test.dot", args[args.length - 1], S, C);
-		C = new NetCon();
-		learn.learnBaselineNetwork(S, E, C);
-		learn.getDotFile("basic.dot", args[args.length - 1], S, C);
+		learn.getDotFile("method.gcm", directory, S, C);
 	}
 
 	private static void init(String filename, SpeciesCollection S)
 	{
-		Scanner scanner = null;
 		try
 		{
-			scanner = new Scanner(new File(filename));
-			while (scanner.hasNext())
+			SBMLDocument doc = SBMLReader.read(new File(filename));
+
+			Model model = doc.getModel();
+
+			for (Species species : model.getListOfSpecies())
 			{
-				String id = scanner.next();
-				S.addInterestingSpecies(id);
+				S.addInterestingSpecies(species.getId());
 			}
 		}
-		catch (FileNotFoundException e)
+
+		catch (XMLStreamException e)
 		{
-			System.out.println("File not found!");
+			e.printStackTrace();
 		}
-		finally
+		catch (IOException e)
 		{
-			scanner.close();
+			e.printStackTrace();
 		}
 	}
 
@@ -188,5 +195,4 @@ public class Main
 
 		}
 	}
-
 }

@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import main.Gui;
+
 public class Learn
 {
 
@@ -603,7 +605,7 @@ public class Learn
 	public void getDotFile(String filename, String directory, SpeciesCollection collection, NetCon network)
 	{
 		Map<String, String> speciesToNode;
-		File fout = new File(directory + filename);
+		File fout = new File(directory + Gui.separator + filename);
 		FileOutputStream fos = null;
 		OutputStreamWriter osw = null;
 		try
