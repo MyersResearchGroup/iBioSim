@@ -1150,9 +1150,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			return selected;
 		}
 		modelEditor.setDirty(true);
-		if (dimID!=null) 
+		if (dimID!=null && !dimID[0].equals("")) 
 			return dimID[0].trim();
-		return null;
+		return selected;
 	}
 
 	/**
