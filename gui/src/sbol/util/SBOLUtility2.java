@@ -540,13 +540,13 @@ public class SBOLUtility2 {
 			return "ribosome entry site";
 		else if (uri.equals(SequenceOntology.TERMINATOR))
 			return "terminator";
-		else if (uri.equals(SequenceOntology.type("SO_0000804")))
+		else if (uri.equals(SequenceOntology.type("SO:0000804")))
 			return "engineered region";
-		else if (uri.equals(SequenceOntology.type("SO_0001203")))
+		else if (uri.equals(SequenceOntology.type("SO:0001203")))
 			return "RNA polymerase promoter";
-		else if (uri.equals(SequenceOntology.type("SO_0000552")))
+		else if (uri.equals(SequenceOntology.type("SO:0000552")))
 			return "Shine Dalgarno sequence";
-		else if (uri.equals(SequenceOntology.type("SO_0000614"))) 
+		else if (uri.equals(SequenceOntology.type("SO:0000614"))) 
 			return "bacterial terminator";
 		else 
 		{
