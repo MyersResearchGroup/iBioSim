@@ -76,10 +76,6 @@
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-math3-3.5.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jsbml-1.1-dev-with-dependencies-rev2310.jar"/>
-	<classpathentry kind="lib" path="gui/lib/libSBOLj-2.0-beta.jar" sourcepath="gui/lib/libSBOLj-2.0-beta-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/BioSim/gui/lib/libSBOLj-2.0-beta-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="gui/lib/libSBOLj-2.0-beta.jar" sourcepath="gui/lib/libSBOLj-2.0-beta-sources.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>

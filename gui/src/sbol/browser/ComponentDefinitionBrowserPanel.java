@@ -67,15 +67,16 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 		LinkedList<String> filteredIDs = new LinkedList<String>();
 		for (int i = 0; i < compURIs.size(); i++) {
 			ComponentDefinition dnac = null;
-			try {
-//				dnac = aggregateCompResolver.resolve(compURIs.get(i));
+			try 
+			{
 				dnac = SBOLDOC.getComponentDefinition(compURIs.get(i));
 			} catch (SBOLValidationException e) {
 				e.printStackTrace();
 				return;
 			}
-			if (filterType.equals("all") || (dnac.getTypes().size() > 0 &&
-					SBOLUtility2.convertURIToSOTerm(dnac.getTypes().iterator().next()).equals(filterType))) {
+			if (filterType.equals("all") || (dnac.getRoles().size() > 0 &&
+					SBOLUtility2.convertURIToSOTerm(dnac.getRoles().iterator().next()).equals(filterType))) 
+			{
 				filteredURIs.add(compURIs.get(i));
 				filteredIDs.add(compIDs.get(i));
 			}
@@ -124,42 +125,19 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 					else 
 						viewArea.append("Description:  NA\n");
 					
-//					LinkedList<SequenceAnnotation> unsortedSA = new LinkedList<SequenceAnnotation>();
-//					if (dnac.getAnnotations() != null) {
-//						for (SequenceAnnotation sa : dnac.getAnnotations()) {
-//							SequenceAnnotation resolvedSA = null;
-//							try {
-//								resolvedSA = aggregateAnnoResolver.resolve(sa.getURI());
-//							} catch (MergerException e1) {
-//								e1.printStackTrace();
-//							}
-//							if (resolvedSA != null)
-//								unsortedSA.add(resolvedSA);
-//							else
-//								unsortedSA.add(sa);
-//						}
-//					}
-//					if (unsortedSA.size() > 0) {
-//						SequenceAnnotation[] sortedSA = sortAnnotations(unsortedSA);
-//						String annotations = processAnnotations(sortedSA);
-//						viewArea.append("Annotations:  ");
-//						viewArea.append(annotations + "\n");
-//					} else 
-//						viewArea.append("Annotations:  NA\n");
 					
-					if (dnac.getSequenceAnnotations().size() == 0) 
+					if (dnac.getSequenceAnnotations().size() > 0) 
 					{
-						//TODO: how to sort different type of locations?
 						//ascending order of range
-//						SequenceAnnotation[] sortedSA = sortAnnotations(dnac.getSequenceAnnotations()); 
-//						String annotations = processAnnotations(sortedSA); //append sa information
-						viewArea.append("Sequence Annotations:  ");
-//						viewArea.append(annotations + "\n");
+						SequenceAnnotation[] sortedSA = sortAnnotations(dnac.getSequenceAnnotations()); 
+						String annotations = processAnnotations(sortedSA); //append sa information
+						viewArea.append("Annotations:  ");
+						viewArea.append(annotations + "\n");
 					} 
 					else 
-						viewArea.append("Sequence Annotations:  NA\n");
+						viewArea.append("Annotations:  NA\n");
 					
-					viewArea.append("Roles:  ");
+					viewArea.append("Types:  ");
 					String roles = "";
 					for (URI uri : dnac.getRoles()) 
 						roles = roles + SBOLUtility2.convertURIToSOTerm(uri) + ", ";
@@ -168,32 +146,16 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 					else
 						viewArea.append("NA\n");
 					
-//					DnaSequence seq = dnac.getDnaSequence();
-//					if (seq != null) {
-//						DnaSequence resolvedSeq = null;
-//						try {
-//							resolvedSeq = aggregateSeqResolver.resolve(seq.getURI());
-//						} catch (MergerException e1) {
-//							e1.printStackTrace();
-//						}
-//						if (resolvedSeq != null)
-//							viewArea.append("DNA Sequence:  " + resolvedSeq.getNucleotides() + "\n\n");
-//						else 
-//							viewArea.append("DNA Sequence:  " + seq.getNucleotides() + "\n\n");
-//					} else
-//						viewArea.append("DNA Sequence:  NA\n\n");
-					
-					//TODO: how do you treat multiple sequences when core had one sequence to display?
 					if (dnac.getSequences() != null) 
 					{
 						String seq = processSequences(dnac.getSequences());
-						viewArea.append("Sequences:  ");
+						viewArea.append("DNA Sequence:  ");
 						viewArea.append(seq + "\n");
 					} 
 					else
-						viewArea.append("Sequence:  NA\n\n");
+						viewArea.append("DNA Sequence:  NA\n\n");
 					
-					if ( dnac.getSequenceConstraints() != null) 
+					/*if ( dnac.getSequenceConstraints() != null) 
 					{
 						String seqCon = processSequenceConstraints(dnac.getSequenceConstraints());
 						viewArea.append("SequenceConstraints: ");
@@ -211,6 +173,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 					}
 					else
 						viewArea.append("Component:  NA\n\n");
+					 */
 				} // end of each compDef
 			} // end of iterating through all selectedURIs
 		} 
@@ -221,9 +184,8 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 		String sequence = "";
 		for(Sequence s : sequences)
 		{
-			//TODO: should we add this level of checking for each sequence == null?
 			if(s != null)
-				sequence = sequence + s.getDisplayId() + " " + s.getElements() + ", ";
+				sequence = sequence + s.getElements() + ", ";
 			else
 				sequence = sequence + "NA"; 
 		}
@@ -232,9 +194,9 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 		return sequence;
 	}
 	
-	private static String processSequenceConstraints(Set<SequenceConstraint> sc)
+	/*private static String processSequenceConstraints(Set<SequenceConstraint> sc)
 	{
-		//TODO: Do we want to process restriction (URI)?
+		// process restriction (URI)?
 		String seqConstraint = "";
 		for(SequenceConstraint s : sc)
 		{
@@ -243,7 +205,6 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 			else
 				seqConstraint = seqConstraint + "NA"; 
 		}
-		//TODO: what does this do seqConstraint.length() - 2?
 //		seqConstraint = seqConstraint.substring(0, seqConstraint.length() - 2); 
 		seqConstraint = seqConstraint.substring(0, seqConstraint.length()); 
 		return seqConstraint;
@@ -251,7 +212,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 	
 	private static String processComponents(Set<Component> components)
 	{
-		//TODO: Do we want to process MapsTo? 
+		//process MapsTo? 
 		String component = "";
 		for(Component c : components)
 		{
@@ -260,86 +221,149 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 			else
 				component = component + "NA"; 
 		}
-		//TODO: what does this do seqConstraint.length() - 2?
 //		component = component.substring(0, component.length() - 2); 
 		component = component.substring(0, component.length() ); 
 		return component;
 	}
+	*/
 	
-	private static String sortLocations(Set<Location> locations)
-	{
-		String location = "";
-		for(Location l : locations)
-		{
-			if(l instanceof Range)
-			{
-				Range r = (Range) l; 
-			}
-			else if(l instanceof Cut)
-			{
-				
-			}
-			else if(l instanceof GenericLocation)
-			{
-				
-			}
-			else
-				location = location + "NA";
-		}
+	private static SequenceAnnotation[] sortAnnotations(Set<SequenceAnnotation> unsortedSA) {
 		
-		return location; 
+	ArrayList<SequenceAnnotation> sortedSA = new ArrayList<SequenceAnnotation>(); 
+		Map<SequenceAnnotation, Range> saToRange = new HashMap<SequenceAnnotation, Range>();
+		
+		//Insert sort of annotations by starting position
+		// O(|SA| |L|)
+		for (SequenceAnnotation sa : unsortedSA)
+		{
+			Range range = null; 
+			for(Location location : sa.getLocations())
+			{
+				// TODO: Assuming each location has 1 range and each sequenceAnnotation is mapped to 
+				// 1 range for fast access
+				if(location instanceof Range)
+				{
+					range = (Range) location; 
+					saToRange.put(sa, range);
+				}
+			}
+			if(range != null)
+			{
+				sortedSA.add(sa);
+			}
+		}
+		// O(|SA| log |SA|)
+		sortSA(sortedSA, saToRange);
+		
+		return sortedSA.toArray(new SequenceAnnotation[sortedSA.size()]);
+		
 	}
 	
-//	private static SequenceAnnotation[] sortAnnotations(Set<SequenceAnnotation> unsortedSA) {
-//		SequenceAnnotation[] sortedSA = new SequenceAnnotation[unsortedSA.size()];
-//		int n = 0;
-//		for (SequenceAnnotation sa : unsortedSA) {
-//			sortedSA[n] = sa;
-//			n++;
-//		}
-//		//Insert sort of annotations by starting position
-//		for (int j = 1; j < sortedSA.length; j++) {
-//			SequenceAnnotation keyAnnotation = sortedSA[j];
-//			int key = keyAnnotation.getBioStart();
-//			int i = j - 1;
-//			while (i >= 0 && sortedSA[i].getBioStart() > key) {
-//				sortedSA[i + 1] = sortedSA[i];
-//				i = i - 1;
-//			}
-//			sortedSA[i + 1] = keyAnnotation;
-//		}
-//		return sortedSA;
-//		
-//	}
-//	
-//	private String processAnnotations(SequenceAnnotation[] arraySA) {
-//		String annotations = "";
-//		for (int k = 0; k < arraySA.length; k++) {
-//			DnaComponent subComponent = arraySA[k].getSubComponent();
-//			if (subComponent != null) {
-//				DnaComponent resolvedSubComponent = null;
-//				try {
-//					resolvedSubComponent = aggregateCompResolver.resolve(subComponent.getURI());
-//				} catch (SBOLValidationException e) {
-//					e.printStackTrace();
-//				}
-//				if (resolvedSubComponent != null)
-//					annotations = annotations + resolvedSubComponent.getDisplayId();
-//				else
-//					annotations = annotations + subComponent.getDisplayId();
-//			} else
-//				annotations = annotations + "NA"; 
-//			String symbol;
-//			if (arraySA[k].getStrand() != null)
-//				symbol = arraySA[k].getStrand().getSymbol();
-//			else
-//				symbol = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
-//			annotations = annotations + " " + symbol + arraySA[k].getBioStart() + " to " + symbol + arraySA[k].getBioEnd() + ", "; 
-//			
-//		}
-//		annotations = annotations.substring(0, annotations.length() - 2);
-//		return annotations;
-//	}
+	private static void sortSA(ArrayList<SequenceAnnotation> listOfSA, final Map<SequenceAnnotation, Range> saToRange)
+	{
+		Collections.sort(listOfSA, new Comparator<SequenceAnnotation>()
+				{
+
+					@Override
+					public int compare(SequenceAnnotation o1,
+							SequenceAnnotation o2)
+					{
+						Range range1 = saToRange.get(o1);
+						Range range2 = saToRange.get(o2);
+						
+						if(range1.getStart() > range2.getStart())
+						{
+							return 1;
+						}
+						else if(range1.getStart() < range2.getStart())
+						{
+							return -1;
+						}
+						else if(range1.getEnd() > range2.getEnd())
+						{
+							return 1;
+						}
+						
+						return -1;
+					}
+			
+				});
+	}
+	
+	
+	//TODO: CLARIFY- order sequenceAnnotation based on displayId of the component of the compDef
+		//seqAnnot.getComponent.getDefinition.getDisplayId
+		// if inline + 
+		// revercomplement - 
+	private String processAnnotations(SequenceAnnotation[] arraySA) 
+	{
+		String annotations = "";
+		for (int k = 0; k < arraySA.length; k++) 
+		{
+//			ComponentDefinition subComponent = arraySA[k].getComponentDefinition();
+//			ComponentDefinition subComponent = arraySA[k].getComponent().getDefinition();
+			Component subComponent = arraySA[k].getComponent();
+		
+			if (subComponent != null) 
+			{
+				ComponentDefinition resolvedSubComponent = null;
+				annotations = annotations + SBOLDOC.getComponentDefinition(subComponent.getDefinitionURI()).getDisplayId();
+				
+				/*try 
+				{
+					resolvedSubComponent = SBOLDOC.getComponentDefinition(subComponent.getIdentity());
+				} catch (SBOLValidationException e) {
+					e.printStackTrace();
+				}
+				if (resolvedSubComponent != null)
+				{
+					annotations = annotations + resolvedSubComponent.getDisplayId();
+				}
+				else
+					annotations = annotations + subComponent.getDisplayId();*/
+					
+			} 
+			else
+			{
+				annotations = annotations + "NA"; 
+			}
+			
+			
+			String symbol;
+			Range range = null;
+			
+			for(Location location : arraySA[k].getLocations())
+			{
+				if(location instanceof Range)
+				{
+					range = (Range) location;
+				}
+			}
+			if (range != null)
+			{
+
+				if(range.getOrientation().toString().equals("inline"))
+				{
+					symbol = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+				}
+				else
+				{
+					symbol = GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
+				}
+			}
+			else
+			{
+				symbol = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+			}
+			
+			annotations = annotations + " " + symbol + range.getStart() + " to " + symbol + range.getEnd() + ", "; 
+			
+		}
+		if(annotations.isEmpty())
+			annotations = annotations + "NA";
+		annotations = annotations.substring(0, annotations.length() - 2); //removes the , at the end
+		return annotations;
+	}
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {

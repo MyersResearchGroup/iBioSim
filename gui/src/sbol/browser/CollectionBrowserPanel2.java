@@ -96,12 +96,12 @@ public class CollectionBrowserPanel2 extends JPanel implements MouseListener {
 		if (selectedURIs[0] != null) 
 		{
 			org.sbolstandard.core2.Collection lib = null;
-			try {
-//				lib = aggregateLibResolver.resolve(selectedURIs[0]);
-				//TODO: when selecting a specific collection, why only select the first selectedURI? 
-				// do we want to assume that the selectedURIs list contains only 1 element?
+			try 
+			{
 				lib = SBOLDOC.getCollection(selectedURIs[0]);
-			} catch (SBOLValidationException e) {
+			} 
+			catch (SBOLValidationException e) 
+			{
 				e.printStackTrace();
 				return;
 			}
@@ -113,26 +113,6 @@ public class CollectionBrowserPanel2 extends JPanel implements MouseListener {
 				viewArea.append("Description:  " + lib.getDescription() + "\n\n");
 			else
 				viewArea.append("Description:  NA\n\n");
-
-			//TODO: How can you get componentDefinitions out of a collection?
-//			for (DnaComponent dnac : lib.getComponents()) 
-//			{
-//				URI compURI = dnac.getURI();
-//				if (!isAssociationBrowser || !compURI.toString().endsWith("iBioSim")) 
-//				{
-//					DnaComponent resolvedDnac = null;
-//					try 
-//					{
-//						resolvedDnac = aggregateCompResolver.resolve(dnac.getURI());
-//					} catch (MergerException e) 
-//					{
-//						e.printStackTrace();
-//					}
-//					if ((resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
-//							|| processDNAComponent(dnac, compIdNames, compURIs))
-//						n++;
-//				}
-//			}
 			
 			for (TopLevel dnac : lib.getMembers()) 
 			{
@@ -200,7 +180,7 @@ public class CollectionBrowserPanel2 extends JPanel implements MouseListener {
  		return false;
 	}
 	
-//	//Sorts first m entries of string array lexographically
+	//Sorts first m entries of string array lexographically
 	private static void lexoSort(LinkedList<String> sortingList, LinkedList<URI> companionList, int m) {
 		for (int j = 1; j < m; j++) 
 		{

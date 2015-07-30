@@ -542,6 +542,8 @@ public class SBOLUtility2 {
 			return "terminator";
 		else if (uri.equals(SequenceOntology.type("SO:0000804")))
 			return "engineered region";
+		else if (uri.equals(SequenceOntology.type("SO:0000805")))
+			return "engineered foreign region";
 		else if (uri.equals(SequenceOntology.type("SO:0001203")))
 			return "RNA polymerase promoter";
 		else if (uri.equals(SequenceOntology.type("SO:0000552")))
