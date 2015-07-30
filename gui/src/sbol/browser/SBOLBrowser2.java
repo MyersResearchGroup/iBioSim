@@ -37,16 +37,15 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 	private JScrollPane viewScroll = new JScrollPane();
 	private CollectionBrowserPanel2          libPanel; 
 	private ComponentDefinitionBrowserPanel compPanel; // control what to display for Component Definition(s)
-	private LinkedList<URI> selectedCompURIs;
 	
+	private LinkedList<URI>    selectedCompURIs; 
 	private LinkedList<URI>    localLibURIs  = new LinkedList<URI>();    //store Collection Identity(s)
 	private LinkedList<String> localLibIds   = new LinkedList<String>(); //store Collection displayId(s)
 	private LinkedList<URI>    localCompURIs = new LinkedList<URI>();	 //store ComponentDef. Identity(s)
 	private boolean isAssociationBrowser = false;
 
-	private Gui gui;
+	private Gui    gui;
 	private String browsePath;
-	
 	private String DEFAULTPREFIX = "http://www.async.utah.edu";
 	
 	//Constructor when browsing a single RDF file from the main gui
@@ -59,8 +58,6 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 //		this.SBOLDOC.setDefaultURIprefix(DEFAULTPREFIX);
 		
 		browsePath = browsePath.replace("\\\\", "\\");
-		
-		//TODO: will only look for SBOL extension. extend to other formats (json, ttl, xml)
 		loadSbolFiles(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), browsePath);
 		constructBrowser(new HashSet<String>());
 	}
@@ -143,33 +140,33 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 			if (browsePath.equals("") || browseFile.equals(file)) 
 			{
 				SBOLDocument sbolDoc = null;
-//				sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
-				if (first) {
-					SBOLDOC = SBOLUtility2.loadSBOLFile(filePath);
-					for(ComponentDefinition c : SBOLDOC.getComponentDefinitions())
-					{
-						if ((!isAssociationBrowser || !c.getIdentity().toString().endsWith("iBioSim"))) 
-							localCompURIs.add(c.getIdentity());
-					}
-					for(Collection col : SBOLDOC.getCollections())
-					{
-						if (col.getDisplayId() != null && !col.getDisplayId().equals("") && 
-								!localLibURIs.contains(col.getIdentity().toString())) 
-						{
-							localLibURIs.add(col.getIdentity()); 
-							localLibIds.add(col.getDisplayId());
-						}
-					} 
-					first = false;
-				} else {
-					sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
-				}
+				sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+//				if (first) {
+//					SBOLDOC = SBOLUtility2.loadSBOLFile(filePath);
+//					for(ComponentDefinition c : SBOLDOC.getComponentDefinitions())
+//					{
+//						if ((!isAssociationBrowser || !c.getIdentity().toString().endsWith("iBioSim"))) 
+//							localCompURIs.add(c.getIdentity());
+//					}
+//					for(Collection col : SBOLDOC.getCollections())
+//					{
+//						if (col.getDisplayId() != null && !col.getDisplayId().equals("") && 
+//								!localLibURIs.contains(col.getIdentity().toString())) 
+//						{
+//							localLibURIs.add(col.getIdentity()); 
+//							localLibIds.add(col.getDisplayId());
+//						}
+//					} 
+//					first = false;
+//				} else {
+//					sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+//				}
 				if (sbolDoc != null) 
 				{
 					for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
 					{
-						if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) {
-//							System.out.println(c.getIdentity());
+						if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
+						{
 							SBOLDOC.createCopy(c);
 						}
 						if ((!isAssociationBrowser || !c.getIdentity().toString().endsWith("iBioSim"))) 
@@ -180,7 +177,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 						if(SBOLDOC.getSequence(s.getIdentity()) == null)
 							SBOLDOC.createCopy(s);
 					}
-					for(Model m : sbolDoc.getModels())
+					/*for(Model m : sbolDoc.getModels())
 					{
 						if(SBOLDOC.getModel(m.getIdentity()) == null)
 							SBOLDOC.createCopy(m);
@@ -195,6 +192,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 						if(SBOLDOC.getGenericTopLevel(gtl.getIdentity()) == null)
 							SBOLDOC.createCopy(gtl);
 					}
+					*/
 					for(Collection col : sbolDoc.getCollections())
 					{
 						if(SBOLDOC.getCollection(col.getIdentity()) == null)
@@ -229,7 +227,8 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 				e.printStackTrace();
 				return;
 			}
-			if (localComp.getRoles().size() > 0) {	
+			if (localComp.getRoles().size() > 0) 
+			{	
 				compDefRoles.add(SBOLUtility2.convertURIToSOTerm(localComp.getRoles().iterator().next()));
 			}
 		}
