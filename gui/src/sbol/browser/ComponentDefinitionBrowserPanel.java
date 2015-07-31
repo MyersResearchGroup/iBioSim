@@ -301,13 +301,14 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 		for (int k = 0; k < arraySA.length; k++) 
 		{
 //			ComponentDefinition subComponent = arraySA[k].getComponentDefinition();
-//			ComponentDefinition subComponent = arraySA[k].getComponent().getDefinition();
-			Component subComponent = arraySA[k].getComponent();
+			ComponentDefinition subComponent = arraySA[k].getComponent().getDefinition();
+//			Component subComponent = arraySA[k].getComponent();
 		
 			if (subComponent != null) 
 			{
 				ComponentDefinition resolvedSubComponent = null;
-				annotations = annotations + SBOLDOC.getComponentDefinition(subComponent.getDefinitionURI()).getDisplayId();
+				annotations = annotations + subComponent.getDisplayId(); 
+						//SBOLDOC.getComponentDefinition(subComponent.getDefinitionURI()).getDisplayId();
 				
 				/*try 
 				{
