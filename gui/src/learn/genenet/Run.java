@@ -25,9 +25,15 @@ public class Run
 		Encodings L = new Encodings();
 		Thresholds T = new Thresholds();
 		NetCon C = new NetCon();
-
 		init(filename, S);
+		loadExperiments(directory, S, E);
+		Learn learn = new Learn(3);
+		learn.learnNetwork(S, E, C, T, L);
+		learn.getDotFile("method.gcm", directory, S, C);
+	}
 
+	public static void loadExperiments(String directory, SpeciesCollection S, Experiments E)
+	{
 		File path = new File(directory);
 
 		experiment = 0;
@@ -41,13 +47,9 @@ public class Run
 				experiment++;
 			}
 		}
-
-		Learn learn = new Learn(3);
-		learn.learnNetwork(S, E, C, T, L);
-		learn.getDotFile("method.gcm", directory, S, C);
 	}
 
-	private static void init(String filename, SpeciesCollection S)
+	public static void init(String filename, SpeciesCollection S)
 	{
 		try
 		{

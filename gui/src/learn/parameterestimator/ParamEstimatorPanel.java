@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
@@ -37,7 +38,7 @@ public class ParamEstimatorPanel extends JPanel implements ActionListener, Runna
 
 	private JComboBox			methods;
 
-	private final String[]		methodNames	= { "None", "Parameter Estimator" };
+	private final String[]		methodNames	= { "None", "PEDI" };
 
 	private String				directory, filename;
 
@@ -236,6 +237,24 @@ public class ParamEstimatorPanel extends JPanel implements ActionListener, Runna
 		{
 			list.clearSelection();
 		}
+	}
+
+	public Object getSelection()
+	{
+		return methods.getSelectedItem();
+	}
+
+	public List<String> getSelectedParameters()
+	{
+		DefaultListModel lm2 = (DefaultListModel) list2.getModel();
+		List<String> parameters = new ArrayList<String>();
+
+		for (int i = 0; i < lm2.getSize(); i++)
+		{
+			parameters.add((String) lm2.get(i));
+		}
+
+		return parameters;
 	}
 
 }
