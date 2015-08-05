@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -43,16 +44,22 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.xml.stream.XMLStreamException;
 
+import learn.genenet.Experiments;
 import learn.genenet.Run;
+import learn.genenet.SpeciesCollection;
 import learn.parameterestimator.ParamEstimatorPanel;
+import learn.parameterestimator.ParameterEstimator;
 import main.Gui;
 import main.Log;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
@@ -76,12 +83,12 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 	// private JButton browseInit; // the browse initial network button
 
 	private JButton							save, run, viewModel, saveModel, viewLog;									// the
-																														// run
-																														// button
+	// run
+	// button
 
 	private JComboBox						debug;																		// debug
-																														// combo
-																														// box
+	// combo
+	// box
 
 	private JTextField						activation, repression, parent;
 
@@ -89,7 +96,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 
 	private JComboBox						numBins, methods;
 
-	private final String[]					methodNames			= { "GeneNet", "GeneNet (Java)" };
+	private final String[]					methodNames			= { "GeneNet", "GeneNet (Java)", "None" };
 
 	private JTextField						influenceLevel, relaxIPDelta, letNThrough, maxVectorSize;
 
@@ -680,13 +687,13 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		{
 			boolean enable;
 
-			if (methods.getSelectedItem().equals(methodNames[1]))
+			if (methods.getSelectedItem().equals(methodNames[0]))
 			{
-				enable = false;
+				enable = true;
 			}
 			else
 			{
-				enable = true;
+				enable = false;
 			}
 
 			influenceLevel.setEnabled(enable);
@@ -723,6 +730,22 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 					}
 				}
 			}
+
+			if (methods.getSelectedItem().equals(methodNames[2]))
+			{
+				activation.setEnabled(false);
+				repression.setEnabled(false);
+				numBins.setEnabled(false);
+				parent.setEnabled(false);
+			}
+			else
+			{
+				activation.setEnabled(true);
+				repression.setEnabled(true);
+				numBins.setEnabled(true);
+				parent.setEnabled(true);
+			}
+
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
 
@@ -1406,11 +1429,61 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		{
 			runGeneNet();
 		}
-		else
+		else if (methods.getSelectedItem().equals("GeneNet (Java)"))
 		{
 			Run.run(learnFile, directory);
 			opendot(Runtime.getRuntime(), new File(directory));
 		}
+
+		if (estimator.getSelection().equals("PEDI"))
+		{
+			SBMLDocument document, newDocument;
+			try
+			{
+				document = SBMLReader.read(new File(learnFile));
+				List<String> parameters = estimator.getSelectedParameters();
+				SpeciesCollection S = new SpeciesCollection();
+				Experiments E = new Experiments();
+				Run.init(learnFile, S);
+				Run.loadExperiments(directory, S, E);
+				newDocument = ParameterEstimator.estimate(document, parameters, E, S);
+				if (newDocument != null)
+				{
+					Model model = newDocument.getModel();
+					for (String parameterId : parameters)
+					{
+						Parameter parameter = model.getParameter(parameterId);
+
+						if (parameter != null)
+						{
+							log.addText(parameterId + ": " + parameter.getValue());
+						}
+						else
+						{
+							log.addText(parameterId + ": NaN");
+						}
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "Could not estimate parameter values due to errors.", "Something went wrong",
+							JOptionPane.ERROR_MESSAGE);
+				}
+
+			}
+			catch (XMLStreamException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
 	}
 
 	private void runGeneNet()
