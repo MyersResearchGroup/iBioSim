@@ -5716,6 +5716,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					LearnGCM learn = new LearnGCM(root + separator + lrnName, log, this);
 					lrnTab.addTab("Learn Options", learn);
 					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
+					lrnTab.addTab("Parameter Estimator Options", learn.getParamEstimator());
+					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Parameter Estimator Options");
 					lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
 					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 				}
