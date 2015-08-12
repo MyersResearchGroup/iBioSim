@@ -142,13 +142,14 @@ public class SBOLField extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
 			HashSet<String> sbolFilePaths = modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
-			SBOLAssociationPanel  associationPanel;
-			if (isModelPanelField) {
-				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, sbolStrand, 
+			SBOLAssociationPanel2  associationPanel;
+			if (isModelPanelField) 
+			{
+				associationPanel = new SBOLAssociationPanel2(sbolFilePaths, sbolURIs, sbolStrand, 
 						SBOLUtility.soSynonyms(sbolType), modelEditor);
 				removedBioSimURI = associationPanel.getRemovedBioSimURI();
 			} else
-				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, sbolStrand,
+				associationPanel = new SBOLAssociationPanel2(sbolFilePaths, sbolURIs, sbolStrand,
 						SBOLUtility.soSynonyms(sbolType));
 			sbolURIs = associationPanel.getComponentURIs();
 			sbolStrand = associationPanel.getComponentStrand();

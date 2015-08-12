@@ -290,39 +290,17 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 				});
 	}
 	
-	
-	//TODO: CLARIFY- order sequenceAnnotation based on displayId of the component of the compDef
-		//seqAnnot.getComponent.getDefinition.getDisplayId
-		// if inline + 
-		// revercomplement - 
 	private String processAnnotations(SequenceAnnotation[] arraySA) 
 	{
 		String annotations = "";
 		for (int k = 0; k < arraySA.length; k++) 
 		{
-//			ComponentDefinition subComponent = arraySA[k].getComponentDefinition();
 			ComponentDefinition subComponent = arraySA[k].getComponent().getDefinition();
-//			Component subComponent = arraySA[k].getComponent();
 		
 			if (subComponent != null) 
 			{
 				ComponentDefinition resolvedSubComponent = null;
 				annotations = annotations + subComponent.getDisplayId(); 
-						//SBOLDOC.getComponentDefinition(subComponent.getDefinitionURI()).getDisplayId();
-				
-				/*try 
-				{
-					resolvedSubComponent = SBOLDOC.getComponentDefinition(subComponent.getIdentity());
-				} catch (SBOLValidationException e) {
-					e.printStackTrace();
-				}
-				if (resolvedSubComponent != null)
-				{
-					annotations = annotations + resolvedSubComponent.getDisplayId();
-				}
-				else
-					annotations = annotations + subComponent.getDisplayId();*/
-					
 			} 
 			else
 			{

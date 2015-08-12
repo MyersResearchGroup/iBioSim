@@ -7,12 +7,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core.MergerException;
 import org.sbolstandard.core2.*;
 
-import sbol.util.SBOLUtility;
-//import sbol.util.SBOLUtility;
 import sbol.util.SBOLUtility2;
 import biomodel.util.GlobalConstants;
 
@@ -55,7 +52,6 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		this.gui        = gui;
 		this.browsePath = browsePath;
 		this.SBOLDOC    = new SBOLDocument();
-//		this.SBOLDOC.setDefaultURIprefix(DEFAULTPREFIX);
 		
 		browsePath = browsePath.replace("\\\\", "\\");
 		loadSbolFiles(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), browsePath);
@@ -109,11 +105,13 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 //	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
-	public SBOLBrowser2(HashSet<String> sbolFilePaths, Set<String> filter) {
+	public SBOLBrowser2(HashSet<String> sbolFilePaths, Set<String> filter) 
+	{
 //		super(new GridLayout(3,1));
 		super(new BorderLayout());
 		isAssociationBrowser = true;
 		selectedCompURIs = new LinkedList<URI>();
+		this.SBOLDOC    = new SBOLDocument();
 		
 		loadSbolFiles(sbolFilePaths, "");
 	
@@ -208,20 +206,12 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 			} //end of searching 1 file
 		} // end of iterating through mult files
 		
-//		java.util.List<String> compDefRoles = new ArrayList<String>();
-//		for(ComponentDefinition compDef : SBOLDOC.getComponentDefinitions())
-//		{
-//			//TODO: Why do you only want the first role of every compDef?
-//			compDefRoles.add(SBOLUtility2.convertURIToSOTerm(compDef.getRoles().iterator().next()));
-//		}
-		
-		//TODO: is this how you would use localCompURIs with global sbolDoc to get rid of resolve?
 		Set<String> compDefRoles = new LinkedHashSet<String>();
 		compDefRoles.add("all");
 		for (int i = 0; i < localCompURIs.size(); i++) {
 			ComponentDefinition localComp = null;
-			try {
-//				localComp = aggregateCompResolver.resolve(localCompURIs.get(i));
+			try 
+			{
 				localComp = SBOLDOC.getComponentDefinition(localCompURIs.get(i));
 			} catch (SBOLValidationException e) {
 				e.printStackTrace();
@@ -236,7 +226,8 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		filterBox = new JComboBox(compDefRoles.toArray());
 	}
 	
-	private boolean browserOpen() {
+	private boolean browserOpen() 
+	{
 		int option = JOptionPane.showOptionDialog(Gui.frame, this,
 				"SBOL Browser2", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -253,7 +244,8 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		return false;
 	}
 	
-	private void constructBrowser(Set<String> filter) {
+	private void constructBrowser(Set<String> filter) 
+	{
 		viewScroll.setMinimumSize(new Dimension(780, 400));
 		viewScroll.setPreferredSize(new Dimension(828, 264));
 		viewScroll.setViewportView(viewArea);
@@ -278,10 +270,11 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		filterPanel.add(new JLabel());
 	}
 	
-//	public LinkedList<URI> getSelection() {
-//		return selectedCompURIs;
-//	}
-//
+	public LinkedList<URI> getSelection() 
+	{
+		return selectedCompURIs;
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
