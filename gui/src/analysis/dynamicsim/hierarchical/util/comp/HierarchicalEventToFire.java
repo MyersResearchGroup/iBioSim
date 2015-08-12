@@ -9,14 +9,16 @@ public class HierarchicalEventToFire
 	private String				eventID				= "";
 	private double				fireTime			= 0.0;
 	private String				modelID;
+	private double				priority;
 
-	public HierarchicalEventToFire(String modelID, String eventID, Map<String, Double> eventAssignmentSet, double fireTime)
+	public HierarchicalEventToFire(String modelID, String eventID, Map<String, Double> eventAssignmentSet, double fireTime, double priority)
 	{
 
 		this.eventID = eventID;
 		this.eventAssignmentSet = eventAssignmentSet;
 		this.fireTime = fireTime;
 		this.modelID = modelID;
+		this.priority = priority;
 	}
 
 	/**
@@ -86,4 +88,21 @@ public class HierarchicalEventToFire
 	{
 		this.modelID = modelID;
 	}
+
+	@Override
+	public String toString()
+	{
+		return eventID + " in " + modelID + " at " + fireTime;
+	}
+
+	public double getPriority()
+	{
+		return priority;
+	}
+
+	public void setPriority(double priority)
+	{
+		this.priority = priority;
+	}
+
 }

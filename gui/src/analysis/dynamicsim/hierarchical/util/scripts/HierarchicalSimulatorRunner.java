@@ -11,6 +11,7 @@ import javax.swing.JProgressBar;
 
 import main.util.dataparser.TSDParser;
 import analysis.dynamicsim.DynamicSimulation;
+import analysis.dynamicsim.DynamicSimulation.SimulationType;
 
 public class HierarchicalSimulatorRunner
 {
@@ -73,7 +74,7 @@ public class HierarchicalSimulatorRunner
 
 			String settingsFile = args[0] + separator + testcase + separator + testcase + "-settings.txt";
 
-			simulator = new DynamicSimulation("hierarchical-rk");
+			simulator = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
 
 			JLabel progressLabel = null;
 			JProgressBar progress = null;
@@ -120,7 +121,7 @@ public class HierarchicalSimulatorRunner
 
 			readProperties(settingsFile);
 
-			simulator = new DynamicSimulation("hierarchical-direct");
+			simulator = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
 
 			JLabel progressLabel = null;
 			JProgressBar progress = null;

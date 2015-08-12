@@ -157,7 +157,19 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 
 		if (type == SetupType.REACTION)
 		{
-			setupSpeciesReferenceArrays(modelstate, (Reaction) sbase);
+			Reaction reaction = (Reaction) sbase;
+			for (SpeciesReference reactant : reaction.getListOfReactants())
+			{
+				setupArrays(modelstate, reaction.getId(), reactant);
+			}
+			for (SpeciesReference product : reaction.getListOfProducts())
+			{
+				setupArrays(modelstate, reaction.getId(), product);
+			}
+			for (ModifierSpeciesReference modifier : reaction.getListOfModifiers())
+			{
+				setupArrays(modelstate, reaction.getId(), modifier);
+			}
 		}
 	}
 
@@ -205,22 +217,6 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 
 		setupArrayObject(modelstate, sbase, id, parent, sizes, indices, null, type);
 
-	}
-
-	protected void setupSpeciesReferenceArrays(ModelState modelstate, Reaction reaction)
-	{
-		for (SpeciesReference reactant : reaction.getListOfReactants())
-		{
-			setupArrays(modelstate, reaction.getId(), reactant);
-		}
-		for (SpeciesReference product : reaction.getListOfProducts())
-		{
-			setupArrays(modelstate, reaction.getId(), product);
-		}
-		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers())
-		{
-			setupArrays(modelstate, reaction.getId(), modifier);
-		}
 	}
 
 	/**
@@ -355,8 +351,6 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 				clone = eventAssignment.getMath().clone();
 				variable = HierarchicalUtilities.getIndexedObject(modelstate, id, eventAssignment.getVariable(), "variable", indices,
 						getReplacements());
-				// TODO: replace both event assignment's and event's dimension
-				// ids
 				if (parentIndices != null)
 				{
 					HierarchicalUtilities.replaceDimensionIds(clone, "d", parentIndices);

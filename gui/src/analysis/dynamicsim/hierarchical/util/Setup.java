@@ -170,6 +170,30 @@ public class Setup
 		modelstate.getEventToAssignmentSetMap().put(eventID, new HashMap<String, ASTNode>());
 		modelstate.getEventToAffectedReactionSetMap().put(eventID, new HashSet<String>());
 		modelstate.getUntriggeredEventSet().add(eventID);
+
+		ArrayList<ASTNode> formulaChildren = new ArrayList<ASTNode>();
+		HierarchicalUtilities.getAllASTNodeChildren(trigger, formulaChildren);
+
+		for (ASTNode ruleNode : formulaChildren)
+		{
+
+			if (ruleNode.isName())
+			{
+				String nodeName = ruleNode.getName();
+
+				if (!modelstate.getVariableToEventTrigger().containsKey(nodeName))
+				{
+					modelstate.getVariableToEventTrigger().put(nodeName, new ArrayList<String>());
+				}
+				if (!modelstate.getEventTriggerToDependency().containsKey(eventID))
+				{
+					modelstate.getEventTriggerToDependency().put(eventID, new ArrayList<String>());
+				}
+				modelstate.getVariableToEventTrigger().get(nodeName).add(eventID);
+				modelstate.getEventTriggerToDependency().get(eventID).add(nodeName);
+			}
+
+		}
 	}
 
 	public static void setupEventAssignment(ModelState modelstate, String variableID, String eventID, ASTNode math, EventAssignment assignment,

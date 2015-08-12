@@ -15,6 +15,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
 
 import analysis.dynamicsim.DynamicSimulation;
+import analysis.dynamicsim.DynamicSimulation.SimulationType;
 import biomodel.parser.BioModel;
 
 public class DynSim
@@ -33,8 +34,7 @@ public class DynSim
 	static boolean				genStats			= false;
 	static String				selectedSimulator	= "";
 	static ArrayList<String>	interestingSpecies	= new ArrayList<String>();
-	static String				separator			= (File.separator.equals("\\")) ? "\\\\"
-															: File.separator;
+	static String				separator			= (File.separator.equals("\\")) ? "\\\\" : File.separator;
 	// static String[] amountSpecies = new String[0];
 	// static String[] concSpecies = new String[0];
 	static String				quantityType		= "amount";
@@ -105,7 +105,7 @@ public class DynSim
 			newFilename = outputDirectory + separator + testcase + "_flatten.xml";
 			readSettings(settingsFile);
 			printInterval = timeLimit / numSteps;
-			simulator = new DynamicSimulation("rk");
+			simulator = new DynamicSimulation(SimulationType.RK);
 		}
 		else
 		{
@@ -118,15 +118,15 @@ public class DynSim
 
 			if (selectedSimulator.contains("SSA-CR"))
 			{
-				simulator = new DynamicSimulation("cr");
+				simulator = new DynamicSimulation(SimulationType.CR);
 			}
 			else if (selectedSimulator.contains("SSA-Direct"))
 			{
-				simulator = new DynamicSimulation("direct");
+				simulator = new DynamicSimulation(SimulationType.DIRECT);
 			}
 			else
 			{
-				simulator = new DynamicSimulation("rk");
+				simulator = new DynamicSimulation(SimulationType.RK);
 			}
 		}
 
@@ -151,20 +151,18 @@ public class DynSim
 			System.out.println("Flattening time: " + (t2 - t1) / 1000);
 			if (testSuite)
 			{
-				simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit,
-						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs,
-						progressLabel, running, stoichAmpValue, intSpecies, numSteps,
-						relativeError, absoluteError, quantityType, genStats, null, null, null);
+				simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
+						printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError,
+						quantityType, genStats, null, null, null);
 
 				TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
 				tsdp.outputCSV(outputDirectory + testcase + ".csv");
 			}
 			else
 			{
-				simulator.simulate(newFilename, outputDirectory, outputDirectory, timeLimit,
-						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs,
-						progressLabel, running, stoichAmpValue, intSpecies, numSteps,
-						relativeError, absoluteError, quantityType, genStats, null, null, null);
+				simulator.simulate(newFilename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
+						printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError,
+						quantityType, genStats, null, null, null);
 			}
 
 		}
@@ -212,14 +210,12 @@ public class DynSim
 			}
 			else
 			{
-				maxTimeStep = Double.valueOf(properties
-						.getProperty(prefix + "simulation.time.step"));
+				maxTimeStep = Double.valueOf(properties.getProperty(prefix + "simulation.time.step"));
 			}
 		}
 		if (properties.containsKey(prefix + "simulation.print.interval"))
 		{
-			printInterval = Double.valueOf(properties.getProperty(prefix
-					+ "simulation.print.interval"));
+			printInterval = Double.valueOf(properties.getProperty(prefix + "simulation.print.interval"));
 		}
 		if (properties.containsKey("monte.carlo.simulation.runs"))
 		{
@@ -239,13 +235,11 @@ public class DynSim
 		}
 		if (properties.containsKey("monte.carlo.simulation.min.time.step"))
 		{
-			minTimeStep = Double.valueOf(properties
-					.getProperty("monte.carlo.simulation.min.time.step"));
+			minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 		}
 		if (properties.containsKey("reb2sac.diffusion.stoichiometry.amplification.value"))
 		{
-			stoichAmpValue = Double.valueOf(properties
-					.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
+			stoichAmpValue = Double.valueOf(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
 		}
 		if (properties.containsKey("selected.simulator"))
 		{
@@ -266,8 +260,7 @@ public class DynSim
 		while (properties.containsKey("reb2sac.interesting.species." + intSpecies))
 		{
 
-			interestingSpecies.add(properties.getProperty("reb2sac.interesting.species."
-					+ intSpecies));
+			interestingSpecies.add(properties.getProperty("reb2sac.interesting.species." + intSpecies));
 			++intSpecies;
 		}
 	}
@@ -289,8 +282,7 @@ public class DynSim
 			e.printStackTrace();
 		}
 
-		timeLimit = Double.valueOf(properties.getProperty("duration"))
-				- Double.valueOf(properties.getProperty("start"));
+		timeLimit = Double.valueOf(properties.getProperty("duration")) - Double.valueOf(properties.getProperty("start"));
 		relativeError = Double.valueOf(properties.getProperty("relative"));
 		absoluteError = Double.valueOf(properties.getProperty("absolute"));
 		numSteps = Integer.valueOf(properties.getProperty("steps"));

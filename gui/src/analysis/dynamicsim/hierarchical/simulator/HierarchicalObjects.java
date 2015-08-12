@@ -19,7 +19,6 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 
 import analysis.dynamicsim.hierarchical.states.ArraysState;
-import analysis.dynamicsim.hierarchical.util.Evaluator;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventToFire;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
@@ -505,7 +504,6 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 	 */
 	public class HierarchicalEventComparator implements Comparator<HierarchicalEventToFire>
 	{
-
 		/**
 		 * compares two events based on their fire times and priorities
 		 */
@@ -523,58 +521,36 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			}
 			else
 			{
-				ModelState state1;
-				ModelState state2;
+
 				if (event1.getModelID().equals("topmodel"))
 				{
-					state1 = topmodel;
 				}
 				else
 				{
-					state1 = submodels.get(event1.getModelID());
+					submodels.get(event1.getModelID());
 				}
+
 				if (event2.getModelID().equals("topmodel"))
 				{
-					state2 = topmodel;
 				}
 				else
 				{
-					state2 = submodels.get(event2.getModelID());
+					submodels.get(event2.getModelID());
 				}
 
-				if (state1.getEventToPriorityMap().get(event1.getEventID()) == null)
-				{
-					if (state2.getEventToPriorityMap().get(event2.getEventID()) != null)
-					{
-						return -1;
-					}
-					if ((Math.random() * 100) > 50)
-					{
-						return -1;
-					}
-					return 1;
-				}
-
-				if (Evaluator.evaluateExpressionRecursive(state1, state1.getEventToPriorityMap().get(event1.getEventID()), false, getCurrentTime(),
-						null, null, getReplacements()) > Evaluator.evaluateExpressionRecursive(state2,
-						state2.getEventToPriorityMap().get(event2.getEventID()), false, getCurrentTime(), null, null, getReplacements()))
+				if (event1.getPriority() > event2.getPriority())
 				{
 					return -1;
 				}
-				else if (Evaluator.evaluateExpressionRecursive(state1, state1.getEventToPriorityMap().get(event1.getEventID()), false,
-						getCurrentTime(), null, null, getReplacements()) < Evaluator.evaluateExpressionRecursive(state2, state2
-						.getEventToPriorityMap().get(event2.getEventID()), false, getCurrentTime(), null, null, getReplacements()))
+				else if (event1.getPriority() < event2.getPriority())
 				{
 					return 1;
 				}
 				else
 				{
-					if ((Math.random() * 100) > 50)
-					{
-						return -1;
-					}
-					return 1;
+					return 0;
 				}
+
 			}
 		}
 	}
