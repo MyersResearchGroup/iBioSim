@@ -72,33 +72,28 @@ import biomodel.gui.schematic.ModelEditor;
 import biomodel.util.GlobalConstants;
 
 /**
- * This class creates a GUI for analysis. It implements the
- * ActionListener class, the KeyListener class, the MouseListener class, and the
- * Runnable class. This allows the GUI to perform actions when buttons are
- * pressed, text is entered into a field, or the mouse is clicked. It also
- * allows this class to execute many analysis programs at the same time on
- * different threads.
+ * This class creates a GUI for analysis. It implements the ActionListener
+ * class, the KeyListener class, the MouseListener class, and the Runnable
+ * class. This allows the GUI to perform actions when buttons are pressed, text
+ * is entered into a field, or the mouse is clicked. It also allows this class
+ * to execute many analysis programs at the same time on different threads.
  * 
  * @author Curtis Madsen
  */
-public class AnalysisView extends JPanel implements ActionListener, Runnable,
-		MouseListener
+public class AnalysisView extends JPanel implements ActionListener, Runnable, MouseListener
 {
 
 	private static final long	serialVersionUID	= 3181014495993143825L;
 
-	private JRadioButton		noAbstraction, expandReactions,
-			reactionAbstraction, stateAbstraction;
+	private JRadioButton		noAbstraction, expandReactions, reactionAbstraction, stateAbstraction;
 
 	private JRadioButton		ODE, monteCarlo, markov, fba, sbml, dot, xhtml;
 
-	private JTextField			limit, interval, minStep, step, absErr, seed,
-			runs, fileStem;
+	private JTextField			limit, interval, minStep, step, absErr, seed, runs, fileStem;
 
 	private JComboBox			intervalLabel;
 
-	private JLabel				limitLabel, minStepLabel, stepLabel,
-			errorLabel, seedLabel, runsLabel, fileStemLabel;
+	private JLabel				limitLabel, minStepLabel, stepLabel, errorLabel, seedLabel, runsLabel, fileStemLabel;
 
 	private JLabel				description, explanation;
 
@@ -108,19 +103,19 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 
 	private Object[]			postAbstractions	= new Object[0];
 
-	private JComboBox			simulators;													// Combo
-																								// Box
-																								// for
-																								// possible
-																								// simulators
+	private JComboBox			simulators;																			// Combo
+																														// Box
+																														// for
+																														// possible
+																														// simulators
 
-	private JLabel				simulatorsLabel;												// Label
-																								// for
-																								// possible
-																								// simulators
+	private JLabel				simulatorsLabel;																		// Label
+																														// for
+																														// possible
+																														// simulators
 
-	private JTextField			rapid1, rapid2, qssa, maxCon, diffStoichAmp;					// advanced
-																								// options
+	private JTextField			rapid1, rapid2, qssa, maxCon, diffStoichAmp;											// advanced
+																														// options
 
 	private JComboBox			bifurcation;
 
@@ -128,36 +123,35 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 
 	private JRadioButton		adaptive, nonAdaptive;
 
-	private JLabel				rapidLabel1, rapidLabel2, qssaLabel,
-			maxConLabel, diffStoichAmpLabel, iSSATypeLabel, iSSAAdaptiveLabel,
+	private JLabel				rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, iSSATypeLabel, iSSAAdaptiveLabel,
 			bifurcationLabel;
 
-	private String				sbmlFile;														// sbml
-																								// file
-																								// and
-																								// root
-																								// directory
+	private String				sbmlFile;																				// sbml
+																														// file
+																														// and
+																														// root
+																														// directory
 
 	private final String		root;
 
-	private final Gui			gui;															// reference
-																								// to
-																								// the
-																								// tstubd
-																								// class
+	private final Gui			gui;																					// reference
+																														// to
+																														// the
+																														// tstubd
+																														// class
 
-	private String				simName;														// simulation
-																								// id
+	private String				simName;																				// simulation
+																														// id
 
-	private final Log			log;															// the
-																								// log
+	private final Log			log;																					// the
+																														// log
 
-	private final JTabbedPane	simTab;														// the
-																								// simulation
-																								// tab
+	private final JTabbedPane	simTab;																				// the
+																														// simulation
+																														// tab
 
-	private ModelEditor			modelEditor;													// model
-																								// editor
+	private ModelEditor			modelEditor;																			// model
+																														// editor
 
 	private JCheckBox			append, concentrations, genRuns, genStats;
 
@@ -167,8 +161,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 
 	private boolean				change;
 
-	private final Pattern		stemPat				= Pattern
-															.compile("([a-zA-Z]|[0-9]|_)*");
+	private final Pattern		stemPat				= Pattern.compile("([a-zA-Z]|[0-9]|_)*");
 
 	private JPanel				advanced;
 
@@ -238,9 +231,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 	 * @param modelFile
 	 *            - the SBML model file
 	 */
-	public AnalysisView(Gui gui, Log log, JTabbedPane simTab,
-			AbstPane lpnAbstraction, String root, String simName,
-			String modelFile)
+	public AnalysisView(Gui gui, Log log, JTabbedPane simTab, AbstPane lpnAbstraction, String root, String simName, String modelFile)
 	{
 
 		super(new BorderLayout());
@@ -253,15 +244,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		this.modelFile = modelFile;
 		if (modelFile.endsWith(".lpn"))
 		{
-			sbmlFile = root + Gui.separator + simName + Gui.separator
-					+ modelFile.replace(".lpn", ".xml");
+			sbmlFile = root + Gui.separator + simName + Gui.separator + modelFile.replace(".lpn", ".xml");
 		}
 		else
 		{
 			sbmlFile = root + Gui.separator + modelFile;
 		}
-		sbmlProp = root + Gui.separator + simName + Gui.separator
-				+ modelFile.replace(".lpn", ".xml");
+		sbmlProp = root + Gui.separator + simName + Gui.separator + modelFile.replace(".lpn", ".xml");
 		interestingSpecies = new ArrayList<String>();
 		change = false;
 		biosimrc = Preferences.userRoot();
@@ -289,7 +278,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		buttonPanel.add(reportOptions, BorderLayout.SOUTH);
 		this.add(buttonPanel, BorderLayout.NORTH);
 		this.add(simulationOptions, BorderLayout.CENTER);
-		loadPropertiesFile(simName,modelFile.replace(".xml", ""));
+		loadPropertiesFile(simName, modelFile.replace(".xml", ""));
 		loadSEDML();
 	}
 
@@ -359,7 +348,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		simulationTypeButtons.add(sbml);
 		simulationTypeButtons.add(dot);
 		simulationTypeButtons.add(xhtml);
-		if (!Gui.isReb2sacFound()) {
+		if (!Gui.isReb2sacFound())
+		{
 			dot.setEnabled(false);
 			xhtml.setEnabled(false);
 		}
@@ -409,8 +399,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		{
 			markov.doClick();
 			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-			if (!simulators.getSelectedItem().equals(
-					biosimrc.get("biosim.sim.sim", "")))
+			if (!simulators.getSelectedItem().equals(biosimrc.get("biosim.sim.sim", "")))
 			{
 				selectedMarkovSim = biosimrc.get("biosim.sim.sim", "");
 			}
@@ -480,11 +469,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		simulators.addActionListener(this);
 		limitLabel = new JLabel("Time Limit:");
 		limit = new JTextField(biosimrc.get("biosim.sim.limit", ""), 39);
-		String[] intervalChoices = { "Print Interval",
-				"Minimum Print Interval", "Number Of Steps" };
+		String[] intervalChoices = { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
 		intervalLabel = new JComboBox(intervalChoices);
-		intervalLabel.setSelectedItem(biosimrc
-				.get("biosim.sim.useInterval", ""));
+		intervalLabel.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
 		interval = new JTextField(biosimrc.get("biosim.sim.interval", ""), 15);
 		minStepLabel = new JLabel("Minimum Time Step:");
 		minStep = new JTextField(biosimrc.get("biosim.sim.min.step", ""), 15);
@@ -592,8 +579,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		{
 			enableFBA();
 		}
-		else if (e.getSource() == sbml || e.getSource() == dot
-				|| e.getSource() == xhtml)
+		else if (e.getSource() == sbml || e.getSource() == dot || e.getSource() == xhtml)
 		{
 			enableSbmlDotAndXhtml();
 		}
@@ -633,68 +619,65 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			}
 			else if (simulators.getSelectedItem().equals("rk4imp"))
 			{
-				description
-						.setText("Implicit 4th order Runge-Kutta at Gaussian points");
+				description.setText("Implicit 4th order Runge-Kutta at Gaussian points");
 				enableODESimulator();
 			}
 			else if (simulators.getSelectedItem().equals("rk8pd"))
 			{
-				description
-						.setText("Embedded Runge-Kutta Prince-Dormand (8,9) method");
+				description.setText("Embedded Runge-Kutta Prince-Dormand (8,9) method");
 				enableODESimulator();
 			}
 			else if (simulators.getSelectedItem().equals("rkf45"))
 			{
-				description
-						.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
+				description.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
 				enableODESimulator();
 			}
-			else if (((String) simulators.getSelectedItem()).equals("SSA-CR"))
+			else if (((String) simulators.getSelectedItem()).equals("SSA-CR (Dynamic)"))
 			{
 				description.setText("SSA Composition and Rejection Method");
 				enableSSASimulator();
 			}
-			else if (((String) simulators.getSelectedItem())
-					.equals("SSA-Direct"))
+			else if (((String) simulators.getSelectedItem()).equals("SSA-Direct (Dynamic)"))
 			{
 				description.setText("SSA-Direct Method (Java)");
 				enableSSASimulator();
 			}
-			else if (((String) simulators.getSelectedItem())
-					.equals("Runge-Kutta-Fehlberg"))
+			else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Dynamic)"))
 			{
 				description.setText("Runge-Kutta-Fehlberg Method (java)");
 				enableODESimulator();
 			}
-			else if (((String) simulators.getSelectedItem())
-					.equals("Hierarchical-RK"))
+			else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Hierarchical)"))
 			{
-				description
-						.setText("Runge-Kutta-Fehlberg Method on Hierarchical Models (java)");
+				description.setText("Runge-Kutta-Fehlberg Method on Hierarchical Models (java)");
 				enableODESimulator();
 			}
-			else if (((String) simulators.getSelectedItem())
-					.equals("Hierarchical-Hybrid"))
+			else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Flatten)"))
 			{
-				description
-						.setText("Hybrid SSA/ODE on Hierarchical Models (java)");
+				description.setText("Runge-Kutta-Fehlberg Method on Flattened Models (java)");
+				enableODESimulator();
+			}
+			else if (((String) simulators.getSelectedItem()).equals("Hierarchical-Hybrid"))
+			{
+				description.setText("Hybrid SSA/ODE on Hierarchical Models (java)");
 				enableSSASimulator();
 			}
-			else if (((String) simulators.getSelectedItem())
-					.contains("gillespie"))
+			else if (((String) simulators.getSelectedItem()).contains("gillespie"))
 			{
 				description.setText("SSA-Direct Method");
 				enableSSASimulator();
 			}
-			else if (((String) simulators.getSelectedItem())
-					.contains("SSA-Hierarchical"))
+			else if (((String) simulators.getSelectedItem()).contains("SSA-Direct (Flatten)"))
 			{
-				description
-						.setText("SSA-Direct Method on Hierarchical Models (java)");
+				description.setText("SSA-Direct Method on Flattened Models (java)");
 				enableSSASimulator();
 			}
-			else if (((String) simulators.getSelectedItem())
-					.contains("interactive"))
+			else if (((String) simulators.getSelectedItem()).contains("SSA-Direct (Hierarchical)"))
+			{
+				description.setText("SSA-Direct Method on Hierarchical Models (java)");
+				enableSSASimulator();
+			}
+			else if (((String) simulators.getSelectedItem()).contains("interactive"))
 			{
 				description.setText("Interactive SSA-Direct Method (java)");
 				enableSSASimulator();
@@ -706,8 +689,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			}
 			else if (simulators.getSelectedItem().equals("emc-sim"))
 			{
-				description
-						.setText("Monte Carlo sim with jump count as independent variable");
+				description.setText("Monte Carlo sim with jump count as independent variable");
 				enableSSASimulator();
 			}
 			else if (simulators.getSelectedItem().equals("bunker"))
@@ -717,8 +699,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			}
 			else if (simulators.getSelectedItem().equals("nmc"))
 			{
-				description.setText("Monte Carlo simulation with normally"
-						+ " distributed waiting time");
+				description.setText("Monte Carlo simulation with normally" + " distributed waiting time");
 				enableSSASimulator();
 			}
 			else if (simulators.getSelectedItem().equals("ctmc-transient"))
@@ -731,28 +712,23 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				description.setText("ATACS Analysis Tool");
 				enableMarkovAnalyzer();
 			}
-			else if (simulators.getSelectedItem().equals(
-					"reachability-analysis"))
+			else if (simulators.getSelectedItem().equals("reachability-analysis"))
 			{
 				description.setText("State Space Exploration");
 				enableMarkovAnalyzer();
 			}
-			else if (simulators.getSelectedItem().equals(
-					"steady-state-markov-chain-analysis"))
+			else if (simulators.getSelectedItem().equals("steady-state-markov-chain-analysis"))
 			{
 				description.setText("Steady State Markov Chain Analysis");
 				enableMarkovAnalyzer();
 			}
-			else if (simulators.getSelectedItem().equals(
-					"transient-markov-chain-analysis"))
+			else if (simulators.getSelectedItem().equals("transient-markov-chain-analysis"))
 			{
-				description
-						.setText("Transient Markov Chain Analysis Using Uniformization");
+				description.setText("Transient Markov Chain Analysis Using Uniformization");
 				enableTransientMarkovAnalyzer();
 			}
 		}
-		else if ((e.getSource() == addPreAbs) || (e.getSource() == addLoopAbs)
-				|| (e.getSource() == addPostAbs))
+		else if ((e.getSource() == addPreAbs) || (e.getSource() == addLoopAbs) || (e.getSource() == addPostAbs))
 		{
 			addAbstractionMethod(e);
 		}
@@ -834,8 +810,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		absList.addItem("stop-flag-generator");
 		addAbsPanel.add(absList, "Center");
 		String[] options = { "Add", "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, addAbsPanel,
-				"Add abstraction method", JOptionPane.YES_NO_OPTION,
+		int value = JOptionPane.showOptionDialog(Gui.frame, addAbsPanel, "Add abstraction method", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION)
 		{
@@ -880,38 +855,28 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					cut = i;
 				}
 			}
-			String propName = sbmlProp.substring(0, sbmlProp.length()
-					- getFilename[getFilename.length - 1].length())
-					+ getFilename[getFilename.length - 1].substring(0, cut)
-					+ ".properties";
+			String propName = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
+					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 			try
 			{
 				if (new File(propName).exists())
 				{
 					Properties getProps = new Properties();
-					FileInputStream load = new FileInputStream(new File(
-							propName));
+					FileInputStream load = new FileInputStream(new File(propName));
 					getProps.load(load);
 					load.close();
-					if (getProps
-							.containsKey("monte.carlo.simulation.time.limit"))
+					if (getProps.containsKey("monte.carlo.simulation.time.limit"))
 					{
-						minStep.setText(getProps
-								.getProperty("monte.carlo.simulation.min.time.step"));
-						step.setText(getProps
-								.getProperty("monte.carlo.simulation.time.step"));
-						limit.setText(getProps
-								.getProperty("monte.carlo.simulation.time.limit"));
-						interval.setText(getProps
-								.getProperty("monte.carlo.simulation.print.interval"));
+						minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
+						step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
+						limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
+						interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
 					}
 				}
 			}
 			catch (IOException e1)
 			{
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Unable to restore time limit and print interval.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else
@@ -923,8 +888,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 	}
 
-	private JFrame createProgressBar(JLabel label, JProgressBar progress,
-			final JButton cancel)
+	private JFrame createProgressBar(JLabel label, JProgressBar progress, final JButton cancel)
 	{
 		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener()
@@ -1027,35 +991,24 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		{
 			if (append.isSelected())
 			{
-				String[] searchForRunFiles = new File(root + Gui.separator
-						+ outDir).list();
+				String[] searchForRunFiles = new File(root + Gui.separator + outDir).list();
 				for (String s : searchForRunFiles)
 				{
-					if (s.length() > 3
-							&& new File(root + Gui.separator + outDir
-									+ Gui.separator + s).isFile()
-							&& (s.equals("mean.tsd")
-									|| s.equals("standard_deviation.tsd") || s
-										.equals("variance.tsd")))
+					if (s.length() > 3 && new File(root + Gui.separator + outDir + Gui.separator + s).isFile()
+							&& (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s.equals("variance.tsd")))
 					{
-						new File(root + Gui.separator + outDir
-								+ Gui.separator + s).delete();
+						new File(root + Gui.separator + outDir + Gui.separator + s).delete();
 					}
 				}
 			}
 			else
 			{
-				String[] searchForRunFiles = new File(root + Gui.separator
-						+ outDir).list();
+				String[] searchForRunFiles = new File(root + Gui.separator + outDir).list();
 				for (String s : searchForRunFiles)
 				{
-					if (s.length() > 3
-							&& s.substring(0, 4).equals("run-")
-							&& new File(root + Gui.separator + outDir
-									+ Gui.separator + s).isFile())
+					if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + Gui.separator + outDir + Gui.separator + s).isFile())
 					{
-						new File(root + Gui.separator + outDir
-								+ Gui.separator + s).delete();
+						new File(root + Gui.separator + outDir + Gui.separator + s).delete();
 					}
 				}
 			}
@@ -1087,9 +1040,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			File[] files = new File(root + Gui.separator + outDir).listFiles();
 			for (File f : files)
 			{
-				if (f.getName().contains("mean.")
-						|| f.getName().contains("standard_deviation.")
-						|| f.getName().contains("variance."))
+				if (f.getName().contains("mean.") || f.getName().contains("standard_deviation.") || f.getName().contains("variance."))
 				{
 					f.delete();
 				}
@@ -1111,26 +1062,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			simulationName = simName + " " + direct;
 			directory = direct;
 		}
-		exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame,
-				ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
-						+ Gui.separator + simName, stateAbstraction, 1,
-				intSpecies, log, gui, simTab, root, progress, simulationName,
-				modelEditor, directory, timeLimit, runTime, modelFile,
-				lpnAbstraction, reactionAbstraction, expandReactions,
-				lpnProperty, absError, timeStep, printInterval, run, rndSeed,
-				refresh, label, running);
-		if (stateAbstraction.isSelected() && modelEditor == null
-				&& !sim.contains("markov-chain-analysis") && exit == 0)
+		exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
+				+ Gui.separator + simName, stateAbstraction, 1, intSpecies, log, gui, simTab, root, progress, simulationName, modelEditor, directory,
+				timeLimit, runTime, modelFile, lpnAbstraction, reactionAbstraction, expandReactions, lpnProperty, absError, timeStep, printInterval,
+				run, rndSeed, refresh, label, running);
+		if (stateAbstraction.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && exit == 0)
 		{
 			simProp = simProp.replace("\\", "/");
-			Nary_Run nary_Run = new Nary_Run(this, simulators,
-					simProp.split("/"), simProp, fba, sbml, dot,
-					xhtml, stateAbstraction, ODE, monteCarlo, timeLimit,
-					((String) (intervalLabel.getSelectedItem())),
-					printInterval, minTimeStep, timeStep, root + Gui.separator
-							+ simName, rndSeed, run, printer_id,
-					printer_track_quantity, intSpecies, rap1, rap2, qss, con,
-					log, gui, simTab, root, directory, modelFile,
+			Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split("/"), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo,
+					timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + Gui.separator + simName,
+					rndSeed, run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, gui, simTab, root, directory, modelFile,
 					reactionAbstraction, lpnAbstraction, absError);
 			nary_Run.open();
 		}
@@ -1181,35 +1122,24 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Must Enter A Real Number Into The Time Limit Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Limit Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		try
 		{
-			if (((String) intervalLabel.getSelectedItem())
-					.contains("Print Interval"))
+			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval"))
 			{
 				printInterval = Double.parseDouble(interval.getText().trim());
 				if (printInterval < 0)
 				{
-					JOptionPane
-							.showMessageDialog(
-									Gui.frame,
-									"Must Enter a Positive Number into the Print Interval Field.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Print Interval Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
-				else if (printInterval == 0
-						&& !((String) intervalLabel.getSelectedItem())
-								.contains("Minimum"))
+				else if (printInterval == 0 && !((String) intervalLabel.getSelectedItem()).contains("Minimum"))
 				{
-					JOptionPane
-							.showMessageDialog(
-									Gui.frame,
-									"Must Enter a Positive Number into the Print Interval Field.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Print Interval Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 			}
@@ -1218,30 +1148,21 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				printInterval = Integer.parseInt(interval.getText().trim());
 				if (printInterval <= 0)
 				{
-					JOptionPane
-							.showMessageDialog(
-									Gui.frame,
-									"Must Enter a Positive Number into the Number of Steps Field.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Number of Steps Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 			}
 		}
 		catch (Exception e1)
 		{
-			if (((String) intervalLabel.getSelectedItem())
-					.contains("Print Interval"))
+			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval"))
 			{
-				JOptionPane
-						.showMessageDialog(
-								Gui.frame,
-								"Must Enter a Real Number into the Print Interval Field.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Print Interval Field.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Must Enter an Integer into the Number of Steps Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter an Integer into the Number of Steps Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		if (step.getText().trim().equals("inf") && !sim.equals("euler"))
@@ -1251,10 +1172,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		else if (step.getText().trim().equals("inf") && sim.equals("euler"))
 		{
 			JOptionPane
-					.showMessageDialog(
-							Gui.frame,
-							"Cannot Select an Infinite Time Step with Euler Simulation.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					.showMessageDialog(Gui.frame, "Cannot Select an Infinite Time Step with Euler Simulation.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		else
@@ -1265,9 +1183,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			}
 			catch (Exception e1)
 			{
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Must Enter a Real Number into the Time Step Field.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 		}
@@ -1278,10 +1194,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		catch (Exception e1)
 		{
 			JOptionPane
-					.showMessageDialog(
-							Gui.frame,
-							"Must Enter a Real Number into the Minimum Time Step Field.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Minimum Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		try
@@ -1290,9 +1203,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Must Enter A Real Number Into The Absolute Error Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Absolute Error Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		try
@@ -1301,9 +1212,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Must Enter an Integer into the Random Seed Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter an Integer into the Random Seed Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		try
@@ -1311,20 +1220,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			run = Integer.parseInt(runs.getText().trim());
 			if (run < 0)
 			{
-				JOptionPane.showMessageDialog(
-						Gui.frame,
-						"Must Enter a Positive Integer into the Runs Field."
-								+ "\nProceding with Default:   "
-								+ biosimrc.get("biosim.sim.runs", ""), "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Integer into the Runs Field." + "\nProceding with Default:   "
+						+ biosimrc.get("biosim.sim.runs", ""), "Error", JOptionPane.ERROR_MESSAGE);
 				run = Integer.parseInt(biosimrc.get("biosim.sim.runs", ""));
 			}
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Must Enter a Positive Integer into the Runs Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Integer into the Runs Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		if (genRuns.isSelected())
@@ -1350,9 +1253,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Must Enter A Real Number Into The"
-							+ " Rapid Equilibrium Condition 1 Field.", "Error",
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The" + " Rapid Equilibrium Condition 1 Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
@@ -1362,9 +1263,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Must Enter A Real Number Into The"
-							+ " Rapid Equilibrium Condition 2 Field.", "Error",
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The" + " Rapid Equilibrium Condition 2 Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
@@ -1374,9 +1273,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Must Enter A Real Number Into The QSSA Condition Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The QSSA Condition Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		try
@@ -1385,9 +1282,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Must Enter An Integer Into The Max"
-							+ " Concentration Threshold Field.", "Error",
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max" + " Concentration Threshold Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
@@ -1404,9 +1299,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Must Enter a Double Into the Stoich." + " Amp. Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Double Into the Stoich." + " Amp. Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		if (noAbstraction.isSelected() && ODE.isSelected())
@@ -1523,37 +1416,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		boolean saveTopLevel = false;
 		if (!direct.equals("."))
 		{
-			simProp = simProp
-					.substring(
-							0,
-							simProp.length()
-									- simProp.split("/")[simProp
-											.split("/").length - 1]
-											.length())
-					+ direct
-					+ Gui.separator
-					+ simProp
-							.substring(simProp.length()
-									- simProp.split("/")[simProp
-											.split("/").length - 1]
-											.length());
+			simProp = simProp.substring(0, simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length()) + direct + Gui.separator
+					+ simProp.substring(simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length());
 			saveTopLevel = true;
 		}
-		String propName = simProp.substring(0, simProp.length()
-				- getFilename[getFilename.length - 1].length())
-				+ getFilename[getFilename.length - 1].substring(0, cut)
-				+ ".properties";
+		String propName = simProp.substring(0, simProp.length() - getFilename[getFilename.length - 1].length())
+				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		log.addText("Creating properties file:\n" + propName + "\n");
-		int numPaths = Integer
-				.parseInt((String) (bifurcation.getSelectedItem()));
-		Run.createProperties(timeLimit,
-				((String) (intervalLabel.getSelectedItem())), printInterval,
-				minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths,
-				intSpecies, printer_id, printer_track_quantity,
-				generate_statistics, sbmlProp.split("/"),
-				selectedButtons, this, sbmlProp, rap1, rap2, qss, con,
-				stoichAmp, preAbs, loopAbs, postAbs, lpnAbstraction,
-				mpde.isSelected(), meanPath.isSelected(), adaptive.isSelected());
+		int numPaths = Integer.parseInt((String) (bifurcation.getSelectedItem()));
+		Run.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError, ".", rndSeed,
+				run, numPaths, intSpecies, printer_id, printer_track_quantity, generate_statistics, sbmlProp.split("/"), selectedButtons, this,
+				sbmlProp, rap1, rap2, qss, con, stoichAmp, preAbs, loopAbs, postAbs, lpnAbstraction, mpde.isSelected(), meanPath.isSelected(),
+				adaptive.isSelected());
 		if (direct.equals("."))
 		{
 			outDir = simName;
@@ -1573,24 +1447,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					{
 						end = runs.charAt(runs.length() - j) + end;
 					}
-					if (end.equals(".tsd") || end.equals(".dat")
-							|| end.equals(".csv"))
+					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv"))
 					{
 						if (runs.contains("run-"))
 						{
-							run = Math.max(
-									run,
-									Integer.parseInt(runs.substring(4,
-											runs.length() - end.length())));
+							run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length() - end.length())));
 						}
 					}
 				}
 			}
 		}
-		String topLevelProps = sbmlProp.substring(0, sbmlProp.length()
-					- getFilename[getFilename.length - 1].length())
-					+ getFilename[getFilename.length - 1].substring(0, cut)
-					+ ".properties";
+		String topLevelProps = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
+				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		try
 		{
 			Properties getProps = new Properties();
@@ -1600,8 +1468,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			getProps.setProperty("selected.simulator", sim);
 			if (transientProperties != null)
 			{
-				getProps.setProperty("selected.property",
-						(String) transientProperties.getSelectedItem());
+				getProps.setProperty("selected.property", (String) transientProperties.getSelectedItem());
 			}
 			if (!fileStem.getText().trim().equals(""))
 			{
@@ -1615,10 +1482,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					int start = 1;
 					for (String s : searchForRunFiles)
 					{
-						if (s.length() > 3
-								&& s.substring(0, 4).equals("run-")
-								&& new File(root + Gui.separator + outDir
-										+ Gui.separator + s).isFile())
+						if (s.length() > 3 && s.substring(0, 4).equals("run-")
+								&& new File(root + Gui.separator + outDir + Gui.separator + s).isFile())
 						{
 							String getNumber = s.substring(4, s.length());
 							String number = "";
@@ -1636,22 +1501,20 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 							start = Math.max(Integer.parseInt(number), start);
 						}
 					}
-					getProps.setProperty("monte.carlo.simulation.start.index",(start + 1) + "");
+					getProps.setProperty("monte.carlo.simulation.start.index", (start + 1) + "");
 				}
 				else
 				{
-					getProps.setProperty("monte.carlo.simulation.start.index","1");
+					getProps.setProperty("monte.carlo.simulation.start.index", "1");
 				}
 			}
 			FileOutputStream store = new FileOutputStream(new File(propName));
-			getProps.store(store,getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
+			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
 			if (saveTopLevel)
 			{
 				store = new FileOutputStream(new File(topLevelProps));
-				getProps.store(store,
-						getFilename[getFilename.length - 1].substring(0, cut)
-								+ " Properties");
+				getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 				store.close();
 			}
 			// saveSEDML();
@@ -1659,9 +1522,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Unable to add properties to property file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		change = false;
 		return true;
@@ -1669,8 +1530,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 
 	private void loadSEDML()
 	{
-		sedmlFilename = root + Gui.separator + simName + Gui.separator
-				+ modelFile.replace(".xml", "") + "-sedml.xml";
+		sedmlFilename = root + Gui.separator + simName + Gui.separator + modelFile.replace(".xml", "") + "-sedml.xml";
 		File sedmlFile = new File(sedmlFilename);
 		if (sedmlFile.exists())
 		{
@@ -1692,48 +1552,39 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				List<Simulation> simulations = sedml.getSimulations();
 				if (simulations.size() > 0)
 				{
-					if (simulations.get(0).getAlgorithm().getKisaoID()
-							.equals("KISAO:0000019"))
+					if (simulations.get(0).getAlgorithm().getKisaoID().equals("KISAO:0000019"))
 					{
 						ODE.setSelected(true);
 						enableODE();
 						// simulators.setSelectedItem("Runge-Kutta-Fehlberg");
 						// TODO: what java ODE simulator fails on 987
 						simulators.setSelectedItem("rkf45");
-						UniformTimeCourse simulation = (UniformTimeCourse) simulations
-								.get(0);
+						UniformTimeCourse simulation = (UniformTimeCourse) simulations.get(0);
 						// KisaoTerm kisaoTerm =
 						// KisaoOntology.getInstance().getTermById(simulation.getAlgorithm().getKisaoID());
-						Annotation annotation = getSEDBaseAnnotation(
-								simulation, "printInterval");
+						Annotation annotation = getSEDBaseAnnotation(simulation, "printInterval");
 						if (annotation == null)
 						{
 							intervalLabel.setSelectedItem("Number Of Steps");
-							interval.setText(""
-									+ simulation.getNumberOfPoints());
+							interval.setText("" + simulation.getNumberOfPoints());
 						}
 						else
 						{
-							Element element = annotation
-									.getAnnotationElementsList().get(0);
+							Element element = annotation.getAnnotationElementsList().get(0);
 							if (element.getAttribute("Print_Interval") != null)
 							{
 								intervalLabel.setSelectedItem("Print Interval");
-								interval.setText(element
-										.getAttributeValue("Print_Interval"));
+								interval.setText(element.getAttributeValue("Print_Interval"));
 							}
 							else
 							{
-								intervalLabel
-										.setSelectedItem("Minimum Print Interval");
-								interval.setText(element
-										.getAttributeValue("Minimum_Print_Interval"));
+								intervalLabel.setSelectedItem("Minimum Print Interval");
+								interval.setText(element.getAttributeValue("Minimum_Print_Interval"));
 							}
 						}
 						limit.setText("" + simulation.getOutputEndTime());
 					}
-					else if (simulations.get(0).getAlgorithm().getKisaoID()
-							.equals("KISAO:0000437"))
+					else if (simulations.get(0).getAlgorithm().getKisaoID().equals("KISAO:0000437"))
 					{
 						fba.setSelected(true);
 						enableFBA();
@@ -1743,9 +1594,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			}
 			catch (XMLException e)
 			{
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Unable to load SED-ML file!",
-						"Error Loading SED-ML File", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to load SED-ML file!", "Error Loading SED-ML File", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -1760,12 +1609,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			}
 			else if (((String) simulators.getSelectedItem()).contains("rk8pd"))
 			{
-				return new Algorithm(
-						GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND);
+				return new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND);
 			}
 			else if (((String) simulators.getSelectedItem()).contains("rkf45")
-					|| ((String) simulators.getSelectedItem())
-							.contains("Runge-Kutta-Fehlberg"))
+					|| ((String) simulators.getSelectedItem()).contains("Runge-Kutta-Fehlberg"))
 			{
 				return new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
 			}
@@ -1780,23 +1627,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			{
 				return new Algorithm(GlobalConstants.KISAO_SSA_CR);
 			}
-			Algorithm algorithm = new Algorithm(
-					GlobalConstants.KISAO_MONTE_CARLO);
+			Algorithm algorithm = new Algorithm(GlobalConstants.KISAO_MONTE_CARLO);
 			Element para = new Element("analysis");
-			para.setAttribute("method",
-					((String) simulators.getSelectedItem()).replace(" ", "_"));
-			para.setNamespace(Namespace.getNamespace("ibiosim",
-					"http://www.fakeuri.com"));
+			para.setAttribute("method", ((String) simulators.getSelectedItem()).replace(" ", "_"));
+			para.setNamespace(Namespace.getNamespace("ibiosim", "http://www.fakeuri.com"));
 			Annotation ann = new Annotation(para);
 			algorithm.addAnnotation(ann);
 			return algorithm;
 		}
 		Algorithm algorithm = new Algorithm(GlobalConstants.KISAO_GENERIC);
 		Element para = new Element("analysis");
-		para.setAttribute("method",
-				((String) simulators.getSelectedItem()).replace(" ", "_"));
-		para.setNamespace(Namespace.getNamespace("ibiosim",
-				"http://www.fakeuri.com"));
+		para.setAttribute("method", ((String) simulators.getSelectedItem()).replace(" ", "_"));
+		para.setNamespace(Namespace.getNamespace("ibiosim", "http://www.fakeuri.com"));
 		Annotation ann = new Annotation(para);
 		algorithm.addAnnotation(ann);
 		return algorithm;
@@ -1821,12 +1663,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 	/**
 	 * Loads the simulate options.
 	 */
-	private void loadPropertiesFile(String simName,String modelName)
+	private void loadPropertiesFile(String simName, String modelName)
 	{
 		String openFile = root + Gui.separator + simName + Gui.separator + simName + ".properties";
-		if (!(new File(openFile)).exists())	{
+		if (!(new File(openFile)).exists())
+		{
 			openFile = root + Gui.separator + simName + Gui.separator + modelName + ".properties";
-			if (!(new File(openFile)).exists()) {
+			if (!(new File(openFile)).exists())
+			{
 				return;
 			}
 		}
@@ -1841,302 +1685,206 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				ArrayList<String> loadProperties = new ArrayList<String>();
 				for (Object key : load.keySet())
 				{
-					String type = key.toString().substring(0,
-							key.toString().indexOf('.'));
+					String type = key.toString().substring(0, key.toString().indexOf('.'));
 					if (type.equals("gcm"))
 					{
-						loadProperties.add(key.toString() + "="
-								+ load.getProperty(key.toString()));
+						loadProperties.add(key.toString() + "=" + load.getProperty(key.toString()));
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.1"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.0.1")
-								.equals("enzyme-kinetic-qssa-1"))
+						if (!load.getProperty("reb2sac.abstraction.method.0.1").equals("enzyme-kinetic-qssa-1"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.0.1="
-											+ load.getProperty("reb2sac.abstraction.method.0.1"));
+							loadProperties.add("reb2sac.abstraction.method.0.1=" + load.getProperty("reb2sac.abstraction.method.0.1"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.2"))
 					{
-						if (!load
-								.getProperty("reb2sac.abstraction.method.0.2")
-								.equals("reversible-to-irreversible-transformer"))
+						if (!load.getProperty("reb2sac.abstraction.method.0.2").equals("reversible-to-irreversible-transformer"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.0.2="
-											+ load.getProperty("reb2sac.abstraction.method.0.2"));
+							loadProperties.add("reb2sac.abstraction.method.0.2=" + load.getProperty("reb2sac.abstraction.method.0.2"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.3"))
 					{
-						if (!load
-								.getProperty("reb2sac.abstraction.method.0.3")
-								.equals("multiple-products-reaction-eliminator"))
+						if (!load.getProperty("reb2sac.abstraction.method.0.3").equals("multiple-products-reaction-eliminator"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.0.3="
-											+ load.getProperty("reb2sac.abstraction.method.0.3"));
+							loadProperties.add("reb2sac.abstraction.method.0.3=" + load.getProperty("reb2sac.abstraction.method.0.3"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.4"))
 					{
-						if (!load
-								.getProperty("reb2sac.abstraction.method.0.4")
-								.equals("multiple-reactants-reaction-eliminator"))
+						if (!load.getProperty("reb2sac.abstraction.method.0.4").equals("multiple-reactants-reaction-eliminator"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.0.4="
-											+ load.getProperty("reb2sac.abstraction.method.0.4"));
+							loadProperties.add("reb2sac.abstraction.method.0.4=" + load.getProperty("reb2sac.abstraction.method.0.4"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.5"))
 					{
-						if (!load
-								.getProperty("reb2sac.abstraction.method.0.5")
-								.equals("single-reactant-product-reaction-eliminator"))
+						if (!load.getProperty("reb2sac.abstraction.method.0.5").equals("single-reactant-product-reaction-eliminator"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.0.5="
-											+ load.getProperty("reb2sac.abstraction.method.0.5"));
+							loadProperties.add("reb2sac.abstraction.method.0.5=" + load.getProperty("reb2sac.abstraction.method.0.5"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.6"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.0.6")
-								.equals("dimer-to-monomer-substitutor"))
+						if (!load.getProperty("reb2sac.abstraction.method.0.6").equals("dimer-to-monomer-substitutor"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.0.6="
-											+ load.getProperty("reb2sac.abstraction.method.0.6"));
+							loadProperties.add("reb2sac.abstraction.method.0.6=" + load.getProperty("reb2sac.abstraction.method.0.6"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.7"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.0.7")
-								.equals("inducer-structure-transformer"))
+						if (!load.getProperty("reb2sac.abstraction.method.0.7").equals("inducer-structure-transformer"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.0.7="
-											+ load.getProperty("reb2sac.abstraction.method.0.7"));
+							loadProperties.add("reb2sac.abstraction.method.0.7=" + load.getProperty("reb2sac.abstraction.method.0.7"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.1.1"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.1.1")
-								.equals("modifier-structure-transformer"))
+						if (!load.getProperty("reb2sac.abstraction.method.1.1").equals("modifier-structure-transformer"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.1.1="
-											+ load.getProperty("reb2sac.abstraction.method.1.1"));
+							loadProperties.add("reb2sac.abstraction.method.1.1=" + load.getProperty("reb2sac.abstraction.method.1.1"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.1.2"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.1.2")
-								.equals("modifier-constant-propagation"))
+						if (!load.getProperty("reb2sac.abstraction.method.1.2").equals("modifier-constant-propagation"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.1.2="
-											+ load.getProperty("reb2sac.abstraction.method.1.2"));
+							loadProperties.add("reb2sac.abstraction.method.1.2=" + load.getProperty("reb2sac.abstraction.method.1.2"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.1"))
 					{
-						if (!load
-								.getProperty("reb2sac.abstraction.method.2.1")
-								.equals("operator-site-forward-binding-remover"))
+						if (!load.getProperty("reb2sac.abstraction.method.2.1").equals("operator-site-forward-binding-remover"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.2.1="
-											+ load.getProperty("reb2sac.abstraction.method.2.1"));
+							loadProperties.add("reb2sac.abstraction.method.2.1=" + load.getProperty("reb2sac.abstraction.method.2.1"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.3"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.2.3")
-								.equals("enzyme-kinetic-rapid-equilibrium-1"))
+						if (!load.getProperty("reb2sac.abstraction.method.2.3").equals("enzyme-kinetic-rapid-equilibrium-1"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.2.3="
-											+ load.getProperty("reb2sac.abstraction.method.2.3"));
+							loadProperties.add("reb2sac.abstraction.method.2.3=" + load.getProperty("reb2sac.abstraction.method.2.3"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.4"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.2.4")
-								.equals("irrelevant-species-remover"))
+						if (!load.getProperty("reb2sac.abstraction.method.2.4").equals("irrelevant-species-remover"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.2.4="
-											+ load.getProperty("reb2sac.abstraction.method.2.4"));
+							loadProperties.add("reb2sac.abstraction.method.2.4=" + load.getProperty("reb2sac.abstraction.method.2.4"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.5"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.2.5")
-								.equals("inducer-structure-transformer"))
+						if (!load.getProperty("reb2sac.abstraction.method.2.5").equals("inducer-structure-transformer"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.2.5="
-											+ load.getProperty("reb2sac.abstraction.method.2.5"));
+							loadProperties.add("reb2sac.abstraction.method.2.5=" + load.getProperty("reb2sac.abstraction.method.2.5"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.6"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.2.6")
-								.equals("modifier-constant-propagation"))
+						if (!load.getProperty("reb2sac.abstraction.method.2.6").equals("modifier-constant-propagation"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.2.6="
-											+ load.getProperty("reb2sac.abstraction.method.2.6"));
+							loadProperties.add("reb2sac.abstraction.method.2.6=" + load.getProperty("reb2sac.abstraction.method.2.6"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.7"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.2.7")
-								.equals("similar-reaction-combiner"))
+						if (!load.getProperty("reb2sac.abstraction.method.2.7").equals("similar-reaction-combiner"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.2.7="
-											+ load.getProperty("reb2sac.abstraction.method.2.7"));
+							loadProperties.add("reb2sac.abstraction.method.2.7=" + load.getProperty("reb2sac.abstraction.method.2.7"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.8"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.2.8")
-								.equals("modifier-constant-propagation"))
+						if (!load.getProperty("reb2sac.abstraction.method.2.8").equals("modifier-constant-propagation"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.2.8="
-											+ load.getProperty("reb2sac.abstraction.method.2.8"));
+							loadProperties.add("reb2sac.abstraction.method.2.8=" + load.getProperty("reb2sac.abstraction.method.2.8"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.2"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.2.2")
-								.equals("dimerization-reduction")
-								&& !load.getProperty(
-										"reb2sac.abstraction.method.2.2")
-										.equals("dimerization-reduction-level-assignment"))
+						if (!load.getProperty("reb2sac.abstraction.method.2.2").equals("dimerization-reduction")
+								&& !load.getProperty("reb2sac.abstraction.method.2.2").equals("dimerization-reduction-level-assignment"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.2.2="
-											+ load.getProperty("reb2sac.abstraction.method.2.2"));
+							loadProperties.add("reb2sac.abstraction.method.2.2=" + load.getProperty("reb2sac.abstraction.method.2.2"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.1"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.3.1")
-								.equals("kinetic-law-constants-simplifier")
-								&& !load.getProperty(
-										"reb2sac.abstraction.method.3.1")
-										.equals("reversible-to-irreversible-transformer")
-								&& !load.getProperty(
-										"reb2sac.abstraction.method.3.1")
-										.equals("nary-order-unary-transformer"))
+						if (!load.getProperty("reb2sac.abstraction.method.3.1").equals("kinetic-law-constants-simplifier")
+								&& !load.getProperty("reb2sac.abstraction.method.3.1").equals("reversible-to-irreversible-transformer")
+								&& !load.getProperty("reb2sac.abstraction.method.3.1").equals("nary-order-unary-transformer"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.3.1="
-											+ load.getProperty("reb2sac.abstraction.method.3.1"));
+							loadProperties.add("reb2sac.abstraction.method.3.1=" + load.getProperty("reb2sac.abstraction.method.3.1"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.2"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.3.2")
-								.equals("kinetic-law-constants-simplifier")
-								&& !load.getProperty(
-										"reb2sac.abstraction.method.3.2")
-										.equals("modifier-constant-propagation"))
+						if (!load.getProperty("reb2sac.abstraction.method.3.2").equals("kinetic-law-constants-simplifier")
+								&& !load.getProperty("reb2sac.abstraction.method.3.2").equals("modifier-constant-propagation"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.3.2="
-											+ load.getProperty("reb2sac.abstraction.method.3.2"));
+							loadProperties.add("reb2sac.abstraction.method.3.2=" + load.getProperty("reb2sac.abstraction.method.3.2"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.3"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.3.3")
-								.equals("absolute-inhibition-generator"))
+						if (!load.getProperty("reb2sac.abstraction.method.3.3").equals("absolute-inhibition-generator"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.3.3="
-											+ load.getProperty("reb2sac.abstraction.method.3.3"));
+							loadProperties.add("reb2sac.abstraction.method.3.3=" + load.getProperty("reb2sac.abstraction.method.3.3"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.4"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.3.4")
-								.equals("final-state-generator"))
+						if (!load.getProperty("reb2sac.abstraction.method.3.4").equals("final-state-generator"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.3.4="
-											+ load.getProperty("reb2sac.abstraction.method.3.4"));
+							loadProperties.add("reb2sac.abstraction.method.3.4=" + load.getProperty("reb2sac.abstraction.method.3.4"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.5"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.3.5")
-								.equals("stop-flag-generator"))
+						if (!load.getProperty("reb2sac.abstraction.method.3.5").equals("stop-flag-generator"))
 						{
-							loadProperties
-									.add("reb2sac.abstraction.method.3.5="
-											+ load.getProperty("reb2sac.abstraction.method.3.5"));
+							loadProperties.add("reb2sac.abstraction.method.3.5=" + load.getProperty("reb2sac.abstraction.method.3.5"));
 						}
 					}
 					else if (key.equals("reb2sac.nary.order.decider"))
 					{
-						if (!load.getProperty("reb2sac.nary.order.decider")
-								.equals("distinct"))
+						if (!load.getProperty("reb2sac.nary.order.decider").equals("distinct"))
 						{
-							loadProperties
-									.add("reb2sac.nary.order.decider="
-											+ load.getProperty("reb2sac.nary.order.decider"));
+							loadProperties.add("reb2sac.nary.order.decider=" + load.getProperty("reb2sac.nary.order.decider"));
 						}
 					}
 					else if (key.equals("simulation.printer"))
 					{
-						if (!load.getProperty("simulation.printer").equals(
-								"tsd.printer"))
+						if (!load.getProperty("simulation.printer").equals("tsd.printer"))
 						{
-							loadProperties.add("simulation.printer="
-									+ load.getProperty("simulation.printer"));
+							loadProperties.add("simulation.printer=" + load.getProperty("simulation.printer"));
 						}
 					}
 					else if (key.equals("simulation.printer.tracking.quantity"))
 					{
-						if (!load.getProperty(
-								"simulation.printer.tracking.quantity").equals(
-								"amount"))
+						if (!load.getProperty("simulation.printer.tracking.quantity").equals("amount"))
 						{
-							loadProperties
-									.add("simulation.printer.tracking.quantity="
-											+ load.getProperty("simulation.printer.tracking.quantity"));
+							loadProperties.add("simulation.printer.tracking.quantity=" + load.getProperty("simulation.printer.tracking.quantity"));
 						}
 					}
-					else if (((String) key).length() > 27
-							&& ((String) key).substring(0, 28).equals(
-									"reb2sac.interesting.species."))
+					else if (((String) key).length() > 27 && ((String) key).substring(0, 28).equals("reb2sac.interesting.species."))
 					{
 					}
-					else if (key
-							.equals("reb2sac.rapid.equilibrium.condition.1"))
+					else if (key.equals("reb2sac.rapid.equilibrium.condition.1"))
 					{
 					}
-					else if (key
-							.equals("reb2sac.rapid.equilibrium.condition.2"))
+					else if (key.equals("reb2sac.rapid.equilibrium.condition.2"))
 					{
 					}
 					else if (key.equals("reb2sac.qssa.condition.1"))
 					{
 					}
-					else if (key
-							.equals("reb2sac.operator.max.concentration.threshold"))
+					else if (key.equals("reb2sac.operator.max.concentration.threshold"))
 					{
 					}
-					else if (key
-							.equals("reb2sac.diffusion.stoichiometry.amplification.value"))
+					else if (key.equals("reb2sac.diffusion.stoichiometry.amplification.value"))
 					{
 					}
 					else if (key.equals("reb2sac.iSSA.number.paths"))
@@ -2172,8 +1920,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					else if (key.equals("monte.carlo.simulation.time.limit"))
 					{
 					}
-					else if (key
-							.equals("monte.carlo.simulation.print.interval"))
+					else if (key.equals("monte.carlo.simulation.print.interval"))
 					{
 					}
 					else if (key.equals("monte.carlo.simulation.number.steps"))
@@ -2200,8 +1947,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					else if (key.equals("computation.analysis.sad.path"))
 					{
 					}
-					else if (key
-							.equals("simulation.time.series.species.level.file"))
+					else if (key.equals("simulation.time.series.species.level.file"))
 					{
 					}
 					else if (key.equals("reb2sac.simulation.method"))
@@ -2216,24 +1962,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					else if (key.equals("file.stem"))
 					{
 					}
-					else if (((String) key).length() > 36
-							&& ((String) key).substring(0, 37).equals(
-									"simulation.run.termination.condition."))
+					else if (((String) key).length() > 36 && ((String) key).substring(0, 37).equals("simulation.run.termination.condition."))
 					{
 					}
-					else if (((String) key).length() > 37
-							&& ((String) key).substring(0, 38).equals(
-									"reb2sac.absolute.inhibition.threshold."))
+					else if (((String) key).length() > 37 && ((String) key).substring(0, 38).equals("reb2sac.absolute.inhibition.threshold."))
 					{
 					}
-					else if (((String) key).length() > 27
-							&& ((String) key).substring(0, 28).equals(
-									"reb2sac.concentration.level."))
+					else if (((String) key).length() > 27 && ((String) key).substring(0, 28).equals("reb2sac.concentration.level."))
 					{
 					}
-					else if (((String) key).length() > 19
-							&& ((String) key).substring(0, 20).equals(
-									"reb2sac.final.state."))
+					else if (((String) key).length() > 19 && ((String) key).substring(0, 20).equals("reb2sac.final.state."))
 					{
 					}
 					else if (key.equals("reb2sac.analysis.stop.enabled"))
@@ -2245,11 +1983,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					else if (key.equals("monte.carlo.simulation.start.index"))
 					{
 					}
-					else if (key.equals("abstraction.interesting")
-							&& lpnAbstraction != null)
+					else if (key.equals("abstraction.interesting") && lpnAbstraction != null)
 					{
-						String intVars = load
-								.getProperty("abstraction.interesting");
+						String intVars = load.getProperty("abstraction.interesting");
 						String[] array = intVars.split(" ");
 						for (String s : array)
 						{
@@ -2259,17 +1995,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 							}
 						}
 					}
-					else if (key.equals("abstraction.factor")
-							&& lpnAbstraction != null)
+					else if (key.equals("abstraction.factor") && lpnAbstraction != null)
 					{
-						lpnAbstraction.factorField.setText(load
-								.getProperty("abstraction.factor"));
+						lpnAbstraction.factorField.setText(load.getProperty("abstraction.factor"));
 					}
-					else if (key.equals("abstraction.iterations")
-							&& lpnAbstraction != null)
+					else if (key.equals("abstraction.iterations") && lpnAbstraction != null)
 					{
-						lpnAbstraction.iterField.setText(load
-								.getProperty("abstraction.iterations"));
+						lpnAbstraction.iterField.setText(load.getProperty("abstraction.iterations"));
 					}
 					else if (key.toString().startsWith("abstraction.transform"))
 					{
@@ -2277,8 +2009,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					}
 					else
 					{
-						loadProperties.add(key + "="
-								+ load.getProperty((String) key));
+						loadProperties.add(key + "=" + load.getProperty((String) key));
 					}
 				}
 				HashMap<Integer, String> preOrder = new HashMap<Integer, String>();
@@ -2292,18 +2023,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					{
 						if (load.containsKey("abstraction.transform." + s))
 						{
-							if (load.getProperty("abstraction.transform." + s)
-									.contains("preloop"))
+							if (load.getProperty("abstraction.transform." + s).contains("preloop"))
 							{
-								Pattern prePattern = Pattern
-										.compile("preloop(\\d+)");
-								Matcher intMatch = prePattern.matcher(load
-										.getProperty("abstraction.transform."
-												+ s));
+								Pattern prePattern = Pattern.compile("preloop(\\d+)");
+								Matcher intMatch = prePattern.matcher(load.getProperty("abstraction.transform." + s));
 								if (intMatch.find())
 								{
-									Integer index = Integer.parseInt(intMatch
-											.group(1));
+									Integer index = Integer.parseInt(intMatch.group(1));
 									preOrder.put(index, s);
 								}
 								else
@@ -2315,18 +2041,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 							{
 								lpnAbstraction.preAbsModel.removeElement(s);
 							}
-							if (load.getProperty("abstraction.transform." + s)
-									.contains("mainloop"))
+							if (load.getProperty("abstraction.transform." + s).contains("mainloop"))
 							{
-								Pattern loopPattern = Pattern
-										.compile("mainloop(\\d+)");
-								Matcher intMatch = loopPattern.matcher(load
-										.getProperty("abstraction.transform."
-												+ s));
+								Pattern loopPattern = Pattern.compile("mainloop(\\d+)");
+								Matcher intMatch = loopPattern.matcher(load.getProperty("abstraction.transform." + s));
 								if (intMatch.find())
 								{
-									Integer index = Integer.parseInt(intMatch
-											.group(1));
+									Integer index = Integer.parseInt(intMatch.group(1));
 									loopOrder.put(index, s);
 								}
 								else
@@ -2338,18 +2059,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 							{
 								lpnAbstraction.loopAbsModel.removeElement(s);
 							}
-							if (load.getProperty("abstraction.transform." + s)
-									.contains("postloop"))
+							if (load.getProperty("abstraction.transform." + s).contains("postloop"))
 							{
-								Pattern postPattern = Pattern
-										.compile("postloop(\\d+)");
-								Matcher intMatch = postPattern.matcher(load
-										.getProperty("abstraction.transform."
-												+ s));
+								Pattern postPattern = Pattern.compile("postloop(\\d+)");
+								Matcher intMatch = postPattern.matcher(load.getProperty("abstraction.transform." + s));
 								if (intMatch.find())
 								{
-									Integer index = Integer.parseInt(intMatch
-											.group(1));
+									Integer index = Integer.parseInt(intMatch.group(1));
 									postOrder.put(index, s);
 								}
 								else
@@ -2383,8 +2099,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					}
 					for (Integer j = 0; j < loopOrder.size(); j++)
 					{
-						lpnAbstraction.loopAbsModel
-								.addElement(loopOrder.get(j));
+						lpnAbstraction.loopAbsModel.addElement(loopOrder.get(j));
 					}
 					if (postOrder.size() > 0)
 					{
@@ -2392,30 +2107,23 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 					}
 					for (Integer j = 0; j < postOrder.size(); j++)
 					{
-						lpnAbstraction.postAbsModel
-								.addElement(postOrder.get(j));
+						lpnAbstraction.postAbsModel.addElement(postOrder.get(j));
 					}
-					lpnAbstraction.preAbs
-							.setListData(lpnAbstraction.preAbsModel.toArray());
-					lpnAbstraction.loopAbs
-							.setListData(lpnAbstraction.loopAbsModel.toArray());
-					lpnAbstraction.postAbs
-							.setListData(lpnAbstraction.postAbsModel.toArray());
+					lpnAbstraction.preAbs.setListData(lpnAbstraction.preAbsModel.toArray());
+					lpnAbstraction.loopAbs.setListData(lpnAbstraction.loopAbsModel.toArray());
+					lpnAbstraction.postAbs.setListData(lpnAbstraction.postAbsModel.toArray());
 				}
-				if (load.getProperty("reb2sac.abstraction.method").equals(
-						"none"))
+				if (load.getProperty("reb2sac.abstraction.method").equals("none"))
 				{
 					noAbstraction.setSelected(true);
 					enableNoAbstraction();
 				}
-				else if (load.getProperty("reb2sac.abstraction.method").equals(
-						"expand"))
+				else if (load.getProperty("reb2sac.abstraction.method").equals("expand"))
 				{
 					expandReactions.setSelected(true);
 					enableNoAbstraction();
 				}
-				else if (load.getProperty("reb2sac.abstraction.method").equals(
-						"abs"))
+				else if (load.getProperty("reb2sac.abstraction.method").equals("abs"))
 				{
 					reactionAbstraction.setSelected(true);
 					enableReactionAbstraction();
@@ -2427,8 +2135,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 				if (load.containsKey("ode.simulation.absolute.error"))
 				{
-					absErr.setText(load
-							.getProperty("ode.simulation.absolute.error"));
+					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
 				}
 				else
 				{
@@ -2436,8 +2143,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 				if (load.containsKey("monte.carlo.simulation.time.step"))
 				{
-					step.setText(load
-							.getProperty("monte.carlo.simulation.time.step"));
+					step.setText(load.getProperty("monte.carlo.simulation.time.step"));
 				}
 				else
 				{
@@ -2445,8 +2151,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 				if (load.containsKey("monte.carlo.simulation.min.time.step"))
 				{
-					minStep.setText(load
-							.getProperty("monte.carlo.simulation.min.time.step"));
+					minStep.setText(load.getProperty("monte.carlo.simulation.min.time.step"));
 				}
 				else
 				{
@@ -2454,8 +2159,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 				if (load.containsKey("monte.carlo.simulation.time.limit"))
 				{
-					limit.setText(load
-							.getProperty("monte.carlo.simulation.time.limit"));
+					limit.setText(load.getProperty("monte.carlo.simulation.time.limit"));
 				}
 				else
 				{
@@ -2464,22 +2168,17 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				if (load.containsKey("monte.carlo.simulation.print.interval"))
 				{
 					intervalLabel.setSelectedItem("Print Interval");
-					interval.setText(load
-							.getProperty("monte.carlo.simulation.print.interval"));
+					interval.setText(load.getProperty("monte.carlo.simulation.print.interval"));
 				}
-				else if (load
-						.containsKey("monte.carlo.simulation.minimum.print.interval"))
+				else if (load.containsKey("monte.carlo.simulation.minimum.print.interval"))
 				{
 					intervalLabel.setSelectedItem("Minimum Print Interval");
-					interval.setText(load
-							.getProperty("monte.carlo.simulation.minimum.print.interval"));
+					interval.setText(load.getProperty("monte.carlo.simulation.minimum.print.interval"));
 				}
-				else if (load
-						.containsKey("monte.carlo.simulation.number.steps"))
+				else if (load.containsKey("monte.carlo.simulation.number.steps"))
 				{
 					intervalLabel.setSelectedItem("Number Of Steps");
-					interval.setText(load
-							.getProperty("monte.carlo.simulation.number.steps"));
+					interval.setText(load.getProperty("monte.carlo.simulation.number.steps"));
 				}
 				else
 				{
@@ -2487,13 +2186,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 				if (load.containsKey("monte.carlo.simulation.random.seed"))
 				{
-					seed.setText(load
-							.getProperty("monte.carlo.simulation.random.seed"));
+					seed.setText(load.getProperty("monte.carlo.simulation.random.seed"));
 				}
 				if (load.containsKey("monte.carlo.simulation.runs"))
 				{
-					runs.setText(load
-							.getProperty("monte.carlo.simulation.runs"));
+					runs.setText(load.getProperty("monte.carlo.simulation.runs"));
 				}
 				if (load.containsKey("simulation.time.series.species.level.file"))
 				{
@@ -2516,82 +2213,68 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 				if (load.containsKey("simulation.printer.tracking.quantity"))
 				{
-					if (load.getProperty("simulation.printer.tracking.quantity")
-							.equals("concentration"))
+					if (load.getProperty("simulation.printer.tracking.quantity").equals("concentration"))
 					{
 						concentrations.doClick();
 					}
 				}
 				if (load.containsKey("simulation.printer"))
 				{
-					if (load.getProperty("simulation.printer").equals(
-							"null.printer"))
+					if (load.getProperty("simulation.printer").equals("null.printer"))
 					{
 						genRuns.doClick();
 					}
 				}
 				if (load.containsKey("reb2sac.simulation.method"))
 				{
-					if (load.getProperty("reb2sac.simulation.method").equals(
-							"ODE"))
+					if (load.getProperty("reb2sac.simulation.method").equals("ODE"))
 					{
 						ODE.setSelected(true);
 						if (load.containsKey("ode.simulation.time.limit"))
 						{
-							limit.setText(load
-									.getProperty("ode.simulation.time.limit"));
+							limit.setText(load.getProperty("ode.simulation.time.limit"));
 						}
 						if (load.containsKey("ode.simulation.print.interval"))
 						{
 							intervalLabel.setSelectedItem("Print Interval");
-							interval.setText(load
-									.getProperty("ode.simulation.print.interval"));
+							interval.setText(load.getProperty("ode.simulation.print.interval"));
 						}
 						if (load.containsKey("ode.simulation.minimum.print.interval"))
 						{
-							intervalLabel
-									.setSelectedItem("Minimum Print Interval");
-							interval.setText(load
-									.getProperty("ode.simulation.minimum.print.interval"));
+							intervalLabel.setSelectedItem("Minimum Print Interval");
+							interval.setText(load.getProperty("ode.simulation.minimum.print.interval"));
 						}
-						else if (load
-								.containsKey("ode.simulation.number.steps"))
+						else if (load.containsKey("ode.simulation.number.steps"))
 						{
 							intervalLabel.setSelectedItem("Number Of Steps");
-							interval.setText(load
-									.getProperty("ode.simulation.number.steps"));
+							interval.setText(load.getProperty("ode.simulation.number.steps"));
 						}
 						if (load.containsKey("ode.simulation.time.step"))
 						{
-							step.setText(load
-									.getProperty("ode.simulation.time.step"));
+							step.setText(load.getProperty("ode.simulation.time.step"));
 						}
 						if (load.containsKey("ode.simulation.min.time.step"))
 						{
-							minStep.setText(load
-									.getProperty("ode.simulation.min.time.step"));
+							minStep.setText(load.getProperty("ode.simulation.min.time.step"));
 						}
 						enableODE();
 						if (load.containsKey("selected.simulator"))
 						{
-							simulators.setSelectedItem(load
-									.getProperty("selected.simulator"));
+							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
 						if (load.containsKey("file.stem"))
 						{
 							fileStem.setText(load.getProperty("file.stem"));
 						}
 					}
-					else if (load.getProperty("reb2sac.simulation.method")
-							.equals("monteCarlo"))
+					else if (load.getProperty("reb2sac.simulation.method").equals("monteCarlo"))
 					{
 						monteCarlo.setSelected(true);
 						append.setEnabled(true);
 						enableMonteCarlo();
 						if (load.containsKey("selected.simulator"))
 						{
-							String simId = load
-									.getProperty("selected.simulator");
+							String simId = load.getProperty("selected.simulator");
 							if (simId.equals("mpde"))
 							{
 								simulators.setSelectedItem("iSSA");
@@ -2641,16 +2324,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 								adaptive.doClick();
 								bifurcation.setSelectedItem("1");
 							}
-							else if (simId
-									.equals("mean_path-adaptive-bifurcation"))
+							else if (simId.equals("mean_path-adaptive-bifurcation"))
 							{
 								simulators.setSelectedItem("iSSA");
 								meanPath.doClick();
 								adaptive.doClick();
 								bifurcation.setSelectedItem("2");
 							}
-							else if (simId
-									.equals("median_path-adaptive-bifurcation"))
+							else if (simId.equals("median_path-adaptive-bifurcation"))
 							{
 								simulators.setSelectedItem("iSSA");
 								medianPath.doClick();
@@ -2671,16 +2352,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 								nonAdaptive.doClick();
 								bifurcation.setSelectedItem("1");
 							}
-							else if (simId
-									.equals("mean_path-event-bifurcation"))
+							else if (simId.equals("mean_path-event-bifurcation"))
 							{
 								simulators.setSelectedItem("iSSA");
 								meanPath.doClick();
 								nonAdaptive.doClick();
 								bifurcation.setSelectedItem("2");
 							}
-							else if (simId
-									.equals("median_path-event-bifurcation"))
+							else if (simId.equals("median_path-event-bifurcation"))
 							{
 								simulators.setSelectedItem("iSSA");
 								medianPath.doClick();
@@ -2698,49 +2377,42 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 						}
 						absErr.setEnabled(false);
 					}
-					else if (load.getProperty("reb2sac.simulation.method")
-							.equals("markov"))
+					else if (load.getProperty("reb2sac.simulation.method").equals("markov"))
 					{
 						markov.setSelected(true);
 						enableMarkov();
 						if (load.containsKey("selected.simulator"))
 						{
-							selectedMarkovSim = load
-									.getProperty("selected.simulator");
+							selectedMarkovSim = load.getProperty("selected.simulator");
 							simulators.setSelectedItem(selectedMarkovSim);
 						}
 						absErr.setEnabled(false);
 					}
-					else if (load.getProperty("reb2sac.simulation.method")
-							.equals("FBA"))
+					else if (load.getProperty("reb2sac.simulation.method").equals("FBA"))
 					{
 						fba.doClick();
 						enableFBA();
 						// absErr.setEnabled(false);
 					}
-					else if (load.getProperty("reb2sac.simulation.method")
-							.equals("SBML"))
+					else if (load.getProperty("reb2sac.simulation.method").equals("SBML"))
 					{
 						sbml.setSelected(true);
 						enableSbmlDotAndXhtml();
 						absErr.setEnabled(false);
 					}
-					else if (load.getProperty("reb2sac.simulation.method")
-							.equals("Network"))
+					else if (load.getProperty("reb2sac.simulation.method").equals("Network"))
 					{
 						dot.setSelected(true);
 						enableSbmlDotAndXhtml();
 						absErr.setEnabled(false);
 					}
-					else if (load.getProperty("reb2sac.simulation.method")
-							.equals("Browser"))
+					else if (load.getProperty("reb2sac.simulation.method").equals("Browser"))
 					{
 						xhtml.setSelected(true);
 						enableSbmlDotAndXhtml();
 						absErr.setEnabled(false);
 					}
-					else if (load.getProperty("reb2sac.simulation.method")
-							.equals("LPN"))
+					else if (load.getProperty("reb2sac.simulation.method").equals("LPN"))
 					{
 						enableSbmlDotAndXhtml();
 						absErr.setEnabled(false);
@@ -2748,23 +2420,19 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 				if (load.containsKey("reb2sac.abstraction.method"))
 				{
-					if (load.getProperty("reb2sac.abstraction.method").equals(
-							"none"))
+					if (load.getProperty("reb2sac.abstraction.method").equals("none"))
 					{
 						noAbstraction.setSelected(true);
 					}
-					else if (load.getProperty("reb2sac.abstraction.method")
-							.equals("expand"))
+					else if (load.getProperty("reb2sac.abstraction.method").equals("expand"))
 					{
 						expandReactions.setSelected(true);
 					}
-					else if (load.getProperty("reb2sac.abstraction.method")
-							.equals("abs"))
+					else if (load.getProperty("reb2sac.abstraction.method").equals("abs"))
 					{
 						reactionAbstraction.setSelected(true);
 					}
-					else if (load.getProperty("reb2sac.abstraction.method")
-							.equals("nary"))
+					else if (load.getProperty("reb2sac.abstraction.method").equals("nary"))
 					{
 						stateAbstraction.setSelected(true);
 					}
@@ -2773,41 +2441,30 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				{
 					if (transientProperties != null)
 					{
-						transientProperties.setSelectedItem(load
-								.getProperty("selected.property"));
+						transientProperties.setSelectedItem(load.getProperty("selected.property"));
 					}
 				}
 				ArrayList<String> getLists = new ArrayList<String>();
 				int i = 1;
-				while (load.containsKey("simulation.run.termination.condition."
-						+ i))
+				while (load.containsKey("simulation.run.termination.condition." + i))
 				{
-					getLists.add(load
-							.getProperty("simulation.run.termination.condition."
-									+ i));
+					getLists.add(load.getProperty("simulation.run.termination.condition." + i));
 					i++;
 				}
 				getLists = new ArrayList<String>();
 				i = 1;
 				while (load.containsKey("reb2sac.interesting.species." + i))
 				{
-					String species = load
-							.getProperty("reb2sac.interesting.species." + i);
+					String species = load.getProperty("reb2sac.interesting.species." + i);
 					int j = 2;
 					String interesting = " ";
-					if (load.containsKey("reb2sac.concentration.level."
-							+ species + ".1"))
+					if (load.containsKey("reb2sac.concentration.level." + species + ".1"))
 					{
-						interesting += load
-								.getProperty("reb2sac.concentration.level."
-										+ species + ".1");
+						interesting += load.getProperty("reb2sac.concentration.level." + species + ".1");
 					}
-					while (load.containsKey("reb2sac.concentration.level."
-							+ species + "." + j))
+					while (load.containsKey("reb2sac.concentration.level." + species + "." + j))
 					{
-						interesting += ","
-								+ load.getProperty("reb2sac.concentration.level."
-										+ species + "." + j);
+						interesting += "," + load.getProperty("reb2sac.concentration.level." + species + "." + j);
 						j++;
 					}
 					if (!interesting.equals(" "))
@@ -2837,15 +2494,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				i = 1;
 				while (load.containsKey("gcm.abstraction.method." + i))
 				{
-					getLists.add(load
-							.getProperty("gcm.abstraction.method." + i));
+					getLists.add(load.getProperty("gcm.abstraction.method." + i));
 					i++;
 				}
 				i = 1;
 				while (load.containsKey("reb2sac.abstraction.method.1." + i))
 				{
-					getLists.add(load
-							.getProperty("reb2sac.abstraction.method.1." + i));
+					getLists.add(load.getProperty("reb2sac.abstraction.method.1." + i));
 					i++;
 				}
 				preAbstractions = getLists.toArray();
@@ -2855,8 +2510,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				i = 1;
 				while (load.containsKey("reb2sac.abstraction.method.2." + i))
 				{
-					getLists.add(load
-							.getProperty("reb2sac.abstraction.method.2." + i));
+					getLists.add(load.getProperty("reb2sac.abstraction.method.2." + i));
 					i++;
 				}
 				loopAbstractions = getLists.toArray();
@@ -2866,8 +2520,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				i = 1;
 				while (load.containsKey("reb2sac.abstraction.method.3." + i))
 				{
-					getLists.add(load
-							.getProperty("reb2sac.abstraction.method.3." + i));
+					getLists.add(load.getProperty("reb2sac.abstraction.method.3." + i));
 					i++;
 				}
 				postAbstractions = getLists.toArray();
@@ -2875,13 +2528,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 
 				if (load.containsKey("reb2sac.rapid.equilibrium.condition.1"))
 				{
-					rapid1.setText(load
-							.getProperty("reb2sac.rapid.equilibrium.condition.1"));
+					rapid1.setText(load.getProperty("reb2sac.rapid.equilibrium.condition.1"));
 				}
 				if (load.containsKey("reb2sac.rapid.equilibrium.condition.2"))
 				{
-					rapid2.setText(load
-							.getProperty("reb2sac.rapid.equilibrium.condition.2"));
+					rapid2.setText(load.getProperty("reb2sac.rapid.equilibrium.condition.2"));
 				}
 				if (load.containsKey("reb2sac.qssa.condition.1"))
 				{
@@ -2889,19 +2540,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 				if (load.containsKey("reb2sac.operator.max.concentration.threshold"))
 				{
-					maxCon.setText(load
-							.getProperty("reb2sac.operator.max.concentration.threshold"));
+					maxCon.setText(load.getProperty("reb2sac.operator.max.concentration.threshold"));
 				}
 				if (load.containsKey("reb2sac.diffusion.stoichiometry.amplification.value"))
 				{
-					diffStoichAmp
-							.setText(load
-									.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
+					diffStoichAmp.setText(load.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
 				}
 				if (load.containsKey("reb2sac.iSSA.number.paths"))
 				{
-					bifurcation.setSelectedItem(load
-							.getProperty("reb2sac.iSSA.number.paths"));
+					bifurcation.setSelectedItem(load.getProperty("reb2sac.iSSA.number.paths"));
 				}
 				if (load.containsKey("reb2sac.iSSA.type"))
 				{
@@ -2936,8 +2583,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			{
 				if (load.containsKey("selected.simulator"))
 				{
-					simulators.setSelectedItem(load
-							.getProperty("selected.simulator"));
+					simulators.setSelectedItem(load.getProperty("selected.simulator"));
 				}
 				if (load.containsKey("file.stem"))
 				{
@@ -2945,16 +2591,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				}
 				if (load.containsKey("simulation.printer.tracking.quantity"))
 				{
-					if (load.getProperty("simulation.printer.tracking.quantity")
-							.equals("concentration"))
+					if (load.getProperty("simulation.printer.tracking.quantity").equals("concentration"))
 					{
 						concentrations.doClick();
 					}
 				}
 				if (load.containsKey("simulation.printer"))
 				{
-					if (load.getProperty("simulation.printer").equals(
-							"null.printer"))
+					if (load.getProperty("simulation.printer").equals("null.printer"))
 					{
 						genRuns.doClick();
 					}
@@ -2965,9 +2609,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		catch (Exception e1)
 		{
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Unable to load properties file!",
-					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -2981,9 +2623,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		{
 			printer_track_quantity = "concentration";
 		}
-		return new Graph(this, printer_track_quantity, simName
-				+ " simulation results", printer_id, outDir, "time", gui, open,
-				log, null, true, false);
+		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time", gui, open, log, null, true, false);
 	}
 
 	public void executeRun()
@@ -2998,11 +2638,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		{
 			if (!(stemPat.matcher(fileStem.getText().trim()).matches()))
 			{
-				JOptionPane
-						.showMessageDialog(
-								Gui.frame,
-								"A file stem can only contain letters, numbers, and underscores.",
-								"Invalid File Stem", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "A file stem can only contain letters, numbers, and underscores.", "Invalid File Stem",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			stem += fileStem.getText().trim();
@@ -3015,21 +2652,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				{
 					if (gui.getTab().getComponentAt(i) instanceof ModelEditor)
 					{
-						ModelEditor gcm = ((ModelEditor) (gui.getTab()
-								.getComponentAt(i)));
+						ModelEditor gcm = ((ModelEditor) (gui.getTab().getComponentAt(i)));
 						if (gcm.isDirty())
 						{
 							Object[] options = { "Yes", "No" };
-							int value = JOptionPane
-									.showOptionDialog(
-											Gui.frame,
-											"Do you want to save changes to "
-													+ modelEditor.getRefFile()
-													+ " before running the simulation?",
-											"Save Changes",
-											JOptionPane.YES_NO_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null,
-											options, options[0]);
+							int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelEditor.getRefFile()
+									+ " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+									options, options[0]);
 							if (value == JOptionPane.YES_OPTION)
 							{
 								gcm.save("gcm");
@@ -3044,21 +2673,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				{
 					if (gui.getTab().getComponentAt(i) instanceof LHPNEditor)
 					{
-						LHPNEditor lpn = ((LHPNEditor) (gui.getTab()
-								.getComponentAt(i)));
+						LHPNEditor lpn = ((LHPNEditor) (gui.getTab().getComponentAt(i)));
 						if (lpn.isDirty())
 						{
 							Object[] options = { "Yes", "No" };
-							int value = JOptionPane
-									.showOptionDialog(
-											Gui.frame,
-											"Do you want to save changes to "
-													+ modelFile
-													+ " before running the simulation?",
-											"Save Changes",
-											JOptionPane.YES_NO_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null,
-											options, options[0]);
+							int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelFile
+									+ " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+									options, options[0]);
 							if (value == JOptionPane.YES_OPTION)
 							{
 								lpn.save();
@@ -3070,8 +2691,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		}
 		if (modelEditor != null)
 		{
-			modelEditor.saveParams(true, stem, ignoreSweep, simulators
-					.getSelectedItem().toString());
+			modelEditor.saveParams(true, stem, ignoreSweep, simulators.getSelectedItem().toString());
 		}
 		else
 		{
@@ -3085,43 +2705,32 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 				lhpnFile.load(root + Gui.separator + modelFile);
 				Abstraction abst = new Abstraction(lhpnFile, lpnAbstraction);
 				abst.abstractSTG(false);
-				abst.save(root + Gui.separator + simName + Gui.separator
-						+ modelFile);
-				if (transientProperties != null
-						&& !((String) transientProperties.getSelectedItem())
-								.equals("none"))
+				abst.save(root + Gui.separator + simName + Gui.separator + modelFile);
+				if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
 				{
-					t1.convertLPN2SBML(root + Gui.separator + simName
-							+ Gui.separator + modelFile,
-							((String) transientProperties.getSelectedItem()));
+					t1.convertLPN2SBML(root + Gui.separator + simName + Gui.separator + modelFile, ((String) transientProperties.getSelectedItem()));
 				}
 				else
 				{
-					t1.convertLPN2SBML(root + Gui.separator + simName
-							+ Gui.separator + modelFile, "");
+					t1.convertLPN2SBML(root + Gui.separator + simName + Gui.separator + modelFile, "");
 				}
 			}
 			else
 			{
-				if (transientProperties != null
-						&& !((String) transientProperties.getSelectedItem())
-								.equals("none"))
+				if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
 				{
-					t1.convertLPN2SBML(root + Gui.separator + modelFile,
-							((String) transientProperties.getSelectedItem()));
+					t1.convertLPN2SBML(root + Gui.separator + modelFile, ((String) transientProperties.getSelectedItem()));
 				}
 				else
 				{
 					t1.convertLPN2SBML(root + Gui.separator + modelFile, "");
 				}
 			}
-			t1.setFilename(root + Gui.separator + simName + Gui.separator
-					+ stem + Gui.separator + modelFile.replace(".lpn", ".xml"));
+			t1.setFilename(root + Gui.separator + simName + Gui.separator + stem + Gui.separator + modelFile.replace(".lpn", ".xml"));
 			t1.outputSBML();
 			if (!stem.equals(""))
 			{
-				new File(root + Gui.separator + simName + Gui.separator
-						+ stem).mkdir();
+				new File(root + Gui.separator + simName + Gui.separator + stem).mkdir();
 				new AnalysisThread(this).start(stem, true);
 			}
 			else
@@ -3144,10 +2753,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		for (int i = 0; i < preAbsList.getSize(); i++)
 		{
 			String abstractionOption = (String) preAbsList.getElementAt(i);
-			if (abstractionOption
-					.equals("complex-formation-and-sequestering-abstraction")
-					|| abstractionOption
-							.equals("operator-site-reduction-abstraction"))
+			if (abstractionOption.equals("complex-formation-and-sequestering-abstraction")
+					|| abstractionOption.equals("operator-site-reduction-abstraction"))
 			{
 				gcmAbsList.add(abstractionOption);
 			}
@@ -3162,10 +2769,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		for (int i = 0; i < preAbsList.getSize(); i++)
 		{
 			String abstractionOption = (String) preAbsList.getElementAt(i);
-			if (!abstractionOption
-					.equals("complex-formation-and-sequestering-abstraction")
-					&& !abstractionOption
-							.equals("operator-site-reduction-abstraction"))
+			if (!abstractionOption.equals("complex-formation-and-sequestering-abstraction")
+					&& !abstractionOption.equals("operator-site-reduction-abstraction"))
 			{
 				return true;
 			}
@@ -3208,11 +2813,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 	public void setSim(String newSimName)
 	{
 		sbmlFile = sbmlFile.replace("\\", "/");
-		sbmlProp = root
-				+ Gui.separator
-				+ newSimName
-				+ Gui.separator
-				+ sbmlFile.split("/")[sbmlFile.split("/").length - 1];
+		sbmlProp = root + Gui.separator + newSimName + Gui.separator + sbmlFile.split("/")[sbmlFile.split("/").length - 1];
 		simName = newSimName;
 	}
 
@@ -3279,13 +2880,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		{
 			printer_track_quantity = "concentration";
 		}
-		return new Graph(this, printer_track_quantity, simName
-				+ " simulation results", printer_id, outDir, "time", gui, open,
-				log, null, false, false);
+		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time", gui, open, log, null, false,
+				false);
 	}
 
-	public void run(ArrayList<AnalysisThread> threads, ArrayList<String> dirs,
-			ArrayList<String> levelOne, String stem)
+	public void run(ArrayList<AnalysisThread> threads, ArrayList<String> dirs, ArrayList<String> levelOne, String stem)
 	{
 		for (AnalysisThread thread : threads)
 		{
@@ -3297,10 +2896,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			{
 			}
 		}
-		if (!dirs.isEmpty()
-				&& new File(root + Gui.separator + simName + Gui.separator
-						+ stem + dirs.get(0) + Gui.separator + "sim-rep.txt")
-						.exists())
+		if (!dirs.isEmpty() && new File(root + Gui.separator + simName + Gui.separator + stem + dirs.get(0) + Gui.separator + "sim-rep.txt").exists())
 		{
 			ArrayList<String> dataLabels = new ArrayList<String>();
 			ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
@@ -3309,8 +2905,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			data.add(new ArrayList<Double>());
 			for (String prefix : levelOne)
 			{
-				double val = Double
-						.parseDouble(prefix.split("=")[1].split("_")[0]);
+				double val = Double.parseDouble(prefix.split("=")[1].split("_")[0]);
 				data.get(0).add(val);
 				for (String d : dirs)
 				{
@@ -3320,17 +2915,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 						ArrayList<String> vals = new ArrayList<String>();
 						try
 						{
-							Scanner s = new Scanner(
-									new File(root + Gui.separator + simName
-											+ Gui.separator + stem + d
-											+ Gui.separator + "sim-rep.txt"));
+							Scanner s = new Scanner(new File(root + Gui.separator + simName + Gui.separator + stem + d + Gui.separator
+									+ "sim-rep.txt"));
 							while (s.hasNextLine())
 							{
 								String[] ss = s.nextLine().split(" ");
-								if (ss[0].equals("The")
-										&& ss[1].equals("total")
-										&& ss[2].equals("termination")
-										&& ss[3].equals("count:")
+								if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:")
 										&& ss[4].equals("0"))
 								{
 								}
@@ -3358,8 +2948,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 						int i = 0;
 						if (vals.get(0).split(" ")[0].startsWith("#total"))
 						{
-							total = Double
-									.parseDouble(vals.get(0).split(" ")[1]);
+							total = Double.parseDouble(vals.get(0).split(" ")[1]);
 							i = 1;
 						}
 						for (; i < vals.size(); i++)
@@ -3367,8 +2956,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 							int index;
 							if (dataLabels.contains(vals.get(i).split(" ")[0]))
 							{
-								index = dataLabels.indexOf(vals.get(i).split(
-										" ")[0]);
+								index = dataLabels.indexOf(vals.get(i).split(" ")[0]);
 							}
 							else
 							{
@@ -3378,23 +2966,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 							}
 							if (total == 0)
 							{
-								data.get(index).add(
-										Double.parseDouble(vals.get(i).split(
-												" ")[1]));
+								data.get(index).add(Double.parseDouble(vals.get(i).split(" ")[1]));
 							}
 							else
 							{
-								data.get(index).add(
-										100 * ((Double.parseDouble(vals.get(i)
-												.split(" ")[1])) / total));
+								data.get(index).add(100 * ((Double.parseDouble(vals.get(i).split(" ")[1])) / total));
 							}
 						}
 					}
 				}
 			}
 			DataParser constData = new DataParser(dataLabels, data);
-			constData.outputTSD(root + Gui.separator + simName
-					+ Gui.separator + "sim-rep.tsd");
+			constData.outputTSD(root + Gui.separator + simName + Gui.separator + "sim-rep.tsd");
 			for (int i = 0; i < simTab.getComponentCount(); i++)
 			{
 				if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
@@ -3506,11 +3089,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		qssaLabel = new JLabel("QSSA Condition:");
 		qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""), 15);
 		maxConLabel = new JLabel("Max Concentration Threshold:");
-		maxCon = new JTextField(biosimrc.get("biosim.sim.concentration", ""),
-				15);
+		maxCon = new JTextField(biosimrc.get("biosim.sim.concentration", ""), 15);
 		diffStoichAmp = new JTextField("1.0", 15);
-		diffStoichAmpLabel = new JLabel(
-				"Grid Diffusion Stoichiometry Amplification:");
+		diffStoichAmpLabel = new JLabel("Grid Diffusion Stoichiometry Amplification:");
 		String[] options = { "1", "2" };
 
 		mpde = new JRadioButton();
@@ -3602,8 +3183,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 	{
 		if (transientProperties != null)
 		{
-			if (!((String) transientProperties.getSelectedItem())
-					.equals("none"))
+			if (!((String) transientProperties.getSelectedItem()).equals("none"))
 			{
 				return ((String) transientProperties.getSelectedItem());
 			}
@@ -3621,8 +3201,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 	{
 		if (!fileStem.getText().trim().equals(""))
 		{
-			return root + Gui.separator + simName + Gui.separator
-					+ fileStem.getText().trim();
+			return root + Gui.separator + simName + Gui.separator + fileStem.getText().trim();
 		}
 		return root + Gui.separator + simName;
 	}
@@ -3722,13 +3301,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			ODE.setSelected(true);
 			enableODE();
 		}
-		if (modelFile.contains(".lpn") || modelFile.contains(".s")
-				|| modelFile.contains(".inst"))
+		if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst"))
 		{
 			markov.setEnabled(true);
 		}
-		if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected()
-				&& !dot.isSelected())
+		if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected())
 		{
 			append.setEnabled(true);
 			concentrations.setEnabled(true);
@@ -3775,13 +3352,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 			ODE.setSelected(true);
 			enableODE();
 		}
-		if (modelFile.contains(".lpn") || modelFile.contains(".s")
-				|| modelFile.contains(".inst"))
+		if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst"))
 		{
 			markov.setEnabled(true);
 		}
-		if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected()
-				&& !dot.isSelected())
+		if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected())
 		{
 			append.setEnabled(true);
 			concentrations.setEnabled(true);
@@ -4087,11 +3662,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		reactionAbstraction.setEnabled(true);
 		stateAbstraction.setEnabled(true);
 		simulators.removeAllItems();
-		simulators.addItem("SSA-Direct");
-		simulators.addItem("SSA-CR");
-		simulators.addItem("SSA-Hierarchical");
+		simulators.addItem("SSA-Direct (Dynamic)");
+		simulators.addItem("SSA-CR (Dynamic)");
+		simulators.addItem("SSA-Direct (Hierarchical)");
+		simulators.addItem("SSA-Direct (Flatten)");
 		simulators.addItem("Hybrid-Hierarchical");
-		simulators.setSelectedItem("SSA-Direct");
+		simulators.setSelectedItem("SSA-Direct (Dynamic)");
 		if (Gui.isReb2sacFound())
 		{
 			simulators.addItem("gillespie");
@@ -4149,9 +3725,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		reactionAbstraction.setEnabled(true);
 		stateAbstraction.setEnabled(true);
 		simulators.removeAllItems();
-		simulators.addItem("Runge-Kutta-Fehlberg");
-		simulators.addItem("Hierarchical-RK");
-		simulators.setSelectedItem("Runge-Kutta-Fehlberg");
+		simulators.addItem("Runge-Kutta-Fehlberg (Dynamic)");
+		simulators.addItem("Runge-Kutta-Fehlberg (Flatten)");
+		simulators.addItem("Runge-Kutta-Fehlberg (Hierarchical)");
+		simulators.setSelectedItem("Runge-Kutta-Fehlberg (Dynamic)");
 		if (Gui.isReb2sacFound())
 		{
 			simulators.addItem("euler");
@@ -4202,8 +3779,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable,
 		getLists = new ArrayList<String>();
 		objects = getLists.toArray();
 		postAbs.setListData(objects);
-		if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected()
-				&& !fba.isSelected())
+		if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && !fba.isSelected())
 		{
 			append.setEnabled(true);
 			concentrations.setEnabled(true);

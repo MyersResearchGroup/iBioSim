@@ -2,6 +2,7 @@ package analysis.dynamicsim.hierarchical.states;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -25,6 +26,8 @@ public abstract class EventState extends ReactionState
 	private HashMap<String, Boolean>				eventToUseValuesFromTriggerTimeMap;
 	private PriorityQueue<HierarchicalEventToFire>	triggeredEventQueue;
 	private HashSet<String>							untriggeredEventSet;
+	private HashMap<String, List<String>>			variableToEventTrigger;
+	private HashMap<String, List<String>>			eventTriggerToDependency;
 
 	public EventState(Map<String, Model> models, String bioModel, String submodelID)
 	{
@@ -45,6 +48,8 @@ public abstract class EventState extends ReactionState
 			eventToAffectedReactionSetMap = new HashMap<String, HashSet<String>>((int) getNumEvents());
 			eventToPreviousTriggerValueMap = new HashMap<String, Boolean>((int) getNumEvents());
 			setVariableToEventSetMap(new HashMap<String, HashSet<String>>((int) getNumEvents()));
+			variableToEventTrigger = new HashMap<String, List<String>>();
+			eventTriggerToDependency = new HashMap<String, List<String>>();
 		}
 	}
 
@@ -203,6 +208,26 @@ public abstract class EventState extends ReactionState
 	public Set<String> getSetOfEvents()
 	{
 		return eventToTriggerMap.keySet();
+	}
+
+	public HashMap<String, List<String>> getVariableToEventTrigger()
+	{
+		return variableToEventTrigger;
+	}
+
+	public void setVariableToEventTrigger(HashMap<String, List<String>> variableToEventTrigger)
+	{
+		this.variableToEventTrigger = variableToEventTrigger;
+	}
+
+	public HashMap<String, List<String>> getEventTriggerToDependency()
+	{
+		return eventTriggerToDependency;
+	}
+
+	public void setEventTriggerToDependency(HashMap<String, List<String>> eventTriggerToDependency)
+	{
+		this.eventTriggerToDependency = eventTriggerToDependency;
 	}
 
 }

@@ -18,24 +18,28 @@ import analysis.dynamicsim.flattened.SimulatorODERK;
 import analysis.dynamicsim.flattened.SimulatorSSACR;
 import analysis.dynamicsim.flattened.SimulatorSSADirect;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalHybridSimulator;
-import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
 
 public class DynamicSimulation
 {
 
 	// simulator type
-	private final String	simulatorType;
+	private final SimulationType	simulatorType;
 
 	// the simulator object
-	private ParentSimulator	simulator;
-	private boolean			cancelFlag;
-	private boolean			statisticsFlag;
+	private ParentSimulator			simulator;
+	private boolean					cancelFlag;
+	private boolean					statisticsFlag;
+
+	public static enum SimulationType
+	{
+		CR, DIRECT, RK, HIERARCHICAL_DIRECT, HIERARCHICAL_HYBRID, HIERARCHICAL_RK;
+	}
 
 	/**
 	 * constructor; sets the simulator type
 	 */
-	public DynamicSimulation(String type)
+	public DynamicSimulation(SimulationType type)
 	{
 
 		simulatorType = type;
@@ -62,35 +66,37 @@ public class DynamicSimulation
 				progressLabel.setText("Generating Model . . .");
 				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
 			}
-			if (simulatorType.equals("cr"))
+
+			switch (simulatorType)
 			{
+			case CR:
 				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
 						printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
-			}
-			else if (simulatorType.equals("direct"))
-			{
+
+				break;
+			case DIRECT:
 				simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
 						printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
-			}
-			else if (simulatorType.equals("rk"))
-			{
-				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed, progress, printInterval,
-						stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType);
-			}
-			else if (simulatorType.equals("hierarchical-direct"))
-			{
+
+				break;
+			case HIERARCHICAL_DIRECT:
 				simulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep,
 						minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
-			}
-			else if (simulatorType.equals("hierarchical-hybrid"))
-			{
+
+				break;
+			case HIERARCHICAL_RK:
+				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed, progress, printInterval,
+						stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType);
+
+				break;
+			case HIERARCHICAL_HYBRID:
 				simulator = new HierarchicalHybridSimulator(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
 						randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
-			}
-			else if (simulatorType.equals("hierarchical-rk"))
-			{
-				simulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed,
-						progress, printInterval, stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType, abstraction);
+				break;
+
+			default:
+				log.addText("The simulation selection was invalid.");
+
 			}
 		}
 		catch (IOException e)

@@ -18,9 +18,36 @@ import org.sbml.jsbml.ASTNode;
 
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
 
-public class Evaluator
+/**
+ * This class is used to evaluate math functions.
+ * 
+ * @author Leandro Watanabe
+ * 
+ */
+public final class Evaluator
 {
 
+	/**
+	 * This is a math evaluator for ASTNode objects in the context of the
+	 * hierarchical simulator.
+	 * 
+	 * @param modelstate
+	 *            - the state of a certain model
+	 * @param node
+	 *            - the math to be evaluated
+	 * @param evaluateState
+	 *            - flag to indicate that math is to be evaluated in the context
+	 *            of the y vector
+	 * @param t
+	 *            - current time
+	 * @param y
+	 *            - vector that is holding a temporary state
+	 * @param variableToIndexMap
+	 *            - maps variables to index in y
+	 * @param replacements
+	 *            - dependencies due to hierarchy
+	 * @return the evaluated value
+	 */
 	public static double evaluateExpressionRecursive(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
 			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
@@ -55,6 +82,9 @@ public class Evaluator
 		}
 	}
 
+	/*
+	 * Evaluates boolean functions
+	 */
 	private static double evaluateBoolean(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
 			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
@@ -242,6 +272,9 @@ public class Evaluator
 		}
 	}
 
+	/*
+	 * 
+	 */
 	private static double evaluateConstant(ASTNode node)
 	{
 

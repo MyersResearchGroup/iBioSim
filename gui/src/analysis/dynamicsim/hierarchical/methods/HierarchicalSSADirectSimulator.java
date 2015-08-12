@@ -821,6 +821,7 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		{
 			dimensionIdMap.put("d" + i, indices[i]);
 		}
+
 		if (notEnoughMoleculesFlag == false)
 		{
 			newPropensity = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getReactionToFormulaMap().get(id), false, getCurrentTime(),
