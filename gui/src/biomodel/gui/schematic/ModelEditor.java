@@ -137,6 +137,24 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	private Events eventPanel;
 	
 	private Constraints consPanel;
+		
+	private JTabbedPane tab = null;
+
+	private String[] options = { "Ok", "Cancel" };
+
+	private PropertyList species = null;
+
+	private PropertyList components = null;
+
+	private String path = null;
+
+	private Gui biosim = null;
+
+	private Log log = null;
+	
+	private boolean textBased = false;
+
+	private MutableBoolean dirty = new MutableBoolean(false);
 	
 	public ModelEditor(String path) throws Exception {
 		this(path, null, null, null, false, null, null, null, false, false);
@@ -352,7 +370,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 //			if (command.contains("Check")) {
 //				saveSBOL(true);
 //			} else {
-				saveSBOL();
+				// TODO: Temporarily remove until ported to SBOL 2.0.
+				//saveSBOL();
 //			}
 		}
 		
@@ -488,27 +507,19 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 	
 	public void exportSBOL2() {
-		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(path,biomodel);
-//		sbmltosbol.export();
+		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(biosim,path,biomodel);
 		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
-//		if (identityManager.containsModelURIs()) {
-//			SBOLFileManager fileManager = new SBOLFileManager(
-//					biosim.getFilePaths(GlobalConstants.RDF_FILE_EXTENSION));
-//			if (fileManager.sbolFilesAreLoaded() && identityManager.loadModelComponents(fileManager)) {
-				File lastFilePath;
-				Preferences biosimrc = Preferences.userRoot();
-				if (biosimrc.get("biosim.general.export_dir", "").equals(""))
-					lastFilePath = null;
-				else 
-					lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
-				String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL2", -1);
-				if (!exportFilePath.equals("")) {
-					biosimrc.put("biosim.general.export_dir", exportFilePath);
-					sbmltosbol.export(exportFilePath);
-//					SBOLFileManager.exportDNAComponents(identityManager.getModelComponents(), exportFilePath);
-				}
-//			}
-//		}
+		File lastFilePath;
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.export_dir", "").equals(""))
+			lastFilePath = null;
+		else 
+			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+		String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL2", -1);
+		if (!exportFilePath.equals("")) {
+			biosimrc.put("biosim.general.export_dir", exportFilePath);
+			sbmltosbol.export(exportFilePath);
+		}
 	}
 	
 	public void exportSBML() {
@@ -2276,22 +2287,4 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			schematic.getGraph().buildGraph();
 		}
 	}
-	
-	private JTabbedPane tab = null;
-
-	private String[] options = { "Ok", "Cancel" };
-
-	private PropertyList species = null;
-
-	private PropertyList components = null;
-
-	private String path = null;
-
-	private Gui biosim = null;
-
-	private Log log = null;
-	
-	private boolean textBased = false;
-
-	private MutableBoolean dirty = new MutableBoolean(false);
 }

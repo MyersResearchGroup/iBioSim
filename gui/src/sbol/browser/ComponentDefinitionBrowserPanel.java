@@ -184,14 +184,17 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 		String sequence = "";
 		for(Sequence s : sequences)
 		{
+			// TODO: need to figure out a better way for multiple sequences, for now just return first sequence
+			return s.getElements();
+			/*
 			if(s != null)
 				sequence = sequence + s.getElements() + ", ";
 			else
-				sequence = sequence + "NA"; 
+				sequence = sequence + "NA";
+				*/ 
 		}
-		
-		sequence = sequence.substring(0, sequence.length() - 2); //this will remove the extra "," at the end of the string
-		return sequence;
+		//sequence = sequence.substring(0, sequence.length() - 2); //this will remove the extra "," at the end of the string
+		return "NA";//sequence;
 	}
 	
 	/*private static String processSequenceConstraints(Set<SequenceConstraint> sc)

@@ -326,7 +326,8 @@ public class Utility {
 						}
 					}
 					else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
-						if (!selectedFile.endsWith(".sbol") && !selectedFile.endsWith(".xml"))
+						if (!selectedFile.endsWith(".sbol") && !selectedFile.endsWith(".xml")
+								&& !selectedFile.endsWith(".rdf"))
 							selectedFile += ".sbol";
 					}
 					else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
@@ -694,7 +695,7 @@ public class Utility {
 				}
 			}
 			else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
-				if (!filename.endsWith(".sbol") && !filename.endsWith(".xml"))
+				if (!filename.endsWith(".sbol") && !filename.endsWith(".xml") && !filename.endsWith(".rdf"))
 					filename += ".sbol";
 			}
 			else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {

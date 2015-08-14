@@ -3688,7 +3688,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource().equals(importSbol))
 		{
-			importFile("SBOL", ".sbol", ".xml");
+			importFile("SBOL", ".sbol", ".rdf");
 		}
 		else if (e.getSource().equals(importSedml))
 		{
@@ -6801,8 +6801,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else
 		{
-			SBOLBrowser sbolBrowser = new SBOLBrowser(this, filePath);
-			sbolBrowser.open();
+			//SBOLBrowser sbolBrowser = new SBOLBrowser(this, filePath);
+			//sbolBrowser.open();
 
 			SBOLBrowser2 sbolBrowser2 = new SBOLBrowser2(this, filePath);
 			sbolBrowser2.open();
