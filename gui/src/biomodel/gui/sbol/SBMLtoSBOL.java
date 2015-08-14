@@ -4,9 +4,11 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
@@ -40,14 +42,18 @@ import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
+import sbol.util.SBOLUtility;
+import sbol.util.SBOLUtility2;
 import uk.ac.ncl.intbio.core.io.CoreIoException;
-
+import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 
 public class SBMLtoSBOL {
 	BioModel bioModel;
 	String path;
+	SBOLDocument SBOLDOC;
 	
 	String VERSION = "1.0";
 	
@@ -55,10 +61,35 @@ public class SBMLtoSBOL {
 	URI LANGUAGE  = org.sbolstandard.core2.Model.SBML;
 	URI FRAMEWORK = SystemsBiologyOntology.DISCRETE_FRAMEWORK;
 	
-	public SBMLtoSBOL(String path,BioModel bioModel) 
+	public SBMLtoSBOL(Gui gui,String path,BioModel bioModel) 
 	{
 		this.path = path;
 		this.bioModel = bioModel;
+		SBOLDOC = new SBOLDocument();
+		HashSet<String> sbolFilePaths = gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
+		loadSBOLFiles(sbolFilePaths);
+	}
+	
+	private boolean loadSBOLFiles(HashSet<String> sbolFilePaths) 
+	{
+		for (String filePath : sbolFilePaths) 
+		{
+			SBOLDocument sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+			if (sbolDoc != null) 
+			{
+				for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
+				{
+					if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
+					{
+						SBOLDOC.createCopy(c);
+					}
+				}
+				
+			} 
+			else
+				return false;
+		}
+		return true;
 	}
 	
 	public void export(String exportFilePath) {
@@ -324,17 +355,39 @@ public class SBMLtoSBOL {
 		
 		Set<URI> compDef_type = new HashSet<URI>();
 		Set<URI> compDef_role = new HashSet<URI>();
+		ComponentDefinition compDef = null;
 		
 		if (BioModel.isPromoterSpecies(species)) 
 		{
+			Reaction production = bioModel.getProductionReaction(species.getId());
+			if (production!=null) {
+				List<URI> sbolURIs = new LinkedList<URI>();
+				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
+				if (sbolURIs.size()>0) {
+					compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
+					if (compDef!=null) {
+						sbolDoc.createCopy(compDef);
+						return compDef;
+					}
+				}
+			}
 			compDef_type.add(ComponentDefinition.DNA);
 			compDef_role.add(SequenceOntology.PROMOTER);
 		} 
 		else 
 		{
+			List<URI> sbolURIs = new LinkedList<URI>();
+			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
+			if (sbolURIs.size()>0) {
+				compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
+				if (compDef!=null) {
+					sbolDoc.createCopy(compDef);
+					return compDef;
+				}
+			}
 			compDef_type.add(ComponentDefinition.PROTEIN);
 		}
-		ComponentDefinition compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
+		compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 		return compDef; 
 	}
 	
