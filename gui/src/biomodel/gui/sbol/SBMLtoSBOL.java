@@ -359,14 +359,27 @@ public class SBMLtoSBOL {
 		
 		if (BioModel.isPromoterSpecies(species)) 
 		{
+			List<URI> sbolURIs = new LinkedList<URI>();
+			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
+			if (sbolURIs.size()>0) {
+				compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
+				if (compDef!=null) {
+					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
+						sbolDoc.createCopy(compDef);
+					}
+					return compDef;
+				}
+			}
 			Reaction production = bioModel.getProductionReaction(species.getId());
 			if (production!=null) {
-				List<URI> sbolURIs = new LinkedList<URI>();
-				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
+				sbolURIs = new LinkedList<URI>();
+				sbolStrand = AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
 				if (sbolURIs.size()>0) {
 					compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
 					if (compDef!=null) {
-						sbolDoc.createCopy(compDef);
+						if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
+							sbolDoc.createCopy(compDef);
+						}
 						return compDef;
 					}
 				}
@@ -381,7 +394,9 @@ public class SBMLtoSBOL {
 			if (sbolURIs.size()>0) {
 				compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
 				if (compDef!=null) {
-					sbolDoc.createCopy(compDef);
+					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
+						sbolDoc.createCopy(compDef);
+					}
 					return compDef;
 				}
 			}
