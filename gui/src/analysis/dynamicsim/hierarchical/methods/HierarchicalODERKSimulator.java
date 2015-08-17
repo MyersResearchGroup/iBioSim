@@ -980,11 +980,11 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 			return String.valueOf(time);
 		}
 
-		@Override
-		public int hashCode()
-		{
-			return Double.hashCode(time);
-		}
+//		@Override
+//		public int hashCode()
+//		{
+//			return Double.hashCode(time);
+//		}
 
 		@Override
 		public boolean equals(Object obj)

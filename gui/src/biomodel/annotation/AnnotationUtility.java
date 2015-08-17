@@ -95,6 +95,10 @@ public class AnnotationUtility {
 					while (uriMatcher.find())
 						try {
 							sbolElementURIs.get(className).add(new URI(uriMatcher.group(1)));
+							if (className.equals("ComponentDefinition")) {
+								dnaCompURIs.clear();
+								dnaCompURIs.add(new URI(uriMatcher.group(1)));
+							}
 						} catch (URISyntaxException e) {
 							e.printStackTrace();
 						}
@@ -538,7 +542,9 @@ public class AnnotationUtility {
 	
 	public static boolean checkObsoleteAnnotation(SBase sbmlObject, String annotation) {
 		try {
-			return sbmlObject.isSetAnnotation() && sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().contains(annotation);
+			return sbmlObject.isSetAnnotation() && 
+					sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().contains(annotation) &&
+					!sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().contains("rdf");
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}

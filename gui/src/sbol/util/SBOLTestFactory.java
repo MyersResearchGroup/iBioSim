@@ -34,6 +34,7 @@ import org.sbolstandard.core2.RestrictionType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceConstraint;
+import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -606,7 +607,7 @@ public class SBOLTestFactory {
 	
 	public static FunctionalComponent createComplexComponent(Set<String> ligandIDs, 
 			AccessType access, DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
-		return createComplexComponent(ligandIDs, SBO.COMPLEX, access, direction, moduleDef, sbolDoc);
+		return createComplexComponent(ligandIDs, SystemsBiologyOntology.NON_COVALENT_BINDING, access, direction, moduleDef, sbolDoc);
 	}
 	
 	public static FunctionalComponent createComplexTFComponent(Set<String> ligandIDs, 
@@ -649,41 +650,41 @@ public class SBOLTestFactory {
 		for (FunctionalComponent ligand : ligands) {
 			bindingID = ligand.getDisplayId() + "_" + bindingID;
 		}
-		Interaction binding = createInteraction(bindingID, SBO.BINDING, moduleDef);
+		Interaction binding = createInteraction(bindingID, SystemsBiologyOntology.NON_COVALENT_BINDING, moduleDef);
 		int particiCount = 1;
 		for (FunctionalComponent ligand : ligands) {
-			createParticipation(particiCount, ligand.getDefinitionURI(), SBO.LIGAND, binding);
+			createParticipation(particiCount, ligand.getDefinitionURI(), SystemsBiologyOntology.REACTANT, binding);
 			particiCount++;
 		}
-		createParticipation(particiCount, complex.getDefinitionURI(), SBO.COMPLEX, binding);
+		createParticipation(particiCount, complex.getDefinitionURI(), SystemsBiologyOntology.PRODUCT, binding);
 		return binding; 
 	}
 	
 	public static Interaction createRepressionInteraction(FunctionalComponent repressor, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef) {
 		Interaction repression = createInteraction(promoter.getDisplayId() + "_Repression_via_" + repressor.getDisplayId(), 
-				SBO.REPRESSION, moduleDef);
+				SystemsBiologyOntology.GENETIC_SUPPRESSION, moduleDef);
 		int particiCount = 1;
-		createParticipation(particiCount, repressor.getDefinitionURI(), SBO.REPRESSOR, repression);
+		createParticipation(particiCount, repressor.getDefinitionURI(), SystemsBiologyOntology.INHIBITOR, repression);
 		particiCount++;
-		createParticipation(particiCount, promoter.getDefinitionURI(), MyersOntology.REPRESSED, repression);
+		createParticipation(particiCount, promoter.getDefinitionURI(), SystemsBiologyOntology.PROMOTER, repression);
 		return repression;
 	}
 	
 	public static Interaction createActivationInteraction(FunctionalComponent activator, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef) {
 		Interaction activation = createInteraction(promoter.getDisplayId() + "_Activation_via_" + activator.getDisplayId(), 
-				SBO.ACTIVATION, moduleDef);
+				SystemsBiologyOntology.GENETIC_ENHANCEMENT, moduleDef);
 		int particiCount = 1;
-		createParticipation(particiCount, activator.getDefinitionURI(), SBO.ACTIVATOR, activation);
+		createParticipation(particiCount, activator.getDefinitionURI(), SystemsBiologyOntology.STIMULATOR, activation);
 		particiCount++;
-		createParticipation(particiCount, promoter.getDefinitionURI(), MyersOntology.ACTIVATED, activation);
+		createParticipation(particiCount, promoter.getDefinitionURI(), SystemsBiologyOntology.PROMOTER, activation);
 		return activation;
 	}
 	
 	public static Interaction createDegradationInteraction(FunctionalComponent degraded, ModuleDefinition moduleDef) {
 		Interaction degradation = createInteraction(degraded.getDisplayId() + "_Degradation", 
-				SBO.DEGRADATION, moduleDef);
+				SystemsBiologyOntology.DEGRADATION, moduleDef);
 		int particiCount = 1;
 		createParticipation(particiCount, degraded.getDefinitionURI(), MyersOntology.DEGRADED, degradation);
 		return degradation;
@@ -692,13 +693,13 @@ public class SBOLTestFactory {
 	public static Interaction createProductionInteraction(FunctionalComponent promoter, FunctionalComponent gene,
 			FunctionalComponent protein, ModuleDefinition moduleDef) {
 		Interaction production = createInteraction(protein.getDisplayId() + "_Production_via_" + promoter.getDisplayId(), 
-				SBO.PRODUCTION, moduleDef);
+				SystemsBiologyOntology.GENETIC_PRODUCTION, moduleDef);
 		int particiCount = 1;
-		createParticipation(particiCount, promoter.getDefinitionURI(), SBO.PROMOTER, production);
+		createParticipation(particiCount, promoter.getDefinitionURI(), SystemsBiologyOntology.PROMOTER, production);
 		particiCount++;
-		createParticipation(particiCount, gene.getDefinitionURI(), MyersOntology.TRANSCRIBED, production);
+		createParticipation(particiCount, gene.getDefinitionURI(), SystemsBiologyOntology.PROMOTER, production);
 		particiCount++;
-		createParticipation(particiCount, protein.getDefinitionURI(), SBO.PRODUCT, production);
+		createParticipation(particiCount, protein.getDefinitionURI(), SystemsBiologyOntology.PRODUCT, production);
 		return production;
 	}
 	
@@ -708,7 +709,7 @@ public class SBOLTestFactory {
 		Set<MapsTo> mappings = new HashSet<MapsTo>();
 		ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(module.getDefinitionURI());
 		for (FunctionalComponent remoteComp : moduleDef.getFunctionalComponents()) { 
-			if (remoteComp.getAccess().equals(SBOLOntology.PUBLIC)) {
+			if (remoteComp.getAccess().equals(AccessType.PUBLIC)) {
 				for (FunctionalComponent localComp : parentModuleDef.getFunctionalComponents()) {
 					if (remoteComp.getDefinitionURI().equals(localComp.getDefinitionURI())) {
 						mappings.add(createMapping(mappingCount, localComp.getDefinitionURI(), remoteComp.getDefinitionURI(),

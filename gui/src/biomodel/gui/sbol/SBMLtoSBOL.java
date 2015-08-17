@@ -55,7 +55,7 @@ public class SBMLtoSBOL {
 	String path;
 	SBOLDocument SBOLDOC;
 	
-	String VERSION = "1.0";
+	String VERSION = "";
 	
 	URI COLLECTION_ID ;
 	URI LANGUAGE  = org.sbolstandard.core2.Model.SBML;
@@ -598,7 +598,7 @@ public class SBMLtoSBOL {
 					export_recurse(sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
 							.getModelRef()).getSource(),subDocument,sbolDoc,collection);
 				}
-				Module m = moduleDef.createModule(subModelId, subDocument.getModel().getId(), "1.0");
+				Module m = moduleDef.createModule(subModelId, subDocument.getModel().getId(), VERSION);
 				
 				for (int j = 0; j < model.getSpeciesCount(); j++) 
 				{
