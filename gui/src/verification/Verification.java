@@ -96,7 +96,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
 	nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
 	postProc, redCheck, xForm2, expandRate, useGraphs, resetOnce, noDisplayResult,
-	rateOptimization;
+	rateOptimization, displayDBM;
 
 	private JTextField bddSize, backgroundField, componentField;
 
@@ -320,6 +320,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		resetOnce.addActionListener(this);
 		noDisplayResult = new JCheckBox("Silence Verification Window");
 		noDisplayResult.addActionListener(this);
+		displayDBM = new JCheckBox("Show DBM in State Graph");
+		displayDBM.addActionListener(this);
 		rateOptimization = new JCheckBox("Rate Optimization On");
 		rateOptimization.addActionListener(this);
 		// Component List
@@ -458,6 +460,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		advancedPanel.add(reduction);
 		advancedPanel.add(resetOnce);
 		advancedPanel.add(noDisplayResult);
+		advancedPanel.add(displayDBM);
 		advancedPanel.add(rateOptimization);
 		
 		bddPanel.add(bddSizeLabel);
@@ -1807,6 +1810,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			Options.set_resetOnce(resetOnce.isSelected());
 			Options.set_displayResults(!noDisplayResult.isSelected());
+			Options.set_displayDBM(displayDBM.isSelected());
 			// Checking the rate optimization flag turns the optimization on.
 			Options.set_rateOptimization(rateOptimization.isSelected());
 			
