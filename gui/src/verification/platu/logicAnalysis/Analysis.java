@@ -39,6 +39,7 @@ import verification.platu.por1.AmpleSet;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
+import verification.timed_state_exploration.octagon.Equivalence;
 import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
 import verification.timed_state_exploration.zoneProject.TimedStateSet;
@@ -752,6 +753,7 @@ public class Analysis {
 				String curEnabledTrans = "";
 				String curGlobalStateLabel = "";
 				String curGlobalStateProb = null;
+				String DBM = "";
 				HashMap<String, Integer> vars = new HashMap<String, Integer>();				
 				for (State curLocalState : curGlobalState.toStateArray()) {
 					curGlobalStateLabel = curGlobalStateLabel + "_" + "S" + curLocalState.getIndex();										
@@ -779,7 +781,16 @@ public class Analysis {
 					curGlobalStateProb = num.format(((ProbGlobalState) curGlobalState).getCurrentProb());
 				}
 				if(Options.getTimingAnalysisFlag()){
-					curGlobalStateLabel = "TS_" + ((TimedPrjState) curGlobalState).getTSID();
+					TimedPrjState timedState = (TimedPrjState) curGlobalState;
+					
+					curGlobalStateLabel = "TS_" + timedState.getTSID();
+					
+					if(Options.get_displayDBM()){
+						
+						Equivalence[] dbm = timedState.get_zones();
+						
+						DBM = "\\n" + dbm[0].toString().replace("\n", "\\n") + "\\n";
+					}
 				}
 				else{
 					curGlobalStateLabel = curGlobalStateLabel.substring(curGlobalStateLabel.indexOf("_")+1, curGlobalStateLabel.length());
@@ -793,7 +804,7 @@ public class Analysis {
 					out.write("Inits[shape=plaintext, label=\"variable vector:<" + curVarNames + ">\\n" + "LPN vector:<" +sgVector.substring(0, sgVector.lastIndexOf(",")) + ">\"]\n");					
 					if (!Options.getMarkovianModelFlag()) {
 						out.write(curGlobalStateLabel + "[label=\"" + curGlobalStateLabel + "\\n<"+curVarValues+">" 
-								+ "\\n<"+curEnabledTrans+">" + "\\n<"+curMarkings+">" + "\", style=\"rounded, filled\"]\n");
+								+ "\\n<"+curEnabledTrans+">" + "\\n<"+curMarkings+">" + "\\n" + DBM + "\\n" + "\", style=\"rounded, filled\"]\n");
 					}						
 					else {
 						out.write(curGlobalStateLabel + "[label=\"" + curGlobalStateLabel + "\\n<"+curVarValues+">" 
@@ -803,7 +814,7 @@ public class Analysis {
 				else { // non-initial global state(s)
 					if (!Options.getMarkovianModelFlag()) {
 						out.write(curGlobalStateLabel + "[label=\"" + curGlobalStateLabel + "\\n<"+curVarValues+">" 
-								+ "\\n<"+curEnabledTrans+">" + "\\n<"+curMarkings+">" + "\"]\n");
+								+ "\\n<"+curEnabledTrans+">" + "\\n<"+curMarkings+">" + "\\n" + DBM + "\\n" + "\"]\n");
 					}
 					else {
 						out.write(curGlobalStateLabel + "[label=\"" + curGlobalStateLabel + "\\n<"+curVarValues+">" 
