@@ -19,6 +19,7 @@ import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbolstandard.core.util.SequenceOntology;
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.MapsTo;
@@ -28,11 +29,10 @@ import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.Identified;
+import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import sbol.util.ChEBI;
 import sbol.util.MyersOntology;
-import sbol.util.SBO;
-import sbol.util.SBOLOntology;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.parser.BioModel;
@@ -46,6 +46,9 @@ public class ModelGenerator {
 	}
 	
 	public static String getDisplayID(Identified sbolElement) { 
+		if (sbolElement.isSetDisplayId()) {
+			return sbolElement.getDisplayId();
+		}
 		String identity = sbolElement.getIdentity().toString();
 		return identity.substring(identity.lastIndexOf("/") + 1);
 	}
@@ -90,9 +93,9 @@ public class ModelGenerator {
 				Participation complex = null;
 				List<Participation> ligands = new LinkedList<Participation>();
 				for (Participation partici: interact.getParticipations()) {
-					if (partici.containsRole(SBO.COMPLEX)) {
+					if (partici.containsRole(SystemsBiologyOntology.PRODUCT)) {
 						complex = partici;
-					} else if (partici.containsRole(SBO.LIGAND)) {
+					} else if (partici.containsRole(SystemsBiologyOntology.REACTANT)) {
 						ligands.add(partici);
 					}
 				}
@@ -100,7 +103,7 @@ public class ModelGenerator {
 			} else if (isProductionInteraction(interact, moduleDef, sbolDoc)) {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
-					if (partici.containsRole(SBO.PROMOTER)) {
+					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)) {
 						promoter = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
@@ -110,11 +113,11 @@ public class ModelGenerator {
 						promoterToProductions.get(promoter).add(interact);
 					} 
 				for (Participation partici : interact.getParticipations())
-					if (partici.containsRole(SBO.PRODUCT)) {
+					if (partici.containsRole(SystemsBiologyOntology.PRODUCT)) {
 						if (!promoterToProducts.containsKey(promoter))
 							promoterToProducts.put(promoter, new LinkedList<Participation>());
 						promoterToProducts.get(promoter).add(partici);
-					} else if (partici.containsRole(MyersOntology.TRANSCRIBED)) {
+					} else if (partici.containsRole(SystemsBiologyOntology.PROMOTER)) {
 						if (!promoterToTranscribed.containsKey(promoter))
 							promoterToTranscribed.put(promoter, new LinkedList<Participation>());
 						promoterToTranscribed.get(promoter).add(partici);
@@ -130,7 +133,7 @@ public class ModelGenerator {
 			} else if (isActivationInteraction(interact, moduleDef, sbolDoc)) {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
-					if (partici.containsRole(MyersOntology.ACTIVATED)) {
+					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)) {
 						promoter = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
@@ -139,7 +142,7 @@ public class ModelGenerator {
 							promoterToActivators.put(promoter, new LinkedList<Participation>());
 					} 
 				for (Participation partici : interact.getParticipations())
-					if (partici.containsRole(SBO.ACTIVATOR))
+					if (partici.containsRole(SystemsBiologyOntology.STIMULATOR))
 						promoterToActivators.get(promoter).add(partici);
 				if (!promoterToActivations.containsKey(promoter))
 					promoterToActivations.put(promoter, new LinkedList<Interaction>());
@@ -147,7 +150,7 @@ public class ModelGenerator {
 			} else if (isRepressionInteraction(interact, moduleDef, sbolDoc)) {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
-					if (partici.containsRole(MyersOntology.REPRESSED)) {
+					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)) {
 						promoter = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
@@ -156,7 +159,7 @@ public class ModelGenerator {
 							promoterToRepressors.put(promoter, new LinkedList<Participation>());
 					} 
 				for (Participation partici : interact.getParticipations())
-					if (partici.containsRole(SBO.REPRESSOR))
+					if (partici.containsRole(SystemsBiologyOntology.INHIBITOR))
 						promoterToRepressors.get(promoter).add(partici);
 				if (!promoterToRepressions.containsKey(promoter))
 					promoterToRepressions.put(promoter, new LinkedList<Interaction>());
@@ -217,11 +220,12 @@ public class ModelGenerator {
 	public static void generateReplacement(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI()); 
-		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemote().getDefinitionURI());
-		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocal().getDefinitionURI());
+		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
+		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocalURI());
 		
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(localSpecies));
 		Port port = subTargetModel.getPortByIdRef(getDisplayID(remoteSpecies));
+		if (port==null) System.out.println("Cannot find "+getDisplayID(remoteSpecies));
 		
 		Submodel subModel = targetModel.getSBMLCompModel().getSubmodel(getDisplayID(subModule));
 		SBMLutilities.addReplacement(localSBMLSpecies, subModel, getDisplayID(subModule), port.getId(), "(none)", 
@@ -236,8 +240,8 @@ public class ModelGenerator {
 	public static void generateReplacedBy(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
-		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemote().getDefinitionURI());
-		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocal().getDefinitionURI());
+		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
+		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocalURI());
 		//OLD VERSION
 //		FunctionalComponent remoteSpecies = subModuleDef.getComponent(mapping.getRemote());
 //		FunctionalComponent localSpecies = moduleDef.getComponent(mapping.getLocal());
@@ -264,7 +268,7 @@ public class ModelGenerator {
 	public static void generateSpecies(FunctionalComponent species, SBOLDocument sbolDoc, BioModel targetModel) {
 		targetModel.createSpecies(getDisplayID(species), -1, -1);
 		Species sbmlSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(species));
-		sbmlSpecies.setBoundaryCondition(species.getDirection().equals(SBOLOntology.INPUT));
+		sbmlSpecies.setBoundaryCondition(species.getDirection().equals(DirectionType.IN));
 		// Annotate SBML species with SBOL component and component definition
 		annotateSpecies(sbmlSpecies, species, sbolDoc);	
 	}
@@ -286,8 +290,8 @@ public class ModelGenerator {
 			break;
 		}
 		FunctionalComponent species = moduleDef.getFunctionalComponent(degraded.getParticipantURI());
-		boolean onPort = (species.getDirection().equals(SBOLOntology.INPUT) 
-				|| species.getDirection().equals(SBOLOntology.OUTPUT));
+		boolean onPort = (species.getDirection().equals(DirectionType.IN) 
+				|| species.getDirection().equals(DirectionType.OUT));
 		Reaction degradationRxn = targetModel.createDegradationReaction(getDisplayID(species), -1, null, onPort, null);
 		degradationRxn.setId(getDisplayID(degradation));
 
@@ -302,8 +306,8 @@ public class ModelGenerator {
 	public static void generateComplexFormationRxn(Interaction complexFormation, Participation complex,
 			List<Participation> ligands, ModuleDefinition moduleDef, BioModel targetModel) {
 		FunctionalComponent complexSpecies = moduleDef.getFunctionalComponent(complex.getParticipantURI());
-		boolean onPort = (complexSpecies.getDirection().equals(SBOLOntology.INPUT) 
-				|| complexSpecies.getDirection().equals(SBOLOntology.OUTPUT));
+		boolean onPort = (complexSpecies.getDirection().equals(DirectionType.IN) 
+				|| complexSpecies.getDirection().equals(DirectionType.OUT));
 		Reaction complexFormationRxn = targetModel.createComplexReaction(getDisplayID(complexSpecies), null, onPort);
 		complexFormationRxn.setId(getDisplayID(complexFormation));
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), complexFormationRxn, 1);
@@ -502,7 +506,7 @@ public class ModelGenerator {
 	
 	public static boolean isIOMapping(MapsTo mapping, Module subModule, SBOLDocument sbolDoc) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
-		FunctionalComponent remoteComp = subModuleDef.getFunctionalComponent(mapping.getRemote().getDefinitionURI()); 
+		FunctionalComponent remoteComp = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
 		return isInputComponent(remoteComp) || isOutputComponent(remoteComp);
 	}
 	
@@ -513,11 +517,11 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isInputComponent(FunctionalComponent comp) {
-		return comp.getDirection().equals(SBOLOntology.INPUT);
+		return comp.getDirection().equals(DirectionType.IN);
 	}
 	
 	public static boolean isOutputComponent(FunctionalComponent comp) {
-		return comp.getDirection().equals(SBOLOntology.OUTPUT);
+		return comp.getDirection().equals(DirectionType.OUT);
 	}
 	
 	public static boolean isDNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -561,6 +565,7 @@ public class ModelGenerator {
 	public static boolean isSpeciesDefinition(ComponentDefinition compDef) {
 		return isComplexDefinition(compDef)
 				|| isProteinDefinition(compDef)
+				|| isTFDefinition(compDef)
 				|| compDef.containsType(ChEBI.EFFECTOR);
 	}
 	
@@ -583,7 +588,7 @@ public class ModelGenerator {
 	
 	public static boolean isDegradationInteraction(Interaction interact, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc) {
-		if (interact.containsType(SBO.DEGRADATION) && interact.getParticipations().size() == 1) {
+		if (interact.containsType(SystemsBiologyOntology.DEGRADATION) && interact.getParticipations().size() == 1) {
 //			Participation partici = interact.getParticipations().get(0); //OLD VERSION
 			Participation partici = null;
 			for(Participation part : interact.getParticipations())
@@ -591,7 +596,7 @@ public class ModelGenerator {
 				partici = part;
 				break;
 			}
-			if (partici.containsRole(MyersOntology.DEGRADED)) {
+			if (partici.containsRole(SystemsBiologyOntology.REACTANT)) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 				if (isSpeciesComponent(comp, sbolDoc))
 					return true;
@@ -602,14 +607,14 @@ public class ModelGenerator {
 	
 	public static boolean isComplexFormationInteraction(Interaction interact, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc) {
-		if (interact.containsType(SBO.BINDING)) {
+		if (interact.containsType(SystemsBiologyOntology.NON_COVALENT_BINDING)) {
 			int complexCount = 0;
 			int ligandCount = 0;
 			for (Participation partici: interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
-				if (partici.containsRole(SBO.COMPLEX) && isComplexComponent(comp, sbolDoc)) 
+				if (partici.containsRole(SystemsBiologyOntology.PRODUCT) && isComplexComponent(comp, sbolDoc)) 
 					complexCount++;
-				else if (partici.containsRole(SBO.LIGAND) && isSpeciesComponent(comp, sbolDoc))
+				else if (partici.containsRole(SystemsBiologyOntology.REACTANT) && isSpeciesComponent(comp, sbolDoc))
 					ligandCount++;
 				else
 					return false;
@@ -622,20 +627,20 @@ public class ModelGenerator {
 	
 	public static boolean isProductionInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
-		if (interact.containsType(SBO.PRODUCTION) && interact.getParticipations().size() == 3) {
+		if (interact.containsType(SystemsBiologyOntology.GENETIC_PRODUCTION) && interact.getParticipations().size() == 2/*3*/) {
 			boolean hasPromoter = false;
 			boolean hasProduct = false;
 			boolean hasTranscribed = false;
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
-				if (partici.containsRole(SBO.PROMOTER) && isPromoterComponent(comp, sbolDoc))
+				if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isPromoterComponent(comp, sbolDoc))
 					hasPromoter = true;
-				else if (partici.containsRole(SBO.PRODUCT) && isProteinComponent(comp, sbolDoc))
+				else if (partici.containsRole(SystemsBiologyOntology.PRODUCT) && isProteinComponent(comp, sbolDoc))
 					hasProduct = true;
-				else if (partici.containsRole(MyersOntology.TRANSCRIBED) && isGeneComponent(comp, sbolDoc))
+				else if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isGeneComponent(comp, sbolDoc))
 					hasTranscribed = true;
 			}
-			if (hasPromoter && hasProduct && hasTranscribed)
+			if (hasPromoter && hasProduct /*&& hasTranscribed*/)
 				return true;
 		}
 		return false;
@@ -643,14 +648,14 @@ public class ModelGenerator {
 	
 	public static boolean isActivationInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
-		if (interact.containsType(SBO.ACTIVATION) && interact.getParticipations().size() == 2) {
+		if (interact.containsType(SystemsBiologyOntology.GENETIC_ENHANCEMENT) && interact.getParticipations().size() == 2) {
 			boolean hasActivated = false;
 			boolean hasActivator = false;
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
-				if (partici.containsRole(MyersOntology.ACTIVATED) && isPromoterComponent(comp, sbolDoc))
+				if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isPromoterComponent(comp, sbolDoc))
 					hasActivated = true;
-				else if (partici.containsRole(SBO.ACTIVATOR) && isTFComponent(comp, sbolDoc))
+				else if (partici.containsRole(SystemsBiologyOntology.STIMULATOR) /*&& isTFComponent(comp, sbolDoc)*/)
 					hasActivator = true;
 			}
 			if (hasActivated && hasActivator)
@@ -661,14 +666,14 @@ public class ModelGenerator {
 	
 	public static boolean isRepressionInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
-		if (interact.containsType(SBO.REPRESSION) && interact.getParticipations().size() == 2) {
+		if (interact.containsType(SystemsBiologyOntology.GENETIC_SUPPRESSION) && interact.getParticipations().size() == 2) {
 			boolean hasRepressed = false;
 			boolean hasRepressor = false;
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
-				if (partici.containsRole(MyersOntology.REPRESSED) && isPromoterComponent(comp, sbolDoc))
+				if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isPromoterComponent(comp, sbolDoc))
 					hasRepressed = true;
-				else if (partici.containsRole(SBO.REPRESSOR) && isTFComponent(comp, sbolDoc))
+				else if (partici.containsRole(SystemsBiologyOntology.INHIBITOR) /*&& isTFComponent(comp, sbolDoc)*/)
 					hasRepressor = true;
 			}
 			if (hasRepressed && hasRepressor)

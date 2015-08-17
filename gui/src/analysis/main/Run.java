@@ -978,96 +978,130 @@ public class Run implements ActionListener
 								}
 							}
 						}
-						else if (sim.equals("transient-markov-chain-analysis"))
+					}
+					else if (sim.equals("transient-markov-chain-analysis"))
+					{
+						if (!sg.getStop())
 						{
+							log.addText("Performing transient Markov chain analysis with uniformization.\n");
+							logFile.write("Performing transient Markov chain analysis with uniformization.\n\n");
+							PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(
+									sg, progress);
+							time1 = System.nanoTime();
+							if (prop != null)
+							{
+								String[] condition = Translator.getProbpropParts(Translator
+										.getProbpropExpression(prop));
+								boolean globallyTrue = false;
+								if (prop.contains("PF"))
+								{
+									condition[0] = "true";
+								}
+								else if (prop.contains("PG"))
+								{
+									condition[0] = "true";
+									globallyTrue = true;
+								}
+								performMarkovAnalysis.start(timeLimit, timeStep, printInterval,
+										absError, condition, globallyTrue);
+							}
+							else
+							{
+								performMarkovAnalysis.start(timeLimit, timeStep, printInterval,
+										absError, null, false);
+							}
+							performMarkovAnalysis.join();
+							time2 = System.nanoTime();
 							if (!sg.getStop())
 							{
-								log.addText("Performing transient Markov chain analysis with uniformization.\n");
-								logFile.write("Performing transient Markov chain analysis with uniformization.\n\n");
-								PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(sg, progress);
-								time1 = System.nanoTime();
-								if (prop != null)
+								String simrep = sg.getMarkovResults();
+								if (simrep != null)
 								{
-									String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
-									boolean globallyTrue = false;
-									if (prop.contains("PF"))
-									{
-										condition[0] = "true";
-									}
-									else if (prop.contains("PG"))
-									{
-										condition[0] = "true";
-										globallyTrue = true;
-									}
-									performMarkovAnalysis.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
+									FileOutputStream simrepstream = new FileOutputStream(
+											new File(directory + Gui.separator + "sim-rep.txt"));
+									simrepstream.write((simrep).getBytes());
+									simrepstream.close();
 								}
-								else
+								Object[] options = { "Yes", "No" };
+								int value = JOptionPane.showOptionDialog(Gui.frame,
+										"The state graph contains " + sg.getNumberOfStates()
+										+ " states and " + sg.getNumberOfTransitions()
+										+ " transitions.\n"
+										+ "Do you want to view it in Graphviz?",
+										"View State Graph", JOptionPane.YES_NO_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION)
 								{
-									performMarkovAnalysis.start(timeLimit, timeStep, printInterval, absError, null, false);
-								}
-								performMarkovAnalysis.join();
-								time2 = System.nanoTime();
-								if (!sg.getStop())
-								{
-									String simrep = sg.getMarkovResults();
-									if (simrep != null)
+									String graphFile = filename.replace(".gcm", "")
+											.replace(".sbml", "").replace(".xml", "")
+											+ "_sg.dot";
+									sg.outputStateGraph(graphFile, true);
+									try
 									{
-										FileOutputStream simrepstream = new FileOutputStream(new File(directory + Gui.separator + "sim-rep.txt"));
-										simrepstream.write((simrep).getBytes());
-										simrepstream.close();
-									}
-									Object[] options = { "Yes", "No" };
-									int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
-											+ " states and " + sg.getNumberOfTransitions() + " transitions.\n"
-											+ "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-									if (value == JOptionPane.YES_OPTION)
-									{
-										String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
-										sg.outputStateGraph(graphFile, true);
-										try
+										Runtime execGraph = Runtime.getRuntime();
+										if (System.getProperty("os.name")
+												.contentEquals("Linux"))
 										{
-											Runtime execGraph = Runtime.getRuntime();
-											if (System.getProperty("os.name").contentEquals("Linux"))
-											{
-												log.addText("Executing:\ndotty " + graphFile + "\n");
-												logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-														+ "_sg.dot", null, new File(directory));
-											}
-											else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
-											{
-												log.addText("Executing:\nopen " + graphFile + "\n");
-												logFile.write("Executing:\nopen " + graphFile + "\n\n");
-												execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-														+ "_sg.dot", null, new File(directory));
-											}
-											else
-											{
-												log.addText("Executing:\ndotty " + graphFile + "\n");
-												logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-														+ "_sg.dot", null, new File(directory));
-											}
+											log.addText("Executing:\ndotty " + graphFile + "\n");
+											logFile.write("Executing:\ndotty " + graphFile
+													+ "\n\n");
+											execGraph.exec(
+													"dotty "
+															+ theFile.replace(".gcm", "")
+															.replace(".sbml", "")
+															.replace(".xml", "")
+															+ "_sg.dot", null, new File(
+																	directory));
 										}
-										catch (Exception e1)
+										else if (System.getProperty("os.name").toLowerCase()
+												.startsWith("mac os"))
 										{
-											JOptionPane
-													.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error", JOptionPane.ERROR_MESSAGE);
+											log.addText("Executing:\nopen " + graphFile + "\n");
+											logFile.write("Executing:\nopen " + graphFile
+													+ "\n\n");
+											execGraph.exec(
+													"open "
+															+ theFile.replace(".gcm", "")
+															.replace(".sbml", "")
+															.replace(".xml", "")
+															+ "_sg.dot", null, new File(
+																	directory));
+										}
+										else
+										{
+											log.addText("Executing:\ndotty " + graphFile + "\n");
+											logFile.write("Executing:\ndotty " + graphFile
+													+ "\n\n");
+											execGraph.exec(
+													"dotty "
+															+ theFile.replace(".gcm", "")
+															.replace(".sbml", "")
+															.replace(".xml", "")
+															+ "_sg.dot", null, new File(
+																	directory));
 										}
 									}
-									if (sg.outputTSD(directory + Gui.separator + "percent-term-time.tsd"))
+									catch (Exception e1)
 									{
-										if (refresh)
+										JOptionPane.showMessageDialog(Gui.frame,
+												"Error viewing state graph.", "Error",
+												JOptionPane.ERROR_MESSAGE);
+									}
+								}
+								if (sg.outputTSD(directory + Gui.separator
+										+ "percent-term-time.tsd"))
+								{
+									if (refresh)
+									{
+										for (int i = 0; i < simTab.getComponentCount(); i++)
 										{
-											for (int i = 0; i < simTab.getComponentCount(); i++)
+											if (simTab.getComponentAt(i).getName()
+													.equals("TSD Graph"))
 											{
-												if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
+												if (simTab.getComponentAt(i) instanceof Graph)
 												{
-													if (simTab.getComponentAt(i) instanceof Graph)
-													{
-														((Graph) simTab.getComponentAt(i)).refresh();
-													}
+													((Graph) simTab.getComponentAt(i))
+													.refresh();
 												}
 											}
 										}
