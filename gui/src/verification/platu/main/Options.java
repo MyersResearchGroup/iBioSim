@@ -221,6 +221,22 @@ public class Options {
 	}
 	
 	/*
+	 * Flag for turning on/off showing the DBM
+	 * as part of the state graph.
+	 */
+	private static boolean _displayDBM;
+	
+	/* Sets the _displayDBM flag. */
+	public static void set_displayDBM(boolean displayDBM){
+		_displayDBM = displayDBM;
+	}
+	
+	/* Gets the _displayDBM flag. */
+	public static boolean get_displayDBM(){
+		return _displayDBM;
+	}
+	
+	/*
 	 * Option for compositional minimization type.
 	 * off - no state space reduction
 	 * abstraction - transition based abstraction
