@@ -324,7 +324,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 			if (range != null)
 			{
 
-				if(range.getOrientation().toString().equals("inline"))
+				if(!range.isSetOrientation() || range.getOrientation().toString().equals("inline"))
 				{
 					symbol = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 				}

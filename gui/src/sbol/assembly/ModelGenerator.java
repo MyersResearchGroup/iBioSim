@@ -17,7 +17,6 @@ import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
-import org.sbolstandard.core.util.SequenceOntology;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
@@ -29,6 +28,7 @@ import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.Identified;
+import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import sbol.util.ChEBI;
@@ -93,9 +93,12 @@ public class ModelGenerator {
 				Participation complex = null;
 				List<Participation> ligands = new LinkedList<Participation>();
 				for (Participation partici: interact.getParticipations()) {
-					if (partici.containsRole(SystemsBiologyOntology.PRODUCT)) {
+					// COMPLEX
+					if (partici.containsRole(SystemsBiologyOntology.PRODUCT) ||
+							partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000253"))) {
 						complex = partici;
-					} else if (partici.containsRole(SystemsBiologyOntology.REACTANT)) {
+					} else if (partici.containsRole(SystemsBiologyOntology.REACTANT) ||
+							partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000280"))) {
 						ligands.add(partici);
 					}
 				}
@@ -117,6 +120,7 @@ public class ModelGenerator {
 						if (!promoterToProducts.containsKey(promoter))
 							promoterToProducts.put(promoter, new LinkedList<Participation>());
 						promoterToProducts.get(promoter).add(partici);
+					// TRANSCRIBED
 					} else if (partici.containsRole(SystemsBiologyOntology.PROMOTER)) {
 						if (!promoterToTranscribed.containsKey(promoter))
 							promoterToTranscribed.put(promoter, new LinkedList<Participation>());
@@ -529,7 +533,8 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isDNADefinition(ComponentDefinition compDef) {
-		return compDef.containsType(ChEBI.DNA);
+		return compDef.containsType(ChEBI.DNA) ||
+				compDef.containsType(ComponentDefinition.DNA);
 	}
 	
 	public static boolean isProteinComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -537,7 +542,8 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isProteinDefinition(ComponentDefinition compDef) {
-		return compDef.containsType(ChEBI.PROTEIN);
+		return compDef.containsType(ChEBI.PROTEIN) ||
+				compDef.containsType(ComponentDefinition.PROTEIN);
 	}
 	
 	public static boolean isPromoterComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -546,7 +552,8 @@ public class ModelGenerator {
 	
 	public static boolean isPromoterDefinition(ComponentDefinition compDef) {
 		return isDNADefinition(compDef) 
-				&& compDef.containsRole(SequenceOntology.PROMOTER);
+				&& (compDef.containsRole(SequenceOntology.PROMOTER)||
+						(compDef.containsRole(org.sbolstandard.core.util.SequenceOntology.PROMOTER)));
 	}
 	
 	public static boolean isGeneComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -566,6 +573,7 @@ public class ModelGenerator {
 		return isComplexDefinition(compDef)
 				|| isProteinDefinition(compDef)
 				|| isTFDefinition(compDef)
+				|| isSmallMoleculeDefinition(compDef)
 				|| compDef.containsType(ChEBI.EFFECTOR);
 	}
 	
@@ -574,7 +582,11 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isComplexDefinition(ComponentDefinition compDef) {
-		return compDef.containsType(ChEBI.NON_COVALENTLY_BOUND_MOLECULAR_ENTITY);
+		return compDef.containsType(ChEBI.NON_COVALENTLY_BOUND_MOLECULAR_ENTITY) ||
+				compDef.containsType(URI.create("http://www.biopax.org/release/biopax-level3.owl#Complex"));
+	}
+	public static boolean isSmallMoleculeDefinition(ComponentDefinition compDef) {
+		return compDef.containsType(ComponentDefinition.SMALL_MOLECULE);
 	}
 	
 	public static boolean isTFComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -607,14 +619,19 @@ public class ModelGenerator {
 	
 	public static boolean isComplexFormationInteraction(Interaction interact, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc) {
-		if (interact.containsType(SystemsBiologyOntology.NON_COVALENT_BINDING)) {
+		if (interact.containsType(SystemsBiologyOntology.NON_COVALENT_BINDING)||
+			interact.containsType(URI.create("http://www.biopax.org/release/biopax-level3.owl#Complex"))) {
 			int complexCount = 0;
 			int ligandCount = 0;
 			for (Participation partici: interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
-				if (partici.containsRole(SystemsBiologyOntology.PRODUCT) && isComplexComponent(comp, sbolDoc)) 
+				if ((partici.containsRole(SystemsBiologyOntology.PRODUCT) ||
+					partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000253"))) && 
+					isComplexComponent(comp, sbolDoc)) 
 					complexCount++;
-				else if (partici.containsRole(SystemsBiologyOntology.REACTANT) && isSpeciesComponent(comp, sbolDoc))
+				else if ((partici.containsRole(SystemsBiologyOntology.REACTANT) ||
+						partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000280"))) && 
+						isSpeciesComponent(comp, sbolDoc))
 					ligandCount++;
 				else
 					return false;
@@ -637,6 +654,7 @@ public class ModelGenerator {
 					hasPromoter = true;
 				else if (partici.containsRole(SystemsBiologyOntology.PRODUCT) && isProteinComponent(comp, sbolDoc))
 					hasProduct = true;
+				// TRANSCRIBED
 				else if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isGeneComponent(comp, sbolDoc))
 					hasTranscribed = true;
 			}
@@ -666,7 +684,9 @@ public class ModelGenerator {
 	
 	public static boolean isRepressionInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
-		if (interact.containsType(SystemsBiologyOntology.GENETIC_SUPPRESSION) && interact.getParticipations().size() == 2) {
+		if ((interact.containsType(SystemsBiologyOntology.GENETIC_SUPPRESSION) ||
+				interact.containsType(SystemsBiologyOntology.INHIBITION))
+				&& interact.getParticipations().size() == 2) {
 			boolean hasRepressed = false;
 			boolean hasRepressor = false;
 			for (Participation partici : interact.getParticipations()) {

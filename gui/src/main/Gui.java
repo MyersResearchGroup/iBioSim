@@ -6834,14 +6834,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions())
 			{
 				BioModel targetModel = new BioModel(projectDirectory);
-				if (!targetModel.load(projectDirectory + File.separator + ModelGenerator.getDisplayID(moduleDef) + ".xml"))
+				//if (!targetModel.load(projectDirectory + File.separator + ModelGenerator.getDisplayID(moduleDef) + ".xml"))
+				//{
+				List<BioModel> models = ModelGenerator.generateModel(projectDirectory, moduleDef, sbolDoc);
+				for (BioModel model : models)
 				{
-					List<BioModel> models = ModelGenerator.generateModel(projectDirectory, moduleDef, sbolDoc);
-					for (BioModel model : models)
+					if (overwrite(projectDirectory + File.separator + model.getSBMLDocument().getModel().getId() + ".xml", 
+							model.getSBMLDocument().getModel().getId() + ".xml"))
 					{
 						model.save(projectDirectory + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+						addToTree(model.getSBMLDocument().getModel().getId() + ".xml");
 					}
 				}
+				//}
 			}
 		}
 		catch (FileNotFoundException e)
