@@ -3584,7 +3584,8 @@ public class ExprTree {
 							result = "(" + r1.getElement(type) + ")";
 						}
 					}
-					result = result + "^";
+					if (type.equals("prism")) result = "pow(" + result + ",";
+					else result = result + "^";
 					if (r2.isit == 'b'
 							|| r2.isit == 'i'
 							|| r2.isit == 'c'
@@ -3602,6 +3603,7 @@ public class ExprTree {
 									+ ")";
 						}
 					}
+					if (type.equals("prism")) result = result + ")";
 				}
 			}
 			// relational ops: geq, leq, gt, lt

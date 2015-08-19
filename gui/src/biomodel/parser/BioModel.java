@@ -113,8 +113,11 @@ import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 import biomodel.util.UndoManager;
 import biomodel.util.Utility;
+import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
+import lpn.parser.Place;
 import lpn.parser.Transition;
+import lpn.parser.Variable;
 import main.Gui;
 import main.Log;
 import main.util.MutableString;
@@ -684,6 +687,7 @@ public class BioModel {
 		ArrayList<String> biochemical = getBiochemicalSpecies();
 		LhpnFile LHPN = new LhpnFile();
 		for (int i = 0; i < specs.size(); i++) {
+			if (sbml.getModel().getSpecies(specs.get(i))==null) continue;
 			double initial = parseValue(getParameter(GlobalConstants.INITIAL_STRING));
 			double selectedThreshold = 0;
 			try {
@@ -737,6 +741,7 @@ public class BioModel {
 			}
 		}
 		for (int i = 0; i < specs.size(); i++) {
+			if (sbml.getModel().getSpecies(specs.get(i))==null) continue;
 			if (!biochemical.contains(specs.get(i)) && !getInputSpecies().contains(specs.get(i))) {
 				int placeNum = 0;
 				int transNum = 0;
@@ -967,6 +972,47 @@ public class BioModel {
 				}
 			}
 			LHPN.addProperty(lpnProperty.getString());
+		}
+		// TODO: this is prism export code, needs to be in own function
+		System.out.println("ctmc");
+		for (String var : LHPN.getVariables()) {
+			int i=0;
+			Place place;
+			String lastValue="";
+			while ((place = LHPN.getPlace(var+i))!=null) {
+				Transition inTrans = place.getPreset()[0];
+				ExprTree assign = inTrans.getAssignTree(var);
+				lastValue = assign.toString();
+				i++;
+			}
+			Variable variable = LHPN.getVariable(var);
+			String initValue = variable.getInitValue();
+			initValue = Long.toString((Math.round(Double.valueOf(initValue))));
+			if (lastValue.equals("")) {
+				System.out.println("const int "+var+"="+initValue+";");
+			} else {
+				System.out.println("module "+var+"_def");
+				System.out.println("  "+var+" : "+"[0.."+lastValue+"] init "+initValue+";");
+				i=0;
+				while ((place = LHPN.getPlace(var+i))!=null) {
+					Transition inTrans = place.getPreset()[0];
+					ExprTree assign = inTrans.getAssignTree(var);
+					System.out.print("  [] "+var+"="+assign.toString()+" -> ");
+					boolean first = true;
+					for (Transition outTrans : place.getPostset()) {
+						assign = outTrans.getAssignTree(var);
+						ExprTree delay = outTrans.getDelayTree();
+						String rate = delay.toString("prism");
+						rate = rate.replace("exponential", "");
+						if (!first) System.out.print(" + ");
+						System.out.print(rate+":("+var+"'="+assign.toString()+")");
+						first = false;
+					}
+					System.out.println(";");
+					i++;
+				}
+				System.out.println("endmodule");
+			}
 		}
 		return LHPN;
 	}
@@ -5079,12 +5125,13 @@ public class BioModel {
 			gridSubmodelID = componentModelRef;
 		
 		potentialGridSubmodel = sbmlCompModel.getListOfSubmodels().get(gridSubmodelID);
+		int size = AnnotationUtility.parseArraySizeAnnotation(potentialGridSubmodel);
 		
-		if (potentialGridSubmodel != null) {
+		if (potentialGridSubmodel != null && size >= 0) {
 			
 			//if the annotation string already exists, then one of these existed before
 			//so update its count
-			int size = AnnotationUtility.parseArraySizeAnnotation(potentialGridSubmodel);
+			//int size = AnnotationUtility.parseArraySizeAnnotation(potentialGridSubmodel);
 			if (size >= 0) {
 				
 				//if we're getting rid of the last submodel of its kind

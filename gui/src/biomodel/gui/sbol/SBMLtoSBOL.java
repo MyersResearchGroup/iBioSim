@@ -39,6 +39,7 @@ import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLWriter;
+import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
@@ -84,6 +85,13 @@ public class SBMLtoSBOL {
 						SBOLDOC.createCopy(c);
 					}
 				}
+				for(Sequence c : sbolDoc.getSequences())
+				{
+					if(SBOLDOC.getSequence(c.getIdentity()) == null) 
+					{
+						SBOLDOC.createCopy(c);
+					}
+				}
 				
 			} 
 			else
@@ -106,7 +114,6 @@ public class SBMLtoSBOL {
 	    
 		try 
 	    {
-//			SBOLWriter.writeRDF(sbolDoc, (System.out));
 			try 
 			{
 				SBOLWriter.writeRDF(sbolDoc, exportFilePath);
@@ -116,9 +123,7 @@ public class SBMLtoSBOL {
 				e.printStackTrace();
 			}
 	    }
-//		catch (XMLStreamException e) { e.printStackTrace(); }
 		catch (FactoryConfigurationError e) { e.printStackTrace(); } 
-//	    catch (CoreIoException e) { e.printStackTrace(); }
 	}
 	
 	public void export_recurse(String source,SBMLDocument sbmlDoc,SBOLDocument sbolDoc,Collection collection) 
@@ -141,173 +146,23 @@ public class SBMLtoSBOL {
 			ComponentDefinition compDef = setComponentDefinition(sbolDoc, model, species);
 			collection.addMember(compDef.getIdentity());
 			
-//<<<<<<< SBMLtoSBOL.java
 			setFunctionalComponent(sbmlDoc, moduleDef, compDef, species);
-//=======
-//			AccessType access; 
-//			DirectionType direction;
-//			// create FunctionalComponents for these within the module
-//			String funcComp_identity =  species.getId();
-//			
-//			if (SBMLutilities.isInput(sbmlDoc,species.getId())) 
-//			{
-//				access    = AccessType.PUBLIC;
-//				direction = DirectionType.IN;
-//			} 
-//			else if (SBMLutilities.isOutput(sbmlDoc,species.getId())) 
-//			{
-//				access    = AccessType.PUBLIC;
-//				direction = DirectionType.OUT;
-//			} 
-//			else 
-//			{
-//				access    = AccessType.PRIVATE; 
-//				direction = DirectionType.NONE;
-//			}
-//			
-//			moduleDef.createFunctionalComponent(funcComp_identity, access, compDef.getIdentity(), direction);
-//>>>>>>> 1.18
 		}
 		
 		for (int i = 0; i < model.getReactionCount(); i++) 
 		{
 			Reaction reaction = model.getReaction(i);
 			
-//<<<<<<< SBMLtoSBOL.java
-			// convert reaction to an interaction
-//=======
-//			String promoterId = ""; 
-//			
-//>>>>>>> 1.18
 			// if production reaction, then you want to examine the modifiers, and create interactions for 
 			// each modifier that is a repressor from this species to the promoter
 			if(BioModel.isProductionReaction(reaction))
 			{
-//<<<<<<< SBMLtoSBOL.java
 				extractProductionReaction(moduleDef, reaction);
-//=======
-//				List<ModifierSpeciesReference> repressors = new ArrayList<ModifierSpeciesReference>();
-//				List<ModifierSpeciesReference> activators = new ArrayList<ModifierSpeciesReference>(); 
-//				
-//				for(ModifierSpeciesReference modifier : reaction.getListOfModifiers())
-//				{
-//	
-//					if (BioModel.isPromoter(modifier)) 
-//					{
-//						promoterId = modifier.getSpecies(); 
-//					} 
-//					else if (BioModel.isRepressor(modifier)) 
-//					{
-//						repressors.add(modifier);
-//					} 
-//					else if (BioModel.isActivator(modifier)) 
-//					{
-//						activators.add(modifier);
-//					} 
-//					else if (BioModel.isRegulator(modifier)) 
-//					{
-//						repressors.add(modifier);
-//						activators.add(modifier);
-//					}
-//				}
-//				
-//				for(ModifierSpeciesReference r : repressors)
-//				{
-//					String inter_id = r.getSpecies() + "_rep_" + promoterId;
-//					
-//					Set<URI> types = new HashSet<URI>();
-//					types.add(SystemsBiologyOntology.GENETIC_SUPPRESSION);
-//					
-//					Interaction interaction = moduleDef.createInteraction(inter_id, types);
-//					
-//					Participation p1 = interaction.createParticipation(promoterId, promoterId);
-//					Participation p2 = interaction.createParticipation(r.getSpecies(), r.getSpecies());
-//					
-//					Set<URI> roles1 = new HashSet<URI>();
-//					roles1.add(SystemsBiologyOntology.PROMOTER);
-//					
-//					Set<URI> roles2 = new HashSet<URI>();
-//					roles2.add(SystemsBiologyOntology.INHIBITOR);
-//					
-//					p1.setRoles(roles1);
-//					p2.setRoles(roles2);
-//				}
-//				
-//				// Repeat same steps for the list of activators
-//				for(ModifierSpeciesReference a : activators)
-//				{
-//					String inter_id ="_act_" + a.getSpecies();
-//					
-//					Set<URI> types = new HashSet<URI>();
-//					types.add(SystemsBiologyOntology.GENETIC_ENHANCEMENT); 
-//					
-//					Interaction interaction = moduleDef.createInteraction(inter_id, types);
-//					
-//					Participation p1 = interaction.createParticipation(promoterId, promoterId);
-//					Participation p2 = interaction.createParticipation(a.getSpecies(), a.getSpecies());
-//					
-//					Set<URI> roles1 = new HashSet<URI>();
-//					roles1.add(SystemsBiologyOntology.PROMOTER);
-//					
-//					Set<URI> roles2 = new HashSet<URI>();
-//					roles2.add(SystemsBiologyOntology.STIMULATOR);
-//					
-//					p1.setRoles(roles1);
-//					p2.setRoles(roles2);
-//				}
-//				
-//				for(SpeciesReference product : reaction.getListOfProducts())
-//				{
-//					String i_id = promoterId + "_prod_" + product.getSpecies();
-//					
-//					Set<URI> type = new HashSet<URI>();
-//					type.add(SystemsBiologyOntology.GENETIC_PRODUCTION);
-//					
-//					Interaction interaction = moduleDef.createInteraction(i_id, type);
-//					Participation p1 = interaction.createParticipation(promoterId, promoterId);
-//					Participation p2 = interaction.createParticipation(product.getSpecies(), product.getSpecies());
-//					
-//					Set<URI> roles1 = new HashSet<URI>();
-//					roles1.add(SystemsBiologyOntology.PROMOTER);
-//					
-//					Set<URI> roles2 = new HashSet<URI>();
-//					roles2.add(SystemsBiologyOntology.PRODUCT);
-//					
-//					p1.setRoles(roles1);
-//					p2.setRoles(roles2);
-//				}
-//>>>>>>> 1.18
 			}
 			// if complex reaction, then create on interaction
 			else if(BioModel.isComplexReaction(reaction))
 			{	
-//<<<<<<< SBMLtoSBOL.java
 				extractComplexReaction(moduleDef, reaction);
-//=======
-//				Set<URI> type = new HashSet<URI>();
-//				type.add(SystemsBiologyOntology.NON_COVALENT_BINDING);
-//				
-//				Interaction inter = moduleDef.createInteraction(reaction.getId(), type);
-//					
-//				for(SpeciesReference reactant : reaction.getListOfReactants())
-//				{
-//					Participation p = inter.createParticipation(reactant.getSpecies(), reactant.getSpecies());
-//					
-//					Set<URI> roles_reac = new HashSet<URI>();
-//					roles_reac.add(SystemsBiologyOntology.REACTANT);
-//					
-//					p.setRoles(roles_reac);
-//				}
-//				for(SpeciesReference product : reaction.getListOfProducts())
-//				{
-//					Participation p = inter.createParticipation(product.getSpecies(), product.getSpecies());
-//					
-//					Set<URI> roles_prod = new HashSet<URI>();
-//					roles_prod.add(SystemsBiologyOntology.PRODUCT);
-//					
-//					p.setRoles(roles_prod); 
-//				}
-//>>>>>>> 1.18
 			}
 			// if degradation reaction, then create an interaction
 			else if(BioModel.isDegradationReaction(reaction))
@@ -345,8 +200,7 @@ public class SBMLtoSBOL {
 				}
 			}
 		}
-		// TODO: Extract SBOL annotations to fill in more info about ComponentDefn.
-		extractAnnotations(sbmlDoc, sbolDoc, collection, moduleDef, model);
+		extractSubModels(sbmlDoc, sbolDoc, collection, moduleDef, model);
 	}
 	
 	public ComponentDefinition setComponentDefinition(SBOLDocument sbolDoc, Model model, Species species)
@@ -366,11 +220,16 @@ public class SBMLtoSBOL {
 				if (compDef!=null) {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 						sbolDoc.createCopy(compDef);
+						for (Sequence sequence : compDef.getSequences()) {
+							if (sbolDoc.getSequence(sequence.getIdentity())==null) {
+								sbolDoc.createCopy(sequence);
+							}
+						}
 					}
 					return compDef;
 				}
 			}
-			Reaction production = bioModel.getProductionReaction(species.getId());
+			Reaction production = BioModel.getProductionReaction(species.getId(),model);
 			if (production!=null) {
 				sbolURIs = new LinkedList<URI>();
 				sbolStrand = AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
@@ -379,6 +238,11 @@ public class SBMLtoSBOL {
 					if (compDef!=null) {
 						if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 							sbolDoc.createCopy(compDef);
+							for (Sequence sequence : compDef.getSequences()) {
+								if (sbolDoc.getSequence(sequence.getIdentity())==null) {
+									sbolDoc.createCopy(sequence);
+								}
+							}
 						}
 						return compDef;
 					}
@@ -396,6 +260,11 @@ public class SBMLtoSBOL {
 				if (compDef!=null) {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 						sbolDoc.createCopy(compDef);
+						for (Sequence sequence : compDef.getSequences()) {
+							if (sbolDoc.getSequence(sequence.getIdentity())==null) {
+								sbolDoc.createCopy(sequence);
+							}
+						}
 					}
 					return compDef;
 				}
@@ -574,19 +443,14 @@ public class SBMLtoSBOL {
 		}
 	}
 	
-	public void extractAnnotations(SBMLDocument sbmlDoc, SBOLDocument sbolDoc, Collection collection, ModuleDefinition moduleDef, Model model)
+	public void extractSubModels(SBMLDocument sbmlDoc, SBOLDocument sbolDoc, Collection collection, ModuleDefinition moduleDef, Model model)
 	{
 		ArrayList<String> comps = new ArrayList<String>();
 		CompSBMLDocumentPlugin sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
 		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
-//<<<<<<< SBMLtoSBOL.java
 		if (sbmlCompModel.getListOfSubmodels().size()>0) 
 		{
 			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
-//=======
-//		if (sbmlCompModel.getListOfSubmodels().size()>0) {
-//			//CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
-//>>>>>>> 1.18
 			for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
 				String subModelId = sbmlCompModel.getListOfSubmodels().get(i).getId();
 				String extModel = sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
