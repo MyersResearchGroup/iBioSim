@@ -216,6 +216,7 @@ public class SBMLtoSBOL {
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			if (sbolURIs.size()>0) {
+				// TODO: need to figure out what to do when size is greater than 1
 				compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
 				if (compDef!=null) {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {

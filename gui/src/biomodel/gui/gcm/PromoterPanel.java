@@ -322,6 +322,13 @@ public class PromoterPanel extends JPanel {
 			// Field for annotating promoter with SBOL DNA components
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
+			// TODO: if sbolURIs.size > 0, add them to the promoter species, and remove from reaction
+			if (sbolURIs.size()>0) {
+				SBOLAnnotation sbolAnnot = new SBOLAnnotation(selected, sbolURIs, sbolStrand);
+				AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);
+				AnnotationUtility.removeSBOLAnnotation(production);
+			}
+			sbolStrand = AnnotationUtility.parseSBOLAnnotation(promoter, sbolURIs);
 			sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
 					3, false);
 			add(sbolField);
@@ -464,11 +471,11 @@ public class PromoterPanel extends JPanel {
 					if (!production.isSetMetaId() || production.getMetaId().equals(""))
 						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), production, 
 								bioModel.getMetaIDIndex());
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(production.getMetaId(), sbolField.getSBOLURIs(),
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(selected, sbolField.getSBOLURIs(),
 							sbolField.getSBOLStrand());
-					AnnotationUtility.setSBOLAnnotation(production, sbolAnnot);
+					AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);
 				} else
-					AnnotationUtility.removeSBOLAnnotation(production);
+					AnnotationUtility.removeSBOLAnnotation(promoter);
 
 				// rename all the influences that use this promoter if name was changed
 				if (selected != null && oldName != null && !oldName.equals(id)) {

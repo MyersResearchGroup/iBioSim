@@ -95,6 +95,7 @@ public class AnnotationUtility {
 					while (uriMatcher.find())
 						try {
 							sbolElementURIs.get(className).add(new URI(uriMatcher.group(1)));
+							// TODO: need to figure out how to handle this cleaner, likely need to get hashmap up to top and use that
 							if (className.equals("ComponentDefinition")) {
 								dnaCompURIs.clear();
 								dnaCompURIs.add(new URI(uriMatcher.group(1)));
