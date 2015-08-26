@@ -327,8 +327,9 @@ public class PromoterPanel extends JPanel {
 				SBOLAnnotation sbolAnnot = new SBOLAnnotation(selected, sbolURIs, sbolStrand);
 				AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);
 				AnnotationUtility.removeSBOLAnnotation(production);
+			} else {
+				sbolStrand = AnnotationUtility.parseSBOLAnnotation(promoter, sbolURIs);
 			}
-			sbolStrand = AnnotationUtility.parseSBOLAnnotation(promoter, sbolURIs);
 			sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
 					3, false);
 			add(sbolField);

@@ -252,11 +252,13 @@ public class SBMLtoSBOL {
 			compDef_type.add(ComponentDefinition.DNA);
 			compDef_role.add(SequenceOntology.PROMOTER);
 		} 
+		// TODO: other cases for other SBO terms
 		else 
 		{
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			if (sbolURIs.size()>0) {
+				// TODO: what if more than 1
 				compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
 				if (compDef!=null) {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
