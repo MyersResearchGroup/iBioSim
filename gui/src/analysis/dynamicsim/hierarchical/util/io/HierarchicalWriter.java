@@ -47,6 +47,7 @@ public class HierarchicalWriter
 				{
 					bufferedWriter.write(commaSpace + models.getVariableToValue(replacements, speciesID));
 					commaSpace = ",";
+
 				}
 			}
 

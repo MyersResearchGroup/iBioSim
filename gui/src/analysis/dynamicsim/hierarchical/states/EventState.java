@@ -17,7 +17,6 @@ public abstract class EventState extends ReactionState
 	private HashMap<String, HashSet<String>>		eventToAffectedReactionSetMap;
 	private HashMap<String, Map<String, ASTNode>>	eventToAssignmentSetMap;
 	private HashMap<String, ASTNode>				eventToDelayMap;
-	private Set<String>								eventToHasDelayMap;
 	private HashMap<String, Boolean>				eventToPreviousTriggerValueMap;
 	private HashMap<String, ASTNode>				eventToPriorityMap;
 	private HashMap<String, Boolean>				eventToTriggerInitiallyTrueMap;
@@ -39,7 +38,6 @@ public abstract class EventState extends ReactionState
 			untriggeredEventSet = new HashSet<String>((int) getNumEvents());
 			eventToPriorityMap = new HashMap<String, ASTNode>((int) getNumEvents());
 			eventToDelayMap = new HashMap<String, ASTNode>((int) getNumEvents());
-			eventToHasDelayMap = new HashSet<String>((int) getNumEvents());
 			eventToTriggerMap = new HashMap<String, ASTNode>((int) getNumEvents());
 			eventToTriggerInitiallyTrueMap = new HashMap<String, Boolean>((int) getNumEvents());
 			eventToTriggerPersistenceMap = new HashMap<String, Boolean>((int) getNumEvents());
@@ -59,7 +57,6 @@ public abstract class EventState extends ReactionState
 		eventToAffectedReactionSetMap = state.eventToAffectedReactionSetMap;
 		eventToAssignmentSetMap = state.eventToAssignmentSetMap;
 		eventToDelayMap = state.eventToDelayMap;
-		eventToHasDelayMap = state.eventToHasDelayMap;
 		eventToPreviousTriggerValueMap = state.eventToPreviousTriggerValueMap == null ? null : new HashMap<String, Boolean>(
 				state.eventToPreviousTriggerValueMap);
 		eventToPriorityMap = state.eventToPriorityMap;
@@ -110,19 +107,9 @@ public abstract class EventState extends ReactionState
 		this.eventToDelayMap = eventToDelayMap;
 	}
 
-	public Set<String> getEventToHasDelayMap()
-	{
-		return eventToHasDelayMap;
-	}
-
 	public boolean hasDelay(String eventId)
 	{
-		return eventToHasDelayMap.contains(eventId);
-	}
-
-	public void setEventToHasDelayMap(Set<String> eventToHasDelayMap)
-	{
-		this.eventToHasDelayMap = eventToHasDelayMap;
+		return eventToDelayMap.containsKey(eventId);
 	}
 
 	public HashMap<String, Boolean> getEventToPreviousTriggerValueMap()

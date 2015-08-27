@@ -88,8 +88,7 @@ public class Setup
 		{
 			modelstate.addVariableToIsConstant(compartmentID);
 		}
-
-		if (!compartment.getConstant())
+		else
 		{
 			modelstate.addVariableToPrint(compartmentID);
 		}
@@ -128,19 +127,16 @@ public class Setup
 	public static void setupSinglePriority(ModelState modelstate, String eventID, String priorityID, ASTNode math, Map<String, Model> models,
 			Set<String> iBioSimFunctionDefinitions)
 	{
-
 		if (priorityID != null && modelstate.isDeletedByMetaID(priorityID))
 		{
 			return;
 		}
-
 		modelstate.getEventToPriorityMap().put(eventID, HierarchicalUtilities.inlineFormula(modelstate, math, models, iBioSimFunctionDefinitions));
 	}
 
 	public static void setupSingleDelay(ModelState modelstate, String eventID, String delayID, ASTNode math, Map<String, Model> models,
 			Set<String> iBioSimFunctionDefinitions)
 	{
-
 		if (delayID != null && modelstate.isDeletedByMetaID(delayID))
 		{
 			return;
@@ -148,9 +144,7 @@ public class Setup
 		else
 		{
 			modelstate.getEventToDelayMap().put(eventID, HierarchicalUtilities.inlineFormula(modelstate, math, models, iBioSimFunctionDefinitions));
-			modelstate.getEventToHasDelayMap().add(eventID);
 		}
-
 	}
 
 	/**
@@ -211,9 +205,6 @@ public class Setup
 
 		modelstate.getVariableToEventSetMap().get(variableID).add(eventID);
 
-		// if the variable is a species, add the reactions it's in
-		// to the event to affected reaction hashmap, which is used
-		// for updating propensities after an event fires
 		if (modelstate.getSpeciesToAffectedReactionSetMap().containsKey(variableID))
 		{
 
@@ -234,12 +225,9 @@ public class Setup
 		{
 			modelstate.addVariableToIsConstant(parameterID);
 		}
-		if (!parameter.getConstant())
+		else
 		{
 			modelstate.getVariablesToPrint().add(parameterID);
-		}
-		if (parameter.getConstant() == false)
-		{
 			modelstate.getNonconstantParameterIDSet().add(parameterID);
 		}
 
@@ -320,10 +308,8 @@ public class Setup
 		double propensity;
 		String forward = reactionID + "_fd";
 		String reverse = reactionID + "_rv";
-
 		modelstate.getReactionToHasEnoughMolecules().put(forward, notEnoughMoleculesFlagFd);
 		modelstate.getReactionToHasEnoughMolecules().put(reverse, notEnoughMoleculesFlagRv);
-
 		if (productsList.getChildCount() > 0 && reactantsList.getChildCount() > 0)
 		{
 
@@ -331,7 +317,6 @@ public class Setup
 					HierarchicalUtilities.inlineFormula(modelstate, reactionFormula.getRightChild(), models, iBioSimFunctionDefinitions));
 			modelstate.getReactionToFormulaMap().put(forward,
 					HierarchicalUtilities.inlineFormula(modelstate, reactionFormula.getLeftChild(), models, iBioSimFunctionDefinitions));
-
 			if (notEnoughMoleculesFlagFd == true)
 			{
 				propensity = 0.0;
@@ -341,38 +326,24 @@ public class Setup
 				propensity = Evaluator.evaluateExpressionRecursive(modelstate,
 						HierarchicalUtilities.inlineFormula(modelstate, reactionFormula.getLeftChild(), models, iBioSimFunctionDefinitions), false,
 						currentTime, null, null, replacements);
-
-				// if (reactionID.contains("_Diffusion_") &&
-				// isStoichAmpBoolean() == true)
-				// {
-				// propensity *= (1.0 / getStoichAmpGridValue());
-				// }
-
 				setPropensity(modelstate, reactionID, propensity);
-
 				modelstate.setPropensity(modelstate.getPropensity() + propensity);
 			}
-
 			modelstate.getReactionToPropensityMap().put(forward, propensity);
-
 			if (notEnoughMoleculesFlagRv == true)
 			{
 				propensity = 0.0;
 			}
 			else
 			{
-
 				propensity = Evaluator.evaluateExpressionRecursive(modelstate,
 						HierarchicalUtilities.inlineFormula(modelstate, reactionFormula.getRightChild(), models, iBioSimFunctionDefinitions), false,
 						currentTime, null, null, replacements);
-
 				if (propensity < 0.0)
 				{
 					propensity = 0.0;
 				}
-
 			}
-
 			setPropensity(modelstate, reverse, propensity);
 		}
 		else
@@ -390,16 +361,12 @@ public class Setup
 					propensity = Evaluator.evaluateExpressionRecursive(modelstate,
 							HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, models, iBioSimFunctionDefinitions), false, currentTime,
 							null, null, replacements);
-
 					if (propensity < 0.0)
 					{
 						propensity = 0.0;
 					}
-
 				}
-
 				setPropensity(modelstate, forward, propensity);
-
 			}
 			else if (productsList.getChildCount() > 0)
 			{
@@ -525,7 +492,7 @@ public class Setup
 			modelstate.getVariableToValueMap().put(speciesID, initValue);
 		}
 
-		if (species.getHasOnlySubstanceUnits() == false)
+		if (!species.getHasOnlySubstanceUnits())
 		{
 			modelstate.getSpeciesToCompartmentNameMap().put(speciesID, species.getCompartment());
 		}
@@ -542,6 +509,7 @@ public class Setup
 		{
 			modelstate.addVariableToIsConstant(speciesID);
 		}
+
 		modelstate.getSpeciesToHasOnlySubstanceUnitsMap().put(speciesID, species.getHasOnlySubstanceUnits());
 		modelstate.getSpeciesIDSet().add(speciesID);
 
@@ -825,7 +793,6 @@ public class Setup
 			modelstate.getHierarchicalReactions().add(forward);
 			modelstate.getHierarchicalReactions().add(reverse);
 		}
-		modifierID = modifierID.replace("_negative_", "-");
 
 		String forwardString = "", reverseString = "";
 
@@ -1023,13 +990,12 @@ public class Setup
 
 			ASTNode math = affectedAssignmentRuleSet.get(variable);
 
-			// update the species count (but only if the species isn't constant)
-			// (bound cond is fine)
-			if (modelstate.isConstant(variable) == false)
+			if (!modelstate.isConstant(variable))
 			{
+				String referencedVariable = HierarchicalUtilities.getReferencedVariable(variable);
 
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
-						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
+						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
 				{
 
 					oldResult = modelstate.getVariableToValue(replacements, variable);
@@ -1068,11 +1034,10 @@ public class Setup
 
 		if (newResult != oldResult)
 		{
-			if (oldResult == Double.NaN)
+			if (Double.isNaN(oldResult))
 			{
 				oldResult = 1.0;
 			}
-
 			modelstate.setVariableToValue(replacements, variable, newResult);
 			if (modelstate.getNumRules() > 0)
 			{
@@ -1080,10 +1045,8 @@ public class Setup
 
 				HierarchicalUtilities.performAssignmentRules(modelstate, rules, replacements, currentTime);
 			}
-
 			return true;
 		}
-
 		return false;
 	}
 
@@ -1107,8 +1070,10 @@ public class Setup
 			Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
 	{
 		double newResult;
-		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
-				&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
+		String referencedVariable = HierarchicalUtilities.getReferencedVariable(variable);
+
+		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
+				&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
 		{
 
 			newResult = Evaluator.evaluateExpressionRecursive(modelstate, initialAssignment, false, currentTime, null, null, replacements)

@@ -12,14 +12,10 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import odk.lang.FastMath;
-
 import org.sbml.jsbml.ASTNode;
 
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSetup;
-import analysis.dynamicsim.hierarchical.util.Evaluator;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
-import analysis.dynamicsim.hierarchical.util.arrays.ArraysObject;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
@@ -27,7 +23,7 @@ import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
 //TODO: assignment rules need to verify if changing a hierarchical species because they
 //		can trigger rules in other places.
 
-public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
+public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 {
 
 	private final Map<Double, List<Double>>	buffer;
@@ -158,7 +154,7 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 
 			totalPropensity = getTotalPropensity();
 
-			delta_t = FastMath.log(1 / r1) / totalPropensity;
+			delta_t = computeNextTimeStep(r1, totalPropensity);
 
 			nextReactionTime = getCurrentTime() + delta_t;
 			nextEventTime = HierarchicalUtilities.handleEvents(getCurrentTime(), getReplacements(), getTopmodel(), getSubmodels());
@@ -219,6 +215,11 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		}
 	}
 
+	public double computeNextTimeStep(double r1, double totalPropensity)
+	{
+		return Math.log(1 / r1) / totalPropensity;
+	}
+
 	private boolean fireEvents()
 	{
 		boolean isFired = false;
@@ -228,7 +229,8 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 					.isNoRuleFlag(), getTopmodel().isNoConstraintsFlag(), getCurrentTime(), getReplacements());
 			if (affectedReactionSet.size() > 0)
 			{
-				Set<String> affectedSpecies = updatePropensities(affectedReactionSet, getTopmodel());
+				Set<String> affectedSpecies = HierarchicalUtilities.updatePropensities(affectedReactionSet, getTopmodel(), getCurrentTime(),
+						getReplacements());
 				perculateDown(getTopmodel(), affectedSpecies);
 				isFired = true;
 			}
@@ -242,7 +244,8 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 						models.isNoRuleFlag(), models.isNoConstraintsFlag(), getCurrentTime(), getReplacements());
 				if (affectedReactionSet.size() > 0)
 				{
-					Set<String> affectedSpecies = updatePropensities(affectedReactionSet, models);
+					Set<String> affectedSpecies = HierarchicalUtilities.updatePropensities(affectedReactionSet, models, getCurrentTime(),
+							getReplacements());
 					perculateUp(models, affectedSpecies);
 					isFired = true;
 				}
@@ -251,21 +254,6 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 
 		return isFired;
 
-	}
-
-	private int getPercentage()
-	{
-
-		if (getTotalRuns() == 1)
-		{
-			double timePerc = getCurrentTime() / getTimeLimit();
-			return (int) (timePerc * 100);
-		}
-		else
-		{
-			double runPerc = 1.0 * currRun / getTotalRuns();
-			return (int) (runPerc * 100);
-		}
 	}
 
 	/**
@@ -301,7 +289,6 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		setupConstraints(model);
 		setupRules(model);
 		setupInitialAssignments(model);
-		setupArraysPropensities(model);
 		model.setInitValues();
 	}
 
@@ -314,7 +301,8 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 			{
 				for (HierarchicalStringPair pair : pairs)
 				{
-					updatePropensity(pair.string1, pair.string2);
+					ModelState model = getModelState(pair.string1);
+					HierarchicalUtilities.updatePropensity(model, pair.string2, getCurrentTime(), getReplacements());
 				}
 			}
 		}
@@ -330,48 +318,13 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 			{
 				for (HierarchicalStringPair pair : pairs)
 				{
-					updatePropensity(pair.string1, pair.string2);
+					ModelState model = getModelState(pair.string1);
+					HierarchicalUtilities.updatePropensity(model, pair.string2, getCurrentTime(), getReplacements());
 					updatedTopSpecies.add(pair.string2);
 				}
 			}
 		}
 		perculateDown(getTopmodel(), updatedTopSpecies);
-	}
-
-	/**
-	 * performs every rate rule using the current time step
-	 * 
-	 * @param delta_t
-	 * @return
-	 */
-	private void performRateRules(ModelState modelstate, double delta_t)
-	{
-
-		for (String variable : modelstate.getRateRulesList().keySet())
-		{
-			ASTNode rateRule = modelstate.getRateRulesList().get(variable);
-
-			if (!modelstate.isConstant(variable))
-			{
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
-						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable) == false)
-				{
-					double currVal = modelstate.getVariableToValue(getReplacements(), variable);
-					double incr = delta_t
-							* (Evaluator.evaluateExpressionRecursive(modelstate, rateRule, false, getCurrentTime(), null, null, getReplacements()) * modelstate
-									.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable)));
-					modelstate.setVariableToValue(getReplacements(), variable, currVal + incr);
-				}
-				else
-				{
-					double currVal = modelstate.getVariableToValue(getReplacements(), variable);
-					double incr = delta_t
-							* Evaluator.evaluateExpressionRecursive(modelstate, rateRule, false, getCurrentTime(), null, null, getReplacements());
-
-					modelstate.setVariableToValue(getReplacements(), variable, currVal + incr);
-				}
-			}
-		}
 	}
 
 	/**
@@ -439,7 +392,8 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 			}
 			else
 			{
-				speciesID = getIndexedSpeciesReference(modelstate, selectedReactionID, speciesAndStoichiometry.string, dims);
+				speciesID = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, selectedReactionID, speciesAndStoichiometry.string, dims,
+						getCurrentTime(), getReplacements());
 			}
 
 			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(selectedReactionID))
@@ -457,27 +411,17 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 					}
 				}
 			}
+			String referencedSpecies = HierarchicalUtilities.getReferencedVariable(speciesID);
 
-			// update the species count if the species isn't a boundary
-			// condition or constant
-			// note that the stoichiometries are earlier modified with the
-			// correct +/- sign
-			boolean cond1 = modelstate.getSpeciesToIsBoundaryConditionMap().get(speciesID);
-			boolean cond2 = modelstate.isConstant(speciesID);
-			if (!cond1 && !cond2)
+			if (!modelstate.getSpeciesToIsBoundaryConditionMap().get(referencedSpecies)
+					&& !modelstate.getSpeciesToIsBoundaryConditionMap().get(referencedSpecies))
 			{
-
 				double val = modelstate.getVariableToValue(getReplacements(), speciesID) + stoichiometry;
 				if (val >= 0)
 				{
 					modelstate.setVariableToValue(getReplacements(), speciesID, val);
 				}
-
 			}
-
-			// if this variable that was just updated is part of an assignment
-			// rule (RHS)
-			// then re-evaluate that assignment rule
 			if (noAssignmentRulesFlag == false && modelstate.getVariableToIsInAssignmentRuleMap().get(speciesID) == true)
 			{
 				affectedAssignmentRuleSet.addAll(modelstate.getVariableToAffectedAssignmentRuleSetMap().get(speciesID));
@@ -529,7 +473,8 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 			{
 				performReaction(getTopmodel(), selectedReactionID, getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag(), null);
 				Set<String> affectedReactionSet = getAffectedReactionSet(getTopmodel(), selectedReactionID, true);
-				Set<String> affectedSpecies = updatePropensities(affectedReactionSet, getTopmodel());
+				Set<String> affectedSpecies = HierarchicalUtilities.updatePropensities(affectedReactionSet, getTopmodel(), getCurrentTime(),
+						getReplacements());
 				perculateDown(getTopmodel(), affectedSpecies);
 			}
 		}
@@ -540,7 +485,8 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 				ModelState modelstate = getSubmodels().get(modelstateID);
 				performReaction(modelstate, selectedReactionID, modelstate.isNoRuleFlag(), modelstate.isNoConstraintsFlag(), null);
 				Set<String> affectedReactionSet = getAffectedReactionSet(modelstate, selectedReactionID, true);
-				Set<String> affectedSpecies = updatePropensities(affectedReactionSet, modelstate);
+				Set<String> affectedSpecies = HierarchicalUtilities.updatePropensities(affectedReactionSet, modelstate, getCurrentTime(),
+						getReplacements());
 				perculateUp(modelstate, affectedSpecies);
 			}
 		}
@@ -561,7 +507,8 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		performReaction(getTopmodel(), selectedReactionID, getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag(), dims);
 
 		Set<String> affectedReactionSet = getAffectedReactionSet(getTopmodel(), arrayedId, true);
-		updatePropensities(affectedReactionSet, getTopmodel());
+
+		HierarchicalUtilities.updatePropensities(affectedReactionSet, getTopmodel(), getCurrentTime(), getReplacements());
 	}
 
 	private double print(double printTime)
@@ -585,7 +532,7 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 
 				if (getRunning() != null)
 				{
-					int perc = getPercentage();
+					int perc = HierarchicalUtilities.getPercentage(getTotalRuns(), currRun, getCurrentTime(), getTimeLimit());
 					getRunning().setTitle("Progress (" + perc + "%)");
 					getProgress().setValue(perc);
 				}
@@ -602,7 +549,7 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 	 *            random number
 	 * @return the getID() of the selected reaction
 	 */
-	private String selectReaction(double r2)
+	public String selectReaction(double r2)
 	{
 
 		double randomPropensity = r2 * (getTotalPropensity());
@@ -639,77 +586,6 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		return selectedReaction;
 	}
 
-	private void setupArraysPropensities(ModelState modelstate)
-	{
-		for (String reaction : modelstate.getReactionToFormulaMap().keySet())
-		{
-			setupArraysPropensity(modelstate, reaction);
-		}
-	}
-
-	private void setupArraysPropensity(ModelState modelstate, String reactionId)
-	{
-		if (modelstate.isArrayedObject(reactionId))
-		{
-			int[] sizes = new int[modelstate.getDimensionCount(reactionId)];
-			for (ArraysObject obj : modelstate.getDimensionObjects().get(reactionId))
-			{
-				sizes[obj.getArrayDim()] = (int) modelstate.getVariableToValue(getReplacements(), obj.getSize()) - 1;
-			}
-			int[] indices = new int[sizes.length];
-			setupArraysPropensity(modelstate, reactionId, sizes, indices);
-			indices = null;
-		}
-	}
-
-	private void setupArraysPropensity(ModelState modelstate, String id, int[] sizes, int[] indices)
-	{
-		while (sizes[sizes.length - 1] >= indices[indices.length - 1])
-		{
-
-			String arrayedId = HierarchicalUtilities.getArrayedID(modelstate, id, indices);
-
-			if (arrayedId != null)
-			{
-				setupArray(modelstate, id, indices);
-			}
-
-			indices[0]++;
-			for (int i = 0; i < indices.length - 1; i++)
-			{
-				if (indices[i] > sizes[i])
-				{
-					indices[i] = 0;
-					indices[i + 1]++;
-				}
-			}
-		}
-	}
-
-	private void setupArray(ModelState modelstate, String id, int[] indices)
-	{
-		String arrayedId = HierarchicalUtilities.getArrayedID(modelstate, id, indices);
-
-		Set<HierarchicalStringDoublePair> speciesSet = modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(id);
-
-		if (modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(arrayedId) == null)
-		{
-			modelstate.getReactionToSpeciesAndStoichiometrySetMap().put(arrayedId, new HashSet<HierarchicalStringDoublePair>());
-		}
-
-		for (HierarchicalStringDoublePair speciesAndStoichiometry : speciesSet)
-		{
-			String speciesID = getIndexedSpeciesReference(modelstate, id, speciesAndStoichiometry.string, indices);
-			modelstate.getSpeciesToAffectedReactionSetMap().get(speciesID).add(arrayedId);
-
-			modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(arrayedId)
-					.add(new HierarchicalStringDoublePair(speciesID, speciesAndStoichiometry.doub));
-		}
-
-		updatePropensity(modelstate, id, indices);
-
-	}
-
 	private void update(boolean reaction, boolean assignRule, boolean rateRule, boolean events, double r2, double previousTime)
 	{
 		if (reaction)
@@ -734,162 +610,13 @@ public final class HierarchicalSSADirectSimulator extends HierarchicalSetup
 
 		if (rateRule)
 		{
-			performRateRules(getTopmodel(), getCurrentTime() - previousTime);
+			HierarchicalUtilities.performEulerRateRules(getTopmodel(), getCurrentTime(), getCurrentTime() - previousTime, getReplacements());
 
 			for (ModelState modelstate : getSubmodels().values())
 			{
-				performRateRules(modelstate, getCurrentTime() - previousTime);
+				HierarchicalUtilities.performEulerRateRules(modelstate, getCurrentTime(), getCurrentTime() - previousTime, getReplacements());
 			}
 		}
-	}
-
-	private Set<String> updatePropensities(Set<String> affectedReactionSet, ModelState modelstate)
-	{
-
-		Set<String> affectedSpecies = new HashSet<String>();
-
-		for (String affectedReactionID : affectedReactionSet)
-		{
-
-			if (modelstate.isDeletedByMetaID(affectedReactionID))
-			{
-				continue;
-			}
-
-			String[] dimensions = affectedReactionID.contains("[") ? affectedReactionID.replace("]", "").split("\\[") : null;
-
-			if (modelstate.isArrayedObject(affectedReactionID))
-			{
-				continue;
-			}
-			else if (dimensions != null)
-			{
-				int[] dims = new int[dimensions.length - 1];
-
-				for (int i = 1; i < dimensions.length; i++)
-				{
-					dims[i - 1] = Integer.parseInt(dimensions[i]);
-				}
-
-				updatePropensity(modelstate, dimensions[0], dims);
-			}
-			else
-			{
-				Set<HierarchicalStringDoublePair> reactantStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(
-						affectedReactionID);
-				updatePropensity(modelstate, affectedReactionID, reactantStoichiometrySet, affectedSpecies);
-			}
-		}
-
-		return affectedSpecies;
-	}
-
-	private void updatePropensity(ModelState modelstate, String id, int[] indices)
-	{
-		String arrayedId = HierarchicalUtilities.getArrayedID(modelstate, id, indices);
-
-		Set<HierarchicalStringDoublePair> reactantStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(id);
-
-		modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(id);
-
-		if (modelstate.getReactionToFormulaMap().get(id) == null)
-		{
-			return;
-		}
-
-		boolean notEnoughMoleculesFlag = false;
-
-		for (HierarchicalStringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
-		{
-			String speciesID = getIndexedSpeciesReference(modelstate, id, speciesAndStoichiometry.string, indices);
-			double stoichiometry = speciesAndStoichiometry.doub;
-
-			if (modelstate.getVariableToValue(getReplacements(), speciesID) < stoichiometry)
-			{
-				notEnoughMoleculesFlag = true;
-				break;
-			}
-		}
-
-		double newPropensity = 0.0;
-
-		double oldPropensity = modelstate.getPropensity(arrayedId);
-
-		Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
-
-		for (int i = 0; i < indices.length; i++)
-		{
-			dimensionIdMap.put("d" + i, indices[i]);
-		}
-
-		if (notEnoughMoleculesFlag == false)
-		{
-			newPropensity = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getReactionToFormulaMap().get(id), false, getCurrentTime(),
-					null, dimensionIdMap, getReplacements());
-		}
-		modelstate.setPropensity(modelstate.getPropensity() + newPropensity - oldPropensity);
-
-		if (newPropensity > 0)
-		{
-			modelstate.updateReactionToPropensityMap(arrayedId, newPropensity);
-		}
-		else
-		{
-			modelstate.getReactionToPropensityMap().remove(arrayedId);
-		}
-	}
-
-	private void updatePropensity(ModelState model, String affectedReactionID, Set<HierarchicalStringDoublePair> reactantStoichiometrySet,
-			Set<String> affectedSpecies)
-	{
-
-		Set<HierarchicalStringDoublePair> reactionToSpecies = model.getReactionToSpeciesAndStoichiometrySetMap().get(affectedReactionID);
-
-		if (model.getReactionToFormulaMap().get(affectedReactionID) == null)
-		{
-			model.getReactionToPropensityMap().put(affectedReactionID, 0.0);
-			return;
-		}
-
-		boolean notEnoughMoleculesFlag = false;
-
-		for (HierarchicalStringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
-		{
-			String speciesID = speciesAndStoichiometry.string;
-
-			double stoichiometry = speciesAndStoichiometry.doub;
-
-			if (model.getVariableToValue(getReplacements(), speciesID) < stoichiometry)
-			{
-				notEnoughMoleculesFlag = true;
-				break;
-			}
-		}
-
-		for (HierarchicalStringDoublePair speciesPair : reactionToSpecies)
-		{
-			affectedSpecies.add(speciesPair.string);
-		}
-
-		double newPropensity = 0.0;
-		if (notEnoughMoleculesFlag == false)
-		{
-			newPropensity = Evaluator.evaluateExpressionRecursive(model, model.getReactionToFormulaMap().get(affectedReactionID), false,
-					getCurrentTime(), null, null, getReplacements());
-		}
-
-		double oldPropensity = model.getReactionToPropensityMap().get(affectedReactionID);
-		model.setPropensity(model.getPropensity() + newPropensity - oldPropensity);
-		model.updateReactionToPropensityMap(affectedReactionID, newPropensity);
-
-	}
-
-	private void updatePropensity(String modelstate, String species)
-	{
-		ModelState model = getModelState(modelstate);
-		Set<String> reactions = model.getSpeciesToAffectedReactionSetMap().get(species);
-		updatePropensities(reactions, model);
-
 	}
 
 	@Override

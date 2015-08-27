@@ -90,7 +90,7 @@ public class DynamicSimulation
 
 				break;
 			case HIERARCHICAL_HYBRID:
-				simulator = new HierarchicalHybridSimulator(SBMLFileName, rootDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
+				simulator = new HierarchicalHybridSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep,
 						randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
 				break;
 

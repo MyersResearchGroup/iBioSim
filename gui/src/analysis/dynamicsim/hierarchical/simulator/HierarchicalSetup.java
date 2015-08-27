@@ -47,14 +47,11 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 	protected void setupForOutput(int currentRun)
 	{
 		setCurrentRun(currentRun);
-
 		try
 		{
-
 			setTSDWriter(new FileWriter(getOutputDirectory() + "run-" + currentRun + ".tsd"));
 			setBufferedTSDWriter(new BufferedWriter(getTSDWriter()));
 			getBufferedTSDWriter().write('(');
-
 		}
 		catch (IOException e)
 		{
@@ -64,8 +61,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 
 	protected void setupCompartments(ModelState modelstate)
 	{
-
-		for (Compartment compartment : getModels().get(modelstate.getModel()).getListOfCompartments())
+		for (Compartment compartment : getModel(modelstate.getModel()).getListOfCompartments())
 		{
 			if (compartment.isSetId() && modelstate.isDeletedBySID(compartment.getId()))
 			{
@@ -77,9 +73,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			}
 
 			Setup.setupSingleCompartment(modelstate, compartment, compartment.getId(), getReplacements());
-
 			setupArrays(modelstate, compartment.getId(), compartment, SetupType.COMPARTMENT);
-
 			setupArrayValue(modelstate, compartment, SetupType.COMPARTMENT);
 		}
 	}
@@ -89,7 +83,6 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 	 */
 	protected void setupConstraints(ModelState modelstate)
 	{
-
 		int count = 0;
 
 		if (modelstate.getNumConstraints() > 0)
@@ -119,12 +112,8 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 	 */
 	protected void setupEvents(ModelState modelstate)
 	{
-		long size = getModels().get(modelstate.getModel()).getEventCount();
-
-		for (int i = 0; i < size; i++)
+		for (Event event : getModel(modelstate.getModel()).getListOfEvents())
 		{
-
-			Event event = getModels().get(modelstate.getModel()).getEvent(i);
 			String id = event.getId();
 
 			if (event.isSetId() && modelstate.isDeletedBySID(id))
@@ -165,7 +154,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 	protected void setupInitialAssignments(ModelState modelstate)
 	{
 
-		for (InitialAssignment initAssignment : getModels().get(modelstate.getModel()).getListOfInitialAssignments())
+		for (InitialAssignment initAssignment : getModel(modelstate.getModel()).getListOfInitialAssignments())
 		{
 			if (initAssignment.isSetMetaId() && modelstate.isDeletedByMetaID(initAssignment.getMetaId()))
 			{
@@ -186,14 +175,8 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 
 	protected void setupNonConstantSpeciesReferences(ModelState modelstate)
 	{
-
-		// loop through all reactions and calculate their propensities
-		Reaction reaction;
-
-		for (int i = 0; i < modelstate.getNumReactions(); i++)
+		for (Reaction reaction : getModel(modelstate.getModel()).getListOfReactions())
 		{
-			reaction = getModels().get(modelstate.getModel()).getReaction(i);
-
 			for (SpeciesReference reactant : reaction.getListOfReactants())
 			{
 				if (reactant.isSetId() && modelstate.isDeletedBySID(reactant.getId()))
@@ -276,16 +259,8 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 	 */
 	protected void setupParameters(ModelState modelstate)
 	{
-
-		// add local parameters
-		Reaction reaction;
-		Parameter parameter;
-		long size;
-
-		size = modelstate.getNumReactions();
-		for (int i = 0; i < size; i++)
+		for (Reaction reaction : getModel(modelstate.getModel()).getListOfReactions())
 		{
-			reaction = getModels().get(modelstate.getModel()).getReaction(i);
 			if (!reaction.isSetKineticLaw())
 			{
 				continue;
@@ -299,12 +274,8 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			Setup.setupLocalParameters(modelstate, kineticLaw, reaction);
 		}
 
-		size = getModels().get(modelstate.getModel()).getListOfParameters().size();
-
-		for (int i = 0; i < size; i++)
+		for (Parameter parameter : getModel(modelstate.getModel()).getListOfParameters())
 		{
-			parameter = getModels().get(modelstate.getModel()).getParameter(i);
-
 			if (parameter.isSetId() && modelstate.isDeletedBySID(parameter.getId()))
 			{
 				continue;
@@ -315,17 +286,9 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			}
 
 			Setup.setupSingleParameter(modelstate, parameter, parameter.getId());
-		}
-
-		for (int i = 0; i < size; i++)
-		{
-			parameter = getModels().get(modelstate.getModel()).getParameter(i);
-
 			setupArrays(modelstate, parameter.getId(), parameter, SetupType.PARAMETER);
-
 			setupArrayValue(modelstate, parameter, SetupType.PARAMETER);
 		}
-
 	}
 
 	protected void setupPropensities(ModelState modelstate)
@@ -339,12 +302,6 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 
 	}
 
-	/**
-	 * calculates the initial propensities for each reaction in the getModel()
-	 * 
-	 * @param numReactions
-	 *            the number of reactions in the getModel()
-	 */
 	protected void setupReactions(ModelState modelstate)
 	{
 		Reaction reaction;
@@ -378,9 +335,11 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 
 			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
 			setupArrays(modelstate, reaction.getId(), reaction, SetupType.REACTION);
+
 			Setup.setupSingleReaction(modelstate, reaction, reactionID, reactionFormula, reaction.getReversible(), reaction.getListOfReactants(),
 					reaction.getListOfProducts(), reaction.getListOfModifiers(), getModels(), getIbiosimFunctionDefinitions(), getReplacements(),
 					getCurrentTime());
+			setupArrayObject(modelstate, reactionID, null, reaction, null, SetupType.REACTION);
 		}
 	}
 
@@ -393,7 +352,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			modelstate.setNoRuleFlag(false);
 		}
 
-		for (Rule rule : getModels().get(modelstate.getModel()).getListOfRules())
+		for (Rule rule : getModel(modelstate.getModel()).getListOfRules())
 		{
 			if (rule.isSetMetaId() && modelstate.isDeletedByMetaID(rule.getMetaId()))
 			{
@@ -423,7 +382,6 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 					Setup.setupSingleRateRule(modelstate, rateRule.getVariable(), rateRule.getMath(), getModels(), getIbiosimFunctionDefinitions());
 				}
 			}
-
 		}
 	}
 
@@ -434,13 +392,8 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 	 */
 	protected void setupSpecies(ModelState modelstate) throws IOException
 	{
-		Species species;
-		long size = getModels().get(modelstate.getModel()).getListOfSpecies().size();
-		for (int i = 0; i < size; i++)
+		for (Species species : getModel(modelstate.getModel()).getListOfSpecies())
 		{
-
-			species = getModels().get(modelstate.getModel()).getSpecies(i);
-
 			if (species.isSetId() && modelstate.isDeletedBySID(species.getId()))
 			{
 				continue;
@@ -449,14 +402,9 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			{
 				continue;
 			}
-
 			Setup.setupSingleSpecies(modelstate, species, species.getId(), getModels(), getReplacements());
-
 			setupArrays(modelstate, species.getId(), species, SetupType.SPECIES);
-
 			setupArrayValue(modelstate, species, SetupType.SPECIES);
-
 		}
-
 	}
 }

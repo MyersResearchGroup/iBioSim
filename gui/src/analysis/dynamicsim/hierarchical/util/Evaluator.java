@@ -683,14 +683,15 @@ public final class Evaluator
 		{
 
 			double value = 0;
+			String referencedVariable = HierarchicalUtilities.getReferencedVariable(name);
 
 			if (evaluateState)
 			{
 				int i, j;
 
 				i = variableToIndexMap.get(name);
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(name)
-						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(name) == false)
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
+						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
 				{
 					j = variableToIndexMap.get(modelstate.getSpeciesToCompartmentNameMap().get(name));
 					value = y[i] / y[j];
@@ -703,8 +704,8 @@ public final class Evaluator
 			}
 			else
 			{
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(name)
-						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(name) == false)
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
+						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
 				{
 					value = (modelstate.getVariableToValue(replacements, name) / modelstate.getVariableToValue(replacements, modelstate
 							.getSpeciesToCompartmentNameMap().get(name)));
