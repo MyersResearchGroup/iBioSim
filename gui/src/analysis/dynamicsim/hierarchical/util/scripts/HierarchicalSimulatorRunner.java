@@ -10,8 +10,13 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import main.util.dataparser.TSDParser;
+
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLWriter;
+
 import analysis.dynamicsim.DynamicSimulation;
 import analysis.dynamicsim.DynamicSimulation.SimulationType;
+import biomodel.parser.BioModel;
 
 public class HierarchicalSimulatorRunner
 {
@@ -30,7 +35,6 @@ public class HierarchicalSimulatorRunner
 	static String				selectedSimulator	= "";
 	static ArrayList<String>	interestingSpecies	= new ArrayList<String>();
 	static String				quantityType		= "amount";
-	static boolean				testSuite			= true;
 
 	/**
 	 * @param args
@@ -45,6 +49,8 @@ public class HierarchicalSimulatorRunner
 			System.out.println("Missing arguments");
 			return;
 		}
+
+		boolean testSuite = args.length == 3;
 
 		DynamicSimulation simulator = null;
 
@@ -118,6 +124,7 @@ public class HierarchicalSimulatorRunner
 			String filename = args[0];
 			String outputDirectory = args[1];
 			String settingsFile = args[2];
+			boolean flattening = args[3].equals("true");
 
 			readProperties(settingsFile);
 
@@ -144,9 +151,28 @@ public class HierarchicalSimulatorRunner
 			try
 			{
 
-				simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
-						printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError,
-						quantityType, false, null, null, null);
+				if (flattening)
+				{
+					String newFilename = filename.replace(".xml", "_flatten.xml");
+
+					double t1 = System.currentTimeMillis();
+					BioModel biomodel = new BioModel(outputDirectory);
+					biomodel.load(filename);
+					SBMLDocument flatten = biomodel.flattenModel(true);
+					SBMLWriter.write(flatten, newFilename, ' ', (short) 2);
+					double t2 = System.currentTimeMillis();
+					System.out.println("Flattening time: " + (t2 - t1) / 1000);
+
+					simulator.simulate(newFilename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
+							printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError,
+							quantityType, false, null, null, null);
+				}
+				else
+				{
+					simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
+							printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError,
+							quantityType, false, null, null, null);
+				}
 
 			}
 			catch (Exception e1)

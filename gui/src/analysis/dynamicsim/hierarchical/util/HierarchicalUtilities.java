@@ -14,6 +14,7 @@ import org.sbml.jsbml.SBMLDocument;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
 import analysis.dynamicsim.hierarchical.util.arrays.IndexObject;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventToFire;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
 import biomodel.network.GeneticNetwork;
 import biomodel.parser.BioModel;
 import biomodel.parser.GCMParser;
@@ -37,6 +38,194 @@ public class HierarchicalUtilities
 				childNode = node.getChild(i);
 				alterLocalParameter(childNode, oldString, newString);
 			}
+		}
+	}
+
+	public static void updatePropensity(ModelState model, String affectedReactionID, Set<HierarchicalStringDoublePair> reactantStoichiometrySet,
+			Set<String> affectedSpecies, double currentTime, Map<String, Double> replacements)
+	{
+
+		Set<HierarchicalStringDoublePair> reactionToSpecies = model.getReactionToSpeciesAndStoichiometrySetMap().get(affectedReactionID);
+
+		if (model.getReactionToFormulaMap().get(affectedReactionID) == null)
+		{
+			model.getReactionToPropensityMap().put(affectedReactionID, 0.0);
+			return;
+		}
+
+		boolean notEnoughMoleculesFlag = false;
+
+		for (HierarchicalStringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
+		{
+			String speciesID = speciesAndStoichiometry.string;
+
+			double stoichiometry = speciesAndStoichiometry.doub;
+
+			if (model.getVariableToValue(replacements, speciesID) < stoichiometry)
+			{
+				notEnoughMoleculesFlag = true;
+				break;
+			}
+		}
+
+		for (HierarchicalStringDoublePair speciesPair : reactionToSpecies)
+		{
+			affectedSpecies.add(speciesPair.string);
+		}
+
+		double newPropensity = 0.0;
+		if (notEnoughMoleculesFlag == false)
+		{
+			newPropensity = Evaluator.evaluateExpressionRecursive(model, model.getReactionToFormulaMap().get(affectedReactionID), false, currentTime,
+					null, null, replacements);
+		}
+
+		double oldPropensity = model.getReactionToPropensityMap().get(affectedReactionID);
+		model.setPropensity(model.getPropensity() + newPropensity - oldPropensity);
+		model.updateReactionToPropensityMap(affectedReactionID, newPropensity);
+
+	}
+
+	public static void updatePropensity(ModelState modelstate, String species, double currentTime, Map<String, Double> replacements)
+	{
+		// ModelState model = getModelState(modelstate);
+		Set<String> reactions = modelstate.getSpeciesToAffectedReactionSetMap().get(species);
+		updatePropensities(reactions, modelstate, currentTime, replacements);
+
+	}
+
+	public static Set<String> updatePropensities(Set<String> affectedReactionSet, ModelState modelstate, double currentTime,
+			Map<String, Double> replacements)
+	{
+
+		Set<String> affectedSpecies = new HashSet<String>();
+
+		for (String affectedReactionID : affectedReactionSet)
+		{
+
+			if (modelstate.isDeletedByMetaID(affectedReactionID))
+			{
+				continue;
+			}
+
+			String[] dimensions = affectedReactionID.contains("[") ? affectedReactionID.replace("]", "").split("\\[") : null;
+
+			if (modelstate.isArrayedObject(affectedReactionID))
+			{
+				continue;
+			}
+			else if (dimensions != null)
+			{
+				int[] dims = new int[dimensions.length - 1];
+
+				for (int i = 1; i < dimensions.length; i++)
+				{
+					dims[i - 1] = Integer.parseInt(dimensions[i]);
+				}
+
+				updatePropensity(modelstate, dimensions[0], currentTime, dims, replacements);
+			}
+			else
+			{
+				Set<HierarchicalStringDoublePair> reactantStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(
+						affectedReactionID);
+				updatePropensity(modelstate, affectedReactionID, reactantStoichiometrySet, affectedSpecies, currentTime, replacements);
+			}
+		}
+
+		return affectedSpecies;
+	}
+
+	public static String getIndexedSpeciesReference(ModelState modelstate, String reaction, String species, int[] reactionIndices, double time,
+			Map<String, Double> replacements)
+	{
+
+		String id = species;
+
+		IndexObject index = modelstate.getIndexObjects().get(reaction + "__" + species);
+
+		if (index == null)
+		{
+			return species;
+		}
+
+		Map<Integer, ASTNode> speciesAttribute = index.getAttributes().get("species");
+
+		if (speciesAttribute == null)
+		{
+			return species;
+		}
+
+		Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
+
+		for (int i = 0; i < reactionIndices.length; i++)
+		{
+			dimensionIdMap.put("d" + i, reactionIndices[i]);
+		}
+
+		for (int i = 0; i < speciesAttribute.size(); i++)
+		{
+			id = id
+					+ "["
+					+ (int) Evaluator.evaluateExpressionRecursive(modelstate, speciesAttribute.get(i), false, time, null, dimensionIdMap,
+							replacements) + "]";
+		}
+
+		return id;
+	}
+
+	public static void updatePropensity(ModelState modelstate, String id, double time, int[] indices, Map<String, Double> replacements)
+	{
+		String arrayedId = HierarchicalUtilities.getArrayedID(modelstate, id, indices);
+
+		Set<HierarchicalStringDoublePair> reactantStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(id);
+
+		modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(id);
+
+		if (modelstate.getReactionToFormulaMap().get(id) == null)
+		{
+			return;
+		}
+
+		boolean notEnoughMoleculesFlag = false;
+
+		for (HierarchicalStringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
+		{
+			String speciesID = getIndexedSpeciesReference(modelstate, id, speciesAndStoichiometry.string, indices, time, replacements);
+			double stoichiometry = speciesAndStoichiometry.doub;
+
+			if (modelstate.getVariableToValue(replacements, speciesID) < stoichiometry)
+			{
+				notEnoughMoleculesFlag = true;
+				break;
+			}
+		}
+
+		double newPropensity = 0.0;
+
+		double oldPropensity = modelstate.getPropensity(arrayedId);
+
+		Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
+
+		for (int i = 0; i < indices.length; i++)
+		{
+			dimensionIdMap.put("d" + i, indices[i]);
+		}
+
+		if (notEnoughMoleculesFlag == false)
+		{
+			newPropensity = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getReactionToFormulaMap().get(id), false, time, null,
+					dimensionIdMap, replacements);
+		}
+		modelstate.setPropensity(modelstate.getPropensity() + newPropensity - oldPropensity);
+
+		if (newPropensity > 0)
+		{
+			modelstate.updateReactionToPropensityMap(arrayedId, newPropensity);
+		}
+		else
+		{
+			modelstate.getReactionToPropensityMap().remove(arrayedId);
 		}
 	}
 
@@ -148,7 +337,59 @@ public class HierarchicalUtilities
 		return network.mergeSBML(filename, sbml);
 	}
 
-	public static String getIndexedObject(ModelState modelstate, String id, String variable, String attribute, int[] indices,
+	public static int getPercentage(int totalRuns, int currentRun, double currentTime, double timeLimit)
+	{
+
+		if (totalRuns == 1)
+		{
+			double timePerc = currentTime / timeLimit;
+			return (int) (timePerc * 100);
+		}
+		else
+		{
+			double runPerc = 1.0 * currentRun / totalRuns;
+			return (int) (runPerc * 100);
+		}
+	}
+
+	/**
+	 * performs every rate rule using the current time step
+	 * 
+	 * @param delta_t
+	 * @return
+	 */
+	public static void performEulerRateRules(ModelState modelstate, double currentTime, double delta_t, Map<String, Double> replacements)
+	{
+		String referencedVariable;
+		for (String variable : modelstate.getRateRulesList().keySet())
+		{
+			ASTNode rateRule = modelstate.getRateRulesList().get(variable);
+			referencedVariable = HierarchicalUtilities.getReferencedVariable(variable);
+
+			if (!modelstate.isConstant(referencedVariable))
+			{
+
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
+						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
+				{
+					double currVal = modelstate.getVariableToValue(replacements, variable);
+					double incr = delta_t
+							* (Evaluator.evaluateExpressionRecursive(modelstate, rateRule, false, currentTime, null, null, replacements) * modelstate
+									.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable)));
+					modelstate.setVariableToValue(replacements, variable, currVal + incr);
+				}
+				else
+				{
+					double currVal = modelstate.getVariableToValue(replacements, variable);
+					double incr = delta_t * Evaluator.evaluateExpressionRecursive(modelstate, rateRule, false, currentTime, null, null, replacements);
+
+					modelstate.setVariableToValue(replacements, variable, currVal + incr);
+				}
+			}
+		}
+	}
+
+	public static String getIndexedObject(ModelState modelstate, String id, String variable, String prefix, String attribute, int[] indices,
 			Map<String, Double> replacements)
 	{
 
@@ -159,7 +400,7 @@ public class HierarchicalUtilities
 
 		for (int i = 0; i < indices.length; i++)
 		{
-			dimensionIdMap.put("d" + i, indices[i]);
+			dimensionIdMap.put(prefix + i, indices[i]);
 		}
 
 		for (int i = 0; i < newIndices.length; i++)
@@ -347,6 +588,24 @@ public class HierarchicalUtilities
 		}
 	}
 
+	public static String getReferencedVariable(String variable)
+	{
+		if (variable.contains("["))
+		{
+			StringBuilder builder = new StringBuilder();
+			for (int i = 0; i < variable.length(); i++)
+			{
+				if (variable.charAt(i) == '[')
+				{
+					break;
+				}
+				builder.append(variable.charAt(i));
+			}
+			return builder.toString();
+		}
+		return variable;
+	}
+
 	public static void replaceSelector(ModelState modelstate, Map<String, Double> replacements, ASTNode formula)
 	{
 		if (formula.getType() == ASTNode.Type.FUNCTION_SELECTOR)
@@ -363,6 +622,7 @@ public class HierarchicalUtilities
 
 				String newId = getArrayedID(modelstate, id, indices);
 
+				formula.setType(ASTNode.Type.NAME);
 				formula.setName(newId);
 			}
 		}
@@ -395,8 +655,10 @@ public class HierarchicalUtilities
 	{
 
 		boolean changed = false;
-		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(variable)
-				&& !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(variable))
+		String referencedVariable = HierarchicalUtilities.getReferencedVariable(variable);
+
+		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
+				&& !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable))
 		{
 			double compartment = modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable));
 
@@ -506,8 +768,6 @@ public class HierarchicalUtilities
 
 	}
 
-	static int	a, b, c;
-
 	private static void fireSingleEvent(ModelState modelstate, Set<String> affectedAssignmentRuleSet, Set<ASTNode> affectedConstraintSet,
 			Set<String> affectedReactionSet, Set<String> variableInFiredEvents, Set<String> untriggeredEvents, final boolean noAssignmentRulesFlag,
 			final boolean noConstraintsFlag, double currentTime, Map<String, Double> replacements)
@@ -537,22 +797,6 @@ public class HierarchicalUtilities
 
 		}
 
-		if (eventToFireID.equals("Rinc"))
-		{
-			a++;
-		}
-		else if (eventToFireID.equals("Qinc"))
-		{
-			b++;
-		}
-		else if (eventToFireID.equals("Tinc"))
-		{
-			c++;
-		}
-		else
-		{
-			System.out.println("here");
-		}
 		Map<String, Double> assignments = new HashMap<String, Double>();
 
 		if (modelstate.getEventToAffectedReactionSetMap().get(eventToFireID) != null)
