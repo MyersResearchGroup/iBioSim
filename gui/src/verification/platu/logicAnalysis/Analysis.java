@@ -983,7 +983,7 @@ public class Analysis {
 			System.out.println("S" + stateArray[i].getIndex() + "(" + stateArray[i].getLpn().getLabel() +"): ");
 			System.out.println("\tmarkings: " + intArrayToString("markings", stateArray[i]));
 			System.out.println("\tvar values: " + intArrayToString("vars", stateArray[i]));
-			System.out.println("\tenabled trans: " + boolArrayToString("enabled trans", stateArray[i]));	
+			System.out.println("\tenabled trans: " + boolArrayToString("enabled trans", stateArray[i]));
 		}
 		System.out.println("----------------------------");
 	}
