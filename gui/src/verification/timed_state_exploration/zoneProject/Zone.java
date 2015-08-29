@@ -2864,12 +2864,12 @@ public class Zone implements Equivalence{
 					// to be switched.
 					newZone.setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, 
 							lcPair,
-							ContinuousUtilities.chkDiv(-1*values.get_LowerBound(),
+							ContinuousUtilities.chkDiv(values.get_LowerBound(),
 									currentRate, true));
 
 					newZone.setDbmEntryByPair(lcPair, 
 							LPNTransitionPair.ZERO_TIMER_PAIR,
-							ContinuousUtilities.chkDiv(values.get_UpperBound(),
+							ContinuousUtilities.chkDiv(-1*values.get_UpperBound(),
 									currentRate, true));
 				}
 				
@@ -2987,11 +2987,11 @@ public class Zone implements Equivalence{
 				}
 				else{
 					setDbmEntry(i,0, 
-							ContinuousUtilities.chkDiv(values.get_UpperBound(),
+							ContinuousUtilities.chkDiv(-1*values.get_UpperBound(),
 									currentRate, true));
 					
 					setDbmEntry(0, i, 
-							ContinuousUtilities.chkDiv(-1*values.get_LowerBound(),
+							ContinuousUtilities.chkDiv(values.get_LowerBound(),
 									currentRate, true));
 				}
 				

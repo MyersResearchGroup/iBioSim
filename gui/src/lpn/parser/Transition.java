@@ -828,7 +828,8 @@ public class Transition {
 //    }
     
     public String getFullLabel() {
-    	return this.label + "(" + this.lhpn.getLabel() + ")";
+    	// TODO: need to fix to get lhpn label too
+    	return this.label + "(" + /*this.lhpn.getLabel()*/ this.getLabel() + ")";
     }
 
     /**

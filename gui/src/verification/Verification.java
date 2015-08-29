@@ -1813,6 +1813,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			Options.set_displayDBM(displayDBM.isSelected());
 			// Checking the rate optimization flag turns the optimization on.
 			Options.set_rateOptimization(rateOptimization.isSelected());
+			//Options.setDebugMode(true);
 			
 			Zone.setSubsetFlag(!timsubset.isSelected());
 			Zone.setSupersetFlag(!superset.isSelected());
