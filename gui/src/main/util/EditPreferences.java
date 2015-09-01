@@ -53,6 +53,7 @@ public class EditPreferences {
 	private JCheckBox infix;
 	private JTextField xhtmlCmd;
 	private JTextField dotCmd;
+	private JTextField prismCmd;
 	private JTextField verCmd;
 	private JTextField viewerField;
 	
@@ -173,6 +174,11 @@ public class EditPreferences {
 				xhtmlCmd.setText("cmd /c start");
 			}
 		}
+		prismCmd = new JTextField(biosimrc.get("biosim.general.prism", ""));
+		JLabel prismCmdLabel = new JLabel("PRISM Model Checking Command");
+		if (prismCmd.getText().equals("")) {
+			prismCmd.setText("prism");
+		}
 		dotCmd = new JTextField(biosimrc.get("biosim.general.graphviz", ""));
 		JLabel dotCmdLabel = new JLabel("Graphviz Viewer Command");
 		if (dotCmd.getText().equals("")) {
@@ -252,6 +258,7 @@ public class EditPreferences {
 					xhtmlCmd.setText("cmd /c start");
 					dotCmd.setText("dotty");
 				}
+				prismCmd.setText("prism");
 				infix.setSelected(true);
 				verCmd.setText("");
 				viewerField.setText("");
@@ -261,9 +268,9 @@ public class EditPreferences {
 		// create general preferences panel
 		JPanel generalPrefsBordered;
 		if (async) {
-			generalPrefsBordered = new JPanel(new GridLayout(11,1));
+			generalPrefsBordered = new JPanel(new GridLayout(12,1));
 		} else {
-			generalPrefsBordered = new JPanel(new GridLayout(9,1));
+			generalPrefsBordered = new JPanel(new GridLayout(10,1));
 		}
 		generalPrefsBordered.add(dialog);
 		generalPrefsBordered.add(icons);
@@ -279,6 +286,10 @@ public class EditPreferences {
 		dotCmdPanel.add(dotCmdLabel);
 		dotCmdPanel.add(dotCmd);
 		generalPrefsBordered.add(dotCmdPanel);
+		JPanel prismCmdPanel = new JPanel(new GridLayout(1,2));
+		prismCmdPanel.add(prismCmdLabel);
+		prismCmdPanel.add(prismCmd);
+		generalPrefsBordered.add(prismCmdPanel);
 		//generalPrefsBordered.add(infix);
 		if (async) {
 			JPanel verCmdPanel = new JPanel(new GridLayout(1,2));
@@ -822,7 +833,7 @@ public class EditPreferences {
 			choices = new String[] { "gillespie", "SSA-Hierarchical", "SSA-Direct", "SSA-CR", "iSSA", "interactive", "emc-sim", "bunker", "nmc"};
 		}
 		else if (type.getSelectedItem().equals("Markov")) {
-			choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "atacs",
+			choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "prism", "atacs",
 					"ctmc-transient" };
 		}
 		else {
@@ -896,6 +907,7 @@ public class EditPreferences {
 					sim.addItem("steady-state-markov-chain-analysis");
 					sim.addItem("transient-markov-chain-analysis");
 					sim.addItem("reachability-analysis");
+					sim.addItem("prism");
 					sim.addItem("atacs");
 					sim.addItem("ctmc-transient");
 					sim.setSelectedItem(o);
@@ -1129,6 +1141,7 @@ public class EditPreferences {
 		//SBML_VERSION = 1;
 		biosimrc.put("biosim.general.browser", xhtmlCmd.getText().trim());
 		biosimrc.put("biosim.general.graphviz", dotCmd.getText().trim());
+		biosimrc.put("biosim.general.prism", prismCmd.getText().trim());
 		biosimrc.put("biosim.sbml.level_version", "L3V1");
 		biosimrc.put("lema.verification.command", verCmd.getText().trim());
 		biosimrc.put("lema.general.viewer", viewerField.getText().trim());
@@ -1441,6 +1454,9 @@ public class EditPreferences {
 			} else {
 				biosimrc.put("biosim.general.graphviz","dotty");
 			}
+		}
+		if (biosimrc.get("biosim.general.prism", "").equals("")) {
+			biosimrc.put("biosim.general.prism","prism");
 		}
 		if (biosimrc.get("biosim.general.infix", "").equals("")) {
 			biosimrc.put("biosim.general.infix", "infix");

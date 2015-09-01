@@ -343,98 +343,26 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 //		return filePaths;
 //	}
 
-	public void save(String command) {
-		//log.addText("save");
+	public void save(boolean check) {
 		setDirty(false);	
-		
 		speciesPanel.refreshSpeciesPanel(biomodel);
-
 		GeneticNetwork.setRoot(path + separator);
-
-		if (command.contains("GCM as")) {
-			String newName = JOptionPane.showInputDialog(Gui.frame, "Enter GCM name:", "GCM Name",
-					JOptionPane.PLAIN_MESSAGE);
-			if (newName == null) {
-				return;
-			}
-			if (newName.contains(".gcm")) {
-				newName = newName.replace(".gcm", "");
-			}
-			saveAs(newName);
-			return;
-		}
 
 		// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
 		if (!biosim.lema && !biomodel.isGridEnabled()) {
 			modelPanel.getSBOLField().deleteRemovedBioSimComponent();
-//			if (command.contains("Check")) {
+//			if (check) {
 //				saveSBOL(true);
 //			} else {
 				// TODO: Temporarily remove until ported to SBOL 2.0.
 				//saveSBOL();
 //			}
 		}
-		
-		// Write out species and influences to a gcm file
-		//gcm.getSBMLDocument().getModel().setName(modelPanel.getModelName());
 		biomodel.save(path + separator + modelId + ".xml");
-		//log.addText("Saving GCM file:\n" + path + separator + gcmname + ".gcm\n");
 		log.addText("Saving SBML file:\n" + path + separator + modelId  + ".xml\n");
-		if (command.contains("Check")) {
+		if (check) {
 			SBMLutilities.check(path + separator + modelId + ".xml",biomodel.getSBMLDocument(),false);
 		}	
-		if (command.contains("LHPN")) {
-			String lpnName = JOptionPane.showInputDialog(Gui.frame,
-					"Enter LPN name:", "LPN Name", JOptionPane.PLAIN_MESSAGE);
-			if (!lpnName.trim().contains(".lpn")) {
-				lpnName = lpnName.trim() + ".lpn";
-			}
-			if (new File(path + separator + lpnName).exists()) {
-				int value = JOptionPane.showOptionDialog(Gui.frame, lpnName
-						+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					biomodel.createLogicalModel(path + separator + lpnName, log, biosim, lpnName);
-				}
-				else {
-					// Do nothing
-				}
-			}
-			else {
-				biomodel.createLogicalModel(path + separator + lpnName, log, biosim, lpnName);
-			}
-		}
-		else if (command.contains("SBML")) {
-			// Then read in the file with the GCMParser
-			GCMParser parser = new GCMParser(path + separator + modelId + ".gcm");
-			GeneticNetwork network = null;
-			BioModel bioModel = new BioModel(path);
-			bioModel.load(path + separator + modelId + ".xml");
-			SBMLDocument sbml = bioModel.flattenModel(true);		
-			network = parser.buildNetwork(sbml);
-			if (network == null) return;
-			network.loadProperties(biomodel);
-			// Finally, output to a file
-			if (new File(path + separator + modelId + ".xml").exists()) {
-				int value = JOptionPane.showOptionDialog(Gui.frame, modelId
-						+ ".xml already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					network.mergeSBML(path + separator + modelId + ".xml");
-					log.addText("Saving GCM file as SBML file:\n" + path + separator + modelId + ".xml\n");
-					biosim.addToTree(modelId + ".xml");
-					//biosim.updateOpenSBML(gcmname + ".xml");
-				}
-				else {
-					// Do nothing
-				}
-			}
-			else {
-				network.mergeSBML(path + separator + modelId + ".xml");
-				log.addText("Saving GCM file as SBML file:\n" + path + separator + modelId + ".xml\n");
-				biosim.addToTree(modelId + ".xml");
-			}
-		}
 		biosim.updateViews(modelId + ".xml");
 
 	}

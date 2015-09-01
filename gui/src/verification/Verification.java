@@ -89,7 +89,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify,
 	vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, lhpn, view, none,
-	simplify, abstractLhpn, octagon, splitZone;
+	simplify, abstractLhpn, octagon, zone;
 	//dbm2
 
 	private JCheckBox abst, partialOrder, dot, verbose, graph, decomposeLPN, multipleLPNs, genrg,
@@ -232,13 +232,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			smt = new JRadioButton("SMT");
 			//dbm2 = new JRadioButton("DBM2");
 			octagon = new JRadioButton("Octagon");
-			splitZone = new JRadioButton("Zone (Java)");
+			zone = new JRadioButton("Zone (Java)");
 			bdd.addActionListener(this);
 			dbm.addActionListener(this);
 			smt.addActionListener(this);
 			//dbm2.addActionListener(this);
 			octagon.addActionListener(this);
-			splitZone.addActionListener(this);
+			zone.addActionListener(this);
 		}
 		lhpn = new JRadioButton("LPN");
 		view = new JRadioButton("View");
@@ -360,7 +360,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		abstractionGroup.add(abstractLhpn);
 		if (lema) {
 			timingMethodGroup.add(untimedStateSearch);
-			timingMethodGroup.add(splitZone);
+			timingMethodGroup.add(zone);
 			timingMethodGroup.add(bdd);
 			timingMethodGroup.add(dbm);
 			timingMethodGroup.add(smt);
@@ -403,7 +403,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingRadioPanel.add(bdd);
 			timingRadioPanel.add(smt);
 			timingRadioPanel.add(dbm);
-			timingRadioPanel.add(splitZone);
+			timingRadioPanel.add(zone);
 			//timingRadioPanel.add(dbm2);
 			timingRadioPanel.add(octagon);
 		}
@@ -508,46 +508,38 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			abstPane = new AbstPane(root + separator + verName, this, log);
 			if (load.containsKey("verification.timing.methods")) {
 				if (atacs) {
-					if (load.getProperty("verification.timing.methods").equals(
-							"untimed")) {
+					if (load.getProperty("verification.timing.methods").equals("untimed")) {
 						untimed.setSelected(true);
-					} else if (load.getProperty("verification.timing.methods")
-							.equals("geometric")) {
+					} else if (load.getProperty("verification.timing.methods").equals("geometric")) {
 						geometric.setSelected(true);
-					} else if (load.getProperty("verification.timing.methods")
-							.equals("posets")) {
+					} else if (load.getProperty("verification.timing.methods").equals("posets")) {
 						posets.setSelected(true);
-					} else if (load.getProperty("verification.timing.methods")
-							.equals("bag")) {
+					} else if (load.getProperty("verification.timing.methods").equals("bag")) {
 						bag.setSelected(true);
-					} else if (load.getProperty("verification.timing.methods")
-							.equals("bap")) {
+					} else if (load.getProperty("verification.timing.methods").equals("bap")) {
 						bap.setSelected(true);
-					} else if (load.getProperty("verification.timing.methods")
-							.equals("baptdc")) {
+					} else if (load.getProperty("verification.timing.methods").equals("baptdc")) {
 						baptdc.setSelected(true);
-					} else if (load.getProperty("verification.timing.methods")
-							.equals("lhpn")) {
+					} else if (load.getProperty("verification.timing.methods").equals("lhpn")) {
 						lhpn.setSelected(true);
 					} else {
 						view.setSelected(true);
 					}
 				} else {
-					if (load.getProperty("verification.timing.methods").equals(
-							"bdd")) {
+					if (load.getProperty("verification.timing.methods").equals("bdd")) {
 						bdd.setSelected(true);
-					} else if (load.getProperty("verification.timing.methods")
-							.equals("dbm")) {
+					} else if (load.getProperty("verification.timing.methods").equals("dbm")) {
 						dbm.setSelected(true);
-					} else if (load.getProperty("verification.timing.methods")
-							.equals("smt")) {
+					} else if (load.getProperty("verification.timing.methods").equals("smt")) {
 						smt.setSelected(true);
-					} else if (load.getProperty("verification.timing.methods")
-							.equals("untimedStateSearch")) {
+					} else if (load.getProperty("verification.timing.methods").equals("untimedStateSearch")) {
 						untimedStateSearch.setSelected(true);
-					} else if (load.getProperty("verification.timing.methods")
-							.equals("lhpn")) {
+					} else if (load.getProperty("verification.timing.methods").equals("lhpn")) {
 						lhpn.setSelected(true);
+					} else if (load.getProperty("verification.timing.methods").equals("zone")) {
+						zone.setSelected(true);
+					} else if (load.getProperty("verification.timing.methods").equals("octagon")) {
+						octagon.setSelected(true);
 					} else {
 						view.setSelected(true);
 					}
@@ -1671,7 +1663,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		 * If the splitZone option (labeled "Split Zone") is selected,
 		 * run the timed analysis.
 		 */
-		if(splitZone.isSelected() || octagon.isSelected())
+		if(zone.isSelected() || octagon.isSelected())
 		{
 
 			// Version prior to adding zones to the project states.
@@ -1798,7 +1790,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			 * The method setTimingAnalysisType sets a static variable
 			 * in the Options class that is queried by the search method.
 			 */
-			if(splitZone.isSelected()){
+			if(zone.isSelected()){
 				Options.setTimingAnalsysisType("zone");
 			}
 			else if(octagon.isSelected()){
@@ -2516,9 +2508,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				if (untimed.isSelected()) {
 					prop.setProperty("verification.timing.methods", "untimed");
 				} else if (geometric.isSelected()) {
-					prop
-					.setProperty("verification.timing.methods",
-							"geometric");
+					prop.setProperty("verification.timing.methods", "geometric");
 				} else if (posets.isSelected()) {
 					prop.setProperty("verification.timing.methods", "posets");
 				} else if (bag.isSelected()) {
@@ -2543,6 +2533,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					prop.setProperty("verification.timing.methods", "untimedStateSearch");
 				} else if (lhpn.isSelected()) {
 					prop.setProperty("verification.timing.methods", "lhpn");
+				} else if (zone.isSelected()) {
+					prop.setProperty("verification.timing.methods", "zone");
+				} else if (octagon.isSelected()) {
+					prop.setProperty("verification.timing.methods", "octagon");
 				} else {
 					prop.setProperty("verification.timing.methods", "view");
 				}

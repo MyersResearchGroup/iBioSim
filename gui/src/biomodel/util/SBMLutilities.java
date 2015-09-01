@@ -813,6 +813,7 @@ public class SBMLutilities
 						}
 						else if (splitLaw[i].equals("PSt"))
 						{
+							createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 							createFunction(model, "PSt", "Probabilistic Steady State Property", "lambda(x,uniform(0,1))");
 						}
 						else if (splitLaw[i].equals("St"))
@@ -821,6 +822,7 @@ public class SBMLutilities
 						}
 						else if (splitLaw[i].equals("PG"))
 						{
+							createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 							createFunction(model, "PG", "Probabilistic Globally Property", "lambda(t,x,uniform(0,1))");
 						}
 						else if (splitLaw[i].equals("G"))
@@ -829,6 +831,7 @@ public class SBMLutilities
 						}
 						else if (splitLaw[i].equals("PF"))
 						{
+							createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 							createFunction(model, "PF", "Probabilistic Eventually Property", "lambda(t,x,uniform(0,1))");
 						}
 						else if (splitLaw[i].equals("F"))
@@ -837,6 +840,7 @@ public class SBMLutilities
 						}
 						else if (splitLaw[i].equals("PU"))
 						{
+							createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 							createFunction(model, "PU", "Probabilistic Until Property", "lambda(t,x,y,uniform(0,1))");
 						}
 						else if (splitLaw[i].equals("U"))
@@ -913,196 +917,196 @@ public class SBMLutilities
 	{
 		if (document.getModel().getFunctionDefinition("uniform") != null)
 		{
-			if (!variableInUse(document, "uniform", false, false, true))
+			if (!functionInUse(document, "uniform", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("uniform");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("normal") != null)
 		{
-			if (!variableInUse(document, "normal", false, false, true))
+			if (!functionInUse(document, "normal", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("normal");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("exponential") != null)
 		{
-			if (!variableInUse(document, "exponential", false, false, true))
+			if (!functionInUse(document, "exponential", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("exponential");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("gamma") != null)
 		{
-			if (!variableInUse(document, "gamma", false, false, true))
+			if (!functionInUse(document, "gamma", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("gamma");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("lognormal") != null)
 		{
-			if (!variableInUse(document, "lognormal", false, false, true))
+			if (!functionInUse(document, "lognormal", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("lognormal");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("chisq") != null)
 		{
-			if (!variableInUse(document, "chisq", false, false, true))
+			if (!functionInUse(document, "chisq", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("chisq");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("laplace") != null)
 		{
-			if (!variableInUse(document, "laplace", false, false, true))
+			if (!functionInUse(document, "laplace", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("laplace");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("cauchy") != null)
 		{
-			if (!variableInUse(document, "cauchy", false, false, true))
+			if (!functionInUse(document, "cauchy", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("cauchy");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("rayleigh") != null)
 		{
-			if (!variableInUse(document, "rayleigh", false, false, true))
+			if (!functionInUse(document, "rayleigh", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("rayleigh");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("poisson") != null)
 		{
-			if (!variableInUse(document, "poisson", false, false, true))
+			if (!functionInUse(document, "poisson", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("poisson");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("binomial") != null)
 		{
-			if (!variableInUse(document, "binomial", false, false, true))
+			if (!functionInUse(document, "binomial", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("binomial");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("bernoulli") != null)
 		{
-			if (!variableInUse(document, "bernoulli", false, false, true))
+			if (!functionInUse(document, "bernoulli", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("bernoulli");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("St") != null)
 		{
-			if (!variableInUse(document, "St", false, false, true))
+			if (!functionInUse(document, "St", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("St");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("PSt") != null)
 		{
-			if (!variableInUse(document, "PSt", false, false, true))
+			if (!functionInUse(document, "PSt", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("PSt");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("PG") != null)
 		{
-			if (!variableInUse(document, "PG", false, false, true))
+			if (!functionInUse(document, "PG", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("PG");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("PF") != null)
 		{
-			if (!variableInUse(document, "PF", false, false, true))
+			if (!functionInUse(document, "PF", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("PF");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("PU") != null)
 		{
-			if (!variableInUse(document, "PU", false, false, true))
+			if (!functionInUse(document, "PU", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("PU");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("G") != null)
 		{
-			if (!variableInUse(document, "G", false, false, true))
+			if (!functionInUse(document, "G", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("G");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("F") != null)
 		{
-			if (!variableInUse(document, "F", false, false, true))
+			if (!functionInUse(document, "F", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("F");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("U") != null)
 		{
-			if (!variableInUse(document, "U", false, false, true))
+			if (!functionInUse(document, "U", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("U");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("rate") != null)
 		{
-			if (!variableInUse(document, "rate", false, false, true))
+			if (!functionInUse(document, "rate", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("rate");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("mod") != null)
 		{
-			if (!variableInUse(document, "mod", false, false, true))
+			if (!functionInUse(document, "mod", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("mod");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("BIT") != null)
 		{
-			if (!variableInUse(document, "BIT", false, false, true))
+			if (!functionInUse(document, "BIT", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("BIT");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("BITOR") != null)
 		{
-			if (!variableInUse(document, "BITOR", false, false, true))
+			if (!functionInUse(document, "BITOR", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("BITOR");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("BITXOR") != null)
 		{
-			if (!variableInUse(document, "BITXOR", false, false, true))
+			if (!functionInUse(document, "BITXOR", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("BITXOR");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("BITNOT") != null)
 		{
-			if (!variableInUse(document, "BITNOT", false, false, true))
+			if (!functionInUse(document, "BITNOT", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("BITNOT");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("BITAND") != null)
 		{
-			if (!variableInUse(document, "BITAND", false, false, true))
+			if (!functionInUse(document, "BITAND", false, false, true))
 			{
 				document.getModel().removeFunctionDefinition("BITAND");
 			}
 		}
 		// if (document.getModel().getFunctionDefinition("neighborQuantityLeft")
 		// != null) {
-		// if (!variableInUse(document, "neighborQuantityLeft", false, false,
+		// if (!functionInUse(document, "neighborQuantityLeft", false, false,
 		// true)) {
 		// document.getModel().removeFunctionDefinition("neighborQuantityLeft");
 		// }
@@ -1110,7 +1114,7 @@ public class SBMLutilities
 		// if
 		// (document.getModel().getFunctionDefinition("neighborQuantityRight")
 		// != null) {
-		// if (!variableInUse(document, "neighborQuantityRight", false, false,
+		// if (!functionInUse(document, "neighborQuantityRight", false, false,
 		// true)) {
 		// document.getModel().removeFunctionDefinition("neighborQuantityRight");
 		// }
@@ -1118,7 +1122,7 @@ public class SBMLutilities
 		// if
 		// (document.getModel().getFunctionDefinition("neighborQuantityAbove")
 		// != null) {
-		// if (!variableInUse(document, "neighborQuantityAbove", false, false,
+		// if (!functionInUse(document, "neighborQuantityAbove", false, false,
 		// true)) {
 		// document.getModel().removeFunctionDefinition("neighborQuantityAbove");
 		// }
@@ -1126,7 +1130,7 @@ public class SBMLutilities
 		// if
 		// (document.getModel().getFunctionDefinition("neighborQuantityBelow")
 		// != null) {
-		// if (!variableInUse(document, "neighborQuantityBelow", false, false,
+		// if (!functionInUse(document, "neighborQuantityBelow", false, false,
 		// true)) {
 		// document.getModel().removeFunctionDefinition("neighborQuantityBelow");
 		// }
@@ -1134,7 +1138,7 @@ public class SBMLutilities
 		// if
 		// (document.getModel().getFunctionDefinition("neighborQuantityLeftFull")
 		// != null) {
-		// if (!variableInUse(document, "neighborQuantityLeftFull", false,
+		// if (!functionInUse(document, "neighborQuantityLeftFull", false,
 		// false, true)) {
 		// document.getModel().removeFunctionDefinition("neighborQuantityLeftFull");
 		// }
@@ -1142,7 +1146,7 @@ public class SBMLutilities
 		// if
 		// (document.getModel().getFunctionDefinition("neighborQuantityRightFull")
 		// != null) {
-		// if (!variableInUse(document, "neighborQuantityRightFull", false,
+		// if (!functionInUse(document, "neighborQuantityRightFull", false,
 		// false, true)) {
 		// document.getModel().removeFunctionDefinition("neighborQuantityRightFull");
 		// }
@@ -1150,7 +1154,7 @@ public class SBMLutilities
 		// if
 		// (document.getModel().getFunctionDefinition("neighborQuantityAboveFull")
 		// != null) {
-		// if (!variableInUse(document, "neighborQuantityAboveFull", false,
+		// if (!functionInUse(document, "neighborQuantityAboveFull", false,
 		// false, true)) {
 		// document.getModel().removeFunctionDefinition("neighborQuantityAboveFull");
 		// }
@@ -1158,7 +1162,7 @@ public class SBMLutilities
 		// if
 		// (document.getModel().getFunctionDefinition("neighborQuantityBelowFull")
 		// != null) {
-		// if (!variableInUse(document, "neighborQuantityBelowFull", false,
+		// if (!functionInUse(document, "neighborQuantityBelowFull", false,
 		// false, true)) {
 		// document.getModel().removeFunctionDefinition("neighborQuantityBelowFull");
 		// }
@@ -1166,7 +1170,7 @@ public class SBMLutilities
 		// if
 		// (document.getModel().getFunctionDefinition("getCompartmentLocationX")
 		// != null) {
-		// if (!variableInUse(document, "getCompartmentLocationX", false, false,
+		// if (!functionInUse(document, "getCompartmentLocationX", false, false,
 		// true)) {
 		// document.getModel().removeFunctionDefinition("getCompartmentLocationX");
 		// }
@@ -1174,7 +1178,7 @@ public class SBMLutilities
 		// if
 		// (document.getModel().getFunctionDefinition("getCompartmentLocationY")
 		// != null) {
-		// if (!variableInUse(document, "getCompartmentLocationY", false, false,
+		// if (!functionInUse(document, "getCompartmentLocationY", false, false,
 		// true)) {
 		// document.getModel().removeFunctionDefinition("getCompartmentLocationY");
 		// }
@@ -1728,7 +1732,7 @@ public class SBMLutilities
 		return false;
 	}
 
-	public static Boolean isSpecialFunction(String functionId)
+	public static Boolean isSpecialFunction(Model model,String functionId)
 	{
 		if (functionId.equals("uniform"))
 		{
@@ -1780,18 +1784,22 @@ public class SBMLutilities
 		}
 		else if (functionId.equals("PSt"))
 		{
+			createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 			return true;
 		}
 		else if (functionId.equals("PG"))
 		{
+			createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 			return true;
 		}
 		else if (functionId.equals("PF"))
 		{
+			createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 			return true;
 		}
 		else if (functionId.equals("PU"))
 		{
+			createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 			return true;
 		}
 		else if (functionId.equals("G"))
@@ -2380,7 +2388,562 @@ public class SBMLutilities
 		}
 		return !remove;
 	}
+	
+	public static String convertMath2PrismProperty(ASTNode math) {
+		if (math.getType() == ASTNode.Type.CONSTANT_E)
+		{
+			return "exponentiale";
+		}
+		else if (math.getType() == ASTNode.Type.CONSTANT_FALSE)
+		{
+			return "false";
+		}
+		else if (math.getType() == ASTNode.Type.CONSTANT_PI)
+		{
+			return "pi";
+		}
+		else if (math.getType() == ASTNode.Type.CONSTANT_TRUE)
+		{
+			return "true";
+		}
+		else if (math.getType() == ASTNode.Type.DIVIDE)
+		{
+			String leftStr = convertMath2PrismProperty(math.getLeftChild());
+			String rightStr = convertMath2PrismProperty(math.getRightChild());
+			return "(" + leftStr + " / " + rightStr + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION)
+		{
+			String result = "";
+			if (math.getName().equals("St")) {
+				result = "S=?[";
+				if (math.getChildCount()==1) {
+					result += convertMath2PrismProperty(math.getChild(0));
+				}
+				result += "]";
+			} else if ((math.getName().equals("PF"))||(math.getName().equals("PG"))||(math.getName().equals("PU"))||
+					((math.getName().equals("F"))||(math.getName().equals("G"))||(math.getName().equals("U")))) {
+				if (math.getName().startsWith("P")) {
+					result = "[";
+				} else {
+					result = "P=? [";
+				}
+				if (math.getChildCount()>=2) {
+					if (math.getChild(0).isRelational() && math.getChild(0).getChildCount()==2) { 
+						String bound = convertMath2PrismProperty(math.getChild(0).getChild(1));
+						String first = convertMath2PrismProperty(math.getChild(1));
+						String relation = "";
+						if (math.getChild(0).getType() == ASTNode.Type.RELATIONAL_LEQ) 
+							relation = "<=";
+						else if (math.getChild(0).getType() == ASTNode.Type.RELATIONAL_GEQ) 
+							relation = ">=";
+						else if (math.getChild(0).getType() == ASTNode.Type.RELATIONAL_GT) 
+							relation = ">";
+						else if (math.getChild(0).getType() == ASTNode.Type.RELATIONAL_LT) 
+							relation = "<";
+						else if (math.getChild(0).getType() == ASTNode.Type.RELATIONAL_EQ) 
+							relation = "=";
+						else if (math.getChild(0).getType() == ASTNode.Type.RELATIONAL_NEQ) 
+							relation = "!=";
+						if (math.getName().equals("PF")) {
+							result += "F" + relation + bound + " " + first;
+						} else if (math.getName().equals("PG")) {
+							result += "G" + relation + bound + " " + first;
+						} else {
+							result += first + " " + "U" + relation + bound + " " +
+									convertMath2PrismProperty(math.getChild(2));
+						}
+					}
+				}
+				result += "]";
+			} else {
+				result = math.getName() + "(";
+				for (int i = 0; i < math.getChildCount(); i++)
+				{
+					String child = convertMath2PrismProperty(math.getChild(i));
+					result += child;
+					if (i + 1 < math.getChildCount())
+					{
+						result += ",";
+					}
+				}
+				result += ")";
+			}
+			return result;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ABS)
+		{
+			return "abs(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOS)
+		{
+			return "acos(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOSH)
+		{
+			return "acosh(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOT)
+		{
+			return "acot(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOTH)
+		{
+			return "acoth(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCSC)
+		{
+			return "acsc(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCSCH)
+		{
+			return "acsch(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSEC)
+		{
+			return "asec(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSECH)
+		{
+			return "asech(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSIN)
+		{
+			return "asin(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSINH)
+		{
+			return "asinh(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCTAN)
+		{
+			return "atan(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ARCTANH)
+		{
+			return "atanh(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_CEILING)
+		{
+			return "ceil(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_COS)
+		{
+			return "cos(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_COSH)
+		{
+			return "cosh(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_COT)
+		{
+			return "cot(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_COTH)
+		{
+			return "coth(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_CSC)
+		{
+			return "csc(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_CSCH)
+		{
+			return "csch(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_DELAY)
+		{
+			String leftStr = convertMath2PrismProperty(math.getLeftChild());
+			String rightStr = convertMath2PrismProperty(math.getRightChild());
+			return "delay(" + leftStr + " , " + rightStr + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_EXP)
+		{
+			return "exp(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_FACTORIAL)
+		{
+			return "factorial(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_FLOOR)
+		{
+			return "floor(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_LN)
+		{
+			return "ln(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_LOG)
+		{
+			String result = "log(";
+			for (int i = 0; i < math.getChildCount(); i++)
+			{
+				String child = convertMath2PrismProperty(math.getChild(i));
+				result += child;
+				if (i + 1 < math.getChildCount())
+				{
+					result += ",";
+				}
+			}
+			result += ")";
+			return result;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_PIECEWISE)
+		{
+			String result = "piecewise(";
+			for (int i = 0; i < math.getChildCount(); i++)
+			{
+				String child = convertMath2PrismProperty(math.getChild(i));
+				result += child;
+				if (i + 1 < math.getChildCount())
+				{
+					result += ",";
+				}
+			}
+			result += ")";
+			return result;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_POWER)
+		{
+			String leftStr = convertMath2PrismProperty(math.getLeftChild());
+			String rightStr = convertMath2PrismProperty(math.getRightChild());
+			return "pow(" + leftStr + " , " + rightStr + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_ROOT)
+		{
+			String leftStr = convertMath2PrismProperty(math.getLeftChild());
+			String rightStr = convertMath2PrismProperty(math.getRightChild());
+			return "root(" + leftStr + " , " + rightStr + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_SEC)
+		{
+			return "sec(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_SECH)
+		{
+			return "sech(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_SIN)
+		{
+			return "sin(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_SINH)
+		{
+			return "sinh(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_TAN)
+		{
+			return "tan(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_TANH)
+		{
+			return "tanh(" + convertMath2PrismProperty(math.getChild(0)) + ")";
+		}
+		else if (math.getType() == ASTNode.Type.INTEGER)
+		{
+			if (math.hasUnits())
+			{
+				return "" + math.getInteger() + " " + math.getUnits();
+			}
+			return "" + math.getInteger();
+		}
+		else if (math.getType() == ASTNode.Type.LOGICAL_AND)
+		{
+			if (math.getChildCount() == 0)
+			{
+				return "";
+			}
+			String result = "(";
+			for (int i = 0; i < math.getChildCount(); i++)
+			{
+				String child = convertMath2PrismProperty(math.getChild(i));
+				result += child;
+				if (i + 1 < math.getChildCount())
+				{
+					result += " & ";
+				}
+			}
+			result += ")";
+			return result;
+		}
+		else if (math.getType() == ASTNode.Type.LOGICAL_NOT)
+		{
+			if (math.getChildCount() == 0)
+			{
+				return "";
+			}
+			String result = "!(";
+			String child = convertMath2PrismProperty(math.getChild(0));
+			result += child;
+			result += ")";
+			return result;
+		}
+		else if (math.getType() == ASTNode.Type.LOGICAL_OR)
+		{
+			if (math.getChildCount() == 0)
+			{
+				return "";
+			}
+			String result = "(";
+			for (int i = 0; i < math.getChildCount(); i++)
+			{
+				String child = convertMath2PrismProperty(math.getChild(i));
+				result += child;
+				if (i + 1 < math.getChildCount())
+				{
+					result += " | ";
+				}
+			}
+			result += ")";
+			return result;
+		}
+		else if (math.getType() == ASTNode.Type.LOGICAL_XOR)
+		{
+			if (math.getChildCount() == 0)
+			{
+				return "";
+			}
+			String result = "xor(";
+			for (int i = 0; i < math.getChildCount(); i++)
+			{
+				String child = convertMath2PrismProperty(math.getChild(i));
+				result += child;
+				if (i + 1 < math.getChildCount())
+				{
+					result += ",";
+				}
+			}
+			result += ")";
+			return result;
+		}
+		else if (math.getType() == ASTNode.Type.MINUS)
+		{
+			if (math.getChildCount() == 1)
+			{
+				return "-" + convertMath2PrismProperty(math.getChild(0));
+			}
+			String leftStr = convertMath2PrismProperty(math.getLeftChild());
+			String rightStr = convertMath2PrismProperty(math.getRightChild());
+			return "(" + leftStr + " - " + rightStr + ")";
+		}
+		else if (math.getType() == ASTNode.Type.NAME)
+		{
+			return math.getName();
+		}
+		else if (math.getType() == ASTNode.Type.NAME_AVOGADRO)
+		{
+			return "avogadro";
+		}
+		else if (math.getType() == ASTNode.Type.NAME_TIME)
+		{
+			return "t";
+		}
+		else if (math.getType() == ASTNode.Type.PLUS)
+		{
+			String returnVal = "(";
+			boolean first = true;
+			for (int i = 0; i < math.getChildCount(); i++)
+			{
+				if (first)
+				{
+					first = false;
+				}
+				else
+				{
+					returnVal += " + ";
+				}
+				returnVal += convertMath2PrismProperty(math.getChild(i));
+			}
+			returnVal += ")";
+			return returnVal;
+		}
+		else if (math.getType() == ASTNode.Type.POWER)
+		{
+			String leftStr = convertMath2PrismProperty(math.getLeftChild());
+			String rightStr = convertMath2PrismProperty(math.getRightChild());
+			return "(" + leftStr + " ^ " + rightStr + ")";
+		}
+		else if (math.getType() == ASTNode.Type.RATIONAL)
+		{
+			if (math.hasUnits())
+			{
+				return math.getNumerator() + "/" + math.getDenominator() + " " + math.getUnits();
+			}
+			return math.getNumerator() + "/" + math.getDenominator();
+		}
+		else if (math.getType() == ASTNode.Type.REAL)
+		{
+			if (math.hasUnits())
+			{
+				return "" + math.getReal() + " " + math.getUnits();
+			}
+			return "" + math.getReal();
+		}
+		else if (math.getType() == ASTNode.Type.REAL_E)
+		{
+			if (math.hasUnits())
+			{
+				return math.getMantissa() + "e" + math.getExponent() + " " + math.getUnits();
+			}
+			return math.getMantissa() + "e" + math.getExponent();
+		}
+		else if (math.getType() == ASTNode.Type.RELATIONAL_EQ)
+		{
+			String leftStr = convertMath2PrismProperty(math.getLeftChild());
+			String rightStr = convertMath2PrismProperty(math.getRightChild());
+			return "(" + leftStr + " == " + rightStr + ")";
+		}
+		else if (math.getType() == ASTNode.Type.RELATIONAL_GEQ)
+		{
+			if (math.getChildCount()>=2 && math.getChild(0).getType() == ASTNode.Type.FUNCTION &&
+					(math.getChild(0).getName().equals("PG") || math.getChild(0).getName().equals("PF")
+							|| math.getChild(0).getName().equals("PU"))) {
+				return "P>=" + convertMath2PrismProperty(math.getRightChild()) + " " +
+						convertMath2PrismProperty(math.getLeftChild());
+			} else {
+				String leftStr = convertMath2PrismProperty(math.getLeftChild());
+				String rightStr = convertMath2PrismProperty(math.getRightChild());
+				return "(" + leftStr + " >= " + rightStr + ")";
+			}
+		}
+		else if (math.getType() == ASTNode.Type.RELATIONAL_GT)
+		{
+			if (math.getChildCount()>=2 && math.getChild(0).getType() == ASTNode.Type.FUNCTION &&
+					(math.getChild(0).getName().equals("PG") || math.getChild(0).getName().equals("PF")
+							|| math.getChild(0).getName().equals("PU"))) {
+				return "P>" + convertMath2PrismProperty(math.getRightChild()) + " " +
+						convertMath2PrismProperty(math.getLeftChild());
+			} else {
+				String leftStr = convertMath2PrismProperty(math.getLeftChild());
+				String rightStr = convertMath2PrismProperty(math.getRightChild());
+				return "(" + leftStr + " > " + rightStr + ")";
+			}
+		}
+		else if (math.getType() == ASTNode.Type.RELATIONAL_LEQ)
+		{
+			if (math.getChildCount()>=2 && math.getChild(0).getType() == ASTNode.Type.FUNCTION &&
+					(math.getChild(0).getName().equals("PG") || math.getChild(0).getName().equals("PF")
+							|| math.getChild(0).getName().equals("PU"))) {
+				return "P<=" + convertMath2PrismProperty(math.getRightChild()) + " " +
+						convertMath2PrismProperty(math.getLeftChild());
+			} else {
+				String leftStr = convertMath2PrismProperty(math.getLeftChild());
+				String rightStr = convertMath2PrismProperty(math.getRightChild());
+				return "(" + leftStr + " <= " + rightStr + ")";
+			}
+		}
+		else if (math.getType() == ASTNode.Type.RELATIONAL_LT)
+		{
+			if (math.getChildCount()>=2 && math.getChild(0).getType() == ASTNode.Type.FUNCTION &&
+					(math.getChild(0).getName().equals("PG") || math.getChild(0).getName().equals("PF")
+							|| math.getChild(0).getName().equals("PU"))) {
+				return "P<" + convertMath2PrismProperty(math.getRightChild()) + " " +
+						convertMath2PrismProperty(math.getLeftChild());
+			} else {
+				String leftStr = convertMath2PrismProperty(math.getLeftChild());
+				String rightStr = convertMath2PrismProperty(math.getRightChild());
+				return "(" + leftStr + " < " + rightStr + ")";
+			}
+		}
+		else if (math.getType() == ASTNode.Type.RELATIONAL_NEQ)
+		{
+			String leftStr = convertMath2PrismProperty(math.getLeftChild());
+			String rightStr = convertMath2PrismProperty(math.getRightChild());
+			return "(" + leftStr + " != " + rightStr + ")";
+		}
+		else if (math.getType() == ASTNode.Type.TIMES)
+		{
+			String returnVal = "(";
+			boolean first = true;
+			for (int i = 0; i < math.getChildCount(); i++)
+			{
+				if (first)
+				{
+					first = false;
+				}
+				else
+				{
+					returnVal += " * ";
+				}
+				returnVal += convertMath2PrismProperty(math.getChild(i));
+			}
+			returnVal += ")";
+			return returnVal;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_SELECTOR)
+		{
+			String returnVal = convertMath2PrismProperty(math.getChild(0));
+			for (int i = 1; i < math.getChildCount(); i++)
+			{
+				returnVal += "[" + convertMath2PrismProperty(math.getChild(i)) + "]";
+			}
+			return returnVal;
+		}
+		else if (math.getType() == ASTNode.Type.VECTOR)
+		{
+			String returnVal = "{";
+			boolean first = true;
+			for (int i = 0; i < math.getChildCount(); i++)
+			{
+				if (first)
+				{
+					first = false;
+				}
+				else
+				{
+					returnVal += ", ";
+				}
+				returnVal += convertMath2PrismProperty(math.getChild(i));
+			}
+			returnVal += "}";
+			return returnVal;
+		}
+		else
+		{
+			if (math.isOperator())
+			{
+				System.out.println("Operator " + math.getName() + " is not currently supported.");
+			}
+			else
+			{
+				System.out.println(math.getName() + " is not currently supported.");
+			}
+		}
+		return "";
+	}
 
+	/**
+	 * Check if a function is in use.
+	 * @param document
+	 * @param id
+	 * @param zeroDim
+	 * @param displayMessage
+	 * @param checkReactions
+	 * @return
+	 */
+	
+	public static boolean functionInUse(SBMLDocument document, String id, boolean zeroDim, boolean displayMessage, boolean checkReactions)
+	{
+		if (variableInUse(document,id,zeroDim,displayMessage,checkReactions)) {
+			return true;
+		}
+		Model model = document.getModel();
+		for (int i = 0; i < model.getFunctionDefinitionCount(); i++)
+		{
+			FunctionDefinition funcDefn = model.getFunctionDefinition(i);
+			String funcDefnStr = SBMLutilities.myFormulaToString(funcDefn.getMath());
+			String[] vars = funcDefnStr.split(" |\\(|\\)|\\,");
+			for (int j = 0; j < vars.length; j++)
+			{
+				if (vars[j].equals(id))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Check if a variable is in use.
 	 */

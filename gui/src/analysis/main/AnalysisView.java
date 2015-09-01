@@ -712,6 +712,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				description.setText("ATACS Analysis Tool");
 				enableMarkovAnalyzer();
 			}
+			else if (simulators.getSelectedItem().equals("prism"))
+			{
+				description.setText("PRISM Analysis Tool");
+				enableMarkovAnalyzer();
+			}
 			else if (simulators.getSelectedItem().equals("reachability-analysis"))
 			{
 				description.setText("State Space Exploration");
@@ -2661,7 +2666,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 									options, options[0]);
 							if (value == JOptionPane.YES_OPTION)
 							{
-								gcm.save("gcm");
+								gcm.save(false);
 							}
 						}
 					}
@@ -2797,6 +2802,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			simulators.addItem("steady-state-markov-chain-analysis");
 			simulators.addItem("transient-markov-chain-analysis");
 			simulators.addItem("reachability-analysis");
+			simulators.addItem("prism");
 			if (Gui.isReb2sacFound())
 			{
 				simulators.addItem("atacs");
@@ -3616,6 +3622,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			simulators.addItem("steady-state-markov-chain-analysis");
 			simulators.addItem("transient-markov-chain-analysis");
 			simulators.addItem("reachability-analysis");
+			simulators.addItem("prism");
 		}
 		if (Gui.isReb2sacFound())
 		{
