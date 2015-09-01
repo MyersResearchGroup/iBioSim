@@ -6,9 +6,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import lpn.parser.LhpnFile;
 import lpn.parser.Translator;
 import lpn.parser.Variable;
+import main.Gui;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -61,7 +64,7 @@ public class BuildProperty {
 		//String[] lpnPath = lpnFileName.split(separator);
 		//System.out.println("No of places : "+numPlaces);
 
-		System.out.println("No of places : "+numPlaces);
+		//System.out.println("No of places : "+numPlaces);
 
 		BufferedReader input = new BufferedReader(new FileReader(propFileName));
 
@@ -86,13 +89,17 @@ public class BuildProperty {
 		TokenStream tokenStream =  new CommonTokenStream(lexer);
 		PropertyParser parser = new PropertyParser(tokenStream);
 		PropertyParser.program_return program = parser.program();
+		if (parser.getNumberOfSyntaxErrors()>0) {
+			JOptionPane.showMessageDialog(Gui.frame, "Error parsing property file, check console.", "Parse Error",  JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		//System.out.println("tree: "+((Tree)program.tree).toStringTree()+"\n");
 
 		CommonTree r0 = program.tree;
 		//System.out.println("parent :"+program.start.getText());
 		int number = r0.getChildCount();
 		//System.out.println("NUMBER : "+number+"\n");
-		printTree(r0, number);
+		//printTree(r0, number);
 		generateFile(r0, lpn,lpnFileName);
 	}
 
@@ -513,7 +520,7 @@ public class BuildProperty {
 				case lpn.parser.properties.PropertyLexer.SAMEAS :
 					break;
 				case lpn.parser.properties.PropertyLexer.WAIT :
-					System.out.println("wait statement: ");
+					//System.out.println("wait statement: ");
 					int count = switchCaseTree.getChildCount();
 					if (count==1){
 						
@@ -605,7 +612,7 @@ public class BuildProperty {
 					
 				case lpn.parser.properties.PropertyLexer.IF :
 					boolean elsePartExists = false;
-					System.out.println("IF statement");
+					//System.out.println("IF statement");
 					if(list.getItemCount()!=0){
 						list.removeAll();
 
@@ -647,7 +654,7 @@ public class BuildProperty {
 
 					for(int x=0;x<list.getItemCount();x++){
 
-						System.out.println("list is : "+list.getItem(x)+"\n");
+						//System.out.println("list is : "+list.getItem(x)+"\n");
 					}
 					for(int j=0;j<switchCaseTree.getChildCount();j++){
 						if(j==0){
@@ -733,7 +740,7 @@ public class BuildProperty {
 
 						}
 						String newEnablingCond = sb.toString();
-						System.out.println(" condition is :"+newEnablingCond);
+						//System.out.println(" condition is :"+newEnablingCond);
 						lpnObj.addTransition("t" + numTransitions);
 							lpnObj.addEnabling("t" +numTransitions, newEnablingCond);
 					numTransitions++;
@@ -757,7 +764,7 @@ public class BuildProperty {
 
 						if(j==0){
 							enablingCond=  generateExpression((CommonTree)switchCaseTree.getChild(0));
-							System.out.println("enabling condition :"+enablingCond);
+							//System.out.println("enabling condition :"+enablingCond);
 							if(numPlaces==0){
 								lpnObj.addPlace("p"+numPlaces, true);
 								numPlaces++;
@@ -768,17 +775,17 @@ public class BuildProperty {
 							String newEnablingCondition1= "";
 							int counter=-1;
 							for(int m=0;m<list.getItemCount();m++){
-								System.out.println("item :"+list.getItem(m).toString());
+								//System.out.println("item :"+list.getItem(m).toString());
 								
 								if(list.getItem(m).toString().equalsIgnoreCase(enablingCond)){
 									counter=m;
 									
 								}
 							}
-							System.out.println("counter is : "+counter);
+							//System.out.println("counter is : "+counter);
 							
 							for(int m=0;m<=counter;m++){
-								System.out.println("item :"+list.getItem(m).toString());
+								//System.out.println("item :"+list.getItem(m).toString());
 								
 								if(list.getItem(m).toString().equalsIgnoreCase(enablingCond)){
 								
@@ -799,7 +806,7 @@ public class BuildProperty {
 
 							}
 							String newEnablingCondition = sb2.toString();
-							System.out.println("newEnablinCondition in ELSEIF : "+newEnablingCondition+"\n");
+							//System.out.println("newEnablinCondition in ELSEIF : "+newEnablingCondition+"\n");
 
 							lpnObj.addEnabling("t" +numTransitions, newEnablingCondition);
 							numTransitions++;
@@ -958,7 +965,7 @@ public class BuildProperty {
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "=" +string2);
-				System.out.println("result2 :"+result);
+				//System.out.println("result2 :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.GETEQ :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
@@ -970,13 +977,13 @@ public class BuildProperty {
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "<" +string2);
-				System.out.println("result2 :"+result);
+				//System.out.println("result2 :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.LETEQ :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "<=" +string2);
-				System.out.println("result2 :"+result);
+				//System.out.println("result2 :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.MINUS :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
@@ -1041,7 +1048,7 @@ public class BuildProperty {
 				break;
 			case lpn.parser.properties.PropertyLexer.UNIFORM :
 				result= newChild.toString();
-				System.out.println("String in UNIFORM :"+result);
+				//System.out.println("String in UNIFORM :"+result);
 				break;
 			default :
 				break;

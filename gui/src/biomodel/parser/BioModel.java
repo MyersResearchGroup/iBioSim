@@ -10,7 +10,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -478,188 +481,6 @@ public class BioModel {
 		this.sbmlCompModel = sbmlCompModel;
 	}
 
-	public void createLogicalModel(final String filename, final Log log, final Gui biosim,
-			final String lpnName) {
-		try {
-			new File(filename + ".temp").createNewFile();
-		}
-		catch (IOException e2) {
-		}
-		final JFrame naryFrame = new JFrame("Thresholds");
-		WindowListener w = new WindowListener() {
-			@Override
-			public void windowClosing(WindowEvent arg0) {
-				naryFrame.dispose();
-			}
-
-			@Override
-			public void windowOpened(WindowEvent arg0) {
-			}
-
-			@Override
-			public void windowClosed(WindowEvent arg0) {
-			}
-
-			@Override
-			public void windowIconified(WindowEvent arg0) {
-			}
-
-			@Override
-			public void windowDeiconified(WindowEvent arg0) {
-			}
-
-			@Override
-			public void windowActivated(WindowEvent arg0) {
-			}
-
-			@Override
-			public void windowDeactivated(WindowEvent arg0) {
-			}
-		};
-		naryFrame.addWindowListener(w);
-
-		JTabbedPane naryTabs = new JTabbedPane();
-		ArrayList<JPanel> specProps = new ArrayList<JPanel>();
-		final ArrayList<JTextField> texts = new ArrayList<JTextField>();
-		final ArrayList<JList> consLevel = new ArrayList<JList>();
-		final ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-		final ArrayList<String> specs = new ArrayList<String>();
-		for (String spec : getSpecies()) {
-			specs.add(spec);
-			JPanel newPanel1 = new JPanel(new GridLayout(1, 2));
-			JPanel newPanel2 = new JPanel(new GridLayout(1, 2));
-			JPanel otherLabel = new JPanel();
-			otherLabel.add(new JLabel(spec + " Amount:"));
-			newPanel2.add(otherLabel);
-			consLevel.add(new JList());
-			conLevel.add(new Object[0]);
-			consLevel.get(consLevel.size() - 1).setListData(new Object[0]);
-			conLevel.set(conLevel.size() - 1, new Object[0]);
-			JScrollPane scroll = new JScrollPane();
-			scroll.setPreferredSize(new java.awt.Dimension(260, 100));
-			scroll.setViewportView(consLevel.get(consLevel.size() - 1));
-			JPanel area = new JPanel();
-			area.add(scroll);
-			newPanel2.add(area);
-			JPanel addAndRemove = new JPanel();
-			JTextField adding = new JTextField(15);
-			texts.add(adding);
-			JButton Add = new JButton("Add");
-			JButton Remove = new JButton("Remove");
-			Add.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					int number = Integer.parseInt(e.getActionCommand().substring(3,
-							e.getActionCommand().length()));
-					try {
-						int get = Integer.parseInt(texts.get(number).getText().trim());
-						if (get <= 0) {
-							JOptionPane.showMessageDialog(naryFrame,
-									"Amounts Must Be Positive Integers.", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-						else {
-							JList add = new JList();
-							Object[] adding = { "" + get };
-							add.setListData(adding);
-							add.setSelectedIndex(0);
-							Object[] sort = main.util.Utility.add(conLevel.get(number),
-									consLevel.get(number), add);
-							int in;
-							for (int out = 1; out < sort.length; out++) {
-								int temp = Integer.parseInt((String) sort[out]);
-								in = out;
-								while (in > 0 && Integer.parseInt((String) sort[in - 1]) >= temp) {
-									sort[in] = sort[in - 1];
-									--in;
-								}
-								sort[in] = temp + "";
-							}
-							conLevel.set(number, sort);
-						}
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(naryFrame,
-								"Amounts Must Be Positive Integers.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			});
-			Add.setActionCommand("Add" + (consLevel.size() - 1));
-			Remove.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					int number = Integer.parseInt(e.getActionCommand().substring(6,
-							e.getActionCommand().length()));
-					conLevel.set(number, main.util.Utility
-							.remove(consLevel.get(number), conLevel.get(number)));
-				}
-			});
-			Remove.setActionCommand("Remove" + (consLevel.size() - 1));
-			addAndRemove.add(adding);
-			addAndRemove.add(Add);
-			addAndRemove.add(Remove);
-			JPanel newnewPanel = new JPanel(new BorderLayout());
-			newnewPanel.add(newPanel1, "North");
-			newnewPanel.add(newPanel2, "Center");
-			newnewPanel.add(addAndRemove, "South");
-			specProps.add(newnewPanel);
-			naryTabs.addTab(spec + " Properties", specProps.get(specProps.size() - 1));
-		}
-
-		JButton naryRun = new JButton("Create");
-		JButton naryClose = new JButton("Cancel");
-		naryRun.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				flattenModel(true);
-				convertToLHPN(specs, conLevel, new MutableString()).save(filename);
-				log.addText("Saving model as LPN:\n" + path + separator + lpnName + "\n");
-				biosim.addToTree(lpnName);
-				naryFrame.dispose();
-				new File(filename + ".temp").delete();
-			}
-		});
-		naryClose.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				naryFrame.dispose();
-				new File(filename + ".temp").delete();
-			}
-		});
-		JPanel naryRunPanel = new JPanel();
-		naryRunPanel.add(naryRun);
-		naryRunPanel.add(naryClose);
-
-		JPanel naryPanel = new JPanel(new BorderLayout());
-		naryPanel.add(naryTabs, "Center");
-		naryPanel.add(naryRunPanel, "South");
-
-		naryFrame.setContentPane(naryPanel);
-		naryFrame.pack();
-		java.awt.Dimension screenSize;
-		try {
-			Toolkit tk = Toolkit.getDefaultToolkit();
-			screenSize = tk.getScreenSize();
-		}
-		catch (AWTError awe) {
-			screenSize = new java.awt.Dimension(640, 480);
-		}
-		java.awt.Dimension frameSize = naryFrame.getSize();
-
-		if (frameSize.height > screenSize.height) {
-			frameSize.height = screenSize.height;
-		}
-		if (frameSize.width > screenSize.width) {
-			frameSize.width = screenSize.width;
-		}
-		int x = screenSize.width / 2 - frameSize.width / 2;
-		int y = screenSize.height / 2 - frameSize.height / 2;
-		naryFrame.setLocation(x, y);
-		naryFrame.setResizable(false);
-		naryFrame.setVisible(true);
-	}
-
 	private static ArrayList<String> copyArray(ArrayList<String> original) {
 		ArrayList<String> copy = new ArrayList<String>();
 		for (String element : original) {
@@ -973,48 +794,68 @@ public class BioModel {
 			}
 			LHPN.addProperty(lpnProperty.getString());
 		}
-		// TODO: this is prism export code, needs to be in own function
-		System.out.println("ctmc");
-		for (String var : LHPN.getVariables()) {
-			int i=0;
-			Place place;
-			String lastValue="";
-			while ((place = LHPN.getPlace(var+i))!=null) {
-				Transition inTrans = place.getPreset()[0];
-				ExprTree assign = inTrans.getAssignTree(var);
-				lastValue = assign.toString();
-				i++;
-			}
-			Variable variable = LHPN.getVariable(var);
-			String initValue = variable.getInitValue();
-			initValue = Long.toString((Math.round(Double.valueOf(initValue))));
-			if (lastValue.equals("")) {
-				System.out.println("const int "+var+"="+initValue+";");
-			} else {
-				System.out.println("module "+var+"_def");
-				System.out.println("  "+var+" : "+"[0.."+lastValue+"] init "+initValue+";");
-				i=0;
-				while ((place = LHPN.getPlace(var+i))!=null) {
+		return LHPN;
+	}
+	
+	public void convertLPN2PRISM(Log log,FileWriter logFile,LhpnFile LPN,String filename) {
+		File file = new File(filename);
+		log.addText("Saving SBML file as PRISM file:\n" + filename + "\n");
+		try {
+			logFile.write("Saving SBML file as PRISM file:\n" + filename + "\n\n");
+			FileWriter out = new FileWriter(file);
+			out.write("ctmc\n");
+			for (String var : LPN.getVariables()) {
+				int i=0;
+				Place place;
+				String lastValue="";
+				while ((place = LPN.getPlace(var+i))!=null) {
 					Transition inTrans = place.getPreset()[0];
 					ExprTree assign = inTrans.getAssignTree(var);
-					System.out.print("  [] "+var+"="+assign.toString()+" -> ");
-					boolean first = true;
-					for (Transition outTrans : place.getPostset()) {
-						assign = outTrans.getAssignTree(var);
-						ExprTree delay = outTrans.getDelayTree();
-						String rate = delay.toString("prism");
-						rate = rate.replace("exponential", "");
-						if (!first) System.out.print(" + ");
-						System.out.print(rate+":("+var+"'="+assign.toString()+")");
-						first = false;
-					}
-					System.out.println(";");
+					lastValue = assign.toString();
 					i++;
 				}
-				System.out.println("endmodule");
+				Variable variable = LPN.getVariable(var);
+				String initValue = variable.getInitValue();
+				initValue = Long.toString((Math.round(Double.valueOf(initValue))));
+				if (lastValue.equals("")) {
+					out.write("const int "+var+"="+initValue+";\n");
+				} else {
+					out.write("module "+var+"_def\n");
+					out.write("  "+var+" : "+"[0.."+lastValue+"] init "+initValue+";\n");
+					i=0;
+					while ((place = LPN.getPlace(var+i))!=null) {
+						Transition inTrans = place.getPreset()[0];
+						ExprTree assign = inTrans.getAssignTree(var);
+						out.write("  [] "+var+"="+assign.toString()+" -> ");
+						boolean first = true;
+						for (Transition outTrans : place.getPostset()) {
+							assign = outTrans.getAssignTree(var);
+							ExprTree delay = outTrans.getDelayTree();
+							String rate = delay.toString("prism");
+							rate = rate.replace("exponential", "");
+							if (!first) out.write(" + ");
+							out.write(rate+":("+var+"'="+assign.toString()+")");
+							first = false;
+						}
+						out.write(";\n");
+						i++;
+					}
+					out.write("endmodule\n");
+				}
+			}
+			out.close();
+			for (int i = 0; i < sbml.getModel().getConstraintCount(); i++) {
+				file = new File(filename.replace(".prism", ".pctl"));
+				log.addText("Saving PRISM Property file:\n" + filename + "\n");
+				logFile.write("Saving PRISM Property file:\n" + filename + "\n\n");
+				out = new FileWriter(file);
+				out.write(SBMLutilities.convertMath2PrismProperty(sbml.getModel().getConstraint(i).getMath()));
+				out.close();
 			}
 		}
-		return LHPN;
+		catch (IOException e) {
+			JOptionPane.showMessageDialog(Gui.frame, "I/O error when writing PRISM file","Error Writing File", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	private ASTNode replaceParams(ASTNode formula, HashMap<String,String> parameters) {
@@ -1739,8 +1580,10 @@ public class BioModel {
 			double np = sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue();
 			product.setStoichiometry(np);
 			product.setConstant(true);
-			r.removeProduct(promoterId+"_mRNA");
-			sbml.getModel().removeSpecies(promoterId+"_mRNA");
+			if (r.getProduct(promoterId + "_mRNA")!=null) {
+				r.removeProduct(promoterId+"_mRNA");
+				sbml.getModel().removeSpecies(promoterId+"_mRNA");
+			}
 		}
 		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
 		return r;
@@ -2022,8 +1865,10 @@ public class BioModel {
 					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
 				}
 			}
-			r.removeProduct(promoterId+"_mRNA");
-			sbml.getModel().removeSpecies(promoterId+"_mRNA");
+			if (r.getProduct(promoterId+"_mRNA")!=null) {
+				r.removeProduct(promoterId+"_mRNA");
+				sbml.getModel().removeSpecies(promoterId+"_mRNA");
+			}
 		}
 		return r;
 	}
@@ -2081,8 +1926,10 @@ public class BioModel {
 					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
 				}
 			}
-			r.removeProduct(promoterId + "_mRNA");
-			sbml.getModel().removeSpecies(promoterId + "_mRNA");
+			if (r.getProduct(promoterId + "_mRNA")!=null) {
+				r.removeProduct(promoterId + "_mRNA");
+				sbml.getModel().removeSpecies(promoterId + "_mRNA");
+			}
 		}
 		addProductionParameters(r,activatorId,ncStr,KaStr,null,"a");
 		return r;
@@ -2129,8 +1976,10 @@ public class BioModel {
 				product.setStoichiometry(np);
 			}
 			product.setConstant(true);
-			r.removeProduct(promoterId + "_mRNA");
-			sbml.getModel().removeSpecies(promoterId + "_mRNA");
+			if (r.getProduct(promoterId + "_mRNA")!=null) {
+				r.removeProduct(promoterId + "_mRNA");
+				sbml.getModel().removeSpecies(promoterId + "_mRNA");
+			}
 		}
 		addProductionParameters(r,repressorId,ncStr,null,KrStr,"r");
 		return r;
@@ -5057,7 +4906,9 @@ public class BioModel {
 			}
 		}
 		sbml.getModel().removeSpecies(id);
-		sbml.getModel().removeSpecies(id+"_mRNA");
+		if (sbml.getModel().getSpecies(id + "_mRNA")!=null) {
+			sbml.getModel().removeSpecies(id+"_mRNA");
+		}
 		removeReaction(getProductionReaction(id).getId());
 		Layout layout = getLayout();
 		if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
@@ -7046,7 +6897,7 @@ public class BioModel {
 			// TODO: validate arrays before flattening
 			//model.save(tempFile.replace("_temp", "_before"));
 			
-			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
+			//model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
 			model.createCompPlugin();
 			model.createFBCPlugin();
 			/*

@@ -77,13 +77,13 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		int count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = listOfFunctions.get(i);
-			if (!SBMLutilities.isSpecialFunction(function.getId())) count++;
+			if (!SBMLutilities.isSpecialFunction(model,function.getId())) count++;
 		}
 		String[] funcs = new String[count];
 		count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = listOfFunctions.get(i);
-			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
+			if (SBMLutilities.isSpecialFunction(model,function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
 			for (int j = 0; j < function.getArgumentCount(); j++) {
 				if (j != 0) {
@@ -467,13 +467,13 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		int count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = listOfFunctions.get(i);
-			if (!SBMLutilities.isSpecialFunction(function.getId())) count++;
+			if (!SBMLutilities.isSpecialFunction(model,function.getId())) count++;
 		}
 		String[] funcs = new String[count];
 		count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = listOfFunctions.get(i);
-			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
+			if (SBMLutilities.isSpecialFunction(model,function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
 			for (int j = 0; j < function.getArgumentCount(); j++) {
 				if (j != 0) {

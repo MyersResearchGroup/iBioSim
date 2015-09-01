@@ -3,6 +3,7 @@ package analysis.main;
 import graph.Graph;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -24,7 +25,9 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.xml.stream.XMLStreamException;
 
 import lpn.parser.Abstraction;
@@ -736,6 +739,169 @@ public class Run implements ActionListener
 					time1 = System.nanoTime();
 					reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=hse2 " + theFile, null, work);
 				}
+				else if (sim.equals("prism"))
+				{
+					String prop = null;
+					time1 = System.nanoTime();
+					progress.setIndeterminate(true);
+					LhpnFile lhpnFile = null;
+					if (modelFile.contains(".lpn"))
+					{
+						lhpnFile = new LhpnFile();
+						lhpnFile.load(root + Gui.separator + modelFile);
+					}
+					else
+					{
+						new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
+						ArrayList<String> specs = new ArrayList<String>();
+						ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+						for (int i = 0; i < intSpecies.length; i++)
+						{
+							if (!intSpecies[i].equals(""))
+							{
+								String[] split = intSpecies[i].split(" ");
+								if (split.length > 1)
+								{
+									String[] levels = split[1].split(",");
+									if (levels.length > 0)
+									{
+										specs.add(split[0]);
+										conLevel.add(levels);
+									}
+								}
+							}
+						}
+						BioModel bioModel = new BioModel(root);
+						bioModel.load(root + Gui.separator + modelEditor.getRefFile());
+						if (bioModel.flattenModel(true) != null)
+						{
+							time1 = System.nanoTime();
+							if (!lpnProperty.equals(""))
+							{
+								prop = lpnProperty;
+							}
+							ArrayList<String> propList = new ArrayList<String>();
+							if (prop == null)
+							{
+								Model m = bioModel.getSBMLDocument().getModel();
+								for (int num = 0; num < m.getConstraintCount(); num++)
+								{
+									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U("))
+									{
+										propList.add(constraint);
+									}
+								}
+							}
+							if (propList.size() > 0)
+							{
+								String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection",
+										JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+								if ((s != null) && (s.length() > 0))
+								{
+									Model m = bioModel.getSBMLDocument().getModel();
+									for (int num = 0; num < m.getConstraintCount(); num++)
+									{
+										String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+										if (s.equals(constraint))
+										{
+											prop = Translator.convertProperty(m.getConstraint(num).getMath());
+										}
+									}
+								}
+							}
+							MutableString mutProp = new MutableString(prop);
+							lhpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
+							prop = mutProp.getString();
+							if (lhpnFile == null)
+							{
+								new File(directory + Gui.separator + "running").delete();
+								logFile.close();
+								return 0;
+							}
+							bioModel.convertLPN2PRISM(log,logFile,lhpnFile,filename.replace(".xml", ".prism"));
+							Preferences biosimrc = Preferences.userRoot();
+							String prismCmd = biosimrc.get("biosim.general.prism", "");
+							log.addText("Executing:\n" + prismCmd + " " + directory + out + ".prism" 
+									+ " " + directory + out + ".pctl" + "\n");
+							logFile.write("Executing:\n" + prismCmd + " " + directory + out + ".prism"
+								+ " " + directory + out + ".pctl" + "\n");
+							reb2sac = exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
+							String error = "";
+							String result = "";
+							String fullLog = "";
+							try
+							{
+								InputStream reb = reb2sac.getInputStream();
+								InputStreamReader isr = new InputStreamReader(reb);
+								BufferedReader br = new BufferedReader(isr);
+								String line;
+								double time = 0;
+								double oldTime = 0;
+								int runNum = 0;
+								int prog = 0;
+								while ((line = br.readLine()) != null)
+								{
+									fullLog += line + '\n';
+									if (line.startsWith("Result:")) {
+										result = line + '\n';
+									}
+								}
+								InputStream reb2 = reb2sac.getErrorStream();
+								int read = reb2.read();
+								while (read != -1)
+								{
+									error += (char) read;
+									read = reb2.read();
+								}
+								br.close();
+								isr.close();
+								reb.close();
+								reb2.close();
+							}
+							catch (Exception e)
+							{
+								//e.printStackTrace();
+							}
+							if (reb2sac != null)
+							{
+								exitValue = reb2sac.waitFor();
+							}
+							if (time2 == -1)
+							{
+								time2 = System.nanoTime();
+							}
+							running.setCursor(null);
+							running.dispose();
+							String time = createTimeString(time1, time2);
+							if (!error.equals(""))
+							{
+								log.addText("Errors:\n" + error + "\n");
+								logFile.write("Errors:\n" + error + "\n\n");
+							} else if (!result.equals("")) {
+								log.addText(result);
+								logFile.write(result);
+							} else {
+								JTextArea messageArea = new JTextArea(fullLog);
+								messageArea.setEditable(false);
+								JScrollPane scroll = new JScrollPane();
+								scroll.setMinimumSize(new Dimension(500, 500));
+								scroll.setPreferredSize(new Dimension(500, 500));
+								scroll.setViewportView(messageArea);
+								JOptionPane.showMessageDialog(Gui.frame, scroll, "Verification Failed", JOptionPane.ERROR_MESSAGE);
+							}
+							log.addText("Total Verification Time: " + time + " for " + simName + "\n\n");
+							logFile.write("Total Verification Time: " + time + " for " + simName + "\n\n\n");
+							return 0;
+						}
+						else
+						{
+							new File(directory + Gui.separator + "running").delete();
+							logFile.close();
+							return 0;
+						}
+					}					
+				}
 				else if (sim.contains("markov-chain-analysis") || sim.equals("reachability-analysis"))
 				{
 					String prop = null;
@@ -817,9 +983,9 @@ public class Run implements ActionListener
 								return 0;
 							}
 							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
-							log.addText("Saving GCM file as LHPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn"
+							log.addText("Saving SBML file as LPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn"
 									+ "\n");
-							logFile.write("Saving GCM file as LHPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+							logFile.write("Saving SBML file as LPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 									+ ".lpn" + "\n\n");
 						}
 						else
@@ -914,14 +1080,9 @@ public class Run implements ActionListener
 								}
 								// TODO: THIS NEEDS FIXING
 								/*
-								 * for (int i = 0; i <
-								 * gcmEditor.getGCM().getConditions().size();
-								 * i++) { if
-								 * (gcmEditor.getGCM().getConditions().
-								 * get(i).startsWith("St")) {
-								 * conditions.add(Translator
-								 * .getProbpropExpression
-								 * (gcmEditor.getGCM().getConditions().get(i)));
+								 * for (int i = 0; i < gcmEditor.getGCM().getConditions().size(); i++) { 
+								 * if (gcmEditor.getGCM().getConditions().get(i).startsWith("St")) {
+								 * conditions.add(Translator.getProbpropExpression(gcmEditor.getGCM().getConditions().get(i)));
 								 * } }
 								 */
 								performMarkovAnalysis.start(absError, propList);
@@ -1580,6 +1741,16 @@ public class Run implements ActionListener
 					log.addText("Executing:\n" + xhtmlCmd + " " + directory + out + ".xhtml" + "\n");
 					logFile.write("Executing:\n" + xhtmlCmd + " " + directory + out + ".xhtml" + "\n\n");
 					exec.exec(xhtmlCmd + " " + out + ".xhtml", null, work);
+				}
+				else if (sim.equals("prism"))
+				{
+					Preferences biosimrc = Preferences.userRoot();
+					String prismCmd = biosimrc.get("biosim.general.prism", "");
+					log.addText("Executing:\n" + prismCmd + " " + directory + out + ".prism" 
+							+ " " + directory + out + ".pctl" + "\n");
+					logFile.write("Executing:\n" + prismCmd + " " + directory + out + ".prism"
+						+ " " + directory + out + ".pctl" + "\n");
+					exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
 				}
 				else if (sim.equals("atacs"))
 				{

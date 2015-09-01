@@ -2888,7 +2888,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (comp instanceof ModelEditor)
 			{
-				((ModelEditor) comp).save("Save GCM");
+				((ModelEditor) comp).save(false);
 			}
 			/*
 			 * else if (comp instanceof SBML_Editor) { ((SBML_Editor)
@@ -3295,7 +3295,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor)
 			{
-				((ModelEditor) comp).save("Save and Check GCM");
+				((ModelEditor) comp).save(true);
 			}
 		}
 		else if (e.getActionCommand().equals("export"))
@@ -5077,7 +5077,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								tab.remove(i);
 							}
 							ModelEditor modelEditor = new ModelEditor(root + separator, modelId, this, log, false, null, null, null, false, grid);
-							modelEditor.save("Save GCM");
+							modelEditor.save(false);
 							addTab(modelId, modelEditor, "Model Editor");
 							addToTree(modelId);
 						}
@@ -7343,7 +7343,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 						if (value == YES_OPTION)
 						{
-							editor.save("gcm");
+							editor.save(false);
 							return 1;
 						}
 						else if (value == NO_OPTION)
@@ -7356,7 +7356,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else if (value == YES_TO_ALL_OPTION)
 						{
-							editor.save("gcm");
+							editor.save(false);
 							return 2;
 						}
 						else if (value == NO_TO_ALL_OPTION)
@@ -7366,7 +7366,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					else if (autosave == 1)
 					{
-						editor.save("gcm");
+						editor.save(false);
 						return 2;
 					}
 					else
