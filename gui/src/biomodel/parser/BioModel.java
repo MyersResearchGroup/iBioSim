@@ -6897,7 +6897,7 @@ public class BioModel {
 			// TODO: validate arrays before flattening
 			//model.save(tempFile.replace("_temp", "_before"));
 			
-			//model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
+			model.setSBMLDocument(ArraysFlattening.convert(model.getSBMLDocument()));
 			model.createCompPlugin();
 			model.createFBCPlugin();
 			/*
