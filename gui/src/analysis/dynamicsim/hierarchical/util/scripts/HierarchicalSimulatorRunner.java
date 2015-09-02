@@ -121,11 +121,11 @@ public class HierarchicalSimulatorRunner
 		}
 		else
 		{
+			System.gc();
 			String filename = args[0];
 			String outputDirectory = args[1];
 			String settingsFile = args[2];
 			boolean flattening = args[3].equals("true");
-
 			readProperties(settingsFile);
 
 			simulator = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
