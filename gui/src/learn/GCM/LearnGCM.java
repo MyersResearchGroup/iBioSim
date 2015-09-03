@@ -96,8 +96,6 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 
 	private JComboBox						numBins, methods;
 
-	private final String[]					methodNames			= { "GeneNet", "GeneNet (Java)", "None" };
-
 	private JTextField						influenceLevel, relaxIPDelta, letNThrough, maxVectorSize;
 
 	// private JCheckBox harshenBoundsOnTie, donotInvertSortOrder, seedParents;
@@ -253,7 +251,13 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		thresholdPanel1.add(backgroundField);
 
 		JLabel methodsLabel = new JLabel("Learn Method:  ");
-		methods = new JComboBox(methodNames);
+		if (Gui.isGeneNetFound()) {
+			String[] methodNames = { "GeneNet", "GeneNet (Java)", "None" };
+			methods = new JComboBox(methodNames);
+		} else {
+			String[] methodNames = { "GeneNet (Java)", "None" };
+			methods = new JComboBox(methodNames);
+		}
 		methods.addActionListener(this);
 		thresholdPanel1.add(methodsLabel);
 		thresholdPanel1.add(methods);
@@ -687,7 +691,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		{
 			boolean enable;
 
-			if (methods.getSelectedItem().equals(methodNames[0]))
+			if (methods.getSelectedItem().equals("GeneNet"))
 			{
 				enable = true;
 			}
@@ -731,7 +735,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 				}
 			}
 
-			if (methods.getSelectedItem().equals(methodNames[2]))
+			if (methods.getSelectedItem().equals("None"))
 			{
 				activation.setEnabled(false);
 				repression.setEnabled(false);
