@@ -407,14 +407,26 @@ public class Schematic extends JPanel implements ActionListener {
 		removeCells();
 	}
 	
-	public void addCompartment(int x, int y) {
+	public int[] getPosition(int x, int y) {
+		int[] xy = new int[2];
 		if (x < 0 && y < 0) {
 			PointerInfo a = MouseInfo.getPointerInfo();
 			Point c = graphComponent.getLocationOnScreen();
 			Point b = a.getLocation();
 			x = (int)(b.getX() - c.getX());
 			y = (int)(b.getY() - c.getY());
-		}
+		}	
+		if (x<0) x = 0;
+		if (y<0) y = 0;
+		xy[0] = x;
+		xy[1] = y;
+		return xy;
+	}
+	
+	public void addCompartment(int x, int y) {
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		bioModel.createCompartment(null, x, y);
 		graph.buildGraph();
 		modelEditor.refresh();
@@ -423,13 +435,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addSpecies(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		bioModel.createSpecies(null, x, y);
 		graph.buildGraph();
 		modelEditor.refresh();
@@ -438,13 +446,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addReaction(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		bioModel.createReaction(null, x, y);
 		graph.buildGraph();
 		modelEditor.refresh();
@@ -453,13 +457,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addComponent(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		
 		boolean dropped;
 		
@@ -486,13 +486,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addPromoter(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		bioModel.createPromoter(null, x, y, true);
 		modelEditor.refresh();
 		graph.buildGraph();
@@ -501,13 +497,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addVariable(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		bioModel.createVariable(null, x, y, false, false);
 		modelEditor.refresh();
 		graph.buildGraph();
@@ -516,13 +508,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addBoolean(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		bioModel.createVariable(null, x, y, false, true);
 		modelEditor.refresh();
 		graph.buildGraph();
@@ -531,13 +519,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addPlace(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		bioModel.createVariable(null, x, y, true, false);
 		modelEditor.refresh();
 		graph.buildGraph();
@@ -546,13 +530,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addTransition(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		String id = events.eventEditor("Add", "",true);
 		if (!id.equals("")) {
 			bioModel.createEvent(id, x, y, true);
@@ -564,13 +544,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addRule(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		String id = rules.ruleEditor("Add", "");
 		if (!id.equals("")) {
 			bioModel.createRule(id, x, y);
@@ -582,13 +558,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addConstraint(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		String id = constraints.constraintEditor("Add", "");
 		if (!id.equals("")) {
 			bioModel.createConstraint(id, x, y);
@@ -600,13 +572,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addEvent(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		String id = events.eventEditor("Add", "",false);
 		if (!id.equals("")) {
 			bioModel.createEvent(id, x, y, false);
@@ -618,13 +586,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void addSelfInfluence(int x, int y) {
-		if (x < 0 && y < 0) {
-			PointerInfo a = MouseInfo.getPointerInfo();
-			Point c = graphComponent.getLocationOnScreen();
-			Point b = a.getLocation();
-			x = (int)(b.getX() - c.getX());
-			y = (int)(b.getY() - c.getY());
-		}
+		int[] xy = getPosition(x,y);
+		x = xy[0];
+		y = xy[1];
 		mxCell cell = (mxCell)(graphComponent.getCellAt(x,y));
 		if(cell.isEdge() == false) {
 			// the user clicked to add a self-influence to a component.

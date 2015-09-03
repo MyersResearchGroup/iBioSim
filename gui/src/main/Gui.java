@@ -180,17 +180,8 @@ import com.apple.eawt.ApplicationEvent;
 public class Gui implements MouseListener, ActionListener, MouseMotionListener, MouseWheelListener
 {
 
-	public static JFrame			frame;												// Frame
-																						// where
-																						// components
-																						// of
-																						// the
-																						// GUI
-																						// are
-	// displayed
-
+	public static JFrame			frame;	// Frame where components of the GUI are displayed
 	private JMenuBar				menuBar;
-
 	private JMenu					file, openRecent, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
 	private JMenuItem				newProj;																				// The
 																															// new
@@ -404,6 +395,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public static Boolean			reb2sacFound		= true;
 
 	public static String			reb2sacExecutable;
+	
+	public static Boolean			geneNetFound		= true;
+
+	public static String			geneNetExecutable;
 
 	public Log						log;																					// the
 																															// log
@@ -9897,41 +9892,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 */
 	public static void main(String args[])
 	{
-		/* TODO: test for factorial */
-		/*
-		 * IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
-		 * FormulaCompilerLibSBML compiler = new FormulaCompilerLibSBML(); try {
-		 * ASTNode mathFormula = ASTNode.parseFormula("factorial(n)", parser);
-		 * String formula = ASTNode.formulaToString(mathFormula, compiler);
-		 * //String formula = JSBML.formulaToString(mathFormula);
-		 * System.out.println("formula="+formula); mathFormula =
-		 * ASTNode.parseFormula(formula, parser); } catch (ParseException e1) {
-		 * // TODO Auto-generated catch block e1.printStackTrace(); }
-		 */
-		/* TODO: test for FUNCTION to NAME bug */
-		/*
-		 * SBMLDocument doc = new SBMLDocument(); Model model =
-		 * doc.createModel("foo"); FunctionDefinition function =
-		 * model.createFunctionDefinition("uniform"); Constraint c =
-		 * model.createConstraint(); try {
-		 * function.setMath(ASTNode.parseFormula("lambda(a,b,(a+b)/2)"));
-		 * c.setMath(ASTNode.parseFormula("uniform(0,1)")); } catch
-		 * (ParseException e1) { e1.printStackTrace(); }
-		 * System.out.println(c.getMath().getType().toString()); doc =
-		 * ArraysFlattening.convert(model.getSBMLDocument());
-		 * System.out.println(
-		 * doc.getModel().getConstraint(0).getMath().getType().toString());
-		 */
-		/*
-		 * try { String filePath =
-		 * "/Users/myers/Downloads/distrib-example2.xml";
-		 * System.out.println("Going to read '" + filePath + "'"); SBMLDocument
-		 * doc = new SBMLReader().readSBML(filePath);
-		 * System.out.println("Reading done."); } catch (Exception e1) {
-		 * System.err.println("Error while reading the sbml file.");
-		 * e1.printStackTrace(); }
-		 */
-
 		boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true, lpnFlag = false;
 		if (args.length > 0)
 		{
@@ -9988,21 +9948,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			ProcessBuilder ps = new ProcessBuilder(reb2sacExecutable, "");
 			ps.redirectErrorStream(true);
 			Process reb2sac = ps.start();
-
-			// Process reb2sac = exec.exec(reb2sacExecutable, null);
-			// BufferedReader in = new BufferedReader(new
-			// InputStreamReader(reb2sac.getInputStream()));
-			// String line;
-			// while ((line = in.readLine()) != null) {
-			// System.out.println(line);
-			// }
-			// in.close();
 			if (reb2sac != null)
 			{
 				exitValue = reb2sac.waitFor();
 			}
-			// System.out.println(reb2sacExecutable +
-			// " exitValue="+exitValue+" reb2sac="+reb2sac);
 			if (exitValue != 255 && exitValue != -1)
 			{
 				reb2sacFound = false;
@@ -10016,18 +9965,41 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		{
 			reb2sacFound = false;
 		}
-		/*
-		 * SBMLDocument doc = new SBMLDocument(3,1); Model model =
-		 * doc.createModel(); CompModelPlugin comp = new CompModelPlugin(model);
-		 * model.addExtension(CompConstants.namespaceURI, comp); Port port =
-		 * comp.createPort(); port.setId("c"); port.setIdRef("s"); SBaseRef
-		 * sbaseRef = port.createSBaseRef(); sbaseRef.setPortRef("c__s");
-		 * SBMLWriter writer = new SBMLWriter(); try { writer.write(doc,
-		 * "foo.xml"); } catch (SBMLException e) { e.printStackTrace(); } catch
-		 * (FileNotFoundException e) { e.printStackTrace(); } catch
-		 * (XMLStreamException e) { e.printStackTrace(); }
-		 */
-
+		exitValue = 1;
+		try
+		{
+			if (System.getProperty("os.name").contentEquals("Linux"))
+			{
+				geneNetExecutable = "GeneNet.linux64";
+			}
+			else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
+			{
+				geneNetExecutable = "GeneNet.mac64";
+			}
+			else
+			{
+				geneNetExecutable = "GeneNet.exe";
+			}
+			ProcessBuilder ps = new ProcessBuilder(geneNetExecutable, "");
+			ps.redirectErrorStream(true);
+			Process geneNet = ps.start();
+			if (geneNet != null)
+			{
+				exitValue = geneNet.waitFor();
+			}
+			if (exitValue != 255 && exitValue != 134 && exitValue != -1)
+			{
+				geneNetFound = false;
+			}
+		}
+		catch (IOException e)
+		{
+			geneNetFound = false;
+		}
+		catch (InterruptedException e)
+		{
+			geneNetFound = false;
+		}
 		new Gui(lemaFlag, atacsFlag, libsbmlFound, lpnFlag);
 	}
 
@@ -10044,6 +10016,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public static String getReb2sacExecutable()
 	{
 		return reb2sacExecutable;
+	}
+	
+	public static boolean isGeneNetFound()
+	{
+		return geneNetFound;
+	}
+
+	public static String getGeneNetExecutable()
+	{
+		return geneNetExecutable;
 	}
 
 	public void refreshLearn(String learnName)
