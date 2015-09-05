@@ -711,14 +711,34 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					explpn.setSelected(true);
 				}
 			}
-			if (load.containsKey("verification.nochecks")) {
-				if (load.getProperty("verification.nochecks").equals("true")) {
+			if (load.containsKey("verification.other.nochecks")) {
+				if (load.getProperty("verification.other.nochecks").equals("true")) {
 					nochecks.setSelected(true);
 				}
 			}
-			if (load.containsKey("verification.reduction")) {
-				if (load.getProperty("verification.reduction").equals("true")) {
+			if (load.containsKey("verification.other.reduction")) {
+				if (load.getProperty("verification.other.reduction").equals("true")) {
 					reduction.setSelected(true);
+				}
+			}
+			if (load.containsKey("verification.other.resetOnce")) {
+				if (load.getProperty("verification.other.resetOnce").equals("true")) {
+					resetOnce.setSelected(true);
+				}
+			}
+			if (load.containsKey("verification.other.noDisplayResult")) {
+				if (load.getProperty("verification.other.noDisplayResult").equals("true")) {
+					noDisplayResult.setSelected(true);
+				}
+			}
+			if (load.containsKey("verification.other.displayDBM")) {
+				if (load.getProperty("verification.other.displayDBM").equals("true")) {
+					displayDBM.setSelected(true);
+				}
+			}
+			if (load.containsKey("verification.other.rateOptimization")) {
+				if (load.getProperty("verification.other.rateOptimization").equals("true")) {
+					rateOptimization.setSelected(true);
 				}
 			}
 			if (verifyFile.endsWith(".s")) {
@@ -2680,14 +2700,34 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				prop.setProperty("verification.timing.explpn", "false");
 			}
 			if (nochecks.isSelected()) {
-				prop.setProperty("verification.nochecks", "true");
+				prop.setProperty("verification.other.nochecks", "true");
 			} else {
-				prop.setProperty("verification.nochecks", "false");
+				prop.setProperty("verification.other.nochecks", "false");
 			}
 			if (reduction.isSelected()) {
-				prop.setProperty("verification.reduction", "true");
+				prop.setProperty("verification.other.reduction", "true");
 			} else {
-				prop.setProperty("verification.reduction", "false");
+				prop.setProperty("verification.other.reduction", "false");
+			}
+			if (resetOnce.isSelected()) {
+				prop.setProperty("verification.other.resetOnce", "true");
+			} else {
+				prop.setProperty("verification.other.resetOnce", "false");
+			}
+			if (rateOptimization.isSelected()) {
+				prop.setProperty("verification.other.rateOptimization", "true");
+			} else {
+				prop.setProperty("verification.other.rateOptimization", "false");
+			}
+			if (noDisplayResult.isSelected()) {
+				prop.setProperty("verification.other.noDisplayResult", "true");
+			} else {
+				prop.setProperty("verification.other.noDisplayResult", "false");
+			}
+			if (displayDBM.isSelected()) {
+				prop.setProperty("verification.other.displayDBM", "true");
+			} else {
+				prop.setProperty("verification.other.displayDBM", "false");
 			}
 			String intVars = "";
 			for (int i = 0; i < abstPane.listModel.getSize(); i++) {
