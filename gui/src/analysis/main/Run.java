@@ -819,13 +819,11 @@ public class Run implements ActionListener
 								logFile.close();
 								return 0;
 							}
-							bioModel.convertLPN2PRISM(log,logFile,lhpnFile,filename.replace(".xml", ".prism"));
+							bioModel.convertLPN2PRISM(log, logFile, lhpnFile, filename.replace(".xml", ".prism"));
 							Preferences biosimrc = Preferences.userRoot();
 							String prismCmd = biosimrc.get("biosim.general.prism", "");
-							log.addText("Executing:\n" + prismCmd + " " + directory + out + ".prism" 
-									+ " " + directory + out + ".pctl" + "\n");
-							logFile.write("Executing:\n" + prismCmd + " " + directory + out + ".prism"
-								+ " " + directory + out + ".pctl" + "\n");
+							log.addText("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl" + "\n");
+							logFile.write("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl" + "\n");
 							reb2sac = exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
 							String error = "";
 							String result = "";
@@ -836,14 +834,11 @@ public class Run implements ActionListener
 								InputStreamReader isr = new InputStreamReader(reb);
 								BufferedReader br = new BufferedReader(isr);
 								String line;
-								double time = 0;
-								double oldTime = 0;
-								int runNum = 0;
-								int prog = 0;
 								while ((line = br.readLine()) != null)
 								{
 									fullLog += line + '\n';
-									if (line.startsWith("Result:")) {
+									if (line.startsWith("Result:"))
+									{
 										result = line + '\n';
 									}
 								}
@@ -861,7 +856,7 @@ public class Run implements ActionListener
 							}
 							catch (Exception e)
 							{
-								//e.printStackTrace();
+								// e.printStackTrace();
 							}
 							if (reb2sac != null)
 							{
@@ -878,10 +873,14 @@ public class Run implements ActionListener
 							{
 								log.addText("Errors:\n" + error + "\n");
 								logFile.write("Errors:\n" + error + "\n\n");
-							} else if (!result.equals("")) {
+							}
+							else if (!result.equals(""))
+							{
 								log.addText(result);
 								logFile.write(result);
-							} else {
+							}
+							else
+							{
 								JTextArea messageArea = new JTextArea(fullLog);
 								messageArea.setEditable(false);
 								JScrollPane scroll = new JScrollPane();
@@ -900,7 +899,7 @@ public class Run implements ActionListener
 							logFile.close();
 							return 0;
 						}
-					}					
+					}
 				}
 				else if (sim.contains("markov-chain-analysis") || sim.equals("reachability-analysis"))
 				{
@@ -1080,9 +1079,14 @@ public class Run implements ActionListener
 								}
 								// TODO: THIS NEEDS FIXING
 								/*
-								 * for (int i = 0; i < gcmEditor.getGCM().getConditions().size(); i++) { 
-								 * if (gcmEditor.getGCM().getConditions().get(i).startsWith("St")) {
-								 * conditions.add(Translator.getProbpropExpression(gcmEditor.getGCM().getConditions().get(i)));
+								 * for (int i = 0; i <
+								 * gcmEditor.getGCM().getConditions().size();
+								 * i++) { if
+								 * (gcmEditor.getGCM().getConditions().
+								 * get(i).startsWith("St")) {
+								 * conditions.add(Translator
+								 * .getProbpropExpression
+								 * (gcmEditor.getGCM().getConditions().get(i)));
 								 * } }
 								 */
 								performMarkovAnalysis.start(absError, propList);
@@ -1146,13 +1150,11 @@ public class Run implements ActionListener
 						{
 							log.addText("Performing transient Markov chain analysis with uniformization.\n");
 							logFile.write("Performing transient Markov chain analysis with uniformization.\n\n");
-							PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(
-									sg, progress);
+							PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(sg, progress);
 							time1 = System.nanoTime();
 							if (prop != null)
 							{
-								String[] condition = Translator.getProbpropParts(Translator
-										.getProbpropExpression(prop));
+								String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
 								boolean globallyTrue = false;
 								if (prop.contains("PF"))
 								{
@@ -1163,13 +1165,11 @@ public class Run implements ActionListener
 									condition[0] = "true";
 									globallyTrue = true;
 								}
-								performMarkovAnalysis.start(timeLimit, timeStep, printInterval,
-										absError, condition, globallyTrue);
+								performMarkovAnalysis.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
 							}
 							else
 							{
-								performMarkovAnalysis.start(timeLimit, timeStep, printInterval,
-										absError, null, false);
+								performMarkovAnalysis.start(timeLimit, timeStep, printInterval, absError, null, false);
 							}
 							performMarkovAnalysis.join();
 							time2 = System.nanoTime();
@@ -1178,91 +1178,60 @@ public class Run implements ActionListener
 								String simrep = sg.getMarkovResults();
 								if (simrep != null)
 								{
-									FileOutputStream simrepstream = new FileOutputStream(
-											new File(directory + Gui.separator + "sim-rep.txt"));
+									FileOutputStream simrepstream = new FileOutputStream(new File(directory + Gui.separator + "sim-rep.txt"));
 									simrepstream.write((simrep).getBytes());
 									simrepstream.close();
 								}
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(Gui.frame,
-										"The state graph contains " + sg.getNumberOfStates()
-										+ " states and " + sg.getNumberOfTransitions()
-										+ " transitions.\n"
-										+ "Do you want to view it in Graphviz?",
-										"View State Graph", JOptionPane.YES_NO_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
+										+ " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?",
+										"View State Graph", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 								if (value == JOptionPane.YES_OPTION)
 								{
-									String graphFile = filename.replace(".gcm", "")
-											.replace(".sbml", "").replace(".xml", "")
-											+ "_sg.dot";
+									String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
 									sg.outputStateGraph(graphFile, true);
 									try
 									{
 										Runtime execGraph = Runtime.getRuntime();
-										if (System.getProperty("os.name")
-												.contentEquals("Linux"))
+										if (System.getProperty("os.name").contentEquals("Linux"))
 										{
 											log.addText("Executing:\ndotty " + graphFile + "\n");
-											logFile.write("Executing:\ndotty " + graphFile
-													+ "\n\n");
-											execGraph.exec(
-													"dotty "
-															+ theFile.replace(".gcm", "")
-															.replace(".sbml", "")
-															.replace(".xml", "")
-															+ "_sg.dot", null, new File(
-																	directory));
+											logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+													+ "_sg.dot", null, new File(directory));
 										}
-										else if (System.getProperty("os.name").toLowerCase()
-												.startsWith("mac os"))
+										else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
 										{
 											log.addText("Executing:\nopen " + graphFile + "\n");
-											logFile.write("Executing:\nopen " + graphFile
-													+ "\n\n");
+											logFile.write("Executing:\nopen " + graphFile + "\n\n");
 											execGraph.exec(
-													"open "
-															+ theFile.replace(".gcm", "")
-															.replace(".sbml", "")
-															.replace(".xml", "")
-															+ "_sg.dot", null, new File(
-																	directory));
+													"open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null,
+													new File(directory));
 										}
 										else
 										{
 											log.addText("Executing:\ndotty " + graphFile + "\n");
-											logFile.write("Executing:\ndotty " + graphFile
-													+ "\n\n");
-											execGraph.exec(
-													"dotty "
-															+ theFile.replace(".gcm", "")
-															.replace(".sbml", "")
-															.replace(".xml", "")
-															+ "_sg.dot", null, new File(
-																	directory));
+											logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+													+ "_sg.dot", null, new File(directory));
 										}
 									}
 									catch (Exception e1)
 									{
-										JOptionPane.showMessageDialog(Gui.frame,
-												"Error viewing state graph.", "Error",
-												JOptionPane.ERROR_MESSAGE);
+										JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error", JOptionPane.ERROR_MESSAGE);
 									}
 								}
-								if (sg.outputTSD(directory + Gui.separator
-										+ "percent-term-time.tsd"))
+								if (sg.outputTSD(directory + Gui.separator + "percent-term-time.tsd"))
 								{
 									if (refresh)
 									{
 										for (int i = 0; i < simTab.getComponentCount(); i++)
 										{
-											if (simTab.getComponentAt(i).getName()
-													.equals("TSD Graph"))
+											if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
 											{
 												if (simTab.getComponentAt(i) instanceof Graph)
 												{
-													((Graph) simTab.getComponentAt(i))
-													.refresh();
+													((Graph) simTab.getComponentAt(i)).refresh();
 												}
 											}
 										}
@@ -1445,6 +1414,25 @@ public class Run implements ActionListener
 						return exitValue;
 					}
 					else if (sim.equals("Runge-Kutta-Fehlberg (Hierarchical)"))
+					{
+
+						double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
+
+						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
+						String SBMLFileName = directory + Gui.separator + theFile;
+						if (direct != null && !direct.equals("."))
+						{
+							outDir = outDir + Gui.separator + direct;
+						}
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs,
+								progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab,
+								reactionAbstraction, log);
+						exitValue = 0;
+						new File(directory + Gui.separator + "running").delete();
+						logFile.close();
+						return exitValue;
+					}
+					else if (sim.equals("Runge-Kutta-Fehlberg (Flatten)"))
 					{
 
 						double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
@@ -1746,10 +1734,8 @@ public class Run implements ActionListener
 				{
 					Preferences biosimrc = Preferences.userRoot();
 					String prismCmd = biosimrc.get("biosim.general.prism", "");
-					log.addText("Executing:\n" + prismCmd + " " + directory + out + ".prism" 
-							+ " " + directory + out + ".pctl" + "\n");
-					logFile.write("Executing:\n" + prismCmd + " " + directory + out + ".prism"
-						+ " " + directory + out + ".pctl" + "\n");
+					log.addText("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl" + "\n");
+					logFile.write("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl" + "\n");
 					exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
 				}
 				else if (sim.equals("atacs"))
