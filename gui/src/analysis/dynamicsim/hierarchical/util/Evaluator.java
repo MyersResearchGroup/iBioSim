@@ -16,7 +16,7 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.sbml.jsbml.ASTNode;
 
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
+import analysis.dynamicsim.hierarchical.states.ReactionState;
 
 /**
  * This class is used to evaluate math functions.
@@ -48,7 +48,7 @@ public final class Evaluator
 	 *            - dependencies due to hierarchy
 	 * @return the evaluated value
 	 */
-	public static double evaluateExpressionRecursive(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+	public static double evaluateExpressionRecursive(ReactionState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
 			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		if (node.isBoolean())
@@ -85,7 +85,7 @@ public final class Evaluator
 	/*
 	 * Evaluates boolean functions
 	 */
-	private static double evaluateBoolean(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+	private static double evaluateBoolean(ReactionState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
 			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		switch (node.getType())
@@ -293,7 +293,7 @@ public final class Evaluator
 		return 0;
 	}
 
-	private static double evaluateFunction(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+	private static double evaluateFunction(ReactionState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
 			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		switch (node.getType())
@@ -666,7 +666,7 @@ public final class Evaluator
 		return node.getInteger();
 	}
 
-	private static double evaluateName(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+	private static double evaluateName(ReactionState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
 			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		String name = node.getName();
@@ -723,7 +723,7 @@ public final class Evaluator
 		}
 	}
 
-	private static double evaluateOperator(ModelState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
+	private static double evaluateOperator(ReactionState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
 			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		switch (node.getType())

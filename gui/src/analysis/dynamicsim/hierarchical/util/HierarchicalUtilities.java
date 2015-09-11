@@ -12,6 +12,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
+import analysis.dynamicsim.hierarchical.states.DocumentState;
 import analysis.dynamicsim.hierarchical.util.arrays.IndexObject;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventToFire;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
@@ -449,7 +450,7 @@ public class HierarchicalUtilities
 	 * @param formula
 	 * @return
 	 */
-	public static ASTNode inlineFormula(ModelState modelstate, ASTNode formula, Map<String, Model> models, Set<String> ibiosimFunctionDefinitions)
+	public static ASTNode inlineFormula(DocumentState state, ASTNode formula, Map<String, Model> models, Set<String> ibiosimFunctionDefinitions)
 	{
 		// TODO: Avoid calling this method
 		if (formula.isFunction() == false || formula.isLeaf() == false)
@@ -457,19 +458,19 @@ public class HierarchicalUtilities
 
 			for (int i = 0; i < formula.getChildCount(); ++i)
 			{
-				formula.replaceChild(i, inlineFormula(modelstate, formula.getChild(i), models, ibiosimFunctionDefinitions));// .clone()));
+				formula.replaceChild(i, inlineFormula(state, formula.getChild(i), models, ibiosimFunctionDefinitions));// .clone()));
 			}
 		}
 
-		if (formula.isFunction() && models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()) != null)
+		if (formula.isFunction() && models.get(state.getModel()).getFunctionDefinition(formula.getName()) != null)
 		{
 
-			if (ibiosimFunctionDefinitions.contains(formula.getName()))
+			if (ibiosimFunctionDefinitions != null && ibiosimFunctionDefinitions.contains(formula.getName()))
 			{
 				return formula;
 			}
 
-			ASTNode inlinedFormula = models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getBody().clone();
+			ASTNode inlinedFormula = models.get(state.getModel()).getFunctionDefinition(formula.getName()).getBody().clone();
 
 			ASTNode oldFormula = formula.clone();
 
@@ -483,9 +484,9 @@ public class HierarchicalUtilities
 
 			Map<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
 
-			for (int i = 0; i < models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
+			for (int i = 0; i < models.get(state.getModel()).getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
 			{
-				inlinedChildToOldIndexMap.put(models.get(modelstate.getModel()).getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
+				inlinedChildToOldIndexMap.put(models.get(state.getModel()).getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
 			}
 
 			for (int i = 0; i < inlinedChildren.size(); ++i)

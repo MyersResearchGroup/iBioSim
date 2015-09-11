@@ -35,9 +35,9 @@ public abstract class HierarchicalReplacement extends HierarchicalObjects
 
 	private Set<String>	cache;
 
-	public HierarchicalReplacement(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit,
-			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException
+	public HierarchicalReplacement(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
+			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
+			String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
 		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue,
 				running, interestingSpecies, quantityType, abstraction);
