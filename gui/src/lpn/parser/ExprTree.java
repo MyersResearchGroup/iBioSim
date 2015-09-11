@@ -5272,6 +5272,13 @@ public class ExprTree {
 				lBound = r1Range.get_LowerBound();
 				uBound = r2Range.get_UpperBound();
 			}
+			else if (op.equals("rate")){
+				LPNContinuousPair lcPair = new LPNContinuousPair(r1.lhpn.getLpnIndex(),
+						lhpn.getContVarIndex(r1.variable));
+				System.out.println("RATE:["+z.getCurrentRate(lcPair)+"]");
+				lBound = z.getCurrentRate(lcPair);
+				uBound = z.getCurrentRate(lcPair);
+			}
 //		    }else if(op=="/"){			
 //			      //ropughly integer division.  
 //			      //DON"T KNOW WHAT FLOATING POINT PART IS!!!!!
