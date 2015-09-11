@@ -22,6 +22,9 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
+import analysis.dynamicsim.hierarchical.states.ArraysState;
+import analysis.dynamicsim.hierarchical.states.HierarchicalState;
+import analysis.dynamicsim.hierarchical.states.ReactionState;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
@@ -217,7 +220,7 @@ public class Setup
 	 * 
 	 * @param parameter
 	 */
-	public static void setupSingleParameter(ModelState modelstate, Parameter parameter, String parameterID)
+	public static void setupSingleParameter(ArraysState modelstate, Parameter parameter, String parameterID)
 	{
 		modelstate.getVariableToValueMap().put(parameterID, parameter.getValue());
 
@@ -254,7 +257,7 @@ public class Setup
 	 * @param productsList
 	 * @param modifiersList
 	 */
-	public static void setupSingleReaction(ModelState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula, boolean reversible,
+	public static void setupSingleReaction(ArraysState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula, boolean reversible,
 			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList,
 			Map<String, Model> models, Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
 	{
@@ -271,7 +274,7 @@ public class Setup
 
 	}
 
-	public static void setupSingleReactionPropensity(ModelState modelstate, String reactionID, ASTNode reactionFormula,
+	public static void setupSingleReactionPropensity(ArraysState modelstate, String reactionID, ASTNode reactionFormula,
 			boolean notEnoughMoleculesFlag, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements,
 			double currentTime)
 	{
@@ -299,7 +302,7 @@ public class Setup
 
 	}
 
-	public static void setupSingleReactionPropensity(ModelState modelstate, String reactionID, ASTNode reactionFormula,
+	public static void setupSingleReactionPropensity(ArraysState modelstate, String reactionID, ASTNode reactionFormula,
 			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, boolean notEnoughMoleculesFlagFd,
 			boolean notEnoughMoleculesFlagRv, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements,
 			double currentTime)
@@ -443,6 +446,7 @@ public class Setup
 	public static void setupSingleRateRule(ModelState modelstate, String variable, ASTNode math, Map<String, Model> models,
 			Set<String> iBioSimFunctionDefinitions)
 	{
+		math = HierarchicalUtilities.inlineFormula(modelstate, math, models, iBioSimFunctionDefinitions);
 		modelstate.getRateRulesList().put(variable, math);
 	}
 
@@ -452,7 +456,7 @@ public class Setup
 	 * @param species
 	 * @param speciesID
 	 */
-	public static void setupSingleSpecies(ModelState modelstate, Species species, String speciesID, Map<String, Model> models,
+	public static void setupSingleSpecies(ArraysState modelstate, Species species, String speciesID, Map<String, Model> models,
 			Map<String, Double> replacements)
 	{
 
@@ -515,7 +519,7 @@ public class Setup
 
 	}
 
-	private static double getStoichiometry(ModelState modelstate, String reactionID, SpeciesReference reactant, Map<String, Double> replacements)
+	private static double getStoichiometry(ArraysState modelstate, String reactionID, SpeciesReference reactant, Map<String, Double> replacements)
 	{
 		double reactantStoichiometry;
 
@@ -531,7 +535,7 @@ public class Setup
 		return reactantStoichiometry;
 	}
 
-	private static void setPropensity(ModelState modelstate, String reactionID, double propensity)
+	private static void setPropensity(ArraysState modelstate, String reactionID, double propensity)
 	{
 		if (!modelstate.isArrayedObject(reactionID))
 		{
@@ -557,7 +561,8 @@ public class Setup
 
 	}
 
-	private static ASTNode setupMath(ModelState modelstate, ASTNode reactionFormula, Map<String, Model> models, Set<String> iBioSimFunctionDefinitions)
+	private static ASTNode setupMath(ReactionState modelstate, ASTNode reactionFormula, Map<String, Model> models,
+			Set<String> iBioSimFunctionDefinitions)
 	{
 		// TODO:fix this
 		if (reactionFormula.getType().equals(ASTNode.Type.TIMES))
@@ -652,7 +657,7 @@ public class Setup
 		return reactionFormula;
 	}
 
-	private static void setupSingleModifier(ModelState modelstate, String reactionID, ModifierSpeciesReference modifier)
+	private static void setupSingleModifier(HierarchicalState modelstate, String reactionID, ModifierSpeciesReference modifier)
 	{
 
 		String modifierID = modifier.getSpecies();
@@ -665,7 +670,7 @@ public class Setup
 		modelstate.getSpeciesToAffectedReactionSetMap().get(modifierID).add(reactionID);
 	}
 
-	private static void setupSingleNonRevReaction(ModelState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula,
+	private static void setupSingleNonRevReaction(ArraysState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula,
 			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList,
 			Map<String, Model> models, Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
 	{
@@ -698,7 +703,7 @@ public class Setup
 
 	}
 
-	private static void setupSingleProduct(ModelState modelstate, String reactionID, SpeciesReference product, Map<String, Double> replacements)
+	private static void setupSingleProduct(ArraysState modelstate, String reactionID, SpeciesReference product, Map<String, Double> replacements)
 	{
 		double productStoichiometry = getStoichiometry(modelstate, reactionID, product, replacements);
 
@@ -735,7 +740,7 @@ public class Setup
 		modelstate.getSpeciesToAffectedReactionSetMap().get(productID).add(reactionID);
 	}
 
-	private static boolean setupSingleReactant(ModelState modelstate, String reactionID, SpeciesReference reactant, Map<String, Double> replacements)
+	private static boolean setupSingleReactant(ArraysState modelstate, String reactionID, SpeciesReference reactant, Map<String, Double> replacements)
 	{
 		double reactantStoichiometry;
 		boolean notEnoughMoleculesFlag;
@@ -781,7 +786,7 @@ public class Setup
 		return notEnoughMoleculesFlag;
 	}
 
-	private static void setupSingleRevModifier(ModelState modelstate, String reactionID, ASTNode reactionFormula, ModifierSpeciesReference modifier)
+	private static void setupSingleRevModifier(ArraysState modelstate, String reactionID, ASTNode reactionFormula, ModifierSpeciesReference modifier)
 	{
 		String modifierID = modifier.getSpecies();
 
@@ -816,7 +821,7 @@ public class Setup
 		}
 	}
 
-	private static boolean setupSingleRevProduct(ModelState modelstate, String reactionID, SpeciesReference product,
+	private static boolean setupSingleRevProduct(ArraysState modelstate, String reactionID, SpeciesReference product,
 			List<SpeciesReference> reactantsList, Map<String, Double> replacements)
 	{
 		String reactantID = product.getSpecies();
@@ -878,7 +883,7 @@ public class Setup
 		}
 	}
 
-	private static boolean setupSingleRevReactant(ModelState modelstate, String reactionID, SpeciesReference reactant,
+	private static boolean setupSingleRevReactant(ArraysState modelstate, String reactionID, SpeciesReference reactant,
 			List<SpeciesReference> productsList, Map<String, Double> replacements)
 	{
 		String reactantID = reactant.getSpecies();
@@ -941,7 +946,7 @@ public class Setup
 		}
 	}
 
-	private static void setupSingleRevReaction(ModelState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula,
+	private static void setupSingleRevReaction(ArraysState modelstate, Reaction reaction, String reactionID, ASTNode reactionFormula,
 			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList,
 			Map<String, Model> models, Set<String> iBioSimFunctionDefinitions, Map<String, Double> replacements, double currentTime)
 	{

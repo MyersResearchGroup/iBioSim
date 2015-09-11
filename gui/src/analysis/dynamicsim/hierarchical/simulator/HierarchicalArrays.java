@@ -21,6 +21,7 @@ import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SimpleSpeciesReference;
+import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
@@ -376,6 +377,10 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 			case SPECIES:
 				modelstate.getSpeciesToAffectedReactionSetMap().put(newId, new HashSet<String>(20));
 				modelstate.getSpeciesIDSet().add(newId);
+				modelstate.getSpeciesToCompartmentNameMap().get(id);
+				String indexedCompartment = HierarchicalUtilities.getIndexedObject(modelstate, id, ((Species) variable).getCompartment(), "d",
+						"compartment", indices, getReplacements());
+				modelstate.getSpeciesToCompartmentNameMap().put(newId, indexedCompartment);
 				// TODO:species need index for compartment
 				break;
 			}
