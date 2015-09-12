@@ -5329,7 +5329,7 @@ public class SBMLutilities
 		{
 			String leftStr = SBMLMathToLPNString(math.getLeftChild(), constants, booleans);
 			String rightStr = SBMLMathToLPNString(math.getRightChild(), constants, booleans);
-			return "(" + leftStr + "!=" + rightStr + ")";
+			return "~(" + leftStr + "=" + rightStr + ")";
 		}
 		else if (math.getType() == ASTNode.Type.LOGICAL_NOT)
 		{
