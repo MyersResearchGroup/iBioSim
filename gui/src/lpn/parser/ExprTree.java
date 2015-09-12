@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.lang.Math;
 
+import biomodel.util.GlobalConstants;
 import verification.timed_state_exploration.octagon.Equivalence;
 import verification.timed_state_exploration.zoneProject.IntervalPair;
 import verification.timed_state_exploration.zoneProject.LPNContAndRate;
@@ -4466,7 +4467,7 @@ public class ExprTree {
 			} else if (op.equals("bernoulli")) {
 				return Double.NaN;
 			} else if (op.equals("rate")) {
-				return Double.NaN;
+				return Double.parseDouble(variables.get(r1.variable+"_" + GlobalConstants.RATE));
 			} else if (op.equals("INT")) {
 				return ((int) left);
 			} else if (op.equals("<")) {
@@ -5275,7 +5276,6 @@ public class ExprTree {
 			else if (op.equals("rate")){
 				LPNContinuousPair lcPair = new LPNContinuousPair(r1.lhpn.getLpnIndex(),
 						lhpn.getContVarIndex(r1.variable));
-				System.out.println("RATE:["+z.getCurrentRate(lcPair)+"]");
 				lBound = z.getCurrentRate(lcPair);
 				uBound = z.getCurrentRate(lcPair);
 			}

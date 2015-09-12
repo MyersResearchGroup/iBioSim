@@ -2850,7 +2850,7 @@ public class BioModel {
 					}
 				}
 			} else {
-				if (rates.containsKey(p.getId())) continue;
+				//if (rates.containsKey(p.getId())) continue;
 				if (!p.getConstant()) {
 					String type = "integer";
 					if (rates.containsValue(p.getId())) type = "continuous"; 
@@ -3014,6 +3014,7 @@ public class BioModel {
 					Parameter p = flatSBML.getModel().getParameter(ea.getVariable());
 					if (p != null && !SBMLutilities.isPlace(p)) {
 						if (rates.containsKey(ea.getVariable())) {
+							t.addContAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
 							t.addRateAssign(rates.get(ea.getVariable()), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
 						} else if (rates.containsValue(ea.getVariable())) {
 							t.addContAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
