@@ -610,8 +610,6 @@ public class BioGraph extends mxGraph {
 				} else {
 					for (int j = 0; j < r.getModifierCount(); j++) {
 						for (int k = 0; k < r.getProductCount(); k++) {
-							if (BioModel.isMRNASpecies(bioModel.getSBMLDocument(), 
-									r.getProduct(k).getSpeciesInstance())) continue;
 							if (BioModel.isRepressor(r.getModifier(j))) {
 								String repressor = r.getModifier(j).getSpecies();
 								String product = r.getProduct(k).getSpecies();
