@@ -1281,9 +1281,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		XYPlot plot = chart.getXYPlot();
 		XYItemRenderer rend = plot.getRenderer();
 		double minY = Double.MAX_VALUE;
-		double maxY = Double.MIN_VALUE;
+		double maxY = (-1)*Double.MAX_VALUE;
 		double minX = Double.MAX_VALUE;
-		double maxX = Double.MIN_VALUE;
+		double maxX = (-1)*Double.MAX_VALUE;
 		Font rangeFont = chart.getXYPlot().getRangeAxis().getLabelFont();
 		Font rangeTickFont = chart.getXYPlot().getRangeAxis().getTickLabelFont();
 		Font domainFont = chart.getXYPlot().getDomainAxis().getLabelFont();
