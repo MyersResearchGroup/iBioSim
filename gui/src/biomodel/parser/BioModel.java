@@ -1580,8 +1580,10 @@ public class BioModel {
 			double np = sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue();
 			product.setStoichiometry(np);
 			product.setConstant(true);
-			if (r.getProduct(promoterId + "_mRNA")!=null) {
+			if (r.getProductForSpecies(promoterId + "_mRNA")!=null) {
 				r.removeProduct(promoterId+"_mRNA");
+			}
+			if (sbml.getModel().getSpecies(promoterId + "_mRNA")!=null) {
 				sbml.getModel().removeSpecies(promoterId+"_mRNA");
 			}
 		}
@@ -1865,8 +1867,10 @@ public class BioModel {
 					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
 				}
 			}
-			if (r.getProduct(promoterId+"_mRNA")!=null) {
+			if (r.getProductForSpecies(promoterId+"_mRNA")!=null) {
 				r.removeProduct(promoterId+"_mRNA");
+			}
+			if (sbml.getModel().getSpecies(promoterId + "_mRNA")!=null) {
 				sbml.getModel().removeSpecies(promoterId+"_mRNA");
 			}
 		}
@@ -1926,8 +1930,10 @@ public class BioModel {
 					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
 				}
 			}
-			if (r.getProduct(promoterId + "_mRNA")!=null) {
+			if (r.getProductForSpecies(promoterId + "_mRNA")!=null) {
 				r.removeProduct(promoterId + "_mRNA");
+			}
+			if (sbml.getModel().getSpecies(promoterId + "_mRNA")!=null) {
 				sbml.getModel().removeSpecies(promoterId + "_mRNA");
 			}
 		}
@@ -1976,8 +1982,10 @@ public class BioModel {
 				product.setStoichiometry(np);
 			}
 			product.setConstant(true);
-			if (r.getProduct(promoterId + "_mRNA")!=null) {
+			if (r.getProductForSpecies(promoterId + "_mRNA")!=null) {
 				r.removeProduct(promoterId + "_mRNA");
+			}
+			if (sbml.getModel().getSpecies(promoterId + "_mRNA")!=null) {
 				sbml.getModel().removeSpecies(promoterId + "_mRNA");
 			}
 		}
