@@ -845,6 +845,9 @@ public class ExprTree {
 			} else if ((tokvalue.equals("true")) || tokvalue.equals("TRUE")) {
 				setVarValues('t', 1, 1, null);
 				(token) = intexpr_gettok(expr);
+			} else if ((tokvalue.equals("maybe")) || tokvalue.equals("MAYBE")) {
+				setVarValues('t', 0, 1, null);
+				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("t") && !booleanSignals.contains(tokvalue) && !integerSignals.contains(tokvalue)
 					&& !continuousSignals.contains(tokvalue)) {
@@ -2788,11 +2791,10 @@ public class ExprTree {
 				else
 					result = "TRUE";
 			} else {
-				if (sbmlFlag | verilog) {
-					result = "0";
-				}
-				result = "UNKNOWN";
-
+				if (sbmlFlag)
+					result = "TRUE";
+				else
+					result = "UNKNOWN";
 			}
 			break;
 

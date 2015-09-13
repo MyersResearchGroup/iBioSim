@@ -932,8 +932,11 @@ public class Translator {
 				else {
 					trigger.setPersistent(true);
 				}
-
-				trigger.setMath(SBMLutilities.myParseFormula("and(" + Enabling + "," + CheckPreset + ")"));
+				if (CheckPreset==null) {
+					trigger.setMath(SBMLutilities.myParseFormula(Enabling));
+				} else {
+					trigger.setMath(SBMLutilities.myParseFormula("and(" + Enabling + "," + CheckPreset + ")"));
+				}
 			}
 			else { // transition is persistent
 				// Create a rule for the persistent transition t. 
