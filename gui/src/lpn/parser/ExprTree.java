@@ -295,7 +295,7 @@ public class ExprTree {
 		return -1;
 	}
 
-	public boolean intexpr_U(String expr) {
+	public void intexpr_U(String expr) {
 		double temp;
 
 		switch (token) {
@@ -303,24 +303,19 @@ public class ExprTree {
 			if (tokvalue.toLowerCase().equals("and")) {
 				token = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.print("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				token = intexpr_gettok(expr);
-				if (!intexpr_R(expr)) {
-					return false;
-				}
+				intexpr_R(expr);
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
@@ -342,27 +337,22 @@ public class ExprTree {
 			} else if (tokvalue.toLowerCase().equals("or")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
@@ -384,27 +374,22 @@ public class ExprTree {
 			} else if (tokvalue.toLowerCase().equals("xor")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
@@ -426,27 +411,22 @@ public class ExprTree {
 			} else if (tokvalue.toLowerCase().equals("min")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
@@ -467,27 +447,22 @@ public class ExprTree {
 			} else if (tokvalue.toLowerCase().equals("max")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
@@ -508,27 +483,22 @@ public class ExprTree {
 			} else if (tokvalue.toLowerCase().equals("idiv")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
@@ -550,27 +520,22 @@ public class ExprTree {
 			} else if (tokvalue.toLowerCase().equals("bit")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
@@ -591,15 +556,12 @@ public class ExprTree {
 			} else if (tokvalue.toLowerCase().equals("floor")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((this).isit == 'n') || ((this).isit == 't')
@@ -616,15 +578,12 @@ public class ExprTree {
 			} else if (tokvalue.toLowerCase().equals("ceil")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((this).isit == 'n') || ((this).isit == 't')
@@ -641,15 +600,12 @@ public class ExprTree {
 			} else if (tokvalue.toLowerCase().equals("not")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((this).isit == 'n') || ((this).isit == 't')
@@ -666,15 +622,12 @@ public class ExprTree {
 			} else if (tokvalue.toLowerCase().equals("int")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_L(expr))
-					return false;
+				intexpr_L(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				// simplify if operands are static
 				if (((this).isit == 'n') || ((this).isit == 't')) {
@@ -686,255 +639,206 @@ public class ExprTree {
 			} else if (tokvalue.equals("uniform")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), newresult, "uniform", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("normal")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), newresult, "normal", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("gamma")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), newresult, "gamma", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("lognormal")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), newresult, "lognormal", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("binomial")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ',') {
-					System.out.printf("ERROR: Expected a ,\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a ,\n");
 				}
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), newresult, "binomial", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("exponential")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), null, "exponential", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("chisq")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), null, "chisq", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("laplace")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), null, "laplace", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("cauchy")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), null, "cauchy", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("rayleigh")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), null, "rayleigh", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("poisson")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), null, "poisson", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("bernoulli")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), null, "bernoulli", 'a');
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.equals("rate")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					System.out.printf("ERROR: Expected a (\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a (\n");
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
-					return false;
+				intexpr_R(expr);
 				if ((token) != ')') {
-					System.out.printf("ERROR: Expected a )\n");
-					return false;
+					throw new IllegalArgumentException("ERROR: Expected a )\n");
 				}
 				setNodeValues((this), null, "rate", 'a');
 				(token) = intexpr_gettok(expr);
@@ -976,29 +880,27 @@ public class ExprTree {
 				if (booleanSignals.contains(tokvalue)) {
 					setVarValues('b', 0, 1, tokvalue);
 					(token) = intexpr_gettok(expr);
-					return true;
+					return;
 				}
 				else if (integerSignals.contains(tokvalue)) {
 					setVarValues('i', -INFIN, INFIN, tokvalue);
 					(token) = intexpr_gettok(expr);
-					return true;
+					return;
 				}
 				else if (continuousSignals.contains(tokvalue)) {
 					setVarValues('c', -INFIN, INFIN, tokvalue);
 					(token) = intexpr_gettok(expr);
-					return true;
+					return;
 				}
 				if (tokvalue.equals("")) {
-					System.out.printf(
+					throw new IllegalArgumentException(String.format(
 							"U1:ERROR(%s): Expected a ID, Number, or a (\n",
-							tokvalue);
-					return false;
+							tokvalue));
 				} else if ((tokvalue.charAt(0)) > ('9')
 						|| ((tokvalue.charAt(0)) < '0')) {
-					System.out.printf(
+					throw new IllegalArgumentException(String.format(
 							"U1:ERROR(%s): Expected a ID, Number, or a (\n",
-							tokvalue);
-					return false;
+							tokvalue));
 				}
 				temp = Double.parseDouble(tokvalue);
 				setVarValues('n', temp, temp, null);
@@ -1007,32 +909,26 @@ public class ExprTree {
 			break;
 		case '(':
 			(token) = intexpr_gettok(expr);
-			if (!intexpr_L(expr))
-				return false;
+			intexpr_L(expr);
 			if ((token) != ')') {
-				System.out.printf("ERROR: Expected a )\n");
-				return false;
+				throw new IllegalArgumentException("ERROR: Expected a )\n");
 			}
 			(token) = intexpr_gettok(expr);
 			break;
 		default:
-			System.out.printf("U2:ERROR: Expected a ID, Number, or a (\n");
-			return false;
+			throw new IllegalArgumentException("U2:ERROR: Expected a ID, Number, or a (\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_T(String expr) {
+	public void intexpr_T(String expr) {
 		switch (token) {
 		case WORD:
 		case '(':
-			if (!intexpr_U(expr))
-				return false;
+			intexpr_U(expr);
 			break;
 		case '-':
 			(token) = intexpr_gettok(expr);
-			if (!intexpr_U(expr))
-				return false;
+			intexpr_U(expr);
 			// simplify if operands are static
 			if ((((this).isit == 'n') || ((this).isit == 't'))
 					&& ((this).lvalue == (this).uvalue)
@@ -1045,13 +941,11 @@ public class ExprTree {
 			}
 			break;
 		default:
-			System.out.printf("T:ERROR: Expected a ID, Number, (, or -\n");
-			return false;
+			throw new IllegalArgumentException("T:ERROR: Expected a ID, Number, (, or -\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_C(String expr) {
+	public void intexpr_C(String expr) {
 		newresult = new ExprTree(this);
 		switch (token) {
 		case '*':
@@ -1059,8 +953,7 @@ public class ExprTree {
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			if (!newresult.intexpr_T(expr))
-				return false;
+			newresult.intexpr_T(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1077,16 +970,14 @@ public class ExprTree {
 			} else {
 				setNodeValues((this), newresult, "*", 'a');
 			}
-			if (!intexpr_C(expr))
-				return false;
+			intexpr_C(expr);
 			break;
 		case '^':
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			if (!newresult.intexpr_T(expr))
-				return false;
+			newresult.intexpr_T(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1103,16 +994,14 @@ public class ExprTree {
 			} else {
 				setNodeValues((this), newresult, "^", 'a');
 			}
-			if (!intexpr_C(expr))
-				return false;
+			intexpr_C(expr);
 			break;
 		case '/':
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			if (!newresult.intexpr_T(expr))
-				return false;
+			newresult.intexpr_T(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1129,16 +1018,14 @@ public class ExprTree {
 			} else {
 				setNodeValues((this), newresult, "/", 'a');
 			}
-			if (!intexpr_C(expr))
-				return false;
+			intexpr_C(expr);
 			break;
 		case '%':
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			if (!newresult.intexpr_T(expr))
-				return false;
+			newresult.intexpr_T(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1155,8 +1042,7 @@ public class ExprTree {
 			} else {
 				setNodeValues((this), newresult, "%", 'a');
 			}
-			if (!intexpr_C(expr))
-				return false;
+			intexpr_C(expr);
 			break;
 		case '+':
 		case '-':
@@ -1174,8 +1060,7 @@ public class ExprTree {
 			break;
 		case '(':
 		case WORD:
-			if (!newresult.intexpr_T(expr))
-				return false;
+			newresult.intexpr_T(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1192,18 +1077,15 @@ public class ExprTree {
 			} else {
 				setNodeValues((this), newresult, "*", 'a');
 			}
-			if (!intexpr_C(expr))
-				return false;
+			intexpr_C(expr);
 			break;
 
 		default:
-			System.out.printf("ERROR: Expected a * or /\n");
-			return false;
+			throw new IllegalArgumentException("ERROR: Expected a * or /\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_B(String expr) {
+	public void intexpr_B(String expr) {
 		newresult = new ExprTree(this);
 		switch (token) {
 		case '+':
@@ -1211,8 +1093,7 @@ public class ExprTree {
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			if (!newresult.intexpr_S(expr))
-				return false;
+			newresult.intexpr_S(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1229,16 +1110,14 @@ public class ExprTree {
 			} else {
 				setNodeValues((this), newresult, "+", 'a');
 			}
-			if (!intexpr_B(expr))
-				return false;
+			intexpr_B(expr);
 			break;
 		case '-':
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			if (!newresult.intexpr_S(expr))
-				return false;
+			newresult.intexpr_S(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1255,8 +1134,7 @@ public class ExprTree {
 			} else {
 				setNodeValues((this), newresult, "-", 'a');
 			}
-			if (!intexpr_B(expr))
-				return false;
+			intexpr_B(expr);
 			break;
 		case ')':
 		case '[':
@@ -1271,47 +1149,37 @@ public class ExprTree {
 		case END_OF_STRING:
 			break;
 		default:
-			System.out.printf("ERROR: Expected a + or -\n");
-			return false;
+			throw new IllegalArgumentException("ERROR: Expected a + or -\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_S(String expr) {
+	public void intexpr_S(String expr) {
 		switch (token) {
 		case WORD:
 		case '(':
 		case '-':
-			if (!intexpr_T(expr))
-				return false;
-			if (!intexpr_C(expr))
-				return false;
+			intexpr_T(expr);
+			intexpr_C(expr);
 			break;
 		default:
-			System.out.printf("S:ERROR: Expected a ID, Number, (, or -\n");
-			return false;
+			throw new IllegalArgumentException("S:ERROR: Expected a ID, Number, (, or -\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_R(String expr) {
+	public void intexpr_R(String expr) {
 		switch (token) {
 		case WORD:
 		case '(':
 		case '-':
-			if (!intexpr_S(expr))
-				return false;
-			if (!intexpr_B(expr))
-				return false;
+			intexpr_S(expr);
+			intexpr_B(expr);
 			break;
 		default:
-			System.out.printf("R:ERROR: Expected a ID, Number, (, or -\n");
-			return false;
+			throw new IllegalArgumentException("R:ERROR: Expected a ID, Number, (, or -\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_P(String expr) {
+	public void intexpr_P(String expr) {
 		newresult = new ExprTree(this);
 		//int spos, i;
 		String ineq = "";
@@ -1323,8 +1191,7 @@ public class ExprTree {
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			if (!newresult.intexpr_R(expr))
-				return false;
+			newresult.intexpr_R(expr);
 			token = newresult.token;
 			tokvalue = newresult.tokvalue;
 			position = newresult.position;
@@ -1361,14 +1228,14 @@ public class ExprTree {
 						this.variable = comp;
 						this.lvalue = 0;
 						this.uvalue = 1;
-						return true;
+						return;
 					}
 					booleanSignals.add(comp);
 					this.isit = 'b';
 					this.variable = comp;
 					this.lvalue = 0;
 					this.uvalue = 1;
-					return true;
+					return;
 				}
 				setNodeValues((this), newresult, "==", 'r');
 			}
@@ -1383,8 +1250,7 @@ public class ExprTree {
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				tokvalue = newresult.tokvalue;
 				position = newresult.position;
@@ -1411,8 +1277,7 @@ public class ExprTree {
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				tokvalue = newresult.tokvalue;
 				position = newresult.position;
@@ -1446,8 +1311,7 @@ public class ExprTree {
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				tokvalue = newresult.tokvalue;
 				position = newresult.position;
@@ -1474,8 +1338,7 @@ public class ExprTree {
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!newresult.intexpr_R(expr))
-					return false;
+				newresult.intexpr_R(expr);
 				token = newresult.token;
 				tokvalue = newresult.tokvalue;
 				position = newresult.position;
@@ -1505,14 +1368,12 @@ public class ExprTree {
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			if (!newresult.intexpr_R(expr))
-				return false;
+			newresult.intexpr_R(expr);
 			token = newresult.token;
 			tokvalue = newresult.tokvalue;
 			position = newresult.position;
 			if ((token) != ']') {
-				System.out.printf("ERROR: Expected a ]\n");
-				return false;
+				throw new IllegalArgumentException("ERROR: Expected a ]\n");
 			}
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
@@ -1537,41 +1398,33 @@ public class ExprTree {
 		case END_OF_STRING:
 			break;
 		default:
-			System.out.printf("ERROR: Expected a [, =, <, or >\n");
-			return false;
+			throw new IllegalArgumentException("ERROR: Expected a [, =, <, or >\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_O(String expr) {
+	public void intexpr_O(String expr) {
 		switch (token) {
 		case WORD:
 		case '(':
 		case '-':
-			if (!intexpr_R(expr))
-				return false;
-			if (!intexpr_P(expr))
-				return false;
+			intexpr_R(expr);
+			intexpr_P(expr);
 			break;
 		default:
-			System.out.printf("O:ERROR: Expected a ID, Number, or a (\n");
-			return false;
+			throw new IllegalArgumentException("O:ERROR: Expected a ID, Number, or a (\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_N(String expr) {
+	public void intexpr_N(String expr) {
 		switch (token) {
 		case WORD:
 		case '-':
 		case '(':
-			if (!intexpr_O(expr))
-				return false;
+			intexpr_O(expr);
 			break;
 		case '~':
 			(token) = intexpr_gettok(expr);
-			if (!intexpr_O(expr))
-				return false;
+			intexpr_O(expr);
 			// simplify if operands are static
 			if ((((this).isit == 'n') || ((this).isit == 't'))
 					&& ((this).lvalue == (this).uvalue)
@@ -1588,13 +1441,11 @@ public class ExprTree {
 			}
 			break;
 		default:
-			System.out.printf("N:ERROR: Expected a ID, Number, (, or -\n");
-			return false;
+			throw new IllegalArgumentException("N:ERROR: Expected a ID, Number, (, or -\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_E(String expr) {
+	public void intexpr_E(String expr) {
 		newresult = new ExprTree(this);
 		switch (token) {
 		case '&':
@@ -1602,8 +1453,7 @@ public class ExprTree {
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			if (!newresult.intexpr_N(expr))
-				return false;
+			newresult.intexpr_N(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1624,8 +1474,7 @@ public class ExprTree {
 			} else {
 				setNodeValues((this), newresult, "&&", 'l');
 			}
-			if (!intexpr_E(expr))
-				return false;
+			intexpr_E(expr);
 			break;
 		case '|':
 		case ')':
@@ -1633,13 +1482,11 @@ public class ExprTree {
 		case END_OF_STRING:
 			break;
 		default:
-			System.out.printf("ERROR(%c): Expected an &\n", (token));
-			return false;
+			throw new IllegalArgumentException(String.format("ERROR(%c): Expected an &\n", (token)));
 		}
-		return true;
 	}
 
-	public boolean intexpr_D(String expr) {
+	public void intexpr_D(String expr) {
 		newresult = new ExprTree(this);
 		switch (token) {
 		case '|':
@@ -1647,8 +1494,7 @@ public class ExprTree {
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			if (!newresult.intexpr_M(expr))
-				return false;
+			newresult.intexpr_M(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1669,16 +1515,14 @@ public class ExprTree {
 			} else {
 				setNodeValues((this), newresult, "||", 'l');
 			}
-			if (!intexpr_D(expr))
-				return false;
+			intexpr_D(expr);
 			break;
 		case ')':
 		case END_OF_STRING:
 			break;
 		case IMPLIES:
 			(token) = intexpr_gettok(expr);
-			if (!intexpr_M(expr))
-				return false;
+			intexpr_M(expr);
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
@@ -1697,50 +1541,39 @@ public class ExprTree {
 			} else {
 				setNodeValues(this, newresult, "->", 'l');
 			}
-			if (!intexpr_D(expr))
-				return false;
+			intexpr_D(expr);
 			break;
 		default:
-			System.out.printf("ERROR: Expected an | or ->\n");
-			return false;
+			throw new IllegalArgumentException("ERROR: Expected an | or ->\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_M(String expr) {
+	public void intexpr_M(String expr) {
 		switch (token) {
 		case WORD:
 		case '(':
 		case '~':
 		case '-':
-			if (!intexpr_N(expr))
-				return false;
-			if (!intexpr_E(expr))
-				return false;
+			intexpr_N(expr);
+			intexpr_E(expr);
 			break;
 		default:
-			System.out.printf("M: ERROR: Expected a ID, Number, (, or -\n");
-			return false;
+			throw new IllegalArgumentException("M: ERROR: Expected a ID, Number, (, or -\n");
 		}
-		return true;
 	}
 
-	public boolean intexpr_L(String expr) {
+	public void intexpr_L(String expr) {
 		switch (token) {
 		case WORD:
 		case '(':
 		case '~':
 		case '-':
-			if (!intexpr_M(expr))
-				return false;
-			if (!intexpr_D(expr))
-				return false;
+			intexpr_M(expr);
+			intexpr_D(expr);
 			break;
 		default:
-			System.out.printf("L:ERROR: Expected a ID, Number, (, or -\n");
-			return false;
+			throw new IllegalArgumentException("L:ERROR: Expected a ID, Number, (, or -\n");
 		}
-		return true;
 	}
 
 	@Override

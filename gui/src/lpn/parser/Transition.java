@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
+import main.Gui;
 import verification.platu.main.Options;
 
 public class Transition {
@@ -139,11 +142,16 @@ public class Transition {
 		}
 		ExprTree expr = new ExprTree(lhpn);
 		if (!newEnab.equals("")) {
-			expr.token = expr.intexpr_gettok(newEnab);
-			retVal = expr.intexpr_L(newEnab);
-			if (retVal) {
+			try {
+				expr.token = expr.intexpr_gettok(newEnab);
+				expr.intexpr_L(newEnab);
 				enablingTree = expr;
 				enabling = newEnab;
+				return true;
+			} catch (IllegalArgumentException e) {
+				JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",newEnab)+e.getMessage(),
+						"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+				return false;
 			}
 		}
 		return retVal;
@@ -159,13 +167,17 @@ public class Transition {
 	public boolean addIntAssign(String variable, String assignment) {
 		boolean retVal;
 		ExprTree expr = new ExprTree(lhpn);
-		expr.token = expr.intexpr_gettok(assignment);
-		retVal = expr.intexpr_L(assignment);
-		if (retVal) {
+		try {
+			expr.token = expr.intexpr_gettok(assignment);
+			expr.intexpr_L(assignment);
 			intAssignTrees.put(variable, expr);
 			intAssignments.put(variable, assignment);
+			return true;
+		} catch (IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",assignment)+e.getMessage(),
+					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
-		return retVal;
 	}
 	
 	public void addIntAssign(String variable, ExprTree assignment) {
@@ -194,25 +206,33 @@ public class Transition {
 	public boolean addContAssign(String variable, String assignment) {
 		boolean retVal;
 		ExprTree expr = new ExprTree(lhpn);
-		expr.token = expr.intexpr_gettok(assignment);
-		retVal = expr.intexpr_L(assignment);
-		if (retVal) {
+		try {
+			expr.token = expr.intexpr_gettok(assignment);
+			expr.intexpr_L(assignment);
 			contAssignTrees.put(variable, expr);
 			contAssignments.put(variable, assignment);
+			return true;
+		} catch (IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",assignment)+e.getMessage(),
+					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
-		return retVal;
 	}
 
 	public boolean addRateAssign(String variable, String assignment) {
 		boolean retVal;
 		ExprTree expr = new ExprTree(lhpn);
-		expr.token = expr.intexpr_gettok(assignment);
-		retVal = expr.intexpr_L(assignment);
-		if (retVal) {
+		try {
+			expr.token = expr.intexpr_gettok(assignment);
+			expr.intexpr_L(assignment);
 			rateAssignTrees.put(variable, expr);
 			rateAssignments.put(variable, assignment);
+			return true;
+		} catch (IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",assignment)+e.getMessage(),
+					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
-		return retVal;
 	}
 
 	public boolean addDelay(String delay) {
@@ -226,13 +246,17 @@ public class Transition {
 			delay = "uniform(" + delay + ")";
 		}
 		ExprTree expr = new ExprTree(lhpn);
-		expr.token = expr.intexpr_gettok(delay);
-		retVal = expr.intexpr_L(delay);
-		if (retVal) {
+		try {
+			expr.token = expr.intexpr_gettok(delay);
+			expr.intexpr_L(delay);
 			delayTree = expr;
 			this.delay = delay;
+			return true;
+		} catch (IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",delay)+e.getMessage(),
+					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
-		return retVal;
 	}
 
 	public boolean addPriority(String priority) {
@@ -243,25 +267,33 @@ public class Transition {
 		}
 		boolean retVal;
 		ExprTree expr = new ExprTree(lhpn);
-		expr.token = expr.intexpr_gettok(priority);
-		retVal = expr.intexpr_L(priority);
-		if (retVal) {
+		try {
+			expr.token = expr.intexpr_gettok(priority);
+			expr.intexpr_L(priority);
 			priorityTree = expr;
 			this.priority = priority;
+			return true;
+		} catch (IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",priority)+e.getMessage(),
+					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
-		return retVal;
 	}
 
 	public boolean addBoolAssign(String variable, String assignment) {
 		boolean retVal;
 		ExprTree expr = new ExprTree(lhpn);
-		expr.token = expr.intexpr_gettok(assignment);
-		retVal = expr.intexpr_L(assignment);
-		if (retVal) {
+		try {
+			expr.token = expr.intexpr_gettok(assignment);
+			expr.intexpr_L(assignment);
 			boolAssignTrees.put(variable, expr);
 			boolAssignments.put(variable, assignment);
+			return true;
+		} catch (IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",assignment)+e.getMessage(),
+					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
-		return retVal;
 	}
 
 	public void setName(String newName) {
