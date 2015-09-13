@@ -1883,9 +1883,12 @@ public class Translator {
 		ExprTree result = new ExprTree(lhpn);
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(str);
-		retVal = expr.intexpr_L(str);
-		if (retVal) {
+		try {
+			expr.intexpr_L(str);
 			result = expr;
+		} catch (IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",str)+e.getMessage(),
+					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
 		}
 		return result;
 	}

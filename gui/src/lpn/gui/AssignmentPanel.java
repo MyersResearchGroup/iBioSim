@@ -3,13 +3,13 @@ package lpn.gui;
 import lpn.parser.*;
 import main.Gui;
 
-
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Properties;
+
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -326,8 +326,13 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			value = fields.get("Assignment").getValue();
 			expr[0].token = expr[0].intexpr_gettok(value);
 			if (!value.equals("")) {
-				if (!expr[0].intexpr_L(value))
+				try {
+					expr[0].intexpr_L(value);
+				} catch (IllegalArgumentException e) {
+					JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",value)+e.getMessage(),
+							"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
 					return false;
+				}
 			}
 		Properties property = new Properties();
 		for (PropertyField f : fields.values()) {
