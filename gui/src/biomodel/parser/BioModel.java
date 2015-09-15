@@ -4697,45 +4697,48 @@ public class BioModel {
 		Reaction complex = getComplexReaction(speciesId);
 		return (complex != null);
 	}
-
-	public void connectComponentAndSpecies(String compId, String port, String specId) {
-		CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbml.getModel().getSpecies(specId));
+	
+	public void connectComponentAndSBase(String compId, String port, CompSBasePlugin sbmlSBase, boolean output) {
 		boolean found = false;
 		ReplacedElement replacement = null;
 		for (int i = 0; i < sbmlSBase.getListOfReplacedElements().size(); i++) {
 			replacement = sbmlSBase.getListOfReplacedElements().get(i);
 			if (replacement.getSubmodelRef().equals(compId) && 
 				replacement.getPortRef().equals(port)) {
-				found = true;
+				if (!output) found = true;
+				else sbmlSBase.removeReplacedElement(replacement);
 				break;
 			}
 		}
-		if (!found) {
-			replacement = sbmlSBase.createReplacedElement();
-			replacement.setSubmodelRef(compId);
-			replacement.setPortRef(port);
+		if (sbmlSBase.isSetReplacedBy()) {
+			ReplacedBy replacedBy = sbmlSBase.getReplacedBy();
+			if (replacedBy.getSubmodelRef().equals(compId) &&
+					replacedBy.getPortRef().equals(port)) {
+				if (output) found = true;
+				else sbmlSBase.unsetReplacedBy();
+			}
 		}
-		return;
+		if (!found) {
+			if (output) {
+				ReplacedBy replacedBy = sbmlSBase.createReplacedBy();
+				replacedBy.setSubmodelRef(compId);
+				replacedBy.setPortRef(port);
+			} else {
+				replacement = sbmlSBase.createReplacedElement();
+				replacement.setSubmodelRef(compId);
+				replacement.setPortRef(port);
+			}
+		}
+	}
+	
+	public void connectComponentAndSpecies(String compId, String port, String specId, boolean output) {
+		CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbml.getModel().getSpecies(specId));
+		connectComponentAndSBase(compId,port,sbmlSBase,output);
 	}
 
-	public void connectComponentAndVariable(String compId, String port, String varId) {
+	public void connectComponentAndVariable(String compId, String port, String varId, boolean output) {
 		CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbml.getModel().getParameter(varId));
-		boolean found = false;
-		ReplacedElement replacement = null;
-		for (int i = 0; i < sbmlSBase.getListOfReplacedElements().size(); i++) {
-			replacement = sbmlSBase.getListOfReplacedElements().get(i);
-			if (replacement.getSubmodelRef().equals(compId) && 
-				replacement.getPortRef().equals(port)) {
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			replacement = sbmlSBase.createReplacedElement();
-			replacement.setSubmodelRef(compId);
-			replacement.setPortRef(port);
-		}
-		return;
+		connectComponentAndSBase(compId,port,sbmlSBase,output);
 	}
 	
 	/**

@@ -2129,7 +2129,7 @@ public class Schematic extends JPanel implements ActionListener {
 		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Output Port");
 		if(port == null)
 			return null;
-		bioModel.connectComponentAndSpecies(compID, compBioModel.getPortByIdRef(port).getId(), specID);
+		bioModel.connectComponentAndSpecies(compID, compBioModel.getPortByIdRef(port).getId(), specID, true);
 		return port;
 	}
 	
@@ -2147,7 +2147,7 @@ public class Schematic extends JPanel implements ActionListener {
 		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Input Port");
 		if(port == null)
 			return null;
-		bioModel.connectComponentAndSpecies(compID, compBioModel.getPortByIdRef(port).getId(), specID);
+		bioModel.connectComponentAndSpecies(compID, compBioModel.getPortByIdRef(port).getId(), specID, false);
 		return port;
 	}
 	
@@ -2173,7 +2173,7 @@ public class Schematic extends JPanel implements ActionListener {
 		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Output Port");
 		if(port == null)
 			return null;
-		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), varID);
+		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), varID, true);
 		return port;
 	}
 	
@@ -2199,7 +2199,7 @@ public class Schematic extends JPanel implements ActionListener {
 		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Input Port");
 		if(port == null)
 			return null;
-		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), varID);
+		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), varID, false);
 		return port;
 	}
 

@@ -85,12 +85,17 @@ public class LhpnFile {
      * The local state graph that corresponds to this LPN.  
      */
     protected StateGraph stateGraph;
+    
+    protected HashMap<String,String> implicitPlaceMap;
+    
+    private static int implicitPlaceCount=0;
 	
 	public LhpnFile(Log log) {
 		separator = Gui.separator;
 		this.log = log;
 		transitions = new HashMap<String, Transition>();
 		places = new HashMap<String, Place>();
+		implicitPlaceMap = new HashMap<String,String>();
 		booleans = new HashMap<String, Variable>();
 		continuous = new HashMap<String, Variable>();
 		integers = new HashMap<String, Variable>();
@@ -104,6 +109,7 @@ public class LhpnFile {
 		separator = Gui.separator;
 		transitions = new HashMap<String, Transition>();
 		places = new HashMap<String, Place>();
+		implicitPlaceMap = new HashMap<String,String>();
 		booleans = new HashMap<String, Variable>();
 		continuous = new HashMap<String, Variable>();
 		integers = new HashMap<String, Variable>();
@@ -670,6 +676,16 @@ public class LhpnFile {
 		transitions.put(t.getLabel(), t);
 	}
 
+	public String insertPlace(Boolean ic) {
+		String name = "";
+		do {
+			name = "ip" + implicitPlaceCount++;
+		} while (getPlace(name)!=null);
+		Place place = new Place(name, ic);
+		places.put(name, place);
+		return name;
+	}
+	
 	public void addPlace(String name, Boolean ic) {
 		Place place = new Place(name, ic);
 		places.put(name, place);
@@ -1958,12 +1974,36 @@ public class LhpnFile {
 			while (transMatcher.find()) {
 				addTransition(transMatcher.group());
 			}
-			Pattern placePattern = Pattern.compile(PLACE);
-			Matcher placeMatcher = placePattern.matcher(data.toString());
-			while (placeMatcher.find()) {
-				String temp = placeMatcher.group(1).replaceAll("\\+", "P");
-				temp = temp.replaceAll("-", "M");
-				String[] tempPlace = temp.split("\\s");
+		}
+		Pattern placePattern = Pattern.compile(PLACE);
+		Matcher placeMatcher = placePattern.matcher(data.toString());
+		while (placeMatcher.find()) {
+			String temp = placeMatcher.group(1);
+			String[] tempPlace = temp.split("\\s");
+			for (int i = 0; i < tempPlace.length; i++) {
+				if (tempPlace[i].contains("+")||tempPlace[i].contains("-")) {
+					boolean assignment = tempPlace[i].contains("+"); 
+					String var = tempPlace[i].replaceAll("\\+(/\\d+)?", "").replaceAll("-(/\\d+)?", "");
+					tempPlace[i] = tempPlace[i].replaceAll("\\+", "P").replaceAll("-", "M");
+					tempPlace[i] = tempPlace[i].replace("/","");
+					if (getTransition(tempPlace[i])==null) {
+						addTransition(tempPlace[i]);
+						Transition trans = getTransition(tempPlace[i]);
+						trans.addBoolAssign(var, assignment?"TRUE":"FALSE");
+					}
+				}
+			}
+			if (isTransition(tempPlace[0]) && isTransition(tempPlace[1])) {
+				for (int i = 1; i < tempPlace.length; i++) {
+					String implicitPlace = implicitPlaceMap.get(tempPlace[0]+","+tempPlace[i]);
+					if (implicitPlace==null) {
+						implicitPlace = insertPlace(false);
+						implicitPlaceMap.put(tempPlace[0]+","+tempPlace[i], implicitPlace);
+					}
+					addMovement(tempPlace[0],implicitPlace);
+					addMovement(implicitPlace,tempPlace[i]);
+				}
+			} else {
 				if (isTransition(tempPlace[0])) {
 					if (!places.containsKey(tempPlace[1])) {
 						addPlace(tempPlace[1], false);
@@ -2017,12 +2057,7 @@ public class LhpnFile {
 				if (initValue.containsKey(s)) {
 					initCond.put("value", initValue.get(s));
 				} else {
-					if (continuous.get(s).getInitValue() != null) // Added this
-																	// condition
-																	// for
-																	// mergeLPN
-																	// methods
-																	// sake. SB
+					if (continuous.get(s).getInitValue() != null) // Added this condition for mergeLPN methods sake. SB
 						initCond.put("value", continuous.get(s).getInitValue());
 					else
 						initCond.put("value", "[-inf,inf]");
@@ -2030,12 +2065,7 @@ public class LhpnFile {
 				if (initRate.containsKey(s)) {
 					initCond.put("rate", initRate.get(s));
 				} else {
-					if (continuous.get(s).getInitRate() != null) // Added this
-																	// condition
-																	// for
-																	// mergeLPN
-																	// methods
-																	// sake. SB
+					if (continuous.get(s).getInitRate() != null) // Added this condition for mergeLPN methods sake. SB
 						initCond.put("rate", continuous.get(s).getInitRate());
 					else
 						initCond.put("rate", "[-inf,inf]");
@@ -2111,7 +2141,18 @@ public class LhpnFile {
 			Pattern markPattern = Pattern.compile(MARKING);
 			Matcher markMatcher = markPattern.matcher(lineMatcher.group(1));
 			while (markMatcher.find()) {
-				places.get(markMatcher.group()).setMarking(true);
+				String marking = markMatcher.group();
+				if (marking.startsWith("<")) {
+					marking = marking.replace("<", "").replace(">","");
+					marking = marking.replace("+", "P").replace("-", "M");
+					marking = marking.replaceAll("/", "");
+					marking = implicitPlaceMap.get(marking);
+				}
+				if (places.get(marking)==null) {
+					System.out.println("Marking cannot be found: "+marking);
+				} else {
+					places.get(marking).setMarking(true);
+				}
 			}
 		}
 	}
@@ -2723,7 +2764,8 @@ public class LhpnFile {
 
 	private static final String INTEGER = "([-\\d]+)";
 
-	private static final String PLACE = "\\n([\\w_\\+-/&&[^\\.#]]+ [\\w_\\+-/]+)";
+	private static final String PLACE = "\\n([\\w_\\+-/&&[^\\.#]]+[ ]+[\\w_\\+-/]+([ ]*[\\w_\\+-/]+)*)";
+	//"\\n([\\w_\\+-/&&[^\\.#]]+ [\\w_\\+-/]+)";
 
 	private static final String CONTINUOUS = "#@\\.continuous ([.[^\\n]]*)\\n";
 
@@ -2737,7 +2779,8 @@ public class LhpnFile {
 
 	private static final String PLACES_LINE = "#\\|\\.places ([.[^\\n]]*)\\n";
 
-	private static final String MARKING = "\\w+";
+	private static final String MARKING = "(\\<\\w+[+-](/\\d+)*,\\w+[+-](/\\d+)*\\>)|(\\w+)"; 
+	//"\\w+";
 
 	private static final String MARKING_LINE = "\\.marking \\{(.*)\\}";
 

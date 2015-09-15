@@ -183,211 +183,29 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public static JFrame			frame;	// Frame where components of the GUI are displayed
 	private JMenuBar				menuBar;
 	private JMenu					file, openRecent, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
-	private JMenuItem				newProj;																				// The
-																															// new
-																															// menu
-																															// item
-	private JMenuItem				newSBMLModel;																			// The
-																															// new
-																															// menu
-																															// item
-	private JMenuItem				newGridModel;
-	private JMenuItem				newVhdl;																				// The
-																															// new
-																															// vhdl
-																															// menu
-																															// item
-	private JMenuItem				newS;																					// The
-																															// new
-																															// assembly
-																															// file
-																															// menu
-																															// item
-	private JMenuItem				newInst;																				// The
-																															// new
-																															// instruction
-																															// file
-																															// menu
-																															// item
-	private JMenuItem				newLhpn;																				// The
-																															// new
-																															// lhpn
-																															// menu
-																															// item
-	private JMenuItem				newProperty;																			// The
-																															// new
-																															// lhpn
-																															// menu
-																															// item
-																															// DK
-	private JMenuItem				newG;																					// The
-																															// new
-																															// petri
-																															// net
-																															// menu
-																															// item
-	private JMenuItem				newCsp;																				// The
-																															// new
-																															// csp
-																															// menu
-																															// item
-	private JMenuItem				newHse;																				// The
-																															// new
-																															// handshaking
-																															// extension
-																															// menu
-																															// item
-	private JMenuItem				newUnc;																				// The
-																															// new
-																															// extended
-																															// burst
-																															// mode
-																															// menu
-																															// item
-	private JMenuItem				newRsg;																				// The
-																															// new
-																															// rsg
-																															// menu
-																															// item
-	private JMenuItem				newSpice;																				// The
-																															// new
-																															// spice
-																															// circuit
-																															// item
-	private JMenuItem				exit;																					// The
-																															// exit
-																															// menu
-																															// item
-	private JMenuItem				importSbol;
-	private JMenuItem				importSedml;
-	private JMenuItem				importSbml;																			// The
-																															// import
-																															// sbml
-																															// menu
-																															// item
-	private JMenuItem				importBioModel;																		// The
-																															// import
-																															// sbml
-																															// menu
-																															// item
-	private JMenuItem				importVirtualPart;
-	// private JMenuItem importDot; // The import dot menu item
-	private JMenuItem				importVhdl;																			// The
-																															// import
-																															// vhdl
-																															// menu
-																															// item
-	private JMenuItem				importS;																				// The
-																															// import
-																															// assembly
-																															// file
-																															// menu
-																															// item
-	private JMenuItem				importInst;																			// The
-																															// import
-																															// instruction
-																															// file
-																															// menu
-																															// item
-	private JMenuItem				importLpn;																				// The
-																															// import
-																															// lpn
-																															// menu
-																															// item
-	private JMenuItem				importG;																				// The
-																															// import
-																															// .g
-																															// file
-																															// menu
-																															// item
-	private JMenuItem				importCsp;																				// The
-																															// import
-																															// csp
-																															// menu
-																															// item
-	private JMenuItem				importHse;																				// The
-																															// import
-																															// handshaking
-																															// extension
-																															// menu
-	private JMenuItem				importUnc;																				// The
-																															// import
-																															// extended
-																															// burst
-																															// mode
-																															// menu
-																															// item
-	private JMenuItem				importRsg;																				// The
-																															// import
-																															// rsg
-																															// menu
-																															// item
-	private JMenuItem				importSpice;																			// The
-																															// import
-																															// spice
-																															// circuit
-																															// item
-	private JMenuItem				manual;																				// The
-																															// manual
-																															// menu
-																															// item
-	private JMenuItem				bugReport;																				// The
-																															// manual
-																															// menu
-																															// item
-	private JMenuItem				about;																					// The
-																															// about
-																															// menu
-																															// item
-	private JMenuItem				openProj;																				// The
-																															// open
-																															// menu
-																															// item
-	private JMenuItem				clearRecent;																			// Clear
-																															// recent
-																															// project
-																															// list
-	private JMenuItem				pref;																					// The
-																															// preferences
-																															// menu
-																															// item
-	private JMenuItem				graph;																					// The
-																															// graph
-																															// menu
-																															// item
+	private JMenuItem				newProj,newSBMLModel,newGridModel,newVhdl,newS,newInst,newLhpn,newProperty,newG;
+	private JMenuItem				newCsp,newHse,newUnc,newRsg,newSpice;
+	private JMenuItem				exit;
+	private JMenuItem				importSbol,importSedml,importSbml,importBioModel,importVirtualPart,importVhdl;
+	private JMenuItem				importS,importInst,importLpn,importG,importCsp,importHse,importUnc;	
+	private JMenuItem				importRsg,importSpice,importProperty;
+	private JMenuItem				manual;	
+	private JMenuItem				bugReport;	
+	private JMenuItem				about;	
+	private JMenuItem				openProj;
+	private JMenuItem				clearRecent;	
+	private JMenuItem				pref;
+	private JMenuItem				graph;
 	private JMenuItem				probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, exportSBML,
 			exportFlatSBML, exportSBOL, exportSBOL2, exportAvi, exportMp4;
-
 	private JMenu					exportDataMenu, exportMovieMenu, exportImageMenu;
-
-	private String					root;																					// The
-																															// root
-																															// directory
-
-	private FileTree				tree;																					// FileTree
-
-	private CloseAndMaxTabbedPane	tab;																					// JTabbedPane
-																															// for
-																															// different
-																															// tools
-
-	private JToolBar				toolbar;																				// Tool
-																															// bar
-																															// for
-																															// common
-																															// options
-
-	private JButton					saveButton, runButton, refreshButton, saveasButton, checkButton, exportButton;			// Tool
-
-	// Bar
-	// options
-
-	private JPanel					mainPanel;																				// the
-																															// main
-																															// panel
-
+	private String					root;
+	private FileTree				tree;
+	private CloseAndMaxTabbedPane	tab;
+	private JToolBar				toolbar;
+	private JButton					saveButton, runButton, refreshButton, saveasButton, checkButton, exportButton;			
+	private JPanel					mainPanel;																				
 	private JSplitPane				topSplit;
-
 	private JSplitPane				mainSplit;
 
 	public static Boolean			libsbmlFound		= true;
@@ -762,6 +580,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importVhdl = new JMenuItem("VHDL Model");
 		importS = new JMenuItem("Assembly File");
 		importInst = new JMenuItem("Instruction File");
+		importProperty = new JMenuItem("Property File");
 		importSpice = new JMenuItem("Spice Circuit");
 		importCsp = new JMenuItem("CSP Model");
 		importHse = new JMenuItem("Handshaking Expansion");
@@ -873,6 +692,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importVhdl.addActionListener(this);
 		importS.addActionListener(this);
 		importInst.addActionListener(this);
+		importProperty.addActionListener(this);
 		importLpn.addActionListener(this);
 		importG.addActionListener(this);
 		importCsp.addActionListener(this);
@@ -1003,6 +823,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importVhdl.setEnabled(false);
 		importS.setEnabled(false);
 		importInst.setEnabled(false);
+		importProperty.setEnabled(false);
 		importLpn.setEnabled(false);
 		importG.setEnabled(false);
 		importCsp.setEnabled(false);
@@ -1216,6 +1037,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			importMenu.add(importSbml);
 			importMenu.add(importS);
 			importMenu.add(importInst);
+			importMenu.add(importProperty);
 			importMenu.add(importLpn);
 			// importMenu.add(importSpice);
 		}
@@ -3419,6 +3241,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				importVhdl.setEnabled(true);
 				importS.setEnabled(true);
 				importInst.setEnabled(true);
+				importProperty.setEnabled(true);
 				importLpn.setEnabled(true);
 				importG.setEnabled(true);
 				importCsp.setEnabled(true);
@@ -3582,6 +3405,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						importVhdl.setEnabled(true);
 						importS.setEnabled(true);
 						importInst.setEnabled(true);
+						importProperty.setEnabled(true);
 						importLpn.setEnabled(true);
 						importG.setEnabled(true);
 						importCsp.setEnabled(true);
@@ -3710,6 +3534,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getSource() == importVhdl)
 		{
 			importFile("VHDL", ".vhd", ".vhd");
+		}
+		else if (e.getSource() == importProperty)
+		{
+			importFile("Property", ".prop", ".prop");
 		}
 		else if (e.getSource() == importS)
 		{
@@ -4911,12 +4739,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								{
 									lpnUSF = true;
 									break;
-								}
+								}/*
 								else
 								{
 									JOptionPane.showMessageDialog(frame, "LPN file format is not valid.", "Error", JOptionPane.ERROR_MESSAGE);
 									break;
-								}
+								}*/
 
 							}
 							input.close();
@@ -4924,7 +4752,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							{
 								String outFileName = file[file.length - 1];
 
-								if (/* !lema && */!atacs)
+								if (/*!lema &&*/ !atacs)
 								{
 									Translator t1 = new Translator();
 									t1.convertLPN2SBML(filename, "");
