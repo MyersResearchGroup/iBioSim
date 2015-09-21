@@ -13,6 +13,9 @@ import org.sbml.jsbml.SBMLDocument;
 
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
 import analysis.dynamicsim.hierarchical.states.DocumentState;
+import analysis.dynamicsim.hierarchical.util.arrays.ArraysObject;
+import analysis.dynamicsim.hierarchical.util.arrays.ArraysPair;
+import analysis.dynamicsim.hierarchical.util.arrays.DimensionObject;
 import analysis.dynamicsim.hierarchical.util.arrays.IndexObject;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventToFire;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
@@ -22,6 +25,90 @@ import biomodel.parser.GCMParser;
 
 public class HierarchicalUtilities
 {
+
+	public static int flattenedSize(ModelState model, String variable, Map<String, Double> replacements)
+	{
+		int size = 1;
+		List<ArraysPair> pairs = model.getArrays().get(variable);
+
+		if (pairs.size() > 1)
+		{
+			System.out.println("Something weird is happening");
+		}
+		DimensionObject dim = pairs.get(0).getDim();
+
+		if (dim != null)
+		{
+			List<ArraysObject> objects = dim.getDimensions();
+			for (int i = 0; i < objects.size(); i++)
+			{
+				String param = objects.get(i).getSize();
+				int value = (int) model.getVariableToValue(replacements, param);
+				size = size * value;
+			}
+		}
+		return size;
+	}
+
+	public static int flattenedIndex(ModelState model, String variable, int[] indices, Map<String, Double> replacements)
+	{
+
+		int index = 0;
+
+		List<ArraysPair> pairs = model.getArrays().get(variable);
+
+		DimensionObject dim = pairs.get(0).getDim();
+
+		if (dim != null)
+		{
+			List<ArraysObject> objects = dim.getDimensions();
+
+			for (int i = 0; i < objects.size(); i++)
+			{
+				String param = objects.get(i).getSize();
+				int value = (int) model.getVariableToValue(replacements, param);
+				int arrayDim = objects.get(i).getArrayDim();
+
+				for (int j = arrayDim + 1; j < indices.length; j++)
+				{
+					indices[j] = indices[j] * value;
+				}
+			}
+
+			for (int j = 0; j < indices.length; j++)
+			{
+				index += indices[j];
+			}
+		}
+
+		return index;
+	}
+
+	public static String getVariableFromArray(String variable)
+	{
+		if (variable.contains("["))
+		{
+			int index = variable.indexOf("[");
+			variable = variable.substring(0, index);
+		}
+		return variable;
+	}
+
+	public static int[] getIndicesFromVariable(String variable)
+	{
+		int[] indices = null;
+		if (variable.contains("["))
+		{
+			String[] split = variable.split("\\[");
+			indices = new int[split.length - 1];
+			int n = indices.length;
+			for (int i = 0; i < indices.length; i++)
+			{
+				indices[n - 1 - i] = Integer.valueOf(split[i + 1].replace("]", ""));
+			}
+		}
+		return indices;
+	}
 
 	public static void alterLocalParameter(ASTNode node, String oldString, String newString)
 	{
@@ -109,22 +196,19 @@ public class HierarchicalUtilities
 				continue;
 			}
 
-			String[] dimensions = affectedReactionID.contains("[") ? affectedReactionID.replace("]", "").split("\\[") : null;
+			int[] dims = HierarchicalUtilities.getIndicesFromVariable(affectedReactionID);
 
 			if (modelstate.isArrayedObject(affectedReactionID))
 			{
 				continue;
 			}
-			else if (dimensions != null)
+			else if (dims != null)
 			{
-				int[] dims = new int[dimensions.length - 1];
+				String reaction = HierarchicalUtilities.getVariableFromArray(affectedReactionID);
 
-				for (int i = 1; i < dimensions.length; i++)
-				{
-					dims[i - 1] = Integer.parseInt(dimensions[i]);
-				}
+				updatePropensity(modelstate, reaction, currentTime, dims, replacements);
 
-				updatePropensity(modelstate, dimensions[0], currentTime, dims, replacements);
+				dims = null;
 			}
 			else
 			{
@@ -137,42 +221,47 @@ public class HierarchicalUtilities
 		return affectedSpecies;
 	}
 
-	public static String getIndexedSpeciesReference(ModelState modelstate, String reaction, String species, int[] reactionIndices, double time,
-			Map<String, Double> replacements)
+	public static List<String> getIndexedSpeciesReference(ModelState modelstate, String reaction, String type, String species, int[] reactionIndices,
+			double time, Map<String, Double> replacements)
 	{
 
-		String id = species;
+		List<String> listOfReferences = new ArrayList<String>();
 
-		IndexObject index = modelstate.getIndexObjects().get(reaction + "__" + species);
+		List<ArraysPair> pairs = modelstate.getArrays().get(reaction + "__" + type + "__" + species);
 
-		if (index == null)
+		if (pairs == null)
 		{
-			return species;
+			listOfReferences.add(species);
+			return listOfReferences;
 		}
 
-		Map<Integer, ASTNode> speciesAttribute = index.getAttributes().get("species");
-
-		if (speciesAttribute == null)
+		for (ArraysPair pair : pairs)
 		{
-			return species;
+
+			IndexObject index = pair.getIndex();
+
+			String id = species;
+			Map<Integer, ASTNode> speciesAttribute = index.getAttributes().get("species");
+
+			Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
+
+			for (int i = 0; i < reactionIndices.length; i++)
+			{
+				dimensionIdMap.put("d" + i, reactionIndices[i]);
+			}
+
+			for (int i = speciesAttribute.size() - 1; i >= 0; i--)
+			{
+				int ind = (int) Evaluator.evaluateExpressionRecursive(modelstate, speciesAttribute.get(i), false, time, null, dimensionIdMap,
+						replacements);
+				id = id + "[" + ind + "]";
+
+			}
+
+			listOfReferences.add(id);
 		}
+		return listOfReferences;
 
-		Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
-
-		for (int i = 0; i < reactionIndices.length; i++)
-		{
-			dimensionIdMap.put("d" + i, reactionIndices[i]);
-		}
-
-		for (int i = 0; i < speciesAttribute.size(); i++)
-		{
-			id = id
-					+ "["
-					+ (int) Evaluator.evaluateExpressionRecursive(modelstate, speciesAttribute.get(i), false, time, null, dimensionIdMap,
-							replacements) + "]";
-		}
-
-		return id;
 	}
 
 	public static void updatePropensity(ModelState modelstate, String id, double time, int[] indices, Map<String, Double> replacements)
@@ -189,16 +278,21 @@ public class HierarchicalUtilities
 		}
 
 		boolean notEnoughMoleculesFlag = false;
-
+		String type = "reactant";
 		for (HierarchicalStringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
 		{
-			String speciesID = getIndexedSpeciesReference(modelstate, id, speciesAndStoichiometry.string, indices, time, replacements);
-			double stoichiometry = speciesAndStoichiometry.doub;
 
-			if (modelstate.getVariableToValue(replacements, speciesID) < stoichiometry)
+			List<String> speciesIDs = getIndexedSpeciesReference(modelstate, id, type, speciesAndStoichiometry.string, indices, time, replacements);
+
+			for (String speciesID : speciesIDs)
 			{
-				notEnoughMoleculesFlag = true;
-				break;
+				double stoichiometry = speciesAndStoichiometry.doub;
+
+				if (modelstate.getVariableToValue(replacements, speciesID) < stoichiometry)
+				{
+					notEnoughMoleculesFlag = true;
+					break;
+				}
 			}
 		}
 
@@ -206,15 +300,14 @@ public class HierarchicalUtilities
 
 		double oldPropensity = modelstate.getPropensity(arrayedId);
 
-		Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
-
-		for (int i = 0; i < indices.length; i++)
-		{
-			dimensionIdMap.put("d" + i, indices[i]);
-		}
-
 		if (notEnoughMoleculesFlag == false)
 		{
+			Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
+
+			for (int i = 0; i < indices.length; i++)
+			{
+				dimensionIdMap.put("d" + i, indices[i]);
+			}
 			newPropensity = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getReactionToFormulaMap().get(id), false, time, null,
 					dimensionIdMap, replacements);
 		}
@@ -390,26 +483,51 @@ public class HierarchicalUtilities
 		}
 	}
 
-	public static String getIndexedObject(ModelState modelstate, String id, String variable, String prefix, String attribute, int[] indices,
+	public static List<String> getIndexedObject(ModelState modelstate, String id, String variable, String prefix, String attribute, int[] indices,
 			Map<String, Double> replacements)
 	{
 
 		Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
-		IndexObject index = modelstate.getIndexObjects().get(id);
-		Map<Integer, ASTNode> indexMap = index.getAttributes().get(attribute);
-		int[] newIndices = new int[indices.length];
 
-		for (int i = 0; i < indices.length; i++)
+		List<ArraysPair> listOfPairs = modelstate.getArrays().get(id);
+
+		if (listOfPairs == null)
 		{
-			dimensionIdMap.put(prefix + i, indices[i]);
+			return null;
 		}
 
-		for (int i = 0; i < newIndices.length; i++)
+		List<String> listOfObjects = new ArrayList<String>();
+
+		for (ArraysPair pair : listOfPairs)
 		{
-			newIndices[i] = (int) Evaluator.evaluateExpressionRecursive(modelstate, indexMap.get(i), false, 0, null, dimensionIdMap, replacements);
+			IndexObject index = pair.getIndex();
+
+			if (index == null)
+			{
+				continue;
+			}
+
+			Map<Integer, ASTNode> indexMap = index.getAttributes().get(attribute);
+
+			int[] newIndices = new int[indices.length];
+
+			for (int i = 0; i < indices.length; i++)
+			{
+				dimensionIdMap.put(prefix + i, indices[i]);
+			}
+
+			for (int i = 0; i < newIndices.length; i++)
+			{
+				newIndices[i] = (int) Evaluator
+						.evaluateExpressionRecursive(modelstate, indexMap.get(i), false, 0, null, dimensionIdMap, replacements);
+			}
+
+			listOfObjects.add(getArrayedID(modelstate, variable, newIndices));
+
+			newIndices = null;
 		}
 
-		return getArrayedID(modelstate, variable, newIndices);
+		return listOfObjects;
 	}
 
 	public static double handleEvents(double currentTime, Map<String, Double> replacements, ModelState topmodel, Map<String, ModelState> submodels)
@@ -625,6 +743,7 @@ public class HierarchicalUtilities
 
 				formula.setType(ASTNode.Type.NAME);
 				formula.setName(newId);
+				indices = null;
 			}
 		}
 		else

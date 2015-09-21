@@ -45,6 +45,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		seed = randomSeed;
 		this.print = true;
 		this.buffer = null;
+		setModels(null);
 	}
 
 	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit,
@@ -381,55 +382,50 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 
 		for (HierarchicalStringDoublePair speciesAndStoichiometry : modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(selectedReactionID))
 		{
-
-			double stoichiometry = speciesAndStoichiometry.doub;
-
-			String speciesID;
-
 			if (dims == null)
 			{
-				speciesID = speciesAndStoichiometry.string;
+				performReaction(modelstate, selectedReactionID, speciesAndStoichiometry.string, speciesAndStoichiometry, noAssignmentRulesFlag,
+						noConstraintsFlag, affectedAssignmentRuleSet, affectedConstraintSet);
 			}
 			else
 			{
-				speciesID = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, selectedReactionID, speciesAndStoichiometry.string, dims,
-						getCurrentTime(), getReplacements());
-			}
+				List<String> listOfSpecies;
 
-			if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(selectedReactionID))
-			{
-
-				for (HierarchicalStringPair doubleID : modelstate.getReactionToNonconstantStoichiometriesSetMap().get(selectedReactionID))
+				if (speciesAndStoichiometry.doub < 0)
 				{
-					if (doubleID.string1.equals(speciesID))
+					if (selectedReactionID.endsWith("_rv"))
 					{
+						listOfSpecies = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, selectedReactionID, "product",
+								speciesAndStoichiometry.string, dims, getCurrentTime(), getReplacements());
+					}
+					else
+					{
+						listOfSpecies = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, selectedReactionID, "reactant",
+								speciesAndStoichiometry.string, dims, getCurrentTime(), getReplacements());
+					}
 
-						stoichiometry = modelstate.getVariableToValue(getReplacements(), doubleID.string2);
-
-						stoichiometry *= (int) (speciesAndStoichiometry.doub / Math.abs(speciesAndStoichiometry.doub));
-						break;
+				}
+				else
+				{
+					if (selectedReactionID.endsWith("_rv"))
+					{
+						listOfSpecies = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, selectedReactionID, "reactant",
+								speciesAndStoichiometry.string, dims, getCurrentTime(), getReplacements());
+					}
+					else
+					{
+						listOfSpecies = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, selectedReactionID, "product",
+								speciesAndStoichiometry.string, dims, getCurrentTime(), getReplacements());
 					}
 				}
-			}
-			String referencedSpecies = HierarchicalUtilities.getReferencedVariable(speciesID);
 
-			if (!modelstate.getSpeciesToIsBoundaryConditionMap().get(referencedSpecies)
-					&& !modelstate.getSpeciesToIsBoundaryConditionMap().get(referencedSpecies))
-			{
-				double val = modelstate.getVariableToValue(getReplacements(), speciesID) + stoichiometry;
-				if (val >= 0)
+				for (String speciesID : listOfSpecies)
 				{
-					modelstate.setVariableToValue(getReplacements(), speciesID, val);
+					performReaction(modelstate, selectedReactionID, speciesID, speciesAndStoichiometry, noAssignmentRulesFlag, noConstraintsFlag,
+							affectedAssignmentRuleSet, affectedConstraintSet);
 				}
-			}
-			if (noAssignmentRulesFlag == false && modelstate.getVariableToIsInAssignmentRuleMap().get(speciesID) == true)
-			{
-				affectedAssignmentRuleSet.addAll(modelstate.getVariableToAffectedAssignmentRuleSetMap().get(speciesID));
-			}
 
-			if (noConstraintsFlag == false && modelstate.getVariableToIsInConstraintMap().get(speciesID) == true)
-			{
-				affectedConstraintSet.addAll(modelstate.getVariableToAffectedConstraintSetMap().get(speciesID));
+				listOfSpecies = null;
 			}
 		}
 
@@ -446,21 +442,63 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		affectedConstraintSet = null;
 	}
 
+	private void performReaction(ModelState modelstate, String selectedReactionID, String speciesID,
+			HierarchicalStringDoublePair speciesAndStoichiometry, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag,
+			HashSet<String> affectedAssignmentRuleSet, HashSet<ASTNode> affectedConstraintSet)
+	{
+		double stoichiometry = speciesAndStoichiometry.doub;
+		if (modelstate.getReactionToNonconstantStoichiometriesSetMap().containsKey(selectedReactionID))
+		{
+
+			for (HierarchicalStringPair doubleID : modelstate.getReactionToNonconstantStoichiometriesSetMap().get(selectedReactionID))
+			{
+				if (doubleID.string1.equals(speciesID))
+				{
+
+					stoichiometry = modelstate.getVariableToValue(getReplacements(), doubleID.string2);
+
+					stoichiometry *= (int) (speciesAndStoichiometry.doub / Math.abs(speciesAndStoichiometry.doub));
+					break;
+				}
+			}
+		}
+		String referencedSpecies = HierarchicalUtilities.getReferencedVariable(speciesID);
+
+		if (!modelstate.getSpeciesToIsBoundaryConditionMap().get(referencedSpecies)
+				&& !modelstate.getSpeciesToIsBoundaryConditionMap().get(referencedSpecies))
+		{
+			double val = modelstate.getVariableToValue(getReplacements(), speciesID) + stoichiometry;
+			if (val >= 0)
+			{
+				modelstate.setVariableToValue(getReplacements(), speciesID, val);
+			}
+		}
+		if (noAssignmentRulesFlag == false && modelstate.getVariableToIsInAssignmentRuleMap().get(speciesID) == true)
+		{
+			affectedAssignmentRuleSet.addAll(modelstate.getVariableToAffectedAssignmentRuleSetMap().get(speciesID));
+		}
+
+		if (noConstraintsFlag == false && modelstate.getVariableToIsInConstraintMap().get(speciesID) == true)
+		{
+			affectedConstraintSet.addAll(modelstate.getVariableToAffectedConstraintSetMap().get(speciesID));
+		}
+	}
+
 	private void performReaction(double r2)
 	{
 		String selectedReactionID = selectReaction(r2);
-
-		String[] dimensions = selectedReactionID.contains("[") ? selectedReactionID.replace("]", "").split("\\[") : null;
-
+		String reactionID = HierarchicalUtilities.getVariableFromArray(selectedReactionID);
+		int[] dims = HierarchicalUtilities.getIndicesFromVariable(selectedReactionID);
 		if (!selectedReactionID.isEmpty())
 		{
-			if (dimensions == null)
+			if (dims == null)
 			{
 				performReaction(selectedReactionID);
 			}
 			else
 			{
-				performReaction(dimensions[0], dimensions);
+				performReaction(reactionID, dims);
+				dims = null;
 			}
 		}
 	}
@@ -492,15 +530,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		}
 	}
 
-	private void performReaction(String selectedReactionID, String[] dimensions)
+	private void performReaction(String selectedReactionID, int[] dims)
 	{
-
-		int[] dims = new int[dimensions.length - 1];
-
-		for (int i = 1; i < dimensions.length; i++)
-		{
-			dims[i - 1] = Integer.parseInt(dimensions[i]);
-		}
 
 		String arrayedId = HierarchicalUtilities.getArrayedID(getTopmodel(), selectedReactionID, dims);
 

@@ -28,7 +28,6 @@ public class HierarchicalWriter
 
 			bufferedWriter.write(commaSpace + topmodel.getVariableToValue(replacements, speciesID));
 			commaSpace = ",";
-
 		}
 
 		for (String noConstantParam : topmodel.getVariablesToPrint())
