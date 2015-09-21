@@ -376,6 +376,14 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 				String dep = getReplacementDependency().get(variable);
 				return replacements.get(dep);
 			}
+			if (variable.contains("["))
+			{
+				String arrayedVariable = HierarchicalUtilities.getVariableFromArray(variable);
+				int[] indices = HierarchicalUtilities.getIndicesFromVariable(variable);
+				int index = HierarchicalUtilities.flattenedIndex(this, arrayedVariable, indices, replacements);
+				indices = null;
+				return getArrayVariableToValue().get(arrayedVariable)[index];
+			}
 			return getVariableToValueMap().get(variable);
 		}
 
@@ -473,6 +481,13 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			{
 				String dep = getReplacementDependency().get(variable);
 				replacements.put(dep, value);
+			}
+			if (variable.contains("["))
+			{
+				String arrayedVariable = HierarchicalUtilities.getVariableFromArray(variable);
+				int[] indices = HierarchicalUtilities.getIndicesFromVariable(variable);
+				int index = HierarchicalUtilities.flattenedIndex(this, arrayedVariable, indices, replacements);
+				getArrayVariableToValue().get(arrayedVariable)[index] = value;
 			}
 			getVariableToValueMap().put(variable, value);
 		}

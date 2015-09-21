@@ -137,7 +137,6 @@ public class DynamicSimulation
 				}
 			}
 		}
-
 		double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
 		System.out.println("Memory used: " + (mem));
 

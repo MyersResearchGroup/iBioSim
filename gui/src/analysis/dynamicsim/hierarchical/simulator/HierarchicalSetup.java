@@ -3,6 +3,7 @@ package analysis.dynamicsim.hierarchical.simulator;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
@@ -23,7 +24,11 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
+import analysis.dynamicsim.hierarchical.util.Evaluator;
+import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.Setup;
+import analysis.dynamicsim.hierarchical.util.arrays.ArraysPair;
+import analysis.dynamicsim.hierarchical.util.arrays.IndexObject;
 
 public abstract class HierarchicalSetup extends HierarchicalArrays
 {
@@ -125,28 +130,25 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 				continue;
 			}
 
+			Setup.setupSingleEvent(modelstate, id, event.getTrigger().getMath(), event.getUseValuesFromTriggerTime(), event.getTrigger()
+					.getInitialValue(), event.getTrigger().getPersistent(), getModels(), getIbiosimFunctionDefinitions());
+
 			setupArrays(modelstate, id, event, SetupType.EVENT);
 
 			setupArrayObject(modelstate, id, null, event, null, SetupType.EVENT);
 
-			if (!modelstate.isArrayedObject(id))
+			if (event.isSetPriority())
 			{
-				Setup.setupSingleEvent(modelstate, id, event.getTrigger().getMath(), event.getUseValuesFromTriggerTime(), event.getTrigger()
-						.getInitialValue(), event.getTrigger().getPersistent(), getModels(), getIbiosimFunctionDefinitions());
-
-				if (event.isSetPriority())
-				{
-					Setup.setupSinglePriority(modelstate, id, event.getPriority().getMetaId(), event.getPriority().getMath(), getModels(),
-							getIbiosimFunctionDefinitions());
-				}
-				if (event.isSetDelay())
-				{
-					Setup.setupSingleDelay(modelstate, id, event.getDelay().getMetaId(), event.getDelay().getMath(), getModels(),
-							getIbiosimFunctionDefinitions());
-				}
-
-				setupEventAssignments(modelstate, event, id);
+				Setup.setupSinglePriority(modelstate, id, event.getPriority().getMetaId(), event.getPriority().getMath(), getModels(),
+						getIbiosimFunctionDefinitions());
 			}
+			if (event.isSetDelay())
+			{
+				Setup.setupSingleDelay(modelstate, id, event.getDelay().getMetaId(), event.getDelay().getMath(), getModels(),
+						getIbiosimFunctionDefinitions());
+			}
+
+			setupEventAssignments(modelstate, event, id);
 
 		}
 	}
@@ -242,15 +244,35 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			{
 				continue;
 			}
-
+			String variable = assignment.getVariable();
 			String assignmentId = event.getId() + "_" + assignment.getVariable();
+			setupArrays(modelstate, assignmentId, assignment, SetupType.EVENT_ASSIGNMENT);
 			setupArrayObject(modelstate, assignmentId, assignmentId, assignment, null, SetupType.EVENT_ASSIGNMENT);
-
 			if (!modelstate.isArrayedObject(assignmentId))
 			{
-				Setup.setupEventAssignment(modelstate, assignment.getVariable(), event.getId(), assignment.getMath(), assignment, getModels(),
+				if (modelstate.getArrays().containsKey(assignmentId))
+				{
+					for (ArraysPair pair : modelstate.getArrays().get(assignmentId))
+					{
+						IndexObject object = pair.getIndex();
+						if (object != null)
+						{
+							HashMap<Integer, ASTNode> indices = object.getAttributes().get("variable");
+							int[] newIndices = new int[indices.size()];
+							for (int i = 0; i < newIndices.length; i++)
+							{
+								newIndices[i] = (int) Evaluator.evaluateExpressionRecursive(modelstate, indices.get(i), false, getCurrentTime(),
+										null, null, getReplacements());
+							}
+							variable = HierarchicalUtilities.getArrayedID(modelstate, variable, newIndices);
+						}
+					}
+				}
+				Setup.setupEventAssignment(modelstate, variable, event.getId(), assignment.getMath(), assignment, getModels(),
 						getIbiosimFunctionDefinitions());
+
 			}
+
 		}
 	}
 
@@ -334,12 +356,23 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			}
 
 			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
-			setupArrays(modelstate, reaction.getId(), reaction, SetupType.REACTION);
-
 			Setup.setupSingleReaction(modelstate, reaction, reactionID, reactionFormula, reaction.getReversible(), reaction.getListOfReactants(),
 					reaction.getListOfProducts(), reaction.getListOfModifiers(), getModels(), getIbiosimFunctionDefinitions(), getReplacements(),
 					getCurrentTime());
-			setupArrayObject(modelstate, reactionID, null, reaction, null, SetupType.REACTION);
+
+			if (reaction.isReversible())
+			{
+				setupArrays(modelstate, reactionID + "_fd", reaction, SetupType.REACTION);
+				setupArrayObject(modelstate, reactionID + "_fd", null, reaction, null, SetupType.REACTION);
+				setupArrays(modelstate, reactionID + "_rv", reaction, SetupType.REACTION);
+				setupArrayObject(modelstate, reactionID + "_rv", null, reaction, null, SetupType.REACTION);
+			}
+			else
+			{
+				setupArrays(modelstate, reactionID, reaction, SetupType.REACTION);
+				setupArrayObject(modelstate, reactionID, null, reaction, null, SetupType.REACTION);
+			}
+
 		}
 	}
 

@@ -80,7 +80,7 @@ public class Setup
 
 		modelstate.addCompartment(compartmentID);
 
-		modelstate.addVariableToValueMap(compartmentID, compartment.getSize());
+		modelstate.setVariableToValue(replacements, compartmentID, compartment.getSize());
 
 		if (Double.isNaN(compartment.getSize()))
 		{
@@ -384,12 +384,6 @@ public class Setup
 					propensity = Evaluator.evaluateExpressionRecursive(modelstate,
 							HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, models, iBioSimFunctionDefinitions), false, currentTime,
 							null, null, replacements);
-
-					// if (reactionID.contains("_Diffusion_") &&
-					// isStoichAmpBoolean() == true)
-					// {
-					// propensity *= (1.0 / getStoichAmpGridValue());
-					// }
 
 				}
 
