@@ -790,12 +790,16 @@ public class Abstraction extends LhpnFile {
 			}
 			if (expr.isit == 't') {
 				if (expr.uvalue == 0
-						&& abstPane.absListModel.contains(abstPane.xform16)
+						&& (abstPane.preAbsModel.contains(abstPane.xform16)
+								|| abstPane.loopAbsModel.contains(abstPane.xform16) || abstPane.postAbsModel
+								.contains(abstPane.xform16))
 						&& abstPane.isSimplify()) {
 					// If the enabling condition is constant false
 					removeTrans.add(t.getLabel());
 				} else if (expr.lvalue == 1
-						&& abstPane.absListModel.contains(abstPane.xform15)
+						&& (abstPane.preAbsModel.contains(abstPane.xform15)
+								|| abstPane.loopAbsModel.contains(abstPane.xform15) || abstPane.postAbsModel
+								.contains(abstPane.xform15))
 						&& abstPane.isSimplify()) {
 					// If the enabling condition is constant true
 					removeEnab.add(t.getLabel());
@@ -2685,7 +2689,7 @@ public class Abstraction extends LhpnFile {
 			Transition new_proc = new Transition(); // Find a transition that is
 			// not part of a process
 			for (Transition t : process_trans.keySet()) {
-				if (process_trans.get(t) == 0) {
+				if (process_trans.get(t) != null && process_trans.get(t) == 0) {
 					new_proc = t;
 					break;
 				}
@@ -2695,7 +2699,7 @@ public class Abstraction extends LhpnFile {
 				if (!flag) // Check the preset to see if it is part of a process
 					for (Transition t : p.getPreset()) {
 						if (!flag)
-							if (process_trans.get(t) != 0) {
+							if (process_trans.get(t) != null && process_trans.get(t) != 0) {
 								flag = true;
 								process = process_trans.get(t);
 								break;
@@ -3575,7 +3579,7 @@ public class Abstraction extends LhpnFile {
 			return false;
 		}
 		for (Transition t : transitions.values()) {
-			if (process_trans.get(t).equals(process_trans.get(trans))) {
+			if (process_trans.get(t)!=null && process_trans.get(t).equals(process_trans.get(trans))) {
 				continue;
 			}
 			if (enabling.becomesTrue(t.getAssignments())) {
