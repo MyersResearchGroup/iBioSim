@@ -2476,10 +2476,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	public void save(String filename) {
 		try {
 			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(new File(directory
-					+ separator + filename));
-			prop.load(in);
-			in.close();
+//			FileInputStream in = new FileInputStream(new File(directory
+//					+ separator + filename));
+//			prop.load(in);
+//			in.close();
 			prop.setProperty("verification.file", verifyFile);
 			if (!bddSize.equals("")) {
 				prop.setProperty("verification.bddSize", this.bddSize.getText()
@@ -2755,6 +2755,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				prop.setProperty("abstraction.transform." + abstPane.preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
 			}
 			for (Integer i=0; i<abstPane.loopAbsModel.size(); i++) {
+				if (abstPane.loopAbsModel.getElementAt(i)==null) continue;
 				if (abstPane.preAbsModel.contains(abstPane.loopAbsModel.getElementAt(i))) {
 					String value = prop.getProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString());
 					value = value + "mainloop" + i.toString();
