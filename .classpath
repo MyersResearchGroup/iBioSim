@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="verification/platu/project/DesignUnit.java|biomodel/gui/gcm/ParameterPanel.java" kind="src" path="gui/src">
+	<classpathentry excluding="verification/platu/project/DesignUnit.java|biomodel/gui/gcm/ParameterPanel.java|analysis/dynamicsim/hierarchical/CVS/" kind="src" path="gui/src">
 		<attributes>
 			<attribute name="ignore_optional_problems" value="true"/>
 		</attributes>
@@ -75,7 +75,7 @@
 	<classpathentry kind="lib" path="gui/lib/csparsej-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-math3-3.5.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jsbml-1.1-dev-with-dependencies-rev2310.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libSBOLj-2.0-beta.jar" sourcepath="gui/lib/libSBOLj-2.0-beta-sources.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jsbml-1.1-dev-with-dependencies-rev2361.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
