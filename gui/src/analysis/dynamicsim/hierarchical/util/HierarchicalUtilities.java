@@ -168,18 +168,18 @@ public class HierarchicalUtilities
 					null, null, replacements);
 		}
 
-		double oldPropensity = model.getReactionToPropensityMap().get(affectedReactionID);
+		double oldPropensity = model.getPropensity(affectedReactionID);
+
 		model.setPropensity(model.getPropensity() + newPropensity - oldPropensity);
-		model.updateReactionToPropensityMap(affectedReactionID, newPropensity);
 
-	}
-
-	public static void updatePropensity(ModelState modelstate, String species, double currentTime, Map<String, Double> replacements)
-	{
-		// ModelState model = getModelState(modelstate);
-		Set<String> reactions = modelstate.getSpeciesToAffectedReactionSetMap().get(species);
-		updatePropensities(reactions, modelstate, currentTime, replacements);
-
+		if (newPropensity > 0)
+		{
+			model.updateReactionToPropensityMap(affectedReactionID, newPropensity);
+		}
+		else
+		{
+			model.getReactionToPropensityMap().remove(affectedReactionID);
+		}
 	}
 
 	public static Set<String> updatePropensities(Set<String> affectedReactionSet, ModelState modelstate, double currentTime,
@@ -259,6 +259,7 @@ public class HierarchicalUtilities
 			}
 
 			listOfReferences.add(id);
+			dimensionIdMap = null;
 		}
 		return listOfReferences;
 
@@ -270,7 +271,7 @@ public class HierarchicalUtilities
 
 		Set<HierarchicalStringDoublePair> reactantStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(id);
 
-		modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(id);
+		// modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(id);
 
 		if (modelstate.getReactionToFormulaMap().get(id) == null)
 		{
@@ -278,12 +279,19 @@ public class HierarchicalUtilities
 		}
 
 		boolean notEnoughMoleculesFlag = false;
-		String type = "reactant";
+		final String reactant = "reactant";
+		final String product = "product";
 		for (HierarchicalStringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
 		{
-
-			List<String> speciesIDs = getIndexedSpeciesReference(modelstate, id, type, speciesAndStoichiometry.string, indices, time, replacements);
-
+			List<String> speciesIDs;
+			if (id.endsWith("_rv"))
+			{
+				speciesIDs = getIndexedSpeciesReference(modelstate, id, product, speciesAndStoichiometry.string, indices, time, replacements);
+			}
+			else
+			{
+				speciesIDs = getIndexedSpeciesReference(modelstate, id, reactant, speciesAndStoichiometry.string, indices, time, replacements);
+			}
 			for (String speciesID : speciesIDs)
 			{
 				double stoichiometry = speciesAndStoichiometry.doub;
@@ -310,6 +318,7 @@ public class HierarchicalUtilities
 			}
 			newPropensity = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getReactionToFormulaMap().get(id), false, time, null,
 					dimensionIdMap, replacements);
+			dimensionIdMap = null;
 		}
 		modelstate.setPropensity(modelstate.getPropensity() + newPropensity - oldPropensity);
 
@@ -487,8 +496,6 @@ public class HierarchicalUtilities
 			Map<String, Double> replacements)
 	{
 
-		Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
-
 		List<ArraysPair> listOfPairs = modelstate.getArrays().get(id);
 
 		if (listOfPairs == null)
@@ -506,6 +513,7 @@ public class HierarchicalUtilities
 			{
 				continue;
 			}
+			Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
 
 			Map<Integer, ASTNode> indexMap = index.getAttributes().get(attribute);
 
@@ -525,6 +533,7 @@ public class HierarchicalUtilities
 			listOfObjects.add(getArrayedID(modelstate, variable, newIndices));
 
 			newIndices = null;
+			dimensionIdMap = null;
 		}
 
 		return listOfObjects;

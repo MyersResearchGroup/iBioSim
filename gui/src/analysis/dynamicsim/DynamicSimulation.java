@@ -14,10 +14,10 @@ import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.Log;
-import analysis.dynamicsim.flattened.SimulatorODERK;
 import analysis.dynamicsim.flattened.SimulatorSSACR;
 import analysis.dynamicsim.flattened.SimulatorSSADirect;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalHybridSimulator;
+import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
 
 public class DynamicSimulation
@@ -85,9 +85,8 @@ public class DynamicSimulation
 
 				break;
 			case HIERARCHICAL_RK:
-				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed, progress, printInterval,
-						stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType);
-
+				simulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed,
+						progress, printInterval, stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType, abstraction);
 				break;
 			case HIERARCHICAL_HYBRID:
 				simulator = new HierarchicalHybridSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep,

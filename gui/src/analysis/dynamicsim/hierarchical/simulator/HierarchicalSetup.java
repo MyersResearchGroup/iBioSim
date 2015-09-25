@@ -133,10 +133,6 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			Setup.setupSingleEvent(modelstate, id, event.getTrigger().getMath(), event.getUseValuesFromTriggerTime(), event.getTrigger()
 					.getInitialValue(), event.getTrigger().getPersistent(), getModels(), getIbiosimFunctionDefinitions());
 
-			setupArrays(modelstate, id, event, SetupType.EVENT);
-
-			setupArrayObject(modelstate, id, null, event, null, SetupType.EVENT);
-
 			if (event.isSetPriority())
 			{
 				Setup.setupSinglePriority(modelstate, id, event.getPriority().getMetaId(), event.getPriority().getMath(), getModels(),
@@ -149,6 +145,10 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			}
 
 			setupEventAssignments(modelstate, event, id);
+
+			setupArrays(modelstate, id, event, SetupType.EVENT);
+
+			setupArrayObject(modelstate, id, null, event, null, SetupType.EVENT);
 
 		}
 	}
@@ -246,8 +246,11 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			}
 			String variable = assignment.getVariable();
 			String assignmentId = event.getId() + "_" + assignment.getVariable();
+
+			Setup.setupEventAssignment(modelstate, variable, event.getId(), assignment.getMath(), assignment, getModels(),
+					getIbiosimFunctionDefinitions());
 			setupArrays(modelstate, assignmentId, assignment, SetupType.EVENT_ASSIGNMENT);
-			setupArrayObject(modelstate, assignmentId, assignmentId, assignment, null, SetupType.EVENT_ASSIGNMENT);
+			setupArrayObject(modelstate, assignmentId, event.getId(), assignment, null, SetupType.EVENT_ASSIGNMENT);
 			if (!modelstate.isArrayedObject(assignmentId))
 			{
 				if (modelstate.getArrays().containsKey(assignmentId))
@@ -270,7 +273,6 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 				}
 				Setup.setupEventAssignment(modelstate, variable, event.getId(), assignment.getMath(), assignment, getModels(),
 						getIbiosimFunctionDefinitions());
-
 			}
 
 		}
