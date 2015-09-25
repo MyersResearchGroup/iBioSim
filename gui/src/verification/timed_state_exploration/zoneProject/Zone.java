@@ -1020,8 +1020,11 @@ public class Zone implements Equivalence{
 //					range = delay.evaluateExprBound(varValues, null);
 //				}
 				
-				range = delay.evaluateExprBound(varValues, this, null);
-				
+				if (delay!=null) {
+					range = delay.evaluateExprBound(varValues, this, null);
+				} else {
+					range = new IntervalPair(0,0);
+				}
 //				int upper, lower;
 //				if(delay.getOp().equals("uniform"))
 //				{
