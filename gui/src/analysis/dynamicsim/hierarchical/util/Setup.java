@@ -166,7 +166,10 @@ public class Setup
 		modelstate.getEventToUseValuesFromTriggerTimeMap().put(eventID, useFromTrigger);
 		modelstate.getEventToAssignmentSetMap().put(eventID, new HashMap<String, ASTNode>());
 		modelstate.getEventToAffectedReactionSetMap().put(eventID, new HashSet<String>());
-		modelstate.getUntriggeredEventSet().add(eventID);
+		if (!modelstate.isArrayedObject(eventID))
+		{
+			modelstate.getUntriggeredEventSet().add(eventID);
+		}
 
 		ArrayList<ASTNode> formulaChildren = new ArrayList<ASTNode>();
 		HierarchicalUtilities.getAllASTNodeChildren(trigger, formulaChildren);
@@ -210,7 +213,10 @@ public class Setup
 
 		if (modelstate.getSpeciesToAffectedReactionSetMap().containsKey(variableID))
 		{
-
+			if (!modelstate.getEventToAffectedReactionSetMap().containsKey(eventID))
+			{
+				modelstate.getEventToAffectedReactionSetMap().put(eventID, new HashSet<String>());
+			}
 			modelstate.getEventToAffectedReactionSetMap().get(eventID).addAll(modelstate.getSpeciesToAffectedReactionSetMap().get(variableID));
 		}
 	}
@@ -311,6 +317,11 @@ public class Setup
 		double propensity;
 		String forward = reactionID + "_fd";
 		String reverse = reactionID + "_rv";
+
+		if (modelstate.isArrayedObject(forward) && modelstate.isArrayedObject(reverse))
+		{
+			return;
+		}
 		modelstate.getReactionToHasEnoughMolecules().put(forward, notEnoughMoleculesFlagFd);
 		modelstate.getReactionToHasEnoughMolecules().put(reverse, notEnoughMoleculesFlagRv);
 		if (productsList.getChildCount() > 0 && reactantsList.getChildCount() > 0)
@@ -329,7 +340,7 @@ public class Setup
 				propensity = Evaluator.evaluateExpressionRecursive(modelstate,
 						HierarchicalUtilities.inlineFormula(modelstate, reactionFormula.getLeftChild(), models, iBioSimFunctionDefinitions), false,
 						currentTime, null, null, replacements);
-				setPropensity(modelstate, reactionID, propensity);
+				setPropensity(modelstate, forward, propensity);
 				modelstate.setPropensity(modelstate.getPropensity() + propensity);
 			}
 			modelstate.getReactionToPropensityMap().put(forward, propensity);
@@ -549,7 +560,10 @@ public class Setup
 			}
 
 			modelstate.setPropensity(modelstate.getPropensity() + propensity);
-
+			if (reactionID.equals("R0"))
+			{
+				System.out.print("here");
+			}
 			modelstate.getReactionToPropensityMap().put(reactionID, propensity);
 		}
 
@@ -776,6 +790,8 @@ public class Setup
 				modelstate.setVariableToValue(replacements, reactant.getId(), reactantStoichiometry);
 			}
 		}
+
+		modelstate.getSpeciesToAffectedReactionSetMap().get(reactantID).add(reactionID);
 
 		return notEnoughMoleculesFlag;
 	}

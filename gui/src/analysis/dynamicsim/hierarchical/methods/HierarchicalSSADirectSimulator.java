@@ -303,7 +303,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 				for (HierarchicalStringPair pair : pairs)
 				{
 					ModelState model = getModelState(pair.string1);
-					HierarchicalUtilities.updatePropensity(model, pair.string2, getCurrentTime(), getReplacements());
+					Set<String> reactions = model.getSpeciesToAffectedReactionSetMap().get(pair.string2);
+					HierarchicalUtilities.updatePropensities(reactions, model, getCurrentTime(), getReplacements());
 				}
 			}
 		}
@@ -320,7 +321,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 				for (HierarchicalStringPair pair : pairs)
 				{
 					ModelState model = getModelState(pair.string1);
-					HierarchicalUtilities.updatePropensity(model, pair.string2, getCurrentTime(), getReplacements());
+					Set<String> reactions = model.getSpeciesToAffectedReactionSetMap().get(pair.string2);
+					HierarchicalUtilities.updatePropensities(reactions, model, getCurrentTime(), getReplacements());
 					updatedTopSpecies.add(pair.string2);
 				}
 			}
@@ -345,11 +347,12 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		return totalPropensity > 0 ? totalPropensity : 0;
 	}
 
-	protected HashSet<String> getAffectedReactionSet(ModelState modelstate, String selectedReactionID, boolean noAssignmentRulesFlag)
+	protected HashSet<String> getAffectedReactionSet(ModelState modelstate, String selectedReactionID, int[] dims, boolean noAssignmentRulesFlag)
 	{
 
 		HashSet<String> affectedReactionSet = new HashSet<String>(20);
 		affectedReactionSet.add(selectedReactionID);
+		HierarchicalUtilities.getVariableFromArray(selectedReactionID);
 
 		for (HierarchicalStringDoublePair speciesAndStoichiometry : modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(selectedReactionID))
 		{
@@ -484,7 +487,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		}
 	}
 
-	private void performReaction(double r2)
+	private void selectAndPerformReaction(double r2)
 	{
 		String selectedReactionID = selectReaction(r2);
 		String reactionID = HierarchicalUtilities.getVariableFromArray(selectedReactionID);
@@ -510,7 +513,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 			if (!selectedReactionID.isEmpty())
 			{
 				performReaction(getTopmodel(), selectedReactionID, getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag(), null);
-				Set<String> affectedReactionSet = getAffectedReactionSet(getTopmodel(), selectedReactionID, true);
+				Set<String> affectedReactionSet = getAffectedReactionSet(getTopmodel(), selectedReactionID, null, true);
 				Set<String> affectedSpecies = HierarchicalUtilities.updatePropensities(affectedReactionSet, getTopmodel(), getCurrentTime(),
 						getReplacements());
 				perculateDown(getTopmodel(), affectedSpecies);
@@ -522,7 +525,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 			{
 				ModelState modelstate = getSubmodels().get(modelstateID);
 				performReaction(modelstate, selectedReactionID, modelstate.isNoRuleFlag(), modelstate.isNoConstraintsFlag(), null);
-				Set<String> affectedReactionSet = getAffectedReactionSet(modelstate, selectedReactionID, true);
+				Set<String> affectedReactionSet = getAffectedReactionSet(modelstate, selectedReactionID, null, true);
 				Set<String> affectedSpecies = HierarchicalUtilities.updatePropensities(affectedReactionSet, modelstate, getCurrentTime(),
 						getReplacements());
 				perculateUp(modelstate, affectedSpecies);
@@ -537,7 +540,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 
 		performReaction(getTopmodel(), selectedReactionID, getTopmodel().isNoRuleFlag(), getTopmodel().isNoConstraintsFlag(), dims);
 
-		Set<String> affectedReactionSet = getAffectedReactionSet(getTopmodel(), arrayedId, true);
+		Set<String> affectedReactionSet = getAffectedReactionSet(getTopmodel(), arrayedId, dims, true);
 
 		HierarchicalUtilities.updatePropensities(affectedReactionSet, getTopmodel(), getCurrentTime(), getReplacements());
 	}
@@ -589,6 +592,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 
 		for (String currentReaction : getTopmodel().getReactionToPropensityMap().keySet())
 		{
+
 			runningTotalReactionsPropensity += getTopmodel().getReactionToPropensityMap().get(currentReaction);
 
 			if (randomPropensity < runningTotalReactionsPropensity)
@@ -603,6 +607,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		{
 			for (String currentReaction : models.getReactionToPropensityMap().keySet())
 			{
+
 				runningTotalReactionsPropensity += models.getReactionToPropensityMap().get(currentReaction);
 
 				if (randomPropensity < runningTotalReactionsPropensity)
@@ -621,7 +626,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 	{
 		if (reaction)
 		{
-			performReaction(r2);
+			selectAndPerformReaction(r2);
 		}
 
 		if (events)

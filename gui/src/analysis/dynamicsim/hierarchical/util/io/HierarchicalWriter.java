@@ -26,15 +26,20 @@ public class HierarchicalWriter
 		for (String speciesID : topmodel.getSpeciesIDSet())
 		{
 
-			bufferedWriter.write(commaSpace + topmodel.getVariableToValue(replacements, speciesID));
-			commaSpace = ",";
+			if (!topmodel.isArrayedObject(speciesID))
+			{
+				bufferedWriter.write(commaSpace + topmodel.getVariableToValue(replacements, speciesID));
+				commaSpace = ",";
+			}
 		}
 
 		for (String noConstantParam : topmodel.getVariablesToPrint())
 		{
-
-			bufferedWriter.write(commaSpace + topmodel.getVariableToValue(replacements, noConstantParam));
-			commaSpace = ",";
+			if (!topmodel.isArrayedObject(noConstantParam))
+			{
+				bufferedWriter.write(commaSpace + topmodel.getVariableToValue(replacements, noConstantParam));
+				commaSpace = ",";
+			}
 
 		}
 
@@ -42,7 +47,7 @@ public class HierarchicalWriter
 		{
 			for (String speciesID : models.getSpeciesIDSet())
 			{
-				if (!models.getIsHierarchical().contains(speciesID))
+				if (!models.isArrayedObject(speciesID) && !models.getIsHierarchical().contains(speciesID))
 				{
 					bufferedWriter.write(commaSpace + models.getVariableToValue(replacements, speciesID));
 					commaSpace = ",";
@@ -52,7 +57,7 @@ public class HierarchicalWriter
 
 			for (String noConstantParam : models.getVariablesToPrint())
 			{
-				if (!models.getIsHierarchical().contains(noConstantParam))
+				if (!models.isArrayedObject(noConstantParam) && !models.getIsHierarchical().contains(noConstantParam))
 				{
 					bufferedWriter.write(commaSpace + models.getVariableToValue(replacements, noConstantParam));
 					commaSpace = ",";
@@ -142,12 +147,18 @@ public class HierarchicalWriter
 
 		for (String speciesID : topmodel.getSpeciesIDSet())
 		{
-			bufferedWriter.write(",\"" + speciesID + "\"");
+			if (!topmodel.isArrayedObject(speciesID))
+			{
+				bufferedWriter.write(",\"" + speciesID + "\"");
+			}
 		}
 
 		for (String noConstantParam : topmodel.getVariablesToPrint())
 		{
-			bufferedWriter.write(",\"" + noConstantParam + "\"");
+			if (!topmodel.isArrayedObject(noConstantParam))
+			{
+				bufferedWriter.write(",\"" + noConstantParam + "\"");
+			}
 		}
 		/*
 		 * for (String compartment : topmodel.compartmentIDSet) {
@@ -157,7 +168,7 @@ public class HierarchicalWriter
 		{
 			for (String speciesID : model.getSpeciesIDSet())
 			{
-				if (!model.getIsHierarchical().contains(speciesID))
+				if (!model.isArrayedObject(speciesID) && !model.getIsHierarchical().contains(speciesID))
 				{
 					bufferedWriter.write(",\"" + model.getID() + "__" + speciesID + "\"");
 				}
@@ -165,7 +176,7 @@ public class HierarchicalWriter
 
 			for (String noConstantParam : model.getVariablesToPrint())
 			{
-				if (!model.getIsHierarchical().contains(noConstantParam))
+				if (!model.isArrayedObject(noConstantParam) && !model.getIsHierarchical().contains(noConstantParam))
 				{
 					bufferedWriter.write(",\"" + model.getID() + "__" + noConstantParam + "\"");
 				}
