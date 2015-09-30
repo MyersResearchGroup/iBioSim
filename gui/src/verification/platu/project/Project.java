@@ -14,6 +14,7 @@ import javax.swing.JProgressBar;
 
 import lpn.parser.LhpnFile;
 import lpn.parser.Translator;
+import main.Gui;
 
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -53,6 +54,8 @@ public class Project {
 	protected LPNTranRelation lpnTranRelation = null;
 	
 	protected CompositionalAnalysis analysis = null;
+	
+	private static String separator = Gui.separator;
   	
 	public Project() {
 		this.label = "";
@@ -256,9 +259,14 @@ public class Project {
 			long elapsedTimeMillis = System.currentTimeMillis() - startReachability; 
 			float elapsedTimeSec = elapsedTimeMillis/1000F;
 			System.out.println("---> total runtime for reachability analysis: " + elapsedTimeSec + " sec\n");
-			if (Options.getOutputLogFlag())
-				outputRuntimeLog(false, elapsedTimeSec);
-			if (Options.getOutputSgFlag()) {
+			if (Options.getOutputLogFlag()) {
+				if (Options.getPOR().toLowerCase().equals("off")) {
+					outputRuntimeLog(false, elapsedTimeSec);
+				}
+				else
+					outputRuntimeLog(true, elapsedTimeSec);
+			}				
+			if (Options.getOutputSgFlag()) {			
 				for (int i=0; i<sgArray.length; i++) {								
 					sgArray[i].drawLocalStateGraph();
 				}
@@ -363,9 +371,9 @@ public class Project {
 //			// -------------------- Temp: nested analysis --------------
 //			// ------------------------------------------------------------
 		}
-		//if (Options.getOutputSgFlag())
-			for (int i=0; i<sgArray.length; i++) 
-				sgArray[i].drawLocalStateGraph();				
+//		if (Options.getOutputSgFlag())
+//			for (int i=0; i<sgArray.length; i++) 
+//				sgArray[i].drawLocalStateGraph();				
 	}
 
 	public static Set<LPN> readLpn(final String src_file) {
@@ -394,10 +402,12 @@ public class Project {
 	private static void outputRuntimeLog(boolean isPOR, float runtime) {
 		try {
 			String fileName = null;
-			if (isPOR)
-				fileName = Options.getPrjSgPath() + Options.getLogName() + "_"
+			if (isPOR) {
+				fileName = Options.getPrjSgPath() + separator + Options.getLogName() + "_"
 						+ Options.getPOR() + "_" + Options.getCycleClosingMthd() + "_" 
 						+ Options.getCycleClosingStrongStubbornMethd() +  "_runtime.log";
+				System.out.println("runtime log = " + fileName);				
+			}
 			else
 				fileName = Options.getPrjSgPath() + Options.getLogName() + "_full_runtime.log";
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));

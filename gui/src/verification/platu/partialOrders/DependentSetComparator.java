@@ -29,6 +29,7 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 				// and non-immediate transitions should not exist.
 				if (dep0.getSeed().getDelayTree() == null && dep1.getSeed().getDelayTree() != null) 
 					return -1;
+				 // TODO: Immediate transition should have 0 delay, not "null" delay.
 				else if (dep1.getSeed().getDelayTree() == null && dep0.getSeed().getDelayTree() != null)
 					return 1;
 				else {
@@ -39,7 +40,7 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 					else {					
 						if (tranFiringFreqMap.get(dep0.getSeed()) < tranFiringFreqMap.get(dep1.getSeed()))
 							return -1;
-						else if (tranFiringFreqMap.get(dep1.getSeed()) < tranFiringFreqMap.get(dep0.getSeed()))
+						else if (tranFiringFreqMap.get(dep0.getSeed()) > tranFiringFreqMap.get(dep1.getSeed()))
 							return 1;
 						else {
 							if (dep0.getLowestLpnNumber(highestLpnIndex) < dep1.getLowestLpnNumber(highestLpnIndex)) 
@@ -49,8 +50,7 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 							else
 								return 0;
 						}
-						
-//						if (dep0.getLowestLpnNumber(highestLpnIndex) < dep1.getLowestLpnNumber(highestLpnIndex)) 
+//						if (dep0.getLowestLpnNumber(highestLpnIndex) < dep1.getLowestLpnNumber(highestLpnIndex)) 	// 
 //							return -1;							
 //						else if (dep0.getLowestLpnNumber(highestLpnIndex) > dep1.getLowestLpnNumber(highestLpnIndex))
 //							return 1;

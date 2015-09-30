@@ -1173,8 +1173,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 				// ------- Debugging Messages Settings ------------
 				 //Options for printing out intermediate results during POR
-				//Options.setDebugMode(true);
-				Options.setDebugMode(false);
+				Options.setDebugMode(true);
+				//Options.setDebugMode(false);
 				if (Options.getDebugMode())
 					System.out.println("Debug mode is ON.");				
 				//----------- POR and Cycle Closing Methods (FULL)--------------
@@ -1395,7 +1395,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				//}
 				return;
 			}
-			else if (decomposeLPN.isSelected() && verbose.isSelected() && lpnList.getSelectedValue() == null) {
+			else if (decomposeLPN.isSelected() && lpnList.getSelectedValue() == null) {
 				HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
 				// create an Abstraction object to get all processes in one LPN
 				Abstraction abs = lpn.abstractLhpn(this);

@@ -18,6 +18,7 @@ import lpn.parser.LhpnFile;
 import lpn.parser.Place;
 import lpn.parser.Transition;
 import lpn.parser.Variable;
+import main.Gui;
 import verification.platu.common.IndexObjMap;
 import verification.platu.logicAnalysis.Constraint;
 import verification.platu.lpn.DualHashMap;
@@ -62,6 +63,7 @@ public class StateGraph {
     protected Set<Constraint> constraintSet = new HashSet<Constraint>();
     protected LhpnFile lpn;
     protected static Set<Entry<Transition, State>> emptySet = new HashSet<Entry<Transition, State>>(0);
+    private String separator = Gui.separator;
     
     public StateGraph(LhpnFile lpn) {
     	this.lpn = lpn;   	
@@ -1227,12 +1229,13 @@ public class StateGraph {
 			String graphFileName = null;
 			if ( Options.getTimingAnalysisType() == "off") {
 				if (Options.getPOR().toLowerCase().equals("off")) {
-					graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_local_full_sg.dot";
+					graphFileName = Options.getPrjSgPath() + separator + getLpn().getLabel() + "_local_full_sg.dot";
 				}					
 				else {
-					graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+					graphFileName = Options.getPrjSgPath() + separator + getLpn().getLabel() + "_POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
 				}					
 			} else {
+				// TODO: Need to add separator here?
 				graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_sg.dot";
 			}
 			int size = this.lpn.getVarIndexMap().size();
