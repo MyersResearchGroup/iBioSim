@@ -435,8 +435,8 @@ public class Options {
 		return outputLogFlag;
 	}
 
-	public static void setLogName(String lpnFileName) {
-		lpnName = lpnFileName;
+	public static void setLogName(String logName) {
+		lpnName = logName;
 	}
 	
 	public static String getLogName() {

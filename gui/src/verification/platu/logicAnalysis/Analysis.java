@@ -55,6 +55,7 @@ public class Analysis {
 	 */
 	private HashSet<Transition> visitedTrans;
 	HashMap<Transition, StaticDependencySets> staticDependency = new HashMap<Transition, StaticDependencySets>();
+	private String separator = Gui.separator;
 		
 	public Analysis(StateGraph[] lpnList, State[] initStateArray, LPNTranRelation lpnTranRelation, String method) {
 		traceCex = new LinkedList<Transition>();
@@ -876,7 +877,7 @@ public class Analysis {
 	}
 	
 	private void drawDependencyGraphs(LhpnFile[] lpnList) {
-		String fileName = Options.getPrjSgPath() + "dependencyGraph.dot";
+		String fileName = Options.getPrjSgPath() + separator + "dependencyGraph.dot";
 		BufferedWriter out;
 		try {
 			out = new BufferedWriter(new FileWriter(fileName));
@@ -1432,7 +1433,7 @@ public class Analysis {
 		try {
 			String fileName = null;
 			if (isPOR) {
-				fileName = Options.getPrjSgPath() + Options.getLogName() + "_" + Options.getPOR() + "_" 
+				fileName = Options.getPrjSgPath() + separator + Options.getLogName() + "_" + Options.getPOR() + "_" 
 					+ Options.getCycleClosingMthd() + "_" + Options.getCycleClosingStrongStubbornMethd() + ".log";
 			}				
 			else
@@ -4417,27 +4418,27 @@ public class Analysis {
     		dependent = computeDependent(curStateArray,enabledTran,dependent,curEnabled,isCycleClosingStrongStubbornComputation);
     		if (Options.getDebugMode())
     			printIntegerSet(dependent, "@ end of partialOrderReduction, dependent set for enabled transition "
-    					+ enabledTran.getFullLabel());						
-    		// Check if the computed dependent set contains both immediate and non-immediate transitions. 
-    		boolean dependentOnlyHasImmediateTrans = false;
-    		boolean dependentOnlyHasNonImmediateTrans = false;
-    		for (Transition tr: dependent) {
-    			if (!dependentOnlyHasImmediateTrans && tr.getDelayTree() == null) {
-    				dependentOnlyHasImmediateTrans = true;
-    			}
-    			if (!dependentOnlyHasNonImmediateTrans && tr.getDelayTree() != null) {
-    				dependentOnlyHasNonImmediateTrans = true;
-    			}    			
-    		}
-    		if (dependentOnlyHasNonImmediateTrans && dependentOnlyHasImmediateTrans) {
-    			System.err.println("*** Error: Non-immediate transitions are dependent on immediate ones. ***");
-    			System.out.println("dependent set: ");
-    			for (Transition tr : dependent) {
-    				System.out.println(tr.getFullLabel());
-    			}
-    			System.out.println();
-    			
-    		}
+    					+ enabledTran.getFullLabel());
+    		// TODO: Immediate transition should have 0 delay, not "null" delay.
+//    		// Check if the computed dependent set contains both immediate and non-immediate transitions. 
+//    		boolean dependentOnlyHasImmediateTrans = false;
+//    		boolean dependentOnlyHasNonImmediateTrans = false;
+//    		for (Transition tr: dependent) {
+//    			if (!dependentOnlyHasImmediateTrans && tr.getDelayTree() == null) {
+//    				dependentOnlyHasImmediateTrans = true;
+//    			}
+//    			if (!dependentOnlyHasNonImmediateTrans && tr.getDelayTree() != null) {
+//    				dependentOnlyHasNonImmediateTrans = true;
+//    			}    			
+//    		}
+//    		if (dependentOnlyHasNonImmediateTrans && dependentOnlyHasImmediateTrans) {
+//    			System.err.println("*** Error: Non-immediate transitions are dependent on immediate ones. ***");
+//    			System.out.println("dependent set: ");
+//    			for (Transition tr : dependent) {
+//    				System.out.println(tr.getFullLabel());
+//    			}
+//    			System.out.println();
+//    		}
     		// TODO: temporarily dealing with dummy transitions (This requires the dummy transitions to have "_dummy" in their names.)				
     		if(isDummyTran(enabledTran.getLabel()))
     			enabledIsDummy = true;
