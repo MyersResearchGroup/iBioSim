@@ -406,7 +406,6 @@ public class Project {
 				fileName = Options.getPrjSgPath() + separator + Options.getLogName() + "_"
 						+ Options.getPOR() + "_" + Options.getCycleClosingMthd() + "_" 
 						+ Options.getCycleClosingStrongStubbornMethd() +  "_runtime.log";
-				System.out.println("runtime log = " + fileName);				
 			}
 			else
 				fileName = Options.getPrjSgPath() + Options.getLogName() + "_full_runtime.log";
