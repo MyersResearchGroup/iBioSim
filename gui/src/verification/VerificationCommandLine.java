@@ -20,6 +20,8 @@ import main.Gui;
 
 public class VerificationCommandLine {
 	
+	static String separator = Gui.separator;
+	
 	public static void main (String[] args) {
 		if (args.length == 0) {
 			System.err.println("Error: Missing arguments.");
@@ -116,10 +118,6 @@ public class VerificationCommandLine {
 			System.out.println(directory);
 		}
 		Options.setPrjSgPath(directory);
-		System.out.println("Options.getPrjSgPath() = " + Options.getPrjSgPath());
-		
-		
-		System.out.println("Options.getCycleClosingMthd() = " + Options.getCycleClosingMthd());
 		// Options for printing the final numbers from search_dfs or search_dfsPOR. 
 		Options.setOutputLogFlag(true);
 		// If the "-allLPNs" option exists, then all LPNs under a directory (either specified by "-dir" or
@@ -131,14 +129,14 @@ public class VerificationCommandLine {
 			for (int i=0; i < lpns.length; i++) {
 				String curLPNname = lpns[i].getName();
 				LhpnFile curLPN = new LhpnFile();
-				curLPN.load(directory + curLPNname);
+				curLPN.load(directory + separator + curLPNname);
 				lpnList.add(curLPN);
 			}
 		}
 		else {
 			for (int i=0; i < lpnNames.size(); i++) {
 				LhpnFile curLPN = new LhpnFile();
-				curLPN.load(directory + lpnNames.get(i));//load(directory + curLPNname);
+				curLPN.load(directory + separator + lpnNames.get(i));//load(directory + curLPNname);
 				lpnList.add(curLPN);
 			}
 		}

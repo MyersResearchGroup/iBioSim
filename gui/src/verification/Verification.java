@@ -1379,7 +1379,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					if (dot.isSelected()) {
 						Options.setOutputSgFlag(true);
 					}
-					Options.setPrjSgPath(directory + separator);
+					//Options.setPrjSgPath(directory + separator);
+					System.out.println("directory = "+ directory);
+					Options.setPrjSgPath(directory);
 					// Options for printing the final numbers from search_dfs.
 					Options.setOutputLogFlag(true);
 					untimed_dfs.search();
