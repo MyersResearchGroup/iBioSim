@@ -919,6 +919,8 @@ public class Transition {
 	public void setDstLpnList(LhpnFile curLPN) {	
 		for (Transition curTran : curLPN.getAllTransitions()) {
 			ExprTree curTranEnablingTree = curTran.getEnablingTree();
+			System.out.println("thisTran = " + this.getLabel());
+			System.out.println("curTran = " + curTran.getLabel());
 			if (curTranEnablingTree != null
 					&& (curTranEnablingTree.getChange(this.getAssignments())=='F'
 					|| curTranEnablingTree.getChange(this.getAssignments())=='f'
