@@ -2409,10 +2409,14 @@ public class ExprTree {
 			return 'X';
 		case 'i': // Integer
 			if (variables.containsKey(variable)) {
-				if (Integer.parseInt(variables.get(variable)) == 0.0) {
-					return 'F';
+				try {
+					if (Integer.parseInt(variables.get(variable)) == 0.0) {
+						return 'F';
+					}
+					return 'T';
+				} catch (Exception e) {
+					return 'X';
 				}
-				return 'T';
 			}
 			return 'U';
 		case 'c': // Continuous
