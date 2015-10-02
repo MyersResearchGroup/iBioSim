@@ -5565,7 +5565,7 @@ public class SBMLutilities
 				{
 
 					int index = inlinedChildToOldIndexMap.get(child.getName());
-					replaceArgument(inlinedFormula, myFormulaToString(child), oldFormula.getChild(index));
+					replaceArgument(inlinedFormula, myFormulaToString(child), inlineFormula(model,oldFormula.getChild(index)));
 
 					if (inlinedFormula.getChildCount() == 0)
 					{
