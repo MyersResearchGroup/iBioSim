@@ -1173,8 +1173,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 				// ------- Debugging Messages Settings ------------
 				 //Options for printing out intermediate results during POR
-				Options.setDebugMode(true);
-				//Options.setDebugMode(false);
+				//Options.setDebugMode(true);
+				Options.setDebugMode(false);
 				if (Options.getDebugMode())
 					System.out.println("Debug mode is ON.");				
 				//----------- POR and Cycle Closing Methods (FULL)--------------
