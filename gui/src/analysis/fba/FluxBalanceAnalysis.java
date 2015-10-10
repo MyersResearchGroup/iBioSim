@@ -30,11 +30,13 @@ public class FluxBalanceAnalysis {
 	
 	private double absError;
 	
+	private HashMap<String,Double> fluxes;
 	
 	public FluxBalanceAnalysis(String root,String sbmlFileName,double absError) {
 		this.root = root;
 		this.sbmlFileName = sbmlFileName;
 		this.absError = absError;
+		fluxes = new HashMap<String,Double>();
 		sbml = SBMLutilities.readSBML(root + this.sbmlFileName);
 		fbc = SBMLutilities.getFBCModelPlugin(sbml.getModel());
 	}
@@ -186,6 +188,7 @@ public class FluxBalanceAnalysis {
 					//						System.out.println(reaction + " = " + value);
 					firstLine += (" " + reaction);
 					secondLine += (" "+ value);
+					fluxes.put(reaction, value);
 				}
 				bw.write(firstLine);
 				bw.write("\n");
@@ -211,5 +214,9 @@ public class FluxBalanceAnalysis {
 			}
 		}
 		return -13;
+	}
+
+	public HashMap<String, Double> getFluxes() {
+		return fluxes;
 	}
 }
