@@ -147,9 +147,13 @@ public class FluxBalanceAnalysis {
 				if (rBounds!=null) {
 					if (rBounds.isSetLowerFluxBound()) {
 						lowerBounds[reactionIndex.get(r.getId())] = rBounds.getLowerFluxBoundInstance().getValue();
+						if (Double.isInfinite(lowerBounds[reactionIndex.get(r.getId())])) 
+							lowerBounds[reactionIndex.get(r.getId())] = minLb;
 					}
 					if (rBounds.isSetUpperFluxBound()) {
 						upperBounds[reactionIndex.get(r.getId())] = rBounds.getUpperFluxBoundInstance().getValue();
+						if (Double.isInfinite(upperBounds[reactionIndex.get(r.getId())])) 
+							upperBounds[reactionIndex.get(r.getId())] = maxUb;
 					}
 				}
 			}
