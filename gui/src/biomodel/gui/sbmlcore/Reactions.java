@@ -358,7 +358,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private boolean createReactionFluxBounds2(String reactionId,String[] dimID,String[] dimensionIds) {
 		Reaction r = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
-		FBCReactionPlugin rBounds = (FBCReactionPlugin)r.getExtension(FBCConstants.namespaceURI);
+		FBCReactionPlugin rBounds = SBMLutilities.getFBCReactionPlugin(r);
 		if(kineticLaw.getText().contains("<=")){
 			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
 			if (userInput.length==3) {
@@ -724,7 +724,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				Reaction r = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
-				FBCReactionPlugin rBounds = (FBCReactionPlugin)r.getExtension(FBCConstants.namespaceURI);
+				FBCReactionPlugin rBounds = SBMLutilities.getFBCReactionPlugin(r);
 				if (rBounds != null) {
 					fluxbounds = "";
 					if (rBounds.isSetLowerFluxBound()) {

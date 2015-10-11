@@ -88,6 +88,7 @@ import org.sbml.jsbml.ext.distrib.DistribInput;
 import org.sbml.jsbml.ext.distrib.DrawFromDistribution;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
+import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.fbc.FluxObjective;
 import org.sbml.jsbml.ext.fbc.Objective;
@@ -5906,6 +5907,17 @@ public class SBMLutilities
 		return comp;
 	}
 
+	public static FBCReactionPlugin getFBCReactionPlugin(Reaction r)
+	{
+		if (r.getExtension(FBCConstants.namespaceURI) != null)
+		{
+			return (FBCReactionPlugin) r.getExtension(FBCConstants.namespaceURI);
+		}
+		FBCReactionPlugin reac = new FBCReactionPlugin(r);
+		r.addExtension(FBCConstants.namespaceURI, reac);
+		return reac;
+	}
+
 	public static ArraysSBasePlugin getArraysSBasePlugin(SBase sb)
 	{
 		if (sb.getExtension(ArraysConstants.namespaceURI) != null)
@@ -6596,6 +6608,59 @@ public class SBMLutilities
 		 */
 
 	}
+	
+	private static SBMLDocument convertToFBCVersion2(String filename,SBMLDocument document) 
+	{
+		if (document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel).endsWith("1")) 
+		{
+			if (!Gui.libsbmlFound)
+			{
+				// TODO: what if library missing
+			}
+			long numErrors = 0;
+			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
+			org.sbml.libsbml.SBMLDocument doc = reader.readSBML(filename);
+			/* create a new conversion properties structure */
+			ConversionProperties props = new ConversionProperties(new SBMLNamespaces(3, 1));
+
+			/* add an option that we want to strip a given package */
+			boolean strict = false;
+			props.addOption("convert fbc v1 to fbc v2", true, "convert fbc v1 to fbc v2");
+			props.addOption("strict", strict, "should the model be a strict one (i.e.: all non-specified bounds will be filled)");
+
+			/* perform the conversion */
+			if (doc.convert(props) != libsbml.LIBSBML_OPERATION_SUCCESS)
+			{
+				System.err.println("Conversion failed!");
+				doc.printErrors();
+				// System.exit(2);
+			}
+			org.sbml.libsbml.SBMLWriter writer = new org.sbml.libsbml.SBMLWriter();
+			try
+			{
+				writer.writeSBMLToFile(doc, filename);
+			}
+			catch (SBMLException e)
+			{
+				e.printStackTrace();
+			}
+			try
+			{
+				document = SBMLReader.read(new File(filename));
+			}
+			catch (XMLStreamException e1)
+			{
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			catch (IOException e1)
+			{
+				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+		}
+		return document;
+	}
 
 	public static SBMLDocument readSBML(String filename)
 	{
@@ -6742,6 +6807,7 @@ public class SBMLutilities
 				return null;
 			}
 		}
+		//document = convertToFBCVersion2(filename,document);
 		return document;
 	}
 
