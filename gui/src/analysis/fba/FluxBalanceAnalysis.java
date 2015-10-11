@@ -5,10 +5,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.HashMap;
 
-
+import org.sbml.jsbml.ext.comp.CompConstants;
+import org.sbml.jsbml.ext.comp.CompSBasePlugin;
+import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
+import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.fbc.Objective.Type;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
@@ -66,10 +70,21 @@ public class FluxBalanceAnalysis {
 
 		HashMap<String, Integer> reactionIndex = new HashMap<String, Integer>();
 		int kp = 0;
-		for(int l =0;l<fbc.getListOfFluxBounds().size();l++){
+		for(int l = 0;l<fbc.getListOfFluxBounds().size();l++){
 			if(!reactionIndex.containsKey(fbc.getFluxBound(l).getReaction())){
 				reactionIndex.put(fbc.getFluxBound(l).getReaction(), kp);
 				kp++;
+			}
+		}
+		// Support for FBC Version 2
+		for (int l = 0; l < sbml.getModel().getReactionCount(); l++) {
+			Reaction r = sbml.getModel().getReaction(l);
+			FBCReactionPlugin rBounds = (FBCReactionPlugin)r.getExtension(FBCConstants.namespaceURI);
+			if (rBounds!=null) {
+				if (rBounds.isSetLowerFluxBound()||rBounds.isSetUpperFluxBound()) {
+					reactionIndex.put(r.getId(), kp);
+					kp++;
+				}
 			}
 		}
 		for (int i = 0; i < fbc.getListOfObjectives().size(); i++) {
@@ -116,6 +131,19 @@ public class FluxBalanceAnalysis {
 					upperBounds[reactionIndex.get(bound.getReaction())] = boundVal; 
 					//R[reactionIndex.get(bound.getReaction())]=1;
 					//System.out.println("  " + vectorToString(R,reactionIndex) + " == " + boundVal);
+				}
+			}
+			// Support for FBC Version 2
+			for (int l = 0; l < sbml.getModel().getReactionCount(); l++) {
+				Reaction r = sbml.getModel().getReaction(l);
+				FBCReactionPlugin rBounds = (FBCReactionPlugin)r.getExtension(FBCConstants.namespaceURI);
+				if (rBounds!=null) {
+					if (rBounds.isSetLowerFluxBound()) {
+						lowerBounds[reactionIndex.get(r.getId())] = rBounds.getLowerFluxBoundInstance().getValue();
+					}
+					if (rBounds.isSetUpperFluxBound()) {
+						upperBounds[reactionIndex.get(r.getId())] = rBounds.getUpperFluxBoundInstance().getValue();
+					}
 				}
 			}
 
@@ -218,5 +246,14 @@ public class FluxBalanceAnalysis {
 
 	public HashMap<String, Double> getFluxes() {
 		return fluxes;
+	}
+	
+	public void setBoundParameters(HashMap<String,Double> bounds) {
+		for (int i = 0; i < sbml.getModel().getParameterCount(); i++) {
+			Parameter p = sbml.getModel().getParameter(i);
+			if (bounds.containsKey(p.getId())) {
+				p.setValue(bounds.get(p.getId()));
+			}
+		}
 	}
 }
