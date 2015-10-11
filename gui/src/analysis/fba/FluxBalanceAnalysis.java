@@ -12,6 +12,7 @@ import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.fbc.Objective.Type;
+import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -26,9 +27,7 @@ public class FluxBalanceAnalysis {
 	
 	private String root;
 	
-	private String sbmlFileName;
-	
-	private SBMLDocument sbml;
+	private Model model;
 	
 	private FBCModelPlugin fbc;
 	
@@ -38,11 +37,19 @@ public class FluxBalanceAnalysis {
 	
 	public FluxBalanceAnalysis(String root,String sbmlFileName,double absError) {
 		this.root = root;
-		this.sbmlFileName = sbmlFileName;
 		this.absError = absError;
 		fluxes = new HashMap<String,Double>();
-		sbml = SBMLutilities.readSBML(root + this.sbmlFileName);
+		SBMLDocument sbml = SBMLutilities.readSBML(root + sbmlFileName);
+		model = sbml.getModel();
 		fbc = SBMLutilities.getFBCModelPlugin(sbml.getModel());
+	}
+	
+	public FluxBalanceAnalysis(Model model,double absError) {
+		this.root = null;
+		this.absError = absError;
+		fluxes = new HashMap<String,Double>();
+		this.model = model;
+		fbc = SBMLutilities.getFBCModelPlugin(model);
 	}
 	
 	public static String vectorToString(double[] objective, HashMap<String,Integer> reactionIndex) {
@@ -77,8 +84,8 @@ public class FluxBalanceAnalysis {
 			}
 		}
 		// Support for FBC Version 2
-		for (int l = 0; l < sbml.getModel().getReactionCount(); l++) {
-			Reaction r = sbml.getModel().getReaction(l);
+		for (int l = 0; l < model.getReactionCount(); l++) {
+			Reaction r = model.getReaction(l);
 			FBCReactionPlugin rBounds = (FBCReactionPlugin)r.getExtension(FBCConstants.namespaceURI);
 			if (rBounds!=null) {
 				if (rBounds.isSetLowerFluxBound()||rBounds.isSetUpperFluxBound()) {
@@ -89,7 +96,7 @@ public class FluxBalanceAnalysis {
 		}
 		for (int i = 0; i < fbc.getListOfObjectives().size(); i++) {
 			if (!fbc.getActiveObjective().equals(fbc.getObjective(i).getId())) continue;
-			double [] objective = new double[sbml.getModel().getReactionCount()];				
+			double [] objective = new double[model.getReactionCount()];				
 			for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
 				if (reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())==null) {
 					// no flux bound on objective
@@ -104,8 +111,8 @@ public class FluxBalanceAnalysis {
 			//System.out.println("Minimize: " + vectorToString(objective,reactionIndex));
 			//System.out.println("Subject to:");
 
-			double [] lowerBounds = new double[sbml.getModel().getReactionCount()];
-			double [] upperBounds = new double[sbml.getModel().getReactionCount()];
+			double [] lowerBounds = new double[model.getReactionCount()];
+			double [] upperBounds = new double[model.getReactionCount()];
 			double minLb = LPPrimalDualMethod.DEFAULT_MIN_LOWER_BOUND;
 			double maxUb = LPPrimalDualMethod.DEFAULT_MAX_UPPER_BOUND;
 			int m = 0;
@@ -134,8 +141,8 @@ public class FluxBalanceAnalysis {
 				}
 			}
 			// Support for FBC Version 2
-			for (int l = 0; l < sbml.getModel().getReactionCount(); l++) {
-				Reaction r = sbml.getModel().getReaction(l);
+			for (int l = 0; l < model.getReactionCount(); l++) {
+				Reaction r = model.getReaction(l);
 				FBCReactionPlugin rBounds = (FBCReactionPlugin)r.getExtension(FBCConstants.namespaceURI);
 				if (rBounds!=null) {
 					if (rBounds.isSetLowerFluxBound()) {
@@ -149,17 +156,17 @@ public class FluxBalanceAnalysis {
 
 			m = 0;
 			int nonBoundarySpeciesCount = 0;
-			for (int j = 0; j < sbml.getModel().getSpeciesCount(); j++) {
-				if (!sbml.getModel().getSpecies(j).getBoundaryCondition()) nonBoundarySpeciesCount++;
+			for (int j = 0; j < model.getSpeciesCount(); j++) {
+				if (!model.getSpecies(j).getBoundaryCondition()) nonBoundarySpeciesCount++;
 			}
-			double[][] stoch = new double [nonBoundarySpeciesCount][(sbml.getModel().getReactionCount())];
+			double[][] stoch = new double [nonBoundarySpeciesCount][(model.getReactionCount())];
 			double[] zero = new double [nonBoundarySpeciesCount];
-			for (int j = 0; j < sbml.getModel().getSpeciesCount(); j++) {
-				Species species = sbml.getModel().getSpecies(j);
+			for (int j = 0; j < model.getSpeciesCount(); j++) {
+				Species species = model.getSpecies(j);
 				if (species.getBoundaryCondition()) continue;
 				zero[m] = 0;
-				for (int k = 0; k < sbml.getModel().getReactionCount(); k++) {
-					Reaction r = sbml.getModel().getReaction(k);
+				for (int k = 0; k < model.getReactionCount(); k++) {
+					Reaction r = model.getReaction(k);
 					if (reactionIndex.get(r.getId())==null) {
 						// reaction missing flux bound
 						return -10;
@@ -196,33 +203,40 @@ public class FluxBalanceAnalysis {
 			opt.setLPOptimizationRequest(or);
 			try {
 				int error = opt.optimize();
-				File f = new File(root + "sim-rep.txt");
-				FileWriter fw = new FileWriter(f);
-				BufferedWriter bw = new BufferedWriter(fw);
 				double [] sol = opt.getLPOptimizationResponse().getSolution();
-				double objkVal = 0;
-				double objkCo = 0;
-				for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) { 
-					objkCo = fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
-					double scale = Math.round(1/absError);
-					objkVal += Math.round(objkCo*sol[reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] * scale) / scale;
+				if (root!=null) {
+					File f = new File(root + "sim-rep.txt");
+					FileWriter fw = new FileWriter(f);
+					BufferedWriter bw = new BufferedWriter(fw);
+					double objkVal = 0;
+					double objkCo = 0;
+					for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) { 
+						objkCo = fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
+						double scale = Math.round(1/absError);
+						objkVal += Math.round(objkCo*sol[reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] * scale) / scale;
+					}
+					String firstLine = ("#total Objective");
+					String secondLine = ("100 " + objkVal);
+					for (String reaction : reactionIndex.keySet()) {
+						double value = sol[reactionIndex.get(reaction)];
+						double scale = Math.round(1/absError);
+						value = Math.round(value * scale) / scale;  
+						firstLine += (" " + reaction);
+						secondLine += (" "+ value);
+					}
+					bw.write(firstLine);
+					bw.write("\n");
+					bw.write(secondLine);
+					bw.write("\n");
+					bw.close();
+				} else {
+					for (String reaction : reactionIndex.keySet()) {
+						double value = sol[reactionIndex.get(reaction)];
+						double scale = Math.round(1/absError);
+						value = Math.round(value * scale) / scale;  
+						fluxes.put(reaction, value);
+					}
 				}
-				String firstLine = ("#total Objective");
-				String secondLine = ("100 " + objkVal);
-				for (String reaction : reactionIndex.keySet()) {
-					double value = sol[reactionIndex.get(reaction)];
-					double scale = Math.round(1/absError);
-					value = Math.round(value * scale) / scale;  
-					//						System.out.println(reaction + " = " + value);
-					firstLine += (" " + reaction);
-					secondLine += (" "+ value);
-					fluxes.put(reaction, value);
-				}
-				bw.write(firstLine);
-				bw.write("\n");
-				bw.write(secondLine);
-				bw.write("\n");
-				bw.close();
 				return error;
 			} catch (Exception e) {
 				File f = new File(root + "sim-rep.txt");
@@ -249,8 +263,8 @@ public class FluxBalanceAnalysis {
 	}
 	
 	public void setBoundParameters(HashMap<String,Double> bounds) {
-		for (int i = 0; i < sbml.getModel().getParameterCount(); i++) {
-			Parameter p = sbml.getModel().getParameter(i);
+		for (int i = 0; i < model.getParameterCount(); i++) {
+			Parameter p = model.getParameter(i);
 			if (bounds.containsKey(p.getId())) {
 				p.setValue(bounds.get(p.getId()));
 			}
