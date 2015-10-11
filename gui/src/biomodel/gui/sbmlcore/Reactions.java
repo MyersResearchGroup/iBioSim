@@ -45,6 +45,8 @@ import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.ext.fbc.FBCConstants;
+import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.fbc.FluxBound.Operation;
 
@@ -349,6 +351,50 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				if (!createFluxBound(userInput[0],FluxBound.Operation.EQUAL,userInput[1],dimID,dimensionIds)) return false;
 			} else {
 				if (!createFluxBound(userInput[1],FluxBound.Operation.EQUAL,userInput[0],dimID,dimensionIds)) return false;
+			}
+		}
+		return true;
+	}
+	
+	private boolean createReactionFluxBounds2(String reactionId,String[] dimID,String[] dimensionIds) {
+		Reaction r = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
+		FBCReactionPlugin rBounds = (FBCReactionPlugin)r.getExtension(FBCConstants.namespaceURI);
+		if(kineticLaw.getText().contains("<=")){
+			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
+			if (userInput.length==3) {
+				rBounds.setLowerFluxBound(userInput[0]);
+				rBounds.setUpperFluxBound(userInput[2]);
+			} 
+			else {
+				if (userInput[0].startsWith(reactionId)) {
+					rBounds.setUpperFluxBound(userInput[1]);
+				} else {
+					rBounds.setLowerFluxBound(userInput[0]);
+				}
+			}			
+		} 
+		else if(kineticLaw.getText().contains(">=")){
+			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split(">=");
+			if (userInput.length==3) {
+				rBounds.setLowerFluxBound(userInput[2]);
+				rBounds.setUpperFluxBound(userInput[0]);
+			} 
+			else {
+				if (userInput[0].startsWith(reactionId)) {
+					rBounds.setLowerFluxBound(userInput[1]);
+				} else {
+					rBounds.setUpperFluxBound(userInput[0]);
+				}
+			}	
+		}
+		else{
+			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("=");
+			if(userInput[0].startsWith(reactionId)){
+				rBounds.setLowerFluxBound(userInput[1]);
+				rBounds.setUpperFluxBound(userInput[1]);
+			} else {
+				rBounds.setLowerFluxBound(userInput[0]);
+				rBounds.setUpperFluxBound(userInput[0]);
 			}
 		}
 		return true;
@@ -677,6 +723,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 					}
 				}
+				Reaction r = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
+				FBCReactionPlugin rBounds = (FBCReactionPlugin)r.getExtension(FBCConstants.namespaceURI);
+				if (rBounds != null) {
+					fluxbounds = "";
+					if (rBounds.isSetLowerFluxBound()) {
+						fluxbounds += rBounds.getLowerFluxBound() + "<="; 
+					} 
+					fluxbounds += reactionId;
+					if (rBounds.isSetUpperFluxBound()) {
+						fluxbounds += "<=" + rBounds.getUpperFluxBound();
+					} 
+				}
 				kineticLaw.setText(fluxbounds);
 			}
 		}
@@ -955,7 +1013,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				else {
-					error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reacID.getText().trim());
+					error = !fluxBoundisGood2(bioModel.getSBMLDocument().getModel(),
+							kineticLaw.getText().replaceAll("\\s",""), reacID.getText().trim());
 				}
 			}
 			if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
@@ -1105,7 +1164,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								i++;
 							}
 						}
-						error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
+						error = !createReactionFluxBounds2(reactionId,dimID,dimensionIds);
 					}
 
 					if (!error) {
@@ -1253,8 +1312,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = checkKineticLawUnits(react.getKineticLaw());
 					}
 					else{
-						error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reacID.getText().trim());
-						if (!error)	error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
+						error = !fluxBoundisGood2(bioModel.getSBMLDocument().getModel(),
+								kineticLaw.getText().replaceAll("\\s",""), reacID.getText().trim());
+						if (!error)	error = !createReactionFluxBounds2(reactionId,dimID,dimensionIds);
 					}
 						
 					if (!error) {
@@ -3654,7 +3714,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Checks the string to see if there are any errors. Retruns true if there are no errors, else returns false.
 	 */
-	public static boolean fluxBoundisGood(String s, String reactionId){
+	private static boolean fluxBoundisGood(String s, String reactionId){
 		if(s.contains("<=")){
 			String [] correctnessTest = s.split("<=");
 			if(correctnessTest.length == 3){
@@ -3853,6 +3913,185 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									JOptionPane.ERROR_MESSAGE);
 							return false;
 						}
+					}
+				}
+				return true;
+			} 
+			JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		else{
+			JOptionPane.showMessageDialog(Gui.frame, "Need Operations.", "Bad Format",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+	}
+	
+	/**
+	 * Checks the string to see if there are any errors. Retruns true if there are no errors, else returns false.
+	 */
+	public static boolean fluxBoundisGood2(Model m, String s, String reactionId){
+		if(s.contains("<=")){
+			String [] correctnessTest = s.split("<=");
+			if(correctnessTest.length == 3){
+				if (m.getParameter(correctnessTest[0])==null) {
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " is not a valid parameter.",
+							"Invalid Bound", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if (m.getParameter(correctnessTest[2])==null) {
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2]+ " is not a valid parameter.",
+							"Invalid Bound", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				String id = correctnessTest[1];
+				if (id.contains("[")) {
+					id = id.substring(0,id.indexOf("["));
+				} 
+				if(!id.equals(reactionId)){
+					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				/* TODO: should check parameter values
+				if(Double.parseDouble(correctnessTest[0]) > Double.parseDouble(correctnessTest[2])){
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " must be less than " + correctnessTest[2], 
+							"Imbalance with Bounds", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				*/
+				return true;
+			}
+			else if(correctnessTest.length == 2){
+				String id0 = correctnessTest[0];
+				if (id0.contains("[")) {
+					id0 = id0.substring(0,id0.indexOf("["));
+				} 
+				String id1 = correctnessTest[1];
+				if (id1.contains("[")) {
+					id1 = id1.substring(0,id1.indexOf("["));
+				} 
+				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
+					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if(correctnessTest[0].equals(reactionId)){
+					if (m.getParameter(correctnessTest[1])==null) {
+						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1]+ " is not a valid parameter.",
+								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
+						return false;
+					}
+				}
+				else{
+					if (m.getParameter(correctnessTest[0])==null) {
+						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " is not a valid parameter.",
+								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
+						return false;
+					}
+				}
+				return true;
+			} else{
+				JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
+						JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		}
+		else if(s.contains(">=")){
+			String [] correctnessTest = s.split(">=");
+			if(correctnessTest.length == 3){
+				if (m.getParameter(correctnessTest[0])==null) {
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " is not a valid parameter.",
+							"Invalid Bound", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if (m.getParameter(correctnessTest[2])==null) {
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2]+ " is not a valid parameter.",
+							"Invalid Bound", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				String id = correctnessTest[1];
+				if (id.contains("[")) {
+					id = id.substring(0,id.indexOf("["));
+				} 
+				if(!id.equals(reactionId)){
+					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				/* TODO: need to update
+				if(Double.parseDouble(correctnessTest[0]) < Double.parseDouble(correctnessTest[2])){
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " must be greater than " + correctnessTest[2], 
+							"Imbalance with Bounds", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				*/
+				return true;
+			}
+			else if(correctnessTest.length == 2){
+				String id0 = correctnessTest[0];
+				if (id0.contains("[")) {
+					id0 = id0.substring(0,id0.indexOf("["));
+				} 
+				String id1 = correctnessTest[1];
+				if (id1.contains("[")) {
+					id1 = id1.substring(0,id1.indexOf("["));
+				} 
+				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
+					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if(correctnessTest[0].equals(reactionId)){
+					if (m.getParameter(correctnessTest[1])==null) {
+						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1]+ " is not a valid parameter.",
+								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
+						return false;
+					}
+				}
+				else{
+					if (m.getParameter(correctnessTest[0])==null) {
+						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " is not a valid parameter.",
+								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
+						return false;
+					}
+				}
+				return true;
+			} else{
+				JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
+						JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		}
+		else if(s.contains("=")){
+			String [] correctnessTest = s.split("=");
+			if(correctnessTest.length == 2){
+				String id0 = correctnessTest[0];
+				if (id0.contains("[")) {
+					id0 = id0.substring(0,id0.indexOf("["));
+				} 
+				String id1 = correctnessTest[1];
+				if (id1.contains("[")) {
+					id1 = id1.substring(0,id1.indexOf("["));
+				} 
+				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
+					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if(correctnessTest[0].equals(reactionId)){
+					if (m.getParameter(correctnessTest[1])==null) {
+						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1]+ " is not a valid parameter.",
+								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
+						return false;
+					}
+				}
+				else{
+					if (m.getParameter(correctnessTest[0])==null) {
+						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " is not a valid parameter.",
+								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
+						return false;
 					}
 				}
 				return true;
