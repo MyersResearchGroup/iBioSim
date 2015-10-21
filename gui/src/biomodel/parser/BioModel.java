@@ -6678,9 +6678,11 @@ public class BioModel {
 		if (sbmlCompModel.getListOfPorts().size() > 0 || sbmlCompModel.getListOfSubmodels().size() > 0) {
 			document.enablePackage(CompConstants.namespaceURI);
 		}
+		/* TODO: remove for now as more detailed check is needed
 		if (sbmlFBC.getListOfObjectives().size() > 0 || sbmlFBC.getListOfFluxBounds().size() > 0) {
 			document.enablePackage(FBCConstants.namespaceURI);
 		}
+		*/
 		document.enablePackage(ArraysConstants.namespaceURI);
 
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {
@@ -6968,10 +6970,12 @@ public class BioModel {
 		{
 			model.getSBMLDocument().disablePackage(CompConstants.namespaceURI);
 		}
+		/* TODO: Removed this for now, needs better check
 		if (model.getSBMLFBC().getObjectiveCount()==0 && 
 				model.getSBMLFBC().getFluxBoundCount()==0) {
 			model.getSBMLDocument().disablePackage(FBCConstants.namespaceURI);
 		}
+		*/
 		model.getSBMLDocument().getModel().setName("Created by iBioSim flatten routine");
 //		checkModelConsistency(model.getSBMLDocument());
 		new File(tempFile).delete();

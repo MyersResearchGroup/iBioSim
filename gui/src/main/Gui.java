@@ -1829,7 +1829,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource() == bugReport)
 		{
-			Utility.submitBugReport("");
+			Utility.submitBugReportTemp("");
 		}
 		else if (e.getSource() == manual)
 		{
