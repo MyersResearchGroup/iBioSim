@@ -65,7 +65,7 @@ public class Utility {
 			report.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Utility.submitBugReport("\n\nStack trace:\n"+message);
+					Utility.submitBugReportTemp("\n\nStack trace:\n"+message);
 				}
 			});
 			JButton close = new JButton("Close");
@@ -883,6 +883,21 @@ public class Utility {
 		}
 		return components;
 	}
+	
+	public static void submitBugReportTemp(String message) {
+		Preferences biosimrc = Preferences.userRoot();
+		String command = biosimrc.get("biosim.general.browser", "");
+		command = command + " http://www.async.ece.utah.edu/cgi-bin/atacs";
+		Runtime exec = Runtime.getRuntime();
+		try
+		{
+			exec.exec(command);
+		}
+		catch (IOException e1)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to open bug database.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
 	public static void submitBugReport(String message) {
 		JPanel reportBugPanel = new JPanel(new GridLayout(4,1));
@@ -948,7 +963,20 @@ public class Utility {
 						"\n\nDescription:\n"+bugDetail.getText().trim()+message);
 				Transport.send(mimeMessage);
 			} catch (MessagingException mex) {
-				mex.printStackTrace();
+				JOptionPane.showMessageDialog(Gui.frame, "Bug report failed, please submit manually.",
+						"Bug Report Failed", JOptionPane.ERROR_MESSAGE);
+				Preferences biosimrc = Preferences.userRoot();
+				String command = biosimrc.get("biosim.general.browser", "");
+				command = command + " http://www.async.ece.utah.edu/cgi-bin/atacs";
+				Runtime exec = Runtime.getRuntime();
+				try
+				{
+					exec.exec(command);
+				}
+				catch (IOException e1)
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to open bug database.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 	}

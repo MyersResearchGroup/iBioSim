@@ -6615,7 +6615,8 @@ public class SBMLutilities
 		{
 			if (!Gui.libsbmlFound)
 			{
-				// TODO: what if library missing
+				JOptionPane.showMessageDialog(Gui.frame, "Unable convert FBC model from Version 1 to Version 2.",
+						"Error Opening File", JOptionPane.ERROR_MESSAGE);
 			}
 			long numErrors = 0;
 			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
@@ -6807,7 +6808,7 @@ public class SBMLutilities
 				return null;
 			}
 		}
-		//document = convertToFBCVersion2(filename,document);
+		document = convertToFBCVersion2(filename,document);
 		return document;
 	}
 
