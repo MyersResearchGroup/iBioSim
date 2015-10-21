@@ -9,9 +9,11 @@ import learn.genenet.SpeciesCollection;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 
 import analysis.dynamicsim.hierarchical.util.Setup;
 import analysis.dynamicsim.hierarchical.util.ode.ODEState;
@@ -19,8 +21,7 @@ import analysis.dynamicsim.hierarchical.util.ode.ODEState;
 public class ParameterEstimator
 {
 
-	public static SBMLDocument estimate(SBMLDocument document, List<String> parameterList, Experiments experiments,
-			SpeciesCollection speciesCollection)
+	public static SBMLDocument estimate(SBMLDocument document, List<String> parameterList, Experiments experiments, SpeciesCollection speciesCollection)
 	{
 		final Model model = document.getModel();
 		final String modelId = model.getId();
@@ -32,7 +33,7 @@ public class ParameterEstimator
 			}
 		};
 		final EstimateState estimateState = new EstimateState(models, modelId, stateId);
-		;
+
 		final ODEState odeState = new ODEState();
 		initialize(model, estimateState, odeState, models);
 		// TODO: fill this out
@@ -57,8 +58,44 @@ public class ParameterEstimator
 
 		for (Reaction reaction : model.getListOfReactions())
 		{
-			Setup.setupSingleReaction(estimateState, reaction, reaction.getId(), reaction.getKineticLaw().getMath(), reaction.getReversible(),
-					reaction.getListOfReactants(), reaction.getListOfProducts(), reaction.getListOfModifiers(), models, null, null, 0);
+			String reactionID = reaction.getId();
+			if (reaction.isReversible())
+			{
+				for (SpeciesReference reactant : reaction.getListOfReactants())
+				{
+					Setup.setupSingleRevReactant(estimateState, reactionID, reactant.getSpecies(), reactant, reaction.getListOfProducts().size(), null);
+				}
+
+				for (SpeciesReference product : reaction.getListOfProducts())
+				{
+					Setup.setupSingleRevProduct(estimateState, reactionID, product.getSpecies(), product, reaction.getListOfReactants().size(), null);
+				}
+
+				for (ModifierSpeciesReference modifier : reaction.getListOfModifiers())
+				{
+					Setup.setupSingleModifier(estimateState, reactionID + "_fd", modifier.getSpecies());
+					Setup.setupSingleModifier(estimateState, reactionID + "_rv", modifier.getSpecies());
+				}
+			}
+			else
+			{
+				for (SpeciesReference reactant : reaction.getListOfReactants())
+				{
+					Setup.setupSingleReactant(estimateState, reactionID, reactant.getSpecies(), reactant, null);
+				}
+
+				for (SpeciesReference product : reaction.getListOfProducts())
+				{
+					Setup.setupSingleProduct(estimateState, reactionID, product.getSpecies(), product, null);
+				}
+
+				for (ModifierSpeciesReference modifier : reaction.getListOfModifiers())
+				{
+					Setup.setupSingleModifier(estimateState, reactionID, modifier.getSpecies());
+				}
+			}
+
+			Setup.setupSingleReaction(estimateState, reaction, reactionID, reaction.getKineticLaw().getMath(), reaction.getReversible(), models, null, null, 0.0);
 		}
 
 		odeState.getDvariablesdtime().put(estimateState.getID(), new HashMap<String, ASTNode>());

@@ -32,13 +32,14 @@ import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.Submodel;
 
+import analysis.dynamicsim.hierarchical.util.Evaluator;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.Setup;
 import analysis.dynamicsim.hierarchical.util.arrays.ArraysObject;
 import analysis.dynamicsim.hierarchical.util.arrays.ArraysPair;
 import analysis.dynamicsim.hierarchical.util.arrays.DimensionObject;
 import analysis.dynamicsim.hierarchical.util.arrays.IndexObject;
-import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalSpeciesReference;
 
 public abstract class HierarchicalArrays extends HierarchicalReplacement
 {
@@ -49,15 +50,13 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 
 	protected enum SetupType
 	{
-		PARAMETER, SPECIES, COMPARTMENT, ASSIGNMENT_RULE, RATE_RULE, EVENT, CONSTRAINT, INITIAL_ASSIGNMENT, REACTION, EVENT_ASSIGNMENT, SPECIES_REFERENCE;
+		PARAMETER, SPECIES, COMPARTMENT, ASSIGNMENT_RULE, RATE_RULE, EVENT, CONSTRAINT, INITIAL_ASSIGNMENT, REV_REACTION, REACTION, EVENT_ASSIGNMENT, SPECIES_REFERENCE, REACTANT, MODIFIER, PRODUCT;
 	}
 
-	public HierarchicalArrays(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
-			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
-			String quantityType, String abstraction) throws IOException, XMLStreamException
+	public HierarchicalArrays(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType,
+			String abstraction) throws IOException, XMLStreamException
 	{
-		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue,
-				running, interestingSpecies, quantityType, abstraction);
+		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
 	}
 
 	/**
@@ -107,6 +106,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 			{
 				dim.addDimension(id, dimension.getSize(), dimension.getArrayDimension());
 			}
+			numOfArrays++;
 		}
 
 		if (plugin.getIndexCount() > 0)
@@ -144,15 +144,15 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 
 			for (SpeciesReference reactant : reaction.getListOfReactants())
 			{
-				setupArrays(modelstate, id, "reactant", reactant);
+				setupArrays(modelstate, id, REACTANT, reactant);
 			}
 			for (SpeciesReference product : reaction.getListOfProducts())
 			{
-				setupArrays(modelstate, id, "product", product);
+				setupArrays(modelstate, id, PRODUCT, product);
 			}
 			for (ModifierSpeciesReference modifier : reaction.getListOfModifiers())
 			{
-				setupArrays(modelstate, id, "modifier", modifier);
+				setupArrays(modelstate, id, MODIFIER, modifier);
 			}
 		}
 	}
@@ -274,6 +274,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 			{
 				dim.addDimension(id, dimension.getSize(), dimension.getArrayDimension());
 			}
+			numOfArrays++;
 		}
 
 		if (plugin.getIndexCount() > 0)
@@ -293,8 +294,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 
 	}
 
-	private void setupArrayObject(ModelState modelstate, SBase sbase, String id, String parent, int[] sizes, int[] indices, int[] parentIndices,
-			SetupType type)
+	private void setupArrayObject(ModelState modelstate, SBase sbase, String id, String parent, int[] sizes, int[] indices, int[] parentIndices, SetupType type)
 	{
 		ASTNode clone;
 		List<String> variables;
@@ -305,8 +305,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 			case EVENT_ASSIGNMENT:
 				EventAssignment eventAssignment = (EventAssignment) sbase;
 				clone = eventAssignment.getMath().clone();
-				variables = HierarchicalUtilities.getIndexedObject(modelstate, id, eventAssignment.getVariable(), "ed", "variable", parentIndices,
-						getReplacements());
+				variables = HierarchicalUtilities.getIndexedObject(modelstate, id, eventAssignment.getVariable(), regularPrefix, "variable", parentIndices, getReplacements());
 
 				HierarchicalUtilities.replaceDimensionIds(clone, regularPrefix, parentIndices);
 
@@ -315,6 +314,30 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 				for (String variable : variables)
 				{
 					Setup.setupEventAssignment(modelstate, variable, parent, clone, eventAssignment, getModels(), getIbiosimFunctionDefinitions());
+				}
+				break;
+			case REACTANT:
+				SpeciesReference reactant = (SpeciesReference) sbase;
+				List<String> reactantIDs = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, id, reactant.getSpecies(), parentIndices, getCurrentTime(), getReplacements());
+				for (String spefRefID : reactantIDs)
+				{
+					Setup.setupSingleReactant(modelstate, parent, spefRefID, reactant, getReplacements());
+				}
+				break;
+			case PRODUCT:
+				SpeciesReference product = (SpeciesReference) sbase;
+				List<String> productIDs = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, id, product.getSpecies(), parentIndices, getCurrentTime(), getReplacements());
+				for (String spefRefID : productIDs)
+				{
+					Setup.setupSingleProduct(modelstate, parent, spefRefID, product, getReplacements());
+				}
+				break;
+			case MODIFIER:
+				ModifierSpeciesReference modifier = (ModifierSpeciesReference) sbase;
+				List<String> modIDs = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, id, modifier.getSpecies(), parentIndices, getCurrentTime(), getReplacements());
+				for (String modID : modIDs)
+				{
+					Setup.setupSingleModifier(modelstate, parent, modID);
 				}
 				break;
 			}
@@ -336,8 +359,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 			case RATE_RULE:
 				RateRule rateRule = (RateRule) sbase;
 				clone = rateRule.getMath().clone();
-				variables = HierarchicalUtilities.getIndexedObject(modelstate, id, rateRule.getVariable(), regularPrefix, "variable", indices,
-						getReplacements());
+				variables = HierarchicalUtilities.getIndexedObject(modelstate, id, rateRule.getVariable(), regularPrefix, "variable", indices, getReplacements());
 				HierarchicalUtilities.replaceDimensionIds(clone, regularPrefix, indices);
 				HierarchicalUtilities.replaceSelector(modelstate, getReplacements(), clone);
 				for (String variable : variables)
@@ -348,8 +370,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 			case ASSIGNMENT_RULE:
 				AssignmentRule assignRule = (AssignmentRule) sbase;
 				clone = assignRule.getMath().clone();
-				variables = HierarchicalUtilities.getIndexedObject(modelstate, id, assignRule.getVariable(), regularPrefix, "variable", indices,
-						getReplacements());
+				variables = HierarchicalUtilities.getIndexedObject(modelstate, id, assignRule.getVariable(), regularPrefix, "variable", indices, getReplacements());
 				HierarchicalUtilities.replaceDimensionIds(clone, regularPrefix, indices);
 				HierarchicalUtilities.replaceSelector(modelstate, getReplacements(), clone);
 				for (String variable : variables)
@@ -360,8 +381,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 			case INITIAL_ASSIGNMENT:
 				InitialAssignment init = (InitialAssignment) sbase;
 				clone = init.getMath().clone();
-				variables = HierarchicalUtilities.getIndexedObject(modelstate, id, init.getVariable(), regularPrefix, "symbol", indices,
-						getReplacements());
+				variables = HierarchicalUtilities.getIndexedObject(modelstate, id, init.getVariable(), regularPrefix, "symbol", indices, getReplacements());
 				HierarchicalUtilities.replaceDimensionIds(clone, regularPrefix, indices);
 				HierarchicalUtilities.replaceSelector(modelstate, getReplacements(), clone);
 				for (String variable : variables)
@@ -375,8 +395,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 				clone = event.getTrigger().getMath().clone();
 				HierarchicalUtilities.replaceDimensionIds(clone, regularPrefix, indices);
 				HierarchicalUtilities.replaceSelector(modelstate, getReplacements(), clone);
-				Setup.setupSingleEvent(modelstate, newId, clone, event.getUseValuesFromTriggerTime(), event.getTrigger().getInitialValue(), event
-						.getTrigger().getPersistent(), getModels(), getIbiosimFunctionDefinitions());
+				Setup.setupSingleEvent(modelstate, newId, clone, event.getUseValuesFromTriggerTime(), event.getTrigger().getInitialValue(), event.getTrigger().getPersistent(), getModels(), getIbiosimFunctionDefinitions());
 				if (event.isSetPriority())
 				{
 					clone = event.getPriority().getMath().clone();
@@ -392,14 +411,20 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 				for (EventAssignment eventAssignment : event.getListOfEventAssignments())
 				{
 					String eventAssignmentId = event.getId() + "_" + eventAssignment.getVariable();
-					setupArrayObject(modelstate, eventAssignmentId, newId, eventAssignment, indices, SetupType.EVENT_ASSIGNMENT);
+					if (modelstate.getArrays().get(eventAssignmentId) == null)
+					{
+						Setup.setupEventAssignment(modelstate, eventAssignment.getVariable(), newId, eventAssignment.getMath(), eventAssignment, getModels(), getIbiosimFunctionDefinitions());
+					}
+					else
+					{
+						setupArrayObject(modelstate, eventAssignmentId, newId, eventAssignment, indices, SetupType.EVENT_ASSIGNMENT);
+					}
 				}
 				break;
 			case EVENT_ASSIGNMENT:
 				EventAssignment eventAssignment = (EventAssignment) sbase;
 				clone = eventAssignment.getMath().clone();
-				variables = HierarchicalUtilities.getIndexedObject(modelstate, id, eventAssignment.getVariable(), eventAssignmentPrefix, "variable",
-						indices, getReplacements());
+				variables = HierarchicalUtilities.getIndexedObject(modelstate, id, eventAssignment.getVariable(), eventAssignmentPrefix, "variable", indices, getReplacements());
 				if (parentIndices != null)
 				{
 					HierarchicalUtilities.replaceDimensionIds(clone, regularPrefix, parentIndices);
@@ -412,7 +437,13 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 				}
 				break;
 			case REACTION:
-				setupArrayReaction(modelstate, id, indices);
+				Reaction reaction = (Reaction) sbase;
+				setupArrayReaction(modelstate, id, id, reaction, indices);
+				break;
+			case REV_REACTION:
+				Reaction revReaction = (Reaction) sbase;
+				setupArrayReaction(modelstate, id, id + "_fd", revReaction, indices);
+				setupArrayReaction(modelstate, id, id + "_rv", revReaction, indices);
 				break;
 			}
 
@@ -426,45 +457,6 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 				}
 			}
 		}
-	}
-
-	private void setupArrayReaction(ModelState modelstate, String id, int[] indices)
-	{
-		String type;
-
-		String arrayedId = HierarchicalUtilities.getArrayedID(modelstate, id, indices);
-
-		Set<HierarchicalStringDoublePair> speciesSet = modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(id);
-
-		if (modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(arrayedId) == null)
-		{
-			modelstate.getReactionToSpeciesAndStoichiometrySetMap().put(arrayedId, new HashSet<HierarchicalStringDoublePair>());
-		}
-
-		for (HierarchicalStringDoublePair speciesAndStoichiometry : speciesSet)
-		{
-
-			if (speciesAndStoichiometry.doub < 0)
-			{
-				type = "reactant";
-			}
-			else
-			{
-				type = "product";
-			}
-			List<String> speciesIDs = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, id, type, speciesAndStoichiometry.string, indices,
-					getCurrentTime(), getReplacements());
-
-			for (String speciesID : speciesIDs)
-			{
-				modelstate.getSpeciesToAffectedReactionSetMap().get(speciesID).add(arrayedId);
-
-				modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(arrayedId)
-						.add(new HierarchicalStringDoublePair(speciesID, speciesAndStoichiometry.doub));
-			}
-
-		}
-		HierarchicalUtilities.updatePropensity(modelstate, id, getCurrentTime(), indices, getReplacements());
 	}
 
 	// TODO: instead of setting up variable, just store the value and check
@@ -482,8 +474,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 				modelstate.getSpeciesIDSet().add(newId);
 				modelstate.getSpeciesToCompartmentNameMap().get(id);
 				String indexedCompartment;
-				List<String> compartments = HierarchicalUtilities.getIndexedObject(modelstate, id, ((Species) variable).getCompartment(), "d",
-						"compartment", indices, getReplacements());
+				List<String> compartments = HierarchicalUtilities.getIndexedObject(modelstate, id, ((Species) variable).getCompartment(), "d", "compartment", indices, getReplacements());
 
 				if (compartments == null || compartments.size() == 0)
 				{
@@ -537,4 +528,89 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 		}
 		setupArrayValue(state, id, sizes, indices);
 	}
+
+	private void setupArrayReaction(ModelState modelstate, String parentId, String id, Reaction revReaction, int[] indices)
+	{
+		String newId = HierarchicalUtilities.getArrayedID(modelstate, id, indices);
+		ASTNode clone = modelstate.getReactionToFormulaMap().get(id).clone();
+		HierarchicalUtilities.replaceDimensionIds(clone, regularPrefix, indices);
+		HierarchicalUtilities.replaceSelector(modelstate, getReplacements(), clone);
+		modelstate.getReactionToFormulaMap().put(newId, clone);
+
+		if (!modelstate.getReactionToReactantStoichiometrySetMap().containsKey(newId))
+		{
+			modelstate.getReactionToReactantStoichiometrySetMap().put(newId, new HashSet<HierarchicalSpeciesReference>());
+		}
+
+		if (!modelstate.getReactionToSpeciesAndStoichiometrySetMap().containsKey(newId))
+		{
+			modelstate.getReactionToSpeciesAndStoichiometrySetMap().put(newId, new HashSet<HierarchicalSpeciesReference>());
+		}
+
+		Set<HierarchicalSpeciesReference> reactants = modelstate.getReactionToReactantStoichiometrySetMap().get(id);
+
+		for (HierarchicalSpeciesReference pair : reactants)
+		{
+			String species = pair.getString();
+			double stoic = pair.getDoub();
+			String type = pair.getType();
+			String arrayId = parentId + "__" + type + "__" + species;
+			List<String> speciesRef = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, arrayId, species, indices, getCurrentTime(), getReplacements());
+			for (String specRef : speciesRef)
+			{
+				modelstate.getReactionToReactantStoichiometrySetMap().get(newId).add(new HierarchicalSpeciesReference(specRef, stoic, type));
+			}
+		}
+
+		reactants = modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(id);
+
+		for (HierarchicalSpeciesReference pair : reactants)
+		{
+			String species = pair.getString();
+			double stoic = pair.getDoub();
+			String type = pair.getType();
+			String arrayId = parentId + "__" + type + "__" + species;
+			List<String> speciesRef = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, arrayId, species, indices, getCurrentTime(), getReplacements());
+			for (String specRef : speciesRef)
+			{
+				modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(newId).add(new HierarchicalSpeciesReference(specRef, stoic, type));
+
+				if (!modelstate.getSpeciesToAffectedReactionSetMap().containsKey(specRef))
+				{
+					modelstate.getSpeciesToAffectedReactionSetMap().put(specRef, new HashSet<String>());
+				}
+
+				modelstate.getSpeciesToAffectedReactionSetMap().get(specRef).add(newId);
+			}
+
+		}
+
+		for (ModifierSpeciesReference modifier : revReaction.getListOfModifiers())
+		{
+			String species = modifier.getSpecies();
+			String arrayId = id + "__" + MODIFIER + "__" + species;
+
+			List<String> arrayedIds = HierarchicalUtilities.getIndexedSpeciesReference(modelstate, arrayId, species, indices, getCurrentTime(), getReplacements());
+
+			for (String refId : arrayedIds)
+			{
+				if (!modelstate.getSpeciesToAffectedReactionSetMap().containsKey(refId))
+				{
+					modelstate.getSpeciesToAffectedReactionSetMap().put(refId, new HashSet<String>());
+				}
+
+				modelstate.getSpeciesToAffectedReactionSetMap().get(refId).add(newId);
+			}
+		}
+		// TODO: non constant stoichiometry
+
+		boolean notEnoughMoleculesFlagFd = HierarchicalUtilities.getNotEnoughEnoughMolecules(modelstate, newId, getReplacements());
+		modelstate.getReactionToHasEnoughMolecules().put(newId, notEnoughMoleculesFlagFd);
+
+		double propensity = Evaluator.evaluateExpressionRecursive(modelstate, HierarchicalUtilities.inlineFormula(modelstate, clone, getModels(), getIbiosimFunctionDefinitions()), false, getCurrentTime(), null, null, getReplacements());
+
+		modelstate.setPropensity(getReplacements(), newId, propensity);
+
+	}
+
 }

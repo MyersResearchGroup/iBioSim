@@ -17,6 +17,7 @@ import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
@@ -33,13 +34,10 @@ import analysis.dynamicsim.hierarchical.util.arrays.IndexObject;
 public abstract class HierarchicalSetup extends HierarchicalArrays
 {
 
-	public HierarchicalSetup(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
-			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
-			String quantityType, String abstraction) throws IOException, XMLStreamException
+	public HierarchicalSetup(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType,
+			String abstraction) throws IOException, XMLStreamException
 	{
-		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue,
-				running, interestingSpecies, quantityType, abstraction);
-
+		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
 	}
 
 	/**
@@ -130,18 +128,15 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 				continue;
 			}
 
-			Setup.setupSingleEvent(modelstate, id, event.getTrigger().getMath(), event.getUseValuesFromTriggerTime(), event.getTrigger()
-					.getInitialValue(), event.getTrigger().getPersistent(), getModels(), getIbiosimFunctionDefinitions());
+			Setup.setupSingleEvent(modelstate, id, event.getTrigger().getMath(), event.getUseValuesFromTriggerTime(), event.getTrigger().getInitialValue(), event.getTrigger().getPersistent(), getModels(), getIbiosimFunctionDefinitions());
 
 			if (event.isSetPriority())
 			{
-				Setup.setupSinglePriority(modelstate, id, event.getPriority().getMetaId(), event.getPriority().getMath(), getModels(),
-						getIbiosimFunctionDefinitions());
+				Setup.setupSinglePriority(modelstate, id, event.getPriority().getMetaId(), event.getPriority().getMath(), getModels(), getIbiosimFunctionDefinitions());
 			}
 			if (event.isSetDelay())
 			{
-				Setup.setupSingleDelay(modelstate, id, event.getDelay().getMetaId(), event.getDelay().getMath(), getModels(),
-						getIbiosimFunctionDefinitions());
+				Setup.setupSingleDelay(modelstate, id, event.getDelay().getMetaId(), event.getDelay().getMath(), getModels(), getIbiosimFunctionDefinitions());
 			}
 
 			setupEventAssignments(modelstate, event, id);
@@ -170,8 +165,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 				modelstate.getInitAssignment().put(initAssignment.getVariable(), initAssignment.getMath());
 			}
 		}
-		Setup.calculateInitAssignments(modelstate, modelstate.getInitAssignment(), modelstate.getAssignmentRulesList(), getModels(),
-				getIbiosimFunctionDefinitions(), getReplacements(), getCurrentTime());
+		Setup.calculateInitAssignments(modelstate, modelstate.getInitAssignment(), modelstate.getAssignmentRulesList(), getModels(), getIbiosimFunctionDefinitions(), getReplacements(), getCurrentTime());
 
 	}
 
@@ -247,8 +241,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 			String variable = assignment.getVariable();
 			String assignmentId = event.getId() + "_" + assignment.getVariable();
 
-			Setup.setupEventAssignment(modelstate, variable, event.getId(), assignment.getMath(), assignment, getModels(),
-					getIbiosimFunctionDefinitions());
+			Setup.setupEventAssignment(modelstate, variable, event.getId(), assignment.getMath(), assignment, getModels(), getIbiosimFunctionDefinitions());
 			setupArrays(modelstate, assignmentId, assignment, SetupType.EVENT_ASSIGNMENT);
 			setupArrayObject(modelstate, assignmentId, event.getId(), assignment, null, SetupType.EVENT_ASSIGNMENT);
 			if (!modelstate.isArrayedObject(assignmentId))
@@ -264,15 +257,13 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 							int[] newIndices = new int[indices.size()];
 							for (int i = 0; i < newIndices.length; i++)
 							{
-								newIndices[i] = (int) Evaluator.evaluateExpressionRecursive(modelstate, indices.get(i), false, getCurrentTime(),
-										null, null, getReplacements());
+								newIndices[i] = (int) Evaluator.evaluateExpressionRecursive(modelstate, indices.get(i), false, getCurrentTime(), null, null, getReplacements());
 							}
 							variable = HierarchicalUtilities.getArrayedID(modelstate, variable, newIndices);
 						}
 					}
 				}
-				Setup.setupEventAssignment(modelstate, variable, event.getId(), assignment.getMath(), assignment, getModels(),
-						getIbiosimFunctionDefinitions());
+				Setup.setupEventAssignment(modelstate, variable, event.getId(), assignment.getMath(), assignment, getModels(), getIbiosimFunctionDefinitions());
 			}
 
 		}
@@ -317,11 +308,11 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 
 	protected void setupPropensities(ModelState modelstate)
 	{
+		modelstate.resetPropensity();
 		for (String reaction : modelstate.getSetOfReactions())
 		{
-			Setup.setupSingleReactionPropensity(modelstate, reaction, modelstate.getReactionToFormulaMap().get(reaction), modelstate
-					.getReactionToHasEnoughMolecules().get(reaction), getModels(), getIbiosimFunctionDefinitions(), getReplacements(),
-					getCurrentTime());
+			boolean notEnoughMoleculesFlagFd = HierarchicalUtilities.getNotEnoughEnoughMolecules(modelstate, reaction, getReplacements());
+			Setup.setupSingleReactionPropensity(modelstate, reaction, modelstate.getReactionToFormulaMap().get(reaction), notEnoughMoleculesFlagFd, getModels(), getIbiosimFunctionDefinitions(), getReplacements(), getCurrentTime());
 		}
 
 	}
@@ -329,25 +320,33 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 	protected void setupReactions(ModelState modelstate)
 	{
 		Reaction reaction;
+		String reactionID;
 		for (int i = 0; i < modelstate.getNumReactions(); i++)
 		{
 			reaction = getModels().get(modelstate.getModel()).getReaction(i);
-
-			if (reaction.isSetId() && modelstate.isDeletedBySID(reaction.getId()))
+			reactionID = reaction.getId();
+			if (reaction.isSetId() && modelstate.isDeletedBySID(reactionID))
 			{
+				if (modelstate.isHierarchical(reactionID))
+				{
+					modelstate.getReactionToHasEnoughMolecules().put(reactionID, false);
+				}
 				continue;
 			}
-			else if (reaction.isSetMetaId() && modelstate.isDeletedByMetaID(reaction.getMetaId()))
+			else if (reaction.isSetMetaId() && modelstate.isDeletedByMetaID(reactionID))
 			{
 				continue;
 			}
 
 			if (!reaction.isSetKineticLaw())
 			{
+				if (modelstate.isHierarchical(reactionID))
+				{
+					modelstate.getReactionToHasEnoughMolecules().put(reactionID, false);
+				}
 				continue;
 			}
 
-			String reactionID = reaction.getId();
 			String species = reactionID;
 			if (reactionID.contains("Degradation") && getReplacements().containsKey(species))
 			{
@@ -357,21 +356,58 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 				}
 			}
 
-			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
-			Setup.setupSingleReaction(modelstate, reaction, reactionID, reactionFormula, reaction.getReversible(), reaction.getListOfReactants(),
-					reaction.getListOfProducts(), reaction.getListOfModifiers(), getModels(), getIbiosimFunctionDefinitions(), getReplacements(),
-					getCurrentTime());
-
 			if (reaction.isReversible())
 			{
-				setupArrays(modelstate, reactionID + "_fd", reaction, SetupType.REACTION);
-				setupArrayObject(modelstate, reactionID + "_fd", null, reaction, null, SetupType.REACTION);
-				setupArrays(modelstate, reactionID + "_rv", reaction, SetupType.REACTION);
-				setupArrayObject(modelstate, reactionID + "_rv", null, reaction, null, SetupType.REACTION);
+				for (SpeciesReference reactant : reaction.getListOfReactants())
+				{
+					Setup.setupSingleRevReactant(modelstate, reactionID, reactant.getSpecies(), reactant, reaction.getListOfProducts().size(), getReplacements());
+				}
+
+				for (SpeciesReference product : reaction.getListOfProducts())
+				{
+					Setup.setupSingleRevProduct(modelstate, reactionID, product.getSpecies(), product, reaction.getListOfReactants().size(), getReplacements());
+				}
+
+				for (ModifierSpeciesReference modifier : reaction.getListOfModifiers())
+				{
+					Setup.setupSingleModifier(modelstate, reactionID + "_fd", modifier.getSpecies());
+					Setup.setupSingleModifier(modelstate, reactionID + "_rv", modifier.getSpecies());
+				}
 			}
 			else
 			{
-				setupArrays(modelstate, reactionID, reaction, SetupType.REACTION);
+				for (SpeciesReference reactant : reaction.getListOfReactants())
+				{
+					Setup.setupSingleReactant(modelstate, reactionID, reactant.getSpecies(), reactant, getReplacements());
+				}
+
+				for (SpeciesReference product : reaction.getListOfProducts())
+				{
+					Setup.setupSingleProduct(modelstate, reactionID, product.getSpecies(), product, getReplacements());
+				}
+
+				for (ModifierSpeciesReference modifier : reaction.getListOfModifiers())
+				{
+					Setup.setupSingleModifier(modelstate, reactionID, modifier.getSpecies());
+				}
+			}
+			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
+
+			setupArrays(modelstate, reactionID, reaction, SetupType.REACTION);
+
+			Setup.setupSingleReaction(modelstate, reaction, reactionID, reactionFormula, reaction.getReversible(), getModels(), getIbiosimFunctionDefinitions(), getReplacements(), getCurrentTime());
+
+			if (reaction.isReversible())
+			{
+				if (modelstate.isArrayedObject(reactionID))
+				{
+					modelstate.addArrayedObject(reactionID + "_fd");
+					modelstate.addArrayedObject(reactionID + "_rv");
+				}
+				setupArrayObject(modelstate, reactionID, null, reaction, null, SetupType.REV_REACTION);
+			}
+			else
+			{
 				setupArrayObject(modelstate, reactionID, null, reaction, null, SetupType.REACTION);
 			}
 
@@ -402,8 +438,7 @@ public abstract class HierarchicalSetup extends HierarchicalArrays
 				setupArrayObject(modelstate, id, null, assignRule, null, SetupType.ASSIGNMENT_RULE);
 				if (!modelstate.isArrayedObject(id))
 				{
-					Setup.setupSingleAssignmentRule(modelstate, assignRule.getVariable(), assignRule.getMath(), getModels(),
-							getIbiosimFunctionDefinitions());
+					Setup.setupSingleAssignmentRule(modelstate, assignRule.getVariable(), assignRule.getMath(), getModels(), getIbiosimFunctionDefinitions());
 				}
 			}
 			else if (rule.isRate())

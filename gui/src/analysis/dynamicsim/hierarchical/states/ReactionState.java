@@ -9,7 +9,7 @@ import java.util.Set;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 
-import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalSpeciesReference;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
 public abstract class ReactionState extends SpeciesState
@@ -20,8 +20,8 @@ public abstract class ReactionState extends SpeciesState
 	private final Map<String, ASTNode>								reactionToFormulaMap;
 	private final Map<String, Set<HierarchicalStringPair>>			reactionToNonconstantStoichiometriesSetMap;
 	private final Map<String, Double>								reactionToPropensityMap;
-	private final Map<String, Set<HierarchicalStringDoublePair>>	reactionToReactantStoichiometrySetMap;
-	private final Map<String, Set<HierarchicalStringDoublePair>>	reactionToSpeciesAndStoichiometrySetMap;
+	private final Map<String, Set<HierarchicalSpeciesReference>>	reactionToReactantStoichiometrySetMap;
+	private final Map<String, Set<HierarchicalSpeciesReference>>	reactionToSpeciesAndStoichiometrySetMap;
 	private final Map<String, Boolean>								reactionToHasEnoughMoleculesMap;
 
 	public ReactionState(Map<String, Model> models, String bioModel, String submodelID)
@@ -30,8 +30,8 @@ public abstract class ReactionState extends SpeciesState
 
 		nonConstantStoichiometry = new HashSet<String>();
 		reactionToPropensityMap = new HashMap<String, Double>((int) (getNumReactions() * 1.5));
-		reactionToSpeciesAndStoichiometrySetMap = new HashMap<String, Set<HierarchicalStringDoublePair>>((int) (getNumReactions() * 1.5));
-		reactionToReactantStoichiometrySetMap = new HashMap<String, Set<HierarchicalStringDoublePair>>((int) (getNumReactions() * 1.5));
+		reactionToSpeciesAndStoichiometrySetMap = new HashMap<String, Set<HierarchicalSpeciesReference>>((int) (getNumReactions() * 1.5));
+		reactionToReactantStoichiometrySetMap = new HashMap<String, Set<HierarchicalSpeciesReference>>((int) (getNumReactions() * 1.5));
 		reactionToFormulaMap = new HashMap<String, ASTNode>((int) (getNumReactions() * 1.5));
 		reactionToHasEnoughMoleculesMap = new HashMap<String, Boolean>((int) (getNumReactions() * 1.5));
 		nonconstantParameterIDSet = new LinkedHashSet<String>();
@@ -78,12 +78,12 @@ public abstract class ReactionState extends SpeciesState
 		return reactionToPropensityMap;
 	}
 
-	public Map<String, Set<HierarchicalStringDoublePair>> getReactionToReactantStoichiometrySetMap()
+	public Map<String, Set<HierarchicalSpeciesReference>> getReactionToReactantStoichiometrySetMap()
 	{
 		return reactionToReactantStoichiometrySetMap;
 	}
 
-	public Map<String, Set<HierarchicalStringDoublePair>> getReactionToSpeciesAndStoichiometrySetMap()
+	public Map<String, Set<HierarchicalSpeciesReference>> getReactionToSpeciesAndStoichiometrySetMap()
 	{
 		return reactionToSpeciesAndStoichiometrySetMap;
 	}
@@ -103,4 +103,7 @@ public abstract class ReactionState extends SpeciesState
 		return reactionToHasEnoughMoleculesMap;
 	}
 
+	public abstract void setPropensity(Map<String, Double> replacements, String reaction, double value);
+
+	public abstract double getPropensity(Map<String, Double> replacements, String reaction);
 }
