@@ -29,35 +29,39 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 public abstract class HierarchicalSimulation implements ParentSimulator
 {
 
-	final private int		SBML_LEVEL		= 3;
-	final private int		SBML_VERSION	= 1;
+	final private int				SBML_LEVEL		= 3;
+	final private int				SBML_VERSION	= 1;
 
-	private BufferedWriter	bufferedTSDWriter;
-	private boolean			cancelFlag;
-	private boolean			constraintFailureFlag;
-	private boolean			constraintFlag;
-	private int				currentRun;
-	private double			currentTime;
-	private String[]		interestingSpecies;
-	private double			maxTimeStep;
-	private double			minTimeStep;
-	private String			outputDirectory;
-	private boolean			printConcentrations;
-	private HashSet<String>	printConcentrationSpecies;
-	private double			printInterval;
-	private JProgressBar	progress;
-	private JFrame			running;
-	private String			SBMLFileName;
-	private boolean			sbmlHasErrorsFlag;
-	private String			separator;
-	private boolean			stoichAmpBoolean;
-	private double			stoichAmpGridValue;
-	private double			timeLimit;
-	private String			rootDirectory;
-	private FileWriter		TSDWriter;
-	private SBMLDocument	document;
-	private String			abstraction;
-	private int				totalRuns;
+	protected final static String	PRODUCT			= "product";
+	protected final static String	REACTANT		= "reactant";
+	protected final static String	MODIFIER		= "modifier";
+
+	private BufferedWriter			bufferedTSDWriter;
+	private boolean					cancelFlag;
+	private boolean					constraintFailureFlag;
+	private boolean					constraintFlag;
+	private int						currentRun;
+	private double					currentTime;
+	private String[]				interestingSpecies;
+	private double					maxTimeStep;
+	private double					minTimeStep;
+	private String					outputDirectory;
+	private boolean					printConcentrations;
+	private HashSet<String>			printConcentrationSpecies;
+	private double					printInterval;
+	private JProgressBar			progress;
+	private JFrame					running;
+	private String					SBMLFileName;
+	private boolean					sbmlHasErrorsFlag;
+	private String					separator;
+	private boolean					stoichAmpBoolean;
+	private double					stoichAmpGridValue;
+	private double					timeLimit;
+	private String					rootDirectory;
+	private FileWriter				TSDWriter;
+	private SBMLDocument			document;
+	private String					abstraction;
+	private int						totalRuns;
 
 	public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
 			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
@@ -576,4 +580,5 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	{
 		return totalRuns;
 	}
+
 }

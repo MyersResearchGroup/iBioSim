@@ -25,4 +25,18 @@ public class EstimateState extends ArraysState
 	{
 		this.getVariableToValueMap().put(variable, value);
 	}
+
+	@Override
+	public void setPropensity(Map<String, Double> replacements, String reaction, double value)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public double getPropensity(Map<String, Double> replacements, String reaction)
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

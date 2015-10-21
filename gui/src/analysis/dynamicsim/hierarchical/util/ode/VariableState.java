@@ -9,7 +9,7 @@ import java.util.Set;
 import org.sbml.jsbml.ASTNode;
 
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
-import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalSpeciesReference;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
 public class VariableState
@@ -100,16 +100,16 @@ public class VariableState
 		String modelstateID = modelstate.getID();
 
 		ASTNode formula = modelstate.getReactionToFormulaMap().get(reaction);
-		Set<HierarchicalStringDoublePair> reactantAndStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(reaction);
-		Set<HierarchicalStringDoublePair> speciesAndStoichiometrySet = modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reaction);
+		Set<HierarchicalSpeciesReference> reactantAndStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(reaction);
+		Set<HierarchicalSpeciesReference> speciesAndStoichiometrySet = modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(reaction);
 		Set<HierarchicalStringPair> nonConstantStoichiometrySet = modelstate.getReactionToNonconstantStoichiometriesSetMap().get(reaction);
 
 		if (reactantAndStoichiometrySet != null)
 		{
-			for (HierarchicalStringDoublePair reactantAndStoichiometry : reactantAndStoichiometrySet)
+			for (HierarchicalSpeciesReference reactantAndStoichiometry : reactantAndStoichiometrySet)
 			{
-				String reactant = reactantAndStoichiometry.string;
-				double stoichiometry = reactantAndStoichiometry.doub;
+				String reactant = reactantAndStoichiometry.getString();
+				double stoichiometry = reactantAndStoichiometry.getDoub();
 				ASTNode stoichNode = new ASTNode();
 				stoichNode.setValue(-1 * stoichiometry);
 				dvariablesdtime.get(modelstateID).put(reactant,
@@ -119,10 +119,10 @@ public class VariableState
 
 		if (speciesAndStoichiometrySet != null)
 		{
-			for (HierarchicalStringDoublePair speciesAndStoichiometry : speciesAndStoichiometrySet)
+			for (HierarchicalSpeciesReference speciesAndStoichiometry : speciesAndStoichiometrySet)
 			{
-				String species = speciesAndStoichiometry.string;
-				double stoichiometry = speciesAndStoichiometry.doub;
+				String species = speciesAndStoichiometry.getString();
+				double stoichiometry = speciesAndStoichiometry.getDoub();
 
 				if (stoichiometry > 0)
 				{

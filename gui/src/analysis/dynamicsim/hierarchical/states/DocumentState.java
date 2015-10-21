@@ -241,13 +241,18 @@ public abstract class DocumentState implements State
 		this.numSpecies = numSpecies;
 	}
 
-	public void setPropensity(double propensity)
-	{
-		this.propensity = propensity;
-	}
-
 	public void setVariablesToPrint(HashSet<String> variablesToPrint)
 	{
 		this.variablesToPrint = variablesToPrint;
+	}
+
+	public void resetPropensity()
+	{
+		this.propensity = 0;
+	}
+
+	protected void setPropensity(double propensity)
+	{
+		this.propensity = propensity;
 	}
 }

@@ -16,7 +16,7 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.sbml.jsbml.ASTNode;
 
-import analysis.dynamicsim.hierarchical.states.ReactionState;
+import analysis.dynamicsim.hierarchical.states.ArraysState;
 
 /**
  * This class is used to evaluate math functions.
@@ -48,8 +48,7 @@ public final class Evaluator
 	 *            - dependencies due to hierarchy
 	 * @return the evaluated value
 	 */
-	public static double evaluateExpressionRecursive(ReactionState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
-			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
+	public static double evaluateExpressionRecursive(ArraysState modelstate, ASTNode node, boolean evaluateState, double t, double[] y, Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		if (node.isBoolean())
 		{
@@ -85,8 +84,7 @@ public final class Evaluator
 	/*
 	 * Evaluates boolean functions
 	 */
-	private static double evaluateBoolean(ReactionState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
-			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
+	private static double evaluateBoolean(ArraysState modelstate, ASTNode node, boolean evaluateState, double t, double[] y, Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		switch (node.getType())
 		{
@@ -101,8 +99,7 @@ public final class Evaluator
 		}
 		case LOGICAL_NOT:
 		{
-			return HierarchicalUtilities.getDoubleFromBoolean(!(HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate,
-					node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements))));
+			return HierarchicalUtilities.getDoubleFromBoolean(!(HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements))));
 		}
 		case LOGICAL_AND:
 		{
@@ -111,9 +108,7 @@ public final class Evaluator
 
 			for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 			{
-				andResult = andResult
-						&& HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter),
-								evaluateState, t, y, variableToIndexMap, replacements));
+				andResult = andResult && HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements));
 			}
 
 			return HierarchicalUtilities.getDoubleFromBoolean(andResult);
@@ -126,9 +121,7 @@ public final class Evaluator
 
 			for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 			{
-				orResult = orResult
-						|| HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter),
-								evaluateState, t, y, variableToIndexMap, replacements));
+				orResult = orResult || HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements));
 			}
 
 			return HierarchicalUtilities.getDoubleFromBoolean(orResult);
@@ -137,14 +130,11 @@ public final class Evaluator
 		case LOGICAL_XOR:
 		{
 
-			boolean xorResult = (node.getChildCount() == 0) ? false : HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(
-					modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements));
+			boolean xorResult = (node.getChildCount() == 0) ? false : HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(0), evaluateState, t, y, variableToIndexMap, replacements));
 
 			for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
 			{
-				xorResult = xorResult
-						^ HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState,
-								t, y, variableToIndexMap, replacements));
+				xorResult = xorResult ^ HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements));
 			}
 
 			return HierarchicalUtilities.getDoubleFromBoolean(xorResult);
@@ -293,8 +283,7 @@ public final class Evaluator
 		return 0;
 	}
 
-	private static double evaluateFunction(ReactionState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
-			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
+	private static double evaluateFunction(ArraysState modelstate, ASTNode node, boolean evaluateState, double t, double[] y, Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		switch (node.getType())
 		{
@@ -307,10 +296,8 @@ public final class Evaluator
 
 			if (nodeName.equals("uniform"))
 			{
-				double leftChildValue = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap,
-						replacements);
-				double rightChildValue = evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap,
-						replacements);
+				double leftChildValue = evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements);
+				double rightChildValue = evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap, replacements);
 				double lowerBound = Math.min(leftChildValue, rightChildValue);
 				double upperBound = Math.max(leftChildValue, rightChildValue);
 				UniformRealDistribution distrib = new UniformRealDistribution(lowerBound, upperBound);
@@ -472,8 +459,7 @@ public final class Evaluator
 			int childIter = 0;
 			for (; childIter < node.getChildCount() - 1; childIter += 2)
 			{
-				boolean condition = HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter + 1),
-						evaluateState, t, y, variableToIndexMap, replacements));
+				boolean condition = HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter + 1), evaluateState, t, y, variableToIndexMap, replacements));
 				if (condition)
 				{
 					return evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements);
@@ -482,8 +468,7 @@ public final class Evaluator
 			}
 			if (node.getChildCount() % 2 == 1)
 			{
-				return evaluateExpressionRecursive(modelstate, node.getChild(node.getChildCount() - 1), evaluateState, t, y, variableToIndexMap,
-						replacements);
+				return evaluateExpressionRecursive(modelstate, node.getChild(node.getChildCount() - 1), evaluateState, t, y, variableToIndexMap, replacements);
 			}
 
 			return 0;
@@ -491,8 +476,7 @@ public final class Evaluator
 
 		case FUNCTION_ROOT:
 		{
-			return FastMath.pow(evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap, replacements),
-					1 / evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements));
+			return FastMath.pow(evaluateExpressionRecursive(modelstate, node.getRightChild(), evaluateState, t, y, variableToIndexMap, replacements), 1 / evaluateExpressionRecursive(modelstate, node.getLeftChild(), evaluateState, t, y, variableToIndexMap, replacements));
 		}
 		case FUNCTION_SEC:
 		{
@@ -622,10 +606,7 @@ public final class Evaluator
 				id = node.getChild(0).getName();
 				for (int childIter = 1; childIter < node.getChildCount(); childIter++)
 				{
-					id = id
-							+ "["
-							+ (int) evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap,
-									replacements) + "]";
+					id = id + "[" + (int) evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements) + "]";
 				}
 
 				return modelstate.getVariableToValue(replacements, id);
@@ -636,8 +617,7 @@ public final class Evaluator
 
 				for (int childIter = 1; childIter < node.getChildCount(); childIter++)
 				{
-					vector = vector.getChild((int) evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y,
-							variableToIndexMap, replacements));
+					vector = vector.getChild((int) evaluateExpressionRecursive(modelstate, node.getChild(childIter), evaluateState, t, y, variableToIndexMap, replacements));
 				}
 
 				if (vector.isNumber())
@@ -666,8 +646,7 @@ public final class Evaluator
 		return node.getInteger();
 	}
 
-	private static double evaluateName(ReactionState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
-			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
+	private static double evaluateName(ArraysState modelstate, ASTNode node, boolean evaluateState, double t, double[] y, Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		String name = node.getName();
 
@@ -675,9 +654,9 @@ public final class Evaluator
 		{
 			return t;
 		}
-		else if (modelstate.getReactionToPropensityMap().keySet().contains(node.getName()))
+		else if (modelstate.getReactionToHasEnoughMolecules().containsKey(node.getName()))
 		{
-			return modelstate.getReactionToPropensityMap().get(node.getName());
+			return modelstate.getPropensity(replacements, node.getName());
 		}
 		else
 		{
@@ -690,8 +669,7 @@ public final class Evaluator
 				int i, j;
 
 				i = variableToIndexMap.get(name);
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
-						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable) && modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
 				{
 					j = variableToIndexMap.get(modelstate.getSpeciesToCompartmentNameMap().get(name));
 					value = y[i] / y[j];
@@ -704,11 +682,9 @@ public final class Evaluator
 			}
 			else
 			{
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
-						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable) && modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
 				{
-					value = (modelstate.getVariableToValue(replacements, name) / modelstate.getVariableToValue(replacements, modelstate
-							.getSpeciesToCompartmentNameMap().get(name)));
+					value = (modelstate.getVariableToValue(replacements, name) / modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(name)));
 				}
 				else if (variableToIndexMap != null && variableToIndexMap.containsKey(name))
 				{
@@ -718,13 +694,16 @@ public final class Evaluator
 				{
 					value = modelstate.getVariableToValue(replacements, name);
 				}
+				else if (modelstate.getArrayVariableToValue().containsKey(referencedVariable))
+				{
+					value = modelstate.getVariableToValue(replacements, name);
+				}
 				return value;
 			}
 		}
 	}
 
-	private static double evaluateOperator(ReactionState modelstate, ASTNode node, boolean evaluateState, double t, double[] y,
-			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
+	private static double evaluateOperator(ArraysState modelstate, ASTNode node, boolean evaluateState, double t, double[] y, Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
 		switch (node.getType())
 		{

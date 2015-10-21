@@ -12,13 +12,14 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
+import analysis.dynamicsim.hierarchical.states.ArraysState;
 import analysis.dynamicsim.hierarchical.states.DocumentState;
 import analysis.dynamicsim.hierarchical.util.arrays.ArraysObject;
 import analysis.dynamicsim.hierarchical.util.arrays.ArraysPair;
 import analysis.dynamicsim.hierarchical.util.arrays.DimensionObject;
 import analysis.dynamicsim.hierarchical.util.arrays.IndexObject;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventToFire;
-import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringDoublePair;
+import analysis.dynamicsim.hierarchical.util.comp.HierarchicalSpeciesReference;
 import biomodel.network.GeneticNetwork;
 import biomodel.parser.BioModel;
 import biomodel.parser.GCMParser;
@@ -50,6 +51,25 @@ public class HierarchicalUtilities
 		return size;
 	}
 
+	public static boolean getNotEnoughEnoughMolecules(ArraysState modelstate, String reaction, Map<String, Double> replacements)
+	{
+		boolean result = false;
+		Set<HierarchicalSpeciesReference> pairs = modelstate.getReactionToReactantStoichiometrySetMap().get(reaction);
+
+		if (pairs != null)
+		{
+			for (HierarchicalSpeciesReference pair : pairs)
+			{
+				if (modelstate.getVariableToValue(replacements, pair.getString()) < pair.getDoub())
+				{
+					result = true;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
 	public static int flattenedIndex(ModelState model, String variable, int[] indices, Map<String, Double> replacements)
 	{
 
@@ -62,8 +82,8 @@ public class HierarchicalUtilities
 		if (dim != null)
 		{
 			List<ArraysObject> objects = dim.getDimensions();
-
-			for (int i = 0; i < objects.size(); i++)
+			int n = objects.size();
+			for (int i = 0; i < n; i++)
 			{
 				String param = objects.get(i).getSize();
 				int value = (int) model.getVariableToValue(replacements, param);
@@ -86,27 +106,59 @@ public class HierarchicalUtilities
 
 	public static String getVariableFromArray(String variable)
 	{
-		if (variable.contains("["))
+		StringBuilder builder = new StringBuilder(variable.length());
+		for (int i = 0; i < variable.length(); i++)
 		{
-			int index = variable.indexOf("[");
-			variable = variable.substring(0, index);
+			if (variable.charAt(i) == '[')
+			{
+				break;
+			}
+			builder.append(variable.charAt(i));
 		}
-		return variable;
+		return builder.toString();
 	}
 
 	public static int[] getIndicesFromVariable(String variable)
 	{
 		int[] indices = null;
-		if (variable.contains("["))
+		int count = 0;
+		List<Integer> numbers = new ArrayList<Integer>();
+
+		while (count < variable.length())
 		{
-			String[] split = variable.split("\\[");
-			indices = new int[split.length - 1];
-			int n = indices.length;
-			for (int i = 0; i < indices.length; i++)
+			if (variable.charAt(count) == '[')
 			{
-				indices[n - 1 - i] = Integer.valueOf(split[i + 1].replace("]", ""));
+				count++;
+				int value = 0;
+				while (variable.charAt(count) != ']')
+				{
+					value = value * 10 + (variable.charAt(count) - '0');
+					count++;
+				}
+				numbers.add(value);
+			}
+			count++;
+		}
+
+		if (numbers.size() > 0)
+		{
+			indices = new int[numbers.size()];
+
+			for (int i = 0; i < numbers.size(); i++)
+			{
+				indices[i] = numbers.get(i);
 			}
 		}
+		// if (variable.contains("["))
+		// {
+		// String[] split = variable.split("\\[");
+		// indices = new int[split.length - 1];
+		// int n = indices.length;
+		// for (int i = 0; i < indices.length; i++)
+		// {
+		// indices[n - 1 - i] = Integer.valueOf(split[i + 1].replace("]", ""));
+		// }
+		// }
 		return indices;
 	}
 
@@ -129,61 +181,32 @@ public class HierarchicalUtilities
 		}
 	}
 
-	public static void updatePropensity(ModelState model, String affectedReactionID, Set<HierarchicalStringDoublePair> reactantStoichiometrySet,
-			Set<String> affectedSpecies, double currentTime, Map<String, Double> replacements)
+	public static void updatePropensity(ModelState model, String affectedReactionID, Set<HierarchicalSpeciesReference> reactantStoichiometrySet, Set<String> affectedSpecies, double currentTime, Map<String, Double> replacements)
 	{
 
-		Set<HierarchicalStringDoublePair> reactionToSpecies = model.getReactionToSpeciesAndStoichiometrySetMap().get(affectedReactionID);
+		Set<HierarchicalSpeciesReference> reactionToSpecies = model.getReactionToSpeciesAndStoichiometrySetMap().get(affectedReactionID);
+		model.getPropensity(affectedReactionID);
 
-		if (model.getReactionToFormulaMap().get(affectedReactionID) == null)
+		boolean notEnoughMoleculesFlag = HierarchicalUtilities.getNotEnoughEnoughMolecules(model, affectedReactionID, replacements);
+
+		if (reactionToSpecies != null)
 		{
-			model.getReactionToPropensityMap().put(affectedReactionID, 0.0);
-			return;
-		}
-
-		boolean notEnoughMoleculesFlag = false;
-
-		for (HierarchicalStringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
-		{
-			String speciesID = speciesAndStoichiometry.string;
-
-			double stoichiometry = speciesAndStoichiometry.doub;
-
-			if (model.getVariableToValue(replacements, speciesID) < stoichiometry)
+			for (HierarchicalSpeciesReference speciesPair : reactionToSpecies)
 			{
-				notEnoughMoleculesFlag = true;
-				break;
+				affectedSpecies.add(speciesPair.getString());
 			}
 		}
-
-		for (HierarchicalStringDoublePair speciesPair : reactionToSpecies)
-		{
-			affectedSpecies.add(speciesPair.string);
-		}
-
 		double newPropensity = 0.0;
 		if (notEnoughMoleculesFlag == false)
 		{
-			newPropensity = Evaluator.evaluateExpressionRecursive(model, model.getReactionToFormulaMap().get(affectedReactionID), false, currentTime,
-					null, null, replacements);
+			newPropensity = Evaluator.evaluateExpressionRecursive(model, model.getReactionToFormulaMap().get(affectedReactionID), false, currentTime, null, null, replacements);
 		}
 
-		double oldPropensity = model.getPropensity(affectedReactionID);
+		model.setPropensity(replacements, affectedReactionID, newPropensity);
 
-		model.setPropensity(model.getPropensity() + newPropensity - oldPropensity);
-
-		if (newPropensity > 0)
-		{
-			model.updateReactionToPropensityMap(affectedReactionID, newPropensity);
-		}
-		else
-		{
-			model.getReactionToPropensityMap().remove(affectedReactionID);
-		}
 	}
 
-	public static Set<String> updatePropensities(Set<String> affectedReactionSet, ModelState modelstate, double currentTime,
-			Map<String, Double> replacements)
+	public static Set<String> updatePropensities(Set<String> affectedReactionSet, ModelState modelstate, double currentTime, Map<String, Double> replacements)
 	{
 
 		Set<String> affectedSpecies = new HashSet<String>();
@@ -196,38 +219,25 @@ public class HierarchicalUtilities
 				continue;
 			}
 
-			int[] dims = HierarchicalUtilities.getIndicesFromVariable(affectedReactionID);
-
 			if (modelstate.isArrayedObject(affectedReactionID))
 			{
 				continue;
 			}
-			else if (dims != null)
-			{
-				String reaction = HierarchicalUtilities.getVariableFromArray(affectedReactionID);
 
-				updatePropensity(modelstate, reaction, currentTime, dims, replacements);
+			Set<HierarchicalSpeciesReference> reactantStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(affectedReactionID);
+			updatePropensity(modelstate, affectedReactionID, reactantStoichiometrySet, affectedSpecies, currentTime, replacements);
 
-				dims = null;
-			}
-			else
-			{
-				Set<HierarchicalStringDoublePair> reactantStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(
-						affectedReactionID);
-				updatePropensity(modelstate, affectedReactionID, reactantStoichiometrySet, affectedSpecies, currentTime, replacements);
-			}
 		}
 
 		return affectedSpecies;
 	}
 
-	public static List<String> getIndexedSpeciesReference(ModelState modelstate, String reaction, String type, String species, int[] reactionIndices,
-			double time, Map<String, Double> replacements)
+	public static List<String> getIndexedSpeciesReference(ArraysState modelstate, String specRefID, String species, int[] reactionIndices, double time, Map<String, Double> replacements)
 	{
 
 		List<String> listOfReferences = new ArrayList<String>();
 
-		List<ArraysPair> pairs = modelstate.getArrays().get(reaction + "__" + type + "__" + species);
+		List<ArraysPair> pairs = modelstate.getArrays().get(specRefID);
 
 		if (pairs == null)
 		{
@@ -252,8 +262,7 @@ public class HierarchicalUtilities
 
 			for (int i = speciesAttribute.size() - 1; i >= 0; i--)
 			{
-				int ind = (int) Evaluator.evaluateExpressionRecursive(modelstate, speciesAttribute.get(i), false, time, null, dimensionIdMap,
-						replacements);
+				int ind = (int) Evaluator.evaluateExpressionRecursive(modelstate, speciesAttribute.get(i), false, time, null, dimensionIdMap, replacements);
 				id = id + "[" + ind + "]";
 
 			}
@@ -263,73 +272,6 @@ public class HierarchicalUtilities
 		}
 		return listOfReferences;
 
-	}
-
-	public static void updatePropensity(ModelState modelstate, String id, double time, int[] indices, Map<String, Double> replacements)
-	{
-		String arrayedId = HierarchicalUtilities.getArrayedID(modelstate, id, indices);
-
-		Set<HierarchicalStringDoublePair> reactantStoichiometrySet = modelstate.getReactionToReactantStoichiometrySetMap().get(id);
-
-		// modelstate.getReactionToSpeciesAndStoichiometrySetMap().get(id);
-
-		if (modelstate.getReactionToFormulaMap().get(id) == null)
-		{
-			return;
-		}
-
-		boolean notEnoughMoleculesFlag = false;
-		final String reactant = "reactant";
-		final String product = "product";
-		for (HierarchicalStringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
-		{
-			List<String> speciesIDs;
-			if (id.endsWith("_rv"))
-			{
-				speciesIDs = getIndexedSpeciesReference(modelstate, id, product, speciesAndStoichiometry.string, indices, time, replacements);
-			}
-			else
-			{
-				speciesIDs = getIndexedSpeciesReference(modelstate, id, reactant, speciesAndStoichiometry.string, indices, time, replacements);
-			}
-			for (String speciesID : speciesIDs)
-			{
-				double stoichiometry = speciesAndStoichiometry.doub;
-
-				if (modelstate.getVariableToValue(replacements, speciesID) < stoichiometry)
-				{
-					notEnoughMoleculesFlag = true;
-					break;
-				}
-			}
-		}
-
-		double newPropensity = 0.0;
-
-		double oldPropensity = modelstate.getPropensity(arrayedId);
-
-		if (notEnoughMoleculesFlag == false)
-		{
-			Map<String, Integer> dimensionIdMap = new HashMap<String, Integer>();
-
-			for (int i = 0; i < indices.length; i++)
-			{
-				dimensionIdMap.put("d" + i, indices[i]);
-			}
-			newPropensity = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getReactionToFormulaMap().get(id), false, time, null,
-					dimensionIdMap, replacements);
-			dimensionIdMap = null;
-		}
-		modelstate.setPropensity(modelstate.getPropensity() + newPropensity - oldPropensity);
-
-		if (newPropensity > 0)
-		{
-			modelstate.updateReactionToPropensityMap(arrayedId, newPropensity);
-		}
-		else
-		{
-			modelstate.getReactionToPropensityMap().remove(arrayedId);
-		}
 	}
 
 	public static boolean checkGrid(Model model)
@@ -351,8 +293,7 @@ public class HierarchicalUtilities
 	 * @param replacements
 	 *            TODO
 	 */
-	public static HashSet<String> fireEvents(ModelState modelstate, Selector selector, final boolean noAssignmentRulesFlag,
-			final boolean noConstraintsFlag, double currentTime, Map<String, Double> replacements)
+	public static HashSet<String> fireEvents(ModelState modelstate, Selector selector, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag, double currentTime, Map<String, Double> replacements)
 	{
 
 		HashSet<String> untriggeredEvents = new HashSet<String>();
@@ -366,8 +307,7 @@ public class HierarchicalUtilities
 
 		while (modelstate.getTriggeredEventQueue().size() > 0 && modelstate.getTriggeredEventQueue().peek().getFireTime() <= currentTime)
 		{
-			fireSingleEvent(modelstate, affectedAssignmentRuleSet, affectedConstraintSet, affectedReactionSet, variableInFiredEvents,
-					untriggeredEvents, noAssignmentRulesFlag, noConstraintsFlag, currentTime, replacements);
+			fireSingleEvent(modelstate, affectedAssignmentRuleSet, affectedConstraintSet, affectedReactionSet, variableInFiredEvents, untriggeredEvents, noAssignmentRulesFlag, noConstraintsFlag, currentTime, replacements);
 			variableInFiredEvents.addAll(performAssignmentRules(modelstate, affectedAssignmentRuleSet, replacements, currentTime));
 			handleEvents(modelstate, currentTime, replacements);
 		}
@@ -386,18 +326,17 @@ public class HierarchicalUtilities
 		ASTNode child;
 		long size = node.getChildCount();
 
+		if (node.getChildCount() == 0)
+		{
+			nodeChildrenList.add(node);
+		}
+
 		for (int i = 0; i < size; i++)
 		{
+			// TODO:check this
 			child = node.getChild(i);
-			if (child.getChildCount() == 0)
-			{
-				nodeChildrenList.add(child);
-			}
-			else
-			{
-				nodeChildrenList.add(child);
-				getAllASTNodeChildren(child, nodeChildrenList);
-			}
+			nodeChildrenList.add(child);
+			getAllASTNodeChildren(child, nodeChildrenList);
 		}
 	}
 
@@ -472,13 +411,10 @@ public class HierarchicalUtilities
 			if (!modelstate.isConstant(referencedVariable))
 			{
 
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
-						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable) && modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
 				{
 					double currVal = modelstate.getVariableToValue(replacements, variable);
-					double incr = delta_t
-							* (Evaluator.evaluateExpressionRecursive(modelstate, rateRule, false, currentTime, null, null, replacements) * modelstate
-									.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable)));
+					double incr = delta_t * (Evaluator.evaluateExpressionRecursive(modelstate, rateRule, false, currentTime, null, null, replacements) * modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable)));
 					modelstate.setVariableToValue(replacements, variable, currVal + incr);
 				}
 				else
@@ -492,8 +428,7 @@ public class HierarchicalUtilities
 		}
 	}
 
-	public static List<String> getIndexedObject(ModelState modelstate, String id, String variable, String prefix, String attribute, int[] indices,
-			Map<String, Double> replacements)
+	public static List<String> getIndexedObject(ModelState modelstate, String id, String variable, String prefix, String attribute, int[] indices, Map<String, Double> replacements)
 	{
 
 		List<ArraysPair> listOfPairs = modelstate.getArrays().get(id);
@@ -526,8 +461,7 @@ public class HierarchicalUtilities
 
 			for (int i = 0; i < newIndices.length; i++)
 			{
-				newIndices[i] = (int) Evaluator
-						.evaluateExpressionRecursive(modelstate, indexMap.get(i), false, 0, null, dimensionIdMap, replacements);
+				newIndices[i] = (int) Evaluator.evaluateExpressionRecursive(modelstate, indexMap.get(i), false, 0, null, dimensionIdMap, replacements);
 			}
 
 			listOfObjects.add(getArrayedID(modelstate, variable, newIndices));
@@ -638,8 +572,7 @@ public class HierarchicalUtilities
 		return formula;
 	}
 
-	public static HashSet<String> performAssignmentRules(ModelState modelstate, Set<String> affectedAssignmentRuleSet,
-			Map<String, Double> replacements, double currentTime)
+	public static HashSet<String> performAssignmentRules(ModelState modelstate, Set<String> affectedAssignmentRuleSet, Map<String, Double> replacements, double currentTime)
 	{
 
 		HashSet<String> affectedVariables = new HashSet<String>();
@@ -659,9 +592,11 @@ public class HierarchicalUtilities
 		return affectedVariables;
 	}
 
-	public static void performAssignmentRules(ModelState modelstate, Map<String, Double> replacements, double currentTime)
+	public static Set<String> performAssignmentRules(ModelState modelstate, Map<String, Double> replacements, double currentTime)
 	{
 		boolean changed = true;
+		Set<String> speciesChanged = new HashSet<String>();
+
 		while (changed)
 		{
 			changed = false;
@@ -669,12 +604,14 @@ public class HierarchicalUtilities
 			for (String variable : modelstate.getAssignmentRulesList().keySet())
 			{
 				ASTNode assignmentRule = modelstate.getAssignmentRulesList().get(variable);
+				speciesChanged.add(variable);
 				if (!modelstate.isConstant(variable))
 				{
 					changed |= updateVariableValue(modelstate, variable, assignmentRule, replacements, currentTime);
 				}
 			}
 		}
+		return speciesChanged;
 	}
 
 	public static void replaceArgument(ASTNode formula, String bvar, ASTNode arg)
@@ -743,9 +680,9 @@ public class HierarchicalUtilities
 				int[] indices = new int[formula.getChildCount() - 1];
 				String id = formula.getChild(0).getName();
 
-				for (int i = 1; i < formula.getChildCount() - 1; i++)
+				for (int i = 1; i < formula.getChildCount(); i++)
 				{
-					indices[i - 1] = (int) Evaluator.evaluateExpressionRecursive(modelstate, formula.getChild(i), false, 0, null, null, replacements);
+					indices[i - 1] = (int) Evaluator.evaluateExpressionRecursive(modelstate, formula.getChild(formula.getChildCount() - i), false, 0, null, null, replacements);
 				}
 
 				String newId = getArrayedID(modelstate, id, indices);
@@ -764,13 +701,11 @@ public class HierarchicalUtilities
 		}
 	}
 
-	public static boolean testConstraints(ModelState modelstate, HashSet<ASTNode> affectedConstraintSet, double currentTime,
-			Map<String, Double> replacements)
+	public static boolean testConstraints(ModelState modelstate, HashSet<ASTNode> affectedConstraintSet, double currentTime, Map<String, Double> replacements)
 	{
 		for (ASTNode constraint : affectedConstraintSet)
 		{
-			if (HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, constraint, false, currentTime, null,
-					null, replacements)))
+			if (HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, constraint, false, currentTime, null, null, replacements)))
 			{
 				return true;
 			}
@@ -779,15 +714,13 @@ public class HierarchicalUtilities
 		return false;
 	}
 
-	public static boolean updateVariableValue(ModelState modelstate, String variable, ASTNode math, Map<String, Double> replacements,
-			double currentTime)
+	public static boolean updateVariableValue(ModelState modelstate, String variable, ASTNode math, Map<String, Double> replacements, double currentTime)
 	{
 
 		boolean changed = false;
 		String referencedVariable = HierarchicalUtilities.getReferencedVariable(variable);
 
-		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
-				&& !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable))
+		if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable) && !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable))
 		{
 			double compartment = modelstate.getVariableToValue(replacements, modelstate.getSpeciesToCompartmentNameMap().get(variable));
 
@@ -809,44 +742,36 @@ public class HierarchicalUtilities
 			if (oldValue != newValue)
 			{
 				changed = true;
-				modelstate.setVariableToValue(replacements, variable,
-						Evaluator.evaluateExpressionRecursive(modelstate, math, false, currentTime, null, null, replacements));
+				modelstate.setVariableToValue(replacements, variable, Evaluator.evaluateExpressionRecursive(modelstate, math, false, currentTime, null, null, replacements));
 			}
 		}
 
 		return changed;
 	}
 
-	private static void checkTriggeredEvents(ModelState modelstate, Set<String> untriggeredEvents, double currentTime,
-			Map<String, Double> replacements)
+	private static void checkTriggeredEvents(ModelState modelstate, Set<String> untriggeredEvents, double currentTime, Map<String, Double> replacements)
 	{
 		for (HierarchicalEventToFire triggeredEvent : modelstate.getTriggeredEventQueue())
 		{
 			String triggeredEventID = triggeredEvent.getEventID();
 
-			if (!modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID)
-					&& !HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate
-							.getEventToTriggerMap().get(triggeredEventID), false, currentTime, null, null, replacements)))
+			if (!modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID) && !HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID), false, currentTime, null, null, replacements)))
 			{
 
 				untriggeredEvents.add(triggeredEventID);
 				modelstate.getEventToPreviousTriggerValueMap().put(triggeredEventID, false);
 			}
 
-			if (modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID)
-					&& !HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate
-							.getEventToTriggerMap().get(triggeredEventID), false, currentTime, null, null, replacements)))
+			if (modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID) && !HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID), false, currentTime, null, null, replacements)))
 			{
 				modelstate.getUntriggeredEventSet().add(triggeredEventID);
 			}
 		}
 	}
 
-	public static boolean isEventTriggered(ModelState modelstate, String event, double t, double[] y, boolean state,
-			Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
+	public static boolean isEventTriggered(ModelState modelstate, String event, double t, double[] y, boolean state, Map<String, Integer> variableToIndexMap, Map<String, Double> replacements)
 	{
-		double givenState = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(event), state, t, y,
-				variableToIndexMap, replacements);
+		double givenState = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(event), state, t, y, variableToIndexMap, replacements);
 
 		if (givenState > 0)
 		{
@@ -897,8 +822,7 @@ public class HierarchicalUtilities
 
 	}
 
-	private static void fireSingleEvent(ModelState modelstate, Set<String> affectedAssignmentRuleSet, Set<ASTNode> affectedConstraintSet,
-			Set<String> affectedReactionSet, Set<String> variableInFiredEvents, Set<String> untriggeredEvents, final boolean noAssignmentRulesFlag,
+	private static void fireSingleEvent(ModelState modelstate, Set<String> affectedAssignmentRuleSet, Set<ASTNode> affectedConstraintSet, Set<String> affectedReactionSet, Set<String> variableInFiredEvents, Set<String> untriggeredEvents, final boolean noAssignmentRulesFlag,
 			final boolean noConstraintsFlag, double currentTime, Map<String, Double> replacements)
 	{
 
@@ -910,10 +834,7 @@ public class HierarchicalUtilities
 
 		modelstate.getUntriggeredEventSet().add(eventToFireID);
 
-		modelstate.addEventToPreviousTriggerValueMap(
-				eventToFireID,
-				HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate,
-						modelstate.getEventToTriggerMap().get(eventToFireID), false, currentTime, null, null, replacements)));
+		modelstate.addEventToPreviousTriggerValueMap(eventToFireID, HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(eventToFireID), false, currentTime, null, null, replacements)));
 
 		if (!modelstate.getEventToTriggerPersistenceMap().get(eventToFireID))
 		{
@@ -975,18 +896,14 @@ public class HierarchicalUtilities
 
 			String triggeredEventID = triggeredEvent.getEventID();
 
-			if (!modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID)
-					&& !HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate
-							.getEventToTriggerMap().get(triggeredEventID), false, currentTime, null, null, replacements)))
+			if (!modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID) && !HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID), false, currentTime, null, null, replacements)))
 			{
 
 				untriggeredEvents.add(triggeredEventID);
 				modelstate.getEventToPreviousTriggerValueMap().put(triggeredEventID, false);
 			}
 
-			if (modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID)
-					&& !HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate
-							.getEventToTriggerMap().get(triggeredEventID), false, currentTime, null, null, replacements)))
+			if (modelstate.getEventToTriggerPersistenceMap().get(triggeredEventID) && !HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(triggeredEventID), false, currentTime, null, null, replacements)))
 			{
 				modelstate.getUntriggeredEventSet().add(triggeredEventID);
 			}
@@ -998,8 +915,7 @@ public class HierarchicalUtilities
 		for (String untriggeredEventID : modelstate.getUntriggeredEventSet())
 		{
 
-			boolean eventTrigger = HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate
-					.getEventToTriggerMap().get(untriggeredEventID), false, currentTime, null, null, replacements));
+			boolean eventTrigger = HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(untriggeredEventID), false, currentTime, null, null, replacements));
 
 			if (eventTrigger)
 			{
@@ -1034,16 +950,14 @@ public class HierarchicalUtilities
 
 		if (modelstate.hasDelay(untriggeredEventID))
 		{
-			fireTime += Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToDelayMap().get(untriggeredEventID), false,
-					currentTime, null, null, replacements);
+			fireTime += Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToDelayMap().get(untriggeredEventID), false, currentTime, null, null, replacements);
 		}
 
 		double priority;
 
 		if (modelstate.getEventToPriorityMap().containsKey(untriggeredEventID))
 		{
-			priority = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToPriorityMap().get(untriggeredEventID), false,
-					currentTime, null, null, replacements);
+			priority = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToPriorityMap().get(untriggeredEventID), false, currentTime, null, null, replacements);
 		}
 		else
 		{
@@ -1053,8 +967,7 @@ public class HierarchicalUtilities
 		modelstate.getTriggeredEventQueue().add(new HierarchicalEventToFire(modelstate.getID(), untriggeredEventID, null, fireTime, priority));
 	}
 
-	private static void handleEventsValueAtTrigger(ModelState modelstate, String untriggeredEventID, double currentTime,
-			Map<String, Double> replacements)
+	private static void handleEventsValueAtTrigger(ModelState modelstate, String untriggeredEventID, double currentTime, Map<String, Double> replacements)
 	{
 		Map<String, Double> evaluatedAssignments = new HashMap<String, Double>();
 
@@ -1070,24 +983,21 @@ public class HierarchicalUtilities
 
 		if (modelstate.hasDelay(untriggeredEventID))
 		{
-			fireTime += Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToDelayMap().get(untriggeredEventID), false,
-					currentTime, null, null, replacements);
+			fireTime += Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToDelayMap().get(untriggeredEventID), false, currentTime, null, null, replacements);
 		}
 
 		double priority;
 
 		if (modelstate.getEventToPriorityMap().containsKey(untriggeredEventID))
 		{
-			priority = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToPriorityMap().get(untriggeredEventID), false,
-					currentTime, null, null, replacements);
+			priority = Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToPriorityMap().get(untriggeredEventID), false, currentTime, null, null, replacements);
 		}
 		else
 		{
 			priority = Double.NEGATIVE_INFINITY;
 		}
 
-		modelstate.getTriggeredEventQueue().add(
-				new HierarchicalEventToFire(modelstate.getID(), untriggeredEventID, evaluatedAssignments, fireTime, priority));
+		modelstate.getTriggeredEventQueue().add(new HierarchicalEventToFire(modelstate.getID(), untriggeredEventID, evaluatedAssignments, fireTime, priority));
 	}
 
 	private static void updatePreviousTriggerValue(ModelState modelstate, double currentTime, Map<String, Double> replacements)
@@ -1096,8 +1006,7 @@ public class HierarchicalUtilities
 		{
 
 			if (modelstate.getEventToTriggerPersistenceMap().get(untriggeredEventID) == false
-					&& HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap()
-							.get(untriggeredEventID), false, currentTime, null, null, replacements)) == false)
+					&& HierarchicalUtilities.getBooleanFromDouble(Evaluator.evaluateExpressionRecursive(modelstate, modelstate.getEventToTriggerMap().get(untriggeredEventID), false, currentTime, null, null, replacements)) == false)
 			{
 				modelstate.getEventToPreviousTriggerValueMap().put(untriggeredEventID, false);
 			}

@@ -50,7 +50,6 @@ public class DynamicSimulation
 			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType, Boolean genStats, JTabbedPane simTab,
 			String abstraction, Log log)
 	{
-
 		String progressText = "";
 
 		if (progressLabel != null)
@@ -113,7 +112,7 @@ public class DynamicSimulation
 
 		Runtime runtime = Runtime.getRuntime();
 		double mb = 1024 * 1024;
-
+		// int count = 0, total = 0;
 		for (int run = 1; run <= runs; ++run)
 		{
 
@@ -130,12 +129,20 @@ public class DynamicSimulation
 			if (simulator != null)
 			{
 				simulator.simulate();
+				// count += ((HierarchicalSSADirectSimulator)
+				// simulator).getTopLevelValue("counter");
+				// total += ((HierarchicalSSADirectSimulator)
+				// simulator).getTopLevelValue("n")
+				// * ((HierarchicalSSADirectSimulator)
+				// simulator).getTopLevelValue("n");
 				if ((runs - run) >= 1)
 				{
 					simulator.setupForNewRun(run + 1);
 				}
 			}
 		}
+
+		System.gc();
 		double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
 		System.out.println("Memory used: " + (mem));
 
@@ -148,6 +155,7 @@ public class DynamicSimulation
 		if (log == null)
 		{
 			System.out.println("Simulation Time: " + (val2 - val1) / 1000);
+			// System.out.println("Count: " + count + " Total: " + total);
 		}
 		else
 		{

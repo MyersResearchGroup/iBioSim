@@ -6,9 +6,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Random;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
@@ -22,6 +24,7 @@ import analysis.dynamicsim.hierarchical.states.ArraysState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventToFire;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
+import analysis.fba.FluxBalanceAnalysis;
 
 public abstract class HierarchicalObjects extends HierarchicalSimulation
 {
@@ -37,13 +40,13 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 	private Map<String, Double>		initReplacementState;
 	private Map<String, ModelState>	arrayModels;
 	private Map<String, ModelState>	submodels;
+	private List<String>			fbamodels;
+	protected int					numOfArrays;
 
-	public HierarchicalObjects(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
-			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
-			String quantityType, String abstraction) throws IOException, XMLStreamException
+	public HierarchicalObjects(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType,
+			String abstraction) throws IOException, XMLStreamException
 	{
-		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue,
-				running, interestingSpecies, quantityType, abstraction);
+		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
 
 		SBMLDocument document = getDocument();
 		replacements = new HashMap<String, Double>();
@@ -53,8 +56,8 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 		models.put(document.getModel().getId(), document.getModel().clone());
 		filesCreated = new ArrayList<String>();
 		arrayModels = new HashMap<String, ModelState>();
-		ibiosimFunctionDefinitions = new HashSet<String>(Arrays.asList("uniform", "exponential", "gamma", "chisq", "lognormal", "laplace", "cauchy",
-				"poisson", "binomial", "bernoulli", "normal"));
+		fbamodels = new ArrayList<String>();
+		ibiosimFunctionDefinitions = new HashSet<String>(Arrays.asList("uniform", "exponential", "gamma", "chisq", "lognormal", "laplace", "cauchy", "poisson", "binomial", "bernoulli", "normal"));
 	}
 
 	public Map<String, ModelState> getArrayModels()
@@ -285,15 +288,49 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 		return submodels.get(id);
 	}
 
+	public List<String> getFbamodels()
+	{
+		return fbamodels;
+	}
+
+	public void setFbamodels(List<String> fbamodels)
+	{
+		this.fbamodels = fbamodels;
+	}
+
+	public void performAllFba()
+	{
+		for (String fbaModel : getFbamodels())
+		{
+			getModelState(fbaModel).runFba();
+		}
+	}
+
 	public class ModelState extends ArraysState
 	{
 		private HierarchicalEventComparator	eventComparator;
-
 		private HashMap<String, Boolean>	initEventToPreviousTriggerValueMap;
 		private HashMap<String, ASTNode>	initEventToTriggerMap;
 		private HashSet<String>				initUntriggeredEventSet;
 		private Map<String, Double>			initVariableState;
-		private boolean						isInitSet;
+		private Map<String, double[]>		initArraysState;
+		private boolean						isInitSet, isInitrraySet;
+		private FluxBalanceAnalysis			fba;
+
+		public FluxBalanceAnalysis getFba()
+		{
+			return fba;
+		}
+
+		public void setFba(FluxBalanceAnalysis fba)
+		{
+			this.fba = fba;
+		}
+
+		public void createFba(Model model)
+		{
+			fba = new FluxBalanceAnalysis(model, 1e-9);
+		}
 
 		public ModelState(Map<String, Model> models, String bioModel, String submodelID)
 		{
@@ -387,6 +424,44 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			return getVariableToValueMap().get(variable);
 		}
 
+		@Override
+		public void setPropensity(Map<String, Double> replacements, String reaction, double value)
+		{
+			double oldValue = getPropensity(replacements, reaction);
+			if (getIsHierarchical().contains(reaction))
+			{
+				String dep = getReplacementDependency().get(reaction);
+				replacements.put(dep, value);
+			}
+			else if (value != 0)
+			{
+				getReactionToPropensityMap().put(reaction, value);
+			}
+			else
+			{
+				getReactionToPropensityMap().remove(reaction, value);
+			}
+			if (!isHierarchical(reaction) && fba == null)
+			{
+				setPropensity(getPropensity() + value - oldValue);
+			}
+		}
+
+		@Override
+		public double getPropensity(Map<String, Double> replacements, String reaction)
+		{
+			if (getIsHierarchical().contains(reaction))
+			{
+				String dep = getReplacementDependency().get(reaction);
+				return replacements.get(dep);
+			}
+			if (getReactionToPropensityMap().containsKey(reaction))
+			{
+				return getReactionToPropensityMap().get(reaction);
+			}
+			return 0;
+		}
+
 		public boolean isDeletedByMetaID(String metaid)
 		{
 			if (getDeletedElementsByMetaId().contains(metaid))
@@ -430,11 +505,20 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 
 		public void restoreInitValues()
 		{
-			if (isInitSet)
+			if (isInitSet && getTotalRuns() > 0)
 			{
 
 				getVariableToValueMap().clear();
 				getVariableToValueMap().putAll(initVariableState);
+
+				if (getInitArraysState() != null)
+				{
+					for (String key : getInitArraysState().keySet())
+					{
+						getArrayVariableToValue().put(key, getInitArraysState().get(key).clone());
+					}
+				}
+
 				if (!isNoEventsFlag())
 				{
 					getEventToPreviousTriggerValueMap().clear();
@@ -450,6 +534,40 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			}
 		}
 
+		public void copyFbaState()
+		{
+			HashMap<String, Double> bounds = new HashMap<String, Double>();
+			for (String variable : getReplacementDependency().keySet())
+			{
+				bounds.put(variable, getVariableToValue(getReplacements(), variable));
+			}
+			fba.setBoundParameters(bounds);
+		}
+
+		public void retrieveFbaState()
+		{
+			Map<String, Double> flux = fba.getFluxes();
+
+			for (String reaction : flux.keySet())
+			{
+				if (isHierarchical(reaction))
+				{
+					setPropensity(getReplacements(), reaction, flux.get(reaction));
+				}
+			}
+
+		}
+
+		public void runFba()
+		{
+			if (fba != null)
+			{
+				copyFbaState();
+				fba.PerformFluxBalanceAnalysis();
+				retrieveFbaState();
+			}
+		}
+
 		/**
 		 * @param eventComparator
 		 *            the eventComparator to set
@@ -461,7 +579,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 
 		public void setInitValues()
 		{
-			if (!isInitSet)
+			if (!isInitSet && getTotalRuns() > 0)
 			{
 				isInitSet = true;
 				initVariableState = new HashMap<String, Double>(getVariableToValueMap());
@@ -482,14 +600,18 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 				String dep = getReplacementDependency().get(variable);
 				replacements.put(dep, value);
 			}
-			if (variable.contains("["))
+			else if (variable.contains("["))
 			{
 				String arrayedVariable = HierarchicalUtilities.getVariableFromArray(variable);
 				int[] indices = HierarchicalUtilities.getIndicesFromVariable(variable);
 				int index = HierarchicalUtilities.flattenedIndex(this, arrayedVariable, indices, replacements);
-				getArrayVariableToValue().get(arrayedVariable)[index] = value;
+				double[] state = getArrayVariableToValue().get(arrayedVariable);
+				state[index] = value;
 			}
-			getVariableToValueMap().put(variable, value);
+			else
+			{
+				getVariableToValueMap().put(variable, value);
+			}
 		}
 
 		/*
@@ -503,12 +625,23 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			return "ModelState [ID=" + getID() + "]";
 		}
 
-		/**
-		 * @return the reactionToPropensityMap
-		 */
-		public void updateReactionToPropensityMap(String reaction, double value)
+		public Map<String, double[]> getInitArraysState()
 		{
-			getReactionToPropensityMap().put(reaction, value);
+			return initArraysState;
+		}
+
+		public void setInitArraysState()
+		{
+			if (!isInitrraySet && numOfArrays > 0 && getTotalRuns() > 0)
+			{
+				isInitrraySet = true;
+				initArraysState = new HashMap<String, double[]>();
+				Set<String> keys = getArrayVariableToValue().keySet();
+				for (String key : keys)
+				{
+					initArraysState.put(key, getArrayVariableToValue().get(key).clone());
+				}
+			}
 		}
 	}
 

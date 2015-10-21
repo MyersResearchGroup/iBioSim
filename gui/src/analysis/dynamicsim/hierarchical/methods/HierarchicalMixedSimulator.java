@@ -14,11 +14,9 @@ import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Quantity;
-import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
@@ -33,7 +31,6 @@ import org.sbml.jsbml.ext.comp.Submodel;
 
 import analysis.dynamicsim.ParentSimulator;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
-import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalStringPair;
 
 public final class HierarchicalMixedSimulator implements ParentSimulator
@@ -125,7 +122,6 @@ public final class HierarchicalMixedSimulator implements ParentSimulator
 
 		setupSpecies(document.getModel());
 		setupParameters(document.getModel());
-		setupAssignmentRules(document.getModel());
 		setupForOutput(randomSeed, runNumber);
 		printSpeciesToTSD();
 
@@ -134,8 +130,6 @@ public final class HierarchicalMixedSimulator implements ParentSimulator
 	@Override
 	public void simulate()
 	{
-
-		performAssignmentRules();
 
 		while (currentTime <= timeLimit)
 		{
@@ -146,8 +140,6 @@ public final class HierarchicalMixedSimulator implements ParentSimulator
 			}
 
 			update();
-
-			performAssignmentRules();
 
 			try
 			{
@@ -189,29 +181,6 @@ public final class HierarchicalMixedSimulator implements ParentSimulator
 
 	}
 
-	private void performAssignmentRules()
-	{
-		boolean changed = true;
-
-		while (changed)
-		{
-			changed = false;
-
-			for (String key : listOfAssignmentRules.keySet())
-			{
-				// double oldValue = values.get(key);
-				// double newValue =
-				// Evaluator.evaluate(listOfAssignmentRules.get(key), values);
-				//
-				// if (oldValue != newValue)
-				// {
-				// values.put(key, newValue);
-				// changed = true;
-				// }
-			}
-		}
-	}
-
 	private void update()
 	{
 		for (String species : values.keySet())
@@ -235,19 +204,6 @@ public final class HierarchicalMixedSimulator implements ParentSimulator
 				}
 			}
 
-		}
-	}
-
-	private void setupAssignmentRules(Model model)
-	{
-		for (Rule rule : model.getListOfRules())
-		{
-			if (rule.isAssignment())
-			{
-				AssignmentRule aRule = (AssignmentRule) rule;
-				ASTNode math = inlineFormula(aRule.getMath());
-				listOfAssignmentRules.put(aRule.getVariable(), math);
-			}
 		}
 	}
 
@@ -390,63 +346,6 @@ public final class HierarchicalMixedSimulator implements ParentSimulator
 		catch (IOException e)
 		{
 		}
-	}
-
-	private ASTNode inlineFormula(ASTNode formula)
-	{
-
-		Model model = document.getModel();
-		if (formula.isFunction() == false || formula.isLeaf() == false)
-		{
-
-			for (int i = 0; i < formula.getChildCount(); ++i)
-			{
-				formula.replaceChild(i, inlineFormula(formula.getChild(i)));// .clone()));
-			}
-		}
-
-		if (formula.isFunction() && document.getModel().getFunctionDefinition(formula.getName()) != null)
-		{
-
-			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody().clone();
-
-			ASTNode oldFormula = formula.clone();
-
-			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
-			HierarchicalUtilities.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
-
-			if (inlinedChildren.size() == 0)
-			{
-				inlinedChildren.add(inlinedFormula);
-			}
-
-			HashMap<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
-
-			for (int i = 0; i < model.getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
-			{
-				inlinedChildToOldIndexMap.put(model.getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
-			}
-
-			for (int i = 0; i < inlinedChildren.size(); ++i)
-			{
-
-				ASTNode child = inlinedChildren.get(i);
-				if ((child.getChildCount() == 0) && child.isName())
-				{
-
-					int index = inlinedChildToOldIndexMap.get(child.getName());
-					HierarchicalUtilities.replaceArgument(inlinedFormula, child.toFormula(), oldFormula.getChild(index));
-
-					if (inlinedFormula.getChildCount() == 0)
-					{
-						inlinedFormula = oldFormula.getChild(index);
-					}
-				}
-			}
-
-			return inlinedFormula;
-		}
-		return formula;
 	}
 
 	@Override
