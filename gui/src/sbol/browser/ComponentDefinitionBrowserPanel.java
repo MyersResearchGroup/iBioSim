@@ -113,6 +113,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 				}
 				if (dnac != null) 
 				{
+					viewArea.append("Identity:  " + dnac.getIdentity() + "\n");
 					viewArea.append("Display ID:  " + dnac.getDisplayId() + "\n");
 					
 					if (dnac.getName() != null && !dnac.getName().equals(""))
