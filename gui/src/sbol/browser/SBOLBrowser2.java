@@ -166,9 +166,9 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 						if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
 						{
 							SBOLDOC.createCopy(c);
+							if ((!isAssociationBrowser || !c.getIdentity().toString().endsWith("iBioSim"))) 
+								localCompURIs.add(c.getIdentity());
 						}
-						if ((!isAssociationBrowser || !c.getIdentity().toString().endsWith("iBioSim"))) 
-							localCompURIs.add(c.getIdentity());
 					}
 					for(Sequence s : sbolDoc.getSequences())
 					{

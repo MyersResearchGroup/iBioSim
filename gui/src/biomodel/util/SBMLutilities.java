@@ -3607,7 +3607,8 @@ public class SBMLutilities
 		{
 			message += "Validation Problems Found by libsbml\n";
 			org.sbml.libsbml.SBMLDocument document = null;
-			if (doc == null)
+			// TODO: temporary hack because otherwise it hangs
+			if (true/*doc == null*/)
 			{
 				document = new org.sbml.libsbml.SBMLReader().readSBML(file);
 			}
@@ -6611,7 +6612,8 @@ public class SBMLutilities
 	
 	private static SBMLDocument convertToFBCVersion2(String filename,SBMLDocument document) 
 	{
-		if (document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel).endsWith("1")) 
+		if (document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel)!=null &&
+				document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel).endsWith("1")) 
 		{
 			if (!Gui.libsbmlFound)
 			{
