@@ -439,7 +439,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			}
 			else
 			{
-				getReactionToPropensityMap().remove(reaction, value);
+				getReactionToPropensityMap().remove(reaction);
 			}
 			if (!isHierarchical(reaction) && fba == null)
 			{
