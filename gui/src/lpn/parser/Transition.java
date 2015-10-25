@@ -860,8 +860,7 @@ public class Transition {
 //    }
     
     public String getFullLabel() {
-    	// TODO: need to fix to get lhpn label too
-    	return this.label + "(" + /*this.lhpn.getLabel()*/ this.getLabel() + ")";
+    	return this.getLabel() + "(" + this.getLpn().getLabel() + ")";
     }
 
     /**
@@ -919,8 +918,6 @@ public class Transition {
 	public void setDstLpnList(LhpnFile curLPN) {	
 		for (Transition curTran : curLPN.getAllTransitions()) {
 			ExprTree curTranEnablingTree = curTran.getEnablingTree();
-			System.out.println("thisTran = " + this.getLabel());
-			System.out.println("curTran = " + curTran.getLabel());
 			if (curTranEnablingTree != null
 					&& (curTranEnablingTree.getChange(this.getAssignments())=='F'
 					|| curTranEnablingTree.getChange(this.getAssignments())=='f'

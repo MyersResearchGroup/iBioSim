@@ -39,7 +39,7 @@ public class VerificationCommandLine {
 		                throw new IllegalArgumentException("Not a valid argument: "+args[i]);
 				if (args[i].equals("-portb")) {
 					Options.setPOR("tb");
-					Options.setCycleClosingMthd("behavioral");
+					Options.setCycleClosingMthd("behavioral");					
 					Options.setCycleClosingStrongStubbornMethd("cctb");				
 				}
 				else if (args[i].equals("-porbehavioral")) {
@@ -76,7 +76,7 @@ public class VerificationCommandLine {
 				else if (args[i].contains("-allLPNs")) {
 					allLPNs = true;
 				}
-				else if (args[i].contains("-debugON")) {
+				else if (args[i].contains("-db")) {
 					Options.setDebugMode(true);
 					System.out.println("Debug mode is ON.");
 				}
@@ -88,7 +88,7 @@ public class VerificationCommandLine {
 					Options.disableDisablingError();
 					System.out.println("Disabling error was diabled.");
 				}
-				else if (args[i].contains("-drawSG")) {
+				else if (args[i].contains("-sg")) {
 					Options.setOutputSgFlag(true);
 					System.out.println("Gererate state graphs.");
 				}

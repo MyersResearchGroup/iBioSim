@@ -1169,7 +1169,7 @@ public class Analysis {
 		}
 		if (Options.getDebugMode()) {
 			printStaticSetsMap(lpnList);
-		}			
+		}
 		LpnTranList initStrongStubbornTrans = buildStrongStubbornSet(initStateArray, null, tranFiringFreq, sgList, lpnList, prjStateSet, stateStackTop, null);
 		lpnTranStack.push(initStrongStubbornTrans);
 		if (Options.getDebugMode()) {			
@@ -1205,11 +1205,16 @@ public class Analysis {
 			}
 			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
 			LinkedList<Transition> curStrongStubbornTrans = lpnTranStack.peek();
-			firedFailure = failureTranIsEnabled(curStrongStubbornTrans); // Null mean no failure.
-			//if (failureTranIsEnabled(curStrongStubbornTrans)) {
+			firedFailure = failureTranIsEnabled(curStrongStubbornTrans); // Null means no failure.			
+//			if(firedFailure != null){
+//				return null;
+//			}
 			if(firedFailure != null){
-				return null;
+				System.out.println("**** Failure transition " + firedFailure.getFullLabel() + " is enabled. Exit.");
+				failure = true;				
+				break main_while_loop;
 			}
+			
 			if (curStrongStubbornTrans.size() == 0) {
 				lpnTranStack.pop();
 				prjStateSet.add(stateStackTop);
@@ -1991,14 +1996,17 @@ public class Analysis {
 	      	System.out.println("******* Begin POR *******");
         }
         if (curEnabled.isEmpty()) {
+        	System.out.println("curEnabled is empty. Exit");        	
         	return strongStubbornSet;
-        }       
+        }
+        //HashSet<Transition> ready = curEnabled;
         HashSet<Transition> ready = computeStrongStubbornSet(stateArray, curEnabled, tranFiringFreq, sgList);
     	if (Options.getDebugMode()) {
 	    	System.out.println("******* End POR *******");
 	    	printIntegerSet(ready, "Strong Stubborn Set");
 	    	System.out.println("********************");
     	}
+    	
 		// ************* Priority: transition fired less times first *************
     	if (tranFiringFreq != null) {
     		LinkedList<Transition> readyList = new LinkedList<Transition>();
