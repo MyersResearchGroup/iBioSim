@@ -24,15 +24,15 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 			return 1;
 		else { // Neither dep0 nor dep1 contains dummy transitions. 			
 			if (!Options.getMarkovianModelFlag()) { // non-stochastic
-				// Compare sets with only immediate transitions and sets with only non-immediate ones. 
-				// Only need to compare seed transitions because a set with mixed immediate 
-				// and non-immediate transitions should not exist.
-				if (dep0.getSeed().getDelayTree() == null && dep1.getSeed().getDelayTree() != null) 
-					return -1;
-				 // TODO: Immediate transition should have 0 delay, not "null" delay.
-				else if (dep1.getSeed().getDelayTree() == null && dep0.getSeed().getDelayTree() != null)
-					return 1;
-				else {
+//				// Compare sets with only immediate transitions and sets with only non-immediate ones. 
+//				// Only need to compare seed transitions because a set with mixed immediate 
+//				// and non-immediate transitions should not exist.
+//				if (dep0.getSeed().getDelayTree() == null && dep1.getSeed().getDelayTree() != null) 
+//					return -1;
+//				 // TODO: Immediate transition should have 0 delay, not "null" delay.
+//				else if (dep1.getSeed().getDelayTree() == null && dep0.getSeed().getDelayTree() != null)
+//					return 1;
+//				else {
 					if (dep0.getDependent().size() < dep1.getDependent().size()) 
 						return -1;
 					else if (dep0.getDependent().size() > dep1.getDependent().size())
@@ -63,7 +63,7 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 //								return 0;
 //						}					
 					}
-				}
+//				}
 			}
 			// TODO: Add condition to compare the average transition rates.
 			return 0;

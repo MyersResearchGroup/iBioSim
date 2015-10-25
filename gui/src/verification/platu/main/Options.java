@@ -65,7 +65,7 @@ public class Options {
 	public static enum cycleClosingMethdDef{
 		BEHAVIORAL, // Improved behavioral analysis on cycle closing
 		STATE_SEARCH, // Improved behavioral analysis + state trace-back
-		NO_CYCLECLOSING, // no cycle closing
+		NO_CYCLECLOSING, // no cycle closing, generated SG may not be valid.
 		STRONG, // Strong cycle condition: for each cycle, at least one state has to fully expand.
 	}
 	private static String cycleClosingMethd = "behavioral";
