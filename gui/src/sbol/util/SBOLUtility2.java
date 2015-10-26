@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -19,23 +20,20 @@ import javax.swing.JOptionPane;
 import main.Gui;
 
 import org.sbolstandard.core2.*;
-//import org.sbolstandard.core.impl.DnaSequenceImpl;
-//import org.sbolstandard.core.impl.SBOLDocumentImpl;
-//import org.sbolstandard.core.util.*;
-import org.sbolstandard.core2.SBOLFactory;
 
 import biomodel.util.GlobalConstants;
 
 public class SBOLUtility2 {
 
-	private static String DEFAULTURI = "http://www.async.ece.utah.edu";
+	//private static String DEFAULTURI = "http://www.async.ece.utah.edu";
 	
 	public static SBOLDocument loadSBOLFile(String filePath) 
 	{
 		SBOLDocument sbolDoc = null;
 		try 
 		{
-			SBOLReader.setURIPrefix(DEFAULTURI);
+			Preferences biosimrc = Preferences.userRoot();
+			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 			sbolDoc = SBOLFactory.read(new FileInputStream(filePath));	
 			
 		} 
