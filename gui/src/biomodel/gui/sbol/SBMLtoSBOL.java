@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
 import javax.xml.stream.FactoryConfigurationError;
@@ -104,7 +105,8 @@ public class SBMLtoSBOL {
 		// TODO read existing 1.1 document in the project to get sequences etc.
 		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 		SBOLDocument sbolDoc = new SBOLDocument();
-		sbolDoc.setDefaultURIprefix("http://www.async.ece.utah.edu");
+		Preferences biosimrc = Preferences.userRoot();
+		sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 		sbolDoc.setComplete(true);
 		sbolDoc.setTypesInURIs(true);
 		
@@ -203,6 +205,21 @@ public class SBMLtoSBOL {
 		extractSubModels(sbmlDoc, sbolDoc, collection, moduleDef, model);
 	}
 	
+	public void recurseComponentDefinition(SBOLDocument sbolDoc,ComponentDefinition cd) {
+		for (org.sbolstandard.core2.Component comp : cd.getComponents()) {
+			if (comp.getDefinition()!=null) {
+				ComponentDefinition compDef = comp.getDefinition();
+				sbolDoc.createCopy(compDef);
+				for (Sequence sequence : compDef.getSequences()) {
+					if (sbolDoc.getSequence(sequence.getIdentity())==null) {
+						sbolDoc.createCopy(sequence);
+					}
+				}
+				recurseComponentDefinition(sbolDoc,compDef);
+			}
+		}
+	}
+	
 	public ComponentDefinition setComponentDefinition(SBOLDocument sbolDoc, Model model, Species species)
 	{
 		String compDef_identity =  model.getId() + "__" + species.getId();
@@ -226,6 +243,7 @@ public class SBMLtoSBOL {
 								sbolDoc.createCopy(sequence);
 							}
 						}
+						recurseComponentDefinition(sbolDoc,compDef);
 					}
 					return compDef;
 				}
@@ -244,6 +262,7 @@ public class SBMLtoSBOL {
 									sbolDoc.createCopy(sequence);
 								}
 							}
+							recurseComponentDefinition(sbolDoc,compDef);
 						}
 						return compDef;
 					}
@@ -268,6 +287,7 @@ public class SBMLtoSBOL {
 								sbolDoc.createCopy(sequence);
 							}
 						}
+						recurseComponentDefinition(sbolDoc,compDef);
 					}
 					return compDef;
 				}
