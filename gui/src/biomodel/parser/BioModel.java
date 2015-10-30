@@ -1425,6 +1425,7 @@ public class BioModel {
 	public void createFBCPlugin() {
 		sbml.enablePackage(FBCConstants.namespaceURI);
 		sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel());
+		sbmlFBC.setStrict(false);
 	}
 
 	public void createCompPlugin() {
