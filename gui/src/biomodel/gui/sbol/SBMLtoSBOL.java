@@ -145,7 +145,7 @@ public class SBMLtoSBOL {
 		{
 			// convert species to a component definition
 			Species species = model.getSpecies(i);
-			ComponentDefinition compDef = setComponentDefinition(sbolDoc, model, species);
+			ComponentDefinition compDef = setComponentDefinition(sbolDoc, model, species, collection);
 			collection.addMember(compDef.getIdentity());
 			
 			setFunctionalComponent(sbmlDoc, moduleDef, compDef, species);
@@ -205,22 +205,25 @@ public class SBMLtoSBOL {
 		extractSubModels(sbmlDoc, sbolDoc, collection, moduleDef, model);
 	}
 	
-	public void recurseComponentDefinition(SBOLDocument sbolDoc,ComponentDefinition cd) {
+	public void recurseComponentDefinition(SBOLDocument sbolDoc,ComponentDefinition cd,Collection collection) {
 		for (org.sbolstandard.core2.Component comp : cd.getComponents()) {
-			if (comp.getDefinition()!=null) {
+			if (sbolDoc.getComponentDefinition(comp.getDefinitionURI())==null) {
 				ComponentDefinition compDef = comp.getDefinition();
 				sbolDoc.createCopy(compDef);
+				collection.addMember(compDef.getIdentity());
 				for (Sequence sequence : compDef.getSequences()) {
 					if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 						sbolDoc.createCopy(sequence);
+						collection.addMember(sequence.getIdentity());
 					}
 				}
-				recurseComponentDefinition(sbolDoc,compDef);
+				recurseComponentDefinition(sbolDoc,compDef,collection);
 			}
 		}
 	}
 	
-	public ComponentDefinition setComponentDefinition(SBOLDocument sbolDoc, Model model, Species species)
+	public ComponentDefinition setComponentDefinition(SBOLDocument sbolDoc, Model model, Species species, 
+			Collection collection)
 	{
 		String compDef_identity =  model.getId() + "__" + species.getId();
 		
@@ -238,12 +241,14 @@ public class SBMLtoSBOL {
 				if (compDef!=null) {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 						sbolDoc.createCopy(compDef);
+						collection.addMember(compDef.getIdentity());
 						for (Sequence sequence : compDef.getSequences()) {
 							if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 								sbolDoc.createCopy(sequence);
+								collection.addMember(sequence.getIdentity());
 							}
 						}
-						recurseComponentDefinition(sbolDoc,compDef);
+						recurseComponentDefinition(sbolDoc,compDef,collection);
 					}
 					return compDef;
 				}
@@ -257,12 +262,14 @@ public class SBMLtoSBOL {
 					if (compDef!=null) {
 						if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 							sbolDoc.createCopy(compDef);
+							collection.addMember(compDef.getIdentity());
 							for (Sequence sequence : compDef.getSequences()) {
 								if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 									sbolDoc.createCopy(sequence);
+									collection.addMember(sequence.getIdentity());
 								}
 							}
-							recurseComponentDefinition(sbolDoc,compDef);
+							recurseComponentDefinition(sbolDoc,compDef,collection);
 						}
 						return compDef;
 					}
@@ -282,12 +289,14 @@ public class SBMLtoSBOL {
 				if (compDef!=null) {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 						sbolDoc.createCopy(compDef);
+						collection.addMember(compDef.getIdentity());
 						for (Sequence sequence : compDef.getSequences()) {
 							if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 								sbolDoc.createCopy(sequence);
+								collection.addMember(sequence.getIdentity());
 							}
 						}
-						recurseComponentDefinition(sbolDoc,compDef);
+						recurseComponentDefinition(sbolDoc,compDef,collection);
 					}
 					return compDef;
 				}
