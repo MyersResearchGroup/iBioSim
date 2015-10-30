@@ -32,8 +32,10 @@ public class SBOLUtility2 {
 		SBOLDocument sbolDoc = null;
 		try 
 		{
+			File f = new File(filePath);
+			String fileName = f.getName().replace(".sbol", "");
 			Preferences biosimrc = Preferences.userRoot();
-			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
 			sbolDoc = SBOLFactory.read(new FileInputStream(filePath));	
 			
 		} 
