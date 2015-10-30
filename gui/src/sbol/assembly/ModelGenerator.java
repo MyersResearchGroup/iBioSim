@@ -168,7 +168,7 @@ public class ModelGenerator {
 				if (!promoterToRepressions.containsKey(promoter))
 					promoterToRepressions.put(promoter, new LinkedList<Interaction>());
 				promoterToRepressions.get(promoter).add(interact);
-			}
+			} 
 		}
 		
 		for (FunctionalComponent promoter : promoterToProductions.keySet()) {
