@@ -16,11 +16,13 @@ import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 
 import org.sbolstandard.core2.*;
 
+import uk.ac.ncl.intbio.core.io.CoreIoException;
 import biomodel.util.GlobalConstants;
 
 public class SBOLUtility2 {
@@ -40,6 +42,18 @@ public class SBOLUtility2 {
 			
 		} 
 		catch (SBOLValidationException e) 
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
+					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (XMLStreamException e) 
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
+					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (CoreIoException e) 
 		{
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
