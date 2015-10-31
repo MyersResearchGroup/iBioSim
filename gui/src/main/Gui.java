@@ -86,6 +86,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.tree.TreeModel;
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
 import learn.AMSModel.LearnLPN;
@@ -141,6 +142,7 @@ import synthesis.async.Synthesis;
 import synthesis.genetic.SynthesisView;
 import uk.ac.ebi.biomodels.BioModelsWSClient;
 import uk.ac.ebi.biomodels.BioModelsWSException;
+import uk.ac.ncl.intbio.core.io.CoreIoException;
 import verification.AbstPane;
 import verification.Verification;
 import verification.platu.lpn.io.PlatuGrammarLexer;
@@ -6649,10 +6651,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private void generateSBMLFromSBOL()
 	{
+		String filePath = tree.getFile();
+		String projectDirectory = filePath.substring(0, filePath.lastIndexOf(File.separator));
 		try
 		{
-			String filePath = tree.getFile();
-			String projectDirectory = filePath.substring(0, filePath.lastIndexOf(File.separator));
 			org.sbolstandard.core2.SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(filePath));
 			for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions())
 			{
@@ -6674,8 +6676,24 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		catch (FileNotFoundException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file not found at " + filePath + ".", 
+					"File Not Found", JOptionPane.ERROR_MESSAGE);
+		}
+		catch (CoreIoException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
+					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
+		}
+		catch (XMLStreamException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
+					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
+		}
+		catch (FactoryConfigurationError e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
+					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
