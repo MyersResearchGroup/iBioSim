@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="verification/platu/project/DesignUnit.java|biomodel/gui/gcm/ParameterPanel.java|analysis/dynamicsim/hierarchical/CVS/" kind="src" path="gui/src">
-		<attributes>
-			<attribute name="ignore_optional_problems" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="gui/lib/AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-anim.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-awt-util.jar"/>
