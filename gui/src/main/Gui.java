@@ -129,6 +129,7 @@ import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.ModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
+import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbolstandard.core.SBOLDocument;
 import org.sbolstandard.core2.ModuleDefinition;
@@ -1831,7 +1832,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource() == bugReport)
 		{
-			Utility.submitBugReportTemp("");
+			Utility.submitBugReport("");
 		}
 		else if (e.getSource() == manual)
 		{
@@ -4490,6 +4491,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							document.enablePackage(LayoutConstants.namespaceURI);
 							document.enablePackage(CompConstants.namespaceURI);
 							document.enablePackage(FBCConstants.namespaceURI);
+							FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
+							fbc.setStrict(false);
 							document.enablePackage(ArraysConstants.namespaceURI);
 
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
@@ -4970,6 +4973,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				try
 				{
 					SBMLDocument document = SBMLutilities.readSBML(filename.trim());
+					if (document==null) return null;
 					if (overwrite(root + separator + file[file.length - 1], file[file.length - 1]))
 					{
 						SBMLutilities.checkModelCompleteness(document);
@@ -4993,7 +4997,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							document.enablePackage(LayoutConstants.namespaceURI);
 							document.enablePackage(CompConstants.namespaceURI);
 							document.enablePackage(FBCConstants.namespaceURI);
-
+							FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
+							fbc.setStrict(false);
 							document.enablePackage(ArraysConstants.namespaceURI);
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
@@ -11263,10 +11268,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				Model model = new Model(md);
 				model.unsetNamespace();
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+				
 				document.enablePackage(LayoutConstants.namespaceURI);
 				document.enablePackage(CompConstants.namespaceURI);
 				document.enablePackage(FBCConstants.namespaceURI);
-
+				FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
+				fbc.setStrict(false);
 				document.enablePackage(ArraysConstants.namespaceURI);
 				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 				document.setModel(model);
