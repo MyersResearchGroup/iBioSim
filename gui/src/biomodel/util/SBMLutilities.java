@@ -6661,6 +6661,9 @@ public class SBMLutilities
 				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
+		} else {
+			FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
+			fbc.setStrict(false);
 		}
 		return document;
 	}

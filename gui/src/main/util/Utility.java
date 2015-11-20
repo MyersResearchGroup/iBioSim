@@ -65,7 +65,7 @@ public class Utility {
 			report.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Utility.submitBugReportTemp("\n\nStack trace:\n"+message);
+					Utility.submitBugReport("\n\nStack trace:\n"+message);
 				}
 			});
 			JButton close = new JButton("Close");
