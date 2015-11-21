@@ -1308,7 +1308,7 @@ public class BioModel {
 			extModel = sbmlComp.getListOfExternalModelDefinitions().get(extId);
 		}
 		extModel.setId(extId);
-		extModel.setSource("file:" + prop.getProperty("gcm").replace(".gcm",".xml"));
+		extModel.setSource(prop.getProperty("gcm").replace(".gcm",".xml"));
 
 		String submodelID = s;
 		
@@ -3519,7 +3519,7 @@ public class BioModel {
 			extModel = sbmlComp.getListOfExternalModelDefinitions().get(extId);
 		
 		extModel.setId(extId);
-		extModel.setSource("file:" + modelFile.replace(".gcm",".xml"));
+		extModel.setSource(modelFile.replace(".gcm",".xml"));
 		extModel.setMd5(md5);
 		
 		//figure out what the submodel's ID should be if it's not provided
