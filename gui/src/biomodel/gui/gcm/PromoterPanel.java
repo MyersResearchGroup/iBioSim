@@ -487,6 +487,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 				}
 			}
 			promoter.setCompartment((String)compartBox.getSelectedItem());
+			production.setCompartment((String)compartBox.getSelectedItem());
 			String speciesType = typeBox.getSelectedItem().toString();
 			boolean onPort = (speciesType.equals(GlobalConstants.INPUT)||speciesType.equals(GlobalConstants.OUTPUT));
 			
