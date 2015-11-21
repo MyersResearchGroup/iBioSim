@@ -11287,7 +11287,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 						ExternalModelDefinition extModel = documentComp.createExternalModelDefinition();
 						extModel.setId(subModelType);
-						extModel.setSource("file:" + subModelType + ".xml");
+						extModel.setSource(subModelType + ".xml");
 						comps.add(subModelType);
 					}
 				}
@@ -11318,7 +11318,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (submodel.getModelRef().equals(extId))
 						{
 							ExternalModelDefinition extModel = sbmlComp.createExternalModelDefinition();
-							extModel.setSource("file:" + extId + ".xml");
+							extModel.setSource(extId + ".xml");
 							extModel.setId(extId);
 							break;
 						}
@@ -11340,7 +11340,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (extModel.isSetModelRef())
 			{
 				String oldId = extModel.getId();
-				extModel.setSource("file:" + extModel.getModelRef() + ".xml");
+				extModel.setSource(extModel.getModelRef() + ".xml");
 				extModel.setId(extModel.getModelRef());
 				extModel.unsetModelRef();
 				for (int j = 0; j < sbmlCompModel.getListOfSubmodels().size(); j++)
