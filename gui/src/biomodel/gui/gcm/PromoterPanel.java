@@ -2,6 +2,8 @@ package biomodel.gui.gcm;
 
 
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,15 +13,20 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
+import org.sbml.jsbml.ext.arrays.Index;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.sbmlcore.MySpecies;
 import biomodel.gui.sbol.SBOLField;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.gui.util.PropertyField;
@@ -31,7 +38,7 @@ import biomodel.util.Utility;
 import main.Gui;
 
 
-public class PromoterPanel extends JPanel {
+public class PromoterPanel extends JPanel implements ActionListener {
 	
 //	private JTextField sbolPromoterText = new JTextField(20);
 //	private JButton sbolPromoterButton = new JButton("Associate SBOL");
@@ -47,10 +54,12 @@ public class PromoterPanel extends JPanel {
 	private Species promoter = null;
 	private Reaction production = null;
 	private PropertyList speciesList;
-	
+	private JComboBox compartBox = null;
+	private JTextField iIndex = null;
+
 	public PromoterPanel(String selected, BioModel bioModel, PropertyList speciesList, boolean paramsOnly, BioModel refGCM, 
 			ModelEditor modelEditor) {
-		super(new GridLayout(paramsOnly?7:11, 1));
+		super(new GridLayout(paramsOnly?7:13, 1));
 		this.selected = selected;
 		this.bioModel = bioModel;
 		this.paramsOnly = paramsOnly;
@@ -91,6 +100,35 @@ public class PromoterPanel extends JPanel {
 			typeBox.setSelectedItem(GlobalConstants.INTERNAL);
 		}
 		production = bioModel.getProductionReaction(selected);
+		
+		// compartment field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Compartment");
+		compartBox = MySpecies.createCompartmentChoices(bioModel);		
+		compartBox.setSelectedItem(promoter.getCompartment());
+		compartBox.addActionListener(this);
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(compartBox);
+		
+		if (!paramsOnly) add(tempPanel);
+		
+		// indices field
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(promoter);
+		tempPanel = new JPanel(new GridLayout(1, 2));
+		iIndex = new JTextField(20);
+		String freshIndex = "";
+		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
+			Index indie = sBasePlugin.getIndex(i,"compartment");
+			if(indie!=null){
+				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+			}
+		}
+		iIndex.setText(freshIndex);
+		tempPanel.add(new JLabel("Compartment Indices"));
+		tempPanel.add(iIndex);
+			
+		if (!paramsOnly) add(tempPanel);
 		
 		// promoter count
 		String origString = "default";
@@ -373,6 +411,7 @@ public class PromoterPanel extends JPanel {
 			}
 			String[] idDims = new String[]{""};
 			String[] dimensionIds = new String[]{""};
+			String[] dex = new String[]{""};
 			idDims = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
 					fields.get(GlobalConstants.ID).getValue(), false);
 			if(idDims==null)return false;
@@ -414,7 +453,40 @@ public class PromoterPanel extends JPanel {
 					dimX.setSize(idDims[i+1].replace("]", "").trim());
 					dimX.setArrayDimension(i);
 				}
+				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
+				dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", idDims, null, null);
+				if(dex==null)return false;
+				int limit = sBasePlugin.getIndexCount();
+				for(int i = limit-1; i>-1; i--){
+			        Index indie = sBasePlugin.getIndex(i,"compartment");
+			        if(indie!=null)
+			           sBasePlugin.removeIndex(indie);
+				}
+				for(int i = 0; i<dex.length-1; i++){
+					Index indexRule = new Index();
+				    indexRule.setArrayDimension(i);
+				    indexRule.setReferencedAttribute("compartment");
+				    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
+				    indexRule.setMath(indexMath);
+				    sBasePlugin.addIndex(indexRule);
+				}
+				sBasePlugin = SBMLutilities.getArraysSBasePlugin(production);
+				limit = sBasePlugin.getIndexCount();
+				for(int i = limit-1; i>-1; i--){
+			        Index indie = sBasePlugin.getIndex(i,"compartment");
+			        if(indie!=null)
+			           sBasePlugin.removeIndex(indie);
+				}
+				for(int i = 0; i<dex.length-1; i++){
+					Index indexRule = new Index();
+				    indexRule.setArrayDimension(i);
+				    indexRule.setReferencedAttribute("compartment");
+				    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
+				    indexRule.setMath(indexMath);
+				    sBasePlugin.addIndex(indexRule);
+				}
 			}
+			promoter.setCompartment((String)compartBox.getSelectedItem());
 			String speciesType = typeBox.getSelectedItem().toString();
 			boolean onPort = (speciesType.equals(GlobalConstants.INPUT)||speciesType.equals(GlobalConstants.OUTPUT));
 			
@@ -572,5 +644,17 @@ public class PromoterPanel extends JPanel {
 		GlobalConstants.OUTPUT};
 
 	private JComboBox typeBox = null;
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == compartBox){
+			if (bioModel.isArray((String)compartBox.getSelectedItem())) {
+				iIndex.setEnabled(true);
+			} else {
+				iIndex.setText("");
+				iIndex.setEnabled(false);
+			}
+		}
+	}
 	
 }
