@@ -91,6 +91,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
+import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.layout.TextGlyph;
 import org.sbml.jsbml.Unit;
@@ -6679,11 +6680,24 @@ public class BioModel {
 		if (sbmlCompModel.getListOfPorts().size() > 0 || sbmlCompModel.getListOfSubmodels().size() > 0) {
 			document.enablePackage(CompConstants.namespaceURI);
 		}
-		/* TODO: remove for now as more detailed check is needed
-		if (sbmlFBC.getListOfObjectives().size() > 0 || sbmlFBC.getListOfFluxBounds().size() > 0) {
+		if (sbmlFBC.getListOfObjectives().size() > 0) {
 			document.enablePackage(FBCConstants.namespaceURI);
+		} else {
+			for (int i = 0; i < document.getModel().getNumReactions(); i++) {
+				Reaction r = document.getModel().getReaction(i);
+				FBCReactionPlugin rBounds = SBMLutilities.getFBCReactionPlugin(r);
+				if (rBounds != null) {
+					if (rBounds.isSetLowerFluxBound()) {
+						document.enablePackage(FBCConstants.namespaceURI);
+						break;
+					} 
+					if (rBounds.isSetUpperFluxBound()) {
+						document.enablePackage(FBCConstants.namespaceURI);
+						break;
+					} 
+				}
+			}
 		}
-		*/
 		document.enablePackage(ArraysConstants.namespaceURI);
 
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {

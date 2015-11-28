@@ -694,35 +694,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			} else {
 				kineticFluxLabel.setSelectedIndex(1);
 				String fluxbounds = "";
-				for(int i = 0; i < bioModel.getSBMLFBC().getListOfFluxBounds().size(); i++){
-					FluxBound fluxBound = bioModel.getSBMLFBC().getListOfFluxBounds().get(i);
-					if(fluxBound.getReaction().equals(reactionId)){
-						String indexStr = "";
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(fluxBound);
-						for(int k = sBasePlugin.getIndexCount()-1; k>=0; k--){
-							Index index = sBasePlugin.getIndex(k,"reaction");
-							if (index!=null)
-								indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-						}
-						if(fluxBound.getOperation()==FluxBound.Operation.GREATER_EQUAL){
-							fluxbounds = fluxBound.getValue() + "<=" + fluxbounds;
-							if(!fluxbounds.contains(reactionId)){
-								fluxbounds += reactionId + indexStr;
-							}
-						}
-						else if(fluxBound.getOperation()==FluxBound.Operation.LESS_EQUAL){
-							fluxbounds += "<=" + fluxBound.getValue();
-							if(!fluxbounds.contains(reactionId)){
-								fluxbounds = reactionId + indexStr + fluxbounds;
-							}
-						} 
-						else if(fluxBound.getOperation()==FluxBound.Operation.EQUAL){
-							double value = fluxBound.getValue();
-							fluxbounds = value + "<=" + reactionId + indexStr + "<=" + value;
-						}
-
-					}
-				}
 				Reaction r = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
 				FBCReactionPlugin rBounds = SBMLutilities.getFBCReactionPlugin(r);
 				if (rBounds != null) {
