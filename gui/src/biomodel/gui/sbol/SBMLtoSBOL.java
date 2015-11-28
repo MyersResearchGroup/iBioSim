@@ -1,6 +1,7 @@
 package biomodel.gui.sbol;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,6 +40,7 @@ import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
@@ -118,10 +120,22 @@ public class SBMLtoSBOL {
 	    {
 			try 
 			{
-				SBOLWriter.writeRDF(sbolDoc, exportFilePath);
+				SBOLWriter.write(sbolDoc, exportFilePath);
 			} 
 			catch (FileNotFoundException e) 
 			{
+				e.printStackTrace();
+			}
+			catch (XMLStreamException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (CoreIoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    }

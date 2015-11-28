@@ -443,6 +443,14 @@ public class BioGraph extends mxGraph {
 			}
 		}
 		
+		// add all the drawn promoters
+		for(String prom : bioModel.getPromoters()){
+			if (bioModel.isPromoterExplicit(prom)) {
+				if(createGraphDrawnPromoterFromModel(prom))
+					needsPositioning = true;
+			}
+		}
+		
 		// add all components
 		if (bioModel.isGridEnabled()) {
 			
@@ -517,14 +525,6 @@ public class BioGraph extends mxGraph {
 					generalGlyph.setBoundingBox(compartmentGlyph.getBoundingBox().clone());
 				}
 				if (createGraphComponentFromModel(comp))
-					needsPositioning = true;
-			}
-		}
-		
-		// add all the drawn promoters
-		for(String prom : bioModel.getPromoters()){
-			if (bioModel.isPromoterExplicit(prom)) {
-				if(createGraphDrawnPromoterFromModel(prom))
 					needsPositioning = true;
 			}
 		}
@@ -2315,7 +2315,7 @@ public class BioGraph extends mxGraph {
 			// input, the arrow should point in from the species
 			String topSpecies = connections.get(propName);
 			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "", 
-					this.getSpeciesCell(topSpecies),insertedVertex);
+					this.getSpeciesOrPromoterCell(topSpecies),insertedVertex);
 			String key = id + " Input " + topSpecies;
 			componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
 			this.updateComponentConnectionVisuals((mxCell)createdEdge, propName);
@@ -2327,7 +2327,7 @@ public class BioGraph extends mxGraph {
 			// output, the arrow should point out to the species
 			String topSpecies = connections.get(propName);
 			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "", insertedVertex, 
-					this.getSpeciesCell(topSpecies));
+					this.getSpeciesOrPromoterCell(topSpecies));
 			String key = id + " Output " + topSpecies;
 			componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
 			this.updateComponentConnectionVisuals((mxCell)createdEdge, propName);

@@ -74,8 +74,14 @@ public class ModelGenerator {
 					generateOutputPort(comp, targetModel);
 				}
 			}
-			if (isPromoterComponent(comp, sbolDoc))
+			if (isPromoterComponent(comp, sbolDoc)) {
 				generatePromoterSpecies(comp, sbolDoc, targetModel);
+				if (isInputComponent(comp)) {
+					generateInputPort(comp, targetModel);
+				} else if (isOutputComponent(comp)){
+					generateOutputPort(comp, targetModel);
+				}
+			}
 		}
 		
 		HashMap<FunctionalComponent, List<Interaction>> promoterToProductions = new HashMap<FunctionalComponent, List<Interaction>>();
@@ -171,12 +177,35 @@ public class ModelGenerator {
 			} 
 		}
 		
-		for (FunctionalComponent promoter : promoterToProductions.keySet()) {
-			generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-					promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-					promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-					promoterToRepressors.get(promoter), moduleDef, sbolDoc, targetModel);
+		for (FunctionalComponent promoter : moduleDef.getFunctionalComponents()) { 
+			if (isPromoterComponent(promoter, sbolDoc)) {
+				if (!promoterToActivators.containsKey(promoter))
+					promoterToActivators.put(promoter, new LinkedList<Participation>());
+				if (!promoterToRepressors.containsKey(promoter))
+					promoterToRepressors.put(promoter, new LinkedList<Participation>());
+				if (!promoterToActivations.containsKey(promoter))
+					promoterToActivations.put(promoter, new LinkedList<Interaction>());
+				if (!promoterToRepressions.containsKey(promoter))
+					promoterToRepressions.put(promoter, new LinkedList<Interaction>());
+				if (!promoterToProducts.containsKey(promoter))
+					promoterToProducts.put(promoter, new LinkedList<Participation>());
+				if (!promoterToTranscribed.containsKey(promoter))
+					promoterToTranscribed.put(promoter, new LinkedList<Participation>());
+				if (!promoterToPartici.containsKey(promoter))
+					promoterToPartici.put(promoter, new LinkedList<Participation>());
+				generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+						promoterToRepressors.get(promoter), moduleDef, sbolDoc, targetModel);
+			}
 		}
+		
+//		for (FunctionalComponent promoter : promoterToProductions.keySet()) {
+//			generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+//					promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+//					promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+//					promoterToRepressors.get(promoter), moduleDef, sbolDoc, targetModel);
+//		}
 		
 		for (Module subModule : moduleDef.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
@@ -342,20 +371,25 @@ public class ModelGenerator {
 			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {
 		
 		String rxnID = "";
-		for (Interaction production : productions)
-			rxnID = rxnID + "_" + getDisplayID(production);
+		if (productions!=null) {
+			for (Interaction production : productions)
+				rxnID = rxnID + "_" + getDisplayID(production);
+		} else {
+			rxnID = promoter.getDisplayId() + "_Production";
+		}
 		rxnID = rxnID.substring(1);
 		Reaction productionRxn = targetModel.createProductionReaction(getDisplayID(promoter), rxnID, null, null, null, null, 
 				null, null, false, null);
 		
 		// Annotate SBML production reaction with SBOL production interactions
 		List<Interaction> productionsRegulations = new LinkedList<Interaction>();
-		productionsRegulations.addAll(productions);
+		if (productions!=null) productionsRegulations.addAll(productions);
 		productionsRegulations.addAll(activations);
 		productionsRegulations.addAll(repressions);
-		annotateRxn(productionRxn, productionsRegulations);
-		
-		annotateSpeciesReference(productionRxn.getModifier(0), partici);
+		if (!productionsRegulations.isEmpty())
+			annotateRxn(productionRxn, productionsRegulations);
+		if (!partici.isEmpty()) 
+			annotateSpeciesReference(productionRxn.getModifier(0), partici);
 		
 		for (Participation activator : activators)
 			generateActivatorReference(activator, promoter, moduleDef, productionRxn, targetModel);
@@ -545,6 +579,14 @@ public class ModelGenerator {
 		return compDef.containsType(ChEBI.PROTEIN) ||
 				compDef.containsType(ComponentDefinition.PROTEIN);
 	}
+		
+	public static boolean isRNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+		return isRNADefinition(sbolDoc.getComponentDefinition(comp.getDefinitionURI()));
+	}
+	
+	public static boolean isRNADefinition(ComponentDefinition compDef) {
+		return compDef.containsType(ComponentDefinition.RNA);
+	}
 	
 	public static boolean isPromoterComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		return isPromoterDefinition(sbolDoc.getComponentDefinition(comp.getDefinitionURI()));
@@ -572,6 +614,7 @@ public class ModelGenerator {
 	public static boolean isSpeciesDefinition(ComponentDefinition compDef) {
 		return isComplexDefinition(compDef)
 				|| isProteinDefinition(compDef)
+				|| isRNADefinition(compDef)
 				|| isTFDefinition(compDef)
 				|| isSmallMoleculeDefinition(compDef)
 				|| compDef.containsType(ChEBI.EFFECTOR);
@@ -627,7 +670,7 @@ public class ModelGenerator {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 				if ((partici.containsRole(SystemsBiologyOntology.PRODUCT) ||
 					partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000253"))) && 
-					isComplexComponent(comp, sbolDoc)) 
+					(isComplexComponent(comp, sbolDoc)||isSpeciesComponent(comp, sbolDoc))) 
 					complexCount++;
 				else if ((partici.containsRole(SystemsBiologyOntology.REACTANT) ||
 						partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000280"))) && 

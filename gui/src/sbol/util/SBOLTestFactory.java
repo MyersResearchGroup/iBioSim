@@ -32,6 +32,7 @@ import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.RestrictionType;
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceConstraint;
 import org.sbolstandard.core2.SystemsBiologyOntology;
@@ -93,7 +94,7 @@ public class SBOLTestFactory {
 		File test = new File("C:\\Users\\Nic\\Documents\\temp\\testToggle.txt");
 //		try {
 			try {
-				SBOLWriter.writeTurtle(sbolDoc,  test);
+				SBOLWriter.write(sbolDoc,  test, SBOLReader.TURTLE);
 			} catch (Throwable e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
