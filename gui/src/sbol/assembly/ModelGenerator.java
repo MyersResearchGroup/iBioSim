@@ -559,7 +559,7 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isOutputComponent(FunctionalComponent comp) {
-		return comp.getDirection().equals(DirectionType.OUT);
+		return comp.getDirection().equals(DirectionType.OUT) || comp.getDirection().equals(DirectionType.INOUT);
 	}
 	
 	public static boolean isDNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -695,7 +695,8 @@ public class ModelGenerator {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 				if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isPromoterComponent(comp, sbolDoc))
 					hasPromoter = true;
-				else if (partici.containsRole(SystemsBiologyOntology.PRODUCT) && isProteinComponent(comp, sbolDoc))
+				else if (partici.containsRole(SystemsBiologyOntology.PRODUCT) && 
+						(isProteinComponent(comp, sbolDoc)||isRNAComponent(comp, sbolDoc)))
 					hasProduct = true;
 				// TRANSCRIBED
 				else if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isGeneComponent(comp, sbolDoc))
