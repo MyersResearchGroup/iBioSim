@@ -49,62 +49,62 @@ public class SBOLTestFactory {
 	}
 	
 	public static void testWrite() {
-		SBOLDocument sbolDoc = new SBOLDocument();
-		sbolDoc.setDefaultURIprefix(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
-		ModuleDefinition lacIInverter = createInverterDefinition("LacI", "pLac", "cTetR", "TetR", 
-				MyersOntology.TF, sbolDoc);
-		ModuleDefinition tetRInverter = createInverterDefinition("TetR", "pTet", "cLacI", "LacI", 
-				MyersOntology.TF, sbolDoc);
-		createToggleSwitchDefinition("IPTG", "aTc", lacIInverter, tetRInverter, sbolDoc);
-//		List<ModuleDefinition> sensorDefs = new LinkedList<ModuleDefinition>();
-//		sensorDefs.add(createSensorDefinition("Ara", "Promoter", "araC", "AraC",
-//				"pBAD", "ipgC", "IpgC", MyersOntology.CHAPERONE, sbolDoc, true));
-//		sensorDefs.add(createSensorDefinition("IPTG", "Promoter", "lacI", "LacI",
-//				"pTac", "mxiE", "MxiE", MyersOntology.TF, sbolDoc, false));
-//		sensorDefs.add(createSensorDefinition("Three_OC_Six", "Promoter", "luxR", "LuxR",
-//				"pLux", "exsC", "ExsC", MyersOntology.CHAPERONE, sbolDoc, true));
-//		List<String> geneIDs = new LinkedList<String>();
-//		geneIDs.add("exsD");
-//		geneIDs.add("exsA");
-//		List<String> proteinIDs = new LinkedList<String>();
-//		proteinIDs.add("ExsD");
-//		proteinIDs.add("ExsA");
-//		List<URI> outputRoles = new LinkedList<URI>();
-//		outputRoles.add(MyersOntology.CHAPERONE);
-//		outputRoles.add(MyersOntology.TF);
-//		sensorDefs.add(createSensorDefinition("aTc", "Promoter", "tetR", "TetR",
-//				"pTetR", geneIDs, proteinIDs, outputRoles, sbolDoc, false));
-//		
-//		List<ModuleDefinition> andDefs = new LinkedList<ModuleDefinition>();
-//		andDefs.add(createANDDefinition("IpgC", "MxiE", "pipaH", "sicA", "SicA", 
-//				MyersOntology.CHAPERONE, sbolDoc));
-//		andDefs.add(createANDDefinition("ExsC", "ExsD", "ExsA", "pexsC", "invF", "InvF",
-//				MyersOntology.TF, sbolDoc));
-//		andDefs.add(createANDDefinition("SicA", "InvF", "psicA", "rfp", "RFP", 
-//				MyersOntology.REPORTER, sbolDoc));
-//		createANDSensorDefinition(sensorDefs, andDefs, sbolDoc);
-//		File test = new File("C:\\Users\\Nic\\Documents\\temp\\andSensor.xml");
-//		File test = new File("C:\\Users\\Nic\\Documents\\temp\\testToggle.xml");
-//		try {
-//			SBOLWriter.write(sbolDoc, test);
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		File test = new File("C:\\Users\\Nic\\Documents\\temp\\testToggle.txt");
-//		try {
-			try {
-				SBOLWriter.write(sbolDoc,  test, SBOLReader.TURTLE);
-			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		Annotation testAnno = new Annotation(null, null);
-//		Annotation testAnno = new Annotation(null);
+//		SBOLDocument sbolDoc = new SBOLDocument();
+//		sbolDoc.setDefaultURIprefix(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
+//		ModuleDefinition lacIInverter = createInverterDefinition("LacI", "pLac", "cTetR", "TetR", 
+//				MyersOntology.TF, sbolDoc);
+//		ModuleDefinition tetRInverter = createInverterDefinition("TetR", "pTet", "cLacI", "LacI", 
+//				MyersOntology.TF, sbolDoc);
+//		createToggleSwitchDefinition("IPTG", "aTc", lacIInverter, tetRInverter, sbolDoc);
+////		List<ModuleDefinition> sensorDefs = new LinkedList<ModuleDefinition>();
+////		sensorDefs.add(createSensorDefinition("Ara", "Promoter", "araC", "AraC",
+////				"pBAD", "ipgC", "IpgC", MyersOntology.CHAPERONE, sbolDoc, true));
+////		sensorDefs.add(createSensorDefinition("IPTG", "Promoter", "lacI", "LacI",
+////				"pTac", "mxiE", "MxiE", MyersOntology.TF, sbolDoc, false));
+////		sensorDefs.add(createSensorDefinition("Three_OC_Six", "Promoter", "luxR", "LuxR",
+////				"pLux", "exsC", "ExsC", MyersOntology.CHAPERONE, sbolDoc, true));
+////		List<String> geneIDs = new LinkedList<String>();
+////		geneIDs.add("exsD");
+////		geneIDs.add("exsA");
+////		List<String> proteinIDs = new LinkedList<String>();
+////		proteinIDs.add("ExsD");
+////		proteinIDs.add("ExsA");
+////		List<URI> outputRoles = new LinkedList<URI>();
+////		outputRoles.add(MyersOntology.CHAPERONE);
+////		outputRoles.add(MyersOntology.TF);
+////		sensorDefs.add(createSensorDefinition("aTc", "Promoter", "tetR", "TetR",
+////				"pTetR", geneIDs, proteinIDs, outputRoles, sbolDoc, false));
+////		
+////		List<ModuleDefinition> andDefs = new LinkedList<ModuleDefinition>();
+////		andDefs.add(createANDDefinition("IpgC", "MxiE", "pipaH", "sicA", "SicA", 
+////				MyersOntology.CHAPERONE, sbolDoc));
+////		andDefs.add(createANDDefinition("ExsC", "ExsD", "ExsA", "pexsC", "invF", "InvF",
+////				MyersOntology.TF, sbolDoc));
+////		andDefs.add(createANDDefinition("SicA", "InvF", "psicA", "rfp", "RFP", 
+////				MyersOntology.REPORTER, sbolDoc));
+////		createANDSensorDefinition(sensorDefs, andDefs, sbolDoc);
+////		File test = new File("C:\\Users\\Nic\\Documents\\temp\\andSensor.xml");
+////		File test = new File("C:\\Users\\Nic\\Documents\\temp\\testToggle.xml");
+////		try {
+////			SBOLWriter.write(sbolDoc, test);
+////		} catch (FileNotFoundException e) {
+////			// TODO Auto-generated catch block
+////			e.printStackTrace();
+////		}
+//		File test = new File("C:\\Users\\Nic\\Documents\\temp\\testToggle.txt");
+////		try {
+//			try {
+//				SBOLWriter.write(sbolDoc,  test, SBOLReader.TURTLE);
+//			} catch (Throwable e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+////		} catch (FileNotFoundException e) {
+////			// TODO Auto-generated catch block
+////			e.printStackTrace();
+////		}
+////		Annotation testAnno = new Annotation(null, null);
+////		Annotation testAnno = new Annotation(null);
 	}
 	
 	public static Module createToggleSwitchModule(ModuleDefinition toggleDef, ModuleDefinition parentModuleDef) {
