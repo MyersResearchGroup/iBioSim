@@ -626,7 +626,7 @@ public class ModelGenerator {
 	
 	public static boolean isComplexDefinition(ComponentDefinition compDef) {
 		return compDef.containsType(ChEBI.NON_COVALENTLY_BOUND_MOLECULAR_ENTITY) ||
-				compDef.containsType(URI.create("http://www.biopax.org/release/biopax-level3.owl#Complex"));
+				compDef.containsType(ComponentDefinition.COMPLEX);
 	}
 	public static boolean isSmallMoleculeDefinition(ComponentDefinition compDef) {
 		return compDef.containsType(ComponentDefinition.SMALL_MOLECULE);
