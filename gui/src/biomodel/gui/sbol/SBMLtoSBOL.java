@@ -379,7 +379,7 @@ public class SBMLtoSBOL {
 			String inter_id = r.getSpecies() + "_rep_" + promoterId;
 			
 			Set<URI> types = new HashSet<URI>();
-			types.add(SystemsBiologyOntology.GENETIC_SUPPRESSION);
+			types.add(SystemsBiologyOntology.INHIBITION);
 			
 			Interaction interaction = moduleDef.createInteraction(inter_id, types);
 			
@@ -402,7 +402,7 @@ public class SBMLtoSBOL {
 			String inter_id ="_act_" + a.getSpecies();
 			
 			Set<URI> types = new HashSet<URI>();
-			types.add(SystemsBiologyOntology.GENETIC_ENHANCEMENT); 
+			types.add(SystemsBiologyOntology.STIMULATION); 
 			
 			Interaction interaction = moduleDef.createInteraction(inter_id, types);
 			

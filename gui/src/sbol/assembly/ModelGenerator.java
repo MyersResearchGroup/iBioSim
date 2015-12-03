@@ -710,7 +710,9 @@ public class ModelGenerator {
 	
 	public static boolean isActivationInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
-		if (interact.containsType(SystemsBiologyOntology.GENETIC_ENHANCEMENT) && interact.getParticipations().size() == 2) {
+		if ((interact.containsType(SystemsBiologyOntology.GENETIC_ENHANCEMENT) ||
+				interact.containsType(SystemsBiologyOntology.STIMULATION)) 
+				&& interact.getParticipations().size() == 2) {
 			boolean hasActivated = false;
 			boolean hasActivator = false;
 			for (Participation partici : interact.getParticipations()) {
