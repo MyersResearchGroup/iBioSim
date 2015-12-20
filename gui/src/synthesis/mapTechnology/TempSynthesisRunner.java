@@ -28,13 +28,11 @@ public class TempSynthesisRunner
 		List<SBOLGraph> library = syn.getLibrary();
 		setLibraryGateScores(library);
 		Map<SynthesisNode, LinkedList<WeightedGraph>> matches = new HashMap<SynthesisNode, LinkedList<WeightedGraph>>();
-		Map<SynthesisNode, SBOLGraph> coveredGates = new HashMap<SynthesisNode, SBOLGraph>();
 		syn.match_topLevel(syn.getSpecification(), matches);
 //		printMatches(matches);
-		
-		syn.cover_topLevel(syn.getSpecification().getOutputNode(), matches);
-//		coveredGates = syn.cover(syn.getSpecification().getOutputNode(), matches, coveredGates, Double.POSITIVE_INFINITY);
-//		printCoveredGates(coveredGates);
+		Map<SynthesisNode, SBOLGraph> solution = syn.cover_topLevel(syn.getSpecification(), matches);
+//		syn.printCoveredGates(solution);
+		syn.getSBOLfromTechMapping(solution, syn.getSpecification());
 	} 
 
 	public static void printMatches(Map<SynthesisNode, LinkedList<WeightedGraph>> matches)
@@ -48,14 +46,6 @@ public class TempSynthesisRunner
 		}
 	}
 	
-	public static void printCoveredGates(Map<SynthesisNode, SBOLGraph> coveredGates)
-	{
-		for(SBOLGraph g : coveredGates.values())
-		{
-			System.out.println(g.getOutputNode().toString());
-		}
-	}
-
 	public static void setLibraryGateScores(List<SBOLGraph> library)
 	{
 		for(SBOLGraph g: library)
