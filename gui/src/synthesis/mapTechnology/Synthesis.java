@@ -1,15 +1,29 @@
 package synthesis.mapTechnology;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+
+import org.sbolstandard.core2.AccessType;
+import org.sbolstandard.core2.Component;
+import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
+import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
+
+import biomodel.util.GlobalConstants;
+import uk.ac.ncl.intbio.core.io.CoreIoException;
 
 public class Synthesis
 {
@@ -55,15 +69,6 @@ public class Synthesis
 		}
 	}
 
-	//	public boolean match(SBOLGraph spec, SBOLGraph lib)
-	//	{	
-	//		if(spec.getRoots().size() != lib.getRoots().size())
-	//		{
-	//			return false;
-	//		}
-	//		return isMatch(spec.getRoots().get(0), lib.getRoots().get(0));
-	//	}
-
 	public void match_topLevel(SBOLGraph _specifiGraph, Map<SynthesisNode, LinkedList<WeightedGraph>> matches)
 	{
 		//Map<SynthesisNode, LinkedList<SBOLGraph>> matches = new HashMap<SynthesisNode, LinkedList<SBOLGraph>>();
@@ -87,7 +92,6 @@ public class Synthesis
 					if(isMatch(n, l))
 					{
 						totalScore = l.getScore() + getSubNodeScore(n, l);
-						//System.out.println(n.getFunctionalComponent().getDisplayId() +"/" + l.toString() + "/" + totalScore);
 						if(totalScore < n.getScore()) 
 						{
 							n.setScore(totalScore); //update speciGraph with new libGate score
@@ -97,7 +101,6 @@ public class Synthesis
 								matches.put(n, new LinkedList<WeightedGraph>());
 							}
 							matches.get(n).addFirst(new WeightedGraph(gate, totalScore));
-							//bestLib = l;
 						}
 						else
 						{
@@ -129,7 +132,6 @@ public class Synthesis
 				}
 			}
 		} //end of for loop
-		//		System.out.println("Score: " + _specifiGraph.getOutputNode().getScore());
 	}
 
 
@@ -145,6 +147,12 @@ public class Synthesis
 		return total;
 	}
 
+	/**
+	 * Return a list of leaf nodes from the spec that maps to the specified library gate
+	 * @param spec
+	 * @param lib
+	 * @return
+	 */
 	public List<SynthesisNode> getEndNodes(SynthesisNode spec, SynthesisNode lib)
 	{
 		List<SynthesisNode> list = new ArrayList<SynthesisNode>();
@@ -167,76 +175,125 @@ public class Synthesis
 		}
 	}
 
-	public void cover_topLevel(SynthesisNode n, Map<SynthesisNode, LinkedList<WeightedGraph>> matches)
+	public Map<SynthesisNode, SBOLGraph> cover_topLevel(SBOLGraph syn, Map<SynthesisNode, LinkedList<WeightedGraph>> matches)
 	{
-		//0. Set up solution of gates used for spec
+		// 0. Set up solution of gates used for spec
 		double bestScore = Double.POSITIVE_INFINITY;
-		double currentScore = 0; 
-		double estimateScore = 0; 
-		Map<SynthesisNode, SBOLGraph> solution = new HashMap<SynthesisNode, SBOLGraph>();
-		Map<SynthesisNode, SBOLGraph> bestSolution = new HashMap<SynthesisNode, SBOLGraph>();
-		cover(n, matches, bestScore, currentScore, estimateScore, solution, bestSolution);
-		printCoveredGates(solution);
+		double currentScore = 0;
+		SynthesisNode n = syn.getOutputNode();
+		Map<SynthesisNode, SBOLGraph> bestSolution = cover(syn, n, matches, bestScore, currentScore);
+		//printCoveredGates(bestSolution);
+		return bestSolution; 
 	}
 
-	private void cover(SynthesisNode n, Map<SynthesisNode, LinkedList<WeightedGraph>> matches, double bestScore, double currentScore, double estimateScore, Map<SynthesisNode, SBOLGraph> solution, Map<SynthesisNode, SBOLGraph> bestSolution)
+	private Map<SynthesisNode, SBOLGraph> cover(SBOLGraph syn, SynthesisNode n, Map<SynthesisNode, LinkedList<WeightedGraph>> matches, double bestScore, double currentScore)
 	{
-		//1. get all gates that can fit this node
 		LinkedList<WeightedGraph> matchedLibGates = matches.get(n);
+		Map<SynthesisNode, SBOLGraph> bestSolution = null;
 
-		for(WeightedGraph wg: matchedLibGates)
+		for (WeightedGraph wg : matchedLibGates)
 		{
 			SBOLGraph libGate = wg.getSBOLGraph();
-			//2. Check to see if graph will cause crosstalk in sol. list before adding to sol. list
-			if(isCrossTalk(solution.values(), libGate))
+			double estimateScore = libGate.getOutputNode().getScore() + getSubNodeScore(n, libGate.getOutputNode());
+
+			if (estimateScore >= bestScore)
 			{
-				//3. If there are crosstalk, move onto new lib gate
 				continue;
 			}
 			else
 			{
-				//3.1 Crosstalk did not occur. Calculate the estimate score
-				estimateScore = currentScore + libGate.getOutputNode().getScore() + getSubNodeScore(n, libGate.getOutputNode());
-				
-				//				estimateScore = getCurrentCoveredScore(solution.values()) + libGate.getOutputNode().getScore() + getSubNodeScore(n, libGate.getOutputNode());
-
-				//3.2 Check if the currentScore is smaller than the best solution score so far
-				//		- if currentScore is bigger, move onto next gate in lib
-				//		- else add lib gate to the solution for the current spec node that you are at
-				if(estimateScore >= bestScore)
-					continue;
-				else//(estimateScore < bestScore)
+				Map<SynthesisNode, SBOLGraph> solutionCopy = new HashMap<SynthesisNode, SBOLGraph>();
+				solutionCopy.put(n, libGate);
+				double score = libGate.getOutputNode().getScore();
+				solutionCopy.put(n, libGate);
+				List<SynthesisNode> childrenNodes = getEndNodes(n, libGate.getOutputNode());
+				if (childrenNodes.size() > 0)
 				{
-					currentScore = getCurrentCoveredScore(solution.values());
-					solution.put(n, libGate);
-					//5. Check if there are any nodes left to cover in the spec
-					List<SynthesisNode> childrenNodes = getEndNodes(n, libGate.getOutputNode());
-					if(childrenNodes.size() > 0 )
+					for (SynthesisNode child : childrenNodes)
 					{
-						//6. get the children nodes that were not covered and continue covering the remaining nodes of the spec
-						for(SynthesisNode child : childrenNodes)
-						{
-							cover(child, matches, bestScore, currentScore, estimateScore, solution, bestSolution);
-						}
-//						bestScore = currentScore;
-					}
-					//spec is done traversing. 
-					//move onto next lib gate and see if that gate can beat this bestScore
-					//	- store the currentScore as the bestScore
-					//	- store the solution of the library gates used for the spec
-					bestScore = getCurrentCoveredScore(solution.values());
-					bestSolution = solution; 
-					if(Math.abs(bestScore - 115) < 1e-5)
-					{
-						System.out.println("stop here");
+						solutionCopy = coverRecursive(child, matches, bestScore, currentScore, solutionCopy);
 					}
 				}
-				//TODO: if no solution is found, return empty solution and INFINITY score
+
+				if (solutionCopy != null)
+				{
+					score = getCurrentCoveredScore(solutionCopy.values());
+
+					if (score < bestScore)
+					{
+						bestScore = score;
+						bestSolution = solutionCopy;
+					}
+				}
+
+			}
+		}
+
+		System.out.println(bestScore);
+		return bestSolution;
+	}
+
+	private Map<SynthesisNode, SBOLGraph> coverRecursive(SynthesisNode n, Map<SynthesisNode, LinkedList<WeightedGraph>> matches, double bestScore, double currentScore, Map<SynthesisNode, SBOLGraph> solution)
+	{
+		LinkedList<WeightedGraph> matchedLibGates = matches.get(n);
+		Map<SynthesisNode, SBOLGraph> bestSolution = null;
+		if (n.isRoot())
+		{
+			return solution;
+		}
+		for (WeightedGraph wg : matchedLibGates)
+		{
+			SBOLGraph libGate = wg.getSBOLGraph();
+			if (isCrossTalk(solution.values(), libGate))
+			{
+				continue;
+			}
+			else
+			{
+				double estimateScore = currentScore + libGate.getOutputNode().getScore() + getSubNodeScore(n, libGate.getOutputNode());
+
+				if (estimateScore >= bestScore)
+				{
+					continue;
+				}
+				else
+				{
+					Map<SynthesisNode, SBOLGraph> solutionCopy = new HashMap<SynthesisNode, SBOLGraph>(solution);
+
+					currentScore = getCurrentCoveredScore(solutionCopy.values());
+					solutionCopy.put(n, libGate);
+					List<SynthesisNode> childrenNodes = getEndNodes(n, libGate.getOutputNode());
+					solutionCopy.put(n, libGate);
+					if (childrenNodes.size() > 0)
+					{
+						for (SynthesisNode child : childrenNodes)
+						{
+
+							solutionCopy = coverRecursive(child, matches, bestScore, currentScore, solutionCopy);
+							if (solutionCopy == null)
+							{
+								break;
+							}
+						}
+					}
+
+					if (solutionCopy != null)
+					{
+						double score = getCurrentCoveredScore(solutionCopy.values());
+						if (score < bestScore)
+						{
+							bestScore = score;
+							bestSolution = solutionCopy;
+						}
+					}
+
+				}
 			}
 
 		}
-		System.out.println("Best Score: " + bestScore);
+		return bestSolution;
 	}
+
 
 	private double getCurrentCoveredScore(Collection<SBOLGraph> gatesUsed)
 	{
@@ -256,47 +313,68 @@ public class Synthesis
 		}
 	}
 
-	public Map<SynthesisNode, SBOLGraph> cover(SynthesisNode n, Map<SynthesisNode, LinkedList<WeightedGraph>> matches, Map<SynthesisNode, SBOLGraph> coveredGates, double best)
+	public void getSBOLfromTechMapping(Map<SynthesisNode, SBOLGraph> solution, SBOLGraph specificationGraph)
 	{
-		double scoreEst, currentCostCovered;
-		Map<SynthesisNode, SBOLGraph> bestCover = null; 
-		//get all library gates that matches specification top node
-		for(WeightedGraph m : matches.get(n))
+		//Set up SBOLDocument to write into
+		SBOLDocument sbolDoc = new SBOLDocument();
+		sbolDoc.setDefaultURIprefix(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
+		getSBOLfromTechMap(null, sbolDoc, solution, specificationGraph.getOutputNode());
+
+		try
 		{
-			//check if library gate crosstalk with any of the gate(s) already used for spec.
-			if(isCrossTalk(coveredGates.values(), m.getSBOLGraph()))
-				continue;
-
-			Map<SynthesisNode, SBOLGraph> temp = new HashMap<SynthesisNode, SBOLGraph>(coveredGates);
-			currentCostCovered = 0; 
-			for(SBOLGraph g : temp.values())
-			{
-				currentCostCovered += g.getOutputNode().getScore();
-			}
-			scoreEst = currentCostCovered + m.getSBOLGraph().getOutputNode().getScore() + getSubNodeScore(n, m.getSBOLGraph().getOutputNode());
-			if(scoreEst < best)
-			{
-				temp.put(n, m.getSBOLGraph());
-				List<SynthesisNode> uncoveredNodeList = getEndNodes(n, m.getSBOLGraph().getOutputNode());
-				if(uncoveredNodeList.size() > 0)
-				{
-					for(SynthesisNode node: uncoveredNodeList)
-					{
-						bestCover = cover(node, matches, temp, best);
-					}
-				}
-				else
-				{
-					best = scoreEst; 
-					bestCover = temp;
-				}
-			}
-
+			//Technology_Mapping_Solution
+//			sbolDoc.write(System.out);
+			sbolDoc.write(new File("/Users/tramynguyen/Desktop/SBOL/Technology_Mapping_Solution.sbol"));
 		}
-
-		return bestCover;
+		catch (XMLStreamException e)
+		{
+			e.printStackTrace();
+		}
+		catch (FactoryConfigurationError e)
+		{
+			e.printStackTrace();
+		}
+		catch (CoreIoException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
+	private void getSBOLfromTechMap(Component comp, SBOLDocument sbolDoc, Map<SynthesisNode, SBOLGraph> solution, SynthesisNode specNode)
+	{
+		//Grab the gate that matches the spec graph
+		SBOLGraph coveredLibGate = solution.get(specNode);
+		//TODO: does it matter what node is used to create a copy of the moduleDefinition from, when it is referring to the same library gate?
+		ModuleDefinition gateMD = (ModuleDefinition) sbolDoc.createCopy(coveredLibGate.getOutputNode().getModuleDefinition());
+		Module module = gateMD.createModule(gateMD.getDisplayId()+"_module", gateMD.getIdentity());
+		if(comp != null)
+		{
+			URI libGateURI = coveredLibGate.getOutputNode().getFunctionalComponent().getIdentity();
+			comp.createMapsTo(comp.getDisplayId()+"_outputMapsTo", RefinementType.USELOCAL, comp.getIdentity(), libGateURI);
+			module.createMapsTo(module.getDisplayId()+"_outputMapsTo", RefinementType.USEREMOTE, libGateURI, comp.getIdentity());
+		}
+		List<SynthesisNode> specLeafNodes = getEndNodes(specNode, coveredLibGate.getOutputNode());
+		List<SynthesisNode> libLeafNodes = getEndNodes(coveredLibGate.getOutputNode(), coveredLibGate.getOutputNode());
+
+		for(int i = 0; i < specLeafNodes.size(); i++)
+		{
+			SynthesisNode specLeaf = specLeafNodes.get(i);
+			SynthesisNode libLeaf = libLeafNodes.get(i); 
+			if(solution.containsKey(specLeaf))
+			{
+				ComponentDefinition topCD = sbolDoc.createComponentDefinition(specLeaf.getComponentDefinition().getDisplayId(), ComponentDefinition.PROTEIN);
+				Component topC = topCD.createComponent(topCD.getDisplayId()+"_component", AccessType.PUBLIC, topCD.getIdentity());
+				topC.createMapsTo(topC.getDisplayId()+"_MapsTo"+i, RefinementType.USELOCAL, topC.getIdentity(), libLeaf.getFunctionalComponent().getIdentity());
+				module.createMapsTo(module.getDisplayId()+"_MapsTo"+i, RefinementType.USEREMOTE, libLeaf.getFunctionalComponent().getIdentity(), topC.getIdentity());
+				getSBOLfromTechMap(topC, sbolDoc, solution, specLeaf);
+			
+			}
+		}
+	}
 
 	private boolean isCrossTalk(Collection<SBOLGraph> gatesUsed, SBOLGraph gate)
 	{
