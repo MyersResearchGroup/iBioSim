@@ -44,7 +44,9 @@ import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
 import verification.timed_state_exploration.zoneProject.TimedStateSet;
 import verification.timed_state_exploration.zoneProject.Zone;
-
+import java.util.Queue;
+import java.util.Iterator;
+ 
 public class Analysis {
 
 	private LinkedList<Transition> traceCex;
@@ -600,6 +602,7 @@ public class Analysis {
 			System.out.println("outputSGPath = "  + Options.getPrjSgPath());
 			
 			//drawGlobalStateGraph(sgList, prjStateSet.toHashSet(), true);
+			//drawReducedStateGraph(initPrjState);
 			drawGlobalStateGraph(initPrjState, prjStateSet);			
 		}
 //		// ---- TEMP ----
@@ -723,6 +726,377 @@ public class Analysis {
 		return failure;
 	}
 
+	public static class ReducedStateGraph {
+		
+		private PrjState initState;
+		private HashSet <PrjState> stateSet; // list of all states of given state graph
+		private HashMap <PrjState, HashSet <PrjState>> statePreSet; // input transitions for each state
+		private HashMap <PrjState, HashSet <PrjState>> statePostSet; // output transitions for each state
+		private HashMap <PrjState, HashMap<String, Integer>> stateVars; // list of care variables for each state
+		private HashSet<String> careVars; // list of care variables
+		
+		ReducedStateGraph (PrjState initGlobalState) {
+			try {
+				// Initialize class variables
+				stateSet = new HashSet<PrjState>();
+				statePreSet = new HashMap<PrjState, HashSet<PrjState>>();
+				statePostSet = new HashMap<PrjState, HashSet<PrjState>>();
+				stateVars = new HashMap<PrjState, HashMap<String,Integer>>();
+				careVars = new HashSet<String>();
+				
+				// Values for c-element example 
+				//careVars.add("A");
+				//careVars.add("B");
+				//careVars.add("C");
+				
+				careVars.add("gp");
+				careVars.add("gn");
+				careVars.add("gp_ack");
+				careVars.add("gn_ack");
+				careVars.add("oc");
+				careVars.add("uv");
+
+				
+				HashSet <PrjState> reducedStateSet =  new HashSet<PrjState>(); // list of care states
+				
+				// Add initial state
+				stateSet.add(initGlobalState);
+				reducedStateSet.add(initGlobalState);
+				initState = initGlobalState;
+				statePreSet.put(initGlobalState, new HashSet<PrjState> ());
+				statePostSet.put(initGlobalState, new HashSet<PrjState> ());
+				
+				HashSet<PrjState> visited = new HashSet<PrjState> ();
+				visited.add(initGlobalState);
+			
+				Queue<PrjState> stateQueue = new LinkedList<PrjState> ();
+				stateQueue.add(initGlobalState);
+				
+				// Traverse graph via bfs and mark noncare states 
+				while (!stateQueue.isEmpty()) {
+					PrjState curState = stateQueue.remove();
+					HashMap<String, Integer> curStateVars = getCareVars(curState);
+					stateVars.put(curState, curStateVars);
+					
+					for (Transition outTran : curState.getNextGlobalStateMap().keySet()) {
+						PrjState nextState = curState.getNextGlobalStateMap().get(outTran);
+						HashMap<String, Integer> nextStateVars = getCareVars(nextState);
+						stateVars.put(nextState, nextStateVars);
+						
+						if (!visited.contains(nextState)) {
+							visited.add(nextState);
+		                    stateQueue.add(nextState);
+		    				statePreSet.put(nextState, new HashSet<PrjState> ());
+		    				statePostSet.put(nextState, new HashSet<PrjState> ());
+						} 
+					
+						// Check if care variables in the next state are equal to those in the current state
+						if (!stateVars.get(curState).equals(stateVars.get(nextState))) 
+							reducedStateSet.add(nextState);
+						
+						statePreSet.get(nextState).add(curState);
+						statePostSet.get(curState).add(nextState);
+						stateSet.add(nextState);
+						
+					}
+				}
+				
+				
+				Iterator<PrjState> nextStateIter = stateSet.iterator();
+				
+				// Remove unmarked states and update transitions
+				while(nextStateIter.hasNext()) {
+					PrjState nextState =  nextStateIter.next();
+					
+					if (!reducedStateSet.contains(nextState)) {
+						//stateSet.remove(nextState);
+						
+						// Update preset states
+						Iterator<PrjState> preSetStateIter = statePreSet.get(nextState).iterator();
+						while(preSetStateIter.hasNext()) {
+							PrjState preSetState =  preSetStateIter.next();
+							statePostSet.get(preSetState).addAll(statePostSet.get(nextState));
+						}
+						
+						// Update post states
+						Iterator<PrjState> postSetStateIter = statePostSet.get(nextState).iterator();
+						while(postSetStateIter.hasNext()) {
+							PrjState postSetState =  postSetStateIter.next();
+							statePreSet.get(postSetState).addAll(statePreSet.get(nextState));
+						}
+						
+					}
+				}
+				
+				stateSet = reducedStateSet;
+				
+				HashMap<PrjState, HashSet<PrjState>> statePreSetTemp = new HashMap<PrjState, HashSet<PrjState>>();
+				HashMap<PrjState, HashSet<PrjState>> statePostSetTemp = new HashMap<PrjState, HashSet<PrjState>>();
+				
+				// Remove transitions to unmarked states 
+				nextStateIter = stateSet.iterator();
+				while(nextStateIter.hasNext()) {
+					PrjState nextState =  nextStateIter.next();
+					statePreSetTemp.put(nextState, new HashSet<PrjState>());
+					statePostSetTemp.put(nextState, new HashSet<PrjState>());
+					
+					// Update preset states
+					Iterator<PrjState> preSetStateIter = statePreSet.get(nextState).iterator();
+					while(preSetStateIter.hasNext()) {
+						PrjState preSetState =  preSetStateIter.next();
+						if (stateSet.contains(preSetState))
+							statePreSetTemp.get(nextState).add(preSetState);
+					}
+					
+					// Update post states
+					Iterator<PrjState> postSetStateIter = statePostSet.get(nextState).iterator();
+					while(postSetStateIter.hasNext()) {
+						PrjState postSetState =  postSetStateIter.next();
+						if (stateSet.contains(postSetState))
+							statePostSetTemp.get(nextState).add(postSetState);
+					}
+				}
+				
+				statePostSet = statePostSetTemp;
+				statePreSet = statePreSetTemp;
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Error creating reduced state graph.");
+			}
+
+		}
+		
+		private void mergeDublicates() {
+			try {
+				boolean reductionFound = true;
+				
+				while (reductionFound) {
+					reductionFound = false;
+					
+					Iterator<PrjState> curStateIter = stateSet.iterator();
+					PrjState preSetState1 = new PrjState();
+					PrjState preSetState2 = new PrjState();
+					
+					// Iterate over all states to identify states with same coding in the preset
+					while(curStateIter.hasNext() && !reductionFound) {
+						PrjState nextState =  curStateIter.next();
+							
+						// TODO: use hash to identify same vector values
+						Iterator<PrjState> preSetStateIter1 = statePreSet.get(nextState).iterator();
+						while(preSetStateIter1.hasNext() && !reductionFound) {
+							preSetState1 =  preSetStateIter1.next();
+							
+							Iterator<PrjState> preSetStateIter2 = statePreSet.get(nextState).iterator();
+							while(preSetStateIter2.hasNext() && !reductionFound) {
+								preSetState2 =  preSetStateIter2.next();
+								
+								// TODO: think on checking similar postsets for states with similar encoding
+								// It is possible there different paths in the graph
+								if (stateVars.get(preSetState1).equals(stateVars.get(preSetState2)) && !preSetState1.equals(initState) && !preSetState2.equals(initState) 
+										&& !preSetState1.equals(preSetState2))
+										reductionFound = true;
+									
+							}
+						}
+					}
+					
+					// If reduction found merge two states and start over
+					if (reductionFound)
+						mergeStates(preSetState1, preSetState2);
+					
+				}
+				
+				// Remove self loops
+				Iterator<PrjState> curStateIter = stateSet.iterator();
+				
+				// Iterate over all states to identify states with same coding in the preset
+				while(curStateIter.hasNext()) {
+					PrjState nextState =  curStateIter.next();
+					
+					statePreSet.get(nextState).remove(nextState);
+					statePostSet.get(nextState).remove(nextState);
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Error removing dublicates from reduced state graph.");
+			}
+		}
+		
+		private void mergeStates(PrjState stateA, PrjState stateB) {
+			try {
+				
+				// Copy preset states
+				HashSet<PrjState> statePreSetLocal = statePreSet.get(stateB);
+				statePreSetLocal.addAll(statePreSet.get(stateA));
+				statePreSet.put(stateA, statePreSetLocal);
+				
+				// Update postset of all connected states
+				Iterator<PrjState> preSetStateIter = statePreSet.get(stateA).iterator();
+				while(preSetStateIter.hasNext()) {
+					PrjState preSetState = preSetStateIter.next();
+					// To avoid selfloops
+					if (!preSetState.equals(stateA))
+						statePostSet.get(preSetState).add(stateA);
+					statePostSet.get(preSetState).remove(stateB);
+				}
+				
+				// Copy post states
+				HashSet<PrjState> statePostSetLocal = statePostSet.get(stateB);
+				statePostSetLocal.addAll(statePostSet.get(stateA));
+				statePostSet.put(stateA, statePostSetLocal);
+				
+				// Update pretset of all connected states
+				Iterator<PrjState> postSetStateIter = statePostSet.get(stateA).iterator();
+				while(postSetStateIter.hasNext()) {
+					PrjState postSetState = postSetStateIter.next();
+					// To avoid selfloops
+					if (!postSetState.equals(stateA))
+						statePreSet.get(postSetState).add(stateA);
+					statePreSet.get(postSetState).remove(stateB);
+				}
+				
+				stateSet.remove(stateB);
+				statePreSet.remove(stateB);
+				statePostSet.remove(stateB);
+				
+			}  catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Error merging states in reduced state graph.");
+			}
+			
+		}
+		
+		private HashMap<String, Integer> getCareVars(PrjState globalState)	{
+			HashMap<String, Integer> vars = new HashMap<String, Integer>();				
+			for (State curLocalState : globalState.toStateArray()) {
+				LhpnFile curLpn = curLocalState.getLpn();
+				for(int i = 0; i < curLpn.getVarIndexMap().size(); i++) {						
+					if (careVars.contains(curLpn.getVarIndexMap().getKey(i))) 
+						vars.put(curLpn.getVarIndexMap().getKey(i), curLocalState.getVariableVector()[i]);
+				}
+			}
+			
+			return vars;
+		}
+		
+		private String getLabel(PrjState stateA, PrjState stateB) {
+			String label = null;
+			
+			try {
+				HashMap<String, Integer> stateAVars = stateVars.get(stateA);
+				HashMap<String, Integer> stateBVars = stateVars.get(stateB);
+				
+				Iterator<String> curVarIter = careVars.iterator();
+				while (curVarIter.hasNext()) {
+					String varName = curVarIter.next();
+					
+					if (stateAVars.get(varName) > stateBVars.get(varName)) {
+						if (label == null)
+							label = varName + "-";
+						else {
+							label = "Error";
+							break;
+						}
+					}
+					
+					if (stateAVars.get(varName) < stateBVars.get(varName)) {
+						if (label == null)
+							label = varName + "+";
+						else {
+							label = "Error";
+							break;
+						}
+					}
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Error getting arc label in reduced state graph.");
+			}
+			return label;
+		}
+		
+		public void drawPetrifySG(String fileName) {
+			try {
+				String fileNameLocal = null;
+				fileNameLocal = Options.getPrjSgPath() + fileName;
+				
+				BufferedWriter out = new BufferedWriter(new FileWriter(fileNameLocal));
+				out.write("# Reduced state graph, generated by LEMA\n");
+				out.write(".inputs" + careVars.toString() + "\n");
+				out.write(".state graph\n");
+				
+				for (PrjState curState : statePostSet.keySet()) {
+					Iterator<PrjState> nextStateIter = statePostSet.get(curState).iterator();
+					while(nextStateIter.hasNext()) {
+						PrjState nextState =  nextStateIter.next();
+						String arcLabel = getLabel(curState, nextState);
+						out.write("TS_" + ((TimedPrjState) curState).getTSID() + " " + arcLabel + " " + "TS_" + ((TimedPrjState) nextState).getTSID() + "\n");
+					}
+				}
+				
+				
+				out.write(".marking {" + "TS_" + ((TimedPrjState) initState).getTSID() + "}\n");
+				out.write(".end");
+				out.close();
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Error producing petrify state graph file.");
+			}
+		}
+		
+		public void drawGraph(String fileName) {
+			try {
+				String fileNameLocal = null;
+				fileNameLocal = Options.getPrjSgPath() + fileName;
+				
+				BufferedWriter out = new BufferedWriter(new FileWriter(fileNameLocal));
+				out.write("digraph G {\n");
+				out.write("node [shape=box, style=rounded]" + "\n");
+				
+				Iterator<PrjState> curStateIter = stateSet.iterator();
+				while(curStateIter.hasNext()) {
+					PrjState curState = curStateIter.next();
+					if (curState.equals(initState))
+						out.write("TS_" + ((TimedPrjState) curState).getTSID() + "[label=\"" + "TS_" + ((TimedPrjState) curState).getTSID()
+								+ "\\n" + stateVars.get(curState) + "\", style=\"rounded, filled\"]" + "\n");
+					else
+						out.write("TS_" + ((TimedPrjState) curState).getTSID() + "[label=\"" + "TS_" + ((TimedPrjState) curState).getTSID()
+								+ "\\n" + stateVars.get(curState) + "\"]" + "\n");
+
+					Iterator<PrjState> nextStateIter = statePostSet.get(curState).iterator();
+					while(nextStateIter.hasNext()) {
+						PrjState nextState =  nextStateIter.next();
+						String arcLabel = getLabel(curState, nextState);
+						out.write("TS_" + ((TimedPrjState) curState).getTSID() + "->" + "TS_" + ((TimedPrjState) nextState).getTSID() +
+								"[label=\""+ arcLabel + "\"]" +"\n");
+					}
+					
+				}
+				
+				out.write("}");
+				out.close();
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Error producing reduced state graph as dot file.");
+			}
+		}
+	}
+	
+	public static void drawReducedStateGraph(PrjState initGlobalState) {
+		ReducedStateGraph reducedStateGraph = new ReducedStateGraph (initGlobalState);
+		reducedStateGraph.drawGraph("Reduced.dot");
+		reducedStateGraph.drawPetrifySG("Reduced.sg");
+		reducedStateGraph.mergeDublicates();
+		reducedStateGraph.drawGraph("Reduced_merged.dot");
+		reducedStateGraph.drawPetrifySG("Reduced_merged.sg");
+	}
+	
+	
 	/**
 	 * Produces DOT files for visualizing the global state graph. <p>
 	 * This method assumes that the global state graph exists.
