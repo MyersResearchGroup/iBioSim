@@ -276,6 +276,7 @@ public class FileTree extends JPanel implements MouseListener {
 					files.add(thisObject);
 				}
 				*/
+				// TODO: if .sbol file, then check version, if 1.1, SBOLRead/Write the file, provide URI prefix (preference + "/" projectName)
 				if (!async && thisObject.toString().length() > 3 && 
 						thisObject.toString().substring(thisObject.toString().length() - 4).equals(".gcm")) {
 					String sbmlFile = thisObject.replace(".gcm",".xml");
