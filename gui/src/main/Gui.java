@@ -3511,6 +3511,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getSource().equals(importSbol))
 		{
 			importFile("SBOL", ".sbol", ".rdf");
+			// TODO: create an importSBOL method that uses SBOLRead/Write to bring into project
 		}
 		else if (e.getSource().equals(importSedml))
 		{
