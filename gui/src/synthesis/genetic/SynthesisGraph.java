@@ -23,7 +23,8 @@ public class SynthesisGraph {
 	private String projectPath;
 	private String modelFileID;
 	private String submodelID;
-	private HashMap<SynthesisNode, List<SynthesisNode>> edges;
+	//NOTE: hold the list of value nodes that connect/point to the key node.
+	private HashMap<SynthesisNode, List<SynthesisNode>> edges;  //NOTE: This is the library for the graph. This library will be initialized in constructGraph()
 	private int nucleotideCount;
 	private Set<String> signals;
 	private Set<URI> compURIs;
@@ -35,62 +36,97 @@ public class SynthesisGraph {
 		Model sbmlModel = biomodel.getSBMLDocument().getModel();
 		projectPath = biomodel.getPath();
 		modelFileID = biomodel.getSBMLFile();
-		Set<SynthesisNode> nodes = constructGraph(sbmlModel, fileManager);
-		decomposeGraph(nodes);
+		//NOTE: create reaction graph from the sbml model and return all nodes that makes up transcription and complex formation reaction
+		Set<SynthesisNode> nodes = constructGraph(sbmlModel, fileManager); 
+		decomposeGraph(nodes); //TODO: decomposeGraph creates the diff gates?
 		output = identifyOutput(nodes);
-		paths = buildPaths(getOutput());
+		paths = buildPaths(getOutput()); 
 //		print();
 	}
 	
 	private void decomposeGraph(Set<SynthesisNode> nodes) {
 		Set<SynthesisNode> typedSpeciesNodes = new HashSet<SynthesisNode>();
 		Set<SynthesisNode> interNodes = new HashSet<SynthesisNode>();
+		/*NOTE: Go through nodes list and check if there is any node that has type set to p (promoter?). 
+		*		If there is a node that has type "p", then get that node from the edges table and count the 
+		*		# of repressor and activator nodes and store them into their corresponding list (typedSpeciesNodes & interNodes)
+		*/		
 		for (SynthesisNode node : nodes)
-			if (node.getType().equals("p")) {
-				if (edges.containsKey(node)) {
+			if (node.getType().equals("p")) 
+			{
+				if (edges.containsKey(node)) 
+				{
 					int numActivators = 0;
 					int numRepressors = 0;
 					for (SynthesisNode tfNode : edges.get(node))
-						if (tfNode.getType().startsWith("r")) {
+					{
+						if (tfNode.getType().startsWith("r")) 
+						{
 							numRepressors++;
 							typedSpeciesNodes.add(tfNode);
-						} else if (tfNode.getType().startsWith("a")) {
+						} 
+						else if (tfNode.getType().startsWith("a")) 
+						{
 							numActivators++;
 							typedSpeciesNodes.add(tfNode);
 						}
-					if (numRepressors > 0 && numActivators == 0) {
-						if (numRepressors == 1) {
+					} 
+					if (numRepressors > 0 && numActivators == 0) 
+					{
+						if (numRepressors == 1) 
+						{
+							//NOTE: replace all existing of this node in edges table and rename its type to inverter (i)
 							decomposeInverterMotif(node);
-						} else if (numRepressors == 2)
+						} 
+						else if (numRepressors == 2)
+							//NOTE: replace all existing of this node in edges table and rename its type to nor (n)
 							decomposeNorMotif(node);
-					} else if (numRepressors == 0 && numActivators > 0) {
+					} 
+					else if (numRepressors == 0 && numActivators > 0) 
+					{
 						if (numActivators == 1)
-							decomposeYesMotif(node, interNodes);
+							decomposeYesMotif(node, interNodes); 
 						else if (numActivators == 2)
 							decomposeOrMotif1(node, interNodes);
 					} 
-				} else
+				} 
+				else //NOTE: if edges table does not contain the specified node.
 					node.setType("c");
-			} else if (node.getType().endsWith("m")) {
+			} 
+			//TODO: why check if these types endsWith(), startsWith(), equal()?
+			else if (node.getType().endsWith("m")) 
+			{
 				decomposeOrMotif2(node, interNodes);
 				typedSpeciesNodes.add(node);
-			} else if (node.getType().endsWith("x")) {
+			} 
+			else if (node.getType().endsWith("x")) 
+			{
 				decomposeAndMotif(node, interNodes);
 				typedSpeciesNodes.add(node);
-			} else if (node.getType().startsWith("v"))
+			} 
+			else if (node.getType().startsWith("v"))
 				typedSpeciesNodes.add(node);
-		for (SynthesisNode typedSpeciesNode : typedSpeciesNodes) {
-			if (edges.containsKey(typedSpeciesNode)) {
+		//TODO: why remove all nodes from typedSpeciesNodes in edges table when they were determined from the
+		//		edges table if the node type was p and then put this current typedSpeciesNode in the for loop below 
+		//		back into the edges table? (look at the upper for loop code in this method)
+		for (SynthesisNode typedSpeciesNode : typedSpeciesNodes) 
+		{
+			if (edges.containsKey(typedSpeciesNode)) 
+			{
 				List<SynthesisNode> inputNodes = edges.remove(typedSpeciesNode);
 				typedSpeciesNode.setType("s");
 				edges.put(typedSpeciesNode, inputNodes);
-			} else
+			} 
+			else
 				typedSpeciesNode.setType("s");
 		}
 		nodes.addAll(interNodes);
 	}
 	
 	private void decomposeInverterMotif(SynthesisNode promoterNode) {
+		//NOTE: remove all copies of the promoter node from edges table. 
+		//		Set the promoter node to type i (inverter?)
+		//		Add this edited version of the promoter node, now with type inverter, back into edges?
 		List<SynthesisNode> inputSpeciesNodes = edges.remove(promoterNode);
 		promoterNode.setType("i");
 		edges.put(promoterNode, inputSpeciesNodes);
@@ -116,13 +152,19 @@ public class SynthesisGraph {
 		edges.put(interPromoterNode, inputSpeciesNodes);
 	}
 	
-	private void decomposeOrMotif1(SynthesisNode promoterNode, Set<SynthesisNode> nodes) {
+	private void decomposeOrMotif1(SynthesisNode promoterNode, Set<SynthesisNode> nodes) 
+	{
+		//NOTE: remove all node with this promoterNode in edges table and set this node type to i
 		List<SynthesisNode> inputSpeciesNodes = edges.remove(promoterNode);
 		promoterNode.setType("i");
 		SynthesisNode interSpeciesNode = new SynthesisNode("s");
 		nodes.add(interSpeciesNode);
 		SynthesisNode interPromoterNode = new SynthesisNode("n");
 		nodes.add(interPromoterNode);
+		//NOTE: put this promoterNode back into edges table as a new node key
+		//		promoterNode 	  -> interSpeciesNode
+		//		interSpeciesNode  -> interPromoterNode
+		//		interPromoterNode -> inputSpeciesNodes (resulting graph after removal of duplicate promoter nodes)
 		edges.put(promoterNode, new LinkedList<SynthesisNode>());
 		edges.get(promoterNode).add(interSpeciesNode);
 		edges.put(interSpeciesNode, new LinkedList<SynthesisNode>());
@@ -138,10 +180,10 @@ public class SynthesisGraph {
 		nodes.addAll(interPromoterNodes);
 		List<SynthesisNode> interSpeciesNodes = new LinkedList<SynthesisNode>();
 		for (int i = 0; i < 3; i++)
-			interSpeciesNodes.add(new SynthesisNode("s"));
+			interSpeciesNodes.add(new SynthesisNode("s")); //TODO: NOTE: add this node in 3x...why? don't care for duplicate
 		nodes.addAll(interSpeciesNodes);
-		edges.put(productNode, interPromoterNodes.subList(0, 1));
-		edges.put(interPromoterNodes.get(0), interSpeciesNodes.subList(0, 1));
+		edges.put(productNode, interPromoterNodes.subList(0, 1)); //NOTE: get @ index = 0 only
+		edges.put(interPromoterNodes.get(0), interSpeciesNodes.subList(0, 1)); 
 		edges.put(interSpeciesNodes.get(0), interPromoterNodes.subList(1, 2));
 		edges.put(interPromoterNodes.get(1), interSpeciesNodes.subList(1, 3));
 		for (int i = 1; i < interSpeciesNodes.size(); i++)
@@ -173,29 +215,38 @@ public class SynthesisGraph {
 		nucleotideCount = 0;
 		compURIs = new HashSet<URI>();
 		signals = new HashSet<String>();
-		for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
+		for (int i = 0; i < sbmlModel.getReactionCount(); i++) 
+		{
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
 			if (sbmlReaction.getProductCount() > 0) 
-				if (BioModel.isProductionReaction(sbmlReaction)) {
+				if (BioModel.isProductionReaction(sbmlReaction)) 
+				{
 					constructTranscriptionMotif(sbmlReaction, idToNode, sbmlModel, fileManager);
-				} else if ((BioModel.isComplexReaction(sbmlReaction))) {
+				} 
+				else if ((BioModel.isComplexReaction(sbmlReaction))) 
+				{
 					constructComplexationMotif(sbmlReaction, idToNode, sbmlModel, fileManager);
 				}
 		}
+		//TODO: why return the value of idToNode and ignore the key?
+		//NOTE: create a table of all the values in idToNode which contains transcription and complex formation reaction
 		return new HashSet<SynthesisNode>(idToNode.values());
 	}
 	
 	private void constructTranscriptionMotif(Reaction sbmlReaction, HashMap<String, SynthesisNode> idToNode, 
 			Model sbmlModel, SBOLFileManager fileManager) {
 		SynthesisNode promoterNode = null;
+		//NOTE: go through reaction and check if there is a promoter to create a node for and add to idToNode
 		for (int j = 0; j < sbmlReaction.getModifierCount(); j++) {
 			ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
 			if (BioModel.isPromoter(sbmlModifier))
 				promoterNode = constructNode("p", sbmlReaction, idToNode,
 						fileManager);
 		}
+		//NOTE: if there was no promoter in the reaction, then create a promoter node for this reaction
 		if (promoterNode == null) 
 			promoterNode = constructNode("p", sbmlReaction, idToNode, fileManager);
+		//NOTE: create nodes for repressors and activators and add to idToNode and edges table
 		for (int j = 0; j < sbmlReaction.getModifierCount(); j++) {
 			ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
 			if (BioModel.isRepressor(sbmlModifier) || BioModel.isActivator(sbmlModifier)) {
@@ -206,15 +257,19 @@ public class SynthesisGraph {
 				else
 					tfNode = constructNode("a", sbmlModel.getSpecies(sbmlModifier.getSpecies()), 
 							idToNode, fileManager);
+				//NOTE: if the promoter node created does not exist in the edges table, add the promoter node to the table
+				//		as the key and add its repressor/activator nodes as its value.
 				if (!edges.containsKey(promoterNode))
 					edges.put(promoterNode, new LinkedList<SynthesisNode>());
 				edges.get(promoterNode).add(tfNode);	
 			} 
 		}
+		//NOTE: create promoter nodes from the reaction and add to idToNode and edges table
 		for (int j = 0; j < sbmlReaction.getProductCount(); j++) {
 			SpeciesReference sbmlProduct = sbmlReaction.getProduct(j);
 			SynthesisNode productNode = constructNode("s", sbmlModel.getSpecies(sbmlProduct.getSpecies()), 
 					idToNode, fileManager);
+			//NOTE: if product node does not exist in edges table, add the product node as the key and the promoter node as its value
 			if (!edges.containsKey(productNode))
 				edges.put(productNode, new LinkedList<SynthesisNode>());
 			edges.get(productNode).add(promoterNode);	
@@ -223,11 +278,16 @@ public class SynthesisGraph {
 	
 	private void constructComplexationMotif(Reaction sbmlReaction, HashMap<String, SynthesisNode> idToNode, 
 			Model sbmlModel, SBOLFileManager fileManager) {
+		//TODO: complexationMotif = complex formation ?
+		// 		complex formation always has only 1 product?
+		//NOTE: create nodes for products and reactants and add to edges table to represent complex formation
 		SpeciesReference sbmlProduct = sbmlReaction.getProduct(0);
 		SynthesisNode complexNode = constructNode("x", sbmlModel.getSpecies(sbmlProduct.getSpecies()), 
 				idToNode, fileManager);
+		//TODO: why don't we want to check if complexNode already exist in edges before adding?
 		edges.put(complexNode, new LinkedList<SynthesisNode>());
-		for (int j = 0; j < sbmlReaction.getReactantCount(); j++) {
+		for (int j = 0; j < sbmlReaction.getReactantCount(); j++) 
+		{
 			SpeciesReference sbmlReactant = sbmlReaction.getReactant(j);
 			SynthesisNode speciesNode = constructNode("v", sbmlModel.getSpecies(sbmlReactant.getSpecies()),
 					idToNode, fileManager);
@@ -238,22 +298,35 @@ public class SynthesisGraph {
 	private SynthesisNode constructNode(String type, SBase sbmlElement, HashMap<String, SynthesisNode> idToNode, 
 			SBOLFileManager fileManager) { 
 		SynthesisNode node;
-		if (idToNode.containsKey(SBMLutilities.getId(sbmlElement))) {
+		//NOTE: sbmlElement - is a reaction
+		//NOTE: check if table idToNode contains the reaction. 
+		//		if reaction DOES exist, check if neighboring nodes (edge) are the same as the specified node. 
+		//			remove the neighboring node if it is the same, append the specified type to the current node's type, 
+		//			then update the edges with the specified node and the updated copy of the neighboring nodes. 
+		//		if reaction DOES NOT exist in the idToNode, then create a node for it and then add to idToNode
+		if (idToNode.containsKey(SBMLutilities.getId(sbmlElement))) 
+		{
 			node = idToNode.get(SBMLutilities.getId(sbmlElement));
-			if (edges.containsKey(node)) {
+			if (edges.containsKey(node)) 
+			{
 				List<SynthesisNode> destinationNodes = edges.remove(node);
 				if (type.equals("s")) 
 					node.setType(node.getType() + "m");
 				else
 					node.setType(type + node.getType());
 				edges.put(node, destinationNodes);
-			} else if (!type.equals("s"))
+			} 
+			else if (!type.equals("s"))
 				node.setType(node.getType() + type);
-		} else {
+		} 
+		else 
+		{
 			node = new SynthesisNode(type, sbmlElement, fileManager);
 			nucleotideCount += node.getNucleotideCount();
-			if (node.getSignal().length() > 0)
+			// NOTE: check if signal (DNAComponent URI) isn't empty and add to this class a copy of that signal
+			if (node.getSignal().length() > 0) 
 				signals.add(node.getSignal());
+			//NOTE: add a copy of the component URIs to this class
 			compURIs.addAll(node.getCompURIs());
 			idToNode.put(SBMLutilities.getId(sbmlElement), node);
 		}
@@ -262,7 +335,11 @@ public class SynthesisGraph {
 	
 	private SynthesisNode identifyOutput(Set<SynthesisNode> nodes) {
 		HashMap<SynthesisNode, SynthesisNode> reverseEdges = new HashMap<SynthesisNode, SynthesisNode>();
-		for (SynthesisNode node : nodes) {
+		//TODO: Clarify on understanding
+		//NOTE: check if edges has any of the node from set nodes and get all of its children to put into reverseEdges list.
+		//		if reverseEdges does not contain a copy of its parent node, then return that node as the output node. 
+		for (SynthesisNode node : nodes) 
+		{
 			if (edges.containsKey(node))
 				for (SynthesisNode childNode : edges.get(node))
 					reverseEdges.put(childNode, node);
@@ -312,11 +389,15 @@ public class SynthesisGraph {
 		return null;
 	}
 	
-	public List<SynthesisNode> postOrderNodes() {
+	public List<SynthesisNode> postOrderNodes() 
+	{
 		List<SynthesisNode> orderedNodes = new LinkedList<SynthesisNode>();
 		List<SynthesisNode> currentNodes = new LinkedList<SynthesisNode>();
-		currentNodes.add(getOutput());
-		while (currentNodes.size() > 0) {
+		currentNodes.add(getOutput()); 
+		//NOTE: get output node from the biomodel and check if edges library contains the output node. 
+		//		if the output node exist in the library, get all nodes pointing to the output node and recursively add onto orderedNodes until there is none left.
+		while (currentNodes.size() > 0) 
+		{
 			orderedNodes.add(0, currentNodes.remove(0));
 			if (edges.containsKey(orderedNodes.get(0))) {
 				currentNodes.addAll(edges.get(orderedNodes.get(0)));
@@ -363,23 +444,33 @@ public class SynthesisGraph {
 	
 	private List<String> buildPaths(SynthesisNode node) {
 		List<String> paths = new LinkedList<String>();
-		if (node.equals(getOutput())) {
+		if (node.equals(getOutput())) 
+		{
 			inputs = new LinkedList<SynthesisNode>();
 			buildPathsHelper(node, "t1", paths, true);
-		} else 
+		} 
+		else 
 			buildPathsHelper(node, "t1", paths, false);
 		return paths;
 	}
 	
-	private void buildPathsHelper(SynthesisNode node, String path, List<String> paths, boolean identifyInputs) {
+	private void buildPathsHelper(SynthesisNode node, String path, List<String> paths, boolean identifyInputs) 
+	{
+		//NOTE: check edges table and see if this node exist. if it does, then get any existing children and add to the specified list of paths to indicate that it has been walked down
+		//		Summary - this method will walk down the specified node and add to path list as it walks until it reaches the end of the node that no longer has any children to walk down to
 		path = path + node.getType();
 		if (edges.containsKey(node)) {
 			int childNum = 0;
-			for (SynthesisNode childNode : edges.get(node)) {
+			for (SynthesisNode childNode : edges.get(node)) 
+			{
 				childNum++;
 				buildPathsHelper(childNode, path + childNum, paths, identifyInputs);
 			}
-		} else {
+		} 
+		else 
+		{
+			//NOTE: if not in edges table, then add to the path to indicate that it this node has been taken
+			//		check if this node is to be an input. if so, then add this node to the inputs list 
 			paths.add(path);
 			if (identifyInputs)
 				inputs.add(node);

@@ -35,7 +35,8 @@ import org.sbml.jsbml.ext.comp.Submodel;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
-import biomodel.gui.sbol.SBOLField;
+import biomodel.gui.sbol.SBOLField2;
+//import biomodel.gui.sbol.SBOLField;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.gui.util.PropertyField;
 import biomodel.gui.util.PropertyList;
@@ -80,7 +81,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 
 	private HashMap<String, PropertyField> fields = null;
 	
-	private SBOLField sbolField;
+	private SBOLField2 sbolField;
 
 	private String selectedComponent, oldPort;
 	
@@ -241,7 +242,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			// Field for annotating submodel with SBOL DNA components
 			List<URI> sbolURIs = new LinkedList<URI>(); 
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(instance, sbolURIs);
-			sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 
+			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 
 					2, false);
 			top.add(sbolField);
 		}

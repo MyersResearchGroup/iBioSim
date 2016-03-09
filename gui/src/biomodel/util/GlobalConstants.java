@@ -139,6 +139,7 @@ public class GlobalConstants {
 	public static final String SO_RBS = "SO_0000139";
 	public static final String SO_CDS = "SO_0000316";
 	public static final String SO_AUTHORITY = "purl.obolibrary.org";
+	public static final String SO_AUTHORITY2 = "identifiers.org";
 	public static final String SBOL_DNA_COMPONENT = "sbolDnaComponent";
 	public static final String GENETIC_CONSTRUCT_REGEX_DEFAULT = 
 			SO_PROMOTER + "(" + SO_RBS + "," + SO_CDS + ")+" + SO_TERMINATOR + "+";

@@ -11,21 +11,24 @@ public class TempSynthesisRunner
 	public static void main(String[] args)
 	{
 		String PATH = "/Users/tramynguyen/Desktop/SBOL/";
+		String SPEC_FILE_NAME = "spec.sbol"; 
+		String LIB_FILE_NAME = "LIBRARY_ANNOT.sbol";
 
 		//Set up specification graph
-		String path1 = PATH + "spec.sbol";
+		String path1 = PATH + SPEC_FILE_NAME;
 		File SPEC_FILE = new File(path1);
 		Synthesis syn = new Synthesis();
 		syn.createSBOLGraph(SPEC_FILE, false);
-		syn.getSpecification().createDotFile(PATH + "SPEC2.dot");
+//		syn.getSpecification().createDotFile(PATH + "SPEC2.dot");
 
 		//Set up library graph
-		String path2 = PATH + "LIBRARY_ANNOT.sbol";
+		String path2 = PATH + LIB_FILE_NAME;
 		File LIBR_FILE = new File(path2);
 		syn.createSBOLGraph(LIBR_FILE, true);
 
 		//Set library gate scores
 		List<SBOLGraph> library = syn.getLibrary();
+		//TODO: make sure to comment the line of code below out if a different library file is used and write a different form of method to set the score for the graph
 		setLibraryGateScores(library);
 		Map<SynthesisNode, LinkedList<WeightedGraph>> matches = new HashMap<SynthesisNode, LinkedList<WeightedGraph>>();
 		syn.match_topLevel(syn.getSpecification(), matches);

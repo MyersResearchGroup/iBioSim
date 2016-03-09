@@ -126,16 +126,17 @@ public class Utility {
 		}
 	}
 
-	/**
-	 * Returns the pathname of the selected file in the file chooser.
-	 */
-	public static String browse(JFrame frame, File file, JTextField text, int i, String approve, int fileType) {
+	/*
+	 * public static String browseSBOL(JFrame frame, File file, JTextField text, int i, String approve, int fileType) 
+	{
 		Preferences biosimrc = Preferences.userRoot();
-		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
+		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) 
+		{
 			FileDialog fd;
-			if (i == JFileChooser.DIRECTORIES_ONLY) {
+			if (i == JFileChooser.DIRECTORIES_ONLY) 
+			{
 				if (approve.equals("Save") || approve.equals("New")) {
-					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd = new FileDialog(frame, approve, FileDialog.SAVE); 
 				}
 				else if (approve.equals("Open")) {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
@@ -364,6 +365,259 @@ public class Utility {
 			else {
 				return "";
 			}
+		}
+	
+	}*/
+	
+	/**
+	 * Returns the pathname of the selected file in the file chooser.
+	 */
+	public static String browse(JFrame frame, File file, JTextField text, int i, String approve, int fileType) {
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) 
+		{
+			FileDialog fd;
+			if (i == JFileChooser.DIRECTORIES_ONLY)  
+			{
+				if (approve.equals("Save") || approve.equals("New")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE); 
+				}
+				else if (approve.equals("Open")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+				}
+				else {
+					fd = new FileDialog(frame, approve);
+				}
+				fd.setFilenameFilter(new FilenameFilter() {
+					@Override
+					public boolean accept(File dir, String name) {
+						return false;
+					}
+				});
+			}
+			else {
+				if (approve.equals("Save") || approve.equals("New")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+				}
+				else if (approve.equals("Open")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+				}
+				else if (approve.equals("Export TSD")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".csv") || name.endsWith(".dat") || name.endsWith(".eps") || name.endsWith(".jpg")
+									|| name.endsWith(".pdf") || name.endsWith(".png") || name.endsWith(".svg") || name.endsWith(".tsd");
+						}
+					});
+				}
+				else if (approve.equals("Export Probability")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".eps") || name.endsWith(".jpg") || name.endsWith(".pdf") || name.endsWith(".png")
+									|| name.endsWith(".svg");
+						}
+					});
+				}
+				else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
+									|| name.endsWith(GlobalConstants.RDF_FILE_EXTENSION);
+						}
+					});
+				}
+				else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith("-sedml.xml");
+						}
+					});
+				}
+				else if (approve.equals("Export SBOL")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
+									|| name.endsWith(GlobalConstants.RDF_FILE_EXTENSION);
+									
+						}
+					});
+				}
+				else if (approve.equals("Export SBOL2")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
+									|| name.endsWith(GlobalConstants.RDF_FILE_EXTENSION )
+									|| name.endsWith(".ttl") || name.endsWith(".json");
+						}
+					});
+				}
+//				else if (approve.equals("Export DNA Component")) {
+//					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+//					fd.setFilenameFilter(new FilenameFilter() {
+//						public boolean accept(File dir, String name) {
+//							return name.endsWith(".sbol");
+//						}
+//					});
+//				}
+				else if (approve.equals("Import SBML")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".sbml") || name.endsWith(".xml");
+						}
+					});
+				}
+				else if (approve.equals("Export SBML")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".sbml") || name.endsWith(".xml");
+						}
+					});
+				}
+				else if (approve.equals("Export Schematic")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".jpg");
+						}
+					});
+				}
+				else if (approve.equals("Save AVI")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".avi");
+						}
+					});
+				}
+				else if (approve.equals("Save MP4")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".mp4");
+						}
+					});
+				}
+				else if (approve.equals("Import Genetic Circuit")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".gcm");
+						}
+					});
+				}
+				else if (approve.equals("Import")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".csv") || name.endsWith(".dat") || name.endsWith(".tsd");
+						}
+					});
+				}
+				else if (approve.equals("saveAsSBOL2")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE); 
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".sbol") || name.endsWith(".rdf");
+						}
+					});
+				}
+				else {
+					fd = new FileDialog(frame, approve);
+				}
+			}
+			if (file != null) {
+				if (file.isDirectory()) {
+					fd.setDirectory(file.getPath());
+				}
+				else {
+					fd.setDirectory(file.getPath());
+					fd.setFile(file.getName());
+				}
+			}
+			if (i == JFileChooser.DIRECTORIES_ONLY) {
+				System.setProperty("apple.awt.fileDialogForDirectories", "true");
+			}
+			fd.setVisible(true);
+			if (i == JFileChooser.DIRECTORIES_ONLY) {
+				System.setProperty("apple.awt.fileDialogForDirectories", "false");
+			}
+			if (fd.getFile() != null) {
+				if (fd.getDirectory() != null) {
+					String selectedFile = fd.getFile();
+					if (approve.equals("Export TSD")) {
+						if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat") && !selectedFile.endsWith(".eps")
+								&& !selectedFile.endsWith(".jpg") && !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
+								&& !selectedFile.endsWith(".svg") && !selectedFile.endsWith(".tsd")) {
+							selectedFile += ".pdf";
+						}
+					}
+					else if (approve.equals("Export Probability")) {
+						if (!selectedFile.endsWith(".eps") && !selectedFile.endsWith(".jpg") && !selectedFile.endsWith(".pdf")
+								&& !selectedFile.endsWith(".png") && !selectedFile.endsWith(".svg")) {
+							selectedFile += ".pdf";
+						}
+					}
+					else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
+						if (!selectedFile.endsWith(".sbol") && !selectedFile.endsWith(".xml")
+								&& !selectedFile.endsWith(".rdf"))
+							selectedFile += ".sbol";
+					}
+					else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
+						if (!selectedFile.endsWith("-sedml.xml"))
+							selectedFile += "-sedml.xml";
+					}
+					else if (approve.equals("Import SBML") || (approve.equals("Export SBML"))) {
+						if (!selectedFile.endsWith(".sbml") && !selectedFile.endsWith(".xml")) {
+							selectedFile += ".xml";
+						}
+					}
+					else if (approve.equals("Export Schematic")) {
+						if (!selectedFile.endsWith(".jpg")) {
+							selectedFile += ".jpg";
+						}
+					}
+					else if (approve.equals("Import Genetic Circuit")) {
+						if (!selectedFile.endsWith(".gcm")) {
+							selectedFile += ".gcm";
+						}
+					}
+					else if (approve.equals("Import")) {
+						if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat") && !selectedFile.endsWith(".tsd")) {
+							selectedFile += ".tsd";
+						}
+					}
+					return fd.getDirectory() + Gui.separator + selectedFile;
+				}
+				return "";
+			}
+			else if (fd.getDirectory() != null) {
+				return ""; // fd.getDirectory();
+			}
+			else {
+				return "";
+			}
 			/*
 			 * String open; Display display = new Display(); Shell shell = new
 			 * Shell(display); shell.setImage(new Image(display,
@@ -419,6 +673,8 @@ public class Utility {
 			 * null) { return open; } else { return ""; }
 			 */
 		}
+		
+		
 		String filename = "";
 		JFileChooser fc = new JFileChooser();
 

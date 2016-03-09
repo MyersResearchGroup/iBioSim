@@ -16,7 +16,7 @@ import org.sbolstandard.core2.*;
 
 import sbol.util.SBOLUtility2;
 import biomodel.util.GlobalConstants;
-
+import java.util.List;
 import java.net.URI;
 import java.util.*;
 
@@ -149,12 +149,22 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 					
 					if (dnac.getSequences() != null) 
 					{
+//						Set<Sequence> sequences = new HashSet<Sequence>();
+//						System.out.println("Found a sequence: " + dnac.getSequenceURIs());
+//						for(URI s : dnac.getSequenceURIs())
+//						{
+//							sequences.add(SBOLDOC.getSequence(s));
+//						}
+						
 						String seq = processSequences(dnac.getSequences());
+//						String seq = processSequences(sequences);
+						
 						viewArea.append("DNA Sequence:  ");
 						viewArea.append(seq + "\n");
 					} 
 					else
 						viewArea.append("DNA Sequence:  NA\n\n");
+					
 					
 					/*if ( dnac.getSequenceConstraints() != null) 
 					{
@@ -303,7 +313,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 		
 			if (subComponent != null) 
 			{
-				ComponentDefinition resolvedSubComponent = null;
+//				ComponentDefinition resolvedSubComponent = null;
 				annotations = annotations + subComponent.getDisplayId(); 
 			} 
 			else

@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -29,7 +30,8 @@ import org.sbml.jsbml.ext.arrays.Index;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.fba.FBAObjective;
-import biomodel.gui.sbol.SBOLField;
+//import biomodel.gui.sbol.SBOLField; //TODO: Tramy - commented out for now
+import biomodel.gui.sbol.SBOLField2;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -50,7 +52,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	
 	private JTextField conviIndex;
 
-	private SBOLField sbolField;
+	private SBOLField2 sbolField;
 	
 	private BioModel bioModel;
 	
@@ -61,7 +63,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	public ModelPanel(BioModel gcm, ModelEditor modelEditor) {
 		super();
 		this.bioModel = gcm;
-		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 1, true);
+		sbolField = new SBOLField2(GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 1, true);
 		this.sbmlModel = gcm.getSBMLDocument().getModel();
 		this.dirty = modelEditor.getDirty();
 		this.setText("Model");
@@ -409,7 +411,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	public void mouseReleased(MouseEvent e) {
 	}
 	
-	public SBOLField getSBOLField() {
+	public SBOLField2 getSBOLField() {
 		return sbolField;
 	}
 }

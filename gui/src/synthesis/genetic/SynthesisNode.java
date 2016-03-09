@@ -35,7 +35,7 @@ public class SynthesisNode {
 		compURIs = new LinkedList<URI>();
 		processDNAComponents(sbmlElement, fileManager);
 		coverIndex = -1;
-		uncoveredBound = 0;
+		uncoveredBound = 0; 
 	}
 	
 	public SynthesisNode(String type) {
@@ -47,15 +47,18 @@ public class SynthesisNode {
 	}
 	
 	private void processDNAComponents(SBase sbmlElement, SBOLFileManager fileManager) {
+		//NOTE: Get all DnaComponent
 		AnnotationUtility.parseSBOLAnnotation(sbmlElement, compURIs);
 		List<DnaComponent> dnaComps = fileManager.resolveURIs(compURIs);
 		nucleotideCount = SBOLUtility.countNucleotides(dnaComps);
 		Set<String> soFilterTypes = new HashSet<String>();
 		soFilterTypes.add(GlobalConstants.SO_CDS);
 		soFilterTypes.add(GlobalConstants.SO_PROMOTER);
+		//NOTE: get dnaComps with the specified SO types of CDS and PROMOTER.
 		List<DnaComponent> signalComps = SBOLUtility.filterDNAComponents(dnaComps, soFilterTypes);
+		//TODO: Why only get the first DnaComponent signal? Assume that signalComps always return 1 or 0?
 		if (signalComps.size() > 0)
-			signal = signalComps.get(0).getURI().toString();
+			signal = signalComps.get(0).getURI().toString(); //TODO: signal will store the uri of the 1st DnaComponent?
 		else 
 			signal = "";
 	}

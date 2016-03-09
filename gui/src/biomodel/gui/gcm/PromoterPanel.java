@@ -27,7 +27,8 @@ import org.sbml.jsbml.ext.arrays.Index;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.sbmlcore.MySpecies;
-import biomodel.gui.sbol.SBOLField;
+//import biomodel.gui.sbol.SBOLField;
+import biomodel.gui.sbol.SBOLField2;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.gui.util.PropertyField;
 import biomodel.gui.util.PropertyList;
@@ -46,7 +47,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 5873800942710657929L;
 	private String[] options = { "Ok", "Cancel" };
 	private HashMap<String, PropertyField> fields = null;
-	private SBOLField sbolField;
+	private SBOLField2 sbolField;
 	private String selected = "";
 	private BioModel bioModel = null;
 	private boolean paramsOnly;
@@ -368,7 +369,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			} else {
 				sbolStrand = AnnotationUtility.parseSBOLAnnotation(promoter, sbolURIs);
 			}
-			sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
 					3, false);
 			add(sbolField);
 		}

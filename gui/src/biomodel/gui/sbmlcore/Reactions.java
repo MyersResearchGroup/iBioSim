@@ -52,7 +52,8 @@ import org.sbml.jsbml.ext.fbc.FluxBound.Operation;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
-import biomodel.gui.sbol.SBOLField;
+import biomodel.gui.sbol.SBOLField2;
+//import biomodel.gui.sbol.SBOLField;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -182,7 +183,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField reactantName;
 
-	private SBOLField sbolField;
+	private SBOLField2 sbolField;
 
 	private JTextField reactantStoichiometry;
 
@@ -746,7 +747,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				Reaction reac = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
 				sbolStrand = AnnotationUtility.parseSBOLAnnotation(reac, sbolURIs);
 			}
-			sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
+			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
 			reactionPanelNorth4.add(sbolField);
 		}
 		reactionPanelNorth.add(reactionPanelNorth1);

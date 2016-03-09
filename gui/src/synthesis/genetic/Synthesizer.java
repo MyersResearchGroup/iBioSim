@@ -27,15 +27,21 @@ public class Synthesizer {
 	
 	public Synthesizer(Set<SynthesisGraph> graphLibrary, Properties synthProps) {
 		this.matcher = new SynthesisMatcher(graphLibrary);
+		//TODO: unclear how exhaustive is set by check if these two constants are check to be equal. 
+		//		Are these constants modified to be equal somewhere?
 		exhaustive = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY).equals(
 				GlobalConstants.SBOL_SYNTH_EXHAUST_BB);
 		solutionCap = Integer.parseInt(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY));
 	}
 	
-	public List<List<SynthesisGraph>> mapSpecification(SynthesisGraph spec) {
+	public List<List<SynthesisGraph>> mapSpecification(SynthesisGraph spec) 
+	{
+		//NOTE: begin matching library parts with the specified biomodel (spec) from output working down
 //		long startTime = System.nanoTime();
-		for (SynthesisNode node : spec.postOrderNodes()) {
-			matchNode(node, spec);
+		//NOTE: postOrderNodes() will return all nodes in library that points to the output node
+		for (SynthesisNode node : spec.postOrderNodes()) 
+		{
+			matchNode(node, spec); //NOTE: match the output (upper) node with the entire biomodel graph
 			boundNode(node, spec);
 		}
 		List<List<SynthesisGraph>> solutions = new LinkedList<List<SynthesisGraph>>();

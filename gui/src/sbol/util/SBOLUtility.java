@@ -398,6 +398,7 @@ public class SBOLUtility {
 	
 	public static List<DnaComponent> filterDNAComponents(List<DnaComponent> dnaComps, Set<String> soFilterNums) {
 		List<DnaComponent> filteredComps = new LinkedList<DnaComponent>();
+		// NOTE: Find all DnaComponent (dnaComps) with the specified filtered type (soFilterNums) and add to DnaComponent list.
 		for (DnaComponent dnaComp : dnaComps) {
 			String soNum = SBOLUtility.loadSONumber(dnaComp);
 			if (soNum != null && soFilterNums.contains(soNum))

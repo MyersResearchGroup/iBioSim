@@ -47,7 +47,8 @@ import org.sbml.jsbml.SpeciesReference;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
-import biomodel.gui.sbol.SBOLField;
+//import biomodel.gui.sbol.SBOLField;
+import biomodel.gui.sbol.SBOLField2;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -76,7 +77,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	
 	private ModelEditor modelEditor;
 	
-	private SBOLField sbolField;
+	private SBOLField2 sbolField;
 	
 	private JTextField ruleMath;
 
@@ -277,7 +278,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				List<URI> sbolURIs = new LinkedList<URI>();
 				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(rule, sbolURIs);
 				// Field for annotating rules with SBOL DNA components
-				sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+				sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
 						2, false);
 			}
 			if (rule.isSetMetaId()) {
@@ -306,7 +307,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		}
 		else {
 			// Field for annotating rules with SBOL DNA components
-			sbolField = new SBOLField(new LinkedList<URI>(), GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
+			sbolField = new SBOLField2(new LinkedList<URI>(), GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
 					GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
 			if (!assignRuleVar("") && !rateRuleVar("")) {
 				ruleType.removeItem("Assignment");

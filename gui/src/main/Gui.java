@@ -266,7 +266,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			moveDown;
 
 	private JMenuItem				save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage, viewLHPN,
-			saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, createSbml, createSynth,
+			saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, createSbml, createSynth, createMapTech,
 			createVer, close, closeAll, saveAll, convertToLPN;
 
 	public String					ENVVAR;
@@ -619,7 +619,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		saveAs = new JMenuItem("Save As");
 		run = new JMenuItem("Save and Run");
 		check = new JMenuItem("Save and Check");
-		saveSBOL = new JMenuItem("Save SBOL");
+		saveSBOL = new JMenuItem("Save As SBOL");
 		refresh = new JMenuItem("Refresh");
 		viewCircuit = new JMenuItem("Circuit");
 		viewRules = new JMenuItem("Production Rules");
@@ -635,6 +635,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createLearn = new JMenuItem("Learn Tool");
 		createSbml = new JMenuItem("Create SBML File");
 		createSynth = new JMenuItem("Synthesis Tool");
+		createMapTech = new JMenuItem("Mapping Technology Tool");
 		createVer = new JMenuItem("Verification Tool");
 		exit = new JMenuItem("Exit");
 		select.addActionListener(this);
@@ -740,6 +741,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createLearn.addActionListener(this);
 		createSbml.addActionListener(this);
 		createSynth.addActionListener(this);
+		createMapTech.addActionListener(this);
 		createVer.addActionListener(this);
 		save.setActionCommand("save");
 		saveAs.setActionCommand("saveas");
@@ -784,7 +786,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | InputEvent.ALT_MASK));
 			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | InputEvent.SHIFT_MASK));
 			createSynth.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ShortCutKey | InputEvent.SHIFT_MASK));
+			createMapTech.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ShortCutKey | InputEvent.SHIFT_MASK));
 			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | InputEvent.SHIFT_MASK));
+			
 		}
 		newLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey));
@@ -915,6 +919,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createLearn.setEnabled(false);
 		createSbml.setEnabled(false);
 		createSynth.setEnabled(false);
+		createMapTech.setEnabled(false);
 		createVer.setEnabled(false);
 		edit.add(undo);
 		edit.add(redo);
@@ -993,12 +998,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.addSeparator();
 		file.add(save);
 		file.add(saveAs);
-		file.add(saveAll);
 		if (!async)
 		{
-			// file.add(saveSBOL);
+			file.add(saveSBOL);
 			file.add(check);
 		}
+		file.add(saveAll);
 		file.add(run);
 		if (lema)
 		{
@@ -1124,6 +1129,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (!lema)
 		{
 			tools.add(createSynth);
+		}
+		if (!lema)
+		{
+			tools.add(createMapTech);
 		}
 		if (async)
 		{
@@ -1693,7 +1702,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor)
 			{
-				((ModelEditor) comp).saveSBOL();
+				((ModelEditor) comp).saveAsSBOL2();
 			}
 		}
 		else if (e.getSource() == exportCsv)
@@ -2831,7 +2840,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (comp instanceof ModelEditor)
 			{
-				String newName = JOptionPane.showInputDialog(frame, "Enter model name:", "Model Name", JOptionPane.PLAIN_MESSAGE);
+				String newName = JOptionPane.showInputDialog(frame, "Enter model name:", "Model Name", JOptionPane.PLAIN_MESSAGE); 
 				if (newName == null)
 				{
 					return;
@@ -10727,6 +10736,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		viewModBrowser.setEnabled(false);
 		createAnal.setEnabled(false);
 		createSynth.setEnabled(false);
+		createMapTech.setEnabled(false);
 		createLearn.setEnabled(false);
 		createVer.setEnabled(false);
 		createSbml.setEnabled(false);
@@ -10755,6 +10765,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				createAnal.setActionCommand("createAnalysis");
 				createSynth.setEnabled(true);
 				createSynth.setActionCommand("createSynthesis");
+				createMapTech.setEnabled(true);
+				createMapTech.setActionCommand("createMapTech");
 				createLearn.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
@@ -10791,6 +10803,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModGraph.setEnabled(true);
 				createSynth.setEnabled(true);
 				createSynth.setActionCommand("createSynthesis");
+				createMapTech.setEnabled(true);
+				createMapTech.setActionCommand("createMapTech");
 				createVer.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
@@ -10809,6 +10823,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				createSynth.setEnabled(true);
 				createSynth.setActionCommand("createSynthesis");
+				createMapTech.setEnabled(true);
+				createMapTech.setActionCommand("createMapTech");
 				createVer.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
@@ -10827,6 +10843,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModGraph.setEnabled(true);
 				createSynth.setEnabled(true);
 				createSynth.setActionCommand("createSynthesis");
+				createMapTech.setEnabled(true);
+				createMapTech.setActionCommand("createMapTech");
 				createVer.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);

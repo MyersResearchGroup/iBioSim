@@ -64,7 +64,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		new File(rootFilePath + separator + synthID).mkdir();
 		JPanel optionsPanel = constructOptionsPanel();
 		addTab("Synthesis Options", optionsPanel);
-		getComponentAt(getComponents().length - 1).setName("Synthesis Options");
+		getComponentAt(getComponents().length - 1).setName("Synthesis Options"); 
 	}
 	
 	private JPanel constructOptionsPanel() {
@@ -173,7 +173,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		return synthProps;
 	}
 	
-	private void saveSynthesisProperties() {
+	private void saveSynthesisProperties() 
+	{
 		String propFilePath = rootFilePath + separator + synthID + separator + synthID 
 				+ GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION;
 		log.addText("Creating properties file:\n" + propFilePath + "\n");
@@ -193,7 +194,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		loadSynthesisOptions();
 	}
 	
-	private void loadSynthesisOptions() {
+	private void loadSynthesisOptions() 
+	{
 		specText.setText(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
 		libFilePaths = new LinkedList<String>();
 		for (String libFilePath : synthProps.getProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY).split(","))
@@ -223,7 +225,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			numSolnsText.setText("1");
 	}
 	
-	private void addLibraryFile(int addIndex) {
+	private void addLibraryFile(int addIndex) 
+	{
 		File startDirectory = new File(Preferences.userRoot().get("biosim.general.project_dir", ""));
 		String libFilePath = Utility.browse(frame, startDirectory, null, 
 				JFileChooser.DIRECTORIES_ONLY, "Open", -1);
@@ -256,7 +259,9 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 //			}
 //	}
 	
-	private void updateLibraryFiles() {
+	private void updateLibraryFiles() 
+	{
+		//NOTE: go through all file path in libFilePaths and add to libList
 		String[] libListData = new String[libFilePaths.size()];
 		for (int i = 0; i < libListData.length; i++) {
 			String[] splitPath = libFilePaths.get(i).split(separator);
@@ -271,6 +276,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	}
 	
 	public List<String> run(String synthFilePath) {
+		//NOTE: find all .sbol files and create an sbol document to its corresponding .sbol file.
 		Set<String> sbolFilePaths = new HashSet<String>();
 		for (String libFilePath : libFilePaths) 
 			for (String fileID : new File(libFilePath).list())
@@ -280,6 +286,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		
 		Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
 //		boolean flatImport = libFilePaths.size() > 1;
+		//NOTE: find .xml files and create a bioModel for each file and load them to the synthesis graph library
+		//		This is where the loading of the SBML library takes place
 		for (String libFilePath : libFilePaths) 
 			for (String gateFileID : new File(libFilePath).list()) 
 				if (gateFileID.endsWith(".xml")) {
@@ -288,10 +296,12 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					graphlibrary.add(new SynthesisGraph(gateModel, fileManager));
 				}
 		
-		BioModel specModel = new BioModel(rootFilePath);
+		//Note: load synthProps that has synthesis.spec as property into the biomodel
+		BioModel specModel = new BioModel(rootFilePath); 
 		specModel.load(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
-		SynthesisGraph spec = new SynthesisGraph(specModel, fileManager);
+		SynthesisGraph spec = new SynthesisGraph(specModel, fileManager); //NOTE: load the SBML library file
 		
+		//NOTE: set up library to match with the given biomodel
 		Synthesizer synthesizer = new Synthesizer(graphlibrary, synthProps);
 		List<List<SynthesisGraph>> solutions = synthesizer.mapSpecification(spec);
 		List<String> solutionFileIDs = importSolutions(solutions, spec, fileManager, synthFilePath);

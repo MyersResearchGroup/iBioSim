@@ -11,13 +11,15 @@ public class SynthesisMatcher {
 	private HashMap<Integer, HashSet<SynthesisGraph>> output = new HashMap<Integer, HashSet<SynthesisGraph>>();
 	private HashMap<String, Integer> nextMove = new HashMap<String, Integer>();
 
-	public SynthesisMatcher(Set<SynthesisGraph> graphLibrary) {
+	public SynthesisMatcher(Set<SynthesisGraph> graphLibrary) 
+	{
+		//NOTE: get each part within the library and walk that part. Add to alphabet list as parts are being walked
 		Set<String> alphabet = new HashSet<String>();
 		for (SynthesisGraph graph : graphLibrary) 
 			for (String keyword : graph.getPaths())
 				for (int i = 0; i < keyword.length(); i++) 
-					alphabet.add(keyword.substring(i, i + 1));
-		HashMap<String, Integer> goTo = constructGoTo(graphLibrary);
+					alphabet.add(keyword.substring(i, i + 1)); //TODO: why are we looking at a substring of the path and not each index of that path?
+		HashMap<String, Integer> goTo = constructGoTo(graphLibrary); //TODO: don't understand how this works and constructFailure()...
 		constructFailure(alphabet, goTo);
 		//		System.out.println(goTo);
 		//		System.out.println(output);
@@ -54,7 +56,9 @@ public class SynthesisMatcher {
 				int state = 0;
 				int j = 0;
 				boolean fail = false;
-				while (!fail && j < keyword.length()) {
+				while (!fail && j < keyword.length()) 
+				{
+					//TODO: why do we want to get substring of a path?
 					String a = keyword.substring(j, j + 1);
 					if (goTo.containsKey(state + a)) {
 						state = goTo.get(state + a);

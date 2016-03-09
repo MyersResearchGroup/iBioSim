@@ -30,7 +30,8 @@ public class Synthesis
 	private static List<SBOLGraph> _libraryGraph; 
 	private static SBOLGraph _specificationGraph; 
 	//TODO: Make sure to alter path for different users or computer used
-	private String PATH = "/Users/tramynguyen/Desktop/SBOL/"; 
+	private String OUTPUT_PATH = "/Users/tramynguyen/Desktop/SBOL/"; 
+	private String OUTPUT_FILE_NAME = "Technology_Mapping_Solution.sbol";
 
 	public Synthesis()
 	{
@@ -326,7 +327,7 @@ public class Synthesis
 		{
 			//Technology_Mapping_Solution
 //			sbolDoc.write(System.out);
-			sbolDoc.write(new File(PATH + "Technology_Mapping_Solution.sbol"));
+			sbolDoc.write(new File(OUTPUT_PATH + OUTPUT_FILE_NAME));
 		}
 		catch (XMLStreamException e)
 		{
