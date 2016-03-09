@@ -4,18 +4,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
+//import java.io.IOException;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
+//import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
-import javax.swing.JFrame;
+//import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
@@ -25,204 +26,357 @@ import org.sbolstandard.core2.*;
 import uk.ac.ncl.intbio.core.io.CoreIoException;
 import biomodel.util.GlobalConstants;
 
-public class SBOLUtility2 {
+public class SBOLUtility2 
+{
+	private static SBOLDocument SBOLDOC; 
 
-	//private static String DEFAULTURI = "http://www.async.ece.utah.edu";
-	
-	public static SBOLDocument loadSBOLFile(String filePath) 
-	{
-		SBOLDocument sbolDoc = null;
-		try 
+	public static SBOLDocument loadSBOLFiles(HashSet<String> sbolFilePaths) {
+		SBOLDocument sbolDoc = new SBOLDocument();
+		Preferences biosimrc = Preferences.userRoot();
+		
+		for (String filePath : sbolFilePaths) 
 		{
 			File f = new File(filePath);
 			String fileName = f.getName().replace(".sbol", "");
-			Preferences biosimrc = Preferences.userRoot();
-			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
-			sbolDoc = SBOLReader.read(new FileInputStream(filePath));	
+			sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
+			SBOLReader.setDropObjectsWithDuplicateURIs(true);
 			
-		} 
-		catch (SBOLValidationException e) 
-		{
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
-					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
-		} 
-		catch (XMLStreamException e) 
-		{
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
-					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
-		} 
-		catch (CoreIoException e) 
-		{
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
-					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
-		} 
-		catch (FileNotFoundException e) 
-		{
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file not found at " + filePath + ".", 
-					"File Not Found", JOptionPane.ERROR_MESSAGE);
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL2 file at " + filePath + ".", 
-					"Input/Output Error", JOptionPane.ERROR_MESSAGE);
+			
+			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
+			try
+			{
+				String sbolRDF = filePath.replace(".sbol", ".rdf");
+				SBOLDocument newSbolDoc = SBOLReader.read(sbolRDF);
+				for(ComponentDefinition c : newSbolDoc.getComponentDefinitions())
+				{
+//					SBOLDOC.createCopy(c);
+					sbolDoc.createCopy(c);
+				}
+			}
+			catch (Throwable e)
+			{
+				e.printStackTrace();
+			}
+			
+//			try
+//			{
+//				sbolDoc.read(filePath);
+//				print(sbolDoc);
+//			}
+//			catch (FileNotFoundException e)
+//			{
+//				e.printStackTrace();
+//				JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", 
+//						"File Not Found", JOptionPane.ERROR_MESSAGE);
+//			}
+//			catch (CoreIoException e)
+//			{
+//				e.printStackTrace();
+//				JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
+//						"Input/Output Error", JOptionPane.ERROR_MESSAGE);
+//			}
+//			catch (XMLStreamException e)
+//			{
+//				e.printStackTrace();
+//				JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
+//						"Invalid XML format", JOptionPane.ERROR_MESSAGE);
+//			}
+//			catch (FactoryConfigurationError e)
+//			{
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 		return sbolDoc;
 	}
 	
-//	public static void writeSBOLDocument(String filePath, SBOLDocument sbolDoc) {
-//		try {
-//			SBOLFactory.write(sbolDoc, new FileOutputStream(filePath));
-//		} catch (SBOLValidationException e) {
-//			e.printStackTrace();
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-//	
-//	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
-//	// Subcomponents of the given component are replaced by components of matching URIs from the SBOL document to avoid having
-//	// multiple data structures of the same URI
-//	public static void addDNAComponent(DnaComponent dnac, SBOLDocument sbolDoc, boolean flatten) {
-//		dnac = replaceDNAComponent(dnac, sbolDoc);
-//		Set<String> topURIs = new HashSet<String>();
+	
+	/**
+	 * Return the SBOLDocument parsed by the given file
+	 * @param filePath
+	 * @return
+	 */
+	public static SBOLDocument loadSBOLFile(String filePath) 
+	{
+		SBOLDocument sbolDoc = null; 
+//		try
+//		{
+			File f = new File(filePath);
+			String fileName = f.getName().replace(".sbol", "");
+			Preferences biosimrc = Preferences.userRoot();
+			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
+			try
+			{
+				sbolDoc = SBOLReader.read(new FileInputStream(filePath));
+			}
+			catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", 
+						"File Not Found", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (CoreIoException e)
+			{
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
+						"Input/Output Error", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (XMLStreamException e)
+			{
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
+						"Invalid XML format", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (FactoryConfigurationError e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return sbolDoc; 
+	}
+	
+	public static void writeSBOLDocument(String filePath, SBOLDocument sbolDoc) 
+	{
+		try
+		{
+			SBOLWriter.write(sbolDoc, new FileOutputStream(filePath));
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + filePath + ".", 
+					"Input/Output Error", JOptionPane.ERROR_MESSAGE);
+		}
+		catch (XMLStreamException e)
+		{
+			// TODO Auto-generated catch block
+			//TODO: What exceptions are these?
+			e.printStackTrace();
+		}
+		catch (FactoryConfigurationError e)
+		{
+			// TODO Auto-generated catch block
+			//TODO: What exceptions are these?
+			e.printStackTrace();
+		}
+		catch (CoreIoException e)
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + filePath + ".", 
+					"Input/Output Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
+	// Subcomponents of the given component are replaced by components of matching URIs from the SBOL document to avoid having
+	// multiple data structures of the same URI
+	public static void addDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc, boolean flatten) 
+	{
+		dnac = replaceDNAComponent(dnac, sbolDoc);
+		Set<String> topURIs = new HashSet<String>();
 //		for (SBOLRootObject sbolObj : sbolDoc.getContents())
 //			if (sbolObj instanceof DnaComponent)
 //				topURIs.add(sbolObj.getURI().toString());
-//		if (flatten)
-//			flattenDNAComponent(dnac, sbolDoc, topURIs);
+		for (TopLevel sbolObj : sbolDoc.getTopLevels())
+			if (sbolObj instanceof ComponentDefinition)
+				topURIs.add(sbolObj.getIdentity().toString());
+		
+		if (flatten)
+			flattenDNAComponent(dnac, sbolDoc, topURIs);
 //		else if (!topURIs.contains(dnac.getURI().toString()))
 //			sbolDoc.addContent(dnac);
-//	}
-//	
-//	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
-//	private static void flattenDNAComponent(DnaComponent dnac, SBOLDocument sbolDoc, Set<String> topURIs) {
-//		if (!topURIs.contains(dnac.getURI().toString())) {
+		else if (!topURIs.contains(dnac.getIdentity().toString()))
+		{
+			sbolDoc.createCopy(dnac); 
+		}
+	}
+	
+	public static void addSequence(Sequence seq, SBOLDocument sbolDoc, boolean flatten) 
+	{
+		Set<String> topURIs = new HashSet<String>();
+		for (TopLevel sbolObj : sbolDoc.getTopLevels())
+			if (sbolObj instanceof Sequence)
+				topURIs.add(sbolObj.getIdentity().toString());
+		
+		if (!topURIs.contains(seq.getIdentity().toString()))
+			sbolDoc.createCopy(seq); 
+	}
+	
+	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
+	private static void flattenDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc, Set<String> topURIs) {
+		if (!topURIs.contains(dnac.getIdentity())) {
 //			sbolDoc.addContent(dnac);
-//			topURIs.add(dnac.getURI().toString());
-//		}
-//		List<SequenceAnnotation> annos = dnac.getAnnotations();
-//		if (annos != null && annos.size() > 0)
-//			flattenSubComponents(annos, sbolDoc, topURIs);
-//	}
-//	
-//	// Recursively adds annotation subcomponents to top level of SBOL document if not already present
-//	private static void flattenSubComponents(List<SequenceAnnotation> annos, SBOLDocument sbolDoc, Set<String> topURIs) {
-//		for (SequenceAnnotation anno : annos) {
+			sbolDoc.createCopy(dnac); 
+			topURIs.add(dnac.getIdentity().toString());
+		}
+		Set<SequenceAnnotation> annos = dnac.getSequenceAnnotations(); 
+		if (annos != null && annos.size() > 0)
+			flattenSubComponents(annos, sbolDoc, topURIs);
+	}
+	
+	// Recursively adds annotation subcomponents to top level of SBOL document if not already present
+	private static void flattenSubComponents(Set<SequenceAnnotation> annos, SBOLDocument sbolDoc, Set<String> topURIs) 
+	{
+		for (SequenceAnnotation anno : annos) {
 //			DnaComponent subDnac = anno.getSubComponent();
-//			if (subDnac != null) {
-//				if (!topURIs.contains(subDnac.getURI().toString())) {
-//					sbolDoc.addContent(subDnac);
-//					topURIs.add(subDnac.getURI().toString());
-//				}
+			ComponentDefinition subDnac = anno.getComponent().getDefinition();
+			if (subDnac != null) 
+			{
+				if (!topURIs.contains(subDnac.getIdentity())) {
+					sbolDoc.createCopy(subDnac); 
+					topURIs.add(subDnac.getIdentity().toString());
+				}
 //				List<SequenceAnnotation> subAnnos = subDnac.getAnnotations();
-//				if (subAnnos != null && subAnnos.size() > 0)
-//					flattenSubComponents(subAnnos, sbolDoc, topURIs);
-//			}
-//		}
-//	}
-//	
-//	// Replaces DNA component and its subcomponents with components from SBOL document if their URIs match
-//	// Used to avoid conflict of multiple data structures of same URI in a single SBOL document
-//	public static DnaComponent replaceDNAComponent(DnaComponent dnac, SBOLDocument sbolDoc) {
+				Set<SequenceAnnotation> subAnnos = subDnac.getSequenceAnnotations(); 
+				if (subAnnos != null && subAnnos.size() > 0)
+					flattenSubComponents(subAnnos, sbolDoc, topURIs);
+			}
+		}
+	}
+	
+	// Replaces DNA component and its subcomponents with components from SBOL document if their URIs match
+	// Used to avoid conflict of multiple data structures of same URI in a single SBOL document
+	public static ComponentDefinition replaceDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc) 
+	{
 //		SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) flattenSBOLDocument(sbolDoc);
 //		UriResolver<DnaComponent> flattenedResolver = flattenedDoc.getComponentUriResolver();
 //		DnaComponent resolvedDnac = flattenedResolver.resolve(dnac.getURI());
-//		if (resolvedDnac != null)
-//			return resolvedDnac;
-//		// TODO: Added to avoid duplicate display ids.
+		
+		
+//		ComponentDefinition resolvedDnac = SBOLDOC.getComponentDefinition(dnac.getIdentity());
+		ComponentDefinition resolvedDnac = sbolDoc.getComponentDefinition(dnac.getIdentity());
+		if (resolvedDnac != null)
+			return resolvedDnac;
 //		DisplayIdResolver<DnaComponent> flattenedIdResolver = flattenedDoc.getComponentDisplayIdResolver();
 //		resolvedDnac = flattenedIdResolver.resolve(dnac.getDisplayId());
 //		if (resolvedDnac != null)
 //			return resolvedDnac;
-//		
+		
 //		List<SequenceAnnotation> annos = dnac.getAnnotations();
-//		if (annos != null && annos.size() > 0)
+		Set<SequenceAnnotation> annos = dnac.getSequenceAnnotations(); 
+		if (annos != null && annos.size() > 0)
+		{
 //			replaceSubComponents(annos, flattenedResolver);
-//		return dnac;
-//	}
-//	
-//	private static void replaceSubComponents(List<SequenceAnnotation> annos, UriResolver<DnaComponent> flattenedResolver) {
-//		for (SequenceAnnotation anno : annos) {
+			replaceSubComponents(annos);
+		}
+		return dnac;
+	}
+	
+	private static void replaceSubComponents(Set<SequenceAnnotation> annos) 
+	{
+		for (SequenceAnnotation anno : annos) 
+		{
 //			DnaComponent subDnac = anno.getSubComponent();
-//			if (subDnac != null) {
+			ComponentDefinition subDnac = anno.getComponentDefinition();
+			if (subDnac != null) 
+			{
 //				DnaComponent resolvedSubDnac = flattenedResolver.resolve(subDnac.getURI());
-//				if (resolvedSubDnac != null)
+				ComponentDefinition resolvedSubDnac = SBOLDOC.getComponentDefinition(subDnac.getIdentity());
+				if (resolvedSubDnac != null)
+				{
 //					anno.setSubComponent(resolvedSubDnac);
-//				else {
+					
+				}
+				else 
+				{
 //					List<SequenceAnnotation> subAnnos = subDnac.getAnnotations();
-//					if (subAnnos != null && subAnnos.size() > 0)
+					Set<SequenceAnnotation> subAnnos = subDnac.getSequenceAnnotations();
+					if (subAnnos != null && subAnnos.size() > 0)
+					{
 //						replaceSubComponents(subAnnos, flattenedResolver);
-//				}
-//			}
-//		}
-//	}
-//	
-//	// Creates SBOL document in which every DNA component is accessible from the top level
-//	public static SBOLDocument flattenSBOLDocument(SBOLDocument sbolDoc) {
+						replaceSubComponents(subAnnos);
+					}
+				}
+			}
+		}
+	}
+	
+	// Creates SBOL document in which every DNA component is accessible from the top level
+	public static SBOLDocument flattenSBOLDocument(SBOLDocument sbolDoc) 
+	{
 //		SBOLDocument flattenedDoc = SBOLFactory.createDocument();
 //		Set<String> topURIs = new HashSet<String>();
 //		for (SBOLRootObject sbolObj : sbolDoc.getContents()) // note getContents() only returns top-level SBOL objects
 //			if (sbolObj instanceof DnaComponent) 
 //				flattenDNAComponent((DnaComponent) sbolObj, flattenedDoc, topURIs);
-//			 else if (sbolObj instanceof org.sbolstandard.core.Collection) {
+//			 else if (sbolObj instanceof org.sbolstandard.core.Collection) 
+//			 {
 //				flattenedDoc.addContent(sbolObj);
 //				for (DnaComponent dnac : ((org.sbolstandard.core.Collection) sbolObj).getComponents())
 //					flattenDNAComponent(dnac, flattenedDoc, topURIs);
 //			}
 //		return flattenedDoc;
-//	}
-//	
-//	// Replaces all DNA components of the merging URI with the given DNA component
-//	// Subcomponents of the given component are replaced by components of matching URIs from the SBOL document to avoid having
-//	// multiple data structures of the same URI
-//	public static void mergeDNAComponent(URI mergingURI, DnaComponent mergingDnac, SBOLDocument sbolDoc) {
+		SBOLDocument flattenedDoc = new SBOLDocument();
+		Set<String> topURIs = new HashSet<String>();
+		for (TopLevel sbolObj : sbolDoc.getTopLevels())
+		{
+			if (sbolObj instanceof ComponentDefinition) 
+				flattenDNAComponent((ComponentDefinition) sbolObj, flattenedDoc, topURIs);
+			 else if (sbolObj instanceof Collection) 
+			 {
+				flattenedDoc.createCopy(sbolObj);
+				for (TopLevel dnac : ((Collection) sbolObj).getMembers())
+					flattenDNAComponent((ComponentDefinition)dnac, flattenedDoc, topURIs);
+			}
+		}
+		return flattenedDoc;
+	}
+	
+	// Replaces all DNA components of the merging URI with the given DNA component
+	// Subcomponents of the given component are replaced by components of matching URIs from the SBOL document to avoid having
+	// multiple data structures of the same URI
+/*	public static void mergeDNAComponent(URI mergingURI, ComponentDefinition mergingDnac, SBOLDocument sbolDoc) 
+	{
 //		SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) flattenSBOLDocument(sbolDoc);
 //		UriResolver<DnaComponent> flattenedResolver = flattenedDoc.getComponentUriResolver();
 //		replaceSubComponents(mergingDnac.getAnnotations(), flattenedResolver);
+		SBOLDOC = new SBOLDocument();
+		for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
+			SBOLDOC.createCopy(c);
+		
+		replaceSubComponents(mergingDnac.getSequenceAnnotations());
+		
 //		List<DnaComponent> intersections = intersectDNAComponent(mergingURI, sbolDoc);
-//		for (DnaComponent intersectedDnac : intersections) {
-//			if (intersectedDnac.getURI().toString().equals(mergingURI.toString())) {
-//				sbolDoc.removeContent(intersectedDnac);
-//				sbolDoc.addContent(mergingDnac);
-//			} else {
-//				List<SequenceAnnotation> intersectedAnnos = new LinkedList<SequenceAnnotation>();
-//				for (SequenceAnnotation anno : intersectedDnac.getAnnotations()) {
-//					DnaComponent subDnac = anno.getSubComponent();
-//					if (subDnac != null && subDnac.getURI().toString().equals(mergingURI.toString())) 
-//						intersectedAnnos.add(anno);
-//				}
-//				for (SequenceAnnotation intersectedAnno : intersectedAnnos)
-//					intersectedAnno.setSubComponent(mergingDnac);
-//				DnaSequence intersectedSeq = intersectedDnac.getDnaSequence();
-//				String nucleotides = "";
-//				int position = 0;
-//				for (SequenceAnnotation anno : intersectedDnac.getAnnotations()) {
-//					String subNucleotides;
-//					if (anno.getStrand() != null && 
-//							anno.getStrand().getSymbol().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
-//						subNucleotides = ((DnaSequenceImpl) anno.getSubComponent().getDnaSequence()).getReverseComplementaryNucleotides();
-//					else
-//						subNucleotides = anno.getSubComponent().getDnaSequence().getNucleotides();
-//					nucleotides = nucleotides + subNucleotides;
-//					anno.setBioStart(position + 1);
-//					position = position + subNucleotides.length();
-//					anno.setBioEnd(position);
-//				}
-//				intersectedSeq.setNucleotides(nucleotides);
-//			}
-//		}
-//	}
-//	
-//	// Deletes all DNA components that have URIs matching the given URI and updates the annotations
-//	// and DNA sequences of composite components using the deleted components
-//	public static void deleteDNAComponent(URI deletingURI, SBOLDocument sbolDoc) {
+		List<ComponentDefinition> intersections = intersectDNAComponent(mergingURI, sbolDoc);
+		for (ComponentDefinition intersectedDnac : intersections) {
+			if (intersectedDnac.getIdentity().equals(mergingURI)) 
+			{
+				sbolDoc.removeContent(intersectedDnac);
+				sbolDoc.addContent(mergingDnac);
+			} 
+			else {
+				List<SequenceAnnotation> intersectedAnnos = new LinkedList<SequenceAnnotation>();
+				for (SequenceAnnotation anno : intersectedDnac.getAnnotations()) {
+					DnaComponent subDnac = anno.getSubComponent();
+					if (subDnac != null && subDnac.getURI().toString().equals(mergingURI.toString())) 
+						intersectedAnnos.add(anno);
+				}
+				for (SequenceAnnotation intersectedAnno : intersectedAnnos)
+					intersectedAnno.setSubComponent(mergingDnac);
+				DnaSequence intersectedSeq = intersectedDnac.getDnaSequence();
+				String nucleotides = "";
+				int position = 0;
+				for (SequenceAnnotation anno : intersectedDnac.getAnnotations()) {
+					String subNucleotides;
+					if (anno.getStrand() != null && 
+							anno.getStrand().getSymbol().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+						subNucleotides = ((DnaSequenceImpl) anno.getSubComponent().getDnaSequence()).getReverseComplementaryNucleotides();
+					else
+						subNucleotides = anno.getSubComponent().getDnaSequence().getNucleotides();
+					nucleotides = nucleotides + subNucleotides;
+					anno.setBioStart(position + 1);
+					position = position + subNucleotides.length();
+					anno.setBioEnd(position);
+				}
+				intersectedSeq.setNucleotides(nucleotides);
+			}
+		}
+	}
+	*/
+	
+	// Deletes all DNA components that have URIs matching the given URI and updates the annotations
+	// and DNA sequences of composite components using the deleted components
+	public static void deleteDNAComponent(URI deletingURI, SBOLDocument sbolDoc) {
 //		List<DnaComponent> intersections = intersectDNAComponent(deletingURI, sbolDoc);
 //		for (DnaComponent intersectedDnac : intersections) {
 //			if (intersectedDnac.getURI().toString().equals(deletingURI.toString())) 
@@ -249,12 +403,51 @@ public class SBOLUtility2 {
 //				intersectedSeq.setNucleotides(nucleotides);
 //			}
 //		}
-//	}
-//	
-//	// Returns all DNA components from SBOL document that have URIs matching the given URI
-//	// or that have subcomponents matching the given URI
-//	public static List<DnaComponent> intersectDNAComponent(URI intersectingURI, SBOLDocument sbolDoc) {
-//		List<DnaComponent> intersections = new LinkedList<DnaComponent>();
+		
+		List<ComponentDefinition> intersections = intersectDNAComponent(deletingURI, sbolDoc);
+		for (ComponentDefinition intersectedDnac : intersections) {
+			if (intersectedDnac.getIdentity().toString().equals(deletingURI.toString())) 
+			{
+				if(SBOLDOC.getComponentDefinition(intersectedDnac.getIdentity()) != null)
+				{
+					SBOLDOC.removeComponentDefinition(intersectedDnac);
+					sbolDoc.removeComponentDefinition(intersectedDnac);
+				}
+			}
+			else 
+			{
+				List<SequenceAnnotation> intersectedAnnos = new LinkedList<SequenceAnnotation>();
+				for (SequenceAnnotation anno : intersectedDnac.getSequenceAnnotations()) {
+					ComponentDefinition subDnac = anno.getComponent().getDefinition();
+					if (subDnac != null && subDnac.getIdentity().toString().equals(deletingURI.toString())) 
+						intersectedAnnos.add(anno);
+				}
+				for (SequenceAnnotation intersectedAnno : intersectedAnnos)
+				{
+					intersectedDnac.removeSequenceAnnotation(intersectedAnno);
+				}
+				//Note: Assume each compDef has 1 Sequence
+				Sequence intersectedSeq = intersectedDnac.getSequences().iterator().next();
+				String nucleotides = "";
+				int position = 0;
+				for (SequenceAnnotation anno : intersectedDnac.getSequenceAnnotations()) {
+					String subNucleotides = anno.getComponent().getDefinition().getSequences().iterator().next().getElements();
+					nucleotides = nucleotides + subNucleotides;
+					int start = position + 1;
+					position = position + subNucleotides.length();
+					int end = position; 
+					anno.addRange(intersectedSeq.getDisplayId()+"_range", start, end);
+				}
+				intersectedSeq.setElements(nucleotides);
+			}
+		}
+	}
+	
+	
+	// Returns all DNA components from SBOL document that have URIs matching the given URI
+	// or that have subcomponents matching the given URI
+	public static List<ComponentDefinition> intersectDNAComponent(URI intersectingURI, SBOLDocument sbolDoc) {
+//		List<ComponentDefinition> intersections = new LinkedList<ComponentDefinition>();
 //		for (SBOLRootObject sbolObj : sbolDoc.getContents()) // note getContents() only returns top-level SBOL objects
 //			if (sbolObj instanceof DnaComponent) 
 //				if (sbolObj.getURI().toString().equals(intersectingURI.toString()) ) 
@@ -264,10 +457,22 @@ public class SBOLUtility2 {
 //					if (annos != null && annos.size() > 0)
 //						intersections.addAll(intersectWithSubComponents(intersectingURI, (DnaComponent) sbolObj, annos));
 //				}
-//		return intersections;
-//	}
-//	
-//	private static List<DnaComponent> intersectWithSubComponents(URI intersectingURI, DnaComponent intersectedDnac, List<SequenceAnnotation> intersectedAnnos) {
+		
+		List<ComponentDefinition> intersections = new LinkedList<ComponentDefinition>();
+		for (TopLevel sbolObj : sbolDoc.getTopLevels()) // note getContents() only returns top-level SBOL objects
+			if (sbolObj instanceof ComponentDefinition) 
+				if (sbolObj.getIdentity().toString().equals(intersectingURI.toString()) ) 
+					intersections.add((ComponentDefinition) sbolObj);
+				else {
+					Set<SequenceAnnotation> annos = ((ComponentDefinition) sbolObj).getSequenceAnnotations();
+					if (annos != null && annos.size() > 0)
+						intersections.addAll(intersectWithSubComponents(intersectingURI, (ComponentDefinition) sbolObj, annos));
+				}
+		return intersections;
+	}
+	
+	
+	private static List<ComponentDefinition> intersectWithSubComponents(URI intersectingURI, ComponentDefinition intersectedDnac, Set<SequenceAnnotation> intersectedAnnos) {
 //		List<DnaComponent> subIntersections = new LinkedList<DnaComponent>();
 //		Iterator<SequenceAnnotation> annoIterator = intersectedAnnos.iterator();
 //		while (subIntersections.size() == 0 && annoIterator.hasNext()) {
@@ -287,8 +492,28 @@ public class SBOLUtility2 {
 //			if (subIntersections.size() > 0)
 //				subIntersections.add(intersectedDnac);
 //		}
-//		return subIntersections;
-//	}
+		
+		List<ComponentDefinition> subIntersections = new LinkedList<ComponentDefinition>();
+		Iterator<SequenceAnnotation> annoIterator = intersectedAnnos.iterator();
+		while (subIntersections.size() == 0 && annoIterator.hasNext()) {
+			ComponentDefinition subDnac = annoIterator.next().getComponent().getDefinition();
+			if (subDnac != null && subDnac.getIdentity().toString().equals(intersectingURI.toString()))
+				subIntersections.add(intersectedDnac);
+		}
+		if (subIntersections.size() == 0) {
+			for (SequenceAnnotation intersectedAnno : intersectedAnnos) {
+				ComponentDefinition subDnac = intersectedAnno.getComponent().getDefinition();
+				if (subDnac != null) {
+					Set<SequenceAnnotation> subAnnos = subDnac.getSequenceAnnotations();
+					if (subAnnos != null && subAnnos.size() > 0)
+						subIntersections.addAll(intersectWithSubComponents(intersectingURI, subDnac, subAnnos));
+				}
+			}
+			if (subIntersections.size() > 0)
+				subIntersections.add(intersectedDnac);
+		}
+		return subIntersections;
+	}
 	
 	
 	
@@ -307,17 +532,29 @@ public class SBOLUtility2 {
 //		return types;
 //	}
 	
-//	public static List<SequenceAnnotation> orderSequenceAnnotations(List<SequenceAnnotation> unsorted) {
-//		List<SequenceAnnotation> sorted = new LinkedList<SequenceAnnotation>();
-//		for (SequenceAnnotation anno : unsorted)
-//			for (int i = 0; i <= sorted.size(); i++)
+	public static List<SequenceAnnotation> orderSequenceAnnotations(Set<SequenceAnnotation> unsorted) {
+		List<SequenceAnnotation> sorted = new LinkedList<SequenceAnnotation>();
+		for (SequenceAnnotation anno : unsorted)
+			for (int i = 0; i <= sorted.size(); i++)
+			{
 //				if (i == sorted.size() 
 //						|| anno.getBioStart().compareTo(sorted.get(i).getBioStart()) <= 0) {
 //					sorted.add(i, anno);
 //					i = sorted.size();
 //				} 
-//		return sorted;
-//	}
+				
+				//Assume that each SeqAnnot. has one location and that it is a Range?
+				Range anno_range = (Range) anno.getLocations().iterator().next();
+				Range sorted_range = (Range) sorted.get(i).getLocations().iterator().next();
+				if (i == sorted.size() 
+						|| anno_range.getStart() <= sorted_range.getStart()) 
+				{
+					sorted.add(i, anno);
+					i = sorted.size();
+				} 
+			}
+		return sorted;
+	}
 
 //	public static List<String> loadDNAComponentTypes(DnaComponent dnaComp, String strand) {
 //		List<String> types = new LinkedList<String>();
@@ -379,13 +616,13 @@ public class SBOLUtility2 {
 //	}
 //	
 	
-//	public static List<URI> loadDNAComponentURIs(List<DnaComponent> dnaComps) {
-//		List<URI> uris = new LinkedList<URI>();
-//		for (DnaComponent lowestComp : loadLowestSubComponents(dnaComps))
-//			uris.add(lowestComp.getURI());
-//		return uris;
-//	}
-//	
+	public static List<URI> loadDNAComponentURIs(List<ComponentDefinition> dnaComps) {
+		List<URI> uris = new LinkedList<URI>();
+		for (ComponentDefinition lowestComp : loadLowestSubComponents(dnaComps))
+			uris.add(lowestComp.getIdentity());
+		return uris;
+	}
+	
 	
 //	public static List<URI> loadNodeURIs(AssemblyNode assemblyNode) {
 //		return loadDNAComponentURIs(assemblyNode.getDNAComponents());
@@ -398,9 +635,9 @@ public class SBOLUtility2 {
 //		return uris;
 //	}
 
-//	public static List<DnaComponent> loadLowestSubComponents(List<DnaComponent> dnaComps) {
-//		List<DnaComponent> subComps = new LinkedList<DnaComponent>();
-//		List<DnaComponent> tempComps = new LinkedList<DnaComponent>(dnaComps);
+	public static List<ComponentDefinition> loadLowestSubComponents(List<ComponentDefinition> dnaComps) {
+		List<ComponentDefinition> subComps = new LinkedList<ComponentDefinition>();
+		List<ComponentDefinition> tempComps = new LinkedList<ComponentDefinition>(dnaComps);
 //		while (tempComps.size() > 0) {
 //			if (tempComps.get(0).getAnnotations().size() > 0)
 //				for (SequenceAnnotation anno : tempComps.remove(0).getAnnotations())
@@ -408,8 +645,17 @@ public class SBOLUtility2 {
 //			else
 //				subComps.add(tempComps.remove(0));
 //		}
-//		return subComps;
-//	}
+		
+		while (tempComps.size() > 0) 
+		{
+			if (tempComps.get(0).getSequenceAnnotations().size() > 0)
+				for (SequenceAnnotation anno : tempComps.remove(0).getSequenceAnnotations())
+					tempComps.add(anno.getComponentDefinition());
+			else
+				subComps.add(tempComps.remove(0));
+		}
+		return subComps;
+	}
 	
 //	public static List<DnaComponent> filterDNAComponents(List<DnaComponent> dnaComps, Set<String> soFilterTypes) {
 //		List<DnaComponent> subComps = new LinkedList<DnaComponent>();
@@ -486,23 +732,23 @@ public class SBOLUtility2 {
 //		} 
 //		return nucleotideCount;
 //	}
-//	
-//	// Converts global constant SBOL type to corresponding set of SO types
-//	public static Set<String> soSynonyms(String sbolType) {
-//		Set<String> types = new HashSet<String>();
-//		if (sbolType.equals(GlobalConstants.SBOL_CDS)) {
-//			types.add(SequenceOntology.CDS.toString()); // CDS
-//		} else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER)) {
-//			types.add(SequenceOntology.PROMOTER.toString()); // promoter
-//			types.add(SequenceOntology.type("SO_0001203").toString()); // RNA_polymerase_promoter
-//		} else if (sbolType.equals(GlobalConstants.SBOL_RBS)) {
-//			types.add(SequenceOntology.type("SO_0000139").toString()); // ribosome_entry_site
-//		} else if (sbolType.equals(GlobalConstants.SBOL_TERMINATOR)) {
-//			types.add(SequenceOntology.TERMINATOR.toString()); // terminator
-//			types.add(SequenceOntology.type("SO_0000614").toString()); // bacterial_terminator
-//		}
-//		return types;
-//	}
+	
+	// Converts global constant SBOL type to corresponding set of SO types
+	public static Set<String> soSynonyms(String sbolType) {
+		Set<String> types = new HashSet<String>();
+		if (sbolType.equals(GlobalConstants.SBOL_CDS)) {
+			types.add(SequenceOntology.CDS.toString()); // CDS
+		} else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER)) {
+			types.add(SequenceOntology.PROMOTER.toString()); // promoter
+			types.add(SequenceOntology.type("SO_0001203").toString()); // RNA_polymerase_promoter
+		} else if (sbolType.equals(GlobalConstants.SBOL_RBS)) {
+			types.add(SequenceOntology.type("SO_0000139").toString()); // ribosome_entry_site
+		} else if (sbolType.equals(GlobalConstants.SBOL_TERMINATOR)) {
+			types.add(SequenceOntology.TERMINATOR.toString()); // terminator
+			types.add(SequenceOntology.type("SO_0000614").toString()); // bacterial_terminator
+		}
+		return types;
+	}
 	
 //	public static String convertURIToSOType(URI uri) {
 //		String temp = uri.toString();
@@ -554,7 +800,7 @@ public class SBOLUtility2 {
 			return "ribosome entry site";
 		else if (uri.equals(SequenceOntology.TERMINATOR))
 			return "terminator";
-		else if (uri.equals(SequenceOntology.type("SO:0000804")))
+		else if (uri.equals(SequenceOntology.ENGINEERED_REGION))
 			return "engineered region";
 		else if (uri.equals(SequenceOntology.type("SO:0000805")))
 			return "engineered foreign region";
@@ -576,29 +822,32 @@ public class SBOLUtility2 {
 		}
 	}
 	
-//	public static String convertRegexSOTermsToNumbers(String regex) {
-//		regex = regex.replaceAll("promoter", "SO_0000167");
-//		regex = regex.replaceAll("ribosome entry site", "SO_0000139");
-//		regex = regex.replaceAll("coding sequence", "SO_0000316");
-//		regex = regex.replaceAll("terminator", "SO_0000141");
-//		return regex;
-//	}
-//	
-//	public static String loadSONumber(DnaComponent dnaComp) {
-//		for (URI uri : dnaComp.getTypes()) {
-//			String authority = uri.getAuthority();
+	
+	public static String convertRegexSOTermsToNumbers(String regex) 
+	{
+		regex = regex.replaceAll("promoter", "SO_0000167");
+		regex = regex.replaceAll("ribosome entry site", "SO_0000139");
+		regex = regex.replaceAll("coding sequence", "SO_0000316");
+		regex = regex.replaceAll("terminator", "SO_0000141");
+		return regex;
+	}
+	
+	public static String loadSONumber(ComponentDefinition dnaComp) {
+		for (URI uri : dnaComp.getRoles()) {
+			String authority = uri.getAuthority();
 //			if (authority != null && authority.equals(GlobalConstants.SO_AUTHORITY)) {
-//				String path = uri.getPath();
-//				if (path != null && path.length() > 0) {
-//					String[] splitPath = path.split("/");
-//					if (splitPath[splitPath.length - 1].startsWith("SO"))
-//						return splitPath[splitPath.length - 1];
-//				}
-//			}
-//		}
-//		return null;
-//	}
-//	
+			if (authority != null && authority.equals(GlobalConstants.SO_AUTHORITY2)) {
+				String path = uri.getPath();
+				if (path != null && path.length() > 0) {
+					String[] splitPath = path.split("/");
+					if (splitPath[splitPath.length - 1].startsWith("SO"))
+						return splitPath[splitPath.length - 1];
+				}
+			}
+		}
+		return null;
+	}
+	
 //	public static String soTypeToGrammarTerminal(String soType) {
 //		if (soType.equals("promoter") || soType.equals("RNA polymerase promoter"))
 //			return "p";

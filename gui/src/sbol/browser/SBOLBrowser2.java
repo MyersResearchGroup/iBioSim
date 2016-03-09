@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
+import javax.xml.namespace.QName;
 
 import org.sbolstandard.core.MergerException;
 import org.sbolstandard.core2.*;
@@ -16,6 +17,7 @@ import biomodel.util.GlobalConstants;
 import java.io.*;
 import java.net.URI;
 import java.util.*;
+
 import org.sbolstandard.core2.Collection;
 
 import main.Gui;
@@ -43,7 +45,6 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 
 	private Gui    gui;
 	private String browsePath;
-	private String DEFAULTPREFIX = "http://www.async.utah.edu";
 	
 	//Constructor when browsing a single RDF file from the main gui
 	public SBOLBrowser2(Gui gui, String browsePath) {
@@ -166,6 +167,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 						if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
 						{
 							SBOLDOC.createCopy(c);
+							
 							if ((!isAssociationBrowser || !c.getIdentity().toString().endsWith("iBioSim"))) 
 								localCompURIs.add(c.getIdentity());
 						}

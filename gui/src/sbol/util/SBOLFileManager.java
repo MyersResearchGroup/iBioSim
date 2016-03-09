@@ -31,23 +31,30 @@ public class SBOLFileManager {
 	private String locatedFilePath;
 	private UseFirstFound<DnaComponent, URI> aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
 	
-	public SBOLFileManager(Set<String> sbolFilePaths) {
-		if (sbolFilePaths.size() == 0) {
+	public SBOLFileManager(Set<String> sbolFilePaths) 
+	{
+		if (sbolFilePaths.size() == 0) 
+		{
 			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 			sbolFilesAreLoaded = false;
-		} else {
+		} 
+		else 
+		{
 			LinkedList<Resolver<DnaComponent, URI>> compResolvers = new LinkedList<Resolver<DnaComponent, URI>>();
 			Iterator<String> sbolFileIterator = sbolFilePaths.iterator();
-			do {
+			do 
+			{
 				String sbolFilePath = sbolFileIterator.next();
 				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(sbolFilePath);
-				if (sbolDoc != null) {
-					fileDocMap.put(sbolFilePath, sbolDoc);
+				if (sbolDoc != null) 
+				{
+					fileDocMap.put(sbolFilePath, sbolDoc); 
 					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
 					Resolver<DnaComponent, URI> compResolver = flattenedDoc.getComponentUriResolver();
 					compResolvers.add(compResolver);
-				} else
+				} 
+				else
 					sbolFilesAreLoaded = false;
 			} while(sbolFileIterator.hasNext() && sbolFilesAreLoaded);
 			aggregateCompResolver.setResolvers(compResolvers);

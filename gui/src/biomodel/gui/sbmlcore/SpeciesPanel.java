@@ -33,7 +33,8 @@ import org.sbml.jsbml.ext.comp.Submodel;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
-import biomodel.gui.sbol.SBOLField;
+import biomodel.gui.sbol.SBOLField2;
+//import biomodel.gui.sbol.SBOLField;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.gui.util.PropertyField;
 import biomodel.gui.util.PropertyList;
@@ -553,7 +554,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			// Field for annotating species with SBOL DNA components
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
-			sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
 					3, false);
 
 			grid.add(sbolField);
@@ -1102,7 +1103,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 	
-	private SBOLField sbolField;
+	private SBOLField2 sbolField;
 	
 	private boolean paramsOnly;
 	

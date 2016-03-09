@@ -40,7 +40,8 @@ import org.sbml.jsbml.UnitDefinition;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
-import biomodel.gui.sbol.SBOLField;
+import biomodel.gui.sbol.SBOLField2;
+//import biomodel.gui.sbol.SBOLField;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -71,7 +72,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	
 	private JComboBox portDir;
 	
-	private SBOLField sbolField;
+	private SBOLField2 sbolField;
 	
 	private BioModel bioModel;
 
@@ -463,7 +464,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					//Parse out SBOL annotations and add to SBOL field
 					String sbolStrand = AnnotationUtility.parseSBOLAnnotation(paramet, sbolURIs);
 					// Field for annotating rules with SBOL DNA components
-					sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+					sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
 							1, false);
 				}
 				if (paramsOnly) {
@@ -528,7 +529,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			}
 		} else {
 			List<URI> sbolURIs = new LinkedList<URI>();
-			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
+			sbolField = new SBOLField2(sbolURIs, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
 					GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 1, false);
 		}
 		parametersPanel.add(idLabel);

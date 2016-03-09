@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
-import javax.swing.JOptionPane;
+//import javax.swing.JOptionPane;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
@@ -27,8 +27,8 @@ import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
-import org.sbml.jsbml.ext.layout.Layout;
-import org.sbml.jsbml.ext.layout.LayoutModelPlugin;
+//import org.sbml.jsbml.ext.layout.Layout;
+//import org.sbml.jsbml.ext.layout.LayoutModelPlugin;
 import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.Collection;
 import org.sbolstandard.core2.ComponentDefinition;
@@ -46,7 +46,7 @@ import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
-import sbol.util.SBOLUtility;
+//import sbol.util.SBOLUtility;
 import sbol.util.SBOLUtility2;
 import uk.ac.ncl.intbio.core.io.CoreIoException;
 import biomodel.annotation.AnnotationUtility;
@@ -87,6 +87,7 @@ public class SBMLtoSBOL {
 					{
 						SBOLDOC.createCopy(c);
 					}
+
 				}
 				for(Sequence c : sbolDoc.getSequences())
 				{
@@ -103,10 +104,27 @@ public class SBMLtoSBOL {
 		return true;
 	}
 	
+	public void saveAsSBOL(String SBOLfile) {
+		SBOLDocument sbolDoc;
+		try
+		{
+			sbolDoc = SBOLReader.read(SBOLfile);
+			export(sbolDoc,SBOLfile);
+		}
+		catch (Throwable e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public void export(String exportFilePath) {
+		SBOLDocument sbolDoc = new SBOLDocument();
+		export(sbolDoc,exportFilePath);
+	}
+	
+	public void export(SBOLDocument sbolDoc, String exportFilePath) {
 		// TODO read existing 1.1 document in the project to get sequences etc.
 		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
-		SBOLDocument sbolDoc = new SBOLDocument();
 		Preferences biosimrc = Preferences.userRoot();
 		sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 		sbolDoc.setComplete(true);
@@ -124,6 +142,7 @@ public class SBMLtoSBOL {
 			} 
 			catch (FileNotFoundException e) 
 			{
+				// TODO: display message
 				e.printStackTrace();
 			}
 			catch (XMLStreamException e) {
@@ -168,7 +187,7 @@ public class SBMLtoSBOL {
 		for (int i = 0; i < model.getReactionCount(); i++) 
 		{
 			Reaction reaction = model.getReaction(i);
-			
+
 			// if production reaction, then you want to examine the modifiers, and create interactions for 
 			// each modifier that is a repressor from this species to the promoter
 			if(BioModel.isProductionReaction(reaction))
@@ -419,7 +438,6 @@ public class SBMLtoSBOL {
 			p2.setRoles(roles2);
 		}
 		
-		int prod_partPrefix = 1;
 		for(SpeciesReference product : reaction.getListOfProducts())
 		{
 			String i_id = promoterId + "_prod_" + product.getSpecies();
@@ -448,9 +466,6 @@ public class SBMLtoSBOL {
 		type.add(SystemsBiologyOntology.NON_COVALENT_BINDING);
 		
 		Interaction inter = moduleDef.createInteraction(reaction.getId(), type);
-		
-		int reac_partPrefix = 1;
-		int prod_partPrefix = 1;
 		
 		for(SpeciesReference reactant : reaction.getListOfReactants())
 		{
@@ -494,9 +509,10 @@ public class SBMLtoSBOL {
 		ArrayList<String> comps = new ArrayList<String>();
 		CompSBMLDocumentPlugin sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
 		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
+
 		if (sbmlCompModel.getListOfSubmodels().size()>0) 
 		{
-			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
+//			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
 			for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
 				String subModelId = sbmlCompModel.getListOfSubmodels().get(i).getId();
 				String extModel = sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
