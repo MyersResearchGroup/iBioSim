@@ -1160,8 +1160,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of an event delay
 	 */
 	private static boolean checkEventDelayUnits(Delay delay) {
-		if (delay.containsUndeclaredUnits()) {
-			if (Gui.getCheckUndeclared()) {
+		if (Gui.getCheckUndeclared()) {
+			if (delay.containsUndeclaredUnits()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event assignment delay contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
@@ -1182,8 +1182,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of an event assignment
 	 */
 	private boolean checkEventAssignmentUnits(EventAssignment assign) {
-		if (assign.containsUndeclaredUnits()) {
-			if (Gui.getCheckUndeclared()) {
+		if (Gui.getCheckUndeclared()) {
+			if (assign.containsUndeclaredUnits()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event assignment to " + assign.getVariable()
 						+ " contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",

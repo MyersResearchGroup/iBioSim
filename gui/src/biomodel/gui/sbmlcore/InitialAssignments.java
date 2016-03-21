@@ -268,8 +268,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	 * Check the units of an initial assignment
 	 */
 	public static boolean checkInitialAssignmentUnits(BioModel bioModel, InitialAssignment init) {
-		if (init.containsUndeclaredUnits()) {
-			if (Gui.getCheckUndeclared()) {
+		if (Gui.getCheckUndeclared()) {
+			if (init.containsUndeclaredUnits()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Initial assignment contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);

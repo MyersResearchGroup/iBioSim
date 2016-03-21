@@ -3665,8 +3665,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of a kinetic law
 	 */
 	public boolean checkKineticLawUnits(KineticLaw law) {
-		if (law.containsUndeclaredUnits()) {
-			if (Gui.getCheckUndeclared()) {
+		if (Gui.getCheckUndeclared()) {
+			if (law.containsUndeclaredUnits()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Kinetic law contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);

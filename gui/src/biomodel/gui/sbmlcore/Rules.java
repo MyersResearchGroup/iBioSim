@@ -940,8 +940,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of a rate rule
 	 */
 	public boolean checkRateRuleUnits(Rule rule) {
-		if (rule.containsUndeclaredUnits()) {
-			if (Gui.getCheckUndeclared()) {
+		if (Gui.getCheckUndeclared()) {
+			if (rule.containsUndeclaredUnits()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Rate rule contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
@@ -962,8 +962,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of an assignment rule
 	 */
 	public boolean checkAssignmentRuleUnits(Rule rule) {
-		if (rule.containsUndeclaredUnits()) {
-			if (Gui.getCheckUndeclared()) {
+		if (Gui.getCheckUndeclared()) {
+			if (rule.containsUndeclaredUnits()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Assignment rule contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
