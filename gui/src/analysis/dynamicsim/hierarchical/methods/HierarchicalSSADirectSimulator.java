@@ -112,6 +112,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 			setupPropensities(model);
 		}
 
+		setReplacements(new HashMap<String, Double>(getInitReplacementState()));
 		try
 		{
 			HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
@@ -319,6 +320,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 		}
 
 		setupArrayedModels();
+		setInitReplacementState(new HashMap<String, Double>(getReplacements()));
+
 		setupForOutput(runNumber);
 		HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
 	}

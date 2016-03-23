@@ -508,8 +508,7 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			if (isInitSet && getTotalRuns() > 0)
 			{
 
-				getVariableToValueMap().clear();
-				getVariableToValueMap().putAll(initVariableState);
+				setVariableToValueMap(new HashMap<String, Double>(initVariableState));
 
 				if (getInitArraysState() != null)
 				{
@@ -544,28 +543,31 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			fba.setBoundParameters(bounds);
 		}
 
-		public void retrieveFbaState()
+		public Set<String> retrieveFbaState()
 		{
 			Map<String, Double> flux = fba.getFluxes();
-
+			Set<String> updatedReactions = new HashSet<String>();
 			for (String reaction : flux.keySet())
 			{
 				if (isHierarchical(reaction))
 				{
 					setPropensity(getReplacements(), reaction, flux.get(reaction));
+					updatedReactions.add(reaction);
 				}
 			}
+			return updatedReactions;
 
 		}
 
-		public void runFba()
+		public Set<String> runFba()
 		{
 			if (fba != null)
 			{
 				copyFbaState();
 				fba.PerformFluxBalanceAnalysis();
-				retrieveFbaState();
+				return retrieveFbaState();
 			}
+			return null;
 		}
 
 		/**
@@ -669,22 +671,23 @@ public abstract class HierarchicalObjects extends HierarchicalSimulation
 			}
 			else
 			{
+				// TODO:
 
-				if (event1.getModelID().equals("topmodel"))
-				{
-				}
-				else
-				{
-					submodels.get(event1.getModelID());
-				}
-
-				if (event2.getModelID().equals("topmodel"))
-				{
-				}
-				else
-				{
-					submodels.get(event2.getModelID());
-				}
+				// if (event1.getModelID().equals("topmodel"))
+				// {
+				// }
+				// else
+				// {
+				// submodels.get(event1.getModelID());
+				// }
+				//
+				// if (event2.getModelID().equals("topmodel"))
+				// {
+				// }
+				// else
+				// {
+				// submodels.get(event2.getModelID());
+				// }
 
 				if (event1.getPriority() > event2.getPriority())
 				{

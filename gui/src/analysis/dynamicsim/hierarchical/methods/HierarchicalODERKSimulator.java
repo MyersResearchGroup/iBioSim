@@ -59,14 +59,11 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 
 																			};
 
-	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit,
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType, String abstraction) throws IOException,
-			XMLStreamException
+	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, int numSteps,
+			double relError, double absError, String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
 
-		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue, running,
-				interestingSpecies, quantityType, abstraction);
+		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
 
 		this.numSteps = numSteps;
 		this.relativeError = relError;
@@ -86,14 +83,11 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 
 	}
 
-	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit,
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType, String abstraction, boolean print)
-			throws IOException, XMLStreamException
+	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, int numSteps,
+			double relError, double absError, String quantityType, String abstraction, boolean print) throws IOException, XMLStreamException
 	{
 
-		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue, running,
-				interestingSpecies, quantityType, abstraction);
+		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
 
 		this.numSteps = numSteps;
 		this.relativeError = relError;
@@ -203,14 +197,22 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 				setCurrentTime(nextEndTime);
 			}
 
+			for (String fba : getFbamodels())
+			{
+				ModelState modelstate = getModelState(fba);
+				modelstate.runFba();
+			}
+
+			// TODO: update this:
+			HierarchicalUtilities.performAssignmentRules(getTopmodel(), getReplacements(), currentTime);
+
 			if (print)
 			{
 				while (getCurrentTime() >= printTime && printTime <= getTimeLimit())
 				{
 					try
 					{
-						HierarchicalWriter.printToTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getReplacements(),
-								getInterestingSpecies(), getPrintConcentrationSpecies(), printTime);
+						HierarchicalWriter.printToTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getReplacements(), getInterestingSpecies(), getPrintConcentrationSpecies(), printTime);
 						getBufferedTSDWriter().write(",\n");
 					}
 					catch (IOException e)
@@ -255,8 +257,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 		{
 
 			int sizeBefore = modelstate.getTriggeredEventQueue().size();
-			vars = HierarchicalUtilities.fireEvents(modelstate, HierarchicalUtilities.Selector.VARIABLE, modelstate.isNoRuleFlag(),
-					modelstate.isNoConstraintsFlag(), getCurrentTime(), getReplacements());
+			vars = HierarchicalUtilities.fireEvents(modelstate, HierarchicalUtilities.Selector.VARIABLE, modelstate.isNoRuleFlag(), modelstate.isNoConstraintsFlag(), getCurrentTime(), getReplacements());
 			int sizeAfter = modelstate.getTriggeredEventQueue().size();
 
 			if (sizeAfter != sizeBefore)
@@ -266,11 +267,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 					referencedVariable = HierarchicalUtilities.getReferencedVariable(var);
 
 					int index = function.state.getVariableToIndexMap().get(modelstateId).get(var);
-					if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
-							&& !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable))
+					if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable) && !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable))
 					{
-						globalValues[index] = modelstate.getVariableToValue(getReplacements(), var)
-								* modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(var));
+						globalValues[index] = modelstate.getVariableToValue(getReplacements(), var) * modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(var));
 						modelstate.setVariableToValue(getReplacements(), var, globalValues[index]);
 					}
 					else
@@ -385,15 +384,13 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 		// getReplacements(), getTopmodel(), getSubmodels());
 	}
 
-	private void computeAssignmentRules(ModelState modelstate, double t, double[] y, double[] currValueChanges,
-			Set<String> affectedAssignmentRuleSet, Set<String> revaluateVariables)
+	private void computeAssignmentRules(ModelState modelstate, double t, double[] y, double[] currValueChanges, Set<String> affectedAssignmentRuleSet, Set<String> revaluateVariables)
 	{
 		boolean changed = true;
 
 		while (changed)
 		{
-			HashSet<String> affectedVariables = HierarchicalUtilities.performAssignmentRules(modelstate, affectedAssignmentRuleSet,
-					getReplacements(), t);
+			HashSet<String> affectedVariables = HierarchicalUtilities.performAssignmentRules(modelstate, affectedAssignmentRuleSet, getReplacements(), t);
 			changed = false;
 
 			if (affectedAssignmentRuleSet != null)
@@ -424,8 +421,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 				{
 					int index = function.state.getVariableToIndexMap().get(modelstate.getID()).get(affectedVariable);
 					double oldValue = currValueChanges[index];
-					double newValue = Evaluator.evaluateExpressionRecursive(modelstate, function.state.getDvariablesdtime().get(modelstate.getID())
-							.get(affectedVariable), false, t, null, null, getReplacements());
+					double newValue = Evaluator.evaluateExpressionRecursive(modelstate, function.state.getDvariablesdtime().get(modelstate.getID()).get(affectedVariable), false, t, null, null, getReplacements());
 
 					if (newValue != oldValue)
 					{
@@ -453,8 +449,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 			if (!modelstate.isConstant(referencedVariable))
 			{
 
-				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable)
-						&& modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
+				if (modelstate.getSpeciesToHasOnlySubstanceUnitsMap().containsKey(referencedVariable) && modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable) == false)
 				{
 					if (!variableToIndexMap.containsKey(variable))
 					{
@@ -468,8 +463,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 						continue;
 					}
 
-					double newValue = Evaluator.evaluateExpressionRecursive(modelstate, formula, false, t, null, null, getReplacements())
-							* modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable));
+					double newValue = Evaluator.evaluateExpressionRecursive(modelstate, formula, false, t, null, null, getReplacements()) * modelstate.getVariableToValue(getReplacements(), modelstate.getSpeciesToCompartmentNameMap().get(variable));
 
 					currValueChanges[index] = newValue;
 				}
@@ -515,8 +509,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 			HierarchicalUtilities.inlineFormula(modelstate, rateRule, getModels(), getIbiosimFunctionDefinitions());
 			referencedVariable = HierarchicalUtilities.getReferencedVariable(variable);
 
-			if (modelstate.getSpeciesIDSet().contains(referencedVariable) && !modelstate.isConstant(referencedVariable)
-					&& !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable))
+			if (modelstate.getSpeciesIDSet().contains(referencedVariable) && !modelstate.isConstant(referencedVariable) && !modelstate.getSpeciesToHasOnlySubstanceUnitsMap().get(referencedVariable))
 			{
 				int speciesIndex = variableToIndexMap.get(variable);
 				int compIndex = variableToIndexMap.get(modelstate.getSpeciesToCompartmentNameMap().get(variable));
@@ -594,14 +587,10 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 				{
 					if (modelstate.getSpeciesIDSet().contains(referendVar) && !modelstate.getSpeciesToIsBoundaryConditionMap().get(referendVar))
 					{
-						currValueChanges[i] = Evaluator.evaluateExpressionRecursive(modelstate,
-								state.getDvariablesdtime().get(modelstateId).get(currentVar), false, t, null, null, getReplacements());
+						currValueChanges[i] = Evaluator.evaluateExpressionRecursive(modelstate, state.getDvariablesdtime().get(modelstateId).get(currentVar), false, t, null, null, getReplacements());
 						revaluateVariables.add(currentVar);
 					}
-					if (modelstate.getVariableToIsInAssignmentRuleMap() != null
-							&& modelstate.getVariableToIsInAssignmentRuleMap().containsKey(currentVar)
-							&& modelstate.getVariableToValueMap().containsKey(currentVar)
-							&& modelstate.getVariableToIsInAssignmentRuleMap().get(currentVar))
+					if (modelstate.getVariableToIsInAssignmentRuleMap() != null && modelstate.getVariableToIsInAssignmentRuleMap().containsKey(currentVar) && modelstate.getVariableToValueMap().containsKey(currentVar) && modelstate.getVariableToIsInAssignmentRuleMap().get(currentVar))
 					{
 						affectedAssignmentRuleSet.addAll(modelstate.getVariableToAffectedAssignmentRuleSetMap().get(currentVar));
 					}
@@ -801,8 +790,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSetup
 			{
 				for (String event : modelstate.getEventToTriggerMap().keySet())
 				{
-					state = HierarchicalUtilities.isEventTriggered(modelstate, event, t, y, true,
-							function.state.getVariableToIndexMap().get(modelstate.getID()), getReplacements());
+					state = HierarchicalUtilities.isEventTriggered(modelstate, event, t, y, true, function.state.getVariableToIndexMap().get(modelstate.getID()), getReplacements());
 
 					if (!triggerValues.get(modelstate.getID()).containsKey(event))
 					{

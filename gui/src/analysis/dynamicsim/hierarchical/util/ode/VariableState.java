@@ -46,6 +46,11 @@ public class VariableState
 			addVariable(modelstate, variable, replacements);
 		}
 
+		for (String variable : modelstate.getReplacementDependency().keySet())
+		{
+			addVariable(modelstate, variable, replacements);
+		}
+
 		for (String reaction : modelstate.getReactionToFormulaMap().keySet())
 		{
 			addReaction(modelstate, reaction);
@@ -75,6 +80,11 @@ public class VariableState
 	private void addVariable(ModelState modelstate, String variable, Map<String, Double> replacements)
 	{
 		int index = variables.size();
+
+		if (variableToIndexMap.get(modelstate.getID()).containsKey(variable))
+		{
+			index = variableToIndexMap.get(modelstate.getID()).get(variable);
+		}
 
 		if (modelstate.isHierarchical(variable))
 		{
@@ -112,8 +122,7 @@ public class VariableState
 				double stoichiometry = reactantAndStoichiometry.getDoub();
 				ASTNode stoichNode = new ASTNode();
 				stoichNode.setValue(-1 * stoichiometry);
-				dvariablesdtime.get(modelstateID).put(reactant,
-						ASTNode.sum(dvariablesdtime.get(modelstateID).get(reactant), ASTNode.times(formula, stoichNode)));
+				dvariablesdtime.get(modelstateID).put(reactant, ASTNode.sum(dvariablesdtime.get(modelstateID).get(reactant), ASTNode.times(formula, stoichNode)));
 			}
 		}
 
@@ -128,8 +137,7 @@ public class VariableState
 				{
 					ASTNode stoichNode = new ASTNode();
 					stoichNode.setValue(stoichiometry);
-					dvariablesdtime.get(modelstateID).put(species,
-							ASTNode.sum(dvariablesdtime.get(modelstateID).get(species), ASTNode.times(formula, stoichNode)));
+					dvariablesdtime.get(modelstateID).put(species, ASTNode.sum(dvariablesdtime.get(modelstateID).get(species), ASTNode.times(formula, stoichNode)));
 				}
 			}
 		}
@@ -143,14 +151,12 @@ public class VariableState
 				if (stoichiometry.startsWith("-"))
 				{
 					ASTNode stoichNode = new ASTNode(stoichiometry.substring(1, stoichiometry.length()));
-					dvariablesdtime.get(modelstateID).put(reactant,
-							ASTNode.diff(dvariablesdtime.get(modelstateID).get(reactant), ASTNode.times(formula, stoichNode)));
+					dvariablesdtime.get(modelstateID).put(reactant, ASTNode.diff(dvariablesdtime.get(modelstateID).get(reactant), ASTNode.times(formula, stoichNode)));
 				}
 				else
 				{
 					ASTNode stoichNode = new ASTNode(stoichiometry);
-					dvariablesdtime.get(modelstateID).put(reactant,
-							ASTNode.sum(dvariablesdtime.get(modelstateID).get(reactant), ASTNode.times(formula, stoichNode)));
+					dvariablesdtime.get(modelstateID).put(reactant, ASTNode.sum(dvariablesdtime.get(modelstateID).get(reactant), ASTNode.times(formula, stoichNode)));
 				}
 			}
 		}

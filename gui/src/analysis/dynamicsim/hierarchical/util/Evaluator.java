@@ -698,6 +698,10 @@ public final class Evaluator
 				{
 					value = modelstate.getVariableToValue(replacements, name);
 				}
+				else if (modelstate.isHierarchical(name))
+				{
+					value = replacements.get(modelstate.getReplacementDependency().get(name));
+				}
 				return value;
 			}
 		}
