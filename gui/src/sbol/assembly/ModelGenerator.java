@@ -275,9 +275,6 @@ public class ModelGenerator {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
 		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocalURI());
-		//OLD VERSION
-//		FunctionalComponent remoteSpecies = subModuleDef.getComponent(mapping.getRemote());
-//		FunctionalComponent localSpecies = moduleDef.getComponent(mapping.getLocal());
 		
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(localSpecies));
 		Port port = subTargetModel.getPortByIdRef(getDisplayID(remoteSpecies));
@@ -644,7 +641,6 @@ public class ModelGenerator {
 	public static boolean isDegradationInteraction(Interaction interact, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc) {
 		if (interact.containsType(SystemsBiologyOntology.DEGRADATION) && interact.getParticipations().size() == 1) {
-//			Participation partici = interact.getParticipations().get(0); //OLD VERSION
 			Participation partici = null;
 			for(Participation part : interact.getParticipations())
 			{
