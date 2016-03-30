@@ -546,6 +546,7 @@ public class SBOLUtility2
 				//Assume that each SeqAnnot. has one location and that it is a Range?
 				Range anno_range = (Range) anno.getLocations().iterator().next();
 				Range sorted_range = (Range) sorted.get(i).getLocations().iterator().next();
+				
 				if (i == sorted.size() 
 						|| anno_range.getStart() <= sorted_range.getStart()) 
 				{

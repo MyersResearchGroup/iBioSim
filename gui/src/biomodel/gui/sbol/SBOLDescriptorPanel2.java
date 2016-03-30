@@ -170,7 +170,11 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 				String newName = JOptionPane.showInputDialog(Gui.frame, "Enter file name:", "File Name", JOptionPane.PLAIN_MESSAGE); 
 				if(newName.isEmpty())
 					JOptionPane.showMessageDialog(Gui.frame, "No file name was provided.", "No file name", JOptionPane.ERROR_MESSAGE);
-
+				if(!newName.endsWith(".rdf") && !newName.endsWith(".sbol"))
+					newName = newName + ".sbol";
+				else if(newName.endsWith(".rdf"))
+					newName = newName.replace(".rdf", ".sbol");
+				
 				SBOLDocument newSBOLDoc = new SBOLDocument();
 				newSBOLDoc.setDefaultURIprefix(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 				
