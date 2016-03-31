@@ -542,17 +542,25 @@ public class SBOLUtility2
 //					sorted.add(i, anno);
 //					i = sorted.size();
 //				} 
+			
 				
-				//Assume that each SeqAnnot. has one location and that it is a Range?
-				Range anno_range = (Range) anno.getLocations().iterator().next();
-				Range sorted_range = (Range) sorted.get(i).getLocations().iterator().next();
-				
-				if (i == sorted.size() 
-						|| anno_range.getStart() <= sorted_range.getStart()) 
+				if (i == sorted.size() ) 
 				{
 					sorted.add(i, anno);
 					i = sorted.size();
 				} 
+				else 
+				{
+					
+					//Assume that each SeqAnnot. has one location and that it is a Range?
+					Range anno_range = (Range) anno.getLocations().iterator().next();
+					Range sorted_range = (Range) sorted.get(i).getLocations().iterator().next();
+					if(anno_range.getStart() <= sorted_range.getStart())
+					{
+						sorted.add(i, anno);
+						i = sorted.size();
+					}
+				}
 			}
 		return sorted;
 	}
