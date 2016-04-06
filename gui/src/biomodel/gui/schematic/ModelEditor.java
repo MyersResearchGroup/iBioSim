@@ -371,7 +371,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 //				saveSBOL(true);
 			} else {
 //				 TODO: Temporarily remove until ported to SBOL 2.0.
-				saveSBOL2();
+				if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "False").equals("True")) {
+					saveSBOL2();
+				}
 			}
 		}
 		biomodel.save(path + separator + modelId + ".xml");

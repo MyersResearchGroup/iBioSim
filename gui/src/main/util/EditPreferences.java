@@ -78,6 +78,7 @@ public class EditPreferences {
 	private JTextField uriField;
 	private JTextField regexField;
 	private JComboBox validationBox;
+	private JComboBox assemblyBox;
 	private JComboBox warningBox;
 	
 	private JTextField limit;
@@ -756,6 +757,7 @@ public class EditPreferences {
 		// assembly preferences
 		JPanel assemblyLabels = new JPanel(new GridLayout(13, 1));
 		assemblyLabels.add(new JLabel("URI Authority"));
+		assemblyLabels.add(new JLabel("Assemble Complete Genetic Construct"));
 		assemblyLabels.add(new JLabel("Regex for Complete Genetic Construct"));
 		assemblyLabels.add(new JLabel("Validate Assembled Constructs"));
 		assemblyLabels.add(new JLabel("Incomplete Construct Warning"));
@@ -765,6 +767,26 @@ public class EditPreferences {
 		String regex = SBOLUtility.convertRegexSOTermsToNumbers(
 				biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 		regexField = new JTextField(regex, 15);
+		assemblyBox = new JComboBox(new String[]{"True", "False"});
+		assemblyBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, ""));
+		assemblyBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (assemblyBox.getSelectedIndex() == 0) {
+					regexField.setEnabled(true);
+					validationBox.setSelectedIndex(0);
+					validationBox.setEnabled(true);
+					warningBox.setSelectedIndex(0);
+					warningBox.setEnabled(true);
+				} else {
+					regexField.setEnabled(false);
+					validationBox.setSelectedIndex(1);
+					validationBox.setEnabled(false);
+					warningBox.setSelectedIndex(1);
+					warningBox.setEnabled(false);
+				}
+			}
+		});
 		validationBox = new JComboBox(new String[]{"True", "False"});
 		validationBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, ""));
 		validationBox.addActionListener(new ActionListener() {
@@ -784,6 +806,7 @@ public class EditPreferences {
 		warningBox = new JComboBox(new String[]{"True", "False"});
 		warningBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, ""));
 		assemblyFields.add(uriField);
+		assemblyFields.add(assemblyBox);
 		assemblyFields.add(regexField);
 		assemblyFields.add(validationBox);
 		assemblyFields.add(warningBox);
@@ -794,6 +817,7 @@ public class EditPreferences {
 			public void actionPerformed(ActionEvent e) {
 				uriField.setText(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 				regexField.setText(GlobalConstants.GENETIC_CONSTRUCT_REGEX_DEFAULT);
+				assemblyBox.setSelectedItem(GlobalConstants.CONSTRUCT_ASSEMBLY_DEFAULT);
 				validationBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION_DEFAULT);
 				warningBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_DEFAULT);
 			}
@@ -1355,6 +1379,10 @@ public class EditPreferences {
 			regexField.setText(biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 			problem = true;
 		}
+		if (assemblyBox.getSelectedItem().equals("True"))
+			biosimrc.put(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "True");
+		else
+			biosimrc.put(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "False");
 		if (validationBox.getSelectedItem().equals("True"))
 			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "True");
 		else
@@ -1604,6 +1632,9 @@ public class EditPreferences {
 		}
 		if (biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "").equals("")) {
 			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, GlobalConstants.CONSTRUCT_VALIDATION_DEFAULT);
+		}
+		if (biosimrc.get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "").equals("")) {
+			biosimrc.put(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, GlobalConstants.CONSTRUCT_ASSEMBLY_DEFAULT);
 		}
 		if (biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "").equals("")) {
 			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, GlobalConstants.CONSTRUCT_VALIDATION_WARNING_DEFAULT);
