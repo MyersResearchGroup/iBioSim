@@ -146,6 +146,8 @@ public class GlobalConstants {
 	public static final String GENETIC_CONSTRUCT_REGEX_PREFERENCE = "biosim.assembly.regex";
 	public static final String SBOL_AUTHORITY_PREFERENCE = "biosim.assembly.authority";
 	public static final String SBOL_AUTHORITY_DEFAULT = "http://www.async.ece.utah.edu";
+	public static final String CONSTRUCT_ASSEMBLY_DEFAULT = "False";
+	public static final String CONSTRUCT_ASSEMBLY_PREFERENCE = "biosim.assembly.validation";
 	public static final String CONSTRUCT_VALIDATION_DEFAULT = "True";
 	public static final String CONSTRUCT_VALIDATION_PREFERENCE = "biosim.assembly.validation";
 	public static final String CONSTRUCT_VALIDATION_WARNING_DEFAULT = "False";
