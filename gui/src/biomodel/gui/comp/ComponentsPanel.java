@@ -242,7 +242,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			// Field for annotating submodel with SBOL DNA components
 			List<URI> sbolURIs = new LinkedList<URI>(); 
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(instance, sbolURIs);
-			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 
+			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, gcmEditor, 
 					2, false);
 			top.add(sbolField);
 		}

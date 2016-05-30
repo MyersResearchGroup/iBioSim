@@ -56,7 +56,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		
 		browsePath = browsePath.replace("\\\\", "\\");
 		loadSbolFiles(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), browsePath);
-		constructBrowser(new HashSet<String>());
+		constructBrowser(new HashSet<URI>());
 	}
 		
 	public void open() {			
@@ -67,46 +67,41 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		browserPanel.add(viewScroll, BorderLayout.SOUTH);
 		
 		JTabbedPane browserTab = new JTabbedPane();
-		browserTab.add("SBOL2 Browser", browserPanel);
+		browserTab.add("SBOL Browser", browserPanel);
 		this.add(browserTab);
-		gui.addTab(browsePath.substring(browsePath.lastIndexOf(Gui.separator) + 1), this, "SBOL2 Browser");
+		gui.addTab(browsePath.substring(browsePath.lastIndexOf(Gui.separator) + 1), this, "SBOL Browser");
 	}
 	
-//	public void reload(Gui gui,String browsePath) {
-//		this.removeAll();
-//		
-//		browsePath = browsePath.replace("\\\\", "\\");
-//		
-//		selectionPanel = new JPanel(new GridLayout(1,2));
-//		filterPanel = new JPanel(new GridLayout(1,3));
-//		viewArea = new JTextArea();
-//		viewScroll = new JScrollPane();
-//		
-//		aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
-//		aggregateAnnoResolver = new AggregatingResolver.UseFirstFound<SequenceAnnotation, URI>();
-//		aggregateSeqResolver = new AggregatingResolver.UseFirstFound<DnaSequence, URI>();
-//		aggregateLibResolver = new AggregatingResolver.UseFirstFound<org.sbolstandard.core.Collection, URI>();
-//		
-//		localLibURIs = new LinkedList<URI>();
-//		localLibIds = new LinkedList<String>();
-//		localCompURIs = new LinkedList<URI>();
-//		
-//		loadSbolFiles(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), browsePath);
-//		
-//		constructBrowser(new HashSet<String>());
-//		
-//		JPanel browserPanel = new JPanel(new BorderLayout());
-//		browserPanel.add(filterPanel, BorderLayout.NORTH);
-//		browserPanel.add(selectionPanel, BorderLayout.CENTER);
-//		browserPanel.add(viewScroll, BorderLayout.SOUTH);
-//		
-//		JTabbedPane browserTab = new JTabbedPane();
-//		browserTab.add("SBOL Browser", browserPanel);
-//		this.add(browserTab);
-//	}
+	public void reload(Gui gui,String browsePath) {
+		this.removeAll();
+		
+		browsePath = browsePath.replace("\\\\", "\\");
+		
+		selectionPanel = new JPanel(new GridLayout(1,2));
+		filterPanel = new JPanel(new GridLayout(1,3));
+		viewArea = new JTextArea();
+		viewScroll = new JScrollPane();
+		
+		localLibURIs = new LinkedList<URI>();
+		localLibIds = new LinkedList<String>();
+		localCompURIs = new LinkedList<URI>();
+		
+		loadSbolFiles(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), browsePath);
+		
+		constructBrowser(new HashSet<URI>());
+		
+		JPanel browserPanel = new JPanel(new BorderLayout());
+		browserPanel.add(filterPanel, BorderLayout.NORTH);
+		browserPanel.add(selectionPanel, BorderLayout.CENTER);
+		browserPanel.add(viewScroll, BorderLayout.SOUTH);
+		
+		JTabbedPane browserTab = new JTabbedPane();
+		browserTab.add("SBOL Browser", browserPanel);
+		this.add(browserTab);
+	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
-	public SBOLBrowser2(HashSet<String> sbolFilePaths, Set<String> filter) 
+	public SBOLBrowser2(HashSet<String> sbolFilePaths, Set<URI> filter) 
 	{
 //		super(new GridLayout(3,1));
 		super(new BorderLayout());
@@ -166,7 +161,13 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 					{
 						if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
 						{
-							SBOLDOC.createCopy(c);
+							try {
+								SBOLDOC.createCopy(c);
+							}
+							catch (SBOLValidationException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							
 							if ((!isAssociationBrowser || !c.getIdentity().toString().endsWith("iBioSim"))) 
 								localCompURIs.add(c.getIdentity());
@@ -174,8 +175,15 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 					}
 					for(Sequence s : sbolDoc.getSequences())
 					{
-						if(SBOLDOC.getSequence(s.getIdentity()) == null)
-							SBOLDOC.createCopy(s);
+						if(SBOLDOC.getSequence(s.getIdentity()) == null) {
+							try {
+								SBOLDOC.createCopy(s);
+							}
+							catch (SBOLValidationException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 					}
 					/*for(Model m : sbolDoc.getModels())
 					{
@@ -195,8 +203,15 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 					*/
 					for(Collection col : sbolDoc.getCollections())
 					{
-						if(SBOLDOC.getCollection(col.getIdentity()) == null)
-							SBOLDOC.createCopy(col);
+						if(SBOLDOC.getCollection(col.getIdentity()) == null) {
+							try {
+								SBOLDOC.createCopy(col);
+							}
+							catch (SBOLValidationException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 						if (col.getDisplayId() != null && !col.getDisplayId().equals("") && 
 								!localLibURIs.contains(col.getIdentity().toString())) 
 						{
@@ -212,13 +227,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		compDefRoles.add("all");
 		for (int i = 0; i < localCompURIs.size(); i++) {
 			ComponentDefinition localComp = null;
-			try 
-			{
-				localComp = SBOLDOC.getComponentDefinition(localCompURIs.get(i));
-			} catch (SBOLValidationException e) {
-				e.printStackTrace();
-				return;
-			}
+			localComp = SBOLDOC.getComponentDefinition(localCompURIs.get(i));
 			if (localComp.getRoles().size() > 0) 
 			{	
 				compDefRoles.add(SBOLUtility2.convertURIToSOTerm(localComp.getRoles().iterator().next()));
@@ -246,7 +255,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		return false;
 	}
 	
-	private void constructBrowser(Set<String> filter) 
+	private void constructBrowser(Set<URI> filter) 
 	{
 		viewScroll.setMinimumSize(new Dimension(780, 400));
 		viewScroll.setPreferredSize(new Dimension(828, 264));

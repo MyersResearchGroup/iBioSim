@@ -33,6 +33,7 @@ import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.RestrictionType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
+import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceConstraint;
 import org.sbolstandard.core2.SystemsBiologyOntology;
@@ -744,6 +745,9 @@ public class SBOLTestFactory {
 			} else {
 				return compDef;
 			}
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -762,6 +766,9 @@ public class SBOLTestFactory {
 			} else {
 				return comp;
 			}
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -780,6 +787,9 @@ public class SBOLTestFactory {
 			} else {
 				return comp;
 			}
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -800,6 +810,9 @@ public class SBOLTestFactory {
 			} else {
 				return moduleDef;
 			}
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -817,6 +830,9 @@ public class SBOLTestFactory {
 			} else {
 				return module;
 			}
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -834,6 +850,9 @@ public class SBOLTestFactory {
 			} else {
 				return mapping;
 			}
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -851,6 +870,9 @@ public class SBOLTestFactory {
 			} else {
 				return constraint;
 			}
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -870,6 +892,9 @@ public class SBOLTestFactory {
 			} else {
 				return interact;
 			}
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -884,12 +909,14 @@ public class SBOLTestFactory {
 			if (partici == null) {
 				Set<URI> particiRoles = new HashSet<URI>();
 				particiRoles.add(role);
-				partici = interact.createParticipation("participation_"+particiCount, participant);
-				partici.addRole(role);
+				partici = interact.createParticipation("participation_"+particiCount, participant,role);
 				return partici;
 			} else {
 				return partici;
 			}
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

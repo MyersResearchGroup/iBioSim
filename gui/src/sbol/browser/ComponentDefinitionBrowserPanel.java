@@ -67,13 +67,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 		LinkedList<String> filteredIDs = new LinkedList<String>();
 		for (int i = 0; i < compURIs.size(); i++) {
 			ComponentDefinition dnac = null;
-			try 
-			{
-				dnac = SBOLDOC.getComponentDefinition(compURIs.get(i));
-			} catch (SBOLValidationException e) {
-				e.printStackTrace();
-				return;
-			}
+			dnac = SBOLDOC.getComponentDefinition(compURIs.get(i));
 			if (filterType.equals("all") || (dnac.getRoles().size() > 0 &&
 					SBOLUtility2.convertURIToSOTerm(dnac.getRoles().iterator().next()).equals(filterType))) 
 			{
@@ -103,14 +97,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 			for (URI compURI : selectedURIs) 
 			{
 				ComponentDefinition dnac = null; 
-				try 
-				{
-					dnac = SBOLDOC.getComponentDefinition(compURI);
-				} 
-				catch (SBOLValidationException e1) 
-				{
-					e1.printStackTrace();
-				}
+				dnac = SBOLDOC.getComponentDefinition(compURI);
 				if (dnac != null) 
 				{
 					viewArea.append("Identity:  " + dnac.getIdentity() + "\n");

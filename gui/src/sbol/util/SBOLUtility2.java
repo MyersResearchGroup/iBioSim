@@ -4,16 +4,28 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 //import java.io.IOException;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 //import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
+
+
+
+
+
+
+
+
+
+import javax.swing.JFrame;
 //import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.xml.stream.FactoryConfigurationError;
@@ -109,28 +121,23 @@ public class SBOLUtility2
 			{
 				sbolDoc = SBOLReader.read(new FileInputStream(filePath));
 			}
-			catch (FileNotFoundException e)
+			catch (IOException e)
 			{
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", 
 						"File Not Found", JOptionPane.ERROR_MESSAGE);
 			}
-			catch (CoreIoException e)
+			catch (SBOLValidationException e)
 			{
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
-						"Input/Output Error", JOptionPane.ERROR_MESSAGE);
+						"Invalid SBOL File", JOptionPane.ERROR_MESSAGE);
 			}
-			catch (XMLStreamException e)
+			catch (SBOLConversionException e)
 			{
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
-						"Invalid XML format", JOptionPane.ERROR_MESSAGE);
-			}
-			catch (FactoryConfigurationError e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+						"Invalid SBOL File", JOptionPane.ERROR_MESSAGE);
 			}
 		return sbolDoc; 
 	}
@@ -141,36 +148,21 @@ public class SBOLUtility2
 		{
 			SBOLWriter.write(sbolDoc, new FileOutputStream(filePath));
 		}
-		catch (FileNotFoundException e)
+		catch (SBOLConversionException e)
 		{
-			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + filePath + ".", 
-					"Input/Output Error", JOptionPane.ERROR_MESSAGE);
+					"SBOL Conversion Error", JOptionPane.ERROR_MESSAGE);
 		}
-		catch (XMLStreamException e)
-		{
-			// TODO Auto-generated catch block
-			//TODO: What exceptions are these?
-			e.printStackTrace();
-		}
-		catch (FactoryConfigurationError e)
-		{
-			// TODO Auto-generated catch block
-			//TODO: What exceptions are these?
-			e.printStackTrace();
-		}
-		catch (CoreIoException e)
-		{
-			e.printStackTrace();
+		catch (IOException e) {
 			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + filePath + ".", 
-					"Input/Output Error", JOptionPane.ERROR_MESSAGE);
+					"SBOL Write Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
 	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
 	// Subcomponents of the given component are replaced by components of matching URIs from the SBOL document to avoid having
 	// multiple data structures of the same URI
-	public static void addDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc, boolean flatten) 
+	public static void addDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc, boolean flatten) throws SBOLValidationException 
 	{
 		dnac = replaceDNAComponent(dnac, sbolDoc);
 		Set<String> topURIs = new HashSet<String>();
@@ -191,7 +183,7 @@ public class SBOLUtility2
 		}
 	}
 	
-	public static void addSequence(Sequence seq, SBOLDocument sbolDoc, boolean flatten) 
+	public static void addSequence(Sequence seq, SBOLDocument sbolDoc, boolean flatten) throws SBOLValidationException 
 	{
 		Set<String> topURIs = new HashSet<String>();
 		for (TopLevel sbolObj : sbolDoc.getTopLevels())
@@ -203,7 +195,7 @@ public class SBOLUtility2
 	}
 	
 	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
-	private static void flattenDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc, Set<String> topURIs) {
+	private static void flattenDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc, Set<String> topURIs) throws SBOLValidationException {
 		if (!topURIs.contains(dnac.getIdentity())) {
 //			sbolDoc.addContent(dnac);
 			sbolDoc.createCopy(dnac); 
@@ -215,7 +207,7 @@ public class SBOLUtility2
 	}
 	
 	// Recursively adds annotation subcomponents to top level of SBOL document if not already present
-	private static void flattenSubComponents(Set<SequenceAnnotation> annos, SBOLDocument sbolDoc, Set<String> topURIs) 
+	private static void flattenSubComponents(Set<SequenceAnnotation> annos, SBOLDocument sbolDoc, Set<String> topURIs) throws SBOLValidationException 
 	{
 		for (SequenceAnnotation anno : annos) {
 //			DnaComponent subDnac = anno.getSubComponent();
@@ -292,7 +284,7 @@ public class SBOLUtility2
 	}
 	
 	// Creates SBOL document in which every DNA component is accessible from the top level
-	public static SBOLDocument flattenSBOLDocument(SBOLDocument sbolDoc) 
+	public static SBOLDocument flattenSBOLDocument(SBOLDocument sbolDoc) throws SBOLValidationException 
 	{
 //		SBOLDocument flattenedDoc = SBOLFactory.createDocument();
 //		Set<String> topURIs = new HashSet<String>();
@@ -376,7 +368,15 @@ public class SBOLUtility2
 	
 	// Deletes all DNA components that have URIs matching the given URI and updates the annotations
 	// and DNA sequences of composite components using the deleted components
-	public static void deleteDNAComponent(URI deletingURI, SBOLDocument sbolDoc) {
+	public static void deleteDNAComponent(URI deletingURI, SBOLDocument sbolDoc) throws SBOLValidationException {
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(deletingURI);
+		if (compDef!=null) {
+			// TODO: should update any references to this compDef
+			for (Sequence sequence : compDef.getSequences()) {
+				sbolDoc.removeSequence(sequence);
+			}
+			sbolDoc.removeComponentDefinition(compDef);
+		}
 //		List<DnaComponent> intersections = intersectDNAComponent(deletingURI, sbolDoc);
 //		for (DnaComponent intersectedDnac : intersections) {
 //			if (intersectedDnac.getURI().toString().equals(deletingURI.toString())) 
@@ -680,16 +680,19 @@ public class SBOLUtility2
 //		return subComps;
 //	}
 	
-//	public static List<DnaComponent> filterDNAComponents(List<DnaComponent> dnaComps, Set<String> soFilterNums) {
-//		List<DnaComponent> filteredComps = new LinkedList<DnaComponent>();
-//		for (DnaComponent dnaComp : dnaComps) {
-//			String soNum = SBOLUtility2.loadSONumber(dnaComp);
-//			if (soNum != null && soFilterNums.contains(soNum))
-//				filteredComps.add(dnaComp);
-//		}
-//		return filteredComps;
-//	}
-//	
+	public static List<ComponentDefinition> filterDNAComponents(List<ComponentDefinition> dnaComps, Set<URI> soFilterNums) {
+		List<ComponentDefinition> filteredComps = new LinkedList<ComponentDefinition>();
+		for (ComponentDefinition dnaComp : dnaComps) {
+			for (URI role : soFilterNums) {
+				if (dnaComp.getRoles().contains(role)) {
+					filteredComps.add(dnaComp);
+					break;
+				}
+			}
+		}
+		return filteredComps;
+	}
+	
 //	public static boolean compareDNAComponents(List<DnaComponent> dnaComps1, List<DnaComponent> dnaComps2) {
 //		if (dnaComps1.size() == dnaComps2.size()) {
 //			for (int i = 0; i < dnaComps1.size(); i++)
@@ -732,31 +735,25 @@ public class SBOLUtility2
 //		}
 //		return false;	
 //	}
-//	
-//	public static int countNucleotides(List<DnaComponent> dnaComps) {
-//		int nucleotideCount = 0;
-//		for (DnaComponent dnaComp : dnaComps) {
-//			if (dnaComp.getDnaSequence() != null)
-//				nucleotideCount += dnaComp.getDnaSequence().getNucleotides().length();
-//		} 
-//		return nucleotideCount;
-//	}
+
+	public static int countNucleotides(List<ComponentDefinition> dnaComps) {
+		int nucleotideCount = 0;
+		for (ComponentDefinition dnaComp : dnaComps) {
+			Sequence sequence = dnaComp.getSequenceByEncoding(Sequence.IUPAC_DNA);
+			if (sequence != null)
+				nucleotideCount += sequence.getElements().length();
+		} 
+		return nucleotideCount;
+	}
 	
 	// Converts global constant SBOL type to corresponding set of SO types
-	public static Set<String> soSynonyms(String sbolType) {
-		Set<String> types = new HashSet<String>();
-		if (sbolType.equals(GlobalConstants.SBOL_CDS)) {
-			types.add(SequenceOntology.CDS.toString()); // CDS
-		} else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER)) {
-			types.add(SequenceOntology.PROMOTER.toString()); // promoter
-			types.add(SequenceOntology.type("SO_0001203").toString()); // RNA_polymerase_promoter
-		} else if (sbolType.equals(GlobalConstants.SBOL_RBS)) {
-			types.add(SequenceOntology.type("SO_0000139").toString()); // ribosome_entry_site
-		} else if (sbolType.equals(GlobalConstants.SBOL_TERMINATOR)) {
-			types.add(SequenceOntology.TERMINATOR.toString()); // terminator
-			types.add(SequenceOntology.type("SO_0000614").toString()); // bacterial_terminator
+	public static Set<URI> soSynonyms(String sbolType) {
+		SequenceOntology so = new SequenceOntology();
+		URI sbolTypeURI = so.getURIbyName(sbolType);
+		if (sbolTypeURI==null) {
+			return new HashSet<URI>();
 		}
-		return types;
+		return so.getDescendantURIsOf(so.getURIbyName(sbolType));
 	}
 	
 //	public static String convertURIToSOType(URI uri) {
@@ -781,54 +778,8 @@ public class SBOLUtility2
 	
 	public static String convertURIToSOTerm(URI uri) 
 	{
-		if (uri.equals(SequenceOntology.PROMOTER))
-			return "promoter";
-		else if (uri.equals(SequenceOntology.type(GlobalConstants.SO_RBS)))
-			return "ribosome entry site";
-		else if (uri.equals(SequenceOntology.CDS))
-			return "coding sequence";
-		else if (uri.equals(SequenceOntology.ENGINEERED_GENE))
-			return "engineered gene";
-		else if (uri.equals(SequenceOntology.FIVE_PRIME_UTR))
-			return "five prime utr";
-		else if (uri.equals(SequenceOntology.GENE))
-			return "gene";
-		else if (uri.equals(SequenceOntology.INSULATOR))
-			return "insulator";
-		else if (uri.equals(SequenceOntology.MRNA))
-			return "messenger RNA";
-		else if (uri.equals(SequenceOntology.OPERATOR))
-			return "operator";
-		else if (uri.equals(SequenceOntology.ORIGIN_OF_REPLICATION))
-			return "origin of replication";
-		else if (uri.equals(SequenceOntology.PRIMER_BINDING_SITE))
-			return "primer binding site";
-		else if (uri.equals(SequenceOntology.RESTRICTION_ENZYME_RECOGNITION_SITE))
-			return "restriction enzyme recognition site";
-		else if (uri.equals(SequenceOntology.RIBOSOME_ENTRY_SITE))
-			return "ribosome entry site";
-		else if (uri.equals(SequenceOntology.TERMINATOR))
-			return "terminator";
-		else if (uri.equals(SequenceOntology.ENGINEERED_REGION))
-			return "engineered region";
-		else if (uri.equals(SequenceOntology.type("SO:0000805")))
-			return "engineered foreign region";
-		else if (uri.equals(SequenceOntology.type("SO:0001203")))
-			return "RNA polymerase promoter";
-		else if (uri.equals(SequenceOntology.type("SO:0000552")))
-			return "Shine Dalgarno sequence";
-		else if (uri.equals(SequenceOntology.type("SO:0000614"))) 
-			return "bacterial terminator";
-		else 
-		{
-			String path = uri.getPath();
-			if (path != null && path.length() > 0) 
-			{
-				String[] splitPath = path.split("/");
-				return splitPath[splitPath.length - 1];
-			}
-			return "N/A";
-		}
+		SequenceOntology so = new SequenceOntology();
+		return so.getName(uri);
 	}
 	
 	
@@ -871,21 +822,21 @@ public class SBOLUtility2
 //		else
 //			return "x";
 //	}
-//	
-//	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, JFrame frame) {
-//		Properties synthProps = new Properties();
-//		for (String synthFileID : new File(synthFilePath).list())
-//			if (synthFileID.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
-//				try {
-//					FileInputStream propStreamIn = new FileInputStream(new File(synthFilePath + separator + synthFileID));
-//					synthProps.load(propStreamIn);
-//					propStreamIn.close();
-//					return synthProps;
-//				} catch (IOException e) {
-//					JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-//				}
-//			}	
-//		return synthProps;
-//	}
+	
+	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, JFrame frame) {
+		Properties synthProps = new Properties();
+		for (String synthFileID : new File(synthFilePath).list())
+			if (synthFileID.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
+				try {
+					FileInputStream propStreamIn = new FileInputStream(new File(synthFilePath + separator + synthFileID));
+					synthProps.load(propStreamIn);
+					propStreamIn.close();
+					return synthProps;
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+				}
+			}	
+		return synthProps;
+	}
 	
 }

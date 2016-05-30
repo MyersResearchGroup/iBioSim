@@ -56,16 +56,27 @@ import main.util.dataparser.DataParser;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Algorithm;
+import org.jlibsedml.AlgorithmParameter;
 import org.jlibsedml.Annotation;
 import org.jlibsedml.Libsedml;
+import org.jlibsedml.Model;
+import org.jlibsedml.Range;
+import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.SEDBase;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.SedMLError;
 import org.jlibsedml.Simulation;
+import org.jlibsedml.SubTask;
+import org.jlibsedml.Task;
+import org.jlibsedml.UniformRange;
 import org.jlibsedml.UniformTimeCourse;
 import org.jlibsedml.XMLException;
+import org.jlibsedml.modelsupport.KisaoOntology;
+import org.jlibsedml.modelsupport.KisaoTerm;
+import org.jlibsedml.modelsupport.SUPPORTED_LANGUAGE;
 
 import verification.AbstPane;
 import biomodel.gui.schematic.ModelEditor;
@@ -1522,7 +1533,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 				store.close();
 			}
-			// saveSEDML();
+			saveSEDML();
 		}
 		catch (Exception e)
 		{
@@ -1531,6 +1542,53 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		change = false;
 		return true;
+	}
+	
+	private void saveSEDML() {
+		double timeLimit = Double.parseDouble(limit.getText().trim());
+		double printInterval = Double.parseDouble(interval.getText().trim());
+		int numberOfSteps;
+		if (((String)intervalLabel.getSelectedItem()).equals("Number Of Steps")) {
+			numberOfSteps = Integer.parseInt(interval.getText().trim());
+		} else {
+			numberOfSteps = (int)Math.floor(timeLimit / printInterval) + 1;
+		}
+		sedmlDoc = new SEDMLDocument(1,2);
+		SedML sedml = sedmlDoc.getSedMLModel();
+		List<Simulation> simulations = sedml.getSimulations();
+		UniformTimeCourse simulation;
+		if (simulations.size() > 0) {
+			simulation = (UniformTimeCourse) simulations.get(0);
+			simulation.setOutputEndTime(timeLimit);
+			simulation.setNumberOfPoints(numberOfSteps);
+			simulation.setAlgorithm(getAlgorithm());
+		} else {
+			Algorithm algo = getAlgorithm();
+			simulation = new UniformTimeCourse("simId", "", 0, 0, timeLimit, numberOfSteps, algo);
+			sedml.addSimulation(simulation);
+			Model model = new Model("modelId", "", SUPPORTED_LANGUAGE.SBML_GENERIC.getURN(), modelFile);
+			sedml.addModel(model);
+			Task task = new Task(simName, "", model.getId(), simulation.getId());
+			sedml.addTask(task);
+		} 
+		if (!runs.getText().trim().equals("1")) {
+			int numRuns = Integer.parseInt(runs.getText().trim());
+			Range range = new UniformRange("range",1,numRuns,numRuns);
+			SubTask subTask = new SubTask(simName);
+			RepeatedTask repeatedTask = new RepeatedTask("repeat_"+simName,"",true,"range");
+			repeatedTask.addRange(range);
+			repeatedTask.addSubtask(subTask);
+			sedml.addTask(repeatedTask);
+		}
+		for (int i = 0; i < simTab.getComponentCount(); i++)
+		{
+			if (simTab.getComponentAt(i) instanceof Graph)
+			{
+				((Graph) simTab.getComponentAt(i)).saveSEDML(sedmlDoc,simName);
+			}
+		}
+		File sedmlFile = new File(sedmlFilename);
+		sedmlDoc.writeDocument(sedmlFile);
 	}
 
 	private void loadSEDML()
@@ -1554,16 +1612,33 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					// return;
 				}
 				SedML sedml = sedmlDoc.getSedMLModel();
+				int numRuns = 1;
+				for (AbstractTask task : sedml.getTasks())
+				{
+					if (task instanceof RepeatedTask) {
+						RepeatedTask repeatedTask = (RepeatedTask) task;
+						for (Range range : repeatedTask.getRanges().values()) {
+							if (range instanceof UniformRange) {
+								UniformRange uniformRange = (UniformRange)range;
+								numRuns = uniformRange.getNumberOfPoints();
+							}
+						}
+					}
+				}
 				List<Simulation> simulations = sedml.getSimulations();
 				if (simulations.size() > 0)
 				{
-					if (simulations.get(0).getAlgorithm().getKisaoID().equals("KISAO:0000019"))
+					String kisaoId = simulations.get(0).getAlgorithm().getKisaoID();
+//					KisaoOntology ko = KisaoOntology.getInstance();
+//					KisaoTerm kt = ko.getTermById(kisaoId);
+//					System.out.println(kt.getExactSynonyms());
+//					System.out.println(kt.is_a(ko.getTermById("KISAO:0000377")));
+					setAlgorithm(simulations.get(0).getAlgorithm());
+					if (ODE.isSelected()||monteCarlo.isSelected())
 					{
-						ODE.setSelected(true);
-						enableODE();
 						// simulators.setSelectedItem("Runge-Kutta-Fehlberg");
 						// TODO: what java ODE simulator fails on 987
-						simulators.setSelectedItem("rkf45");
+						//simulators.setSelectedItem("rkf45");
 						UniformTimeCourse simulation = (UniformTimeCourse) simulations.get(0);
 						// KisaoTerm kisaoTerm =
 						// KisaoOntology.getInstance().getTermById(simulation.getAlgorithm().getKisaoID());
@@ -1588,11 +1663,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							}
 						}
 						limit.setText("" + simulation.getOutputEndTime());
+						runs.setText(""+numRuns);
 					}
-					else if (simulations.get(0).getAlgorithm().getKisaoID().equals("KISAO:0000437"))
+					else if (fba.isSelected())
 					{
-						fba.setSelected(true);
-						enableFBA();
 						absErr.setText("1e-4");
 					}
 				}
@@ -1606,49 +1680,107 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private Algorithm getAlgorithm()
 	{
-		if (ODE.isEnabled())
+		Algorithm algorithm = null;
+		if (ODE.isSelected())
 		{
 			if (((String) simulators.getSelectedItem()).contains("euler"))
 			{
-				return new Algorithm(GlobalConstants.KISAO_EULER);
+				algorithm = new Algorithm(GlobalConstants.KISAO_EULER);
 			}
 			else if (((String) simulators.getSelectedItem()).contains("rk8pd"))
 			{
-				return new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND);
+				algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND);
 			}
 			else if (((String) simulators.getSelectedItem()).contains("rkf45")
 					|| ((String) simulators.getSelectedItem()).contains("Runge-Kutta-Fehlberg"))
 			{
-				return new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
+				algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
 			}
 		}
-		else if (monteCarlo.isEnabled())
+		else if (monteCarlo.isSelected())
 		{
-			if (((String) simulators.getSelectedItem()).contains("gillespie"))
+			if (((String) simulators.getSelectedItem()).equals("gillespie"))
 			{
-				return new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
+				algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
 			}
-			else if (((String) simulators.getSelectedItem()).equals("SSA-CR"))
+			else if (((String) simulators.getSelectedItem()).contains("SSA-CR"))
 			{
-				return new Algorithm(GlobalConstants.KISAO_SSA_CR);
+				algorithm = new Algorithm(GlobalConstants.KISAO_SSA_CR);
 			}
-			Algorithm algorithm = new Algorithm(GlobalConstants.KISAO_MONTE_CARLO);
+		} 
+		else if (fba.isSelected()) 
+		{
+			algorithm = new Algorithm(GlobalConstants.KISAO_FBA);
+		}
+		else {
+			algorithm = new Algorithm(GlobalConstants.KISAO_GENERIC);
 			Element para = new Element("analysis");
 			para.setAttribute("method", ((String) simulators.getSelectedItem()).replace(" ", "_"));
 			para.setNamespace(Namespace.getNamespace("ibiosim", "http://www.fakeuri.com"));
 			Annotation ann = new Annotation(para);
 			algorithm.addAnnotation(ann);
-			return algorithm;
 		}
-		Algorithm algorithm = new Algorithm(GlobalConstants.KISAO_GENERIC);
-		Element para = new Element("analysis");
-		para.setAttribute("method", ((String) simulators.getSelectedItem()).replace(" ", "_"));
-		para.setNamespace(Namespace.getNamespace("ibiosim", "http://www.fakeuri.com"));
-		Annotation ann = new Annotation(para);
-		algorithm.addAnnotation(ann);
+		AlgorithmParameter ap = new AlgorithmParameter(GlobalConstants.KISAO_MINIMUM_STEP_SIZE,minStep.getText());
+		algorithm.addAlgorithmParameter(ap);
+		ap = new AlgorithmParameter(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE,step.getText());
+		algorithm.addAlgorithmParameter(ap);
+		ap = new AlgorithmParameter(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE,absErr.getText());
+		algorithm.addAlgorithmParameter(ap);
+		ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED,seed.getText());
+		algorithm.addAlgorithmParameter(ap);
 		return algorithm;
 	}
 
+	private void setAlgorithm(Algorithm algorithm)
+	{
+		String kisaoId = algorithm.getKisaoID();
+		KisaoTerm kt = KisaoOntology.getInstance().getTermById(kisaoId);
+		if (kisaoId.equals(GlobalConstants.KISAO_EULER)) {
+			ODE.setSelected(true);
+			enableODE();
+			simulators.setSelectedItem((String)"euler");
+		} else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG)) {
+			ODE.setSelected(true);
+			enableODE();
+			simulators.setSelectedItem((String)"rkf45");
+		} else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND)) {
+			ODE.setSelected(true);
+			enableODE();
+			simulators.setSelectedItem((String)"rk8pd");
+		} else if (kisaoId.equals(GlobalConstants.KISAO_GILLESPIE_DIRECT)) {
+			monteCarlo.setSelected(true);
+			enableMonteCarlo();
+			simulators.setSelectedItem((String)"gillespie");
+		} else if (kisaoId.equals(GlobalConstants.KISAO_SSA_CR)) {
+			monteCarlo.setSelected(true);
+			enableMonteCarlo();
+			simulators.setSelectedItem((String)"SSA-CR (Dynamic)");
+		} else if (kisaoId.equals(GlobalConstants.KISAO_FBA)) {
+			fba.setSelected(true);
+			enableFBA();
+		} else if (kt.is_a(KisaoOntology.ALGORITHM_WITH_DETERMINISTIC_RULES)) {
+			ODE.setSelected(true);
+			enableODE();
+			simulators.setSelectedItem((String)"rkf45");			
+		} else {
+			monteCarlo.setSelected(true);
+			enableMonteCarlo();
+			simulators.setSelectedItem((String)"gillespie");			
+		}
+		for (AlgorithmParameter ap : algorithm.getListOfAlgorithmParameters()) {
+			if (ap.getKisaoID().equals(GlobalConstants.KISAO_MINIMUM_STEP_SIZE)) {
+				minStep.setText(ap.getValue());
+			} else if (ap.getKisaoID().equals(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE)) {
+				step.setText(ap.getValue());
+			} else if (ap.getKisaoID().equals(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE)) {
+				absErr.setText(ap.getValue());
+			} else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED)) {
+				seed.setText(ap.getValue());
+			}
+		}
+	}
+
+	
 	private static Annotation getSEDBaseAnnotation(SEDBase sedBase, String name)
 	{
 		@SuppressWarnings("deprecation")

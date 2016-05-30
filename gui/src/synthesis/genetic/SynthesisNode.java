@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.sbml.jsbml.SBase;
-import org.sbolstandard.core.DnaComponent;
+import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.SequenceOntology;
 
-import sbol.util.SBOLFileManager;
-import sbol.util.SBOLUtility;
-
+import sbol.util.SBOLFileManager2;
+import sbol.util.SBOLUtility2;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
@@ -29,7 +29,7 @@ public class SynthesisNode {
 	private List<SynthesisNode> uncoveredNodes;
 	private int uncoveredBound;
 	
-	public SynthesisNode(String type, SBase sbmlElement, SBOLFileManager fileManager) {
+	public SynthesisNode(String type, SBase sbmlElement, SBOLFileManager2 fileManager) {
 		id = SBMLutilities.getId(sbmlElement);
 		this.type = type;
 		compURIs = new LinkedList<URI>();
@@ -46,19 +46,19 @@ public class SynthesisNode {
 		uncoveredBound = 0;
 	}
 	
-	private void processDNAComponents(SBase sbmlElement, SBOLFileManager fileManager) {
+	private void processDNAComponents(SBase sbmlElement, SBOLFileManager2 fileManager) {
 		//NOTE: Get all DnaComponent
 		AnnotationUtility.parseSBOLAnnotation(sbmlElement, compURIs);
-		List<DnaComponent> dnaComps = fileManager.resolveURIs(compURIs);
-		nucleotideCount = SBOLUtility.countNucleotides(dnaComps);
-		Set<String> soFilterTypes = new HashSet<String>();
-		soFilterTypes.add(GlobalConstants.SO_CDS);
-		soFilterTypes.add(GlobalConstants.SO_PROMOTER);
+		List<ComponentDefinition> dnaComps = fileManager.resolveURIs(compURIs);
+		nucleotideCount = SBOLUtility2.countNucleotides(dnaComps);
+		Set<URI> soFilterTypes = new HashSet<URI>();
+		soFilterTypes.add(SequenceOntology.CDS);
+		soFilterTypes.add(SequenceOntology.PROMOTER);
 		//NOTE: get dnaComps with the specified SO types of CDS and PROMOTER.
-		List<DnaComponent> signalComps = SBOLUtility.filterDNAComponents(dnaComps, soFilterTypes);
+		List<ComponentDefinition> signalComps = SBOLUtility2.filterDNAComponents(dnaComps, soFilterTypes);
 		//TODO: Why only get the first DnaComponent signal? Assume that signalComps always return 1 or 0?
 		if (signalComps.size() > 0)
-			signal = signalComps.get(0).getURI().toString(); //TODO: signal will store the uri of the 1st DnaComponent?
+			signal = signalComps.get(0).getIdentity().toString(); //TODO: signal will store the uri of the 1st DnaComponent?
 		else 
 			signal = "";
 	}

@@ -554,7 +554,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			// Field for annotating species with SBOL DNA components
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
-			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
 					3, false);
 
 			grid.add(sbolField);

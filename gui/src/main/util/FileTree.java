@@ -12,7 +12,7 @@ import javax.swing.tree.*;
 
 import main.Gui;
 
-import sbol.util.SBOLUtility;
+import sbol.util.SBOLUtility2;
 
 import biomodel.parser.BioModel;
 import biomodel.parser.GCM2SBML;
@@ -464,7 +464,7 @@ public class FileTree extends JPanel implements MouseListener {
 						}
 					} else if (new File(newPath + separator + d + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
 						try {
-							Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(newPath, separator, Gui.frame);
+							Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(newPath, separator, Gui.frame);
 							if (synthProps != null)
 								if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
 									String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
@@ -583,7 +583,7 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 			} else if (new File(path + separator + item + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
 				try {
-					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(path, separator, Gui.frame);
+					Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(path, separator, Gui.frame);
 					if (synthProps != null) {
 						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
 							String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);

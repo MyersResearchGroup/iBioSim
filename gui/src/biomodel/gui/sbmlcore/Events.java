@@ -384,7 +384,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						List<URI> sbolURIs = new LinkedList<URI>();
 						String sbolStrand = AnnotationUtility.parseSBOLAnnotation(event, sbolURIs);
 						// Field for annotating event with SBOL DNA components
-						sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+						sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
 								2, false);
 					}
 					String dimInID = SBMLutilities.getDimensionString(event);
@@ -395,7 +395,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		else {
 			// Field for annotating event with SBOL DNA components
 			sbolField = new SBOLField2(new LinkedList<URI>(), GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
-					GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
+					GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 2, false);
 			String eventId = "event0";
 			if (isTransition) eventId = "t0";
 			int en = 0;

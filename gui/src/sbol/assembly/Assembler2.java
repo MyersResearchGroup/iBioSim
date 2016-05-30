@@ -1,6 +1,7 @@
 package sbol.assembly;
 
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceAnnotation;
 
 import java.net.URI;
@@ -46,7 +47,7 @@ public class Assembler2
 //		return assemblyComp;
 //	}
 //	
-	public ComponentDefinition assembleDNAComponent(SBOLDocument sbolDoc) 
+	public ComponentDefinition assembleDNAComponent(SBOLDocument sbolDoc) throws SBOLValidationException 
 	{	
 		// Orders list of subcomponents (to be assembled into composite component) 
 		// by walking synthesis nodes
@@ -198,7 +199,7 @@ public class Assembler2
 		return flatOrderedNodes;
 	}
 
-	private static int addSubComponent(int position, ComponentDefinition subComp, ComponentDefinition parentComp, String strand,Sequence parentSeq) 
+	private static int addSubComponent(int position, ComponentDefinition subComp, ComponentDefinition parentComp, String strand,Sequence parentSeq) throws SBOLValidationException 
 	{
 		//Assume that each CompDef given only has 1 Sequence and 1 element?
 //		if (subComp.getSequences() != null && subComp.getSequences().iterator().next().getElements() != null 

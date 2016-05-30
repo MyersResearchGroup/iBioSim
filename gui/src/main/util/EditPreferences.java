@@ -25,7 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.plaf.metal.MetalButtonUI;
 
-import sbol.util.SBOLUtility;
+import sbol.util.SBOLUtility2;
 import main.Gui;
 
 import com.mxgraph.util.mxConstants;
@@ -764,7 +764,7 @@ public class EditPreferences {
 		
 		JPanel assemblyFields = new JPanel(new GridLayout(13 ,1));
 		uriField = new JTextField(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, ""),15);
-		String regex = SBOLUtility.convertRegexSOTermsToNumbers(
+		String regex = SBOLUtility2.convertRegexSOTermsToNumbers(
 				biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 		regexField = new JTextField(regex, 15);
 		assemblyBox = new JComboBox(new String[]{"True", "False"});

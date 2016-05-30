@@ -63,7 +63,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	public ModelPanel(BioModel gcm, ModelEditor modelEditor) {
 		super();
 		this.bioModel = gcm;
-		sbolField = new SBOLField2(GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 1, true);
+		sbolField = new SBOLField2(GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 1, true);
 		this.sbmlModel = gcm.getSBMLDocument().getModel();
 		this.dirty = modelEditor.getDirty();
 		this.setText("Model");
@@ -233,7 +233,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(conversionFactor);
 			modelEditorPanel.add(new JLabel("Conversion Factor Indices:"));
 			modelEditorPanel.add(conviIndex);
-			modelEditorPanel.add(new JLabel("SBOL DNA Component:"));
+			modelEditorPanel.add(new JLabel("SBOL ComponentDefinition:"));
 			modelEditorPanel.add(sbolField);
 			modelEditorPanel.add(new JLabel("Flux Objective:"));
 			modelEditorPanel.add(fbaoButton);

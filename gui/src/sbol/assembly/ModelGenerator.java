@@ -2,6 +2,7 @@ package sbol.assembly;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -174,7 +175,9 @@ public class ModelGenerator {
 				if (!promoterToRepressions.containsKey(promoter))
 					promoterToRepressions.put(promoter, new LinkedList<Interaction>());
 				promoterToRepressions.get(promoter).add(interact);
-			} 
+			} else {
+				generateBiochemicalRxn(interact, moduleDef, targetModel);
+			}
 		}
 		
 		for (FunctionalComponent promoter : moduleDef.getFunctionalComponents()) { 
@@ -308,7 +311,35 @@ public class ModelGenerator {
 		Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(promoter));
 		
 		// Annotate SBML promoter species with SBOL component and component definition
-		annotateSpecies(sbmlPromoter, promoter, sbolDoc.getComponentDefinition(promoter.getDefinitionURI()), sbolDoc);
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
+		if (compDef!=null) {
+			annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
+		}
+	}
+
+	public static void generateBiochemicalRxn(Interaction interaction, ModuleDefinition moduleDef, BioModel targetModel) {
+		SystemsBiologyOntology sbo = new SystemsBiologyOntology();
+		String SBOid = "";
+		for (URI type : interaction.getTypes()) {
+			if (sbo.getId(type)!=null) {
+				SBOid = sbo.getId(type);
+			}
+		}
+		ArrayList<String> reactants = new ArrayList<String>();
+		ArrayList<String> modifiers = new ArrayList<String>();
+		ArrayList<String> products = new ArrayList<String>();
+		for (Participation participation : interaction.getParticipations()) {
+			if (participation.containsRole(SystemsBiologyOntology.REACTANT)) {
+				reactants.add(participation.getDisplayId());
+			}
+			if (participation.containsRole(SystemsBiologyOntology.MODIFIER)) {
+				modifiers.add(participation.getDisplayId());
+			}
+			if (participation.containsRole(SystemsBiologyOntology.PRODUCT)) {
+				products.add(participation.getDisplayId());
+			}
+		}
+		targetModel.createBiochemicalReaction(interaction.getDisplayId(),SBOid,reactants,modifiers,products);
 	}
 
 	public static void generateDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) {
@@ -401,8 +432,10 @@ public class ModelGenerator {
 			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(i).getParticipantURI());
 			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(i).getParticipantURI());
 			
-			annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(protein)), 
-					sbolDoc.getComponentDefinition(gene.getDefinitionURI()));
+			ComponentDefinition compDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
+			if (compDef!=null) {
+				annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(protein)), compDef);
+			}
 		}
 	}
 	
@@ -469,9 +502,11 @@ public class ModelGenerator {
 					comp.getDefinitionURI());
 		}
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
-		speciesAnno.createSBOLElementsDescription(compDef.getClass().getSimpleName(), 
-				compDef.getIdentity());
-		AnnotationUtility.setSBOLAnnotation(species, speciesAnno);	
+		if (compDef!=null) {
+			speciesAnno.createSBOLElementsDescription(compDef.getClass().getSimpleName(), 
+					compDef.getIdentity());
+			AnnotationUtility.setSBOLAnnotation(species, speciesAnno);	
+		}
 	}
 	
 	// Annotate SBML species with SBOL DNA component and any existing, annotating SBOL elements
@@ -560,7 +595,9 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isDNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-		return isDNADefinition(sbolDoc.getComponentDefinition(comp.getDefinitionURI()));
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+		if (compDef==null) return false;
+		return isDNADefinition(compDef);
 	}
 	
 	public static boolean isDNADefinition(ComponentDefinition compDef) {
@@ -569,7 +606,9 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isProteinComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-		return isProteinDefinition(sbolDoc.getComponentDefinition(comp.getDefinitionURI()));
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+		if (compDef==null) return false;
+		return isProteinDefinition(compDef);
 	}
 	
 	public static boolean isProteinDefinition(ComponentDefinition compDef) {
@@ -578,7 +617,9 @@ public class ModelGenerator {
 	}
 		
 	public static boolean isRNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-		return isRNADefinition(sbolDoc.getComponentDefinition(comp.getDefinitionURI()));
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+		if (compDef==null) return false;
+		return isRNADefinition(compDef);
 	}
 	
 	public static boolean isRNADefinition(ComponentDefinition compDef) {
@@ -586,7 +627,9 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isPromoterComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-		return isPromoterDefinition(sbolDoc.getComponentDefinition(comp.getDefinitionURI()));
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+		if (compDef==null) return false;
+		return isPromoterDefinition(compDef);
 	}
 	
 	public static boolean isPromoterDefinition(ComponentDefinition compDef) {
@@ -596,7 +639,9 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isGeneComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-		return isGeneDefinition(sbolDoc.getComponentDefinition(comp.getDefinitionURI()));
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+		if (compDef==null) return false;
+		return isGeneDefinition(compDef);
 	}
 	
 	public static boolean isGeneDefinition(ComponentDefinition compDef) {
@@ -605,7 +650,9 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isSpeciesComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-		return isSpeciesDefinition(sbolDoc.getComponentDefinition(comp.getDefinitionURI()));
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+		if (compDef==null) return true;
+		return isSpeciesDefinition(compDef);
 	}
 	
 	public static boolean isSpeciesDefinition(ComponentDefinition compDef) {
@@ -618,7 +665,9 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isComplexComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-		return isComplexDefinition(sbolDoc.getComponentDefinition(comp.getDefinitionURI()));
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+		if (compDef==null) return false;
+		return isComplexDefinition(compDef);
 	}
 	
 	public static boolean isComplexDefinition(ComponentDefinition compDef) {
@@ -630,7 +679,9 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isTFComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-		return isTFDefinition(sbolDoc.getComponentDefinition(comp.getDefinitionURI()));
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+		if (compDef==null) return false;
+		return isTFDefinition(compDef);
 	}
 	
 	public static boolean isTFDefinition(ComponentDefinition compDef) {

@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLValidationException;
 
 import sbol.util.SBOLUtility2;
 //
@@ -39,7 +40,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	private JTextField sbolText = new JTextField(20);
 	private List<URI> sbolURIs = new LinkedList<URI>();
 	private String sbolStrand;
-	private JButton sbolButton = new JButton("Associate SBOL2");
+	private JButton sbolButton = new JButton("Associate SBOL");
 	private ModelEditor modelEditor;
 	private boolean isModelPanelField;
 	private URI removedBioSimURI;
@@ -65,7 +66,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			setLabel(sbolType);
 			this.add(sbolLabel);
 		}
-		sbolButton.setActionCommand("associateSBOL2");
+		sbolButton.setActionCommand("associateSBOL");
 		sbolButton.addActionListener(this);
 		this.add(sbolButton);
 		if (styleOption == 3)
@@ -144,7 +145,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 //	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("associateSBOL2")) {
+		if (e.getActionCommand().equals("associateSBOL")) {
 			HashSet<String> sbolFilePaths = modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
 			SBOLAssociationPanel2  associationPanel;
 			if (isModelPanelField) 
@@ -161,23 +162,23 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	}
 	
 	private void setLabel(String sbolType) {
-		if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT)) {
+		if (sbolType.equals(GlobalConstants.SBOL_COMPONENTDEFINITION)) {
 			if (styleOption == 3)
-				sbolLabel = new JLabel("SBOL DNA Component2");
+				sbolLabel = new JLabel("SBOL ComponentDefinition");
 			else
-				sbolLabel = new JLabel("SBOL DNA Component2: ");
+				sbolLabel = new JLabel("SBOL ComponentDefinition: ");
 		} else if (sbolType.equals(GlobalConstants.SBOL_CDS))
-			sbolLabel = new JLabel("SBOL Coding Sequence2");
+			sbolLabel = new JLabel("SBOL Coding Sequence");
 		else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER))
-			sbolLabel = new JLabel("SBOL Promoter2");
+			sbolLabel = new JLabel("SBOL Promoter");
 		else if (sbolType.equals(GlobalConstants.SBOL_RBS))
-			sbolLabel = new JLabel("SBOL Ribosome Binding Site2");
+			sbolLabel = new JLabel("SBOL Ribosome Binding Site");
 		else if (sbolType.equals(GlobalConstants.SBOL_TERMINATOR))
-			sbolLabel = new JLabel("SBOL Terminator2");
+			sbolLabel = new JLabel("SBOL Terminator");
 	}
 	
 	// Deletes from local SBOL files any iBioSim composite component that had its URI removed from the SBOLAssociationPanel
-	public void deleteRemovedBioSimComponent() {
+	public void deleteRemovedBioSimComponent() throws SBOLValidationException {
 		if (removedBioSimURI != null) {
 			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
 				SBOLDocument sbolDoc = SBOLUtility2.loadSBOLFile(filePath);

@@ -2,12 +2,19 @@ package biomodel.util;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,8 +27,10 @@ import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.tree.TreeNode;
@@ -3593,6 +3602,131 @@ public class SBMLutilities
 		}
 		return false;
 	}
+	
+	/**
+	 * Checks consistency of the sbml file.
+	 */
+	public static boolean checkThread(String file, SBMLDocument doc, boolean overdeterminedOnly)
+	{
+		Validation validation = new Validation(file,doc,overdeterminedOnly);
+        Thread t = new Thread(validation);
+//		final JButton cancel = new JButton("Cancel");
+//		final JFrame running = new JFrame("Progress");
+//		WindowListener w = new WindowListener()
+//		{
+//			@Override
+//			public void windowClosing(WindowEvent arg0)
+//			{
+//				cancel.doClick();
+//				running.dispose();
+//			}
+//
+//			@Override
+//			public void windowOpened(WindowEvent arg0)
+//			{
+//			}
+//
+//			@Override
+//			public void windowClosed(WindowEvent arg0)
+//			{
+//			}
+//
+//			@Override
+//			public void windowIconified(WindowEvent arg0)
+//			{
+//			}
+//
+//			@Override
+//			public void windowDeiconified(WindowEvent arg0)
+//			{
+//			}
+//
+//			@Override
+//			public void windowActivated(WindowEvent arg0)
+//			{
+//			}
+//
+//			@Override
+//			public void windowDeactivated(WindowEvent arg0)
+//			{
+//			}
+//		};
+//		running.addWindowListener(w);
+//		JPanel text = new JPanel();
+//		JPanel progBar = new JPanel();
+//		JPanel button = new JPanel();
+//		JPanel all = new JPanel(new BorderLayout());
+//		JLabel label = new JLabel("Running...");
+//		JProgressBar progress = new JProgressBar(0, species.size());
+//		progress.setStringPainted(true);
+//		// progress.setString("");
+//		progress.setValue(0);
+//		text.add(label);
+//		progBar.add(progress);
+//		button.add(cancel);
+//		all.add(text, "North");
+//		all.add(progBar, "Center");
+//		all.add(button, "South");
+//		running.setContentPane(all);
+//		running.pack();
+//		Dimension screenSize;
+//		//running.setLocation(x, y);
+//		running.setVisible(true);
+//		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//		final Process learn;
+//		int exitValue = 0;
+//		try
+//		{
+//	        t.start();
+//			cancel.setActionCommand("Cancel");
+//			cancel.addActionListener(new ActionListener()
+//			{
+//				@Override
+//				public void actionPerformed(ActionEvent e)
+//				{
+//					learn.destroy();
+//					running.setCursor(null);
+//					running.dispose();
+//				}
+//			});
+//			//biosim.getExitButton().setActionCommand("Exit program");
+//			biosim.getExitButton().addActionListener(new ActionListener()
+//			{
+//				@Override
+//				public void actionPerformed(ActionEvent e)
+//				{
+//					learn.destroy();
+//					running.setCursor(null);
+//					running.dispose();
+//				}
+//			});
+//			String output = "";
+//			InputStream reb = learn.getInputStream();
+//			InputStreamReader isr = new InputStreamReader(reb);
+//			BufferedReader br = new BufferedReader(isr);
+//			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+//			int count = 0;
+//			while ((output = br.readLine()) != null)
+//			{
+//				if (output.startsWith("Gene = ", 0))
+//				{
+//					// log.addText(output);
+//					count++;
+//					progress.setValue(count);
+//				}
+//				out.write(output);
+//				out.write("\n");
+//			}
+//			br.close();
+//			isr.close();
+//			reb.close();
+//			out.close();
+//			viewLog.setEnabled(true);
+//			exitValue = learn.waitFor();
+//		}
+        //t.wait();
+		return true;
+	}
 
 	/**
 	 * Checks consistency of the sbml file.
@@ -6503,7 +6637,6 @@ public class SBMLutilities
 		}
 		if (display)
 		{
-			final JFrame f = new JFrame("SBML Model Completeness Errors");
 			messageArea.setLineWrap(true);
 			messageArea.setEditable(false);
 			messageArea.setSelectionStart(0);
@@ -6512,43 +6645,8 @@ public class SBMLutilities
 			scroll.setMinimumSize(new java.awt.Dimension(600, 600));
 			scroll.setPreferredSize(new java.awt.Dimension(600, 600));
 			scroll.setViewportView(messageArea);
-			JButton close = new JButton("Dismiss");
-			close.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					f.dispose();
-				}
-			});
-			JPanel consistencyPanel = new JPanel(new BorderLayout());
-			consistencyPanel.add(scroll, "Center");
-			consistencyPanel.add(close, "South");
-			f.setContentPane(consistencyPanel);
-			f.pack();
-			java.awt.Dimension screenSize;
-			try
-			{
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			}
-			catch (AWTError awe)
-			{
-				screenSize = new java.awt.Dimension(640, 480);
-			}
-			java.awt.Dimension frameSize = f.getSize();
-			if (frameSize.height > screenSize.height)
-			{
-				frameSize.height = screenSize.height;
-			}
-			if (frameSize.width > screenSize.width)
-			{
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			f.setLocation(x, y);
-			f.setVisible(true);
+			JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Model Completeness Errors", JOptionPane.ERROR_MESSAGE);
+
 		}
 	}
 

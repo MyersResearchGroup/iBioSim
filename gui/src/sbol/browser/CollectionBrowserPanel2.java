@@ -27,7 +27,7 @@ public class CollectionBrowserPanel2 extends JPanel implements MouseListener {
 	private ComponentDefinitionBrowserPanel compPanel;
 	
 	private JList       libList = new JList();
-	private Set<String> filter  = new HashSet<String>();
+	private Set<URI> filter  = new HashSet<URI>();
 	private boolean isAssociationBrowser = false;
 //	
 	public CollectionBrowserPanel2(SBOLDocument sbolDoc, JTextArea viewArea, ComponentDefinitionBrowserPanel compDefPanel) {
@@ -59,7 +59,7 @@ public class CollectionBrowserPanel2 extends JPanel implements MouseListener {
 		displaySelected();
 	}
 	
-	public void setFilter(Set<String> filter) {
+	public void setFilter(Set<URI> filter) {
 		this.filter = filter;
 	}
 	
@@ -96,15 +96,8 @@ public class CollectionBrowserPanel2 extends JPanel implements MouseListener {
 		if (selectedURIs[0] != null) 
 		{
 			org.sbolstandard.core2.Collection lib = null;
-			try 
-			{
-				lib = SBOLDOC.getCollection(selectedURIs[0]);
-			} 
-			catch (SBOLValidationException e) 
-			{
-				e.printStackTrace();
-				return;
-			}
+			lib = SBOLDOC.getCollection(selectedURIs[0]);
+			if (lib==null) return;
 			if (lib.getName() != null)
 				viewArea.append("Name:  " + lib.getName() + "\n");
 			else
@@ -122,14 +115,7 @@ public class CollectionBrowserPanel2 extends JPanel implements MouseListener {
 					if (!isAssociationBrowser || !compURI.toString().endsWith("iBioSim")) 
 						{
 							ComponentDefinition resolvedDnac = null;
-							try 
-							{
-								resolvedDnac = SBOLDOC.getComponentDefinition(dnac.getIdentity());
-							} 
-							catch (SBOLValidationException e) 
-							{
-								e.printStackTrace();
-							}
+							resolvedDnac = SBOLDOC.getComponentDefinition(dnac.getIdentity());
 							if ((resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
 									|| processDNAComponent( (ComponentDefinition)dnac, compIdNames, compURIs))
 								n++;
@@ -144,11 +130,7 @@ public class CollectionBrowserPanel2 extends JPanel implements MouseListener {
 				if (!isAssociationBrowser || !compURI.toString().endsWith("iBioSim")) 
 				{
 					ComponentDefinition resolvedDnac = null;
-					try {
-						resolvedDnac = SBOLDOC.getComponentDefinition(compURI);
-					} catch (SBOLValidationException e) {
-						e.printStackTrace();
-					}
+					resolvedDnac = SBOLDOC.getComponentDefinition(compURI);
 					if (resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
 						n++;
 				}
