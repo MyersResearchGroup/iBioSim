@@ -43,9 +43,9 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.comp.Submodel;
-import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 
 import analysis.main.AnalysisThread;
@@ -82,20 +82,15 @@ import biomodel.parser.GCMParser;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
-import sbol.assembly.Assembler;
 import sbol.assembly.Assembler2;
 //import sbol.assembly.Assembler2;
-import sbol.assembly.AssemblyGraph;
 import sbol.assembly.AssemblyGraph2;
 //import sbol.assembly.AssemblyGraph2;
 import sbol.assembly.SequenceTypeValidator;
-import sbol.util.SBOLFileManager;
 import sbol.util.SBOLFileManager2;
 //import sbol.util.SBOLFileManager2;
-import sbol.util.SBOLIdentityManager;
 import sbol.util.SBOLIdentityManager2;
 //import sbol.util.SBOLIdentityManager2;
-import sbol.util.SBOLUtility;
 import sbol.util.SBOLUtility2;
 
 /**
@@ -366,13 +361,27 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 		// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
 		if (!biosim.lema && !biomodel.isGridEnabled()) {
-			modelPanel.getSBOLField().deleteRemovedBioSimComponent();
+			try {
+				modelPanel.getSBOLField().deleteRemovedBioSimComponent();
+			}
+			catch (SBOLValidationException e1) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(Gui.frame, "Error removing SBOL.", 
+						"SBOL Validation Error", JOptionPane.ERROR_MESSAGE);
+			}
 			if (check) {
 //				saveSBOL(true);
 			} else {
 //				 TODO: Temporarily remove until ported to SBOL 2.0.
 				if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "False").equals("True")) {
-					saveSBOL2();
+					try {
+						saveSBOL2();
+					}
+					catch (SBOLValidationException e) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL.", 
+								"SBOL Assembly Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		}
@@ -386,52 +395,52 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
-	public void saveSBOL() {
-		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
-		if (identityManager.containsBioSimURI()) {
-			AssemblyGraph assemblyGraph = new AssemblyGraph(biomodel);
-			if (assemblyGraph.containsSBOL()) {
-				SBOLFileManager fileManager = new SBOLFileManager(
-						biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
-				if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
-					//assemblyGraph.print();
-					String regex = SBOLUtility.convertRegexSOTermsToNumbers(
-							Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
-					SequenceTypeValidator seqValidator = new SequenceTypeValidator(regex);
-					Assembler assembler = new Assembler(assemblyGraph, seqValidator);
-					DnaComponent assembledComp = assembler.assembleDNAComponent();
-					if (assembledComp != null) {
-						if (identityManager.containsPlaceHolderURI() || identityManager.loadBioSimComponent(fileManager)) {
-							identityManager.describeDNAComponent(assembledComp);
-							identityManager.identifyDNAComponent(assembledComp);
-							fileManager.saveDNAComponent(assembledComp, identityManager);
-							identityManager.replaceBioSimURI(assembledComp.getURI());
-							identityManager.annotateBioModel();
-						}
-					} else if (identityManager.containsPlaceHolderURI()) {
-						identityManager.removeBioSimURI();
-						identityManager.annotateBioModel();
-					}
-
-				} else if (identityManager.containsPlaceHolderURI()) {
-					identityManager.removeBioSimURI();
-					identityManager.annotateBioModel();
-				} 
-			} else {
-				if (identityManager.containsBioSimURI() && !identityManager.containsPlaceHolderURI()) {
-					SBOLFileManager fileManager = new SBOLFileManager(
-							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
-					if (fileManager.sbolFilesAreLoaded())
-						fileManager.deleteDNAComponent(identityManager.getBioSimURI());
-				}
-				identityManager.removeBioSimURI();
-				identityManager.annotateBioModel();
-			} 
-		}
-	}
+//	public void saveSBOL() {
+//		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
+//		if (identityManager.containsBioSimURI()) {
+//			AssemblyGraph assemblyGraph = new AssemblyGraph(biomodel);
+//			if (assemblyGraph.containsSBOL()) {
+//				SBOLFileManager fileManager = new SBOLFileManager(
+//						biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
+//				if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
+//					//assemblyGraph.print();
+//					String regex = SBOLUtility.convertRegexSOTermsToNumbers(
+//							Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
+//					SequenceTypeValidator seqValidator = new SequenceTypeValidator(regex);
+//					Assembler assembler = new Assembler(assemblyGraph, seqValidator);
+//					DnaComponent assembledComp = assembler.assembleDNAComponent();
+//					if (assembledComp != null) {
+//						if (identityManager.containsPlaceHolderURI() || identityManager.loadBioSimComponent(fileManager)) {
+//							identityManager.describeDNAComponent(assembledComp);
+//							identityManager.identifyDNAComponent(assembledComp);
+//							fileManager.saveDNAComponent(assembledComp, identityManager);
+//							identityManager.replaceBioSimURI(assembledComp.getURI());
+//							identityManager.annotateBioModel();
+//						}
+//					} else if (identityManager.containsPlaceHolderURI()) {
+//						identityManager.removeBioSimURI();
+//						identityManager.annotateBioModel();
+//					}
+//
+//				} else if (identityManager.containsPlaceHolderURI()) {
+//					identityManager.removeBioSimURI();
+//					identityManager.annotateBioModel();
+//				} 
+//			} else {
+//				if (identityManager.containsBioSimURI() && !identityManager.containsPlaceHolderURI()) {
+//					SBOLFileManager fileManager = new SBOLFileManager(
+//							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
+//					if (fileManager.sbolFilesAreLoaded())
+//						fileManager.deleteDNAComponent(identityManager.getBioSimURI());
+//				}
+//				identityManager.removeBioSimURI();
+//				identityManager.annotateBioModel();
+//			} 
+//		}
+//	}
 	
 	// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
-		public void saveSBOL2() 
+		public void saveSBOL2() throws SBOLValidationException 
 		{
 //			SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel); 
 			SBOLIdentityManager2 identityManager = new SBOLIdentityManager2(biomodel); 
@@ -568,31 +577,30 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	
 	// Exports SBOL DNA components associated with model itself to a new or existing SBOL file
-	public void exportSBOL() {
-		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
-		if (identityManager.containsModelURIs()) {
-			SBOLFileManager fileManager = new SBOLFileManager(
-					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
-			if (fileManager.sbolFilesAreLoaded() && identityManager.loadModelComponents(fileManager)) {
-				File lastFilePath;
-				Preferences biosimrc = Preferences.userRoot();
-				if (biosimrc.get("biosim.general.export_dir", "").equals(""))
-					lastFilePath = null;
-				else 
-					lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
-				String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
-				if (!exportFilePath.equals("")) {
-					biosimrc.put("biosim.general.export_dir", exportFilePath);
-					SBOLFileManager.exportDNAComponents(identityManager.getModelComponents(), exportFilePath);
-				}
-			}
-		}
-	}
+//	public void exportSBOL() {
+//		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
+//		if (identityManager.containsModelURIs()) {
+//			SBOLFileManager fileManager = new SBOLFileManager(
+//					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
+//			if (fileManager.sbolFilesAreLoaded() && identityManager.loadModelComponents(fileManager)) {
+//				File lastFilePath;
+//				Preferences biosimrc = Preferences.userRoot();
+//				if (biosimrc.get("biosim.general.export_dir", "").equals(""))
+//					lastFilePath = null;
+//				else 
+//					lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+//				String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
+//				if (!exportFilePath.equals("")) {
+//					biosimrc.put("biosim.general.export_dir", exportFilePath);
+//					SBOLFileManager.exportDNAComponents(identityManager.getModelComponents(), exportFilePath);
+//				}
+//			}
+//		}
+//	}
 	
 	public void saveAsSBOL2() 
 	{
 		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(biosim,path,biomodel);
-		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
 		Preferences biosimrc = Preferences.userRoot();
 		JFileChooser chooser = new JFileChooser(biosimrc.get("biosim.general.project_dir", ""));
 		chooser.setDialogTitle("Save as SBOL2");
@@ -621,7 +629,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	public void exportSBOL2() {
 		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(biosim,path,biomodel);
-		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
 		File lastFilePath;
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.export_dir", "").equals(""))

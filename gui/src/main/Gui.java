@@ -109,14 +109,19 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Curve;
+import org.jlibsedml.DataGenerator;
 import org.jlibsedml.DataSet;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
+import org.jlibsedml.Range;
+import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.Report;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.SedMLError;
+import org.jlibsedml.UniformRange;
+import org.jlibsedml.Variable;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
@@ -131,14 +136,15 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
-import org.sbolstandard.core.SBOLDocument;
 import org.sbolstandard.core2.ModuleDefinition;
+import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
+import org.sbolstandard.core2.SBOLValidationException;
 
 import sbol.assembly.ModelGenerator;
-import sbol.browser.SBOLBrowser;
 import sbol.browser.SBOLBrowser2;
-import sbol.util.SBOLUtility;
+import sbol.util.SBOLUtility2;
 import synthesis.async.Synthesis;
 import synthesis.genetic.SynthesisView;
 import uk.ac.ebi.biomodels.BioModelsWSClient;
@@ -200,7 +206,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem				pref;
 	private JMenuItem				graph;
 	private JMenuItem				probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, exportSBML,
-			exportFlatSBML, exportSBOL, exportSBOL2, exportAvi, exportMp4;
+			exportFlatSBML, exportSBOL2, exportAvi, exportMp4;
 	private JMenu					exportDataMenu, exportMovieMenu, exportImageMenu;
 	private String					root;
 	private FileTree				tree;
@@ -591,8 +597,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importRsg = new JMenuItem("Reduced State Graph");
 		exportSBML = new JMenuItem("SBML");
 		exportFlatSBML = new JMenuItem("Flat SBML");
-		exportSBOL = new JMenuItem("SBOL");
-		exportSBOL2 = new JMenuItem("SBOL2");
+		exportSBOL2 = new JMenuItem("SBOL");
 		exportCsv = new JMenuItem("CSV");
 		exportDat = new JMenuItem("DAT");
 		exportEps = new JMenuItem("EPS");
@@ -706,7 +711,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importSpice.addActionListener(this);
 		exportSBML.addActionListener(this);
 		exportFlatSBML.addActionListener(this);
-		exportSBOL.addActionListener(this);
 		exportSBOL2.addActionListener(this);
 		exportCsv.addActionListener(this);
 		exportDat.addActionListener(this);
@@ -841,7 +845,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.setEnabled(false);
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
-		exportSBOL.setEnabled(false);
 		exportSBOL2.setEnabled(false);
 		exportCsv.setEnabled(false);
 		exportDat.setEnabled(false);
@@ -1055,7 +1058,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportMovieMenu);
 		exportMenu.add(exportFlatSBML);
 		exportMenu.add(exportSBML);
-		exportMenu.add(exportSBOL);
 		exportMenu.add(exportSBOL2);
 
 		exportDataMenu.add(exportTsd);
@@ -1679,14 +1681,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (comp instanceof ModelEditor)
 			{
 				((ModelEditor) comp).exportSBML();
-			}
-		}
-		else if (e.getSource() == exportSBOL)
-		{
-			Component comp = tab.getSelectedComponent();
-			if (comp instanceof ModelEditor)
-			{
-				((ModelEditor) comp).exportSBOL();
 			}
 		}
 		else if (e.getSource() == exportSBOL2)
@@ -3911,9 +3905,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								sbolIterator = null;
 								for (String filePath : getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION))
 								{
-									SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
-									SBOLUtility.deleteDNAComponent(sbolURI, sbolDoc);
-									SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
+									SBOLDocument sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+									try {
+										SBOLUtility2.deleteDNAComponent(sbolURI, sbolDoc);
+									}
+									catch (SBOLValidationException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									SBOLUtility2.writeSBOLDocument(filePath, sbolDoc);
 								}
 							}
 						}
@@ -5132,11 +5132,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				File sedmlFile = new File(filename.trim());
 				SEDMLDocument sedmlDoc = Libsedml.readDocument(sedmlFile);
 				sedmlDoc.validate();
-				// TODO: removed validation for now
 				if (sedmlDoc.hasErrors())
 				{
 					List<SedMLError> errors = sedmlDoc.getErrors();
-					final JFrame f = new JFrame("SED-ML Errors and Warnings");
+					//final JFrame f = new JFrame("SED-ML Errors and Warnings");
 					JTextArea messageArea = new JTextArea();
 					messageArea.append("Imported SED-ML file contains the errors listed below. ");
 					messageArea.append("It is recommended that you fix them before performing this analysis or you may get unexpected results.\n\n");
@@ -5153,43 +5152,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scroll.setMinimumSize(new Dimension(600, 600));
 					scroll.setPreferredSize(new Dimension(600, 600));
 					scroll.setViewportView(messageArea);
-					JButton close = new JButton("Dismiss");
-					close.addActionListener(new ActionListener()
-					{
-						@Override
-						public void actionPerformed(ActionEvent e)
-						{
-							f.dispose();
-						}
-					});
-					JPanel consistencyPanel = new JPanel(new BorderLayout());
-					consistencyPanel.add(scroll, "Center");
-					consistencyPanel.add(close, "South");
-					f.setContentPane(consistencyPanel);
-					f.pack();
-					Dimension screenSize;
-					try
-					{
-						Toolkit tk = Toolkit.getDefaultToolkit();
-						screenSize = tk.getScreenSize();
-					}
-					catch (AWTError awe)
-					{
-						screenSize = new Dimension(640, 480);
-					}
-					Dimension frameSize = f.getSize();
-					if (frameSize.height > screenSize.height)
-					{
-						frameSize.height = screenSize.height;
-					}
-					if (frameSize.width > screenSize.width)
-					{
-						frameSize.width = screenSize.width;
-					}
-					int x = screenSize.width / 2 - frameSize.width / 2;
-					int y = screenSize.height / 2 - frameSize.height / 2;
-					f.setLocation(x, y);
-					f.setVisible(true);
 					JOptionPane.showMessageDialog(Gui.frame, scroll, "SED-ML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
 				}
 				SedML sedml = sedmlDoc.getSedMLModel();
@@ -5216,133 +5178,154 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				for (int i = 0; i < tasks.size(); i++)
 				{
 					AbstractTask task = tasks.get(i);
+					// TODO: should handle this properly.
+					if (task instanceof RepeatedTask) continue;
 					if (modelMap.containsKey(task.getModelReference()))
 					{
 						String modelId = modelMap.get(task.getModelReference()).replace(".xml", "");
-						String analysisId = modelId;
-						if (tasks.size() > 1)
-						{
-							analysisId += "_" + task.getId();
-						}
+						String analysisId = task.getId();
 						if (overwrite(root + separator + analysisId, analysisId))
 						{
 							new File(root + separator + analysisId).mkdir();
 							String newFile = file[file.length - 1];
 							newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
-							List<Output> outputs = sedml.getOutputs();
-							if (outputs.size() > 0 && outputs.get(0).isPlot2d())
-							{
-								Plot2D plot = (Plot2D) outputs.get(0);
-								Properties graph = new Properties();
-								if (plot.getName() != null)
+							for (Output output : sedml.getOutputs()) {
+								// TODO: what if multiple plots, need to use top-level graphs
+								if (output.isPlot2d())
 								{
-									graph.setProperty("title", plot.getName());
-								}
-								else
-								{
-									graph.setProperty("title", plot.getId());
-								}
-								graph.setProperty("chart.background.paint", "" + new java.awt.Color(238, 238, 238).getRGB());
-								graph.setProperty("plot.background.paint", "" + java.awt.Color.WHITE.getRGB());
-								graph.setProperty("plot.domain.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
-								graph.setProperty("plot.range.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
-								graph.setProperty("x.axis", "");
-								graph.setProperty("y.axis", "");
-								graph.setProperty("x.min", "0.0");
-								graph.setProperty("x.max", "1.0");
-								graph.setProperty("x.scale", "0.1");
-								graph.setProperty("y.min", "0.0");
-								graph.setProperty("y.max", "1.0");
-								graph.setProperty("y.scale", "0.1");
-								graph.setProperty("auto.resize", "true");
-								graph.setProperty("LogX", "false");
-								graph.setProperty("LogY", "false");
-								graph.setProperty("visibleLegend", "true");
-								List<Curve> curves = plot.getListOfCurves();
-								for (int j = 0; j < curves.size(); j++)
-								{
-									Curve curve = curves.get(j);
-									String name;
-									if (curve.getName() != null)
+									Plot2D plot = (Plot2D) output;
+									Properties graph = new Properties();
+									if (plot.getName() != null)
 									{
-										name = curve.getName();
+										graph.setProperty("title", plot.getName());
 									}
 									else
 									{
-										name = curve.getId();
+										graph.setProperty("title", plot.getId());
 									}
-									graph.setProperty("species.connected." + j, "true");
-									graph.setProperty("species.filled." + j, "true");
-									graph.setProperty("species.xnumber." + j, "0");
-									graph.setProperty("species.number." + j, "" + j);
-									graph.setProperty("species.run.number." + j, "run-" + 1);
-									graph.setProperty("species.name." + j, name + " (1)");
-									graph.setProperty("species.id." + j, name + " (1)");
-									graph.setProperty("species.visible." + j, "true");
-									graph.setProperty("species.paint." + j, colors[j % numColors]);
-									graph.setProperty("species.shape." + j, "Circle");
-									graph.setProperty("species.directory." + j, "");
+									graph.setProperty("chart.background.paint", "" + new java.awt.Color(238, 238, 238).getRGB());
+									graph.setProperty("plot.background.paint", "" + java.awt.Color.WHITE.getRGB());
+									graph.setProperty("plot.domain.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
+									graph.setProperty("plot.range.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
+									graph.setProperty("x.axis", "");
+									graph.setProperty("y.axis", "");
+									graph.setProperty("x.min", "0.0");
+									graph.setProperty("x.max", "1.0");
+									graph.setProperty("x.scale", "0.1");
+									graph.setProperty("y.min", "0.0");
+									graph.setProperty("y.max", "1.0");
+									graph.setProperty("y.scale", "0.1");
+									graph.setProperty("auto.resize", "true");
+									graph.setProperty("LogX", "false");
+									graph.setProperty("LogY", "false");
+									graph.setProperty("visibleLegend", "true");
+									List<Curve> curves = plot.getListOfCurves();
+									for (int j = 0; j < curves.size(); j++)
+									{
+										Curve curve = curves.get(j);
+										String name = null;
+										DataGenerator dg = sedml.getDataGeneratorWithId(curve.getYDataReference());
+										if (dg != null)
+										{
+											for (Variable var : dg.getListOfVariables()) {
+												name = var.getId();
+											}
+											if (name==null) continue;
+										}
+										else
+										{
+											continue;
+										}
+										// TODO: need to handle yDataReference too
+										graph.setProperty("species.connected." + j, "true");
+										graph.setProperty("species.filled." + j, "true");
+										graph.setProperty("species.xnumber." + j, "0");
+										graph.setProperty("species.number." + j, "" + j);
+										graph.setProperty("species.run.number." + j, "run-" + 1);
+										graph.setProperty("species.name." + j, name + " (1)");
+										graph.setProperty("species.id." + j, name + " (1)");
+										graph.setProperty("species.visible." + j, "true");
+										graph.setProperty("species.paint." + j, colors[j % numColors]);
+										graph.setProperty("species.shape." + j, "Circle");
+										graph.setProperty("species.directory." + j, "");
+										graph.setProperty("LogX", Boolean.toString(curve.getLogX()));
+										graph.setProperty("LogY", Boolean.toString(curve.getLogY()));
+									}
+									try
+									{
+										FileOutputStream store = new FileOutputStream(new File(root + separator + analysisId + separator + analysisId
+												+ ".grf"));
+										graph.store(store, "Graph Data");
+										store.close();
+										log.addText("Creating graph file:\n" + root + separator + analysisId + separator + analysisId + ".grf" + "\n");
+									}
+									catch (Exception except)
+									{
+										JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
+									}
 								}
-								try
+								else if (output.isReport())
 								{
-									FileOutputStream store = new FileOutputStream(new File(root + separator + analysisId + separator + analysisId
-											+ ".grf"));
-									graph.store(store, "Graph Data");
-									store.close();
-									log.addText("Creating graph file:\n" + root + separator + analysisId + separator + analysisId + ".grf" + "\n");
-								}
-								catch (Exception except)
-								{
-									JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
-								}
-							}
-							else if (outputs.size() > 0 && outputs.get(0).isReport())
-							{
-								Report report = (Report) outputs.get(0);
-								Properties graph = new Properties();
-								String name;
-								if (report.getName() != null)
-								{
-									name = report.getName();
-								}
-								else
-								{
-									name = report.getId();
-								}
-								graph.setProperty("title", name);
-								graph.setProperty("chart.background.paint", "" + new java.awt.Color(238, 238, 238).getRGB());
-								graph.setProperty("plot.background.paint", "" + java.awt.Color.WHITE.getRGB());
-								// graph.setProperty("plot.domain.grid.line.paint",
-								// "" + java.awt.Color.LIGHT_GRAY.getRGB());
-								graph.setProperty("plot.range.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
-								graph.setProperty("x.axis", "");
-								graph.setProperty("y.axis", "Percent");
-								// graph.setProperty("auto.resize", "true");
-								graph.setProperty("visibleLegend", "true");
-								graph.setProperty("gradient", "false");
-								graph.setProperty("shadow", "false");
-								List<DataSet> dataSets = report.getListOfDataSets();
-								for (int j = 0; j < dataSets.size(); j++)
-								{
-									DataSet dataSet = dataSets.get(j);
-									graph.setProperty("species.number." + j, "" + j);
-									graph.setProperty("species.id." + j, dataSet.getLabel());
-									graph.setProperty("species.name." + j, dataSet.getLabel());
-									graph.setProperty("species.paint." + j, colors[j % numColors]);
-									graph.setProperty("species.directory." + j, "");
-								}
-								try
-								{
-									FileOutputStream store = new FileOutputStream(new File(root + separator + analysisId + separator + analysisId
-											+ ".prb"));
-									graph.store(store, "Probability Data");
-									store.close();
-									log.addText("Creating probability file:\n" + root + separator + analysisId + separator + analysisId + ".prb"
-											+ "\n");
-								}
-								catch (Exception except)
-								{
-									JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Histogram!", "Error", JOptionPane.ERROR_MESSAGE);
+									Report report = (Report) output;
+									Properties graph = new Properties();
+									String name;
+									if (report.getName() != null)
+									{
+										name = report.getName();
+									}
+									else
+									{
+										name = report.getId();
+									}
+									graph.setProperty("title", name);
+									graph.setProperty("chart.background.paint", "" + new java.awt.Color(238, 238, 238).getRGB());
+									graph.setProperty("plot.background.paint", "" + java.awt.Color.WHITE.getRGB());
+									// graph.setProperty("plot.domain.grid.line.paint",
+									// "" + java.awt.Color.LIGHT_GRAY.getRGB());
+									graph.setProperty("plot.range.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
+									graph.setProperty("x.axis", "");
+									graph.setProperty("y.axis", "Percent");
+									// graph.setProperty("auto.resize", "true");
+									graph.setProperty("visibleLegend", "true");
+									graph.setProperty("gradient", "false");
+									graph.setProperty("shadow", "false");
+									List<DataSet> dataSets = report.getListOfDataSets();
+									for (int j = 0; j < dataSets.size(); j++)
+									{
+										DataSet dataSet = dataSets.get(j);
+										DataGenerator dg = sedml.getDataGeneratorWithId(dataSet.getDataReference());
+										String id = "";
+										if (dg != null)
+										{
+											for (Variable var : dg.getListOfVariables()) {
+												id = var.getId();
+												name = var.getName();
+											}
+											if (id==null) continue;
+										}
+										else
+										{
+											continue;
+										}
+										graph.setProperty("species.number." + j, "" + j);
+										graph.setProperty("species.id." + j, id);
+										graph.setProperty("species.name." + j, name);
+										graph.setProperty("species.paint." + j, colors[j % numColors]);
+										graph.setProperty("species.directory." + j, "");
+									}
+									try
+									{
+										FileOutputStream store = new FileOutputStream(new File(root + separator + analysisId + separator + analysisId
+												+ ".prb"));
+										graph.store(store, "Probability Data");
+										store.close();
+										log.addText("Creating probability file:\n" + root + separator + analysisId + separator + analysisId + ".prb"
+												+ "\n");
+									}
+									catch (Exception except)
+									{
+										JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Histogram!", "Error", JOptionPane.ERROR_MESSAGE);
+									}
 								}
 							}
 							performAnalysis(modelId, analysisId, sedmlDoc);
@@ -6689,23 +6672,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				//}
 			}
 		}
-		catch (FileNotFoundException e)
+		catch (IOException e)
 		{
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file not found at " + filePath + ".", 
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 		}
-		catch (CoreIoException e) {
+		catch (SBOLValidationException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
 					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
 		}
-		catch (XMLStreamException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
-					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
-		}
-		catch (FactoryConfigurationError e) {
+		catch (SBOLConversionException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
 					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
@@ -8843,7 +8821,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private void openSBOLSynthesisView()
 	{
-		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), separator, frame);
+		Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(tree.getFile(), separator, frame);
 		if (synthProps != null)
 		{
 			String synthID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
@@ -10067,7 +10045,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 			if (this.tab.getComponentAt(i).getName().equals("SBOL Browser"))
 			{
-				((SBOLBrowser) this.tab.getComponentAt(i)).reload(this, tab);
+				((SBOLBrowser2) this.tab.getComponentAt(i)).reload(this, tab);
 			}
 
 			String properties = root + separator + tab + separator + tab + ".sim";
@@ -10321,7 +10299,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.setEnabled(false);
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
-		exportSBOL.setEnabled(false);
 		exportSBOL2.setEnabled(false);
 		exportDataMenu.setEnabled(false);
 		exportImageMenu.setEnabled(false);
@@ -10409,12 +10386,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportMenu.setEnabled(true);
 			exportSBML.setEnabled(true);
 			exportFlatSBML.setEnabled(true);
-			exportSBOL.setEnabled(true);
 			exportSBOL2.setEnabled(true);
 			exportImageMenu.setEnabled(true);
 			exportJpg.setEnabled(true);
 		}
-		else if (comp instanceof SBOLBrowser)
+		else if (comp instanceof SBOLBrowser2)
 		{
 			// save.setEnabled(true);
 		}
@@ -11141,7 +11117,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else if (new File(root + separator + s + separator + s + ".sbolsynth.properties").exists())
 				{
-					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(root + separator + s, separator, Gui.frame);
+					Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(root + separator + s, separator, Gui.frame);
 					if (synthProps != null)
 					{
 						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY))

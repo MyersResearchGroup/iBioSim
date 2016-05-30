@@ -747,7 +747,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				Reaction reac = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
 				sbolStrand = AnnotationUtility.parseSBOLAnnotation(reac, sbolURIs);
 			}
-			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
+			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 2, false);
 			reactionPanelNorth4.add(sbolField);
 		}
 		reactionPanelNorth.add(reactionPanelNorth1);

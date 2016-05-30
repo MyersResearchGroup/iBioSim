@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
+
+
+
+import javax.swing.JOptionPane;
 //import javax.swing.JOptionPane;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -33,18 +37,24 @@ import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.Collection;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
+import org.sbolstandard.core2.EDAMOntology;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.RefinementType;
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
+import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+
+
+
 
 //import sbol.util.SBOLUtility;
 import sbol.util.SBOLUtility2;
@@ -62,7 +72,7 @@ public class SBMLtoSBOL {
 	String VERSION = "";
 	
 	URI COLLECTION_ID ;
-	URI LANGUAGE  = org.sbolstandard.core2.Model.SBML;
+	URI LANGUAGE  = EDAMOntology.SBML;
 	URI FRAMEWORK = SystemsBiologyOntology.DISCRETE_FRAMEWORK;
 	
 	public SBMLtoSBOL(Gui gui,String path,BioModel bioModel) 
@@ -85,7 +95,13 @@ public class SBMLtoSBOL {
 				{
 					if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
 					{
-						SBOLDOC.createCopy(c);
+						try {
+							SBOLDOC.createCopy(c);
+						}
+						catch (SBOLValidationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 
 				}
@@ -93,7 +109,13 @@ public class SBMLtoSBOL {
 				{
 					if(SBOLDOC.getSequence(c.getIdentity()) == null) 
 					{
-						SBOLDOC.createCopy(c);
+						try {
+							SBOLDOC.createCopy(c);
+						}
+						catch (SBOLValidationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 				
@@ -131,37 +153,33 @@ public class SBMLtoSBOL {
 		sbolDoc.setTypesInURIs(true);
 		
 		String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
-		Collection collection = sbolDoc.createCollection(collection_id, VERSION);
-		export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
+		Collection collection;
+		try {
+			collection = sbolDoc.createCollection(collection_id, VERSION);
+			export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
+		}
+		catch (SBOLValidationException e1) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(Gui.frame, "Error export SBOL file.", 
+					"SBOL Export Error", JOptionPane.ERROR_MESSAGE);
+		}
 	    
 		try 
-	    {
-			try 
-			{
-				SBOLWriter.write(sbolDoc, exportFilePath);
-			} 
-			catch (FileNotFoundException e) 
-			{
-				// TODO: display message
-				e.printStackTrace();
-			}
-			catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (CoreIoException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    }
-		catch (FactoryConfigurationError e) { e.printStackTrace(); } 
+		{
+			sbolDoc.write(exportFilePath);
+		} 
+		catch (SBOLConversionException e)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + exportFilePath + ".", 
+					"SBOL Conversion Error", JOptionPane.ERROR_MESSAGE);
+		}
+		catch (IOException e) {
+			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + exportFilePath + ".", 
+					"SBOL Write Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
-	public void export_recurse(String source,SBMLDocument sbmlDoc,SBOLDocument sbolDoc,Collection collection) 
+	public void export_recurse(String source,SBMLDocument sbmlDoc,SBOLDocument sbolDoc,Collection collection) throws SBOLValidationException 
 	{
 		Model model    = sbmlDoc.getModel();
 		//String modelId = model.getId();
@@ -215,30 +233,27 @@ public class SBMLtoSBOL {
 				{
 					Set<URI> roles_r = new HashSet<URI>();
 					roles_r.add(SystemsBiologyOntology.REACTANT);
-					Participation p = inter.createParticipation(reactant.getSpecies(), reactant.getSpecies());
-					p.setRoles(roles_r);
+					Participation p = inter.createParticipation(reactant.getSpecies(), reactant.getSpecies(),roles_r);
 				}
 				for(ModifierSpeciesReference modifier : reaction.getListOfModifiers())
 				{
 					Set<URI> roles_r = new HashSet<URI>();
 					roles_r.add(SystemsBiologyOntology.MODIFIER);
-					Participation p = inter.createParticipation(modifier.getSpecies(), modifier.getSpecies());
-					p.setRoles(roles_r);
+					Participation p = inter.createParticipation(modifier.getSpecies(), modifier.getSpecies(),roles_r);
 				}
 				for(SpeciesReference product : reaction.getListOfProducts())
 				{
 					// create participation from product.getSpecies() as type product
 					Set<URI> roles_p = new HashSet<URI>();
 					roles_p.add(SystemsBiologyOntology.PRODUCT);
-					Participation p = inter.createParticipation(product.getSpecies(), product.getSpecies());
-					p.setRoles(roles_p);
+					Participation p = inter.createParticipation(product.getSpecies(), product.getSpecies(),roles_p);
 				}
 			}
 		}
 		extractSubModels(sbmlDoc, sbolDoc, collection, moduleDef, model);
 	}
 	
-	public void recurseComponentDefinition(SBOLDocument sbolDoc,ComponentDefinition cd,Collection collection) {
+	public void recurseComponentDefinition(SBOLDocument sbolDoc,ComponentDefinition cd,Collection collection) throws SBOLValidationException {
 		for (org.sbolstandard.core2.Component comp : cd.getComponents()) {
 			if (sbolDoc.getComponentDefinition(comp.getDefinitionURI())==null) {
 				ComponentDefinition compDef = comp.getDefinition();
@@ -256,7 +271,7 @@ public class SBMLtoSBOL {
 	}
 	
 	public ComponentDefinition setComponentDefinition(SBOLDocument sbolDoc, Model model, Species species, 
-			Collection collection)
+			Collection collection) throws SBOLValidationException
 	{
 		String compDef_identity =  model.getId() + "__" + species.getId();
 		
@@ -340,7 +355,7 @@ public class SBMLtoSBOL {
 		return compDef; 
 	}
 	
-	public FunctionalComponent setFunctionalComponent(SBMLDocument sbmlDoc, ModuleDefinition moduleDef, ComponentDefinition compDef, Species species)
+	public FunctionalComponent setFunctionalComponent(SBMLDocument sbmlDoc, ModuleDefinition moduleDef, ComponentDefinition compDef, Species species) throws SBOLValidationException
 	{
 		AccessType access; 
 		DirectionType direction;
@@ -366,7 +381,7 @@ public class SBMLtoSBOL {
 		return moduleDef.createFunctionalComponent(funcComp_identity, access, compDef.getIdentity(), direction);
 	}
 	
-	public void extractProductionReaction(ModuleDefinition moduleDef, Reaction reaction)
+	public void extractProductionReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
 	{
 		List<ModifierSpeciesReference> repressors = new ArrayList<ModifierSpeciesReference>();
 		List<ModifierSpeciesReference> activators = new ArrayList<ModifierSpeciesReference>(); 
@@ -402,17 +417,8 @@ public class SBMLtoSBOL {
 			
 			Interaction interaction = moduleDef.createInteraction(inter_id, types);
 			
-			Participation p1 = interaction.createParticipation(promoterId, promoterId);
-			Participation p2 = interaction.createParticipation(r.getSpecies(), r.getSpecies());
-			
-			Set<URI> roles1 = new HashSet<URI>();
-			roles1.add(SystemsBiologyOntology.PROMOTER);
-			
-			Set<URI> roles2 = new HashSet<URI>();
-			roles2.add(SystemsBiologyOntology.INHIBITOR);
-			
-			p1.setRoles(roles1);
-			p2.setRoles(roles2);
+			Participation p1 = interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
+			Participation p2 = interaction.createParticipation(r.getSpecies(), r.getSpecies(),SystemsBiologyOntology.INHIBITOR);
 		}
 		
 		// Repeat same steps for the list of activators
@@ -425,17 +431,8 @@ public class SBMLtoSBOL {
 			
 			Interaction interaction = moduleDef.createInteraction(inter_id, types);
 			
-			Participation p1 = interaction.createParticipation(promoterId, promoterId);
-			Participation p2 = interaction.createParticipation(a.getSpecies(), a.getSpecies());
-			
-			Set<URI> roles1 = new HashSet<URI>();
-			roles1.add(SystemsBiologyOntology.PROMOTER);
-			
-			Set<URI> roles2 = new HashSet<URI>();
-			roles2.add(SystemsBiologyOntology.STIMULATOR);
-			
-			p1.setRoles(roles1);
-			p2.setRoles(roles2);
+			Participation p1 = interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
+			Participation p2 = interaction.createParticipation(a.getSpecies(), a.getSpecies(),SystemsBiologyOntology.STIMULATOR);
 		}
 		
 		for(SpeciesReference product : reaction.getListOfProducts())
@@ -446,21 +443,12 @@ public class SBMLtoSBOL {
 			type.add(SystemsBiologyOntology.GENETIC_PRODUCTION);
 			
 			Interaction interaction = moduleDef.createInteraction(i_id, type);
-			Participation p1 = interaction.createParticipation(promoterId, promoterId);
-			Participation p2 = interaction.createParticipation(product.getSpecies(), product.getSpecies());
-			
-			Set<URI> roles1 = new HashSet<URI>();
-			roles1.add(SystemsBiologyOntology.PROMOTER);
-			
-			Set<URI> roles2 = new HashSet<URI>();
-			roles2.add(SystemsBiologyOntology.PRODUCT);
-			
-			p1.setRoles(roles1);
-			p2.setRoles(roles2);
+			Participation p1 = interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
+			Participation p2 = interaction.createParticipation(product.getSpecies(), product.getSpecies(),SystemsBiologyOntology.PRODUCT);
 		}
 	}
 	
-	public void extractComplexReaction(ModuleDefinition moduleDef, Reaction reaction)
+	public void extractComplexReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
 	{
 		Set<URI> type = new HashSet<URI>();
 		type.add(SystemsBiologyOntology.NON_COVALENT_BINDING);
@@ -469,25 +457,15 @@ public class SBMLtoSBOL {
 		
 		for(SpeciesReference reactant : reaction.getListOfReactants())
 		{
-			Participation p = inter.createParticipation(reactant.getSpecies(), reactant.getSpecies());
-			
-			Set<URI> roles_reac = new HashSet<URI>();
-			roles_reac.add(SystemsBiologyOntology.REACTANT);
-			
-			p.setRoles(roles_reac);
+			Participation p = inter.createParticipation(reactant.getSpecies(), reactant.getSpecies(),SystemsBiologyOntology.REACTANT);
 		}
 		for(SpeciesReference product : reaction.getListOfProducts())
 		{
-			Participation p = inter.createParticipation(product.getSpecies(), product.getSpecies());
-			
-			Set<URI> roles_prod = new HashSet<URI>();
-			roles_prod.add(SystemsBiologyOntology.PRODUCT);
-			
-			p.setRoles(roles_prod); 
+			Participation p = inter.createParticipation(product.getSpecies(), product.getSpecies(),SystemsBiologyOntology.PRODUCT);
 		}
 	}
 	
-	public void extractDegradationReaction(ModuleDefinition moduleDef, Reaction reaction)
+	public void extractDegradationReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
 	{
 		Set<URI> types = new HashSet<URI>();
 		types.add(SystemsBiologyOntology.DEGRADATION);
@@ -496,15 +474,12 @@ public class SBMLtoSBOL {
 		
 		for(SpeciesReference sp : reaction.getListOfReactants())
 		{
-			Set<URI> roles_sp = new HashSet<URI>();
-			roles_sp.add(SystemsBiologyOntology.REACTANT);
 			String p_id = sp.getSpecies();
-			Participation p = inter.createParticipation(p_id, sp.getSpecies());
-			p.setRoles(roles_sp);
+			Participation p = inter.createParticipation(p_id, sp.getSpecies(),SystemsBiologyOntology.REACTANT);
 		}
 	}
 	
-	public void extractSubModels(SBMLDocument sbmlDoc, SBOLDocument sbolDoc, Collection collection, ModuleDefinition moduleDef, Model model)
+	public void extractSubModels(SBMLDocument sbmlDoc, SBOLDocument sbolDoc, Collection collection, ModuleDefinition moduleDef, Model model) throws SBOLValidationException
 	{
 		ArrayList<String> comps = new ArrayList<String>();
 		CompSBMLDocumentPlugin sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);

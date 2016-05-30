@@ -140,7 +140,7 @@ public class GlobalConstants {
 	public static final String SO_CDS = "SO_0000316";
 	public static final String SO_AUTHORITY = "purl.obolibrary.org";
 	public static final String SO_AUTHORITY2 = "identifiers.org";
-	public static final String SBOL_DNA_COMPONENT = "sbolDnaComponent";
+	public static final String SBOL_COMPONENTDEFINITION = "sbolDnaComponent";
 	public static final String GENETIC_CONSTRUCT_REGEX_DEFAULT = 
 			SO_PROMOTER + "(" + SO_RBS + "," + SO_CDS + ")+" + SO_TERMINATOR + "+";
 	public static final String GENETIC_CONSTRUCT_REGEX_PREFERENCE = "biosim.assembly.regex";
@@ -236,6 +236,11 @@ public class GlobalConstants {
 	public static final String KISAO_EULER = "KISAO:0000030";
 	public static final String KISAO_RUNGE_KUTTA_FEHLBERG = "KISAO:0000086";
 	public static final String KISAO_RUNGE_KUTTA_PRINCE_DORMAND = "KISAO:0000087";
+	public static final String KISAO_FBA = "KISAO:0000437";
+	public static final String KISAO_MINIMUM_STEP_SIZE = "KISAO:0000485";
+	public static final String KISAO_MAXIMUM_STEP_SIZE = "KISAO:0000467";
+	public static final String KISAO_ABSOLUTE_TOLERANCE = "KISAO:0000211";
+	public static final String KISAO_SEED = "KISAO:0000488";
 	
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";

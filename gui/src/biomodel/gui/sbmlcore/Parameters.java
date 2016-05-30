@@ -464,7 +464,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					//Parse out SBOL annotations and add to SBOL field
 					String sbolStrand = AnnotationUtility.parseSBOLAnnotation(paramet, sbolURIs);
 					// Field for annotating rules with SBOL DNA components
-					sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+					sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
 							1, false);
 				}
 				if (paramsOnly) {
@@ -530,7 +530,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		} else {
 			List<URI> sbolURIs = new LinkedList<URI>();
 			sbolField = new SBOLField2(sbolURIs, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
-					GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 1, false);
+					GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 1, false);
 		}
 		parametersPanel.add(idLabel);
 		parametersPanel.add(paramID);
@@ -599,7 +599,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			parametersPanel.add(paramConst);
 		}
 		if (!paramsOnly && !isPlace && !isBoolean) {
-			parametersPanel.add(new JLabel("SBOL DNA Component:  "));
+			parametersPanel.add(new JLabel("SBOL ComponentDefinition:  "));
 			parametersPanel.add(sbolField);
 		}
 		Object[] options = { option, "Cancel" };

@@ -30,12 +30,15 @@ import main.Gui;
 
 
 
+
 //import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core2.ComponentDefinition;
 
 
 
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
+
 
 
 
@@ -87,11 +90,11 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 		descriptionText.setEnabled(false);
 	}
 	
-//	public void openViewer() {
-//		JOptionPane.showOptionDialog(Gui.frame, this,
-//				"SBOL Descriptors", JOptionPane.YES_NO_CANCEL_OPTION,
-//				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-//	}
+	public void openViewer() {
+		JOptionPane.showOptionDialog(Gui.frame, this,
+				"SBOL Descriptors", JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+	}
 	
 	public void constructPanel(Set<String> sbolFilePaths) {
 		
@@ -107,18 +110,18 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 			saveFileIDBox.addItem(splitPath[splitPath.length - 1]);
 		}
 		
-		add(new JLabel("Save SBOL DNA Component to File:"));
+		add(new JLabel("Save SBOL ComponentDefinition to File:"));
 		add(saveFileIDBox);
 		
 //		JPanel saveFileButton = new JPanel(new GridLayout(2, 1));
 //		saveFileButton.add(saveFileIDBox);
 //		add(saveFileButton);
 		
-		add(new JLabel("SBOL DNA Component ID:"));
+		add(new JLabel("SBOL ComponentDefinition ID:"));
 		add(idText);
-		add(new JLabel("SBOL DNA Component Name:"));
+		add(new JLabel("SBOL ComponentDefinition Name:"));
 		add(nameText);
-		add(new JLabel("SBOL DNA Component Description:"));
+		add(new JLabel("SBOL ComponentDefinition Description:"));
 		add(descriptionText);
 	}
 	
@@ -183,25 +186,14 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 				{
 					newSBOLDoc.write(filePath);
 				}
-				catch (XMLStreamException e)
+				catch (SBOLConversionException e)
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + filePath + ".", 
+							"SBOL Conversion Error", JOptionPane.ERROR_MESSAGE);
 				}
-				catch (FactoryConfigurationError e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (CoreIoException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				catch (IOException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + filePath + ".", 
+							"SBOL Write Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			//else if?

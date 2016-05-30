@@ -369,7 +369,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			} else {
 				sbolStrand = AnnotationUtility.parseSBOLAnnotation(promoter, sbolURIs);
 			}
-			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
 					3, false);
 			add(sbolField);
 		}

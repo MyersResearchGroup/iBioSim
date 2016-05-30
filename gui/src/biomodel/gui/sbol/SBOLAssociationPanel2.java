@@ -8,43 +8,21 @@ import javax.swing.*;
 
 import main.Gui;
 
-
-
-
-
-
-
-
-//import org.sbolstandard.core.*;
 import org.sbolstandard.core2.*;
-import org.sbolstandard.core.impl.AggregatingResolver;
-import org.sbolstandard.core.impl.SBOLDocumentImpl;
-import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.util.GlobalConstants;
-import sbol.browser.SBOLBrowser;
 import sbol.browser.SBOLBrowser2;
-import sbol.util.SBOLFileManager;
 import sbol.util.SBOLFileManager2;
-import sbol.util.SBOLIdentityManager;
 import sbol.util.SBOLIdentityManager2;
-import sbol.util.SBOLUtility;
 import sbol.util.SBOLUtility2;
-import uk.ac.ncl.intbio.core.io.CoreIoException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
 
 import javax.swing.JCheckBox;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 public class SBOLAssociationPanel2 extends JPanel implements ActionListener 
 {
@@ -55,7 +33,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 	private List<URI> compURIs;
 	private List<URI> defaultCompURIs;
 	private boolean defaultMinusBoxState;
-	private Set<String> soTypes;
+	private Set<URI> soTypes;
 	private ModelEditor modelEditor; 
 //	private UseFirstFound<DnaComponent, URI> aggregateCompResolver; 
 	private JList compList 	   = new JList();
@@ -69,7 +47,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 	private JButton addMove 		= new JButton("Add/Move Composite");
 	
 	public SBOLAssociationPanel2(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, 
-			String defaultCompStrand, Set<String> soTypes, ModelEditor modelEditor) 
+			String defaultCompStrand, Set<URI> soTypes, ModelEditor modelEditor) 
 	{
 		super(new BorderLayout());
 		SBOLDOC = new SBOLDocument(); 
@@ -94,7 +72,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 	}
 	
 	public SBOLAssociationPanel2(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, 
-			String defaultCompStrand, Set<String> soTypes) 
+			String defaultCompStrand, Set<URI> soTypes) 
 	{
 		super(new BorderLayout());
 		SBOLDOC = new SBOLDocument(); 
@@ -173,7 +151,13 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 				{
 					if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
 					{
-						SBOLDOC.createCopy(c);
+						try {
+							SBOLDOC.createCopy(c);
+						}
+						catch (SBOLValidationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 				
@@ -213,14 +197,13 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 			{
 //				DnaComponent resolvedComp = null;
 				ComponentDefinition resolvedComp = null; 
-				try 
-				{
-//					resolvedComp = aggregateCompResolver.resolve(uri);
-					resolvedComp = SBOLDOC.getComponentDefinition(uri);
-				} 
-				catch (SBOLValidationException e) 
-				{
-					e.printStackTrace();
+				resolvedComp = SBOLDOC.getComponentDefinition(uri);
+				if (resolvedComp == null) {
+					Set<TopLevel> wasDerivedFrom = SBOLDOC.getByWasDerivedFrom(uri);
+					if (wasDerivedFrom.size() > 0) {
+						resolvedComp = (ComponentDefinition)wasDerivedFrom.iterator().next();
+						compURIs.set(i, resolvedComp.getIdentity());
+					}
 				}
 				if (resolvedComp != null) 
 				{
@@ -414,7 +397,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 					}
 				}
 				if (dnaComponent!=null) {
-					SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(SBOLFileName.substring(SBOLFileName.lastIndexOf(Gui.separator)+1),
+					SBOLDescriptorPanel2 descriptorPanel = new SBOLDescriptorPanel2(SBOLFileName.substring(SBOLFileName.lastIndexOf(Gui.separator)+1),
 							dnaComponent.getDisplayId(),dnaComponent.getName(),dnaComponent.getDescription());
 					descriptorPanel.openViewer();
 				}

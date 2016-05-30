@@ -19,8 +19,10 @@ import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.RefinementType;
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
+import org.sbolstandard.core2.SBOLValidationException;
 
 import biomodel.util.GlobalConstants;
 import uk.ac.ncl.intbio.core.io.CoreIoException;
@@ -321,7 +323,13 @@ public class Synthesis
 		//Set up SBOLDocument to write into
 		SBOLDocument sbolDoc = new SBOLDocument();
 		sbolDoc.setDefaultURIprefix(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
-		getSBOLfromTechMap(null, sbolDoc, solution, specificationGraph.getOutputNode());
+		try {
+			getSBOLfromTechMap(null, sbolDoc, solution, specificationGraph.getOutputNode());
+		}
+		catch (SBOLValidationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		try
 		{
@@ -329,25 +337,17 @@ public class Synthesis
 //			sbolDoc.write(System.out);
 			sbolDoc.write(new File(OUTPUT_PATH + OUTPUT_FILE_NAME));
 		}
-		catch (XMLStreamException e)
-		{
-			e.printStackTrace();
-		}
-		catch (FactoryConfigurationError e)
-		{
-			e.printStackTrace();
-		}
-		catch (CoreIoException e)
-		{
-			e.printStackTrace();
-		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
+		catch (SBOLConversionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	private void getSBOLfromTechMap(Component comp, SBOLDocument sbolDoc, Map<SynthesisNode, SBOLGraph> solution, SynthesisNode specNode)
+	private void getSBOLfromTechMap(Component comp, SBOLDocument sbolDoc, Map<SynthesisNode, SBOLGraph> solution, SynthesisNode specNode) throws SBOLValidationException
 	{
 		//Grab the gate that matches the spec graph
 		SBOLGraph coveredLibGate = solution.get(specNode);

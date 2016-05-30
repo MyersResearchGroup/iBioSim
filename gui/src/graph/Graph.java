@@ -100,6 +100,23 @@ import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jibble.epsgraphics.EpsGraphics2D;
+import org.jlibsedml.Curve;
+import org.jlibsedml.DataGenerator;
+import org.jlibsedml.DataSet;
+import org.jlibsedml.Libsedml;
+import org.jlibsedml.Output;
+import org.jlibsedml.Plot2D;
+import org.jlibsedml.Report;
+import org.jlibsedml.SEDMLDocument;
+import org.jlibsedml.SedML;
+import org.jlibsedml.Task;
+import org.jlibsedml.Variable;
+import org.jlibsedml.VariableSymbol;
+import org.jlibsedml.XPathTarget;
+import org.jlibsedml.modelsupport.SBMLSupport;
+import org.jmathml.ASTCi;
+import org.jmathml.ASTNode;
+import org.jmathml.ASTSymbol;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
@@ -353,7 +370,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			public void actionPerformed(ActionEvent e) {
 				if (updateXNumber && node != null) {
 					String curDir = "";
-					if (node.getParent().getParent() != null
+					if (node.getParent() != null && node.getParent().getParent() != null
 							&& directories.contains(((IconNode) node.getParent().getParent()).getName() + separator
 									+ ((IconNode) node.getParent()).getName())) {
 						curDir = ((IconNode) node.getParent().getParent()).getName() + separator + ((IconNode) node.getParent()).getName();
@@ -5526,6 +5543,43 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	public void run() {
 		analysisView.executeRun();
+	}
+	
+	public void saveSEDML(SEDMLDocument sedmlDoc,String taskId) {
+		SBMLSupport support = new SBMLSupport();
+		SedML sedml = sedmlDoc.getSedMLModel();
+		Task task = (Task) sedml.getTaskWithId(taskId);
+		if (timeSeries) {
+			ASTNode math = Libsedml.parseFormulaString("time");
+			Variable variable = new Variable("time","",taskId,VariableSymbol.TIME);
+			DataGenerator dataGen = new DataGenerator("time_dg","time",math);
+			dataGen.addVariable(variable);
+			sedml.addDataGenerator(dataGen);
+			Plot2D output = new Plot2D("graph",chart.getTitle().getText());
+			for (int i = 0; i < graphed.size(); i++) {
+				String [] id = graphed.get(i).getID().split(" ");
+				String [] name = graphed.get(i).getSpecies().split(" ");
+				String xpath = support.getXPathForSpecies(id[0]);
+				XPathTarget target = new XPathTarget(xpath);
+				sedml.addSimpleSpeciesAsOutput(target, id[0], id[0], task, true);
+				Curve curve = new Curve("c_"+id[0],name[0],LogX.isSelected(),LogY.isSelected(),
+						graphSpecies.get(graphed.get(i).getXNumber())+"_dg",id[0]+"_dg");
+				output.addCurve(curve);
+			}	
+			sedml.addOutput(output);
+		} else {
+			Report report = new Report("report",chart.getTitle().getText());
+			for (int i = 0; i < probGraphed.size(); i++) {
+				String [] id = probGraphed.get(i).getID().split(" ");
+				String [] name = probGraphed.get(i).getSpecies().split(" ");
+				String xpath = support.getXPathForReaction(id[0]);
+				XPathTarget target = new XPathTarget(xpath);
+				sedml.addSimpleSpeciesAsOutput(target, id[0], id[0], task, true);
+				DataSet ds = new DataSet("d_"+id[0],name[0],probGraphed.get(i).getSpecies(),id[0]+"_dg");
+				report.addDataSet(ds);
+			}
+			sedml.addOutput(report);
+		}
 	}
 
 	public void save() {

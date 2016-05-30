@@ -1470,6 +1470,41 @@ public class BioModel {
 			}
 		}		
 	}
+	
+	public Reaction createBiochemicalReaction(String id,String SBOid,ArrayList<String> reactants,
+			ArrayList<String> modifiers,ArrayList<String> products) {
+		Reaction r = sbml.getModel().getReaction(id);
+		if (r==null) {
+			r = sbml.getModel().createReaction();
+			r.setId(id);
+			r.setSBOTerm(SBOid);
+			r.setReversible(false);
+			r.setFast(false);
+			String kLaw = "k";
+			for (String reactant : reactants) {
+				SpeciesReference ref = r.createReactant();
+				ref.setSpecies(reactant);
+				ref.setStoichiometry(1);
+				ref.setConstant(true);
+				kLaw += "*" + reactant;
+			}
+			for (String modifier : modifiers) {
+				ModifierSpeciesReference ref = r.createModifier();
+				ref.setSpecies(modifier);
+			}
+			for (String product : products) {
+				SpeciesReference ref = r.createProduct();
+				ref.setSpecies(product);
+				ref.setStoichiometry(1);
+				ref.setConstant(true);
+			}
+			KineticLaw k = r.createKineticLaw();
+			LocalParameter lp = k.createLocalParameter("k");
+			lp.setValue(0.1);
+			k.setMath(SBMLutilities.myParseFormula(kLaw));
+		}
+		return r;
+	}
 
 	public Reaction createComplexReaction(String s,String KcStr,boolean onPort) {
 		createComplexDefaultParameters();
