@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="gui/src"/>
+	<classpathentry excluding="biomodel/gui/sbol/SBOLAssociationPanel.java|biomodel/gui/sbol/SBOLField.java|biomodel/gui/sbol/SBOLDescriptorPanel.java|sbol/assembly/Assembler.java|sbol/assembly/AssemblyGraph.java|sbol/assembly/AssemblyNode.java|sbol/browser/CollectionBrowserPanel.java|sbol/browser/SBOLBrowser.java|sbol/browser/DNAComponentBrowserPanel.java|sbol/util/SBOLFileManager.java|sbol/util/SBOLIdentityManager.java|sbol/util/SBOLUtility.java" kind="src" path="gui/src"/>
 	<classpathentry kind="lib" path="gui/lib/AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-anim.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-awt-util.jar"/>
@@ -46,9 +46,9 @@
 	<classpathentry kind="lib" path="gui/lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="lib" path="gui/lib/antlr-3.4-complete.jar"/>
-	<classpathentry kind="lib" path="gui/lib/libSBOLj-2.0.1-SNAPSHOT-withDependencies.jar" sourcepath="gui/lib/libSBOLj-2.0.1-SNAPSHOT-sources.jar">
+	<classpathentry kind="lib" path="gui/lib/libSBOLj-2.1.1-SNAPSHOT-withDependencies.jar" sourcepath="gui/lib/libSBOLj-2.1.1-SNAPSHOT-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/BioSim/gui/lib/libSBOLj-2.0.1-SNAPSHOT-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/Users/myers/research/nobackup/workspace/BioSim/gui/lib/libSBOLj-2.1.1-SNAPSHOT-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
