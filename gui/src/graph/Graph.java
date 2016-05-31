@@ -1,6 +1,4 @@
-
 package graph;
-
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -104,7 +102,6 @@ import org.jlibsedml.Curve;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.DataSet;
 import org.jlibsedml.Libsedml;
-import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
 import org.jlibsedml.Report;
 import org.jlibsedml.SEDMLDocument;
@@ -114,9 +111,7 @@ import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.XPathTarget;
 import org.jlibsedml.modelsupport.SBMLSupport;
-import org.jmathml.ASTCi;
 import org.jmathml.ASTNode;
-import org.jmathml.ASTSymbol;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
@@ -8119,6 +8114,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			while (s.hasNextLine()) {
 				String[] ss = s.nextLine().split(" ");
 				if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0")) {
+					s.close();
 					return;
 				}
 				if (data.size() == 0) {
@@ -8132,6 +8128,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 			}
+			s.close();
 		}
 		catch (Exception e) {
 		}
@@ -8149,6 +8146,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			while (s.hasNextLine()) {
 				String[] ss = s.nextLine().split(" ");
 				if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0")) {
+					s.close();
 					return new double[0];
 				}
 				if (data.size() == 0) {
@@ -8162,6 +8160,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 			}
+			s.close();
 		}
 		catch (Exception e) {
 		}

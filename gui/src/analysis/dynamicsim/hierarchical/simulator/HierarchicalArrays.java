@@ -46,7 +46,7 @@ public abstract class HierarchicalArrays extends HierarchicalReplacement
 
 	private final String	eventAssignmentPrefix	= "ed";
 	private final String	regularPrefix			= "d";
-	private final String	speciesRefPrefix		= "d";
+	//dprivate final String	speciesRefPrefix		= "d";
 
 	protected enum SetupType
 	{

@@ -165,7 +165,6 @@ public class Transition {
 	}
 
 	public boolean addIntAssign(String variable, String assignment) {
-		boolean retVal;
 		ExprTree expr = new ExprTree(lhpn);
 		try {
 			expr.token = expr.intexpr_gettok(assignment);
@@ -204,7 +203,6 @@ public class Transition {
 	}
 
 	public boolean addContAssign(String variable, String assignment) {
-		boolean retVal;
 		ExprTree expr = new ExprTree(lhpn);
 		try {
 			expr.token = expr.intexpr_gettok(assignment);
@@ -220,7 +218,6 @@ public class Transition {
 	}
 
 	public boolean addRateAssign(String variable, String assignment) {
-		boolean retVal;
 		ExprTree expr = new ExprTree(lhpn);
 		try {
 			expr.token = expr.intexpr_gettok(assignment);
@@ -241,7 +238,6 @@ public class Transition {
 			delayTree = null;
 			return true;
 		}
-		boolean retVal;
 		if (delay.matches("\\d+?,\\d+?")) {
 			delay = "uniform(" + delay + ")";
 		}
@@ -265,7 +261,6 @@ public class Transition {
 			priorityTree = null;
 			return true;
 		}
-		boolean retVal;
 		ExprTree expr = new ExprTree(lhpn);
 		try {
 			expr.token = expr.intexpr_gettok(priority);
@@ -281,7 +276,6 @@ public class Transition {
 	}
 
 	public boolean addBoolAssign(String variable, String assignment) {
-		boolean retVal;
 		ExprTree expr = new ExprTree(lhpn);
 		try {
 			expr.token = expr.intexpr_gettok(assignment);

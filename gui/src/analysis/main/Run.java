@@ -1842,6 +1842,7 @@ public class Run implements ActionListener
 														}
 													}
 												}
+												s.close();
 											}
 											catch (Exception e)
 											{
@@ -1978,6 +1979,7 @@ public class Run implements ActionListener
 														}
 													}
 												}
+												s.close();
 											}
 											catch (Exception e)
 											{
@@ -2139,6 +2141,7 @@ public class Run implements ActionListener
 														}
 													}
 												}
+												s.close();
 											}
 											catch (Exception e)
 											{
@@ -2275,6 +2278,7 @@ public class Run implements ActionListener
 														}
 													}
 												}
+												s.close();
 											}
 											catch (Exception e)
 											{

@@ -13,7 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Quantity;
@@ -47,7 +46,7 @@ public final class HierarchicalMixedSimulator implements ParentSimulator
 	private BufferedWriter									bufferedTSDWriter;
 	private final List<HierarchicalSimulation>				sims;
 	private final Map<String, Double>						values;
-	private final Map<String, ASTNode>						listOfAssignmentRules;
+	//private final Map<String, ASTNode>						listOfAssignmentRules;
 	private final Map<String, List<HierarchicalStringPair>>	quantityToReplaces;
 	private final Map<String, HierarchicalStringPair>		quantityToReplacedBy;
 	private final Map<String, Integer>						idToIndex;
@@ -76,7 +75,7 @@ public final class HierarchicalMixedSimulator implements ParentSimulator
 		this.values = new HashMap<String, Double>();
 		this.quantityToReplaces = new HashMap<String, List<HierarchicalStringPair>>();
 		this.quantityToReplacedBy = new HashMap<String, HierarchicalStringPair>();
-		this.listOfAssignmentRules = new HashMap<String, ASTNode>();
+		//this.listOfAssignmentRules = new HashMap<String, ASTNode>();
 		this.idToModel = new HashMap<String, Model>();
 		this.idToIndex = new HashMap<String, Integer>();
 		this.indexToId = new HashMap<Integer, String>();

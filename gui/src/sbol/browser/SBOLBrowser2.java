@@ -25,7 +25,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static SBOLDocument SBOLDOC; 
+	private SBOLDocument SBOLDOC; 
 	
 //	private static final long serialVersionUID = 1L;
 	private String[] options = {"Ok", "Cancel"};

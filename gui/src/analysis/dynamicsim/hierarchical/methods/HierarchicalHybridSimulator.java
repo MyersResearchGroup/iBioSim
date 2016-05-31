@@ -19,9 +19,9 @@ public final class HierarchicalHybridSimulator extends HierarchicalSSADirectSimu
 {
 
 	private final DiffEquations		function;
-	private double[]				globalValues;
-	private double					nextEventTime;
-	private int						numSteps;
+	//private double[]				globalValues;
+	//private double					nextEventTime;
+	//private int						numSteps;
 	private double					relativeError, absoluteError;
 	private HighamHall54Integrator	odecalc;
 

@@ -3593,130 +3593,130 @@ public class SBMLutilities
 		return false;
 	}
 	
-	/**
-	 * Checks consistency of the sbml file.
-	 */
-	public static boolean checkThread(String file, SBMLDocument doc, boolean overdeterminedOnly)
-	{
-		Validation validation = new Validation(file,doc,overdeterminedOnly);
-        Thread t = new Thread(validation);
-//		final JButton cancel = new JButton("Cancel");
-//		final JFrame running = new JFrame("Progress");
-//		WindowListener w = new WindowListener()
-//		{
-//			@Override
-//			public void windowClosing(WindowEvent arg0)
-//			{
-//				cancel.doClick();
-//				running.dispose();
-//			}
-//
-//			@Override
-//			public void windowOpened(WindowEvent arg0)
-//			{
-//			}
-//
-//			@Override
-//			public void windowClosed(WindowEvent arg0)
-//			{
-//			}
-//
-//			@Override
-//			public void windowIconified(WindowEvent arg0)
-//			{
-//			}
-//
-//			@Override
-//			public void windowDeiconified(WindowEvent arg0)
-//			{
-//			}
-//
-//			@Override
-//			public void windowActivated(WindowEvent arg0)
-//			{
-//			}
-//
-//			@Override
-//			public void windowDeactivated(WindowEvent arg0)
-//			{
-//			}
-//		};
-//		running.addWindowListener(w);
-//		JPanel text = new JPanel();
-//		JPanel progBar = new JPanel();
-//		JPanel button = new JPanel();
-//		JPanel all = new JPanel(new BorderLayout());
-//		JLabel label = new JLabel("Running...");
-//		JProgressBar progress = new JProgressBar(0, species.size());
-//		progress.setStringPainted(true);
-//		// progress.setString("");
-//		progress.setValue(0);
-//		text.add(label);
-//		progBar.add(progress);
-//		button.add(cancel);
-//		all.add(text, "North");
-//		all.add(progBar, "Center");
-//		all.add(button, "South");
-//		running.setContentPane(all);
-//		running.pack();
-//		Dimension screenSize;
-//		//running.setLocation(x, y);
-//		running.setVisible(true);
-//		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-//		final Process learn;
-//		int exitValue = 0;
-//		try
-//		{
-//	        t.start();
-//			cancel.setActionCommand("Cancel");
-//			cancel.addActionListener(new ActionListener()
-//			{
-//				@Override
-//				public void actionPerformed(ActionEvent e)
-//				{
-//					learn.destroy();
-//					running.setCursor(null);
-//					running.dispose();
-//				}
-//			});
-//			//biosim.getExitButton().setActionCommand("Exit program");
-//			biosim.getExitButton().addActionListener(new ActionListener()
-//			{
-//				@Override
-//				public void actionPerformed(ActionEvent e)
-//				{
-//					learn.destroy();
-//					running.setCursor(null);
-//					running.dispose();
-//				}
-//			});
-//			String output = "";
-//			InputStream reb = learn.getInputStream();
-//			InputStreamReader isr = new InputStreamReader(reb);
-//			BufferedReader br = new BufferedReader(isr);
-//			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-//			int count = 0;
-//			while ((output = br.readLine()) != null)
-//			{
-//				if (output.startsWith("Gene = ", 0))
-//				{
-//					// log.addText(output);
-//					count++;
-//					progress.setValue(count);
-//				}
-//				out.write(output);
-//				out.write("\n");
-//			}
-//			br.close();
-//			isr.close();
-//			reb.close();
-//			out.close();
-//			viewLog.setEnabled(true);
-//			exitValue = learn.waitFor();
-//		}
-        //t.wait();
-		return true;
-	}
+//	/**
+//	 * Checks consistency of the sbml file.
+//	 */
+//	public static boolean checkThread(String file, SBMLDocument doc, boolean overdeterminedOnly)
+//	{
+//		Validation validation = new Validation(file,doc,overdeterminedOnly);
+//        Thread t = new Thread(validation);
+////		final JButton cancel = new JButton("Cancel");
+////		final JFrame running = new JFrame("Progress");
+////		WindowListener w = new WindowListener()
+////		{
+////			@Override
+////			public void windowClosing(WindowEvent arg0)
+////			{
+////				cancel.doClick();
+////				running.dispose();
+////			}
+////
+////			@Override
+////			public void windowOpened(WindowEvent arg0)
+////			{
+////			}
+////
+////			@Override
+////			public void windowClosed(WindowEvent arg0)
+////			{
+////			}
+////
+////			@Override
+////			public void windowIconified(WindowEvent arg0)
+////			{
+////			}
+////
+////			@Override
+////			public void windowDeiconified(WindowEvent arg0)
+////			{
+////			}
+////
+////			@Override
+////			public void windowActivated(WindowEvent arg0)
+////			{
+////			}
+////
+////			@Override
+////			public void windowDeactivated(WindowEvent arg0)
+////			{
+////			}
+////		};
+////		running.addWindowListener(w);
+////		JPanel text = new JPanel();
+////		JPanel progBar = new JPanel();
+////		JPanel button = new JPanel();
+////		JPanel all = new JPanel(new BorderLayout());
+////		JLabel label = new JLabel("Running...");
+////		JProgressBar progress = new JProgressBar(0, species.size());
+////		progress.setStringPainted(true);
+////		// progress.setString("");
+////		progress.setValue(0);
+////		text.add(label);
+////		progBar.add(progress);
+////		button.add(cancel);
+////		all.add(text, "North");
+////		all.add(progBar, "Center");
+////		all.add(button, "South");
+////		running.setContentPane(all);
+////		running.pack();
+////		Dimension screenSize;
+////		//running.setLocation(x, y);
+////		running.setVisible(true);
+////		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+////		final Process learn;
+////		int exitValue = 0;
+////		try
+////		{
+////	        t.start();
+////			cancel.setActionCommand("Cancel");
+////			cancel.addActionListener(new ActionListener()
+////			{
+////				@Override
+////				public void actionPerformed(ActionEvent e)
+////				{
+////					learn.destroy();
+////					running.setCursor(null);
+////					running.dispose();
+////				}
+////			});
+////			//biosim.getExitButton().setActionCommand("Exit program");
+////			biosim.getExitButton().addActionListener(new ActionListener()
+////			{
+////				@Override
+////				public void actionPerformed(ActionEvent e)
+////				{
+////					learn.destroy();
+////					running.setCursor(null);
+////					running.dispose();
+////				}
+////			});
+////			String output = "";
+////			InputStream reb = learn.getInputStream();
+////			InputStreamReader isr = new InputStreamReader(reb);
+////			BufferedReader br = new BufferedReader(isr);
+////			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+////			int count = 0;
+////			while ((output = br.readLine()) != null)
+////			{
+////				if (output.startsWith("Gene = ", 0))
+////				{
+////					// log.addText(output);
+////					count++;
+////					progress.setValue(count);
+////				}
+////				out.write(output);
+////				out.write("\n");
+////			}
+////			br.close();
+////			isr.close();
+////			reb.close();
+////			out.close();
+////			viewLog.setEnabled(true);
+////			exitValue = learn.waitFor();
+////		}
+//        //t.wait();
+//		return true;
+//	}
 
 	/**
 	 * Checks consistency of the sbml file.
@@ -3732,7 +3732,7 @@ public class SBMLutilities
 			message += "Validation Problems Found by libsbml\n";
 			org.sbml.libsbml.SBMLDocument document = null;
 			// TODO: temporary hack because otherwise it hangs
-			if (true/*doc == null*/)
+			if (doc == null)
 			{
 				document = new org.sbml.libsbml.SBMLReader().readSBML(file);
 			}
@@ -6694,7 +6694,7 @@ public class SBMLutilities
 				JOptionPane.showMessageDialog(Gui.frame, "Unable convert FBC model from Version 1 to Version 2.",
 						"Error Opening File", JOptionPane.ERROR_MESSAGE);
 			}
-			long numErrors = 0;
+			//long numErrors = 0;
 			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
 			org.sbml.libsbml.SBMLDocument doc = reader.readSBML(filename);
 			/* create a new conversion properties structure */

@@ -97,7 +97,7 @@ public class BuildProperty {
 
 		CommonTree r0 = program.tree;
 		//System.out.println("parent :"+program.start.getText());
-		int number = r0.getChildCount();
+		//int number = r0.getChildCount();
 		//System.out.println("NUMBER : "+number+"\n");
 		//printTree(r0, number);
 		generateFile(r0, lpn,lpnFileName);

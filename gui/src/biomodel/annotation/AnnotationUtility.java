@@ -15,7 +15,6 @@ import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.xml.XMLAttributes;
 import org.sbml.jsbml.xml.XMLNode;
-import org.sbml.jsbml.xml.XMLToken;
 import org.sbml.jsbml.xml.XMLTriple;
 import org.sbml.jsbml.JSBML;
 

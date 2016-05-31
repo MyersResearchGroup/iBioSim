@@ -23,7 +23,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static SBOLDocument SBOLDOC; 
+	private SBOLDocument SBOLDOC; 
 //	private static final long serialVersionUID = 1L;
 	private LinkedList<URI>    compURIs;
 	private LinkedList<String> compIDs;
@@ -180,7 +180,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 	
 	private static String processSequences(Set<Sequence> sequences)
 	{
-		String sequence = "";
+		//String sequence = "";
 		for(Sequence s : sequences)
 		{
 			// TODO: need to figure out a better way for multiple sequences, for now just return first sequence

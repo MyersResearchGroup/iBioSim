@@ -10,9 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-
 import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
@@ -25,7 +22,6 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import biomodel.util.GlobalConstants;
-import uk.ac.ncl.intbio.core.io.CoreIoException;
 
 public class Synthesis
 {
@@ -53,10 +49,9 @@ public class Synthesis
 
 	public void createSBOLGraph(File fileName, boolean isLibraryFile)
 	{
-		SBOLReader sbolFile = new SBOLReader();
 		try
 		{
-			SBOLDocument sbolDoc = sbolFile.read(fileName);
+			SBOLDocument sbolDoc = SBOLReader.read(fileName);
 			for(ModuleDefinition m : sbolDoc.getModuleDefinitions())
 			{
 				SBOLGraph sbolGraph = new SBOLGraph();
@@ -89,7 +84,7 @@ public class Synthesis
 			}
 			else
 			{
-				SynthesisNode bestLib = null;
+				//SynthesisNode bestLib = null;
 				double totalScore;
 				for(SBOLGraph gate : _libraryGraph)
 				{
@@ -120,7 +115,7 @@ public class Synthesis
 								//base off of score values
 								//Assuming every time add new gate to list, the list should be already ordered
 								LinkedList<WeightedGraph> list = matches.get(n);
-								WeightedGraph temp = list.getFirst();
+								//WeightedGraph temp = list.getFirst();
 								for(int i = list.size()-1; i >= 0; i--)
 								{
 									if(list.get(i).getWeight() <= totalScore)

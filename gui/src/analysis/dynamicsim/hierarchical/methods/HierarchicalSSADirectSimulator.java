@@ -3,8 +3,6 @@ package analysis.dynamicsim.hierarchical.methods;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -27,11 +25,11 @@ import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
 public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 {
 
-	private final Map<Double, List<Double>>	buffer;
+	//private final Map<Double, List<Double>>	buffer;
 	private int								currRun;
 	private String							modelstateID;
 	private final boolean					print;
-	private final long						seed;
+	//private final long						seed;
 
 	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
 			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException
@@ -41,9 +39,9 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 
 		initialize(randomSeed, 1);
 		modelstateID = "topmodel";
-		seed = randomSeed;
+		//seed = randomSeed;
 		this.print = true;
-		this.buffer = null;
+		//this.buffer = null;
 		setModels(null);
 	}
 
@@ -57,8 +55,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSetup
 
 		this.modelstateID = "topmodel";
 		this.print = print;
-		this.seed = randomSeed;
-		this.buffer = new HashMap<Double, List<Double>>();
+		//this.seed = randomSeed;
+		//this.buffer = new HashMap<Double, List<Double>>();
 
 	}
 
