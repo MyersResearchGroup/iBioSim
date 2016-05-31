@@ -144,33 +144,33 @@ public abstract class HierarchicalReplacement extends HierarchicalObjects
 		}
 	}
 
-	private void setupExternalModelDefinition(ExternalModelDefinition ext, CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel, Submodel submodel, String path, String newPrefix) throws XMLStreamException, IOException
-	{
-		String source = ext.getSource().replace("file:", "");
-		String extDef = path + getSeparator() + source;
-		SBMLDocument extDoc = SBMLReader.read(new File(extDef));
-		Model model = extDoc.getModel();
-
-		CompSBMLDocumentPlugin extSbmlComp = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
-		CompModelPlugin extSbmlCompModel = (CompModelPlugin) model.getPlugin(CompConstants.namespaceURI);
-
-		if (ext.isSetModelRef())
-		{
-			if (extSbmlComp.getExternalModelDefinition(ext.getModelRef()) != null)
-			{
-				ext = extSbmlComp.getExternalModelDefinition(ext.getModelRef());
-				setupExternalModelDefinition(ext, sbmlComp, sbmlCompModel, submodel, path, newPrefix);
-			}
-			else if (extSbmlComp.getModelDefinition(ext.getModelRef()) != null)
-			{
-				model = extSbmlComp.getModelDefinition(submodel.getModelRef());
-			}
-		}
-
-		getModels().put(submodel.getModelRef(), model);
-		setupSubmodels(path, newPrefix, extSbmlComp, extSbmlCompModel);
-
-	}
+//	private void setupExternalModelDefinition(ExternalModelDefinition ext, CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel, Submodel submodel, String path, String newPrefix) throws XMLStreamException, IOException
+//	{
+//		String source = ext.getSource().replace("file:", "");
+//		String extDef = path + getSeparator() + source;
+//		SBMLDocument extDoc = SBMLReader.read(new File(extDef));
+//		Model model = extDoc.getModel();
+//
+//		CompSBMLDocumentPlugin extSbmlComp = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
+//		CompModelPlugin extSbmlCompModel = (CompModelPlugin) model.getPlugin(CompConstants.namespaceURI);
+//
+//		if (ext.isSetModelRef())
+//		{
+//			if (extSbmlComp.getExternalModelDefinition(ext.getModelRef()) != null)
+//			{
+//				ext = extSbmlComp.getExternalModelDefinition(ext.getModelRef());
+//				setupExternalModelDefinition(ext, sbmlComp, sbmlCompModel, submodel, path, newPrefix);
+//			}
+//			else if (extSbmlComp.getModelDefinition(ext.getModelRef()) != null)
+//			{
+//				model = extSbmlComp.getModelDefinition(submodel.getModelRef());
+//			}
+//		}
+//
+//		getModels().put(submodel.getModelRef(), model);
+//		setupSubmodels(path, newPrefix, extSbmlComp, extSbmlCompModel);
+//
+//	}
 
 	private void setupGrid(SBMLDocument document, Submodel submodel)
 	{

@@ -1882,7 +1882,6 @@ public class Translator {
 	}
 	
 	public static ExprTree String2ExprTree(LhpnFile lhpn, String str) {
-		boolean retVal;
 		ExprTree result = new ExprTree(lhpn);
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(str);

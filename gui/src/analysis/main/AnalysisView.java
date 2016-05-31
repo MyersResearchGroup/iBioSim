@@ -1628,7 +1628,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				List<Simulation> simulations = sedml.getSimulations();
 				if (simulations.size() > 0)
 				{
-					String kisaoId = simulations.get(0).getAlgorithm().getKisaoID();
+//					String kisaoId = simulations.get(0).getAlgorithm().getKisaoID();
 //					KisaoOntology ko = KisaoOntology.getInstance();
 //					KisaoTerm kt = ko.getTermById(kisaoId);
 //					System.out.println(kt.getExactSynonyms());
@@ -3077,6 +3077,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 									}
 								}
 							}
+							s.close();
 						}
 						catch (Exception e)
 						{

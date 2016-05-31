@@ -941,6 +941,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 			{
 				str.add(f.nextLine());
 			}
+			f.close();
 		}
 		catch (Exception e1)
 		{
@@ -1227,14 +1228,16 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 					copy = null;
 				}
 			}
-			if (copy != null)
-			{
-				copy = copy.trim();
-			}
+			//if (copy != null)
+			//{
+			copy = copy.trim();
+			//}
+			/*
 			else
 			{
 				return;
 			}
+			*/
 			if (!copy.equals(""))
 			{
 				if (copy.length() > 3)

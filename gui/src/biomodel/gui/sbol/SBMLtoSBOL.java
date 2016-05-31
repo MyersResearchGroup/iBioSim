@@ -32,7 +32,6 @@ import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
-import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
@@ -217,20 +216,20 @@ public class SBMLtoSBOL {
 				{
 					Set<URI> roles_r = new HashSet<URI>();
 					roles_r.add(SystemsBiologyOntology.REACTANT);
-					Participation p = inter.createParticipation(reactant.getSpecies(), reactant.getSpecies(),roles_r);
+					inter.createParticipation(reactant.getSpecies(), reactant.getSpecies(),roles_r);
 				}
 				for(ModifierSpeciesReference modifier : reaction.getListOfModifiers())
 				{
 					Set<URI> roles_r = new HashSet<URI>();
 					roles_r.add(SystemsBiologyOntology.MODIFIER);
-					Participation p = inter.createParticipation(modifier.getSpecies(), modifier.getSpecies(),roles_r);
+					inter.createParticipation(modifier.getSpecies(), modifier.getSpecies(),roles_r);
 				}
 				for(SpeciesReference product : reaction.getListOfProducts())
 				{
 					// create participation from product.getSpecies() as type product
 					Set<URI> roles_p = new HashSet<URI>();
 					roles_p.add(SystemsBiologyOntology.PRODUCT);
-					Participation p = inter.createParticipation(product.getSpecies(), product.getSpecies(),roles_p);
+					inter.createParticipation(product.getSpecies(), product.getSpecies(),roles_p);
 				}
 			}
 		}
@@ -266,7 +265,8 @@ public class SBMLtoSBOL {
 		if (BioModel.isPromoterSpecies(species)) 
 		{
 			List<URI> sbolURIs = new LinkedList<URI>();
-			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
+			//String sbolStrand = 
+			AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			if (sbolURIs.size()>0) {
 				// TODO: need to figure out what to do when size is greater than 1
 				compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
@@ -288,7 +288,8 @@ public class SBMLtoSBOL {
 			Reaction production = BioModel.getProductionReaction(species.getId(),model);
 			if (production!=null) {
 				sbolURIs = new LinkedList<URI>();
-				sbolStrand = AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
+				//sbolStrand = 
+				AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
 				if (sbolURIs.size()>0) {
 					compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
 					if (compDef!=null) {
@@ -314,7 +315,8 @@ public class SBMLtoSBOL {
 		else 
 		{
 			List<URI> sbolURIs = new LinkedList<URI>();
-			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
+			//String sbolStrand = 
+			AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			if (sbolURIs.size()>0) {
 				// TODO: what if more than 1
 				compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
@@ -401,8 +403,8 @@ public class SBMLtoSBOL {
 			
 			Interaction interaction = moduleDef.createInteraction(inter_id, types);
 			
-			Participation p1 = interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
-			Participation p2 = interaction.createParticipation(r.getSpecies(), r.getSpecies(),SystemsBiologyOntology.INHIBITOR);
+			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
+			interaction.createParticipation(r.getSpecies(), r.getSpecies(),SystemsBiologyOntology.INHIBITOR);
 		}
 		
 		// Repeat same steps for the list of activators
@@ -415,8 +417,8 @@ public class SBMLtoSBOL {
 			
 			Interaction interaction = moduleDef.createInteraction(inter_id, types);
 			
-			Participation p1 = interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
-			Participation p2 = interaction.createParticipation(a.getSpecies(), a.getSpecies(),SystemsBiologyOntology.STIMULATOR);
+			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
+			interaction.createParticipation(a.getSpecies(), a.getSpecies(),SystemsBiologyOntology.STIMULATOR);
 		}
 		
 		for(SpeciesReference product : reaction.getListOfProducts())
@@ -427,8 +429,8 @@ public class SBMLtoSBOL {
 			type.add(SystemsBiologyOntology.GENETIC_PRODUCTION);
 			
 			Interaction interaction = moduleDef.createInteraction(i_id, type);
-			Participation p1 = interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
-			Participation p2 = interaction.createParticipation(product.getSpecies(), product.getSpecies(),SystemsBiologyOntology.PRODUCT);
+			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
+			interaction.createParticipation(product.getSpecies(), product.getSpecies(),SystemsBiologyOntology.PRODUCT);
 		}
 	}
 	
@@ -441,11 +443,11 @@ public class SBMLtoSBOL {
 		
 		for(SpeciesReference reactant : reaction.getListOfReactants())
 		{
-			Participation p = inter.createParticipation(reactant.getSpecies(), reactant.getSpecies(),SystemsBiologyOntology.REACTANT);
+			inter.createParticipation(reactant.getSpecies(), reactant.getSpecies(),SystemsBiologyOntology.REACTANT);
 		}
 		for(SpeciesReference product : reaction.getListOfProducts())
 		{
-			Participation p = inter.createParticipation(product.getSpecies(), product.getSpecies(),SystemsBiologyOntology.PRODUCT);
+			inter.createParticipation(product.getSpecies(), product.getSpecies(),SystemsBiologyOntology.PRODUCT);
 		}
 	}
 	
@@ -459,7 +461,7 @@ public class SBMLtoSBOL {
 		for(SpeciesReference sp : reaction.getListOfReactants())
 		{
 			String p_id = sp.getSpecies();
-			Participation p = inter.createParticipation(p_id, sp.getSpecies(),SystemsBiologyOntology.REACTANT);
+			inter.createParticipation(p_id, sp.getSpecies(),SystemsBiologyOntology.REACTANT);
 		}
 	}
 	

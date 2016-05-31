@@ -11,7 +11,12 @@ import java.util.*;
 
 public class CollectionBrowserPanel2 extends JPanel implements MouseListener {
 	
-	private static SBOLDocument SBOLDOC; 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private SBOLDocument SBOLDOC; 
 //	private static final long serialVersionUID = 1L;
 	
 	private LinkedList<URI> localLibURIs;

@@ -1,7 +1,6 @@
 package learn.AMSModel;
 
 import lpn.parser.LhpnFile;
-import lpn.parser.Translator;
 import main.*;
 import main.util.dataparser.*;
 

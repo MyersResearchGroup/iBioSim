@@ -13,7 +13,6 @@ import org.sbolstandard.core2.SequenceOntology;
 import sbol.util.SBOLFileManager2;
 import sbol.util.SBOLUtility2;
 import biomodel.annotation.AnnotationUtility;
-import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 
 public class SynthesisNode {
