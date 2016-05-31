@@ -6238,6 +6238,11 @@ public class BioModel {
 		prop.setProperty("graphy", String.valueOf(y));
 	}
 	*/
+	
+	public boolean isSBOLGene(String promoterId) {
+		Species species = sbml.getModel().getSpecies(promoterId);
+		return AnnotationUtility.hasSBOLAnnotation(species);
+	}
 
 	public boolean isPromoterExplicit(String promoterId) {
 		if (promoterId != null && getLayout().getSpeciesGlyph(GlobalConstants.GLYPH+"__"+promoterId)!=null)

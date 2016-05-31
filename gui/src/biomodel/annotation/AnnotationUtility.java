@@ -2,6 +2,7 @@ package biomodel.annotation;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,6 +52,22 @@ public class AnnotationUtility {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public static boolean hasSBOLAnnotation(SBase sbmlObject) {
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+		}
+		catch (XMLStreamException e) {
+			return false;
+		}
+		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
+		Matcher sbolMatcher = sbolPattern.matcher(annotation);
+		if (sbolMatcher.find()) {
+			return true;
+		}
+		return false;
 	}
 	
 	public static String parseSBOLAnnotation(SBase sbmlObject, List<URI> dnaCompURIs) {
