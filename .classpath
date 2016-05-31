@@ -18,9 +18,7 @@
 	<classpathentry kind="lib" path="gui/lib/activation.jar"/>
 	<classpathentry kind="lib" path="gui/lib/mail.jar"/>
 	<classpathentry kind="lib" path="gui/lib/iText-2.1.5.jar"/>
-	<classpathentry kind="lib" path="gui/lib/biomodels-wslib_standalone-1.12.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jgraphx.jar"/>
-	<classpathentry kind="lib" path="gui/lib/hadoop-0.20.2-core.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-primitives-20070823.jar"/>
 	<classpathentry kind="lib" path="gui/lib/hppc-0.3.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/SourceLibrary.jar"/>
@@ -37,6 +35,17 @@
 			<attribute name="javadoc_location" value="jar:file:/Users/myers/research/nobackup/workspace/BioSim/gui/lib/libSBOLj-2.1.1-SNAPSHOT-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="gui/lib/biomodels-wslib-1.21.jar"/>
+	<classpathentry kind="lib" path="gui/lib/axis.jar"/>
+	<classpathentry kind="lib" path="gui/lib/commons-discovery-0.5.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="gui/lib/wsdl4j.jar"/>
+	<classpathentry kind="lib" path="gui/lib/saaj.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-transcoder.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-gui-util.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-css.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-bridge.jar"/>
+	<classpathentry kind="lib" path="gui/lib/w3c-dom.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="gui/lib/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jdom-contrib.jar"/>
@@ -52,8 +61,6 @@
 	<classpathentry kind="lib" path="gui/lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jdepend-2.9.1.jar"/>
-	<classpathentry kind="lib" path="gui/lib/junit-3.8.1.jar"/>
-	<classpathentry kind="lib" path="gui/lib/xml-apis-1.0.b2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/JParts-1.0-SNAPSHOT-withDependencies.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xerces_2_11_0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/joptimizer-3.3.0.jar"/>
