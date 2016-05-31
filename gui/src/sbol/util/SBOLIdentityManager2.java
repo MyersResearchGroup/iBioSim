@@ -2,26 +2,14 @@ package sbol.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
-
-import main.Gui;
-
 import org.sbml.jsbml.Model;
-////import org.sbolstandard.core.DnaComponent;
-//import org.sbolstandard.core2.SequenceAnnotation;
-////import org.sbolstandard.core.util.SBOLDeepEquality;
-//import org.sbolstandard.core2.ComponentDefinition;
-
-import org.sbolstandard.core.util.SBOLDeepEquality;
 import org.sbolstandard.core2.ComponentDefinition;
-import org.sbolstandard.core2.SequenceAnnotation;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -38,7 +26,6 @@ public class SBOLIdentityManager2 {
 	private ComponentDefinition bioSimComp;
 	private String saveFilePath;
 	private String uriAuthority;
-	private String time;
 
 	public SBOLIdentityManager2(BioModel biomodel) {
 		this.biomodel = biomodel;
@@ -218,54 +205,54 @@ public class SBOLIdentityManager2 {
 	}
 	
 	
-	// Constructs URIs for newly synthesized component, its DNA sequence, and sequence annotations
-	// Also replaces URI of previously synthesized component or placeholder URI among component URIs previously annotating model
-	public void identifyDNAComponent(ComponentDefinition dnaComp) 
-	{
-		boolean identical = false;
-		if (bioSimComp != null) {
-			Set<SequenceAnnotation> annos = dnaComp.getSequenceAnnotations();
-			Set<SequenceAnnotation> synthAnnos = bioSimComp.getSequenceAnnotations();
-			if (annos.size() == synthAnnos.size()) 
-			{
-				//TODO: Can't set identity for SequenceAnnot. and CompDef and Seq.
-//				for (int i = 0; i < annos.size(); i++)
-//				{
-//					annos.get(i).setURI(synthAnnos.get(i).getURI());
-//				}
-//				dnaComp.setURI(modelURIs.get(indexOfBioSimURI));
-//				if (bioSimComp.getDnaSequence() != null)
-//					dnaComp.getDnaSequence().setURI(bioSimComp.getDnaSequence().getURI());
-				
-//				identical = SBOLDeepEquality.isDeepEqual(dnaComp, bioSimComp);
-				identical = dnaComp.equals(bioSimComp);
-			} 
-		}
-//		if (!identical) {
-//			setTime(); 
-//			// URI authority and time are set for creating new URIs
-//			try {
-//				dnaComp.setURI(new URI(uriAuthority + "#comp" + time + "_iBioSim"));
-//			} catch (URISyntaxException e) {
-//				e.printStackTrace();
-//			}
-//			try {
-//				dnaComp.getDnaSequence().setURI(new URI(uriAuthority + "#seq" + time + "_iBioSim"));
-//			} catch (URISyntaxException e) {
-//				e.printStackTrace();
-//			}
-////			List<SequenceAnnotation> synthAnnos = dnaComp.getAnnotations();
-//			Set<SequenceAnnotation> synthAnnos = dnaComp.getSequenceAnnotations();
-//			for (int i = 0; i < synthAnnos.size(); i++) {
-//				try {
-//					synthAnnos.get(i).setURI(new URI(uriAuthority + "#anno" + i + time + "_iBioSim"));
-//				} catch (URISyntaxException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//			
+//	// Constructs URIs for newly synthesized component, its DNA sequence, and sequence annotations
+//	// Also replaces URI of previously synthesized component or placeholder URI among component URIs previously annotating model
+//	public void identifyDNAComponent(ComponentDefinition dnaComp) 
+//	{
+//		boolean identical = false;
+//		if (bioSimComp != null) {
+//			Set<SequenceAnnotation> annos = dnaComp.getSequenceAnnotations();
+//			Set<SequenceAnnotation> synthAnnos = bioSimComp.getSequenceAnnotations();
+//			if (annos.size() == synthAnnos.size()) 
+//			{
+//				//TODO: Can't set identity for SequenceAnnot. and CompDef and Seq.
+////				for (int i = 0; i < annos.size(); i++)
+////				{
+////					annos.get(i).setURI(synthAnnos.get(i).getURI());
+////				}
+////				dnaComp.setURI(modelURIs.get(indexOfBioSimURI));
+////				if (bioSimComp.getDnaSequence() != null)
+////					dnaComp.getDnaSequence().setURI(bioSimComp.getDnaSequence().getURI());
+//				
+////				identical = SBOLDeepEquality.isDeepEqual(dnaComp, bioSimComp);
+//				identical = dnaComp.equals(bioSimComp);
+//			} 
 //		}
-	}
+////		if (!identical) {
+////			setTime(); 
+////			// URI authority and time are set for creating new URIs
+////			try {
+////				dnaComp.setURI(new URI(uriAuthority + "#comp" + time + "_iBioSim"));
+////			} catch (URISyntaxException e) {
+////				e.printStackTrace();
+////			}
+////			try {
+////				dnaComp.getDnaSequence().setURI(new URI(uriAuthority + "#seq" + time + "_iBioSim"));
+////			} catch (URISyntaxException e) {
+////				e.printStackTrace();
+////			}
+//////			List<SequenceAnnotation> synthAnnos = dnaComp.getAnnotations();
+////			Set<SequenceAnnotation> synthAnnos = dnaComp.getSequenceAnnotations();
+////			for (int i = 0; i < synthAnnos.size(); i++) {
+////				try {
+////					synthAnnos.get(i).setURI(new URI(uriAuthority + "#anno" + i + time + "_iBioSim"));
+////				} catch (URISyntaxException e) {
+////					e.printStackTrace();
+////				}
+////			}
+////			
+////		}
+//	}
 	
 	
 	public void annotateBioModel() {
@@ -284,10 +271,10 @@ public class SBOLIdentityManager2 {
 		uriAuthority = Preferences.userRoot().get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, "");
 	}
 	
-	private void setTime() {
-		Calendar now = Calendar.getInstance();
-		time = "_" + now.get(Calendar.MONTH) + "_" 
-				+ now.get(Calendar.DATE) + "_" + now.get(Calendar.YEAR) + "_" + now.get(Calendar.HOUR_OF_DAY) + "_" 
-				+ now.get(Calendar.MINUTE) + "_" + now.get(Calendar.SECOND) + "_" + now.get(Calendar.MILLISECOND);
-	}
+//	private void setTime() {
+//		Calendar now = Calendar.getInstance();
+//		time = "_" + now.get(Calendar.MONTH) + "_" 
+//				+ now.get(Calendar.DATE) + "_" + now.get(Calendar.YEAR) + "_" + now.get(Calendar.HOUR_OF_DAY) + "_" 
+//				+ now.get(Calendar.MINUTE) + "_" + now.get(Calendar.SECOND) + "_" + now.get(Calendar.MILLISECOND);
+//	}
 }

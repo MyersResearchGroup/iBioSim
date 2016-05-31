@@ -1,10 +1,8 @@
 package biomodel.gui.sbol;
 
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,45 +11,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 
-
-
-
-
-
-
-
-//import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core2.ComponentDefinition;
-
-
-
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
-
-
-
-
-
-//import sbol.util.SBOLFileManager;
 import sbol.util.SBOLFileManager2;
-//import sbol.util.SBOLIdentityManager;
 import sbol.util.SBOLIdentityManager2;
-import uk.ac.ncl.intbio.core.io.CoreIoException;
-import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
-import biomodel.gui.schematic.ModelEditor;
 
 public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 

@@ -6,15 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
-import javax.xml.namespace.QName;
-
-import org.sbolstandard.core.MergerException;
 import org.sbolstandard.core2.*;
 
 import sbol.util.SBOLUtility2;
 import biomodel.util.GlobalConstants;
 
-import java.io.*;
 import java.net.URI;
 import java.util.*;
 
@@ -24,6 +20,11 @@ import main.Gui;
 
 public class SBOLBrowser2 extends JPanel implements ActionListener {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static SBOLDocument SBOLDOC; 
 	
 //	private static final long serialVersionUID = 1L;
@@ -126,7 +127,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 	{
 		String browseFile = browsePath.substring(browsePath.lastIndexOf(Gui.separator) + 1);
 		
-		boolean first = true;
+//		boolean first = true;
 		for (String filePath : sbolFilePaths) 
 		{
 			String file = filePath.substring(filePath.lastIndexOf(Gui.separator) + 1);

@@ -1,7 +1,6 @@
 package biomodel.gui.schematic;
 
 import java.awt.BorderLayout;
-import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JFrame;

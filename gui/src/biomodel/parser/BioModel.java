@@ -1,18 +1,9 @@
 package biomodel.parser;
 
 
-import java.awt.AWTError;
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,17 +13,11 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
@@ -92,7 +77,6 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
-import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.layout.TextGlyph;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
@@ -3811,15 +3795,15 @@ public class BioModel {
 				break;
 			}
 		}
-		int i=0;
-		while (i < sbmlFBC.getFluxBoundCount()) {
-			FluxBound fluxBound = sbmlFBC.getFluxBound(i);
-			if (fluxBound.getReaction().equals(id)) {
-				sbmlFBC.removeFluxBound(i);
-			} else {
-				i++;
-			}
-		}
+//		int i=0;
+//		while (i < sbmlFBC.getFluxBoundCount()) {
+//			FluxBound fluxBound = sbmlFBC.getFluxBound(i);
+//			if (fluxBound.getReaction().equals(id)) {
+//				sbmlFBC.removeFluxBound(i);
+//			} else {
+//				i++;
+//			}
+//		}
 		Layout layout = getLayout();
 		if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
 			layout.getListOfReactionGlyphs().remove(GlobalConstants.GLYPH+"__"+id);

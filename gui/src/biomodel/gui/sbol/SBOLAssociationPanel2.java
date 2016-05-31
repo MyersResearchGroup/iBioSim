@@ -27,6 +27,10 @@ import javax.swing.JCheckBox;
 public class SBOLAssociationPanel2 extends JPanel implements ActionListener 
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private SBOLDocument SBOLDOC; 
 //	private static final long serialVersionUID = 1L;
 	private HashSet<String> sbolFilePaths;

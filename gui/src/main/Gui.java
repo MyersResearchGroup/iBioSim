@@ -86,7 +86,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.tree.TreeModel;
-import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
 import learn.AMSModel.LearnLPN;
@@ -114,13 +113,11 @@ import org.jlibsedml.DataSet;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
-import org.jlibsedml.Range;
 import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.Report;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.SedMLError;
-import org.jlibsedml.UniformRange;
 import org.jlibsedml.Variable;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
@@ -142,6 +139,15 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
+import com.apple.eawt.AboutHandler;
+import com.apple.eawt.AppEvent.AboutEvent;
+import com.apple.eawt.AppEvent.PreferencesEvent;
+import com.apple.eawt.AppEvent.QuitEvent;
+import com.apple.eawt.Application;
+import com.apple.eawt.PreferencesHandler;
+import com.apple.eawt.QuitHandler;
+import com.apple.eawt.QuitResponse; 
+
 import sbol.assembly.ModelGenerator;
 import sbol.browser.SBOLBrowser2;
 import sbol.util.SBOLUtility2;
@@ -149,7 +155,6 @@ import synthesis.async.Synthesis;
 import synthesis.genetic.SynthesisView;
 import uk.ac.ebi.biomodels.BioModelsWSClient;
 import uk.ac.ebi.biomodels.BioModelsWSException;
-import uk.ac.ncl.intbio.core.io.CoreIoException;
 import verification.AbstPane;
 import verification.Verification;
 import verification.platu.lpn.io.PlatuGrammarLexer;
@@ -173,10 +178,6 @@ import biomodel.parser.BioModel;
 import biomodel.parser.GCM2SBML;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
-
-import com.apple.eawt.Application;
-import com.apple.eawt.ApplicationAdapter;
-import com.apple.eawt.ApplicationEvent;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the
@@ -301,83 +302,30 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private static final String		atacsVersion		= "6.1";
 
-	private static final String		iBioSimVersion		= "2.8.4";
+	private static final String		iBioSimVersion		= "2.8.4";	
+	
+	public void OSXSetup() {
+		Application app = Application.getApplication();
 
-	public class MacOSAboutHandler extends Application
-	{
-
-		public MacOSAboutHandler()
-		{
-			// addApplicationListener(new AboutBoxHandler());
-		}
-
-		public void addAboutBoxHandler()
-		{
-			addApplicationListener(new AboutBoxHandler());
-		}
-
-		class AboutBoxHandler extends ApplicationAdapter
-		{
-			@Override
-			public void handleAbout(ApplicationEvent event)
-			{
+		app.setAboutHandler(new AboutHandler() {
+		    public void handleAbout(AboutEvent ae) {
 				about();
-				event.setHandled(true);
-			}
-		}
-	}
+		    }
+		});
 
-	public class MacOSPreferencesHandler extends Application
-	{
-
-		public MacOSPreferencesHandler()
-		{
-			// addApplicationListener(new PreferencesHandler());
-		}
-
-		public void addPreferencesHandler()
-		{
-			addApplicationListener(new PreferencesHandler());
-		}
-
-		class PreferencesHandler extends ApplicationAdapter
-		{
-			@Override
-			public void handlePreferences(ApplicationEvent event)
-			{
+		app.setPreferencesHandler(new PreferencesHandler() {
+		    public void handlePreferences(PreferencesEvent pe) {
 				EditPreferences editPreferences = new EditPreferences(frame, async, tree);
 				editPreferences.preferences();
-				event.setHandled(true);
-			}
-		}
-	}
-
-	public class MacOSQuitHandler extends Application
-	{
-
-		public MacOSQuitHandler()
-		{
-			// addApplicationListener(new QuitHandler());
-		}
-
-		public void addQuitHandler()
-		{
-			addApplicationListener(new QuitHandler());
-		}
-
-		class QuitHandler extends ApplicationAdapter
-		{
-			@Override
-			public void handleQuit(ApplicationEvent event)
-			{
-				if (exit())
-				{
-					event.setHandled(true);
-				}
-			}
-		}
-
-	}
+		    }
+		});
+		
+		app.setQuitHandler(new QuitHandler() {
+			public void handleQuitRequestWith(QuitEvent event, QuitResponse response)  {
+		    	exit();
+		    }
+		});
+   }
 
 	/**
 	 * This is the constructor for the Proj class. It initializes all the input
@@ -1075,15 +1023,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		help.add(bugReport);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
 		{
-			MacOSAboutHandler macOSAboutHandler = new MacOSAboutHandler();
-			macOSAboutHandler.addAboutBoxHandler();
-			MacOSPreferencesHandler macOSPreferencesHandler = new MacOSPreferencesHandler();
-			macOSPreferencesHandler.addPreferencesHandler();
-			MacOSQuitHandler macOSQuitHandler = new MacOSQuitHandler();
-			macOSQuitHandler.addQuitHandler();
-			Application application = new Application();
-			application.addPreferencesMenuItem();
-			application.setEnabledPreferencesMenu(true);
+			OSXSetup();
 		}
 		else
 		{
@@ -6656,7 +6596,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			org.sbolstandard.core2.SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(filePath));
 			for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions())
 			{
-				BioModel targetModel = new BioModel(projectDirectory);
+				//BioModel targetModel = new BioModel(projectDirectory);
 				//if (!targetModel.load(projectDirectory + File.separator + ModelGenerator.getDisplayID(moduleDef) + ".xml"))
 				//{
 				List<BioModel> models = ModelGenerator.generateModel(projectDirectory, moduleDef, sbolDoc);
@@ -7164,7 +7104,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 */
 	public int save(int index, int autosave)
 	{
-		if (tab.getComponentAt(index).getName().contains(("GCM")) || tab.getComponentAt(index).getName().contains("LHPN"))
+		if (tab.getComponentAt(index).getName().contains(("Model Editor")) || tab.getComponentAt(index).getName().contains("LHPN"))
 		{
 			if (tab.getComponentAt(index) instanceof ModelEditor)
 			{

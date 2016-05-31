@@ -4,9 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-
-import org.sbolstandard.core.DnaComponent;
-import org.sbolstandard.core.MergerException;
 import org.sbolstandard.core2.*;
 
 import java.net.URI;

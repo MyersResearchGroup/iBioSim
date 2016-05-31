@@ -58,19 +58,28 @@
     <target name="build" depends="init">
         <javac source="1.6"
 	       target="1.6"
+	       srcdir="${src.dir}"
                nowarn="on"
 	       destdir="${build.classes}"
                debug="${debug.flag}"
                deprecation="on"
 		   classpathref="classpath">
           <src path="${src.dir}"/>
+	  <exclude name="biomodel/gui/sbol/SBOLAssociationPanel.java"/>
+          <exclude name="biomodel/gui/sbol/SBOLField.java"/>
+          <exclude name="biomodel/gui/sbol/SBOLDescriptorPanel.java"/>
+          <exclude name="sbol/assembly/Assembler.java"/>
+          <exclude name="sbol/assembly/AssemblyGraph.java"/>
+          <exclude name="sbol/assembly/AssemblyNode.java"/>
+          <exclude name="sbol/browser/CollectionBrowserPanel.java"/>
+          <exclude name="sbol/browser/SBOLBrowser.java"/>
+          <exclude name="sbol/browser/DNAComponentBrowserPanel.java"/>
+          <exclude name="sbol/util/SBO.java"/>
+          <exclude name="sbol/util/SBOLFileManager.java"/>
+          <exclude name="sbol/util/SBOLTestFactory.java"/>
+          <exclude name="sbol/util/SBOLIdentityManager.java"/>
+          <exclude name="sbol/util/SBOLUtility.java"/>
 	  </javac>	
-        <!--<jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
-	    <manifest>
-		<attribute name="Main-Class" value="main.Gui"/>
-		<attribute name="Class-Path" value="../../lib/AppleJavaExtensions.jar ../../lib/jgraphx1.6.1.2.jar ../../lib/grappa1_2.jar ../../lib/jcommon-1.0.16.jar ../../lib/jfreechart-1.0.13.jar ../../lib/iText-2.1.5.jar ../../lib/batik-anim.jar ../../lib/batik-awt-util.jar ../../lib/batik-bridge.jar ../../lib/batik-codec.jar ../../lib/batik-css.jar ../../lib/batik-dom.jar ../../lib/batik-ext.jar ../../lib/batik-extension.jar ../../lib/batik-gui-util.jar ../../lib/batik-gvt.jar ../../lib/batik-parser.jar ../../lib/batik-script.jar ../../lib/batik-svg-dom.jar ../../lib/batik-svggen.jar ../../lib/batik-swing.jar ../../lib/batik-transcoder.jar ../../lib/batik-util.jar ../../lib/batik-xml.jar ../../lib/activation.jar ../../lib/mail.jar ../../lib/js.jar ../../lib/pdf-transcoder.jar ../../lib/xalan-2.6.0.jar ../../lib/xerces_2_5_0.jar ../../lib/xml-apis.jar ../../lib/xml-apis-ext.jar ../../lib/epsgraphics.jar ../../lib/org-jdesktop-layout.jar ../../lib/swing-layout-1.0.3.jar ../../lib/libsbml/lib/libsbmlj.jar ../../lib/junit.jar ../../lib/biomodels-wslib_standalone-1.12.jar ../../lib/gson-1.6.jar"/>
-      	    </manifest>
-	</jar>-->
     </target>
 
     <!-- Deploy -->

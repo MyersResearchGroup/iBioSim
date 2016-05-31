@@ -1057,7 +1057,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					"Select LPN", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 					null, options, options[0]);
 			if (selection == JOptionPane.YES_OPTION) {
-				for (Object obj : lpnListInCurDir.getSelectedValues()) {
+				for (Object obj : lpnListInCurDir.getSelectedValuesList().toArray()) {
 					String filename = (String) obj;
 					if (filename != null) {
 						String[] lpns = lpnList.getItems();
@@ -1128,8 +1128,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (!decomposeLPN.isSelected()) {
 				ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
 				selectedLPNs.add(lpn);
-				for (int i=0; i < lpnList.getSelectedValues().length; i++) {
-					String curLPNname = (String) lpnList.getSelectedValues()[i];
+				for (int i=0; i < lpnList.getSelectedValuesList().toArray().length; i++) {
+					String curLPNname = (String) lpnList.getSelectedValuesList().toArray()[i];
 					LhpnFile curLPN = new LhpnFile();
 					curLPN.load(directory + separator + curLPNname);
 					selectedLPNs.add(curLPN);
@@ -1620,7 +1620,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}				
 				}
 			}
-			else if (multipleLPNs.isSelected() && lpnList.getSelectedValues().length < 1) {
+			else if (multipleLPNs.isSelected() && lpnList.getSelectedValuesList().toArray().length < 1) {
 				JOptionPane.showMessageDialog(
 						Gui.frame,
 						"Please select at least 1 more LPN.",

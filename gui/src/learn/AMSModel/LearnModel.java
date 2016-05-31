@@ -2105,6 +2105,21 @@ public class LearnModel { // added ItemListener SB
 					g.addMovement("t" + numTransitions, "p" + placeInfo.get(st).getProperty("placeNum"));
 					g.changeInitialMarking("p" + placeInfo.get(st).getProperty("placeNum"), false);
 					out.write("2:Added transition t" + numTransitions + " b/w initPlace and transient place p" + placeInfo.get(st).getProperty("placeNum") + "\n");
+					
+					/* TODO: CJM: not quite right
+					if (g.getPostset("p" + placeInfo.get(st).getProperty("placeNum")).length==0) {
+						numTransitions++;
+						g.addTransition("t" + numTransitions);
+						g.changeDelay("t" + numTransitions,"0");
+						g.addMovement("p"+placeInfo.get(st).getProperty("placeNum"), "t" + numTransitions);
+						g.addMovement("t" + numTransitions,"p" + 
+								(Integer.parseInt(placeInfo.get(st).getProperty("placeNum"))+1));
+						out.write("Added init transition t" + numTransitions + " b/w place p" 
+								+ placeInfo.get(st).getProperty("placeNum") + " and p" 
+								+ Integer.parseInt(placeInfo.get(st).getProperty("placeNum"))+1 + "\n");
+					}
+					*/
+					
 					String[] binOutgoing = st.split(",");
 					String condStr = "";
 					for (int j = 0; j < reqdVarsL.size(); j++){ // preserving the order by having reqdVarsL as outer loop rather than care
@@ -2445,6 +2460,7 @@ public class LearnModel { // added ItemListener SB
 		try{
 			Properties p0, p1 = null;
 			out.write("In UpdateRateInfo\n");
+			// TODO: This is a hack to make first bin at time 0
 			String firstKey = "";
 			for (int j = 0; j < reqdVarsL.size(); j++) {
 				if (reqdVarsL.get(j).isCare()){
@@ -2499,12 +2515,29 @@ public class LearnModel { // added ItemListener SB
 						p0 = new Properties();
 						if (ratePlaces.size() == 0){
 							if (!transientPlaceReqd) {
-								placeInfo.put(key, p0);
-								g.addPlace("p" + numPlaces, false);
-								placeInfo.put(firstKey, p0); // CJM: 4/17/2015 - hack to fix transient
-								g.addPlace("p" + (numPlaces+1), false); // CJM: 4/17/2015 - hack to fix transient
-								startPlaces.add(/*key*/firstKey); // CJM: 4/17/2015 - hack to fix transient
-							} else {
+								// TODO: Added to try to fix start problem
+								if (firstKey!=key) {
+									Properties p0b = new Properties();
+									placeInfo.put(firstKey, p0b); // CJM: 4/17/2015 - hack to fix transient
+									g.addPlace("p" + numPlaces, false); // CJM: 4/17/2015 - hack to fix transient
+									startPlaces.add(firstKey); // CJM: 4/17/2015 - hack to fix transient
+									p0b.setProperty("placeNum", numPlaces.toString());
+									p0b.setProperty("type", "RATE");
+									p0b.setProperty("initiallyMarked", "false");
+									p0b.setProperty("metaType","false");  // REMOVE LATER?????
+									ratePlaces.add("p" + numPlaces);
+									out.write("New init place p" + numPlaces + " at time " + data.get(0).get(i) + " bins " + firstKey + "\n");
+									numPlaces++;
+									cvgProp.setProperty("places", String.valueOf(Integer.parseInt(cvgProp.getProperty("places"))+1));
+
+									placeInfo.put(key, p0);
+									g.addPlace("p" + numPlaces, false);
+								} else {
+									placeInfo.put(key, p0);
+									g.addPlace("p" + numPlaces, false);
+									startPlaces.add(key);
+								}
+						} else {
 								transientNetPlaces.put(key, p0);
 								g.addPlace("p" + numPlaces, true);
 							}
@@ -3477,12 +3510,13 @@ public class LearnModel { // added ItemListener SB
 							// p.setProperty(v.getName() +
 							// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
 							// + "_rMax"))/delayScaleFactor)));
+							System.out.println(st1 + ":" + v.getName());
 							p.setProperty(v.getName() + "_rMin", Double
 									.toString(Double.parseDouble(p.getProperty(v.getName()
-											+ "_rMin"))* scaleFactor));
+											+ "_rMin","0.0"))* scaleFactor));
 							p.setProperty(v.getName() + "_rMax", Double
 									.toString(Double.parseDouble(p.getProperty(v.getName()
-											+ "_rMax"))* scaleFactor));
+											+ "_rMax","0.0"))* scaleFactor));
 						} else {
 							// p.setProperty(v.getName() +
 							// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()

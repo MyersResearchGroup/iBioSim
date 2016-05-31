@@ -8,20 +8,21 @@ import javax.swing.*;
 //import org.sbolstandard.core.DnaComponent;
 //import org.sbolstandard.core.DnaSequence;
 //import org.sbolstandard.core.MergerException;
-import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.SequenceAnnotation;
-import org.sbolstandard.core2.SequenceConstraint;
 //import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 import org.sbolstandard.core2.*;
 
 import sbol.util.SBOLUtility2;
 import biomodel.util.GlobalConstants;
-import java.util.List;
 import java.net.URI;
 import java.util.*;
 
 public class ComponentDefinitionBrowserPanel extends JPanel implements MouseListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static SBOLDocument SBOLDOC; 
 //	private static final long serialVersionUID = 1L;
 	private LinkedList<URI>    compURIs;

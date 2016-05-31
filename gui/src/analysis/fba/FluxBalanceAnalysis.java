@@ -5,12 +5,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.HashMap;
 
-import org.sbml.jsbml.ext.comp.CompConstants;
-import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
-import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.fbc.Objective.Type;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
@@ -77,12 +74,12 @@ public class FluxBalanceAnalysis {
 
 		HashMap<String, Integer> reactionIndex = new HashMap<String, Integer>();
 		int kp = 0;
-		for(int l = 0;l<fbc.getListOfFluxBounds().size();l++){
-			if(!reactionIndex.containsKey(fbc.getFluxBound(l).getReaction())){
-				reactionIndex.put(fbc.getFluxBound(l).getReaction(), kp);
-				kp++;
-			}
-		}
+//		for(int l = 0;l<fbc.getListOfFluxBounds().size();l++){
+//			if(!reactionIndex.containsKey(fbc.getFluxBound(l).getReaction())){
+//				reactionIndex.put(fbc.getFluxBound(l).getReaction(), kp);
+//				kp++;
+//			}
+//		}
 		// Support for FBC Version 2
 		for (int l = 0; l < model.getReactionCount(); l++) {
 			Reaction r = model.getReaction(l);
@@ -116,30 +113,30 @@ public class FluxBalanceAnalysis {
 			double minLb = LPPrimalDualMethod.DEFAULT_MIN_LOWER_BOUND;
 			double maxUb = LPPrimalDualMethod.DEFAULT_MAX_UPPER_BOUND;
 			int m = 0;
-			for (int j = 0; j < fbc.getListOfFluxBounds().size(); j++) {
-				FluxBound bound = fbc.getFluxBound(j);
-				//double R [] = new double [reactionIndex.size()];
-				double boundVal = bound.getValue();
-				if (Double.isInfinite(boundVal) && boundVal > 0) boundVal = 10;
-				if(bound.getOperation().equals(FluxBound.Operation.GREATER_EQUAL)){
-					if (Double.isInfinite(boundVal)) boundVal = minLb;
-					lowerBounds[reactionIndex.get(bound.getReaction())] = boundVal;
-					//R[reactionIndex.get(bound.getReaction())]=1;
-					//System.out.println("  " + vectorToString(R,reactionIndex) + " >= " + boundVal);
-				}
-				else if(bound.getOperation().equals(FluxBound.Operation.LESS_EQUAL)){
-					if (Double.isInfinite(boundVal)) boundVal = maxUb;
-					upperBounds[reactionIndex.get(bound.getReaction())] = boundVal;
-					//R[reactionIndex.get(bound.getReaction())]=1;
-					//System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
-				} 
-				else if(bound.getOperation().equals(FluxBound.Operation.EQUAL)){
-					lowerBounds[reactionIndex.get(bound.getReaction())] = boundVal; 
-					upperBounds[reactionIndex.get(bound.getReaction())] = boundVal; 
-					//R[reactionIndex.get(bound.getReaction())]=1;
-					//System.out.println("  " + vectorToString(R,reactionIndex) + " == " + boundVal);
-				}
-			}
+//			for (int j = 0; j < fbc.getListOfFluxBounds().size(); j++) {
+//				FluxBound bound = fbc.getFluxBound(j);
+//				//double R [] = new double [reactionIndex.size()];
+//				double boundVal = bound.getValue();
+//				if (Double.isInfinite(boundVal) && boundVal > 0) boundVal = 10;
+//				if(bound.getOperation().equals(FluxBound.Operation.GREATER_EQUAL)){
+//					if (Double.isInfinite(boundVal)) boundVal = minLb;
+//					lowerBounds[reactionIndex.get(bound.getReaction())] = boundVal;
+//					//R[reactionIndex.get(bound.getReaction())]=1;
+//					//System.out.println("  " + vectorToString(R,reactionIndex) + " >= " + boundVal);
+//				}
+//				else if(bound.getOperation().equals(FluxBound.Operation.LESS_EQUAL)){
+//					if (Double.isInfinite(boundVal)) boundVal = maxUb;
+//					upperBounds[reactionIndex.get(bound.getReaction())] = boundVal;
+//					//R[reactionIndex.get(bound.getReaction())]=1;
+//					//System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
+//				} 
+//				else if(bound.getOperation().equals(FluxBound.Operation.EQUAL)){
+//					lowerBounds[reactionIndex.get(bound.getReaction())] = boundVal; 
+//					upperBounds[reactionIndex.get(bound.getReaction())] = boundVal; 
+//					//R[reactionIndex.get(bound.getReaction())]=1;
+//					//System.out.println("  " + vectorToString(R,reactionIndex) + " == " + boundVal);
+//				}
+//			}
 			// Support for FBC Version 2
 			for (int l = 0; l < model.getReactionCount(); l++) {
 				Reaction r = model.getReaction(l);

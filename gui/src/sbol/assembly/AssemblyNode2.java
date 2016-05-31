@@ -1,12 +1,8 @@
 package sbol.assembly;
 
-//import java.net.URI;
 import java.net.URI;
 import java.util.List;
-
-import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core2.ComponentDefinition;
-
 import biomodel.util.GlobalConstants;
 
 public class AssemblyNode2 {
