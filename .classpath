@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="biomodel/gui/sbol/SBOLAssociationPanel.java|biomodel/gui/sbol/SBOLField.java|biomodel/gui/sbol/SBOLDescriptorPanel.java|sbol/assembly/Assembler.java|sbol/assembly/AssemblyGraph.java|sbol/assembly/AssemblyNode.java|sbol/browser/CollectionBrowserPanel.java|sbol/browser/SBOLBrowser.java|sbol/browser/DNAComponentBrowserPanel.java|sbol/util/SBOLFileManager.java|sbol/util/SBOLIdentityManager.java|sbol/util/SBOLUtility.java" kind="src" path="gui/src"/>
-	<classpathentry kind="lib" path="gui/lib/AppleJavaExtensions.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-anim.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-awt-util.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-bridge.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-codec.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-css.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-dom.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-ext.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-extension.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-gui-util.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-gvt.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-parser.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-script.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-svg-dom.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-svggen.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-swing.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-transcoder.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-util.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-xml.jar"/>
 	<classpathentry kind="lib" path="gui/lib/epsgraphics.jar"/>
@@ -67,7 +53,6 @@
 	<classpathentry kind="lib" path="gui/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jdepend-2.9.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/junit-3.8.1.jar"/>
-	<classpathentry kind="lib" path="gui/lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis-1.0.b2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/JParts-1.0-SNAPSHOT-withDependencies.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xerces_2_11_0.jar"/>
