@@ -45,15 +45,11 @@ import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Port;
-import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
-import org.sbml.jsbml.ext.fbc.FluxBound;
-import org.sbml.jsbml.ext.fbc.FluxBound.Operation;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.sbol.SBOLField2;
-//import biomodel.gui.sbol.SBOLField;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -284,78 +280,78 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		this.add(addReacs, "South");
 	}
 	
-	private boolean createFluxBound(String reactionIdIndex,Operation operation,String value,String[] dimID,String[] dimensionIds) {
-		String reactionId = reactionIdIndex;
-		String indexStr = "";
-		if (reactionIdIndex.contains("[")) {
-			reactionId = reactionIdIndex.substring(0,reactionIdIndex.indexOf("["));
-			indexStr = reactionIdIndex.substring(reactionIdIndex.indexOf("["));
-		} 						
-		SBase reaction = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactionId);
-		String[] dex = SBMLutilities.checkIndices(indexStr, reaction, bioModel.getSBMLDocument(), dimensionIds, "reaction", dimID, null, null);
-		if (dex==null) return false;
-		double greaterValue = Double.parseDouble(value);
-		FluxBound fluxBound = bioModel.getSBMLFBC().createFluxBound();
-		fluxBound.setOperation(operation);
-		fluxBound.setValue(greaterValue);
-		fluxBound.setReaction(reactionId);
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-		ArraysSBasePlugin sBasePluginFB = SBMLutilities.getArraysSBasePlugin(fluxBound);
-		sBasePluginFB.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
-		sBasePluginFB.unsetListOfIndices();
-		for(int k = 0; k<dex.length-1; k++){
-			Index indexRule = new Index();
-			indexRule.setArrayDimension(k);
-			indexRule.setReferencedAttribute("fbc:reaction");
-			ASTNode indexMath = SBMLutilities.myParseFormula(dex[k+1]);
-			indexRule.setMath(indexMath);
-			sBasePluginFB.addIndex(indexRule);
-		}		
-		return true;
-	}
+//	private boolean createFluxBound(String reactionIdIndex,Operation operation,String value,String[] dimID,String[] dimensionIds) {
+//		String reactionId = reactionIdIndex;
+//		String indexStr = "";
+//		if (reactionIdIndex.contains("[")) {
+//			reactionId = reactionIdIndex.substring(0,reactionIdIndex.indexOf("["));
+//			indexStr = reactionIdIndex.substring(reactionIdIndex.indexOf("["));
+//		} 						
+//		SBase reaction = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactionId);
+//		String[] dex = SBMLutilities.checkIndices(indexStr, reaction, bioModel.getSBMLDocument(), dimensionIds, "reaction", dimID, null, null);
+//		if (dex==null) return false;
+//		double greaterValue = Double.parseDouble(value);
+//		FluxBound fluxBound = bioModel.getSBMLFBC().createFluxBound();
+//		fluxBound.setOperation(operation);
+//		fluxBound.setValue(greaterValue);
+//		fluxBound.setReaction(reactionId);
+//		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
+//		ArraysSBasePlugin sBasePluginFB = SBMLutilities.getArraysSBasePlugin(fluxBound);
+//		sBasePluginFB.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
+//		sBasePluginFB.unsetListOfIndices();
+//		for(int k = 0; k<dex.length-1; k++){
+//			Index indexRule = new Index();
+//			indexRule.setArrayDimension(k);
+//			indexRule.setReferencedAttribute("fbc:reaction");
+//			ASTNode indexMath = SBMLutilities.myParseFormula(dex[k+1]);
+//			indexRule.setMath(indexMath);
+//			sBasePluginFB.addIndex(indexRule);
+//		}		
+//		return true;
+//	}
 	
-	private boolean createReactionFluxBounds(String reactionId,String[] dimID,String[] dimensionIds) {
-		if(kineticLaw.getText().contains("<=")){
-			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
-			if (userInput.length==3) {
-				if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[0],dimID,dimensionIds)) return false;
-				if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[2],dimID,dimensionIds)) return false;
-			} 
-			else {
-				if (userInput[0].startsWith(reactionId)) {
-					if (!createFluxBound(userInput[0],FluxBound.Operation.LESS_EQUAL,userInput[1],dimID,dimensionIds)) return false;
-				} else {
-					if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[0],dimID,dimensionIds)) return false;
-				}
-			}			
-		} 
-		else if(kineticLaw.getText().contains(">=")){
-			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split(">=");
-			if (userInput.length==3) {
-				if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[0],dimID,dimensionIds)) return false;
-				if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[2],dimID,dimensionIds)) return false;
-			} 
-			else {
-				if (userInput[0].startsWith(reactionId)) {
-					if (!createFluxBound(userInput[0],FluxBound.Operation.GREATER_EQUAL,userInput[1],dimID,dimensionIds)) return false;
-				} else {
-					if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[0],dimID,dimensionIds)) return false;
-				}
-			}	
-		}
-		else{
-			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("=");
-			FluxBound fxEqual = bioModel.getSBMLFBC().createFluxBound();
-			fxEqual.setOperation(FluxBound.Operation.EQUAL);
-			fxEqual.setReaction(reactionId);
-			if(userInput[0].startsWith(reactionId)){
-				if (!createFluxBound(userInput[0],FluxBound.Operation.EQUAL,userInput[1],dimID,dimensionIds)) return false;
-			} else {
-				if (!createFluxBound(userInput[1],FluxBound.Operation.EQUAL,userInput[0],dimID,dimensionIds)) return false;
-			}
-		}
-		return true;
-	}
+//	private boolean createReactionFluxBounds(String reactionId,String[] dimID,String[] dimensionIds) {
+//		if(kineticLaw.getText().contains("<=")){
+//			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
+//			if (userInput.length==3) {
+//				if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[0],dimID,dimensionIds)) return false;
+//				if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[2],dimID,dimensionIds)) return false;
+//			} 
+//			else {
+//				if (userInput[0].startsWith(reactionId)) {
+//					if (!createFluxBound(userInput[0],FluxBound.Operation.LESS_EQUAL,userInput[1],dimID,dimensionIds)) return false;
+//				} else {
+//					if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[0],dimID,dimensionIds)) return false;
+//				}
+//			}			
+//		} 
+//		else if(kineticLaw.getText().contains(">=")){
+//			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split(">=");
+//			if (userInput.length==3) {
+//				if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[0],dimID,dimensionIds)) return false;
+//				if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[2],dimID,dimensionIds)) return false;
+//			} 
+//			else {
+//				if (userInput[0].startsWith(reactionId)) {
+//					if (!createFluxBound(userInput[0],FluxBound.Operation.GREATER_EQUAL,userInput[1],dimID,dimensionIds)) return false;
+//				} else {
+//					if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[0],dimID,dimensionIds)) return false;
+//				}
+//			}	
+//		}
+//		else{
+//			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("=");
+//			FluxBound fxEqual = bioModel.getSBMLFBC().createFluxBound();
+//			fxEqual.setOperation(FluxBound.Operation.EQUAL);
+//			fxEqual.setReaction(reactionId);
+//			if(userInput[0].startsWith(reactionId)){
+//				if (!createFluxBound(userInput[0],FluxBound.Operation.EQUAL,userInput[1],dimID,dimensionIds)) return false;
+//			} else {
+//				if (!createFluxBound(userInput[1],FluxBound.Operation.EQUAL,userInput[0],dimID,dimensionIds)) return false;
+//			}
+//		}
+//		return true;
+//	}
 	
 	private boolean createReactionFluxBounds2(String reactionId,String[] dimID,String[] dimensionIds) {
 		Reaction r = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
@@ -1117,25 +1113,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							react.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(production)));
 						}
 						error = checkKineticLawUnits(react.getKineticLaw());
-						int i = 0;
-						while (i < bioModel.getSBMLFBC().getListOfFluxBounds().size()) {
-							if(bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getReaction().equals(reactionId)){
-								bioModel.getSBMLFBC().removeFluxBound(i);
-							} else {
-								i++;
-							}
-						}
 					}
 					else{
 						react.unsetKineticLaw();
-						int i = 0;
-						while(i < bioModel.getSBMLFBC().getListOfFluxBounds().size()){
-							if(bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getReaction().equals(reactionId)){
-								bioModel.getSBMLFBC().removeFluxBound(i);
-							} else {
-								i++;
-							}
-						}
 						error = !createReactionFluxBounds2(reactionId,dimID,dimensionIds);
 					}
 
@@ -3686,219 +3666,219 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Checks the string to see if there are any errors. Retruns true if there are no errors, else returns false.
 	 */
-	private static boolean fluxBoundisGood(String s, String reactionId){
-		if(s.contains("<=")){
-			String [] correctnessTest = s.split("<=");
-			if(correctnessTest.length == 3){
-				try{
-					Double.parseDouble(correctnessTest[0]);
-				}
-				catch(NumberFormatException e){
-					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " has to be a double.",
-							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				try{
-					Double.parseDouble(correctnessTest[2]);
-				}
-				catch(NumberFormatException e){
-					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2] + " has to be a double.", 
-							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				String id = correctnessTest[1];
-				if (id.contains("[")) {
-					id = id.substring(0,id.indexOf("["));
-				} 
-				if(!id.equals(reactionId)){
-					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
-							JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				if(Double.parseDouble(correctnessTest[0]) > Double.parseDouble(correctnessTest[2])){
-					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " must be less than " + correctnessTest[2], 
-							"Imbalance with Bounds", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				return true;
-			}
-			else if(correctnessTest.length == 2){
-				String id0 = correctnessTest[0];
-				if (id0.contains("[")) {
-					id0 = id0.substring(0,id0.indexOf("["));
-				} 
-				String id1 = correctnessTest[1];
-				if (id1.contains("[")) {
-					id1 = id1.substring(0,id1.indexOf("["));
-				} 
-				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
-					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
-							JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				if(correctnessTest[0].equals(reactionId)){
-					try{
-						Double.parseDouble(correctnessTest[1]);
-					}
-					catch(Exception e){
-						if(e.equals(new NumberFormatException())){
-							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
-									JOptionPane.ERROR_MESSAGE);
-							return false;
-						}
-					}
-				}
-				else{
-					try{
-						Double.parseDouble(correctnessTest[0]);
-					}
-					catch(Exception e){
-						if(e.equals(new NumberFormatException())){
-							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
-									JOptionPane.ERROR_MESSAGE);
-							return false;
-						}
-					}
-				}
-				return true;
-			} else{
-				JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
-						JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
-		}
-		else if(s.contains(">=")){
-			String [] correctnessTest = s.split(">=");
-			if(correctnessTest.length == 3){
-				try{
-					Double.parseDouble(correctnessTest[0]);
-				}
-				catch(NumberFormatException e){
-					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " has to be a double.",
-							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				try{
-					Double.parseDouble(correctnessTest[2]);
-				}
-				catch(NumberFormatException e){
-					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2] + " has to be a double.", 
-							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				String id = correctnessTest[1];
-				if (id.contains("[")) {
-					id = id.substring(0,id.indexOf("["));
-				} 
-				if(!id.equals(reactionId)){
-					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
-							JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				if(Double.parseDouble(correctnessTest[0]) < Double.parseDouble(correctnessTest[2])){
-					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " must be greater than " + correctnessTest[2], 
-							"Imbalance with Bounds", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				return true;
-			}
-			else if(correctnessTest.length == 2){
-				String id0 = correctnessTest[0];
-				if (id0.contains("[")) {
-					id0 = id0.substring(0,id0.indexOf("["));
-				} 
-				String id1 = correctnessTest[1];
-				if (id1.contains("[")) {
-					id1 = id1.substring(0,id1.indexOf("["));
-				} 
-				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
-					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
-							JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				if(correctnessTest[0].equals(reactionId)){
-					try{
-						Double.parseDouble(correctnessTest[1]);
-					}
-					catch(Exception e){
-						if(e.equals(new NumberFormatException())){
-							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
-									JOptionPane.ERROR_MESSAGE);
-							return false;
-						}
-					}
-				}
-				else{
-					try{
-						Double.parseDouble(correctnessTest[0]);
-					}
-					catch(Exception e){
-						if(e.equals(new NumberFormatException())){
-							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
-									JOptionPane.ERROR_MESSAGE);
-							return false;
-						}
-					}
-				}
-				return true;
-			} else{
-				JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
-						JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
-		}
-		else if(s.contains("=")){
-			String [] correctnessTest = s.split("=");
-			if(correctnessTest.length == 2){
-				String id0 = correctnessTest[0];
-				if (id0.contains("[")) {
-					id0 = id0.substring(0,id0.indexOf("["));
-				} 
-				String id1 = correctnessTest[1];
-				if (id1.contains("[")) {
-					id1 = id1.substring(0,id1.indexOf("["));
-				} 
-				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
-					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
-							JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-				if(correctnessTest[0].equals(reactionId)){
-					try{
-						Double.parseDouble(correctnessTest[1]);
-					}
-					catch(Exception e){
-						if(e.equals(new NumberFormatException())){
-							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
-									JOptionPane.ERROR_MESSAGE);
-							return false;
-						}
-					}
-				}
-				else{
-					try{
-						Double.parseDouble(correctnessTest[0]);
-					}
-					catch(Exception e){
-						if(e.equals(new NumberFormatException())){
-							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
-									JOptionPane.ERROR_MESSAGE);
-							return false;
-						}
-					}
-				}
-				return true;
-			} 
-			JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
-					JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		else{
-			JOptionPane.showMessageDialog(Gui.frame, "Need Operations.", "Bad Format",
-					JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-	}
+//	private static boolean fluxBoundisGood(String s, String reactionId){
+//		if(s.contains("<=")){
+//			String [] correctnessTest = s.split("<=");
+//			if(correctnessTest.length == 3){
+//				try{
+//					Double.parseDouble(correctnessTest[0]);
+//				}
+//				catch(NumberFormatException e){
+//					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " has to be a double.",
+//							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				try{
+//					Double.parseDouble(correctnessTest[2]);
+//				}
+//				catch(NumberFormatException e){
+//					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2] + " has to be a double.", 
+//							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				String id = correctnessTest[1];
+//				if (id.contains("[")) {
+//					id = id.substring(0,id.indexOf("["));
+//				} 
+//				if(!id.equals(reactionId)){
+//					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+//							JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				if(Double.parseDouble(correctnessTest[0]) > Double.parseDouble(correctnessTest[2])){
+//					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " must be less than " + correctnessTest[2], 
+//							"Imbalance with Bounds", JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				return true;
+//			}
+//			else if(correctnessTest.length == 2){
+//				String id0 = correctnessTest[0];
+//				if (id0.contains("[")) {
+//					id0 = id0.substring(0,id0.indexOf("["));
+//				} 
+//				String id1 = correctnessTest[1];
+//				if (id1.contains("[")) {
+//					id1 = id1.substring(0,id1.indexOf("["));
+//				} 
+//				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
+//					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+//							JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				if(correctnessTest[0].equals(reactionId)){
+//					try{
+//						Double.parseDouble(correctnessTest[1]);
+//					}
+//					catch(Exception e){
+//						if(e.equals(new NumberFormatException())){
+//							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
+//									JOptionPane.ERROR_MESSAGE);
+//							return false;
+//						}
+//					}
+//				}
+//				else{
+//					try{
+//						Double.parseDouble(correctnessTest[0]);
+//					}
+//					catch(Exception e){
+//						if(e.equals(new NumberFormatException())){
+//							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
+//									JOptionPane.ERROR_MESSAGE);
+//							return false;
+//						}
+//					}
+//				}
+//				return true;
+//			} else{
+//				JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
+//						JOptionPane.ERROR_MESSAGE);
+//				return false;
+//			}
+//		}
+//		else if(s.contains(">=")){
+//			String [] correctnessTest = s.split(">=");
+//			if(correctnessTest.length == 3){
+//				try{
+//					Double.parseDouble(correctnessTest[0]);
+//				}
+//				catch(NumberFormatException e){
+//					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " has to be a double.",
+//							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				try{
+//					Double.parseDouble(correctnessTest[2]);
+//				}
+//				catch(NumberFormatException e){
+//					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2] + " has to be a double.", 
+//							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				String id = correctnessTest[1];
+//				if (id.contains("[")) {
+//					id = id.substring(0,id.indexOf("["));
+//				} 
+//				if(!id.equals(reactionId)){
+//					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+//							JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				if(Double.parseDouble(correctnessTest[0]) < Double.parseDouble(correctnessTest[2])){
+//					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " must be greater than " + correctnessTest[2], 
+//							"Imbalance with Bounds", JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				return true;
+//			}
+//			else if(correctnessTest.length == 2){
+//				String id0 = correctnessTest[0];
+//				if (id0.contains("[")) {
+//					id0 = id0.substring(0,id0.indexOf("["));
+//				} 
+//				String id1 = correctnessTest[1];
+//				if (id1.contains("[")) {
+//					id1 = id1.substring(0,id1.indexOf("["));
+//				} 
+//				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
+//					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+//							JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				if(correctnessTest[0].equals(reactionId)){
+//					try{
+//						Double.parseDouble(correctnessTest[1]);
+//					}
+//					catch(Exception e){
+//						if(e.equals(new NumberFormatException())){
+//							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
+//									JOptionPane.ERROR_MESSAGE);
+//							return false;
+//						}
+//					}
+//				}
+//				else{
+//					try{
+//						Double.parseDouble(correctnessTest[0]);
+//					}
+//					catch(Exception e){
+//						if(e.equals(new NumberFormatException())){
+//							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
+//									JOptionPane.ERROR_MESSAGE);
+//							return false;
+//						}
+//					}
+//				}
+//				return true;
+//			} else{
+//				JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
+//						JOptionPane.ERROR_MESSAGE);
+//				return false;
+//			}
+//		}
+//		else if(s.contains("=")){
+//			String [] correctnessTest = s.split("=");
+//			if(correctnessTest.length == 2){
+//				String id0 = correctnessTest[0];
+//				if (id0.contains("[")) {
+//					id0 = id0.substring(0,id0.indexOf("["));
+//				} 
+//				String id1 = correctnessTest[1];
+//				if (id1.contains("[")) {
+//					id1 = id1.substring(0,id1.indexOf("["));
+//				} 
+//				if(!id0.equals(reactionId) && !id1.equals(reactionId)){
+//					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+//							JOptionPane.ERROR_MESSAGE);
+//					return false;
+//				}
+//				if(correctnessTest[0].equals(reactionId)){
+//					try{
+//						Double.parseDouble(correctnessTest[1]);
+//					}
+//					catch(Exception e){
+//						if(e.equals(new NumberFormatException())){
+//							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
+//									JOptionPane.ERROR_MESSAGE);
+//							return false;
+//						}
+//					}
+//				}
+//				else{
+//					try{
+//						Double.parseDouble(correctnessTest[0]);
+//					}
+//					catch(Exception e){
+//						if(e.equals(new NumberFormatException())){
+//							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
+//									JOptionPane.ERROR_MESSAGE);
+//							return false;
+//						}
+//					}
+//				}
+//				return true;
+//			} 
+//			JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
+//					JOptionPane.ERROR_MESSAGE);
+//			return false;
+//		}
+//		else{
+//			JOptionPane.showMessageDialog(Gui.frame, "Need Operations.", "Bad Format",
+//					JOptionPane.ERROR_MESSAGE);
+//			return false;
+//		}
+//	}
 	
 	/**
 	 * Checks the string to see if there are any errors. Retruns true if there are no errors, else returns false.

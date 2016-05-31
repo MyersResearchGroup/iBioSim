@@ -2,7 +2,6 @@ package sbol.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 //import java.io.IOException;
@@ -15,27 +14,14 @@ import java.util.Properties;
 //import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.Preferences;
-
-
-
-
-
-
-
-
-
-
 import javax.swing.JFrame;
 //import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 
 import org.sbolstandard.core2.*;
 
-import uk.ac.ncl.intbio.core.io.CoreIoException;
 import biomodel.util.GlobalConstants;
 
 public class SBOLUtility2 

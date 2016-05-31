@@ -21,9 +21,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBMLDocument;
 
 import biomodel.parser.BioModel;
@@ -225,7 +223,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 					p.load(load);
 					load.close();
-					Object[] delete = files.getSelectedValues();
+					Object[] delete = files.getSelectedValuesList().toArray();
 					for (Object file : delete) {
 						int run = 0;
 						String[] list = new File(directory).list();

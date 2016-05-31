@@ -2,19 +2,12 @@ package biomodel.util;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,10 +20,8 @@ import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.tree.TreeNode;
@@ -98,7 +89,6 @@ import org.sbml.jsbml.ext.distrib.DrawFromDistribution;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
-import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.fbc.FluxObjective;
 import org.sbml.jsbml.ext.fbc.Objective;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
@@ -6560,7 +6550,6 @@ public class SBMLutilities
 
 	public static void checkModelCompleteness(SBMLDocument document)
 	{
-		FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
 		JTextArea messageArea = new JTextArea();
 		messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
 		boolean display = false;
@@ -6598,22 +6587,9 @@ public class SBMLutilities
 		for (int i = 0; i < model.getReactionCount(); i++)
 		{
 			Reaction reaction = model.getReaction(i);
-			if (fbc != null)
-			{
-				boolean foundIt = false;
-				for (int j = 0; j < fbc.getListOfFluxBounds().size(); j++)
-				{
-					FluxBound fb = fbc.getFluxBound(j);
-					if (fb.getReaction().equals(reaction.getId()))
-					{
-						foundIt = true;
-						break;
-					}
-				}
-				if (foundIt)
-				{
-					continue;
-				}
+			FBCReactionPlugin rBounds = SBMLutilities.getFBCReactionPlugin(reaction);
+			if (rBounds.isSetLowerFluxBound() || rBounds.isSetUpperFluxBound()) {
+				continue;
 			}
 			if (!(reaction.isSetKineticLaw()))
 			{

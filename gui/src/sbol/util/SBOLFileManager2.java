@@ -1,7 +1,5 @@
 package sbol.util;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,7 +9,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;

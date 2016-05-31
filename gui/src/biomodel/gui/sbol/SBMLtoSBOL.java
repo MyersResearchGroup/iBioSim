@@ -1,6 +1,5 @@
 package biomodel.gui.sbol;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -9,14 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.prefs.Preferences;
-
-
-
-
 import javax.swing.JOptionPane;
-//import javax.swing.JOptionPane;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 
@@ -31,8 +23,6 @@ import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
-//import org.sbml.jsbml.ext.layout.Layout;
-//import org.sbml.jsbml.ext.layout.LayoutModelPlugin;
 import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.Collection;
 import org.sbolstandard.core2.ComponentDefinition;
@@ -48,17 +38,11 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
-import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
-
-
-
-//import sbol.util.SBOLUtility;
 import sbol.util.SBOLUtility2;
-import uk.ac.ncl.intbio.core.io.CoreIoException;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;

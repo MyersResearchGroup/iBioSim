@@ -635,7 +635,7 @@ public class ModelGenerator {
 	public static boolean isPromoterDefinition(ComponentDefinition compDef) {
 		return isDNADefinition(compDef) 
 				&& (compDef.containsRole(SequenceOntology.PROMOTER)||
-						(compDef.containsRole(org.sbolstandard.core.util.SequenceOntology.PROMOTER)));
+						(compDef.containsRole(SequenceOntology.PROMOTER)));
 	}
 	
 	public static boolean isGeneComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -737,7 +737,7 @@ public class ModelGenerator {
 		if (interact.containsType(SystemsBiologyOntology.GENETIC_PRODUCTION) && interact.getParticipations().size() == 2/*3*/) {
 			boolean hasPromoter = false;
 			boolean hasProduct = false;
-			boolean hasTranscribed = false;
+			//boolean hasTranscribed = false;
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 				if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isPromoterComponent(comp, sbolDoc))
@@ -747,7 +747,7 @@ public class ModelGenerator {
 					hasProduct = true;
 				// TRANSCRIBED
 				else if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isGeneComponent(comp, sbolDoc))
-					hasTranscribed = true;
+					;//hasTranscribed = true;
 			}
 			if (hasPromoter && hasProduct /*&& hasTranscribed*/)
 				return true;
