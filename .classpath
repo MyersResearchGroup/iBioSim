@@ -45,6 +45,7 @@
 	<classpathentry kind="lib" path="gui/lib/batik-css.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-bridge.jar"/>
 	<classpathentry kind="lib" path="gui/lib/w3c-dom.jar"/>
+	<classpathentry kind="lib" path="gui/lib/AppleJavaExtensions.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="gui/lib/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jdom-contrib.jar"/>
