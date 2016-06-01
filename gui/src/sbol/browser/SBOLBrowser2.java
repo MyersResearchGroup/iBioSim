@@ -55,7 +55,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		this.browsePath = browsePath;
 		this.SBOLDOC    = new SBOLDocument();
 		
-		browsePath = browsePath.replace("\\\\", "\\");
+		//browsePath = browsePath.replace("\\\\", "\\");
 		loadSbolFiles(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), browsePath);
 		constructBrowser(new HashSet<URI>());
 	}
