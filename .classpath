@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="gui/lib/batik-util.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-xml.jar"/>
 	<classpathentry kind="lib" path="gui/lib/epsgraphics.jar"/>
-	<classpathentry kind="lib" path="gui/lib/js.jar"/>
 	<classpathentry kind="lib" path="gui/lib/junit.jar"/>
 	<classpathentry kind="lib" path="gui/lib/org-jdesktop-layout.jar"/>
 	<classpathentry kind="lib" path="gui/lib/pdf-transcoder.jar"/>
@@ -53,7 +52,6 @@
 	<classpathentry kind="lib" path="gui/lib/jlibsedml.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xom-1.2.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jmathml.jar"/>
-	<classpathentry kind="lib" path="gui/lib/architecture-rules-3.0.0-M1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/colt-1.2.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-beanutils-1.6.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-collections-2.1.jar"/>
