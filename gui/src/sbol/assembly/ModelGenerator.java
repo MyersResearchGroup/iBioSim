@@ -632,10 +632,11 @@ public class ModelGenerator {
 		return isPromoterDefinition(compDef);
 	}
 	
+	// TODO: need to figure out better if the CD is a promoter, need to look carefully at its subComponents
 	public static boolean isPromoterDefinition(ComponentDefinition compDef) {
-		return isDNADefinition(compDef) 
+		return isDNADefinition(compDef) /*
 				&& (compDef.containsRole(SequenceOntology.PROMOTER)||
-						(compDef.containsRole(SequenceOntology.PROMOTER)));
+						(compDef.containsRole(SequenceOntology.PROMOTER)))*/;
 	}
 	
 	public static boolean isGeneComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
