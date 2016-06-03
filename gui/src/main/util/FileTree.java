@@ -5,15 +5,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
+import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLReader;
+import org.sbolstandard.core2.SBOLValidationException;
+
 import main.Gui;
-
 import sbol.util.SBOLUtility2;
-
 import biomodel.parser.BioModel;
 import biomodel.parser.GCM2SBML;
 import biomodel.util.GlobalConstants;
@@ -276,6 +280,30 @@ public class FileTree extends JPanel implements MouseListener {
 					files.add(thisObject);
 				}
 				*/
+				if (!async && thisObject.toString().endsWith(".sbol")) {
+					Preferences biosimrc = Preferences.userRoot();
+					String sbolFile = thisObject.toString();
+					SBOLReader.setKeepGoing(true);
+					SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+					SBOLDocument sbolDoc;
+					try {
+						sbolDoc = SBOLReader.read(curPath + separator + sbolFile);
+						sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+						sbolDoc.write(curPath + separator + sbolFile);
+					}
+					catch (SBOLValidationException e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+					}
+					catch (IOException e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+					}
+					catch (SBOLConversionException e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+					}
+				}
 				// TODO: if .sbol file, then check version, if 1.1, SBOLRead/Write the file, provide URI prefix (preference + "/" projectName)
 				if (!async && thisObject.toString().length() > 3 && 
 						thisObject.toString().substring(thisObject.toString().length() - 4).equals(".gcm")) {

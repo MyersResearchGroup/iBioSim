@@ -137,7 +137,9 @@ import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
+import org.sbolstandard.core2.SBOLValidate;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SBOLWriter;
 
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
@@ -3482,8 +3484,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource().equals(importSbol))
 		{
-			importFile("SBOL", ".sbol", ".rdf");
-			// TODO: create an importSBOL method that uses SBOLRead/Write to bring into project
+			importSBOL();
 		}
 		else if (e.getSource().equals(importSedml))
 		{
@@ -5322,6 +5323,72 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			catch (Exception e1)
 			{
 				e1.printStackTrace();
+				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+	
+
+	private void importSBOL()
+	{
+		Preferences biosimrc = Preferences.userRoot();
+		File importFile;
+		if (biosimrc.get("biosim.general.import_dir", "").equals(""))
+		{
+			importFile = null;
+		}
+		else
+		{
+			importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+		}
+		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, "Import SBOL", -1);
+		if (!filename.trim().equals(""))
+		{
+			biosimrc.put("biosim.general.import_dir", filename.trim());
+			String[] file = filename.trim().split(separator);
+			try
+			{
+				File sbolFile = new File(filename.trim());
+				SBOLReader.setKeepGoing(true);
+				SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+				SBOLDocument sbolDoc = SBOLReader.read(sbolFile);
+				sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+				SBOLValidate.validateSBOL(sbolDoc,true,true,true);
+				if (SBOLReader.getNumErrors()>0 || SBOLValidate.getNumErrors()>0)
+				{
+					JTextArea messageArea = new JTextArea();
+					messageArea.append("Imported SBOL file contains the errors listed below. ");
+					messageArea.append("It is recommended that you fix them or you may get unexpected results.\n\n");
+					for (String error : SBOLReader.getErrors()) 
+					{
+						messageArea.append(error + "\n");
+					}
+					for (String error : SBOLValidate.getErrors()) 
+					{
+						messageArea.append(error + "\n");
+					}
+					messageArea.setLineWrap(true);
+					messageArea.setEditable(false);
+					messageArea.setSelectionStart(0);
+					messageArea.setSelectionEnd(0);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(600, 600));
+					scroll.setPreferredSize(new Dimension(600, 600));
+					scroll.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(Gui.frame, scroll, "SBOL Errors and Warnings", JOptionPane.ERROR_MESSAGE);
+				}
+				String newFile = file[file.length-1].replace(".xml", "").replace(".rdf", "").replace(".gb", "").replace(".fasta", "")+".sbol";
+				SBOLWriter.write(sbolDoc, root + separator + newFile);
+				addToTree(newFile);
+			}
+			catch (IOException e1)
+			{
+				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (SBOLConversionException e) {
+				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (SBOLValidationException e) {
 				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
