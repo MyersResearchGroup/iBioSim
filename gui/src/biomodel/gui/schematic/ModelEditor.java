@@ -635,7 +635,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			lastFilePath = null;
 		else 
 			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
-		String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL2", -1);
+		String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
 		if (!exportFilePath.equals("")) {
 			biosimrc.put("biosim.general.export_dir", exportFilePath);
 			sbmltosbol.export(exportFilePath);
