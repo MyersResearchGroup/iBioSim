@@ -147,6 +147,7 @@ import com.apple.eawt.Application;
 import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse; 
+import com.clarkparsia.sbol.editor.SBOLDesignerPlugin;
 
 import sbol.assembly.ModelGenerator;
 import sbol.browser.SBOLBrowser2;
@@ -193,7 +194,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public static JFrame			frame;	// Frame where components of the GUI are displayed
 	private JMenuBar				menuBar;
 	private JMenu					file, openRecent, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
-	private JMenuItem				newProj,newSBMLModel,newGridModel,newVhdl,newS,newInst,newLhpn,newProperty,newG;
+	private JMenuItem				newProj,newSBMLModel,newSBOL,newGridModel,newVhdl,newS,newInst,newLhpn,newProperty,newG;
 	private JMenuItem				newCsp,newHse,newUnc,newRsg,newSpice;
 	private JMenuItem				exit;
 	private JMenuItem				importSbol,importSedml,importSbml,importBioModel,importVirtualPart,importVhdl;
@@ -511,6 +512,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		pref = new JMenuItem("Preferences");
 		newProj = new JMenuItem("Project");
 		newSBMLModel = new JMenuItem("Model");
+		newSBOL = new JMenuItem("SBOL File");
 		newGridModel = new JMenuItem("Grid Model");
 		newSpice = new JMenuItem("Spice Circuit");
 		newVhdl = new JMenuItem("VHDL Model");
@@ -625,6 +627,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		bugReport.addActionListener(this);
 		newProj.addActionListener(this);
 		newSBMLModel.addActionListener(this);
+		newSBOL.addActionListener(this);
 		newGridModel.addActionListener(this);
 		newVhdl.addActionListener(this);
 		newS.addActionListener(this);
@@ -732,9 +735,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else
 		{
 			check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
-			saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | InputEvent.ALT_MASK));
+			//saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | InputEvent.ALT_MASK));
 			refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
 			newSBMLModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
+			//newSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | InputEvent.ALT_MASK));
 			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | InputEvent.SHIFT_MASK));
 			createSynth.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ShortCutKey | InputEvent.SHIFT_MASK));
@@ -805,6 +809,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportAvi.setEnabled(false);
 		exportMp4.setEnabled(false);
 		newSBMLModel.setEnabled(false);
+		newSBOL.setEnabled(false);
 		newGridModel.setEnabled(false);
 		newVhdl.setEnabled(false);
 		newS.setEnabled(false);
@@ -910,6 +915,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		{
 			newMenu.add(newSBMLModel);
 			newMenu.add(newGridModel);
+			newMenu.add(newSBOL);
 		}
 		else if (lema)
 		{
@@ -2075,6 +2081,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		{
 			generateSBMLFromSBOL();
 		}
+		else if (e.getActionCommand().equals("SBOLDesinger"))
+		{
+			openSBOLDesigner();
+		}
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("modelEditor"))
 		{
@@ -3196,6 +3206,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				importRsg.setEnabled(true);
 				importSpice.setEnabled(true);
 				newSBMLModel.setEnabled(true);
+				newSBOL.setEnabled(true);
 				newGridModel.setEnabled(true);
 				newVhdl.setEnabled(true);
 				newProperty.setEnabled(true); // DK
@@ -3360,6 +3371,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						importRsg.setEnabled(true);
 						importSpice.setEnabled(true);
 						newSBMLModel.setEnabled(true);
+						newSBOL.setEnabled(true);
 						newGridModel.setEnabled(true);
 						newVhdl.setEnabled(true);
 						newS.setEnabled(true);
@@ -3392,6 +3404,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getSource() == newSBMLModel)
 		{
 			createModel(false);
+		}
+		else if (e.getSource() == newSBOL)
+		{
+			newSBOLDesigner();
 		}
 		else if (e.getSource() == newGridModel)
 		{
@@ -6564,9 +6580,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else
 		{
-			//SBOLBrowser sbolBrowser = new SBOLBrowser(this, filePath);
-			//sbolBrowser.open();
-
 			SBOLBrowser2 sbolBrowser2 = new SBOLBrowser2(this, filePath);
 			sbolBrowser2.open();
 		}
@@ -6586,6 +6599,30 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	// // SBMLtoSBOL sbolDoc = new SBMLtoSBOL(filePath, this.);
 	// }
 	// }
+	
+	private void openSBOLDesigner() {
+		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(Gui.separator) + 1);
+		try {
+			SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,fileName);
+			addTab(fileName,sbolDesignerPlugin,"SBOL Designer");
+		}
+		catch (SBOLValidationException e) {
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + fileName + " is invalid.", 
+					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private void newSBOLDesigner() {
+		try {
+			SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,"");
+			addTab(sbolDesignerPlugin.getFileName(),sbolDesignerPlugin,"SBOL Designer");
+			addToTree(sbolDesignerPlugin.getFileName());
+		}
+		catch (SBOLValidationException e) {
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to create SBOL file.", 
+					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
 	private void generateSBMLFromSBOL()
 	{
@@ -6614,18 +6651,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file not found at " + filePath + ".", 
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", 
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (SBOLValidationException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + filePath + " is invalid.", 
 					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (SBOLConversionException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "SBOL2 file at " + filePath + " is invalid.", 
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + filePath + " is invalid.", 
 					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -7851,11 +7885,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				generate.addActionListener(this);
 				generate.addMouseListener(this);
 				generate.setActionCommand("sbolToSBML");
+				JMenuItem openSBOLDesigner = new JMenuItem("Open in SBOL Designer");
+				openSBOLDesigner.addActionListener(this);
+				openSBOLDesigner.addMouseListener(this);
+				openSBOLDesigner.setActionCommand("SBOLDesinger");
 				popup.add(view);
 				popup.add(copy);
 				popup.add(rename);
 				popup.add(delete);
 				popup.add(generate);
+				popup.add(openSBOLDesigner);
 			}
 			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd"))
 			{
