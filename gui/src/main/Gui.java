@@ -2663,6 +2663,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				((ModelEditor) comp).save(false);
 			}
+			else if (comp instanceof SBOLDesignerPlugin)
+			{
+				((SBOLDesignerPlugin) comp).saveSBOL();
+				log.addText("Saving SBOL file: " + ((SBOLDesignerPlugin) comp).getFileName() + "\n");
+			}
 			/*
 			 * else if (comp instanceof SBML_Editor) { ((SBML_Editor)
 			 * comp).save(false, "", true, true); }
@@ -7239,6 +7244,64 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				return 3;
 			}
 		}
+		else if (tab.getComponentAt(index).getName().contains("SBOL Designer"))
+		{
+			SBOLDesignerPlugin editor = (SBOLDesignerPlugin) tab.getComponentAt(index);
+			if (editor.isModified())
+			{
+				if (autosave == 0)
+				{
+					int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + getTitleAt(index) + "?", "Save Changes",
+							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+					if (value == YES_OPTION)
+					{
+						editor.saveSBOL();
+						log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
+						return 1;
+					}
+					else if (value == NO_OPTION)
+					{
+						return 1;
+					}
+					else if (value == CANCEL_OPTION)
+					{
+						return 0;
+					}
+					else if (value == YES_TO_ALL_OPTION)
+					{
+						editor.saveSBOL();
+						log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
+						return 2;
+					}
+					else if (value == NO_TO_ALL_OPTION)
+					{
+						return 3;
+					}
+				}
+				else if (autosave == 1)
+				{
+					editor.saveSBOL();
+					log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
+					return 2;
+				}
+				else
+				{
+					return 3;
+				}
+			}
+			if (autosave == 0)
+			{
+				return 1;
+			}
+			else if (autosave == 1)
+			{
+				return 2;
+			}
+			else
+			{
+				return 3;
+			}
+		}
 		else if (tab.getComponentAt(index).getName().contains("Graph") || tab.getComponentAt(index).getName().equals("Histogram"))
 		{
 			if (tab.getComponentAt(index) instanceof Graph)
@@ -10368,6 +10431,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportSBOL2.setEnabled(true);
 			exportImageMenu.setEnabled(true);
 			exportJpg.setEnabled(true);
+		}
+		else if (comp instanceof SBOLDesignerPlugin)
+		{
+			saveButton.setEnabled(true);
+			//saveasButton.setEnabled(true);
+			//checkButton.setEnabled(true);
+			//exportButton.setEnabled(true);
+			save.setEnabled(true);
+			//saveAs.setEnabled(true);
+			//saveSBOL.setEnabled(true);
+			saveAll.setEnabled(true);
+			close.setEnabled(true);
+			closeAll.setEnabled(true);
+			//check.setEnabled(true);
 		}
 		else if (comp instanceof SBOLBrowser2)
 		{
