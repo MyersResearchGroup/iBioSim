@@ -427,7 +427,7 @@ public class Utility {
 					fd.setFilenameFilter(new FilenameFilter() {
 						@Override
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
+							return name.endsWith(".fasta") || name.endsWith(".gb") || name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
 									|| name.endsWith(GlobalConstants.RDF_FILE_EXTENSION);
 						}
 					});
@@ -729,7 +729,7 @@ public class Utility {
 			}
 			retValue = fc.showDialog(frame, approve);
 		}
-		else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
+		else if (approve.equals("Import SBOL") || approve.equals("Export SBOL")) {
 			fc.addChoosableFileFilter(sbolFilter);
 			fc.addChoosableFileFilter(xmlFilter);
 			fc.setAcceptAllFileFilterUsed(false);
@@ -877,7 +877,7 @@ public class Utility {
 				}
 			}
 			else if (approve.equals("Import SBOL") || approve.equals("Export SBOL")) {
-				if (!filename.endsWith(".sbol") && !filename.endsWith(".xml") && !filename.endsWith(".rdf"))
+				if (!filename.endsWith(".sbol") && !filename.endsWith(".xml") && !filename.endsWith(".rdf") && !filename.endsWith(".gb") && !filename.endsWith(".fasta"))
 					filename += ".sbol";
 			}
 			else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
