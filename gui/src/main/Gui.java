@@ -1636,6 +1636,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				((ModelEditor) comp).exportSBOL2();
 			}
+			else if (comp instanceof SBOLDesignerPlugin)
+			{
+				exportSBOL((SBOLDesignerPlugin) comp);
+			}
 		}
 		else if (e.getSource() == saveSBOL)
 		{
@@ -3088,6 +3092,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((ModelEditor) comp).exportSBML();
 				// TODO: should give choice of SBML or SBOL
 			}
+			else if (comp instanceof SBOLDesignerPlugin)
+			{
+				exportSBOL((SBOLDesignerPlugin) comp);
+			}
 			else if (comp instanceof JTabbedPane)
 			{
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
@@ -3759,6 +3767,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		enableTabMenu(tab.getSelectedIndex());
 		enableTreeMenu();
+	}
+	
+	public void exportSBOL(SBOLDesignerPlugin sbolDesignerPlugin) {
+		File lastFilePath;
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+			lastFilePath = null;
+		}
+		else {
+			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+		}
+		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
+		if (!exportPath.equals("")) {
+			biosimrc.put("biosim.general.export_dir",exportPath);
+			sbolDesignerPlugin.exportSBOL(exportPath);
+			log.addText("Exporting SBOL file:\n" + exportPath + "\n");
+		}
 	}
 
 	private void delete(String fullPath)
@@ -10437,7 +10462,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveButton.setEnabled(true);
 			//saveasButton.setEnabled(true);
 			//checkButton.setEnabled(true);
-			//exportButton.setEnabled(true);
+			exportButton.setEnabled(true);
 			save.setEnabled(true);
 			//saveAs.setEnabled(true);
 			//saveSBOL.setEnabled(true);
@@ -10445,6 +10470,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			close.setEnabled(true);
 			closeAll.setEnabled(true);
 			//check.setEnabled(true);
+			exportMenu.setEnabled(true);
+			exportSBOL2.setEnabled(true);
 		}
 		else if (comp instanceof SBOLBrowser2)
 		{
