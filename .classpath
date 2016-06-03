@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="biomodel/gui/sbol/SBOLAssociationPanel.java|biomodel/gui/sbol/SBOLField.java|biomodel/gui/sbol/SBOLDescriptorPanel.java|sbol/assembly/Assembler.java|sbol/assembly/AssemblyGraph.java|sbol/assembly/AssemblyNode.java|sbol/browser/CollectionBrowserPanel.java|sbol/browser/SBOLBrowser.java|sbol/browser/DNAComponentBrowserPanel.java|sbol/util/SBOLFileManager.java|sbol/util/SBOLIdentityManager.java|sbol/util/SBOLUtility.java" kind="src" path="gui/src"/>
-	<classpathentry kind="lib" path="gui/lib/batik-awt-util.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-dom.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-svggen.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-util.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-xml.jar"/>
 	<classpathentry kind="lib" path="gui/lib/epsgraphics.jar"/>
+	<classpathentry kind="lib" path="gui/lib/js.jar"/>
 	<classpathentry kind="lib" path="gui/lib/junit.jar"/>
 	<classpathentry kind="lib" path="gui/lib/org-jdesktop-layout.jar"/>
 	<classpathentry kind="lib" path="gui/lib/pdf-transcoder.jar"/>
@@ -40,19 +36,34 @@
 	<classpathentry kind="lib" path="gui/lib/jaxrpc.jar"/>
 	<classpathentry kind="lib" path="gui/lib/wsdl4j.jar"/>
 	<classpathentry kind="lib" path="gui/lib/saaj.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-transcoder.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-gui-util.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-css.jar"/>
-	<classpathentry kind="lib" path="gui/lib/batik-bridge.jar"/>
 	<classpathentry kind="lib" path="gui/lib/w3c-dom.jar"/>
-	<classpathentry kind="lib" path="gui/lib/AppleJavaExtensions.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-awt-util.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-ext.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-svggen.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-util.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-xml.jar"/>
+	<classpathentry kind="lib" path="gui/lib/javax.servlet-api-3.0.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jdom-contrib.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-dom.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-css.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-gui-util.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-bridge.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-transcoder.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-svg-dom.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-anim.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-parser.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-gvt.jar"/>
+	<classpathentry kind="lib" path="gui/lib/batik-script.jar"/>
+	<classpathentry kind="lib" path="gui/lib/SBOLDesigner.jar"/>
+	<classpathentry kind="lib" path="gui/lib/simpleeventbus-1.2.jar"/>
+	<classpathentry kind="lib" path="gui/lib/guava-18.0.jar"/>
+	<classpathentry kind="lib" path="gui/lib/openrdf-sesame-2.6.9-onejar.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="gui/lib/jaxen-1.1.1.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jdom-contrib.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jdom.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jlibsedml.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xom-1.2.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jmathml.jar"/>
+	<classpathentry kind="lib" path="gui/lib/architecture-rules-3.0.0-M1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/colt-1.2.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-beanutils-1.6.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-collections-2.1.jar"/>
