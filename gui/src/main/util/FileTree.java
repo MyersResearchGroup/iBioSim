@@ -281,15 +281,17 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 				*/
 				if (!async && thisObject.toString().endsWith(".sbol")) {
-					Preferences biosimrc = Preferences.userRoot();
 					String sbolFile = thisObject.toString();
-					SBOLReader.setKeepGoing(true);
-					SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-					SBOLDocument sbolDoc;
 					try {
-						sbolDoc = SBOLReader.read(curPath + separator + sbolFile);
-						sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-						sbolDoc.write(curPath + separator + sbolFile);
+						if (!SBOLReader.getSBOLVersion(curPath + separator + sbolFile).endsWith(SBOLReader.SBOLVERSION2)) {
+							Preferences biosimrc = Preferences.userRoot();
+							SBOLReader.setKeepGoing(true);
+							SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+							SBOLDocument sbolDoc;
+							sbolDoc = SBOLReader.read(curPath + separator + sbolFile);
+							sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+							sbolDoc.write(curPath + separator + sbolFile);
+						}
 					}
 					catch (SBOLValidationException e) {
 						// TODO Auto-generated catch block
