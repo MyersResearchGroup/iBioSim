@@ -6701,7 +6701,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(Gui.separator) + 1);
 		try {
 			SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,fileName);
-			addTab(fileName,sbolDesignerPlugin,"SBOL Designer");
+			addTab(sbolDesignerPlugin.getRootDisplayId(),sbolDesignerPlugin,"SBOL Designer");
 		}
 		catch (SBOLValidationException e) {
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + fileName + " is invalid.", 
@@ -6712,7 +6712,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void newSBOLDesigner() {
 		try {
 			SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,"");
-			addTab(sbolDesignerPlugin.getFileName(),sbolDesignerPlugin,"SBOL Designer");
+			addTab(sbolDesignerPlugin.getFileName().replace(".sbol", ""),sbolDesignerPlugin,"SBOL Designer");
 			addToTree(sbolDesignerPlugin.getFileName());
 		}
 		catch (SBOLValidationException e) {
