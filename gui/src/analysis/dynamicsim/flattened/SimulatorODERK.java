@@ -36,15 +36,11 @@ public class SimulatorODERK extends Simulator
 	double						relativeError;
 	double						absoluteError;
 
-	public SimulatorODERK(String SBMLFileName, String outputDirectory, double timeLimit,
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval,
-			double stoichAmpValue, JFrame running, String[] interestingSpecies, int numSteps,
-			double relError, double absError, String quantityType) throws IOException
+	public SimulatorODERK(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, int numSteps, double relError, double absError,
+			String quantityType) throws IOException
 	{
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, randomSeed, progress,
-				printInterval, initializationTime, stoichAmpValue, running, interestingSpecies,
-				quantityType);
+		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, randomSeed, progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
 
 		this.numSteps = numSteps;
 		relativeError = relError;
@@ -53,7 +49,8 @@ public class SimulatorODERK extends Simulator
 		initialize(randomSeed, 1);
 	}
 
-	private void initialize(long randomSeed, int runNumber) throws IOException
+	@Override
+	public void initialize(long randomSeed, int runNumber) throws IOException
 	{
 
 		setupArrays();
@@ -134,10 +131,8 @@ public class SimulatorODERK extends Simulator
 			ASTNode formula = reactionToFormulaMap.get(reaction);
 			// System.out.println("HERE: " + formula.toFormula());
 
-			HashSet<StringDoublePair> reactantAndStoichiometrySet = reactionToReactantStoichiometrySetMap
-					.get(reaction);
-			HashSet<StringDoublePair> speciesAndStoichiometrySet = reactionToSpeciesAndStoichiometrySetMap
-					.get(reaction);
+			HashSet<StringDoublePair> reactantAndStoichiometrySet = reactionToReactantStoichiometrySetMap.get(reaction);
+			HashSet<StringDoublePair> speciesAndStoichiometrySet = reactionToSpeciesAndStoichiometrySetMap.get(reaction);
 
 			// loop through reactants
 			for (StringDoublePair reactantAndStoichiometry : reactantAndStoichiometrySet)
@@ -149,8 +144,7 @@ public class SimulatorODERK extends Simulator
 				ASTNode stoichNode = new ASTNode();
 				stoichNode.setValue(-1 * stoichiometry);
 
-				dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex],
-						ASTNode.times(formula, stoichNode));
+				dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula, stoichNode));
 			}
 
 			// loop through products
@@ -169,8 +163,7 @@ public class SimulatorODERK extends Simulator
 					ASTNode stoichNode = new ASTNode();
 					stoichNode.setValue(stoichiometry);
 
-					dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex],
-							ASTNode.times(formula, stoichNode));
+					dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula, stoichNode));
 				}
 			}
 		}
@@ -324,9 +317,7 @@ public class SimulatorODERK extends Simulator
 			// if a constraint fails
 			if (constraintFailureFlag == true)
 			{
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Simulation Canceled Due To Constraint Failure", "Constraint Failure",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled Due To Constraint Failure", "Constraint Failure", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -390,15 +381,12 @@ public class SimulatorODERK extends Simulator
 			for (String affectedVariable : affectedVariables)
 			{
 
-				if (variableToAffectedAssignmentRuleSetMap != null
-						&& variableToAffectedAssignmentRuleSetMap.containsKey(affectedVariable))
+				if (variableToAffectedAssignmentRuleSetMap != null && variableToAffectedAssignmentRuleSetMap.containsKey(affectedVariable))
 				{
-					performAssignmentRules(variableToAffectedAssignmentRuleSetMap
-							.get(affectedVariable));
+					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get(affectedVariable));
 				}
 
-				if (variableToAffectedConstraintSetMap != null
-						&& variableToAffectedConstraintSetMap.containsKey(affectedVariable))
+				if (variableToAffectedConstraintSetMap != null && variableToAffectedConstraintSetMap.containsKey(affectedVariable))
 				{
 					testConstraints(variableToAffectedConstraintSetMap.get(affectedVariable));
 				}
@@ -413,8 +401,7 @@ public class SimulatorODERK extends Simulator
 				}
 			}
 
-			if (variableToIsInAssignmentRuleMap != null
-					&& variableToIsInAssignmentRuleMap.containsKey("time"))
+			if (variableToIsInAssignmentRuleMap != null && variableToIsInAssignmentRuleMap.containsKey("time"))
 			{
 
 				performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
@@ -453,8 +440,7 @@ public class SimulatorODERK extends Simulator
 				// printTime += printInterval;
 				if (running != null)
 				{
-					running.setTitle("Progress (" + (int) ((currentTime / timeLimit) * 100.0)
-							+ "%)");
+					running.setTitle("Progress (" + (int) ((currentTime / timeLimit) * 100.0) + "%)");
 				}
 			}
 
@@ -466,8 +452,7 @@ public class SimulatorODERK extends Simulator
 			if (noEventsFlag == false)
 			{
 				handleEvents();
-				if (!triggeredEventQueue.isEmpty()
-						&& triggeredEventQueue.peek().fireTime <= currentTime)
+				if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)
 				{
 					currentTime = triggeredEventQueue.peek().fireTime;
 				}
@@ -519,10 +504,7 @@ public class SimulatorODERK extends Simulator
 
 				String currentVar = indexToVariableMap.get(i);
 
-				if ((speciesIDSet.contains(currentVar) && speciesToIsBoundaryConditionMap
-						.get(currentVar) == false)
-						&& (variableToValueMap.contains(currentVar))
-						&& variableToIsConstantMap.get(currentVar) == false)
+				if ((speciesIDSet.contains(currentVar) && speciesToIsBoundaryConditionMap.get(currentVar) == false) && (variableToValueMap.contains(currentVar)) && variableToIsConstantMap.get(currentVar) == false)
 				{
 
 					currValueChanges[i] = evaluateExpressionRecursive(dvariablesdtime[i]);
@@ -537,13 +519,9 @@ public class SimulatorODERK extends Simulator
 					currValueChanges[i] = 0;
 				}
 
-				if (variableToIsInAssignmentRuleMap != null
-						&& variableToIsInAssignmentRuleMap.containsKey(currentVar)
-						&& variableToValueMap.contains(currentVar)
-						&& variableToIsInAssignmentRuleMap.get(currentVar) == true)
+				if (variableToIsInAssignmentRuleMap != null && variableToIsInAssignmentRuleMap.containsKey(currentVar) && variableToValueMap.contains(currentVar) && variableToIsInAssignmentRuleMap.get(currentVar) == true)
 				{
-					affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap
-							.get(currentVar));
+					affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(currentVar));
 				}
 
 				// if (variableToIsInConstraintMap.get(speciesID) == true)

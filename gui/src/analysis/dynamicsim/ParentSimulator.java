@@ -1,5 +1,9 @@
 package analysis.dynamicsim;
 
+import java.io.IOException;
+
+import javax.xml.stream.XMLStreamException;
+
 public interface ParentSimulator
 {
 	/**
@@ -27,4 +31,6 @@ public interface ParentSimulator
 	 * 
 	 */
 	public abstract void printStatisticsTSD();
+
+	public abstract void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException;
 }

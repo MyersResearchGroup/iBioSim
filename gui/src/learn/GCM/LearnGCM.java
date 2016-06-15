@@ -251,10 +251,13 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		thresholdPanel1.add(backgroundField);
 
 		JLabel methodsLabel = new JLabel("Learn Method:  ");
-		if (Gui.isGeneNetFound()) {
+		if (Gui.isGeneNetFound())
+		{
 			String[] methodNames = { "GeneNet", "GeneNet (Java)", "None" };
 			methods = new JComboBox(methodNames);
-		} else {
+		}
+		else
+		{
 			String[] methodNames = { "GeneNet (Java)", "None" };
 			methods = new JComboBox(methodNames);
 		}
@@ -386,8 +389,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 			if (load.containsKey("genenet.file"))
 			{
 				String[] getProp = load.getProperty("genenet.file").split(separator);
-				learnFile = directory.substring(0, directory.length() - getFilename[getFilename.length - 1].length()) + separator
-						+ getProp[getProp.length - 1];
+				learnFile = directory.substring(0, directory.length() - getFilename[getFilename.length - 1].length()) + separator + getProp[getProp.length - 1];
 				backgroundField.setText(getProp[getProp.length - 1]);
 			}
 			if (load.containsKey("genenet.Tn"))
@@ -1222,9 +1224,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 				copy = JOptionPane.showInputDialog(Gui.frame, "Enter Model ID:", "Save Model", JOptionPane.PLAIN_MESSAGE);
 				if (!(IDpat.matcher(copy.replace(".xml", "")).matches()))
 				{
-					JOptionPane.showMessageDialog(Gui.frame,
-							"A model ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.", "Invalid ID",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "A model ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 					copy = null;
 				}
 			}
@@ -1442,18 +1442,18 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 			opendot(Runtime.getRuntime(), new File(directory));
 		}
 
-		if (estimator.getSelection().equals("PEDI"))
+		if (estimator.getSelection().equals("SRES"))
 		{
-			SBMLDocument document, newDocument;
+			SBMLDocument newDocument;
 			try
 			{
-				document = SBMLReader.read(new File(learnFile));
+				SBMLReader.read(new File(learnFile));
 				List<String> parameters = estimator.getSelectedParameters();
 				SpeciesCollection S = new SpeciesCollection();
 				Experiments E = new Experiments();
 				Run.init(learnFile, S);
 				Run.loadExperiments(directory, S, E);
-				newDocument = ParameterEstimator.estimate(document, parameters, E, S);
+				newDocument = ParameterEstimator.estimate(learnFile, directory, parameters, E, S);
 				if (newDocument != null)
 				{
 					Model model = newDocument.getModel();
@@ -1473,8 +1473,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 				}
 				else
 				{
-					JOptionPane.showMessageDialog(Gui.frame, "Could not estimate parameter values due to errors.", "Something went wrong",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Could not estimate parameter values due to errors.", "Something went wrong", JOptionPane.ERROR_MESSAGE);
 				}
 
 			}
@@ -1819,8 +1818,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		}
 		else
 		{
-			JOptionPane.showMessageDialog(Gui.frame, "A model was not generated." + "\nPlease see the run.log file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "A model was not generated." + "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

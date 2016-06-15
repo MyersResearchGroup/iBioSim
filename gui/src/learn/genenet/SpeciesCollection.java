@@ -35,7 +35,7 @@ public class SpeciesCollection
 		return speciesColumn.get(species);
 	}
 
-	public String get(int index)
+	public String getInterestingSpecies(int index)
 	{
 		return interestingSpecies.get(index);
 	}

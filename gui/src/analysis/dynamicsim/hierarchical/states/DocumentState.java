@@ -1,62 +1,35 @@
 package analysis.dynamicsim.hierarchical.states;
 
-import java.util.HashSet;
-import java.util.Map;
-
-import org.sbml.jsbml.Model;
+import analysis.dynamicsim.hierarchical.util.math.ValueNode;
 
 public abstract class DocumentState implements State
 {
-	private String			ID;
-	private double			maxPropensity;
-	private double			minPropensity;
-	private final String	model;
-	private boolean			noConstraintsFlag;
-	private boolean			noEventsFlag;
-	private boolean			noRuleFlag;
-	private long			numCompartments;
-	private long			numConstraints;
-	private long			numEvents;
-	private int				numInitialAssignments;
-	private long			numParameters;
-	private int				numRateRules;
-	private long			numReactions;
-	private long			numRules;
-	private long			numSpecies;
-	private double			propensity;
-	private HashSet<String>	variablesToPrint;
+	private String		ID;
+	private double		maxPropensity;
+	private double		minPropensity;
+	private boolean		noConstraintsFlag;
+	private boolean		noEventsFlag;
+	private boolean		noRuleFlag;
+	protected ValueNode	propensity;
 
-	public DocumentState(Map<String, Model> models, String bioModel, String submodelID)
+	public DocumentState(String submodelID)
 	{
-		this.model = bioModel;
 		this.ID = submodelID;
-		setCountVariables(models.get(getModel()));
 		minPropensity = Double.MAX_VALUE / 10.0;
 		maxPropensity = Double.MIN_VALUE / 10.0;
 		noConstraintsFlag = true;
 		noRuleFlag = true;
 		noEventsFlag = true;
-		variablesToPrint = new HashSet<String>();
 	}
 
 	public DocumentState(DocumentState state)
 	{
 		this.ID = state.ID;
-		this.model = state.model;
 		this.minPropensity = state.minPropensity;
 		this.maxPropensity = state.maxPropensity;
 		this.noConstraintsFlag = state.noConstraintsFlag;
 		this.noRuleFlag = state.noRuleFlag;
 		this.noEventsFlag = state.noEventsFlag;
-		this.variablesToPrint = state.variablesToPrint;
-		this.numSpecies = state.numSpecies;
-		this.numParameters = state.numParameters;
-		this.numReactions = state.numReactions;
-		this.numInitialAssignments = state.numInitialAssignments;
-		this.numEvents = state.numEvents;
-		this.numRules = state.numRules;
-		this.numConstraints = state.numConstraints;
-		this.numCompartments = state.numCompartments;
 	}
 
 	public String getID()
@@ -74,69 +47,9 @@ public abstract class DocumentState implements State
 		return minPropensity;
 	}
 
-	public String getModel()
-	{
-		return model;
-	}
-
-	public long getNumCompartments()
-	{
-		return numCompartments;
-	}
-
-	public long getNumConstraints()
-	{
-		return numConstraints;
-	}
-
-	public long getNumEvents()
-	{
-		return numEvents;
-	}
-
-	public int getNumInitialAssignments()
-	{
-		return numInitialAssignments;
-	}
-
-	public long getNumParameters()
-	{
-		return numParameters;
-	}
-
-	public int getNumRateRules()
-	{
-		return numRateRules;
-	}
-
-	public long getNumReactions()
-	{
-		return numReactions;
-	}
-
-	public long getNumRules()
-	{
-		return numRules;
-	}
-
-	public long getNumSpecies()
-	{
-		return numSpecies;
-	}
-
 	public double getPropensity()
 	{
-		return propensity;
-	}
-
-	public HashSet<String> getVariablesToPrint()
-	{
-		return variablesToPrint;
-	}
-
-	public void addVariableToPrint(String id)
-	{
-		variablesToPrint.add(id);
+		return propensity.getValue();
 	}
 
 	public boolean isNoConstraintsFlag()
@@ -152,18 +65,6 @@ public abstract class DocumentState implements State
 	public boolean isNoRuleFlag()
 	{
 		return noRuleFlag;
-	}
-
-	public void setCountVariables(Model model)
-	{
-		this.numSpecies = model.getSpeciesCount();
-		this.numParameters = model.getParameterCount();
-		this.numReactions = model.getReactionCount();
-		this.numInitialAssignments = model.getInitialAssignmentCount();
-		this.numEvents = model.getEventCount();
-		this.numRules = model.getRuleCount();
-		this.numConstraints = model.getConstraintCount();
-		this.numCompartments = model.getCompartmentCount();
 	}
 
 	public void setID(String iD)
@@ -196,63 +97,9 @@ public abstract class DocumentState implements State
 		this.noRuleFlag = noRuleFlag;
 	}
 
-	public void setNumCompartments(long numCompartments)
+	public ValueNode createPropensity()
 	{
-		this.numCompartments = numCompartments;
-	}
-
-	public void setNumConstraints(long numConstraints)
-	{
-		this.numConstraints = numConstraints;
-	}
-
-	public void setNumEvents(long numEvents)
-	{
-		this.numEvents = numEvents;
-	}
-
-	public void setNumInitialAssignments(int numInitialAssignments)
-	{
-		this.numInitialAssignments = numInitialAssignments;
-	}
-
-	public void setNumParameters(long numParameters)
-	{
-		this.numParameters = numParameters;
-	}
-
-	public void setNumRateRules(int numRateRules)
-	{
-		this.numRateRules = numRateRules;
-	}
-
-	public void setNumReactions(long numReactions)
-	{
-		this.numReactions = numReactions;
-	}
-
-	public void setNumRules(long numRules)
-	{
-		this.numRules = numRules;
-	}
-
-	public void setNumSpecies(long numSpecies)
-	{
-		this.numSpecies = numSpecies;
-	}
-
-	public void setVariablesToPrint(HashSet<String> variablesToPrint)
-	{
-		this.variablesToPrint = variablesToPrint;
-	}
-
-	public void resetPropensity()
-	{
-		this.propensity = 0;
-	}
-
-	protected void setPropensity(double propensity)
-	{
-		this.propensity = propensity;
+		this.propensity = new ValueNode(0);
+		return propensity;
 	}
 }
