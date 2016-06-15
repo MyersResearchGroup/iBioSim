@@ -62,10 +62,6 @@ public class ObjectiveSqureError extends Objective
 		this.Models = Ms;
 	}
 
-	static int		count	= 0;
-	static double	param	= 0;
-	static double	error	= Double.MAX_VALUE;
-
 	@Override
 	public Result evaluate(double[] features)
 	{
@@ -103,18 +99,7 @@ public class ObjectiveSqureError extends Objective
 		odeSim.setTimeLimit(0);
 
 		odeSim.setupForNewRun(0);
-		if (sum <= error)
-		{
-			error = sum;
-			param = features[0];
-		}
-		System.out.println("Count " + count++);
-		System.out.println("Sum " + sum);
-		System.out.println("Param" + features[0]);
 
-		System.out.println("Best " + param);
-
-		System.out.println("Best Error " + error);
 		return new Result(sum);
 	}
 

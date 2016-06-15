@@ -63,7 +63,7 @@ public class ParameterEstimator
 		// TODO: report results: take average of error
 		// TODO: weight mean square error. Add small value
 		System.out.println(solution.toString());
-		// TODO: fill this out
+		// TODO: copy best parameter to a new SBML document
 		return null;
 	}
 
