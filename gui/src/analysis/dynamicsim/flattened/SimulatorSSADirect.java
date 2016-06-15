@@ -24,15 +24,11 @@ public class SimulatorSSADirect extends Simulator
 	private double		currentStep;
 	private double		numSteps;
 
-	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit,
-			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress,
-			double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType) throws IOException
+	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType)
+			throws IOException
 	{
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,
-				progress, printInterval, initializationTime, stoichAmpValue, running,
-				interestingSpecies, quantityType);
+		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
 
 		initialize(randomSeed, 1);
 	}
@@ -67,8 +63,7 @@ public class SimulatorSSADirect extends Simulator
 		{
 			handleEvents();
 
-			HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag,
-					noConstraintsFlag);
+			HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
 
 			// recalculate propensties/groups for affected reactions
 			if (affectedReactionSet.size() > 0)
@@ -86,9 +81,7 @@ public class SimulatorSSADirect extends Simulator
 			if (constraintFailureFlag == true)
 			{
 
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Simulation Canceled Due To Constraint Failure", "Constraint Failure",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled Due To Constraint Failure", "Constraint Failure", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -105,8 +98,7 @@ public class SimulatorSSADirect extends Simulator
 
 				handleEvents();
 				nextEventTime = Double.POSITIVE_INFINITY;
-				if (!triggeredEventQueue.isEmpty()
-						&& triggeredEventQueue.peek().fireTime <= nextEventTime)
+				if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= nextEventTime)
 				{
 					nextEventTime = triggeredEventQueue.peek().fireTime;
 				}
@@ -149,8 +141,7 @@ public class SimulatorSSADirect extends Simulator
 			}
 			else if (currentTime == nextEventTime)
 			{
-				HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag,
-						noConstraintsFlag);
+				HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
 
 				// recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0)
@@ -216,7 +207,8 @@ public class SimulatorSSADirect extends Simulator
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void initialize(long randomSeed, int runNumber) throws IOException
+	@Override
+	public void initialize(long randomSeed, int runNumber) throws IOException
 	{
 
 		setupArrays();
@@ -360,8 +352,7 @@ public class SimulatorSSADirect extends Simulator
 
 			// create a set (precludes duplicates) of reactions that the
 			// selected reaction's species affect
-			HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID,
-					noAssignmentRulesFlag);
+			HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID, noAssignmentRulesFlag);
 
 			updatePropensities(affectedReactionSet);
 
@@ -370,8 +361,7 @@ public class SimulatorSSADirect extends Simulator
 
 		// update time for next iteration
 
-		if (variableToIsInAssignmentRuleMap != null
-				&& variableToIsInAssignmentRuleMap.containsKey("time"))
+		if (variableToIsInAssignmentRuleMap != null && variableToIsInAssignmentRuleMap.containsKey("time"))
 		{
 			performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
 		}
@@ -424,8 +414,7 @@ public class SimulatorSSADirect extends Simulator
 
 			boolean notEnoughMoleculesFlag = false;
 
-			HashSet<StringDoublePair> reactantStoichiometrySet = reactionToReactantStoichiometrySetMap
-					.get(affectedReactionID);
+			HashSet<StringDoublePair> reactantStoichiometrySet = reactionToReactantStoichiometrySetMap.get(affectedReactionID);
 
 			// check for enough molecules for the reaction to occur
 			for (StringDoublePair speciesAndStoichiometry : reactantStoichiometrySet)
@@ -447,8 +436,7 @@ public class SimulatorSSADirect extends Simulator
 			if (notEnoughMoleculesFlag == false)
 			{
 
-				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap
-						.get(affectedReactionID));
+				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap.get(affectedReactionID));
 				// newPropensity =
 				// CalculatePropensityIterative(affectedReactionID);
 			}

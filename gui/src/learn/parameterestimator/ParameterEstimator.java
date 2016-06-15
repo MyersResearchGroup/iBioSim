@@ -1,121 +1,70 @@
 package learn.parameterestimator;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import javax.xml.stream.XMLStreamException;
 
 import learn.genenet.Experiments;
 import learn.genenet.SpeciesCollection;
+import learn.parameterestimator.methods.sres.EvolutionMethodSetting;
+import learn.parameterestimator.methods.sres.Modelsettings;
+import learn.parameterestimator.methods.sres.ObjectiveSqureError;
+import learn.parameterestimator.methods.sres.SRES;
 
-import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Model;
-import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.Species;
-import org.sbml.jsbml.SpeciesReference;
 
-import analysis.dynamicsim.hierarchical.util.Setup;
-import analysis.dynamicsim.hierarchical.util.ode.ODEState;
+import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
+import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 
 public class ParameterEstimator
 {
+	static double				relativeError		= 1e-6;
+	static double				absoluteError		= 1e-9;
+	static int					numSteps;
+	static double				maxTimeStep			= Double.POSITIVE_INFINITY;
+	static double				minTimeStep			= 0.0;
+	static long					randomSeed			= 0;
+	static int					runs				= 1;
+	static double				stoichAmpValue		= 1.0;
+	static boolean				genStats			= false;
+	static String				selectedSimulator	= "";
+	static ArrayList<String>	interestingSpecies	= new ArrayList<String>();
+	static String				quantityType		= "amount";
 
-	public static SBMLDocument estimate(SBMLDocument document, List<String> parameterList, Experiments experiments, SpeciesCollection speciesCollection)
+	public static SBMLDocument estimate(String SBMLFileName, String root, List<String> parameterList, Experiments experiments, SpeciesCollection speciesCollection) throws IOException, XMLStreamException
 	{
-		final Model model = document.getModel();
-		final String modelId = model.getId();
-		final String stateId = "topmodel";
-		final Map<String, Model> models = new HashMap<String, Model>(1)
-		{
-			{
-				put(modelId, model);
-			}
-		};
-		final EstimateState estimateState = new EstimateState(models, modelId, stateId);
 
-		final ODEState odeState = new ODEState();
-		initialize(model, estimateState, odeState, models);
+		int numberofparameters = parameterList.size();
+		int sp = 0;
+		int n = experiments.getExperiments().get(0).size() - 1;
+		double ep = experiments.getExperiments().get(0).get(n).get(0);
+		double[] lowerbounds = new double[numberofparameters];
+		double[] upperbounds = new double[numberofparameters];
+		HierarchicalSimulation sim = new HierarchicalODERKSimulator(SBMLFileName, root, 0);
+		sim.initialize(randomSeed, 0);
+
+		for (int i = 0; i < numberofparameters; i++)
+		{
+			lowerbounds[i] = sim.getTopLevelValue(parameterList.get(i)) / 10;
+			upperbounds[i] = sim.getTopLevelValue(parameterList.get(i)) * 10;
+		}
+		Modelsettings M1 = new Modelsettings(experiments.getExperiments().get(0).get(0), speciesCollection.size(), sp, (int) ep, lowerbounds, upperbounds, false);
+		// Objective objective1 = new ObjectiveSqureError(M1,0.1);
+
+		EvolutionMethodSetting EMS = new EvolutionMethodSetting();
+		ObjectiveSqureError TP = new ObjectiveSqureError(sim, experiments, parameterList, speciesCollection, M1, 0.1);
+
+		SRES sres = new SRES(TP, EMS);
+		// System.out.println("test");
+		SRES.Solution solution = sres.run(200).getBestSolution();
+
+		// TODO: report results: take average of error
+		// TODO: weight mean square error. Add small value
+		System.out.println(solution.toString());
 		// TODO: fill this out
 		return null;
 	}
 
-	/**
-	 * Initialize the objects to help determine the math of the variables.
-	 * 
-	 * @param model
-	 * @param estimateState
-	 * @param odeState
-	 * @param models
-	 */
-	private static void initialize(final Model model, final EstimateState estimateState, final ODEState odeState, final Map<String, Model> models)
-	{
-
-		for (Species species : model.getListOfSpecies())
-		{
-			Setup.setupSingleSpecies(estimateState, species, species.getId(), models, null);
-		}
-
-		for (Reaction reaction : model.getListOfReactions())
-		{
-			String reactionID = reaction.getId();
-			if (reaction.isReversible())
-			{
-				for (SpeciesReference reactant : reaction.getListOfReactants())
-				{
-					Setup.setupSingleRevReactant(estimateState, reactionID, reactant.getSpecies(), reactant, reaction.getListOfProducts().size(), null);
-				}
-
-				for (SpeciesReference product : reaction.getListOfProducts())
-				{
-					Setup.setupSingleRevProduct(estimateState, reactionID, product.getSpecies(), product, reaction.getListOfReactants().size(), null);
-				}
-
-				for (ModifierSpeciesReference modifier : reaction.getListOfModifiers())
-				{
-					Setup.setupSingleModifier(estimateState, reactionID + "_fd", modifier.getSpecies());
-					Setup.setupSingleModifier(estimateState, reactionID + "_rv", modifier.getSpecies());
-				}
-			}
-			else
-			{
-				for (SpeciesReference reactant : reaction.getListOfReactants())
-				{
-					Setup.setupSingleReactant(estimateState, reactionID, reactant.getSpecies(), reactant, null);
-				}
-
-				for (SpeciesReference product : reaction.getListOfProducts())
-				{
-					Setup.setupSingleProduct(estimateState, reactionID, product.getSpecies(), product, null);
-				}
-
-				for (ModifierSpeciesReference modifier : reaction.getListOfModifiers())
-				{
-					Setup.setupSingleModifier(estimateState, reactionID, modifier.getSpecies());
-				}
-			}
-
-			Setup.setupSingleReaction(estimateState, reaction, reactionID, reaction.getKineticLaw().getMath(), reaction.getReversible(), models, null, null, 0.0);
-		}
-
-		odeState.getDvariablesdtime().put(estimateState.getID(), new HashMap<String, ASTNode>());
-
-		for (String reaction : estimateState.getReactionToFormulaMap().keySet())
-		{
-			odeState.addReaction(estimateState, reaction);
-		}
-	}
-
-	/**
-	 * Get the ODE for a particular species.
-	 * 
-	 * @param estimateState
-	 * @param odeState
-	 * @param variable
-	 * @return
-	 */
-	private static ASTNode getMath(final EstimateState estimateState, final ODEState odeState, final String variable)
-	{
-		return odeState.getDvariablesdtime().get(estimateState.getID()).get(variable);
-	}
 }

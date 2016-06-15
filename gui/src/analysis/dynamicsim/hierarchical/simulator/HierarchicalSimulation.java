@@ -4,7 +4,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -18,7 +24,11 @@ import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
 import analysis.dynamicsim.ParentSimulator;
-import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.util.math.EventNode;
+import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
+import analysis.dynamicsim.hierarchical.util.math.ValueNode;
+import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 /**
  * This class provides the state variables of the simulation.
@@ -29,43 +39,67 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 public abstract class HierarchicalSimulation implements ParentSimulator
 {
 
-	final private int				SBML_LEVEL		= 3;
-	final private int				SBML_VERSION	= 1;
+	final private int	SBML_LEVEL		= 3;
+	final private int	SBML_VERSION	= 1;
 
-	protected final static String	PRODUCT			= "product";
-	protected final static String	REACTANT		= "reactant";
-	protected final static String	MODIFIER		= "modifier";
+	public static enum SimType
+	{
+		HSSA, HODE, FBA, MIXED, NONE;
+	}
 
-	private BufferedWriter			bufferedTSDWriter;
-	private boolean					cancelFlag;
-	private boolean					constraintFailureFlag;
-	private boolean					constraintFlag;
-	private int						currentRun;
-	private double					currentTime;
-	private String[]				interestingSpecies;
-	private double					maxTimeStep;
-	private double					minTimeStep;
-	private String					outputDirectory;
-	private boolean					printConcentrations;
-	private HashSet<String>			printConcentrationSpecies;
-	private double					printInterval;
-	private JProgressBar			progress;
-	private JFrame					running;
-	private String					SBMLFileName;
-	private boolean					sbmlHasErrorsFlag;
-	private String					separator;
-	private boolean					stoichAmpBoolean;
-	private double					stoichAmpGridValue;
-	private double					timeLimit;
-	private String					rootDirectory;
-	private FileWriter				TSDWriter;
-	private SBMLDocument			document;
-	private String					abstraction;
-	private int						totalRuns;
+	protected final static String		PRODUCT		= "product";
+	protected final static String		REACTANT	= "reactant";
+	protected final static String		MODIFIER	= "modifier";
 
-	public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep,
-			double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
-			String quantityType, String abstraction) throws IOException, XMLStreamException
+	protected final VariableNode		currentTime;
+
+	private BufferedWriter				bufferedTSDWriter;
+	private boolean						cancelFlag;
+	private boolean						constraintFailureFlag;
+	private boolean						constraintFlag;
+	private int							currentRun;
+	private String[]					interestingSpecies;
+	private double						maxTimeStep;
+	private double						minTimeStep;
+	private String						outputDirectory;
+	private boolean						printConcentrations;
+	private HashSet<String>				printConcentrationSpecies;
+	private double						printInterval;
+	private JProgressBar				progress;
+	private JFrame						running;
+	private String						SBMLFileName;
+	private boolean						sbmlHasErrorsFlag;
+	private String						separator;
+	private boolean						stoichAmpBoolean;
+	private double						stoichAmpGridValue;
+	private double						timeLimit;
+	private String						rootDirectory;
+	private FileWriter					TSDWriter;
+	private SBMLDocument				document;
+	private String						abstraction;
+	private int							totalRuns;
+
+	protected List<VariableNode>		variableList;
+	protected List<VariableNode>		assignmentList;
+
+	protected double[]					initStateCopy;
+
+	protected List<EventNode>			eventList;
+	protected PriorityQueue<EventNode>	triggeredEventList;
+
+	protected boolean					isInitialized;
+	private int							numSubmodels;
+	private boolean						isGrid;
+	private Random						randomNumberGenerator;
+	private ModelState					topmodel;
+	private ArrayList<String>			filesCreated;
+	private Map<String, ModelState>		submodels;
+	final private SimType				type;
+	private List<ModelState>			states;
+	private ValueNode					totalPropensity;
+
+	public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
+			String quantityType, String abstraction, SimType type) throws XMLStreamException, IOException
 	{
 		this.SBMLFileName = SBMLFileName;
 		this.timeLimit = timeLimit;
@@ -81,12 +115,18 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		this.document = SBMLReader.read(new File(SBMLFileName));
 		this.abstraction = abstraction;
 		this.totalRuns = runs;
-
+		this.type = type;
+		this.filesCreated = new ArrayList<String>();
+		this.topmodel = new ModelState("topmodel");
+		this.submodels = new HashMap<String, ModelState>(0);
+		this.currentTime = new VariableNode("_time", 0);
 		if (abstraction != null)
 		{
 			if (abstraction.equals("expandReaction"))
 			{
-				this.document = HierarchicalUtilities.getFlattenedRegulations(rootDirectory, SBMLFileName);
+				// this.document =
+				// HierarchicalUtilities.getFlattenedRegulations(rootDirectory,
+				// SBMLFileName);
 			}
 		}
 
@@ -121,13 +161,53 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 				errorString += errors.getError(i);
 			}
 
-			JOptionPane.showMessageDialog(Gui.frame, "The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString,
-					"SBML Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString, "SBML Error", JOptionPane.ERROR_MESSAGE);
 
 			sbmlHasErrorsFlag = true;
 		}
 
 		separator = Gui.separator;
+	}
+
+	public HierarchicalSimulation(HierarchicalSimulation copy)
+	{
+		this.SBMLFileName = copy.SBMLFileName;
+		this.timeLimit = copy.timeLimit;
+		this.maxTimeStep = copy.maxTimeStep;
+		this.minTimeStep = copy.minTimeStep;
+		this.progress = copy.progress;
+		this.printInterval = copy.printInterval;
+		this.rootDirectory = copy.rootDirectory;
+		this.outputDirectory = copy.outputDirectory;
+		this.running = copy.running;
+		this.printConcentrationSpecies = copy.printConcentrationSpecies;
+		this.interestingSpecies = copy.interestingSpecies;
+		this.document = copy.document;
+		this.abstraction = copy.abstraction;
+		this.totalRuns = copy.totalRuns;
+		this.type = copy.type;
+		this.isGrid = copy.isGrid;
+		this.filesCreated = copy.filesCreated;
+		this.topmodel = copy.topmodel;
+		this.submodels = copy.submodels;
+		this.separator = copy.separator;
+		this.currentTime = copy.currentTime;
+	}
+
+	public void addModelState(ModelState modelstate)
+	{
+
+		if (states == null)
+		{
+			states = new ArrayList<ModelState>();
+		}
+
+		states.add(modelstate);
+	}
+
+	public List<ModelState> getListOfModelStates()
+	{
+		return states;
 	}
 
 	/**
@@ -173,7 +253,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	/**
 	 * @return the currentTime
 	 */
-	public double getCurrentTime()
+	public VariableNode getCurrentTime()
 	{
 		return currentTime;
 	}
@@ -381,7 +461,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	 */
 	public void setCurrentTime(double currentTime)
 	{
-		this.currentTime = currentTime;
+		this.currentTime.setValue(currentTime);
 	}
 
 	/**
@@ -581,4 +661,311 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		return totalRuns;
 	}
 
+	/**
+	 * @return the filesCreated
+	 */
+	public ArrayList<String> getFilesCreated()
+	{
+		return filesCreated;
+	}
+
+	/**
+	 * @return the numSubmodels
+	 */
+	public int getNumSubmodels()
+	{
+		return numSubmodels;
+	}
+
+	/**
+	 * @return the randomNumberGenerator
+	 */
+	public Random getRandomNumberGenerator()
+	{
+		return randomNumberGenerator;
+	}
+
+	/**
+	 * @return the submodels
+	 */
+	public Map<String, ModelState> getSubmodels()
+	{
+		return submodels;
+	}
+
+	/**
+	 * @return the topmodel
+	 */
+	public ModelState getTopmodel()
+	{
+		return topmodel;
+	}
+
+	/**
+	 * @return the isGrid
+	 */
+	public boolean isGrid()
+	{
+		return isGrid;
+	}
+
+	/**
+	 * @param filesCreated
+	 *            the filesCreated to set
+	 */
+	public void setFilesCreated(ArrayList<String> filesCreated)
+	{
+		this.filesCreated = filesCreated;
+	}
+
+	/**
+	 * @param isGrid
+	 *            the isGrid to set
+	 */
+	public void setGrid(boolean isGrid)
+	{
+		this.isGrid = isGrid;
+	}
+
+	/**
+	 * @param numSubmodels
+	 *            the numSubmodels to set
+	 */
+	public void setNumSubmodels(int numSubmodels)
+	{
+		this.numSubmodels = numSubmodels;
+	}
+
+	/**
+	 * @param randomNumberGenerator
+	 *            the randomNumberGenerator to set
+	 */
+	public void setRandomNumberGenerator(Random randomNumberGenerator)
+	{
+		this.randomNumberGenerator = randomNumberGenerator;
+	}
+
+	/**
+	 * @param submodels
+	 *            the submodels to set
+	 */
+	public void addSubmodel(String id, ModelState modelstate)
+	{
+		if (submodels == null)
+		{
+			submodels = new HashMap<String, ModelState>();
+		}
+		submodels.put(id, modelstate);
+	}
+
+	/**
+	 * @param topmodel
+	 *            the topmodel to set
+	 */
+	public void setTopmodel(ModelState topmodel)
+	{
+		this.topmodel = topmodel;
+	}
+
+	public ModelState getModelState(String id)
+	{
+		if (id.equals("topmodel"))
+		{
+			return topmodel;
+		}
+		return submodels.get(id);
+	}
+
+	public SimType getType()
+	{
+		return type;
+	}
+
+	protected void setupForOutput(int currentRun)
+	{
+		setCurrentRun(currentRun);
+		try
+		{
+			setTSDWriter(new FileWriter(getOutputDirectory() + "run-" + currentRun + ".tsd"));
+			setBufferedTSDWriter(new BufferedWriter(getTSDWriter()));
+			getBufferedTSDWriter().write('(');
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	protected List<ReactionNode> getReactionList()
+	{
+		if (states == null)
+		{
+			states = getModelStateList();
+		}
+
+		List<ReactionNode> reactions = new ArrayList<ReactionNode>();
+
+		for (ModelState submodel : states)
+		{
+
+			if (submodel.getNumOfReactions() > 0)
+			{
+				reactions.addAll(submodel.getReactions());
+			}
+		}
+
+		return reactions;
+
+	}
+
+	protected List<VariableNode> getAssignmentRuleList()
+	{
+		if (variableList == null)
+		{
+			variableList = getVariableList();
+		}
+
+		List<VariableNode> listOfAssignmentRules = new ArrayList<VariableNode>();
+
+		for (VariableNode variable : variableList)
+		{
+			if (variable.hasAssignmentRule())
+			{
+				listOfAssignmentRules.add(variable);
+			}
+		}
+
+		return listOfAssignmentRules;
+
+	}
+
+	protected List<EventNode> getEventList()
+	{
+		if (states == null)
+		{
+			states = getModelStateList();
+		}
+
+		List<EventNode> events = new ArrayList<EventNode>();
+
+		for (ModelState modelstate : states)
+		{
+
+			if (modelstate.getNumOfEvents() > 0)
+			{
+				events.addAll(modelstate.getEvents());
+			}
+		}
+
+		return events;
+
+	}
+
+	protected List<VariableNode> getVariableList()
+	{
+
+		if (states == null)
+		{
+			states = getModelStateList();
+		}
+
+		List<VariableNode> variables = new ArrayList<VariableNode>();
+
+		for (ModelState modelstate : states)
+		{
+			if (modelstate.getNumOfVariables() > 0)
+			{
+				variables.addAll(modelstate.getVariables());
+			}
+		}
+
+		return variables;
+
+	}
+
+	protected double[] getArrayState(List<VariableNode> variables)
+	{
+		double[] state = new double[variables.size()];
+		for (int i = 0; i < state.length; i++)
+		{
+			state[i] = variables.get(i).getValue();
+		}
+		return state;
+
+	}
+
+	protected List<ModelState> getModelStateList()
+	{
+
+		List<ModelState> listOfStates = new ArrayList<ModelState>();
+
+		ModelState topmodel = getTopmodel();
+		listOfStates.add(topmodel);
+
+		for (ModelState submodel : getSubmodels().values())
+		{
+			listOfStates.add(submodel);
+		}
+
+		return listOfStates;
+
+	}
+
+	public void linkPropensities()
+	{
+		if (states == null)
+		{
+			states = getModelStateList();
+		}
+		ValueNode propensity;
+		totalPropensity = new ValueNode(0);
+		for (ModelState modelstate : states)
+		{
+
+			if (modelstate.getNumOfReactions() > 0)
+			{
+				propensity = modelstate.createPropensity();
+				for (ReactionNode node : modelstate.getReactions())
+				{
+					node.setTotalPropensityRef(totalPropensity);
+					node.setModelPropensityRef(propensity);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Returns the total propensity of all model states.
+	 */
+	protected double getTotalPropensity()
+	{
+		return totalPropensity != null ? totalPropensity.getValue() : 0;
+	}
+
+	public void setTopLevelValue(String variable, double value)
+	{
+		if (topmodel != null)
+		{
+			VariableNode variableNode = topmodel.getNode(variable);
+			if (variableNode != null)
+			{
+				variableNode.setValue(value);
+			}
+		}
+	}
+
+	public double getTopLevelValue(String variable)
+	{
+		if (topmodel != null)
+		{
+			VariableNode variableNode = topmodel.getNode(variable);
+			if (variableNode != null)
+			{
+				return variableNode.getValue();
+			}
+		}
+
+		return Double.NaN;
+	}
 }

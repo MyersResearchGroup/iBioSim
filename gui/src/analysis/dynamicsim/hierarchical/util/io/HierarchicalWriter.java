@@ -5,139 +5,40 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalObjects.ModelState;
+import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.util.math.SpeciesNode;
+import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 public class HierarchicalWriter
 {
-
-	public static void printAllToTSD(double printTime, BufferedWriter bufferedWriter, ModelState topmodel, Map<String, ModelState> submodels,
-			Map<String, Double> replacements) throws IOException
-	{
-		String commaSpace = "";
-
-		bufferedWriter.write("(");
-
-		commaSpace = "";
-
-		// print the current time
-		bufferedWriter.write(printTime + ",");
-
-		// loop through the speciesIDs and print their current value to the file
-		for (String speciesID : topmodel.getSpeciesIDSet())
-		{
-
-			if (!topmodel.isArrayedObject(speciesID))
-			{
-				bufferedWriter.write(commaSpace + topmodel.getVariableToValue(replacements, speciesID));
-				commaSpace = ",";
-			}
-		}
-
-		for (String noConstantParam : topmodel.getVariablesToPrint())
-		{
-			if (!topmodel.isArrayedObject(noConstantParam))
-			{
-				bufferedWriter.write(commaSpace + topmodel.getVariableToValue(replacements, noConstantParam));
-				commaSpace = ",";
-			}
-
-		}
-
-		for (ModelState models : submodels.values())
-		{
-			for (String speciesID : models.getSpeciesIDSet())
-			{
-				if (!models.isArrayedObject(speciesID) && !models.getIsHierarchical().contains(speciesID))
-				{
-					bufferedWriter.write(commaSpace + models.getVariableToValue(replacements, speciesID));
-					commaSpace = ",";
-
-				}
-			}
-
-			for (String noConstantParam : models.getVariablesToPrint())
-			{
-				if (!models.isArrayedObject(noConstantParam) && !models.getIsHierarchical().contains(noConstantParam))
-				{
-					bufferedWriter.write(commaSpace + models.getVariableToValue(replacements, noConstantParam));
-					commaSpace = ",";
-				}
-			}
-		}
-
-		bufferedWriter.write(")");
-		bufferedWriter.flush();
-	}
-
-	public static void printInterestingToTSD(BufferedWriter bufferedWriter, double printTime, ModelState topmodel, Map<String, ModelState> submodels,
-			Map<String, Double> replacements, String[] interesting, Set<String> printConcentrations) throws IOException
-	{
-
-		String commaSpace = "";
-
-		bufferedWriter.write("(");
-
-		commaSpace = "";
-
-		// print the current time
-		bufferedWriter.write(printTime + ",");
-
-		double temp;
-		// loop through the speciesIDs and print their current value to the file
-
-		for (String s : interesting)
-		{
-			String element = s.replaceAll("(.+)__", "");
-			String id = s.replace("__" + element, "");
-			ModelState ms = (id.equals(s)) ? topmodel : submodels.get(id);
-			if (printConcentrations.contains(s))
-			{
-				temp = ms.getVariableToValue(replacements, ms.getSpeciesToCompartmentNameMap().get(element));
-				bufferedWriter.write(commaSpace + ms.getVariableToValue(replacements, element) / temp);
-				commaSpace = ",";
-			}
-			else
-			{
-				bufferedWriter.write(commaSpace + ms.getVariableToValue(replacements, element));
-				commaSpace = ",";
-			}
-		}
-
-		bufferedWriter.write(")");
-		bufferedWriter.flush();
-	}
 
 	/**
 	 * appends the current species states to the TSD file
 	 * 
 	 * @throws IOException
 	 */
-	public static void printToTSD(BufferedWriter bufferedWriter, ModelState topmodel, Map<String, ModelState> submodels,
-			Map<String, Double> replacements, String[] interesting, Set<String> printConcentrations, double printTime) throws IOException
+	public static void printToTSD(BufferedWriter bufferedWriter, ModelState topmodel, Map<String, ModelState> submodels, String[] interesting, Set<String> printConcentrations, double printTime) throws IOException
 	{
-		if (interesting.length == 0)
+		if (interesting == null || interesting.length == 0)
 		{
-			printAllToTSD(printTime, bufferedWriter, topmodel, submodels, replacements);
+			printAllToTSD(printTime, bufferedWriter, topmodel, submodels);
 		}
 		else
 		{
-			printInterestingToTSD(bufferedWriter, printTime, topmodel, submodels, replacements, interesting, printConcentrations);
+			printInterestingToTSD(bufferedWriter, printTime, topmodel, submodels, interesting, printConcentrations);
 		}
 
 	}
 
-	public static void setupVariableFromTSD(BufferedWriter bufferedWriter, ModelState topmodel, Map<String, ModelState> submodels,
-			String[] interesting) throws IOException
+	public static void setupVariableFromTSD(BufferedWriter bufferedWriter, ModelState topmodel, Map<String, ModelState> submodels, String[] interesting) throws IOException
 	{
 		bufferedWriter.write("(" + "\"" + "time" + "\"");
 
-		if (interesting.length > 0)
+		if (interesting != null && interesting.length > 0)
 		{
 			for (String s : interesting)
 			{
-
 				bufferedWriter.write(",\"" + s + "\"");
-
 			}
 
 			bufferedWriter.write("),\n");
@@ -145,45 +46,65 @@ public class HierarchicalWriter
 			return;
 		}
 
-		for (String speciesID : topmodel.getSpeciesIDSet())
+		for (VariableNode node : topmodel.getVariables())
 		{
-			if (!topmodel.isArrayedObject(speciesID))
-			{
-				bufferedWriter.write(",\"" + speciesID + "\"");
-			}
-		}
-
-		for (String noConstantParam : topmodel.getVariablesToPrint())
-		{
-			if (!topmodel.isArrayedObject(noConstantParam))
-			{
-				bufferedWriter.write(",\"" + noConstantParam + "\"");
-			}
-		}
-		/*
-		 * for (String compartment : topmodel.compartmentIDSet) {
-		 * bufferedTSDWriter.write(", \"" + compartment + "\""); }
-		 */
-		for (ModelState model : submodels.values())
-		{
-			for (String speciesID : model.getSpeciesIDSet())
-			{
-				if (!model.isArrayedObject(speciesID) && !model.getIsHierarchical().contains(speciesID))
-				{
-					bufferedWriter.write(",\"" + model.getID() + "__" + speciesID + "\"");
-				}
-			}
-
-			for (String noConstantParam : model.getVariablesToPrint())
-			{
-				if (!model.isArrayedObject(noConstantParam) && !model.getIsHierarchical().contains(noConstantParam))
-				{
-					bufferedWriter.write(",\"" + model.getID() + "__" + noConstantParam + "\"");
-				}
-			}
+			bufferedWriter.write(",\"" + node.getName() + "\"");
 		}
 
 		bufferedWriter.write("),\n");
 
+	}
+
+	private static void printAllToTSD(double printTime, BufferedWriter bufferedWriter, ModelState topmodel, Map<String, ModelState> submodels) throws IOException
+	{
+		String commaSpace = ",";
+
+		bufferedWriter.write("(");
+
+		// print the current time
+		bufferedWriter.write(printTime + "");
+
+		// loop through the speciesIDs and print their current value to the
+		// file
+		for (VariableNode node : topmodel.getVariables())
+		{
+			bufferedWriter.write(commaSpace + node.getValue());
+		}
+
+		bufferedWriter.write(")");
+		bufferedWriter.flush();
+	}
+
+	private static void printInterestingToTSD(BufferedWriter bufferedWriter, double printTime, ModelState topmodel, Map<String, ModelState> submodels, String[] interesting, Set<String> printConcentrations) throws IOException
+	{
+
+		String commaSpace = "";
+
+		bufferedWriter.write("(");
+
+		commaSpace = "";
+
+		// print the current time
+		bufferedWriter.write(printTime + ",");
+
+		for (String s : interesting)
+		{
+			String element = s.replaceAll("(.+)__", "");
+			String id = s.replace("__" + element, "");
+			ModelState ms = (id.equals(s)) ? topmodel : submodels.get(id);
+			VariableNode node = ms.getNode(element);
+			double value = node.getValue();
+			if (printConcentrations.contains(s))
+			{
+				SpeciesNode species = (SpeciesNode) node;
+				value = species.getConcentration();
+			}
+			bufferedWriter.write(commaSpace + value);
+			commaSpace = ",";
+
+		}
+
+		bufferedWriter.write(")");
+		bufferedWriter.flush();
 	}
 }

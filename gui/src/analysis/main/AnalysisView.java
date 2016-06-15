@@ -134,35 +134,34 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private JRadioButton		adaptive, nonAdaptive;
 
-	private JLabel				rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, iSSATypeLabel, iSSAAdaptiveLabel,
-			bifurcationLabel;
+	private JLabel				rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, iSSATypeLabel, iSSAAdaptiveLabel, bifurcationLabel;
 
-	private String				sbmlFile;																				// sbml
-																														// file
-																														// and
-																														// root
-																														// directory
+	private String				sbmlFile;																													// sbml
+																																							// file
+																																							// and
+																																							// root
+																																							// directory
 
 	private final String		root;
 
-	private final Gui			gui;																					// reference
-																														// to
-																														// the
-																														// tstubd
-																														// class
+	private final Gui			gui;																														// reference
+																																							// to
+																																							// the
+																																							// tstubd
+																																							// class
 
-	private String				simName;																				// simulation
-																														// id
+	private String				simName;																													// simulation
+																																							// id
 
-	private final Log			log;																					// the
-																														// log
+	private final Log			log;																														// the
+																																							// log
 
-	private final JTabbedPane	simTab;																				// the
-																														// simulation
-																														// tab
+	private final JTabbedPane	simTab;																													// the
+																																							// simulation
+																																							// tab
 
-	private ModelEditor			modelEditor;																			// model
-																														// editor
+	private ModelEditor			modelEditor;																												// model
+																																							// editor
 
 	private JCheckBox			append, concentrations, genRuns, genStats;
 
@@ -663,6 +662,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				description.setText("Runge-Kutta-Fehlberg Method on Hierarchical Models (java)");
 				enableODESimulator();
 			}
+			else if (((String) simulators.getSelectedItem()).equals("Mixed-Hierarchical"))
+			{
+				description.setText("FBA+SSA+ODE Simulator");
+				enableODESimulator();
+			}
 			else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Flatten)"))
 			{
 				description.setText("Runge-Kutta-Fehlberg Method on Flattened Models (java)");
@@ -826,8 +830,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		absList.addItem("stop-flag-generator");
 		addAbsPanel.add(absList, "Center");
 		String[] options = { "Add", "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, addAbsPanel, "Add abstraction method", JOptionPane.YES_NO_OPTION,
-				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, addAbsPanel, "Add abstraction method", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION)
 		{
 			if (e.getSource() == addPreAbs)
@@ -871,8 +874,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					cut = i;
 				}
 			}
-			String propName = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
-					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
+			String propName = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length()) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 			try
 			{
 				if (new File(propName).exists())
@@ -1010,8 +1012,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				String[] searchForRunFiles = new File(root + Gui.separator + outDir).list();
 				for (String s : searchForRunFiles)
 				{
-					if (s.length() > 3 && new File(root + Gui.separator + outDir + Gui.separator + s).isFile()
-							&& (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s.equals("variance.tsd")))
+					if (s.length() > 3 && new File(root + Gui.separator + outDir + Gui.separator + s).isFile() && (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s.equals("variance.tsd")))
 					{
 						new File(root + Gui.separator + outDir + Gui.separator + s).delete();
 					}
@@ -1078,17 +1079,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			simulationName = simName + " " + direct;
 			directory = direct;
 		}
-		exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
-				+ Gui.separator + simName, stateAbstraction, 1, intSpecies, log, gui, simTab, root, progress, simulationName, modelEditor, directory,
-				timeLimit, runTime, modelFile, lpnAbstraction, reactionAbstraction, expandReactions, lpnProperty, absError, timeStep, printInterval,
-				run, rndSeed, refresh, label, running);
+		exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root + Gui.separator + simName, stateAbstraction, 1, intSpecies, log, gui, simTab, root, progress, simulationName, modelEditor, directory, timeLimit, runTime,
+				modelFile, lpnAbstraction, reactionAbstraction, expandReactions, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label, running);
 		if (stateAbstraction.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && exit == 0)
 		{
 			simProp = simProp.replace("\\", "/");
-			Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split("/"), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo,
-					timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + Gui.separator + simName,
-					rndSeed, run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, gui, simTab, root, directory, modelFile,
-					reactionAbstraction, lpnAbstraction, absError);
+			Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split("/"), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + Gui.separator + simName, rndSeed, run,
+					printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, gui, simTab, root, directory, modelFile, reactionAbstraction, lpnAbstraction, absError);
 			nary_Run.open();
 		}
 		running.setCursor(null);
@@ -1148,14 +1145,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				printInterval = Double.parseDouble(interval.getText().trim());
 				if (printInterval < 0)
 				{
-					JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Print Interval Field.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Print Interval Field.", "Error", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 				else if (printInterval == 0 && !((String) intervalLabel.getSelectedItem()).contains("Minimum"))
 				{
-					JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Print Interval Field.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Print Interval Field.", "Error", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 			}
@@ -1164,8 +1159,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				printInterval = Integer.parseInt(interval.getText().trim());
 				if (printInterval <= 0)
 				{
-					JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Number of Steps Field.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Number of Steps Field.", "Error", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 			}
@@ -1174,8 +1168,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval"))
 			{
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Print Interval Field.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Print Interval Field.", "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter an Integer into the Number of Steps Field.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1187,8 +1180,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		else if (step.getText().trim().equals("inf") && sim.equals("euler"))
 		{
-			JOptionPane
-					.showMessageDialog(Gui.frame, "Cannot Select an Infinite Time Step with Euler Simulation.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Cannot Select an Infinite Time Step with Euler Simulation.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		else
@@ -1209,8 +1201,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		catch (Exception e1)
 		{
-			JOptionPane
-					.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Minimum Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Minimum Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		try
@@ -1236,8 +1227,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			run = Integer.parseInt(runs.getText().trim());
 			if (run < 0)
 			{
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Integer into the Runs Field." + "\nProceding with Default:   "
-						+ biosimrc.get("biosim.sim.runs", ""), "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Integer into the Runs Field." + "\nProceding with Default:   " + biosimrc.get("biosim.sim.runs", ""), "Error", JOptionPane.ERROR_MESSAGE);
 				run = Integer.parseInt(biosimrc.get("biosim.sim.runs", ""));
 			}
 		}
@@ -1269,8 +1259,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The" + " Rapid Equilibrium Condition 1 Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The" + " Rapid Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		try
@@ -1279,8 +1268,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The" + " Rapid Equilibrium Condition 2 Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The" + " Rapid Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		try
@@ -1298,8 +1286,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		catch (Exception e1)
 		{
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max" + " Concentration Threshold Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max" + " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		try
@@ -1432,18 +1419,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		boolean saveTopLevel = false;
 		if (!direct.equals("."))
 		{
-			simProp = simProp.substring(0, simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length()) + direct + Gui.separator
-					+ simProp.substring(simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length());
+			simProp = simProp.substring(0, simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length()) + direct + Gui.separator + simProp.substring(simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length());
 			saveTopLevel = true;
 		}
-		String propName = simProp.substring(0, simProp.length() - getFilename[getFilename.length - 1].length())
-				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
+		String propName = simProp.substring(0, simProp.length() - getFilename[getFilename.length - 1].length()) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		log.addText("Creating properties file:\n" + propName + "\n");
 		int numPaths = Integer.parseInt((String) (bifurcation.getSelectedItem()));
-		Run.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError, ".", rndSeed,
-				run, numPaths, intSpecies, printer_id, printer_track_quantity, generate_statistics, sbmlProp.split("/"), selectedButtons, this,
-				sbmlProp, rap1, rap2, qss, con, stoichAmp, preAbs, loopAbs, postAbs, lpnAbstraction, mpde.isSelected(), meanPath.isSelected(),
-				adaptive.isSelected());
+		Run.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths, intSpecies, printer_id, printer_track_quantity, generate_statistics, sbmlProp.split("/"), selectedButtons, this, sbmlProp, rap1, rap2,
+				qss, con, stoichAmp, preAbs, loopAbs, postAbs, lpnAbstraction, mpde.isSelected(), meanPath.isSelected(), adaptive.isSelected());
 		if (direct.equals("."))
 		{
 			outDir = simName;
@@ -1473,8 +1456,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 			}
 		}
-		String topLevelProps = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
-				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
+		String topLevelProps = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length()) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		try
 		{
 			Properties getProps = new Properties();
@@ -1498,8 +1480,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					int start = 1;
 					for (String s : searchForRunFiles)
 					{
-						if (s.length() > 3 && s.substring(0, 4).equals("run-")
-								&& new File(root + Gui.separator + outDir + Gui.separator + s).isFile())
+						if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + Gui.separator + outDir + Gui.separator + s).isFile())
 						{
 							String getNumber = s.substring(4, s.length());
 							String number = "";
@@ -1543,26 +1524,33 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		change = false;
 		return true;
 	}
-	
-	private void saveSEDML() {
+
+	private void saveSEDML()
+	{
 		double timeLimit = Double.parseDouble(limit.getText().trim());
 		double printInterval = Double.parseDouble(interval.getText().trim());
 		int numberOfSteps;
-		if (((String)intervalLabel.getSelectedItem()).equals("Number Of Steps")) {
+		if (((String) intervalLabel.getSelectedItem()).equals("Number Of Steps"))
+		{
 			numberOfSteps = Integer.parseInt(interval.getText().trim());
-		} else {
-			numberOfSteps = (int)Math.floor(timeLimit / printInterval) + 1;
 		}
-		sedmlDoc = new SEDMLDocument(1,2);
+		else
+		{
+			numberOfSteps = (int) Math.floor(timeLimit / printInterval) + 1;
+		}
+		sedmlDoc = new SEDMLDocument(1, 2);
 		SedML sedml = sedmlDoc.getSedMLModel();
 		List<Simulation> simulations = sedml.getSimulations();
 		UniformTimeCourse simulation;
-		if (simulations.size() > 0) {
+		if (simulations.size() > 0)
+		{
 			simulation = (UniformTimeCourse) simulations.get(0);
 			simulation.setOutputEndTime(timeLimit);
 			simulation.setNumberOfPoints(numberOfSteps);
 			simulation.setAlgorithm(getAlgorithm());
-		} else {
+		}
+		else
+		{
 			Algorithm algo = getAlgorithm();
 			simulation = new UniformTimeCourse("simId", "", 0, 0, timeLimit, numberOfSteps, algo);
 			sedml.addSimulation(simulation);
@@ -1570,12 +1558,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			sedml.addModel(model);
 			Task task = new Task(simName, "", model.getId(), simulation.getId());
 			sedml.addTask(task);
-		} 
-		if (!runs.getText().trim().equals("1")) {
+		}
+		if (!runs.getText().trim().equals("1"))
+		{
 			int numRuns = Integer.parseInt(runs.getText().trim());
-			Range range = new UniformRange("range",1,numRuns,numRuns);
+			Range range = new UniformRange("range", 1, numRuns, numRuns);
 			SubTask subTask = new SubTask(simName);
-			RepeatedTask repeatedTask = new RepeatedTask("repeat_"+simName,"",true,"range");
+			RepeatedTask repeatedTask = new RepeatedTask("repeat_" + simName, "", true, "range");
 			repeatedTask.addRange(range);
 			repeatedTask.addSubtask(subTask);
 			sedml.addTask(repeatedTask);
@@ -1584,7 +1573,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			if (simTab.getComponentAt(i) instanceof Graph)
 			{
-				((Graph) simTab.getComponentAt(i)).saveSEDML(sedmlDoc,simName);
+				((Graph) simTab.getComponentAt(i)).saveSEDML(sedmlDoc, simName);
 			}
 		}
 		File sedmlFile = new File(sedmlFilename);
@@ -1615,11 +1604,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				int numRuns = 1;
 				for (AbstractTask task : sedml.getTasks())
 				{
-					if (task instanceof RepeatedTask) {
+					if (task instanceof RepeatedTask)
+					{
 						RepeatedTask repeatedTask = (RepeatedTask) task;
-						for (Range range : repeatedTask.getRanges().values()) {
-							if (range instanceof UniformRange) {
-								UniformRange uniformRange = (UniformRange)range;
+						for (Range range : repeatedTask.getRanges().values())
+						{
+							if (range instanceof UniformRange)
+							{
+								UniformRange uniformRange = (UniformRange) range;
 								numRuns = uniformRange.getNumberOfPoints();
 							}
 						}
@@ -1628,17 +1620,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				List<Simulation> simulations = sedml.getSimulations();
 				if (simulations.size() > 0)
 				{
-//					String kisaoId = simulations.get(0).getAlgorithm().getKisaoID();
-//					KisaoOntology ko = KisaoOntology.getInstance();
-//					KisaoTerm kt = ko.getTermById(kisaoId);
-//					System.out.println(kt.getExactSynonyms());
-//					System.out.println(kt.is_a(ko.getTermById("KISAO:0000377")));
+					// String kisaoId =
+					// simulations.get(0).getAlgorithm().getKisaoID();
+					// KisaoOntology ko = KisaoOntology.getInstance();
+					// KisaoTerm kt = ko.getTermById(kisaoId);
+					// System.out.println(kt.getExactSynonyms());
+					// System.out.println(kt.is_a(ko.getTermById("KISAO:0000377")));
 					setAlgorithm(simulations.get(0).getAlgorithm());
-					if (ODE.isSelected()||monteCarlo.isSelected())
+					if (ODE.isSelected() || monteCarlo.isSelected())
 					{
 						// simulators.setSelectedItem("Runge-Kutta-Fehlberg");
 						// TODO: what java ODE simulator fails on 987
-						//simulators.setSelectedItem("rkf45");
+						// simulators.setSelectedItem("rkf45");
 						UniformTimeCourse simulation = (UniformTimeCourse) simulations.get(0);
 						// KisaoTerm kisaoTerm =
 						// KisaoOntology.getInstance().getTermById(simulation.getAlgorithm().getKisaoID());
@@ -1663,7 +1656,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							}
 						}
 						limit.setText("" + simulation.getOutputEndTime());
-						runs.setText(""+numRuns);
+						runs.setText("" + numRuns);
 					}
 					else if (fba.isSelected())
 					{
@@ -1691,8 +1684,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			{
 				algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND);
 			}
-			else if (((String) simulators.getSelectedItem()).contains("rkf45")
-					|| ((String) simulators.getSelectedItem()).contains("Runge-Kutta-Fehlberg"))
+			else if (((String) simulators.getSelectedItem()).contains("rkf45") || ((String) simulators.getSelectedItem()).contains("Runge-Kutta-Fehlberg"))
 			{
 				algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
 			}
@@ -1703,16 +1695,21 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			{
 				algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
 			}
+			if (((String) simulators.getSelectedItem()).contains("Hierarchical"))
+			{
+				algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
+			}
 			else if (((String) simulators.getSelectedItem()).contains("SSA-CR"))
 			{
 				algorithm = new Algorithm(GlobalConstants.KISAO_SSA_CR);
 			}
-		} 
-		else if (fba.isSelected()) 
+		}
+		else if (fba.isSelected())
 		{
 			algorithm = new Algorithm(GlobalConstants.KISAO_FBA);
 		}
-		else {
+		else
+		{
 			algorithm = new Algorithm(GlobalConstants.KISAO_GENERIC);
 			Element para = new Element("analysis");
 			para.setAttribute("method", ((String) simulators.getSelectedItem()).replace(" ", "_"));
@@ -1720,13 +1717,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			Annotation ann = new Annotation(para);
 			algorithm.addAnnotation(ann);
 		}
-		AlgorithmParameter ap = new AlgorithmParameter(GlobalConstants.KISAO_MINIMUM_STEP_SIZE,minStep.getText());
+		AlgorithmParameter ap = new AlgorithmParameter(GlobalConstants.KISAO_MINIMUM_STEP_SIZE, minStep.getText());
 		algorithm.addAlgorithmParameter(ap);
-		ap = new AlgorithmParameter(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE,step.getText());
+		ap = new AlgorithmParameter(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE, step.getText());
 		algorithm.addAlgorithmParameter(ap);
-		ap = new AlgorithmParameter(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE,absErr.getText());
+		ap = new AlgorithmParameter(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE, absErr.getText());
 		algorithm.addAlgorithmParameter(ap);
-		ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED,seed.getText());
+		ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED, seed.getText());
 		algorithm.addAlgorithmParameter(ap);
 		return algorithm;
 	}
@@ -1735,52 +1732,74 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	{
 		String kisaoId = algorithm.getKisaoID();
 		KisaoTerm kt = KisaoOntology.getInstance().getTermById(kisaoId);
-		if (kisaoId.equals(GlobalConstants.KISAO_EULER)) {
+		if (kisaoId.equals(GlobalConstants.KISAO_EULER))
+		{
 			ODE.setSelected(true);
 			enableODE();
-			simulators.setSelectedItem((String)"euler");
-		} else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG)) {
+			simulators.setSelectedItem("euler");
+		}
+		else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG))
+		{
 			ODE.setSelected(true);
 			enableODE();
-			simulators.setSelectedItem((String)"rkf45");
-		} else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND)) {
+			simulators.setSelectedItem("rkf45");
+		}
+		else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND))
+		{
 			ODE.setSelected(true);
 			enableODE();
-			simulators.setSelectedItem((String)"rk8pd");
-		} else if (kisaoId.equals(GlobalConstants.KISAO_GILLESPIE_DIRECT)) {
+			simulators.setSelectedItem("rk8pd");
+		}
+		else if (kisaoId.equals(GlobalConstants.KISAO_GILLESPIE_DIRECT))
+		{
 			monteCarlo.setSelected(true);
 			enableMonteCarlo();
-			simulators.setSelectedItem((String)"gillespie");
-		} else if (kisaoId.equals(GlobalConstants.KISAO_SSA_CR)) {
+			simulators.setSelectedItem("gillespie");
+		}
+		else if (kisaoId.equals(GlobalConstants.KISAO_SSA_CR))
+		{
 			monteCarlo.setSelected(true);
 			enableMonteCarlo();
-			simulators.setSelectedItem((String)"SSA-CR (Dynamic)");
-		} else if (kisaoId.equals(GlobalConstants.KISAO_FBA)) {
+			simulators.setSelectedItem("SSA-CR (Dynamic)");
+		}
+		else if (kisaoId.equals(GlobalConstants.KISAO_FBA))
+		{
 			fba.setSelected(true);
 			enableFBA();
-		} else if (kt.is_a(KisaoOntology.ALGORITHM_WITH_DETERMINISTIC_RULES)) {
+		}
+		else if (kt.is_a(KisaoOntology.ALGORITHM_WITH_DETERMINISTIC_RULES))
+		{
 			ODE.setSelected(true);
 			enableODE();
-			simulators.setSelectedItem((String)"rkf45");			
-		} else {
+			simulators.setSelectedItem("rkf45");
+		}
+		else
+		{
 			monteCarlo.setSelected(true);
 			enableMonteCarlo();
-			simulators.setSelectedItem((String)"gillespie");			
+			simulators.setSelectedItem("gillespie");
 		}
-		for (AlgorithmParameter ap : algorithm.getListOfAlgorithmParameters()) {
-			if (ap.getKisaoID().equals(GlobalConstants.KISAO_MINIMUM_STEP_SIZE)) {
+		for (AlgorithmParameter ap : algorithm.getListOfAlgorithmParameters())
+		{
+			if (ap.getKisaoID().equals(GlobalConstants.KISAO_MINIMUM_STEP_SIZE))
+			{
 				minStep.setText(ap.getValue());
-			} else if (ap.getKisaoID().equals(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE)) {
+			}
+			else if (ap.getKisaoID().equals(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE))
+			{
 				step.setText(ap.getValue());
-			} else if (ap.getKisaoID().equals(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE)) {
+			}
+			else if (ap.getKisaoID().equals(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE))
+			{
 				absErr.setText(ap.getValue());
-			} else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED)) {
+			}
+			else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED))
+			{
 				seed.setText(ap.getValue());
 			}
 		}
 	}
 
-	
 	private static Annotation getSEDBaseAnnotation(SEDBase sedBase, String name)
 	{
 		@SuppressWarnings("deprecation")
@@ -1941,16 +1960,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.2"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.2.2").equals("dimerization-reduction")
-								&& !load.getProperty("reb2sac.abstraction.method.2.2").equals("dimerization-reduction-level-assignment"))
+						if (!load.getProperty("reb2sac.abstraction.method.2.2").equals("dimerization-reduction") && !load.getProperty("reb2sac.abstraction.method.2.2").equals("dimerization-reduction-level-assignment"))
 						{
 							loadProperties.add("reb2sac.abstraction.method.2.2=" + load.getProperty("reb2sac.abstraction.method.2.2"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.1"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.3.1").equals("kinetic-law-constants-simplifier")
-								&& !load.getProperty("reb2sac.abstraction.method.3.1").equals("reversible-to-irreversible-transformer")
+						if (!load.getProperty("reb2sac.abstraction.method.3.1").equals("kinetic-law-constants-simplifier") && !load.getProperty("reb2sac.abstraction.method.3.1").equals("reversible-to-irreversible-transformer")
 								&& !load.getProperty("reb2sac.abstraction.method.3.1").equals("nary-order-unary-transformer"))
 						{
 							loadProperties.add("reb2sac.abstraction.method.3.1=" + load.getProperty("reb2sac.abstraction.method.3.1"));
@@ -1958,8 +1975,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.2"))
 					{
-						if (!load.getProperty("reb2sac.abstraction.method.3.2").equals("kinetic-law-constants-simplifier")
-								&& !load.getProperty("reb2sac.abstraction.method.3.2").equals("modifier-constant-propagation"))
+						if (!load.getProperty("reb2sac.abstraction.method.3.2").equals("kinetic-law-constants-simplifier") && !load.getProperty("reb2sac.abstraction.method.3.2").equals("modifier-constant-propagation"))
 						{
 							loadProperties.add("reb2sac.abstraction.method.3.2=" + load.getProperty("reb2sac.abstraction.method.3.2"));
 						}
@@ -2775,8 +2791,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			if (!(stemPat.matcher(fileStem.getText().trim()).matches()))
 			{
-				JOptionPane.showMessageDialog(Gui.frame, "A file stem can only contain letters, numbers, and underscores.", "Invalid File Stem",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "A file stem can only contain letters, numbers, and underscores.", "Invalid File Stem", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			stem += fileStem.getText().trim();
@@ -2793,9 +2808,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						if (gcm.isDirty())
 						{
 							Object[] options = { "Yes", "No" };
-							int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelEditor.getRefFile()
-									+ " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options, options[0]);
+							int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelEditor.getRefFile() + " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION)
 							{
 								gcm.save(false);
@@ -2814,9 +2827,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						if (lpn.isDirty())
 						{
 							Object[] options = { "Yes", "No" };
-							int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelFile
-									+ " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options, options[0]);
+							int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelFile + " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION)
 							{
 								lpn.save();
@@ -2890,8 +2901,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		for (int i = 0; i < preAbsList.getSize(); i++)
 		{
 			String abstractionOption = (String) preAbsList.getElementAt(i);
-			if (abstractionOption.equals("complex-formation-and-sequestering-abstraction")
-					|| abstractionOption.equals("operator-site-reduction-abstraction"))
+			if (abstractionOption.equals("complex-formation-and-sequestering-abstraction") || abstractionOption.equals("operator-site-reduction-abstraction"))
 			{
 				gcmAbsList.add(abstractionOption);
 			}
@@ -2906,8 +2916,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		for (int i = 0; i < preAbsList.getSize(); i++)
 		{
 			String abstractionOption = (String) preAbsList.getElementAt(i);
-			if (!abstractionOption.equals("complex-formation-and-sequestering-abstraction")
-					&& !abstractionOption.equals("operator-site-reduction-abstraction"))
+			if (!abstractionOption.equals("complex-formation-and-sequestering-abstraction") && !abstractionOption.equals("operator-site-reduction-abstraction"))
 			{
 				return true;
 			}
@@ -3018,8 +3027,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			printer_track_quantity = "concentration";
 		}
-		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time", gui, open, log, null, false,
-				false);
+		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time", gui, open, log, null, false, false);
 	}
 
 	public void run(ArrayList<AnalysisThread> threads, ArrayList<String> dirs, ArrayList<String> levelOne, String stem)
@@ -3053,13 +3061,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						ArrayList<String> vals = new ArrayList<String>();
 						try
 						{
-							Scanner s = new Scanner(new File(root + Gui.separator + simName + Gui.separator + stem + d + Gui.separator
-									+ "sim-rep.txt"));
+							Scanner s = new Scanner(new File(root + Gui.separator + simName + Gui.separator + stem + d + Gui.separator + "sim-rep.txt"));
 							while (s.hasNextLine())
 							{
 								String[] ss = s.nextLine().split(" ");
-								if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:")
-										&& ss[4].equals("0"))
+								if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
 								{
 								}
 								if (vals.size() == 0)
@@ -3807,6 +3813,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		simulators.addItem("SSA-Direct (Hierarchical)");
 		simulators.addItem("SSA-Direct (Flatten)");
 		simulators.addItem("Hybrid-Hierarchical");
+
+		simulators.addItem("Mixed-Hierarchical");
 		simulators.setSelectedItem("SSA-Direct (Dynamic)");
 		if (Gui.isReb2sacFound())
 		{

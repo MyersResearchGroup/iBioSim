@@ -84,11 +84,8 @@ public class Run implements ActionListener
 	 * @param useInterval
 	 * @param stem
 	 */
-	public static void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep, double timeStep,
-			double absError, String outDir, long rndSeed, int run, int numPaths, String[] intSpecies, String printer_id,
-			String printer_track_quantity, String genStats, String[] getFilename, String selectedButtons, Component component, String filename,
-			double rap1, double rap2, double qss, int con, double stoichAmp, JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane,
-			boolean mpde, boolean meanPath, boolean adaptive)
+	public static void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep, double timeStep, double absError, String outDir, long rndSeed, int run, int numPaths, String[] intSpecies, String printer_id, String printer_track_quantity, String genStats,
+			String[] getFilename, String selectedButtons, Component component, String filename, double rap1, double rap2, double qss, int con, double stoichAmp, JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane, boolean mpde, boolean meanPath, boolean adaptive)
 	{
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary"))
@@ -97,8 +94,7 @@ public class Run implements ActionListener
 			for (int i = 0; i < preAbs.getModel().getSize(); i++)
 			{
 				String abstractionOption = (String) preAbs.getModel().getElementAt(i);
-				if (abstractionOption.equals("complex-formation-and-sequestering-abstraction")
-						|| abstractionOption.equals("operator-site-reduction-abstraction"))
+				if (abstractionOption.equals("complex-formation-and-sequestering-abstraction") || abstractionOption.equals("operator-site-reduction-abstraction"))
 				{
 					abs.setProperty("gcm.abstraction.method." + gcmIndex, abstractionOption);
 					gcmIndex++;
@@ -178,8 +174,7 @@ public class Run implements ActionListener
 			}
 			for (Integer i = 0; i < abstPane.postAbsModel.size(); i++)
 			{
-				if (abstPane.preAbsModel.contains(abstPane.postAbsModel.getElementAt(i))
-						|| abstPane.preAbsModel.contains(abstPane.postAbsModel.get(i)))
+				if (abstPane.preAbsModel.contains(abstPane.postAbsModel.getElementAt(i)) || abstPane.preAbsModel.contains(abstPane.postAbsModel.get(i)))
 				{
 					String value = abs.getProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString());
 					value = value + "postloop" + i.toString();
@@ -324,16 +319,13 @@ public class Run implements ActionListener
 					cut = i;
 				}
 			}
-			FileOutputStream store = new FileOutputStream(new File((filename.substring(0,
-					filename.length() - getFilename[getFilename.length - 1].length()))
-					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties"));
+			FileOutputStream store = new FileOutputStream(new File((filename.substring(0, filename.length() - getFilename[getFilename.length - 1].length())) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties"));
 			abs.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
 		}
 		catch (Exception except)
 		{
-			JOptionPane.showMessageDialog(component, "Unable To Save Properties File!" + "\nMake sure you select a model for abstraction.",
-					"Unable To Save File", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Unable To Save Properties File!" + "\nMake sure you select a model for abstraction.", "Unable To Save File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -346,12 +338,9 @@ public class Run implements ActionListener
 	 * @throws XMLStreamException
 	 * @throws NumberFormatException
 	 */
-	public int execute(String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, Component component,
-			JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id, String printer_track_quantity, String outDir,
-			JRadioButton nary, int naryRun, String[] intSpecies, Log log, Gui gui, JTabbedPane simTab, String root, JProgressBar progress,
-			String simName, ModelEditor modelEditor, String direct, double timeLimit, double runTime, String modelFile, AbstPane abstPane,
-			JRadioButton abstraction, JRadioButton expandReaction, String lpnProperty, double absError, double timeStep, double printInterval,
-			int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running)
+	public int execute(String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, Component component, JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id, String printer_track_quantity, String outDir, JRadioButton nary, int naryRun,
+			String[] intSpecies, Log log, Gui gui, JTabbedPane simTab, String root, JProgressBar progress, String simName, ModelEditor modelEditor, String direct, double timeLimit, double runTime, String modelFile, AbstPane abstPane, JRadioButton abstraction, JRadioButton expandReaction,
+			String lpnProperty, double absError, double timeStep, double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running)
 	{
 		outDir = outDir.replace("\\", "/");
 		filename = filename.replace("\\", "/");
@@ -437,8 +426,7 @@ public class Run implements ActionListener
 				}
 				if (propList.size() > 0)
 				{
-					String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection", JOptionPane.PLAIN_MESSAGE,
-							null, propList.toArray(), null);
+					String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 					if ((s != null) && (s.length() > 0))
 					{
 						Model m = bioModel.getSBMLDocument().getModel();
@@ -506,8 +494,7 @@ public class Run implements ActionListener
 					if (f.exists())
 					{
 						Object[] options = { "Overwrite", "Cancel" };
-						int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?", "Overwrite",
-								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 						if (value == JOptionPane.YES_OPTION)
 						{
 							File dir = new File(root + Gui.separator + sbmlName);
@@ -599,8 +586,7 @@ public class Run implements ActionListener
 							}
 							if (propList.size() > 0)
 							{
-								String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection",
-										JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+								String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 								if ((s != null) && (s.length() > 0))
 								{
 									Model m = bioModel.getSBMLDocument().getModel();
@@ -654,13 +640,10 @@ public class Run implements ActionListener
 					{
 						if (analysisView.reb2sacAbstraction() && (abstraction.isSelected() || nary.isSelected()))
 						{
-							log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + Gui.separator + sbmlName
-									+ " " + filename + "\n");
-							logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + Gui.separator + sbmlName
-									+ " " + filename + "\n\n");
+							log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + Gui.separator + sbmlName + " " + filename + "\n");
+							logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + Gui.separator + sbmlName + " " + filename + "\n\n");
 							time1 = System.nanoTime();
-							reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + Gui.separator + sbmlName + " "
-									+ theFile, null, work);
+							reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + Gui.separator + sbmlName + " " + theFile, null, work);
 						}
 						else
 						{
@@ -795,8 +778,7 @@ public class Run implements ActionListener
 							}
 							if (propList.size() > 0)
 							{
-								String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection",
-										JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+								String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 								if ((s != null) && (s.length() > 0))
 								{
 									Model m = bioModel.getSBMLDocument().getModel();
@@ -957,8 +939,7 @@ public class Run implements ActionListener
 							}
 							if (propList.size() > 0)
 							{
-								String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection",
-										JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+								String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 								if ((s != null) && (s.length() > 0))
 								{
 									Model m = bioModel.getSBMLDocument().getModel();
@@ -982,10 +963,8 @@ public class Run implements ActionListener
 								return 0;
 							}
 							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
-							log.addText("Saving SBML file as LPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn"
-									+ "\n");
-							logFile.write("Saving SBML file as LPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-									+ ".lpn" + "\n\n");
+							log.addText("Saving SBML file as LPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn" + "\n");
+							logFile.write("Saving SBML file as LPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn" + "\n\n");
 						}
 						else
 						{
@@ -1010,9 +989,8 @@ public class Run implements ActionListener
 					{
 						time2 = System.nanoTime();
 						Object[] options = { "Yes", "No" };
-						int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates() + " states and "
-								+ sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph",
-								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates() + " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 						if (value == JOptionPane.YES_OPTION)
 						{
 							String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
@@ -1024,22 +1002,19 @@ public class Run implements ActionListener
 								{
 									log.addText("Executing:\ndotty " + graphFile + "\n");
 									logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-									execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null,
-											new File(directory));
+									execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
 								}
 								else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
 								{
 									log.addText("Executing:\nopen " + graphFile + "\n");
 									logFile.write("Executing:\nopen " + graphFile + "\n\n");
-									execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null,
-											new File(directory));
+									execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
 								}
 								else
 								{
 									log.addText("Executing:\ndotty " + graphFile + "\n");
 									logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-									execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null,
-											new File(directory));
+									execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
 								}
 							}
 							catch (Exception e1)
@@ -1072,8 +1047,7 @@ public class Run implements ActionListener
 										String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 										if (constraint.startsWith("St("))
 										{
-											propList.add(sg.createProperty(constraint.trim().replace(" ", ""),
-													Translator.convertProperty(m.getConstraint(num).getMath())));
+											propList.add(sg.createProperty(constraint.trim().replace(" ", ""), Translator.convertProperty(m.getConstraint(num).getMath())));
 										}
 									}
 								}
@@ -1103,9 +1077,8 @@ public class Run implements ActionListener
 									simrepstream.close();
 								}
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
-										+ " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?",
-										"View State Graph", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates() + " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 								if (value == JOptionPane.YES_OPTION)
 								{
 									String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
@@ -1117,23 +1090,19 @@ public class Run implements ActionListener
 										{
 											log.addText("Executing:\ndotty " + graphFile + "\n");
 											logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-													+ "_sg.dot", null, new File(directory));
+											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
 										}
 										else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
 										{
 											log.addText("Executing:\nopen " + graphFile + "\n");
 											logFile.write("Executing:\nopen " + graphFile + "\n\n");
-											execGraph.exec(
-													"open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null,
-													new File(directory));
+											execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
 										}
 										else
 										{
 											log.addText("Executing:\ndotty " + graphFile + "\n");
 											logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-													+ "_sg.dot", null, new File(directory));
+											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
 										}
 									}
 									catch (Exception e1)
@@ -1183,9 +1152,8 @@ public class Run implements ActionListener
 									simrepstream.close();
 								}
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
-										+ " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?",
-										"View State Graph", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates() + " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 								if (value == JOptionPane.YES_OPTION)
 								{
 									String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
@@ -1197,23 +1165,19 @@ public class Run implements ActionListener
 										{
 											log.addText("Executing:\ndotty " + graphFile + "\n");
 											logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-													+ "_sg.dot", null, new File(directory));
+											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
 										}
 										else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
 										{
 											log.addText("Executing:\nopen " + graphFile + "\n");
 											logFile.write("Executing:\nopen " + graphFile + "\n\n");
-											execGraph.exec(
-													"open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null,
-													new File(directory));
+											execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
 										}
 										else
 										{
 											log.addText("Executing:\ndotty " + graphFile + "\n");
 											logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-													+ "_sg.dot", null, new File(directory));
+											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
 										}
 									}
 									catch (Exception e1)
@@ -1251,9 +1215,7 @@ public class Run implements ActionListener
 									}
 									else
 									{
-										simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity,
-												outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time",
-												gui, null, log, null, false, false));
+										simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
 										simTab.getComponentAt(i).setName("Histogram");
 									}
 								}
@@ -1265,8 +1227,7 @@ public class Run implements ActionListener
 				else
 				{
 					Preferences biosimrc = Preferences.userRoot();
-					String reactionAbstraction = abstraction == null ? "None" : abstraction.isSelected() ? "reactionAbstraction"
-							: abstraction == null ? "None" : expandReaction.isSelected() ? "expandReaction" : "None";
+					String reactionAbstraction = abstraction == null ? "None" : abstraction.isSelected() ? "reactionAbstraction" : abstraction == null ? "None" : expandReaction.isSelected() ? "expandReaction" : "None";
 
 					if (sim.equals("interactive"))
 					{
@@ -1302,9 +1263,7 @@ public class Run implements ActionListener
 							outDir = outDir + Gui.separator + direct;
 						}
 
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress,
-								printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats,
-								simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1323,9 +1282,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress,
-								printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats,
-								simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1344,9 +1301,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress,
-								printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats,
-								simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1365,9 +1320,26 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress,
-								printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats,
-								simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
+						exitValue = 0;
+						new File(directory + Gui.separator + "running").delete();
+						logFile.close();
+						return exitValue;
+					}
+					else if (sim.equals("Mixed-Hierarchical"))
+					{
+
+						double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
+
+						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
+
+						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_MIXED);
+						String SBMLFileName = directory + Gui.separator + theFile;
+						if (direct != null && !direct.equals("."))
+						{
+							outDir = outDir + Gui.separator + direct;
+						}
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1386,9 +1358,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress,
-								printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity,
-								genStats, simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1405,9 +1375,8 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs,
-								progressLabel, running, stoichAmpValue, intSpecies, (int) Math.floor(timeLimit / printInterval), 0, absError,
-								printer_track_quantity, genStats, simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, (int) Math.floor(timeLimit / printInterval), 0, absError, printer_track_quantity, genStats,
+								simTab, reactionAbstraction, log);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1424,9 +1393,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs,
-								progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab,
-								reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1443,9 +1410,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs,
-								progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab,
-								reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1564,18 +1529,15 @@ public class Run implements ActionListener
 			{
 				if (exitValue == 143)
 				{
-					JOptionPane.showMessageDialog(Gui.frame, "The simulation was" + " canceled by the user.", "Canceled Simulation",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "The simulation was" + " canceled by the user.", "Canceled Simulation", JOptionPane.ERROR_MESSAGE);
 				}
 				else if (exitValue == 139)
 				{
-					JOptionPane.showMessageDialog(Gui.frame, "The selected model is not a valid sbml file." + "\nYou must select an sbml file.",
-							"Not An SBML File", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "The selected model is not a valid sbml file." + "\nYou must select an sbml file.", "Not An SBML File", JOptionPane.ERROR_MESSAGE);
 				}
 				else
 				{
-					JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!\n" + "Bad Return Value!\n" + "The reb2sac program returned "
-							+ exitValue + " as an exit value.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!\n" + "Bad Return Value!\n" + "The reb2sac program returned " + exitValue + " as an exit value.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			else
@@ -1600,13 +1562,9 @@ public class Run implements ActionListener
 									}
 									else
 									{
-										if (new File(filename.substring(0,
-												filename.length() - filename.split("/")[filename.split("/").length - 1].length())
-												+ "sim-rep.txt").exists())
+										if (new File(filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "sim-rep.txt").exists())
 										{
-											simTab.setComponentAt(i,
-													new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1]
-															+ " simulation results", printer_id, outDir, "Flux", gui, null, log, null, false, false));
+											simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "Flux", gui, null, log, null, false, false));
 											simTab.getComponentAt(i).setName("Histogram");
 										}
 									}
@@ -1652,13 +1610,11 @@ public class Run implements ActionListener
 					}
 					else if (exitValue == -8)
 					{
-						JOptionPane.showMessageDialog(Gui.frame, "Miscellaneous FBA failure (see console for details).", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Miscellaneous FBA failure (see console for details).", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					else if (exitValue == -9)
 					{
-						JOptionPane.showMessageDialog(Gui.frame, "Reaction in flux objective does not have a flux bound.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Reaction in flux objective does not have a flux bound.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					else if (exitValue == -10)
 					{
@@ -1740,10 +1696,8 @@ public class Run implements ActionListener
 				}
 				else if (sim.equals("atacs"))
 				{
-					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA "
-							+ filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "out.hse\n");
-					logFile.write("Executing:\natacs -T0.000001 -oqoflhsgllvA "
-							+ filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "out.hse\n\n");
+					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA " + filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "out.hse\n");
+					logFile.write("Executing:\natacs -T0.000001 -oqoflhsgllvA " + filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "out.hse\n\n");
 					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
 					if (refresh)
 					{
@@ -1757,9 +1711,7 @@ public class Run implements ActionListener
 								}
 								else
 								{
-									simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity,
-											outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui,
-											null, log, null, false, false));
+									simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
 									simTab.getComponentAt(i).setName("Histogram");
 								}
 							}
@@ -1825,8 +1777,7 @@ public class Run implements ActionListener
 												if (s.hasNextLine())
 												{
 													String[] ss = s.nextLine().split(" ");
-													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
-															&& ss[3].equals("count:") && ss[4].equals("0"))
+													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
 													{
 													}
 													else
@@ -1891,8 +1842,7 @@ public class Run implements ActionListener
 													if (terms.get(k - 1).get(l) < j)
 													{
 														data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
-														percentData.get(k).set(percentData.get(k).size() - 1,
-																((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
+														percentData.get(k).set(percentData.get(k).size() - 1, ((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
 														terms.get(k - 1).remove(l);
 													}
 												}
@@ -1910,9 +1860,7 @@ public class Run implements ActionListener
 								}
 								else
 								{
-									simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity,
-											outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui,
-											null, log, null, true, false));
+									simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, true, false));
 									boolean outputM = true;
 									boolean outputV = true;
 									boolean outputS = true;
@@ -1962,8 +1910,7 @@ public class Run implements ActionListener
 												if (s.hasNextLine())
 												{
 													String[] ss = s.nextLine().split(" ");
-													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
-															&& ss[3].equals("count:") && ss[4].equals("0"))
+													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
 													{
 													}
 													else
@@ -2028,8 +1975,7 @@ public class Run implements ActionListener
 													if (terms.get(k - 1).get(l) < j)
 													{
 														data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
-														percentData.get(k).set(percentData.get(k).size() - 1,
-																((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
+														percentData.get(k).set(percentData.get(k).size() - 1, ((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
 														terms.get(k - 1).remove(l);
 													}
 												}
@@ -2053,13 +1999,9 @@ public class Run implements ActionListener
 									}
 									else
 									{
-										if (new File(filename.substring(0,
-												filename.length() - filename.split("/")[filename.split("/").length - 1].length())
-												+ "sim-rep.txt").exists())
+										if (new File(filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "sim-rep.txt").exists())
 										{
-											simTab.setComponentAt(i,
-													new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1]
-															+ " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
+											simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
 											simTab.getComponentAt(i).setName("Histogram");
 										}
 									}
@@ -2124,8 +2066,7 @@ public class Run implements ActionListener
 												if (s.hasNextLine())
 												{
 													String[] ss = s.nextLine().split(" ");
-													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
-															&& ss[3].equals("count:") && ss[4].equals("0"))
+													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
 													{
 													}
 													else
@@ -2190,8 +2131,7 @@ public class Run implements ActionListener
 													if (terms.get(k - 1).get(l) < j)
 													{
 														data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
-														percentData.get(k).set(percentData.get(k).size() - 1,
-																((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
+														percentData.get(k).set(percentData.get(k).size() - 1, ((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
 														terms.get(k - 1).remove(l);
 													}
 												}
@@ -2209,9 +2149,7 @@ public class Run implements ActionListener
 								}
 								else
 								{
-									simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity,
-											outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui,
-											null, log, null, true, false));
+									simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, true, false));
 									boolean outputM = true;
 									boolean outputV = true;
 									boolean outputS = true;
@@ -2261,8 +2199,7 @@ public class Run implements ActionListener
 												if (s.hasNextLine())
 												{
 													String[] ss = s.nextLine().split(" ");
-													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
-															&& ss[3].equals("count:") && ss[4].equals("0"))
+													if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
 													{
 													}
 													else
@@ -2327,8 +2264,7 @@ public class Run implements ActionListener
 													if (terms.get(k - 1).get(l) < j)
 													{
 														data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
-														percentData.get(k).set(percentData.get(k).size() - 1,
-																((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
+														percentData.get(k).set(percentData.get(k).size() - 1, ((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
 														terms.get(k - 1).remove(l);
 													}
 												}
@@ -2352,13 +2288,9 @@ public class Run implements ActionListener
 									}
 									else
 									{
-										if (new File(filename.substring(0,
-												filename.length() - filename.split("/")[filename.split("/").length - 1].length())
-												+ "sim-rep.txt").exists())
+										if (new File(filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "sim-rep.txt").exists())
 										{
-											simTab.setComponentAt(i,
-													new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1]
-															+ " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
+											simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
 											simTab.getComponentAt(i).setName("Histogram");
 										}
 									}

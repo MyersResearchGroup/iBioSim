@@ -31,11 +31,11 @@ public class Learn
 	{
 		for (int i = 0; i < S.size(); i++)
 		{
-			String s_0 = S.get(i);
+			String s_0 = S.getInterestingSpecies(i);
 
 			for (int j = 0; j < S.size(); j++)
 			{
-				String s_1 = S.get(j);
+				String s_1 = S.getInterestingSpecies(j);
 
 				if (!s_0.equals(s_1))
 				{
@@ -132,7 +132,7 @@ public class Learn
 
 		for (int i = 0; i < S.size(); i++)
 		{
-			String s = S.get(i);
+			String s = S.getInterestingSpecies(i);
 
 			if (!C.containEdge(s))
 			{
@@ -148,8 +148,8 @@ public class Learn
 	{
 		for (int i = 0; i < S.size(); i++)
 		{
-			getDiscreteLevels(S.get(i), S, E, L, bins);
-			getBinAssign(S.get(i), S, E, L, bins);
+			getDiscreteLevels(S.getInterestingSpecies(i), S, E, L, bins);
+			getBinAssign(S.getInterestingSpecies(i), S, E, L, bins);
 		}
 	}
 

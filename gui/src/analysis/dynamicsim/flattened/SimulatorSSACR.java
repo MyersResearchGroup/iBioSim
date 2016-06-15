@@ -61,15 +61,10 @@ public class SimulatorSSACR extends Simulator
 	private double						currentStep;
 	private double						numSteps;
 
-	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit,
-			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress,
-			double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType) throws IOException
+	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) throws IOException
 	{
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,
-				progress, printInterval, initializationTime, stoichAmpValue, running,
-				interestingSpecies, quantityType);
+		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
 
 		initialize(randomSeed, 1);
 
@@ -137,14 +132,13 @@ public class SimulatorSSACR extends Simulator
 		double nextEventTime = Double.POSITIVE_INFINITY;
 		numSteps = (int) (timeLimit / printInterval);
 		currentStep = 0;
-		
+
 		// add events to queue if they trigger
 		if (noEventsFlag == false)
 		{
 			handleEvents();
 
-			HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag,
-					noConstraintsFlag);
+			HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
 
 			// recalculate propensties/groups for affected reactions
 			if (affectedReactionSet.size() > 0)
@@ -164,9 +158,7 @@ public class SimulatorSSACR extends Simulator
 			if (constraintFailureFlag == true)
 			{
 
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Simulation Canceled Due To Constraint Failure", "Constraint Failure",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled Due To Constraint Failure", "Constraint Failure", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -213,8 +205,7 @@ public class SimulatorSSACR extends Simulator
 				nextEventTime = Double.POSITIVE_INFINITY;
 				// step to the next event fire time if it comes before the next
 				// time step
-				if (!triggeredEventQueue.isEmpty()
-						&& triggeredEventQueue.peek().fireTime <= nextEventTime)
+				if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= nextEventTime)
 				{
 					nextEventTime = triggeredEventQueue.peek().fireTime;
 				}
@@ -257,21 +248,17 @@ public class SimulatorSSACR extends Simulator
 				for (String affectedVariable : affectedVariables)
 				{
 
-					if (speciesToAffectedReactionSetMap != null
-							&& speciesToAffectedReactionSetMap.containsKey(affectedVariable))
+					if (speciesToAffectedReactionSetMap != null && speciesToAffectedReactionSetMap.containsKey(affectedVariable))
 					{
 						updatePropensities(speciesToAffectedReactionSetMap.get(affectedVariable));
 					}
 
-					if (variableToAffectedAssignmentRuleSetMap != null
-							&& variableToAffectedAssignmentRuleSetMap.containsKey(affectedVariable))
+					if (variableToAffectedAssignmentRuleSetMap != null && variableToAffectedAssignmentRuleSetMap.containsKey(affectedVariable))
 					{
-						performAssignmentRules(variableToAffectedAssignmentRuleSetMap
-								.get(affectedVariable));
+						performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get(affectedVariable));
 					}
 
-					if (variableToAffectedConstraintSetMap != null
-							&& variableToAffectedConstraintSetMap.containsKey(affectedVariable))
+					if (variableToAffectedConstraintSetMap != null && variableToAffectedConstraintSetMap.containsKey(affectedVariable))
 					{
 						testConstraints(variableToAffectedConstraintSetMap.get(affectedVariable));
 					}
@@ -316,8 +303,7 @@ public class SimulatorSSACR extends Simulator
 
 					// create a set (precludes duplicates) of reactions that the
 					// selected reaction's species affect
-					HashSet<String> affectedReactionSet = getAffectedReactionSet(
-							selectedReactionID, noAssignmentRulesFlag);
+					HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID, noAssignmentRulesFlag);
 
 					boolean newMinPropensityFlag = updatePropensities(affectedReactionSet);
 
@@ -343,8 +329,7 @@ public class SimulatorSSACR extends Simulator
 					// step6Time += System.nanoTime() - step6Initial;
 				}
 
-				if (variableToIsInAssignmentRuleMap != null
-						&& variableToIsInAssignmentRuleMap.containsKey("time"))
+				if (variableToIsInAssignmentRuleMap != null && variableToIsInAssignmentRuleMap.containsKey("time"))
 				{
 					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
 				}
@@ -357,8 +342,7 @@ public class SimulatorSSACR extends Simulator
 
 			else if (currentTime == nextEventTime)
 			{
-				HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag,
-						noConstraintsFlag);
+				HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
 
 				// recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0)
@@ -457,7 +441,8 @@ public class SimulatorSSACR extends Simulator
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void initialize(long randomSeed, int runNumber) throws IOException
+	@Override
+	public void initialize(long randomSeed, int runNumber) throws IOException
 	{
 
 		reactionToGroupMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));
@@ -627,8 +612,7 @@ public class SimulatorSSACR extends Simulator
 		{
 
 			double propensity = reactionToPropensityMap.get(reaction);
-			org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath
-					.frexp((float) (propensity / minPropensity));
+			org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (propensity / minPropensity));
 			int group = frexpResult.exponent;
 
 			groupToTotalGroupPropensityMap.adjustValue(group, propensity);
@@ -798,8 +782,7 @@ public class SimulatorSSACR extends Simulator
 				groupToReactionSetList.get(0).add(reaction);
 			}
 
-			org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath
-					.frexp((float) (propensity / minPropensity));
+			org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (propensity / minPropensity));
 			int group = frexpResult.exponent;
 
 			groupToReactionSetList.get(group).add(reaction);
@@ -868,8 +851,7 @@ public class SimulatorSSACR extends Simulator
 			// + "   " + groupToTotalGroupPropensityMap.get(selectedGroup));
 			// System.err.println(runningTotalGroupsPropensity);
 
-			if (randomPropensity < runningTotalGroupsPropensity
-					&& nonemptyGroupSet.contains(selectedGroup))
+			if (randomPropensity < runningTotalGroupsPropensity && nonemptyGroupSet.contains(selectedGroup))
 			{
 				break;
 			}
@@ -1067,12 +1049,10 @@ public class SimulatorSSACR extends Simulator
 			else
 			{
 				// if it's outside of the old group's boundaries
-				if (newPropensity > groupToPropensityCeilingMap.get(oldGroup)
-						|| newPropensity < groupToPropensityFloorMap.get(oldGroup))
+				if (newPropensity > groupToPropensityCeilingMap.get(oldGroup) || newPropensity < groupToPropensityFloorMap.get(oldGroup))
 				{
 
-					org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath
-							.frexp((float) (newPropensity / minPropensity));
+					org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (newPropensity / minPropensity));
 					int group = frexpResult.exponent;
 
 					// if the group is one that currently exists
@@ -1180,8 +1160,7 @@ public class SimulatorSSACR extends Simulator
 
 			boolean notEnoughMoleculesFlag = false;
 
-			HashSet<StringDoublePair> reactantStoichiometrySet = reactionToReactantStoichiometrySetMap
-					.get(affectedReactionID);
+			HashSet<StringDoublePair> reactantStoichiometrySet = reactionToReactantStoichiometrySetMap.get(affectedReactionID);
 
 			if (reactantStoichiometrySet == null)
 			{
@@ -1207,8 +1186,7 @@ public class SimulatorSSACR extends Simulator
 
 			if (notEnoughMoleculesFlag == false)
 			{
-				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap
-						.get(affectedReactionID));
+				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap.get(affectedReactionID));
 			}
 
 			// stoichiometry amplification -- alter the propensity

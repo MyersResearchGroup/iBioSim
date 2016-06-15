@@ -38,7 +38,7 @@ public class ParamEstimatorPanel extends JPanel implements ActionListener, Runna
 
 	private JComboBox			methods;
 
-	private final String[]		methodNames	= { "None", "PEDI" };
+	private final String[]		methodNames	= { "None", "SRES" };
 
 	private String				directory, filename;
 
@@ -54,7 +54,10 @@ public class ParamEstimatorPanel extends JPanel implements ActionListener, Runna
 
 	private JList				list, list2;
 
-	JButton						add, remove;
+	JButton						add, remove, insertBound;
+
+	// Specify bounds
+	private JTextField			up, lw, paramId;
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input

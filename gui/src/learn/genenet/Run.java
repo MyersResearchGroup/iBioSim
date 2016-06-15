@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Scanner;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -46,6 +47,11 @@ public class Run
 				parse(name, S, E);
 				experiment++;
 			}
+			else if (name.endsWith(".csv"))
+			{
+				parseCSV(name, S, E);
+				experiment++;
+			}
 		}
 	}
 
@@ -70,6 +76,52 @@ public class Run
 		catch (IOException e)
 		{
 			e.printStackTrace();
+		}
+	}
+
+	private static void parseCSV(String filename, SpeciesCollection S, Experiments E)
+	{
+		Scanner scan = null;
+		boolean isFirst = true;
+		try
+		{
+			scan = new Scanner(new File(filename));
+			int row = 0;
+			while (scan.hasNextLine())
+			{
+				String line = scan.nextLine();
+
+				String[] values = line.split(",");
+
+				if (isFirst)
+				{
+					for (int i = 0; i < values.length; i++)
+					{
+						S.addSpecies(values[i], i);
+					}
+					isFirst = false;
+				}
+				else
+				{
+					for (int i = 0; i < values.length; i++)
+					{
+						E.addExperiment(experiment, row, i, Double.parseDouble(values[i]));
+					}
+					row++;
+				}
+			}
+		}
+		catch (FileNotFoundException e)
+		{
+			System.out.println("Could not find the file!");
+		}
+		finally
+		{
+			if (scan != null)
+			{
+				scan.close();
+			}
+
 		}
 	}
 
