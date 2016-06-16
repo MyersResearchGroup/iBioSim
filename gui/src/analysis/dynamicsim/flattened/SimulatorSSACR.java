@@ -67,24 +67,24 @@ public class SimulatorSSACR extends Simulator
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
 
 		initialize(randomSeed, 1);
-
-		SBMLDocument doc = new SBMLDocument();
-		Model model = doc.createModel("foo");
-		FunctionDefinition function = model.createFunctionDefinition("uniform");
-		Constraint c = model.createConstraint();
-		try
-		{
-			function.setMath(ASTNode.parseFormula("lambda(a,b,(a+b)/2)"));
-			c.setMath(ASTNode.parseFormula("uniform(0,1)"));
-		}
-		catch (ParseException e1)
-		{
-			e1.printStackTrace();
-		}
-
-		System.out.println(c.getMath().getType().toString());
-		doc = ArraysFlattening.convert(model.getSBMLDocument());
-		System.out.println(doc.getModel().getConstraint(0).getMath().getType().toString());
+//
+//		SBMLDocument doc = new SBMLDocument();
+//		Model model = doc.createModel("foo");
+//		FunctionDefinition function = model.createFunctionDefinition("uniform");
+//		Constraint c = model.createConstraint();
+//		try
+//		{
+//			function.setMath(ASTNode.parseFormula("lambda(a,b,(a+b)/2)"));
+//			c.setMath(ASTNode.parseFormula("uniform(0,1)"));
+//		}
+//		catch (ParseException e1)
+//		{
+//			e1.printStackTrace();
+//		}
+//
+//		System.out.println(c.getMath().getType().toString());
+//		doc = ArraysFlattening.convert(model.getSBMLDocument());
+//		System.out.println(doc.getModel().getConstraint(0).getMath().getType().toString());
 	}
 
 	/**
