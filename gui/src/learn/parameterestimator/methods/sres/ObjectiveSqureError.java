@@ -82,15 +82,14 @@ public class ObjectiveSqureError extends Objective
 		for (int i = 0; i < experiment.size() - 1; i++)
 		{
 
+			odeSim.setTimeLimit(experiment.get(i + 1).get(0));
 			odeSim.simulate();
 			for (int j = 1; j < speciesCollection.length; j++)
 			{
-				double tmp = odeSim.getTopLevelValue(speciesCollection[j]) - experiment.get(i).get(j);
+				double tmp = odeSim.getTopLevelValue(speciesCollection[j]) - experiment.get(i + 1).get(j);
 				tmp = tmp * tmp;
 				sum = sum + tmp;
 			}
-
-			odeSim.setTimeLimit(experiment.get(i + 1).get(0));
 
 		}
 

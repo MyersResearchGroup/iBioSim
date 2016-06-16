@@ -47,8 +47,8 @@ public class ParameterEstimator
 
 		for (int i = 0; i < numberofparameters; i++)
 		{
-			lowerbounds[i] = sim.getTopLevelValue(parameterList.get(i)) / 10;
-			upperbounds[i] = sim.getTopLevelValue(parameterList.get(i)) * 10;
+			lowerbounds[i] = sim.getTopLevelValue(parameterList.get(i)) / 100;
+			upperbounds[i] = sim.getTopLevelValue(parameterList.get(i)) * 100;
 		}
 		Modelsettings M1 = new Modelsettings(experiments.getExperiments().get(0).get(0), speciesCollection.size(), sp, (int) ep, lowerbounds, upperbounds, false);
 		// Objective objective1 = new ObjectiveSqureError(M1,0.1);
