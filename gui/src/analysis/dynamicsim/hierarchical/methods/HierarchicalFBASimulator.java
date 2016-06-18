@@ -7,10 +7,10 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
 
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 import analysis.dynamicsim.hierarchical.states.ModelState;
-import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 import analysis.fba.FluxBalanceAnalysis;
 
 public class HierarchicalFBASimulator extends HierarchicalSimulation
@@ -20,14 +20,19 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 	private HashMap<String, Double>	values;
 	private boolean					isInitialized;
 
-	public HierarchicalFBASimulator(HierarchicalSimulation simulation)
+	public HierarchicalFBASimulator(HierarchicalSimulation simulation, ModelState topmodel)
 	{
 		super(simulation);
+		setTopmodel(topmodel);
 		values = new HashMap<String, Double>();
 	}
 
 	public void setFBA(Model model)
 	{
+		for (Parameter parameter : model.getListOfParameters())
+		{
+			values.put(parameter.getId(), parameter.getValue());
+		}
 		fba = new FluxBalanceAnalysis(model, 1e-9);
 	}
 
@@ -83,20 +88,15 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 	public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException
 	{
 
-		if (!isInitialized)
-		{
-			getState();
-		}
-
 	}
 
 	public void getState()
 	{
 
 		ModelState topmodel = getTopmodel();
-		for (VariableNode value : topmodel.getVariables())
+		for (String name : values.keySet())
 		{
-			values.put(value.getName(), value.getValue());
+			values.put(name, topmodel.getNode(name).getValue());
 		}
 	}
 

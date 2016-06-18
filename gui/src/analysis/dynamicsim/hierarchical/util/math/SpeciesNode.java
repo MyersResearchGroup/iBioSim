@@ -69,7 +69,7 @@ public class SpeciesNode extends VariableNode
 
 		HierarchicalNode reactionRate = new HierarchicalNode(Type.TIMES);
 		reactionRate.addChild(reactionNode);
-		reactionRate.addChild(specRefNode.getStoichiometry());
+		reactionRate.addChild(specRefNode);
 		odeRate.addChild(reactionRate);
 	}
 
@@ -86,7 +86,7 @@ public class SpeciesNode extends VariableNode
 
 		reactionRate.addChild(reactionNode);
 
-		reactionRate.addChild(specRefNode.getStoichiometry());
+		reactionRate.addChild(specRefNode);
 
 		sub.addChild(reactionRate);
 

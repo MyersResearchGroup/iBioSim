@@ -191,7 +191,12 @@ public class ReplacementSetup implements Setup
 		{
 			if (sbasePlugin.isSetReplacedBy())
 			{
-				setupReplacedBy(sbasePlugin.getReplacedBy(), id, prefix, top, topCompModel, listOfHandlers, listOfModules, listOfModels, mapOfModels);
+				ReplacementHandler handler = setupReplacedBy(sbasePlugin.getReplacedBy(), id, prefix, top, topCompModel, listOfHandlers, listOfModules, listOfModels, mapOfModels);
+				if (handler != null)
+				{
+					id = handler.getFromVariable();
+					top = handler.getFromModelState();
+				}
 			}
 
 			if (sbasePlugin.isSetListOfReplacedElements())
@@ -227,13 +232,13 @@ public class ReplacementSetup implements Setup
 
 	}
 
-	private static void setupReplacedBy(ReplacedBy replacement, String id, String prefix, ModelState top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
+	private static ReplacementHandler setupReplacedBy(ReplacedBy replacement, String id, String prefix, ModelState top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
 	{
 		String subModelId = prefix + replacement.getSubmodelRef();
 		int subIndex = mapOfModels.get(subModelId);
 		ModelState sub = listOfModules.get(subIndex);
 		Model submodel = listOfModels.get(subIndex);
-
+		ReplacementHandler handler = null;
 		if (replacement.isSetIdRef())
 		{
 			String tmp = subModelId + "__" + replacement.getIdRef();
@@ -246,13 +251,16 @@ public class ReplacementSetup implements Setup
 			if (replacement.isSetSBaseRef())
 			{
 				String subId = replacement.getSBaseRef().getIdRef();
-				listOfHandlers.add(new ReplacementHandler(sub, subId, top, id));
+				handler = new ReplacementHandler(sub, subId, top, id);
+				listOfHandlers.add(handler);
 				top.addDeletedBySid(id);
 			}
 			else
 			{
 				String subId = replacement.getIdRef();
-				listOfHandlers.add(new ReplacementHandler(sub, subId, top, id));
+
+				handler = new ReplacementHandler(sub, subId, top, id);
+				listOfHandlers.add(handler);
 				top.addDeletedBySid(id);
 			}
 		}
@@ -261,9 +269,13 @@ public class ReplacementSetup implements Setup
 			CompModelPlugin subModel = (CompModelPlugin) submodel.getExtension("comp");
 			Port port = subModel.getListOfPorts().get(replacement.getPortRef());
 			String subId = port.getIdRef();
-			listOfHandlers.add(new ReplacementHandler(sub, subId, top, id));
+
+			handler = new ReplacementHandler(sub, subId, top, id);
+			listOfHandlers.add(handler);
 			top.addDeletedBySid(id);
 		}
+
+		return handler;
 	}
 
 	private static void setupReplacedElement(ReplacedElement element, String id, String prefix, ModelState top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)

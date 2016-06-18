@@ -42,8 +42,6 @@ public class ReactionSetup
 			}
 			ReactionNode reactionNode = (ReactionNode) modelstate.getNode(reaction.getId());
 
-			KineticLaw kineticLaw = reaction.getKineticLaw();
-			ASTNode reactionFormula = kineticLaw.getMath();
 			for (SpeciesReference reactant : reaction.getListOfReactants())
 			{
 				SpeciesReferenceSetup.setupSingleReactant(modelstate, reactionNode, reactant.getSpecies(), reactant);
@@ -52,8 +50,12 @@ public class ReactionSetup
 			{
 				SpeciesReferenceSetup.setupSingleProduct(modelstate, reactionNode, product.getSpecies(), product);
 			}
-			setupSingleReaction(modelstate, reaction, reactionNode, reactionFormula, reaction.getReversible(), split, model, 0);
-
+			KineticLaw kineticLaw = reaction.getKineticLaw();
+			if (kineticLaw != null)
+			{
+				ASTNode reactionFormula = kineticLaw.getMath();
+				setupSingleReaction(modelstate, reaction, reactionNode, reactionFormula, reaction.getReversible(), split, model, 0);
+			}
 		}
 	}
 

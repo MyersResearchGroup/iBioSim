@@ -1,26 +1,23 @@
 package analysis.dynamicsim.hierarchical.util.math;
 
-public class SpeciesReferenceNode extends ValueNode
+public class SpeciesReferenceNode extends VariableNode
 {
-
-	private ValueNode	stoichiometry;
 	private SpeciesNode	species;
 	private String		speciesRefId;
 
 	public SpeciesReferenceNode()
 	{
-		super(0);
+		super("none", 1);
 	}
 
-	public SpeciesReferenceNode(ValueNode stoichiometry)
+	public SpeciesReferenceNode(double value)
 	{
-		super(0);
-		this.stoichiometry = stoichiometry;
+		super("none", value);
 	}
 
-	public void setStoichiometry(ValueNode stoichiometry)
+	public SpeciesReferenceNode(String id, double value)
 	{
-		this.stoichiometry = stoichiometry;
+		super(id, value);
 	}
 
 	public void setSpecies(SpeciesNode species)
@@ -38,9 +35,9 @@ public class SpeciesReferenceNode extends ValueNode
 		return speciesRefId;
 	}
 
-	public ValueNode getStoichiometry()
+	public double getStoichiometry()
 	{
-		return stoichiometry;
+		return value;
 	}
 
 	public SpeciesNode getSpecies()
@@ -49,22 +46,9 @@ public class SpeciesReferenceNode extends ValueNode
 	}
 
 	@Override
-	public double getValue()
-	{
-		if (stoichiometry != null)
-		{
-			return stoichiometry.getValue();
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-	@Override
 	public String toString()
 	{
-		return stoichiometry + " " + species;
+		return value + " " + species;
 	}
 
 }

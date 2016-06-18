@@ -21,4 +21,25 @@ public class ReplacementHandler
 	{
 		toModelState.addMappingNode(toVariable, fromModelState.getNode(fromVariable));
 	}
+
+	public ModelState getFromModelState()
+	{
+		return fromModelState;
+	}
+
+	public String getFromVariable()
+	{
+		return fromVariable;
+	}
+
+	public ModelState getToModelState()
+	{
+		return toModelState;
+	}
+
+	public String getToVariable()
+	{
+		return toVariable;
+	}
+
 }

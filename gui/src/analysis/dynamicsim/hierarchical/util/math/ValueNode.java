@@ -64,7 +64,7 @@ public class ValueNode extends HierarchicalNode
 
 	public boolean hasAssignmentRule()
 	{
-		return assignRule == null;
+		return assignRule != null;
 	}
 
 	@Override

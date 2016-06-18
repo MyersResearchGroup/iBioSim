@@ -72,7 +72,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	private String						separator;
 	private boolean						stoichAmpBoolean;
 	private double						stoichAmpGridValue;
-	private double						timeLimit;
+	protected double					timeLimit;
 	private String						rootDirectory;
 	private FileWriter					TSDWriter;
 	private SBMLDocument				document;
@@ -98,7 +98,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	private List<ModelState>			states;
 	private ValueNode					totalPropensity;
 
-	public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
+	public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
 			String quantityType, String abstraction, SimType type) throws XMLStreamException, IOException
 	{
 		this.SBMLFileName = SBMLFileName;
@@ -120,6 +120,8 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		this.topmodel = new ModelState("topmodel");
 		this.submodels = new HashMap<String, ModelState>(0);
 		this.currentTime = new VariableNode("_time", 0);
+		this.currentRun = 1;
+		this.randomNumberGenerator = new Random(randomSeed);
 		if (abstraction != null)
 		{
 			if (abstraction.equals("expandReaction"))
@@ -192,6 +194,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		this.submodels = copy.submodels;
 		this.separator = copy.separator;
 		this.currentTime = copy.currentTime;
+		this.randomNumberGenerator = copy.randomNumberGenerator;
 	}
 
 	public void addModelState(ModelState modelstate)
@@ -734,15 +737,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	public void setNumSubmodels(int numSubmodels)
 	{
 		this.numSubmodels = numSubmodels;
-	}
-
-	/**
-	 * @param randomNumberGenerator
-	 *            the randomNumberGenerator to set
-	 */
-	public void setRandomNumberGenerator(Random randomNumberGenerator)
-	{
-		this.randomNumberGenerator = randomNumberGenerator;
 	}
 
 	/**
