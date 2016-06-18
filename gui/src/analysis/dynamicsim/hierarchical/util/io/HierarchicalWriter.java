@@ -50,6 +50,16 @@ public class HierarchicalWriter
 		{
 			bufferedWriter.write(",\"" + node.getName() + "\"");
 		}
+		for (ModelState submodel : submodels.values())
+		{
+			if (submodel.getVariables() != null)
+			{
+				for (VariableNode node : submodel.getVariables())
+				{
+					bufferedWriter.write(",\"" + submodel.getID() + " " + node.getName() + "\"");
+				}
+			}
+		}
 
 		bufferedWriter.write("),\n");
 
@@ -70,7 +80,16 @@ public class HierarchicalWriter
 		{
 			bufferedWriter.write(commaSpace + node.getValue());
 		}
-
+		for (ModelState submodel : submodels.values())
+		{
+			if (submodel.getVariables() != null)
+			{
+				for (VariableNode node : submodel.getVariables())
+				{
+					bufferedWriter.write(commaSpace + node.getValue());
+				}
+			}
+		}
 		bufferedWriter.write(")");
 		bufferedWriter.flush();
 	}

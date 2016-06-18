@@ -6,8 +6,6 @@ import analysis.dynamicsim.hierarchical.states.ModelState;
 import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.math.SpeciesNode;
 import analysis.dynamicsim.hierarchical.util.math.SpeciesReferenceNode;
-import analysis.dynamicsim.hierarchical.util.math.ValueNode;
-import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 public class SpeciesReferenceSetup
 {
@@ -35,7 +33,7 @@ public class SpeciesReferenceSetup
 
 		double stoichiometryValue = Double.isNaN(product.getStoichiometry()) ? 1 : product.getStoichiometry();
 
-		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode(new ValueNode(stoichiometryValue));
+		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode(stoichiometryValue);
 
 		SpeciesNode species = (SpeciesNode) modelstate.getNode(productID);
 		speciesReferenceNode.setSpecies(species);
@@ -43,12 +41,11 @@ public class SpeciesReferenceSetup
 
 		if (!product.getConstant())
 		{
-
 			if (product.getId().length() > 0)
 			{
-				VariableNode stoichiometry = modelstate.addVariable(product.getId(), product.getStoichiometry());
-				stoichiometry.setIsVariableConstant(false);
-				speciesReferenceNode.setStoichiometry(stoichiometry);
+				speciesReferenceNode.setName(product.getId());
+				modelstate.addVariable(speciesReferenceNode);
+				speciesReferenceNode.setIsVariableConstant(false);
 			}
 		}
 		species.addODERate(reaction, speciesReferenceNode);
@@ -59,7 +56,7 @@ public class SpeciesReferenceSetup
 	{
 
 		double stoichiometryValue = Double.isNaN(reactant.getStoichiometry()) ? 1 : reactant.getStoichiometry();
-		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode(new ValueNode(stoichiometryValue));
+		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode(stoichiometryValue);
 		SpeciesNode species = (SpeciesNode) modelstate.getNode(reactantID);
 		speciesReferenceNode.setSpecies(species);
 		reaction.addReactant(speciesReferenceNode);
@@ -68,9 +65,9 @@ public class SpeciesReferenceSetup
 		{
 			if (reactant.getId().length() > 0)
 			{
-				VariableNode stoichiometry = modelstate.addVariable(reactant.getId(), reactant.getStoichiometry());
-				stoichiometry.setIsVariableConstant(false);
-				speciesReferenceNode.setStoichiometry(stoichiometry);
+				speciesReferenceNode.setName(reactant.getId());
+				modelstate.addVariable(speciesReferenceNode);
+				speciesReferenceNode.setIsVariableConstant(false);
 			}
 		}
 		species.subtractODERate(reaction, speciesReferenceNode);

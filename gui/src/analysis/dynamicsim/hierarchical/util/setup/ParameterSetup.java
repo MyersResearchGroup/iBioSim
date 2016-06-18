@@ -20,7 +20,7 @@ public class ParameterSetup
 
 		for (Parameter parameter : model.getListOfParameters())
 		{
-			if (modelstate.isDeletedBySId(parameter.getMetaId()))
+			if (modelstate.isDeletedBySId(parameter.getId()))
 			{
 				continue;
 			}
@@ -66,25 +66,28 @@ public class ParameterSetup
 
 		String reactionID = reaction.getId();
 
-		for (LocalParameter localParameter : kineticLaw.getListOfLocalParameters())
+		if (kineticLaw != null)
 		{
-
-			String id = localParameter.getId();
-
-			if (modelstate.isDeletedBySId(id))
+			for (LocalParameter localParameter : kineticLaw.getListOfLocalParameters())
 			{
-				continue;
+
+				String id = localParameter.getId();
+
+				if (modelstate.isDeletedBySId(id))
+				{
+					continue;
+				}
+				else if (localParameter.isSetMetaId() && modelstate.isDeletedByMetaId(localParameter.getMetaId()))
+				{
+					continue;
+				}
+
+				String parameterID = reactionID + "_" + id;
+
+				modelstate.addConstant(parameterID, localParameter.getValue());
+
+				HierarchicalUtilities.alterLocalParameter(kineticLaw.getMath(), id, parameterID);
 			}
-			else if (localParameter.isSetMetaId() && modelstate.isDeletedByMetaId(localParameter.getMetaId()))
-			{
-				continue;
-			}
-
-			String parameterID = reactionID + "_" + id;
-
-			modelstate.addConstant(parameterID, localParameter.getValue());
-
-			HierarchicalUtilities.alterLocalParameter(kineticLaw.getMath(), id, parameterID);
 		}
 	}
 

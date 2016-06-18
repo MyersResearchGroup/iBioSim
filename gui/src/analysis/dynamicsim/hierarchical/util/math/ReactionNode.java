@@ -69,15 +69,15 @@ public class ReactionNode extends VariableNode
 	public boolean computePropensity()
 	{
 		double oldValue = value;
-		forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate);
+		if (forwardRate != null)
+		{
+			forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate);
+			value = forwardRateValue;
+		}
 		if (reverseRate != null)
 		{
 			reverseRateValue = Evaluator.evaluateExpressionRecursive(reverseRate);
 			value = forwardRateValue + reverseRateValue;
-		}
-		else
-		{
-			value = forwardRateValue;
 		}
 		if (totalPropensityRef != null)
 		{
@@ -100,7 +100,7 @@ public class ReactionNode extends VariableNode
 			{
 				for (SpeciesReferenceNode specRef : reactants)
 				{
-					double stoichiometry = specRef.getStoichiometry().getValue();
+					double stoichiometry = specRef.getStoichiometry();
 					SpeciesNode speciesNode = specRef.getSpecies();
 					speciesNode.setValue(speciesNode.getValue() - stoichiometry);
 					dependentReactions.addAll(speciesNode.getReactionDependents());
@@ -111,7 +111,7 @@ public class ReactionNode extends VariableNode
 			{
 				for (SpeciesReferenceNode specRef : products)
 				{
-					double stoichiometry = specRef.getStoichiometry().getValue();
+					double stoichiometry = specRef.getStoichiometry();
 					SpeciesNode speciesNode = specRef.getSpecies();
 					speciesNode.setValue(speciesNode.getValue() + stoichiometry);
 					dependentReactions.addAll(speciesNode.getReactionDependents());

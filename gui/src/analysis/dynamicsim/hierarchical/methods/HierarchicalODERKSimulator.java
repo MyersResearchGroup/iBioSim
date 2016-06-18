@@ -2,6 +2,7 @@ package analysis.dynamicsim.hierarchical.methods;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 import javax.swing.JFrame;
@@ -28,28 +29,12 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 	private boolean						isSingleStep;
 	private double						printTime	= 0;
 	private HighamHall54Integrator		odecalc;
-	private final boolean				print;
-	private long						randomSeed;
 	private double						relativeError, absoluteError;
-
+	private DifferentialEquations		de;
 	private double[]					state;
 	private List<ReactionNode>			reactionList;
 	private List<EventNode>				eventList;
 	private PriorityQueue<EventNode>	triggeredEventList;
-
-	public HierarchicalODERKSimulator(HierarchicalSimulation sim, ModelState topModel, long randomSeed) throws IOException, XMLStreamException
-	{
-		super(sim);
-		setTopmodel(topModel);
-		this.relativeError = 1e-6;
-		this.absoluteError = 1e-9;
-		this.print = false;
-		this.randomSeed = randomSeed;
-		this.odecalc = new HighamHall54Integrator(getMinTimeStep(), getMaxTimeStep(), absoluteError, relativeError);
-		this.isInitialized = false;
-		this.isSingleStep = true;
-		this.printTime = Double.POSITIVE_INFINITY;
-	}
 
 	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, double timeLimit) throws IOException, XMLStreamException
 	{
@@ -67,7 +52,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType, abstraction, true);
 		this.isInitialized = false;
 		this.printTime = 0;
-		this.randomSeed = randomSeed;
 		this.isSingleStep = false;
 
 	}
@@ -76,11 +60,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 			double relError, double absError, String quantityType, String abstraction, boolean print) throws IOException, XMLStreamException
 	{
 
-		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, SimType.HODE);
-		this.randomSeed = randomSeed;
+		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, SimType.HODE);
 		this.relativeError = relError;
 		this.absoluteError = absError;
-		this.print = print;
 		this.printTime = 0;
 		this.isSingleStep = false;
 		this.absoluteError = absoluteError == 0 ? 1e-12 : absoluteError;
@@ -94,6 +76,37 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		odecalc = new HighamHall54Integrator(getMinTimeStep(), getMaxTimeStep(), absoluteError, relativeError);
 		isInitialized = false;
 
+	}
+
+	public HierarchicalODERKSimulator(HierarchicalMixedSimulator sim, ModelState topmodel, Map<String, ModelState> submodels) throws IOException, XMLStreamException
+	{
+		super(sim);
+		this.relativeError = 1e-6;
+		this.absoluteError = 1e-9;
+		this.odecalc = new HighamHall54Integrator(getMinTimeStep(), getMaxTimeStep(), absoluteError, relativeError);
+		this.isInitialized = true;
+		this.isSingleStep = true;
+		this.printTime = Double.POSITIVE_INFINITY;
+
+		this.eventList = getEventList();
+		this.variableList = getVariableList();
+		this.reactionList = getReactionList();
+
+		de = new DifferentialEquations();
+		if (!eventList.isEmpty())
+		{
+			HierarchicalEventHandler handler = new HierarchicalEventHandler();
+			HierarchicalTriggeredEventHandler triggeredHandler = new HierarchicalTriggeredEventHandler();
+			odecalc.addEventHandler(handler, getPrintInterval(), 1e-20, 10000);
+			odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20, 10000);
+			triggeredEventList = new PriorityQueue<EventNode>(new HierarchicalEventComparator());
+
+			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue());
+
+		}
+		state = getArrayState(variableList);
+
+		initStateCopy = state.clone();
 	}
 
 	@Override
@@ -119,7 +132,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 			eventList = getEventList();
 			variableList = getVariableList();
 			reactionList = getReactionList();
-
+			de = new DifferentialEquations();
 			HierarchicalUtilities.computeFixedPoint(variableList, reactionList);
 
 			if (!eventList.isEmpty())
@@ -154,7 +167,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		{
 			try
 			{
-				this.initialize(randomSeed, 1);
+				this.initialize(0, 1);
 			}
 			catch (IOException e)
 			{
@@ -167,8 +180,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		}
 
 		double nextEndTime = 0;
-
-		DifferentialEquations de = new DifferentialEquations();
 
 		while (currentTime.getValue() < getTimeLimit() && !isCancelFlag() && !isConstraintFlag())
 		{

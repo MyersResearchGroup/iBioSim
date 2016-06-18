@@ -18,11 +18,13 @@ import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 
+import analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 import analysis.dynamicsim.hierarchical.states.ModelState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
+import biomodel.util.GlobalConstants;
 
 public class ModelSetup implements Setup
 {
@@ -60,6 +62,11 @@ public class ModelSetup implements Setup
 		}
 
 		initializeModelStates(sim, listOfHandlers, listOfModules, listOfModels, sim.getCurrentTime(), isSSA);
+
+		if (sim instanceof HierarchicalMixedSimulator)
+		{
+			initializeHybridSimulation((HierarchicalMixedSimulator) sim, listOfModels, listOfModules);
+		}
 	}
 
 	private static void setupSubmodels(HierarchicalSimulation sim, String path, String prefix, CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel, List<ModelState> listOfModules, List<Model> listOfModels, List<String> listOfPrefix, Map<String, Integer> mapOfModels)
@@ -151,4 +158,71 @@ public class ModelSetup implements Setup
 
 	}
 
+	private static void initializeHybridSimulation(HierarchicalMixedSimulator sim, List<Model> listOfModels, List<ModelState> listOfModules) throws IOException
+	{
+		List<ModelState> listOfODEStates = new ArrayList<ModelState>();
+		List<ModelState> listOfSSAStates = new ArrayList<ModelState>();
+		List<ModelState> listOfFBAStates = new ArrayList<ModelState>();
+		List<Model> listOfFBAModels = new ArrayList<Model>();
+
+		for (int i = 0; i < listOfModels.size(); i++)
+		{
+			Model model = listOfModels.get(i);
+			ModelState state = listOfModules.get(i);
+
+			int sboTerm = model.isSetSBOTerm() ? model.getSBOTerm() : -1;
+			if (sboTerm == GlobalConstants.SBO_FLUX_BALANCE)
+			{
+				listOfFBAStates.add(state);
+				listOfFBAModels.add(model);
+			}
+			else if (sboTerm == GlobalConstants.SBO_NONSPATIAL_DISCRETE)
+			{
+				listOfSSAStates.add(state);
+			}
+			else
+			{
+				listOfODEStates.add(state);
+			}
+		}
+
+		addSimulationMethod(sim, listOfODEStates, false);
+		addSimulationMethod(sim, listOfSSAStates, true);
+		addFBA(sim, listOfFBAModels, listOfFBAStates);
+	}
+
+	private static void addSimulationMethod(HierarchicalMixedSimulator sim, List<ModelState> listOfODEStates, boolean isSSA)
+	{
+		if (listOfODEStates.size() > 0)
+		{
+			ModelState topmodel = listOfODEStates.get(0);
+			Map<String, ModelState> submodels = listOfODEStates.size() > 1 ? new HashMap<String, ModelState>() : null;
+
+			for (int i = 1; i < listOfODEStates.size(); i++)
+			{
+				ModelState submodel = listOfODEStates.get(i);
+				submodels.put(submodel.getID(), submodel);
+			}
+
+			if (isSSA)
+			{
+				sim.createODESim(topmodel, submodels);
+			}
+			else
+			{
+				sim.createODESim(topmodel, submodels);
+			}
+		}
+	}
+
+	// TODO: generalize this
+	private static void addFBA(HierarchicalMixedSimulator sim, List<Model> listOfFBAModels, List<ModelState> listOfFBAStates)
+	{
+		if (listOfFBAModels.size() > 0)
+		{
+			ModelState state = listOfFBAStates.get(0);
+			Model model = listOfFBAModels.get(0);
+			sim.createFBASim(state, model);
+		}
+	}
 }

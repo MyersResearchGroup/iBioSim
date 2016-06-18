@@ -16,6 +16,7 @@ import main.Gui;
 import main.Log;
 import analysis.dynamicsim.flattened.SimulatorSSACR;
 import analysis.dynamicsim.flattened.SimulatorSSADirect;
+import analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
 
@@ -88,11 +89,7 @@ public class DynamicSimulation
 				// abstraction);
 				break;
 			case HIERARCHICAL_MIXED:
-				// simulator = new HierarchicalMixedSimulator(SBMLFileName,
-				// rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep,
-				// minTimeStep, randomSeed, progress, printInterval,
-				// stoichAmpValue, running, interestingSpecies, quantityType,
-				// abstraction);
+				simulator = new HierarchicalMixedSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction);
 				break;
 			default:
 				log.addText("The simulation selection was invalid.");

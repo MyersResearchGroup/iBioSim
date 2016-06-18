@@ -2,7 +2,6 @@ package analysis.dynamicsim.hierarchical.methods;
 
 import java.io.IOException;
 import java.util.PriorityQueue;
-import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
@@ -29,7 +28,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
 
-		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, SimType.HSSA);
+		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, SimType.HSSA);
 		this.print = true;
 		this.randomSeed = randomSeed;
 	}
@@ -38,7 +37,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 			String[] interestingSpecies, String quantityType, String abstraction, boolean print) throws IOException, XMLStreamException
 	{
 
-		super(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, SimType.HSSA);
+		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, SimType.HSSA);
 		this.print = print;
 		this.randomSeed = randomSeed;
 
@@ -63,7 +62,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
 			assignmentList = getAssignmentRuleList();
 			HierarchicalUtilities.computeFixedPoint(variableList, getReactionList());
-			setRandomNumberGenerator(new Random(randomSeed));
 			if (!eventList.isEmpty())
 			{
 				triggeredEventList = new PriorityQueue<EventNode>(new HierarchicalEventComparator());
