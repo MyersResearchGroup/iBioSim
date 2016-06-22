@@ -121,7 +121,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 	public void simulate()
 	{
 
-		double r1 = 0, r2 = 0, totalPropensity = 0, delta_t = 0, nextReactionTime = 0, previousTime = 0, printTime = 0, nextEventTime = 0, nextMaxTime = 0;
+		double r1 = 0, r2 = 0, totalPropensity = 0, delta_t = 0, nextReactionTime = 0, previousTime = 0, nextEventTime = 0, nextMaxTime = 0;
 
 		if (isSbmlHasErrorsFlag())
 		{
@@ -146,7 +146,11 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		printTime = 0;
 		previousTime = 0;
 		nextEventTime = getNextEventTime();
-		printTime = print(printTime);
+
+		if (print)
+		{
+			printToFile();
+		}
 
 		while (currentTime.getValue() < getTimeLimit() && !isCancelFlag())
 		{
@@ -180,18 +184,19 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 			if (currentTime.getValue() == nextReactionTime)
 			{
 				update(true, false, false, r2, previousTime);
-
-				printTime = print(printTime);
 			}
 			else if (currentTime.getValue() == nextEventTime)
 			{
 				update(false, false, true, r2, previousTime);
-				printTime = print(printTime);
 			}
 			else
 			{
 				update(false, true, false, r2, previousTime);
-				printTime = print(printTime);
+			}
+
+			if (print)
+			{
+				printToFile();
 			}
 		}
 
@@ -199,7 +204,12 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		{
 			setCurrentTime(getTimeLimit());
 			update(false, true, true, r2, previousTime);
-			print(printTime);
+
+			if (print)
+			{
+				printToFile();
+			}
+
 			try
 			{
 				getBufferedTSDWriter().write(')');
@@ -276,34 +286,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 				return;
 			}
 		}
-	}
-
-	private double print(double printTime)
-	{
-		if (print)
-		{
-			while (currentTime.getValue() >= printTime && printTime < getTimeLimit())
-			{
-				try
-				{
-					HierarchicalWriter.printToTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies(), getPrintConcentrationSpecies(), printTime);
-					getBufferedTSDWriter().write(",\n");
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-
-				printTime += getPrintInterval();
-
-				if (getRunning() != null)
-				{
-					getRunning().setTitle("Progress (" + (int) ((getCurrentTime().getValue() / getTimeLimit()) * 100.0) + "%)");
-				}
-
-			}
-		}
-		return printTime;
 	}
 
 	@Override

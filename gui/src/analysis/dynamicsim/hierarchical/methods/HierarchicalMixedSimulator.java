@@ -24,8 +24,6 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	private HierarchicalODERKSimulator	odeSim;
 	private HierarchicalSimulation		ssaSim;
 
-	private double						printTime	= 0;
-
 	public HierarchicalMixedSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
 			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException
 	{
@@ -78,7 +76,6 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 			}
 		}
 		double nextEndTime = currentTime.getValue();
-
 		while (currentTime.getValue() < timeLimit)
 		{
 			nextEndTime = currentTime.getValue() + getMaxTimeStep();
@@ -102,30 +99,7 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 			currentTime.setValue(nextEndTime);
 
-			while (currentTime.getValue() >= printTime && printTime <= getTimeLimit())
-			{
-				try
-				{
-					HierarchicalWriter.printToTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies(), getPrintConcentrationSpecies(), printTime);
-					getBufferedTSDWriter().write(",\n");
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-
-				printTime = printTime + getPrintInterval();
-
-				if (getRunning() != null)
-				{
-					getRunning().setTitle("Progress (" + (int) ((getCurrentTime().getValue() / getTimeLimit()) * 100.0) + "%)");
-				}
-			}
-
-			if (getProgress() != null)
-			{
-				getProgress().setValue((int) ((getCurrentTime().getValue() / getTimeLimit()) * 100.0));
-			}
+			printToFile();
 		}
 
 		try

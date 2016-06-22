@@ -27,6 +27,7 @@ public class CoreSetup implements Setup
 
 	public static void initializeModel(ModelState modelstate, Model model, VariableNode time, boolean split)
 	{
+
 		initializeLinks(modelstate, model, time, split);
 		EventSetup.setupEvents(modelstate, model);
 		ConstraintSetup.setupConstraints(modelstate, model);
@@ -38,6 +39,7 @@ public class CoreSetup implements Setup
 	{
 		SpeciesSetup.setupCompartmentToSpecies(modelstate, model);
 		ReactionSetup.setupSpeciesReferenceToReaction(modelstate, model, split);
+
 	}
 
 	public static void initializeLinks(ModelState modelstate, Model model, VariableNode time)
