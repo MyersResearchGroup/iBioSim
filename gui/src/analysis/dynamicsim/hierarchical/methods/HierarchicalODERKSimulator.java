@@ -27,7 +27,6 @@ import analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 {
 	private boolean						isSingleStep;
-	private double						printTime	= 0;
 	private HighamHall54Integrator		odecalc;
 	private double						relativeError, absoluteError;
 	private DifferentialEquations		de;
@@ -51,7 +50,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 
 		this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType, abstraction, true);
 		this.isInitialized = false;
-		this.printTime = 0;
 		this.isSingleStep = false;
 
 	}
@@ -63,14 +61,17 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, SimType.HODE);
 		this.relativeError = relError;
 		this.absoluteError = absError;
-		this.printTime = 0;
 		this.isSingleStep = false;
 		this.absoluteError = absoluteError == 0 ? 1e-12 : absoluteError;
 		this.relativeError = absoluteError == 0 ? 1e-9 : relativeError;
 
-		if (numSteps > 0)
+		if (numSteps == 1)
 		{
-			setPrintInterval(getTimeLimit() / numSteps);
+			setPrintInterval(Double.POSITIVE_INFINITY);
+		}
+		else if (numSteps > 1)
+		{
+			setPrintInterval(timeLimit / (numSteps - 1));
 		}
 
 		odecalc = new HighamHall54Integrator(getMinTimeStep(), getMaxTimeStep(), absoluteError, relativeError);
@@ -184,6 +185,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		while (currentTime.getValue() < getTimeLimit() && !isCancelFlag() && !isConstraintFlag())
 		{
 			nextEndTime = currentTime.getValue() + getMaxTimeStep();
+
 			if (nextEndTime > printTime)
 			{
 				nextEndTime = printTime;
@@ -214,25 +216,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 			}
 			if (!isSingleStep)
 			{
-				while (currentTime.getValue() >= printTime && printTime <= getTimeLimit())
-				{
-					try
-					{
-						HierarchicalWriter.printToTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies(), getPrintConcentrationSpecies(), printTime);
-						getBufferedTSDWriter().write(",\n");
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-
-					printTime = printTime + getPrintInterval();
-
-					if (getRunning() != null)
-					{
-						getRunning().setTitle("Progress (" + (int) ((getCurrentTime().getValue() / getTimeLimit()) * 100.0) + "%)");
-					}
-				}
+				printToFile();
 			}
 		}
 		if (!isSingleStep)

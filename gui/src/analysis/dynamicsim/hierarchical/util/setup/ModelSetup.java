@@ -21,6 +21,7 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.states.ModelState.ModelType;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
@@ -49,7 +50,7 @@ public class ModelSetup implements Setup
 		CompModelPlugin sbmlCompModel = (CompModelPlugin) model.getPlugin(CompConstants.namespaceURI);
 		ModelState topmodel = new ModelState("topmodel");
 		sim.setTopmodel(topmodel);
-
+		setModelType(topmodel, model);
 		indexToModel.put("topmodel", 0);
 		listOfPrefix.add("");
 		listOfModules.add(topmodel);
@@ -129,6 +130,7 @@ public class ModelSetup implements Setup
 				listOfPrefix.add(newPrefix);
 				listOfModules.add(modelstate);
 				listOfModels.add(model);
+				setModelType(modelstate, model);
 				setupSubmodels(sim, path, newPrefix, compDoc, compModel, listOfModules, listOfModels, listOfPrefix, mapOfModels);
 			}
 		}
@@ -170,13 +172,12 @@ public class ModelSetup implements Setup
 			Model model = listOfModels.get(i);
 			ModelState state = listOfModules.get(i);
 
-			int sboTerm = model.isSetSBOTerm() ? model.getSBOTerm() : -1;
-			if (sboTerm == GlobalConstants.SBO_FLUX_BALANCE)
+			if (state.getModelType() == ModelType.HFBA)
 			{
 				listOfFBAStates.add(state);
 				listOfFBAModels.add(model);
 			}
-			else if (sboTerm == GlobalConstants.SBO_NONSPATIAL_DISCRETE)
+			else if (state.getModelType() == ModelType.HSSA)
 			{
 				listOfSSAStates.add(state);
 			}
@@ -223,6 +224,27 @@ public class ModelSetup implements Setup
 			ModelState state = listOfFBAStates.get(0);
 			Model model = listOfFBAModels.get(0);
 			sim.createFBASim(state, model);
+		}
+	}
+
+	private static void setModelType(ModelState modelstate, Model model)
+	{
+		int sboTerm = model.isSetSBOTerm() ? model.getSBOTerm() : -1;
+		if (sboTerm == GlobalConstants.SBO_FLUX_BALANCE)
+		{
+			modelstate.setModelType(ModelType.HFBA);
+		}
+		else if (sboTerm == GlobalConstants.SBO_NONSPATIAL_DISCRETE)
+		{
+			modelstate.setModelType(ModelType.HSSA);
+		}
+		else if (sboTerm == GlobalConstants.SBO_NONSPATIAL_CONTINUOUS)
+		{
+			modelstate.setModelType(ModelType.HODE);
+		}
+		else
+		{
+			modelstate.setModelType(ModelType.NONE);
 		}
 	}
 }

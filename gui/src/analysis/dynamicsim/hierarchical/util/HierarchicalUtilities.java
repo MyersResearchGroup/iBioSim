@@ -100,7 +100,9 @@ public class HierarchicalUtilities
 			}
 		}
 
-		if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null)
+		// TODO: need to check isOperator here because new ASTNode says they are
+		// FUNCTIONS but we can't getName of operators.
+		if (formula.isFunction() && !formula.isOperator() && model.getFunctionDefinition(formula.getName()) != null)
 		{
 
 			if (ibiosimFunctionDefinitions != null && ibiosimFunctionDefinitions.contains(formula.getName()))

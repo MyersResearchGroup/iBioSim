@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import org.sbml.jsbml.SBMLReader;
 
 import analysis.dynamicsim.ParentSimulator;
 import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
 import analysis.dynamicsim.hierarchical.util.math.EventNode;
 import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.math.ValueNode;
@@ -52,6 +54,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	protected final static String		MODIFIER	= "modifier";
 
 	protected final VariableNode		currentTime;
+	protected double					printTime;
 
 	private BufferedWriter				bufferedTSDWriter;
 	private boolean						cancelFlag;
@@ -107,6 +110,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		this.minTimeStep = minTimeStep;
 		this.progress = progress;
 		this.printInterval = printInterval;
+		this.printTime = 0;
 		this.rootDirectory = rootDirectory;
 		this.outputDirectory = outputDirectory;
 		this.running = running;
@@ -962,4 +966,37 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 		return Double.NaN;
 	}
+
+	protected void printToFile()
+	{
+		while (currentTime.getValue() >= printTime && printTime <= getTimeLimit())
+		{
+			try
+			{
+				HierarchicalWriter.printToTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies(), getPrintConcentrationSpecies(), printTime);
+				getBufferedTSDWriter().write(",\n");
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+
+			printTime = getRoundedDouble(printTime + getPrintInterval());
+
+			if (getRunning() != null)
+			{
+				getRunning().setTitle("Progress (" + (int) ((getCurrentTime().getValue() / getTimeLimit()) * 100.0) + "%)");
+			}
+		}
+	}
+
+	private double getRoundedDouble(double value)
+	{
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.setScale(6, BigDecimal.ROUND_HALF_EVEN);
+		double newValue = bd.doubleValue();
+		bd = null;
+		return newValue;
+	}
+
 }
