@@ -60,7 +60,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 			eventList = getEventList();
 			variableList = getVariableList();
 			assignmentList = getAssignmentRuleList();
-			HierarchicalUtilities.computeFixedPoint(variableList, getReactionList());
+			HierarchicalUtilities.computeFixedPoint(getInitAssignmentList(), getReactionList());
 			if (!eventList.isEmpty())
 			{
 				triggeredEventList = new PriorityQueue<EventNode>(new HierarchicalEventComparator());

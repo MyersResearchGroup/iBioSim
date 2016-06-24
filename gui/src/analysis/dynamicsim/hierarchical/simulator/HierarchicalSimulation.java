@@ -823,17 +823,17 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 			variableList = getVariableList();
 		}
 
-		List<VariableNode> listOfAssignmentRules = new ArrayList<VariableNode>();
+		assignmentList = new ArrayList<VariableNode>();
 
 		for (VariableNode variable : variableList)
 		{
 			if (variable.hasAssignmentRule())
 			{
-				listOfAssignmentRules.add(variable);
+				assignmentList.add(variable);
 			}
 		}
 
-		return listOfAssignmentRules;
+		return assignmentList;
 
 	}
 
@@ -878,6 +878,50 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		}
 
 		return variables;
+
+	}
+
+	protected List<VariableNode> getConstantsList()
+	{
+
+		if (states == null)
+		{
+			states = getModelStateList();
+		}
+
+		List<VariableNode> constants = new ArrayList<VariableNode>();
+
+		for (ModelState modelstate : states)
+		{
+			if (modelstate.getNumOfVariables() > 0)
+			{
+				constants.addAll(modelstate.getConstants());
+			}
+		}
+
+		return constants;
+
+	}
+
+	protected List<VariableNode> getInitAssignmentList()
+	{
+
+		if (assignmentList == null)
+		{
+			assignmentList = getAssignmentRuleList();
+		}
+		List<VariableNode> initAssignmentList = new ArrayList<VariableNode>(assignmentList);
+		List<VariableNode> constants = getConstantsList();
+
+		for (VariableNode node : constants)
+		{
+			if (node.hasInitAssignment())
+			{
+				initAssignmentList.add(node);
+			}
+		}
+
+		return initAssignmentList;
 
 	}
 

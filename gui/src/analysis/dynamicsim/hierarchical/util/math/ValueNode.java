@@ -72,6 +72,11 @@ public class ValueNode extends HierarchicalNode
 		return assignRule != null;
 	}
 
+	public boolean hasInitAssignment()
+	{
+		return initAssign != null;
+	}
+
 	@Override
 	public String toString()
 	{
