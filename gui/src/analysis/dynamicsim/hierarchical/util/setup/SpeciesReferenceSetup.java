@@ -39,13 +39,18 @@ public class SpeciesReferenceSetup
 		speciesReferenceNode.setSpecies(species);
 		reaction.addProduct(speciesReferenceNode);
 
-		if (!product.getConstant())
+		if (product.isSetId() && product.getId().length() > 0)
 		{
-			if (product.getId().length() > 0)
+			speciesReferenceNode.setName(product.getId());
+
+			if (!product.getConstant())
 			{
-				speciesReferenceNode.setName(product.getId());
 				modelstate.addVariable(speciesReferenceNode);
 				speciesReferenceNode.setIsVariableConstant(false);
+			}
+			else
+			{
+				modelstate.addConstant(speciesReferenceNode);
 			}
 		}
 		species.addODERate(reaction, speciesReferenceNode);
@@ -61,13 +66,18 @@ public class SpeciesReferenceSetup
 		speciesReferenceNode.setSpecies(species);
 		reaction.addReactant(speciesReferenceNode);
 
-		if (!reactant.getConstant())
+		if (reactant.isSetId() && reactant.getId().length() > 0)
 		{
-			if (reactant.getId().length() > 0)
+			speciesReferenceNode.setName(reactant.getId());
+
+			if (!reactant.getConstant())
 			{
-				speciesReferenceNode.setName(reactant.getId());
 				modelstate.addVariable(speciesReferenceNode);
 				speciesReferenceNode.setIsVariableConstant(false);
+			}
+			else
+			{
+				modelstate.addConstant(speciesReferenceNode);
 			}
 		}
 		species.subtractODERate(reaction, speciesReferenceNode);
