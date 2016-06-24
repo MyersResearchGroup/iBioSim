@@ -186,7 +186,7 @@ public class HierarchicalUtilities
 	{
 		if (math.isName() && math.getName().equals(id))
 		{
-			math.setVariable(null);
+			// math.setVariable(null);
 			math.setName(parameterID);
 		}
 		else

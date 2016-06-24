@@ -6,14 +6,21 @@ import java.util.List;
 public class VariableNode extends ValueNode
 {
 
-	private boolean				isVariableConstant;
-	private String				name;
+	protected boolean			isVariableConstant;
+	protected String			name;
 	private List<ReactionNode>	reactionDependents;
 
 	public VariableNode(String name, double value)
 	{
 		super(Type.NAME, value);
 		this.name = name;
+	}
+
+	public VariableNode(VariableNode copy)
+	{
+		super(copy);
+		this.name = copy.name;
+		this.isVariableConstant = copy.isVariableConstant;
 	}
 
 	public void setName(String name)

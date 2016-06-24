@@ -13,6 +13,11 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 		super(type);
 	}
 
+	public HierarchicalNode(HierarchicalNode copy)
+	{
+		super(copy);
+	}
+
 	public void addChild(HierarchicalNode node)
 	{
 		if (node != null)
@@ -23,6 +28,12 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 			}
 			children.add(node);
 		}
+	}
+
+	public List<HierarchicalNode> createChildren()
+	{
+		children = new ArrayList<HierarchicalNode>();
+		return children;
 	}
 
 	public List<HierarchicalNode> getChildren()

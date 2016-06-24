@@ -59,7 +59,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 			ModelSetup.setupModels(this, true);
 			eventList = getEventList();
 			variableList = getVariableList();
-
 			assignmentList = getAssignmentRuleList();
 			HierarchicalUtilities.computeFixedPoint(variableList, getReactionList());
 			if (!eventList.isEmpty())

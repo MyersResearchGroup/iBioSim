@@ -26,6 +26,15 @@ public class ParameterSetup
 			}
 			setupSingleParameter(modelstate, parameter, parameter.getId());
 		}
+
+		// for (Parameter parameter : model.getListOfParameters())
+		// {
+		// if (modelstate.isDeletedBySId(parameter.getId()))
+		// {
+		// continue;
+		// }
+		// setupArrayParameter(modelstate, parameter, parameter.getId());
+		// }
 	}
 
 	/**
@@ -33,7 +42,7 @@ public class ParameterSetup
 	 * 
 	 * @param parameter
 	 */
-	public static void setupSingleParameter(ModelState modelstate, Parameter parameter, String parameterID)
+	private static void setupSingleParameter(ModelState modelstate, Parameter parameter, String parameterID)
 	{
 		double value = parameter.getValue();
 
@@ -53,6 +62,17 @@ public class ParameterSetup
 			modelstate.addVariable(node);
 		}
 
+	}
+
+	/**
+	 * 
+	 * @param modelstate
+	 * @param parameter
+	 * @param parameterID
+	 */
+	private static void setupArrayParameter(ModelState modelstate, Parameter parameter, String parameterID)
+	{
+		ArraysSetup.setupArrays(modelstate, parameter, modelstate.getNode(parameterID));
 	}
 
 	/**

@@ -40,6 +40,8 @@ public class CompartmentSetup
 		{
 			modelstate.addVariable(node);
 		}
+
+		// ArraysSetup.setupArrays(modelstate, compartment, node);
 	}
 
 }

@@ -47,6 +47,7 @@ public class ModelSetup implements Setup
 		Map<String, Integer> indexToModel = new HashMap<String, Integer>();
 
 		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document.getPlugin(CompConstants.namespaceURI);
+
 		CompModelPlugin sbmlCompModel = (CompModelPlugin) model.getPlugin(CompConstants.namespaceURI);
 		ModelState topmodel = new ModelState("topmodel");
 		sim.setTopmodel(topmodel);
