@@ -168,7 +168,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		{
 			try
 			{
-				this.initialize(0, 1);
+				initialize(0, 1);
 			}
 			catch (IOException e)
 			{

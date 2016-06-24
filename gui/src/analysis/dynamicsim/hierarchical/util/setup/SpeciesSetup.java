@@ -17,7 +17,7 @@ public class SpeciesSetup
 	 * @param species
 	 * @param speciesID
 	 */
-	public static void setupSingleSpecies(ModelState modelstate, Species species, Model model)
+	private static void setupSingleSpecies(ModelState modelstate, Species species, Model model)
 	{
 
 		double initValue = 0;
@@ -34,6 +34,7 @@ public class SpeciesSetup
 		{
 			modelstate.addVariable(node);
 		}
+		// ArraysSetup.setupArrays(modelstate, species, node);
 
 	}
 
@@ -76,6 +77,7 @@ public class SpeciesSetup
 			{
 				node.setValue(species.getInitialConcentration() * compartment.getValue());
 			}
+
 		}
 	}
 

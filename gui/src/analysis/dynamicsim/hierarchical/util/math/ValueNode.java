@@ -2,7 +2,6 @@ package analysis.dynamicsim.hierarchical.util.math;
 
 public class ValueNode extends HierarchicalNode
 {
-	protected int				index;
 	protected double			value;
 
 	protected HierarchicalNode	assignRule;
@@ -13,6 +12,12 @@ public class ValueNode extends HierarchicalNode
 	{
 		super(type);
 		this.value = value;
+	}
+
+	protected ValueNode(ValueNode copy)
+	{
+		super(copy);
+		this.value = copy.value;
 	}
 
 	public ValueNode(double value)

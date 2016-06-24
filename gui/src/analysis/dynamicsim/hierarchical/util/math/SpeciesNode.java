@@ -15,6 +15,14 @@ public class SpeciesNode extends VariableNode
 		this.isSpecies = true;
 	}
 
+	public SpeciesNode(SpeciesNode copy)
+	{
+		super(copy.name, copy.value);
+		this.isBoundary = copy.isBoundary;
+		this.hasOnlySubstance = copy.hasOnlySubstance;
+		this.isSpecies = true;
+	}
+
 	public void setCompartment(VariableNode compartment)
 	{
 		this.compartment = compartment;

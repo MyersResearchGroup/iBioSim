@@ -17,6 +17,13 @@ public abstract class AbstractHierarchicalNode
 		this.type = type;
 	}
 
+	public AbstractHierarchicalNode(AbstractHierarchicalNode copy)
+	{
+		this.type = copy.type;
+		this.isSpecies = copy.isSpecies;
+		this.isReaction = copy.isReaction;
+	}
+
 	public Type getType()
 	{
 		return type;
