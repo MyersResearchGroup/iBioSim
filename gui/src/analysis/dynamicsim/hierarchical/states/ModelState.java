@@ -172,6 +172,11 @@ public final class ModelState extends DocumentState
 		return variables;
 	}
 
+	public List<VariableNode> getConstants()
+	{
+		return constants;
+	}
+
 	public void addDeletedBySid(String id)
 	{
 

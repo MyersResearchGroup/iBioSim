@@ -129,8 +129,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 			eventList = getEventList();
 			variableList = getVariableList();
 			reactionList = getReactionList();
+			assignmentList = getAssignmentRuleList();
 			de = new DifferentialEquations();
-			HierarchicalUtilities.computeFixedPoint(variableList, reactionList);
+			HierarchicalUtilities.computeFixedPoint(getInitAssignmentList(), reactionList);
 
 			if (!eventList.isEmpty())
 			{
@@ -198,7 +199,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 				{
 
 					odecalc.integrate(de, currentTime.getValue(), state, nextEndTime, state);
-					HierarchicalUtilities.computeAssignmentRules(state, variableList);
+					HierarchicalUtilities.computeAssignmentRules(state, assignmentList);
 
 				}
 				catch (Exception e)
@@ -296,9 +297,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 				variableList.get(i).setValue(y[i]);
 			}
 
-			HierarchicalUtilities.computeAssignmentRules(state, variableList);
+			HierarchicalUtilities.computeAssignmentRules(state, assignmentList);
 			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, t);
-			HierarchicalUtilities.computeAssignmentRules(y, variableList);
+			HierarchicalUtilities.computeAssignmentRules(y, assignmentList);
 
 			return EventHandler.Action.STOP;
 		}

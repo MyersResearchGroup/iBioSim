@@ -1,7 +1,6 @@
 package analysis.dynamicsim.hierarchical.methods;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -14,7 +13,6 @@ import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 import analysis.dynamicsim.hierarchical.states.ModelState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
-import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 import analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 
 public final class HierarchicalMixedSimulator extends HierarchicalSimulation
@@ -39,15 +37,8 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 			setCurrentTime(0);
 			ModelSetup.setupModels(this, false);
 			variableList = getVariableList();
-			assignmentList = new ArrayList<VariableNode>();
-			for (VariableNode node : getTopmodel().getVariables())
-			{
-				if (node.hasAssignmentRule())
-				{
-					assignmentList.add(node);
-				}
-			}
-			HierarchicalUtilities.computeFixedPoint(variableList, getReactionList());
+			assignmentList = getAssignmentRuleList();
+			HierarchicalUtilities.computeFixedPoint(getInitAssignmentList(), getReactionList());
 
 			setupForOutput(runNumber);
 			HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
