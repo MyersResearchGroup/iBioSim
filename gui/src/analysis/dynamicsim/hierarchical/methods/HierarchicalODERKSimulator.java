@@ -65,13 +65,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		this.absoluteError = absoluteError == 0 ? 1e-12 : absoluteError;
 		this.relativeError = absoluteError == 0 ? 1e-9 : relativeError;
 
-		if (numSteps == 1)
+		if (numSteps > 0)
 		{
-			setPrintInterval(Double.POSITIVE_INFINITY);
-		}
-		else if (numSteps > 1)
-		{
-			setPrintInterval(timeLimit / (numSteps - 1));
+			setPrintInterval(timeLimit / numSteps);
 		}
 
 		odecalc = new HighamHall54Integrator(getMinTimeStep(), getMaxTimeStep(), absoluteError, relativeError);
