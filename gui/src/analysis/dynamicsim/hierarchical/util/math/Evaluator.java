@@ -669,51 +669,53 @@ public final class Evaluator
 
 	private static double evaluateOperator(HierarchicalNode node, boolean checkSubstance)
 	{
+		double result;
 		switch (node.getType())
 		{
 		case PLUS:
 		{
 
-			double sum = 0.0;
+			result = 0.0;
 
 			for (int childIter = 0; childIter < node.getNumOfChild(); childIter++)
 			{
-				sum += evaluateExpressionRecursive(node.getChild(childIter), checkSubstance);
+				result += evaluateExpressionRecursive(node.getChild(childIter), checkSubstance);
 			}
 
-			return sum;
+			break;
 		}
 
 		case MINUS:
 		{
 			HierarchicalNode leftChild = node.getChild(0);
 
-			double sum = evaluateExpressionRecursive(leftChild, checkSubstance);
+			result = evaluateExpressionRecursive(leftChild, checkSubstance);
 
 			if (node.getNumOfChild() == 1)
 			{
-				return -sum;
+				result = -result;
 			}
-
-			for (int childIter = 1; childIter < node.getNumOfChild(); ++childIter)
+			else
 			{
-				sum -= evaluateExpressionRecursive(node.getChild(childIter), checkSubstance);
+				for (int childIter = 1; childIter < node.getNumOfChild(); ++childIter)
+				{
+					result -= evaluateExpressionRecursive(node.getChild(childIter), checkSubstance);
+				}
 			}
-
-			return sum;
+			break;
 		}
 
 		case TIMES:
 		{
 
-			double product = 1.0;
+			result = 1.0;
 
 			for (int childIter = 0; childIter < node.getNumOfChild(); ++childIter)
 			{
-				product *= evaluateExpressionRecursive(node.getChild(childIter), checkSubstance);
+				result *= evaluateExpressionRecursive(node.getChild(childIter), checkSubstance);
 			}
 
-			return product;
+			break;
 		}
 
 		case DIVIDE:
@@ -722,9 +724,8 @@ public final class Evaluator
 			HierarchicalNode rightChild = node.getChild(1);
 			double leftValue = evaluateExpressionRecursive(leftChild, checkSubstance);
 			double rightValue = evaluateExpressionRecursive(rightChild, checkSubstance);
-			double result = leftValue / rightValue;
-			return result;
-
+			result = leftValue / rightValue;
+			break;
 		}
 		case POWER:
 		{
@@ -732,13 +733,16 @@ public final class Evaluator
 			HierarchicalNode rightChild = node.getChild(1);
 			double leftValue = evaluateExpressionRecursive(leftChild, checkSubstance);
 			double rightValue = evaluateExpressionRecursive(rightChild, checkSubstance);
-			double result = Math.pow(leftValue, rightValue);
-			return result;
+			result = Math.pow(leftValue, rightValue);
+			break;
 
 		}
 		default:
-			return 0.0;
+			result = 0.0;
 		}
+
+		return result;
+
 	}
 
 }
