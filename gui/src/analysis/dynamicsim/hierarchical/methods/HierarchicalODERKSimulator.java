@@ -96,7 +96,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 			HierarchicalTriggeredEventHandler triggeredHandler = new HierarchicalTriggeredEventHandler();
 			odecalc.addEventHandler(handler, getPrintInterval(), 1e-20, 10000);
 			odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20, 10000);
-			triggeredEventList = new PriorityQueue<EventNode>(new HierarchicalEventComparator());
+			triggeredEventList = new PriorityQueue<EventNode>(0,new HierarchicalEventComparator());
 
 			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue());
 
@@ -139,7 +139,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 				HierarchicalTriggeredEventHandler triggeredHandler = new HierarchicalTriggeredEventHandler();
 				odecalc.addEventHandler(handler, getPrintInterval(), 1e-20, 10000);
 				odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20, 10000);
-				triggeredEventList = new PriorityQueue<EventNode>(new HierarchicalEventComparator());
+				triggeredEventList = new PriorityQueue<EventNode>(0,new HierarchicalEventComparator());
 
 				HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue());
 
