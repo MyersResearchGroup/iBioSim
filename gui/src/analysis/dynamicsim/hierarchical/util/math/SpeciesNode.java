@@ -108,7 +108,7 @@ public class SpeciesNode extends VariableNode
 		{
 			return Evaluator.evaluateExpressionRecursive(rateRule);
 		}
-		if (odeRate != null)
+		if (odeRate != null && !isBoundary)
 		{
 			return Evaluator.evaluateExpressionRecursive(odeRate);
 		}
