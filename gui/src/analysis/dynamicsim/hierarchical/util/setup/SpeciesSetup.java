@@ -26,7 +26,7 @@ public class SpeciesSetup
 		SpeciesNode node = new SpeciesNode(id, initValue);
 		node.setBoundaryCondition(species.getBoundaryCondition());
 		node.setHasOnlySubstance(species.getHasOnlySubstanceUnits());
-		if (species.getConstant() || species.getBoundaryCondition())
+		if (species.getConstant())
 		{
 			modelstate.addConstant(node);
 		}
