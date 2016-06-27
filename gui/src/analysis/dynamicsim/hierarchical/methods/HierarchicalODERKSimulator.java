@@ -199,7 +199,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 				{
 
 					odecalc.integrate(de, currentTime.getValue(), state, nextEndTime, state);
-					HierarchicalUtilities.computeAssignmentRules(state, assignmentList);
+					HierarchicalUtilities.computeAssignmentRules(state, variableList);
 
 				}
 				catch (Exception e)
@@ -297,9 +297,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 				variableList.get(i).setValue(y[i]);
 			}
 
-			HierarchicalUtilities.computeAssignmentRules(state, assignmentList);
+			HierarchicalUtilities.computeAssignmentRules(state, variableList);
 			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, t);
-			HierarchicalUtilities.computeAssignmentRules(y, assignmentList);
+			HierarchicalUtilities.computeAssignmentRules(y, variableList);
 
 			return EventHandler.Action.STOP;
 		}
