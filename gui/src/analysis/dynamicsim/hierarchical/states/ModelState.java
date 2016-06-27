@@ -236,6 +236,11 @@ public final class ModelState extends DocumentState
 		return events == null ? 0 : events.size();
 	}
 
+	public int getNumOfConstants()
+	{
+		return constants == null ? 0 : constants.size();
+	}
+
 	public List<ReactionNode> getReactions()
 	{
 		return reactions;
