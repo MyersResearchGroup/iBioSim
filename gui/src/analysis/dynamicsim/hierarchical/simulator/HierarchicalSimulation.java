@@ -893,7 +893,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 		for (ModelState modelstate : states)
 		{
-			if (modelstate.getNumOfVariables() > 0)
+			if (modelstate.getNumOfConstants() > 0)
 			{
 				constants.addAll(modelstate.getConstants());
 			}
