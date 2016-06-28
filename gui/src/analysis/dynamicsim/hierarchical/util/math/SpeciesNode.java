@@ -107,7 +107,7 @@ public class SpeciesNode extends VariableNode
 		double rate = 0;
 		if (rateRule != null)
 		{
-			rate = Evaluator.evaluateExpressionRecursive(rateRule, false);
+			rate = Evaluator.evaluateExpressionRecursive(rateRule);
 
 			if (!hasOnlySubstance)
 			{
