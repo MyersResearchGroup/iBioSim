@@ -520,6 +520,8 @@ public class SBOLUtility2
 	
 	public static List<SequenceAnnotation> orderSequenceAnnotations(Set<SequenceAnnotation> unsorted) {
 		List<SequenceAnnotation> sorted = new LinkedList<SequenceAnnotation>();
+		//TODO: Consider using fuction from libSBOLj library to order sequenceAnnotations
+		
 		for (SequenceAnnotation anno : unsorted)
 			for (int i = 0; i <= sorted.size(); i++)
 			{
@@ -538,14 +540,24 @@ public class SBOLUtility2
 				else 
 				{
 					
-					//Assume that each SeqAnnot. has one location and that it is a Range?
-					Range anno_range = (Range) anno.getLocations().iterator().next();
-					Range sorted_range = (Range) sorted.get(i).getLocations().iterator().next();
-					if(anno_range.getStart() <= sorted_range.getStart())
+					for(Location location : anno.getLocations())
 					{
-						sorted.add(i, anno);
-						i = sorted.size();
+						if(location instanceof Range)
+						{
+							//Assume that each SeqAnnot. has one location and that it is a Range?
+							Range anno_range = (Range) location;
+							Range sorted_range = (Range) sorted.get(i).getLocations().iterator().next();
+
+							if(anno_range.getStart() <= sorted_range.getStart())
+							{
+								sorted.add(i, anno);
+								i = sorted.size();
+							}
+							break; 
+						}
 					}
+					
+					
 				}
 			}
 		return sorted;

@@ -4100,6 +4100,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
+
 //	private void importVirtualPart()
 //	{
 //		final PartsHandler partsHandler = new PartsHandler("http://sbol.ncl.ac.uk:8081/");
