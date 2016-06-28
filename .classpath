@@ -72,8 +72,6 @@
 	<classpathentry kind="lib" path="gui/lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jdepend-2.9.1.jar"/>
-	<classpathentry kind="lib" path="gui/lib/JParts-1.0-SNAPSHOT-withDependencies.jar"/>
-	<classpathentry kind="lib" path="gui/lib/xerces_2_11_0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/joptimizer-3.3.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/csparsej-1.1.1.jar"/>
