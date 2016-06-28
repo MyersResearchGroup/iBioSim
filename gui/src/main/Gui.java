@@ -162,14 +162,14 @@ import verification.AbstPane;
 import verification.Verification;
 import verification.platu.lpn.io.PlatuGrammarLexer;
 import verification.platu.lpn.io.PlatuGrammarParser;
-import virtualparts.ModelBuilder;
-import virtualparts.PartsHandler;
-import virtualparts.SBML.SBMLHandler;
-import virtualparts.entity.Interaction;
-import virtualparts.entity.Interactions;
-import virtualparts.entity.Part;
-import virtualparts.entity.Parts;
-import virtualparts.entity.Summary;
+//import virtualparts.ModelBuilder;
+//import virtualparts.PartsHandler;
+//import virtualparts.SBML.SBMLHandler;
+//import virtualparts.entity.Interaction;
+//import virtualparts.entity.Interactions;
+//import virtualparts.entity.Part;
+//import virtualparts.entity.Parts;
+//import virtualparts.entity.Summary;
 import analysis.main.AnalysisView;
 import analysis.main.Run;
 import biomodel.annotation.AnnotationUtility;
@@ -269,7 +269,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private String[]				BioModelIds			= null;
 
-	private Parts					allVirtualParts		= null;
+//	private Parts					allVirtualParts		= null;
 
 	private JMenuItem				addCompartment, addSpecies, addReaction, addModule, addPromoter, addVariable, addBoolean, addPlace,
 			addTransition, addRule, addConstraint, addEvent, addSelfInfl, cut, select, undo, redo, copy, rename, delete, moveLeft, moveRight, moveUp,
@@ -3501,7 +3501,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource() == importVirtualPart)
 		{
-			importVirtualPart();
+//			importVirtualPart();
 		}
 		// if the import dot menu item is selected
 		/*
@@ -4100,533 +4100,533 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	private void importVirtualPart()
-	{
-		final PartsHandler partsHandler = new PartsHandler("http://sbol.ncl.ac.uk:8081/");
-		if (!showParts && getPartsThread == null)
-		{
-			getPartsThread = new Thread(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					try
-					{
-						final JButton cancel = new JButton("Cancel");
-						final MutableBoolean stop = new MutableBoolean(false);
-						cancel.addActionListener(new ActionListener()
-						{
-							@Override
-							public void actionPerformed(ActionEvent arg0)
-							{
-								stop.setValue(true);
-							}
-						});
-						final JFrame running = new JFrame("Progress");
-						WindowListener w = new WindowListener()
-						{
-							@Override
-							public void windowClosing(WindowEvent arg0)
-							{
-								running.setCursor(null);
-								cancel.doClick();
-								running.dispose();
-							}
-
-							@Override
-							public void windowOpened(WindowEvent arg0)
-							{
-							}
-
-							@Override
-							public void windowClosed(WindowEvent arg0)
-							{
-							}
-
-							@Override
-							public void windowIconified(WindowEvent arg0)
-							{
-							}
-
-							@Override
-							public void windowDeiconified(WindowEvent arg0)
-							{
-							}
-
-							@Override
-							public void windowActivated(WindowEvent arg0)
-							{
-							}
-
-							@Override
-							public void windowDeactivated(WindowEvent arg0)
-							{
-							}
-						};
-						running.addWindowListener(w);
-						JPanel text = new JPanel();
-						JPanel progBar = new JPanel();
-						JPanel button = new JPanel();
-						JPanel all = new JPanel(new BorderLayout());
-						JLabel label = new JLabel("Retrieving Virtual Parts");
-						Summary summary = partsHandler.GetPartsSummary();
-						int pageCount = summary.getPageCount();
-						JProgressBar progress = new JProgressBar(0, pageCount);
-						progress.setStringPainted(true);
-						progress.setValue(0);
-						text.add(label);
-						progBar.add(progress);
-						button.add(cancel);
-						all.add(text, "North");
-						all.add(progBar, "Center");
-						all.add(button, "South");
-						running.setContentPane(all);
-						running.pack();
-						Dimension screenSize;
-						try
-						{
-							Toolkit tk = Toolkit.getDefaultToolkit();
-							screenSize = tk.getScreenSize();
-						}
-						catch (AWTError awe)
-						{
-							screenSize = new Dimension(640, 480);
-						}
-						Dimension frameSize = running.getSize();
-
-						if (frameSize.height > screenSize.height)
-						{
-							frameSize.height = screenSize.height;
-						}
-						if (frameSize.width > screenSize.width)
-						{
-							frameSize.width = screenSize.width;
-						}
-						int x = screenSize.width / 2 - frameSize.width / 2;
-						int y = screenSize.height / 2 - frameSize.height / 2;
-						running.setLocation(x, y);
-						running.setVisible(true);
-						running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						allVirtualParts = new Parts();
-						for (int i = 1; i <= pageCount && !stop.booleanValue(); i++)
-						{
-							Parts parts = partsHandler.GetParts(i);
-							allVirtualParts.getParts().addAll(parts.getParts());
-							progress.setValue(i);
-						}
-						running.setCursor(null);
-						running.dispose();
-						if (!stop.booleanValue())
-						{
-							showParts = true;
-							importVirtualPart();
-						}
-						else
-						{
-							getPartsThread = null;
-						}
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-				}
-			});
-			getPartsThread.start();
-		}
-		else if (showParts)
-		{
-			final List<Part> list = allVirtualParts.getParts();
-			final JPanel virtualPartsPanel = new JPanel(new BorderLayout());
-			final JPanel labelPanel = new JPanel(new BorderLayout());
-			TableModel dataModel = new AbstractTableModel()
-			{
-
-				private static final long	serialVersionUID	= 1L;
-
-				@Override
-				public int getColumnCount()
-				{
-					return 6;
-				}
-
-				@Override
-				public int getRowCount()
-				{
-					return list.size();
-				}
-
-				@Override
-				public Object getValueAt(int row, int col)
-				{
-					Part p = list.get(row);
-					switch (col)
-					{
-					case 0:
-						return p.getName();
-					case 1:
-						return p.getType();
-					case 2:
-						return p.getDisplayName();
-					case 3:
-						return p.getOrganism();
-					case 4:
-						return p.getDescription();
-					default:
-						return row;
-					}
-				}
-
-				@Override
-				public String getColumnName(int col)
-				{
-					switch (col)
-					{
-					case 0:
-						return "ID";
-					case 1:
-						return "Type";
-					case 2:
-						return "Name";
-					case 3:
-						return "Organism";
-					case 4:
-						return "Description";
-					default:
-						return "Entry";
-					}
-				}
-			};
-			final JTable tableOfVirtualParts = new JTable(dataModel);
-			tableOfVirtualParts.setAutoCreateRowSorter(true);
-			tableOfVirtualParts.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			tableOfVirtualParts.getColumnModel().getColumn(0).setPreferredWidth(150);
-			tableOfVirtualParts.getColumnModel().getColumn(1).setPreferredWidth(150);
-			tableOfVirtualParts.getColumnModel().getColumn(2).setPreferredWidth(150);
-			tableOfVirtualParts.getColumnModel().getColumn(3).setPreferredWidth(150);
-			tableOfVirtualParts.getColumnModel().getColumn(4).setPreferredWidth(150);
-			tableOfVirtualParts.getColumnModel().getColumn(5).setMinWidth(0);
-			tableOfVirtualParts.getColumnModel().getColumn(5).setMaxWidth(0);
-			tableOfVirtualParts.getColumnModel().getColumn(5).setWidth(0);
-			tableOfVirtualParts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			tableOfVirtualParts.addMouseListener(new MouseListener()
-			{
-				@Override
-				public void mouseClicked(MouseEvent arg0)
-				{
-					try
-					{
-						if (arg0.getButton() == MouseEvent.BUTTON1 && arg0.getClickCount() == 2)
-						{
-							int selected = tableOfVirtualParts.getSelectedRow();
-							if (selected >= 0)
-							{
-								Part part = list.get((Integer) tableOfVirtualParts.getModel().getValueAt(
-										tableOfVirtualParts.convertRowIndexToModel(selected), 5));
-								final Interactions interactions = partsHandler.GetInteractions(part);
-								if (interactions != null && interactions.getInteractions() != null)
-								{
-									TableModel dataModel = new AbstractTableModel()
-									{
-
-										private static final long	serialVersionUID	= 1L;
-
-										@Override
-										public int getColumnCount()
-										{
-											return 4;
-										}
-
-										@Override
-										public int getRowCount()
-										{
-											return interactions.getInteractions().size();
-										}
-
-										@Override
-										public Object getValueAt(int row, int col)
-										{
-											Interaction i = interactions.getInteractions().get(row);
-											switch (col)
-											{
-											case 0:
-												return i.getName();
-											case 1:
-												String parts = "";
-												for (String p : i.getParts())
-												{
-													parts += p + ", ";
-												}
-												return parts.substring(0, parts.length() - 2);
-											case 2:
-												return i.getInteractionType();
-											default:
-												return i.getDescription();
-											}
-										}
-
-										@Override
-										public String getColumnName(int col)
-										{
-											switch (col)
-											{
-											case 0:
-												return "ID";
-											case 1:
-												return "Parts";
-											case 2:
-												return "Type";
-											default:
-												return "Description";
-											}
-										}
-									};
-									JTable tableOfInteractions = new JTable(dataModel);
-									tableOfInteractions.setAutoCreateRowSorter(true);
-									tableOfInteractions.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-									tableOfInteractions.getColumnModel().getColumn(0).setPreferredWidth(150);
-									tableOfInteractions.getColumnModel().getColumn(1).setPreferredWidth(150);
-									tableOfInteractions.getColumnModel().getColumn(2).setPreferredWidth(150);
-									tableOfInteractions.getColumnModel().getColumn(3).setPreferredWidth(150);
-									JScrollPane ScrollInteractions = new JScrollPane();
-									ScrollInteractions.setMinimumSize(new Dimension(520, 150));
-									ScrollInteractions.setPreferredSize(new Dimension(552, 150));
-									ScrollInteractions.setViewportView(tableOfInteractions);
-									JOptionPane.showMessageDialog(frame, ScrollInteractions, "Interactions for Part " + part.getName(),
-											JOptionPane.PLAIN_MESSAGE);
-								}
-								else
-								{
-									JOptionPane.showMessageDialog(frame, "There are no interactions associated with this part in the repository.",
-											"No Interactions", JOptionPane.ERROR_MESSAGE);
-								}
-							}
-						}
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-					catch (XMLStreamException e)
-					{
-						e.printStackTrace();
-					}
-				}
-
-				@Override
-				public void mouseEntered(MouseEvent arg0)
-				{
-				}
-
-				@Override
-				public void mouseExited(MouseEvent arg0)
-				{
-				}
-
-				@Override
-				public void mousePressed(MouseEvent arg0)
-				{
-				}
-
-				@Override
-				public void mouseReleased(MouseEvent arg0)
-				{
-				}
-			});
-			JLabel TextVirtualParts = new JLabel("List of Virtual Parts:");
-			JLabel DoubleClick = new JLabel("Double click on a part to view its interactions.");
-			JScrollPane ScrollVirtualParts = new JScrollPane();
-			ScrollVirtualParts.setMinimumSize(new Dimension(520, 250));
-			ScrollVirtualParts.setPreferredSize(new Dimension(552, 250));
-			ScrollVirtualParts.setViewportView(tableOfVirtualParts);
-			labelPanel.add(TextVirtualParts, "North");
-			labelPanel.add(DoubleClick, "Center");
-			virtualPartsPanel.add(labelPanel, "North");
-			virtualPartsPanel.add(ScrollVirtualParts, "Center");
-			Object[] options = { "Import Part", "Import Part's Interactions", "Cancel" };
-			showVirtualPartImportOption(virtualPartsPanel, options, tableOfVirtualParts, partsHandler);
-		}
-	}
-
-	private void showVirtualPartImportOption(JPanel virtualPartsPanel, Object[] options, JTable tableOfVirtualParts, PartsHandler partsHandler)
-	{
-		try
-		{
-			List<Part> list = allVirtualParts.getParts();
-			int value = JOptionPane.showOptionDialog(frame, virtualPartsPanel, "List of Virtual Parts", JOptionPane.YES_NO_CANCEL_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			int selected = tableOfVirtualParts.getSelectedRow();
-			if (selected >= 0)
-			{
-				Part part = list.get((Integer) tableOfVirtualParts.getModel().getValueAt(tableOfVirtualParts.convertRowIndexToModel(selected), 5));
-				if (value == JOptionPane.YES_OPTION)
-				{
-					SBMLDocument sbmlDocument = partsHandler.GetModel(part);
-					if (sbmlDocument != null)
-					{
-						SBMLWriter writer = new SBMLWriter();
-						writer.writeSBMLToFile(sbmlDocument, root + separator + part.getName() + ".xml.temp");
-						SBMLDocument document = SBMLutilities.readSBML(root + separator + part.getName() + ".xml.temp");
-						SBMLutilities.checkModelCompleteness(document);
-						SBMLutilities.check(root + separator + part.getName() + ".xml.temp", document, false);
-						String newFile = part.getName() + ".xml";
-						newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
-						if (Character.isDigit(newFile.charAt(0)))
-						{
-							newFile = "M" + newFile;
-						}
-						if (document != null)
-						{
-							if (document.getModel().isSetId())
-							{
-								newFile = document.getModel().getId();
-							}
-							else
-							{
-								document.getModel().setId(newFile.replace(".xml", ""));
-							}
-							document.enablePackage(LayoutConstants.namespaceURI);
-							document.enablePackage(CompConstants.namespaceURI);
-							document.enablePackage(FBCConstants.namespaceURI);
-							FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
-							fbc.setStrict(false);
-							document.enablePackage(ArraysConstants.namespaceURI);
-
-							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
-							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
-
-							if (documentComp.getListOfModelDefinitions().size() > 0 || documentComp.getListOfExternalModelDefinitions().size() > 0)
-							{
-								if (!extractModelDefinitions(documentComp, documentCompModel))
-								{
-									JOptionPane.showMessageDialog(frame, "Unable to extract model definitions from the model.",
-											"Unable to Extract Model Definitions", JOptionPane.ERROR_MESSAGE);
-								}
-							}
-							SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
-							if (document.getModel().getId() == null || document.getModel().getId().equals(""))
-							{
-								document.getModel().setId(newFile.replace(".xml", ""));
-							}
-							else
-							{
-								newFile = document.getModel().getId() + ".xml";
-							}
-							if (overwrite(root + separator + newFile, newFile))
-							{
-								writer.writeSBMLToFile(document, root + separator + newFile);
-								addToTree(newFile);
-								openSBML(root + separator + newFile);
-							}
-							new File(root + separator + part.getName() + ".xml.temp").delete();
-						}
-					}
-					else
-					{
-						JOptionPane.showMessageDialog(frame, "There is no SBML model associated with this part in the repository.", "No SBML Model",
-								JOptionPane.ERROR_MESSAGE);
-						showVirtualPartImportOption(virtualPartsPanel, options, tableOfVirtualParts, partsHandler);
-					}
-				}
-				if (value == JOptionPane.NO_OPTION)
-				{
-					Interactions interactions = partsHandler.GetInteractions(part);
-					if (interactions != null && interactions.getInteractions() != null)
-					{
-						for (Interaction interaction : interactions.getInteractions())
-						{
-							SBMLHandler sbmlHandler = new SBMLHandler();
-							SBMLDocument sbmlContainer = sbmlHandler.GetSBMLTemplateModel(interaction.getName() + "_model");
-							ModelBuilder modelBuilder = new ModelBuilder(sbmlContainer);
-							SBMLDocument sbmlDocumentPart = partsHandler.GetModel(part);
-							modelBuilder.Add(sbmlDocumentPart);
-							for (String p : interaction.getParts())
-							{
-								if (!p.equals(part.getName()))
-								{
-									for (Part tempPart : list)
-									{
-										if (p.equals(tempPart.getName()))
-										{
-											SBMLDocument sbmlDocument = partsHandler.GetModel(tempPart);
-											if (sbmlDocument != null)
-											{
-												modelBuilder.Add(sbmlDocument);
-											}
-										}
-									}
-								}
-							}
-							SBMLDocument sbmlDocument = partsHandler.GetInteractionModel(interaction);
-							if (sbmlDocument != null)
-							{
-								modelBuilder.Add(sbmlDocument);
-								SBMLWriter writer = new SBMLWriter();
-								writer.writeSBMLToFile(modelBuilder.GetModel(), root + separator + interaction.getName() + ".xml.temp");
-								SBMLDocument document = SBMLutilities.readSBML(root + separator + interaction.getName() + ".xml.temp");
-								String newFile = interaction.getName() + ".xml";
-								newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
-								if (Character.isDigit(newFile.charAt(0)))
-								{
-									newFile = "M" + newFile;
-								}
-								if (document != null)
-								{
-									if (document.getModel().isSetId())
-									{
-										newFile = document.getModel().getId();
-									}
-									else
-									{
-										document.getModel().setId(newFile.replace(".xml", ""));
-									}
-									document.enablePackage(LayoutConstants.namespaceURI);
-									document.enablePackage(CompConstants.namespaceURI);
-									document.enablePackage(FBCConstants.namespaceURI);
-									CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
-									CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
-									if (documentComp.getListOfModelDefinitions().size() > 0
-											|| documentComp.getListOfExternalModelDefinitions().size() > 0)
-									{
-										if (!extractModelDefinitions(documentComp, documentCompModel))
-										{
-											JOptionPane.showMessageDialog(frame, "Unable to extract model definitions from the model.",
-													"Unable to Extract Model Definitions", JOptionPane.ERROR_MESSAGE);
-										}
-									}
-									SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
-									if (document.getModel().getId() == null || document.getModel().getId().equals(""))
-									{
-										document.getModel().setId(newFile.replace(".xml", ""));
-									}
-									else
-									{
-										newFile = document.getModel().getId() + ".xml";
-									}
-									if (overwrite(root + separator + newFile, newFile))
-									{
-										writer.writeSBMLToFile(document, root + separator + newFile);
-										addToTree(newFile);
-										openSBML(root + separator + newFile);
-									}
-									new File(root + separator + interaction.getName() + ".xml.temp").delete();
-								}
-							}
-						}
-					}
-					else
-					{
-						JOptionPane.showMessageDialog(frame, "There are no interactions associated with this part in the repository.",
-								"No Interactions", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
+//	private void importVirtualPart()
+//	{
+//		final PartsHandler partsHandler = new PartsHandler("http://sbol.ncl.ac.uk:8081/");
+//		if (!showParts && getPartsThread == null)
+//		{
+//			getPartsThread = new Thread(new Runnable()
+//			{
+//				@Override
+//				public void run()
+//				{
+//					try
+//					{
+//						final JButton cancel = new JButton("Cancel");
+//						final MutableBoolean stop = new MutableBoolean(false);
+//						cancel.addActionListener(new ActionListener()
+//						{
+//							@Override
+//							public void actionPerformed(ActionEvent arg0)
+//							{
+//								stop.setValue(true);
+//							}
+//						});
+//						final JFrame running = new JFrame("Progress");
+//						WindowListener w = new WindowListener()
+//						{
+//							@Override
+//							public void windowClosing(WindowEvent arg0)
+//							{
+//								running.setCursor(null);
+//								cancel.doClick();
+//								running.dispose();
+//							}
+//
+//							@Override
+//							public void windowOpened(WindowEvent arg0)
+//							{
+//							}
+//
+//							@Override
+//							public void windowClosed(WindowEvent arg0)
+//							{
+//							}
+//
+//							@Override
+//							public void windowIconified(WindowEvent arg0)
+//							{
+//							}
+//
+//							@Override
+//							public void windowDeiconified(WindowEvent arg0)
+//							{
+//							}
+//
+//							@Override
+//							public void windowActivated(WindowEvent arg0)
+//							{
+//							}
+//
+//							@Override
+//							public void windowDeactivated(WindowEvent arg0)
+//							{
+//							}
+//						};
+//						running.addWindowListener(w);
+//						JPanel text = new JPanel();
+//						JPanel progBar = new JPanel();
+//						JPanel button = new JPanel();
+//						JPanel all = new JPanel(new BorderLayout());
+//						JLabel label = new JLabel("Retrieving Virtual Parts");
+//						Summary summary = partsHandler.GetPartsSummary();
+//						int pageCount = summary.getPageCount();
+//						JProgressBar progress = new JProgressBar(0, pageCount);
+//						progress.setStringPainted(true);
+//						progress.setValue(0);
+//						text.add(label);
+//						progBar.add(progress);
+//						button.add(cancel);
+//						all.add(text, "North");
+//						all.add(progBar, "Center");
+//						all.add(button, "South");
+//						running.setContentPane(all);
+//						running.pack();
+//						Dimension screenSize;
+//						try
+//						{
+//							Toolkit tk = Toolkit.getDefaultToolkit();
+//							screenSize = tk.getScreenSize();
+//						}
+//						catch (AWTError awe)
+//						{
+//							screenSize = new Dimension(640, 480);
+//						}
+//						Dimension frameSize = running.getSize();
+//
+//						if (frameSize.height > screenSize.height)
+//						{
+//							frameSize.height = screenSize.height;
+//						}
+//						if (frameSize.width > screenSize.width)
+//						{
+//							frameSize.width = screenSize.width;
+//						}
+//						int x = screenSize.width / 2 - frameSize.width / 2;
+//						int y = screenSize.height / 2 - frameSize.height / 2;
+//						running.setLocation(x, y);
+//						running.setVisible(true);
+//						running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//						allVirtualParts = new Parts();
+//						for (int i = 1; i <= pageCount && !stop.booleanValue(); i++)
+//						{
+//							Parts parts = partsHandler.GetParts(i);
+//							allVirtualParts.getParts().addAll(parts.getParts());
+//							progress.setValue(i);
+//						}
+//						running.setCursor(null);
+//						running.dispose();
+//						if (!stop.booleanValue())
+//						{
+//							showParts = true;
+//							importVirtualPart();
+//						}
+//						else
+//						{
+//							getPartsThread = null;
+//						}
+//					}
+//					catch (IOException e)
+//					{
+//						e.printStackTrace();
+//					}
+//				}
+//			});
+//			getPartsThread.start();
+//		}
+//		else if (showParts)
+//		{
+//			final List<Part> list = allVirtualParts.getParts();
+//			final JPanel virtualPartsPanel = new JPanel(new BorderLayout());
+//			final JPanel labelPanel = new JPanel(new BorderLayout());
+//			TableModel dataModel = new AbstractTableModel()
+//			{
+//
+//				private static final long	serialVersionUID	= 1L;
+//
+//				@Override
+//				public int getColumnCount()
+//				{
+//					return 6;
+//				}
+//
+//				@Override
+//				public int getRowCount()
+//				{
+//					return list.size();
+//				}
+//
+//				@Override
+//				public Object getValueAt(int row, int col)
+//				{
+//					Part p = list.get(row);
+//					switch (col)
+//					{
+//					case 0:
+//						return p.getName();
+//					case 1:
+//						return p.getType();
+//					case 2:
+//						return p.getDisplayName();
+//					case 3:
+//						return p.getOrganism();
+//					case 4:
+//						return p.getDescription();
+//					default:
+//						return row;
+//					}
+//				}
+//
+//				@Override
+//				public String getColumnName(int col)
+//				{
+//					switch (col)
+//					{
+//					case 0:
+//						return "ID";
+//					case 1:
+//						return "Type";
+//					case 2:
+//						return "Name";
+//					case 3:
+//						return "Organism";
+//					case 4:
+//						return "Description";
+//					default:
+//						return "Entry";
+//					}
+//				}
+//			};
+//			final JTable tableOfVirtualParts = new JTable(dataModel);
+//			tableOfVirtualParts.setAutoCreateRowSorter(true);
+//			tableOfVirtualParts.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+//			tableOfVirtualParts.getColumnModel().getColumn(0).setPreferredWidth(150);
+//			tableOfVirtualParts.getColumnModel().getColumn(1).setPreferredWidth(150);
+//			tableOfVirtualParts.getColumnModel().getColumn(2).setPreferredWidth(150);
+//			tableOfVirtualParts.getColumnModel().getColumn(3).setPreferredWidth(150);
+//			tableOfVirtualParts.getColumnModel().getColumn(4).setPreferredWidth(150);
+//			tableOfVirtualParts.getColumnModel().getColumn(5).setMinWidth(0);
+//			tableOfVirtualParts.getColumnModel().getColumn(5).setMaxWidth(0);
+//			tableOfVirtualParts.getColumnModel().getColumn(5).setWidth(0);
+//			tableOfVirtualParts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//			tableOfVirtualParts.addMouseListener(new MouseListener()
+//			{
+//				@Override
+//				public void mouseClicked(MouseEvent arg0)
+//				{
+//					try
+//					{
+//						if (arg0.getButton() == MouseEvent.BUTTON1 && arg0.getClickCount() == 2)
+//						{
+//							int selected = tableOfVirtualParts.getSelectedRow();
+//							if (selected >= 0)
+//							{
+//								Part part = list.get((Integer) tableOfVirtualParts.getModel().getValueAt(
+//										tableOfVirtualParts.convertRowIndexToModel(selected), 5));
+//								final Interactions interactions = partsHandler.GetInteractions(part);
+//								if (interactions != null && interactions.getInteractions() != null)
+//								{
+//									TableModel dataModel = new AbstractTableModel()
+//									{
+//
+//										private static final long	serialVersionUID	= 1L;
+//
+//										@Override
+//										public int getColumnCount()
+//										{
+//											return 4;
+//										}
+//
+//										@Override
+//										public int getRowCount()
+//										{
+//											return interactions.getInteractions().size();
+//										}
+//
+//										@Override
+//										public Object getValueAt(int row, int col)
+//										{
+//											Interaction i = interactions.getInteractions().get(row);
+//											switch (col)
+//											{
+//											case 0:
+//												return i.getName();
+//											case 1:
+//												String parts = "";
+//												for (String p : i.getParts())
+//												{
+//													parts += p + ", ";
+//												}
+//												return parts.substring(0, parts.length() - 2);
+//											case 2:
+//												return i.getInteractionType();
+//											default:
+//												return i.getDescription();
+//											}
+//										}
+//
+//										@Override
+//										public String getColumnName(int col)
+//										{
+//											switch (col)
+//											{
+//											case 0:
+//												return "ID";
+//											case 1:
+//												return "Parts";
+//											case 2:
+//												return "Type";
+//											default:
+//												return "Description";
+//											}
+//										}
+//									};
+//									JTable tableOfInteractions = new JTable(dataModel);
+//									tableOfInteractions.setAutoCreateRowSorter(true);
+//									tableOfInteractions.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+//									tableOfInteractions.getColumnModel().getColumn(0).setPreferredWidth(150);
+//									tableOfInteractions.getColumnModel().getColumn(1).setPreferredWidth(150);
+//									tableOfInteractions.getColumnModel().getColumn(2).setPreferredWidth(150);
+//									tableOfInteractions.getColumnModel().getColumn(3).setPreferredWidth(150);
+//									JScrollPane ScrollInteractions = new JScrollPane();
+//									ScrollInteractions.setMinimumSize(new Dimension(520, 150));
+//									ScrollInteractions.setPreferredSize(new Dimension(552, 150));
+//									ScrollInteractions.setViewportView(tableOfInteractions);
+//									JOptionPane.showMessageDialog(frame, ScrollInteractions, "Interactions for Part " + part.getName(),
+//											JOptionPane.PLAIN_MESSAGE);
+//								}
+//								else
+//								{
+//									JOptionPane.showMessageDialog(frame, "There are no interactions associated with this part in the repository.",
+//											"No Interactions", JOptionPane.ERROR_MESSAGE);
+//								}
+//							}
+//						}
+//					}
+//					catch (IOException e)
+//					{
+//						e.printStackTrace();
+//					}
+//					catch (XMLStreamException e)
+//					{
+//						e.printStackTrace();
+//					}
+//				}
+//
+//				@Override
+//				public void mouseEntered(MouseEvent arg0)
+//				{
+//				}
+//
+//				@Override
+//				public void mouseExited(MouseEvent arg0)
+//				{
+//				}
+//
+//				@Override
+//				public void mousePressed(MouseEvent arg0)
+//				{
+//				}
+//
+//				@Override
+//				public void mouseReleased(MouseEvent arg0)
+//				{
+//				}
+//			});
+//			JLabel TextVirtualParts = new JLabel("List of Virtual Parts:");
+//			JLabel DoubleClick = new JLabel("Double click on a part to view its interactions.");
+//			JScrollPane ScrollVirtualParts = new JScrollPane();
+//			ScrollVirtualParts.setMinimumSize(new Dimension(520, 250));
+//			ScrollVirtualParts.setPreferredSize(new Dimension(552, 250));
+//			ScrollVirtualParts.setViewportView(tableOfVirtualParts);
+//			labelPanel.add(TextVirtualParts, "North");
+//			labelPanel.add(DoubleClick, "Center");
+//			virtualPartsPanel.add(labelPanel, "North");
+//			virtualPartsPanel.add(ScrollVirtualParts, "Center");
+//			Object[] options = { "Import Part", "Import Part's Interactions", "Cancel" };
+//			showVirtualPartImportOption(virtualPartsPanel, options, tableOfVirtualParts, partsHandler);
+//		}
+//	}
+//
+//	private void showVirtualPartImportOption(JPanel virtualPartsPanel, Object[] options, JTable tableOfVirtualParts, PartsHandler partsHandler)
+//	{
+//		try
+//		{
+//			List<Part> list = allVirtualParts.getParts();
+//			int value = JOptionPane.showOptionDialog(frame, virtualPartsPanel, "List of Virtual Parts", JOptionPane.YES_NO_CANCEL_OPTION,
+//					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//			int selected = tableOfVirtualParts.getSelectedRow();
+//			if (selected >= 0)
+//			{
+//				Part part = list.get((Integer) tableOfVirtualParts.getModel().getValueAt(tableOfVirtualParts.convertRowIndexToModel(selected), 5));
+//				if (value == JOptionPane.YES_OPTION)
+//				{
+//					SBMLDocument sbmlDocument = partsHandler.GetModel(part);
+//					if (sbmlDocument != null)
+//					{
+//						SBMLWriter writer = new SBMLWriter();
+//						writer.writeSBMLToFile(sbmlDocument, root + separator + part.getName() + ".xml.temp");
+//						SBMLDocument document = SBMLutilities.readSBML(root + separator + part.getName() + ".xml.temp");
+//						SBMLutilities.checkModelCompleteness(document);
+//						SBMLutilities.check(root + separator + part.getName() + ".xml.temp", document, false);
+//						String newFile = part.getName() + ".xml";
+//						newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
+//						if (Character.isDigit(newFile.charAt(0)))
+//						{
+//							newFile = "M" + newFile;
+//						}
+//						if (document != null)
+//						{
+//							if (document.getModel().isSetId())
+//							{
+//								newFile = document.getModel().getId();
+//							}
+//							else
+//							{
+//								document.getModel().setId(newFile.replace(".xml", ""));
+//							}
+//							document.enablePackage(LayoutConstants.namespaceURI);
+//							document.enablePackage(CompConstants.namespaceURI);
+//							document.enablePackage(FBCConstants.namespaceURI);
+//							FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
+//							fbc.setStrict(false);
+//							document.enablePackage(ArraysConstants.namespaceURI);
+//
+//							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
+//							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
+//
+//							if (documentComp.getListOfModelDefinitions().size() > 0 || documentComp.getListOfExternalModelDefinitions().size() > 0)
+//							{
+//								if (!extractModelDefinitions(documentComp, documentCompModel))
+//								{
+//									JOptionPane.showMessageDialog(frame, "Unable to extract model definitions from the model.",
+//											"Unable to Extract Model Definitions", JOptionPane.ERROR_MESSAGE);
+//								}
+//							}
+//							SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
+//							if (document.getModel().getId() == null || document.getModel().getId().equals(""))
+//							{
+//								document.getModel().setId(newFile.replace(".xml", ""));
+//							}
+//							else
+//							{
+//								newFile = document.getModel().getId() + ".xml";
+//							}
+//							if (overwrite(root + separator + newFile, newFile))
+//							{
+//								writer.writeSBMLToFile(document, root + separator + newFile);
+//								addToTree(newFile);
+//								openSBML(root + separator + newFile);
+//							}
+//							new File(root + separator + part.getName() + ".xml.temp").delete();
+//						}
+//					}
+//					else
+//					{
+//						JOptionPane.showMessageDialog(frame, "There is no SBML model associated with this part in the repository.", "No SBML Model",
+//								JOptionPane.ERROR_MESSAGE);
+//						showVirtualPartImportOption(virtualPartsPanel, options, tableOfVirtualParts, partsHandler);
+//					}
+//				}
+//				if (value == JOptionPane.NO_OPTION)
+//				{
+//					Interactions interactions = partsHandler.GetInteractions(part);
+//					if (interactions != null && interactions.getInteractions() != null)
+//					{
+//						for (Interaction interaction : interactions.getInteractions())
+//						{
+//							SBMLHandler sbmlHandler = new SBMLHandler();
+//							SBMLDocument sbmlContainer = sbmlHandler.GetSBMLTemplateModel(interaction.getName() + "_model");
+//							ModelBuilder modelBuilder = new ModelBuilder(sbmlContainer);
+//							SBMLDocument sbmlDocumentPart = partsHandler.GetModel(part);
+//							modelBuilder.Add(sbmlDocumentPart);
+//							for (String p : interaction.getParts())
+//							{
+//								if (!p.equals(part.getName()))
+//								{
+//									for (Part tempPart : list)
+//									{
+//										if (p.equals(tempPart.getName()))
+//										{
+//											SBMLDocument sbmlDocument = partsHandler.GetModel(tempPart);
+//											if (sbmlDocument != null)
+//											{
+//												modelBuilder.Add(sbmlDocument);
+//											}
+//										}
+//									}
+//								}
+//							}
+//							SBMLDocument sbmlDocument = partsHandler.GetInteractionModel(interaction);
+//							if (sbmlDocument != null)
+//							{
+//								modelBuilder.Add(sbmlDocument);
+//								SBMLWriter writer = new SBMLWriter();
+//								writer.writeSBMLToFile(modelBuilder.GetModel(), root + separator + interaction.getName() + ".xml.temp");
+//								SBMLDocument document = SBMLutilities.readSBML(root + separator + interaction.getName() + ".xml.temp");
+//								String newFile = interaction.getName() + ".xml";
+//								newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
+//								if (Character.isDigit(newFile.charAt(0)))
+//								{
+//									newFile = "M" + newFile;
+//								}
+//								if (document != null)
+//								{
+//									if (document.getModel().isSetId())
+//									{
+//										newFile = document.getModel().getId();
+//									}
+//									else
+//									{
+//										document.getModel().setId(newFile.replace(".xml", ""));
+//									}
+//									document.enablePackage(LayoutConstants.namespaceURI);
+//									document.enablePackage(CompConstants.namespaceURI);
+//									document.enablePackage(FBCConstants.namespaceURI);
+//									CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
+//									CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
+//									if (documentComp.getListOfModelDefinitions().size() > 0
+//											|| documentComp.getListOfExternalModelDefinitions().size() > 0)
+//									{
+//										if (!extractModelDefinitions(documentComp, documentCompModel))
+//										{
+//											JOptionPane.showMessageDialog(frame, "Unable to extract model definitions from the model.",
+//													"Unable to Extract Model Definitions", JOptionPane.ERROR_MESSAGE);
+//										}
+//									}
+//									SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
+//									if (document.getModel().getId() == null || document.getModel().getId().equals(""))
+//									{
+//										document.getModel().setId(newFile.replace(".xml", ""));
+//									}
+//									else
+//									{
+//										newFile = document.getModel().getId() + ".xml";
+//									}
+//									if (overwrite(root + separator + newFile, newFile))
+//									{
+//										writer.writeSBMLToFile(document, root + separator + newFile);
+//										addToTree(newFile);
+//										openSBML(root + separator + newFile);
+//									}
+//									new File(root + separator + interaction.getName() + ".xml.temp").delete();
+//								}
+//							}
+//						}
+//					}
+//					else
+//					{
+//						JOptionPane.showMessageDialog(frame, "There are no interactions associated with this part in the repository.",
+//								"No Interactions", JOptionPane.ERROR_MESSAGE);
+//					}
+//				}
+//			}
+//		}
+//		catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		}
+//	}
 
 	private void createLPN()
 	{
