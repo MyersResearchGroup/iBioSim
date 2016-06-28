@@ -480,7 +480,8 @@ public class Assembler2
 			}
 		} else {
 //			List<SequenceAnnotation> annos = SBOLUtility2.orderSequenceAnnotations(dnaComp.getAnnotations());
-			List<SequenceAnnotation> annos = SBOLUtility2.orderSequenceAnnotations(dnaComp.getSequenceAnnotations());
+//			List<SequenceAnnotation> annos = SBOLUtility2.orderSequenceAnnotations(dnaComp.getSequenceAnnotations());
+			List<SequenceAnnotation> annos = dnaComp.getSortedSequenceAnnotations(); 
 			String prevSubStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 			int minusIndex = 0;
 			for (SequenceAnnotation anno : annos) {
