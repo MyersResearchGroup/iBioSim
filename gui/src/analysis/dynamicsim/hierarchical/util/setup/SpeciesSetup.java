@@ -6,7 +6,10 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Species;
 
 import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.util.math.AbstractHierarchicalNode.Type;
+import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
 import analysis.dynamicsim.hierarchical.util.math.SpeciesNode;
+import analysis.dynamicsim.hierarchical.util.math.ValueNode;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 public class SpeciesSetup
@@ -75,7 +78,20 @@ public class SpeciesSetup
 
 			else if (species.isSetInitialConcentration())
 			{
-				node.setValue(species.getInitialConcentration() * compartment.getValue());
+				if (node.hasOnlySubstance())
+				{
+					HierarchicalNode initConcentration = new HierarchicalNode(Type.TIMES);
+					initConcentration.addChild(new ValueNode(species.getInitialConcentration()));
+					initConcentration.addChild(compartment);
+					node.setInitialAssignment(initConcentration);
+				}
+				else
+				{
+					HierarchicalNode initConcentration = new HierarchicalNode(Type.TIMES);
+					initConcentration.addChild(new ValueNode(species.getInitialConcentration()));
+					node.setInitialAssignment(initConcentration);
+				}
+
 			}
 
 		}

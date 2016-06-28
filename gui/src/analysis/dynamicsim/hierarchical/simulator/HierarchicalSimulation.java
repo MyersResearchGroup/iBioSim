@@ -906,12 +906,21 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	protected List<VariableNode> getInitAssignmentList()
 	{
 
-		if (assignmentList == null)
+		if (variableList == null)
 		{
-			assignmentList = getAssignmentRuleList();
+			variableList = getVariableList();
 		}
-		List<VariableNode> initAssignmentList = new ArrayList<VariableNode>(assignmentList);
+
+		List<VariableNode> initAssignmentList = new ArrayList<VariableNode>();
 		List<VariableNode> constants = getConstantsList();
+
+		for (VariableNode node : variableList)
+		{
+			if (node.hasInitAssignment() || node.hasAssignmentRule())
+			{
+				initAssignmentList.add(node);
+			}
+		}
 
 		for (VariableNode node : constants)
 		{
