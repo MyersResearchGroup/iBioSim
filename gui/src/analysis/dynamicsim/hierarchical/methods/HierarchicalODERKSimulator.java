@@ -129,7 +129,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 			eventList = getEventList();
 			variableList = getVariableList();
 			reactionList = getReactionList();
-			assignmentList = getAssignmentRuleList();
 			de = new DifferentialEquations();
 			HierarchicalUtilities.computeFixedPoint(getInitAssignmentList(), reactionList);
 
