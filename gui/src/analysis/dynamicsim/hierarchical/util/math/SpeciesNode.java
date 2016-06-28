@@ -104,14 +104,20 @@ public class SpeciesNode extends VariableNode
 	@Override
 	public double computeRateOfChange(double time)
 	{
+		double rate = 0;
 		if (rateRule != null)
 		{
-			return Evaluator.evaluateExpressionRecursive(rateRule);
+			rate = Evaluator.evaluateExpressionRecursive(rateRule, false);
+
+			if (!hasOnlySubstance)
+			{
+				rate = rate * compartment.getValue();
+			}
 		}
 		if (odeRate != null && !isBoundary)
 		{
-			return Evaluator.evaluateExpressionRecursive(odeRate);
+			rate = Evaluator.evaluateExpressionRecursive(odeRate);
 		}
-		return 0;
+		return rate;
 	}
 }
