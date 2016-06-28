@@ -89,7 +89,7 @@ public class VariableNode extends ValueNode
 		{
 			return 0;
 		}
-		return Evaluator.evaluateExpressionRecursive(rateRule);
+		return Evaluator.evaluateExpressionRecursive(rateRule, false);
 	}
 
 	@Override
