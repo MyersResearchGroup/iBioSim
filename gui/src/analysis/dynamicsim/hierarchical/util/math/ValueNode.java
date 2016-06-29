@@ -39,6 +39,7 @@ public class ValueNode extends HierarchicalNode
 
 	public void setAssignmentRule(HierarchicalNode assignRule)
 	{
+		this.initAssign = null;
 		this.assignRule = assignRule;
 	}
 

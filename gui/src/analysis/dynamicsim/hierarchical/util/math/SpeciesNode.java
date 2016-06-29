@@ -102,24 +102,6 @@ public class SpeciesNode extends VariableNode
 	}
 
 	@Override
-	public boolean computeInitialValue()
-	{
-		if (initAssign == null)
-		{
-			return false;
-		}
-
-		double oldValue = value;
-		double newValue = Evaluator.evaluateExpressionRecursive(initAssign);
-		if (!hasOnlySubstance)
-		{
-			newValue = newValue * compartment.getValue();
-		}
-		this.value = newValue;
-		return oldValue != newValue;
-	}
-
-	@Override
 	public double computeRateOfChange(double time)
 	{
 		double rate = 0;
@@ -137,24 +119,5 @@ public class SpeciesNode extends VariableNode
 			rate = Evaluator.evaluateExpressionRecursive(odeRate);
 		}
 		return rate;
-	}
-
-	@Override
-	public boolean computeAssignmentValue()
-	{
-		if (assignRule == null)
-		{
-			return false;
-		}
-
-		double oldValue = value;
-		double newValue = Evaluator.evaluateExpressionRecursive(assignRule, false);
-		if (!hasOnlySubstance)
-		{
-			newValue = newValue * compartment.getValue();
-		}
-		this.value = newValue;
-
-		return oldValue != newValue;
 	}
 }

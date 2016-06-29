@@ -78,19 +78,10 @@ public class SpeciesSetup
 
 			else if (species.isSetInitialConcentration())
 			{
-				if (node.hasOnlySubstance())
-				{
-					HierarchicalNode initConcentration = new HierarchicalNode(Type.TIMES);
-					initConcentration.addChild(new ValueNode(species.getInitialConcentration()));
-					initConcentration.addChild(compartment);
-					node.setInitialAssignment(initConcentration);
-				}
-				else
-				{
-					HierarchicalNode initConcentration = new HierarchicalNode(Type.TIMES);
-					initConcentration.addChild(new ValueNode(species.getInitialConcentration()));
-					node.setInitialAssignment(initConcentration);
-				}
+				HierarchicalNode initConcentration = new HierarchicalNode(Type.TIMES);
+				initConcentration.addChild(new ValueNode(species.getInitialConcentration()));
+				initConcentration.addChild(compartment);
+				node.setInitialAssignment(initConcentration);
 
 			}
 
