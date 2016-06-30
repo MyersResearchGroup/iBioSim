@@ -38,12 +38,11 @@ public class SBOLUtility2
 			String fileName = f.getName().replace(".sbol", "");
 			sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
 			SBOLReader.setDropObjectsWithDuplicateURIs(true);
-			
-			
 			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
 			try
 			{
 				String sbolRDF = filePath.replace(".sbol", ".rdf");
+				SBOLReader.setKeepGoing(false);
 				SBOLDocument newSbolDoc = SBOLReader.read(sbolRDF);
 				for(ComponentDefinition c : newSbolDoc.getComponentDefinitions())
 				{
