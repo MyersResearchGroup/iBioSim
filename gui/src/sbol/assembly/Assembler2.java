@@ -488,10 +488,8 @@ public class Assembler2
 				String subStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 //				if (anno.getStrand() == null) {
 				for (Location location : anno.getLocations()) {
-					// TODO: searches for Range location and consider only one Range
-					if (location instanceof Range) {
-						Range range = (Range)location;
-						if(!range.isSetOrientation() || range.getOrientation().equals(OrientationType.INLINE))
+					if(location.isSetOrientation()) {
+						if (location.getOrientation().equals(OrientationType.INLINE))
 							subStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 						else 
 							subStrand = GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
