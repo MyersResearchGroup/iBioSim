@@ -241,7 +241,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 	private boolean browserOpen() 
 	{
 		int option = JOptionPane.showOptionDialog(Gui.frame, this,
-				"SBOL Browser2", JOptionPane.YES_NO_OPTION,
+				"SBOL Browser", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (option == JOptionPane.YES_OPTION) 
 		{
