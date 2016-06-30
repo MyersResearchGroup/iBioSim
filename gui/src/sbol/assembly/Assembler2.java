@@ -485,18 +485,18 @@ public class Assembler2
 			String prevSubStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 			int minusIndex = 0;
 			for (SequenceAnnotation anno : annos) {
-				String subStrand;
+				String subStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 //				if (anno.getStrand() == null) {
-				if (anno.getLocations().iterator().next() == null) {
-					subStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
-				} 
-				else
-				{
-//					subStrand = anno.getStrand().getSymbol();
-					if(anno.getLocations().iterator().next().getOrientation().equals(OrientationType.INLINE))
-						subStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
-					else 
-						subStrand = GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
+				for (Location location : anno.getLocations()) {
+					// TODO: searches for Range location and consider only one Range
+					if (location instanceof Range) {
+						Range range = (Range)location;
+						if(!range.isSetOrientation() || range.getOrientation().equals(OrientationType.INLINE))
+							subStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+						else 
+							subStrand = GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
+						break;
+					}
 				}
 				List<String> nextTypes;
 				if (strand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
