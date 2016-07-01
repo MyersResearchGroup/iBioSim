@@ -1234,7 +1234,7 @@ public class SBMLutilities
 		}
 		if (node.getType() == ASTNode.Type.NAME_TIME)
 		{
-			if (!node.getName().equals("t") || !node.getName().equals("time"))
+			if (node.getName()==null || !node.getName().equals("t") || !node.getName().equals("time"))
 			{
 				node.setName("t");
 			}
@@ -1287,6 +1287,7 @@ public class SBMLutilities
 			if (node.getName().equals("t"))
 			{
 				node.setType(ASTNode.Type.NAME_TIME);
+				node.setName("t");
 			}
 			else if (node.getName().equals("time"))
 			{
