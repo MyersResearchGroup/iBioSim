@@ -5647,7 +5647,7 @@ public class SBMLutilities
 		ibiosimFunctionDefinitions.add("U");
 		ibiosimFunctionDefinitions.add("PU");
 
-		if (formula.isFunction() == false /* || formula.isLeaf() == false */)
+		if (formula.isFunction() == false || formula.isOperator()/* || formula.isLeaf() == false */)
 		{
 
 			for (int i = 0; i < formula.getChildCount(); ++i)
