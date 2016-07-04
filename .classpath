@@ -21,7 +21,6 @@
 	<classpathentry kind="lib" path="gui/lib/openmali.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jafama.jar"/>
 	<classpathentry kind="lib" path="gui/lib/flanagan.jar"/>
-	<classpathentry kind="lib" path="gui/lib/gson-2.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="lib" path="gui/lib/antlr-3.4-complete.jar"/>
@@ -59,6 +58,14 @@
 	<classpathentry kind="lib" path="gui/lib/guava-18.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/openrdf-sesame-2.6.9-onejar.jar"/>
 	<classpathentry kind="lib" path="gui/lib/AppleJavaExtensions.jar"/>
+	<classpathentry kind="lib" path="gui/lib/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="gui/lib/httpclient-4.5.2.jar"/>
+	<classpathentry kind="lib" path="gui/lib/httpclient-cache-4.5.2.jar"/>
+	<classpathentry kind="lib" path="gui/lib/httpcore-4.4.4.jar"/>
+	<classpathentry kind="lib" path="gui/lib/httpmime-4.5.2.jar"/>
+	<classpathentry kind="lib" path="gui/lib/gson-2.3.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/sbolstack-frontend-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="gui/lib/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jlibsedml.jar"/>
