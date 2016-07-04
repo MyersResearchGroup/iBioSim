@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -32,6 +31,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.locks.ReentrantLock;
@@ -73,6 +73,8 @@ import main.util.dataparser.TSDParser;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
+import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
@@ -98,18 +100,18 @@ import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jibble.epsgraphics.EpsGraphics2D;
+import org.jlibsedml.Annotation;
 import org.jlibsedml.Curve;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.DataSet;
 import org.jlibsedml.Libsedml;
+import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
 import org.jlibsedml.Report;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
-import org.jlibsedml.Task;
 import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
-import org.jlibsedml.XPathTarget;
 import org.jlibsedml.modelsupport.SBMLSupport;
 import org.jmathml.ASTNode;
 import org.sbml.jsbml.ListOf;
@@ -120,6 +122,7 @@ import org.sbml.jsbml.Species;
 import org.w3c.dom.DOMImplementation;
 
 import analysis.main.AnalysisView;
+import analysis.main.SEDMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.SBMLutilities;
 
@@ -3904,8 +3907,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			color += "_" + colorsButtons.get(i).getBackground().getRGB();
 		}
 		graphed.add(new GraphSpecies(shapey.get(shapeStr), color, filled.get(i).isSelected(), 
-				visible.get(i).isSelected(), connected.get(i).isSelected(), dataSet, boxes.get(i).getName(), label,
-				XVariable.getSelectedIndex(), i, directory));
+				visible.get(i).isSelected(), connected.get(i).isSelected(), dataSet, 
+				(String)XVariable.getSelectedItem(), 
+				boxes.get(i).getName(), label, XVariable.getSelectedIndex(), i, directory));
 	}
 
 	private void addTreeListener() {
@@ -5540,37 +5544,160 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		analysisView.executeRun();
 	}
 	
-	public void saveSEDML(SEDMLDocument sedmlDoc,String taskId) {
+	private DataGenerator getDataGenerator(SedML sedml,String variableId,String variableName,String dataSet,String taskId) {
 		SBMLSupport support = new SBMLSupport();
-		SedML sedml = sedmlDoc.getSedMLModel();
-		Task task = (Task) sedml.getTaskWithId(taskId);
+		for (DataGenerator dataGenerator : sedml.getDataGenerators()) {
+			if (dataGenerator.getListOfVariables().size()!=1) continue;
+			String ds = SEDMLutilities.getSEDBaseAnnotation(dataGenerator, "dataSet", "dataset", "");
+			Variable variable = dataGenerator.getListOfVariables().get(0);
+			if (variable.getReference().equals(taskId) &&
+					variable.getTarget() != null &&
+					support.getIdFromXPathIdentifer(variable.getTarget()) != null &&
+					support.getIdFromXPathIdentifer(variable.getTarget()).equals(variableId) &&
+					ds.equals(dataSet)) {
+				return dataGenerator;
+			}
+		}
+		// TODO: not always species, need to check type before creating XPath
+		// Also, can be timelimit for probablity analysis, not an id in the model at all
+		String xpath = support.getXPathForSpecies(variableId);
+		DataGenerator dataGen = sedml.getDataGeneratorWithId(variableId+"_"+taskId+"_dg");
+		if (dataGen != null) {
+			sedml.removeDataGenerator(dataGen);
+		}
+		Variable variable = new Variable(variableId+"_"+taskId,variableName,taskId,xpath);
+		ASTNode math = Libsedml.parseFormulaString(variableId+"_"+taskId);
+		dataGen = new DataGenerator(variableId+"_"+taskId+"_"+dataSet+"_dg",variableId,math);
+		dataGen.addVariable(variable);
+		if (!dataSet.equals("")) {
+			Element para = new Element("dataSet");
+			para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+			para.setAttribute("dataset", "" + dataSet);
+			Annotation ann = new Annotation(para);
+			dataGen.addAnnotation(ann);
+		}
+		sedml.addDataGenerator(dataGen);
+		return dataGen;
+	}
+	
+	public void saveSEDML(SEDMLDocument sedmlDoc,String taskId,String plotId) {
+		SedML sedml = sedmlDoc.getSedMLModel();		
 		if (timeSeries) {
-			ASTNode math = Libsedml.parseFormulaString("time");
-			Variable variable = new Variable("time","",taskId,VariableSymbol.TIME);
-			DataGenerator dataGen = new DataGenerator("time_dg","time",math);
-			dataGen.addVariable(variable);
-			sedml.addDataGenerator(dataGen);
-			Plot2D output = new Plot2D("graph",chart.getTitle().getText());
+			if (plotId==null) {
+				plotId = graphName.replace(".grf", "_graph");
+			}
+			Plot2D output = (Plot2D)sedml.getOutputWithId(plotId);
+			if (output!=null) {
+				sedml.removeOutput(output);
+			}
+			output = new Plot2D(plotId,chart.getTitle().getText());
+			
+			Element para = new Element("graph");
+			para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+			para.setAttribute("chart_background_paint", "" + ((Color) chart.getBackgroundPaint()).getRGB());
+			para.setAttribute("plot_background_paint", "" + ((Color) chart.getPlot().getBackgroundPaint()).getRGB());
+			para.setAttribute("plot_domain_grid_line_paint", "" + ((Color) chart.getXYPlot().getDomainGridlinePaint()).getRGB());
+			para.setAttribute("plot_range_grid_line_paint", "" + ((Color) chart.getXYPlot().getRangeGridlinePaint()).getRGB());
+			para.setAttribute("x_axis", chart.getXYPlot().getDomainAxis().getLabel());
+			para.setAttribute("y_axis", chart.getXYPlot().getRangeAxis().getLabel());
+			para.setAttribute("x_min", XMin.getText());
+			para.setAttribute("x_max", XMax.getText());
+			para.setAttribute("x_scale", XScale.getText());
+			para.setAttribute("y_min", YMin.getText());
+			para.setAttribute("y_max", YMax.getText());
+			para.setAttribute("y_scale", YScale.getText());
+			para.setAttribute("auto_resize", "" + resize.isSelected());
+			para.setAttribute("visibleLegend", "" + visibleLegend.isSelected());
+			Annotation ann = new Annotation(para);
+			output.addAnnotation(ann);
+
 			for (int i = 0; i < graphed.size(); i++) {
-				String [] id = graphed.get(i).getID().split(" ");
-				String [] name = graphed.get(i).getSpecies().split(" ");
-				String xpath = support.getXPathForSpecies(id[0]);
-				XPathTarget target = new XPathTarget(xpath);
-				sedml.addSimpleSpeciesAsOutput(target, id[0], id[0], task, true);
-				Curve curve = new Curve("c_"+id[0],name[0],LogX.isSelected(),LogY.isSelected(),
-						graphSpecies.get(graphed.get(i).getXNumber())+"_dg",id[0]+"_dg");
+				String [] idSplit = graphed.get(i).getID().split(" ");
+				String name = graphed.get(i).getSpecies();
+				String id = idSplit[0];
+				String taskIdStr = taskId;
+				String dataSet;
+				if (taskId==null) {
+					taskIdStr = idSplit[1].replace("(","").replace(",","").replace("/","__");
+					dataSet = idSplit[2].replace(")","");
+				} else {
+					if (idSplit.length==3) {
+						taskIdStr = taskId + "__" + idSplit[1].replace("(","").replace(",","");
+						dataSet = idSplit[2].replace(")","");
+					} else {
+						taskIdStr = taskId;
+						dataSet = idSplit[1].replace("(","").replace(")","");
+					}
+				}
+				if (dataSet.equals("\u03C7")) {
+					dataSet = "mean";
+				} else if (dataSet.equals("\u03B4")) {
+					dataSet = "stddev";
+				} else if (dataSet.equals("\u03B4\u00B2")) {
+					dataSet = "variance";
+				}
+				DataGenerator dataGen = getDataGenerator(sedml,id,name,dataSet,taskIdStr);
+				DataGenerator xdg = getDataGenerator(sedml,graphSpecies.get(graphed.get(i).getXNumber()),
+						graphSpecies.get(graphed.get(i).getXNumber()),dataSet,taskIdStr);
+				Curve curve = new Curve("c_"+plotId+"_"+id+"_"+taskIdStr+"_"+dataSet,name,
+						LogX.isSelected(),LogY.isSelected(),xdg.getId(),dataGen.getId());
+				
+				para = new Element("curve");
+				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+				para.setAttribute("connected", "" + graphed.get(i).getConnected());
+				para.setAttribute("filled", "" + graphed.get(i).getFilled());
+				para.setAttribute("visible", "" + graphed.get(i).getVisible());
+				//para.setAttribute("species_xnumber", "" + graphed.get(i).getXNumber());
+				//para.setAttribute("species_number", "" + graphed.get(i).getNumber());
+				//para.setAttribute("species_run_number", graphed.get(i).getRunNumber());
+				para.setAttribute("paint", graphed.get(i).getShapeAndPaint().getPaintName());
+				para.setAttribute("shape", graphed.get(i).getShapeAndPaint().getShapeName());
+				ann = new Annotation(para);
+				curve.addAnnotation(ann);
+				
 				output.addCurve(curve);
 			}	
 			sedml.addOutput(output);
 		} else {
-			Report report = new Report("report",chart.getTitle().getText());
+			if (plotId==null) {
+				plotId = graphName.replace(".prb", "_report");
+			}
+			Report report = (Report)sedml.getOutputWithId(plotId);
+			if (report!=null) {
+				sedml.removeOutput(report);
+			}
+			report = new Report(plotId,chart.getTitle().getText());
+
+			Element para = new Element("histogram");
+			para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+			para.setAttribute("chart_background_paint", "" + ((Color) chart.getBackgroundPaint()).getRGB());
+			para.setAttribute("plot_background_paint", "" + ((Color) chart.getPlot().getBackgroundPaint()).getRGB());
+			para.setAttribute("plot_range_grid_line_paint", "" + ((Color) chart.getCategoryPlot().getRangeGridlinePaint()).getRGB());
+			para.setAttribute("x_axis", chart.getCategoryPlot().getDomainAxis().getLabel());
+			para.setAttribute("y_axis", chart.getCategoryPlot().getRangeAxis().getLabel());
+			para.setAttribute("gradient", "" + (((BarRenderer) chart.getCategoryPlot().getRenderer()).getBarPainter() instanceof GradientBarPainter));
+			para.setAttribute("shadow", "" + ((BarRenderer) chart.getCategoryPlot().getRenderer()).getShadowsVisible());
+			para.setAttribute("visibleLegend", "" + visibleLegend.isSelected());
+			Annotation ann = new Annotation(para);
+			report.addAnnotation(ann);		
+			
 			for (int i = 0; i < probGraphed.size(); i++) {
 				String [] id = probGraphed.get(i).getID().split(" ");
-				String [] name = probGraphed.get(i).getSpecies().split(" ");
-				String xpath = support.getXPathForReaction(id[0]);
-				XPathTarget target = new XPathTarget(xpath);
-				sedml.addSimpleSpeciesAsOutput(target, id[0], id[0], task, true);
-				DataSet ds = new DataSet("d_"+id[0],name[0],probGraphed.get(i).getSpecies(),id[0]+"_dg");
+				String name = probGraphed.get(i).getSpecies();
+				String taskIdStr = taskId;
+				// TODO: not sure handle subTasks
+				if (taskId==null) {
+					taskIdStr = id[1].replace("(","").replace(")","");
+				} 
+				DataGenerator dataGen = getDataGenerator(sedml,id[0],name,"",taskIdStr);
+				DataSet ds = new DataSet("d_"+plotId+"_"+id[0],name,probGraphed.get(i).getSpecies(),dataGen.getId());
+
+				para = new Element("dataSet");
+				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+				para.setAttribute("paint", probGraphed.get(i).getPaintName());
+				ann = new Annotation(para);
+				ds.addAnnotation(ann);
+
 				report.addDataSet(ds);
 			}
 			sedml.addOutput(report);
@@ -5578,6 +5705,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	public void save() {
+		String taskId = null;
+		String plotId = graphName.replace(".grf", "").replace(".prb", "");
+		if (analysisView!=null) {
+			taskId = graphName.replace(".grf", "").replace(".prb", "");
+			plotId = null;
+		}
+		saveSEDML(biomodelsim.getSEDMLDocument(),taskId,plotId);
+		biomodelsim.writeSEDMLDocument();
 		if (timeSeries) {
 			Properties graph = new Properties();
 			graph.setProperty("title", chart.getTitle().getText());
@@ -5844,21 +5979,256 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 	}
+	
+	private String getDataSet(DataGenerator dataGenerator) {
+		String dataSet = SEDMLutilities.getSEDBaseAnnotation(dataGenerator, "dataSet", "dataset", "1");
+		if (dataSet.equals("mean")) {
+			return "\u03C7";
+		} else if (dataSet.equals("stddev")) {
+			return "\u03B4"; 
+		} else if (dataSet.equals("variance")) {
+			return "\u03B4\u00B2"; 
+		}
+		return dataSet;
+	}
+	
+	private String getRunNumber(DataGenerator dataGenerator) {
+		String dataSet = SEDMLutilities.getSEDBaseAnnotation(dataGenerator, "dataSet", "dataset", "1");
+		if (dataSet.equals("mean")) {
+			return "Average";
+		} else if (dataSet.equals("stddev")) {
+			return "Standard Deviation"; 
+		} else if (dataSet.equals("variance")) {
+			return "Variance"; 
+		}
+		return "run-"+dataSet;
+	}
+	
+	private boolean loadSEDML(SEDMLDocument sedmlDoc,String analysisId,String plotId) {
+		SedML sedml = sedmlDoc.getSedMLModel();
+		SBMLSupport sbmlSupport = new SBMLSupport();
+		String[] colorlist = { "Red", "Blue", "Green", "Yellow", "Magenta", "Cyan", "Tan", "Gray (Dark)", "Red (Dark)", "Blue (Dark)",
+				"Green (Dark)", "Yellow (Dark)", "Magenta (Dark)", "Cyan (Dark)", "Black", "Gray", "Red (Extra Dark)", "Blue (Extra Dark)",
+				"Green (Extra Dark)", "Yellow (Extra Dark)", "Magenta (Extra Dark)", "Cyan (Extra Dark)", "Red (Light)", "Blue (Light)",
+				"Green (Light)", "Yellow (Light)", "Magenta (Light)", "Cyan (Light)", "Gray (Light)" };
+		int numColors = colorlist.length;
+		String[] shapeList = { "Square", "Circle", "Triangle", "Diamond", "Rectangle (Horizontal)", 
+				"Triangle (Upside Down)", "Circle (Half)", "Arrow", "Rectangle (Vertical)", "Arrow (Backwards)" };
+		int numShapes = shapeList.length;
+		Output output = null;
+		if (plotId!=null) {
+			output = sedml.getOutputWithId(plotId);
+		} else {
+			if (timeSeries) {
+				output = sedml.getOutputWithId(analysisId+"_graph");
+			} else {
+				output = sedml.getOutputWithId(analysisId+"_report");
+			}
+		}
+		if (output==null) return false;
+		if (output.isPlot2d())
+		{
+			Plot2D plot = (Plot2D) output;
+			if (plot.getName() != null)	{
+				chart.setTitle(plot.getName());
+			} else {
+				chart.setTitle(plot.getId());
+			}
+			XMin.setText(SEDMLutilities.getSEDBaseAnnotation(plot, "graph", "x_min", "0.0"));
+			XMax.setText(SEDMLutilities.getSEDBaseAnnotation(plot, "graph", "x_max", "1.0"));
+			XScale.setText(SEDMLutilities.getSEDBaseAnnotation(plot, "graph", "x_scale", "0.1"));
+			YMin.setText(SEDMLutilities.getSEDBaseAnnotation(plot, "graph", "y_min", "0.0"));
+			YMax.setText(SEDMLutilities.getSEDBaseAnnotation(plot, "graph", "y_max", "1.0"));
+			YScale.setText(SEDMLutilities.getSEDBaseAnnotation(plot, "graph", "y_scale", "0.1"));
+			chart.getXYPlot().getDomainAxis().setLabel(SEDMLutilities.getSEDBaseAnnotation(plot, "graph", "x_axis", "time"));
+			chart.getXYPlot().getRangeAxis().setLabel(SEDMLutilities.getSEDBaseAnnotation(plot, "graph", "y_axis", ""));
+			chart.setBackgroundPaint(new Color(Integer.parseInt(SEDMLutilities.
+					getSEDBaseAnnotation(plot, "graph", "chart_background_paint", "" + new Color(238, 238, 238).getRGB()))));
+			chart.getPlot().setBackgroundPaint(new Color(Integer.parseInt(SEDMLutilities.
+					getSEDBaseAnnotation(plot, "graph", "plot_background_paint", "" + (Color.WHITE).getRGB()))));
+			chart.getXYPlot().setDomainGridlinePaint(new Color(Integer.parseInt(SEDMLutilities.
+					getSEDBaseAnnotation(plot, "graph", "plot_domain_grid_line_paint", "" + (Color.LIGHT_GRAY).getRGB()))));
+			chart.getXYPlot().setRangeGridlinePaint(new Color(Integer.parseInt(SEDMLutilities.
+					getSEDBaseAnnotation(plot, "graph", "plot_range_grid_line_paint", "" + (Color.LIGHT_GRAY).getRGB()))));
+			resize.setSelected(SEDMLutilities.getSEDBaseAnnotation(plot, "graph", "auto_resize", "true").equals("true"));
+			visibleLegend.setSelected(SEDMLutilities.getSEDBaseAnnotation(plot, "graph", "visibleLegend", "true").equals("true"));
+			LogX.setSelected(false);
+			LogY.setSelected(false);
+			List<Curve> curves = plot.getListOfCurves();
+			for (int j = 0; j < curves.size(); j++)
+			{
+				Curve curve = curves.get(j);
+				String id = null;
+				String taskId = "";
+				DataGenerator dg = sedml.getDataGeneratorWithId(curve.getYDataReference());
+				if (dg != null)
+				{
+					// TODO: do not handle multiple variables yet
+					//if (dg.getListOfVariables().size()!=1) continue;
+					for (Variable var : dg.getListOfVariables()) {
+						//Variable var = dg.getListOfVariables().get(0);
+						if (var.isVariable()) {
+							id = sbmlSupport.getIdFromXPathIdentifer(var.getTarget());
+							if (id==null) continue;
+							if (analysisId==null) {
+								taskId = var.getReference();
+								id += " (" + taskId + ", " + getDataSet(dg) + ")";
+							} else {
+								if (var.getReference().equals(analysisId)) {
+									id += " (" + getDataSet(dg) + ")";
+								} else {
+									taskId = var.getReference().replace(analysisId+"__", "");
+									id += " (" + taskId + ", " + getDataSet(dg) + ")";
+								}
+							}
+							break;
+						}
+					}
+				}
+				else
+				{
+					continue;
+				}
+				String name = null;
+				name = curve.getName();
+				if (name==null || name.equals("")) {
+					name = id;
+				}
+				int xNumber = 0;
+				DataGenerator xdg = sedml.getDataGeneratorWithId(curve.getXDataReference());
+				String xid = "time";
+				String connectedDefault = "true";
+				if (xdg != null)
+				{
+					// TODO: do not handle multiple variables yet
+					//if (xdg.getListOfVariables().size()!=1) continue;
+					for (Variable var : xdg.getListOfVariables()) {
+						//Variable var = dg.getListOfVariables().get(0);
+						if (var.isVariable()) {
+							xid = sbmlSupport.getIdFromXPathIdentifer(var.getTarget());
+							XVariable.setSelectedItem(xid);
+							xNumber = XVariable.getSelectedIndex();
+							if (xNumber==-1) xNumber=0;
+							connectedDefault = "false";
+							if (chart.getXYPlot().getDomainAxis().getLabel().equals("time")) {	
+								chart.getXYPlot().getDomainAxis().setLabel(xid);
+							}
+							break;
+						} 
+					}
+				}
+				LogX.setSelected(curve.getLogX());
+				LogY.setSelected(curve.getLogY());
+				boolean connected = SEDMLutilities.getSEDBaseAnnotation(curve, "curve", "connected", connectedDefault).equals("true");
+				boolean filled = SEDMLutilities.getSEDBaseAnnotation(curve, "curve", "filled", "true").equals("true");
+				boolean visible = SEDMLutilities.getSEDBaseAnnotation(curve, "curve", "visible", "true").equals("true");
+				String paint = SEDMLutilities.getSEDBaseAnnotation(curve, "curve", "paint", colorlist[j % numColors]);
+				String shape = SEDMLutilities.getSEDBaseAnnotation(curve, "curve", "shape", shapeList[j % numShapes]);
+				graphed.add(new GraphSpecies(shapes.get(shape), paint, filled, visible, connected, getRunNumber(dg), 
+						xid, id, name, xNumber, j, taskId.replace("__", "/")));
+			}
+			updateXNumber = false;
+			XVariable.addItem("time");
+			refresh();
+		}
+		else if (output.isReport())
+		{
+			Report report = (Report) output;
+			if (report.getName() != null) {
+				chart.setTitle(report.getName());
+			} else {
+				chart.setTitle(report.getId());
+			}
+
+			chart.setBackgroundPaint(new Color(Integer.parseInt(SEDMLutilities.
+				getSEDBaseAnnotation(report, "histogram", "chart_background_paint", "" + new Color(238, 238, 238).getRGB()))));
+			chart.getPlot().setBackgroundPaint(new Color(Integer.parseInt(SEDMLutilities.
+					getSEDBaseAnnotation(report, "histogram", "plot_background_paint", "" + (Color.WHITE).getRGB()))));
+			chart.getCategoryPlot().setRangeGridlinePaint(new Color(Integer.parseInt(SEDMLutilities.
+					getSEDBaseAnnotation(report, "histogram", "plot_range_grid_line_paint", "" + (Color.LIGHT_GRAY).getRGB()))));
+			chart.getCategoryPlot().getDomainAxis().setLabel(SEDMLutilities.getSEDBaseAnnotation(report, "histogram", "x_axis", ""));
+			chart.getCategoryPlot().getRangeAxis().setLabel(SEDMLutilities.getSEDBaseAnnotation(report, "histogram", "y_axis", ""));	
+			((BarRenderer) chart.getCategoryPlot().getRenderer()).setShadowVisible(
+					SEDMLutilities.getSEDBaseAnnotation(report, "histogram", "shadow", "false").equals("true"));
+			visibleLegend.setSelected(SEDMLutilities.getSEDBaseAnnotation(report, "histogram", "visibleLegend", "true").equals("true"));
+			if (SEDMLutilities.getSEDBaseAnnotation(report, "histogram", "gradient", "false").equals("true")) {
+				((BarRenderer) chart.getCategoryPlot().getRenderer()).setBarPainter(new GradientBarPainter());
+			} else {
+				((BarRenderer) chart.getCategoryPlot().getRenderer()).setBarPainter(new StandardBarPainter());
+			}
+			
+			List<DataSet> dataSets = report.getListOfDataSets();
+			for (int j = 0; j < dataSets.size(); j++)
+			{
+				DataSet dataSet = dataSets.get(j);
+				DataGenerator dg = sedml.getDataGeneratorWithId(dataSet.getDataReference());
+				String id = "";
+				String taskId = "";
+				if (dg != null)
+				{
+					// TODO: do not handle multiple variables yet
+					//if (dg.getListOfVariables().size()!=1) continue;
+					for (Variable var : dg.getListOfVariables()) {
+						//Variable var = dg.getListOfVariables().get(0);
+						if (var.isVariable()) {
+							id = sbmlSupport.getIdFromXPathIdentifer(var.getTarget());
+							if (id==null) continue;
+							// TODO: does not appear to handle subtasks
+							if (analysisId==null) {
+								taskId = var.getReference();
+								id += " (" + taskId + ")";
+							} else {
+								id += "";
+							}
+							break;
+						}
+					}
+				}
+				else
+				{
+					continue;
+				}
+				String name = null;
+				name = dataSet.getName();
+				if (name==null || name.equals("")) {
+					name = id;
+				}
+				Paint paint = null;
+				String color = SEDMLutilities.getSEDBaseAnnotation(dataSet, "dataSet", "paint", colorlist[j % numColors]);
+				if (color.startsWith("Custom_")) {
+					paint = new Color(Integer.parseInt(color.replace("Custom_", "")));
+				} else {
+					paint = colors.get(color);
+				}
+				// TODO: number
+				probGraphed.add(new GraphProbs(paint, color, id, name, j, taskId));
+			}
+			refreshProb();
+		}
+		return true;
+	}
 
 	private void open(String filename) {
+		String taskId = null;
+		String plotId = graphName.replace(".grf", "").replace(".prb", "");
+		if (analysisView!=null) {
+			taskId = graphName.replace(".grf", "").replace(".prb", "");
+			plotId = null;
+		}
+		if (loadSEDML(biomodelsim.getSEDMLDocument(),taskId,plotId)) return;
 		if (timeSeries) {
 			Properties graph = new Properties();
 			try {
 				FileInputStream load = new FileInputStream(new File(filename));
 				graph.load(load);
 				load.close();
-				XMin.setText(graph.getProperty("x.min"));
-				XMax.setText(graph.getProperty("x.max"));
-				XScale.setText(graph.getProperty("x.scale"));
-				YMin.setText(graph.getProperty("y.min"));
-				YMax.setText(graph.getProperty("y.max"));
-				YScale.setText(graph.getProperty("y.scale"));
-				chart.setTitle(graph.getProperty("title"));
+				XMin.setText(graph.getProperty("x.min","0.0"));
+				XMax.setText(graph.getProperty("x.max","1.0"));
+				XScale.setText(graph.getProperty("x.scale","0.1"));
+				YMin.setText(graph.getProperty("y.min","0.0"));
+				YMax.setText(graph.getProperty("y.max","1.0"));
+				YScale.setText(graph.getProperty("y.scale","0.1"));
+				chart.setTitle(graph.getProperty("title",""));
 				if (graph.containsKey("chart.background.paint")) {
 					chart.setBackgroundPaint(new Color(Integer.parseInt(graph.getProperty("chart.background.paint"))));
 				}
@@ -5871,30 +6241,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (graph.containsKey("plot.range.grid.line.paint")) {
 					chart.getXYPlot().setRangeGridlinePaint(new Color(Integer.parseInt(graph.getProperty("plot.range.grid.line.paint"))));
 				}
-				chart.getXYPlot().getDomainAxis().setLabel(graph.getProperty("x.axis"));
-				chart.getXYPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
-				if (graph.getProperty("auto.resize").equals("true")) {
+				chart.getXYPlot().getDomainAxis().setLabel(graph.getProperty("x.axis","time"));
+				chart.getXYPlot().getRangeAxis().setLabel(graph.getProperty("y.axis",""));
+				if (graph.getProperty("auto.resize","true").equals("true")) {
 					resize.setSelected(true);
-				}
-				else {
+				} else {
 					resize.setSelected(false);
 				}
-				if (graph.containsKey("LogX") && graph.getProperty("LogX").equals("true")) {
+				if (graph.containsKey("LogX") && graph.getProperty("LogX","false").equals("true")) {
 					LogX.setSelected(true);
-				}
-				else {
+				} else {
 					LogX.setSelected(false);
 				}
-				if (graph.containsKey("LogY") && graph.getProperty("LogY").equals("true")) {
+				if (graph.containsKey("LogY") && graph.getProperty("LogY","false").equals("true")) {
 					LogY.setSelected(true);
-				}
-				else {
+				} else {
 					LogY.setSelected(false);
 				}
 				if (graph.containsKey("visibleLegend") && graph.getProperty("visibleLegend").equals("false")) {
 					visibleLegend.setSelected(false);
-				}
-				else {
+				} else {
 					visibleLegend.setSelected(true);
 				}
 				int next = 0;
@@ -5902,37 +6268,37 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					boolean connected, filled, visible;
 					if (graph.getProperty("species.connected." + next).equals("true")) {
 						connected = true;
-					}
-					else {
+					} else {
 						connected = false;
 					}
 					if (graph.getProperty("species.filled." + next).equals("true")) {
 						filled = true;
-					}
-					else {
+					} else {
 						filled = false;
 					}
 					if (graph.getProperty("species.visible." + next).equals("true")) {
 						visible = true;
-					}
-					else {
+					} else {
 						visible = false;
 					}
 					int xnumber = 0;
 					if (graph.containsKey("species.xnumber." + next)) {
 						xnumber = Integer.parseInt(graph.getProperty("species.xnumber." + next));
 					}
-					graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape." + next)), graph.getProperty("species.paint." + next)
-							.trim(), filled, visible, connected, graph.getProperty("species.run.number." + next), graph.getProperty("species.id."
-							+ next), graph.getProperty("species.name." + next), xnumber,
-							Integer.parseInt(graph.getProperty("species.number." + next)), graph.getProperty("species.directory." + next)));
+					graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape." + next)), 
+							graph.getProperty("species.paint." + next).trim(), filled, visible, connected, 
+							graph.getProperty("species.run.number." + next), "time",
+							graph.getProperty("species.id."	+ next), graph.getProperty("species.name." + next), 
+							xnumber, Integer.parseInt(graph.getProperty("species.number." + next)), 
+							graph.getProperty("species.directory." + next)));
 					next++;
 				}
 				updateXNumber = false;
 				XVariable.addItem("time");
 				refresh();
 			}
-			catch (IOException except) {
+			catch (Exception e) {
+				e.printStackTrace();
 				JOptionPane.showMessageDialog(Gui.frame, "Unable To Load Graph!", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -5942,7 +6308,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				FileInputStream load = new FileInputStream(new File(filename));
 				graph.load(load);
 				load.close();
-				chart.setTitle(graph.getProperty("title"));
+				chart.setTitle(graph.getProperty("title","Results"));
 				if (graph.containsKey("chart.background.paint")) {
 					chart.setBackgroundPaint(new Color(Integer.parseInt(graph.getProperty("chart.background.paint"))));
 				}
@@ -5952,24 +6318,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (graph.containsKey("plot.range.grid.line.paint")) {
 					chart.getCategoryPlot().setRangeGridlinePaint(new Color(Integer.parseInt(graph.getProperty("plot.range.grid.line.paint"))));
 				}
-				chart.getCategoryPlot().getDomainAxis().setLabel(graph.getProperty("x.axis"));
-				chart.getCategoryPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
+				chart.getCategoryPlot().getDomainAxis().setLabel(graph.getProperty("x.axis",""));
+				chart.getCategoryPlot().getRangeAxis().setLabel(graph.getProperty("y.axis",""));
 				if (graph.containsKey("gradient") && graph.getProperty("gradient").equals("true")) {
 					((BarRenderer) chart.getCategoryPlot().getRenderer()).setBarPainter(new GradientBarPainter());
-				}
-				else {
+				} else {
 					((BarRenderer) chart.getCategoryPlot().getRenderer()).setBarPainter(new StandardBarPainter());
 				}
 				if (graph.containsKey("shadow") && graph.getProperty("shadow").equals("false")) {
 					((BarRenderer) chart.getCategoryPlot().getRenderer()).setShadowVisible(false);
-				}
-				else {
+				} else {
 					((BarRenderer) chart.getCategoryPlot().getRenderer()).setShadowVisible(true);
 				}
 				if (graph.containsKey("visibleLegend") && graph.getProperty("visibleLegend").equals("false")) {
 					visibleLegend.setSelected(false);
-				}
-				else {
+				} else {
 					visibleLegend.setSelected(true);
 				}
 				int next = 0;
@@ -5978,8 +6341,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					Paint paint;
 					if (color.startsWith("Custom_")) {
 						paint = new Color(Integer.parseInt(color.replace("Custom_", "")));
-					}
-					else {
+					} else {
 						paint = colors.get(color);
 					}
 					probGraphed.add(new GraphProbs(paint, color, graph.getProperty("species.id." + next), graph.getProperty("species.name." + next),
@@ -6089,6 +6451,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								String compare = g.getID().replace(" (", "~");
 								if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
 									g.setNumber(i - 1);
+									set = true;
+								}
+								if (!g.getXid().equals("time") && graphSpecies.get(i).equals(g.getXid())) {
+									g.setXNumber(i);
 									set = true;
 								}
 							}
@@ -6287,6 +6653,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									g.setNumber(i - 1);
 									set = true;
 								}
+								if (!g.getXid().equals("time") && graphSpecies.get(i).equals(g.getXid())) {
+									g.setXNumber(i);
+									set = true;
+								}
 							}
 							if (g.getNumber() + 1 < graphSpecies.size() && set) {
 								graphData.add(new XYSeries(g.getSpecies()));
@@ -6367,6 +6737,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								String compare = g.getID().replace(" (", "~");
 								if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
 									g.setNumber(i - 1);
+									set = true;
+								}
+								if (!g.getXid().equals("time") && graphSpecies.get(i).equals(g.getXid())) {
+									g.setXNumber(i);
 									set = true;
 								}
 							}
@@ -6592,6 +6966,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									g.setNumber(i - 1);
 									set = true;
 								}
+								if (!g.getXid().equals("time") && graphSpecies.get(i).equals(g.getXid())) {
+									g.setXNumber(i);
+									set = true;
+								}
 							}
 							if (g.getNumber() + 1 < graphSpecies.size() && set) {
 								graphData.add(new XYSeries(g.getSpecies()));
@@ -6808,12 +7186,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private boolean speciesFilled, speciesVisible, speciesConnected;
 
-		private String runNumber, species, directory, id;
+		private String runNumber, species, directory, xid, id;
 
 		private int xnumber, number;
 
-		private GraphSpecies(Shape s, String p, boolean filled, boolean visible, boolean connected, String runNumber, String id, String species,
-				int xnumber, int number, String directory) {
+		private GraphSpecies(Shape s, String p, boolean filled, boolean visible, boolean connected, 
+				String runNumber, String xid, String id, String species, int xnumber, int number, String directory) {
 			sP = new ShapeAndPaint(s, p);
 			this.speciesFilled = filled;
 			this.speciesVisible = visible;
@@ -6823,6 +7201,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			this.xnumber = xnumber;
 			this.number = number;
 			this.directory = directory;
+			this.xid = xid;
 			this.id = id;
 		}
 
@@ -6898,6 +7277,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			return directory;
 		}
 
+		private String getXid() {
+			return xid;
+		}
+	
 		private String getID() {
 			return id;
 		}
@@ -8134,7 +8517,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		for (String s : data) {
 			if (!s.split(" ")[0].equals("#total")) {
-				graphProbs.add(s.split(" ")[0]);
+				graphProbs.add(s.split(" ")[0].replace("-", ""));
 			}
 		}
 	}

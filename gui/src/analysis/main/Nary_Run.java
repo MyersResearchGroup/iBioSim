@@ -157,7 +157,7 @@ public class Nary_Run implements ActionListener, Runnable
 	/*
 	 * Data used for monteCarlo abstraction
 	 */
-	private final double				timeLimit, printInterval, minTimeStep, timeStep;
+	private final double				initialTime, outputStartTime, timeLimit, printInterval, minTimeStep, timeStep;
 
 	private final int					run;												// Data
 																							// used
@@ -220,6 +220,8 @@ public class Nary_Run implements ActionListener, Runnable
 
 	private final double				absError;
 
+	private final double				relError;
+
 	/**
 	 * This constructs a new Nary_Run object. This object is a GUI that contains
 	 * input fields for the nary abstraction. This constructor initializes the
@@ -228,23 +230,26 @@ public class Nary_Run implements ActionListener, Runnable
 	public Nary_Run(Component component, JComboBox simulators, String[] getFilename,
 			String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot,
 			JRadioButton xhtml, JRadioButton nary, JRadioButton ODE, JRadioButton monteCarlo,
-			double timeLimit, String useInterval, double printInterval, double minTimeStep,
+			double initialTime, double outputStartTime, double timeLimit, String useInterval, double printInterval, double minTimeStep,
 			double timeStep, String outDir, long rndSeed, int run, String printer_id,
 			String printer_track_quantity, String[] intSpecies, double rap1, double rap2,
 			double qss, int con, Log log, Gui biomodelsim, JTabbedPane simTab, String root,
 			String direct, String modelFile, JRadioButton abstraction, AbstPane abstPane,
-			double absError)
+			double absError, double relError)
 	{
 		separator = Gui.separator;
 
 		// intitializes the member variables
 		this.absError = absError;
+		this.relError = relError;
 		this.root = root;
 		this.rap1 = rap1;
 		this.rap2 = rap2;
 		this.qss = qss;
 		this.con = con;
 		this.intSpecies = intSpecies;
+		this.initialTime = initialTime;
+		this.outputStartTime = outputStartTime;
 		this.timeLimit = timeLimit;
 		this.printInterval = printInterval;
 		this.minTimeStep = minTimeStep;
@@ -731,7 +736,7 @@ public class Nary_Run implements ActionListener, Runnable
 		String[] finalS = Utility.getList(finalStates, finalState);
 		Run runProgram = new Run(null);
 		naryCancel.addActionListener(runProgram);
-		Nary_Run.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep, timeStep,
+		Nary_Run.createNaryProperties(initialTime, outputStartTime, timeLimit, useInterval, printInterval, minTimeStep, timeStep,
 				outDir, rndSeed, run, 1, printer_id, printer_track_quantity, getFilename,
 				naryFrame, filename, monteCarlo, stopE, stopR, finalS, inhib, consLevel,
 				getSpeciesProps, conLevel, termCond, intSpecies, rap1, rap2, qss, con, counts,
@@ -749,8 +754,8 @@ public class Nary_Run implements ActionListener, Runnable
 		}
 		runProgram.execute(filename, fba, sbml, dot, xhtml, naryFrame, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, biomodelsim,
-				simTab, root, progress, "", null, direct, timeLimit, timeLimit * run, modelFile,
-				abstPane, abstraction, null, null, absError, timeStep, printInterval, run, rndSeed,
+				simTab, root, progress, "", null, direct, initialTime, outputStartTime, timeLimit, timeLimit * run, modelFile,
+				abstPane, abstraction, null, null, absError, relError, timeStep, printInterval, run, rndSeed,
 				true, label, running);
 		running.setCursor(null);
 		running.dispose();
@@ -761,7 +766,7 @@ public class Nary_Run implements ActionListener, Runnable
 	 * This method is given what data is entered into the nary frame and creates
 	 * the nary properties file from that information.
 	 */
-	public static void createNaryProperties(double timeLimit, String useInterval,
+	public static void createNaryProperties(double initialTime, double outputStartTime, double timeLimit, String useInterval,
 			double printInterval, double minTimeStep, double timeStep, String outDir, long rndSeed,
 			int run, int numPaths, String printer_id, String printer_track_quantity,
 			String[] getFilename, Component component, String filename, JRadioButton monteCarlo,
@@ -832,6 +837,8 @@ public class Nary_Run implements ActionListener, Runnable
 		}
 		if (monteCarlo.isSelected())
 		{
+			nary.setProperty("simulation.initial.time", "" + initialTime);
+			nary.setProperty("simulation.output.start.time", "" + outputStartTime);
 			nary.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
 			if (useInterval.equals("Print Interval"))
 			{

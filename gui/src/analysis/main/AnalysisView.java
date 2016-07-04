@@ -20,7 +20,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
@@ -60,23 +59,24 @@ import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Algorithm;
 import org.jlibsedml.AlgorithmParameter;
 import org.jlibsedml.Annotation;
+import org.jlibsedml.DataGenerator;
 import org.jlibsedml.Libsedml;
-import org.jlibsedml.Model;
+import org.jlibsedml.OneStep;
 import org.jlibsedml.Range;
 import org.jlibsedml.RepeatedTask;
-import org.jlibsedml.SEDBase;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
-import org.jlibsedml.SedMLError;
 import org.jlibsedml.Simulation;
+import org.jlibsedml.SteadyState;
 import org.jlibsedml.SubTask;
 import org.jlibsedml.Task;
 import org.jlibsedml.UniformRange;
 import org.jlibsedml.UniformTimeCourse;
-import org.jlibsedml.XMLException;
+import org.jlibsedml.Variable;
+import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
-import org.jlibsedml.modelsupport.SUPPORTED_LANGUAGE;
+import org.jmathml.ASTNode;
 
 import verification.AbstPane;
 import biomodel.gui.schematic.ModelEditor;
@@ -100,11 +100,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private JRadioButton		ODE, monteCarlo, markov, fba, sbml, dot, xhtml;
 
-	private JTextField			limit, interval, minStep, step, absErr, seed, runs, fileStem;
+	private JTextField			initialTimeField, outputStartTimeField, limit, interval, minStep, step, relErr, absErr, seed, runs, fileStem;
 
 	private JComboBox			intervalLabel;
 
-	private JLabel				limitLabel, minStepLabel, stepLabel, errorLabel, seedLabel, runsLabel, fileStemLabel;
+	private JLabel				initialTimeLabel, outputStartTimeLabel, limitLabel, minStepLabel, stepLabel, relErrorLabel, errorLabel, seedLabel, runsLabel, fileStemLabel;
 
 	private JLabel				description, explanation;
 
@@ -115,18 +115,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	private Object[]			postAbstractions	= new Object[0];
 
 	private JComboBox			simulators;																			// Combo
-																														// Box
-																														// for
-																														// possible
-																														// simulators
 
 	private JLabel				simulatorsLabel;																		// Label
-																														// for
-																														// possible
-																														// simulators
 
 	private JTextField			rapid1, rapid2, qssa, maxCon, diffStoichAmp;											// advanced
-																														// options
 
 	private JComboBox			bifurcation;
 
@@ -137,31 +129,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	private JLabel				rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, iSSATypeLabel, iSSAAdaptiveLabel, bifurcationLabel;
 
 	private String				sbmlFile;																													// sbml
-																																							// file
-																																							// and
-																																							// root
-																																							// directory
 
 	private final String		root;
 
 	private final Gui			gui;																														// reference
-																																							// to
-																																							// the
-																																							// tstubd
-																																							// class
 
 	private String				simName;																													// simulation
-																																							// id
 
 	private final Log			log;																														// the
-																																							// log
 
 	private final JTabbedPane	simTab;																													// the
-																																							// simulation
-																																							// tab
 
 	private ModelEditor			modelEditor;																												// model
-																																							// editor
 
 	private JCheckBox			append, concentrations, genRuns, genStats;
 
@@ -191,7 +170,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private JComboBox			transientProperties;
 
-	private final JTextField	modelFileField;
+	private final JTextField	modelFileField, taskId;
+	
+	private JComboBox			subTaskList;
 
 	private String				selectedMarkovSim	= null;
 
@@ -199,15 +180,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private SEDMLDocument		sedmlDoc			= null;
 
-	private String				sedmlFilename		= "";
-
 	private final Preferences	biosimrc;
 
+	private double				initialTime;
+	private double				outputStartTime;
 	private double				timeLimit;
 	private double				printInterval;
 	private double				minTimeStep;
 	private double				timeStep;
 	private double				absError;
+	private double				relError;
 	private long				rndSeed;
 	private int					run;
 	private String				outDir;
@@ -266,9 +248,21 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		biosimrc = Preferences.userRoot();
 
 		JPanel modelFilePanel = new JPanel();
+
+		fileStemLabel = new JLabel("Task ID:");
+		taskId = new JTextField(simName);
+		taskId.setEditable(false);
+		fileStem = new JTextField("", 15);
+		subTaskList = new JComboBox();
+		subTaskList.addItem("(none)");
+		
 		JLabel modelFileLabel = new JLabel("Model File:");
 		modelFileField = new JTextField(this.modelFile);
 		modelFileField.setEditable(false);
+		modelFilePanel.add(fileStemLabel);
+		modelFilePanel.add(taskId);
+		modelFilePanel.add(fileStem);
+		modelFilePanel.add(subTaskList);
 		modelFilePanel.add(modelFileLabel);
 		modelFilePanel.add(modelFileField);
 
@@ -289,7 +283,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		this.add(buttonPanel, BorderLayout.NORTH);
 		this.add(simulationOptions, BorderLayout.CENTER);
 		loadPropertiesFile(simName, modelFile.replace(".xml", ""));
-		loadSEDML();
+		loadSEDML("");
+		subTaskList.addActionListener(this);
 	}
 
 	/* Creates the abstraction radio button options */
@@ -335,7 +330,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/* Creates the radio buttons for selecting the simulation type */
 	private JPanel createSimulationTypeOptions()
 	{
-		JLabel choose2 = new JLabel("Simulation Type:");
+		JLabel choose2 = new JLabel("Analysis Type:");
 		ODE = new JRadioButton("ODE");
 		monteCarlo = new JRadioButton("Monte Carlo");
 		markov = new JRadioButton("Markov");
@@ -477,8 +472,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		simulators = new JComboBox();
 		// simulators.setSelectedItem("rkf45");
 		simulators.addActionListener(this);
+		initialTimeLabel = new JLabel("Initial Time:");
+		initialTimeField = new JTextField(biosimrc.get("biosim.sim.initial.time", ""), 15);
+		outputStartTimeLabel = new JLabel("Output Start Time:");
+		outputStartTimeField = new JTextField(biosimrc.get("biosim.sim.output.start.time", ""), 15);
 		limitLabel = new JLabel("Time Limit:");
-		limit = new JTextField(biosimrc.get("biosim.sim.limit", ""), 39);
+		limit = new JTextField(biosimrc.get("biosim.sim.limit", ""), 15);
 		String[] intervalChoices = { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
 		intervalLabel = new JComboBox(intervalChoices);
 		intervalLabel.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
@@ -489,45 +488,29 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		step = new JTextField(biosimrc.get("biosim.sim.step", ""), 15);
 		errorLabel = new JLabel("Absolute Error:");
 		absErr = new JTextField(biosimrc.get("biosim.sim.error", ""), 15);
+		relErrorLabel = new JLabel("Relative Error:");
+		relErr = new JTextField(biosimrc.get("biosim.sim.relative.error", ""), 15);
 		seedLabel = new JLabel("Random Seed:");
 		seed = new JTextField(biosimrc.get("biosim.sim.seed", ""), 15);
 		runsLabel = new JLabel("Runs:");
 		runs = new JTextField(biosimrc.get("biosim.sim.runs", ""), 15);
-		fileStemLabel = new JLabel("Simulation ID:");
-		fileStem = new JTextField("", 15);
 		JPanel inputHolder = new JPanel(new BorderLayout());
 		JPanel inputHolderLeft;
 		JPanel inputHolderRight;
 		if (modelFile.contains(".lpn"))
 		{
-			inputHolderLeft = new JPanel(new GridLayout(11, 1));
-			inputHolderRight = new JPanel(new GridLayout(11, 1));
+			inputHolderLeft = new JPanel(new GridLayout(3, 1));
+			inputHolderRight = new JPanel(new GridLayout(3, 1));
 		}
 		else
 		{
-			inputHolderLeft = new JPanel(new GridLayout(10, 1));
-			inputHolderRight = new JPanel(new GridLayout(10, 1));
+			inputHolderLeft = new JPanel(new GridLayout(2, 1));
+			inputHolderRight = new JPanel(new GridLayout(2, 1));
 		}
 		inputHolderLeft.add(simulatorsLabel);
 		inputHolderRight.add(simulators);
 		inputHolderLeft.add(explanation);
 		inputHolderRight.add(description);
-		inputHolderLeft.add(limitLabel);
-		inputHolderRight.add(limit);
-		inputHolderLeft.add(intervalLabel);
-		inputHolderRight.add(interval);
-		inputHolderLeft.add(minStepLabel);
-		inputHolderRight.add(minStep);
-		inputHolderLeft.add(stepLabel);
-		inputHolderRight.add(step);
-		inputHolderLeft.add(errorLabel);
-		inputHolderRight.add(absErr);
-		inputHolderLeft.add(seedLabel);
-		inputHolderRight.add(seed);
-		inputHolderLeft.add(runsLabel);
-		inputHolderRight.add(runs);
-		inputHolderLeft.add(fileStemLabel);
-		inputHolderRight.add(fileStem);
 		if (modelFile.contains(".lpn"))
 		{
 			JLabel prop = new JLabel("Property:");
@@ -545,11 +528,40 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			transientProperties.setPreferredSize(new Dimension(5, 10));
 			inputHolderLeft.add(prop);
 			inputHolderRight.add(transientProperties);
-		}
+		}	
 		inputHolder.add(inputHolderLeft, "West");
 		inputHolder.add(inputHolderRight, "Center");
 		JPanel simulationOptions = new JPanel();
 		simulationOptions.add(inputHolder);
+		
+		JPanel simOptionsHolder = new JPanel(new BorderLayout());
+		JPanel simOptionsHolderLeft;
+		JPanel simOptionsHolderRight;
+		simOptionsHolderLeft = new JPanel(new GridLayout(5, 2));
+		simOptionsHolderRight = new JPanel(new GridLayout(5, 2));
+		simOptionsHolderLeft.add(initialTimeLabel);
+		simOptionsHolderLeft.add(initialTimeField);
+		simOptionsHolderRight.add(outputStartTimeLabel);
+		simOptionsHolderRight.add(outputStartTimeField);
+		simOptionsHolderLeft.add(limitLabel);
+		simOptionsHolderLeft.add(limit);
+		simOptionsHolderRight.add(intervalLabel);
+		simOptionsHolderRight.add(interval);
+		simOptionsHolderLeft.add(minStepLabel);
+		simOptionsHolderLeft.add(minStep);
+		simOptionsHolderRight.add(stepLabel);
+		simOptionsHolderRight.add(step);
+		simOptionsHolderLeft.add(errorLabel);
+		simOptionsHolderLeft.add(absErr);
+		simOptionsHolderRight.add(relErrorLabel);
+		simOptionsHolderRight.add(relErr);
+		simOptionsHolderLeft.add(seedLabel);
+		simOptionsHolderLeft.add(seed);
+		simOptionsHolderRight.add(runsLabel);
+		simOptionsHolderRight.add(runs);
+		simOptionsHolder.add(simOptionsHolderLeft, "West");
+		simOptionsHolder.add(simOptionsHolderRight, "Center");
+		simulationOptions.add(simOptionsHolder);
 		return simulationOptions;
 	}
 
@@ -561,7 +573,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	public void actionPerformed(ActionEvent e)
 	{
 		change = true;
-		if (e.getSource() == noAbstraction || e.getSource() == expandReactions)
+		if (e.getSource() == subTaskList) {
+			String subTask = "";
+			if (!((String)subTaskList.getSelectedItem()).equals("(none)")) {
+				subTask = (String)subTaskList.getSelectedItem();
+			}
+			saveSEDML();
+			loadSEDML(subTask);
+		}
+		else if (e.getSource() == noAbstraction || e.getSource() == expandReactions)
 		{
 			enableNoAbstraction();
 		}
@@ -768,6 +788,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			setupToAppendRuns(true);
 		}
+		else if (e.getSource() == fileStem)
+		{
+			System.out.println("ACTION");
+		}
 	}
 
 	/* Add an abstraction method */
@@ -853,6 +877,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	{
 		if (append.isSelected())
 		{
+			initialTimeLabel.setEnabled(false);
+			initialTimeField.setEnabled(false);
+			outputStartTimeLabel.setEnabled(false);
+			outputStartTimeField.setEnabled(false);
 			limit.setEnabled(false);
 			interval.setEnabled(false);
 			limitLabel.setEnabled(false);
@@ -885,6 +913,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					load.close();
 					if (getProps.containsKey("monte.carlo.simulation.time.limit"))
 					{
+						initialTimeField.setText(getProps.getProperty("simulation.initial.time"));
+						outputStartTimeField.setText(getProps.getProperty("simulation.output.start.time"));
 						minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
 						step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
 						limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
@@ -899,9 +929,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		else
 		{
+			initialTimeField.setEnabled(true);
+			initialTimeLabel.setEnabled(true);
+			outputStartTimeField.setEnabled(true);
+			outputStartTimeLabel.setEnabled(true);
 			limit.setEnabled(true);
-			interval.setEnabled(true);
 			limitLabel.setEnabled(true);
+			interval.setEnabled(true);
 			intervalLabel.setEnabled(true);
 		}
 	}
@@ -1079,13 +1113,17 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			simulationName = simName + " " + direct;
 			directory = direct;
 		}
-		exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root + Gui.separator + simName, stateAbstraction, 1, intSpecies, log, gui, simTab, root, progress, simulationName, modelEditor, directory, timeLimit, runTime,
-				modelFile, lpnAbstraction, reactionAbstraction, expandReactions, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label, running);
+		exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
+				+ Gui.separator + simName, stateAbstraction, 1, intSpecies, log, gui, simTab, root, progress, simulationName, modelEditor, directory,
+				initialTime, outputStartTime, timeLimit, runTime, modelFile, lpnAbstraction, reactionAbstraction, expandReactions, lpnProperty, absError, relError, timeStep, printInterval,
+				run, rndSeed, refresh, label, running);
 		if (stateAbstraction.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && exit == 0)
 		{
 			simProp = simProp.replace("\\", "/");
-			Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split("/"), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + Gui.separator + simName, rndSeed, run,
-					printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, gui, simTab, root, directory, modelFile, reactionAbstraction, lpnAbstraction, absError);
+			Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split("/"), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo,
+					initialTime, outputStartTime, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + Gui.separator + simName,
+					rndSeed, run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, gui, simTab, root, directory, modelFile,
+					reactionAbstraction, lpnAbstraction, absError, relError);
 			nary_Run.open();
 		}
 		running.setCursor(null);
@@ -1110,11 +1148,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 */
 	public boolean save(String direct)
 	{
+		initialTime = 0.0;
+		outputStartTime = 0.0;
 		timeLimit = 100.0;
 		printInterval = 1.0;
 		minTimeStep = 0.0;
 		timeStep = 1.0;
 		absError = 1.0e-9;
+		relError = 0.0;
 		rndSeed = 314159;
 		run = 1;
 		intSpecies = getInterestingSpecies();
@@ -1129,6 +1170,24 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		sim = (String) simulators.getSelectedItem();
 		simProp = sbmlProp;
 
+		try
+		{
+			initialTime = Double.parseDouble(initialTimeField.getText().trim());
+		}
+		catch (Exception e1)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Initial Time Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		try
+		{
+			outputStartTime = Double.parseDouble(outputStartTimeField.getText().trim());
+		}
+		catch (Exception e1)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Output Start Time Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 		try
 		{
 			timeLimit = Double.parseDouble(limit.getText().trim());
@@ -1211,6 +1270,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		catch (Exception e1)
 		{
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Absolute Error Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		try
+		{
+			relError = Double.parseDouble(relErr.getText().trim());
+		}
+		catch (Exception e1)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Relative Error Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		try
@@ -1425,8 +1493,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		String propName = simProp.substring(0, simProp.length() - getFilename[getFilename.length - 1].length()) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		log.addText("Creating properties file:\n" + propName + "\n");
 		int numPaths = Integer.parseInt((String) (bifurcation.getSelectedItem()));
-		Run.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths, intSpecies, printer_id, printer_track_quantity, generate_statistics, sbmlProp.split("/"), selectedButtons, this, sbmlProp, rap1, rap2,
-				qss, con, stoichAmp, preAbs, loopAbs, postAbs, lpnAbstraction, mpde.isSelected(), meanPath.isSelected(), adaptive.isSelected());
+		Run.createProperties(initialTime, outputStartTime, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError, relError, ".", rndSeed,
+				run, numPaths, intSpecies, printer_id, printer_track_quantity, generate_statistics, sbmlProp.split("/"), selectedButtons, this,
+				sbmlProp, rap1, rap2, qss, con, stoichAmp, preAbs, loopAbs, postAbs, lpnAbstraction, mpde.isSelected(), meanPath.isSelected(),
+				adaptive.isSelected());
 		if (direct.equals("."))
 		{
 			outDir = simName;
@@ -1470,6 +1540,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			if (!fileStem.getText().trim().equals(""))
 			{
+				new File(root + Gui.separator + simName + Gui.separator + fileStem.getText().trim()).mkdir();
 				getProps.setProperty("file.stem", fileStem.getText().trim());
 			}
 			if (monteCarlo.isSelected() || ODE.isSelected())
@@ -1524,9 +1595,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		change = false;
 		return true;
 	}
-
-	private void saveSEDML()
-	{
+	
+	private void saveSEDML() {
+		double initialTime = Double.parseDouble(initialTimeField.getText().trim());
+		double outputStartTime = Double.parseDouble(outputStartTimeField.getText().trim());
 		double timeLimit = Double.parseDouble(limit.getText().trim());
 		double printInterval = Double.parseDouble(interval.getText().trim());
 		int numberOfSteps;
@@ -1538,33 +1610,65 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			numberOfSteps = (int) Math.floor(timeLimit / printInterval) + 1;
 		}
-		sedmlDoc = new SEDMLDocument(1, 2);
 		SedML sedml = sedmlDoc.getSedMLModel();
-		List<Simulation> simulations = sedml.getSimulations();
-		UniformTimeCourse simulation;
-		if (simulations.size() > 0)
-		{
-			simulation = (UniformTimeCourse) simulations.get(0);
-			simulation.setOutputEndTime(timeLimit);
-			simulation.setNumberOfPoints(numberOfSteps);
-			simulation.setAlgorithm(getAlgorithm());
+		//List<Simulation> simulations = sedml.getSimulations();
+		String taskId = simName;
+		if (!fileStem.getText().trim().equals("")) {
+			taskId = simName + "__" + fileStem.getText().trim();
 		}
-		else
-		{
-			Algorithm algo = getAlgorithm();
-			simulation = new UniformTimeCourse("simId", "", 0, 0, timeLimit, numberOfSteps, algo);
-			sedml.addSimulation(simulation);
-			Model model = new Model("modelId", "", SUPPORTED_LANGUAGE.SBML_GENERIC.getURN(), modelFile);
-			sedml.addModel(model);
-			Task task = new Task(simName, "", model.getId(), simulation.getId());
-			sedml.addTask(task);
+		AbstractTask task = sedml.getTaskWithId(taskId);
+		Simulation simulation = sedml.getSimulation(taskId+"_sim");
+		if (simulation != null) {
+			sedml.removeSimulation(simulation);
 		}
-		if (!runs.getText().trim().equals("1"))
-		{
+//		Model model = sedml.getModelWithId(simName+"_model");
+//		if (model!=null) {
+//			sedml.removeModel(model);
+//		}
+		if (task != null) {
+			sedml.removeTask(task);
+		}
+		Algorithm algo = getAlgorithm();
+		if (algo.getKisaoID().equals(GlobalConstants.KISAO_FBA)) {
+			simulation = new SteadyState(taskId+"_sim", "", algo);
+		} else if (algo.getKisaoID().equals(GlobalConstants.KISAO_GENERIC)) {
+			simulation = new SteadyState(taskId+"_sim", "", algo);
+			// TODO: need to deal with transient Markov chain method which is a type of UniformTimeCourse
+		} else {
+			simulation = new UniformTimeCourse(taskId+"_sim", "", initialTime, outputStartTime, timeLimit, numberOfSteps, algo);
+			if (intervalLabel.getSelectedItem().equals("Print Interval")) {
+				Element para = new Element("printInterval");
+				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+				para.setAttribute("Print_Interval", interval.getText());
+				Annotation ann = new Annotation(para);
+				simulation.addAnnotation(ann);
+			} else if (intervalLabel.getSelectedItem().equals("Minimum Print Interval")) {
+				Element para = new Element("printInterval");
+				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+				para.setAttribute("Minimum_Print_Interval", interval.getText());
+				Annotation ann = new Annotation(para);
+				simulation.addAnnotation(ann);
+			}
+		}
+		sedml.addSimulation(simulation);
+		//model = new Model(taskId+"_model", "", SUPPORTED_LANGUAGE.SBML_GENERIC.getURN(), modelFile);
+		//sedml.addModel(model);
+		task = new Task(taskId, "", taskId+"_model", simulation.getId());
+		sedml.addTask(task);
+		DataGenerator dataGen = sedml.getDataGeneratorWithId("time_"+taskId+"_dg");
+		if (dataGen != null) {
+			sedml.removeDataGenerator(dataGen);
+		}
+		Variable variable = new Variable("time_"+taskId,"",taskId,VariableSymbol.TIME);
+		ASTNode math = Libsedml.parseFormulaString("time_"+taskId);
+		dataGen = new DataGenerator("time_"+taskId+"_dg","time",math);
+		dataGen.addVariable(variable);
+		sedml.addDataGenerator(dataGen);
+		if (!runs.getText().trim().equals("1")) {
 			int numRuns = Integer.parseInt(runs.getText().trim());
 			Range range = new UniformRange("range", 1, numRuns, numRuns);
-			SubTask subTask = new SubTask(simName);
-			RepeatedTask repeatedTask = new RepeatedTask("repeat_" + simName, "", true, "range");
+			SubTask subTask = new SubTask(taskId);
+			RepeatedTask repeatedTask = new RepeatedTask("repeat_" + taskId, "", true, "range");
 			repeatedTask.addRange(range);
 			repeatedTask.addSubtask(subTask);
 			sedml.addTask(repeatedTask);
@@ -1573,100 +1677,83 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			if (simTab.getComponentAt(i) instanceof Graph)
 			{
-				((Graph) simTab.getComponentAt(i)).saveSEDML(sedmlDoc, simName);
+				((Graph) simTab.getComponentAt(i)).saveSEDML(sedmlDoc,simName,null);
 			}
 		}
-		File sedmlFile = new File(sedmlFilename);
-		sedmlDoc.writeDocument(sedmlFile);
+		gui.writeSEDMLDocument();
 	}
 
-	private void loadSEDML()
+	private void loadSEDML(String subTask)
 	{
-		sedmlFilename = root + Gui.separator + simName + Gui.separator + modelFile.replace(".xml", "") + "-sedml.xml";
-		File sedmlFile = new File(sedmlFilename);
-		if (sedmlFile.exists())
+		sedmlDoc = gui.getSEDMLDocument();
+		SedML sedml = sedmlDoc.getSedMLModel();
+		int numRuns = 1;
+		subTaskList.removeAllItems();
+		subTaskList.addItem("(none)");
+		for (AbstractTask task : sedml.getTasks())
 		{
-			try
-			{
-				sedmlDoc = Libsedml.readDocument(sedmlFile);
-				sedmlDoc.validate();
-				if (sedmlDoc.hasErrors())
-				{
-					List<SedMLError> errors = sedmlDoc.getErrors();
-					for (int i = 0; i < errors.size(); i++)
-					{
-						SedMLError error = errors.get(i);
-						System.out.println(error.getMessage());
-					}
-					// return;
-				}
-				SedML sedml = sedmlDoc.getSedMLModel();
-				int numRuns = 1;
-				for (AbstractTask task : sedml.getTasks())
-				{
-					if (task instanceof RepeatedTask)
-					{
-						RepeatedTask repeatedTask = (RepeatedTask) task;
-						for (Range range : repeatedTask.getRanges().values())
-						{
-							if (range instanceof UniformRange)
-							{
-								UniformRange uniformRange = (UniformRange) range;
-								numRuns = uniformRange.getNumberOfPoints();
-							}
-						}
-					}
-				}
-				List<Simulation> simulations = sedml.getSimulations();
-				if (simulations.size() > 0)
-				{
-					// String kisaoId =
-					// simulations.get(0).getAlgorithm().getKisaoID();
-					// KisaoOntology ko = KisaoOntology.getInstance();
-					// KisaoTerm kt = ko.getTermById(kisaoId);
-					// System.out.println(kt.getExactSynonyms());
-					// System.out.println(kt.is_a(ko.getTermById("KISAO:0000377")));
-					setAlgorithm(simulations.get(0).getAlgorithm());
-					if (ODE.isSelected() || monteCarlo.isSelected())
-					{
-						// simulators.setSelectedItem("Runge-Kutta-Fehlberg");
-						// TODO: what java ODE simulator fails on 987
-						// simulators.setSelectedItem("rkf45");
-						UniformTimeCourse simulation = (UniformTimeCourse) simulations.get(0);
-						// KisaoTerm kisaoTerm =
-						// KisaoOntology.getInstance().getTermById(simulation.getAlgorithm().getKisaoID());
-						Annotation annotation = getSEDBaseAnnotation(simulation, "printInterval");
-						if (annotation == null)
-						{
-							intervalLabel.setSelectedItem("Number Of Steps");
-							interval.setText("" + simulation.getNumberOfPoints());
-						}
-						else
-						{
-							Element element = annotation.getAnnotationElementsList().get(0);
-							if (element.getAttribute("Print_Interval") != null)
-							{
-								intervalLabel.setSelectedItem("Print Interval");
-								interval.setText(element.getAttributeValue("Print_Interval"));
-							}
-							else
-							{
-								intervalLabel.setSelectedItem("Minimum Print Interval");
-								interval.setText(element.getAttributeValue("Minimum_Print_Interval"));
-							}
-						}
-						limit.setText("" + simulation.getOutputEndTime());
-						runs.setText("" + numRuns);
-					}
-					else if (fba.isSelected())
-					{
-						absErr.setText("1e-4");
+			if (task.getId().startsWith(simName+"__")) {
+				subTaskList.addItem(task.getId().replace(simName+"__",""));
+			}
+			// TODO: this is hack to get number of runs, needs to be fixed
+			if (task instanceof RepeatedTask) {
+				RepeatedTask repeatedTask = (RepeatedTask) task;
+				if (!repeatedTask.getSubTasks().values().contains(simName)) continue;
+				for (Range range : repeatedTask.getRanges().values()) {
+					if (range instanceof UniformRange) {
+						UniformRange uniformRange = (UniformRange)range;
+						numRuns = uniformRange.getNumberOfPoints();
 					}
 				}
 			}
-			catch (XMLException e)
+		}
+		String taskId = simName;
+		if (subTask!=null && !subTask.equals("")) {
+			taskId = taskId + "__" + subTask;
+			subTaskList.setSelectedItem(subTask);
+		}
+		AbstractTask task = sedml.getTaskWithId(taskId);
+		if (task != null) {
+			Simulation simulation = sedml.getSimulation(task.getSimulationReference());
+			setAlgorithm(simulation.getAlgorithm());
+			fileStem.setText(subTask);
+			if (ODE.isSelected()||monteCarlo.isSelected())
 			{
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to load SED-ML file!", "Error Loading SED-ML File", JOptionPane.ERROR_MESSAGE);
+				// TODO: what java ODE simulator fails on 987
+				if (simulation instanceof UniformTimeCourse) {
+					UniformTimeCourse utcSimulation = (UniformTimeCourse) simulation;
+					String printInterval = SEDMLutilities.getSEDBaseAnnotation(simulation, "printInterval", "Print_Interval", null);
+					if (printInterval != null)
+					{
+						intervalLabel.setSelectedItem("Print Interval");
+						interval.setText(printInterval);
+					} else {
+						printInterval = SEDMLutilities.getSEDBaseAnnotation(simulation, "printInterval", "Minimum_Print_Interval", null);
+						if (printInterval != null) {
+							intervalLabel.setSelectedItem("Minimum Print Interval");
+							interval.setText(printInterval);
+						} else {
+							intervalLabel.setSelectedItem("Number Of Steps");
+							interval.setText("" + utcSimulation.getNumberOfPoints());
+						}
+					}
+					initialTimeField.setText("" + utcSimulation.getInitialTime());
+					outputStartTimeField.setText("" + utcSimulation.getOutputStartTime());
+					limit.setText("" + utcSimulation.getOutputEndTime());
+					runs.setText(""+numRuns);
+				} else if (simulation instanceof OneStep) {
+					OneStep osSimulation = (OneStep) simulation;
+					intervalLabel.setSelectedItem("Number Of Steps");
+					interval.setText("" + 1);
+					initialTimeField.setText("" + 0);
+					outputStartTimeField.setText("" + 0);
+					limit.setText("" + osSimulation.getStep());
+					runs.setText(""+numRuns);
+				}
+			}
+			else if (fba.isSelected())
+			{
+				absErr.setText("1e-4");
 			}
 		}
 	}
@@ -1674,6 +1761,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	private Algorithm getAlgorithm()
 	{
 		Algorithm algorithm = null;
+		Element para = new Element("analysis");
+		para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
 		if (ODE.isSelected())
 		{
 			if (((String) simulators.getSelectedItem()).contains("euler"))
@@ -1687,6 +1776,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			else if (((String) simulators.getSelectedItem()).contains("rkf45") || ((String) simulators.getSelectedItem()).contains("Runge-Kutta-Fehlberg"))
 			{
 				algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
+				para.setAttribute("method", ((String) simulators.getSelectedItem()));
+			} 
+			else {
+				algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
+				para.setAttribute("method", ((String) simulators.getSelectedItem()));
 			}
 		}
 		else if (monteCarlo.isSelected())
@@ -1703,27 +1797,46 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			{
 				algorithm = new Algorithm(GlobalConstants.KISAO_SSA_CR);
 			}
-		}
-		else if (fba.isSelected())
+			else {
+				algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
+				para.setAttribute("method", ((String) simulators.getSelectedItem()));
+			}
+		} 
+		else if (fba.isSelected()) 
 		{
 			algorithm = new Algorithm(GlobalConstants.KISAO_FBA);
 		}
 		else
 		{
 			algorithm = new Algorithm(GlobalConstants.KISAO_GENERIC);
-			Element para = new Element("analysis");
-			para.setAttribute("method", ((String) simulators.getSelectedItem()).replace(" ", "_"));
-			para.setNamespace(Namespace.getNamespace("ibiosim", "http://www.fakeuri.com"));
-			Annotation ann = new Annotation(para);
-			algorithm.addAnnotation(ann);
+			if (sbml.isSelected()) {
+				para.setAttribute("method", "Model");
+			} else if (dot.isSelected()) {
+				para.setAttribute("method", "Network");
+			} else if (xhtml.isSelected()) {
+				para.setAttribute("method", "Browser");
+			} else {
+				para.setAttribute("method", ((String) simulators.getSelectedItem()));
+			}
 		}
-		AlgorithmParameter ap = new AlgorithmParameter(GlobalConstants.KISAO_MINIMUM_STEP_SIZE, minStep.getText());
+		if (expandReactions.isSelected()) {
+			para.setAttribute("abstraction", "Expand Reactions");
+		} else if (reactionAbstraction.isSelected()) {
+			para.setAttribute("abstraction", "Reaction-based");
+		} else if (stateAbstraction.isSelected()) {
+			para.setAttribute("abstraction", "State-based");
+		}
+		Annotation ann = new Annotation(para);
+		algorithm.addAnnotation(ann);
+		AlgorithmParameter ap = new AlgorithmParameter(GlobalConstants.KISAO_MINIMUM_STEP_SIZE,minStep.getText());
 		algorithm.addAlgorithmParameter(ap);
 		ap = new AlgorithmParameter(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE, step.getText());
 		algorithm.addAlgorithmParameter(ap);
 		ap = new AlgorithmParameter(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE, absErr.getText());
 		algorithm.addAlgorithmParameter(ap);
-		ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED, seed.getText());
+		ap = new AlgorithmParameter(GlobalConstants.KISAO_RELATIVE_TOLERANCE,relErr.getText());
+		algorithm.addAlgorithmParameter(ap);
+		ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED,seed.getText());
 		algorithm.addAlgorithmParameter(ap);
 		return algorithm;
 	}
@@ -1732,8 +1845,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	{
 		String kisaoId = algorithm.getKisaoID();
 		KisaoTerm kt = KisaoOntology.getInstance().getTermById(kisaoId);
-		if (kisaoId.equals(GlobalConstants.KISAO_EULER))
-		{
+		String method = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "method", null);
+		if (kisaoId.equals(GlobalConstants.KISAO_EULER)) {
 			ODE.setSelected(true);
 			enableODE();
 			simulators.setSelectedItem("euler");
@@ -1742,22 +1855,23 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			ODE.setSelected(true);
 			enableODE();
-			simulators.setSelectedItem("rkf45");
-		}
-		else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND))
-		{
+			simulators.setSelectedItem((String)"rkf45");
+			if (method!=null) {
+				simulators.setSelectedItem(method);
+			}
+		} else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND)) {
 			ODE.setSelected(true);
 			enableODE();
-			simulators.setSelectedItem("rk8pd");
-		}
-		else if (kisaoId.equals(GlobalConstants.KISAO_GILLESPIE_DIRECT))
-		{
+			simulators.setSelectedItem((String)"rk8pd");
+		} else if (kisaoId.equals(GlobalConstants.KISAO_GILLESPIE) ||
+				kisaoId.equals(GlobalConstants.KISAO_GILLESPIE_DIRECT)) {
 			monteCarlo.setSelected(true);
 			enableMonteCarlo();
-			simulators.setSelectedItem("gillespie");
-		}
-		else if (kisaoId.equals(GlobalConstants.KISAO_SSA_CR))
-		{
+			simulators.setSelectedItem((String)"gillespie");
+			if (method!=null) {
+				simulators.setSelectedItem(method);
+			}
+		} else if (kisaoId.equals(GlobalConstants.KISAO_SSA_CR)) {
 			monteCarlo.setSelected(true);
 			enableMonteCarlo();
 			simulators.setSelectedItem("SSA-CR (Dynamic)");
@@ -1766,9 +1880,22 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			fba.setSelected(true);
 			enableFBA();
-		}
-		else if (kt.is_a(KisaoOntology.ALGORITHM_WITH_DETERMINISTIC_RULES))
-		{
+		} else if (kisaoId.equals(GlobalConstants.KISAO_GENERIC)) {
+			if (method!=null) {
+				if (method.equals("Model")) {
+					sbml.setSelected(true);
+				} else if (method.equals("Network")) {
+					dot.setSelected(true);
+				} else if (method.equals("Browser")) {
+					xhtml.setSelected(true);
+				} else {
+					markov.setSelected(true);
+					if (method!=null) {
+						simulators.setSelectedItem(method);
+					}
+				}
+			}
+		} else if (kt==null || kt.is_a(KisaoOntology.ALGORITHM_WITH_DETERMINISTIC_RULES)) {
 			ODE.setSelected(true);
 			enableODE();
 			simulators.setSelectedItem("rkf45");
@@ -1779,10 +1906,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			enableMonteCarlo();
 			simulators.setSelectedItem("gillespie");
 		}
-		for (AlgorithmParameter ap : algorithm.getListOfAlgorithmParameters())
-		{
-			if (ap.getKisaoID().equals(GlobalConstants.KISAO_MINIMUM_STEP_SIZE))
-			{
+		String abstraction = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "abstraction", null);
+		if (abstraction!=null) {
+			if (abstraction.equals("Expand Reactions")) {
+				expandReactions.setSelected(true);
+			} else if (abstraction.equals("Reaction-based")) {
+				reactionAbstraction.setSelected(true);
+			} else if (abstraction.equals("State-based")) {
+				stateAbstraction.setSelected(true);
+			}
+		}
+		for (AlgorithmParameter ap : algorithm.getListOfAlgorithmParameters()) {
+			if (ap.getKisaoID().equals(GlobalConstants.KISAO_MINIMUM_STEP_SIZE)) {
 				minStep.setText(ap.getValue());
 			}
 			else if (ap.getKisaoID().equals(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE))
@@ -1792,28 +1927,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			else if (ap.getKisaoID().equals(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE))
 			{
 				absErr.setText(ap.getValue());
-			}
-			else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED))
-			{
+			} else if (ap.getKisaoID().equals(GlobalConstants.KISAO_RELATIVE_TOLERANCE)) {
+				relErr.setText(ap.getValue());
+			} else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED)) {
 				seed.setText(ap.getValue());
 			}
 		}
-	}
-
-	private static Annotation getSEDBaseAnnotation(SEDBase sedBase, String name)
-	{
-		@SuppressWarnings("deprecation")
-		List<Annotation> annotations = sedBase.getAnnotation();
-		for (int i = 0; i < annotations.size(); i++)
-		{
-			Annotation annotation = annotations.get(i);
-			List<Element> elements = annotation.getAnnotationElementsList();
-			if (elements.size() > 0 && elements.get(0).getName().equals(name))
-			{
-				return annotation;
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -2050,6 +2169,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					{
 					}
 					else if (key.equals("ode.simulation.time.limit"))
+					{
+					}
+					else if (key.equals("simulation.initial.time"))
+					{
+					}
+					else if (key.equals("simulation.output.start.time"))
 					{
 					}
 					else if (key.equals("ode.simulation.print.interval"))
@@ -2294,6 +2419,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				{
 					absErr.setText("1.0E-9");
 				}
+				if (load.containsKey("ode.simulation.relative.error"))
+				{
+					relErr.setText(load.getProperty("ode.simulation.relative.error"));
+				}
+				else
+				{
+					relErr.setText("0.0");
+				}
 				if (load.containsKey("monte.carlo.simulation.time.step"))
 				{
 					step.setText(load.getProperty("monte.carlo.simulation.time.step"));
@@ -2317,6 +2450,22 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				else
 				{
 					limit.setText("100.0");
+				}
+				if (load.containsKey("simulation.initial.time"))
+				{
+					initialTimeField.setText(load.getProperty("simulation.initial.time"));
+				}
+				else
+				{
+					initialTimeField.setText("0.0");
+				}
+				if (load.containsKey("simulation.output.start.time"))
+				{
+					outputStartTimeField.setText(load.getProperty("simulation.output.start.time"));
+				}
+				else
+				{
+					outputStartTimeField.setText("0.0");
 				}
 				if (load.containsKey("monte.carlo.simulation.print.interval"))
 				{
@@ -2383,6 +2532,22 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					if (load.getProperty("reb2sac.simulation.method").equals("ODE"))
 					{
 						ODE.setSelected(true);
+						if (load.containsKey("simulation.initial.time"))
+						{
+							initialTimeField.setText(load.getProperty("simulation.initial.time"));
+						}
+						else
+						{
+							initialTimeField.setText("0.0");
+						}
+						if (load.containsKey("simulation.output.start.time"))
+						{
+							outputStartTimeField.setText(load.getProperty("simulation.output.start.time"));
+						}
+						else
+						{
+							outputStartTimeField.setText("0.0");
+						}
 						if (load.containsKey("ode.simulation.time.limit"))
 						{
 							limit.setText(load.getProperty("ode.simulation.time.limit"));
@@ -2528,7 +2693,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						{
 							fileStem.setText(load.getProperty("file.stem"));
 						}
-						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("markov"))
 					{
@@ -2539,7 +2703,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							selectedMarkovSim = load.getProperty("selected.simulator");
 							simulators.setSelectedItem(selectedMarkovSim);
 						}
-						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("FBA"))
 					{
@@ -2551,24 +2714,20 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					{
 						sbml.setSelected(true);
 						enableSbmlDotAndXhtml();
-						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Network"))
 					{
 						dot.setSelected(true);
 						enableSbmlDotAndXhtml();
-						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Browser"))
 					{
 						xhtml.setSelected(true);
 						enableSbmlDotAndXhtml();
-						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("LPN"))
 					{
 						enableSbmlDotAndXhtml();
-						absErr.setEnabled(false);
 					}
 				}
 				if (load.containsKey("reb2sac.abstraction.method"))
@@ -2839,6 +2998,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		if (modelEditor != null)
 		{
+			saveSEDML();
 			modelEditor.saveParams(true, stem, ignoreSweep, simulators.getSelectedItem().toString());
 		}
 		else
@@ -2878,7 +3038,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			t1.outputSBML();
 			if (!stem.equals(""))
 			{
-				new File(root + Gui.separator + simName + Gui.separator + stem).mkdir();
 				new AnalysisThread(this).start(stem, true);
 			}
 			else
@@ -3351,6 +3510,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		return root + Gui.separator + simName;
 	}
 
+	public String getSimName()
+	{
+		return simName;
+	}
+	
 	public void updateBackgroundFile(String updatedFile)
 	{
 		modelFileField.setText(updatedFile);
@@ -3529,6 +3693,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		step.setEnabled(false);
 		errorLabel.setEnabled(true);
 		absErr.setEnabled(true);
+		relErrorLabel.setEnabled(true);
+		relErr.setEnabled(true);
+		initialTimeLabel.setEnabled(false);
+		initialTimeField.setEnabled(false);
+		outputStartTimeLabel.setEnabled(false);
+		outputStartTimeField.setEnabled(false);
 		limitLabel.setEnabled(false);
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);
@@ -3571,6 +3741,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		stepLabel.setEnabled(true);
 		absErr.setEnabled(true);
 		errorLabel.setEnabled(true);
+		relErr.setEnabled(true);
+		relErrorLabel.setEnabled(true);
 		disableiSSASimulatorOptions();
 	}
 
@@ -3583,6 +3755,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		stepLabel.setEnabled(true);
 		errorLabel.setEnabled(false);
 		absErr.setEnabled(false);
+		relErrorLabel.setEnabled(false);
+		relErr.setEnabled(false);
 		disableiSSASimulatorOptions();
 	}
 
@@ -3595,6 +3769,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		stepLabel.setEnabled(true);
 		errorLabel.setEnabled(false);
 		absErr.setEnabled(false);
+		relErrorLabel.setEnabled(false);
+		relErr.setEnabled(false);
 		mpde.setEnabled(true);
 		meanPath.setEnabled(true);
 		medianPath.setEnabled(true);
@@ -3640,6 +3816,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		stepLabel.setEnabled(false);
 		errorLabel.setEnabled(false);
 		absErr.setEnabled(false);
+		relErrorLabel.setEnabled(false);
+		relErr.setEnabled(false);
+		initialTimeLabel.setEnabled(false);
+		initialTimeField.setEnabled(false);
+		outputStartTimeLabel.setEnabled(false);
+		outputStartTimeField.setEnabled(false);
 		limitLabel.setEnabled(false);
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);
@@ -3656,6 +3838,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		stepLabel.setEnabled(true);
 		errorLabel.setEnabled(true);
 		absErr.setEnabled(true);
+		relErrorLabel.setEnabled(true);
+		relErr.setEnabled(true);
+		initialTimeLabel.setEnabled(false);
+		initialTimeField.setEnabled(false);
+		outputStartTimeLabel.setEnabled(false);
+		outputStartTimeField.setEnabled(false);
 		limitLabel.setEnabled(true);
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
@@ -3672,6 +3860,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		stepLabel.setEnabled(true);
 		absErr.setEnabled(false);
 		errorLabel.setEnabled(false);
+		relErr.setEnabled(false);
+		relErrorLabel.setEnabled(false);
 		disableiSSASimulatorOptions();
 	}
 
@@ -3704,6 +3894,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		step.setEnabled(false);
 		errorLabel.setEnabled(false);
 		absErr.setEnabled(false);
+		relErrorLabel.setEnabled(false);
+		relErr.setEnabled(false);
+		initialTimeLabel.setEnabled(false);
+		initialTimeField.setEnabled(false);
+		outputStartTimeLabel.setEnabled(false);
+		outputStartTimeField.setEnabled(false);
 		limitLabel.setEnabled(false);
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);
@@ -3724,7 +3920,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		genRuns.setEnabled(false);
 		genStats.setEnabled(false);
 		report.setEnabled(false);
-		absErr.setEnabled(false);
 		disableiSSASimulatorOptions();
 	}
 
@@ -3745,6 +3940,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		step.setEnabled(false);
 		errorLabel.setEnabled(false);
 		absErr.setEnabled(false);
+		relErrorLabel.setEnabled(false);
+		relErr.setEnabled(false);
+		initialTimeLabel.setEnabled(false);
+		initialTimeField.setEnabled(false);
+		outputStartTimeLabel.setEnabled(false);
+		outputStartTimeField.setEnabled(false);
 		limitLabel.setEnabled(false);
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);
@@ -3797,6 +3998,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		stepLabel.setEnabled(true);
 		step.setEnabled(true);
 		errorLabel.setEnabled(false);
+		absErr.setEnabled(false);
+		relErrorLabel.setEnabled(false);
+		relErr.setEnabled(false);
+		initialTimeLabel.setEnabled(true);
+		initialTimeField.setEnabled(true);
+		outputStartTimeLabel.setEnabled(true);
+		outputStartTimeField.setEnabled(true);
 		limitLabel.setEnabled(true);
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
@@ -3826,7 +4034,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			simulators.addItem("nmc");
 			simulators.setSelectedItem("gillespie");
 		}
-		absErr.setEnabled(false);
 		if (!stateAbstraction.isSelected())
 		{
 			ArrayList<String> getLists = new ArrayList<String>();
@@ -3862,6 +4069,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		step.setEnabled(true);
 		errorLabel.setEnabled(false);
 		absErr.setEnabled(false);
+		relErrorLabel.setEnabled(false);
+		relErr.setEnabled(false);
+		initialTimeLabel.setEnabled(true);
+		initialTimeField.setEnabled(true);
+		outputStartTimeLabel.setEnabled(true);
+		outputStartTimeField.setEnabled(true);
 		limitLabel.setEnabled(true);
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
