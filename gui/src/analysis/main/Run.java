@@ -84,8 +84,11 @@ public class Run implements ActionListener
 	 * @param useInterval
 	 * @param stem
 	 */
-	public static void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep, double timeStep, double absError, String outDir, long rndSeed, int run, int numPaths, String[] intSpecies, String printer_id, String printer_track_quantity, String genStats,
-			String[] getFilename, String selectedButtons, Component component, String filename, double rap1, double rap2, double qss, int con, double stoichAmp, JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane, boolean mpde, boolean meanPath, boolean adaptive)
+	public static void createProperties(double initialTime, double outputStartTime, double timeLimit, String useInterval, double printInterval, double minTimeStep, double timeStep,
+			double absError, double relError, String outDir, long rndSeed, int run, int numPaths, String[] intSpecies, String printer_id,
+			String printer_track_quantity, String genStats, String[] getFilename, String selectedButtons, Component component, String filename,
+			double rap1, double rap2, double qss, int con, double stoichAmp, JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane,
+			boolean mpde, boolean meanPath, boolean adaptive)
 	{
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary"))
@@ -248,6 +251,8 @@ public class Run implements ActionListener
 		}
 		if (!selectedButtons.contains("monteCarlo"))
 		{
+			abs.setProperty("simulation.initial.time", "" + initialTime);
+			abs.setProperty("simulation.output.start.time", "" + outputStartTime);
 			abs.setProperty("ode.simulation.time.limit", "" + timeLimit);
 			if (useInterval.equals("Print Interval"))
 			{
@@ -271,12 +276,15 @@ public class Run implements ActionListener
 			}
 			abs.setProperty("ode.simulation.min.time.step", "" + minTimeStep);
 			abs.setProperty("ode.simulation.absolute.error", "" + absError);
+			abs.setProperty("ode.simulation.relative.error", "" + relError);
 			abs.setProperty("ode.simulation.out.dir", outDir);
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			abs.setProperty("monte.carlo.simulation.runs", "" + run);
 		}
 		if (!selectedButtons.contains("ODE"))
 		{
+			abs.setProperty("simulation.initial.time", "" + initialTime);
+			abs.setProperty("simulation.output.start.time", "" + outputStartTime);
 			abs.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
 			if (useInterval.equals("Print Interval"))
 			{
@@ -338,9 +346,12 @@ public class Run implements ActionListener
 	 * @throws XMLStreamException
 	 * @throws NumberFormatException
 	 */
-	public int execute(String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, Component component, JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id, String printer_track_quantity, String outDir, JRadioButton nary, int naryRun,
-			String[] intSpecies, Log log, Gui gui, JTabbedPane simTab, String root, JProgressBar progress, String simName, ModelEditor modelEditor, String direct, double timeLimit, double runTime, String modelFile, AbstPane abstPane, JRadioButton abstraction, JRadioButton expandReaction,
-			String lpnProperty, double absError, double timeStep, double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running)
+	public int execute(String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, Component component,
+			JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id, String printer_track_quantity, String outDir,
+			JRadioButton nary, int naryRun, String[] intSpecies, Log log, Gui gui, JTabbedPane simTab, String root, JProgressBar progress,
+			String simName, ModelEditor modelEditor, String direct, double initialTime, double outputStartTime, double timeLimit, double runTime, String modelFile, AbstPane abstPane,
+			JRadioButton abstraction, JRadioButton expandReaction, String lpnProperty, double absError, double relError, double timeStep, double printInterval,
+			int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running)
 	{
 		outDir = outDir.replace("\\", "/");
 		filename = filename.replace("\\", "/");

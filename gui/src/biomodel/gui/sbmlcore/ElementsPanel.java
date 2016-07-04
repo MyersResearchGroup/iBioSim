@@ -4,14 +4,17 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.jlibsedml.Change;
+import org.jlibsedml.RemoveXML;
+import org.jlibsedml.SEDMLDocument;
+import org.jlibsedml.SedML;
+import org.jlibsedml.modelsupport.SBMLSupport;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Rule;
@@ -24,30 +27,44 @@ public class ElementsPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private ArrayList<String> elementChanges;
 	
-	public ElementsPanel(SBMLDocument document,String paramFile) {
+	public ElementsPanel(SBMLDocument document,SEDMLDocument sedmlDoc,String simName/*String paramFile*/) {
 		super(new GridLayout(1, 4));
 		elementChanges = new ArrayList<String>();
 		ArrayList<String> usedIDs = SBMLutilities.CreateListOfUsedIDs(document);
-		ArrayList<String> getParams = new ArrayList<String>();
-		try {
-			Scanner scan = new Scanner(new File(paramFile));
-			if (scan.hasNextLine()) {
-				scan.nextLine();
-			}
-			while (scan.hasNextLine()) {
-				String s = scan.nextLine();
-				if (s.trim().equals("")) {
-					break;
+		SBMLSupport sbmlSupport = new SBMLSupport();
+		SedML sedml = sedmlDoc.getSedMLModel();
+		org.jlibsedml.Model model = sedml.getModelWithId(simName+"_model");
+		if (model!=null) {
+			for (Change change : model.getListOfChanges()) {
+				if (change instanceof RemoveXML) {
+					RemoveXML removeXML = (RemoveXML)change;
+					String target = sbmlSupport.getIdFromXPathIdentifer(removeXML.getTargetXPath().getTargetAsString());
+					if (target!=null) {
+						elementChanges.add(target);
+					}
 				}
-				getParams.add(s);
 			}
-			while (scan.hasNextLine()) {
-				elementChanges.add(scan.nextLine());
-			}
-			scan.close();
 		}
-		catch (Exception e) {
-		}
+//		ArrayList<String> getParams = new ArrayList<String>();
+//		try {
+//			Scanner scan = new Scanner(new File(paramFile));
+//			if (scan.hasNextLine()) {
+//				scan.nextLine();
+//			}
+//			while (scan.hasNextLine()) {
+//				String s = scan.nextLine();
+//				if (s.trim().equals("")) {
+//					break;
+//				}
+//				getParams.add(s);
+//			}
+//			while (scan.hasNextLine()) {
+//				elementChanges.add(scan.nextLine());
+//			}
+//			scan.close();
+//		}
+//		catch (Exception e) {
+//		}
 		Model m = document.getModel();
 		int consNum = m.getConstraintCount();
 		String[] cons = new String[consNum];

@@ -6,7 +6,6 @@ import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -39,6 +38,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -69,7 +69,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -83,8 +82,6 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.tree.TreeModel;
 import javax.xml.stream.XMLStreamException;
 
@@ -98,7 +95,6 @@ import lpn.parser.Translator;
 import lpn.parser.properties.BuildProperty;
 import main.util.EditPreferences;
 import main.util.FileTree;
-import main.util.MutableBoolean;
 import main.util.Utility;
 import main.util.tabs.CloseAndMaxTabbedPane;
 
@@ -107,21 +103,31 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.jlibsedml.AbstractTask;
+import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.Curve;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.DataSet;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
+import org.jlibsedml.Plot3D;
 import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.Report;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.SedMLError;
+import org.jlibsedml.Simulation;
+import org.jlibsedml.Surface;
+import org.jlibsedml.Task;
 import org.jlibsedml.Variable;
+import org.jlibsedml.XMLException;
+import org.jlibsedml.execution.ArchiveModelResolver;
+import org.jlibsedml.modelsupport.BioModelsModelsRetriever;
+import org.jlibsedml.modelsupport.URLResourceRetriever;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.comp.CompConstants;
@@ -133,6 +139,7 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
+import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
@@ -162,6 +169,7 @@ import verification.AbstPane;
 import verification.Verification;
 import verification.platu.lpn.io.PlatuGrammarLexer;
 import verification.platu.lpn.io.PlatuGrammarParser;
+
 //import virtualparts.ModelBuilder;
 //import virtualparts.PartsHandler;
 //import virtualparts.SBML.SBMLHandler;
@@ -170,8 +178,11 @@ import verification.platu.lpn.io.PlatuGrammarParser;
 //import virtualparts.entity.Part;
 //import virtualparts.entity.Parts;
 //import virtualparts.entity.Summary;
+
+import analysis.main.AnalysisThread;
 import analysis.main.AnalysisView;
 import analysis.main.Run;
+import analysis.main.SEDMLutilities;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.movie.MovieContainer;
@@ -210,9 +221,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem				pref;
 	private JMenuItem				graph;
 	private JMenuItem				probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, exportSBML,
-			exportFlatSBML, exportSBOL2, exportAvi, exportMp4;
+			exportFlatSBML, exportSBOL2, exportSEDML, exportAvi, exportMp4;
 	private JMenu					exportDataMenu, exportMovieMenu, exportImageMenu;
 	private String					root;
+	private String 					currentProjectId;
 	private FileTree				tree;
 	private CloseAndMaxTabbedPane	tab;
 	private JToolBar				toolbar;
@@ -263,9 +275,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private boolean					runGetNames;
 
-	private boolean					showParts			= false;
+//	private boolean					showParts			= false;
 
-	private Thread					getPartsThread		= null;
+//	private Thread					getPartsThread		= null;
 
 	private String[]				BioModelIds			= null;
 
@@ -307,6 +319,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private static final String		iBioSimVersion		= "2.8.4";	
 	
+	private SEDMLDocument 			sedmlDocument		= null;
+	
+	private SBOLDocument			sbolDocument		= null;
+	
 	public void OSXSetup() {
 		Application app = Application.getApplication();
 
@@ -320,6 +336,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		    public void handlePreferences(PreferencesEvent pe) {
 				EditPreferences editPreferences = new EditPreferences(frame, async, tree);
 				editPreferences.preferences();
+				if (sbolDocument!=null) {
+					Preferences biosimrc = Preferences.userRoot();
+					sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+				}
 		    }
 		});
 		
@@ -514,7 +534,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		pref = new JMenuItem("Preferences");
 		newProj = new JMenuItem("Project");
 		newSBMLModel = new JMenuItem("Model");
-		newSBOL = new JMenuItem("SBOL File");
+		newSBOL = new JMenuItem("Part");
 		newGridModel = new JMenuItem("Grid Model");
 		newSpice = new JMenuItem("Spice Circuit");
 		newVhdl = new JMenuItem("VHDL Model");
@@ -550,6 +570,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSBML = new JMenuItem("SBML");
 		exportFlatSBML = new JMenuItem("Flat SBML");
 		exportSBOL2 = new JMenuItem("SBOL");
+		exportSEDML = new JMenuItem("SED-ML");
 		exportCsv = new JMenuItem("CSV");
 		exportDat = new JMenuItem("DAT");
 		exportEps = new JMenuItem("EPS");
@@ -665,6 +686,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSBML.addActionListener(this);
 		exportFlatSBML.addActionListener(this);
 		exportSBOL2.addActionListener(this);
+		exportSEDML.addActionListener(this);
 		exportCsv.addActionListener(this);
 		exportDat.addActionListener(this);
 		exportEps.addActionListener(this);
@@ -740,6 +762,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			//saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | InputEvent.ALT_MASK));
 			refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
 			newSBMLModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
+			newSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey | InputEvent.ALT_MASK));
 			//newSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | InputEvent.ALT_MASK));
 			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | InputEvent.SHIFT_MASK));
@@ -800,6 +823,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
 		exportSBOL2.setEnabled(false);
+		exportSEDML.setEnabled(false);
 		exportCsv.setEnabled(false);
 		exportDat.setEnabled(false);
 		exportEps.setEnabled(false);
@@ -1015,6 +1039,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportFlatSBML);
 		exportMenu.add(exportSBML);
 		exportMenu.add(exportSBOL2);
+		// TODO: Removed for now since not working
+		//exportMenu.add(exportSEDML);
 
 		exportDataMenu.add(exportTsd);
 		exportDataMenu.add(exportCsv);
@@ -1440,7 +1466,314 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		System.exit(1);
 		return true;
 	}
+	
+	private void createProject(ActionEvent e) {
+		int autosave = 0;
+		for (int i = 0; i < tab.getTabCount(); i++)
+		{
+			int save = save(i, autosave);
+			if (save == 0)
+			{
+				return;
+			}
+			else if (save == 2)
+			{
+				autosave = 1;
+			}
+			else if (save == 3)
+			{
+				autosave = 2;
+			}
+		}
+		File file;
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.project_dir", "").equals(""))
+		{
+			file = null;
+		}
+		else
+		{
+			file = new File(biosimrc.get("biosim.general.project_dir", ""));
+		}
+		String filename;
 
+		if (e.getActionCommand().startsWith(GlobalConstants.SBOL_SYNTH_COMMAND))
+		{
+			filename = identifySBOLSynthesisPath(e.getActionCommand());
+		}
+		else
+		{
+			filename = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "New", -1);
+		}
+		if (!filename.trim().equals(""))
+		{
+			filename = filename.trim();
+			biosimrc.put("biosim.general.project_dir", filename);
+			File f = new File(filename);
+			if (f.exists())
+			{
+				Object[] options = { "Overwrite", "Cancel" };
+				int value = JOptionPane.showOptionDialog(frame, "File already exists." + "\nDo you want to overwrite?", "Overwrite",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.YES_OPTION)
+				{
+					File dir = new File(filename);
+					if (dir.isDirectory())
+					{
+						deleteDir(dir);
+					}
+					else
+					{
+						System.gc();
+						dir.delete();
+					}
+				}
+				else
+				{
+					return;
+				}
+			}
+			new File(filename).mkdir();
+			try
+			{
+				if (lema)
+				{
+					new FileWriter(new File(filename + separator + "LEMA.prj")).close();
+				}
+				else if (atacs)
+				{
+					new FileWriter(new File(filename + separator + "ATACS.prj")).close();
+				}
+				else
+				{
+					new FileWriter(new File(filename + separator + "BioSim.prj")).close();
+				}
+			}
+			catch (IOException e1)
+			{
+				JOptionPane.showMessageDialog(frame, "Unable to create a new project.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			root = filename;
+			currentProjectId = root.split(Gui.separator)[root.split(Gui.separator).length-1];
+			refresh();
+			tab.removeAll();
+			addRecentProject(filename);
+			
+			sedmlDocument = new SEDMLDocument(1,2);
+			writeSEDMLDocument();
+			
+			sbolDocument = new SBOLDocument();
+			sbolDocument.setCreateDefaults(true);
+			sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+			writeSBOLDocument();		
+			addToTree(currentProjectId+".sbol");
+
+			// importDot.setEnabled(true);
+			importMenu.setEnabled(true);
+			importSbol.setEnabled(true);
+			importSedml.setEnabled(true);
+			importSbml.setEnabled(true);
+			importBioModel.setEnabled(true);
+			importVirtualPart.setEnabled(true);
+			importVhdl.setEnabled(true);
+			importS.setEnabled(true);
+			importInst.setEnabled(true);
+			importProperty.setEnabled(true);
+			importLpn.setEnabled(true);
+			importG.setEnabled(true);
+			importCsp.setEnabled(true);
+			importHse.setEnabled(true);
+			importUnc.setEnabled(true);
+			importRsg.setEnabled(true);
+			importSpice.setEnabled(true);
+			newSBMLModel.setEnabled(true);
+			newSBOL.setEnabled(true);
+			newGridModel.setEnabled(true);
+			newVhdl.setEnabled(true);
+			newProperty.setEnabled(true); // DK
+			newS.setEnabled(true);
+			newInst.setEnabled(true);
+			newLhpn.setEnabled(true);
+			newG.setEnabled(true);
+			newCsp.setEnabled(true);
+			newHse.setEnabled(true);
+			newUnc.setEnabled(true);
+			newRsg.setEnabled(true);
+			newSpice.setEnabled(true);
+			graph.setEnabled(true);
+			probGraph.setEnabled(true);
+		}
+	}
+
+	private void openProject(ActionEvent e) {
+		int autosave = 0;
+		for (int i = 0; i < tab.getTabCount(); i++)
+		{
+			int save = save(i, autosave);
+			if (save == 0)
+			{
+				return;
+			}
+			else if (save == 2)
+			{
+				autosave = 1;
+			}
+			else if (save == 3)
+			{
+				autosave = 2;
+			}
+		}
+		Preferences biosimrc = Preferences.userRoot();
+		String projDir = "";
+		if (e.getSource() == openProj)
+		{
+			File file;
+			if (biosimrc.get("biosim.general.project_dir", "").equals(""))
+			{
+				file = null;
+			}
+			else
+			{
+				file = new File(biosimrc.get("biosim.general.project_dir", ""));
+			}
+			projDir = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "Open", -1);
+			if (projDir.endsWith(".prj"))
+			{
+				biosimrc.put("biosim.general.project_dir", projDir);
+				String[] tempArray = projDir.split(separator);
+				projDir = "";
+				for (int i = 0; i < tempArray.length - 1; i++)
+				{
+					projDir = projDir + tempArray[i] + separator;
+				}
+			}
+		}
+		else if (e.getSource() == recentProjects[0])
+		{
+			projDir = recentProjectPaths[0];
+		}
+		else if (e.getSource() == recentProjects[1])
+		{
+			projDir = recentProjectPaths[1];
+		}
+		else if (e.getSource() == recentProjects[2])
+		{
+			projDir = recentProjectPaths[2];
+		}
+		else if (e.getSource() == recentProjects[3])
+		{
+			projDir = recentProjectPaths[3];
+		}
+		else if (e.getSource() == recentProjects[4])
+		{
+			projDir = recentProjectPaths[4];
+		}
+		else if (e.getSource() == recentProjects[5])
+		{
+			projDir = recentProjectPaths[5];
+		}
+		else if (e.getSource() == recentProjects[6])
+		{
+			projDir = recentProjectPaths[6];
+		}
+		else if (e.getSource() == recentProjects[7])
+		{
+			projDir = recentProjectPaths[7];
+		}
+		else if (e.getSource() == recentProjects[8])
+		{
+			projDir = recentProjectPaths[8];
+		}
+		else if (e.getSource() == recentProjects[9])
+		{
+			projDir = recentProjectPaths[9];
+		}
+		// log.addText(projDir);
+		if (!projDir.equals(""))
+		{
+			biosimrc.put("biosim.general.project_dir", projDir);
+			if (new File(projDir).isDirectory())
+			{
+				boolean isProject = false;
+				for (String temp : new File(projDir).list())
+				{
+					if (temp.equals(".prj"))
+					{
+						isProject = true;
+					}
+					if (lema && temp.equals("LEMA.prj"))
+					{
+						isProject = true;
+					}
+					else if (atacs && temp.equals("ATACS.prj"))
+					{
+						isProject = true;
+					}
+					else if (temp.equals("BioSim.prj"))
+					{
+						isProject = true;
+					}
+				}
+				if (isProject)
+				{
+					root = projDir;
+					currentProjectId = root.split(Gui.separator)[root.split(Gui.separator).length-1];
+					refresh();
+					tab.removeAll();
+					addRecentProject(projDir);
+					readSEDMLDocument();
+					readSBOLDocument();
+					
+					// importDot.setEnabled(true);
+					importMenu.setEnabled(true);
+					importSbol.setEnabled(true);
+					importSedml.setEnabled(true);
+					importSbml.setEnabled(true);
+					importBioModel.setEnabled(true);
+					importVirtualPart.setEnabled(true);
+					importVhdl.setEnabled(true);
+					importS.setEnabled(true);
+					importInst.setEnabled(true);
+					importProperty.setEnabled(true);
+					importLpn.setEnabled(true);
+					importG.setEnabled(true);
+					importCsp.setEnabled(true);
+					importHse.setEnabled(true);
+					importUnc.setEnabled(true);
+					importRsg.setEnabled(true);
+					importSpice.setEnabled(true);
+					newSBMLModel.setEnabled(true);
+					newSBOL.setEnabled(true);
+					newGridModel.setEnabled(true);
+					newVhdl.setEnabled(true);
+					newS.setEnabled(true);
+					newInst.setEnabled(true);
+					newLhpn.setEnabled(true);
+					newProperty.setEnabled(true); // DK
+					newG.setEnabled(true);
+					newCsp.setEnabled(true);
+					newHse.setEnabled(true);
+					newUnc.setEnabled(true);
+					newRsg.setEnabled(true);
+					newSpice.setEnabled(true);
+					graph.setEnabled(true);
+					probGraph.setEnabled(true);
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(frame, "You must select a valid project.", "Error", JOptionPane.ERROR_MESSAGE);
+					removeRecentProject(projDir);
+				}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(frame, "You must select a valid project.", "Error", JOptionPane.ERROR_MESSAGE);
+				removeRecentProject(projDir);
+			}
+		}
+	}
+	
 	/**
 	 * This method performs different functions depending on what menu items are
 	 * selected.
@@ -1642,6 +1975,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				exportSBOL((SBOLDesignerPlugin) comp);
 			}
+		}
+		else if (e.getSource() == exportSEDML)
+		{
+			// TODO: removed, not working
+			//exportSEDML();
 		}
 		else if (e.getSource() == saveSBOL)
 		{
@@ -2263,7 +2601,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				dummy.setSelected(false);
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
-				Run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
+				Run.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty,
 						null, false, false, false);
 				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile
@@ -2477,7 +2815,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				dummy.setSelected(false);
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
-				Run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
+				Run.createProperties(0,0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty,
 						null, false, false, false);
 				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile
@@ -2597,7 +2935,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				Run.createProperties(0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, directory, 314159L, 1, 1, new String[0], "tsd.printer", "amount",
+				Run.createProperties(0,0,0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, 0, directory, 314159L, 1, 1, new String[0], "tsd.printer", "amount",
 						"false", (directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty,
 						empty, null, false, false, false);
 				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory
@@ -2671,13 +3009,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (comp instanceof SBOLDesignerPlugin)
 			{
-				((SBOLDesignerPlugin) comp).saveSBOL();
-				log.addText("Saving SBOL file: " + ((SBOLDesignerPlugin) comp).getFileName() + "\n");
+				try {
+					((SBOLDesignerPlugin) comp).saveSBOL();
+					log.addText("Saving SBOL file: " + ((SBOLDesignerPlugin) comp).getFileName() + "\n");
+				}
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
-			/*
-			 * else if (comp instanceof SBML_Editor) { ((SBML_Editor)
-			 * comp).save(false, "", true, true); }
-			 */
 			else if (comp instanceof Graph)
 			{
 				((Graph) comp).save();
@@ -2821,10 +3160,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					((ModelEditor) comp).saveAs(newName);
 				}
 			}
-			/*
-			 * else if (comp instanceof SBML_Editor) { ((SBML_Editor)
-			 * comp).saveAs(); }
-			 */
+			else if (comp instanceof SBOLDesignerPlugin)
+			{
+				String oldName = ((SBOLDesignerPlugin) comp).getFileName();
+				String newName = JOptionPane.showInputDialog(frame, "Enter SBOL file name:", "SBOL File Name", JOptionPane.PLAIN_MESSAGE); 
+				if (!newName.endsWith(".sbol")) newName += ".sbol";
+				((SBOLDesignerPlugin) comp).setFileName(newName);
+				try {
+					((SBOLDesignerPlugin) comp).saveSBOL();
+				}
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				addToTree(newName);
+				updateTabName(oldName.replace(".sbol", ""),newName.replace(".sbol", ""));
+				log.addText("Saving SBOL file: " + ((SBOLDesignerPlugin) comp).getFileName() + "\n");
+			}
 			else if (comp instanceof Graph)
 			{
 				((Graph) comp).saveAs();
@@ -3081,6 +3432,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				((ModelEditor) comp).save(true);
 			}
+			else if (comp instanceof SBOLDesignerPlugin)
+			{
+				log.addText("Saving SBOL file: " + ((SBOLDesignerPlugin) comp).getFileName() + "\n");	
+				try {
+					((SBOLDesignerPlugin) comp).saveSBOL();
+				}
+				catch (Exception e2) {
+					JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				SBOLDocument sbolDoc;
+				try {
+					SBOLReader.setKeepGoing(true);
+					sbolDoc = SBOLReader.read(root + separator + ((SBOLDesignerPlugin) comp).getFileName());
+					checkSBOL(sbolDoc);
+				}
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Error Validating SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
 		}
 		else if (e.getActionCommand().equals("export"))
 		{
@@ -3111,138 +3481,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// if the new menu item is selected
 		else if (e.getSource() == newProj)
 		{
-			int autosave = 0;
-			for (int i = 0; i < tab.getTabCount(); i++)
-			{
-				int save = save(i, autosave);
-				if (save == 0)
-				{
-					return;
-				}
-				else if (save == 2)
-				{
-					autosave = 1;
-				}
-				else if (save == 3)
-				{
-					autosave = 2;
-				}
-			}
-			File file;
-			Preferences biosimrc = Preferences.userRoot();
-			if (biosimrc.get("biosim.general.project_dir", "").equals(""))
-			{
-				file = null;
-			}
-			else
-			{
-				file = new File(biosimrc.get("biosim.general.project_dir", ""));
-			}
-			String filename;
-
-			if (e.getActionCommand().startsWith(GlobalConstants.SBOL_SYNTH_COMMAND))
-			{
-				filename = identifySBOLSynthesisPath(e.getActionCommand());
-			}
-			else
-			{
-				filename = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "New", -1);
-			}
-			if (!filename.trim().equals(""))
-			{
-				filename = filename.trim();
-				biosimrc.put("biosim.general.project_dir", filename);
-				File f = new File(filename);
-				if (f.exists())
-				{
-					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame, "File already exists." + "\nDo you want to overwrite?", "Overwrite",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (value == JOptionPane.YES_OPTION)
-					{
-						File dir = new File(filename);
-						if (dir.isDirectory())
-						{
-							deleteDir(dir);
-						}
-						else
-						{
-							System.gc();
-							dir.delete();
-						}
-					}
-					else
-					{
-						return;
-					}
-				}
-				new File(filename).mkdir();
-				try
-				{
-					if (lema)
-					{
-						new FileWriter(new File(filename + separator + "LEMA.prj")).close();
-					}
-					else if (atacs)
-					{
-						new FileWriter(new File(filename + separator + "ATACS.prj")).close();
-					}
-					else
-					{
-						new FileWriter(new File(filename + separator + "BioSim.prj")).close();
-					}
-				}
-				catch (IOException e1)
-				{
-					JOptionPane.showMessageDialog(frame, "Unable to create a new project.", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				root = filename;
-				refresh();
-				tab.removeAll();
-				addRecentProject(filename);
-
-				// importDot.setEnabled(true);
-				importMenu.setEnabled(true);
-				importSbol.setEnabled(true);
-				importSedml.setEnabled(true);
-				importSbml.setEnabled(true);
-				importBioModel.setEnabled(true);
-				importVirtualPart.setEnabled(true);
-				importVhdl.setEnabled(true);
-				importS.setEnabled(true);
-				importInst.setEnabled(true);
-				importProperty.setEnabled(true);
-				importLpn.setEnabled(true);
-				importG.setEnabled(true);
-				importCsp.setEnabled(true);
-				importHse.setEnabled(true);
-				importUnc.setEnabled(true);
-				importRsg.setEnabled(true);
-				importSpice.setEnabled(true);
-				newSBMLModel.setEnabled(true);
-				newSBOL.setEnabled(true);
-				newGridModel.setEnabled(true);
-				newVhdl.setEnabled(true);
-				newProperty.setEnabled(true); // DK
-				newS.setEnabled(true);
-				newInst.setEnabled(true);
-				newLhpn.setEnabled(true);
-				newG.setEnabled(true);
-				newCsp.setEnabled(true);
-				newHse.setEnabled(true);
-				newUnc.setEnabled(true);
-				newRsg.setEnabled(true);
-				newSpice.setEnabled(true);
-				graph.setEnabled(true);
-				probGraph.setEnabled(true);
-			}
+			createProject(e);
 		}
 		// if the open project menu item is selected
 		else if (e.getSource() == pref)
 		{
 			EditPreferences editPreferences = new EditPreferences(frame, async, tree);
 			editPreferences.preferences();
+			if (sbolDocument!=null) {
+				Preferences biosimrc = Preferences.userRoot();
+				sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+			}
 		}
 		else if (e.getSource() == clearRecent)
 		{
@@ -3253,167 +3502,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				|| (e.getSource() == recentProjects[5]) || (e.getSource() == recentProjects[6]) || (e.getSource() == recentProjects[7])
 				|| (e.getSource() == recentProjects[8]) || (e.getSource() == recentProjects[9]))
 		{
-			int autosave = 0;
-			for (int i = 0; i < tab.getTabCount(); i++)
-			{
-				int save = save(i, autosave);
-				if (save == 0)
-				{
-					return;
-				}
-				else if (save == 2)
-				{
-					autosave = 1;
-				}
-				else if (save == 3)
-				{
-					autosave = 2;
-				}
-			}
-			Preferences biosimrc = Preferences.userRoot();
-			String projDir = "";
-			if (e.getSource() == openProj)
-			{
-				File file;
-				if (biosimrc.get("biosim.general.project_dir", "").equals(""))
-				{
-					file = null;
-				}
-				else
-				{
-					file = new File(biosimrc.get("biosim.general.project_dir", ""));
-				}
-				projDir = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "Open", -1);
-				if (projDir.endsWith(".prj"))
-				{
-					biosimrc.put("biosim.general.project_dir", projDir);
-					String[] tempArray = projDir.split(separator);
-					projDir = "";
-					for (int i = 0; i < tempArray.length - 1; i++)
-					{
-						projDir = projDir + tempArray[i] + separator;
-					}
-				}
-			}
-			else if (e.getSource() == recentProjects[0])
-			{
-				projDir = recentProjectPaths[0];
-			}
-			else if (e.getSource() == recentProjects[1])
-			{
-				projDir = recentProjectPaths[1];
-			}
-			else if (e.getSource() == recentProjects[2])
-			{
-				projDir = recentProjectPaths[2];
-			}
-			else if (e.getSource() == recentProjects[3])
-			{
-				projDir = recentProjectPaths[3];
-			}
-			else if (e.getSource() == recentProjects[4])
-			{
-				projDir = recentProjectPaths[4];
-			}
-			else if (e.getSource() == recentProjects[5])
-			{
-				projDir = recentProjectPaths[5];
-			}
-			else if (e.getSource() == recentProjects[6])
-			{
-				projDir = recentProjectPaths[6];
-			}
-			else if (e.getSource() == recentProjects[7])
-			{
-				projDir = recentProjectPaths[7];
-			}
-			else if (e.getSource() == recentProjects[8])
-			{
-				projDir = recentProjectPaths[8];
-			}
-			else if (e.getSource() == recentProjects[9])
-			{
-				projDir = recentProjectPaths[9];
-			}
-			// log.addText(projDir);
-			if (!projDir.equals(""))
-			{
-				biosimrc.put("biosim.general.project_dir", projDir);
-				if (new File(projDir).isDirectory())
-				{
-					boolean isProject = false;
-					for (String temp : new File(projDir).list())
-					{
-						if (temp.equals(".prj"))
-						{
-							isProject = true;
-						}
-						if (lema && temp.equals("LEMA.prj"))
-						{
-							isProject = true;
-						}
-						else if (atacs && temp.equals("ATACS.prj"))
-						{
-							isProject = true;
-						}
-						else if (temp.equals("BioSim.prj"))
-						{
-							isProject = true;
-						}
-					}
-					if (isProject)
-					{
-						root = projDir;
-						refresh();
-						tab.removeAll();
-						addRecentProject(projDir);
-						// importDot.setEnabled(true);
-						importMenu.setEnabled(true);
-						importSbol.setEnabled(true);
-						importSedml.setEnabled(true);
-						importSbml.setEnabled(true);
-						importBioModel.setEnabled(true);
-						importVirtualPart.setEnabled(true);
-						importVhdl.setEnabled(true);
-						importS.setEnabled(true);
-						importInst.setEnabled(true);
-						importProperty.setEnabled(true);
-						importLpn.setEnabled(true);
-						importG.setEnabled(true);
-						importCsp.setEnabled(true);
-						importHse.setEnabled(true);
-						importUnc.setEnabled(true);
-						importRsg.setEnabled(true);
-						importSpice.setEnabled(true);
-						newSBMLModel.setEnabled(true);
-						newSBOL.setEnabled(true);
-						newGridModel.setEnabled(true);
-						newVhdl.setEnabled(true);
-						newS.setEnabled(true);
-						newInst.setEnabled(true);
-						newLhpn.setEnabled(true);
-						newProperty.setEnabled(true); // DK
-						newG.setEnabled(true);
-						newCsp.setEnabled(true);
-						newHse.setEnabled(true);
-						newUnc.setEnabled(true);
-						newRsg.setEnabled(true);
-						newSpice.setEnabled(true);
-						graph.setEnabled(true);
-						probGraph.setEnabled(true);
-					}
-					else
-					{
-						JOptionPane.showMessageDialog(frame, "You must select a valid project.", "Error", JOptionPane.ERROR_MESSAGE);
-						removeRecentProject(projDir);
-					}
-				}
-				else
-				{
-					JOptionPane.showMessageDialog(frame, "You must select a valid project.", "Error", JOptionPane.ERROR_MESSAGE);
-					removeRecentProject(projDir);
-				}
-			}
+			openProject(e);
 		}
 		// if the new circuit model menu item is selected
 		else if (e.getSource() == newSBMLModel)
@@ -3422,7 +3511,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource() == newSBOL)
 		{
-			newSBOLDesigner();
+			createPart();
 		}
 		else if (e.getSource() == newGridModel)
 		{
@@ -3782,9 +3871,179 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
 		if (!exportPath.equals("")) {
 			biosimrc.put("biosim.general.export_dir",exportPath);
-			sbolDesignerPlugin.exportSBOL(exportPath);
 			log.addText("Exporting SBOL file:\n" + exportPath + "\n");
+			try {
+				sbolDesignerPlugin.exportSBOL(exportPath);
+			}
+			// TODO: maybe add details on failures
+			catch (FileNotFoundException e) {
+				JOptionPane.showMessageDialog(frame, "Unable to export file.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (SBOLConversionException e) {
+				JOptionPane.showMessageDialog(frame, "Unable to export file.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (IOException e) {
+				JOptionPane.showMessageDialog(frame, "Unable to export file.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (SBOLValidationException e) {
+				JOptionPane.showMessageDialog(frame, "Unable to export file.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
+	}
+	
+	private void deleteFromSEDML(String fileName) {
+		SedML sedml = sedmlDocument.getSedMLModel();
+		if (fileName.endsWith(".prb") || fileName.endsWith(".grf")) {
+			String outputId = fileName.replace(".prb","").replace(".grf", "");
+			Output output = sedml.getOutputWithId(outputId);
+			if (output != null) {
+				sedml.removeOutput(output);
+			}
+		} else if (fileName.endsWith(".xml")) {
+			ArrayList<String> remove = new ArrayList<String>();
+			for (org.jlibsedml.Model model : sedml.getModels()) {
+				if (model.getSource().equals(fileName)) {
+					remove.add(model.getId());
+				}
+			}
+			int size;
+			do {
+				size = remove.size();
+				for (org.jlibsedml.Model model : sedml.getModels()) {
+					if (!remove.contains(model.getId()) && 
+							remove.contains(model.getSource())) {
+						remove.add(model.getId());
+					}
+				}
+			} while (size != remove.size());
+			for (String modelId : remove) {
+				sedml.removeModel(sedml.getModelWithId(modelId));
+			}
+		} else {
+			AbstractTask task = sedml.getTaskWithId(fileName);
+			if (task != null) {
+				sedml.removeTask(task);
+				task = sedml.getTaskWithId("repeat_"+fileName);
+				if (task != null) {
+					sedml.removeTask(task);
+				}
+				Simulation simulation = sedml.getSimulation(fileName+"_sim");
+				if (simulation != null) {
+					sedml.removeSimulation(simulation);
+				}
+				org.jlibsedml.Model model = sedml.getModelWithId(fileName+"_model");
+				if (model != null) {
+					sedml.removeModel(model);
+				}
+				Output output = sedml.getOutputWithId(fileName+"_graph");
+				if (output != null) {
+					sedml.removeOutput(output);
+				}
+				output = sedml.getOutputWithId(fileName+"_report");
+				if (output != null) {
+					sedml.removeOutput(output);
+				}
+				ArrayList<DataGenerator> remove = new ArrayList<DataGenerator>();
+				for (DataGenerator dg : sedml.getDataGenerators()) {
+					for (Variable var : dg.getListOfVariables()) {
+						if (var.getReference().equals(fileName) || var.getReference().equals("repeat_"+fileName)) {
+							remove.add(dg);
+							break;
+						}
+					}
+				}
+				for (DataGenerator dg : remove) {
+					sedml.removeDataGenerator(dg);
+				}
+				ArrayList<AbstractTask> subTasks = new ArrayList<AbstractTask>();
+				for (AbstractTask subTask : sedml.getTasks()) {
+					if (subTask.getId().startsWith(fileName+"__")) {
+						subTasks.add(subTask);
+					}
+				}
+				for (AbstractTask subTask : subTasks) {
+					remove.clear();
+					for (DataGenerator dg : sedml.getDataGenerators()) {
+						for (Variable var : dg.getListOfVariables()) {
+							if (var.getReference().equals(subTask.getId())) {
+								remove.add(dg);
+								break;
+							}
+						}
+					}
+					for (DataGenerator dg : remove) {
+						sedml.removeDataGenerator(dg);
+					}
+					simulation = sedml.getSimulation(subTask.getId()+"_sim");
+					if (simulation != null) {
+						sedml.removeSimulation(simulation);
+					}
+					model = sedml.getModelWithId(subTask.getId()+"_model");
+					if (model != null) {
+						sedml.removeModel(model);
+					}
+					sedml.removeTask(subTask);
+				}
+				for (Output out : sedml.getOutputs()) {
+					if (out instanceof Plot2D) {
+						ArrayList<Curve> removeCurves = new ArrayList<Curve>();
+						Plot2D plot2d = (Plot2D)out;
+						for (Curve curve : plot2d.getListOfCurves()) {
+							if (sedml.getDataGeneratorWithId(curve.getXDataReference())==null ||
+									sedml.getDataGeneratorWithId(curve.getYDataReference())==null) {
+								removeCurves.add(curve);
+							}
+						
+						}
+						for (Curve curve : removeCurves) {
+							plot2d.removeCurve(curve);
+						}
+					} else if (out instanceof Plot3D) {
+						ArrayList<Surface> removeSurfaces = new ArrayList<Surface>();
+						Plot3D plot3d = (Plot3D)out;
+						for (Surface surface : plot3d.getListOfSurfaces()) {
+							if (sedml.getDataGeneratorWithId(surface.getXDataReference())==null ||
+									sedml.getDataGeneratorWithId(surface.getYDataReference())==null ||
+									sedml.getDataGeneratorWithId(surface.getZDataReference())==null) {
+								removeSurfaces.add(surface);
+							}
+						
+						}
+						for (Surface surface : removeSurfaces) {
+							plot3d.removeSurface(surface);
+						}
+					} else if (out instanceof Report) {
+						ArrayList<DataSet> removeDataSets = new ArrayList<DataSet>();
+						Report report = (Report)out;
+						for (DataSet dataset : report.getListOfDataSets()) {
+							if (sedml.getDataGeneratorWithId(dataset.getDataReference())==null) {
+								removeDataSets.add(dataset);
+							}
+						
+						}
+						for (DataSet dataset : removeDataSets) {
+							report.removeDataSet(dataset);
+						}						
+					}
+				}
+			}
+			
+		}
+		// Prune unnecessary simulations
+		ArrayList<Simulation> remove = new ArrayList<Simulation>();
+		for (Simulation sim : sedml.getSimulations()) {
+			remove.add(sim);
+			for (AbstractTask task : sedml.getTasks()) {
+				if (task.getSimulationReference().equals(sim.getId())) {
+					remove.remove(sim);
+					break;
+				}
+			}
+		}
+		for (Simulation sim : remove) {
+			sedml.removeSimulation(sim);
+		}
+		writeSEDMLDocument();
 	}
 
 	private void delete(String fullPath)
@@ -3813,6 +4072,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					dir.delete();
 				}
 				deleteFromTree(dirName);
+				deleteFromSEDML(dirName);
 			}
 			else
 			{
@@ -3908,6 +4168,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					new File(fullPath).delete();
 					deleteFromTree(fileName);
+					deleteFromSEDML(fileName);
 				}
 			}
 		}
@@ -5034,11 +5295,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return newFile;
 	}
 
-	private void performAnalysis(String modelId, String simName, SEDMLDocument sedmlDoc) throws Exception
+	private void performAnalysis(String modelId, String simName) throws Exception
 	{
 		String sbmlFile = root + separator + modelId + ".xml";
-		File sedmlFile = new File(root + separator + simName + separator + modelId + "-sedml.xml");
-		sedmlDoc.writeDocument(sedmlFile);
+		//File sedmlFile = new File(root + separator + simName + separator + modelId + "-sedml.xml");
+		//sedmlDoc.writeDocument(sedmlFile);
 		String modelFileName = sbmlFile.split(separator)[sbmlFile.split(separator).length - 1];
 		String sbmlFileProp;
 		sbmlFileProp = root + separator + simName + separator + modelFileName;
@@ -5065,14 +5326,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName, root + separator + simName + separator
 				+ simName + ".sim", analysisView, false, false);
 		analysisView.setModelEditor(modelEditor);
-		ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(), root + separator + simName.trim() + separator
-				+ simName.trim() + ".sim");
+		ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
+				sedmlDocument,simName);
+//				root + separator + simName.trim() + separator
+//				+ simName.trim() + ".sim");
 		modelEditor.setElementsPanel(elementsPanel);
 		addModelViewTab(analysisView, simTab, modelEditor);
 		simTab.addTab("Parameters", modelEditor);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Model Editor");
+		// TODO: need to think about this one, will not 
 		modelEditor.createSBML("", ".", "rkf45");
-		analysisView.run(".", true);
+		new AnalysisThread(analysisView).start(".", true);
+		//analysisView.run(".", true);
 		Graph tsdGraph;
 		if (new File(root + separator + simName + separator + simName + ".grf").exists())
 		{
@@ -5097,6 +5362,286 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Histogram");
 		addTab(simName, simTab, null);
 	}
+	
+	private HashMap<String,String> importModels(String path,SedML sedml,ArchiveComponents ac) 
+			throws SBMLException, FileNotFoundException, XMLStreamException, URISyntaxException {
+		HashMap<String, String> modelMap = new HashMap<String, String>();
+		for (org.jlibsedml.Model model : sedml.getModels())
+		{
+			if (modelMap.get(model.getSource())!=null) {
+				//model.setSource(modelMap.get(model.getSource()));
+				modelMap.put(model.getId(), modelMap.get(model.getSource()));
+			} else {
+				String newFile = null;
+				if (model.getSource().startsWith("urn:miriam:biomodels.db")) {
+					BioModelsModelsRetriever retriever = new BioModelsModelsRetriever();
+					String docStr = retriever.getModelXMLFor(URI.create(model.getSource()));
+					SBMLWriter Xwriter = new SBMLWriter();
+					SBMLDocument doc = SBMLReader.read(docStr);
+					Xwriter.write(doc, root + Gui.separator + "temp.xml");  
+					newFile = importSBML(root + Gui.separator + "temp.xml");
+					//Files.delete(root + Gui.separator + "temp.xml");
+				} else if (model.getSource().startsWith("http://")) {
+					URLResourceRetriever retriever = new URLResourceRetriever();
+					String docStr = retriever.getModelXMLFor(URI.create(model.getSource()));
+					SBMLWriter Xwriter = new SBMLWriter();
+					SBMLDocument doc = SBMLReader.read(docStr);
+					Xwriter.write(doc, root + Gui.separator + "temp.xml");  
+					newFile = importSBML(root + Gui.separator + "temp.xml");
+					//Files.delete(root + Gui.separator + "temp.xml");
+				} else {
+					if (ac==null) {
+						String sbmlFile = path + model.getSource();
+						newFile = importSBML(sbmlFile);
+					} else {
+						ArchiveModelResolver archiveModelResolver = new ArchiveModelResolver(ac);
+						String docStr = archiveModelResolver.getModelXMLFor(model.getSourceURI());
+						SBMLWriter Xwriter = new SBMLWriter();
+//						for (IModelContent mod : ac.getModelFiles()) {
+//							System.out.println(mod.getName());
+//							System.out.println(mod.getContents());
+//						}
+//						System.out.println("Reading "+model.getSourceURI());
+//						System.out.println(docStr);
+						SBMLDocument doc = SBMLReader.read(docStr);
+						Xwriter.write(doc, root + Gui.separator + "temp.xml");  
+						newFile = importSBML(root + Gui.separator + "temp.xml");						
+					}
+				}
+				if (newFile == null)
+				{
+					continue;
+				}
+				sedmlDocument.getSedMLModel().getModelWithId(model.getId()).setSource(newFile);
+				model.setSource(newFile);
+				modelMap.put(model.getId(), newFile);
+			}
+		}
+		return modelMap;
+	}
+	
+	private void importTasks(SedML sedml,HashMap<String,String> modelMap) throws Exception {
+		for (AbstractTask task : sedml.getTasks())
+		{
+			org.jlibsedml.Model model = sedml.getModelWithId(task.getModelReference());
+			if (!model.getId().equals(task.getId()+"_model")) {
+				org.jlibsedml.Model oldModel = sedml.getModelWithId(task.getId()+"_model");
+				if (oldModel!=null) {
+					sedml.removeModel(oldModel);
+				}
+				model = SEDMLutilities.copyModel(model,task.getId()+"_model");
+			}
+			sedmlDocument.getSedMLModel().addModel(model);
+			Task t = (Task)task;
+			modelMap.put(model.getId(), modelMap.get(task.getModelReference()));
+			t.setModelReference(model.getId());
+			// TODO: should handle this properly.
+			if (task instanceof RepeatedTask) continue;
+			if (modelMap.containsKey(task.getModelReference()))
+			{
+				String modelId = modelMap.get(task.getModelReference()).replace(".xml", "");
+				String analysisId = task.getId();
+				if (overwrite(root + separator + analysisId, analysisId))
+				{
+					new File(root + separator + analysisId).mkdir();
+					performAnalysis(modelId, analysisId);
+				}
+			}
+		}
+	}
+	
+	private void importOutputs(SedML sedml) throws Exception {
+		for (Output output : sedml.getOutputs()) {
+			if (output.isPlot2d())
+			{
+				Plot2D plot = (Plot2D) output;
+				Properties graph = new Properties();
+				try
+				{
+					FileOutputStream store = new FileOutputStream(new File(root + separator + plot.getId() + ".grf"));
+					graph.store(store, "Graph Data");
+					store.close();
+					log.addText("Creating graph file:\n" + root + separator + plot.getId() + ".grf" + "\n");
+					String graphFile = plot.getId() + ".grf";
+					addToTree(graphFile);
+					//								}
+				}
+				catch (Exception except)
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (output.isReport())
+			{
+				// TODO: need to handle multiple reports
+				Report report = (Report) output;
+				Properties graph = new Properties();
+				try
+				{
+					FileOutputStream store = new FileOutputStream(new File(root + separator + report.getId() + ".prb"));
+					graph.store(store, "Probability Data");
+					store.close();
+					log.addText("Creating probability file:\n" + root + separator + report.getId() + ".prb"
+							+ "\n");
+					String graphFile = report.getId() + ".prb";
+					addToTree(graphFile);
+
+				}
+				catch (Exception except)
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Histogram!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+		for (Output output : sedml.getOutputs()) {
+			if (output.isPlot2d()) {
+				Plot2D plot = (Plot2D) output;
+				String graphFile = plot.getId() + ".grf";
+				for (int j = 0; j < tab.getTabCount(); j++)
+				{
+					if (getTitleAt(j).equals(graphFile))
+					{
+						removeTab(tab.getComponentAt(j));
+					}
+				}
+				addTab(graphFile, new Graph(null, "Number of molecules", "title", "tsd.printer", root, 
+						"Time", this, root + separator + graphFile, log, graphFile, true, false), "TSD Graph");
+			} else if (output.isReport()) {
+				Report report = (Report) output;
+				String graphFile = report.getId() + ".prb";
+				for (int j = 0; j < tab.getTabCount(); j++)
+				{
+					if (getTitleAt(j).equals(graphFile))
+					{
+						removeTab(tab.getComponentAt(j));
+					}
+				}
+				addTab(graphFile, new Graph(null, "Percent", "title", "tsd.printer",
+						root, "Time", this, root + separator + graphFile, log, graphFile, false, false), "Histogram");
+			}
+		}
+	}
+	
+	public SBOLDocument getSBOLDocument() {
+		return sbolDocument;
+	}
+	
+	private void readSBOLDocument() {
+		String sbolFilename = root + Gui.separator + currentProjectId + ".sbol";
+		File sbolFile = new File(sbolFilename);
+		if (sbolFile.exists()) {
+			try {
+				sbolDocument = SBOLReader.read(sbolFilename);
+				sbolDocument.setCreateDefaults(true);
+				Preferences biosimrc = Preferences.userRoot();
+				sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+			}
+			catch (SBOLValidationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			catch (SBOLConversionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else {
+			sbolDocument = new SBOLDocument();
+			sbolDocument.setCreateDefaults(true);
+			Preferences biosimrc = Preferences.userRoot();
+			sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+			// TODO: need to import existing SBOL files into this one
+			writeSBOLDocument();
+			addToTree(currentProjectId+".sbol");
+		}
+	}
+	
+	public void writeSBOLDocument() {
+		String sbolFilename = root + Gui.separator + currentProjectId + ".sbol";
+		try {
+			sbolDocument.write(sbolFilename);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Unable to write SBOL file.", "Error", JOptionPane.ERROR_MESSAGE);
+
+		}
+		catch (SBOLConversionException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Unable to write SBOL file.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public SEDMLDocument getSEDMLDocument() {
+		return sedmlDocument;
+	}
+	
+	private void readSEDMLDocument() {
+		String sedmlFilename = root + Gui.separator + currentProjectId + ".sedml";
+		File sedmlFile = new File(sedmlFilename);
+		if (sedmlFile.exists())	{
+			try {
+				sedmlDocument = Libsedml.readDocument(sedmlFile);
+			}
+			catch (XMLException exception) {
+				// TODO: Need an error message for an invalid SED-ML file
+				exception.printStackTrace();
+			}
+		} else {
+			sedmlDocument = new SEDMLDocument(1,2);
+			// TODO: PORT EXISTING FILES INTO SED-ML
+			writeSEDMLDocument();
+		}
+	}
+	
+	public void writeSEDMLDocument() {
+		String sedmlFilename = root + Gui.separator + currentProjectId + ".sedml";
+		sedmlDocument.writeDocument(new File(sedmlFilename));
+	}
+	
+	private void importSEDMLDocument(String path,SEDMLDocument sedmlDoc,ArchiveComponents ac) throws Exception {
+ 		SedML sedml = sedmlDoc.getSedMLModel();
+		SedML sedmlModel = sedmlDocument.getSedMLModel();
+		HashMap<String,String> modelMap = null;
+		for (org.jlibsedml.Model model : sedml.getModels()) {
+			if (sedmlModel.getModelWithId(model.getId())!=null) {
+				sedmlModel.removeModel(sedmlModel.getModelWithId(model.getId()));
+			}
+			sedmlModel.addModel(SEDMLutilities.copyModel(model,model.getId()));
+		}
+		modelMap = importModels(path,sedml,ac);
+		// TODO: need to build modelMap
+		for (Simulation simulation : sedml.getSimulations()) {
+			if (sedmlModel.getSimulation(simulation.getId())!=null) {
+				sedmlModel.removeSimulation(sedmlModel.getSimulation(simulation.getId()));
+			}
+			sedmlModel.addSimulation(SEDMLutilities.copySimulation(simulation,simulation.getId()));
+ 		}
+		for (AbstractTask task : sedml.getTasks()) {
+			if (sedmlModel.getTaskWithId(task.getId())!=null) {
+				sedmlModel.removeTask(sedmlModel.getTaskWithId(task.getId()));
+			}
+			sedmlModel.addTask(SEDMLutilities.copyTask(task,task.getId()));
+		}
+		importTasks(sedml,modelMap);
+		for (DataGenerator dataGenerator : sedml.getDataGenerators()) {
+			if (sedmlModel.getDataGeneratorWithId(dataGenerator.getId())!=null) {
+				sedmlModel.removeDataGenerator(sedmlModel.getDataGeneratorWithId(dataGenerator.getId()));
+			}
+			sedmlModel.addDataGenerator(SEDMLutilities.copyDataGenerator(dataGenerator,dataGenerator.getId()));
+		}
+		for (Output output : sedml.getOutputs()) {
+			if (sedmlModel.getOutputWithId(output.getId())!=null) {
+				sedmlModel.removeOutput(sedmlModel.getOutputWithId(output.getId()));
+			}
+			sedmlModel.addOutput(SEDMLutilities.copyOutput(output,output.getId()));
+		}
+		importOutputs(sedml);
+		writeSEDMLDocument();
+	}
 
 	private void importSEDML()
 	{
@@ -5114,11 +5659,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (!filename.trim().equals(""))
 		{
 			biosimrc.put("biosim.general.import_dir", filename.trim());
-			String[] file = filename.trim().split(separator);
 			try
 			{
-				File sedmlFile = new File(filename.trim());
-				SEDMLDocument sedmlDoc = Libsedml.readDocument(sedmlFile);
+				SEDMLDocument sedmlDoc = null;
+				ArchiveComponents ac = null;
+				if (filename.trim().endsWith(".sedx")) { 
+					ac = Libsedml.readSEDMLArchive(new FileInputStream(filename.trim()));
+					sedmlDoc = ac.getSedmlDocument();
+				} else {
+					File sedmlFile = new File(filename.trim());
+					sedmlDoc = Libsedml.readDocument(sedmlFile);
+				}
 				sedmlDoc.validate();
 				if (sedmlDoc.hasErrors())
 				{
@@ -5142,190 +5693,82 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scroll.setViewportView(messageArea);
 					JOptionPane.showMessageDialog(Gui.frame, scroll, "SED-ML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
 				}
-				SedML sedml = sedmlDoc.getSedMLModel();
-				List<org.jlibsedml.Model> models = sedml.getModels();
-				HashMap<String, String> modelMap = new HashMap<String, String>();
-				for (int i = 0; i < models.size(); i++)
-				{
-					org.jlibsedml.Model model = models.get(i);
-					String sbmlFile = filename.substring(0, filename.lastIndexOf(separator)) + model.getSource();
-					String newFile = importSBML(sbmlFile);
-					if (newFile == null)
-					{
-						return;
-					}
-					model.setSource(newFile);
-					modelMap.put(model.getId(), newFile);
-				}
-				String[] colors = { "Red", "Blue", "Green", "Yellow", "Magenta", "Cyan", "Tan", "Gray (Dark)", "Red (Dark)", "Blue (Dark)",
-						"Green (Dark)", "Yellow (Dark)", "Magenta (Dark)", "Cyan (Dark)", "Black", "Gray", "Red (Extra Dark)", "Blue (Extra Dark)",
-						"Green (Extra Dark)", "Yellow (Extra Dark)", "Magenta (Extra Dark)", "Cyan (Extra Dark)", "Red (Light)", "Blue (Light)",
-						"Green (Light)", "Yellow (Light)", "Magenta (Light)", "Cyan (Light)", "Gray (Light)" };
-				int numColors = colors.length;
-				List<AbstractTask> tasks = sedml.getTasks();
-				for (int i = 0; i < tasks.size(); i++)
-				{
-					AbstractTask task = tasks.get(i);
-					// TODO: should handle this properly.
-					if (task instanceof RepeatedTask) continue;
-					if (modelMap.containsKey(task.getModelReference()))
-					{
-						String modelId = modelMap.get(task.getModelReference()).replace(".xml", "");
-						String analysisId = task.getId();
-						if (overwrite(root + separator + analysisId, analysisId))
-						{
-							new File(root + separator + analysisId).mkdir();
-							String newFile = file[file.length - 1];
-							newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
-							for (Output output : sedml.getOutputs()) {
-								// TODO: what if multiple plots, need to use top-level graphs
-								if (output.isPlot2d())
-								{
-									Plot2D plot = (Plot2D) output;
-									Properties graph = new Properties();
-									if (plot.getName() != null)
-									{
-										graph.setProperty("title", plot.getName());
-									}
-									else
-									{
-										graph.setProperty("title", plot.getId());
-									}
-									graph.setProperty("chart.background.paint", "" + new java.awt.Color(238, 238, 238).getRGB());
-									graph.setProperty("plot.background.paint", "" + java.awt.Color.WHITE.getRGB());
-									graph.setProperty("plot.domain.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
-									graph.setProperty("plot.range.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
-									graph.setProperty("x.axis", "");
-									graph.setProperty("y.axis", "");
-									graph.setProperty("x.min", "0.0");
-									graph.setProperty("x.max", "1.0");
-									graph.setProperty("x.scale", "0.1");
-									graph.setProperty("y.min", "0.0");
-									graph.setProperty("y.max", "1.0");
-									graph.setProperty("y.scale", "0.1");
-									graph.setProperty("auto.resize", "true");
-									graph.setProperty("LogX", "false");
-									graph.setProperty("LogY", "false");
-									graph.setProperty("visibleLegend", "true");
-									List<Curve> curves = plot.getListOfCurves();
-									for (int j = 0; j < curves.size(); j++)
-									{
-										Curve curve = curves.get(j);
-										String name = null;
-										DataGenerator dg = sedml.getDataGeneratorWithId(curve.getYDataReference());
-										if (dg != null)
-										{
-											for (Variable var : dg.getListOfVariables()) {
-												name = var.getId();
-											}
-											if (name==null) continue;
-										}
-										else
-										{
-											continue;
-										}
-										// TODO: need to handle yDataReference too
-										graph.setProperty("species.connected." + j, "true");
-										graph.setProperty("species.filled." + j, "true");
-										graph.setProperty("species.xnumber." + j, "0");
-										graph.setProperty("species.number." + j, "" + j);
-										graph.setProperty("species.run.number." + j, "run-" + 1);
-										graph.setProperty("species.name." + j, name + " (1)");
-										graph.setProperty("species.id." + j, name + " (1)");
-										graph.setProperty("species.visible." + j, "true");
-										graph.setProperty("species.paint." + j, colors[j % numColors]);
-										graph.setProperty("species.shape." + j, "Circle");
-										graph.setProperty("species.directory." + j, "");
-										graph.setProperty("LogX", Boolean.toString(curve.getLogX()));
-										graph.setProperty("LogY", Boolean.toString(curve.getLogY()));
-									}
-									try
-									{
-										FileOutputStream store = new FileOutputStream(new File(root + separator + analysisId + separator + analysisId
-												+ ".grf"));
-										graph.store(store, "Graph Data");
-										store.close();
-										log.addText("Creating graph file:\n" + root + separator + analysisId + separator + analysisId + ".grf" + "\n");
-									}
-									catch (Exception except)
-									{
-										JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else if (output.isReport())
-								{
-									Report report = (Report) output;
-									Properties graph = new Properties();
-									String name;
-									if (report.getName() != null)
-									{
-										name = report.getName();
-									}
-									else
-									{
-										name = report.getId();
-									}
-									graph.setProperty("title", name);
-									graph.setProperty("chart.background.paint", "" + new java.awt.Color(238, 238, 238).getRGB());
-									graph.setProperty("plot.background.paint", "" + java.awt.Color.WHITE.getRGB());
-									// graph.setProperty("plot.domain.grid.line.paint",
-									// "" + java.awt.Color.LIGHT_GRAY.getRGB());
-									graph.setProperty("plot.range.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
-									graph.setProperty("x.axis", "");
-									graph.setProperty("y.axis", "Percent");
-									// graph.setProperty("auto.resize", "true");
-									graph.setProperty("visibleLegend", "true");
-									graph.setProperty("gradient", "false");
-									graph.setProperty("shadow", "false");
-									List<DataSet> dataSets = report.getListOfDataSets();
-									for (int j = 0; j < dataSets.size(); j++)
-									{
-										DataSet dataSet = dataSets.get(j);
-										DataGenerator dg = sedml.getDataGeneratorWithId(dataSet.getDataReference());
-										String id = "";
-										if (dg != null)
-										{
-											for (Variable var : dg.getListOfVariables()) {
-												id = var.getId();
-												name = var.getName();
-											}
-											if (id==null) continue;
-										}
-										else
-										{
-											continue;
-										}
-										graph.setProperty("species.number." + j, "" + j);
-										graph.setProperty("species.id." + j, id);
-										graph.setProperty("species.name." + j, name);
-										graph.setProperty("species.paint." + j, colors[j % numColors]);
-										graph.setProperty("species.directory." + j, "");
-									}
-									try
-									{
-										FileOutputStream store = new FileOutputStream(new File(root + separator + analysisId + separator + analysisId
-												+ ".prb"));
-										graph.store(store, "Probability Data");
-										store.close();
-										log.addText("Creating probability file:\n" + root + separator + analysisId + separator + analysisId + ".prb"
-												+ "\n");
-									}
-									catch (Exception except)
-									{
-										JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Histogram!", "Error", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-							}
-							performAnalysis(modelId, analysisId, sedmlDoc);
-						}
-					}
-				}
+				String path = filename.substring(0, filename.lastIndexOf(separator));
+				importSEDMLDocument(path,sedmlDoc,ac);
 			}
 			catch (Exception e1)
 			{
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to import SED-ML file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
+		}
+	}
+	
+	// TODO: removed not working
+//	public void exportSEDML() {
+//		File lastFilePath;
+//		Preferences biosimrc = Preferences.userRoot();
+//		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+//			lastFilePath = null;
+//		}
+//		else {
+//			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+//		}
+//		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SED-ML", -1);
+//		if (!exportPath.equals("")) {
+//			biosimrc.put("biosim.general.export_dir",exportPath);
+//			log.addText("Exporting SED-ML file:\n" + exportPath + "\n");
+//			List<IModelContent> models = new ArrayList<IModelContent>();
+//			for (String s : new File(root).list()) {
+//				if (s.endsWith(".xml")) {
+//					File modelFile = new File(s); 
+//					FileModelContent fmc = new FileModelContent(modelFile);
+//					System.out.println(fmc.getName());
+//					System.out.println(fmc.getContents());
+//					models.add(fmc);
+//				}
+//			}
+//			try {
+//				byte [] sedx = Libsedml.writeSEDMLArchive(new ArchiveComponents(models,sedmlDocument),
+//						root.split(Gui.separator)[root.split(Gui.separator).length-1]);
+//				File file = new File(exportPath);
+//				FileOutputStream fos = new FileOutputStream(file);
+//				fos.write(sedx);
+//				fos.flush();
+//				fos.close();
+//			}
+//			catch (Exception e) {
+//				JOptionPane.showMessageDialog(frame, "Unable to export SED-ML file.", "Error", JOptionPane.ERROR_MESSAGE);
+//			}
+//		}
+//	}
+
+	
+	private void checkSBOL(SBOLDocument sbolDoc) 
+	{
+		SBOLValidate.validateSBOL(sbolDoc,true,true,true);
+		if (SBOLReader.getNumErrors()>0 || SBOLValidate.getNumErrors()>0)
+		{
+			JTextArea messageArea = new JTextArea();
+			messageArea.append("SBOL file contains the errors listed below. ");
+			messageArea.append("It is recommended that you fix them or you may get unexpected results.\n\n");
+			for (String error : SBOLReader.getErrors()) 
+			{
+				messageArea.append(error + "\n");
+			}
+			for (String error : SBOLValidate.getErrors()) 
+			{
+				messageArea.append(error + "\n");
+			}
+			messageArea.setLineWrap(true);
+			messageArea.setEditable(false);
+			messageArea.setSelectionStart(0);
+			messageArea.setSelectionEnd(0);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setMinimumSize(new Dimension(600, 600));
+			scroll.setPreferredSize(new Dimension(600, 600));
+			scroll.setViewportView(messageArea);
+			JOptionPane.showMessageDialog(Gui.frame, scroll, "SBOL Errors and Warnings", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -5349,35 +5792,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String[] file = filename.trim().split(separator);
 			try
 			{
+				// TODO: need to import into project's sbolDocument
 				File sbolFile = new File(filename.trim());
 				SBOLReader.setKeepGoing(true);
 				SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 				SBOLDocument sbolDoc = SBOLReader.read(sbolFile);
 				sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-				SBOLValidate.validateSBOL(sbolDoc,true,true,true);
-				if (SBOLReader.getNumErrors()>0 || SBOLValidate.getNumErrors()>0)
-				{
-					JTextArea messageArea = new JTextArea();
-					messageArea.append("Imported SBOL file contains the errors listed below. ");
-					messageArea.append("It is recommended that you fix them or you may get unexpected results.\n\n");
-					for (String error : SBOLReader.getErrors()) 
-					{
-						messageArea.append(error + "\n");
-					}
-					for (String error : SBOLValidate.getErrors()) 
-					{
-						messageArea.append(error + "\n");
-					}
-					messageArea.setLineWrap(true);
-					messageArea.setEditable(false);
-					messageArea.setSelectionStart(0);
-					messageArea.setSelectionEnd(0);
-					JScrollPane scroll = new JScrollPane();
-					scroll.setMinimumSize(new Dimension(600, 600));
-					scroll.setPreferredSize(new Dimension(600, 600));
-					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(Gui.frame, scroll, "SBOL Errors and Warnings", JOptionPane.ERROR_MESSAGE);
-				}
+				checkSBOL(sbolDoc);
 				String newFile = file[file.length-1].replace(".xml", "").replace(".rdf", "").replace(".gb", "").replace(".fasta", "")+".sbol";
 				SBOLWriter.write(sbolDoc, root + separator + newFile);
 				addToTree(newFile);
@@ -5982,14 +6403,186 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			e2.printStackTrace();
 		}
 	}
+	
+	private void copySEDML(String oldName,String newName) {
+		SedML sedml = sedmlDocument.getSedMLModel();
+		if (oldName.endsWith(".prb") || oldName.endsWith(".grf")) {
+			String outputId = oldName.replace(".prb","").replace(".grf", "");
+			String newOutputId = newName.replace(".prb","").replace(".grf", "");
+			Output output = sedml.getOutputWithId(outputId);
+			if (output != null) {
+				Output newOutput = SEDMLutilities.copyOutput(output,newOutputId);
+				sedml.addOutput(newOutput);
+			}
+		} else if (oldName.endsWith(".xml")) {
+			// Do nothing
+		} else {
+			AbstractTask task = sedml.getTaskWithId(oldName);
+			if (task != null) {
+				AbstractTask newTask = SEDMLutilities.copyTask(task, newName);
+				sedml.addTask(newTask);
+				AbstractTask repeatedTask = sedml.getTaskWithId("repeat_"+oldName);
+				if (repeatedTask != null) {
+					AbstractTask newRepeatedTask = SEDMLutilities.copyTask(repeatedTask, "repeat_"+newName);
+					sedml.addTask(newRepeatedTask);
+				}
+				Output output = sedml.getOutputWithId(oldName+"_graph");
+				Plot2D newGraph = null;
+				if (output != null) {
+					newGraph = (Plot2D)SEDMLutilities.copyOutput(output,newName+"_graph");
+					sedml.addOutput(newGraph);
+				}
+				output = sedml.getOutputWithId(oldName+"_report");
+				Report newReport = null;
+				if (output != null) {
+					newReport = (Report)SEDMLutilities.copyOutput(output,newName+"_report");
+					sedml.addOutput(newReport);
+				}
+				ArrayList<DataGenerator> copy = new ArrayList<DataGenerator>();
+				for (DataGenerator dg : sedml.getDataGenerators()) {
+					for (Variable var : dg.getListOfVariables()) {
+						if (var.getReference().equals(oldName)) {
+							copy.add(dg);
+							break;
+						} else if (var.getReference().equals("repeat_"+oldName)) { 
+							copy.add(dg);
+							break;
+						}
+					}
+				}
+				for (DataGenerator dg : copy) {
+					String newDGid;
+					if (dg.getId().contains(oldName)) {
+						newDGid = dg.getId().replace(oldName, newName);
+					} else {
+						newDGid = newName + "_" + dg.getId();
+					}
+					DataGenerator newDG = SEDMLutilities.copyDataGenerator(dg,newDGid);
+					for (Variable var : newDG.getListOfVariables()) {
+						if (var.getReference().equals(oldName)) {
+							var.setReference(newName);
+						} else if (var.getReference().equals("repeat_"+oldName)) { 
+							var.setReference("repeat_"+newName);
+						}
+					}
+					sedml.addDataGenerator(newDG);
+					if (newGraph!=null) {
+						for (Curve curve : newGraph.getListOfCurves()) {
+							if (curve.getXDataReference().equals(dg.getId())) {
+								curve.setxDataReference(newDG.getId());
+							}
+							if (curve.getYDataReference().equals(dg.getId())) {
+								curve.setyDataReference(newDG.getId());
+							}
+						}
+					}
+					if (newReport!=null) {
+						for (DataSet dataSet : newReport.getListOfDataSets()) {
+							if (dataSet.getDataReference().equals(dg.getId())) {
+								dataSet.setDataReference(newDG.getId());
+							}
+						}
+					}
+				}
+				ArrayList<AbstractTask> subTasks = new ArrayList<AbstractTask>();
+				for (AbstractTask subTask : sedml.getTasks()) {
+					if (subTask.getId().startsWith(oldName+"__")) {
+						subTasks.add(subTask);
+					}
+				}
+				for (AbstractTask subTask : subTasks) {
+					String newId = subTask.getId().replace(oldName+"__", newName+"__");
+					newTask = SEDMLutilities.copyTask(subTask, newId);
+					sedml.addTask(newTask);
+					copy = new ArrayList<DataGenerator>();
+					for (DataGenerator dg : sedml.getDataGenerators()) {
+						for (Variable var : dg.getListOfVariables()) {
+							if (var.getReference().equals(subTask.getId())) {
+								copy.add(dg);
+								break;
+							} 
+						}
+					}
+					for (DataGenerator dg : copy) {
+						String newDGid;
+						if (dg.getId().contains(oldName+"__")) {
+							newDGid = dg.getId().replace(oldName+"__", newName+"__");
+						} else {
+							newDGid = newName + "_" + dg.getId();
+						}
+						DataGenerator newDG = SEDMLutilities.copyDataGenerator(dg,newDGid);
+						for (Variable var : newDG.getListOfVariables()) {
+							if (var.getReference().equals(subTask.getId())) {
+								var.setReference(newTask.getId());
+							} 
+						}
+						sedml.addDataGenerator(newDG);
+						if (newGraph!=null) {
+							for (Curve curve : newGraph.getListOfCurves()) {
+								if (curve.getXDataReference().equals(dg.getId())) {
+									curve.setxDataReference(newDG.getId());
+								}
+								if (curve.getYDataReference().equals(dg.getId())) {
+									curve.setyDataReference(newDG.getId());
+								}
+							}
+						}
+						if (newReport!=null) {
+							for (DataSet dataSet : newReport.getListOfDataSets()) {
+								if (dataSet.getDataReference().equals(dg.getId())) {
+									dataSet.setDataReference(newDG.getId());
+								}
+							}
+						}
+					}
+				}
+			}
+			
+		}
+		writeSEDMLDocument();		
+	}
+	
+	private void copyDirectory(String srcDir,String destDir,String copyName) throws SBMLException, XMLStreamException, IOException {
+		new File(destDir).mkdir();
+		String[] files = new File(srcDir).list();
+		for (String file : files)
+		{
+			if (file.endsWith(".sbml") || file.equals(".xml"))
+			{
+				SBMLDocument document = SBMLutilities.readSBML(srcDir + separator + file);
+				SBMLWriter writer = new SBMLWriter();
+				writer.writeSBMLToFile(document, destDir + separator + file);
+			}
+			else if (new File(srcDir + separator + file).isFile()) {
+				FileOutputStream out = new FileOutputStream(new File(destDir + separator + file));
+				if (file.endsWith(".sim")||file.endsWith(".grf")||file.endsWith(".prb")||file.endsWith(".lrn")) {
+					String ext = file.substring(file.lastIndexOf("."));
+					out = new FileOutputStream(new File(destDir + separator + copyName + ext));
+				}
+				FileInputStream in = new FileInputStream(new File(srcDir + separator + file));
+				int read = in.read();
+				while (read != -1)
+				{
+					out.write(read);
+					read = in.read();
+				}
+				in.close();
+				out.close();
+			} else if (new File(srcDir + separator + file).isDirectory()) {
+				copyDirectory(srcDir + separator + file,destDir + separator + file, copyName+"__"+file);
+			}
+		}
+	}
+
 
 	private void copy()
 	{
 		if (!tree.getFile().equals(root))
 		{
+			String oldName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 			for (int i = 0; i < tab.getTabCount(); i++)
 			{
-				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+				if (getTitleAt(i).equals(oldName))
 				{
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0)
@@ -6013,7 +6606,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					copy += extension;
 				}
 			}
-			if (copy.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			if (copy.equals(oldName))
 			{
 				JOptionPane.showMessageDialog(frame, "Unable to copy file." + "\nNew filename must be different than old filename.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -6021,7 +6614,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			try
 			{
-				if (checkFiles(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], copy))
+				if (checkFiles(oldName, copy))
 				{
 					if (overwrite(root + separator + copy, copy))
 					{
@@ -6052,18 +6645,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							SBMLWriter writer = new SBMLWriter();
 							writer.writeSBMLToFile(document, root + separator + copy);
 						}
-						else if (copy.endsWith(".gcm"))
-						{
-							SBMLDocument document = SBMLutilities.readSBML(tree.getFile().replace(".gcm", ".xml"));
-							document.getModel().setId(copy.substring(0, copy.lastIndexOf(".")));
-							SBMLWriter writer = new SBMLWriter();
-							writer.writeSBMLToFile(document, root + separator + copy.replace(".gcm", ".xml"));
-							addToTree(copy.replace(".gcm", ".xml"));
-							BioModel gcm = new BioModel(root);
-							gcm.load(tree.getFile());
-							gcm.setSBMLFile(copy.replace(".gcm", ".xml"));
-							gcm.save(root + separator + copy);
-						}
 						else if (copy.contains("."))
 						{
 							FileOutputStream out = new FileOutputStream(new File(root + separator + copy));
@@ -6079,102 +6660,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else
 						{
-							boolean sim = false;
-							for (String s : new File(tree.getFile()).list())
-							{
-								if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim"))
-								{
-									sim = true;
-								}
-							}
-							if (sim)
-							{
-								new File(root + separator + copy).mkdir();
-								String[] s = new File(tree.getFile()).list();
-								for (String ss : s)
-								{
-									if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml") || ss.length() > 3
-											&& ss.substring(ss.length() - 4).equals(".xml"))
-									{
-										SBMLDocument document = SBMLutilities.readSBML(tree.getFile() + separator + ss);
-										SBMLWriter writer = new SBMLWriter();
-										writer.writeSBMLToFile(document, root + separator + copy + separator + ss);
-									}
-									else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties"))
-									{
-										FileOutputStream out = new FileOutputStream(new File(root + separator + copy + separator + ss));
-										FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
-										int read = in.read();
-										while (read != -1)
-										{
-											out.write(read);
-											read = in.read();
-										}
-										in.close();
-										out.close();
-									}
-									else if (ss.length() > 3
-											&& (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(ss.length() - 4).equals(".dat")
-													|| ss.substring(ss.length() - 4).equals(".sad") || ss.substring(ss.length() - 4).equals(".pms") || ss
-													.substring(ss.length() - 4).equals(".sim")) && !ss.equals(".sim"))
-									{
-										FileOutputStream out;
-										if (ss.substring(ss.length() - 4).equals(".pms"))
-										{
-											out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".sim"));
-										}
-										else if (ss.substring(ss.length() - 4).equals(".sim"))
-										{
-											out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".sim"));
-										}
-										else
-										{
-											out = new FileOutputStream(new File(root + separator + copy + separator + ss));
-										}
-										FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
-										int read = in.read();
-										while (read != -1)
-										{
-											out.write(read);
-											read = in.read();
-										}
-										in.close();
-										out.close();
-									}
-								}
-							}
-							else
-							{
-								new File(root + separator + copy).mkdir();
-								String[] s = new File(tree.getFile()).list();
-								for (String ss : s)
-								{
-									if (ss.length() > 3
-											&& (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(ss.length() - 4).equals(".lrn")))
-									{
-										FileOutputStream out;
-										if (ss.substring(ss.length() - 4).equals(".lrn"))
-										{
-											out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".lrn"));
-										}
-										else
-										{
-											out = new FileOutputStream(new File(root + separator + copy + separator + ss));
-										}
-										FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
-										int read = in.read();
-										while (read != -1)
-										{
-											out.write(read);
-											read = in.read();
-										}
-										in.close();
-										out.close();
-									}
-								}
-							}
+							copyDirectory(tree.getFile(), root + separator + copy, copy);
 						}
 						addToTree(copy);
+						copySEDML(oldName,copy);
 					}
 				}
 			}
@@ -6183,6 +6672,249 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "Unable to copy file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+	}
+	
+	private void renameTabs(String oldName,String rename) {
+		for (int i = 0; i < tab.getTabCount(); i++)
+		{
+			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			{
+				if (tree.getFile().length() > 3
+						&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree.getFile()
+								.substring(tree.getFile().length() - 4).equals(".prb")))
+				{
+					((Graph) tab.getComponentAt(i)).setGraphName(rename);
+					tab.setTitleAt(i, rename);
+				}
+				else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".xml"))
+				{
+					((ModelEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
+					tab.setTitleAt(i, rename);
+				}
+				else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm"))
+				{
+					((ModelEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
+					tab.setTitleAt(i, rename);
+				}
+				else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol"))
+				{
+					tab.setTitleAt(i, rename);
+				}
+				else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn"))
+				{
+					((LHPNEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
+					tab.setTitleAt(i, rename);
+				}
+				else if (tab.getComponentAt(i) instanceof JTabbedPane)
+				{
+					if (tab.getComponentAt(i) instanceof SynthesisView)
+					{
+						((SynthesisView) tab.getComponentAt(i)).renameView(rename);
+					}
+					else
+					{
+						JTabbedPane t = new JTabbedPane();
+						t.addMouseListener(this);
+						int selected = ((JTabbedPane) tab.getComponentAt(i)).getSelectedIndex();
+						boolean analysis = false;
+						ArrayList<Component> comps = new ArrayList<Component>();
+						for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++)
+						{
+							Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
+							comps.add(c);
+						}
+						for (Component c : comps)
+						{
+							if (analysis)
+							{
+								if (c instanceof MovieContainer)
+								{
+									t.addTab("Schematic", c);
+									t.getComponentAt(t.getComponents().length - 1).setName("ModelViewMovie");
+								}
+								else if (c instanceof ModelEditor)
+								{
+									((ModelEditor) c).setParamFile(root + separator + rename + separator + rename + ".sim");
+									t.addTab("Parameters", c);
+									t.getComponentAt(t.getComponents().length - 1).setName("Model Editor");
+								}
+								else if (c instanceof Graph)
+								{
+									((Graph) c).setDirectory(root + separator + rename);
+									if (((Graph) c).isTSDGraph())
+									{
+										t.addTab("TSD Graph", c);
+										t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
+									}
+									else
+									{
+										t.addTab("Histogram", c);
+										t.getComponentAt(t.getComponents().length - 1).setName("Histogram");
+									}
+								}
+								else if (c instanceof JScrollPane)
+								{
+									// Do nothing
+								}
+								else
+								{
+									t.addTab("Advanced Options", c);
+									t.getComponentAt(t.getComponents().length - 1).setName("");
+								}
+							}
+							else
+							{
+								if (c instanceof AnalysisView)
+								{
+									((AnalysisView) c).setSim(rename);
+									t.addTab("Simulation Options", c);
+									t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
+									analysis = true;
+								}
+								else if (c instanceof Graph)
+								{
+									Graph g = ((Graph) c);
+									g.setDirectory(root + separator + rename);
+									if (g.isTSDGraph())
+									{
+										g.setGraphName(rename + ".grf");
+									}
+									else
+									{
+										g.setGraphName(rename + ".prb");
+									}
+								}
+								else if (c instanceof LearnGCM)
+								{
+									LearnGCM l = ((LearnGCM) c);
+									l.setDirectory(root + separator + rename);
+								}
+								else if (c instanceof DataManager)
+								{
+									DataManager d = ((DataManager) c);
+									d.setDirectory(root + separator + rename);
+								}
+							}
+						}
+						if (analysis)
+						{
+							t.setSelectedIndex(selected);
+							tab.setComponentAt(i, t);
+						}
+					}
+					tab.setTitleAt(i, rename);
+					tab.getComponentAt(i).setName(rename);
+				}
+				else
+				{
+					tab.setTitleAt(i, rename);
+					tab.getComponentAt(i).setName(rename);
+				}
+			}
+			else if (tab.getComponentAt(i) instanceof JTabbedPane)
+			{
+				if (tab.getComponentAt(i) instanceof SynthesisView)
+				{
+					((SynthesisView) tab.getComponentAt(i)).changeSpecFile(rename);
+				}
+				else
+				{
+					ArrayList<Component> comps = new ArrayList<Component>();
+					for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++)
+					{
+						Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
+						comps.add(c);
+					}
+					for (Component c : comps)
+					{
+						if (c instanceof AnalysisView && ((AnalysisView) c).getBackgroundFile().equals(oldName))
+						{
+							((AnalysisView) c).updateBackgroundFile(rename);
+						}
+						else if (c instanceof LearnGCM && ((LearnGCM) c).getBackgroundFile().equals(oldName))
+						{
+							((LearnGCM) c).updateBackgroundFile(rename);
+						}
+					}
+				}
+			}
+		}		
+	}
+	
+	private void renameSEDML(String oldName,String newName) {
+		SedML sedml = sedmlDocument.getSedMLModel();
+		if (oldName.endsWith(".prb") || oldName.endsWith(".grf")) {
+			String outputId = oldName.replace(".prb","").replace(".grf", "");
+			String newOutputId = newName.replace(".prb","").replace(".grf", "");
+			Output output = sedml.getOutputWithId(outputId);
+			if (output != null) {
+				Output newOutput = SEDMLutilities.copyOutput(output,newOutputId);
+				sedml.addOutput(newOutput);
+				sedml.removeOutput(output);
+			}
+		} else if (oldName.endsWith(".xml")) {
+			for (org.jlibsedml.Model model : sedml.getModels()) {
+				if (model.getSource().equals(oldName)) {
+					model.setSource(newName);
+				}
+			}
+		} else {
+			AbstractTask task = sedml.getTaskWithId(oldName);
+			if (task != null) {
+				AbstractTask newTask = SEDMLutilities.copyTask(task, newName);
+				sedml.addTask(newTask);
+				sedml.removeTask(task);
+				AbstractTask repeatedTask = sedml.getTaskWithId("repeat_"+oldName);
+				if (repeatedTask != null) {
+					AbstractTask newRepeatedTask = SEDMLutilities.copyTask(repeatedTask, "repeat_"+newName);
+					sedml.addTask(newRepeatedTask);
+					sedml.removeTask(repeatedTask);
+				}
+				Output output = sedml.getOutputWithId(oldName+"_graph");
+				if (output != null) {
+					Output newOutput = SEDMLutilities.copyOutput(output,newName+"_graph");
+					sedml.addOutput(newOutput);
+					sedml.removeOutput(output);
+				}
+				output = sedml.getOutputWithId(oldName+"_report");
+				if (output != null) {
+					Output newOutput = SEDMLutilities.copyOutput(output,newName+"_report");
+					sedml.addOutput(newOutput);
+					sedml.removeOutput(output);
+				}
+				for (DataGenerator dg : sedml.getDataGenerators()) {
+					for (Variable var : dg.getListOfVariables()) {
+						if (var.getReference().equals(oldName)) {
+							var.setReference(newName);
+						} else if (var.getReference().equals("repeat_"+oldName)) { 
+							var.setReference("repeat_"+newName);
+						}
+					}
+				}
+				ArrayList<AbstractTask> subTasks = new ArrayList<AbstractTask>();
+				for (AbstractTask subTask : sedml.getTasks()) {
+					if (subTask.getId().startsWith(oldName+"__")) {
+						subTasks.add(subTask);
+					}
+				}
+				for (AbstractTask subTask : subTasks) {
+					String newId = subTask.getId().replace(oldName+"__", newName+"__");
+					newTask = SEDMLutilities.copyTask(subTask, newId);
+					sedml.addTask(newTask);
+					for (DataGenerator dg : sedml.getDataGenerators()) {
+						for (Variable var : dg.getListOfVariables()) {
+							if (var.getReference().equals(subTask.getId())) {
+								var.setReference(newId);
+								break;
+							}
+						}
+					}
+					sedml.removeTask(task);
+				}
+			}
+			
+		}
+		writeSEDMLDocument();		
 	}
 
 	private void rename()
@@ -6248,116 +6980,69 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					break;
 				}
 			}
-			String rename = JOptionPane.showInputDialog(frame, "Enter a New Filename:", "Rename", JOptionPane.PLAIN_MESSAGE);
-			if (rename == null || rename.equals(""))
+			String newName = JOptionPane.showInputDialog(frame, "Enter a New Filename:", "Rename", JOptionPane.PLAIN_MESSAGE);
+			if (newName == null || newName.equals(""))
 			{
 				return;
 			}
-			rename = rename.trim();
+			newName = newName.trim();
 			if (tree.getFile().contains("."))
 			{
 				String extension = tree.getFile().substring(tree.getFile().lastIndexOf("."), tree.getFile().length());
-				if (!rename.endsWith(extension))
+				if (!newName.endsWith(extension))
 				{
-					rename += extension;
+					newName += extension;
 				}
 			}
-			if (rename.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			if (newName.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
 			{
 				JOptionPane.showMessageDialog(frame, "Unable to rename file." + "\nNew filename must be different than old filename.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			int index = rename.lastIndexOf(".");
-			String modelID = rename;
+			int index = newName.lastIndexOf(".");
+			String modelID = newName;
 			if (index != -1)
 			{
-				modelID = rename.substring(0, rename.lastIndexOf("."));
+				modelID = newName.substring(0, newName.lastIndexOf("."));
 			}
 			try
 			{
-				if (checkFiles(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], rename))
+				if (checkFiles(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], newName))
 				{
-					if (overwrite(root + separator + rename, rename))
+					if (overwrite(root + separator + newName, newName))
 					{
 						if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
 								|| tree.getFile().endsWith(".lpn") || tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp")
 								|| tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc") || tree.getFile().endsWith(".rsg")
 								|| tree.getFile().endsWith(".prop"))
 						{
-							reassignViews(oldName, rename);
+							reassignViews(oldName, newName);
 						}
-						if (tree.getFile().endsWith(".gcm"))
+						if (tree.getFile().endsWith(".xml"))
 						{
-							String newSBMLfile = rename.replace(".gcm", ".xml");
-							new File(tree.getFile()).renameTo(new File(root + separator + rename));
-							new File(tree.getFile().replace(".gcm", ".xml")).renameTo(new File(root + separator + newSBMLfile));
-							BioModel gcm = new BioModel(root);
-							gcm.load(root + separator + rename);
-							gcm.setSBMLFile(newSBMLfile);
-							gcm.save(root + separator + rename);
-							SBMLDocument document = SBMLutilities.readSBML(root + separator + newSBMLfile);
+							new File(tree.getFile()).renameTo(new File(root + separator + newName));
+							SBMLDocument document = SBMLutilities.readSBML(root + separator + newName);
 							document.getModel().setId(modelID);
 							SBMLWriter writer = new SBMLWriter();
-							writer.writeSBMLToFile(document, root + separator + newSBMLfile);
-							deleteFromTree(oldName.replace(".gcm", ".xml"));
-							addToTree(newSBMLfile);
-						}
-						else if (tree.getFile().endsWith(".xml"))
-						{
-							new File(tree.getFile()).renameTo(new File(root + separator + rename));
-							SBMLDocument document = SBMLutilities.readSBML(root + separator + rename);
-							document.getModel().setId(modelID);
-							SBMLWriter writer = new SBMLWriter();
-							writer.writeSBMLToFile(document, root + separator + rename);
+							writer.writeSBMLToFile(document, root + separator + newName);
 						}
 						else
 						{
-							new File(tree.getFile()).renameTo(new File(root + separator + rename));
-						}
-						if (rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".gcm"))
-						{
-							for (String s : new File(root).list())
-							{
-								if (s.endsWith(".gcm"))
-								{
-									boolean update = false;
-									BufferedReader in = new BufferedReader(new FileReader(root + separator + s));
-									String line = null;
-									String file = "";
-									while ((line = in.readLine()) != null)
-									{
-										if (line.contains("gcm=" + oldName))
-										{
-											line = line.replaceAll("gcm=" + oldName, "gcm=" + rename);
-											update = true;
-										}
-										file += line;
-										file += "\n";
-									}
-									in.close();
-									BufferedWriter out = new BufferedWriter(new FileWriter(root + separator + s));
-									out.write(file);
-									out.close();
-									if (update)
-									{
-										renameOpenModelEditors(s, oldName, rename);
-									}
-								}
-							}
+							new File(tree.getFile()).renameTo(new File(root + separator + newName));
 						}
 						if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
 								|| tree.getFile().endsWith(".lpn") || tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp")
 								|| tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc") || tree.getFile().endsWith(".rsg")
 								|| tree.getFile().endsWith(".prop"))
 						{
-							updateAsyncViews(rename);
+							updateAsyncViews(newName);
 						}
-						if (new File(root + separator + rename).isDirectory())
+						if (new File(root + separator + newName).isDirectory())
 						{
-							String subFilePath = root + separator + rename + separator
+							String subFilePath = root + separator + newName + separator
 									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
-							String renamedSubFilePath = root + separator + rename + separator + rename;
+							String renamedSubFilePath = root + separator + newName + separator + newName;
 							if (new File(subFilePath + ".sim").exists())
 							{
 								new File(subFilePath + ".sim").renameTo(new File(renamedSubFilePath + ".sim"));
@@ -6392,196 +7077,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								new File(subFilePath + ".prop").renameTo(new File(renamedSubFilePath + ".prop"));
 							}
 						}
-						for (int i = 0; i < tab.getTabCount(); i++)
-						{
-							if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
-							{
-								/*
-								 * if (tree.getFile().length() > 4 &&
-								 * tree.getFile
-								 * ().substring(tree.getFile().length() -
-								 * 5).equals(".sbml") || tree.getFile().length()
-								 * > 3 &&
-								 * tree.getFile().substring(tree.getFile()
-								 * .length() - 4).equals(".xml")) {
-								 * ((SBML_Editor)
-								 * tab.getComponentAt(i)).setModelID(modelID);
-								 * ((SBML_Editor)
-								 * tab.getComponentAt(i)).setFile(root +
-								 * separator + rename); tab.setTitleAt(i,
-								 * rename); } else
-								 */if (tree.getFile().length() > 3
-										&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree.getFile()
-												.substring(tree.getFile().length() - 4).equals(".prb")))
-								{
-									((Graph) tab.getComponentAt(i)).setGraphName(rename);
-									tab.setTitleAt(i, rename);
-								}
-								else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".xml"))
-								{
-									((ModelEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
-									tab.setTitleAt(i, rename);
-								}
-								else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm"))
-								{
-									((ModelEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
-									tab.setTitleAt(i, rename);
-								}
-								else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol"))
-								{
-									tab.setTitleAt(i, rename);
-								}
-								else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn"))
-								{
-									((LHPNEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
-									tab.setTitleAt(i, rename);
-								}
-								else if (tab.getComponentAt(i) instanceof JTabbedPane)
-								{
-									if (tab.getComponentAt(i) instanceof SynthesisView)
-									{
-										((SynthesisView) tab.getComponentAt(i)).renameView(rename);
-									}
-									else
-									{
-										JTabbedPane t = new JTabbedPane();
-										t.addMouseListener(this);
-										int selected = ((JTabbedPane) tab.getComponentAt(i)).getSelectedIndex();
-										boolean analysis = false;
-										ArrayList<Component> comps = new ArrayList<Component>();
-										for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++)
-										{
-											Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
-											comps.add(c);
-										}
-										for (Component c : comps)
-										{
-											if (analysis)
-											{
-												if (c instanceof MovieContainer)
-												{
-													t.addTab("Schematic", c);
-													t.getComponentAt(t.getComponents().length - 1).setName("ModelViewMovie");
-												}
-												else if (c instanceof ModelEditor)
-												{
-													((ModelEditor) c).setParamFile(root + separator + rename + separator + rename + ".sim");
-													t.addTab("Parameters", c);
-													t.getComponentAt(t.getComponents().length - 1).setName("Model Editor");
-												}
-												else if (c instanceof Graph)
-												{
-													((Graph) c).setDirectory(root + separator + rename);
-													if (((Graph) c).isTSDGraph())
-													{
-														t.addTab("TSD Graph", c);
-														t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
-													}
-													else
-													{
-														t.addTab("Histogram", c);
-														t.getComponentAt(t.getComponents().length - 1).setName("Histogram");
-													}
-												}
-												else if (c instanceof JScrollPane)
-												{
-													// JScrollPane scroll = new
-													// JScrollPane();
-													// scroll.setViewportView(new
-													// JPanel());
-													// t.addTab("SBML Elements",
-													// scroll);
-													// t.getComponentAt(t.getComponents().length
-													// - 1).setName("");
-												}
-												else
-												{
-													t.addTab("Advanced Options", c);
-													t.getComponentAt(t.getComponents().length - 1).setName("");
-												}
-											}
-											else
-											{
-												if (c instanceof AnalysisView)
-												{
-													((AnalysisView) c).setSim(rename);
-													t.addTab("Simulation Options", c);
-													t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
-													analysis = true;
-												}
-												else if (c instanceof Graph)
-												{
-													// c.addMouseListener(this);
-													Graph g = ((Graph) c);
-													g.setDirectory(root + separator + rename);
-													if (g.isTSDGraph())
-													{
-														g.setGraphName(rename + ".grf");
-													}
-													else
-													{
-														g.setGraphName(rename + ".prb");
-													}
-												}
-												else if (c instanceof LearnGCM)
-												{
-													LearnGCM l = ((LearnGCM) c);
-													l.setDirectory(root + separator + rename);
-												}
-												else if (c instanceof DataManager)
-												{
-													DataManager d = ((DataManager) c);
-													d.setDirectory(root + separator + rename);
-												}
-											}
-										}
-										if (analysis)
-										{
-											t.setSelectedIndex(selected);
-											tab.setComponentAt(i, t);
-										}
-									}
-									tab.setTitleAt(i, rename);
-									tab.getComponentAt(i).setName(rename);
-								}
-								else
-								{
-									tab.setTitleAt(i, rename);
-									tab.getComponentAt(i).setName(rename);
-								}
-							}
-							else if (tab.getComponentAt(i) instanceof JTabbedPane)
-							{
-								if (tab.getComponentAt(i) instanceof SynthesisView)
-								{
-									((SynthesisView) tab.getComponentAt(i)).changeSpecFile(rename);
-								}
-								else
-								{
-									ArrayList<Component> comps = new ArrayList<Component>();
-									for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++)
-									{
-										Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
-										comps.add(c);
-									}
-									for (Component c : comps)
-									{
-										if (c instanceof AnalysisView && ((AnalysisView) c).getBackgroundFile().equals(oldName))
-										{
-											((AnalysisView) c).updateBackgroundFile(rename);
-										}
-										else if (c instanceof LearnGCM && ((LearnGCM) c).getBackgroundFile().equals(oldName))
-										{
-											((LearnGCM) c).updateBackgroundFile(rename);
-										}
-									}
-								}
-							}
-						}
-						// updateAsyncViews(rename);
-						updateViewNames(tree.getFile(), rename);
+						renameTabs(oldName,newName);
+						updateViewNames(tree.getFile(), newName);
 						deleteFromTree(oldName);
-						addToTree(rename);
+						addToTree(newName);
+						renameSEDML(oldName,newName);
 					}
 				}
 			}
@@ -6701,24 +7201,52 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void openSBOLDesigner() {
 		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(Gui.separator) + 1);
 		try {
-			SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,fileName);
+			
+			SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,fileName,null,sbolDocument.getDefaultURIprefix());
+			if (sbolDesignerPlugin.getRootDisplayId().equals("NewDesign")) return;
 			addTab(sbolDesignerPlugin.getRootDisplayId(),sbolDesignerPlugin,"SBOL Designer");
 		}
-		catch (SBOLValidationException e) {
+		catch (Exception e) {
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + fileName + " is invalid.", 
 					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
-	private void newSBOLDesigner() {
-		try {
-			SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,"");
-			addTab(sbolDesignerPlugin.getFileName().replace(".sbol", ""),sbolDesignerPlugin,"SBOL Designer");
-			addToTree(sbolDesignerPlugin.getFileName());
+	private void createPart() {
+		String partId = null;
+		JTextField partChooser = new JTextField("");
+		partChooser.setColumns(20);
+		JPanel partPanel = new JPanel(new GridLayout(2, 1));
+		partPanel.add(new JLabel("Enter Part ID: "));
+		partPanel.add(partChooser);
+		frame.add(partPanel);
+		String[] options = { GlobalConstants.OK, GlobalConstants.CANCEL };
+		int okCancel = JOptionPane.showOptionDialog(frame, partPanel, "Part ID", 
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		// if the user clicks "ok" on the panel
+		if (okCancel == JOptionPane.OK_OPTION) {
+			partId = partChooser.getText();
+		} else {
+			return;
 		}
-		catch (SBOLValidationException e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to create SBOL file.", 
-					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
+		if (partId != null && !partId.trim().equals("")) {
+			if (!(IDpat.matcher(partId).matches()))	{
+				JOptionPane.showMessageDialog(frame,
+					"A part ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.", "Invalid ID",
+					JOptionPane.ERROR_MESSAGE);
+			} else {
+				SBOLDesignerPlugin sbolDesignerPlugin;
+				try {
+					ComponentDefinition cd = sbolDocument.createComponentDefinition(partId, "1", ComponentDefinition.DNA);
+					writeSBOLDocument();
+					sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,currentProjectId+".sbol",cd.getIdentity(),sbolDocument.getDefaultURIprefix());
+					addTab(partId,sbolDesignerPlugin,"SBOL Designer");
+				}
+				catch (Exception e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to create new part.", 
+							"Invalid Part", JOptionPane.ERROR_MESSAGE);
+				}
+			}
 		}
 	}
 
@@ -7348,7 +7876,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 					if (value == YES_OPTION)
 					{
-						editor.saveSBOL();
+						try {
+							editor.saveSBOL();
+						}
+						catch (Exception e) {
+							JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
+						}
 						log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
 						return 1;
 					}
@@ -7362,7 +7895,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					else if (value == YES_TO_ALL_OPTION)
 					{
-						editor.saveSBOL();
+						try {
+							editor.saveSBOL();
+						}
+						catch (Exception e) {
+							JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
+						}
 						log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
 						return 2;
 					}
@@ -7373,7 +7911,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else if (autosave == 1)
 				{
-					editor.saveSBOL();
+					try {
+						editor.saveSBOL();
+					}
+					catch (Exception e) {
+						JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 					log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
 					return 2;
 				}
@@ -7966,8 +8509,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		{
 			// frame.getGlassPane().setVisible(false);
 			popup.removeAll();
-			if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml") || tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml"))
+			if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml"))
 			{
 				JMenuItem create = new JMenuItem("Create Analysis View");
 				create.addActionListener(this);
@@ -8019,40 +8561,40 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol"))
+			else if (tree.getFile().endsWith(".sbol"))
 			{
 				JMenuItem view = new JMenuItem("View");
 				view.addActionListener(this);
 				view.addMouseListener(this);
-				view.setActionCommand("browseSbol");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
+				view.setActionCommand("SBOLDesinger");
+//				JMenuItem copy = new JMenuItem("Copy");
+//				copy.addActionListener(this);
+//				copy.addMouseListener(this);
+//				copy.setActionCommand("copy");
+//				JMenuItem rename = new JMenuItem("Rename");
+//				rename.addActionListener(this);
+//				rename.addMouseListener(this);
+//				rename.setActionCommand("rename");
+//				JMenuItem delete = new JMenuItem("Delete");
+//				delete.addActionListener(this);
+//				delete.addMouseListener(this);
+//				delete.setActionCommand("delete");
 				JMenuItem generate = new JMenuItem("Generate SBML");
 				generate.addActionListener(this);
 				generate.addMouseListener(this);
 				generate.setActionCommand("sbolToSBML");
-				JMenuItem openSBOLDesigner = new JMenuItem("Open in SBOL Designer");
+				JMenuItem openSBOLDesigner = new JMenuItem("Open in Browser");
 				openSBOLDesigner.addActionListener(this);
 				openSBOLDesigner.addMouseListener(this);
-				openSBOLDesigner.setActionCommand("SBOLDesinger");
+				openSBOLDesigner.setActionCommand("browseSbol");
 				popup.add(view);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
+//				popup.add(copy);
+//				popup.add(rename);
+//				popup.add(delete);
 				popup.add(generate);
 				popup.add(openSBOLDesigner);
 			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd"))
+			else if (tree.getFile().endsWith(".vhd"))
 			{
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
@@ -8103,7 +8645,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".vams"))
+			else if (tree.getFile().endsWith(".vams"))
 			{
 				JMenuItem viewModel = new JMenuItem("View Model");
 				viewModel.addActionListener(this);
@@ -8130,7 +8672,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					popup.add(delete);
 				}
 			}
-			else if (tree.getFile().length() > 2 && tree.getFile().substring(tree.getFile().length() - 3).equals(".sv"))
+			else if (tree.getFile().endsWith(".sv"))
 			{
 				JMenuItem viewModel = new JMenuItem("View Model");
 				viewModel.addActionListener(this);
@@ -8157,7 +8699,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					popup.add(delete);
 				}
 			}
-			else if (tree.getFile().length() > 1 && tree.getFile().substring(tree.getFile().length() - 2).equals(".g"))
+			else if (tree.getFile().endsWith(".g"))
 			{
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
@@ -8207,7 +8749,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn"))
+			else if (tree.getFile().endsWith(".lpn"))
 			{
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
@@ -8276,7 +8818,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(delete);
 			}
 
-			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".prop"))
+			else if (tree.getFile().endsWith(".prop"))
 			{
 
 				JMenuItem convertToLPN = new JMenuItem("Convert To LPN");
@@ -8315,7 +8857,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(convertToLPN);
 			}
 
-			else if (tree.getFile().length() > 1 && tree.getFile().substring(tree.getFile().length() - 2).equals(".s"))
+			else if (tree.getFile().endsWith(".s"))
 			{
 				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 				createAnalysis.addActionListener(this);
@@ -8344,7 +8886,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".inst"))
+			else if (tree.getFile().endsWith(".inst"))
 			{
 				JMenuItem delete = new JMenuItem("Delete");
 				delete.addActionListener(this);
@@ -8362,58 +8904,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".csp"))
-			{
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.addMouseListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createAnalysis");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.addMouseListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem createVerification = new JMenuItem("Create Verification View");
-				createVerification.addActionListener(this);
-				createVerification.addMouseListener(this);
-				createVerification.setActionCommand("createVerify");
-				JMenuItem viewModel = new JMenuItem("View Model");
-				viewModel.addActionListener(this);
-				viewModel.addMouseListener(this);
-				viewModel.setActionCommand("viewModel");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				if (atacs)
-				{
-					popup.add(createSynthesis);
-				}
-				// popup.add(createAnalysis);
-				if (lema)
-				{
-					popup.add(createLearn);
-				}
-				popup.add(createVerification);
-				popup.addSeparator();
-				popup.add(viewModel);
-				popup.addSeparator();
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".hse"))
+			else if (tree.getFile().endsWith(".csp"))
 			{
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
@@ -8464,7 +8955,58 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".unc"))
+			else if (tree.getFile().endsWith(".hse"))
+			{
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createAnalysis");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs)
+				{
+					popup.add(createSynthesis);
+				}
+				// popup.add(createAnalysis);
+				if (lema)
+				{
+					popup.add(createLearn);
+				}
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().endsWith(".unc"))
 			{
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
@@ -8494,7 +9036,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg"))
+			else if (tree.getFile().endsWith(".rsg"))
 			{
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
@@ -8524,7 +9066,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".grf"))
+			else if (tree.getFile().endsWith(".grf"))
 			{
 				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
@@ -8547,7 +9089,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".prb"))
+			else if (tree.getFile().endsWith(".prb"))
 			{
 				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
@@ -8578,19 +9120,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				boolean learn = false;
 				for (String s : new File(tree.getFile()).list())
 				{
-					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim"))
+					if (s.endsWith(".sim"))
 					{
 						sim = true;
 					}
-					if ((s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) || s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION))
+					if ((s.endsWith(".syn")) || s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION))
 					{
 						synth = true;
 					}
-					if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver"))
+					if (s.endsWith(".ver"))
 					{
 						ver = true;
 					}
-					if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn"))
+					if (s.endsWith(".lrn"))
 					{
 						learn = true;
 					}
@@ -8681,28 +9223,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol"))
 			{
-				openSBOL();
+				openSBOLDesigner();
 			}
-			// else if (tree.getFile().length() >= 5 &&
-			// tree.getFile().substring(tree.getFile().length() -
-			// 5).equals(".rdf")) {
-			// openSBOL2(); //TODO: SBOL2 extensions
-			// }
-			// else if (tree.getFile().length() >= 5 &&
-			// tree.getFile().substring(tree.getFile().length() -
-			// 5).equals(".xml")) {
-			// openSBOL2(); //TODO: SBOL2 extensions
-			// }
-			// else if (tree.getFile().length() >= 5 &&
-			// tree.getFile().substring(tree.getFile().length() -
-			// 5).equals(".ttl")) {
-			// openSBOL2(); //TODO: SBOL2 extensions
-			// }
-			// else if (tree.getFile().length() >= 5 &&
-			// tree.getFile().substring(tree.getFile().length() -
-			// 5).equals(".json")) {
-			// openSBOL2(); //TODO: SBOL2 extensions
-			// }
 			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd"))
 			{
 				openModel("VHDL");
@@ -9690,8 +10212,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			ModelEditor modelEditor = new ModelEditor(root + separator, modelFileName, this, log, true, analysisName, root + separator + analysisName
 					+ separator + analysisName + ".sim", analysisView, false, false);
 			analysisView.setModelEditor(modelEditor);
-			ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(), root + separator + analysisName + separator
-					+ analysisName + ".sim");
+			ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(), 
+					sedmlDocument,analysisName);
+					//root + separator + analysisName + separator
+					//+ analysisName + ".sim");
 			modelEditor.setElementsPanel(elementsPanel);
 			addModelViewTab(analysisView, simTab, modelEditor);
 			simTab.addTab("Parameters", modelEditor);
@@ -9866,6 +10390,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 */
 	public static void main(String args[])
 	{
+		if (System.getenv("DYLD_LIBRARY_PATH")==null) {
+			System.out.println("DYLD_LIBRARY_PATH is missing");
+		}
+
 		boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true, lpnFlag = false;
 		if (args.length > 0)
 		{
@@ -10072,21 +10600,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return false;
 	}
 
-	private void renameOpenModelEditors(String modelName, String oldname, String newName)
-	{
-		for (int i = 0; i < tab.getTabCount(); i++)
-		{
-			String tab = this.getTitleAt(i);
-			if (modelName.equals(tab))
-			{
-				if (this.tab.getComponentAt(i) instanceof ModelEditor)
-				{
-					((ModelEditor) this.tab.getComponentAt(i)).renameComponents(oldname, newName);
-					return;
-				}
-			}
-		}
-	}
+//	private void renameOpenModelEditors(String modelName, String oldname, String newName)
+//	{
+//		for (int i = 0; i < tab.getTabCount(); i++)
+//		{
+//			String tab = this.getTitleAt(i);
+//			if (modelName.equals(tab))
+//			{
+//				if (this.tab.getComponentAt(i) instanceof ModelEditor)
+//				{
+//					((ModelEditor) this.tab.getComponentAt(i)).renameComponents(oldname, newName);
+//					return;
+//				}
+//			}
+//		}
+//	}
 
 	public void updateAsyncViews(String updatedFile)
 	{
@@ -10234,7 +10762,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							new File(properties).delete();
 							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
 							ElementsPanel elementsPanel = new ElementsPanel(((ModelEditor) (sim.getComponentAt(j))).getBioModel().getSBMLDocument(),
-									root + separator + tab + separator + tab + ".sim");
+									sedmlDocument,tab);
+									//root + separator + tab + separator + tab + ".sim");
 							((ModelEditor) (sim.getComponentAt(j))).setElementsPanel(elementsPanel);
 
 							for (int k = 0; k < sim.getTabCount(); k++)
@@ -10431,7 +10960,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		closeAll.setEnabled(false);
 		run.setEnabled(false);
 		check.setEnabled(false);
-		exportMenu.setEnabled(false);
+		exportMenu.setEnabled(true);
+		exportSEDML.setEnabled(true);
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
 		exportSBOL2.setEnabled(false);
@@ -10528,16 +11058,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (comp instanceof SBOLDesignerPlugin)
 		{
 			saveButton.setEnabled(true);
-			//saveasButton.setEnabled(true);
-			//checkButton.setEnabled(true);
+			checkButton.setEnabled(true);
 			exportButton.setEnabled(true);
 			save.setEnabled(true);
-			//saveAs.setEnabled(true);
 			//saveSBOL.setEnabled(true);
 			saveAll.setEnabled(true);
 			close.setEnabled(true);
 			closeAll.setEnabled(true);
-			//check.setEnabled(true);
+			check.setEnabled(true);
 			exportMenu.setEnabled(true);
 			exportSBOL2.setEnabled(true);
 		}
@@ -10882,8 +11410,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (tree.getFile().equals(root))
 			{
 			}
-			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-					|| tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".xml"))
+			else if (tree.getFile().endsWith(".sbol")) {
+			}
+			else if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml"))
 			{
 				viewModGraph.setEnabled(true);
 				viewModGraph.setActionCommand("graph");
@@ -10900,31 +11429,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				delete.setEnabled(true);
 				viewModel.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".grf"))
+			else if (tree.getFile().endsWith(".grf"))
 			{
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol"))
+			else if (tree.getFile().endsWith(".vams"))
 			{
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".vams"))
+			else if (tree.getFile().endsWith(".sv"))
 			{
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 2 && tree.getFile().substring(tree.getFile().length() - 3).equals(".sv"))
-			{
-				copy.setEnabled(true);
-				rename.setEnabled(true);
-				delete.setEnabled(true);
-			}
-			else if (tree.getFile().length() > 1 && tree.getFile().substring(tree.getFile().length() - 2).equals(".g"))
+			else if (tree.getFile().endsWith(".g"))
 			{
 				viewModel.setEnabled(true);
 				viewModGraph.setEnabled(true);
@@ -10938,7 +11461,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				delete.setEnabled(true);
 				viewLHPN.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn"))
+			else if (tree.getFile().endsWith(".lpn"))
 			{
 				viewModel.setEnabled(true);
 				viewModGraph.setEnabled(true);
@@ -10959,12 +11482,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewLHPN.setEnabled(true);
 				saveAsVerilog.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 3
-					&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")
-							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")
-							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")
-							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd") || tree.getFile()
-							.substring(tree.getFile().length() - 4).equals(".rsg")))
+			else if (tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc")
+							|| tree.getFile().endsWith(".csp") || tree.getFile().endsWith(".vhd") 
+							|| tree.getFile().endsWith(".rsg"))
 			{
 				viewModel.setEnabled(true);
 				viewModGraph.setEnabled(true);
@@ -10978,8 +11498,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				delete.setEnabled(true);
 				viewLHPN.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 1 && tree.getFile().substring(tree.getFile().length() - 2).equals(".s") || tree.getFile().length() > 4
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst"))
+			else if (tree.getFile().endsWith(".s") || tree.getFile().endsWith(".inst"))
 			{
 				createAnal.setEnabled(true);
 				createVer.setEnabled(true);
@@ -10996,20 +11515,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				boolean learn = false;
 				for (String s : new File(tree.getFile()).list())
 				{
-					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim"))
+					if (s.endsWith(".sim"))
 					{
 						sim = true;
 					}
-					else if ((s.length() > 4 && s.substring(s.length() - 4).equals(".syn"))
+					else if ((s.endsWith(".syn"))
 							|| (s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)))
 					{
 						synth = true;
 					}
-					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".ver"))
+					else if (s.endsWith(".ver"))
 					{
 						ver = true;
 					}
-					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".lrn"))
+					else if (s.endsWith(".lrn"))
 					{
 						learn = true;
 					}

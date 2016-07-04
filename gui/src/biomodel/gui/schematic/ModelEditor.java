@@ -26,19 +26,38 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.xpath.XPathExpressionException;
 
 import lpn.parser.Lpn2verilog;
 import main.Gui;
 import main.Log;
 import main.util.MutableBoolean;
 
+import org.jlibsedml.AbstractTask;
+import org.jlibsedml.Change;
+import org.jlibsedml.ChangeAttribute;
+import org.jlibsedml.Model;
+import org.jlibsedml.RemoveXML;
+import org.jlibsedml.SEDMLDocument;
+import org.jlibsedml.SedML;
+import org.jlibsedml.XMLException;
+import org.jlibsedml.XPathTarget;
+import org.jlibsedml.modelsupport.SBMLSupport;
+import org.jlibsedml.modelsupport.SUPPORTED_LANGUAGE;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
+import org.sbml.jsbml.AlgebraicRule;
+import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.Event;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
@@ -51,6 +70,7 @@ import org.sbolstandard.core2.Sequence;
 import analysis.main.AnalysisThread;
 import analysis.main.AnalysisView;
 import analysis.main.ConstraintTermThread;
+import analysis.main.SEDMLutilities;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.comp.ComponentsPanel;
 import biomodel.gui.comp.GridPanel;
@@ -829,25 +849,76 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		sweep.add(Keq);
 	}
 	
+	// TODO: should use SED-ML model changes here
 	public void saveParams(boolean run, String stem, boolean ignoreSweep, String analysisMethod) {
 		try {
+			SEDMLDocument sedmlDoc = biosim.getSEDMLDocument();
+			SedML sedml = sedmlDoc.getSedMLModel();
+			SBMLSupport sbmlSupport = new SBMLSupport();
+			String taskId = analysisView.getSimName();
+			if (stem!=null && !stem.equals("")) {
+				taskId = taskId + "__" + stem;
+			}
+			AbstractTask task = sedml.getTaskWithId(taskId);
+			Model model = sedml.getModelWithId(task.getModelReference());
+			if (model!=null) {
+				sedml.removeModel(model);
+			}
+			model = new Model(task.getModelReference(),"",SUPPORTED_LANGUAGE.SBML_GENERIC.getURN(),refFile);
+			sedml.addModel(model);
 			FileOutputStream out = new FileOutputStream(new File(paramFile));
 			out.write((refFile + "\n").getBytes());
 			for (String s : parameterChanges) {
 				if (!s.trim().equals("")) {
-					out.write((s + "\n").getBytes());
+					//out.write((s + "\n").getBytes());
+					String[] change = s.split(" ");
+					if (change.length==4 && change[2].equals("Modified")) {
+						String target = null;
+						if (change[0].contains("/")) {
+							String[] reactionParam = change[0].split("/"); 
+							target = sbmlSupport.getXPathForKineticLawParameter(reactionParam[0], reactionParam[1], SBMLSupport.ParameterAttribute.valueOf("value"));
+						} else {
+							target = sbmlSupport.getXPathForGlobalParameter(change[0], SBMLSupport.ParameterAttribute.valueOf("value"));
+						}
+						ChangeAttribute changeAttribute = new ChangeAttribute(new XPathTarget(target),change[3]);
+						model.addChange(changeAttribute);
+					} else {
+						out.write((s + "\n").getBytes());
+					}
 				}
 			}
 			out.write(("\n").getBytes());
 			if (elementsPanel != null) {
 				for (String s : elementsPanel.getElementChanges()) {
-					out.write((s + "\n").getBytes());
+//					out.write((s + "\n").getBytes());
+					SBase sbase = SBMLutilities.getElementByMetaId(biomodel.getSBMLDocument().getModel(), s);				
+					if (sbase==null) {
+						sbase = SBMLutilities.getElementBySId(biomodel.getSBMLDocument(), s);
+					}
+					String target = null;
+					if (sbase instanceof Event) {
+						target = "/sbml:sbml/sbml:model/sbml:listOfEvents/sbml:event[@id='"+s+"']";
+					} else if (sbase instanceof Constraint) {
+						target = "/sbml:sbml/sbml:model/sbml:listOfConstraints/sbml:constraint[@metaid='"+s+"']";
+					} else if (sbase instanceof AssignmentRule) {
+						target = "/sbml:sbml/sbml:model/sbml:listOfRules/sbml:assignmentRule[@metaid='"+s+"']";
+					} else if (sbase instanceof AlgebraicRule) {
+						target = "/sbml:sbml/sbml:model/sbml:listOfRules/sbml:algebraicRule[@metaid='"+s+"']";
+					} else if (sbase instanceof RateRule) {
+						target = "/sbml:sbml/sbml:model/sbml:listOfRules/sbml:rateRule[@metaid='"+s+"']";
+					} 
+					if (target != null && model != null) {
+						RemoveXML removeXML = new RemoveXML(new XPathTarget(target));
+						model.addChange(removeXML);
+					}
 				}
 			}
+			biosim.writeSEDMLDocument();
 			out.close();
 			setDirty(false);
 		}
 		catch (Exception e1) {
+			e1.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to save parameter file.", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 		if (run) {
@@ -1010,6 +1081,34 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				scan.close();
 			}
 			catch (Exception e) {
+			}
+			SBMLSupport sbmlSupport = new SBMLSupport();
+			SedML sedml = biosim.getSEDMLDocument().getSedMLModel();
+			org.jlibsedml.Model model = sedml.getModelWithId(simName+"_model");
+			if (model!=null) {
+				for (Change change : model.getListOfChanges()) {
+					if (change instanceof ChangeAttribute) {
+						ChangeAttribute changeAttribute = (ChangeAttribute)change;
+						String reactionId = SEDMLutilities.getReactionIdFromXPathIdentifer(changeAttribute.getTargetXPath().getTargetAsString());
+						String target = sbmlSupport.getIdFromXPathIdentifer(changeAttribute.getTargetXPath().getTargetAsString());
+						if (target!=null) {
+							if (reactionId!=null) {
+								Reaction r = biomodel.getSBMLDocument().getModel().getReaction(reactionId);
+								if (r!=null) {
+									LocalParameter p = r.getKineticLaw().getLocalParameter(target);
+									if (p!=null) {
+										getParams.add(reactionId+"/"+target+" "+p.getValue()+" Modified "+changeAttribute.getNewValue());
+									}
+								}
+							} else {
+								Parameter p = biomodel.getSBMLDocument().getModel().getParameter(target);
+								if (p!=null) {
+									getParams.add(target+" "+p.getValue()+" Modified "+changeAttribute.getNewValue());
+								}
+							}
+						}
+					}
+				}
 			}
 			for (String update : getParams) {
 				String id;
@@ -1340,6 +1439,42 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 	}
+	
+	public SBMLDocument applyChanges(SEDMLDocument sedmlDoc, SBMLDocument sbmlDoc, Model model) throws SBMLException, XPathExpressionException, XMLStreamException, XMLException {
+		SedML sedml = sedmlDoc.getSedMLModel();
+		if (sedml.getModelWithId(model.getSource())!=null) {
+			sbmlDoc = applyChanges(sedmlDoc,sbmlDoc,sedml.getModelWithId(model.getSource()));
+		}
+		SBMLWriter Xwriter = new SBMLWriter();
+		SBMLReader Xreader = new SBMLReader();		
+		sbmlDoc = Xreader.readSBMLFromString(sedmlDoc.getChangedModel(model.getId(),Xwriter.writeSBMLToString(sbmlDoc)));
+		return sbmlDoc;
+	}
+	
+	public void performModelChanges(String stem) {
+		SEDMLDocument sedmlDoc;
+		sedmlDoc = biosim.getSEDMLDocument();
+		SedML sedml = sedmlDoc.getSedMLModel();
+		String taskId = simName;
+		if (stem!=null && !stem.equals("")) {
+			taskId = taskId + "__" + stem;
+		}
+		AbstractTask task = sedml.getTaskWithId(taskId);
+		if (task==null) return;
+		//Simulation simulation = sedml.getSimulation(task.getSimulationReference());
+		Model model = sedml.getModelWithId(task.getModelReference());
+		if (model.getListOfChanges().size()==0) return;
+		SBMLWriter Xwriter = new SBMLWriter();
+		try {
+			SBMLDocument sbmlDoc = SBMLReader.read(new File(path + Gui.separator + filename));
+			Xwriter.write(applyChanges(sedmlDoc,sbmlDoc,model), 
+					path + Gui.separator + simName + Gui.separator + filename);
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public boolean createSBML(String stem, String direct, String analysisMethod) {
 		ArrayList<String> dd = new ArrayList<String>();
@@ -1403,6 +1538,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				catch (XMLStreamException e) {
 					e.printStackTrace();
 				}
+				performModelChanges(stem);
 			}
 		}
 		else
