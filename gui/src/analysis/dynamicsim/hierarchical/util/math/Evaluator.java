@@ -583,46 +583,15 @@ public final class Evaluator
 		}
 		case FUNCTION_SELECTOR:
 		{
-			// if (node.getChild(0).isName())
-			// {
-			// String id = "";
-			// id = node.getChild(0).getName();
-			// for (int childIter = 1; childIter < node.getNumOfChild();
-			// childIter++)
-			// {
-			// id = id + "[" + (int) evaluateExpressionRecursive(modelstate,
-			// node.getChild(childIter), time) + "]";
-			// }
-			//
-			// return modelstate.getVariableToValue(replacements, id);
-			// }
-			// else if (node.getChild(0).isVector())
-			// {
-			// HierarchicalNode vector = node.getChild(0);
-			//
-			// for (int childIter = 1; childIter < node.getNumOfChild();
-			// childIter++)
-			// {
-			// vector = vector.getChild((int)
-			// evaluateExpressionRecursive(modelstate, node.getChild(childIter),
-			// time));
-			// }
-			//
-			// if (vector.isNumber())
-			// {
-			// return vector.getReal();
-			// }
-			// else if (vector.isName())
-			// {
-			// return modelstate.getVariableToValue(replacements,
-			// vector.getName());
-			// }
-			//
-			// }
-			// else
-			// {
-			// return 0;
-			// }
+			HierarchicalNode array = node.getChild(0);
+
+			for (int i = 1; i < node.getNumOfChild(); i++)
+			{
+				int index = (int) evaluateExpressionRecursive(node.getChild(i), checkSubstance);
+				array = array.getChild(index);
+			}
+
+			return ((VariableNode) array).getValue();
 		}
 
 		default:

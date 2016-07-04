@@ -8,7 +8,9 @@ import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.Dimension;
 
 import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.util.math.AbstractHierarchicalNode.Type;
 import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
+import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.math.SpeciesNode;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
@@ -24,11 +26,10 @@ public class ArraysSetup implements Setup
 			return;
 		}
 
-		setupArrays(plugin, plugin.getDimensionCount() - 1, symbol.getId(), "", modelstate, variableNode);
-
+		setupArrays(plugin, plugin.getDimensionCount() - 1, symbol.getId(), "", modelstate, variableNode, variableNode);
 	}
 
-	private static void setupArrays(ArraysSBasePlugin plugin, int arrayDim, String id, String suffix, ModelState modelstate, VariableNode variableNode)
+	private static void setupArrays(ArraysSBasePlugin plugin, int arrayDim, String id, String suffix, ModelState modelstate, VariableNode variableNode, HierarchicalNode parent)
 	{
 
 		Dimension dimension = plugin.getDimensionByArrayDimension(arrayDim);
@@ -49,6 +50,12 @@ public class ArraysSetup implements Setup
 					child.setName(newId);
 					children.add(child);
 				}
+				else if (variableNode.isReaction())
+				{
+					ReactionNode child = new ReactionNode((ReactionNode) variableNode);
+					child.setName(newId);
+					children.add(child);
+				}
 				else
 				{
 					VariableNode child = new VariableNode(variableNode);
@@ -59,11 +66,11 @@ public class ArraysSetup implements Setup
 			}
 			else
 			{
-				// HierarchicalNode child = new HierarchicalNode(Type.VECTOR);
-				// children.add(child);
+				HierarchicalNode child = new HierarchicalNode(Type.VECTOR);
+				children.add(child);
+				setupArrays(plugin, arrayDim - 1, id, newSuffix, modelstate, variableNode, child);
 				// setupArrays(plugin, arrayDim - 1, id, newSuffix, modelstate,
-				// child, value);
-				setupArrays(plugin, arrayDim - 1, id, newSuffix, modelstate, variableNode);
+				// variableNode);
 			}
 		}
 	}

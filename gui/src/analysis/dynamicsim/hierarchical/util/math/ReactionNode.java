@@ -25,6 +25,12 @@ public class ReactionNode extends VariableNode
 		isReaction = true;
 	}
 
+	public ReactionNode(ReactionNode copy)
+	{
+		super(copy);
+		isReaction = true;
+	}
+
 	public List<SpeciesReferenceNode> getListOfReactants()
 	{
 		return reactants;
