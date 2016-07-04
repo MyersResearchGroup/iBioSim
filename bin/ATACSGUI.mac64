@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# run-time wrapper for BioSim gui
+export ATACSGUI=/Applications/ATACS.app/Contents/Resources
+export PATH=$ATACSGUI/bin:$PATH
+export DYLD_LIBRARY_PATH=$ATACSGUI/lib64:$DYLD_LIBRARY_PATH
+CLASSPATH=$ATACSGUI/gui/dist/classes
+
+for jarFile in $ATACSGUI/gui/lib/*.jar
+do
+    CLASSPATH=$CLASSPATH:$jarFile
+done
+
+exec java-Xmx2048M -Xms2048M -XX:+UseSerialGC -classpath $CLASSPATH -Dapple.laf.useScreenMenuBar=true -Xdock:name="ATACSGUI" -Xdock:icon=$ATACSGUI/gui/icons/ATACS.png main.Gui -atacs
