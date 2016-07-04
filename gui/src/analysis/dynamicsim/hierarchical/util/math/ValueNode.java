@@ -1,5 +1,6 @@
 package analysis.dynamicsim.hierarchical.util.math;
 
+
 public class ValueNode extends HierarchicalNode
 {
 	protected double			value;

@@ -8,6 +8,7 @@ public class SpeciesNode extends VariableNode
 	private boolean				hasOnlySubstance;
 	private HierarchicalNode	speciesRateEquation;
 	private HierarchicalNode	odeRate;
+	private HierarchicalNode	compartmentSelector;
 
 	public SpeciesNode(String name, double value)
 	{
@@ -20,6 +21,7 @@ public class SpeciesNode extends VariableNode
 		super(copy.name, copy.value);
 		this.isBoundary = copy.isBoundary;
 		this.hasOnlySubstance = copy.hasOnlySubstance;
+		this.compartment = copy.compartment;
 		this.isSpecies = true;
 	}
 
@@ -31,6 +33,16 @@ public class SpeciesNode extends VariableNode
 	public VariableNode getCompartment()
 	{
 		return compartment;
+	}
+
+	public void setCompartmentSelector(HierarchicalNode selector)
+	{
+		this.compartmentSelector = selector;
+	}
+
+	public HierarchicalNode getCompartmentSelector()
+	{
+		return compartmentSelector;
 	}
 
 	public double getConcentration()
@@ -99,6 +111,20 @@ public class SpeciesNode extends VariableNode
 		sub.addChild(reactionRate);
 
 		odeRate.addChild(sub);
+	}
+
+	@Override
+	public boolean computeInitialValue()
+	{
+		if (initAssign == null)
+		{
+			return false;
+		}
+
+		double oldValue = value;
+		double newValue = Evaluator.evaluateExpressionRecursive(initAssign, false);
+		this.value = newValue;
+		return oldValue != newValue;
 	}
 
 	@Override

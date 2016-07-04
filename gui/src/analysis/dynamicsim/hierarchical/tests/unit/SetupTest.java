@@ -105,4 +105,18 @@ public class SetupTest
 
 	}
 
+	/**
+	 * 
+	 * 
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 */
+	@Test
+	public void test11() throws IOException, XMLStreamException
+	{
+		String SBMLFile = "./gui/src/analysis/dynamicsim/hierarchical/tests/resources/test11.xml";
+		HierarchicalSSADirectSimulator ssaSim = new HierarchicalSSADirectSimulator(SBMLFile, "", "", 1, 10, 0, 1, false);
+		ssaSim.initialize(0, 1);
+	}
+
 }

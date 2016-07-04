@@ -6,9 +6,10 @@ import java.util.List;
 public class VariableNode extends ValueNode
 {
 
-	protected boolean			isVariableConstant;
-	protected String			name;
-	private List<ReactionNode>	reactionDependents;
+	protected boolean					isVariableConstant;
+	protected String					name;
+	private List<ReactionNode>			reactionDependents;
+	private List<ArrayDimensionNode>	dimensions;
 
 	public VariableNode(String name, double value)
 	{
@@ -65,7 +66,7 @@ public class VariableNode extends ValueNode
 		}
 
 		double oldValue = value;
-		double newValue = Evaluator.evaluateExpressionRecursive(initAssign);
+		double newValue = Evaluator.evaluateExpressionRecursive(initAssign, false);
 		this.value = newValue;
 		return oldValue != newValue;
 	}
@@ -90,6 +91,15 @@ public class VariableNode extends ValueNode
 			return 0;
 		}
 		return Evaluator.evaluateExpressionRecursive(rateRule, false);
+	}
+
+	public void addDimension(ArrayDimensionNode dim)
+	{
+		if (dimensions == null)
+		{
+			dimensions = new ArrayList<ArrayDimensionNode>();
+		}
+		dimensions.add(dim);
 	}
 
 	@Override

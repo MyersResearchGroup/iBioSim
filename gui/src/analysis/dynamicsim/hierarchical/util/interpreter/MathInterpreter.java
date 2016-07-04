@@ -13,12 +13,22 @@ import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 public final class MathInterpreter
 {
 
-	public static HierarchicalNode parseASTNode(ASTNode math, Map<String, VariableNode> variableToNodes)
+	public static HierarchicalNode parseASTNode(ASTNode math, Map<String, VariableNode> variableToNodes, Map<String, VariableNode> dimensionNode)
 	{
-		return parseASTNode(math, variableToNodes, null);
+		return parseASTNode(math, variableToNodes, dimensionNode, null);
 	}
 
 	public static HierarchicalNode parseASTNode(ASTNode math, Map<String, VariableNode> variableToNodes, VariableNode parent)
+	{
+		return parseASTNode(math, variableToNodes, null, parent);
+	}
+
+	public static HierarchicalNode parseASTNode(ASTNode math, Map<String, VariableNode> variableToNodes)
+	{
+		return parseASTNode(math, variableToNodes, null, null);
+	}
+
+	public static HierarchicalNode parseASTNode(ASTNode math, Map<String, VariableNode> variableToNodes, Map<String, VariableNode> dimensionNodes, VariableNode parent)
 	{
 
 		HierarchicalNode node;
@@ -38,14 +48,14 @@ public final class MathInterpreter
 			node = new HierarchicalNode(Type.CONSTRUCTOR_PIECE);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case CONSTRUCTOR_OTHERWISE:
 			node = new HierarchicalNode(Type.CONSTRUCTOR_OTHERWISE);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case CONSTANT_TRUE:
@@ -55,14 +65,14 @@ public final class MathInterpreter
 			node = new HierarchicalNode(Type.DIVIDE);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case FUNCTION:
 			node = new HierarchicalNode(Type.FUNCTION);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case FUNCTION_ABS:
@@ -169,28 +179,28 @@ public final class MathInterpreter
 			node = new HierarchicalNode(Type.FUNCTION_LOG);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case FUNCTION_PIECEWISE:
 			node = new HierarchicalNode(Type.FUNCTION_PIECEWISE);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case FUNCTION_POWER:
 			node = new HierarchicalNode(Type.FUNCTION_POWER);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case FUNCTION_ROOT:
 			node = new HierarchicalNode(Type.FUNCTION_ROOT);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case FUNCTION_SEC:
@@ -232,7 +242,7 @@ public final class MathInterpreter
 			node = new HierarchicalNode(Type.LOGICAL_AND);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case LOGICAL_NOT:
@@ -243,25 +253,33 @@ public final class MathInterpreter
 			node = new HierarchicalNode(Type.LOGICAL_OR);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case LOGICAL_XOR:
 			node = new HierarchicalNode(Type.LOGICAL_XOR);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case MINUS:
 			node = new HierarchicalNode(Type.MINUS);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case NAME:
-			node = variableToNodes.get(math.getName());
+			String name = math.getName();
+			if (dimensionNodes.containsKey(name))
+			{
+				node = dimensionNodes.get(name);
+			}
+			else
+			{
+				node = variableToNodes.get(name);
+			}
 			if (parent != null && parent.isReaction())
 			{
 				((VariableNode) node).addReactionDependency((ReactionNode) parent);
@@ -278,42 +296,42 @@ public final class MathInterpreter
 			node = new HierarchicalNode(Type.PLUS);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case POWER:
 			node = new HierarchicalNode(Type.POWER);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case PRODUCT:
 			node = new HierarchicalNode(Type.PRODUCT);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case QUALIFIER_BVAR:
 			node = new HierarchicalNode(Type.QUALIFIER_BVAR);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case QUALIFIER_DEGREE:
 			node = new HierarchicalNode(Type.QUALIFIER_DEGREE);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case QUALIFIER_LOGBASE:
 			node = new HierarchicalNode(Type.QUALIFIER_LOGBASE);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case RATIONAL:
@@ -331,56 +349,56 @@ public final class MathInterpreter
 			node = new HierarchicalNode(Type.RELATIONAL_EQ);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case RELATIONAL_GEQ:
 			node = new HierarchicalNode(Type.RELATIONAL_GEQ);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case RELATIONAL_GT:
 			node = new HierarchicalNode(Type.RELATIONAL_GT);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case RELATIONAL_LEQ:
 			node = new HierarchicalNode(Type.RELATIONAL_LEQ);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case RELATIONAL_LT:
 			node = new HierarchicalNode(Type.RELATIONAL_LT);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case RELATIONAL_NEQ:
 			node = new HierarchicalNode(Type.RELATIONAL_NEQ);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case SUM:
 			node = new HierarchicalNode(Type.SUM);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case TIMES:
 			node = new HierarchicalNode(Type.TIMES);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		case UNKNOWN:
@@ -390,7 +408,7 @@ public final class MathInterpreter
 			node = new HierarchicalNode(Type.VECTOR);
 			for (ASTNode child : math.getListOfNodes())
 			{
-				node.addChild(parseASTNode(child, variableToNodes, parent));
+				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
 		default:
