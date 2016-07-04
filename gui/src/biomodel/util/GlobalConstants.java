@@ -231,6 +231,7 @@ public class GlobalConstants {
 	
 	public static final String KISAO_GENERIC = "KISAO:0000000";
 	public static final String KISAO_MONTE_CARLO = "KISAO:0000319";
+	public static final String KISAO_GILLESPIE = "KISAO:0000241";
 	public static final String KISAO_GILLESPIE_DIRECT = "KISAO:0000029";
 	public static final String KISAO_SSA_CR = "KISAO:0000329";
 	public static final String KISAO_EULER = "KISAO:0000030";
@@ -240,6 +241,7 @@ public class GlobalConstants {
 	public static final String KISAO_MINIMUM_STEP_SIZE = "KISAO:0000485";
 	public static final String KISAO_MAXIMUM_STEP_SIZE = "KISAO:0000467";
 	public static final String KISAO_ABSOLUTE_TOLERANCE = "KISAO:0000211";
+	public static final String KISAO_RELATIVE_TOLERANCE = "KISAO:0000209";
 	public static final String KISAO_SEED = "KISAO:0000488";
 	
 	public static final String TRUE = "true";
