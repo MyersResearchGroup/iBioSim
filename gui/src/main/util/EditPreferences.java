@@ -81,11 +81,14 @@ public class EditPreferences {
 	private JComboBox assemblyBox;
 	private JComboBox warningBox;
 	
+	private JTextField initialTime;
+	private JTextField outputStartTime;
 	private JTextField limit;
 	private JTextField interval;
 	private JTextField minStep;
 	private JTextField step;
 	private JTextField error;
+	private JTextField relError;
 	private JTextField seed;
 	private JTextField runs;
 	private JTextField rapid1;
@@ -951,11 +954,14 @@ public class EditPreferences {
 			}
 		});
 
+		initialTime = new JTextField(biosimrc.get("biosim.sim.initial.time", ""));
+		outputStartTime = new JTextField(biosimrc.get("biosim.sim.output.start.time", ""));
 		limit = new JTextField(biosimrc.get("biosim.sim.limit", ""));
 		interval = new JTextField(biosimrc.get("biosim.sim.interval", ""));
 		minStep = new JTextField(biosimrc.get("biosim.sim.min.step", ""));
 		step = new JTextField(biosimrc.get("biosim.sim.step", ""));
 		error = new JTextField(biosimrc.get("biosim.sim.error", ""));
+		relError = new JTextField(biosimrc.get("biosim.sim.relative.error", ""));
 		seed = new JTextField(biosimrc.get("biosim.sim.seed", ""));
 		runs = new JTextField(biosimrc.get("biosim.sim.runs", ""));
 		rapid1 = new JTextField(biosimrc.get("biosim.sim.rapid1", ""));
@@ -967,16 +973,19 @@ public class EditPreferences {
 		useInterval = new JComboBox(choices);
 		useInterval.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
 
-		JPanel analysisLabels = new JPanel(new GridLayout(15, 1));
+		JPanel analysisLabels = new JPanel(new GridLayout(18, 1));
 		analysisLabels.add(new JLabel("Simulation Command:"));
 		analysisLabels.add(new JLabel("Abstraction:"));
 		analysisLabels.add(new JLabel("Simulation Type:"));
 		analysisLabels.add(new JLabel("Possible Simulators/Analyzers:"));
+		analysisLabels.add(new JLabel("Initial Time:"));
+		analysisLabels.add(new JLabel("Output Start Time:"));
 		analysisLabels.add(new JLabel("Time Limit:"));
 		analysisLabels.add(useInterval);
 		analysisLabels.add(new JLabel("Minimum Time Step:"));
 		analysisLabels.add(new JLabel("Maximum Time Step:"));
 		analysisLabels.add(new JLabel("Absolute Error:"));
+		analysisLabels.add(new JLabel("Relative Error:"));
 		analysisLabels.add(new JLabel("Random Seed:"));
 		analysisLabels.add(new JLabel("Runs:"));
 		analysisLabels.add(new JLabel("Rapid Equilibrium Condition 1:"));
@@ -984,16 +993,19 @@ public class EditPreferences {
 		analysisLabels.add(new JLabel("QSSA Condition:"));
 		analysisLabels.add(new JLabel("Max Concentration Threshold:"));
 
-		JPanel analysisFields = new JPanel(new GridLayout(15, 1));
+		JPanel analysisFields = new JPanel(new GridLayout(18, 1));
 		analysisFields.add(simCommand);
 		analysisFields.add(abs);
 		analysisFields.add(type);
 		analysisFields.add(sim);
+		analysisFields.add(initialTime);
+		analysisFields.add(outputStartTime);
 		analysisFields.add(limit);
 		analysisFields.add(interval);
 		analysisFields.add(minStep);
 		analysisFields.add(step);
 		analysisFields.add(error);
+		analysisFields.add(relError);
 		analysisFields.add(seed);
 		analysisFields.add(runs);
 		analysisFields.add(rapid1);
@@ -1009,12 +1021,15 @@ public class EditPreferences {
 				abs.setSelectedItem("None");
 				type.setSelectedItem("ODE");
 				sim.setSelectedItem("rkf45");
+				initialTime.setText("0.0");
+				outputStartTime.setText("0.0");
 				limit.setText("100.0");
 				useInterval.setSelectedItem("Print Interval");
 				interval.setText("1.0");
 				step.setText("inf");
 				minStep.setText("0");
 				error.setText("1.0E-9");
+				relError.setText("0.0");
 				seed.setText("314159");
 				runs.setText("1");
 				rapid1.setText("0.1");
@@ -1293,6 +1308,10 @@ public class EditPreferences {
 		biosimrc.put("biosim.sim.type", (String) type.getSelectedItem());
 		biosimrc.put("biosim.sim.sim", (String) sim.getSelectedItem());
 		try {
+			Double.parseDouble(initialTime.getText().trim());
+			biosimrc.put("biosim.sim.initial.time", initialTime.getText().trim());
+			Double.parseDouble(outputStartTime.getText().trim());
+			biosimrc.put("biosim.sim.output.start.time", outputStartTime.getText().trim());
 			Double.parseDouble(limit.getText().trim());
 			biosimrc.put("biosim.sim.limit", limit.getText().trim());
 			Double.parseDouble(interval.getText().trim());
@@ -1308,6 +1327,8 @@ public class EditPreferences {
 			biosimrc.put("biosim.min.sim.step", minStep.getText().trim());
 			Double.parseDouble(error.getText().trim());
 			biosimrc.put("biosim.sim.error", error.getText().trim());
+			Double.parseDouble(relError.getText().trim());
+			biosimrc.put("biosim.sim.relative.error", relError.getText().trim());
 			Long.parseLong(seed.getText().trim());
 			biosimrc.put("biosim.sim.seed", seed.getText().trim());
 			Integer.parseInt(runs.getText().trim());
@@ -1363,9 +1384,9 @@ public class EditPreferences {
 	
 	private boolean saveAssemblyPreferences(Preferences biosimrc) {
 		boolean problem = false;
-		if (!uriField.getText().trim().equals(""))
+		if (!uriField.getText().trim().equals("")) {
 			biosimrc.put(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, uriField.getText().trim());
-		else {
+		} else {
 			JOptionPane.showMessageDialog(Gui.frame, "URI authority cannot be blank.", 
 					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
 			uriField.setText(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, ""));
@@ -1422,7 +1443,7 @@ public class EditPreferences {
 		prefTabs.addTab("Schematic Preferences", schematicPrefs);
 		prefTabs.addTab("Model Preferences", modelPrefs);
 		prefTabs.addTab("Analysis Preferences", analysisPrefs);
-		if (!async) prefTabs.addTab("SBOL Assembly Preferences", assemblyPrefs);
+		if (!async) prefTabs.addTab("SBOL Preferences", assemblyPrefs);
 		if (!async) prefTabs.addTab("Learn Preferences", learnPrefs);
 
 		boolean problem;
@@ -1549,6 +1570,12 @@ public class EditPreferences {
 		if (biosimrc.get("biosim.sim.sim", "").equals("")) {
 			biosimrc.put("biosim.sim.sim", "rkf45");
 		}
+		if (biosimrc.get("biosim.sim.initial.time", "").equals("")) {
+			biosimrc.put("biosim.sim.initial.time", "0.0");
+		}
+		if (biosimrc.get("biosim.sim.output.start.time", "").equals("")) {
+			biosimrc.put("biosim.sim.output.start.time", "0.0");
+		}
 		if (biosimrc.get("biosim.sim.limit", "").equals("")) {
 			biosimrc.put("biosim.sim.limit", "100.0");
 		}
@@ -1566,6 +1593,9 @@ public class EditPreferences {
 		}
 		if (biosimrc.get("biosim.sim.error", "").equals("")) {
 			biosimrc.put("biosim.sim.error", "1.0E-9");
+		}
+		if (biosimrc.get("biosim.sim.relative.error", "").equals("")) {
+			biosimrc.put("biosim.sim.relative.error", "0.0");
 		}
 		if (biosimrc.get("biosim.sim.seed", "").equals("")) {
 			biosimrc.put("biosim.sim.seed", "314159");
