@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# run-time wrapper for BioSim gui
+export DYLD_LIBRARY_PATH=$BIOSIM/lib:$DYLD_LIBRARY_PATH
+CLASSPATH=$BIOSIM/gui/dist/classes
+
+for jarFile in $BIOSIM/gui/lib/*.jar
+do
+    CLASSPATH=$CLASSPATH:$jarFile
+done
+
+exec java -Xmx2048M -Xms2048M -XX:+UseSerialGC -classpath $CLASSPATH -Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/gui/icons/iBioSim.jpg main.Gui
