@@ -6796,67 +6796,25 @@ public class SBMLutilities
 			numErrors = doc.checkL3v1Compatibility();
 			if (numErrors > 0)
 			{
-				JTextArea messageArea = new JTextArea();
-				messageArea.append("Conversion to SBML level " + Gui.SBML_LEVEL + " version " + Gui.SBML_VERSION
-						+ " produced the errors listed below. ");
-				messageArea.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
-				messageArea.append("--------------------------------------------------------------------------------------\n");
-				messageArea.append(filename);
-				messageArea.append("\n--------------------------------------------------------------------------------------\n\n");
+				String message = "Conversion to SBML level " + Gui.SBML_LEVEL + " version " + Gui.SBML_VERSION
+						+ " produced the errors listed below.";
+				message += "It is recommended that you fix them before using these models or you may get unexpected results.\n\n";
+				message += "--------------------------------------------------------------------------------------\n";
+				message += filename;
+				message += "\n--------------------------------------------------------------------------------------\n\n";
 				for (int i = 0; i < numErrors; i++)
 				{
 					String error = doc.getError(i).getMessage();
-					messageArea.append(i + ":" + error + "\n");
+					message += i + ":" + error + "\n";
 				}
-				final JFrame f = new JFrame("SBML Conversion Errors and Warnings");
+				JTextArea messageArea = new JTextArea(message);
 				messageArea.setLineWrap(true);
 				messageArea.setEditable(false);
-				messageArea.setSelectionStart(0);
-				messageArea.setSelectionEnd(0);
 				JScrollPane scroll = new JScrollPane();
 				scroll.setMinimumSize(new java.awt.Dimension(600, 600));
 				scroll.setPreferredSize(new java.awt.Dimension(600, 600));
 				scroll.setViewportView(messageArea);
-				JButton close = new JButton("Dismiss");
-				close.addActionListener(new ActionListener()
-				{
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						f.dispose();
-					}
-				});
-				JPanel consistencyPanel = new JPanel(new BorderLayout());
-				consistencyPanel.add(scroll, "Center");
-				consistencyPanel.add(close, "South");
-				f.setContentPane(consistencyPanel);
-				f.pack();
-				java.awt.Dimension screenSize;
-				try
-				{
-					Toolkit tk = Toolkit.getDefaultToolkit();
-					screenSize = tk.getScreenSize();
-				}
-				catch (AWTError awe)
-				{
-					screenSize = new java.awt.Dimension(640, 480);
-				}
-				java.awt.Dimension frameSize = f.getSize();
-				if (frameSize.height > screenSize.height)
-				{
-					frameSize.height = screenSize.height;
-				}
-				if (frameSize.width > screenSize.width)
-				{
-					frameSize.width = screenSize.width;
-				}
-				int x = screenSize.width / 2 - frameSize.width / 2;
-				int y = screenSize.height / 2 - frameSize.height / 2;
-				f.setLocation(x, y);
-				f.setVisible(true);
-				Object[] options = { "Dismiss" };
-				JOptionPane.showOptionDialog(Gui.frame, scroll, "SBML Conversion Errors and Warnings", JOptionPane.YES_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Conversion Errors and Warnings", JOptionPane.ERROR_MESSAGE);
 			}
 			convertToL3(doc);
 			doc.setLevelAndVersion(Gui.SBML_LEVEL, Gui.SBML_VERSION, false);

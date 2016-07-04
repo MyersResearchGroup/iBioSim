@@ -113,6 +113,7 @@ public class SBMLtoSBOL {
 		SBOLDocument sbolDoc;
 		try
 		{
+			SBOLReader.setKeepGoing(false);
 			sbolDoc = SBOLReader.read(SBOLfile);
 			export(sbolDoc,SBOLfile);
 		}
