@@ -69,7 +69,7 @@ public class VariableNode extends ValueNode
 		}
 
 		double oldValue = value;
-		double newValue = Evaluator.evaluateExpressionRecursive(initAssign, false);
+		double newValue = Evaluator.evaluateExpressionRecursive(initAssign, true);
 		this.value = newValue;
 		boolean isNaN = Double.isNaN(oldValue) && Double.isNaN(newValue);
 		return !isNaN && oldValue != newValue;
@@ -82,10 +82,10 @@ public class VariableNode extends ValueNode
 			return false;
 		}
 		double oldValue = value;
-		double newValue = Evaluator.evaluateExpressionRecursive(assignRule, false);
+		double newValue = Evaluator.evaluateExpressionRecursive(assignRule, true);
 		this.value = newValue;
-
-		return oldValue != newValue;
+		boolean isNaN = Double.isNaN(oldValue) && Double.isNaN(newValue);
+		return !isNaN && oldValue != newValue;
 	}
 
 	public double computeRateOfChange(double time)
