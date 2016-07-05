@@ -91,7 +91,7 @@ public class HierarchicalUtilities
 	public static ASTNode inlineFormula(ModelState state, ASTNode formula, Model model)
 	{
 		// TODO: Avoid calling this method
-		if (formula.isFunction() == false || formula.isLeaf() == false)
+		if (formula.isFunction() == false || formula.isOperator()/* || formula.isLeaf() == false */)
 		{
 
 			for (int i = 0; i < formula.getChildCount(); ++i)
