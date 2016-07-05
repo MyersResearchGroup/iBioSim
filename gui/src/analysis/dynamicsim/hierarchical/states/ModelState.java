@@ -17,10 +17,6 @@ import biomodel.util.GlobalConstants;
 
 public final class ModelState extends DocumentState
 {
-	public static enum ModelType
-	{
-		HSSA, HODE, HFBA, NONE;
-	}
 
 	private boolean						isInitSet;
 	private ModelType					type;
@@ -32,6 +28,7 @@ public final class ModelState extends DocumentState
 	private List<VariableNode>			variables;
 	private List<VariableNode>			constants;
 	private List<ReactionNode>			reactions;
+	private List<VariableNode>			arrays;
 
 	private Map<String, VariableNode>	idToNode;
 
@@ -153,6 +150,29 @@ public final class ModelState extends DocumentState
 		}
 
 		variables.add(node);
+		idToNode.put(node.getName(), node);
+		return node;
+	}
+
+	public VariableNode addArray(String variable, double value)
+	{
+		VariableNode node = new VariableNode(variable, value);
+		return addArray(node);
+	}
+
+	public VariableNode addArray(VariableNode node)
+	{
+
+		if (arrays == null)
+		{
+			arrays = new ArrayList<VariableNode>();
+		}
+		if (idToNode == null)
+		{
+			idToNode = new HashMap<String, VariableNode>();
+		}
+
+		arrays.add(node);
 		idToNode.put(node.getName(), node);
 		return node;
 	}
