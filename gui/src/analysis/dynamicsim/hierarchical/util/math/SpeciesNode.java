@@ -124,7 +124,23 @@ public class SpeciesNode extends VariableNode
 		double oldValue = value;
 		double newValue = Evaluator.evaluateExpressionRecursive(initAssign, false);
 		this.value = newValue;
-		return oldValue != newValue;
+		boolean isNaN = Double.isNaN(oldValue) && Double.isNaN(newValue);
+		return !isNaN && oldValue != newValue;
+	}
+
+	@Override
+	public boolean computeAssignmentValue()
+	{
+		if (assignRule == null)
+		{
+			return false;
+		}
+		double oldValue = value;
+		double newValue = Evaluator.evaluateExpressionRecursive(assignRule, false);
+
+		this.value = newValue;
+		boolean isNaN = Double.isNaN(oldValue) && Double.isNaN(newValue);
+		return !isNaN && oldValue != newValue;
 	}
 
 	@Override
