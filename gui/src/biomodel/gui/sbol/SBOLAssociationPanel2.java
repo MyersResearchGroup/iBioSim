@@ -94,7 +94,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 	
 	public void constructPanel() 
 	{
-		JLabel      associationLabel = new JLabel("Associated DNA Components2:"); 
+		JLabel      associationLabel = new JLabel("Associated DNA Components:"); 
 		JScrollPane componentScroll  = new JScrollPane();
 		componentScroll.setMinimumSize(new Dimension(260, 200));
 		componentScroll.setPreferredSize(new Dimension(276, 132));
@@ -103,7 +103,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 		this.add(componentScroll, "Center");
 		
 		JPanel minusPanel = new JPanel();
-		JLabel minusLabel = new JLabel("Minus Strand");
+		JLabel minusLabel = new JLabel("Reverse Complement");
 		minusPanel.add(minusBox);
 		minusPanel.add(minusLabel);
 		JPanel metaPanel      = new JPanel(new GridLayout(2, 1));

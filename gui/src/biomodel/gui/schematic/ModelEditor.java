@@ -385,14 +385,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				modelPanel.getSBOLField().deleteRemovedBioSimComponent();
 			}
 			catch (SBOLValidationException e1) {
-				// TODO Auto-generated catch block
 				JOptionPane.showMessageDialog(Gui.frame, "Error removing SBOL.", 
 						"SBOL Validation Error", JOptionPane.ERROR_MESSAGE);
 			}
 			if (check) {
 //				saveSBOL(true);
 			} else {
-//				 TODO: Temporarily remove until ported to SBOL 2.0.
 				if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "False").equals("True")) {
 					try {
 						saveSBOL2();
@@ -406,7 +404,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		biomodel.save(path + separator + modelId + ".xml");
-		log.addText("Saving SBML file:\n" + path + separator + modelId  + ".xml\n");
+		log.addText("Saving SBML file:\n" + path + separator + modelId  + ".xml");
+		saveAsSBOL2();
+		log.addText("Converting SBML into SBOL and saving into the project's SBOL library.");
 		if (check) {
 			SBMLutilities.check(path + separator + modelId + ".xml",biomodel.getSBMLDocument(),false);
 		}	
@@ -621,30 +621,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveAsSBOL2() 
 	{
 		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(biosim,path,biomodel);
-		Preferences biosimrc = Preferences.userRoot();
-		JFileChooser chooser = new JFileChooser(biosimrc.get("biosim.general.project_dir", ""));
-		chooser.setDialogTitle("Save as SBOL2");
-		chooser.setApproveButtonToolTipText("Save SBOL2");
-		int choice = chooser.showDialog(Gui.frame, "Save File");
-		if(choice == JFileChooser.CANCEL_OPTION)
-			return;
-		
-		File file = chooser.getSelectedFile();
-		String chosenPath = file.getPath();
-		if(chosenPath.endsWith(".sbol") == false)
-		{
-			chosenPath = chosenPath + ".sbol";
-		}
-		
-		if(!file.exists())
-		{
-			sbmltosbol.export(chosenPath);
-		}
-		else if(file.exists())
-		{
-			sbmltosbol.saveAsSBOL(chosenPath);
-		}
-		
+		sbmltosbol.saveAsSBOL(biosim.getSBOLDocument());
+		biosim.writeSBOLDocument();
 	}
 	
 	public void exportSBOL2() {
@@ -890,7 +868,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			out.write(("\n").getBytes());
 			if (elementsPanel != null) {
 				for (String s : elementsPanel.getElementChanges()) {
-//					out.write((s + "\n").getBytes());
 					SBase sbase = SBMLutilities.getElementByMetaId(biomodel.getSBMLDocument().getModel(), s);				
 					if (sbase==null) {
 						sbase = SBMLutilities.getElementBySId(biomodel.getSBMLDocument(), s);

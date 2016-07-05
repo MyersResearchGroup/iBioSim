@@ -39,7 +39,8 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 	private boolean display;
 	
 	public SBOLDescriptorPanel2(SBOLIdentityManager2 identityManager, SBOLFileManager2 fileManager) {
-		super(new GridLayout(4, 2));
+		//super(new GridLayout(4, 2));
+		super(new GridLayout(3, 2));
 		constructPanel(fileManager.getSBOLFilePaths());
 		display = (loadSBOLDescriptors(identityManager) || 
 				!identityManager.containsBioSimURI() || identityManager.containsPlaceHolderURI() ||
@@ -84,8 +85,8 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 			saveFileIDBox.addItem(splitPath[splitPath.length - 1]);
 		}
 		
-		add(new JLabel("Save SBOL ComponentDefinition to File:"));
-		add(saveFileIDBox);
+//		add(new JLabel("Save SBOL ComponentDefinition to File:"));
+//		add(saveFileIDBox);
 		
 //		JPanel saveFileButton = new JPanel(new GridLayout(2, 1));
 //		saveFileButton.add(saveFileIDBox);

@@ -109,23 +109,32 @@ public class SBMLtoSBOL {
 		return true;
 	}
 	
-	public void saveAsSBOL(String SBOLfile) {
-		SBOLDocument sbolDoc;
-		try
-		{
-			SBOLReader.setKeepGoing(false);
-			sbolDoc = SBOLReader.read(SBOLfile);
-			export(sbolDoc,SBOLfile);
+	public void saveAsSBOL(SBOLDocument sbolDoc) {
+		sbolDoc.setTypesInURIs(true);
+		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
+		String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
+		Collection collection;
+		try {
+			collection = sbolDoc.getCollection(collection_id, VERSION);
+			if (collection!=null) {
+				sbolDoc.removeCollection(collection);
+			}
+			collection = sbolDoc.createCollection(collection_id, VERSION);
+			export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
 		}
-		catch (Throwable e)
-		{
-			e.printStackTrace();
+		catch (SBOLValidationException e1) {
+			e1.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL file.", 
+					"SBOL Save Error", JOptionPane.ERROR_MESSAGE);
 		}
+		sbolDoc.setTypesInURIs(false);
 	}
 	
 	public void export(String exportFilePath) {
 		SBOLDocument sbolDoc = new SBOLDocument();
+		sbolDoc.setTypesInURIs(true);
 		export(sbolDoc,exportFilePath);
+		sbolDoc.setTypesInURIs(false);
 	}
 	
 	public void export(SBOLDocument sbolDoc, String exportFilePath) {
@@ -134,7 +143,7 @@ public class SBMLtoSBOL {
 		Preferences biosimrc = Preferences.userRoot();
 		sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 		sbolDoc.setComplete(true);
-		sbolDoc.setTypesInURIs(true);
+		//sbolDoc.setTypesInURIs(true);
 		
 		String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
 		Collection collection;
@@ -168,12 +177,20 @@ public class SBMLtoSBOL {
 		Model model    = sbmlDoc.getModel();
 		//String modelId = model.getId();
 		URI sourceURI  = URI.create(source);
-		
-		org.sbolstandard.core2.Model sbolModel = sbolDoc.createModel(model.getId(), VERSION, sourceURI, LANGUAGE, FRAMEWORK);
+
+		org.sbolstandard.core2.Model sbolModel = sbolDoc.getModel(model.getId()+"_model", VERSION);
+		if (sbolModel!=null) {
+			sbolDoc.removeModel(sbolModel);
+		}
+		sbolModel = sbolDoc.createModel(model.getId()+"_model", VERSION, sourceURI, LANGUAGE, FRAMEWORK);
 		collection.addMember(sbolModel.getIdentity());	
 		
 		String identityStr  = model.getId();
-		ModuleDefinition moduleDef = sbolDoc.createModuleDefinition(identityStr, VERSION);
+		ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(identityStr, VERSION);
+		if (moduleDef!=null) {
+			sbolDoc.removeModuleDefinition(moduleDef);
+		}
+		moduleDef = sbolDoc.createModuleDefinition(identityStr, VERSION);
 		collection.addMember(moduleDef.getIdentity());
 
 		for (int i = 0; i < model.getSpeciesCount(); i++) 
@@ -338,6 +355,10 @@ public class SBMLtoSBOL {
 			}
 			compDef_type.add(ComponentDefinition.PROTEIN);
 		}
+		compDef = sbolDoc.getComponentDefinition(compDef_identity, VERSION);
+		if (compDef!=null) {
+			sbolDoc.removeComponentDefinition(compDef);
+		}
 		compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 		return compDef; 
 	}
@@ -411,7 +432,7 @@ public class SBMLtoSBOL {
 		// Repeat same steps for the list of activators
 		for(ModifierSpeciesReference a : activators)
 		{
-			String inter_id ="_act_" + a.getSpecies();
+			String inter_id = a.getSpecies() + "_act_" + promoterId;
 			
 			Set<URI> types = new HashSet<URI>();
 			types.add(SystemsBiologyOntology.STIMULATION); 
