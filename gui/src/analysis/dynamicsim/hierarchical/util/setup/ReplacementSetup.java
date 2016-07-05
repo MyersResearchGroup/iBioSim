@@ -58,6 +58,15 @@ public class ReplacementSetup implements Setup
 			}
 			for (Reaction reaction : model.getListOfReactions())
 			{
+				// if (reaction.isSetKineticLaw())
+				// {
+				// KineticLaw law = reaction.getKineticLaw();
+				// for (LocalParameter local : law.getListOfLocalParameters())
+				// {
+				// setupReplacement(local, modelstate, topCompModel, prefix,
+				// listOfHandlers, listOfModules, listOfModels, mapOfModels);
+				// }
+				// }
 				setupReplacement(reaction, modelstate, topCompModel, prefix, listOfHandlers, listOfModules, listOfModels, mapOfModels);
 				for (SpeciesReference reactant : reaction.getListOfReactants())
 				{
@@ -134,8 +143,17 @@ public class ReplacementSetup implements Setup
 					}
 					if (deletion.isSetSBaseRef())
 					{
-						String subId = deletion.getSBaseRef().getIdRef();
-						sub.addDeletedBySid(subId);
+						if (deletion.getSBaseRef().isSetIdRef())
+						{
+							String subId = deletion.getSBaseRef().getIdRef();
+							sub.addDeletedBySid(subId);
+						}
+						else if (deletion.getSBaseRef().isSetMetaIdRef())
+						{
+							String subId = deletion.getSBaseRef().getMetaIdRef();
+							sub.addDeletedByMetaId(subId);
+						}
+
 					}
 					else
 					{
