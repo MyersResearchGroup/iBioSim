@@ -272,7 +272,7 @@ public final class MathInterpreter
 			break;
 		case NAME:
 			String name = math.getName();
-			if (dimensionNodes.containsKey(name))
+			if (dimensionNodes != null && dimensionNodes.containsKey(name))
 			{
 				node = dimensionNodes.get(name);
 			}
