@@ -44,11 +44,6 @@ public class ParameterSetup
 	{
 		double value = parameter.getValue();
 
-		if (Double.isNaN(value))
-		{
-			value = 0;
-		}
-
 		VariableNode node = new VariableNode(parameter.getId(), value);
 
 		if (parameter.isConstant())
