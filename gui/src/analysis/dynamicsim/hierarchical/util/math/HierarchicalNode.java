@@ -52,7 +52,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 
 	public int getNumOfChild()
 	{
-		return children.size();
+		return children == null ? 0 : children.size();
 	}
 
 	@Override
