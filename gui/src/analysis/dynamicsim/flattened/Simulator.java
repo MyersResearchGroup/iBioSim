@@ -3011,7 +3011,7 @@ public abstract class Simulator implements ParentSimulator
 	protected ASTNode inlineFormula(ASTNode formula)
 	{
 
-		if (formula.isFunction() == false || formula.isLeaf() == false)
+		if (formula.isFunction() == false || formula.isOperator()/* || formula.isLeaf() == false */)
 		{
 
 			for (int i = 0; i < formula.getChildCount(); ++i)
@@ -3019,8 +3019,7 @@ public abstract class Simulator implements ParentSimulator
 				formula.replaceChild(i, inlineFormula(formula.getChild(i)));// .clone()));
 			}
 		}
-
-		if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null)
+		else if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null)
 		{
 
 			if (ibiosimFunctionDefinitions.contains(formula.getName()))
