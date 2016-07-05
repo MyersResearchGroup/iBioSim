@@ -376,6 +376,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		@Override
 		public void computeDerivatives(double t, double[] y, double[] yDot) throws MaxCountExceededException, DimensionMismatchException
 		{
+
 			setCurrentTime(t);
 			// Copy values
 			updateVariables(y);

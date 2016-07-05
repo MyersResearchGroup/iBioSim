@@ -71,7 +71,8 @@ public class VariableNode extends ValueNode
 		double oldValue = value;
 		double newValue = Evaluator.evaluateExpressionRecursive(initAssign, false);
 		this.value = newValue;
-		return oldValue != newValue;
+		boolean isNaN = Double.isNaN(oldValue) && Double.isNaN(newValue);
+		return !isNaN && oldValue != newValue;
 	}
 
 	public boolean computeAssignmentValue()
