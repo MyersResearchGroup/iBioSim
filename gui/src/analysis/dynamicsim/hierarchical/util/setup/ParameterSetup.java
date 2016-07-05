@@ -17,24 +17,22 @@ public class ParameterSetup
 	 */
 	public static void setupParameters(ModelState modelstate, Model model)
 	{
-
 		for (Parameter parameter : model.getListOfParameters())
 		{
 			if (modelstate.isDeletedBySId(parameter.getId()))
 			{
 				continue;
 			}
+			// if (ArraysSetup.checkArray(parameter))
+			// {
+			// setupArrayParameter(modelstate, parameter, parameter.getId());
+			// }
+			// else
+			// {
+			// setupSingleParameter(modelstate, parameter, parameter.getId());
+			// }
 			setupSingleParameter(modelstate, parameter, parameter.getId());
 		}
-
-		// for (Parameter parameter : model.getListOfParameters())
-		// {
-		// if (modelstate.isDeletedBySId(parameter.getId()))
-		// {
-		// continue;
-		// }
-		// setupArrayParameter(modelstate, parameter, parameter.getId());
-		// }
 	}
 
 	/**
@@ -62,17 +60,6 @@ public class ParameterSetup
 			modelstate.addVariable(node);
 		}
 
-	}
-
-	/**
-	 * 
-	 * @param modelstate
-	 * @param parameter
-	 * @param parameterID
-	 */
-	private static void setupArrayParameter(ModelState modelstate, Parameter parameter, String parameterID)
-	{
-		ArraysSetup.setupArrays(modelstate, parameter, modelstate.getNode(parameterID));
 	}
 
 	/**

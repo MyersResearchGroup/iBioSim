@@ -42,4 +42,10 @@ public class ReplacementHandler
 		return toVariable;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "copy " + fromVariable + " of " + fromModelState.getID() + " to " + toVariable + " of " + toModelState.getID();
+	}
+
 }

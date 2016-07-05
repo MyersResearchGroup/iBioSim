@@ -37,6 +37,7 @@ public class SpeciesSetup
 		{
 			modelstate.addVariable(node);
 		}
+
 		// ArraysSetup.setupArrays(modelstate, species, node);
 
 	}

@@ -309,13 +309,13 @@ public class ReplacementSetup implements Setup
 
 				String subId = ref.getIdRef();
 				listOfHandlers.add(new ReplacementHandler(top, id, sub, subId));
-				sub.addDeletedBySid(id);
+				sub.addDeletedBySid(subId);
 			}
 			else
 			{
 				String subId = element.getIdRef();
 				listOfHandlers.add(new ReplacementHandler(top, id, sub, subId));
-				sub.addDeletedBySid(id);
+				sub.addDeletedBySid(subId);
 			}
 		}
 		else if (element.isSetPortRef())

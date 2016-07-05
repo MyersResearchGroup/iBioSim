@@ -21,7 +21,7 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 import analysis.dynamicsim.hierarchical.states.ModelState;
-import analysis.dynamicsim.hierarchical.states.ModelState.ModelType;
+import analysis.dynamicsim.hierarchical.states.State.ModelType;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
