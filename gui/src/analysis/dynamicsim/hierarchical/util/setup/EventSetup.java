@@ -37,7 +37,7 @@ public class EventSetup
 
 			boolean useValuesFromTrigger = event.getUseValuesFromTriggerTime();
 			boolean isPersistent = trigger.isSetPersistent() ? trigger.getPersistent() : false;
-			boolean initValue = trigger.isSetInitialValue() ? trigger.isSetInitialValue() : false;
+			boolean initValue = trigger.isSetInitialValue() ? trigger.getInitialValue() : false;
 			setupSingleEvent(modelstate, node, event.getTrigger().getMath(), useValuesFromTrigger, initValue, isPersistent, model, variableToNodeMap);
 
 			if (event.isSetPriority())
