@@ -2282,6 +2282,7 @@ public class BioGraph extends mxGraph {
 					"A model definition cannot be found for " + modelFileName + 
 					".\nDropping module from the schematic.\n",
 					"Warning", JOptionPane.WARNING_MESSAGE);
+			bioModel.removeComponent(id);
 			return false;
 		}
 		
