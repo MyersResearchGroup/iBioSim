@@ -5584,7 +5584,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		SedML sedml = sedmlDoc.getSedMLModel();		
 		if (timeSeries) {
 			if (plotId==null) {
-				plotId = graphName.replace(".grf", "_graph");
+				plotId = graphName.replace(".grf", "__graph");
 			}
 			Plot2D output = (Plot2D)sedml.getOutputWithId(plotId);
 			if (output!=null) {
@@ -5660,7 +5660,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			sedml.addOutput(output);
 		} else {
 			if (plotId==null) {
-				plotId = graphName.replace(".prb", "_report");
+				plotId = graphName.replace(".prb", "__report");
 			}
 			Report report = (Report)sedml.getOutputWithId(plotId);
 			if (report!=null) {
@@ -6020,9 +6020,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			output = sedml.getOutputWithId(plotId);
 		} else {
 			if (timeSeries) {
-				output = sedml.getOutputWithId(analysisId+"_graph");
+				output = sedml.getOutputWithId(analysisId+"__graph");
 			} else {
-				output = sedml.getOutputWithId(analysisId+"_report");
+				output = sedml.getOutputWithId(analysisId+"__report");
 			}
 		}
 		if (output==null) return false;
