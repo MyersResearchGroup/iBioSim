@@ -312,11 +312,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static Object			ICON_COLLAPSE		= UIManager.get("Tree.collapsedIcon");
 
-	private static final String		lemaVersion			= "2.8.4";
+	private static final String		lemaVersion			= "2.8.5";
 
 	private static final String		atacsVersion		= "6.1";
 
-	private static final String		iBioSimVersion		= "2.8.4";	
+	private static final String		iBioSimVersion		= "2.8.5";	
 	
 	private SEDMLDocument 			sedmlDocument		= null;
 	
@@ -3011,6 +3011,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				try {
 					((SBOLDesignerPlugin) comp).saveSBOL();
+					readSBOLDocument();
 					log.addText("Saving SBOL file: " + ((SBOLDesignerPlugin) comp).getFileName() + "\n");
 				}
 				catch (Exception e1) {
@@ -3168,6 +3169,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((SBOLDesignerPlugin) comp).setFileName(newName);
 				try {
 					((SBOLDesignerPlugin) comp).saveSBOL();
+					readSBOLDocument();
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -3437,6 +3439,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				log.addText("Saving SBOL file: " + ((SBOLDesignerPlugin) comp).getFileName() + "\n");	
 				try {
 					((SBOLDesignerPlugin) comp).saveSBOL();
+					readSBOLDocument();
 				}
 				catch (Exception e2) {
 					JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -3925,11 +3928,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (model != null) {
 					sedml.removeModel(model);
 				}
-				Output output = sedml.getOutputWithId(fileName+"_graph");
+				Output output = sedml.getOutputWithId(fileName+"__graph");
 				if (output != null) {
 					sedml.removeOutput(output);
 				}
-				output = sedml.getOutputWithId(fileName+"_report");
+				output = sedml.getOutputWithId(fileName+"__report");
 				if (output != null) {
 					sedml.removeOutput(output);
 				}
@@ -5490,6 +5493,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	public SBOLDocument getSBOLDocument() {
+		readSBOLDocument();
 		return sbolDocument;
 	}
 	
@@ -5756,7 +5760,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (!checkSBOL(sbolDoc,false)) return;
 				log.addText("Importing " + sbolFile + " into the project's SBOL library.");
 				generateSBMLFromSBOL(filename.trim());
-				sbolDocument.read(sbolFile);
+				getSBOLDocument().read(sbolFile);
 				writeSBOLDocument();
 //				String newFile = file[file.length-1].replace(".xml", "").replace(".rdf", "").replace(".gb", "").replace(".fasta", "")+".sbol";
 //				SBOLWriter.write(sbolDoc, root + separator + newFile);
@@ -5844,6 +5848,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				graphName += ".grf";
 			}
+			if (graphName.contains("__"))
+			{
+				JOptionPane.showMessageDialog(frame, "TSD Graph ID's are not allowed to include two consecutive underscores.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			if (overwrite(root + separator + graphName, graphName))
 			{
 				Graph g = new Graph(null, "Number of molecules", graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "Time",
@@ -5871,6 +5880,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else
 			{
 				graphName += ".prb";
+			}
+			if (graphName.contains("__"))
+			{
+				JOptionPane.showMessageDialog(frame, "Histogram ID's are not allowed to include two consecutive underscores.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 			if (overwrite(root + separator + graphName, graphName))
 			{
@@ -6385,16 +6399,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					AbstractTask newRepeatedTask = SEDMLutilities.copyTask(repeatedTask, "repeat_"+newName);
 					sedml.addTask(newRepeatedTask);
 				}
-				Output output = sedml.getOutputWithId(oldName+"_graph");
+				Output output = sedml.getOutputWithId(oldName+"__graph");
 				Plot2D newGraph = null;
 				if (output != null) {
-					newGraph = (Plot2D)SEDMLutilities.copyOutput(output,newName+"_graph");
+					newGraph = (Plot2D)SEDMLutilities.copyOutput(output,newName+"__graph");
 					sedml.addOutput(newGraph);
 				}
-				output = sedml.getOutputWithId(oldName+"_report");
+				output = sedml.getOutputWithId(oldName+"__report");
 				Report newReport = null;
 				if (output != null) {
-					newReport = (Report)SEDMLutilities.copyOutput(output,newName+"_report");
+					newReport = (Report)SEDMLutilities.copyOutput(output,newName+"__report");
 					sedml.addOutput(newReport);
 				}
 				ArrayList<DataGenerator> copy = new ArrayList<DataGenerator>();
@@ -6829,15 +6843,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					sedml.addTask(newRepeatedTask);
 					sedml.removeTask(repeatedTask);
 				}
-				Output output = sedml.getOutputWithId(oldName+"_graph");
+				Output output = sedml.getOutputWithId(oldName+"__graph");
 				if (output != null) {
-					Output newOutput = SEDMLutilities.copyOutput(output,newName+"_graph");
+					Output newOutput = SEDMLutilities.copyOutput(output,newName+"__graph");
 					sedml.addOutput(newOutput);
 					sedml.removeOutput(output);
 				}
-				output = sedml.getOutputWithId(oldName+"_report");
+				output = sedml.getOutputWithId(oldName+"__report");
 				if (output != null) {
-					Output newOutput = SEDMLutilities.copyOutput(output,newName+"_report");
+					Output newOutput = SEDMLutilities.copyOutput(output,newName+"__report");
 					sedml.addOutput(newOutput);
 					sedml.removeOutput(output);
 				}
@@ -7161,7 +7175,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(Gui.separator) + 1);
 		try {
 			
-			SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,fileName,null,sbolDocument.getDefaultURIprefix());
+			SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,fileName,null,getSBOLDocument().getDefaultURIprefix());
 			if (sbolDesignerPlugin.getRootDisplayId().equals("NewDesign")) return;
 			addTab(sbolDesignerPlugin.getRootDisplayId(),sbolDesignerPlugin,"SBOL Designer");
 		}
@@ -7196,12 +7210,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			} else {
 				SBOLDesignerPlugin sbolDesignerPlugin;
 				try {
-					ComponentDefinition cd = sbolDocument.createComponentDefinition(partId, "1", ComponentDefinition.DNA);
+					ComponentDefinition cd = getSBOLDocument().createComponentDefinition(partId, "1", ComponentDefinition.DNA);
 					writeSBOLDocument();
 					sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,currentProjectId+".sbol",cd.getIdentity(),sbolDocument.getDefaultURIprefix());
 					addTab(partId,sbolDesignerPlugin,"SBOL Designer");
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(Gui.frame, "Unable to create new part.", 
 							"Invalid Part", JOptionPane.ERROR_MESSAGE);
 				}
@@ -7836,6 +7851,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 						try {
 							editor.saveSBOL();
+							readSBOLDocument();
 						}
 						catch (Exception e) {
 							JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -7855,6 +7871,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 						try {
 							editor.saveSBOL();
+							readSBOLDocument();
 						}
 						catch (Exception e) {
 							JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -7871,6 +7888,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				{
 					try {
 						editor.saveSBOL();
+						readSBOLDocument();
 					}
 					catch (Exception e) {
 						JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -9471,6 +9489,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (simName.equals(""))
 		{
 			simName = modelId;
+		}
+		if (simName.contains("__"))
+		{
+			JOptionPane.showMessageDialog(frame, "Analysis view ID's are not allowed to include two consecutive underscores.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		simName = simName.trim();
 		if (!overwrite(root + separator + simName, simName))

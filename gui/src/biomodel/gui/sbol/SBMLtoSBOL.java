@@ -358,7 +358,7 @@ public class SBMLtoSBOL {
 		compDef = sbolDoc.getComponentDefinition(compDef_identity, VERSION);
 		if (compDef!=null) {
 			sbolDoc.removeComponentDefinition(compDef);
-		}
+		} 
 		compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 		return compDef; 
 	}
