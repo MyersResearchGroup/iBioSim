@@ -2782,7 +2782,7 @@ public class BioModel {
 	 * 
 	 * @param filename
 	 */
-	public void save(String filename) {
+	public void save(String filename) {		
 		updatePorts();
 		setGridSize(grid.getNumRows(),grid.getNumCols());
 		setLayoutSize();
@@ -5224,26 +5224,8 @@ public class BioModel {
 	 * @param componentID
 	 */
 	public void removeGridSpecies(String componentModelRef) {
-		
-		//find the sbml file for the component
-		/*
-		System.out.println("Start:"+componentModelRef);
-		if (this.getSBMLComp()==null) {
-			System.out.println("1");
-		}
-		if (this.getSBMLComp().getListOfExternalModelDefinitions()==null) {
-			System.out.println("2");
-		}
-		if (this.getSBMLComp().getListOfExternalModelDefinitions().get(componentModelRef)==null) {
-			System.out.println("3");
-		}
-		if (this.getSBMLComp().getListOfExternalModelDefinitions().get(componentModelRef).getSource()==null) {
-			System.out.println("4");
-		}
-		*/
 		String externalModelID = 
 			this.getSBMLComp().getListOfExternalModelDefinitions().get(componentModelRef).getSource().replace("file://","").replace("file:","");
-		//System.out.println("End:"+externalModelID);
 		
 		SBMLDocument document = null;
 		
@@ -6433,7 +6415,6 @@ public class BioModel {
 							return true;
 						}
 				}
-				/*
 				if (sbmlSBase.isSetReplacedBy()) {
 					ReplacedBy replacement = sbmlSBase.getReplacedBy();
 					if (replacement.getSubmodelRef().equals(submodel.getId()) &&
@@ -6441,7 +6422,6 @@ public class BioModel {
 						return true;
 					}
 				}
-				*/
 			}
 		}
 		return false;
@@ -7367,7 +7347,6 @@ public class BioModel {
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,p.getId(),
 						model.getParameter(j).getId());
 			}
-			//System.out.println("orig="+p.getId()+" new="+newName);
 			updateVarId(false, p.getId(), newName, subBioModel);
 			if (subModel.getParameter(newName)==null) p.setId(newName);
 			else p.setId("skip"+"___"+p.getId());

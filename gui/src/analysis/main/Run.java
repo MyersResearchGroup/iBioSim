@@ -2327,7 +2327,7 @@ public class Run implements ActionListener
 		return exitValue;
 	}
 
-	private String createTimeString(long time1, long time2)
+	public static String createTimeString(long time1, long time2)
 	{
 		long minutes;
 		long hours;
