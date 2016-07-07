@@ -4291,7 +4291,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					String Pub = (client.getSimpleModelById(SelectedModel)).getPublicationId();
 					Preferences biosimrc = Preferences.userRoot();
 					String command = biosimrc.get("biosim.general.browser", "");
-					command = command + " http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
+					command = command + " http://www.ncbi.nlm.nih.gov/pubmed/?term=" + Pub;
 					log.addText("Executing:\n" + command + "\n");
 					Runtime exec = Runtime.getRuntime();
 					exec.exec(command);
