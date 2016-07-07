@@ -230,24 +230,30 @@ public class SBMLtoSBOL {
 				
 				Interaction inter = moduleDef.createInteraction(reaction.getId(), types);
 				
+				int j = 0;
 				for(SpeciesReference reactant : reaction.getListOfReactants())
 				{
 					Set<URI> roles_r = new HashSet<URI>();
 					roles_r.add(SystemsBiologyOntology.REACTANT);
-					inter.createParticipation(reactant.getSpecies(), reactant.getSpecies(),roles_r);
+					inter.createParticipation(reactant.getSpecies()+"_r"+j, reactant.getSpecies(),roles_r);
+					j++;
 				}
+				j = 0;
 				for(ModifierSpeciesReference modifier : reaction.getListOfModifiers())
 				{
 					Set<URI> roles_r = new HashSet<URI>();
 					roles_r.add(SystemsBiologyOntology.MODIFIER);
-					inter.createParticipation(modifier.getSpecies(), modifier.getSpecies(),roles_r);
+					inter.createParticipation(modifier.getSpecies()+"_m"+j, modifier.getSpecies(),roles_r);
+					j++;
 				}
+				j = 0;
 				for(SpeciesReference product : reaction.getListOfProducts())
 				{
 					// create participation from product.getSpecies() as type product
 					Set<URI> roles_p = new HashSet<URI>();
 					roles_p.add(SystemsBiologyOntology.PRODUCT);
-					inter.createParticipation(product.getSpecies(), product.getSpecies(),roles_p);
+					inter.createParticipation(product.getSpecies()+"_p"+j, product.getSpecies(),roles_p);
+					j++;
 				}
 			}
 		}

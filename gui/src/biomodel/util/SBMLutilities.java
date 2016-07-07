@@ -1817,6 +1817,15 @@ public class SBMLutilities
 		}
 		return false;
 	}
+	
+	public static String fixSId(String sId) {
+		sId = sId.replaceAll("[^a-zA-Z0-9_]", "_");
+		sId = sId.replace(" ", "_");
+		if (Character.isDigit(sId.charAt(0))) {
+			sId = "_" + sId;
+		}
+		return sId;
+	}
 
 	public static void fillBlankMetaIDs(SBMLDocument document)
 	{
@@ -1853,6 +1862,8 @@ public class SBMLutilities
 			if (!r.isSetMetaId() || r.getMetaId().equals(""))
 			{
 				metaIDIndex = setDefaultMetaID(document, r, metaIDIndex);
+			} else {
+				r.setMetaId(fixSId(r.getMetaId()));
 			}
 		}
 		for (int i = 0; i < model.getEventCount(); i++)
@@ -1869,6 +1880,8 @@ public class SBMLutilities
 			if (!c.isSetMetaId() || c.getMetaId().equals(""))
 			{
 				metaIDIndex = setDefaultMetaID(document, c, metaIDIndex);
+			} else {
+				c.setMetaId(fixSId(c.getMetaId()));
 			}
 		}
 		CompModelPlugin compModel = (CompModelPlugin) document.getModel().getExtension(CompConstants.namespaceURI);
