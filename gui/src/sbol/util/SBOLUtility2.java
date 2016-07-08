@@ -773,10 +773,30 @@ public class SBOLUtility2
 //			return "N/A";
 //	}
 	
+	public static String convertURIToTypeString(URI uri)
+	{
+		if (uri.equals(ComponentDefinition.DNA)) {
+			return "DNA";
+		} else if (uri.equals(ComponentDefinition.RNA)) {
+			return "RNA";
+		} else if (uri.equals(ComponentDefinition.PROTEIN)) {
+			return "protein";
+		} else if (uri.equals(ComponentDefinition.SMALL_MOLECULE)) {
+			return "small molecule";
+		} else if (uri.equals(ComponentDefinition.COMPLEX)) {
+			return "complex";
+		} else if (uri.equals(ComponentDefinition.EFFECTOR)) {
+			return "effector";
+		} 
+		return uri.toString();
+	}
+	
 	public static String convertURIToSOTerm(URI uri) 
 	{
 		SequenceOntology so = new SequenceOntology();
-		return so.getName(uri);
+		String role = so.getName(uri);
+		if (role!=null) return role;
+		return uri.toString();
 	}
 	
 	

@@ -111,7 +111,6 @@ import org.jlibsedml.Report;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.Variable;
-import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.modelsupport.SBMLSupport;
 import org.jmathml.ASTNode;
 import org.sbml.jsbml.ListOf;
@@ -6200,7 +6199,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				} else {
 					paint = colors.get(color);
 				}
-				// TODO: number
 				probGraphed.add(new GraphProbs(paint, color, id, name, j, taskId));
 			}
 			refreshProb();
