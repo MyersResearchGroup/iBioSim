@@ -1179,6 +1179,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Initial Time Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		if (initialTime < 0)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Non-negative Number into the Initial Time Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 		try
 		{
 			outputStartTime = Double.parseDouble(outputStartTimeField.getText().trim());
@@ -1188,6 +1194,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Output Start Time Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		if (outputStartTime < 0)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Non-negative Number into the Output Start Time Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 		try
 		{
 			timeLimit = Double.parseDouble(limit.getText().trim());
@@ -1197,6 +1209,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Limit Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		if (timeLimit <= 0)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Time Limit Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}		
+		
 		try
 		{
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval"))
@@ -1233,13 +1251,29 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter an Integer into the Number of Steps Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		
+		try
+		{
+			minTimeStep = Double.parseDouble(minStep.getText().trim());
+		}
+		catch (Exception e1)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Minimum Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (minTimeStep < 0)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Non-negative Number into the Minimum Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 		if (step.getText().trim().equals("inf") && !sim.equals("euler"))
 		{
 			timeStep = Double.MAX_VALUE;
 		}
 		else if (step.getText().trim().equals("inf") && sim.equals("euler"))
 		{
-			JOptionPane.showMessageDialog(Gui.frame, "Cannot Select an Infinite Time Step with Euler Simulation.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Cannot Select an Infinite Maximum Time Step with Euler Simulation.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		else
@@ -1250,19 +1284,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			catch (Exception e1)
 			{
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Maximum Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 		}
-		try
+		if (timeStep <= 0)
 		{
-			minTimeStep = Double.parseDouble(minStep.getText().trim());
-		}
-		catch (Exception e1)
-		{
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Real Number into the Minimum Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Maximum Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
-		}
+		}	
+		
 		try
 		{
 			absError = Double.parseDouble(absErr.getText().trim());
@@ -1272,6 +1303,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Absolute Error Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		if (absError < 0)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Non-negative Number into the Absolute Error Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 		try
 		{
 			relError = Double.parseDouble(relErr.getText().trim());
@@ -1281,6 +1318,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Relative Error Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		if (relError < 0)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Non-negative Number into the Relative Error Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		
 		try
 		{
 			rndSeed = Long.parseLong(seed.getText().trim());
@@ -1290,6 +1334,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter an Integer into the Random Seed Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		
 		try
 		{
 			run = Integer.parseInt(runs.getText().trim());
@@ -1297,6 +1342,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			{
 				JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Integer into the Runs Field." + "\nProceding with Default:   " + biosimrc.get("biosim.sim.runs", ""), "Error", JOptionPane.ERROR_MESSAGE);
 				run = Integer.parseInt(biosimrc.get("biosim.sim.runs", ""));
+				return false;
 			}
 		}
 		catch (Exception e1)
@@ -1304,6 +1350,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Integer into the Runs Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		
 		if (genRuns.isSelected())
 		{
 			printer_id = "null.printer";
