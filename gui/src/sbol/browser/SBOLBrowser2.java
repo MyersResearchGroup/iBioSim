@@ -30,8 +30,10 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 //	private static final long serialVersionUID = 1L;
 	private String[] options = {"Ok", "Cancel"};
 	private JPanel      selectionPanel = new JPanel(new GridLayout(1,2));
-	private JPanel      filterPanel    = new JPanel(new GridLayout(1,3));
-	private JComboBox   filterBox;
+	private JPanel      filterTypePanel    = new JPanel(new GridLayout(1,3));
+	private JComboBox   filterTypeBox;
+	private JPanel      filterRolePanel    = new JPanel(new GridLayout(1,3));
+	private JComboBox   filterRoleBox;
 
 	private JTextArea   viewArea   = new JTextArea();
 	private JScrollPane viewScroll = new JScrollPane();
@@ -62,7 +64,9 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		
 	public void open() {			
 		JPanel browserPanel = new JPanel(new BorderLayout());
-		
+		JPanel filterPanel = new JPanel();
+		filterPanel.add(filterTypePanel);
+		filterPanel.add(filterRolePanel);
 		browserPanel.add(filterPanel, BorderLayout.NORTH);
 		browserPanel.add(selectionPanel, BorderLayout.CENTER);
 		browserPanel.add(viewScroll, BorderLayout.SOUTH);
@@ -79,7 +83,8 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		browsePath = browsePath.replace("\\\\", "\\");
 		
 		selectionPanel = new JPanel(new GridLayout(1,2));
-		filterPanel = new JPanel(new GridLayout(1,3));
+		filterTypePanel = new JPanel(new GridLayout(1,2));
+		filterRolePanel = new JPanel(new GridLayout(1,2));
 		viewArea = new JTextArea();
 		viewScroll = new JScrollPane();
 		
@@ -92,6 +97,9 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		constructBrowser(new HashSet<URI>());
 		
 		JPanel browserPanel = new JPanel(new BorderLayout());
+		JPanel filterPanel = new JPanel();
+		filterPanel.add(filterTypePanel);
+		filterPanel.add(filterRolePanel);
 		browserPanel.add(filterPanel, BorderLayout.NORTH);
 		browserPanel.add(selectionPanel, BorderLayout.CENTER);
 		browserPanel.add(viewScroll, BorderLayout.SOUTH);
@@ -114,6 +122,9 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 	
 		constructBrowser(filter);
 
+		JPanel filterPanel = new JPanel();
+		filterPanel.add(filterTypePanel);
+		filterPanel.add(filterRolePanel);
 		this.add(filterPanel, BorderLayout.NORTH);
 		this.add(selectionPanel, BorderLayout.CENTER);
 		this.add(viewScroll, BorderLayout.SOUTH);
@@ -224,6 +235,16 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 			} //end of searching 1 file
 		} // end of iterating through mult files
 		
+		Set<String> compDefTypes = new LinkedHashSet<String>();
+		compDefTypes.add("all");
+		compDefTypes.add("DNA");
+		compDefTypes.add("RNA");
+		compDefTypes.add("protein");
+		compDefTypes.add("complex");
+		compDefTypes.add("small molecule");
+		compDefTypes.add("effector");
+		filterTypeBox = new JComboBox(compDefTypes.toArray());
+		
 		Set<String> compDefRoles = new LinkedHashSet<String>();
 		compDefRoles.add("all");
 		for (int i = 0; i < localCompURIs.size(); i++) {
@@ -234,8 +255,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 				compDefRoles.add(SBOLUtility2.convertURIToSOTerm(localComp.getRoles().iterator().next()));
 			}
 		}
-		
-		filterBox = new JComboBox(compDefRoles.toArray());
+		filterRoleBox = new JComboBox(compDefRoles.toArray());
 	}
 	
 	private boolean browserOpen() 
@@ -273,13 +293,19 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 		selectionPanel.add(libPanel);
 		selectionPanel.add(compPanel);
 		
-		filterBox.setActionCommand("filterSBOL");
-		filterBox.addActionListener(this);
-		JLabel filterLabel = new JLabel("Filter by Type:  ");
-		filterLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		filterPanel.add(filterLabel);
-		filterPanel.add(filterBox);
-		filterPanel.add(new JLabel());
+		filterTypeBox.setActionCommand("filterTypes");
+		filterTypeBox.addActionListener(this);
+		JLabel filterTypeLabel = new JLabel("Filter by Type:  ");
+		filterTypeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		filterTypePanel.add(filterTypeLabel);
+		filterTypePanel.add(filterTypeBox);
+
+		filterRoleBox.setActionCommand("filterRoles");
+		filterRoleBox.addActionListener(this);
+		JLabel filterRoleLabel = new JLabel("Filter by Role:  ");
+		filterRoleLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		filterRolePanel.add(filterRoleLabel);
+		filterRolePanel.add(filterRoleBox);
 	}
 	
 	public LinkedList<URI> getSelection() 
@@ -290,11 +316,21 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
-		if (e.getActionCommand().equals("filterSBOL")) 
+		if (e.getActionCommand().equals("filterRoles")) 
 		{
 			libPanel.displaySelected();
-			compPanel.filterComponents(filterBox.getSelectedItem().toString());
-		} 
+			if (!filterRoleBox.getSelectedItem().toString().equals("all")) {
+				filterTypeBox.setSelectedItem("DNA");
+			}
+			compPanel.filterComponentsByRole(filterRoleBox.getSelectedItem().toString());
+		} else if (e.getActionCommand().equals("filterTypes")) 
+		{
+			libPanel.displaySelected();
+			if (!filterTypeBox.getSelectedItem().toString().equals("DNA")) {
+				filterRoleBox.setSelectedItem("all");
+			}
+			compPanel.filterComponentsByType(filterTypeBox.getSelectedItem().toString());
+		}
 		
 	}
 }
