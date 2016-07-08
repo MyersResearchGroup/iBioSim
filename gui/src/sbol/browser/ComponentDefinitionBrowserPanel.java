@@ -127,6 +127,16 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 						viewArea.append("Annotations:  NA\n");
 					
 					viewArea.append("Types:  ");
+					String types = "";
+					for (URI uri : dnac.getTypes()) {
+						types = types + SBOLUtility2.convertURIToTypeString(uri) + ", ";
+					}
+					if (types.length() > 0)
+						viewArea.append(types.substring(0, types.length() - 2) + "\n");
+					else 
+						viewArea.append("NA\n");
+					
+					viewArea.append("Roles:  ");
 					String roles = "";
 					for (URI uri : dnac.getRoles()) 
 						roles = roles + SBOLUtility2.convertURIToSOTerm(uri) + ", ";
