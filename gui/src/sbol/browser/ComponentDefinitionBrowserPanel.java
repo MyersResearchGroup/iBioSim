@@ -5,15 +5,13 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-//import org.sbolstandard.core.DnaComponent;
-//import org.sbolstandard.core.DnaSequence;
-//import org.sbolstandard.core.MergerException;
-import org.sbolstandard.core2.SequenceAnnotation;
+import org.sbolstandard.core2.Component;
 //import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 import org.sbolstandard.core2.*;
 
 import sbol.util.SBOLUtility2;
 import biomodel.util.GlobalConstants;
+
 import java.net.URI;
 import java.util.*;
 
@@ -24,12 +22,8 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 	 */
 	private static final long serialVersionUID = 1L;
 	private SBOLDocument SBOLDOC; 
-//	private static final long serialVersionUID = 1L;
 	private LinkedList<URI>    compURIs;
 	private LinkedList<String> compIDs;
-//	private UseFirstFound<DnaComponent, URI> aggregateCompResolver;
-//	private UseFirstFound<SequenceAnnotation, URI> aggregateAnnoResolver;
-//	private UseFirstFound<DnaSequence, URI> aggregateSeqResolver;
 	
 	private JTextArea viewArea;
 	private JList compDefList = new JList();
@@ -37,9 +31,6 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 	public ComponentDefinitionBrowserPanel(SBOLDocument sbolDoc, JTextArea viewArea) {
 		super(new BorderLayout());
 		this.SBOLDOC = sbolDoc; 
-//		this.aggregateCompResolver = aggregateCompResolver;
-//		this.aggregateAnnoResolver = aggregateAnnoResolver;
-//		this.aggregateSeqResolver = aggregateSeqResolver;
 		this.viewArea = viewArea;
 		
 		compDefList.addMouseListener(this);
@@ -62,15 +53,32 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 		compDefList.setListData(idObjects);
 	}
 	
-	public void filterComponents(String filterType) {
+	public void filterComponentsByType(String filterRole) {
 		viewArea.setText("");
 		LinkedList<URI> filteredURIs = new LinkedList<URI>();
 		LinkedList<String> filteredIDs = new LinkedList<String>();
 		for (int i = 0; i < compURIs.size(); i++) {
 			ComponentDefinition dnac = null;
 			dnac = SBOLDOC.getComponentDefinition(compURIs.get(i));
-			if (filterType.equals("all") || (dnac.getRoles().size() > 0 &&
-					SBOLUtility2.convertURIToSOTerm(dnac.getRoles().iterator().next()).equals(filterType))) 
+			if (filterRole.equals("all") || (dnac.getTypes().size() > 0 &&
+					SBOLUtility2.convertURIToTypeString(dnac.getTypes().iterator().next()).equals(filterRole))) 
+			{
+				filteredURIs.add(compURIs.get(i));
+				filteredIDs.add(compIDs.get(i));
+			}
+		}
+		setComponents(filteredIDs, filteredURIs);
+	}
+	
+	public void filterComponentsByRole(String filterRole) {
+		viewArea.setText("");
+		LinkedList<URI> filteredURIs = new LinkedList<URI>();
+		LinkedList<String> filteredIDs = new LinkedList<String>();
+		for (int i = 0; i < compURIs.size(); i++) {
+			ComponentDefinition dnac = null;
+			dnac = SBOLDOC.getComponentDefinition(compURIs.get(i));
+			if (filterRole.equals("all") || (dnac.getRoles().size() > 0 &&
+					SBOLUtility2.convertURIToSOTerm(dnac.getRoles().iterator().next()).equals(filterRole))) 
 			{
 				filteredURIs.add(compURIs.get(i));
 				filteredIDs.add(compIDs.get(i));
@@ -102,90 +110,111 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 				if (dnac != null) 
 				{
 					viewArea.append("Identity:  " + dnac.getIdentity() + "\n");
-					viewArea.append("Display ID:  " + dnac.getDisplayId() + "\n");
-					
-					if (dnac.getName() != null && !dnac.getName().equals(""))
+					if (!dnac.getIdentity().equals(dnac.getPersistentIdentity())) {
+						viewArea.append("Persistent Identity:  " + dnac.getPersistentIdentity() + "\n");
+					}
+					if (dnac.isSetDisplayId()) {
+						viewArea.append("Display ID:  " + dnac.getDisplayId() + "\n");
+					}
+					if (dnac.isSetVersion()) {
+						viewArea.append("Version:  " + dnac.getVersion() + "\n");
+					}
+					if (dnac.isSetWasDerivedFrom()) {
+						viewArea.append("Version:  " + dnac.getWasDerivedFrom() + "\n");
+					}
+					if (dnac.isSetName()) {
 						viewArea.append("Name:  " + dnac.getName() + "\n");
-					else
-						viewArea.append("Name:  NA\n");
-					
-					if (dnac.getDescription() != null && !dnac.getDescription().equals(""))
+					}
+					if (dnac.isSetDescription()) {
 						viewArea.append("Description:  " + dnac.getDescription() + "\n");
-					else 
-						viewArea.append("Description:  NA\n");
-					
-					
-					if (dnac.getSequenceAnnotations().size() > 0) 
-					{
-						//ascending order of range
-						SequenceAnnotation[] sortedSA = sortAnnotations(dnac.getSequenceAnnotations()); 
-						String annotations = processAnnotations(sortedSA); //append sa information
-						viewArea.append("Annotations:  ");
-						viewArea.append(annotations + "\n");
-					} 
-					else 
-						viewArea.append("Annotations:  NA\n");
-					
-					viewArea.append("Types:  ");
+					}
 					String types = "";
 					for (URI uri : dnac.getTypes()) {
 						types = types + SBOLUtility2.convertURIToTypeString(uri) + ", ";
 					}
-					if (types.length() > 0)
+					if (types.length() > 0) {
+						viewArea.append("Types:  ");
 						viewArea.append(types.substring(0, types.length() - 2) + "\n");
-					else 
-						viewArea.append("NA\n");
+					}
 					
-					viewArea.append("Roles:  ");
 					String roles = "";
 					for (URI uri : dnac.getRoles()) 
 						roles = roles + SBOLUtility2.convertURIToSOTerm(uri) + ", ";
-					if (roles.length() > 0)
+					if (roles.length() > 0) {
+						viewArea.append("Roles:  ");
 						viewArea.append(roles.substring(0, roles.length() - 2) + "\n");
-					else
-						viewArea.append("NA\n");
+					}
 					
-					if (dnac.getSequences() != null) 
+					if (dnac.getComponents().size()>0) {
+						try {
+							viewArea.append("Components:  ");
+							String sortedComponents = "";
+							for (Component component : dnac.getSortedComponents()) {
+								sortedComponents = sortedComponents + processComponent(dnac,component);
+							}
+							viewArea.append(sortedComponents + "\n");
+						}
+						catch (SBOLValidationException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if (dnac.getSequences().size()>0) 
 					{
-//						Set<Sequence> sequences = new HashSet<Sequence>();
-//						System.out.println("Found a sequence: " + dnac.getSequenceURIs());
-//						for(URI s : dnac.getSequenceURIs())
-//						{
-//							sequences.add(SBOLDOC.getSequence(s));
-//						}
-						
 						String seq = processSequences(dnac.getSequences());
-//						String seq = processSequences(sequences);
-						
 						viewArea.append("DNA Sequence:  ");
 						viewArea.append(seq + "\n");
 					} 
-					else
-						viewArea.append("DNA Sequence:  NA\n\n");
-					
-					
-					/*if ( dnac.getSequenceConstraints() != null) 
-					{
-						String seqCon = processSequenceConstraints(dnac.getSequenceConstraints());
-						viewArea.append("SequenceConstraints: ");
-						viewArea.append(seqCon + "\n");
-					}
-					else
-						viewArea.append("SequenceConstraint:  NA\n\n");
-					
-					if ( dnac.getComponents() != null) 
-					{
-						
-						String comp = processComponents(dnac.getComponents());
-						viewArea.append("Components: ");
-						viewArea.append(comp + "\n");
-					}
-					else
-						viewArea.append("Component:  NA\n\n");
-					 */
-				} // end of each compDef
-			} // end of iterating through all selectedURIs
+				} 
+			} 
 		} 
+	}
+	
+	private static String processComponent(ComponentDefinition dnac,Component component) {
+		String componentStr = "";
+		ComponentDefinition definition = component.getDefinition();
+		if (definition!=null) {
+			if (definition.isSetDisplayId()) {
+				componentStr = definition.getDisplayId();
+			} else {
+				componentStr = definition.getIdentity().toString();
+			}
+		} else {
+			if (component.isSetDisplayId()) {
+				componentStr = component.getDisplayId();
+			} else {
+				componentStr = component.getIdentity().toString();
+			}
+		}
+		SequenceAnnotation sequenceAnnotation = dnac.getSequenceAnnotation(component);
+		if (sequenceAnnotation != null) {
+			if (sequenceAnnotation.getLocations().size()>0) {
+				componentStr += " (";
+				boolean first = true;
+				for (Location location : sequenceAnnotation.getLocations()) {
+					String symbol = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+					if (location.isSetOrientation() && location.getOrientation().equals(OrientationType.REVERSECOMPLEMENT)) {
+						symbol = GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
+					}
+					if (!first) {
+						componentStr += "; ";
+					} else {
+						first = false;
+					}
+					if (location instanceof Range) {
+						Range range = (Range)location;
+						componentStr += symbol + range.getStart() + " to " + symbol + range.getEnd(); 
+					} else if (location instanceof Cut) {
+						Cut cut = (Cut)location;
+						componentStr += symbol + cut.getAt();
+					} else if (location instanceof GenericLocation) {
+						componentStr += symbol;
+					}
+				}
+				componentStr += ") ";
+			}
+		}
+		return componentStr;
 	}
 	
 	private static String processSequences(Set<Sequence> sequences)
@@ -195,14 +224,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 		{
 			// TODO: need to figure out a better way for multiple sequences, for now just return first sequence
 			return s.getElements();
-			/*
-			if(s != null)
-				sequence = sequence + s.getElements() + ", ";
-			else
-				sequence = sequence + "NA";
-				*/ 
 		}
-		//sequence = sequence.substring(0, sequence.length() - 2); //this will remove the extra "," at the end of the string
 		return "NA";//sequence;
 	}
 	
