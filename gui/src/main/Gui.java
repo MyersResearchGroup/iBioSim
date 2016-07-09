@@ -208,7 +208,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem				newProj,newSBMLModel,newSBOL,newGridModel,newVhdl,newS,newInst,newLhpn,newProperty,newG;
 	private JMenuItem				newCsp,newHse,newUnc,newRsg,newSpice;
 	private JMenuItem				exit;
-	private JMenuItem				importSbol,importSedml,importSbml,importBioModel,importVirtualPart,importVhdl;
+	private JMenuItem				importSbol,importGenBank,importFasta;
+	private JMenuItem				importSedml,importSbml,importBioModel,importVirtualPart,importVhdl;
 	private JMenuItem				importS,importInst,importLpn,importG,importCsp,importHse,importUnc;	
 	private JMenuItem				importRsg,importSpice,importProperty;
 	private JMenuItem				manual;	
@@ -218,8 +219,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem				clearRecent;	
 	private JMenuItem				pref;
 	private JMenuItem				graph;
-	private JMenuItem				probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, exportSBML,
-			exportFlatSBML, exportSBOL2, exportSEDML, exportAvi, exportMp4;
+	private JMenuItem				probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf;
+	private JMenuItem				exportPng, exportSvg, exportTsd, exportSBML,exportFlatSBML;
+	private JMenuItem				exportSBOL1, exportSBOL2, exportGenBank, exportFasta, exportSEDML, exportAvi, exportMp4;
 	private JMenu					exportDataMenu, exportMovieMenu, exportImageMenu;
 	private String					root;
 	private String 					currentProjectId;
@@ -548,6 +550,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Histogram");
 		importSbol = new JMenuItem("SBOL File");
+		importGenBank = new JMenuItem("GenBank File");
+		importFasta = new JMenuItem("Fasta File");
 		importSedml = new JMenuItem("SED-ML File");
 		importSbml = new JMenuItem("SBML Model");
 		importBioModel = new JMenuItem("BioModel");
@@ -567,7 +571,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importRsg = new JMenuItem("Reduced State Graph");
 		exportSBML = new JMenuItem("SBML");
 		exportFlatSBML = new JMenuItem("Flat SBML");
-		exportSBOL2 = new JMenuItem("SBOL");
+		exportSBOL1 = new JMenuItem("SBOL 1.1");
+		exportSBOL2 = new JMenuItem("SBOL 2.0");
+		exportGenBank = new JMenuItem("GenBank");
+		exportFasta = new JMenuItem("Fasta");
 		exportSEDML = new JMenuItem("SED-ML");
 		exportCsv = new JMenuItem("CSV");
 		exportDat = new JMenuItem("DAT");
@@ -665,6 +672,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exit.addActionListener(this);
 		about.addActionListener(this);
 		importSbol.addActionListener(this);
+		importGenBank.addActionListener(this);
+		importFasta.addActionListener(this);
 		importSedml.addActionListener(this);
 		importSbml.addActionListener(this);
 		importBioModel.addActionListener(this);
@@ -683,7 +692,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importSpice.addActionListener(this);
 		exportSBML.addActionListener(this);
 		exportFlatSBML.addActionListener(this);
+		exportSBOL1.addActionListener(this);
 		exportSBOL2.addActionListener(this);
+		exportGenBank.addActionListener(this);
+		exportFasta.addActionListener(this);
 		exportSEDML.addActionListener(this);
 		exportCsv.addActionListener(this);
 		exportDat.addActionListener(this);
@@ -802,6 +814,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		pref.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, ShortCutKey));
 
 		importSbol.setEnabled(false);
+		importGenBank.setEnabled(false);
+		importFasta.setEnabled(false);
 		importSedml.setEnabled(false);
 		importSbml.setEnabled(false);
 		importBioModel.setEnabled(false);
@@ -820,7 +834,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.setEnabled(false);
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
+		exportSBOL1.setEnabled(false);
 		exportSBOL2.setEnabled(false);
+		exportGenBank.setEnabled(false);
+		exportFasta.setEnabled(false);
 		exportSEDML.setEnabled(false);
 		exportCsv.setEnabled(false);
 		exportDat.setEnabled(false);
@@ -1005,9 +1022,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// importMenu.add(importDot);
 			importMenu.add(importSbml);
 			importMenu.add(importBioModel);
-			importMenu.add(importVirtualPart);
+			// TODO: Removed due to issues with JParts
+			//importMenu.add(importVirtualPart);
 			importMenu.add(importLpn);
 			importMenu.add(importSbol);
+			importMenu.add(importGenBank);
+			importMenu.add(importFasta);
 			importMenu.add(importSedml);
 		}
 		else if (atacs)
@@ -1036,7 +1056,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportMovieMenu);
 		exportMenu.add(exportFlatSBML);
 		exportMenu.add(exportSBML);
+		exportMenu.add(exportSBOL1);
 		exportMenu.add(exportSBOL2);
+		exportMenu.add(exportGenBank);
+		exportMenu.add(exportFasta);
 		// Removed for now since not working
 		//exportMenu.add(exportSEDML);
 
@@ -1570,6 +1593,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// importDot.setEnabled(true);
 			importMenu.setEnabled(true);
 			importSbol.setEnabled(true);
+			importGenBank.setEnabled(true);
+			importFasta.setEnabled(true);
 			importSedml.setEnabled(true);
 			importSbml.setEnabled(true);
 			importBioModel.setEnabled(true);
@@ -1726,6 +1751,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					// importDot.setEnabled(true);
 					importMenu.setEnabled(true);
 					importSbol.setEnabled(true);
+					importGenBank.setEnabled(true);
+					importFasta.setEnabled(true);
 					importSedml.setEnabled(true);
 					importSbml.setEnabled(true);
 					importBioModel.setEnabled(true);
@@ -1962,16 +1989,52 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((ModelEditor) comp).exportSBML();
 			}
 		}
+		else if (e.getSource() == exportSBOL1)
+		{
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor)
+			{
+				((ModelEditor) comp).exportSBOL2("SBOL1");
+			}
+			else if (comp instanceof SBOLDesignerPlugin)
+			{
+				exportSBOL((SBOLDesignerPlugin) comp,"SBOL1");
+			}
+		}
 		else if (e.getSource() == exportSBOL2)
 		{
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor)
 			{
-				((ModelEditor) comp).exportSBOL2();
+				((ModelEditor) comp).exportSBOL2("SBOL");
 			}
 			else if (comp instanceof SBOLDesignerPlugin)
 			{
-				exportSBOL((SBOLDesignerPlugin) comp);
+				exportSBOL((SBOLDesignerPlugin) comp,"SBOL");
+			}
+		}
+		else if (e.getSource() == exportGenBank)
+		{
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor)
+			{
+				((ModelEditor) comp).exportSBOL2("GenBank");
+			}
+			else if (comp instanceof SBOLDesignerPlugin)
+			{
+				exportSBOL((SBOLDesignerPlugin) comp,"GenBank");
+			}
+		}
+		else if (e.getSource() == exportFasta)
+		{
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor)
+			{
+				((ModelEditor) comp).exportSBOL2("Fasta");
+			}
+			else if (comp instanceof SBOLDesignerPlugin)
+			{
+				exportSBOL((SBOLDesignerPlugin) comp,"Fasta");
 			}
 		}
 		else if (e.getSource() == exportSEDML)
@@ -3468,7 +3531,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (comp instanceof SBOLDesignerPlugin)
 			{
-				exportSBOL((SBOLDesignerPlugin) comp);
+				exportSBOL((SBOLDesignerPlugin) comp, "SBOL");
 			}
 			else if (comp instanceof JTabbedPane)
 			{
@@ -3575,7 +3638,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource().equals(importSbol))
 		{
-			importSBOL();
+			importSBOL("Import SBOL");
+		}
+		else if (e.getSource().equals(importGenBank))
+		{
+			importSBOL("Import GenBank");
+		}
+		else if (e.getSource().equals(importFasta))
+		{
+			importSBOL("Import Fasta");
 		}
 		else if (e.getSource().equals(importSedml))
 		{
@@ -3861,7 +3932,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		enableTreeMenu();
 	}
 	
-	public void exportSBOL(SBOLDesignerPlugin sbolDesignerPlugin) {
+	public void exportSBOL(SBOLDesignerPlugin sbolDesignerPlugin,String fileType) {
 		File lastFilePath;
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
@@ -3870,12 +3941,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else {
 			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
 		}
-		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
+		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, 
+				"Export " + fileType.replace("1", ""), -1);
 		if (!exportPath.equals("")) {
 			biosimrc.put("biosim.general.export_dir",exportPath);
-			log.addText("Exporting SBOL file:\n" + exportPath + "\n");
+			log.addText("Exporting " + fileType + " file:\n" + exportPath + "\n");
 			try {
-				sbolDesignerPlugin.exportSBOL(exportPath);
+				sbolDesignerPlugin.exportSBOL(exportPath,fileType);
 			}
 			catch (Exception e) {
 				JOptionPane.showMessageDialog(frame, "Unable to export file.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -5730,7 +5802,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 
-	private void importSBOL()
+	private void importSBOL(String fileType)
 	{
 		Preferences biosimrc = Preferences.userRoot();
 		File importFile;
@@ -5742,7 +5814,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		{
 			importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 		}
-		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, "Import SBOL", -1);
+		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, fileType, -1);
 		if (!filename.trim().equals(""))
 		{
 			biosimrc.put("biosim.general.import_dir", filename.trim());
@@ -10892,7 +10964,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSEDML.setEnabled(true);
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
+		exportSBOL1.setEnabled(false);
 		exportSBOL2.setEnabled(false);
+		exportGenBank.setEnabled(false);
+		exportFasta.setEnabled(false);
 		exportDataMenu.setEnabled(false);
 		exportImageMenu.setEnabled(false);
 		exportMovieMenu.setEnabled(false);
@@ -10979,7 +11054,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportMenu.setEnabled(true);
 			exportSBML.setEnabled(true);
 			exportFlatSBML.setEnabled(true);
+			exportSBOL1.setEnabled(true);
 			exportSBOL2.setEnabled(true);
+			exportGenBank.setEnabled(true);
+			exportFasta.setEnabled(true);
 			exportImageMenu.setEnabled(true);
 			exportJpg.setEnabled(true);
 		}
@@ -10995,7 +11073,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			closeAll.setEnabled(true);
 			check.setEnabled(true);
 			exportMenu.setEnabled(true);
+			exportSBOL1.setEnabled(true);
 			exportSBOL2.setEnabled(true);
+			exportGenBank.setEnabled(true);
+			exportFasta.setEnabled(true);
 		}
 		else if (comp instanceof SBOLBrowser2)
 		{

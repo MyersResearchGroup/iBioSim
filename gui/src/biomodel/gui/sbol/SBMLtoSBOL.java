@@ -130,11 +130,32 @@ public class SBMLtoSBOL {
 		sbolDoc.setTypesInURIs(false);
 	}
 	
-	public void export(String exportFilePath) {
+	public void export(String exportFilePath,String fileType) {
 		SBOLDocument sbolDoc = new SBOLDocument();
 		sbolDoc.setTypesInURIs(true);
 		export(sbolDoc,exportFilePath);
 		sbolDoc.setTypesInURIs(false);
+		try 
+		{
+			if (fileType.equals("SBOL")) {	
+				sbolDoc.write(exportFilePath,SBOLDocument.RDF);
+			} else if (fileType.equals("SBOL1")) {	
+				sbolDoc.write(exportFilePath,SBOLDocument.RDFV1);
+			} else if (fileType.equals("GenBank")) {	
+				sbolDoc.write(exportFilePath,SBOLDocument.GENBANK);
+			} else if (fileType.equals("Fasta")) {	
+				sbolDoc.write(exportFilePath,SBOLDocument.FASTAformat);
+			} 
+		} 
+		catch (SBOLConversionException e)
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Error writing "+fileType+" file at " + exportFilePath + ".", 
+					fileType+" Conversion Error", JOptionPane.ERROR_MESSAGE);
+		}
+		catch (IOException e) {
+			JOptionPane.showMessageDialog(Gui.frame, "Error writing "+fileType+" file at " + exportFilePath + ".", 
+					fileType+" Write Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	public void export(SBOLDocument sbolDoc, String exportFilePath) {
@@ -155,20 +176,6 @@ public class SBMLtoSBOL {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(Gui.frame, "Error export SBOL file.", 
 					"SBOL Export Error", JOptionPane.ERROR_MESSAGE);
-		}
-	    
-		try 
-		{
-			sbolDoc.write(exportFilePath);
-		} 
-		catch (SBOLConversionException e)
-		{
-			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + exportFilePath + ".", 
-					"SBOL Conversion Error", JOptionPane.ERROR_MESSAGE);
-		}
-		catch (IOException e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + exportFilePath + ".", 
-					"SBOL Write Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

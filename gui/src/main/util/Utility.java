@@ -184,8 +184,26 @@ public class Utility {
 					fd.setFilenameFilter(new FilenameFilter() {
 						@Override
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".fasta") || name.endsWith(".gb") || name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
+							return name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
 									|| name.endsWith(GlobalConstants.RDF_FILE_EXTENSION);
+						}
+					});
+				}
+				else if (approve.equals("Import GenBank")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".gb");
+						}
+					});
+				}
+				else if (approve.equals("Import Fasta")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".fasta");
 						}
 					});
 				}
@@ -196,6 +214,26 @@ public class Utility {
 						public boolean accept(File dir, String name) {
 							return name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
 									|| name.endsWith(GlobalConstants.RDF_FILE_EXTENSION);
+									
+						}
+					});
+				}
+				else if (approve.equals("Export GenBank")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".gb");
+									
+						}
+					});
+				}
+				else if (approve.equals("Export Fasta")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".fasta");
 									
 						}
 					});
@@ -327,9 +365,16 @@ public class Utility {
 						}
 					}
 					else if (approve.equals("Import SBOL") || approve.equals("Export SBOL")) {
-						if (!selectedFile.endsWith(".sbol") && !selectedFile.endsWith(".xml")
-							&& !selectedFile.endsWith(".gb") && !selectedFile.endsWith(".fasta"))
+						if (!selectedFile.endsWith(".sbol") && !selectedFile.endsWith(".xml"))
 							selectedFile += ".sbol";
+					}
+					else if (approve.equals("Import GenBank") || approve.equals("Export GenBank")) {
+						if (!selectedFile.endsWith(".gb"))
+							selectedFile += ".gb";
+					}
+					else if (approve.equals("Import Fasta") || approve.equals("Export Fasta")) {
+						if (!selectedFile.endsWith(".fasta"))
+							selectedFile += ".fasta";
 					}
 					else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
 						if (!selectedFile.endsWith(".xml")&&!selectedFile.endsWith(".sedml")
@@ -417,6 +462,12 @@ public class Utility {
 		ExampleFileFilter xmlFilter = new ExampleFileFilter();
 		xmlFilter.addExtension("xml");
 		xmlFilter.setDescription("Extensible Markup Language");
+		ExampleFileFilter gbFilter = new ExampleFileFilter();
+		gbFilter.addExtension("gb");
+		gbFilter.setDescription("GenBank");
+		ExampleFileFilter fastaFilter = new ExampleFileFilter();
+		fastaFilter.addExtension("fasta");
+		fastaFilter.setDescription("Fasta");
 		ExampleFileFilter gcmFilter = new ExampleFileFilter();
 		gcmFilter.addExtension("gcm");
 		gcmFilter.setDescription("Genetic Circuit Model");
@@ -494,6 +545,18 @@ public class Utility {
 		else if (approve.equals("Import SBOL") || approve.equals("Export SBOL")) {
 			fc.addChoosableFileFilter(sbolFilter);
 			fc.addChoosableFileFilter(xmlFilter);
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileFilter(sbolFilter);
+			retValue = fc.showDialog(frame, approve);
+		}
+		else if (approve.equals("Import GenBank") || approve.equals("Export GenBank")) {
+			fc.addChoosableFileFilter(gbFilter);
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileFilter(sbolFilter);
+			retValue = fc.showDialog(frame, approve);
+		}
+		else if (approve.equals("Import Fasta") || approve.equals("Export Fasta")) {
+			fc.addChoosableFileFilter(fastaFilter);
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileFilter(sbolFilter);
 			retValue = fc.showDialog(frame, approve);
@@ -639,8 +702,16 @@ public class Utility {
 				}
 			}
 			else if (approve.equals("Import SBOL") || approve.equals("Export SBOL")) {
-				if (!filename.endsWith(".sbol") && !filename.endsWith(".xml") && !filename.endsWith(".rdf") && !filename.endsWith(".gb") && !filename.endsWith(".fasta"))
+				if (!filename.endsWith(".sbol") && !filename.endsWith(".xml") && !filename.endsWith(".rdf"))
 					filename += ".sbol";
+			}
+			else if (approve.equals("Import SBOL") || approve.equals("Export SBOL")) {
+				if (!filename.endsWith(".gb"))
+					filename += ".gb";
+			}
+			else if (approve.equals("Import SBOL") || approve.equals("Export SBOL")) {
+				if (!filename.endsWith(".fasta"))
+					filename += ".fasta";
 			}
 			else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
 				if (!filename.endsWith(".xml")&&!filename.endsWith(".sedml")&&!filename.endsWith(".sedx"))

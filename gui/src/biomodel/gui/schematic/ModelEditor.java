@@ -624,7 +624,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		biosim.writeSBOLDocument();
 	}
 	
-	public void exportSBOL2() {
+	public void exportSBOL2(String fileType) {
 		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(biosim,path,biomodel);
 		File lastFilePath;
 		Preferences biosimrc = Preferences.userRoot();
@@ -632,10 +632,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			lastFilePath = null;
 		else 
 			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
-		String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
+		String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, 
+				"Export "+fileType.replace("1",""), -1);
 		if (!exportFilePath.equals("")) {
 			biosimrc.put("biosim.general.export_dir", exportFilePath);
-			sbmltosbol.export(exportFilePath);
+			sbmltosbol.export(exportFilePath,fileType);
 		}
 	}
 	
