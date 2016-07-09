@@ -7175,7 +7175,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	// }
 	// }
 	
+	private boolean sbolDesignerOpen() {
+		for (int i = 0; i < tab.getTabCount(); i++)
+		{
+			if (this.tab.getComponentAt(i).getName().equals("SBOL Designer"))
+			{
+				JOptionPane.showMessageDialog(Gui.frame, "Currently only one SBOL Designer tab can be open at a time.", 
+						"Unable to Open SBOL Designer", JOptionPane.ERROR_MESSAGE);		
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void openSBOLDesigner() {
+		// TODO: temporary fix until SBOL Factory removed
+		if (sbolDesignerOpen()) return;
 		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(Gui.separator) + 1);
 		try {
 			if (getSBOLDocument().getComponentDefinitions().size()==0) {
@@ -7194,6 +7209,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	private void createPart() {
+		// TODO: temporary fix until SBOL Factory removed
+		if (sbolDesignerOpen()) return;
 		String partId = null;
 		JTextField partChooser = new JTextField("");
 		partChooser.setColumns(20);
