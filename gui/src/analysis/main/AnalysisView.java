@@ -63,7 +63,6 @@ import org.jlibsedml.DataGenerator;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.OneStep;
 import org.jlibsedml.Range;
-import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.Simulation;
@@ -1711,15 +1710,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		dataGen = new DataGenerator("time_"+taskId+"_dg","time",math);
 		dataGen.addVariable(variable);
 		sedml.addDataGenerator(dataGen);
-		if (!runs.getText().trim().equals("1")) {
-			int numRuns = Integer.parseInt(runs.getText().trim());
-			Range range = new UniformRange("range", 1, numRuns, numRuns);
-			SubTask subTask = new SubTask(taskId);
-			RepeatedTask repeatedTask = new RepeatedTask("repeat_" + taskId, "", true, "range");
-			repeatedTask.addRange(range);
-			repeatedTask.addSubtask(subTask);
-			sedml.addTask(repeatedTask);
-		}
 		for (int i = 0; i < simTab.getComponentCount(); i++)
 		{
 			if (simTab.getComponentAt(i) instanceof Graph)
@@ -1734,24 +1724,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	{
 		sedmlDoc = gui.getSEDMLDocument();
 		SedML sedml = sedmlDoc.getSedMLModel();
-		int numRuns = 1;
 		subTaskList.removeAllItems();
 		subTaskList.addItem("(none)");
 		for (AbstractTask task : sedml.getTasks())
 		{
 			if (task.getId().startsWith(simName+"__")) {
 				subTaskList.addItem(task.getId().replace(simName+"__",""));
-			}
-			// TODO: this is hack to get number of runs, needs to be fixed
-			if (task instanceof RepeatedTask) {
-				RepeatedTask repeatedTask = (RepeatedTask) task;
-				if (!repeatedTask.getSubTasks().values().contains(simName)) continue;
-				for (Range range : repeatedTask.getRanges().values()) {
-					if (range instanceof UniformRange) {
-						UniformRange uniformRange = (UniformRange)range;
-						numRuns = uniformRange.getNumberOfPoints();
-					}
-				}
 			}
 		}
 		String taskId = simName;
@@ -1787,7 +1765,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					initialTimeField.setText("" + utcSimulation.getInitialTime());
 					outputStartTimeField.setText("" + utcSimulation.getOutputStartTime());
 					limit.setText("" + utcSimulation.getOutputEndTime());
-					runs.setText(""+numRuns);
 				} else if (simulation instanceof OneStep) {
 					OneStep osSimulation = (OneStep) simulation;
 					intervalLabel.setSelectedItem("Number Of Steps");
@@ -1795,7 +1772,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					initialTimeField.setText("" + 0);
 					outputStartTimeField.setText("" + 0);
 					limit.setText("" + osSimulation.getStep());
-					runs.setText(""+numRuns);
 				}
 			}
 			else if (fba.isSelected())
@@ -1884,6 +1860,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		ap = new AlgorithmParameter(GlobalConstants.KISAO_RELATIVE_TOLERANCE,relErr.getText());
 		algorithm.addAlgorithmParameter(ap);
 		ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED,seed.getText());
+		algorithm.addAlgorithmParameter(ap);
+		ap = new AlgorithmParameter(GlobalConstants.KISAO_SAMPLES,runs.getText());
 		algorithm.addAlgorithmParameter(ap);
 		return algorithm;
 	}
@@ -1978,6 +1956,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				relErr.setText(ap.getValue());
 			} else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED)) {
 				seed.setText(ap.getValue());
+			} else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SAMPLES)) {
+				runs.setText(ap.getValue());
 			}
 		}
 	}

@@ -111,7 +111,6 @@ import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
 import org.jlibsedml.Plot3D;
-import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.Report;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
@@ -3916,10 +3915,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			AbstractTask task = sedml.getTaskWithId(fileName);
 			if (task != null) {
 				sedml.removeTask(task);
-				task = sedml.getTaskWithId("repeat_"+fileName);
-				if (task != null) {
-					sedml.removeTask(task);
-				}
 				Simulation simulation = sedml.getSimulation(fileName+"_sim");
 				if (simulation != null) {
 					sedml.removeSimulation(simulation);
@@ -3939,7 +3934,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				ArrayList<DataGenerator> remove = new ArrayList<DataGenerator>();
 				for (DataGenerator dg : sedml.getDataGenerators()) {
 					for (Variable var : dg.getListOfVariables()) {
-						if (var.getReference().equals(fileName) || var.getReference().equals("repeat_"+fileName)) {
+						if (var.getReference().equals(fileName)) {
 							remove.add(dg);
 							break;
 						}
@@ -5406,8 +5401,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Task t = (Task)task;
 			modelMap.put(model.getId(), modelMap.get(task.getModelReference()));
 			t.setModelReference(model.getId());
-			// TODO: should handle this properly.
-			if (task instanceof RepeatedTask) continue;
 			if (modelMap.containsKey(task.getModelReference()))
 			{
 				String modelId = modelMap.get(task.getModelReference()).replace(".xml", "");
@@ -6398,11 +6391,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (task != null) {
 				AbstractTask newTask = SEDMLutilities.copyTask(task, newName);
 				sedml.addTask(newTask);
-				AbstractTask repeatedTask = sedml.getTaskWithId("repeat_"+oldName);
-				if (repeatedTask != null) {
-					AbstractTask newRepeatedTask = SEDMLutilities.copyTask(repeatedTask, "repeat_"+newName);
-					sedml.addTask(newRepeatedTask);
-				}
 				Output output = sedml.getOutputWithId(oldName+"__graph");
 				Plot2D newGraph = null;
 				if (output != null) {
@@ -6421,10 +6409,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (var.getReference().equals(oldName)) {
 							copy.add(dg);
 							break;
-						} else if (var.getReference().equals("repeat_"+oldName)) { 
-							copy.add(dg);
-							break;
-						}
+						} 
 					}
 				}
 				for (DataGenerator dg : copy) {
@@ -6438,9 +6423,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					for (Variable var : newDG.getListOfVariables()) {
 						if (var.getReference().equals(oldName)) {
 							var.setReference(newName);
-						} else if (var.getReference().equals("repeat_"+oldName)) { 
-							var.setReference("repeat_"+newName);
-						}
+						} 
 					}
 					sedml.addDataGenerator(newDG);
 					if (newGraph!=null) {
@@ -6841,12 +6824,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				AbstractTask newTask = SEDMLutilities.copyTask(task, newName);
 				sedml.addTask(newTask);
 				sedml.removeTask(task);
-				AbstractTask repeatedTask = sedml.getTaskWithId("repeat_"+oldName);
-				if (repeatedTask != null) {
-					AbstractTask newRepeatedTask = SEDMLutilities.copyTask(repeatedTask, "repeat_"+newName);
-					sedml.addTask(newRepeatedTask);
-					sedml.removeTask(repeatedTask);
-				}
 				Output output = sedml.getOutputWithId(oldName+"__graph");
 				if (output != null) {
 					Output newOutput = SEDMLutilities.copyOutput(output,newName+"__graph");
@@ -6863,9 +6840,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					for (Variable var : dg.getListOfVariables()) {
 						if (var.getReference().equals(oldName)) {
 							var.setReference(newName);
-						} else if (var.getReference().equals("repeat_"+oldName)) { 
-							var.setReference("repeat_"+newName);
-						}
+						} 
 					}
 				}
 				ArrayList<AbstractTask> subTasks = new ArrayList<AbstractTask>();
