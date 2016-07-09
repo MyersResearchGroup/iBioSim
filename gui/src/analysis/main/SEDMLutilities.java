@@ -20,6 +20,7 @@ import org.jlibsedml.OneStep;
 import org.jlibsedml.Output;
 import org.jlibsedml.Parameter;
 import org.jlibsedml.Plot2D;
+import org.jlibsedml.Plot3D;
 import org.jlibsedml.Range;
 import org.jlibsedml.RemoveXML;
 import org.jlibsedml.RepeatedTask;
@@ -29,6 +30,7 @@ import org.jlibsedml.SetValue;
 import org.jlibsedml.Simulation;
 import org.jlibsedml.SteadyState;
 import org.jlibsedml.SubTask;
+import org.jlibsedml.Surface;
 import org.jlibsedml.Task;
 import org.jlibsedml.UniformRange;
 import org.jlibsedml.UniformTimeCourse;
@@ -239,6 +241,14 @@ public class SEDMLutilities {
 		copyAnnotation(curve,newCurve);
 		return newCurve;
 	}
+	
+	public static Surface copySurface(Surface surface,String newId) {
+		Surface newSurface = new Surface(newId,surface.getName(),surface.getLogX(),surface.getLogY(),
+				surface.getLogZ(),surface.getXDataReference(),surface.getYDataReference(),
+				surface.getZDataReference());
+		copyAnnotation(surface,newSurface);
+		return newSurface;
+	}
 
 	public static DataSet copyDataSet(DataSet dataSet,String newId) {
 		DataSet newDataSet = new DataSet(newId,dataSet.getName(),dataSet.getLabel(),
@@ -264,6 +274,22 @@ public class SEDMLutilities {
 			}
 			copyAnnotation(plot2d,newPlot2d);
 			return newPlot2d;
+		} else if (output instanceof Plot3D) {
+			Plot3D plot3d = (Plot3D) output;
+			Plot3D newPlot3d = new Plot3D(newId,plot3d.getName());
+			for (Surface surface : plot3d.getListOfSurfaces()) {
+				String newSurfaceId = surface.getId();
+				if (!plot3d.getId().equals(newId)) {
+					if (newSurfaceId.contains("_"+plot3d.getId()+"_")) {
+						newSurfaceId = newSurfaceId.replace("_"+plot3d.getId()+"_","_"+newId+"_");
+					} else {
+						newSurfaceId = newSurfaceId + "_" + newId;
+					}
+				}
+				newPlot3d.addSurface(copySurface(surface,newSurfaceId));
+			}
+			copyAnnotation(plot3d,newPlot3d);
+			return newPlot3d;
 		} else if (output instanceof Report) {
 			Report report = (Report) output;
 			Report newReport = new Report(newId,report.getName());
@@ -281,7 +307,6 @@ public class SEDMLutilities {
 			copyAnnotation(report,newReport);
 			return newReport;
 		}
-		// TODO: need to handle Plot3D
 		return null;
 	}
 
@@ -300,7 +325,7 @@ public class SEDMLutilities {
 			Annotation annotation = annotations.get(i);
 			List<Element> elements = annotation.getAnnotationElementsList();
 			for (Element element : elements) {
-				// TODO: check namespace
+				if (!element.getNamespaceURI().equals("http://www.async.ece.utah.edu/iBioSim")) continue;
 				if (element.getName().equals(name)) {
 					if (element.getAttributeValue(attribute)!=null) {
 						return element.getAttributeValue(attribute);
