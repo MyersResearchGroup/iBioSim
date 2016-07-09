@@ -33,6 +33,8 @@ public class FileTree extends JPanel implements MouseListener {
 	private String fileLocation; // location of selected file
 
 	private DefaultMutableTreeNode root; // root node
+	
+	private Gui gui;
 
 	//private File dir; // root directory
 
@@ -91,10 +93,11 @@ public class FileTree extends JPanel implements MouseListener {
 	/**
 	 * Construct a FileTree
 	 */
-	public FileTree(final File dir, Gui biomodelsim, boolean lema, boolean atacs, boolean lpn) {
+	public FileTree(final File dir, Gui gui, boolean lema, boolean atacs, boolean lpn) {
 		this.lema = lema;
 		this.atacs = atacs;
 		this.lpn = lpn;
+		this.gui = gui;
 		async = lema || atacs;
 		separator = Gui.separator;
 
@@ -182,7 +185,7 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 			});
 			tree.addMouseListener(this);
-			tree.addMouseListener(biomodelsim);
+			tree.addMouseListener(gui);
 		}
 		else {
 			tree = new JTree(new DefaultMutableTreeNode());
@@ -267,48 +270,41 @@ public class FileTree extends JPanel implements MouseListener {
 				dirs.add(thisObject);
 			}
 			else if (!f.getName().equals("CVS"))
-				/*
-				if (!async && thisObject.toString().length() > 4
-						&& thisObject.toString().substring(thisObject.toString().length() - 5).equals(".sbml") || !async
-						&& thisObject.toString().length() > 3 && thisObject.toString().substring(thisObject.toString().length() - 4).equals(".xml")) {
-					files.add(thisObject);
-					if (Gui.createGCMFromSBML(curPath, curPath + separator + thisObject.toString(), thisObject.toString(), thisObject.toString()
-							.replace(".xml", ".gcm").replace(".sbml", ".gcm"), false))
-						files.add(thisObject.replace(".xml", ".gcm").replace(".sbml", ".gcm"));
-				}
-				else {
-					files.add(thisObject);
-				}
-				*/
 				if (!async && thisObject.toString().endsWith(".sbol")) {
 					String sbolFile = thisObject.toString();
-					try {
-						if (!SBOLReader.getSBOLVersion(curPath + separator + sbolFile).endsWith(SBOLReader.SBOLVERSION2)) {
-							Preferences biosimrc = Preferences.userRoot();
-							SBOLReader.setKeepGoing(true);
-							SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-							SBOLDocument sbolDoc;
-							sbolDoc = SBOLReader.read(curPath + separator + sbolFile);
-							sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-							sbolDoc.write(curPath + separator + sbolFile);
+					if (!sbolFile.equals(gui.getCurrentProjectId()+".sbol")) {
+						try {
+							SBOLReader.setDropObjectsWithDuplicateURIs(true);
+							gui.getSBOLDocument().read(curPath + separator + sbolFile);
+							SBOLReader.setDropObjectsWithDuplicateURIs(false);
+							gui.writeSBOLDocument();
+							new File(curPath + separator + sbolFile).delete();
+							
+//						if (!SBOLReader.getSBOLVersion(curPath + separator + sbolFile).endsWith(SBOLReader.SBOLVERSION2)) {
+//							Preferences biosimrc = Preferences.userRoot();
+//							SBOLReader.setKeepGoing(true);
+//							SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+//							SBOLDocument sbolDoc;
+//							sbolDoc = SBOLReader.read(curPath + separator + sbolFile);
+//							sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+//							sbolDoc.write(curPath + separator + sbolFile);
+//						}
+						}
+						catch (SBOLValidationException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+						}
+						catch (IOException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+						}
+						catch (SBOLConversionException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
 						}
 					}
-					catch (SBOLValidationException e) {
-						// TODO Auto-generated catch block
-						//e.printStackTrace();
-					}
-					catch (IOException e) {
-						// TODO Auto-generated catch block
-						//e.printStackTrace();
-					}
-					catch (SBOLConversionException e) {
-						// TODO Auto-generated catch block
-						//e.printStackTrace();
-					}
 				}
-				// TODO: if .sbol file, then check version, if 1.1, SBOLRead/Write the file, provide URI prefix (preference + "/" projectName)
-				if (!async && thisObject.toString().length() > 3 && 
-						thisObject.toString().substring(thisObject.toString().length() - 4).equals(".gcm")) {
+				if (!async && thisObject.toString().endsWith(".gcm")) {
 					String sbmlFile = thisObject.replace(".gcm",".xml");
 					BioModel bioModel = new BioModel(curPath);
 					bioModel.load(curPath + separator + sbmlFile);
@@ -327,148 +323,103 @@ public class FileTree extends JPanel implements MouseListener {
 		for (int fnum = 0; fnum < files.size(); fnum++) {
 			DefaultMutableTreeNode file = null;
 			if (curDir.getParent() == null) {
-				if (!atacs && files.get(fnum).toString().length() > 4 && 
-						files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbml") || 
-					!atacs && files.get(fnum).toString().length() > 3 && 
-						files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) { 
+				if (!atacs && files.get(fnum).toString().endsWith(".sbml") || 
+					!atacs && files.get(fnum).toString().endsWith(".xml")) { 
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))); 
-				} else if (!async && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbol")) {
+				} else if (!async && files.get(fnum).toString().endsWith(".sbol") &&
+						(files.get(fnum).equals(gui.getCurrentProjectId()+".sbol"))) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files.get(fnum)));
 				}
-				/*
-				else if (!async && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".gcm")) {
-					file = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum)));
-				}
-				*/
-				else if (async && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
+				else if (async && files.get(fnum).toString().endsWith(".vhd")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum)));
 				}
-				else if (async && files.get(fnum).toString().length() > 4  //DK
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".prop")) {
+				else if (async && files.get(fnum).toString().endsWith(".prop")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_PROP, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 1
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".s")) {
+				else if (lema && files.get(fnum).toString().endsWith(".s")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_S, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".inst")) {
+				else if (lema && files.get(fnum).toString().endsWith(".inst")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_INST, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 1
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".g")) {
+				else if (atacs && files.get(fnum).toString().endsWith(".g")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
-				else if (lpn && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".lpn")) {
+				else if (lpn && files.get(fnum).toString().endsWith(".lpn")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals("csp")) {
+				else if (atacs && files.get(fnum).toString().endsWith("csp")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".hse")) {
+				else if (atacs && files.get(fnum).toString().endsWith(".hse")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".unc")) {
+				else if (atacs && files.get(fnum).toString().endsWith(".unc")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".rsg")) {
+				else if (atacs && files.get(fnum).toString().endsWith(".rsg")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".vams")) {
+				else if (lema && files.get(fnum).toString().endsWith(".vams")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_VERILOG, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 2
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 3).equals(".sv")) {
+				else if (lema && files.get(fnum).toString().endsWith(".sv")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_VERILOG, null, files.get(fnum)));
 				}
-				else if (files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".grf")) {
+				else if (files.get(fnum).toString().endsWith(".grf")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files.get(fnum)));
 				}
-				else if (files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".prb")) {
+				else if (files.get(fnum).toString().endsWith(".prb")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files.get(fnum)));
 				}
 			}
 			else if (!(curDir.getParent().toString().equals(root.toString()))) {
-				if (!atacs && files.get(fnum).toString().length() > 4 &&
-						files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbml") || 
-					!atacs && files.get(fnum).toString().length() > 3 &&
-					 	files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) { 
+				if (!atacs && files.get(fnum).toString().endsWith(".sbml") || 
+					!atacs && files.get(fnum).toString().endsWith(".xml")) { 
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))); 
-				} else if (!async && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbol")) {
+				} else if (!async && files.get(fnum).toString().endsWith(".sbol")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files.get(fnum)));
 				}
-				/*
-				else if (!async && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".gcm")) {
-					file = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum)));
-				}
-				*/
-				else if (async && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
+				else if (async && files.get(fnum).toString().endsWith(".vhd")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum)));
 				}  
-				else if (async && files.get(fnum).toString().length() > 4  //DK
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".prop")) {
+				else if (async && files.get(fnum).toString().endsWith(".prop")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_PROP, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 1
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".s")) {
+				else if (lema && files.get(fnum).toString().endsWith(".s")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_S, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".inst")) {
+				else if (lema && files.get(fnum).toString().endsWith(".inst")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_INST, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 1
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".g")) {
+				else if (atacs && files.get(fnum).toString().endsWith(".g")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
-				else if (lpn && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".lpn")) {
+				else if (lpn && files.get(fnum).toString().endsWith(".lpn")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".csp")) {
+				else if (atacs && files.get(fnum).toString().endsWith(".csp")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".hse")) {
+				else if (atacs && files.get(fnum).toString().endsWith(".hse")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".unc")) {
+				else if (atacs && files.get(fnum).toString().endsWith(".unc")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".rsg")) {
+				else if (atacs && files.get(fnum).toString().endsWith(".rsg")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".vams")) {
+				else if (lema && files.get(fnum).toString().endsWith(".vams")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_VERILOG, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 2
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 3).equals(".sv")) {
+				else if (lema && files.get(fnum).toString().endsWith(".sv")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_VERILOG, null, files.get(fnum)));
 				}
-				else if (files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".grf")) {
+				else if (files.get(fnum).toString().endsWith(".grf")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files.get(fnum)));
 				}
-				else if (files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".prb")) {
+				else if (files.get(fnum).toString().endsWith(".prb")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files.get(fnum)));
 				}
 			}
