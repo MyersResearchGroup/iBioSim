@@ -18,7 +18,7 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 
 	private FluxBalanceAnalysis		fba;
 	private HashMap<String, Double>	values;
-	private boolean					isInitialized;
+	//private boolean					isInitialized;
 
 	public HierarchicalFBASimulator(HierarchicalSimulation simulation, ModelState topmodel)
 	{
