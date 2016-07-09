@@ -14,7 +14,7 @@ public class StringGraph
 	}
 	
 	public void createStringGraph()
-	{
+	{ 
 		StringNode n = new StringNode(stateNum);
 		_nodes.put(stateNum, stateNum);
 		stateNum++;
