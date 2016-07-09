@@ -1488,6 +1488,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return true;
 	}
 	
+	public String getCurrentProjectId() {
+		return currentProjectId;
+	}
+	
 	private void createProject(ActionEvent e) {
 		int autosave = 0;
 		for (int i = 0; i < tab.getTabCount(); i++)
@@ -1577,9 +1581,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			root = filename;
 			currentProjectId = root.split(Gui.separator)[root.split(Gui.separator).length-1];
-			refresh();
-			tab.removeAll();
-			addRecentProject(filename);
 			
 			sedmlDocument = new SEDMLDocument(1,2);
 			writeSEDMLDocument();
@@ -1588,6 +1589,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			sbolDocument.setCreateDefaults(true);
 			sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 			writeSBOLDocument();		
+
+			refresh();
+			tab.removeAll();
+			addRecentProject(filename);
+
 			addToTree(currentProjectId+".sbol");
 
 			// importDot.setEnabled(true);
@@ -1742,11 +1748,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				{
 					root = projDir;
 					currentProjectId = root.split(Gui.separator)[root.split(Gui.separator).length-1];
-					refresh();
-					tab.removeAll();
-					addRecentProject(projDir);
 					readSEDMLDocument();
 					readSBOLDocument();
+					refresh();
+					addToTree(currentProjectId+".sbol");
+					tab.removeAll();
+					addRecentProject(projDir);
 					
 					// importDot.setEnabled(true);
 					importMenu.setEnabled(true);
@@ -5581,7 +5588,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Preferences biosimrc = Preferences.userRoot();
 			sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 			writeSBOLDocument();
-			addToTree(currentProjectId+".sbol");
 		}
 	}
 	
@@ -7684,18 +7690,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		mainPanel.validate();
 	}
 
-	/**
-	 * This method refreshes the tree.
-	 */
-	public void refreshTree()
-	{
-		mainPanel.remove(tree);
-		tree = new FileTree(new File(root), this, lema, atacs, lpn);
-		topSplit.setLeftComponent(tree);
-		// mainPanel.add(tree, "West");
-		// updateGCM();
-		mainPanel.validate();
-	}
+//	/**
+//	 * This method refreshes the tree.
+//	 */
+//	private void refreshTree()
+//	{
+//		mainPanel.remove(tree);
+//		tree = new FileTree(new File(root), this, lema, atacs, lpn);
+//		topSplit.setLeftComponent(tree);
+//		// mainPanel.add(tree, "West");
+//		// updateGCM();
+//		mainPanel.validate();
+//	}
 
 	public void addToTree(String item)
 	{
