@@ -261,122 +261,122 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 	}
 	*/
 	
-	private static SequenceAnnotation[] sortAnnotations(Set<SequenceAnnotation> unsortedSA) {
-		
-	ArrayList<SequenceAnnotation> sortedSA = new ArrayList<SequenceAnnotation>(); 
-		Map<SequenceAnnotation, Range> saToRange = new HashMap<SequenceAnnotation, Range>();
-		
-		//Insert sort of annotations by starting position
-		// O(|SA| |L|)
-		for (SequenceAnnotation sa : unsortedSA)
-		{
-			Range range = null; 
-			for(Location location : sa.getLocations())
-			{
-				// TODO: Assuming each location has 1 range and each sequenceAnnotation is mapped to 
-				// 1 range for fast access
-				if(location instanceof Range)
-				{
-					range = (Range) location; 
-					saToRange.put(sa, range);
-				}
-			}
-			if(range != null)
-			{
-				sortedSA.add(sa);
-			}
-		}
-		// O(|SA| log |SA|)
-		sortSA(sortedSA, saToRange);
-		
-		return sortedSA.toArray(new SequenceAnnotation[sortedSA.size()]);
-		
-	}
+//	private static SequenceAnnotation[] sortAnnotations(Set<SequenceAnnotation> unsortedSA) {
+//		
+//	ArrayList<SequenceAnnotation> sortedSA = new ArrayList<SequenceAnnotation>(); 
+//		Map<SequenceAnnotation, Range> saToRange = new HashMap<SequenceAnnotation, Range>();
+//		
+//		//Insert sort of annotations by starting position
+//		// O(|SA| |L|)
+//		for (SequenceAnnotation sa : unsortedSA)
+//		{
+//			Range range = null; 
+//			for(Location location : sa.getLocations())
+//			{
+//				// TODO: Assuming each location has 1 range and each sequenceAnnotation is mapped to 
+//				// 1 range for fast access
+//				if(location instanceof Range)
+//				{
+//					range = (Range) location; 
+//					saToRange.put(sa, range);
+//				}
+//			}
+//			if(range != null)
+//			{
+//				sortedSA.add(sa);
+//			}
+//		}
+//		// O(|SA| log |SA|)
+//		sortSA(sortedSA, saToRange);
+//		
+//		return sortedSA.toArray(new SequenceAnnotation[sortedSA.size()]);
+//		
+//	}
 	
-	private static void sortSA(ArrayList<SequenceAnnotation> listOfSA, final Map<SequenceAnnotation, Range> saToRange)
-	{
-		Collections.sort(listOfSA, new Comparator<SequenceAnnotation>()
-				{
-
-					@Override
-					public int compare(SequenceAnnotation o1,
-							SequenceAnnotation o2)
-					{
-						Range range1 = saToRange.get(o1);
-						Range range2 = saToRange.get(o2);
-						
-						if(range1.getStart() > range2.getStart())
-						{
-							return 1;
-						}
-						else if(range1.getStart() < range2.getStart())
-						{
-							return -1;
-						}
-						else if(range1.getEnd() > range2.getEnd())
-						{
-							return 1;
-						}
-						
-						return -1;
-					}
-			
-				});
-	}
-	
-	private String processAnnotations(SequenceAnnotation[] arraySA) 
-	{
-		String annotations = "";
-		for (int k = 0; k < arraySA.length; k++) 
-		{
-			ComponentDefinition subComponent = arraySA[k].getComponent().getDefinition();
-		
-			if (subComponent != null) 
-			{
-//				ComponentDefinition resolvedSubComponent = null;
-				annotations = annotations + subComponent.getDisplayId(); 
-			} 
-			else
-			{
-				annotations = annotations + "NA"; 
-			}
-			
-			
-			String symbol;
-			Range range = null;
-			
-			for(Location location : arraySA[k].getLocations())
-			{
-				if(location instanceof Range)
-				{
-					range = (Range) location;
-				}
-			}
-			if (range != null)
-			{
-
-				if(!range.isSetOrientation() || range.getOrientation().toString().equals("inline"))
-				{
-					symbol = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
-				}
-				else
-				{
-					symbol = GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
-				}
-			}
-			else
-			{
-				symbol = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
-			}
-			
-			annotations = annotations + " " + symbol + range.getStart() + " to " + symbol + range.getEnd() + ", "; 
-			
-		}
-		if(annotations.isEmpty())
-			annotations = annotations + "NA";
-		annotations = annotations.substring(0, annotations.length() - 2); //removes the , at the end
-		return annotations;
-	}
+//	private static void sortSA(ArrayList<SequenceAnnotation> listOfSA, final Map<SequenceAnnotation, Range> saToRange)
+//	{
+//		Collections.sort(listOfSA, new Comparator<SequenceAnnotation>()
+//				{
+//
+//					@Override
+//					public int compare(SequenceAnnotation o1,
+//							SequenceAnnotation o2)
+//					{
+//						Range range1 = saToRange.get(o1);
+//						Range range2 = saToRange.get(o2);
+//						
+//						if(range1.getStart() > range2.getStart())
+//						{
+//							return 1;
+//						}
+//						else if(range1.getStart() < range2.getStart())
+//						{
+//							return -1;
+//						}
+//						else if(range1.getEnd() > range2.getEnd())
+//						{
+//							return 1;
+//						}
+//						
+//						return -1;
+//					}
+//			
+//				});
+//	}
+//	
+//	private String processAnnotations(SequenceAnnotation[] arraySA) 
+//	{
+//		String annotations = "";
+//		for (int k = 0; k < arraySA.length; k++) 
+//		{
+//			ComponentDefinition subComponent = arraySA[k].getComponent().getDefinition();
+//		
+//			if (subComponent != null) 
+//			{
+////				ComponentDefinition resolvedSubComponent = null;
+//				annotations = annotations + subComponent.getDisplayId(); 
+//			} 
+//			else
+//			{
+//				annotations = annotations + "NA"; 
+//			}
+//			
+//			
+//			String symbol;
+//			Range range = null;
+//			
+//			for(Location location : arraySA[k].getLocations())
+//			{
+//				if(location instanceof Range)
+//				{
+//					range = (Range) location;
+//				}
+//			}
+//			if (range != null)
+//			{
+//
+//				if(!range.isSetOrientation() || range.getOrientation().toString().equals("inline"))
+//				{
+//					symbol = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+//				}
+//				else
+//				{
+//					symbol = GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
+//				}
+//			}
+//			else
+//			{
+//				symbol = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+//			}
+//			
+//			annotations = annotations + " " + symbol + range.getStart() + " to " + symbol + range.getEnd() + ", "; 
+//			
+//		}
+//		if(annotations.isEmpty())
+//			annotations = annotations + "NA";
+//		annotations = annotations.substring(0, annotations.length() - 2); //removes the , at the end
+//		return annotations;
+//	}
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {

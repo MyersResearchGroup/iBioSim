@@ -20,7 +20,7 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 	private HierarchicalFBASimulator	fbaSim;
 	private HierarchicalODERKSimulator	odeSim;
-	private HierarchicalSimulation		ssaSim;
+	//private HierarchicalSimulation		ssaSim;
 
 	public HierarchicalMixedSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
 			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException

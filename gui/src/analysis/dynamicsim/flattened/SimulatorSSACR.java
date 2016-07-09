@@ -18,14 +18,6 @@ import main.Gui;
 import main.util.MutableBoolean;
 import odk.lang.FastMath;
 
-import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Constraint;
-import org.sbml.jsbml.FunctionDefinition;
-import org.sbml.jsbml.Model;
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.ext.arrays.flattening.ArraysFlattening;
-import org.sbml.jsbml.text.parser.ParseException;
-
 public class SimulatorSSACR extends Simulator
 {
 

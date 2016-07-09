@@ -19,7 +19,7 @@ import analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 {
 
-	private int				currRun;
+	private int				currRun; 
 	private final boolean	print;
 
 	private long			randomSeed;
