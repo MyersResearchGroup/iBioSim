@@ -1489,7 +1489,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	public String getCurrentProjectId() {
-		return currentProjectId;
+		return currentProjectId; 
 	}
 	
 	private void createProject(ActionEvent e) {
