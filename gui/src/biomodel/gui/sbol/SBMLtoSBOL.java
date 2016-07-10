@@ -303,15 +303,15 @@ public class SBMLtoSBOL {
 				if (compDef!=null) {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 						sbolDoc.createCopy(compDef);
-						collection.addMember(compDef.getIdentity());
-						for (Sequence sequence : compDef.getSequences()) {
-							if (sbolDoc.getSequence(sequence.getIdentity())==null) {
-								sbolDoc.createCopy(sequence);
-								collection.addMember(sequence.getIdentity());
-							}
-						}
-						recurseComponentDefinition(sbolDoc,compDef,collection);
 					}
+					collection.addMember(compDef.getIdentity());
+					for (Sequence sequence : compDef.getSequences()) {
+						if (sbolDoc.getSequence(sequence.getIdentity())==null) {
+							sbolDoc.createCopy(sequence);
+							collection.addMember(sequence.getIdentity());
+						}
+					}
+					recurseComponentDefinition(sbolDoc,compDef,collection);
 					return compDef;
 				}
 			}
@@ -325,15 +325,15 @@ public class SBMLtoSBOL {
 					if (compDef!=null) {
 						if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 							sbolDoc.createCopy(compDef);
-							collection.addMember(compDef.getIdentity());
-							for (Sequence sequence : compDef.getSequences()) {
-								if (sbolDoc.getSequence(sequence.getIdentity())==null) {
-									sbolDoc.createCopy(sequence);
-									collection.addMember(sequence.getIdentity());
-								}
-							}
-							recurseComponentDefinition(sbolDoc,compDef,collection);
 						}
+						collection.addMember(compDef.getIdentity());
+						for (Sequence sequence : compDef.getSequences()) {
+							if (sbolDoc.getSequence(sequence.getIdentity())==null) {
+								sbolDoc.createCopy(sequence);
+								collection.addMember(sequence.getIdentity());
+							}
+						}
+						recurseComponentDefinition(sbolDoc,compDef,collection);
 						return compDef;
 					}
 				}
@@ -353,25 +353,24 @@ public class SBMLtoSBOL {
 				if (compDef!=null) {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 						sbolDoc.createCopy(compDef);
-						collection.addMember(compDef.getIdentity());
-						for (Sequence sequence : compDef.getSequences()) {
-							if (sbolDoc.getSequence(sequence.getIdentity())==null) {
-								sbolDoc.createCopy(sequence);
-								collection.addMember(sequence.getIdentity());
-							}
-						}
-						recurseComponentDefinition(sbolDoc,compDef,collection);
 					}
+					collection.addMember(compDef.getIdentity());
+					for (Sequence sequence : compDef.getSequences()) {
+						if (sbolDoc.getSequence(sequence.getIdentity())==null) {
+							sbolDoc.createCopy(sequence);
+							collection.addMember(sequence.getIdentity());
+						}
+					}
+					recurseComponentDefinition(sbolDoc,compDef,collection);
 					return compDef;
 				}
 			}
 			compDef_type.add(ComponentDefinition.PROTEIN);
 		}
 		compDef = sbolDoc.getComponentDefinition(compDef_identity, VERSION);
-		if (compDef!=null) {
-			sbolDoc.removeComponentDefinition(compDef);
+		if (compDef==null) {
+			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 		} 
-		compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 		return compDef; 
 	}
 	
