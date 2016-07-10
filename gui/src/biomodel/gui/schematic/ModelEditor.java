@@ -51,6 +51,7 @@ import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
@@ -60,6 +61,7 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLDocument;
@@ -1429,6 +1431,48 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return sbmlDoc;
 	}
 	
+	private void createDataGenerators(SedML sedml,NamedSBase namedSBase,String taskId,String type,String reactionId) {
+		SEDMLutilities.getDataGenerator(sedml,namedSBase.getId(),namedSBase.getName(),"mean",taskId,type,reactionId);
+		SEDMLutilities.getDataGenerator(sedml,namedSBase.getId(),namedSBase.getName(),"variance",taskId,type,reactionId);
+		SEDMLutilities.getDataGenerator(sedml,namedSBase.getId(),namedSBase.getName(),"stddev",taskId,type,reactionId);
+		for (int i = analysisView.getStartIndex(taskId.replace("__", Gui.separator)); 
+				i < analysisView.getStartIndex(taskId.replace("__", Gui.separator)) + analysisView.getNumRuns(); i++) {
+			SEDMLutilities.getDataGenerator(sedml,namedSBase.getId(),namedSBase.getName(),""+i,taskId,type,reactionId);
+		}
+	}
+	
+	private void createDataGenerators(org.sbml.jsbml.Model model,SedML sedml,String taskId) {
+		if (analysisView.getStartIndex(taskId.replace("__", Gui.separator))==1) {
+			SEDMLutilities.removeDataGeneratorsByTaskId(sedml, taskId);
+		}
+		for (Compartment compartment : model.getListOfCompartments()) {
+			if (!compartment.isConstant()) {
+				createDataGenerators(sedml,compartment,taskId,compartment.getElementName(),null);
+			}
+		}
+		for (Species species : model.getListOfSpecies()) {
+			if (!species.isConstant()) {
+				createDataGenerators(sedml,species,taskId,species.getElementName(),null);
+			}
+		}
+		for (Parameter parameter : model.getListOfParameters()) {
+			if (!parameter.isConstant()) {
+				createDataGenerators(sedml,parameter,taskId,parameter.getElementName(),null);
+			}
+		}
+		for (Reaction reaction : model.getListOfReactions()) {
+			createDataGenerators(sedml,reaction,taskId,reaction.getElementName(),null);
+			for (SpeciesReference speciesReference : reaction.getListOfReactants()) {
+				if (speciesReference.isSetId() && !speciesReference.isConstant())
+					createDataGenerators(sedml,speciesReference,taskId,"reactant",reaction.getId());
+			}
+			for (SpeciesReference speciesReference : reaction.getListOfProducts()) {
+				if (speciesReference.isSetId() && !speciesReference.isConstant())
+					createDataGenerators(sedml,speciesReference,taskId,"product",reaction.getId());
+			}
+		}
+	}
+	
 	public void performModelChanges(String stem) {
 		SEDMLDocument sedmlDoc;
 		sedmlDoc = biosim.getSEDMLDocument();
@@ -1441,10 +1485,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (task==null) return;
 		//Simulation simulation = sedml.getSimulation(task.getSimulationReference());
 		Model model = sedml.getModelWithId(task.getModelReference());
-		if (model.getListOfChanges().size()==0) return;
 		SBMLWriter Xwriter = new SBMLWriter();
 		try {
-			SBMLDocument sbmlDoc = SBMLReader.read(new File(path + Gui.separator + filename));
+			SBMLDocument sbmlDoc = SBMLReader.read(new File(path + Gui.separator + simName + Gui.separator + filename));
+			createDataGenerators(sbmlDoc.getModel(),sedml,taskId);
+			if (model.getListOfChanges().size()==0) return;
 			Xwriter.write(applyChanges(sedmlDoc,sbmlDoc,model), 
 					path + Gui.separator + simName + Gui.separator + filename);
 		}
