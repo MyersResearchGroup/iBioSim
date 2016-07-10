@@ -155,6 +155,19 @@ public class SBMLutilities
 		}
 		return false;
 	}
+	
+	public static int getModelSize(SBMLDocument doc) {
+		int size = 0;
+		Model model = doc.getModel();
+		size += model.getNumParameters();
+		size += model.getNumCompartments();
+		size += model.getNumSpecies();
+		size += model.getNumReactions();
+		size += model.getNumEvents();
+		size += model.getNumConstraints();
+		size += model.getNumRules();
+		return size;
+	}
 
 	public static String getDimensionString(SBase sBase)
 	{

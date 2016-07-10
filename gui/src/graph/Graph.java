@@ -161,7 +161,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<String> graphSpecies; // names of species in the graph
 
-	private Gui biomodelsim; // tstubd gui
+	private Gui gui; // tstubd gui
 
 	private JButton save, run, saveAs;
 
@@ -294,7 +294,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		this.outDir = outDir;
 		this.printer_id = printer_id;
-		this.biomodelsim = biomodelsim;
+		this.gui = biomodelsim;
 		XYSeriesCollection data = new XYSeriesCollection();
 		if (learnGraph) {
 			updateSpecies();
@@ -715,7 +715,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					if (value == JOptionPane.YES_OPTION) {
 						File dir = new File(outDir + separator + rename);
 						if (dir.isDirectory()) {
-							biomodelsim.deleteDir(dir);
+							gui.deleteDir(dir);
 						}
 						else {
 							dir.delete();
@@ -861,7 +861,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								simDir.remove(i);
 								File dir = new File(outDir + separator + ((IconNode) select.getLastPathComponent()).getName());
 								if (dir.isDirectory()) {
-									biomodelsim.deleteDir(dir);
+									gui.deleteDir(dir);
 								}
 								else {
 									dir.delete();
@@ -907,7 +907,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								name += "." + printer_id.substring(0, printer_id.length() - 8);
 								File dir = new File(outDir + separator + name);
 								if (dir.isDirectory()) {
-									biomodelsim.deleteDir(dir);
+									gui.deleteDir(dir);
 								}
 								else {
 									dir.delete();
@@ -988,7 +988,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									name += "." + printer_id.substring(0, printer_id.length() - 8);
 									File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + separator + name);
 									if (dir.isDirectory()) {
-										biomodelsim.deleteDir(dir);
+										gui.deleteDir(dir);
 									}
 									else {
 										dir.delete();
@@ -1121,7 +1121,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					name += "." + printer_id.substring(0, printer_id.length() - 8);
 					File dir = new File(outDir + separator + name);
 					if (dir.isDirectory()) {
-						biomodelsim.deleteDir(dir);
+						gui.deleteDir(dir);
 					}
 					else {
 						dir.delete();
@@ -1200,7 +1200,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					name += "." + printer_id.substring(0, printer_id.length() - 8);
 					File dir = new File(outDir + separator + name);
 					if (dir.isDirectory()) {
-						biomodelsim.deleteDir(dir);
+						gui.deleteDir(dir);
 					}
 					else {
 						dir.delete();
@@ -1210,7 +1210,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				else {
 					File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName());
 					if (dir.isDirectory()) {
-						biomodelsim.deleteDir(dir);
+						gui.deleteDir(dir);
 					}
 					else {
 						dir.delete();
@@ -5710,8 +5710,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			taskId = graphName.replace(".grf", "").replace(".prb", "");
 			plotId = null;
 		}
-		saveSEDML(biomodelsim.getSEDMLDocument(),taskId,plotId);
-		biomodelsim.writeSEDMLDocument();
+		saveSEDML(gui.getSEDMLDocument(),taskId,plotId);
+		gui.writeSEDMLDocument();
 		if (timeSeries) {
 			Properties graph = new Properties();
 			graph.setProperty("title", chart.getTitle().getText());
@@ -5822,14 +5822,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											+ separator + graphName);
 						}
 						if (del.isDirectory()) {
-							biomodelsim.deleteDir(del);
+							gui.deleteDir(del);
 						}
 						else {
 							del.delete();
 						}
-						for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
-							if (biomodelsim.getTitleAt(i).equals(graphName)) {
-								biomodelsim.getTab().remove(i);
+						for (int i = 0; i < gui.getTab().getTabCount(); i++) {
+							if (gui.getTitleAt(i).equals(graphName)) {
+								gui.getTab().remove(i);
 							}
 						}
 					}
@@ -5880,7 +5880,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					store.close();
 					log.addText("Creating graph file:\n" + f.getAbsolutePath() + "\n");
 					setChange(false);
-					biomodelsim.addToTree(f.getName());
+					gui.addToTree(f.getName());
 				}
 				catch (Exception except) {
 					JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -5923,14 +5923,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											+ separator + graphName);
 						}
 						if (del.isDirectory()) {
-							biomodelsim.deleteDir(del);
+							gui.deleteDir(del);
 						}
 						else {
 							del.delete();
 						}
-						for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
-							if (biomodelsim.getTitleAt(i).equals(graphName)) {
-								biomodelsim.getTab().remove(i);
+						for (int i = 0; i < gui.getTab().getTabCount(); i++) {
+							if (gui.getTitleAt(i).equals(graphName)) {
+								gui.getTab().remove(i);
 							}
 						}
 					}
@@ -5970,7 +5970,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					store.close();
 					log.addText("Creating probability graph file:\n" + f.getAbsolutePath() + "\n");
 					setChange(false);
-					biomodelsim.addToTree(f.getName());
+					gui.addToTree(f.getName());
 				}
 				catch (Exception except) {
 					JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Probability Graph!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -6213,7 +6213,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			taskId = graphName.replace(".grf", "").replace(".prb", "");
 			plotId = null;
 		}
-		if (loadSEDML(biomodelsim.getSEDMLDocument(),taskId,plotId)) return;
+		if (loadSEDML(gui.getSEDMLDocument(),taskId,plotId)) return;
 		if (timeSeries) {
 			Properties graph = new Properties();
 			try {
@@ -7294,7 +7294,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	
 	public void setChange(boolean change) {
 		this.change = change;
-		biomodelsim.markTabDirty(change);
+		gui.markTabDirty(change);
 	}
 
 	public boolean hasChanged() {
@@ -8739,12 +8739,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		learnSpecs = new ArrayList<String>();
 		if (background != null) {
 			if (background.endsWith(".gcm")) {
-				BioModel gcm = new BioModel(biomodelsim.getRoot());
+				BioModel gcm = new BioModel(gui.getRoot());
 				gcm.load(background);
 				learnSpecs = gcm.getSpecies();
 			}
 			else if (background.endsWith(".lpn")) {
-				LhpnFile lhpn = new LhpnFile(biomodelsim.log);
+				LhpnFile lhpn = new LhpnFile(gui.log);
 				lhpn.load(background);
 				/*
 				HashMap<String, Properties> speciesMap = lhpn.getContinuous();

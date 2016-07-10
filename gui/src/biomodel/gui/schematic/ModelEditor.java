@@ -186,9 +186,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	private MutableBoolean dirty = new MutableBoolean(false);
 	
-	public ModelEditor(String path) throws Exception {
-		this(path, null, null, null, false, null, null, null, false, false);
-	}
+	private final int LARGE_MODEL_SIZE = 100;
+	
+//	public ModelEditor(String path) throws Exception {
+//		this(path, null, null, null, false, null, null, null, false, false);
+//	}
 
 	public ModelEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly,
 			String simName, String paramFile, AnalysisView analysisView, boolean textBased, boolean grid) throws Exception {
@@ -395,7 +397,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						saveSBOL2();
 					}
 					catch (SBOLValidationException e) {
-						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL.", 
 								"SBOL Assembly Error", JOptionPane.ERROR_MESSAGE);
 					}
@@ -1838,6 +1839,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
 				consPanel,eventPanel,parametersPanel,biosim.lema);
+		int size = SBMLutilities.getModelSize(biomodel.getSBMLDocument());
+		if (!textBased && size > LARGE_MODEL_SIZE) {
+			String[] editor = { "Open in Textual Editor", "Open in Graphical Editor" };
+			int value = JOptionPane.showOptionDialog(Gui.frame, "Model very large (" + size + "+ elements)" +
+					" you may want to open in textual editor instead.", "Very Large Model", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, editor, editor[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				textBased = true;
+			}
+		}
 		if (textBased) {
 			if (!biosim.lema) {
 				tab.addTab("Compartments", compPanel);
