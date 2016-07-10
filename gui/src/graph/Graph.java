@@ -104,7 +104,6 @@ import org.jlibsedml.Annotation;
 import org.jlibsedml.Curve;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.DataSet;
-import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
 import org.jlibsedml.Report;
@@ -112,7 +111,6 @@ import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.Variable;
 import org.jlibsedml.modelsupport.SBMLSupport;
-import org.jmathml.ASTNode;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
@@ -5542,43 +5540,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	public void run() {
 		analysisView.executeRun();
 	}
-	
-	private DataGenerator getDataGenerator(SedML sedml,String variableId,String variableName,String dataSet,String taskId) {
-		SBMLSupport support = new SBMLSupport();
-		for (DataGenerator dataGenerator : sedml.getDataGenerators()) {
-			if (dataGenerator.getListOfVariables().size()!=1) continue;
-			String ds = SEDMLutilities.getSEDBaseAnnotation(dataGenerator, "dataSet", "dataset", "");
-			Variable variable = dataGenerator.getListOfVariables().get(0);
-			if (variable.getReference().equals(taskId) &&
-					variable.getTarget() != null &&
-					support.getIdFromXPathIdentifer(variable.getTarget()) != null &&
-					support.getIdFromXPathIdentifer(variable.getTarget()).equals(variableId) &&
-					ds.equals(dataSet)) {
-				return dataGenerator;
-			}
-		}
-		// TODO: not always species, need to check type before creating XPath
-		// Also, can be timelimit for probablity analysis, not an id in the model at all
-		String xpath = support.getXPathForSpecies(variableId);
-		DataGenerator dataGen = sedml.getDataGeneratorWithId(variableId+"_"+taskId+"_dg");
-		if (dataGen != null) {
-			sedml.removeDataGenerator(dataGen);
-		}
-		Variable variable = new Variable(variableId+"_"+taskId,variableName,taskId,xpath);
-		ASTNode math = Libsedml.parseFormulaString(variableId+"_"+taskId);
-		dataGen = new DataGenerator(variableId+"_"+taskId+"_"+dataSet+"_dg",variableId,math);
-		dataGen.addVariable(variable);
-		if (!dataSet.equals("")) {
-			Element para = new Element("dataSet");
-			para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
-			para.setAttribute("dataset", "" + dataSet);
-			Annotation ann = new Annotation(para);
-			dataGen.addAnnotation(ann);
-		}
-		sedml.addDataGenerator(dataGen);
-		return dataGen;
-	}
-	
+		
 	public void saveSEDML(SEDMLDocument sedmlDoc,String taskId,String plotId) {
 		SedML sedml = sedmlDoc.getSedMLModel();		
 		if (timeSeries) {
@@ -5635,13 +5597,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				} else if (dataSet.equals("\u03B4\u00B2")) {
 					dataSet = "variance";
 				}
-				DataGenerator dataGen = getDataGenerator(sedml,id,name,dataSet,taskIdStr);
-				DataGenerator xdg = getDataGenerator(sedml,graphSpecies.get(graphed.get(i).getXNumber()),
-						graphSpecies.get(graphed.get(i).getXNumber()),dataSet,taskIdStr);
+				DataGenerator dataGen = SEDMLutilities.getDataGenerator(sedml,id,name,dataSet,taskIdStr,"species",null);
+				DataGenerator xdg = SEDMLutilities.getDataGenerator(sedml,graphSpecies.get(graphed.get(i).getXNumber()),
+						graphSpecies.get(graphed.get(i).getXNumber()),dataSet,taskIdStr,"species",null);
 				Curve curve = new Curve("c_"+plotId+"_"+id+"_"+taskIdStr+"_"+dataSet,name,
 						LogX.isSelected(),LogY.isSelected(),xdg.getId(),dataGen.getId());
 				
-				para = new Element("curve");
+				para = new Element("tsdGraph");
 				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
 				para.setAttribute("connected", "" + graphed.get(i).getConnected());
 				para.setAttribute("filled", "" + graphed.get(i).getFilled());
@@ -5688,7 +5650,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (taskId==null) {
 					taskIdStr = id[1].replace("(","").replace(")","");
 				} 
-				DataGenerator dataGen = getDataGenerator(sedml,id[0],name,"",taskIdStr);
+				DataGenerator dataGen = SEDMLutilities.getDataGenerator(sedml,id[0],name,"",taskIdStr,"reaction",null);
 				DataSet ds = new DataSet("d_"+plotId+"_"+id[0],name,probGraphed.get(i).getSpecies(),dataGen.getId());
 
 				para = new Element("dataSet");
@@ -6118,11 +6080,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				LogX.setSelected(curve.getLogX());
 				LogY.setSelected(curve.getLogY());
-				boolean connected = SEDMLutilities.getSEDBaseAnnotation(curve, "curve", "connected", connectedDefault).equals("true");
-				boolean filled = SEDMLutilities.getSEDBaseAnnotation(curve, "curve", "filled", "true").equals("true");
-				boolean visible = SEDMLutilities.getSEDBaseAnnotation(curve, "curve", "visible", "true").equals("true");
-				String paint = SEDMLutilities.getSEDBaseAnnotation(curve, "curve", "paint", colorlist[j % numColors]);
-				String shape = SEDMLutilities.getSEDBaseAnnotation(curve, "curve", "shape", shapeList[j % numShapes]);
+				boolean connected = SEDMLutilities.getSEDBaseAnnotation(curve, "tsdGraph", "connected", connectedDefault).equals("true");
+				boolean filled = SEDMLutilities.getSEDBaseAnnotation(curve, "tsdGraph", "filled", "true").equals("true");
+				boolean visible = SEDMLutilities.getSEDBaseAnnotation(curve, "tsdGraph", "visible", "true").equals("true");
+				String paint = SEDMLutilities.getSEDBaseAnnotation(curve, "tsdGraph", "paint", colorlist[j % numColors]);
+				String shape = SEDMLutilities.getSEDBaseAnnotation(curve, "tsdGraph", "shape", shapeList[j % numShapes]);
 				graphed.add(new GraphSpecies(shapes.get(shape), paint, filled, visible, connected, getRunNumber(dg), 
 						xid, id, name, xNumber, j, taskId.replace("__", "/")));
 			}

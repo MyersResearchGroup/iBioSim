@@ -4010,24 +4010,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (output != null) {
 					sedml.removeOutput(output);
 				}
-				ArrayList<DataGenerator> remove = new ArrayList<DataGenerator>();
-				for (DataGenerator dg : sedml.getDataGenerators()) {
-					for (Variable var : dg.getListOfVariables()) {
-						if (var.getReference().equals(fileName)) {
-							remove.add(dg);
-							break;
-						}
-					}
-				}
-				for (DataGenerator dg : remove) {
-					sedml.removeDataGenerator(dg);
-				}
+				SEDMLutilities.removeDataGeneratorsByTaskId(sedml,fileName);
 				ArrayList<AbstractTask> subTasks = new ArrayList<AbstractTask>();
 				for (AbstractTask subTask : sedml.getTasks()) {
 					if (subTask.getId().startsWith(fileName+"__")) {
 						subTasks.add(subTask);
 					}
 				}
+				ArrayList<DataGenerator> remove = new ArrayList<DataGenerator>();
 				for (AbstractTask subTask : subTasks) {
 					remove.clear();
 					for (DataGenerator dg : sedml.getDataGenerators()) {

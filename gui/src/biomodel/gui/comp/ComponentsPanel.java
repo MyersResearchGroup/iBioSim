@@ -926,7 +926,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						String[] dimensionIds = new String[]{""};
 						dimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
 								fields.get(GlobalConstants.ID).getValue(), false);
-						if(dimensions!=null) {
+						if(dimensions!=null && dimensions.length>0) {
 							dimensionIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(variable);
 							sBasePlugin.unsetListOfDimensions();

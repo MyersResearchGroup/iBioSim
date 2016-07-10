@@ -1,8 +1,10 @@
 package analysis.main;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jlibsedml.AbstractIdentifiableElement;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.AddXML;
@@ -15,6 +17,7 @@ import org.jlibsedml.Curve;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.DataSet;
 import org.jlibsedml.FunctionalRange;
+import org.jlibsedml.Libsedml;
 import org.jlibsedml.Model;
 import org.jlibsedml.OneStep;
 import org.jlibsedml.Output;
@@ -26,6 +29,7 @@ import org.jlibsedml.RemoveXML;
 import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.Report;
 import org.jlibsedml.SEDBase;
+import org.jlibsedml.SedML;
 import org.jlibsedml.SetValue;
 import org.jlibsedml.Simulation;
 import org.jlibsedml.SteadyState;
@@ -35,9 +39,93 @@ import org.jlibsedml.Task;
 import org.jlibsedml.UniformRange;
 import org.jlibsedml.UniformTimeCourse;
 import org.jlibsedml.Variable;
+import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.VectorRange;
+import org.jlibsedml.modelsupport.SBMLSupport;
+import org.jmathml.ASTNode;
 
 public class SEDMLutilities {
+	
+	public static String getXPathForReactant(String reactionId,String reactantId) {
+		SBMLSupport support = new SBMLSupport();
+        return support.getXPathForReaction(reactionId)
+                + "/sbml:listOfReactants" + "/sbml:speciesReference[@id='" + reactantId + "']";
+	}
+	
+	public static String getXPathForProduct(String reactionId,String productId) {
+		SBMLSupport support = new SBMLSupport();
+        return support.getXPathForReaction(reactionId)
+                + "/sbml:listOfProducts" + "/sbml:speciesReference[@id='" + productId + "']";
+	}
+	
+	public static DataGenerator getDataGenerator(SedML sedml,String variableId,String variableName,
+			String dataSet,String taskId,String type,String reactionId) {
+		SBMLSupport support = new SBMLSupport();
+		for (DataGenerator dataGenerator : sedml.getDataGenerators()) {
+			if (dataGenerator.getListOfVariables().size()!=1) continue;
+			String ds = SEDMLutilities.getSEDBaseAnnotation(dataGenerator, "dataSet", "dataset", "");
+			Variable variable = dataGenerator.getListOfVariables().get(0);
+			if (variable.getReference().equals(taskId) &&
+					variable.getTarget() != null &&
+					support.getIdFromXPathIdentifer(variable.getTarget()) != null &&
+					support.getIdFromXPathIdentifer(variable.getTarget()).equals(variableId) &&
+					ds.equals(dataSet)) {
+				return dataGenerator;
+			}
+		}
+		// TODO: can be timelimit for probablity analysis, not an id in the model at all
+		String xpath = "";
+		Variable variable;
+		if (variableId.equals("time")) {
+			variable = new Variable(variableId+"_"+taskId+"_"+dataSet+"_var",variableName,taskId,VariableSymbol.TIME);
+		} else {
+			if (type.equals("compartment")) {
+				xpath = support.getXPathForCompartment(variableId);
+			} else if (type.equals("species")) {
+				xpath = support.getXPathForSpecies(variableId);
+			} else if (type.equals("parameter")) {
+				xpath = support.getXPathForGlobalParameter(variableId);
+			} else if (type.equals("reaction")) {
+				xpath = support.getXPathForReaction(variableId);
+			} else if (type.equals("reactant")) {
+				xpath = getXPathForReactant(reactionId,variableId);
+			} else if (type.equals("product")) {
+				xpath = getXPathForProduct(reactionId,variableId);
+			}
+			variable = new Variable(variableId+"_"+taskId+"_"+dataSet+"_var",variableName,taskId,xpath);
+		}
+		DataGenerator dataGen = sedml.getDataGeneratorWithId(variableId+"_"+taskId+"_"+dataSet+"_dg");
+		if (dataGen != null) {
+			sedml.removeDataGenerator(dataGen);
+		}
+		ASTNode math = Libsedml.parseFormulaString(variableId+"_"+taskId+"_"+dataSet+"_var");
+		dataGen = new DataGenerator(variableId+"_"+taskId+"_"+dataSet+"_dg",variableId,math);
+		dataGen.addVariable(variable);
+		if (!dataSet.equals("")) {
+			Element para = new Element("dataSet");
+			para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+			para.setAttribute("dataset", "" + dataSet);
+			Annotation ann = new Annotation(para);
+			dataGen.addAnnotation(ann);
+		}
+		sedml.addDataGenerator(dataGen);
+		return dataGen;
+	}
+	
+	public static void removeDataGeneratorsByTaskId(SedML sedml,String taskId) {
+		ArrayList<DataGenerator> remove = new ArrayList<DataGenerator>();
+		for (DataGenerator dg : sedml.getDataGenerators()) {
+			for (Variable var : dg.getListOfVariables()) {
+				if (var.getReference().equals(taskId)) {
+					remove.add(dg);
+					break;
+				}
+			}
+		}
+		for (DataGenerator dg : remove) {
+			sedml.removeDataGenerator(dg);
+		}
+	}
 	
 	public static void copyAnnotation(SEDBase sedBase1,SEDBase sedBase2) {
 		List<Annotation> annotations = sedBase1.getAnnotation();

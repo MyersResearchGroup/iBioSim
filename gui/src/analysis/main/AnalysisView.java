@@ -282,6 +282,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		loadSEDML("");
 		subTaskList.addActionListener(this);
 	}
+	
+	public int getNumRuns() {
+		try {
+			return Integer.parseInt(runs.getText());
+		} catch (Exception e) {
+			return 1;
+		}
+	}
 
 	/* Creates the abstraction radio button options */
 	private JPanel createAbstractionOptions()
@@ -1138,6 +1146,39 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 		}
 	}
+	
+	public int getStartIndex(String outDir) {
+		if (append.isSelected())
+		{
+			String[] searchForRunFiles = new File(root + Gui.separator + outDir).list();
+			int start = 1;
+			for (String s : searchForRunFiles)
+			{
+				if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + Gui.separator + outDir + Gui.separator + s).isFile())
+				{
+					String getNumber = s.substring(4, s.length());
+					String number = "";
+					for (int i = 0; i < getNumber.length(); i++)
+					{
+						if (Character.isDigit(getNumber.charAt(i)))
+						{
+							number += getNumber.charAt(i);
+						}
+						else
+						{
+							break;
+						}
+					}
+					start = Math.max(Integer.parseInt(number), start);
+				}
+			}
+			return (start+1);
+		}
+		else
+		{
+			return 1;
+		}
+	}
 
 	/**
 	 * Saves the simulate options.
@@ -1590,29 +1631,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			{
 				if (append.isSelected())
 				{
-					String[] searchForRunFiles = new File(root + Gui.separator + outDir).list();
-					int start = 1;
-					for (String s : searchForRunFiles)
-					{
-						if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + Gui.separator + outDir + Gui.separator + s).isFile())
-						{
-							String getNumber = s.substring(4, s.length());
-							String number = "";
-							for (int i = 0; i < getNumber.length(); i++)
-							{
-								if (Character.isDigit(getNumber.charAt(i)))
-								{
-									number += getNumber.charAt(i);
-								}
-								else
-								{
-									break;
-								}
-							}
-							start = Math.max(Integer.parseInt(number), start);
-						}
-					}
-					getProps.setProperty("monte.carlo.simulation.start.index", (start + 1) + "");
+					getProps.setProperty("monte.carlo.simulation.start.index", 
+							getStartIndex(outDir) + "");
 				}
 				else
 				{

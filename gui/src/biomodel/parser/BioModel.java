@@ -2105,7 +2105,7 @@ public class BioModel {
 		}
 		String indexStr = "";
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-		if (dimensions!=null) {
+		if (dimensions!=null && dimensions.length>0) {
 			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
 			sBasePlugin.unsetListOfDimensions();
 			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(reaction.getReactant(0));
@@ -2185,7 +2185,7 @@ public class BioModel {
 			k = r.getKineticLaw();
 		}
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-		if (dimensions!=null) {
+		if (dimensions!=null && dimensions.length>0) {
 			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
 			sBasePlugin.unsetListOfDimensions();
 			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(r.getProduct(0));
@@ -2289,7 +2289,7 @@ public class BioModel {
 		} 
 		String indexStr = "";
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-		if (dimensions!=null) {
+		if (dimensions!=null && dimensions.length>0) {
 			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
 			sBasePlugin.unsetListOfDimensions();
 			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(reaction.getReactant(0));
@@ -2416,7 +2416,7 @@ public class BioModel {
 			}
 		}
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, r, metaIDIndex);
-		if (dimensions!=null) {
+		if (dimensions!=null && dimensions.length>0) {
 			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
 			sBasePlugin.unsetListOfDimensions();
