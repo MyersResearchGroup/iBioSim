@@ -3425,7 +3425,7 @@ public class SBMLutilities
 	 */
 	public static void updateVarId(SBMLDocument document, boolean isSpecies, String origId, String newId)
 	{
-		if (origId.equals(newId))
+		if (origId==null || origId.equals("") || origId.equals(newId))
 		{
 			return;
 		}
