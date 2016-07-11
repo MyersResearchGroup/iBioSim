@@ -6028,7 +6028,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					//if (dg.getListOfVariables().size()!=1) continue;
 					for (Variable var : dg.getListOfVariables()) {
 						//Variable var = dg.getListOfVariables().get(0);
-						if (var.isVariable()) {
+						// TODO: hack to deal with concentration calculations
+						if (var.isVariable() && 
+								(dg.getListOfVariables().size()==1 || 
+									!var.getTarget().contains("compartment"))) {
 							id = sbmlSupport.getIdFromXPathIdentifer(var.getTarget());
 							if (id==null) continue;
 							if (analysisId==null) {
