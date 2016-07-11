@@ -6712,6 +6712,7 @@ public class SBMLutilities
 			{
 				JOptionPane.showMessageDialog(Gui.frame, "Unable convert FBC model from Version 1 to Version 2.",
 						"Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return null;
 			}
 			//long numErrors = 0;
 			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
