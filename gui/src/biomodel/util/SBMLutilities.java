@@ -6576,7 +6576,7 @@ public class SBMLutilities
 		for (int i = 0; i < model.getCompartmentCount(); i++)
 		{
 			Compartment compartment = model.getCompartment(i);
-			if (!compartment.isSetSize())
+			if (!compartment.isSetSize() && model.getInitialAssignment(compartment.getId())==null)
 			{
 				messageArea.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Compartment " + compartment.getId() + " needs a size.\n");
@@ -6586,7 +6586,8 @@ public class SBMLutilities
 		for (int i = 0; i < model.getSpeciesCount(); i++)
 		{
 			Species species = model.getSpecies(i);
-			if (!(species.isSetInitialAmount()) && !(species.isSetInitialConcentration()))
+			if (!(species.isSetInitialAmount()) && !(species.isSetInitialConcentration())
+					 && model.getInitialAssignment(species.getId())==null)
 			{
 				messageArea.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Species " + species.getId() + " needs an initial amount or concentration.\n");
@@ -6596,7 +6597,7 @@ public class SBMLutilities
 		for (int i = 0; i < model.getParameterCount(); i++)
 		{
 			Parameter parameter = model.getParameter(i);
-			if (!(parameter.isSetValue()))
+			if (!(parameter.isSetValue()) && model.getInitialAssignment(parameter.getId())==null)
 			{
 				messageArea.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Parameter " + parameter.getId() + " needs an initial value.\n");
