@@ -841,6 +841,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				taskId = taskId + "__" + stem;
 			}
 			AbstractTask task = sedml.getTaskWithId(taskId);
+			// TODO: hack to avoid null pointer if saveParams happens before analysisView saveSEDML
+			if (task==null) return;
 			Model model = sedml.getModelWithId(task.getModelReference());
 			if (model!=null) {
 				sedml.removeModel(model);
