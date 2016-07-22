@@ -22,15 +22,15 @@ public class GCMFileTest extends TestCase{
 	
 	public void testLoadandSave() { 
 //		GCMFile file = new GCMFile();		
-//		file.load("gcm"+ File.separator +"bar.gcm");
+//		file.load("gcm"+ Gui.separator +"bar.gcm");
 //		file.setSBMLFile("foo.sbml");
-//		file.save("gcm"+ File.separator +"baz.gcm");
+//		file.save("gcm"+ Gui.separator +"baz.gcm");
 	}
 	
 	public void testMerge() {
-		GCMParser parser = new GCMParser("gcm"+ File.separator +"baz.gcm");
+		GCMParser parser = new GCMParser("gcm"+ Gui.separator +"baz.gcm");
 		GeneticNetwork network = parser.buildNetwork();				
-		network.mergeSBML("gcm"+ File.separator +"baz.sbml");
+		network.mergeSBML("gcm"+ Gui.separator +"baz.sbml");
 	}
 	
 	public void testAddProperty() {
