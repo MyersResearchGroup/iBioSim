@@ -24,35 +24,35 @@ public class ScriptTest extends TestCase {
 	public void ThresholdCoop() {
 		System.out.println("\nCoop:");
 		GCMScript script = new GCMScript();
-		script.generateThresholds(directory + File.separator + "coop", "C",
+		script.generateThresholds(directory + Gui.separator + "coop", "C",
 				3500, "coop", 5);
 	}
 
 	public void ThresholdRatio() {
 		System.out.println("\nRatio:");
 		GCMScript script = new GCMScript();
-		script.generateThresholds(directory + File.separator + "ratio", "C",
+		script.generateThresholds(directory + Gui.separator + "ratio", "C",
 				3500, "ratio", 5);
 	}
 
 	public void testThresholdPromoter() {
 		System.out.println("\nPromoter:");
 		GCMScript script = new GCMScript();
-		script.generateThresholds(directory + File.separator + "promoter", "C",
+		script.generateThresholds(directory + Gui.separator + "promoter", "C",
 				3500, "promoter", 5);
 	}
 
 	public void ThresholdDecay() {
 		System.out.println("\nDecay:");
 		GCMScript script = new GCMScript();
-		script.generateThresholds(directory + File.separator + "decay", "C",
+		script.generateThresholds(directory + Gui.separator + "decay", "C",
 				3500, "decay", 5);
 	}
 
 	public void ThresholdRep() {
 		System.out.println("\nRep:");
 		GCMScript script = new GCMScript();
-		script.generateThresholds(directory + File.separator + "rep", "C",
+		script.generateThresholds(directory + Gui.separator + "rep", "C",
 				3500, "rep", 6);
 	}
 
