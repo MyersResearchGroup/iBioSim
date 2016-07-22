@@ -45,6 +45,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
@@ -10442,6 +10443,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				reb2sacExecutable = "reb2sac.exe";
 			}
 			ProcessBuilder ps = new ProcessBuilder(reb2sacExecutable, "");
+			Map<String, String> env = ps.environment();
+			if (System.getenv("BIOSIM")!=null) {
+				env.put("BIOSIM", System.getenv("BIOSIM"));
+			}
+			if (System.getenv("LEMA")!=null) {
+				env.put("LEMA", System.getenv("LEMA"));
+			}
+			if (System.getenv("ATACSGUI")!=null) {
+				env.put("ATACSGUI", System.getenv("ATACSGUI"));
+			}
+			if (System.getenv("LD_LIBRARY_PATH")!=null) {
+				env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
+			}
+			if (System.getenv("DYLD_LIBRARY_PATH")!=null) {
+				env.put("DYLD_LIBRARY_PATH", System.getenv("DYLD_LIBRARY_PATH"));
+			}
+			if (System.getenv("PATH")!=null) {
+				env.put("PATH", System.getenv("PATH"));
+			}
 			ps.redirectErrorStream(true);
 			Process reb2sac = ps.start();
 			if (reb2sac != null)
@@ -10477,6 +10497,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				geneNetExecutable = "GeneNet.exe";
 			}
 			ProcessBuilder ps = new ProcessBuilder(geneNetExecutable, "");
+			Map<String, String> env = ps.environment();
+			if (System.getenv("BIOSIM")!=null) {
+				env.put("BIOSIM", System.getenv("BIOSIM"));
+			}
+			if (System.getenv("LEMA")!=null) {
+				env.put("LEMA", System.getenv("LEMA"));
+			}
+			if (System.getenv("ATACSGUI")!=null) {
+				env.put("ATACSGUI", System.getenv("ATACSGUI"));
+			}
+			if (System.getenv("LD_LIBRARY_PATH")!=null) {
+				env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
+			}
+			if (System.getenv("DYLD_LIBRARY_PATH")!=null) {
+				env.put("DYLD_LIBRARY_PATH", System.getenv("DYLD_LIBRARY_PATH"));
+			}
+			if (System.getenv("PATH")!=null) {
+				env.put("PATH", System.getenv("PATH"));
+			}
 			ps.redirectErrorStream(true);
 			Process geneNet = ps.start();
 			if (geneNet != null)
