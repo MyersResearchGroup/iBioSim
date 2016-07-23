@@ -189,12 +189,12 @@ public class BioGraph extends mxGraph {
 		Point point = reactionGlyph.getBoundingBox().createPosition();
 		point.setX(this.getSpeciesOrPromoterCell(product).getGeometry().getCenterX());
 		point.setY(this.getSpeciesOrPromoterCell(product).getGeometry().getCenterY());
-		SBMLutilities.copyDimensions(r,reactionGlyph);
+		//SBMLutilities.copyDimensions(r,reactionGlyph);
 		SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.REFERENCE_GLYPH+"__"+reactant+"__"+type+"__"+product);
 		speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+product);
 		speciesReferenceGlyph.setRole(SpeciesReferenceRole.PRODUCT);
-		SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+product), speciesReferenceGlyph, "layout:speciesGlyph");
-		SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:id");
+//		SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+product), speciesReferenceGlyph, "layout:speciesGlyph");
+//		SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:id");
 		LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
 		lineSegment.setStart(new Point(this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterX(),
 				this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterY()));
@@ -207,8 +207,8 @@ public class BioGraph extends mxGraph {
 			SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.GLYPH+"__"+reactionId+"__"+role+"__"+speciesId);
 			speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+speciesId);
 			speciesReferenceGlyph.setRole(SpeciesReferenceRole.valueOf(role.toUpperCase()));
-			SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+speciesId), speciesReferenceGlyph, "layout:speciesGlyph");
-			SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:id");
+//			SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+speciesId), speciesReferenceGlyph, "layout:speciesGlyph");
+//			SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:id");
 			LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
 			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
 			lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
@@ -220,8 +220,8 @@ public class BioGraph extends mxGraph {
 			ReferenceGlyph referenceGlyph = generalGlyph.createReferenceGlyph(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId);
 			referenceGlyph.setGlyph(GlobalConstants.GLYPH+"__"+refId);
 			referenceGlyph.setRole(role);
-			SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+refId), referenceGlyph, "layout:glyph");
-			SBMLutilities.copyIndices(generalGlyph, referenceGlyph, "layout:id");
+//			SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+refId), referenceGlyph, "layout:glyph");
+//			SBMLutilities.copyIndices(generalGlyph, referenceGlyph, "layout:id");
 			LineSegment lineSegment = referenceGlyph.createCurve().createLineSegment();
 			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
 			lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
@@ -283,7 +283,7 @@ public class BioGraph extends mxGraph {
 					compartmentGlyph.getBoundingBox().getPosition().setY(0);
 					compartmentGlyph.getBoundingBox().getDimensions().setWidth(1070/m.getCompartmentCount());
 					compartmentGlyph.getBoundingBox().getDimensions().setHeight(425);
-					SBMLutilities.copyDimensionsIndices(c, compartmentGlyph, "layout:compartment");
+					//SBMLutilities.copyDimensionsIndices(c, compartmentGlyph, "layout:compartment");
 					TextGlyph textGlyph = null;
 					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+c.getId())!=null) {
 						textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+c.getId());
@@ -297,7 +297,7 @@ public class BioGraph extends mxGraph {
 					textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+c.getId());
 					textGlyph.setText(SBMLutilities.getArrayId(bioModel.getSBMLDocument(),c.getId()));
 					textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox().clone());
-					SBMLutilities.copyDimensionsIndices(compartmentGlyph, textGlyph, "layout:graphicalObject");
+					//SBMLutilities.copyDimensionsIndices(compartmentGlyph, textGlyph, "layout:graphicalObject");
 					if(createGraphCompartmentFromModel(c.getId()))
 						needsPositioning = true;			
 				}
