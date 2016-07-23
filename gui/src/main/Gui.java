@@ -5599,6 +5599,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	public SEDMLDocument getSEDMLDocument() {
+		//readSEDMLDocument();
 		return sedmlDocument;
 	}
 	
