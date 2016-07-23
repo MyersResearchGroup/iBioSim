@@ -802,10 +802,10 @@ public class SBOLUtility2
 	
 	public static String convertRegexSOTermsToNumbers(String regex) 
 	{
-		regex = regex.replaceAll("promoter", "SO_0000167");
-		regex = regex.replaceAll("ribosome entry site", "SO_0000139");
-		regex = regex.replaceAll("coding sequence", "SO_0000316");
-		regex = regex.replaceAll("terminator", "SO_0000141");
+		regex = regex.replaceAll("promoter", "SO:0000167");
+		regex = regex.replaceAll("ribosome entry site", "SO:0000139");
+		regex = regex.replaceAll("coding sequence", "SO:0000316");
+		regex = regex.replaceAll("terminator", "SO:0000141");
 		return regex;
 	}
 	
