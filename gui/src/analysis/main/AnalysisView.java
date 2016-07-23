@@ -1956,7 +1956,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				reactionAbstraction.setSelected(true);
 			} else if (abstraction.equals("State-based")) {
 				stateAbstraction.setSelected(true);
+			} else {
+				noAbstraction.setSelected(true);
 			}
+		} else {
+			noAbstraction.setSelected(true);
 		}
 		for (AlgorithmParameter ap : algorithm.getListOfAlgorithmParameters()) {
 			if (ap.getKisaoID().equals(GlobalConstants.KISAO_MINIMUM_STEP_SIZE)) {
