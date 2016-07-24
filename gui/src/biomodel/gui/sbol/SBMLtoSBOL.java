@@ -365,12 +365,34 @@ public class SBMLtoSBOL {
 					return compDef;
 				}
 			}
-			compDef_type.add(ComponentDefinition.PROTEIN);
+			if (species.isSetSBOTerm()) {
+				if (species.getSBOTerm()==GlobalConstants.SBO_DNA) {
+					compDef_type.add(ComponentDefinition.DNA);
+				} else if (species.getSBOTerm()==GlobalConstants.SBO_RNA) {
+					compDef_type.add(ComponentDefinition.RNA);
+				} else if (species.getSBOTerm()==GlobalConstants.SBO_PROTEIN) {
+					compDef_type.add(ComponentDefinition.PROTEIN);
+				} else if (species.getSBOTermID().equals(GlobalConstants.SBO_NONCOVALENT_COMPLEX) ||
+						SBMLutilities.sbo.isDescendantOf(species.getSBOTermID(), GlobalConstants.SBO_NONCOVALENT_COMPLEX)) {
+					compDef_type.add(ComponentDefinition.COMPLEX);
+				} else if (species.getSBOTermID().equals(GlobalConstants.SBO_SIMPLE_CHEMICAL) ||
+						SBMLutilities.sbo.isDescendantOf(species.getSBOTermID(), GlobalConstants.SBO_SIMPLE_CHEMICAL)) {
+					compDef_type.add(ComponentDefinition.SMALL_MOLECULE);
+				} else {
+					compDef_type.add(ComponentDefinition.PROTEIN);
+				}
+			} else {
+				compDef_type.add(ComponentDefinition.PROTEIN);
+			}
 		}
 		compDef = sbolDoc.getComponentDefinition(compDef_identity, VERSION);
 		if (compDef==null) {
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
-		} 
+		} else if (!compDef.getTypes().containsAll(compDef_type)) {
+			// TODO: if the type has changed, then replace it
+			sbolDoc.removeComponentDefinition(compDef);
+			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
+		}
 		return compDef; 
 	}
 	
