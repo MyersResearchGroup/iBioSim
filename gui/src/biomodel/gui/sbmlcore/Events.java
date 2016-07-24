@@ -74,7 +74,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private JTextField eventID;
 	
 	private boolean isTransition;
-
+	
+	private JComboBox SBOTerms;
+	
 	/* Create event panel */
 	public Events(Gui biosim, BioModel bioModel, ModelEditor modelEditor, boolean isTextual) {
 		super(new BorderLayout());
@@ -152,12 +154,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		ArrayList<String> presetPlaces = new ArrayList<String>();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel evPanel = new JPanel(new GridLayout(9, 2));
+		JPanel evPanel = new JPanel(new GridLayout(10, 2));
 		if (isTransition) {
-			evPanel.setLayout(new GridLayout(7, 2));
+			evPanel.setLayout(new GridLayout(8, 2));
 		}
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
+		JLabel sboTermLabel = new JLabel(GlobalConstants.SBOTERM);
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_INTERACTION));
+		if (isTransition) {
+			SBOTerms.setSelectedItem("petri net transition");
+		}
 		JLabel triggerLabel;
 		if (isTransition) {
 			triggerLabel = new JLabel("Enabling condition:");
@@ -230,6 +237,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					eventID.setText(event.getId());
 					selectedID = event.getId();
 					eventName.setText(event.getName());
+					if (event.isSetSBOTerm()) {
+						SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(event.getSBOTermID()));
+					}
 					String trigger = SBMLutilities.myFormulaToString(event.getTrigger().getMath());
 					ASTNode triggerMath = event.getTrigger().getMath();
 					for (int j = 0; j < bioModel.getSBMLDocument().getModel().getParameterCount(); j++) {
@@ -419,6 +429,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		evPanel.add(eventName);
 		evPanel.add(onPortLabel);
 		evPanel.add(onPort);
+		evPanel.add(sboTermLabel);
+		evPanel.add(SBOTerms);
 		evPanel.add(triggerLabel);
 		evPanel.add(eventTrigger);
 		JPanel persistPanel = new JPanel();
@@ -868,6 +880,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								}
 							}
 						}
+						if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+							e.unsetSBOTerm();
+						} else {
+							e.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+						}
 						int index = events.getSelectedIndex();
 						ev[index] = e.getId();
 						for (int i = 1; dimID!=null && i < dimID.length; i++) {
@@ -1096,6 +1113,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 					}
+					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+						e.unsetSBOTerm();
+					} else {
+						e.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+					}
+
 					String eventEntry = e.getId();
 					for (int i = 1; dimID!=null && i < dimID.length; i++) {
 						eventEntry += "[" + dimID[i] + "]";

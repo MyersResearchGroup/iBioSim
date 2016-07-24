@@ -58,8 +58,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	
 	private Model sbmlModel;
 
-	private MutableBoolean dirty;
-
+	private MutableBoolean dirty;	
+	
 	public ModelPanel(BioModel gcm, ModelEditor modelEditor) {
 		super();
 		this.bioModel = gcm;
@@ -190,33 +190,12 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			fbaoButton = new JButton("Edit Objectives");
 			fbaoButton.setActionCommand("fluxObjective");
 			fbaoButton.addActionListener(this);
-			framework = new JComboBox();
+			// TODO: interaction?
+			framework = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_FRAMEWORK));
 			framework.addActionListener(this);
-			framework.addItem("( unspecified )");
-			framework.addItem("Non-spatial continuous");
-			framework.addItem("Spatial continuous");
-			framework.addItem("Non-spatial discrete");
-			framework.addItem("Spatial discrete");
-			framework.addItem("Boolean logical");
-			framework.addItem("Flux balance");
 			if (model.isSetSBOTerm()) {
-				int frameworkSBO = model.getSBOTerm();
-				framework.setSelectedItem("( unspecified )");
-				if (frameworkSBO == GlobalConstants.SBO_NONSPATIAL_CONTINUOUS) {
-					framework.setSelectedItem("Non-spatial continuous");
-				} else if (frameworkSBO == GlobalConstants.SBO_SPATIAL_CONTINUOUS) {
-					framework.setSelectedItem("Spatial continuous");
-				} else if (frameworkSBO == GlobalConstants.SBO_NONSPATIAL_DISCRETE) {
-					framework.setSelectedItem("Non-spatial discrete");
-				} else if (frameworkSBO == GlobalConstants.SBO_SPATIAL_DISCRETE) {
-					framework.setSelectedItem("Spatial discrete");
-				} else if (frameworkSBO == GlobalConstants.SBO_BOOLEAN_LOGICAL) {
-					framework.setSelectedItem("Boolean logical");
-				} else if (frameworkSBO == GlobalConstants.SBO_FLUX_BALANCE) {
-					framework.setSelectedItem("Flux balance");
-				}  
+				framework.setSelectedItem(SBMLutilities.sbo.getName(model.getSBOTermID()));
 			}
-			
 			modelEditorPanel.add(substanceUnitsLabel);
 			modelEditorPanel.add(substanceUnits);
 			modelEditorPanel.add(timeUnitsLabel);
@@ -237,7 +216,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(sbolField);
 			modelEditorPanel.add(new JLabel("Flux Objective:"));
 			modelEditorPanel.add(fbaoButton);
-			modelEditorPanel.add(new JLabel("Framework:"));
+			modelEditorPanel.add(new JLabel(GlobalConstants.SBOTERM));
 			modelEditorPanel.add(framework);
 		}
 		Object[] options = { option, "Cancel" };
@@ -321,20 +300,10 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 						sBasePlugin.addIndex(indexRule);
 					}
 				}
-				if (framework.getSelectedItem().equals("Non-spatial continuous")) {
-					model.setSBOTerm(GlobalConstants.SBO_NONSPATIAL_CONTINUOUS);
-				} else if (framework.getSelectedItem().equals("Spatial continuous")) {
-					model.setSBOTerm(GlobalConstants.SBO_SPATIAL_CONTINUOUS);
-				} else if (framework.getSelectedItem().equals("Non-spatial discrete")) {
-					model.setSBOTerm(GlobalConstants.SBO_NONSPATIAL_DISCRETE);
-				} else if (framework.getSelectedItem().equals("Spatial discrete")) {
-					model.setSBOTerm(GlobalConstants.SBO_SPATIAL_DISCRETE);
-				} else if (framework.getSelectedItem().equals("Boolean logical")) {
-					model.setSBOTerm(GlobalConstants.SBO_BOOLEAN_LOGICAL);
-				} else if (framework.getSelectedItem().equals("Flux balance")) {
-					model.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
-				} else {
+				if (framework.getSelectedItem().equals("(unspecified)")) {
 					model.unsetSBOTerm();
+				} else {
+					model.setSBOTerm(SBMLutilities.sbo.getId((String)framework.getSelectedItem()));
 				}
 				model.setName(modelName.getText());
 				dirty.setValue(true);
