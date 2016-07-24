@@ -84,7 +84,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private Rules rulesPanel;
 	
 	private JCheckBox onPort;
-
+	
+	private JComboBox SBOTerms;
+	
 	public Compartments(BioModel bioModel, ModelEditor modelEditor, Boolean paramsOnly, ArrayList<String> getParams, 
 			String file, ArrayList<String> parameterChanges, Boolean editOnly) {
 		super(new BorderLayout());
@@ -156,24 +158,15 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		JPanel compartPanel = new JPanel();
 		JPanel compPanel;
 		if (paramsOnly) {
-			if (bioModel.getSBMLDocument().getLevel() < 3) {
-				compPanel = new JPanel(new GridLayout(11, 2));
-			}
-			else {
-				compPanel = new JPanel(new GridLayout(9, 2));
-			}
+			compPanel = new JPanel(new GridLayout(10, 2));
 		}
 		else {
-			if (bioModel.getSBMLDocument().getLevel() < 3) {
-				compPanel = new JPanel(new GridLayout(9, 2));
-			}
-			else {
-				compPanel = new JPanel(new GridLayout(7, 2));
-			}
+			compPanel = new JPanel(new GridLayout(8, 2));
 		}
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
-//		JLabel compTypeLabel = new JLabel("Type:");
+		JLabel sboTermLabel = new JLabel(GlobalConstants.SBOTERM);
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_MATERIAL_ENTITY));
 		JLabel dimLabel = new JLabel("Spatial Dimensions:");
 		JLabel constLabel = new JLabel("Constant:");
 		JLabel sizeLabel = new JLabel("Spatial Size:");
@@ -181,17 +174,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		compID = new JTextField(12);
 		compName = new JTextField(12);
-		
-//		CompartmentType not supported in Level 3
-//		ListOf listOfCompTypes = bioModel.getSBMLDocument().getModel().getListOfCompartmentTypes();
-//		String[] compTypeList = new String[(int) bioModel.getSBMLDocument().getModel().getNumCompartmentTypes() + 1];
-//		compTypeList[0] = "( none )";
-//		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartmentTypes(); i++) {
-//			compTypeList[i + 1] = ((CompartmentType) listOfCompTypes.get(i)).getId();
-//		}
-//		Utility.sort(compTypeList);
-//		Object[] choices = compTypeList;
-//		compTypeBox = new JComboBox(choices);
 		dimText = new JTextField(12);
 		dimText.setText("3.0");
 		compSize = new JTextField(12);
@@ -271,7 +253,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		if (paramsOnly) {
 			compID.setEnabled(false);
 			compName.setEnabled(false);
-//			compTypeBox.setEnabled(false);
 			dimText.setEnabled(false);
 			compUnits.setEnabled(false);
 			CompConstants.setEnabled(false);
@@ -284,10 +265,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(selected);
 				selectedID = compartment.getId();
 				compName.setText(compartment.getName());
-//				CompartmentType not supported in Level 3
-//				if (compartment.isSetCompartmentType()) {
-//					compTypeBox.setSelectedItem(compartment.getCompartmentType());
-//				}
+				if (compartment.isSetSBOTerm()) {
+					SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(compartment.getSBOTermID()));
+				}
 				dimText.setText(String.valueOf(compartment.getSpatialDimensions()));
 				setCompartOptions(String.valueOf(compartment.getSpatialDimensions()));
 				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
@@ -350,10 +330,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		compPanel.add(compName);
 		compPanel.add(onPortLabel);
 		compPanel.add(onPort);
-//		if (bioModel.getSBMLDocument().getLevel() < 3) {
-//			compPanel.add(compTypeLabel);
-//			compPanel.add(compTypeBox);
-//		}
+		compPanel.add(sboTermLabel);
+		compPanel.add(SBOTerms);
 		compPanel.add(dimLabel);
 		compPanel.add(dimText);
 		if (paramsOnly) {
@@ -507,6 +485,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						Compartment c = bioModel.getSBMLDocument().getModel().getCompartment(val);
 						c.setId(compartmentId);
 						c.setName(compName.getText().trim());
+						if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+							c.unsetSBOTerm();
+						} else {
+							c.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+						}
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
 						sBasePlugin.unsetListOfDimensions();
 						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
@@ -514,12 +497,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
-						if (bioModel.getSBMLDocument().getLevel() < 3) {
-							c.setSpatialDimensions(dim);
-						}
-						else {
-							c.setSpatialDimensions(dim);
-						}
+						c.setSpatialDimensions(dim);
 						if (compSize.getText().trim().equals("") || compSize.getText().trim().startsWith("(")) {
 							c.unsetSize();
 						}
@@ -616,18 +594,18 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						Compartment c = bioModel.getSBMLDocument().getModel().createCompartment();
 						c.setId(compartmentId);
 						c.setName(compName.getText().trim());
+						if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+							c.unsetSBOTerm();
+						} else {
+							c.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+						}
 						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
 						for(int i = 0; dimID!=null &&i<dimID.length-1; i++){
 							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
 							dimX.setSize(dimID[i+1]);
 							dimX.setArrayDimension(i);
 						}
-						if (bioModel.getSBMLDocument().getLevel() < 3) {
-							c.setSpatialDimensions(dim);
-						}
-						else {
-							c.setSpatialDimensions(dim);
-						}
+						c.setSpatialDimensions(dim);
 						if (!compSize.getText().trim().equals("")) {
 							c.setSize(Double.parseDouble(compSize.getText().trim()));
 						}
@@ -716,9 +694,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					}
 				}
 			}
-			if (bioModel.getSBMLDocument().getLevel() < 3) {
-				compUnits.addItem("volume");
-			}
 			compUnits.addItem("litre");
 			compUnits.addItem("dimensionless");
 			if (!paramsOnly) {
@@ -738,9 +713,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					}
 				}
 			}
-			if (bioModel.getSBMLDocument().getLevel() < 3) {
-				compUnits.addItem("area");
-			}
 			compUnits.addItem("dimensionless");
 			if (!paramsOnly) {
 				CompConstants.setEnabled(true);
@@ -759,9 +731,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					}
 				}
 			}
-			if (bioModel.getSBMLDocument().getLevel() < 3) {
-				compUnits.addItem("length");
-			}
 			compUnits.addItem("metre");
 			compUnits.addItem("dimensionless");
 			if (!paramsOnly) {
@@ -772,11 +741,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		else if (dim == 0) {
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
-			if (bioModel.getSBMLDocument().getLevel() < 3) {
-				compSize.setText("");
-				CompConstants.setEnabled(false);
-				compSize.setEnabled(false);
-			}
 		}
 		else {
 			compUnits.removeAllItems();

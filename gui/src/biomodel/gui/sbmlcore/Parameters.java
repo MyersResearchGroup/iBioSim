@@ -89,7 +89,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private ModelEditor modelEditor;
 	
 	private boolean constantsOnly;
-
+	
+	private JComboBox SBOTerms;
+	
 	public Parameters(BioModel bioModel, ModelEditor modelEditor, Boolean paramsOnly, ArrayList<String> getParams, String file,
 			ArrayList<String> parameterChanges, boolean constantsOnly) {
 		super(new BorderLayout());
@@ -270,20 +272,20 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JPanel parametersPanel;
 		if (paramsOnly) {
 			if (isPlace) {
-				parametersPanel = new JPanel(new GridLayout(7, 2));
-			} else if (isBoolean){
 				parametersPanel = new JPanel(new GridLayout(8, 2));
-			} else {
+			} else if (isBoolean){
 				parametersPanel = new JPanel(new GridLayout(9, 2));
+			} else {
+				parametersPanel = new JPanel(new GridLayout(10, 2));
 			}
 		}
 		else {
 			if (isPlace) {
-				parametersPanel = new JPanel(new GridLayout(4, 2));
-			} else if (isBoolean){
 				parametersPanel = new JPanel(new GridLayout(5, 2));
+			} else if (isBoolean){
+				parametersPanel = new JPanel(new GridLayout(6, 2));
 			} else {
-				parametersPanel = new JPanel(new GridLayout(7, 2));
+				parametersPanel = new JPanel(new GridLayout(8, 2));
 			}
 		}
 		JLabel idLabel = new JLabel("ID:");
@@ -293,7 +295,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JLabel rateLabel = new JLabel("Initial Rate:");
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel constLabel = new JLabel("Constant:");
-		
+		JLabel sboTermLabel = new JLabel(GlobalConstants.SBOTERM);
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_PARAMETER));
+		if (isPlace) {
+			SBOTerms.setSelectedItem("petri net place");
+		} else if (isBoolean) {
+			SBOTerms.setSelectedItem("logical parameter");
+		}
 		paramID = new JTextField();
 		paramName = new JTextField();
 		paramValue = new JTextField();
@@ -393,6 +401,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			paramUnits.setEnabled(false);
 			paramConst.setEnabled(false);
 			portDir.setEnabled(false);
+			SBOTerms.setEnabled(false);
 			sweep.setEnabled(false);
 		}
 		String selectedID = "";
@@ -410,15 +419,15 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 					if (paramsOnly) {
 						if (isPlace) {
-							parametersPanel.setLayout(new GridLayout(7, 2));
-						} else {
 							parametersPanel.setLayout(new GridLayout(8, 2));
+						} else {
+							parametersPanel.setLayout(new GridLayout(9, 2));
 						}
 					} else {
 						if (isPlace) {
-							parametersPanel.setLayout(new GridLayout(4, 2));
-						} else {
 							parametersPanel.setLayout(new GridLayout(5, 2));
+						} else {
+							parametersPanel.setLayout(new GridLayout(6, 2));
 						}
 					}
 					if (paramet.getValue()==0) {
@@ -430,9 +439,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					rateParam = bioModel.getSBMLDocument().getModel().getParameter(selected + "_" + GlobalConstants.RATE);
 					if (rateParam!=null) {
 						if (paramsOnly) {
-							parametersPanel = new JPanel(new GridLayout(9, 2));
+							parametersPanel = new JPanel(new GridLayout(10, 2));
 						} else {
-							parametersPanel = new JPanel(new GridLayout(8, 2));
+							parametersPanel = new JPanel(new GridLayout(9, 2));
 						}
 						if (paramsOnly) {
 							if (rateParam.isSetValue()) {
@@ -481,6 +490,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 				if (paramet.isSetUnits()) {
 					paramUnits.setSelectedItem(paramet.getUnits());
+				}
+				if (paramet.isSetSBOTerm()) {
+					SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(paramet.getSBOTermID()));
 				}
 				if (bioModel.getPortByIdRef(paramet.getId())!=null) {
 					Port port = bioModel.getPortByIdRef(paramet.getId());
@@ -575,7 +587,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			parametersPanel.add(type);
 		}
 		parametersPanel.add(onPortLabel);
-		parametersPanel.add(portDir);		
+		parametersPanel.add(portDir);
+		parametersPanel.add(sboTermLabel);
+		parametersPanel.add(SBOTerms);
 		parametersPanel.add(valueLabel);
 		if (isPlace || isBoolean) {
 			parametersPanel.add(placeMarking);
@@ -750,6 +764,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							
 							paramet.setName(paramName.getText().trim());
+							if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+								paramet.unsetSBOTerm();
+							} else {
+								paramet.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+							}
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}
@@ -876,7 +895,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							if (dimID!=null)
 								paramet.setId(dimID[0].trim());
 							paramet.setName(paramName.getText().trim());
-							
+							if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+								paramet.unsetSBOTerm();
+							} else {
+								paramet.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+							}
 							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							for(int i = 0; dimID!=null && i<dimID.length-1; i++){
 								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);

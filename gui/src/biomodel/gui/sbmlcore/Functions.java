@@ -2,7 +2,6 @@ package biomodel.gui.sbmlcore;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +11,7 @@ import java.io.StringReader;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -19,8 +19,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpringLayout;
 
 import main.Gui;
+import main.util.SpringUtilities;
 import main.util.Utility;
 
 import org.sbml.jsbml.ASTNode;
@@ -62,7 +64,9 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private Rules rulesPanel;
 	
 	private JCheckBox onPort;
-
+	
+	private JComboBox SBOTerms;
+	
 	/* Create initial assignment panel */
 	public Functions(BioModel bioModel, ModelEditor modelEditor) {
 		super(new BorderLayout());
@@ -184,12 +188,14 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			return;
 		}
 		JPanel functionPanel = new JPanel();
-		JPanel funcPanel = new JPanel(new GridLayout(5, 2));
+		JPanel funcPanel = new JPanel(new SpringLayout());
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
 		JLabel argLabel = new JLabel("Arguments:");
 		JLabel eqnLabel = new JLabel("Definition:");
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
+		JLabel sboTermLabel = new JLabel(GlobalConstants.SBOTERM);
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_MATHEMATICAL_EXPRESSION));
 		JTextField funcID = new JTextField(12);
 		JTextField funcName = new JTextField(12);
 		JTextField args = new JTextField(12);
@@ -206,6 +212,9 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					onPort.setSelected(true);
 				} else {
 					onPort.setSelected(false);
+				}
+				if (function.isSetSBOTerm()) {
+					SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(function.getSBOTermID()));
 				}
 				String argStr = "";
 				for (int j = 0; j < function.getArgumentCount(); j++) {
@@ -235,6 +244,12 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		funcPanel.add(eqn);
 		funcPanel.add(onPortLabel);
 		funcPanel.add(onPort);
+		funcPanel.add(sboTermLabel);
+		funcPanel.add(SBOTerms);
+		SpringUtilities.makeCompactGrid(funcPanel,
+                6, 2, //rows, cols
+                6, 6,        //initX, initY
+                6, 6);       //xPad, yPad
 		functionPanel.add(funcPanel);
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, functionPanel, "Function Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
@@ -306,6 +321,11 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					FunctionDefinition f = bioModel.getSBMLDocument().getModel().getFunctionDefinition(val);
 					f.setId(funcID.getText().trim());
 					f.setName(funcName.getText().trim());
+					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+						f.unsetSBOTerm();
+					} else {
+						f.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+					}
 					if (args.getText().trim().equals("")) {
 						try {
 							f.setMath(JSBML.parseFormula("lambda(" + eqn.getText().trim() + ")"));
@@ -380,6 +400,11 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						FunctionDefinition f = bioModel.getSBMLDocument().getModel().createFunctionDefinition();
 						f.setId(funcID.getText().trim());
 						f.setName(funcName.getText().trim());
+						if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+							f.unsetSBOTerm();
+						} else {
+							f.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+						}
 						if (args.getText().trim().equals("")) {
 							try {
 								f.setMath(JSBML.parseFormula("lambda(" + eqn.getText().trim() + ")"));

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
@@ -98,6 +99,7 @@ import org.sbml.libsbml.SBMLNamespaces;
 import org.sbml.libsbml.SBasePlugin;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
+import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
@@ -106,6 +108,17 @@ import flanagan.math.PsRandom;
 
 public class SBMLutilities
 {
+
+	public static final SystemsBiologyOntology sbo = new SystemsBiologyOntology();
+	
+	public static final Object[] getSortedListOfSBOTerms(String parent) {
+		Set<String> SBOTerms = SBMLutilities.sbo.getDescendantNamesOf(parent);
+		ArrayList<String> list = new ArrayList<String>();
+		list.addAll(SBOTerms);
+		java.util.Collections.sort(list);
+		list.add(0,"(unspecified)");
+		return list.toArray();
+	}
 
 	/**
 	 * Check that ID is valid and unique

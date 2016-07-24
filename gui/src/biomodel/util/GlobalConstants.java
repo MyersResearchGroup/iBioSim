@@ -80,6 +80,7 @@ public class GlobalConstants {
 	public static final String PETRI_NET_EDGE = "Petri_Net_Edge";
 	public static final String GRID_RECTANGLE = "Grid Rectangle";
 	public static final String PORTMAP = "Port Map";
+	public static final String SBOTERM = "SBO Term:";
 	public static final String PORT = "port";
 	public static final String NAME = "Name";
 	public static final String CONSTANT = "boundary";
@@ -186,6 +187,13 @@ public class GlobalConstants {
 	public static final String REPRESSION = "repression";
 	public static final String REGULATION = "regulation";
 	public static final String NOINFLUENCE = "no_influence";
+	
+	public static final String SBO_FRAMEWORK = "SBO:0000004";
+	public static final String SBO_MATERIAL_ENTITY = "SBO:0000240";
+	public static final String SBO_INTERACTION = "SBO:0000231";
+	public static final String SBO_PARTICIPANT_ROLE = "SBO:0000003";
+	public static final String SBO_MATHEMATICAL_EXPRESSION = "SBO:0000064";
+	public static final String SBO_PARAMETER = "SBO:0000545";
 	
 	public static final int SBO_ACTIVATION = 459;
 	public static final int SBO_REPRESSION = 20;

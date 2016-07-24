@@ -50,7 +50,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
 	/**
 	 * calls constructor to construct the panel
 	 * @param selected
@@ -94,13 +94,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (paramsOnly)
 			grid = new JPanel(new GridLayout(7,1));
 		else {
-			
-			if (bioModel.getSBMLDocument().getLevel() > 2) {
-				grid = new JPanel(new GridLayout(17,1));
-			} 
-			else {
-				grid = new JPanel(new GridLayout(16,1));
-			}
+			grid = new JPanel(new GridLayout(18,1));
 		}
 		
 		this.add(grid, BorderLayout.CENTER);		
@@ -128,17 +122,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		String dimInID = SBMLutilities.getDimensionString(species);
 		field = new PropertyField(GlobalConstants.ID, species.getId() + dimInID, null, null, Utility.IDDimString, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
-		
 		if (!paramsOnly) grid.add(field);
 			
 		// Name field
 		field = new PropertyField(GlobalConstants.NAME, species.getName(), null, null, Utility.NAMEstring, paramsOnly, 
 				"default", false);
 		fields.put(GlobalConstants.NAME, field);
-		
 		if (!paramsOnly) grid.add(field);		
 
-		// Type field
+		// Port Type field
 		JPanel tempPanel = new JPanel();
 		JLabel tempLabel = new JLabel(GlobalConstants.PORTTYPE);
 		typeBox = new JComboBox(types);
@@ -146,7 +138,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(typeBox);
-
+		if (!paramsOnly) grid.add(tempPanel);
+		
+		// SBO Term field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel(GlobalConstants.SBOTERM);
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_MATERIAL_ENTITY));
+		SBOTerms.addActionListener(this);
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(SBOTerms);
 		if (!paramsOnly) grid.add(tempPanel);
 		
 		// compartment field
@@ -158,7 +159,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(compartBox);
-		
 		if (!paramsOnly) grid.add(tempPanel);
 		
 		// indices field
@@ -238,41 +238,38 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (!paramsOnly) grid.add(tempPanel);
 		
 		// Conversion factor field
-		if (bioModel.getSBMLDocument().getLevel() > 2) {
-			
-			tempPanel = new JPanel();
-			tempLabel = new JLabel("Conversion Factor");
-			convBox = MySpecies.createConversionFactorChoices(bioModel);
-			convBox.addActionListener(this);
-			
-			if (species.isSetConversionFactor()) {
-				convBox.setSelectedItem(species.getConversionFactor());
-			}
-			
-			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(tempLabel);
-			tempPanel.add(convBox);
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Conversion Factor");
+		convBox = MySpecies.createConversionFactorChoices(bioModel);
+		convBox.addActionListener(this);
 
-			if (!paramsOnly) grid.add(tempPanel);
-			
-			tempPanel = new JPanel(new GridLayout(1, 2));
-			
-			String cfreshIndex = "";
-			//This needs to be fixed for 2 different indices
-			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i,"conversionFactor");
-				if(indie!=null){
-					cfreshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
-				}
-			}
-			conviIndex.setText(cfreshIndex);
-			
-			tempPanel.add(new JLabel("Conversion Factor Indices"));
-			tempPanel.add(conviIndex);
-					
-			if (!paramsOnly) grid.add(tempPanel);
+		if (species.isSetConversionFactor()) {
+			convBox.setSelectedItem(species.getConversionFactor());
 		}
-		
+
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(convBox);
+
+		if (!paramsOnly) grid.add(tempPanel);
+
+		tempPanel = new JPanel(new GridLayout(1, 2));
+
+		String cfreshIndex = "";
+		//This needs to be fixed for 2 different indices
+		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
+			Index indie = sBasePlugin.getIndex(i,"conversionFactor");
+			if(indie!=null){
+				cfreshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
+			}
+		}
+		conviIndex.setText(cfreshIndex);
+
+		tempPanel.add(new JLabel("Conversion Factor Indices"));
+		tempPanel.add(conviIndex);
+
+		if (!paramsOnly) grid.add(tempPanel);
+
 		// Boundary condition field
 		tempPanel = new JPanel(new GridLayout(1,3));
 		specBoundary = new JCheckBox("Boundary Condition");
@@ -568,6 +565,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			} else {
 				typeBox.setSelectedItem(GlobalConstants.INTERNAL);
 			}
+			if (species.isSetSBOTerm()) {
+				SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(species.getSBOTermID()));
+			}
 		}
 		
 
@@ -745,55 +745,53 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						species.setUnits(unit);
 					}
 					String convFactor = null;
-					if (bioModel.getSBMLDocument().getLevel() > 2) {
-						convFactor = (String) convBox.getSelectedItem();
-						
-						if (convFactor.equals("( none )")) {
-							species.unsetConversionFactor();
-							int limit = sBasePlugin.getIndexCount();
-							for(int i = limit-1; i>-1; i--){
-						        Index indie = sBasePlugin.getIndex(i,"conversionFactor");
-						        if(indie!=null)
-						           sBasePlugin.removeIndex(indie);
-						       }
-						}
-						else {
-							species.setConversionFactor(convFactor);
-							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
-							cdex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "conversionFactor", dimID, null, null);
-							if(cdex==null)return false;
-							int limit = sBasePlugin.getIndexCount();
-							for(int i = limit-1; i>-1; i--){
-						        Index indie = sBasePlugin.getIndex(i,"conversionFactor");
-						        if(indie!=null)
-						           sBasePlugin.removeIndex(indie);
-						       }
-							for(int i = 0; i<cdex.length-1; i++){
-								Index indexRule = new Index();
-							    indexRule.setArrayDimension(i);
-							    indexRule.setReferencedAttribute("conversionFactor");
-							    ASTNode indexMath = SBMLutilities.myParseFormula(cdex[i+1]);
-							    indexRule.setMath(indexMath);
-							    sBasePlugin.addIndex(indexRule);
-							}
-						}
-						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
-						dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", dimID, null, null);
-						if(dex==null)return false;
+					convFactor = (String) convBox.getSelectedItem();
+
+					if (convFactor.equals("( none )")) {
+						species.unsetConversionFactor();
 						int limit = sBasePlugin.getIndexCount();
 						for(int i = limit-1; i>-1; i--){
-					        Index indie = sBasePlugin.getIndex(i,"compartment");
-					        if(indie!=null)
-					           sBasePlugin.removeIndex(indie);
+							Index indie = sBasePlugin.getIndex(i,"conversionFactor");
+							if(indie!=null)
+								sBasePlugin.removeIndex(indie);
 						}
-						for(int i = 0; i<dex.length-1; i++){
+					}
+					else {
+						species.setConversionFactor(convFactor);
+						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
+						cdex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "conversionFactor", dimID, null, null);
+						if(cdex==null)return false;
+						int limit = sBasePlugin.getIndexCount();
+						for(int i = limit-1; i>-1; i--){
+							Index indie = sBasePlugin.getIndex(i,"conversionFactor");
+							if(indie!=null)
+								sBasePlugin.removeIndex(indie);
+						}
+						for(int i = 0; i<cdex.length-1; i++){
 							Index indexRule = new Index();
-						    indexRule.setArrayDimension(i);
-						    indexRule.setReferencedAttribute("compartment");
-						    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-						    indexRule.setMath(indexMath);
-						    sBasePlugin.addIndex(indexRule);
+							indexRule.setArrayDimension(i);
+							indexRule.setReferencedAttribute("conversionFactor");
+							ASTNode indexMath = SBMLutilities.myParseFormula(cdex[i+1]);
+							indexRule.setMath(indexMath);
+							sBasePlugin.addIndex(indexRule);
 						}
+					}
+					SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
+					dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", dimID, null, null);
+					if(dex==null)return false;
+					int limit = sBasePlugin.getIndexCount();
+					for(int i = limit-1; i>-1; i--){
+						Index indie = sBasePlugin.getIndex(i,"compartment");
+						if(indie!=null)
+							sBasePlugin.removeIndex(indie);
+					}
+					for(int i = 0; i<dex.length-1; i++){
+						Index indexRule = new Index();
+						indexRule.setArrayDimension(i);
+						indexRule.setReferencedAttribute("compartment");
+						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
+						indexRule.setMath(indexMath);
+						sBasePlugin.addIndex(indexRule);
 					}
 				} else {
 					PropertyField f = fields.get(GlobalConstants.INITIAL_STRING);
@@ -820,6 +818,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			String speciesType = typeBox.getSelectedItem().toString();
 			boolean onPort = (speciesType.equals(GlobalConstants.INPUT)||speciesType.equals(GlobalConstants.OUTPUT));
+			
+			if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+				species.unsetSBOTerm();
+			} else {
+				species.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+			}
 			
 			if (degradation != null && !specDegradable.isSelected()) {
 				bioModel.removeReaction(degradation.getId());
@@ -1076,6 +1080,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private BioModel refGCM = null;
 
 	private JComboBox typeBox = null;
+	private JComboBox SBOTerms = null;
 	private JComboBox compartBox = null;
 	private JComboBox convBox = null;
 	private JComboBox unitsBox = null;

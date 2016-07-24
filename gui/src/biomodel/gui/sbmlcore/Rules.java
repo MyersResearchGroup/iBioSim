@@ -21,8 +21,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpringLayout;
 
 import main.Gui;
+import main.util.SpringUtilities;
 import main.util.Utility;
 
 import org.sbml.jsbml.AssignmentRule;
@@ -80,7 +82,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	private SBOLField2 sbolField;
 	
 	private JTextField ruleMath;
-
+	
+	private JComboBox SBOTerms;
+	
 	/* Create rule panel */
 	public Rules(BioModel gcm, ModelEditor modelEditor) {
 		super(new BorderLayout());
@@ -222,8 +226,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		JPanel rulePanel = new JPanel(new BorderLayout());
 		JPanel firstLine = new JPanel();
 //		JPanel secondLine = new JPanel();
-		JPanel thirdLine = new JPanel();
-		JPanel topPanel = new JPanel(new GridLayout(2,1));
+//		JPanel thirdLine = new JPanel();
+		JPanel topPanel = new JPanel(new GridLayout(1,1));
 		JPanel mathPanel = new JPanel();
 		JPanel SBOLPanel = new JPanel(new BorderLayout());
 		JLabel IDLabel = new JLabel("ID:");
@@ -231,17 +235,19 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		JLabel varLabel = new JLabel("Variable:");
 		JLabel ruleLabel = new JLabel("Rule:");
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
+		JLabel sboTermLabel = new JLabel(GlobalConstants.SBOTERM);
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_MATHEMATICAL_EXPRESSION));
 		String[] list = { "Algebraic", "Assignment", "Rate" };
 		ruleType = new JComboBox(list);
 		ruleType.setSelectedItem("Assignment");
 		ruleVar = new JComboBox();
 		assignRuleVar("");
 		JTextField id = new JTextField(12);
-		ruleMath = new JTextField(30);
+		ruleMath = new JTextField(85);
 		ruleVar.setEnabled(true);
 		ruleVar.addActionListener(this);
 		JCheckBox onPort = new JCheckBox();
-		iIndex = new JTextField(20);
+		iIndex = new JTextField(15);
 		iIndex.setEnabled(true);
 		
 		if (option.equals("OK")) {
@@ -297,6 +303,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			} else {
 				onPort.setSelected(false);
 			}
+			if (rule.isSetSBOTerm()) {
+				SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(rule.getSBOTermID()));
+			}
 			String freshIndex = "";
 			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
 				Index indie = sBasePlugin.getIndex(i,"variable");
@@ -334,18 +343,24 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		firstLine.add(ruleType);
 		firstLine.add(onPortLabel);
 		firstLine.add(onPort);
-		thirdLine.add(varLabel);
-		thirdLine.add(ruleVar);
-		thirdLine.add(new JLabel("Indices:"));
-		thirdLine.add(iIndex);
+		firstLine.add(varLabel);
+		firstLine.add(ruleVar);
+		firstLine.add(new JLabel("Indices:"));
+		firstLine.add(iIndex);
 		topPanel.add(firstLine);
-		topPanel.add(thirdLine);
+		//topPanel.add(thirdLine);
 		mathPanel.add(ruleLabel);
 		mathPanel.add(ruleMath);
 		rulePanel.add(topPanel,"North");
 		rulePanel.add(mathPanel,"Center");
-		if (!modelEditor.isParamsOnly())
-			SBOLPanel.add(sbolField,"North");
+		if (!modelEditor.isParamsOnly()) {
+			JPanel sboField = new JPanel(new SpringLayout());
+			sboField.add(sboTermLabel);
+			sboField.add(SBOTerms);
+			SpringUtilities.makeCompactGrid(sboField, 1, 2, 6, 6, 6, 6);
+			SBOLPanel.add(sboField,"North");
+			SBOLPanel.add(sbolField,"South");
+		}
 		rulePanel.add(SBOLPanel, "South");
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
@@ -535,6 +550,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 //						rul[index] = oldVal;
 					}
 //					updateRules(rul);
+					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+						r.unsetSBOTerm();
+					} else {
+						r.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+					}
 					rules.setListData(rul);
 					rules.setSelectedIndex(index);
 					bioModel.makeUndoPoint();
@@ -655,6 +675,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 //					updateRules(rul);
+					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+						r.unsetSBOTerm();
+					} else {
+						r.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+					}
 					rules.setListData(rul);
 					rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (bioModel.getSBMLDocument().getModel().getRuleCount() == 1) {

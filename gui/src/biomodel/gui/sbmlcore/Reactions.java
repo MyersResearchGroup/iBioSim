@@ -22,8 +22,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpringLayout;
 
 import main.Gui;
+import main.util.SpringUtilities;
 import main.util.Utility;
 
 import org.sbml.jsbml.ASTNode;
@@ -66,6 +68,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private static final long serialVersionUID = 1L;
 
 	private JComboBox stoiciLabel;
+
+	private JComboBox reactionSBO;
 
 	private JComboBox reactionComp; // compartment combo box
 
@@ -212,7 +216,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private JComboBox SBOTerms = null;
 
 	private JTextField repCooperativity, actCooperativity, repBinding, actBinding;
-
+	
 	public Reactions(BioModel gcm, Boolean paramsOnly, ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, 
 			ModelEditor gcmEditor) {
 		super(new BorderLayout());
@@ -280,80 +284,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		this.add(addReacs, "South");
 	}
 	
-//	private boolean createFluxBound(String reactionIdIndex,Operation operation,String value,String[] dimID,String[] dimensionIds) {
-//		String reactionId = reactionIdIndex;
-//		String indexStr = "";
-//		if (reactionIdIndex.contains("[")) {
-//			reactionId = reactionIdIndex.substring(0,reactionIdIndex.indexOf("["));
-//			indexStr = reactionIdIndex.substring(reactionIdIndex.indexOf("["));
-//		} 						
-//		SBase reaction = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactionId);
-//		String[] dex = SBMLutilities.checkIndices(indexStr, reaction, bioModel.getSBMLDocument(), dimensionIds, "reaction", dimID, null, null);
-//		if (dex==null) return false;
-//		double greaterValue = Double.parseDouble(value);
-//		FluxBound fluxBound = bioModel.getSBMLFBC().createFluxBound();
-//		fluxBound.setOperation(operation);
-//		fluxBound.setValue(greaterValue);
-//		fluxBound.setReaction(reactionId);
-//		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-//		ArraysSBasePlugin sBasePluginFB = SBMLutilities.getArraysSBasePlugin(fluxBound);
-//		sBasePluginFB.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
-//		sBasePluginFB.unsetListOfIndices();
-//		for(int k = 0; k<dex.length-1; k++){
-//			Index indexRule = new Index();
-//			indexRule.setArrayDimension(k);
-//			indexRule.setReferencedAttribute("fbc:reaction");
-//			ASTNode indexMath = SBMLutilities.myParseFormula(dex[k+1]);
-//			indexRule.setMath(indexMath);
-//			sBasePluginFB.addIndex(indexRule);
-//		}		
-//		return true;
-//	}
-	
-//	private boolean createReactionFluxBounds(String reactionId,String[] dimID,String[] dimensionIds) {
-//		if(kineticLaw.getText().contains("<=")){
-//			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
-//			if (userInput.length==3) {
-//				if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[0],dimID,dimensionIds)) return false;
-//				if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[2],dimID,dimensionIds)) return false;
-//			} 
-//			else {
-//				if (userInput[0].startsWith(reactionId)) {
-//					if (!createFluxBound(userInput[0],FluxBound.Operation.LESS_EQUAL,userInput[1],dimID,dimensionIds)) return false;
-//				} else {
-//					if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[0],dimID,dimensionIds)) return false;
-//				}
-//			}			
-//		} 
-//		else if(kineticLaw.getText().contains(">=")){
-//			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split(">=");
-//			if (userInput.length==3) {
-//				if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[0],dimID,dimensionIds)) return false;
-//				if (!createFluxBound(userInput[1],FluxBound.Operation.GREATER_EQUAL,userInput[2],dimID,dimensionIds)) return false;
-//			} 
-//			else {
-//				if (userInput[0].startsWith(reactionId)) {
-//					if (!createFluxBound(userInput[0],FluxBound.Operation.GREATER_EQUAL,userInput[1],dimID,dimensionIds)) return false;
-//				} else {
-//					if (!createFluxBound(userInput[1],FluxBound.Operation.LESS_EQUAL,userInput[0],dimID,dimensionIds)) return false;
-//				}
-//			}	
-//		}
-//		else{
-//			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("=");
-//			FluxBound fxEqual = bioModel.getSBMLFBC().createFluxBound();
-//			fxEqual.setOperation(FluxBound.Operation.EQUAL);
-//			fxEqual.setReaction(reactionId);
-//			if(userInput[0].startsWith(reactionId)){
-//				if (!createFluxBound(userInput[0],FluxBound.Operation.EQUAL,userInput[1],dimID,dimensionIds)) return false;
-//			} else {
-//				if (!createFluxBound(userInput[1],FluxBound.Operation.EQUAL,userInput[0],dimID,dimensionIds)) return false;
-//			}
-//		}
-//		return true;
-//	}
-	
-	private boolean createReactionFluxBounds2(String reactionId,String[] dimID,String[] dimensionIds) {
+	private boolean createReactionFluxBounds(String reactionId,String[] dimID,String[] dimensionIds) {
 		Reaction r = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
 		FBCReactionPlugin rBounds = SBMLutilities.getFBCReactionPlugin(r);
 		if(kineticLaw.getText().contains("<=")){
@@ -410,14 +341,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JLabel id = new JLabel("ID:");
 		reacID = new JTextField(15);
 		JLabel name = new JLabel("Name:");
-		if (bioModel.getSBMLDocument().getLevel() < 3) {
-			reacName = new JTextField(50);
-		}
-		else {
-			reacName = new JTextField(30);
-		}
+		reacName = new JTextField(30);
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		onPort = new JCheckBox();
+		JLabel sboTermLabel = new JLabel(GlobalConstants.SBOTERM);
+		reactionSBO = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_INTERACTION));
 		JLabel reactionCompLabel = new JLabel("Compartment:");
 		ListOf<Compartment> listOfCompartments = bioModel.getSBMLDocument().getModel().getListOfCompartments();
 		String[] addC = new String[bioModel.getSBMLDocument().getModel().getCompartmentCount()];
@@ -724,6 +652,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactionPanelNorth1.add(onPortLabel);
 		reactionPanelNorth1.add(onPort);
 
+		reactionPanelNorth3.add(sboTermLabel);
+		reactionPanelNorth3.add(reactionSBO);
 		reactionPanelNorth3.add(reactionCompLabel);
 		reactionPanelNorth3.add(reactionComp);
 		reactionPanelNorth3.add(new JLabel("Compartment Indices:"));
@@ -799,9 +729,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else {
 				reacFast.setSelectedItem("false");
 			}
-			if (bioModel.getSBMLDocument().getLevel() > 2) {
-				reactionComp.setSelectedItem(reac.getCompartment());
+			if (reac.isSetSBOTerm()) {
+				reactionSBO.setSelectedItem(SBMLutilities.sbo.getName(reac.getSBOTermID()));
 			}
+			reactionComp.setSelectedItem(reac.getCompartment());
 			complex = null;
 			production = null;
 			if (reac.isSetSBOTerm()) {
@@ -1041,9 +972,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						react.setReversible(false);
 					}
-					if (bioModel.getSBMLDocument().getLevel() > 2) {
-						react.setCompartment((String) reactionComp.getSelectedItem());
+					if (reactionSBO.getSelectedItem().equals("(unspecified)")) {
+						react.unsetSBOTerm();
+					} else {
+						react.setSBOTerm(SBMLutilities.sbo.getId((String)reactionSBO.getSelectedItem()));
 					}
+					react.setCompartment((String) reactionComp.getSelectedItem());
 					if (reacFast.getSelectedItem().equals("true")) {
 						react.setFast(true);
 					}
@@ -1116,7 +1050,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						react.unsetKineticLaw();
-						error = !createReactionFluxBounds2(reactionId,dimID,dimensionIds);
+						error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
 					}
 
 					if (!error) {
@@ -1216,9 +1150,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						react.setFast(false);
 					}
-					if (bioModel.getSBMLDocument().getLevel() > 2) {
-						react.setCompartment((String) reactionComp.getSelectedItem());
+					if (reactionSBO.getSelectedItem().equals("(unspecified)")) {
+						react.unsetSBOTerm();
+					} else {
+						react.setSBOTerm(SBMLutilities.sbo.getId((String)reactionSBO.getSelectedItem()));
 					}
+					react.setCompartment((String) reactionComp.getSelectedItem());
 					react.setId(reactionID);
 					react.setName(reacName.getText().trim());
 					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
@@ -1266,7 +1203,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else{
 						error = !fluxBoundisGood2(bioModel.getSBMLDocument().getModel(),
 								kineticLaw.getText().replaceAll("\\s",""), reacID.getText().trim());
-						if (!error)	error = !createReactionFluxBounds2(reactionId,dimID,dimensionIds);
+						if (!error)	error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
 					}
 						
 					if (!error) {
@@ -1369,9 +1306,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		else {
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
-				if (bioModel.getSBMLDocument().getLevel() > 2 || (model.getCompartment(i).getSpatialDimensions() != 0)) {
-					validVars.add(model.getCompartment(i).getId());
-				}
+				validVars.add(model.getCompartment(i).getId());
 			}
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 				validVars.add(model.getParameter(i).getId());
@@ -1421,7 +1356,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					|| splitLaw[i].equals("leq") || splitLaw[i].equals("gt") || splitLaw[i].equals("neq") || splitLaw[i].equals("lt")
 					|| splitLaw[i].equals("delay") || splitLaw[i].equals("t") || splitLaw[i].equals("time") || splitLaw[i].equals("true")
 					|| splitLaw[i].equals("false") || splitLaw[i].equals("pi") || splitLaw[i].equals("exponentiale")
-					|| ((bioModel.getSBMLDocument().getLevel() > 2) && (splitLaw[i].equals("avogadro")))) {
+					|| splitLaw[i].equals("avogadro")) {
 			}
 			else {
 				String temp = splitLaw[i];
@@ -1450,17 +1385,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			return;
 		}
 		JPanel parametersPanel;
-		if (paramsOnly) {
-			parametersPanel = new JPanel(new GridLayout(7, 2));
-		}
-		else {
-			parametersPanel = new JPanel(new GridLayout(5, 2));
-		}
+		parametersPanel = new JPanel(new SpringLayout());
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
 		JLabel valueLabel = new JLabel("Value:");
 		JLabel unitsLabel = new JLabel("Units:");
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
+		JLabel sboTermLabel = new JLabel(GlobalConstants.SBOTERM);
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_PARAMETER));
 		paramOnPort = new JCheckBox();
 		reacParamID = new JTextField();
 		reacParamName = new JTextField();
@@ -1476,25 +1408,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			// GET OTHER THINGS
 		}
 		for (int i = 0; i < units.length; i++) {
-			if (bioModel.getSBMLDocument().getLevel() > 2
-					|| (!units[i].equals("substance") && !units[i].equals("volume") && !units[i].equals("area") && !units[i].equals("length") && !units[i]
-							.equals("time"))) {
-				reacParamUnits.addItem(units[i]);
-			}
+			reacParamUnits.addItem(units[i]);
 		}
-		String[] unitIdsL2V4 = { "substance", "volume", "area", "length", "time", "ampere", "becquerel", "candela", "celsius", "coulomb",
-				"dimensionless", "farad", "gram", "gray", "henry", "hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux",
-				"metre", "mole", "newton", "ohm", "pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 		String[] unitIdsL3V1 = { "ampere", "avogadro", "becquerel", "candela", "celsius", "coulomb", "dimensionless", "farad", "gram", "gray",
 				"henry", "hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm",
 				"pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 		String[] unitIds;
-		if (bioModel.getSBMLDocument().getLevel() < 3) {
-			unitIds = unitIdsL2V4;
-		}
-		else {
-			unitIds = unitIdsL3V1;
-		}
+		unitIds = unitIdsL3V1;
 		for (int i = 0; i < unitIds.length; i++) {
 			reacParamUnits.addItem(unitIds[i]);
 		}
@@ -1565,6 +1485,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (paramet.isSetUnits()) {
 				reacParamUnits.setSelectedItem(paramet.getUnits());
 			}
+			if (paramet.isSetSBOTerm()) {
+				SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(paramet.getSBOTermID()));
+			}
 			if (bioModel.getPortByMetaIdRef(paramet.getMetaId())!=null) {
 				paramOnPort.setSelected(true);
 			} else {
@@ -1579,6 +1502,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				                                                                               .split(" ").length - 1]);
 				reacParamValue.setEnabled(true);
 				reacParamUnits.setEnabled(false);
+				SBOTerms.setEnabled(false);
 				if (reacParamValue.getText().trim().startsWith("(")) {
 					try {
 						start.setText((reacParamValue.getText().trim()).split(",")[0].substring(1).trim());
@@ -1610,11 +1534,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						sweep.setEnabled(true);
 						reacParamValue.setEnabled(true);
 						reacParamUnits.setEnabled(false);
+						SBOTerms.setEnabled(false);
 					}
 					else {
 						sweep.setEnabled(false);
 						reacParamValue.setEnabled(false);
 						reacParamUnits.setEnabled(false);
+						SBOTerms.setEnabled(false);
 						SBMLDocument d = SBMLutilities.readSBML(file);
 						KineticLaw KL = d.getModel().getReaction(selectedReaction).getKineticLaw();
 						ListOf<LocalParameter> list = KL.getListOfLocalParameters();
@@ -1649,6 +1575,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		parametersPanel.add(reacParamUnits);
 		parametersPanel.add(onPortLabel);
 		parametersPanel.add(paramOnPort);
+		parametersPanel.add(sboTermLabel);
+		parametersPanel.add(SBOTerms);
+		if (paramsOnly) {
+			SpringUtilities.makeCompactGrid(parametersPanel, 8, 2, 6, 6, 6, 6);
+		} else {
+			SpringUtilities.makeCompactGrid(parametersPanel, 6, 2, 6, 6, 6, 6);
+		}
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, "Parameter Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -1749,6 +1682,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						else {
 							paramet.setUnits(unit);
 						}
+						if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+							paramet.unsetSBOTerm();
+						} else {
+							paramet.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+						}
 						reacParams[index] = param;
 						Utility.sort(reacParams);
 						reacParameters.setListData(reacParams);
@@ -1815,6 +1753,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						paramet.setValue(val);
 						if (!unit.equals("( none )")) {
 							paramet.setUnits(unit);
+						}
+						if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+							paramet.unsetSBOTerm();
+						} else {
+							paramet.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
 						}
 						if (paramOnPort.isSelected()) {
 							Port port = bioModel.getSBMLCompModel().createPort();
@@ -1894,10 +1837,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	public void productsEditor(BioModel bioModel, String option, String selectedProductId, SpeciesReference product,
 			boolean inSchematic, Reaction reaction) {
 		JPanel productsPanel;
-		productsPanel = new JPanel(new GridLayout(6, 2));
+		productsPanel = new JPanel(new GridLayout(7, 2));
 		JLabel productIdLabel = new JLabel("Id:");
 		JLabel productNameLabel = new JLabel("Name:");
 		JLabel speciesLabel = new JLabel("Species:");
+		JLabel SBOTermLabel = new JLabel(GlobalConstants.SBOTERM);
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_PARTICIPANT_ROLE));
 		Object[] stoiciOptions = { "Stoichiometry", "Stoichiometry Math" };
 		stoiciLabel = new JComboBox(stoiciOptions);
 		JLabel stoichiometryLabel = new JLabel("Stoichiometry:");
@@ -1954,6 +1899,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					productStoichiometry.setText("" + bioModel.removeBooleans(init.getMath()));
 				} 						
 			}
+			if (product.isSetSBOTerm()) {
+				SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(product.getSBOTermID()));
+			}
 			if (!product.getConstant()) {
 				productConstant.setSelectedItem("false");
 			}
@@ -2004,17 +1952,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		productsPanel.add(productSpecies);
 		productsPanel.add(new JLabel("Indices:"));
 		productsPanel.add(PiIndex);
-		if (bioModel.getSBMLDocument().getLevel() < 3) {
-			productsPanel.add(stoiciLabel);
-		}
-		else {
-			productsPanel.add(stoichiometryLabel);
-		}
+		productsPanel.add(SBOTermLabel);
+		productsPanel.add(SBOTerms);
+		productsPanel.add(stoichiometryLabel);
 		productsPanel.add(productStoichiometry);
-		if (bioModel.getSBMLDocument().getLevel() > 2) {
-			productsPanel.add(constantLabel);
-			productsPanel.add(productConstant);
-		}
+		productsPanel.add(constantLabel);
+		productsPanel.add(productConstant);
 		if (speciesList.length == 0) {
 			JOptionPane.showMessageDialog(Gui.frame, "There are no species availiable to be products." + "\nAdd species to this sbml file first.",
 					"No Species", JOptionPane.ERROR_MESSAGE);
@@ -2188,6 +2131,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					produ.setName(productName.getText().trim());
 					produ.setSpecies((String) productSpecies.getSelectedItem());
 					produ.setStoichiometry(val);
+					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+						produ.unsetSBOTerm();
+					} else {
+						produ.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+					}
 					if (productConstant.getSelectedItem().equals("true")) {
 						produ.setConstant(true);
 					}
@@ -2233,6 +2181,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					changedProducts.add(produ);
 					produ.setSpecies((String) productSpecies.getSelectedItem());
 					produ.setStoichiometry(val);
+					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+						produ.unsetSBOTerm();
+					} else {
+						produ.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+					}
 					if (productConstant.getSelectedItem().equals("true")) {
 						produ.setConstant(true);
 					}
@@ -2346,13 +2299,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		modifierSpecies = new JComboBox(choices);
 		modifierSpecies.addActionListener(this);
 		modifierSpecies.setEnabled(true);
-		JLabel SBOTermsLabel = new JLabel("Type");
+		JLabel SBOTermsLabel = new JLabel(GlobalConstants.SBOTERM);
 		JLabel RepStoichiometryLabel = new JLabel("Stoichiometry of repression (nc)");
 		JLabel RepBindingLabel = new JLabel("Repression binding equilibrium (Kr)");
 		JLabel ActStoichiometryLabel = new JLabel("Stoichiometry of activation (nc)");
 		JLabel ActBindingLabel = new JLabel("Activation binding equilibrium (Ka)");
 		
-		String selectedID = "";			
+		String selectedID = "";	
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_PARTICIPANT_ROLE));
+		
 		if (option.equals("OK")) {
 			if (modifier == null || !inSchematic) {
 				for (ModifierSpeciesReference m : changedModifiers) {
@@ -2384,42 +2339,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			MiIndex.setText(freshIndex);
 			modifierSpecies.setSelectedItem(modifier.getSpecies());
-			if (production!=null) {
-				if (BioModel.isPromoter(modifier)) {
-					String [] sboTerms = new String[1];
-					sboTerms[0] = "Promoter";
-					SBOTerms = new JComboBox(sboTerms);			
-					SBOTerms.setSelectedItem("Promoter");
-				} else {
-					String [] sboTerms = new String[4];
-					sboTerms[0] = "Repression";
-					sboTerms[1] = "Activation";
-					sboTerms[2] = "Dual activity";
-					sboTerms[3] = "No influence";
-					SBOTerms = new JComboBox(sboTerms);			
-					if (BioModel.isRepressor(modifier)) {
-						SBOTerms.setSelectedItem("Repression");
-					} else if (BioModel.isActivator(modifier)) {
-						SBOTerms.setSelectedItem("Activation");
-					} else if (BioModel.isRegulator(modifier)) {
-						SBOTerms.setSelectedItem("Dual activity");
-					} else if (BioModel.isNeutral(modifier)) {
-						SBOTerms.setSelectedItem("No influence");
-					}
-				}
+			if (modifier.isSetSBOTerm()) {
+				SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(modifier.getSBOTermID()));
 			}
-		} else {
-			String [] sboTerms = new String[4];
-			sboTerms[0] = "Repression";
-			sboTerms[1] = "Activation";
-			sboTerms[2] = "Dual activity";
-			sboTerms[3] = "No influence";
-			SBOTerms = new JComboBox(sboTerms);			
-		}
+		} 
 		if (production==null) {
-			modifiersPanel = new JPanel(new GridLayout(4, 2));
+			modifiersPanel = new JPanel(new GridLayout(5, 2));
 		} else {
-			if (SBOTerms.getSelectedItem().equals("Promoter")) {
+			if (SBOTerms.getSelectedItem().equals("promoter")) {
 				modifiersPanel = new JPanel(new GridLayout(5, 2));
 			} else {
 				modifiersPanel = new JPanel(new GridLayout(9, 2));
@@ -2453,10 +2380,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		modifiersPanel.add(modifierSpecies);
 		modifiersPanel.add(new JLabel("Indices:"));
 		modifiersPanel.add(MiIndex);
+		modifiersPanel.add(SBOTermsLabel);
+		modifiersPanel.add(SBOTerms);
 		if (production!=null) {
-			modifiersPanel.add(SBOTermsLabel);
-			modifiersPanel.add(SBOTerms);
-			if (SBOTerms.getSelectedItem().equals("Promoter")) {
+			if (SBOTerms.getSelectedItem().equals("promoter")) {
 				modifierSpecies.setEnabled(false);
 				SBOTerms.setEnabled(false);
 			} else {
@@ -2624,18 +2551,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					modi.setId(modifierID);
 					modi.setName(modifierName.getText());
 					modi.setSpecies((String) modifierSpecies.getSelectedItem());
-					if (production!=null) {
-						if (SBOTerms.getSelectedItem().equals("Repression")) {
-							modi.setSBOTerm(GlobalConstants.SBO_REPRESSION);
-						} else if (SBOTerms.getSelectedItem().equals("Activation")) {
-							modi.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
-						} else if (SBOTerms.getSelectedItem().equals("Dual activity")) {
-							modi.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
-						} else if (SBOTerms.getSelectedItem().equals("No influence")) {
-							modi.setSBOTerm(GlobalConstants.SBO_NEUTRAL);
-						} else if (SBOTerms.getSelectedItem().equals("Promoter")) {
-							modi.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
-						} 
+					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+						modi.unsetSBOTerm();
+					} else {
+						modi.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
 					}
 					if (production!=null) {
 						double nc = bioModel.getSBMLDocument().getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue();
@@ -2721,18 +2640,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					modi.setName(modifierName.getText());
 					changedModifiers.add(modi);
 					modi.setSpecies(mod);
-					if (production!=null) {
-						if (SBOTerms.getSelectedItem().equals("Repression")) {
-							modi.setSBOTerm(GlobalConstants.SBO_REPRESSION);
-						} else if (SBOTerms.getSelectedItem().equals("Activation")) {
-							modi.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
-						} else if (SBOTerms.getSelectedItem().equals("Dual activity")) {
-							modi.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
-						} else if (SBOTerms.getSelectedItem().equals("No influence")) {
-							modi.setSBOTerm(GlobalConstants.SBO_NEUTRAL);
-						} else if (SBOTerms.getSelectedItem().equals("Promoter")) {
-							modi.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
-						} 
+					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+						modi.unsetSBOTerm();
+					} else {
+						modi.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
 					}
 					if (production!=null) {
 						double nc = bioModel.getSBMLDocument().getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue();
@@ -2879,15 +2790,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	public void reactantsEditor(BioModel gcm, String option, String selectedReactantId, SpeciesReference reactant, 
 			boolean inSchematic, Reaction reaction) {
 		JPanel reactantsPanel;
-		if (gcm.getSBMLDocument().getLevel() < 3) {
-			reactantsPanel = new JPanel(new GridLayout(5, 2));
-		}
-		else {
-			reactantsPanel = new JPanel(new GridLayout(6, 2));
-		}
+		reactantsPanel = new JPanel(new GridLayout(7, 2));
 		JLabel reactantIdLabel = new JLabel("Id:");
 		JLabel reactantNameLabel = new JLabel("Name:");
 		JLabel speciesLabel = new JLabel("Species:");
+		JLabel SBOTermLabel = new JLabel(GlobalConstants.SBOTERM);
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_PARTICIPANT_ROLE));
 		Object[] stoiciOptions = { "Stoichiometry", "Stoichiometry Math" };
 		stoiciLabel = new JComboBox(stoiciOptions);
 		JLabel stoichiometryLabel = new JLabel("Stoichiometry:");
@@ -2942,6 +2850,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reactantStoichiometry.setText("" + bioModel.removeBooleans(init.getMath()));
 				} 
 			}
+			if (reactant.isSetSBOTerm()) {
+				SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(reactant.getSBOTermID()));
+			}
 			if (!reactant.getConstant()) {
 				reactantConstant.setSelectedItem("false");
 			}
@@ -2990,17 +2901,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactantsPanel.add(reactantSpecies);
 		reactantsPanel.add(new JLabel("Indices:"));
 		reactantsPanel.add(RiIndex);
-		if (gcm.getSBMLDocument().getLevel() < 3) {
-			reactantsPanel.add(stoiciLabel);
-		}
-		else {
-			reactantsPanel.add(stoichiometryLabel);
-		}
+		reactantsPanel.add(SBOTermLabel);
+		reactantsPanel.add(SBOTerms);
+		reactantsPanel.add(stoichiometryLabel);
 		reactantsPanel.add(reactantStoichiometry);
-		if (gcm.getSBMLDocument().getLevel() > 2) {
-			reactantsPanel.add(constantLabel);
-			reactantsPanel.add(reactantConstant);
-		}
+		reactantsPanel.add(constantLabel);
+		reactantsPanel.add(reactantConstant);
 		if (speciesList.length == 0) {
 			JOptionPane.showMessageDialog(Gui.frame, "There are no species availiable to be reactants." + "\nAdd species to this sbml file first.",
 					"No Species", JOptionPane.ERROR_MESSAGE);
@@ -3195,6 +3101,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 					}
+					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+						reactan.unsetSBOTerm();
+					} else {
+						reactan.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+					}
 					if (reactantConstant.getSelectedItem().equals("true")) {
 						reactan.setConstant(true);
 					}
@@ -3262,6 +3173,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								addLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+reactan.getSpecies(),val);
 							}
 						}
+					}
+					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+						reactan.unsetSBOTerm();
+					} else {
+						reactan.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
 					}
 					if (reactantConstant.getSelectedItem().equals("true")) {
 						reactan.setConstant(true);

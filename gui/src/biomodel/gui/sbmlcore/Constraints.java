@@ -9,17 +9,19 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpringLayout;
 import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
+import main.util.SpringUtilities;
 import main.util.Utility;
 
 import org.sbml.jsbml.Constraint;
@@ -54,6 +56,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	private BioModel bioModel;
 
 	private ModelEditor modelEditor;
+	
+	private JComboBox SBOTerms;
 
 	/* Create initial assignment panel */
 	public Constraints(BioModel bioModel, ModelEditor modelEditor) {
@@ -110,30 +114,16 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		JPanel consPanel = new JPanel(new BorderLayout());
 		JPanel southPanel = new JPanel(new BorderLayout());
 		JPanel IDPanel = new JPanel();
-		JPanel mathPanel = new JPanel(new BorderLayout());
-		JPanel messagePanel = new JPanel(new BorderLayout());
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel mathLabel = new JLabel("Constraint:");
 		JLabel messageLabel = new JLabel("Messsage:");
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
-		JTextField consID = new JTextField(12);		
-		JTextArea consMath = new JTextArea(3,30);
-		consMath.setLineWrap(true);
-		consMath.setWrapStyleWord(true);
-		JScrollPane scroll = new JScrollPane();
-		scroll.setMinimumSize(new Dimension(100, 100));
-		scroll.setPreferredSize(new Dimension(100, 100));
-		scroll.setViewportView(consMath);
-		
-		JTextArea consMessage = new JTextArea(3,30);
-		consMessage.setLineWrap(true);
-		consMessage.setWrapStyleWord(true);
-		JScrollPane scroll2 = new JScrollPane();
-		scroll2.setMinimumSize(new Dimension(100, 100));
-		scroll2.setPreferredSize(new Dimension(100, 100));
-		scroll2.setViewportView(consMessage);
-		
 		JCheckBox onPort = new JCheckBox();
+		JLabel sboTermLabel = new JLabel(GlobalConstants.SBOTERM);
+		SBOTerms = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_MATHEMATICAL_EXPRESSION));
+		JTextField consID = new JTextField(12);		
+		JTextField consMath = new JTextField(85);
+		JTextField consMessage = new JTextField(85);
 
 		String selectedID = "";
 		int Cindex = -1;
@@ -147,6 +137,9 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						selectedID = c.get(i).getMetaId();
 						String dimInID = SBMLutilities.getDimensionString(c.get(Cindex));
 						consID.setText(selectedID+dimInID);
+					}
+					if (c.get(i).isSetSBOTerm()) {
+						SBOTerms.setSelectedItem(SBMLutilities.sbo.getName(c.get(i).getSBOTermID()));
 					}
 					if (c.get(i).isSetMessage()) {
 						String message;
@@ -183,11 +176,20 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		IDPanel.add(consID);
 		IDPanel.add(onPortLabel);
 		IDPanel.add(onPort);
-		mathPanel.add(mathLabel,"North");
-		mathPanel.add(scroll,"Center");
-		messagePanel.add(messageLabel,"North");
-		messagePanel.add(scroll2,"Center");
+		JPanel sboPanel = new JPanel(new SpringLayout());
+		sboPanel.add(sboTermLabel);
+		sboPanel.add(SBOTerms);
+		SpringUtilities.makeCompactGrid(sboPanel, 1, 2, 6, 6, 6, 6);
+		JPanel mathPanel = new JPanel(new SpringLayout());
+		mathPanel.add(mathLabel);
+		mathPanel.add(consMath);
+		SpringUtilities.makeCompactGrid(mathPanel, 1, 2, 6, 6, 6, 6);
+		JPanel messagePanel = new JPanel(new SpringLayout());
+		messagePanel.add(messageLabel);
+		messagePanel.add(consMessage);
+		SpringUtilities.makeCompactGrid(messagePanel, 1, 2, 6, 6, 6, 6);
 		consPanel.add(IDPanel,"North");
+		consPanel.add(sboPanel,"South");
 		southPanel.add(consPanel,"North");
 		southPanel.add(mathPanel,"Center");
 		southPanel.add(messagePanel,"South");
@@ -241,6 +243,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						Constraint c = (bioModel.getSBMLDocument().getModel().getListOfConstraints()).get(Cindex);
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
 						SBMLutilities.setMetaId(c, constraintId);
+						if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+							c.unsetSBOTerm();
+						} else {
+							c.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+						}
 						if (!consMessage.getText().trim().equals("")) {
 							XMLNode xmlNode;
 							try {
@@ -318,6 +325,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						Constraint c = bioModel.getSBMLDocument().getModel().createConstraint();
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
 						SBMLutilities.setMetaId(c, constraintId);
+						if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
+							c.unsetSBOTerm();
+						} else {
+							c.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+						}
 						if (!consMessage.getText().trim().equals("")) {
 							XMLNode xmlNode;
 							try {
