@@ -275,8 +275,18 @@ public class GlobalConstants {
 
 	public static final int DEFAULT_SPECIES_WIDTH = 100;
 	public static final int DEFAULT_SPECIES_HEIGHT = 30;
-	public static final int DEFAULT_REACTION_WIDTH = 30;
-	public static final int DEFAULT_REACTION_HEIGHT = 30;
+	public static final int DEFAULT_DNA_WIDTH = 100;
+	public static final int DEFAULT_DNA_HEIGHT = 30;
+	public static final int DEFAULT_RNA_WIDTH = 50;
+	public static final int DEFAULT_RNA_HEIGHT = 20;
+	public static final int DEFAULT_PROTEIN_WIDTH = 40;
+	public static final int DEFAULT_PROTEIN_HEIGHT = 40;
+	public static final int DEFAULT_SMALL_MOLECULE_WIDTH = 20;
+	public static final int DEFAULT_SMALL_MOLECULE_HEIGHT = 20;
+	public static final int DEFAULT_COMPLEX_WIDTH = 100;
+	public static final int DEFAULT_COMPLEX_HEIGHT = 30;
+	public static final int DEFAULT_REACTION_WIDTH = 20;
+	public static final int DEFAULT_REACTION_HEIGHT = 20;
 	public static final int DEFAULT_VARIABLE_WIDTH = 30;
 	public static final int DEFAULT_VARIABLE_HEIGHT = 30;
 	public static final int DEFAULT_RULE_WIDTH = 50;

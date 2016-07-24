@@ -353,7 +353,7 @@ public class EditPreferences {
 			schematicElement = new SchematicElement(mxConstants.SHAPE_RECTANGLE+" (rounded)",createColorFromString("#5CB4F2"),false);
 			schematicElements.put("Species",schematicElement);
 
-			schematicElement = new SchematicElement(mxConstants.SHAPE_ELLIPSE,createColorFromString("#C7007B"),false);
+			schematicElement = new SchematicElement(mxConstants.SHAPE_RECTANGLE,createColorFromString("#C7007B"),false);
 			schematicElements.put("Reaction",schematicElement);
 
 			schematicElement = new SchematicElement(mxConstants.SHAPE_RHOMBUS,createColorFromString("#F00E0E"),false);

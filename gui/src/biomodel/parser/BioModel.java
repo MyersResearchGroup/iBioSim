@@ -1714,13 +1714,13 @@ public class BioModel {
 		if (species.isSetSBOTerm()) {
 			if (species.getSBOTerm()==GlobalConstants.SBO_MRNA || species.getSBOTerm()==GlobalConstants.SBO_MRNA_OLD) {
 				species.setSBOTerm(GlobalConstants.SBO_MRNA);
-				return true;
+				return species.getId().endsWith("_mRNA");
 			}
 		}
 		if (AnnotationUtility.checkObsoleteAnnotation(species,GlobalConstants.TYPE+"="+GlobalConstants.MRNA)) {
 			species.setSBOTerm(GlobalConstants.SBO_MRNA);
 			AnnotationUtility.removeObsoleteAnnotation(species);
-			return true;
+			return species.getId().endsWith("_mRNA");
 		}
 		return false;
 	}
@@ -5197,6 +5197,40 @@ public class BioModel {
 					product.setConstant(true);
 				}
 			}
+		}
+	}
+	
+	public void updateSpeciesSize(Species species) {
+		int width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
+		int height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
+		if (species.isSetSBOTerm()) {
+			if (species.getSBOTerm()==GlobalConstants.SBO_DNA) {
+				width = GlobalConstants.DEFAULT_DNA_WIDTH;
+				height = GlobalConstants.DEFAULT_DNA_HEIGHT;
+			} else if (species.getSBOTerm()==GlobalConstants.SBO_RNA) {
+				width = GlobalConstants.DEFAULT_RNA_WIDTH;
+				height = GlobalConstants.DEFAULT_RNA_HEIGHT;
+			} else if (species.getSBOTerm()==GlobalConstants.SBO_PROTEIN) {
+				width = GlobalConstants.DEFAULT_PROTEIN_WIDTH;
+				height = GlobalConstants.DEFAULT_PROTEIN_HEIGHT;
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_NONCOVALENT_COMPLEX) ||
+					SBMLutilities.sbo.isDescendantOf(species.getSBOTermID(), GlobalConstants.SBO_NONCOVALENT_COMPLEX)) {
+				width = GlobalConstants.DEFAULT_COMPLEX_WIDTH;
+				height = GlobalConstants.DEFAULT_COMPLEX_HEIGHT;
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_SIMPLE_CHEMICAL) ||
+					SBMLutilities.sbo.isDescendantOf(species.getSBOTermID(), GlobalConstants.SBO_SIMPLE_CHEMICAL)) {
+				width = GlobalConstants.DEFAULT_SMALL_MOLECULE_WIDTH;
+				height = GlobalConstants.DEFAULT_SMALL_MOLECULE_HEIGHT;
+			} else {
+				width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
+				height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
+			}
+		} 
+		Layout layout = getLayout();
+		if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+species.getId())!=null) {
+			SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+species.getId());
+			speciesGlyph.getBoundingBox().getDimensions().setWidth(width);
+			speciesGlyph.getBoundingBox().getDimensions().setHeight(height);
 		}
 	}
 
