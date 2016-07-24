@@ -820,9 +820,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			boolean onPort = (speciesType.equals(GlobalConstants.INPUT)||speciesType.equals(GlobalConstants.OUTPUT));
 			
 			if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
-				species.unsetSBOTerm();
+				if (species.isSetSBOTerm()) {
+					species.unsetSBOTerm();
+					bioModel.updateSpeciesSize(species);
+				}
 			} else {
-				species.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+				String SBOTermID = SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem());
+				if (!species.isSetSBOTerm() || !species.getSBOTermID().equals(SBOTermID)) {
+					species.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
+					bioModel.updateSpeciesSize(species);
+				}
 			}
 			
 			if (degradation != null && !specDegradable.isSelected()) {

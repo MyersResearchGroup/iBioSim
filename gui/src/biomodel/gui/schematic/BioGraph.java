@@ -43,6 +43,7 @@ import org.sbml.jsbml.ext.layout.SpeciesGlyph;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.layout.SpeciesReferenceGlyph;
 import org.sbml.jsbml.ext.layout.TextGlyph;
+import org.sbolstandard.core2.ComponentDefinition;
 
 import main.Gui;
 
@@ -2366,8 +2367,8 @@ public class BioGraph extends mxGraph {
 	 * @return: A bool, true if the species had to be positioned.
 	 */
 	private boolean createGraphSpeciesFromModel(String sp){
-		if (BioModel.isMRNASpecies(bioModel.getSBMLDocument(),
-				bioModel.getSBMLDocument().getModel().getSpecies(sp))) return false; 
+		Species species = bioModel.getSBMLDocument().getModel().getSpecies(sp);
+		if (BioModel.isMRNASpecies(bioModel.getSBMLDocument(),species)) return false; 
 		
 		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), sp);
 		
@@ -2387,9 +2388,32 @@ public class BioGraph extends mxGraph {
 		this.speciesToMxCellMap.put(sp, insertedVertex);
 		
 		this.setSpeciesStyles(sp);
-		
-		return sizeAndPositionFromProperties(insertedVertex,
-				GlobalConstants.DEFAULT_SPECIES_WIDTH,GlobalConstants.DEFAULT_SPECIES_HEIGHT);
+		int width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
+		int height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
+		if (species.isSetSBOTerm()) {
+			if (species.getSBOTerm()==GlobalConstants.SBO_DNA) {
+				width = GlobalConstants.DEFAULT_DNA_WIDTH;
+				height = GlobalConstants.DEFAULT_DNA_HEIGHT;
+			} else if (species.getSBOTerm()==GlobalConstants.SBO_RNA) {
+				width = GlobalConstants.DEFAULT_RNA_WIDTH;
+				height = GlobalConstants.DEFAULT_RNA_HEIGHT;
+			} else if (species.getSBOTerm()==GlobalConstants.SBO_PROTEIN) {
+				width = GlobalConstants.DEFAULT_PROTEIN_WIDTH;
+				height = GlobalConstants.DEFAULT_PROTEIN_HEIGHT;
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_NONCOVALENT_COMPLEX) ||
+					SBMLutilities.sbo.isDescendantOf(species.getSBOTermID(), GlobalConstants.SBO_NONCOVALENT_COMPLEX)) {
+				width = GlobalConstants.DEFAULT_COMPLEX_WIDTH;
+				height = GlobalConstants.DEFAULT_COMPLEX_HEIGHT;
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_SIMPLE_CHEMICAL) ||
+					SBMLutilities.sbo.isDescendantOf(species.getSBOTermID(), GlobalConstants.SBO_SIMPLE_CHEMICAL)) {
+				width = GlobalConstants.DEFAULT_SMALL_MOLECULE_WIDTH;
+				height = GlobalConstants.DEFAULT_SMALL_MOLECULE_HEIGHT;
+			} else {
+				width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
+				height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
+			}
+		} 
+		return sizeAndPositionFromProperties(insertedVertex,width,height);
 	}
 	
 	/**
@@ -2694,7 +2718,7 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Component", "50")));
 		stylesheet.putCellStyle("SBMLCOMPONENT", style);		
 
-		//species
+		//species / complex
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Species", mxConstants.SHAPE_RECTANGLE));
 		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Species", "true").equals("true"));
@@ -2703,10 +2727,30 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Species", "#000000"));
 		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Species", "50")));
 		stylesheet.putCellStyle("SPECIES", style);
+
+		//DNA / RNA
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Species", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, false);
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Species", "#5CB4F2"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Species", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Species", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Species", "50")));
+		stylesheet.putCellStyle("NUCLEIC_ACID", style);
+		
+		//Protein / Small Molecule
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
+		style.put(mxConstants.STYLE_ROUNDED, true);
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Species", "#5CB4F2"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Species", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Species", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Species", "50")));
+		stylesheet.putCellStyle("MOLECULE", style);
 		
 		//reactions
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Reaction", mxConstants.SHAPE_ELLIPSE));
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Reaction", mxConstants.SHAPE_RECTANGLE));
 		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Reaction", "false").equals("true"));
 		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Reaction", "#C7007B"));
 		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Reaction", "#000000"));
@@ -3084,7 +3128,22 @@ public class BioGraph extends mxGraph {
 	 */
 	private void setSpeciesStyles(String id){
 		String style="SPECIES;";
-		
+		Species species = bioModel.getSBMLDocument().getModel().getSpecies(id);
+		if (species!=null && species.isSetSBOTerm()) {
+			if (species.getSBOTerm()==GlobalConstants.SBO_DNA) {
+				style = "NUCLEIC_ACID;";
+			} else if (species.getSBOTerm()==GlobalConstants.SBO_RNA) {
+				style = "NUCLEIC_ACID;";
+			} else if (species.getSBOTerm()==GlobalConstants.SBO_PROTEIN) {
+				style = "MOLECULE;";
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_NONCOVALENT_COMPLEX) ||
+					SBMLutilities.sbo.isDescendantOf(species.getSBOTermID(), GlobalConstants.SBO_NONCOVALENT_COMPLEX)) {
+				style="SPECIES;";
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_SIMPLE_CHEMICAL) ||
+					SBMLutilities.sbo.isDescendantOf(species.getSBOTermID(), GlobalConstants.SBO_SIMPLE_CHEMICAL)) {
+				style = "MOLECULE;";
+			} 
+		}
 		mxCell cell = this.getSpeciesCell(id);
 		cell.setStyle(style);
 	}
