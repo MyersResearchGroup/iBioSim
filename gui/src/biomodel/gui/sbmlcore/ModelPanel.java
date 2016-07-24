@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import main.Gui;
-import main.util.MutableBoolean;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
@@ -57,15 +56,15 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	private BioModel bioModel;
 	
 	private Model sbmlModel;
-
-	private MutableBoolean dirty;	
+	
+	private ModelEditor modelEditor;
 	
 	public ModelPanel(BioModel gcm, ModelEditor modelEditor) {
 		super();
 		this.bioModel = gcm;
+		this.modelEditor = modelEditor;
 		sbolField = new SBOLField2(GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 1, true);
 		this.sbmlModel = gcm.getSBMLDocument().getModel();
-		this.dirty = modelEditor.getDirty();
 		this.setText("Model");
 		this.setToolTipText("Edit Model Attributes");
 		this.addActionListener(this);
@@ -306,7 +305,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					model.setSBOTerm(SBMLutilities.sbo.getId((String)framework.getSelectedItem()));
 				}
 				model.setName(modelName.getText());
-				dirty.setValue(true);
+				modelEditor.setDirty(true);
 				bioModel.makeUndoPoint();
 			}
 			if (error) {
@@ -325,12 +324,12 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		} else if (e.getActionCommand().equals("editDescriptors")) {
 //			if (bioModel.getSBOLDescriptors() != null)
 //				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(sbolField.getSBOLURIs().get(0))
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 		}
 		else if (e.getActionCommand().equals("fluxObjective")){
 			FBAObjective fbaObjective = new FBAObjective(bioModel);
 			fbaObjective.openGui();
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 		}
 		else if (e.getActionCommand().equals("comboBoxChanged")){
 			if (conversionFactor.getSelectedItem().equals("( none )")) {
@@ -344,7 +343,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					conviIndex.setEnabled(false);
 				}
 			}
-			dirty.setValue(true);
+			//modelEditor.setDirty(true);
 		}
 	}
 
