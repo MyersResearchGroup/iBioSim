@@ -3818,7 +3818,8 @@ public class SBMLutilities
 				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, false);
 			}
 
-			for (int i = 0; i < document.checkConsistency(); i++)
+			long numberOfErrors = document.checkConsistency();
+			for (int i = 0; i < numberOfErrors; i++)
 			{
 				String error = document.getError(i).getMessage();
 				if (error.startsWith("Due to the need to instantiate models"))
@@ -3881,7 +3882,8 @@ public class SBMLutilities
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, false);
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, false);
 			}
-			for (int i = 0; i < document.checkConsistency(); i++)
+			long numberOfErrors = document.checkConsistency(); 
+			for (int i = 0; i < numberOfErrors; i++)
 			{
 				String error = document.getError(i).getMessage();
 				if (error.startsWith("Due to the need to instantiate models"))
