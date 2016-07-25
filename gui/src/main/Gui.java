@@ -5241,7 +5241,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private String importSBMLDocument(String file,SBMLDocument document) throws SBMLException, FileNotFoundException, XMLStreamException {
 		String newFile = null;
 		SBMLutilities.checkModelCompleteness(document);
-		SBMLutilities.check(null, document, false);
+		// TODO: removed due to bug with file from BioPax2SBML convert
+		//SBMLutilities.check(null, document, false);
 		newFile = file;
 		newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 		if (Character.isDigit(newFile.charAt(0))) {
@@ -5338,6 +5339,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				catch (Exception e1)
 				{
+					e1.printStackTrace();
 					JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -11976,6 +11978,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				Model model = new Model(md);
 				model.unsetNamespace();
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+				document.setModel(model);
 				
 				document.enablePackage(LayoutConstants.namespaceURI);
 				document.enablePackage(CompConstants.namespaceURI);
@@ -11984,7 +11987,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				fbc.setStrict(false);
 				document.enablePackage(ArraysConstants.namespaceURI);
 				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
-				document.setModel(model);
 				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
 
 				ArrayList<String> comps = new ArrayList<String>();
