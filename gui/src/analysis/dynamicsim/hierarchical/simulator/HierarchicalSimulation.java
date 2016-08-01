@@ -31,6 +31,7 @@ import analysis.dynamicsim.hierarchical.util.math.EventNode;
 import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.math.ValueNode;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
+import analysis.dynamicsim.hierarchical.util.setup.ConstraintNode;
 
 /**
  * This class provides the state variables of the simulation.
@@ -84,8 +85,10 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 	protected List<VariableNode>		variableList;
 	protected List<VariableNode>		assignmentList;
+	protected List<ConstraintNode>		constraintList;
 
 	protected double[]					initStateCopy;
+	protected double					initTotalPropensity;
 
 	protected List<EventNode>			eventList;
 	protected PriorityQueue<EventNode>	triggeredEventList;
@@ -100,9 +103,10 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	final private SimType				type;
 	private List<ModelState>			states;
 	private ValueNode					totalPropensity;
+	private double						initialTime, outputStartTime;
 
 	public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
-			String quantityType, String abstraction, SimType type) throws XMLStreamException, IOException
+			String quantityType, String abstraction, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException
 	{
 		this.SBMLFileName = SBMLFileName;
 		this.timeLimit = timeLimit;
@@ -126,6 +130,9 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		this.currentTime = new VariableNode("_time", 0);
 		this.currentRun = 1;
 		this.randomNumberGenerator = new Random(randomSeed);
+		this.initialTime = initialTime;
+		this.outputStartTime = outputStartTime;
+
 		if (abstraction != null)
 		{
 			if (abstraction.equals("expandReaction"))
@@ -881,6 +888,28 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 	}
 
+	protected List<ConstraintNode> getConstraintList()
+	{
+
+		if (states == null)
+		{
+			states = getModelStateList();
+		}
+
+		List<ConstraintNode> constraints = new ArrayList<ConstraintNode>();
+
+		for (ModelState modelstate : states)
+		{
+			if (modelstate.getNumOfConstraints() > 0)
+			{
+				constraints.addAll(modelstate.getConstraints());
+			}
+		}
+
+		return constraints;
+
+	}
+
 	protected List<VariableNode> getConstantsList()
 	{
 
@@ -932,6 +961,16 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 		return initAssignmentList;
 
+	}
+
+	public double getInitialTime()
+	{
+		return initialTime;
+	}
+
+	public double getOutputStartTime()
+	{
+		return outputStartTime;
 	}
 
 	protected double[] getArrayState(List<VariableNode> variables)
@@ -1052,4 +1091,32 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		return newValue;
 	}
 
+	protected void setInitialPropensity()
+	{
+		this.initTotalPropensity = totalPropensity.getValue();
+
+		for (ModelState state : states)
+		{
+			state.setInitPropensity();
+
+			for (int i = state.getNumOfReactions() - 1; i >= 0; i--)
+			{
+				state.getReactions().get(i).setInitPropensity();
+			}
+		}
+	}
+
+	protected void restoreInitialPropensity()
+	{
+		totalPropensity.setValue(initTotalPropensity);
+		for (ModelState state : states)
+		{
+			state.restoreInitPropensity();
+
+			for (int i = state.getNumOfReactions() - 1; i >= 0; i--)
+			{
+				state.getReactions().get(i).restoreInitPropensity();
+			}
+		}
+	}
 }

@@ -27,6 +27,8 @@ public class CoreSetup implements Setup
 
 	public static void initializeModel(ModelState modelstate, Model model, VariableNode time, boolean split)
 	{
+		ArraysSetup.linkDimensionSize(modelstate);
+		ArraysSetup.expandArrays(modelstate);
 
 		initializeLinks(modelstate, model, time, split);
 		EventSetup.setupEvents(modelstate, model);
@@ -37,13 +39,10 @@ public class CoreSetup implements Setup
 
 	public static void initializeLinks(ModelState modelstate, Model model, VariableNode time, boolean split)
 	{
+
 		SpeciesSetup.setupCompartmentToSpecies(modelstate, model);
 		ReactionSetup.setupSpeciesReferenceToReaction(modelstate, model, split);
 
 	}
 
-	public static void initializeLinks(ModelState modelstate, Model model, VariableNode time)
-	{
-		initializeLinks(modelstate, model, time, false);
-	}
 }

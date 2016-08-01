@@ -23,22 +23,16 @@ public class SpeciesSetup
 	private static void setupSingleSpecies(ModelState modelstate, Species species, Model model)
 	{
 
-		double initValue = 0;
-		String id = species.getId();
-
-		SpeciesNode node = new SpeciesNode(id, initValue);
-		node.setBoundaryCondition(species.getBoundaryCondition());
-		node.setHasOnlySubstance(species.getHasOnlySubstanceUnits());
+		SpeciesNode node = createSpeciesNode(species);
 		if (species.getConstant())
 		{
 			modelstate.addConstant(node);
 		}
+
 		else
 		{
 			modelstate.addVariable(node);
 		}
-
-		// ArraysSetup.setupArrays(modelstate, species, node);
 
 	}
 
@@ -55,7 +49,10 @@ public class SpeciesSetup
 			{
 				continue;
 			}
-
+			if (ArraysSetup.checkArray(species))
+			{
+				continue;
+			}
 			setupSingleSpecies(modelstate, species, model);
 		}
 	}
@@ -69,6 +66,7 @@ public class SpeciesSetup
 			{
 				continue;
 			}
+
 			SpeciesNode node = (SpeciesNode) modelstate.getNode(species.getId());
 			VariableNode compartment = modelstate.getNode(species.getCompartment());
 			node.setCompartment(compartment);
@@ -83,10 +81,18 @@ public class SpeciesSetup
 				initConcentration.addChild(new ValueNode(species.getInitialConcentration()));
 				initConcentration.addChild(compartment);
 				node.setInitialAssignment(initConcentration);
-
 			}
 
 		}
+	}
+
+	private static SpeciesNode createSpeciesNode(Species species)
+	{
+		SpeciesNode node = new SpeciesNode(species.getId(), 0);
+		node.setBoundaryCondition(species.getBoundaryCondition());
+		node.setHasOnlySubstance(species.getHasOnlySubstanceUnits());
+		node.setIsVariableConstant(species.getConstant());
+		return node;
 	}
 
 }

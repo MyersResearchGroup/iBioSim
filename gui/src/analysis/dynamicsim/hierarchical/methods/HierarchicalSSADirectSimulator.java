@@ -18,35 +18,33 @@ import analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 
 public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 {
-
-	private int				currRun; 
 	private final boolean	print;
 
 	private long			randomSeed;
 
 	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType, String abstraction) throws IOException, XMLStreamException
+			String[] interestingSpecies, String quantityType, String abstraction, double initialTime, double outputStartTime) throws IOException, XMLStreamException
 	{
 
-		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, SimType.HSSA);
+		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, initialTime, outputStartTime, SimType.HSSA);
 		this.print = true;
 		this.randomSeed = randomSeed;
 	}
 
 	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType, String abstraction, boolean print) throws IOException, XMLStreamException
+			String[] interestingSpecies, String quantityType, String abstraction, double initialTime, double outputStartTime, boolean print) throws IOException, XMLStreamException
 	{
 
-		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, SimType.HSSA);
+		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, initialTime, outputStartTime, SimType.HSSA);
 		this.print = print;
 		this.randomSeed = randomSeed;
 
 	}
 
-	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, long randomSeed, double printInterval, boolean print) throws IOException, XMLStreamException
+	public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, long randomSeed, double printInterval, double initialTime, double outputStartTime, boolean print) throws IOException, XMLStreamException
 	{
 
-		this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, Double.POSITIVE_INFINITY, 0, randomSeed, null, printInterval, 1, null, null, null, null, print);
+		this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, Double.POSITIVE_INFINITY, 0, randomSeed, null, printInterval, 1, null, null, null, null, 0, 0, print);
 
 	}
 
@@ -55,11 +53,12 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 	{
 		if (!isInitialized)
 		{
-			setCurrentTime(0);
+			setCurrentTime(getInitialTime());
 			ModelSetup.setupModels(this, true);
 			eventList = getEventList();
 			variableList = getVariableList();
-			assignmentList = getAssignmentRuleList();
+			getAssignmentRuleList();
+			constraintList = getConstraintList();
 			HierarchicalUtilities.computeFixedPoint(getInitAssignmentList(), getReactionList());
 			if (!eventList.isEmpty())
 			{
@@ -68,6 +67,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 			}
 
 			initStateCopy = getArrayState(variableList);
+			setInitialPropensity();
 
 			setupForOutput(runNumber);
 			HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
@@ -100,10 +100,15 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 	@Override
 	public void setupForNewRun(int newRun)
 	{
-		currRun = newRun;
-		setCurrentTime(0.0);
+		setCurrentTime(getInitialTime());
 		setConstraintFlag(true);
 		setupForOutput(newRun);
+
+		for (int i = initStateCopy.length - 1; i >= 0; i--)
+		{
+			variableList.get(i).setValue(initStateCopy[i]);
+		}
+		restoreInitialPropensity();
 
 		try
 		{
@@ -142,7 +147,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 				e.printStackTrace();
 			}
 		}
-		printTime = 0;
+		printTime = getOutputStartTime();
 		previousTime = 0;
 		nextEventTime = getNextEventTime();
 
@@ -153,6 +158,11 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
 		while (currentTime.getValue() < getTimeLimit() && !isCancelFlag())
 		{
+			if (!HierarchicalUtilities.evaluateConstraints(constraintList))
+			{
+				return;
+			}
+
 			r1 = getRandomNumberGenerator().nextDouble();
 			r2 = getRandomNumberGenerator().nextDouble();
 			totalPropensity = getTotalPropensity();

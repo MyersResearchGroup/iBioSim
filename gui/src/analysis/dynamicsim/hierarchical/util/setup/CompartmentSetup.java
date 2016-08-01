@@ -18,6 +18,7 @@ public class CompartmentSetup
 			}
 			setupSingleCompartment(modelstate, compartment);
 		}
+
 	}
 
 	private static void setupSingleCompartment(ModelState modelstate, Compartment compartment)
@@ -40,8 +41,6 @@ public class CompartmentSetup
 		{
 			modelstate.addVariable(node);
 		}
-
-		// ArraysSetup.setupArrays(modelstate, compartment, node);
 	}
 
 }

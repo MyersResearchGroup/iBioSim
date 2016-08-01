@@ -1,6 +1,5 @@
 package analysis.dynamicsim.hierarchical.util.math;
 
-
 public class ValueNode extends HierarchicalNode
 {
 	protected double			value;
@@ -80,7 +79,19 @@ public class ValueNode extends HierarchicalNode
 	}
 
 	@Override
+	public ValueNode clone()
+	{
+		return new ValueNode(this);
+	}
+
+	@Override
 	public String toString()
+	{
+		return "NUMBER = " + String.valueOf(value);
+	}
+
+	@Override
+	public String report()
 	{
 		return String.valueOf(value);
 	}

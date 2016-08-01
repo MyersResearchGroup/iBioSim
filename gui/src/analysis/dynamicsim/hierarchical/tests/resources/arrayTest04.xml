@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" arrays:required="true" comp:required="true" fbc:required="false" layout:required="false" level="3" version="1" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+  <model fbc:strict="false" id="reactionArray" metaid="iBioSim2">
+    <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:port comp:id="compartment__Cell" comp:idRef="Cell" sboTerm="SBO:0000601"/>
+    </comp:listOfPorts>
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:depth="0" layout:height="425" layout:width="1070"/>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:compartment="Cell" layout:id="Glyph__Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="425" layout:width="1070"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__S0" layout:species="S0">
+            <arrays:listOfDimensions xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:dimension arrays:arrayDimension="0" arrays:id="d0" arrays:size="n"/>
+            </arrays:listOfDimensions>
+            <arrays:listOfIndices xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="layout:species">
+                <math xmlns="http://www.w3.org/1998/Math/MathML">                
+                  <ci> d0 </ci>
+                </math>
+                            </arrays:index>
+            </arrays:listOfIndices>
+            <layout:boundingBox>
+              <layout:position layout:x="141" layout:y="79"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__S1" layout:species="S1">
+            <arrays:listOfDimensions xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:dimension arrays:arrayDimension="0" arrays:id="d0" arrays:size="n"/>
+            </arrays:listOfDimensions>
+            <arrays:listOfIndices xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="layout:species">
+                <math xmlns="http://www.w3.org/1998/Math/MathML">                
+                  <ci> d0 </ci>
+                </math>
+                            </arrays:index>
+            </arrays:listOfIndices>
+            <layout:boundingBox>
+              <layout:position layout:x="404" layout:y="99"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfReactionGlyphs>
+          <layout:reactionGlyph layout:id="Glyph__R0" layout:reaction="R0">
+            <arrays:listOfDimensions xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:dimension arrays:arrayDimension="0" arrays:id="d0" arrays:size="n"/>
+            </arrays:listOfDimensions>
+            <arrays:listOfIndices xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="layout:reaction">
+                <math xmlns="http://www.w3.org/1998/Math/MathML">                
+                  <ci> d0 </ci>
+                </math>
+                            </arrays:index>
+            </arrays:listOfIndices>
+            <layout:boundingBox>
+              <layout:position layout:x="302" layout:y="123"/>
+              <layout:dimensions layout:height="30" layout:width="30"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__R0__substrate__S0" layout:role="substrate" layout:speciesGlyph="Glyph__S0">
+                <arrays:listOfIndices xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+                  <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="layout:speciesGlyph">
+                    <math xmlns="http://www.w3.org/1998/Math/MathML">                    
+                      <ci> d0 </ci>
+                    </math>
+                                    </arrays:index>
+                  <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="layout:id">
+                    <math xmlns="http://www.w3.org/1998/Math/MathML">                    
+                      <ci> d0 </ci>
+                    </math>
+                                    </arrays:index>
+                </arrays:listOfIndices>
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="191" layout:y="94"/>
+                      <layout:end layout:x="317" layout:y="138"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="Glyph__R0__product__S1" layout:role="product" layout:speciesGlyph="Glyph__S1">
+                <arrays:listOfIndices xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+                  <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="layout:speciesGlyph">
+                    <math xmlns="http://www.w3.org/1998/Math/MathML">                    
+                      <ci> d0 </ci>
+                    </math>
+                                    </arrays:index>
+                  <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="layout:id">
+                    <math xmlns="http://www.w3.org/1998/Math/MathML">                    
+                      <ci> d0 </ci>
+                    </math>
+                                    </arrays:index>
+                </arrays:listOfIndices>
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="317" layout:y="138"/>
+                      <layout:end layout:x="454" layout:y="114"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+        </layout:listOfReactionGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="Glyph__Cell" layout:id="TextGlyph__Cell" layout:text="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="425" layout:width="1070"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__S0" layout:id="TextGlyph__S0" layout:text="S0[n]">
+            <arrays:listOfDimensions xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:dimension arrays:arrayDimension="0" arrays:id="d0" arrays:size="n"/>
+            </arrays:listOfDimensions>
+            <arrays:listOfIndices xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="layout:graphicalObject">
+                <math xmlns="http://www.w3.org/1998/Math/MathML">                
+                  <ci> d0 </ci>
+                </math>
+                            </arrays:index>
+            </arrays:listOfIndices>
+            <layout:boundingBox>
+              <layout:position layout:x="141" layout:y="79"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__S1" layout:id="TextGlyph__S1" layout:text="S1[n]">
+            <arrays:listOfDimensions xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:dimension arrays:arrayDimension="0" arrays:id="d0" arrays:size="n"/>
+            </arrays:listOfDimensions>
+            <arrays:listOfIndices xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="layout:graphicalObject">
+                <math xmlns="http://www.w3.org/1998/Math/MathML">                
+                  <ci> d0 </ci>
+                </math>
+                            </arrays:index>
+            </arrays:listOfIndices>
+            <layout:boundingBox>
+              <layout:position layout:x="404" layout:y="99"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__R0" layout:id="TextGlyph__R0" layout:text="R0[n]">
+            <arrays:listOfDimensions xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:dimension arrays:arrayDimension="0" arrays:id="d0" arrays:size="n"/>
+            </arrays:listOfDimensions>
+            <arrays:listOfIndices xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="layout:graphicalObject">
+                <math xmlns="http://www.w3.org/1998/Math/MathML">                
+                  <ci> d0 </ci>
+                </math>
+                            </arrays:index>
+            </arrays:listOfIndices>
+            <layout:boundingBox>
+              <layout:position layout:x="302" layout:y="123"/>
+              <layout:dimensions layout:height="30" layout:width="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfCompartments>
+      <compartment constant="true" id="Cell" size="1" spatialDimensions="3"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="S0" initialAmount="0" metaid="iBioSim1">
+        <arrays:listOfDimensions xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+          <arrays:dimension arrays:arrayDimension="0" arrays:id="d0" arrays:size="n"/>
+        </arrays:listOfDimensions>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="S1" initialAmount="0" metaid="iBioSim3">
+        <arrays:listOfDimensions xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+          <arrays:dimension arrays:arrayDimension="0" arrays:id="d0" arrays:size="n"/>
+        </arrays:listOfDimensions>
+      </species>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter constant="true" id="n" value="10"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction compartment="Cell" fast="false" id="R0" metaid="iBioSim4" reversible="false">
+        <arrays:listOfDimensions xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+          <arrays:dimension arrays:arrayDimension="0" arrays:id="d0" arrays:size="n"/>
+        </arrays:listOfDimensions>
+        <listOfReactants>
+          <speciesReference constant="true" id="s0" species="S0" stoichiometry="1">
+            <arrays:listOfDimensions xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:dimension arrays:arrayDimension="0" arrays:id="rd0" arrays:size="n"/>
+            </arrays:listOfDimensions>
+            <arrays:listOfIndices xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="species">
+                <math xmlns="http://www.w3.org/1998/Math/MathML">                
+                  <ci> rd0 </ci>
+                </math>
+                            </arrays:index>
+            </arrays:listOfIndices>
+          </speciesReference>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" species="S1" stoichiometry="1">
+            <arrays:listOfIndices xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1">
+              <arrays:index arrays:arrayDimension="0" arrays:referencedAttribute="species">
+                <math xmlns="http://www.w3.org/1998/Math/MathML">                
+                  <ci> d0 </ci>
+                </math>
+                            </arrays:index>
+            </arrays:listOfIndices>
+          </speciesReference>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> s0kfs0 </ci>
+              <ci> s0S0s0 </ci>
+            </apply>
+          </math>
+                  <listOfLocalParameters>
+            <localParameter id="kf" value="0.1"/>
+            <localParameter id="kr" value="1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

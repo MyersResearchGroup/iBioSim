@@ -1,18 +1,14 @@
 package analysis.dynamicsim.hierarchical.util.math;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class VariableNode extends ValueNode
 {
 
-	protected boolean						isVariableConstant;
-	protected String						name;
-	private List<ReactionNode>				reactionDependents;
-	private Map<String, ArrayDimensionNode>	dimensionMap;
-	private List<ArrayDimensionNode>		dimensionList;
+	protected boolean			isVariableConstant;
+	protected String			name;
+	private List<ReactionNode>	reactionDependents;
 
 	public VariableNode(String name, double value)
 	{
@@ -97,24 +93,15 @@ public class VariableNode extends ValueNode
 		return Evaluator.evaluateExpressionRecursive(rateRule, false);
 	}
 
-	public void addDimension(String dimId, ArrayDimensionNode dim)
-	{
-		if (dimensionMap == null)
-		{
-			dimensionMap = new HashMap<String, ArrayDimensionNode>();
-		}
-		if (dimensionList == null)
-		{
-			dimensionList = new ArrayList<ArrayDimensionNode>();
-		}
-		dimensionMap.put(dimId, dim);
-		dimensionList.add(dim);
-	}
-
 	@Override
 	public String toString()
 	{
 		return name + "=" + value;
 	}
 
+	@Override
+	public VariableNode clone()
+	{
+		return new VariableNode(this);
+	}
 }

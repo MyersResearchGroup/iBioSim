@@ -32,8 +32,12 @@ public class EventSetup
 			{
 				continue;
 			}
-			EventNode node = modelstate.addEvent();
+
 			Trigger trigger = event.getTrigger();
+			ASTNode triggerMath = HierarchicalUtilities.inlineFormula(modelstate, trigger.getMath(), model);
+			HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, variableToNodeMap);
+
+			EventNode node = modelstate.addEvent(triggerNode);
 
 			boolean useValuesFromTrigger = event.getUseValuesFromTriggerTime();
 			boolean isPersistent = trigger.isSetPersistent() ? trigger.getPersistent() : false;
@@ -104,9 +108,6 @@ public class EventSetup
 	 */
 	public static void setupSingleEvent(ModelState modelstate, EventNode node, ASTNode trigger, boolean useFromTrigger, boolean initValue, boolean persistent, Model model, Map<String, VariableNode> variableToNodeMap)
 	{
-		trigger = HierarchicalUtilities.inlineFormula(modelstate, trigger, model);
-		HierarchicalNode triggerNode = MathInterpreter.parseASTNode(trigger, variableToNodeMap);
-		node.setTriggerValue(triggerNode);
 		node.setUseTriggerValue(useFromTrigger);
 		node.setPersistent(persistent);
 

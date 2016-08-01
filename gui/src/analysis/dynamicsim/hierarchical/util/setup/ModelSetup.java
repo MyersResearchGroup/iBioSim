@@ -149,16 +149,15 @@ public class ModelSetup implements Setup
 			listOfHandlers.get(i).copyNodeTo();
 		}
 
-		if (isSSA)
-		{
-			sim.linkPropensities();
-		}
-
 		for (int i = 0; i < listOfModules.size(); i++)
 		{
 			CoreSetup.initializeModel(listOfModules.get(i), listOfModels.get(i), time, isSSA);
 		}
 
+		if (isSSA)
+		{
+			sim.linkPropensities();
+		}
 	}
 
 	private static void initializeHybridSimulation(HierarchicalMixedSimulator sim, List<Model> listOfModels, List<ModelState> listOfModules) throws IOException

@@ -1274,7 +1274,7 @@ public class Run implements ActionListener
 							outDir = outDir + Gui.separator + direct;
 						}
 
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1293,7 +1293,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1312,7 +1312,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1331,7 +1331,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1350,7 +1350,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1369,7 +1369,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1387,7 +1387,7 @@ public class Run implements ActionListener
 							outDir = outDir + Gui.separator + direct;
 						}
 						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, (int) Math.floor(timeLimit / printInterval), 0, absError, printer_track_quantity, genStats,
-								simTab, reactionAbstraction, log);
+								simTab, reactionAbstraction, log, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1404,7 +1404,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();
@@ -1421,7 +1421,7 @@ public class Run implements ActionListener
 						{
 							outDir = outDir + Gui.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log);
+						dynSim.simulate(SBMLFileName, root, outDir + Gui.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + Gui.separator + "running").delete();
 						logFile.close();

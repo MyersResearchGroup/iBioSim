@@ -8,7 +8,6 @@ public class SpeciesNode extends VariableNode
 	private boolean				hasOnlySubstance;
 	private HierarchicalNode	speciesRateEquation;
 	private HierarchicalNode	odeRate;
-	private HierarchicalNode	compartmentSelector;
 
 	public SpeciesNode(String name, double value)
 	{
@@ -18,11 +17,10 @@ public class SpeciesNode extends VariableNode
 
 	public SpeciesNode(SpeciesNode copy)
 	{
-		super(copy.name, copy.value);
+		this(copy.name, copy.value);
 		this.isBoundary = copy.isBoundary;
 		this.hasOnlySubstance = copy.hasOnlySubstance;
 		this.compartment = copy.compartment;
-		this.isSpecies = true;
 	}
 
 	public void setCompartment(VariableNode compartment)
@@ -33,16 +31,6 @@ public class SpeciesNode extends VariableNode
 	public VariableNode getCompartment()
 	{
 		return compartment;
-	}
-
-	public void setCompartmentSelector(HierarchicalNode selector)
-	{
-		this.compartmentSelector = selector;
-	}
-
-	public HierarchicalNode getCompartmentSelector()
-	{
-		return compartmentSelector;
 	}
 
 	public double getConcentration()
@@ -153,13 +141,28 @@ public class SpeciesNode extends VariableNode
 
 			if (!hasOnlySubstance)
 			{
-				rate = rate * compartment.getValue();
+				double compartmentChange = compartment.computeRateOfChange(time);
+				if (compartmentChange != 0)
+				{
+					rate = rate * compartment.getValue();
+					rate = rate + value / compartment.getValue() * compartmentChange;
+				}
+				else
+				{
+					rate = rate * compartment.getValue();
+				}
 			}
 		}
-		if (odeRate != null && !isBoundary)
+		else if (odeRate != null && !isBoundary)
 		{
 			rate = Evaluator.evaluateExpressionRecursive(odeRate);
 		}
 		return rate;
+	}
+
+	@Override
+	public SpeciesNode clone()
+	{
+		return new SpeciesNode(this);
 	}
 }

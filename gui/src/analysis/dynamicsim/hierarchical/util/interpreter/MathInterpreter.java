@@ -417,4 +417,30 @@ public final class MathInterpreter
 		return node;
 	}
 
+	public static HierarchicalNode replaceNameNodes(HierarchicalNode node, Map<String, VariableNode> variableToNodes)
+	{
+		if (node.isName())
+		{
+			VariableNode varNode = (VariableNode) node;
+			if (variableToNodes.containsKey(varNode.getName()))
+			{
+				return new ValueNode(varNode.getValue());
+			}
+			else
+			{
+				return varNode;
+			}
+		}
+		else
+		{
+
+			HierarchicalNode newNode = new HierarchicalNode(node.getType());
+			for (int i = 0; i < node.getNumOfChild(); i++)
+			{
+				newNode.addChild(replaceNameNodes(node.getChild(i), variableToNodes));
+			}
+			return newNode;
+		}
+
+	}
 }

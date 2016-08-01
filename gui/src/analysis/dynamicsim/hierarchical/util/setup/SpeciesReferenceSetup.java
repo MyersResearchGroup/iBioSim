@@ -10,15 +10,6 @@ import analysis.dynamicsim.hierarchical.util.math.SpeciesReferenceNode;
 public class SpeciesReferenceSetup
 {
 
-	public static void setupSingleModifier(ModelState modelstate, ReactionNode reactionNode, String modifierID)
-	{
-		// VariableNode node = modelstate.getNode(modifierID);
-		// if (node != null)
-		// {
-		// reactionNode.addModifier(node);
-		// }
-	}
-
 	public static void setupSingleProduct(ModelState modelstate, ReactionNode reaction, String productID, SpeciesReference product)
 	{
 
@@ -59,6 +50,15 @@ public class SpeciesReferenceSetup
 
 	public static void setupSingleReactant(ModelState modelstate, ReactionNode reaction, String reactantID, SpeciesReference reactant)
 	{
+
+		if (reactant.isSetId() && modelstate.isDeletedBySId(reactant.getId()))
+		{
+			return;
+		}
+		if (reactant.isSetMetaId() && modelstate.isDeletedByMetaId(reactant.getMetaId()))
+		{
+			return;
+		}
 
 		double stoichiometryValue = Double.isNaN(reactant.getStoichiometry()) ? 1 : reactant.getStoichiometry();
 		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode(stoichiometryValue);

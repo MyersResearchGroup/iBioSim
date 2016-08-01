@@ -19,6 +19,7 @@ import analysis.dynamicsim.hierarchical.util.interpreter.RateSplitterInterpreter
 import analysis.dynamicsim.hierarchical.util.math.EventNode;
 import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
+import analysis.dynamicsim.hierarchical.util.setup.ConstraintNode;
 
 public class HierarchicalUtilities
 {
@@ -91,7 +92,11 @@ public class HierarchicalUtilities
 	public static ASTNode inlineFormula(ModelState state, ASTNode formula, Model model)
 	{
 		// TODO: Avoid calling this method
-		if (formula.isFunction() == false || formula.isOperator()/* || formula.isLeaf() == false */)
+		if (formula.isFunction() == false || formula.isOperator()/*
+																 * ||
+																 * formula.isLeaf
+																 * () == false
+																 */)
 		{
 
 			for (int i = 0; i < formula.getChildCount(); ++i)
@@ -332,5 +337,15 @@ public class HierarchicalUtilities
 		}
 
 		return plus.getChildCount() > 0 && minus.getChildCount() > 0 ? result : null;
+	}
+
+	public static boolean evaluateConstraints(List<ConstraintNode> listOfConstraints)
+	{
+		boolean hasSuccess = true;
+		for (ConstraintNode constraintNode : listOfConstraints)
+		{
+			hasSuccess = hasSuccess && constraintNode.evaluateConstraint();
+		}
+		return hasSuccess;
 	}
 }

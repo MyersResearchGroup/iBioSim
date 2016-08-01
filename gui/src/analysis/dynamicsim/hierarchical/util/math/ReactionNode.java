@@ -18,6 +18,8 @@ public class ReactionNode extends VariableNode
 	private double						reverseRateValue;
 	private ValueNode					totalPropensityRef;
 	private ValueNode					modelPropensityRef;
+	private double						initPropensity;
+	private double						initForwardPropensity;
 
 	public ReactionNode(String name)
 	{
@@ -193,5 +195,24 @@ public class ReactionNode extends VariableNode
 	public void setReverseRate(HierarchicalNode rate)
 	{
 		this.reverseRate = rate;
+	}
+
+	public void setInitPropensity()
+	{
+		this.initPropensity = value;
+		this.initForwardPropensity = forwardRateValue;
+	}
+
+	public void restoreInitPropensity()
+	{
+		this.value = initPropensity;
+		this.forwardRateValue = initForwardPropensity;
+		this.reverseRateValue = value - forwardRateValue;
+	}
+
+	@Override
+	public ReactionNode clone()
+	{
+		return new ReactionNode(this);
 	}
 }

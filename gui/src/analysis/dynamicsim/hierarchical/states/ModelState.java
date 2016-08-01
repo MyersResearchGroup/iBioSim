@@ -11,8 +11,10 @@ import java.util.Set;
 import org.sbml.jsbml.Model;
 
 import analysis.dynamicsim.hierarchical.util.math.EventNode;
+import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
 import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
+import analysis.dynamicsim.hierarchical.util.setup.ConstraintNode;
 import biomodel.util.GlobalConstants;
 
 public final class ModelState extends DocumentState
@@ -29,6 +31,7 @@ public final class ModelState extends DocumentState
 	private List<VariableNode>			constants;
 	private List<ReactionNode>			reactions;
 	private List<VariableNode>			arrays;
+	private List<ConstraintNode>		constraints;
 
 	private Map<String, VariableNode>	idToNode;
 
@@ -73,6 +76,12 @@ public final class ModelState extends DocumentState
 	public ReactionNode addReaction(String variable)
 	{
 		ReactionNode node = new ReactionNode(variable);
+		addReaction(node);
+		return node;
+	}
+
+	public ReactionNode addReaction(ReactionNode node)
+	{
 		if (reactions == null)
 		{
 			reactions = new ArrayList<ReactionNode>();
@@ -82,7 +91,7 @@ public final class ModelState extends DocumentState
 			idToNode = new HashMap<String, VariableNode>();
 		}
 		reactions.add(node);
-		idToNode.put(variable, node);
+		idToNode.put(node.getName(), node);
 		return node;
 	}
 
@@ -112,10 +121,10 @@ public final class ModelState extends DocumentState
 		return node;
 	}
 
-	public EventNode addEvent()
+	public EventNode addEvent(HierarchicalNode triggerNode)
 	{
 
-		EventNode node = new EventNode();
+		EventNode node = new EventNode(triggerNode);
 		return addEvent(node);
 	}
 
@@ -128,6 +137,23 @@ public final class ModelState extends DocumentState
 		}
 
 		events.add(node);
+		return node;
+	}
+
+	public VariableNode addArray(VariableNode node)
+	{
+
+		if (arrays == null)
+		{
+			arrays = new ArrayList<VariableNode>();
+		}
+
+		if (idToNode == null)
+		{
+			idToNode = new HashMap<String, VariableNode>();
+		}
+		arrays.add(node);
+		idToNode.put(node.getName(), node);
 		return node;
 	}
 
@@ -154,27 +180,24 @@ public final class ModelState extends DocumentState
 		return node;
 	}
 
-	public VariableNode addArray(String variable, double value)
+	public ConstraintNode addConstraint(String variable, HierarchicalNode node)
 	{
-		VariableNode node = new VariableNode(variable, value);
-		return addArray(node);
+
+		if (constraints == null)
+		{
+			constraints = new ArrayList<ConstraintNode>();
+		}
+
+		ConstraintNode constraintNode = new ConstraintNode(variable, node);
+
+		constraints.add(constraintNode);
+
+		return constraintNode;
 	}
 
-	public VariableNode addArray(VariableNode node)
+	public List<ConstraintNode> getListOfConstraints()
 	{
-
-		if (arrays == null)
-		{
-			arrays = new ArrayList<VariableNode>();
-		}
-		if (idToNode == null)
-		{
-			idToNode = new HashMap<String, VariableNode>();
-		}
-
-		arrays.add(node);
-		idToNode.put(node.getName(), node);
-		return node;
+		return constraints;
 	}
 
 	public void addMappingNode(String variable, VariableNode node)
@@ -195,6 +218,11 @@ public final class ModelState extends DocumentState
 	public List<VariableNode> getConstants()
 	{
 		return constants;
+	}
+
+	public List<ConstraintNode> getConstraints()
+	{
+		return constraints;
 	}
 
 	public void addDeletedBySid(String id)
@@ -259,6 +287,21 @@ public final class ModelState extends DocumentState
 	public int getNumOfConstants()
 	{
 		return constants == null ? 0 : constants.size();
+	}
+
+	public int getNumOfConstraints()
+	{
+		return constraints == null ? 0 : constraints.size();
+	}
+
+	public int getNumOfArrays()
+	{
+		return arrays == null ? 0 : arrays.size();
+	}
+
+	public List<VariableNode> getArrays()
+	{
+		return arrays;
 	}
 
 	public List<ReactionNode> getReactions()

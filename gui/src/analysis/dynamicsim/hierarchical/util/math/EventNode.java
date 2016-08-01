@@ -3,10 +3,8 @@ package analysis.dynamicsim.hierarchical.util.math;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventNode
+public class EventNode extends HierarchicalNode
 {
-
-	private HierarchicalNode	triggerValue;
 	private HierarchicalNode	delayValue;
 	private HierarchicalNode	priorityValue;
 
@@ -22,21 +20,12 @@ public class EventNode
 	private double[]			assignmentValues;
 	List<EventAssignmentNode>	eventAssignments;
 
-	public EventNode()
+	public EventNode(HierarchicalNode trigger)
 	{
+		super(trigger);
 		maxDisabledTime = Double.NEGATIVE_INFINITY;
 		minEnabledTime = Double.POSITIVE_INFINITY;
 		fireTime = Double.POSITIVE_INFINITY;
-	}
-
-	public HierarchicalNode getTriggerValue()
-	{
-		return triggerValue;
-	}
-
-	public void setTriggerValue(HierarchicalNode triggerValue)
-	{
-		this.triggerValue = triggerValue;
 	}
 
 	public HierarchicalNode getDelayValue()
@@ -186,8 +175,7 @@ public class EventNode
 		{
 			EventAssignmentNode eventAssignmentNode = eventAssignments.get(i);
 			VariableNode variable = eventAssignmentNode.getVariable();
-			HierarchicalNode math = eventAssignmentNode.getMath();
-			double value = Evaluator.evaluateExpressionRecursive(math, false);
+			double value = Evaluator.evaluateExpressionRecursive(eventAssignmentNode, false);
 			if (variable.isSpecies())
 			{
 				SpeciesNode species = (SpeciesNode) variable;
@@ -203,7 +191,7 @@ public class EventNode
 
 	public boolean computeTrigger()
 	{
-		double triggerResult = Evaluator.evaluateExpressionRecursive(triggerValue);
+		double triggerResult = Evaluator.evaluateExpressionRecursive(this);
 		return triggerResult != 0;
 	}
 

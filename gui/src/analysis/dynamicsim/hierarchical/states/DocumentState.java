@@ -11,6 +11,7 @@ public abstract class DocumentState implements State
 	private boolean		noEventsFlag;
 	private boolean		noRuleFlag;
 	protected ValueNode	propensity;
+	protected double	initPropensity;
 
 	public DocumentState(String submodelID)
 	{
@@ -101,5 +102,15 @@ public abstract class DocumentState implements State
 	{
 		this.propensity = new ValueNode(0);
 		return propensity;
+	}
+
+	public void setInitPropensity()
+	{
+		this.initPropensity = propensity.getValue();
+	}
+
+	public void restoreInitPropensity()
+	{
+		this.propensity.setValue(initPropensity);
 	}
 }

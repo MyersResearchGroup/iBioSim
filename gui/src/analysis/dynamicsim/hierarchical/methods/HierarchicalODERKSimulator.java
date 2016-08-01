@@ -38,32 +38,34 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, double timeLimit) throws IOException, XMLStreamException
 	{
 
-		this(SBMLFileName, rootDirectory, rootDirectory, 0, timeLimit, Double.POSITIVE_INFINITY, 0, null, Double.POSITIVE_INFINITY, 0, null, null, 1, 1e-6, 1e-9, "amount", "none", false);
+		this(SBMLFileName, rootDirectory, rootDirectory, 0, timeLimit, Double.POSITIVE_INFINITY, 0, null, Double.POSITIVE_INFINITY, 0, null, null, 1, 1e-6, 1e-9, "amount", "none", 0, 0, false);
 		isInitialized = false;
 		isSingleStep = true;
 		this.printTime = Double.POSITIVE_INFINITY;
 	}
 
 	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, int numSteps,
-			double relError, double absError, String quantityType, String abstraction) throws IOException, XMLStreamException
+			double relError, double absError, String quantityType, String abstraction, double initialTime, double outputStartTime) throws IOException, XMLStreamException
 	{
 
-		this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType, abstraction, true);
+		this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType, abstraction, initialTime, outputStartTime, true);
 		this.isInitialized = false;
 		this.isSingleStep = false;
 
 	}
 
 	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, int numSteps,
-			double relError, double absError, String quantityType, String abstraction, boolean print) throws IOException, XMLStreamException
+			double relError, double absError, String quantityType, String abstraction, double initialTime, double outputStartTime, boolean print) throws IOException, XMLStreamException
 	{
 
-		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, SimType.HODE);
+		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, initialTime, outputStartTime, SimType.HODE);
 		this.relativeError = relError;
 		this.absoluteError = absError;
 		this.isSingleStep = false;
 		this.absoluteError = absoluteError == 0 ? 1e-12 : absoluteError;
 		this.relativeError = absoluteError == 0 ? 1e-9 : relativeError;
+
+		this.printTime = outputStartTime;
 
 		if (numSteps > 0)
 		{
@@ -116,7 +118,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 	@Override
 	public void clear()
 	{
-
 	}
 
 	@Override
@@ -124,11 +125,13 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 	{
 		if (!isInitialized)
 		{
-			setCurrentTime(0);
+			setCurrentTime(getInitialTime());
 			ModelSetup.setupModels(this, false);
 			eventList = getEventList();
 			variableList = getVariableList();
 			reactionList = getReactionList();
+			constraintList = getConstraintList();
+
 			de = new DifferentialEquations();
 			HierarchicalUtilities.computeFixedPoint(getInitAssignmentList(), reactionList);
 
@@ -178,8 +181,14 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 
 		double nextEndTime = 0;
 
-		while (currentTime.getValue() < getTimeLimit() && !isCancelFlag() && !isConstraintFlag())
+		while (currentTime.getValue() < getTimeLimit() && !isCancelFlag())
 		{
+
+			if (!HierarchicalUtilities.evaluateConstraints(constraintList))
+			{
+				return;
+			}
+
 			nextEndTime = currentTime.getValue() + getMaxTimeStep();
 
 			if (nextEndTime > printTime)
