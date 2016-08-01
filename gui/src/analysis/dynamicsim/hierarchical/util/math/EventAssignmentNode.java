@@ -1,34 +1,35 @@
 package analysis.dynamicsim.hierarchical.util.math;
 
-public class EventAssignmentNode
+public class EventAssignmentNode extends HierarchicalNode
 {
 
-	private VariableNode		variable;
-	private HierarchicalNode	math;
+	private VariableNode	variable;
 
 	public EventAssignmentNode(VariableNode variable, HierarchicalNode math)
 	{
+		super(math);
 		this.variable = variable;
-		this.math = math;
+	}
+
+	public EventAssignmentNode(HierarchicalNode math)
+	{
+		super(math);
+	}
+
+	public EventAssignmentNode(EventAssignmentNode math)
+	{
+		super(math);
+		this.variable = math.variable;
 	}
 
 	public VariableNode getVariable()
 	{
 		return variable;
+
 	}
 
 	public void setVariable(VariableNode variable)
 	{
 		this.variable = variable;
-	}
-
-	public HierarchicalNode getMath()
-	{
-		return math;
-	}
-
-	public void setMath(HierarchicalNode math)
-	{
-		this.math = math;
 	}
 }

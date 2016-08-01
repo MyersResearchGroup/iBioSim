@@ -16,14 +16,9 @@ public class ArrayDimensionNode extends VariableNode
 		super(name, value);
 	}
 
-	public void setSizeId(String sizeId)
+	public VariableNode getSize()
 	{
-		this.sizeId = sizeId;
-	}
-
-	public String getSizeId()
-	{
-		return sizeId;
+		return size;
 	}
 
 	public void setSize(VariableNode size)
@@ -31,9 +26,14 @@ public class ArrayDimensionNode extends VariableNode
 		this.size = size;
 	}
 
-	public VariableNode getSize()
+	public String getSizeId()
 	{
-		return size;
+		return sizeId;
+	}
+
+	public void setSizeId(String sizeId)
+	{
+		this.sizeId = sizeId;
 	}
 
 }

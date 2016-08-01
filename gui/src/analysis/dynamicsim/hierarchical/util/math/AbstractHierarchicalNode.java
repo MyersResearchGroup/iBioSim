@@ -24,6 +24,14 @@ public abstract class AbstractHierarchicalNode
 		this.isReaction = copy.isReaction;
 	}
 
+	/**
+	 * This method is used to report information about the node when printing
+	 * something onto a file.
+	 * 
+	 * @return
+	 */
+	public abstract String report();
+
 	public Type getType()
 	{
 		return type;

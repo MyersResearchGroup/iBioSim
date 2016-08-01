@@ -13,6 +13,7 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 
+import analysis.dynamicsim.hierarchical.states.ModelState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
 /**
@@ -23,6 +24,22 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
  */
 public final class Evaluator
 {
+
+	public static HierarchicalNode evaluateArraysSelector(ModelState modelstate, HierarchicalNode node)
+	{
+		if (node.getNumOfChild() > 0)
+		{
+			HierarchicalNode child = node.getChild(0).getArrayNode();
+			for (int i = node.getNumOfChild() - 1; i >= 1; i--)
+			{
+				int index = (int) evaluateExpressionRecursive(node.getChild(i));
+				child = child.getChild(index);
+			}
+
+			return child;
+		}
+		return null;
+	}
 
 	public static double evaluateExpressionRecursive(HierarchicalNode node)
 	{

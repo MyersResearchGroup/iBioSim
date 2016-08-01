@@ -26,6 +26,10 @@ public class ReactionSetup
 			{
 				continue;
 			}
+			else if (ArraysSetup.checkArray(reaction))
+			{
+				continue;
+			}
 			modelstate.addReaction(reaction.getId());
 
 		}
@@ -76,7 +80,7 @@ public class ReactionSetup
 
 		if (reversible && split)
 		{
-			setupSingleRevReaction(modelstate, forward, reactionFormula, model, currentTime);
+			setupSingleRevReaction(modelstate, forward, reactionFormula, currentTime);
 		}
 		else
 		{
@@ -92,7 +96,7 @@ public class ReactionSetup
 		reactionNode.computeNotEnoughEnoughMolecules();
 	}
 
-	private static void setupSingleRevReaction(ModelState modelstate, ReactionNode reactionNode, ASTNode reactionFormula, Model model, double currentTime)
+	private static void setupSingleRevReaction(ModelState modelstate, ReactionNode reactionNode, ASTNode reactionFormula, double currentTime)
 	{
 		ASTNode[] splitMath = HierarchicalUtilities.splitMath(reactionFormula);
 		if (splitMath == null)

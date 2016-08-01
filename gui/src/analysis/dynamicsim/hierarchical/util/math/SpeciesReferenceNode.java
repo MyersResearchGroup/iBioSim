@@ -20,6 +20,13 @@ public class SpeciesReferenceNode extends VariableNode
 		super(id, value);
 	}
 
+	public SpeciesReferenceNode(SpeciesReferenceNode copy)
+	{
+		super(copy);
+		this.species = copy.species.clone();
+		this.speciesRefId = copy.speciesRefId;
+	}
+
 	public void setSpecies(SpeciesNode species)
 	{
 		this.species = species;
@@ -49,6 +56,12 @@ public class SpeciesReferenceNode extends VariableNode
 	public String toString()
 	{
 		return value + " " + species;
+	}
+
+	@Override
+	public SpeciesReferenceNode clone()
+	{
+		return new SpeciesReferenceNode(this);
 	}
 
 }

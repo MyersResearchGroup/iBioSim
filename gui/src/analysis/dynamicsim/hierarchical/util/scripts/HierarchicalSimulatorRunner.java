@@ -60,8 +60,7 @@ public class HierarchicalSimulatorRunner
 		{
 			String testcase = args[1];
 
-			String[] casesNeedToChangeTimeStep = new String[] { "00028", "00080", "00128", "00173", "00194", "00196", "00197", "00198", "00200",
-					"00201", "00269", "00274", "00400", "00460", "00276", "00278", "00279", "00870", "00872", "01159", "01160", "01161" };
+			String[] casesNeedToChangeTimeStep = new String[] { "00028", "00080", "00128", "00173", "00194", "00196", "00197", "00198", "00200", "00201", "00269", "00274", "00400", "00460", "00276", "00278", "00279", "00870", "00872", "01159", "01160", "01161" };
 
 			for (String s : casesNeedToChangeTimeStep)
 			{
@@ -105,9 +104,7 @@ public class HierarchicalSimulatorRunner
 			try
 			{
 
-				simulator.simulate(filename, root, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs,
-						progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null,
-						null);
+				simulator.simulate(filename, root, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, null, 0, 0);
 
 				TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
 				tsdp.outputCSV(outputDirectory + testcase + ".csv");
@@ -163,15 +160,12 @@ public class HierarchicalSimulatorRunner
 					double t2 = System.currentTimeMillis();
 					System.out.println("Flattening time: " + (t2 - t1) / 1000);
 
-					simulator.simulate(newFilename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
-							printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError,
-							quantityType, false, null, null, null);
+					simulator.simulate(newFilename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, null, 0,
+							0);
 				}
 				else
 				{
-					simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress,
-							printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError,
-							quantityType, false, null, null, null);
+					simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, null, 0, 0);
 				}
 
 			}

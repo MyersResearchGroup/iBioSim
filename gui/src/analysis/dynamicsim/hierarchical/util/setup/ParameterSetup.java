@@ -23,14 +23,10 @@ public class ParameterSetup
 			{
 				continue;
 			}
-			// if (ArraysSetup.checkArray(parameter))
-			// {
-			// setupArrayParameter(modelstate, parameter, parameter.getId());
-			// }
-			// else
-			// {
-			// setupSingleParameter(modelstate, parameter, parameter.getId());
-			// }
+			else if (ArraysSetup.checkArray(parameter))
+			{
+				continue;
+			}
 			setupSingleParameter(modelstate, parameter, parameter.getId());
 		}
 	}

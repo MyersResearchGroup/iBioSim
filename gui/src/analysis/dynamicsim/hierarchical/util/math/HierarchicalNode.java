@@ -7,6 +7,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 {
 
 	private List<HierarchicalNode>	children;
+	private ArrayNode				arrayNode;
 
 	public HierarchicalNode(Type type)
 	{
@@ -16,6 +17,10 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 	public HierarchicalNode(HierarchicalNode copy)
 	{
 		super(copy);
+		for (int i = 0; i < copy.getNumOfChild(); i++)
+		{
+			addChild(new HierarchicalNode(copy.getChild(i)));
+		}
 	}
 
 	public void addChild(HierarchicalNode node)
@@ -27,6 +32,24 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 				children = new ArrayList<HierarchicalNode>();
 			}
 			children.add(node);
+		}
+	}
+
+	@Override
+	public HierarchicalNode clone()
+	{
+		return new HierarchicalNode(this);
+	}
+
+	public void addChildren(List<HierarchicalNode> listOfNodes)
+	{
+		if (listOfNodes != null)
+		{
+			if (children == null)
+			{
+				children = new ArrayList<HierarchicalNode>();
+			}
+			children.addAll(listOfNodes);
 		}
 	}
 
@@ -50,6 +73,11 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 		return null;
 	}
 
+	public void setChild(int index, HierarchicalNode node)
+	{
+		children.set(index, node);
+	}
+
 	public int getNumOfChild()
 	{
 		return children == null ? 0 : children.size();
@@ -68,6 +96,22 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 		}
 		toString = toString + ")";
 		return toString;
+	}
+
+	public void setArrayNode(ArrayNode arrayNode)
+	{
+		this.arrayNode = arrayNode;
+	}
+
+	public ArrayNode getArrayNode()
+	{
+		return arrayNode;
+	}
+
+	@Override
+	public String report()
+	{
+		return toString();
 	}
 
 }

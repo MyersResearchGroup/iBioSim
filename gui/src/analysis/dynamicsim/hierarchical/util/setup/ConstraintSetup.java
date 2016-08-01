@@ -6,6 +6,8 @@ import org.sbml.jsbml.Model;
 
 import analysis.dynamicsim.hierarchical.states.ModelState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
+import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
 
 public class ConstraintSetup
 {
@@ -20,32 +22,36 @@ public class ConstraintSetup
 			modelstate.setNoConstraintsFlag(false);
 		}
 
+		int count = 0;
 		for (Constraint constraint : model.getListOfConstraints())
 		{
-			if (constraint.isSetMetaId() && modelstate.isDeletedByMetaId(constraint.getMetaId()))
+			String id = null;
+			if (constraint.isSetMetaId())
+			{
+				id = constraint.getMetaId();
+			}
+			else
+			{
+				id = "constraint " + count++;
+			}
+
+			if (modelstate.isDeletedByMetaId(constraint.getMetaId()))
 			{
 				continue;
 			}
-			setupSingleConstraint(modelstate, constraint.getMath(), model);
+
+			setupSingleConstraint(modelstate, id, constraint.getMath(), model);
 		}
 
 	}
 
-	public static void setupSingleConstraint(ModelState modelstate, ASTNode math, Model model)
+	public static void setupSingleConstraint(ModelState modelstate, String id, ASTNode math, Model model)
 	{
 
 		math = HierarchicalUtilities.inlineFormula(modelstate, math, model);
 
-		for (ASTNode constraintNode : math.getListOfNodes())
-		{
+		HierarchicalNode constraintNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
 
-			if (constraintNode.isName())
-			{
-
-				// String nodeName = constraintNode.getName();
-			}
-		}
-
+		modelstate.addConstraint(id, constraintNode);
 	}
-
 }

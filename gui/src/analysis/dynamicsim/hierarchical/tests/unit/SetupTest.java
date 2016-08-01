@@ -70,7 +70,7 @@ public class SetupTest
 	public void test05() throws IOException, XMLStreamException
 	{
 		String SBMLFile = "./gui/src/analysis/dynamicsim/hierarchical/tests/resources/test05.xml";
-		HierarchicalSSADirectSimulator ssaSim = new HierarchicalSSADirectSimulator(SBMLFile, "", "", 1, 10, 0, 1, false);
+		HierarchicalSSADirectSimulator ssaSim = new HierarchicalSSADirectSimulator(SBMLFile, "", "", 1, 10, 0, 1, 0, 0, false);
 		ssaSim.simulate();
 
 	}
@@ -85,7 +85,7 @@ public class SetupTest
 	public void test06() throws IOException, XMLStreamException
 	{
 		String SBMLFile = "./gui/src/analysis/dynamicsim/hierarchical/tests/resources/test06.xml";
-		HierarchicalSSADirectSimulator ssaSim = new HierarchicalSSADirectSimulator(SBMLFile, "", "", 1, 10, 0, 1, false);
+		HierarchicalSSADirectSimulator ssaSim = new HierarchicalSSADirectSimulator(SBMLFile, "", "", 1, 10, 0, 1, 0, 0, false);
 		ssaSim.simulate();
 
 	}
@@ -100,7 +100,7 @@ public class SetupTest
 	public void test07() throws IOException, XMLStreamException
 	{
 		String SBMLFile = "./gui/src/analysis/dynamicsim/hierarchical/tests/resources/test07.xml";
-		HierarchicalSSADirectSimulator ssaSim = new HierarchicalSSADirectSimulator(SBMLFile, "", "", 1, 10, 0, 1, false);
+		HierarchicalSSADirectSimulator ssaSim = new HierarchicalSSADirectSimulator(SBMLFile, "", "", 1, 10, 0, 1, 0, 0, false);
 		ssaSim.simulate();
 
 	}
@@ -115,7 +115,7 @@ public class SetupTest
 	public void test11() throws IOException, XMLStreamException
 	{
 		String SBMLFile = "./gui/src/analysis/dynamicsim/hierarchical/tests/resources/test11.xml";
-		HierarchicalSSADirectSimulator ssaSim = new HierarchicalSSADirectSimulator(SBMLFile, "", "", 1, 10, 0, 1, false);
+		HierarchicalSSADirectSimulator ssaSim = new HierarchicalSSADirectSimulator(SBMLFile, "", "", 1, 10, 0, 1, 0, 0, false);
 		ssaSim.initialize(0, 1);
 	}
 
