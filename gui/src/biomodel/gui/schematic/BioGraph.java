@@ -34,7 +34,6 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.ext.layout.ReactionGlyph;
 import org.sbml.jsbml.ext.layout.ReferenceGlyph;
 import org.sbml.jsbml.Rule;
@@ -43,7 +42,6 @@ import org.sbml.jsbml.ext.layout.SpeciesGlyph;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.layout.SpeciesReferenceGlyph;
 import org.sbml.jsbml.ext.layout.TextGlyph;
-import org.sbolstandard.core2.ComponentDefinition;
 
 import main.Gui;
 
@@ -170,14 +168,14 @@ public class BioGraph extends mxGraph {
 		Layouting.applyLayout(ident, this, graphComponent);
 	}
 	
-	private static SBase getGlyph(Layout layout, String glyphId) {
-		SBase sbase = layout.getCompartmentGlyph(glyphId);
-		if (sbase!=null) return sbase;
-		sbase = layout.getSpeciesGlyph(glyphId);
-		if (sbase!=null) return sbase;
-		sbase = layout.getListOfAdditionalGraphicalObjects().get(glyphId);
-		return sbase;
-	}
+//	private static SBase getGlyph(Layout layout, String glyphId) {
+//		SBase sbase = layout.getCompartmentGlyph(glyphId);
+//		if (sbase!=null) return sbase;
+//		sbase = layout.getSpeciesGlyph(glyphId);
+//		if (sbase!=null) return sbase;
+//		sbase = layout.getListOfAdditionalGraphicalObjects().get(glyphId);
+//		return sbase;
+//	}
 	
 	private void createLayoutConnection(Layout layout,Reaction r,String reactant,String product,String type) {
 		ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+reactant+"__"+type+"__"+product);
@@ -2391,13 +2389,15 @@ public class BioGraph extends mxGraph {
 		int width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
 		int height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
 		if (species.isSetSBOTerm()) {
-			if (species.getSBOTerm()==GlobalConstants.SBO_DNA) {
+			if (species.getSBOTermID().equals(GlobalConstants.SBO_DNA) ||
+					species.getSBOTermID().equals(GlobalConstants.SBO_DNA_SEGMENT)) {
 				width = GlobalConstants.DEFAULT_DNA_WIDTH;
 				height = GlobalConstants.DEFAULT_DNA_HEIGHT;
-			} else if (species.getSBOTerm()==GlobalConstants.SBO_RNA) {
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_RNA) ||
+					species.getSBOTermID().equals(GlobalConstants.SBO_RNA_SEGMENT)) {
 				width = GlobalConstants.DEFAULT_RNA_WIDTH;
 				height = GlobalConstants.DEFAULT_RNA_HEIGHT;
-			} else if (species.getSBOTerm()==GlobalConstants.SBO_PROTEIN) {
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_PROTEIN)) {
 				width = GlobalConstants.DEFAULT_PROTEIN_WIDTH;
 				height = GlobalConstants.DEFAULT_PROTEIN_HEIGHT;
 			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_NONCOVALENT_COMPLEX) ||
@@ -3130,11 +3130,13 @@ public class BioGraph extends mxGraph {
 		String style="SPECIES;";
 		Species species = bioModel.getSBMLDocument().getModel().getSpecies(id);
 		if (species!=null && species.isSetSBOTerm()) {
-			if (species.getSBOTerm()==GlobalConstants.SBO_DNA) {
+			if (species.getSBOTermID().equals(GlobalConstants.SBO_DNA) ||
+					species.getSBOTermID().equals(GlobalConstants.SBO_DNA_SEGMENT)) {
 				style = "NUCLEIC_ACID;";
-			} else if (species.getSBOTerm()==GlobalConstants.SBO_RNA) {
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_RNA) ||
+					species.getSBOTermID().equals(GlobalConstants.SBO_RNA_SEGMENT)) {
 				style = "NUCLEIC_ACID;";
-			} else if (species.getSBOTerm()==GlobalConstants.SBO_PROTEIN) {
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_PROTEIN)) {
 				style = "MOLECULE;";
 			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_NONCOVALENT_COMPLEX) ||
 					SBMLutilities.sbo.isDescendantOf(species.getSBOTermID(), GlobalConstants.SBO_NONCOVALENT_COMPLEX)) {

@@ -442,7 +442,7 @@ public class EditPreferences {
 			schematicElement = schematicElements.get("Reaction");
 			schematicElement.colorButton.setForeground(createColorFromString("#C7007B"));
 			schematicElement.colorButton.setBackground(createColorFromString("#C7007B"));
-			schematicElement.shape.setSelectedItem(mxConstants.SHAPE_ELLIPSE);
+			schematicElement.shape.setSelectedItem(mxConstants.SHAPE_RECTANGLE);
 
 			schematicElement = schematicElements.get("Event");
 			schematicElement.colorButton.setForeground(createColorFromString("#00FF00"));

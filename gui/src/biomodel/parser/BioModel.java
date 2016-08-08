@@ -2375,14 +2375,17 @@ public class BioModel {
 			ModifierSpeciesReference modifier = r.createModifier();
 			modifier.setSpecies(promoterId);
 			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
-			Species mRNA = sbml.getModel().createSpecies();
-			mRNA.setId(promoterId + "_mRNA");
-			mRNA.setCompartment(r.getCompartment());
-			mRNA.setInitialAmount(0.0);
-			mRNA.setBoundaryCondition(false);
-			mRNA.setConstant(false);
-			mRNA.setHasOnlySubstanceUnits(true);
-			mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);
+			Species mRNA = sbml.getModel().getSpecies(promoterId+"_mRNA");
+			if (mRNA==null) {
+				mRNA = sbml.getModel().createSpecies();
+				mRNA.setId(promoterId + "_mRNA");
+				mRNA.setCompartment(r.getCompartment());
+				mRNA.setInitialAmount(0.0);
+				mRNA.setBoundaryCondition(false);
+				mRNA.setConstant(false);
+				mRNA.setHasOnlySubstanceUnits(true);
+				mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);
+			}
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(mRNA.getId());
 			product.setStoichiometry(1.0);
@@ -5204,13 +5207,15 @@ public class BioModel {
 		int width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
 		int height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
 		if (species.isSetSBOTerm()) {
-			if (species.getSBOTerm()==GlobalConstants.SBO_DNA) {
+			if (species.getSBOTermID().equals(GlobalConstants.SBO_DNA) ||
+					species.getSBOTermID().equals(GlobalConstants.SBO_DNA_SEGMENT)) {
 				width = GlobalConstants.DEFAULT_DNA_WIDTH;
 				height = GlobalConstants.DEFAULT_DNA_HEIGHT;
-			} else if (species.getSBOTerm()==GlobalConstants.SBO_RNA) {
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_RNA) ||
+					species.getSBOTermID().equals(GlobalConstants.SBO_RNA_SEGMENT)) {
 				width = GlobalConstants.DEFAULT_RNA_WIDTH;
 				height = GlobalConstants.DEFAULT_RNA_HEIGHT;
-			} else if (species.getSBOTerm()==GlobalConstants.SBO_PROTEIN) {
+			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_PROTEIN)) {
 				width = GlobalConstants.DEFAULT_PROTEIN_WIDTH;
 				height = GlobalConstants.DEFAULT_PROTEIN_HEIGHT;
 			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_NONCOVALENT_COMPLEX) ||
