@@ -430,7 +430,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		field = new PropertyField(GlobalConstants.KDECAY_STRING, 
 				bioModel.getParameter(GlobalConstants.KDECAY_STRING), origString, defaultValue,
 				formatString, paramsOnly, origString, false);
-		if (degradation != null) {
+		if (degradation != null && degradation.isSetKineticLaw()) {
 			LocalParameter kd = degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING);
 			String sweep = AnnotationUtility.parseSweepAnnotation(kd);
 			if (sweep != null) {
