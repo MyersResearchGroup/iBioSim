@@ -106,7 +106,7 @@ public class SEDMLutilities {
 			para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
 			para.setAttribute("dataset", "" + dataSet);
 			Annotation ann = new Annotation(para);
-			dataGen.addAnnotation(ann);
+			dataGen.setAnnotation(ann);
 		}
 		sedml.addDataGenerator(dataGen);
 		return dataGen;
@@ -128,15 +128,13 @@ public class SEDMLutilities {
 	}
 	
 	public static void copyAnnotation(SEDBase sedBase1,SEDBase sedBase2) {
-		List<Annotation> annotations = sedBase1.getAnnotation();
-		for (int i = 0; i < annotations.size(); i++)
-		{	
-			Annotation annotation = annotations.get(0);
+		Annotation annotation = sedBase1.getAnnotation();
+		if (annotation!=null) {
 			List<Element> elements = annotation.getAnnotationElementsList();
 			for (Element element : elements) {
 				if (!element.getName().equals("sbsi-editor")) {
 					Annotation newAnnotation = new Annotation((Element)element.clone());
-					sedBase2.addAnnotation(newAnnotation);
+					sedBase2.setAnnotation(newAnnotation);
 					// TODO: only copying first element
 					break;
 				}
@@ -407,10 +405,8 @@ public class SEDMLutilities {
 	
 	public static String getSEDBaseAnnotation(SEDBase sedBase, String name, String attribute, String defaultValue)
 	{
-		List<Annotation> annotations = sedBase.getAnnotation();
-		for (int i = 0; i < annotations.size(); i++)
-		{
-			Annotation annotation = annotations.get(i);
+		Annotation annotation = sedBase.getAnnotation();
+		if (annotation!=null) {
 			List<Element> elements = annotation.getAnnotationElementsList();
 			for (Element element : elements) {
 				if (!element.getNamespaceURI().equals("http://www.async.ece.utah.edu/iBioSim")) continue;

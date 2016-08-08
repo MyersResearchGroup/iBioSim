@@ -196,9 +196,11 @@ public class GlobalConstants {
 	public static final String SBO_PARAMETER = "SBO:0000545";
 	
 	// Material entities
-	public static final int SBO_DNA = 251;
-	public static final int SBO_RNA = 250;
-	public static final int SBO_PROTEIN = 252;
+	public static final String SBO_DNA = "SBO:0000251";
+	public static final String SBO_DNA_SEGMENT = "SBO:0000634";
+	public static final String SBO_RNA = "SBO:0000250";
+	public static final String SBO_RNA_SEGMENT = "SBO:0000635";
+	public static final String SBO_PROTEIN = "SBO:0000252";
 	public static final String SBO_NONCOVALENT_COMPLEX = "SBO:0000253";
 	public static final String SBO_SIMPLE_CHEMICAL = "SBO:0000247";
 	

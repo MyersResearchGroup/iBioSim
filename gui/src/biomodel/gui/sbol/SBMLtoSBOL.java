@@ -366,11 +366,13 @@ public class SBMLtoSBOL {
 				}
 			}
 			if (species.isSetSBOTerm()) {
-				if (species.getSBOTerm()==GlobalConstants.SBO_DNA) {
+				if (species.getSBOTermID().equals(GlobalConstants.SBO_DNA) ||
+						species.getSBOTermID().equals(GlobalConstants.SBO_DNA_SEGMENT)) {
 					compDef_type.add(ComponentDefinition.DNA);
-				} else if (species.getSBOTerm()==GlobalConstants.SBO_RNA) {
+				} else if (species.getSBOTermID().equals(GlobalConstants.SBO_RNA) ||
+						species.getSBOTermID().equals(GlobalConstants.SBO_RNA_SEGMENT)) {
 					compDef_type.add(ComponentDefinition.RNA);
-				} else if (species.getSBOTerm()==GlobalConstants.SBO_PROTEIN) {
+				} else if (species.getSBOTermID().equals(GlobalConstants.SBO_PROTEIN)) {
 					compDef_type.add(ComponentDefinition.PROTEIN);
 				} else if (species.getSBOTermID().equals(GlobalConstants.SBO_NONCOVALENT_COMPLEX) ||
 						SBMLutilities.sbo.isDescendantOf(species.getSBOTermID(), GlobalConstants.SBO_NONCOVALENT_COMPLEX)) {

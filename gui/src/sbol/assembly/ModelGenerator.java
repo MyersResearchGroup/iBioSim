@@ -301,6 +301,17 @@ public class ModelGenerator {
 		targetModel.createSpecies(getDisplayID(species), -1, -1);
 		Species sbmlSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(species));
 		sbmlSpecies.setBoundaryCondition(species.getDirection().equals(DirectionType.IN));
+		if (isDNAComponent(species,sbolDoc)) {
+			sbmlSpecies.setSBOTerm(GlobalConstants.SBO_DNA_SEGMENT);
+		} else if (isRNAComponent(species,sbolDoc)) {
+			sbmlSpecies.setSBOTerm(GlobalConstants.SBO_RNA_SEGMENT);
+		} else if (isProteinComponent(species,sbolDoc)) {
+			sbmlSpecies.setSBOTerm(GlobalConstants.SBO_PROTEIN);
+		} else if (isComplexComponent(species,sbolDoc)) {
+			sbmlSpecies.setSBOTerm(GlobalConstants.SBO_NONCOVALENT_COMPLEX);
+		} else if (isSmallMoleculeComponent(species,sbolDoc)) {
+			sbmlSpecies.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
+		}
 		// Annotate SBML species with SBOL component and component definition
 		annotateSpecies(sbmlSpecies, species, sbolDoc);	
 	}
@@ -668,6 +679,12 @@ public class ModelGenerator {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isComplexDefinition(compDef);
+	}
+	
+	public static boolean isSmallMoleculeComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+		if (compDef==null) return false;
+		return isSmallMoleculeDefinition(compDef);
 	}
 	
 	public static boolean isComplexDefinition(ComponentDefinition compDef) {

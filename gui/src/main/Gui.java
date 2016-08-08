@@ -108,6 +108,8 @@ import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.Curve;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.DataSet;
+import org.jlibsedml.FileModelContent;
+import org.jlibsedml.IModelContent;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
@@ -1062,7 +1064,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportGenBank);
 		exportMenu.add(exportFasta);
 		// Removed for now since not working
-		//exportMenu.add(exportSEDML);
+		exportMenu.add(exportSEDML);
 
 		exportDataMenu.add(exportTsd);
 		exportDataMenu.add(exportCsv);
@@ -2048,7 +2050,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getSource() == exportSEDML)
 		{
 			// Removed, not working
-			//exportSEDML();
+			exportSEDML();
 		}
 //		else if (e.getSource() == saveSBOL)
 //		{
@@ -5242,7 +5244,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String newFile = null;
 		SBMLutilities.checkModelCompleteness(document);
 		// TODO: removed due to bug with file from BioPax2SBML convert
-		//SBMLutilities.check(null, document, false);
+		SBMLutilities.check(null, document, false);
 		newFile = file;
 		newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 		if (Character.isDigit(newFile.charAt(0))) {
@@ -5732,43 +5734,43 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	// Removed not working
-//	public void exportSEDML() {
-//		File lastFilePath;
-//		Preferences biosimrc = Preferences.userRoot();
-//		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
-//			lastFilePath = null;
-//		}
-//		else {
-//			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
-//		}
-//		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SED-ML", -1);
-//		if (!exportPath.equals("")) {
-//			biosimrc.put("biosim.general.export_dir",exportPath);
-//			log.addText("Exporting SED-ML file:\n" + exportPath + "\n");
-//			List<IModelContent> models = new ArrayList<IModelContent>();
-//			for (String s : new File(root).list()) {
-//				if (s.endsWith(".xml")) {
-//					File modelFile = new File(s); 
-//					FileModelContent fmc = new FileModelContent(modelFile);
-//					System.out.println(fmc.getName());
-//					System.out.println(fmc.getContents());
-//					models.add(fmc);
-//				}
-//			}
-//			try {
-//				byte [] sedx = Libsedml.writeSEDMLArchive(new ArchiveComponents(models,sedmlDocument),
-//						root.split(Gui.separator)[root.split(Gui.separator).length-1]);
-//				File file = new File(exportPath);
-//				FileOutputStream fos = new FileOutputStream(file);
-//				fos.write(sedx);
-//				fos.flush();
-//				fos.close();
-//			}
-//			catch (Exception e) {
-//				JOptionPane.showMessageDialog(frame, "Unable to export SED-ML file.", "Error", JOptionPane.ERROR_MESSAGE);
-//			}
-//		}
-//	}
+	public void exportSEDML() {
+		File lastFilePath;
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+			lastFilePath = null;
+		}
+		else {
+			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+		}
+		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SED-ML", -1);
+		if (!exportPath.equals("")) {
+			biosimrc.put("biosim.general.export_dir",exportPath);
+			log.addText("Exporting SED-ML file:\n" + exportPath + "\n");
+			List<IModelContent> models = new ArrayList<IModelContent>();
+			for (String s : new File(root).list()) {
+				if (s.endsWith(".xml")) {
+					File modelFile = new File(root + separator + s); 
+					FileModelContent fmc = new FileModelContent(modelFile);
+					//System.out.println(fmc.getName());
+					//System.out.println(fmc.getContents());
+					models.add(fmc);
+				}
+			}
+			try {
+				byte [] sedx = Libsedml.writeSEDMLArchive(new ArchiveComponents(models,sedmlDocument),
+						root.split(Gui.separator)[root.split(Gui.separator).length-1]);
+				File file = new File(exportPath);
+				FileOutputStream fos = new FileOutputStream(file);
+				fos.write(sedx);
+				fos.flush();
+				fos.close();
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(frame, "Unable to export SED-ML file.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
 
 	
 	private boolean checkSBOL(SBOLDocument sbolDoc,boolean bestPractice) 
