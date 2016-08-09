@@ -5244,7 +5244,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String newFile = null;
 		SBMLutilities.checkModelCompleteness(document);
 		// TODO: removed due to bug with file from BioPax2SBML convert
-		SBMLutilities.check(null, document, false);
+		//SBMLutilities.check(null, document, false);
 		newFile = file;
 		newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 		if (Character.isDigit(newFile.charAt(0))) {
