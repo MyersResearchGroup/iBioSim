@@ -1737,6 +1737,7 @@ public class BioModel {
 			} else if (species.getSBOTerm()==GlobalConstants.SBO_PROMOTER_BINDING_REGION) {
 				return true;
 			} else if (species.getSBOTermID().equals(GlobalConstants.SBO_DNA_SEGMENT)) {
+				//species.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
 				return true;
 				// TODO: assuming DNA_SEGMENT is promoter
 			}
@@ -1761,6 +1762,9 @@ public class BioModel {
 			} else if (mod.getSBOTerm() == GlobalConstants.SBO_PROMOTER_MODIFIER) {
 				return true;
 			}
+		} else if (isPromoterSpecies(mod.getSpeciesInstance())) {
+			mod.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
+			return true;
 		}
 		return false;
 	}

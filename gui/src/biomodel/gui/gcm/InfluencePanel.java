@@ -201,11 +201,14 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				Reaction refProd = refGCM.getSBMLDocument().getModel().getReaction(production.getId());
 				LocalParameter nc = null;
 				if (typeBox.getSelectedItem().equals(GlobalConstants.COMPLEX)) {
-					nc = refProd.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator);
+					if (refProd.isSetKineticLaw())
+						nc = refProd.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator);
 				} else if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) { 
-					nc = refProd.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_r");
+					if (refProd.isSetKineticLaw())
+						nc = refProd.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_r");
 				} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) { 
-					nc = refProd.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_a");
+					if (refProd.isSetKineticLaw())
+						nc = refProd.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_a");
 				} 
 				if (nc != null) {
 					defaultValue = ""+nc.getValue();
@@ -219,11 +222,14 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				defString, defaultValue, formatString, paramsOnly, defString, false);
 		LocalParameter nc = null;
 		if (typeBox.getSelectedItem().equals(GlobalConstants.COMPLEX)) {
-			nc = production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator);
+			if (production.isSetKineticLaw())
+				nc = production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator);
 		} else if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) { 
-			nc = production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_r");
+			if (production.isSetKineticLaw())
+				nc = production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_r");
 		} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) { 
-			nc = production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_a");
+			if (production.isSetKineticLaw())
+				nc = production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_a");
 		} else {
 			field.setEnabled(false);
 		}
@@ -249,8 +255,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				LocalParameter kr_f = null;
 				LocalParameter kr_r = null;
 				if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) { 
-					kr_f = refProd.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + regulator + "_"));
-					kr_r = refProd.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + regulator + "_"));
+					if (refProd.isSetKineticLaw()) {
+						kr_f = refProd.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + regulator + "_"));
+						kr_r = refProd.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + regulator + "_"));
+					}
 				} 
 				if (kr_f != null && kr_r != null) {
 					defaultValue = kr_f.getValue()+"/"+kr_r.getValue();
@@ -267,8 +275,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		LocalParameter kr_f = null;
 		LocalParameter kr_r = null;
 		if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) { 
-			kr_f = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + regulator + "_"));
-			kr_r = production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + regulator + "_"));
+			if (production.isSetKineticLaw()) {
+				kr_f = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + regulator + "_"));
+				kr_r = production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + regulator + "_"));
+			}
 		} else {
 			field.setEnabled(false);
 		}
@@ -294,8 +304,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				LocalParameter ka_f = null;
 				LocalParameter ka_r = null;
 				if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) { 
-					ka_f = refProd.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + regulator + "_"));
-					ka_r = refProd.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + regulator + "_"));
+					if (refProd.isSetKineticLaw()) {
+						ka_f = refProd.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + regulator + "_"));
+						ka_r = refProd.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + regulator + "_"));
+					}
 				} 
 				if (ka_f != null && ka_r != null) {
 					defaultValue = ka_f.getValue()+"/"+ka_r.getValue();
@@ -312,8 +324,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		LocalParameter ka_f = null;
 		LocalParameter ka_r = null;
 		if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) { 
-			ka_f = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + regulator + "_"));
-			ka_r = production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + regulator + "_"));
+			if (production.isSetKineticLaw()) {
+				ka_f = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + regulator + "_"));
+				ka_r = production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + regulator + "_"));
+			}
 		} else {
 			field.setEnabled(false);
 		}
@@ -355,19 +369,26 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 
 			if (promoterId==null) {
-				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator);
+				if (production.isSetKineticLaw())
+					production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator);
 			} else if (selection.contains("->")){
-				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_a");
+				if (production.isSetKineticLaw())
+					production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_a");
 			} else if (selection.contains("-|")){
-				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_r");
+				if (production.isSetKineticLaw())
+					production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_r");
 			}
 			if (selection.contains("-|")){
-				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + regulator + "_"));
-				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + regulator + "_"));
+				if (production.isSetKineticLaw()) {
+					production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + regulator + "_"));
+					production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + regulator + "_"));
+				}
 			}
 			if (selection.contains("->")){
-				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + regulator + "_"));
-				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + regulator + "_"));
+				if (production.isSetKineticLaw()) {
+					production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + regulator + "_"));
+					production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + regulator + "_"));
+				}
 			}
 
 			if (promoterId != null && !promoterBox.getSelectedItem().equals(promoterId)) {
@@ -453,6 +474,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					indexRule.setMath(indexMath);
 					sBasePlugin.addIndex(indexRule);
 				}
+			}
+			if (!production.isSetKineticLaw()) {
+				production.createKineticLaw();
 			}
 			PropertyField f = fields.get(GlobalConstants.COOPERATIVITY_STRING);
 			String CoopStr = null;
