@@ -26,19 +26,19 @@ import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.SBaseRef;
 import org.sbml.jsbml.ext.comp.Submodel;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 
 public class ReplacementSetup implements Setup
 {
 
-	public static void setupReplacements(List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, List<String> listOfPrefix, Map<String, Integer> mapOfModels)
+	public static void setupReplacements(List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, List<String> listOfPrefix, Map<String, Integer> mapOfModels)
 	{
 
 		for (int i = 0; i < listOfModels.size(); i++)
 		{
 			Model model = listOfModels.get(i);
-			ModelState modelstate = listOfModules.get(i);
+			HierarchicalModel modelstate = listOfModules.get(i);
 			CompModelPlugin topCompModel = (CompModelPlugin) model.getExtension(CompConstants.shortLabel);
 
 			String prefix = listOfPrefix.get(i);
@@ -108,7 +108,7 @@ public class ReplacementSetup implements Setup
 		}
 	}
 
-	private static void setupDeletion(CompModelPlugin topCompModel, String prefix, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
+	private static void setupDeletion(CompModelPlugin topCompModel, String prefix, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
 	{
 		if (topCompModel.isSetListOfSubmodels())
 		{
@@ -120,7 +120,7 @@ public class ReplacementSetup implements Setup
 
 	}
 
-	private static void setupDeletion(Submodel submodel, String prefix, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
+	private static void setupDeletion(Submodel submodel, String prefix, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
 	{
 		if (submodel.isSetListOfDeletions())
 		{
@@ -131,7 +131,7 @@ public class ReplacementSetup implements Setup
 			{
 
 				int subIndex = mapOfModels.get(subModelId);
-				ModelState sub = listOfModules.get(subIndex);
+				HierarchicalModel sub = listOfModules.get(subIndex);
 				Model model = listOfModels.get(subIndex);
 				if (deletion.isSetIdRef())
 				{
@@ -200,7 +200,7 @@ public class ReplacementSetup implements Setup
 		}
 	}
 
-	private static void setupReplacement(AbstractNamedSBase sbase, ModelState top, CompModelPlugin topCompModel, String prefix, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
+	private static void setupReplacement(AbstractNamedSBase sbase, HierarchicalModel top, CompModelPlugin topCompModel, String prefix, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
 	{
 		CompSBasePlugin sbasePlugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
 		String id = sbase.getId();
@@ -228,7 +228,7 @@ public class ReplacementSetup implements Setup
 
 	}
 
-	private static void setupReplacement(SBase sbase, ModelState top, CompModelPlugin topCompModel, String prefix, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
+	private static void setupReplacement(SBase sbase, HierarchicalModel top, CompModelPlugin topCompModel, String prefix, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
 	{
 		CompSBasePlugin sbasePlugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
 
@@ -250,11 +250,11 @@ public class ReplacementSetup implements Setup
 
 	}
 
-	private static ReplacementHandler setupReplacedBy(ReplacedBy replacement, String id, String prefix, ModelState top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
+	private static ReplacementHandler setupReplacedBy(ReplacedBy replacement, String id, String prefix, HierarchicalModel top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
 	{
 		String subModelId = prefix + replacement.getSubmodelRef();
 		int subIndex = mapOfModels.get(subModelId);
-		ModelState sub = listOfModules.get(subIndex);
+		HierarchicalModel sub = listOfModules.get(subIndex);
 		Model submodel = listOfModels.get(subIndex);
 		ReplacementHandler handler = null;
 		if (replacement.isSetIdRef())
@@ -296,11 +296,11 @@ public class ReplacementSetup implements Setup
 		return handler;
 	}
 
-	private static void setupReplacedElement(ReplacedElement element, String id, String prefix, ModelState top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
+	private static void setupReplacedElement(ReplacedElement element, String id, String prefix, HierarchicalModel top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
 	{
 		String subModelId = prefix + element.getSubmodelRef();
 		int subIndex = mapOfModels.get(subModelId);
-		ModelState sub = listOfModules.get(subIndex);
+		HierarchicalModel sub = listOfModules.get(subIndex);
 		Model submodel = listOfModels.get(subIndex);
 
 		CompModelPlugin compModel = (CompModelPlugin) submodel.getExtension("comp");
@@ -345,7 +345,7 @@ public class ReplacementSetup implements Setup
 		}
 	}
 
-	private static void setupReplacedBy(ReplacedBy replacement, String prefix, ModelState top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
+	private static void setupReplacedBy(ReplacedBy replacement, String prefix, HierarchicalModel top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
 	{
 		String subModelId = prefix + replacement.getSubmodelRef();
 		int subIndex = mapOfModels.get(subModelId);
@@ -376,11 +376,11 @@ public class ReplacementSetup implements Setup
 		}
 	}
 
-	private static void setupReplacedElement(ReplacedElement element, String prefix, ModelState top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
+	private static void setupReplacedElement(ReplacedElement element, String prefix, HierarchicalModel top, CompModelPlugin topCompModel, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
 	{
 		String subModelId = prefix + element.getSubmodelRef();
 		int subIndex = mapOfModels.get(subModelId);
-		ModelState sub = listOfModules.get(subIndex);
+		HierarchicalModel sub = listOfModules.get(subIndex);
 		Model submodel = listOfModels.get(subIndex);
 
 		CompModelPlugin compModel = (CompModelPlugin) submodel.getExtension("comp");

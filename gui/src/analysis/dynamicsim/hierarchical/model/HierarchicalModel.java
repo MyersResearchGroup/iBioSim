@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical.states;
+package analysis.dynamicsim.hierarchical.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,14 +10,14 @@ import java.util.Set;
 
 import org.sbml.jsbml.Model;
 
+import analysis.dynamicsim.hierarchical.util.math.ConstraintNode;
 import analysis.dynamicsim.hierarchical.util.math.EventNode;
 import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
 import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
-import analysis.dynamicsim.hierarchical.util.setup.ConstraintNode;
 import biomodel.util.GlobalConstants;
 
-public final class ModelState extends DocumentState
+public final class HierarchicalModel extends Container
 {
 
 	private boolean						isInitSet;
@@ -35,14 +35,17 @@ public final class ModelState extends DocumentState
 
 	private Map<String, VariableNode>	idToNode;
 
-	public ModelState(String submodelID)
+	// TODO: keep track of child model states because needed when cloning
+
+	public HierarchicalModel(String submodelID)
 	{
 		super(submodelID);
 	}
 
-	public ModelState(ModelState state)
+	public HierarchicalModel(HierarchicalModel state)
 	{
 		super(state);
+		this.type = state.type;
 	}
 
 	public void clear()
@@ -50,10 +53,25 @@ public final class ModelState extends DocumentState
 
 	}
 
-	@Override
-	public ModelState clone()
+	public void copyConstraints(HierarchicalModel state)
 	{
-		return new ModelState(this);
+		// TODO:
+	}
+
+	public void copyEvents(HierarchicalModel state)
+	{
+		// TODO:
+	}
+
+	public void copyReactions(HierarchicalModel state)
+	{
+		// TODO:
+	}
+
+	@Override
+	public HierarchicalModel clone()
+	{
+		return new HierarchicalModel(this);
 	}
 
 	public boolean isInitSet()

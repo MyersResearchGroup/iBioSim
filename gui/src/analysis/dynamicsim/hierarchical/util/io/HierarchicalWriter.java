@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.math.SpeciesNode;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
@@ -17,7 +17,7 @@ public class HierarchicalWriter
 	 * 
 	 * @throws IOException
 	 */
-	public static void printToTSD(BufferedWriter bufferedWriter, ModelState topmodel, Map<String, ModelState> submodels, String[] interesting, Set<String> printConcentrations, double printTime) throws IOException
+	public static void printToTSD(BufferedWriter bufferedWriter, HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels, String[] interesting, Set<String> printConcentrations, double printTime) throws IOException
 	{
 		if (interesting == null || interesting.length == 0)
 		{
@@ -30,7 +30,7 @@ public class HierarchicalWriter
 
 	}
 
-	public static void setupVariableFromTSD(BufferedWriter bufferedWriter, ModelState topmodel, Map<String, ModelState> submodels, String[] interesting) throws IOException
+	public static void setupVariableFromTSD(BufferedWriter bufferedWriter, HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels, String[] interesting) throws IOException
 	{
 		bufferedWriter.write("(" + "\"" + "time" + "\"");
 
@@ -46,13 +46,16 @@ public class HierarchicalWriter
 			return;
 		}
 
-		for (VariableNode node : topmodel.getVariables())
+		if (topmodel.getNumOfVariables() > 0)
 		{
-			bufferedWriter.write(",\"" + node.getName() + "\"");
+			for (VariableNode node : topmodel.getVariables())
+			{
+				bufferedWriter.write(",\"" + node.getName() + "\"");
+			}
 		}
-		for (ModelState submodel : submodels.values())
+		for (HierarchicalModel submodel : submodels.values())
 		{
-			if (submodel.getVariables() != null)
+			if (submodel.getNumOfVariables() > 0)
 			{
 				for (VariableNode node : submodel.getVariables())
 				{
@@ -65,7 +68,7 @@ public class HierarchicalWriter
 
 	}
 
-	private static void printAllToTSD(double printTime, BufferedWriter bufferedWriter, ModelState topmodel, Map<String, ModelState> submodels) throws IOException
+	private static void printAllToTSD(double printTime, BufferedWriter bufferedWriter, HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels) throws IOException
 	{
 		String commaSpace = ",";
 
@@ -80,7 +83,7 @@ public class HierarchicalWriter
 		{
 			bufferedWriter.write(commaSpace + node.getValue());
 		}
-		for (ModelState submodel : submodels.values())
+		for (HierarchicalModel submodel : submodels.values())
 		{
 			if (submodel.getVariables() != null)
 			{
@@ -94,7 +97,7 @@ public class HierarchicalWriter
 		bufferedWriter.flush();
 	}
 
-	private static void printInterestingToTSD(BufferedWriter bufferedWriter, double printTime, ModelState topmodel, Map<String, ModelState> submodels, String[] interesting, Set<String> printConcentrations) throws IOException
+	private static void printInterestingToTSD(BufferedWriter bufferedWriter, double printTime, HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels, String[] interesting, Set<String> printConcentrations) throws IOException
 	{
 
 		String commaSpace = "";
@@ -110,7 +113,7 @@ public class HierarchicalWriter
 		{
 			String element = s.replaceAll("(.+)__", "");
 			String id = s.replace("__" + element, "");
-			ModelState ms = (id.equals(s)) ? topmodel : submodels.get(id);
+			HierarchicalModel ms = (id.equals(s)) ? topmodel : submodels.get(id);
 			VariableNode node = ms.getNode(element);
 			double value = node.getValue();
 			if (printConcentrations.contains(s))

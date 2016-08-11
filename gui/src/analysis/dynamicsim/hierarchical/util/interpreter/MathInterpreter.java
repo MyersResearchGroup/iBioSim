@@ -417,30 +417,75 @@ public final class MathInterpreter
 		return node;
 	}
 
-	public static HierarchicalNode replaceNameNodes(HierarchicalNode node, Map<String, VariableNode> variableToNodes)
+	public static HierarchicalNode copyMath(HierarchicalNode node, Map<String, VariableNode> variableToNodes, boolean useValue)
 	{
 		if (node.isName())
 		{
 			VariableNode varNode = (VariableNode) node;
 			if (variableToNodes.containsKey(varNode.getName()))
 			{
-				return new ValueNode(varNode.getValue());
+				if (useValue)
+				{
+					return new ValueNode(varNode.getValue());
+				}
+				else
+				{
+					return variableToNodes.get(varNode.getName());
+				}
+			}
+		}
+		if (node.getNumOfChild() == 0)
+		{
+			return node;
+		}
+
+		HierarchicalNode clone = new HierarchicalNode(node.getType());
+
+		if (replaceNodes(clone, node, variableToNodes, useValue))
+		{
+			return clone;
+		}
+
+		return node;
+
+	}
+
+	private static boolean replaceNodes(HierarchicalNode parent, HierarchicalNode node, Map<String, VariableNode> variableToNodes, boolean useValue)
+	{
+
+		boolean result = false;
+		for (HierarchicalNode child : node.getChildren())
+		{
+			if (child.isName())
+			{
+				VariableNode varNode = (VariableNode) child;
+				if (variableToNodes.containsKey(varNode.getName()))
+				{
+					if (useValue)
+					{
+						parent.addChild(new ValueNode(varNode.getValue()));
+					}
+					else
+					{
+						parent.addChild(variableToNodes.get(varNode.getName()));
+					}
+					result = true;
+					continue;
+				}
+			}
+			if (child.getNumOfChild() == 0)
+			{
+				parent.addChild(child.clone());
 			}
 			else
 			{
-				return varNode;
+				HierarchicalNode newNode = new HierarchicalNode(child.getType());
+				result = result | replaceNodes(newNode, child, variableToNodes, useValue);
+				parent.addChild(newNode);
 			}
 		}
-		else
-		{
 
-			HierarchicalNode newNode = new HierarchicalNode(node.getType());
-			for (int i = 0; i < node.getNumOfChild(); i++)
-			{
-				newNode.addChild(replaceNameNodes(node.getChild(i), variableToNodes));
-			}
-			return newNode;
-		}
+		return result;
 
 	}
 }

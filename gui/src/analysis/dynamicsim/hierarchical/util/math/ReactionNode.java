@@ -64,7 +64,12 @@ public class ReactionNode extends VariableNode
 		this.forwardRate = kineticLaw;
 	}
 
-	public HierarchicalNode getKineticLaw()
+	public HierarchicalNode getForwardRate()
+	{
+		return forwardRate;
+	}
+
+	public HierarchicalNode getReverseRate()
 	{
 		return forwardRate;
 	}

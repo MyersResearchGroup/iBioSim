@@ -13,7 +13,7 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
 /**
@@ -25,7 +25,7 @@ import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 public final class Evaluator
 {
 
-	public static HierarchicalNode evaluateArraysSelector(ModelState modelstate, HierarchicalNode node)
+	public static HierarchicalNode evaluateArraysSelector(HierarchicalModel modelstate, HierarchicalNode node)
 	{
 		if (node.getNumOfChild() > 0)
 		{

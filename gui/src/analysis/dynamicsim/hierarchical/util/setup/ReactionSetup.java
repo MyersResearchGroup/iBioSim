@@ -6,7 +6,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
 import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
@@ -15,7 +15,7 @@ import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 public class ReactionSetup
 {
 
-	public static void setupReactions(ModelState modelstate, Model model)
+	public static void setupReactions(HierarchicalModel modelstate, Model model)
 	{
 		Reaction reaction;
 		for (int i = 0; i < model.getNumReactions(); i++)
@@ -36,7 +36,7 @@ public class ReactionSetup
 
 	}
 
-	public static void setupSpeciesReferenceToReaction(ModelState modelstate, Model model, boolean split)
+	public static void setupSpeciesReferenceToReaction(HierarchicalModel modelstate, Model model, boolean split)
 	{
 		for (Reaction reaction : model.getListOfReactions())
 		{
@@ -74,7 +74,7 @@ public class ReactionSetup
 	 * @param productsList
 	 * @param modifiersList
 	 */
-	private static void setupSingleReaction(ModelState modelstate, Reaction reaction, ReactionNode forward, ASTNode reactionFormula, boolean reversible, boolean split, Model model, double currentTime)
+	private static void setupSingleReaction(HierarchicalModel modelstate, Reaction reaction, ReactionNode forward, ASTNode reactionFormula, boolean reversible, boolean split, Model model, double currentTime)
 	{
 		reactionFormula = HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, model);
 
@@ -89,14 +89,14 @@ public class ReactionSetup
 
 	}
 
-	private static void setupSingleNonRevReaction(ModelState modelstate, ReactionNode reactionNode, ASTNode reactionFormula, Model model, double currentTime)
+	private static void setupSingleNonRevReaction(HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula, Model model, double currentTime)
 	{
 		HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, modelstate.getVariableToNodeMap(), reactionNode);
 		reactionNode.setForwardRate(math);
 		reactionNode.computeNotEnoughEnoughMolecules();
 	}
 
-	private static void setupSingleRevReaction(ModelState modelstate, ReactionNode reactionNode, ASTNode reactionFormula, double currentTime)
+	private static void setupSingleRevReaction(HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula, double currentTime)
 	{
 		ASTNode[] splitMath = HierarchicalUtilities.splitMath(reactionFormula);
 		if (splitMath == null)

@@ -93,19 +93,31 @@ public final class RateSplitterInterpreter
 			{
 				if (a.isUMinus() && b.isUMinus())
 				{
-					listOfNodes.add(ASTNode.times(a.getChild(0), b.getChild(0)));
+					ASTNode product = new ASTNode(ASTNode.Type.TIMES);
+					product.addChild(a);
+					product.addChild(b);
+					listOfNodes.add(product);
 				}
 				else if (a.isUMinus())
 				{
-					listOfNodes.add(ASTNode.uMinus(ASTNode.times(a.getChild(0), b)));
+					ASTNode product = new ASTNode(ASTNode.Type.TIMES);
+					product.addChild(a.getChild(0));
+					product.addChild(b);
+					listOfNodes.add(ASTNode.uMinus(product));
 				}
 				else if (b.isUMinus())
 				{
-					listOfNodes.add(ASTNode.uMinus(ASTNode.times(a, b.getChild(0))));
+					ASTNode product = new ASTNode(ASTNode.Type.TIMES);
+					product.addChild(a);
+					product.addChild(b.getChild(0));
+					listOfNodes.add(ASTNode.uMinus(product));
 				}
 				else
 				{
-					listOfNodes.add(ASTNode.times(a, b));
+					ASTNode product = new ASTNode(ASTNode.Type.TIMES);
+					product.addChild(a);
+					product.addChild(b);
+					listOfNodes.add(product);
 				}
 			}
 		}

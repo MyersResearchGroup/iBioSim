@@ -12,7 +12,7 @@ import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.arrays.Index;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
 import analysis.dynamicsim.hierarchical.util.math.AbstractHierarchicalNode.Type;
 import analysis.dynamicsim.hierarchical.util.math.ArrayNode;
@@ -47,22 +47,22 @@ public class ArraysSetup implements Setup
 		return plugin.getNumDimensions() > 0;
 	}
 
-	public static HierarchicalNode setupDimensions(ModelState modelstate, SBase sbase, ASTNode math, ArraysType type)
+	public static HierarchicalNode setupDimensions(HierarchicalModel modelstate, SBase sbase, ASTNode math, ArraysType type)
 	{
 		return setupDimensions(modelstate, sbase, math, null, type);
 	}
 
-	public static void setupDimensions(ModelState modelstate, SBase sbase, VariableNode node, ArraysType type)
+	public static void setupDimensions(HierarchicalModel modelstate, SBase sbase, VariableNode node, ArraysType type)
 	{
 		setupDimensions(modelstate, sbase, node, null, type);
 	}
 
-	public static void setupDimensions(ModelState modelstate, SBase sbase, HierarchicalNode node, ArraysType type)
+	public static void setupDimensions(HierarchicalModel modelstate, SBase sbase, HierarchicalNode node, ArraysType type)
 	{
 		setupDimensions(modelstate, sbase, node, null, type);
 	}
 
-	public static HierarchicalNode setupDimensions(ModelState modelstate, SBase sbase, ASTNode math, HierarchicalNode parent, ArraysType type)
+	public static HierarchicalNode setupDimensions(HierarchicalModel modelstate, SBase sbase, ASTNode math, HierarchicalNode parent, ArraysType type)
 	{
 		HierarchicalNode refObj = null;
 		EventNode eventNode = null;
@@ -93,7 +93,7 @@ public class ArraysSetup implements Setup
 		return null;
 	}
 
-	public static void setupDimensions(ModelState modelstate, SBase sbase, VariableNode node, HierarchicalNode parent, ArraysType type)
+	public static void setupDimensions(HierarchicalModel modelstate, SBase sbase, VariableNode node, HierarchicalNode parent, ArraysType type)
 	{
 		ArrayNode arrayNode = setupArrayDimensions(modelstate, sbase, parent, type);
 
@@ -105,7 +105,7 @@ public class ArraysSetup implements Setup
 
 	}
 
-	public static void setupDimensions(ModelState modelstate, SBase sbase, HierarchicalNode node, HierarchicalNode parent, ArraysType type)
+	public static void setupDimensions(HierarchicalModel modelstate, SBase sbase, HierarchicalNode node, HierarchicalNode parent, ArraysType type)
 	{
 		ArrayNode arrayNode = setupArrayDimensions(modelstate, sbase, parent, type);
 
@@ -117,7 +117,7 @@ public class ArraysSetup implements Setup
 
 	}
 
-	private static ArrayNode setupArrayDimensions(ModelState modelstate, SBase sbase, HierarchicalNode parent, ArraysType type)
+	private static ArrayNode setupArrayDimensions(HierarchicalModel modelstate, SBase sbase, HierarchicalNode parent, ArraysType type)
 	{
 		ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
 
@@ -164,7 +164,7 @@ public class ArraysSetup implements Setup
 		return 0;
 	}
 
-	public static void linkDimensionSize(ModelState modelstate)
+	public static void linkDimensionSize(HierarchicalModel modelstate)
 	{
 		for (int i = modelstate.getNumOfArrays() - 1; i >= 0; i--)
 		{
@@ -177,7 +177,7 @@ public class ArraysSetup implements Setup
 		}
 	}
 
-	public static void setupIndices(ModelState modelstate, SBase sbase, ArrayNode arrayNode, ArraysType type)
+	public static void setupIndices(HierarchicalModel modelstate, SBase sbase, ArrayNode arrayNode, ArraysType type)
 	{
 
 		ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
@@ -230,7 +230,7 @@ public class ArraysSetup implements Setup
 		}
 	}
 
-	public static void expandArrays(ModelState modelstate)
+	public static void expandArrays(HierarchicalModel modelstate)
 	{
 		for (int i = modelstate.getNumOfArrays() - 1; i >= 0; i--)
 		{
@@ -240,13 +240,13 @@ public class ArraysSetup implements Setup
 
 	}
 
-	public static void expandArray(ModelState modelstate, HierarchicalNode node)
+	public static void expandArray(HierarchicalModel modelstate, HierarchicalNode node)
 	{
 		ArrayNode arrayNode = node.getArrayNode();
 		setupArrays(arrayNode.getNumDimensions() - 1, modelstate, node, null, arrayNode, new int[arrayNode.getNumDimensions()], arrayNode.getArraysType());
 	}
 
-	public static void expandArray(ModelState modelstate, HierarchicalNode node, HierarchicalNode parent)
+	public static void expandArray(HierarchicalModel modelstate, HierarchicalNode node, HierarchicalNode parent)
 	{
 		ArrayNode arrayNode = node.getArrayNode();
 		setupArrays(arrayNode.getNumDimensions() - 1, modelstate, node, parent, arrayNode, new int[arrayNode.getNumDimensions()], arrayNode.getArraysType());
@@ -266,7 +266,7 @@ public class ArraysSetup implements Setup
 		return maxIndex;
 	}
 
-	private static HierarchicalNode convertIndex(ModelState modelstate, ArrayNode arrayNode, String referencedNode, ArraysSBasePlugin plugin, String attribute)
+	private static HierarchicalNode convertIndex(HierarchicalModel modelstate, ArrayNode arrayNode, String referencedNode, ArraysSBasePlugin plugin, String attribute)
 	{
 		int maxIndex = getMaxArrayDim(plugin, attribute);
 
@@ -283,7 +283,7 @@ public class ArraysSetup implements Setup
 		return selector;
 	}
 
-	private static void setupArrays(int arrayDim, ModelState modelstate, HierarchicalNode refNode, HierarchicalNode objParent, HierarchicalNode arrayParent, int[] dimValues, ArraysType type)
+	private static void setupArrays(int arrayDim, HierarchicalModel modelstate, HierarchicalNode refNode, HierarchicalNode objParent, HierarchicalNode arrayParent, int[] dimValues, ArraysType type)
 	{
 		ArrayNode arrayNode = refNode.getArrayNode();
 		ValueNode sizeNode = arrayNode.getDimensionSize(arrayDim);
@@ -308,7 +308,6 @@ public class ArraysSetup implements Setup
 					SpeciesNode specChild = new SpeciesNode(speciesNode);
 					specChild.setName(newId);
 					arrayParent.addChild(specChild);
-					modelstate.addVariable(specChild);
 					if (arrayNode.hasIndexReference(compartmentAttr))
 					{
 						for (int j = dimValues.length - 1; j >= 0; j--)
@@ -316,6 +315,14 @@ public class ArraysSetup implements Setup
 							arrayNode.setDimensionValue(j, dimValues[j]);
 						}
 						specChild.setCompartment((VariableNode) Evaluator.evaluateArraysSelector(modelstate, arrayNode.getIndexMap().get(compartmentAttr)));
+					}
+					if (speciesNode.isConstant())
+					{
+						modelstate.addVariable(speciesNode);
+					}
+					else
+					{
+						modelstate.addConstant(speciesNode);
 					}
 					break;
 				case REACTION:
@@ -343,12 +350,11 @@ public class ArraysSetup implements Setup
 					}
 					break;
 				case INITASSIGNMENT:
-					clone = refNode.clone();
 					for (int j = dimValues.length - 1; j >= 0; j--)
 					{
 						arrayNode.setDimensionValue(j, dimValues[j]);
 					}
-					MathInterpreter.replaceNameNodes(clone, arrayNode.getDimensionMap());
+					clone = MathInterpreter.copyMath(refNode, arrayNode.getDimensionMap(), true);
 					if (arrayNode.hasIndexReference(symbolAttr))
 					{
 						variableNode = (VariableNode) Evaluator.evaluateArraysSelector(modelstate, arrayNode.getIndexMap().get(symbolAttr));
@@ -361,7 +367,7 @@ public class ArraysSetup implements Setup
 					{
 						arrayNode.setDimensionValue(j, dimValues[j]);
 					}
-					clone = MathInterpreter.replaceNameNodes(refNode, arrayNode.getDimensionMap());
+					clone = MathInterpreter.copyMath(refNode, arrayNode.getDimensionMap(), true);
 					if (arrayNode.hasIndexReference(variableAttr))
 					{
 						variableNode = (VariableNode) Evaluator.evaluateArraysSelector(modelstate, arrayNode.getIndexMap().get(variableAttr));
@@ -373,7 +379,7 @@ public class ArraysSetup implements Setup
 					{
 						arrayNode.setDimensionValue(j, dimValues[j]);
 					}
-					clone = MathInterpreter.replaceNameNodes(refNode, arrayNode.getDimensionMap());
+					clone = MathInterpreter.copyMath(refNode, arrayNode.getDimensionMap(), true);
 					if (arrayNode.hasIndexReference(variableAttr))
 					{
 						variableNode = (VariableNode) Evaluator.evaluateArraysSelector(modelstate, arrayNode.getIndexMap().get(variableAttr));
@@ -416,7 +422,8 @@ public class ArraysSetup implements Setup
 					break;
 				case EVENT:
 					eventNode = (EventNode) refNode;
-					EventNode eventChild = new EventNode(eventNode);
+					clone = MathInterpreter.copyMath(eventNode, arrayNode.getDimensionMap(), true);
+					EventNode eventChild = new EventNode(clone);
 					arrayParent.addChild(eventChild);
 					modelstate.addEvent(eventChild);
 
@@ -436,6 +443,12 @@ public class ArraysSetup implements Setup
 					}
 					eventNode = (EventNode) getIndexedNode(objParent);
 					eventNode.addEventAssignment(eventAssignChild);
+					break;
+				case CONSTRAINT:
+					// ConstraintNode constraintNode = (ConstraintNode) refNode;
+					// newId = getArrayedId(constraintNode.getName(), copy);
+					// ConstraintNode constraintChild = new
+					// ConstraintNode(newId, constraintNode);
 					break;
 				}
 

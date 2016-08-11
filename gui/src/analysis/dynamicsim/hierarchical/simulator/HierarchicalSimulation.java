@@ -25,13 +25,13 @@ import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
 import analysis.dynamicsim.ParentSimulator;
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
+import analysis.dynamicsim.hierarchical.util.math.ConstraintNode;
 import analysis.dynamicsim.hierarchical.util.math.EventNode;
 import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.math.ValueNode;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
-import analysis.dynamicsim.hierarchical.util.setup.ConstraintNode;
 
 /**
  * This class provides the state variables of the simulation.
@@ -97,11 +97,11 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	private int							numSubmodels;
 	private boolean						isGrid;
 	private Random						randomNumberGenerator;
-	private ModelState					topmodel;
+	private HierarchicalModel					topmodel;
 	private ArrayList<String>			filesCreated;
-	private Map<String, ModelState>		submodels;
+	private Map<String, HierarchicalModel>		submodels;
 	final private SimType				type;
-	private List<ModelState>			states;
+	private List<HierarchicalModel>			states;
 	private ValueNode					totalPropensity;
 	private double						initialTime, outputStartTime;
 
@@ -125,8 +125,8 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		this.totalRuns = runs;
 		this.type = type;
 		this.filesCreated = new ArrayList<String>();
-		this.topmodel = new ModelState("topmodel");
-		this.submodels = new HashMap<String, ModelState>(0);
+		this.topmodel = new HierarchicalModel("topmodel");
+		this.submodels = new HashMap<String, HierarchicalModel>(0);
 		this.currentTime = new VariableNode("_time", 0);
 		this.currentRun = 1;
 		this.randomNumberGenerator = new Random(randomSeed);
@@ -208,18 +208,18 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		this.randomNumberGenerator = copy.randomNumberGenerator;
 	}
 
-	public void addModelState(ModelState modelstate)
+	public void addModelState(HierarchicalModel modelstate)
 	{
 
 		if (states == null)
 		{
-			states = new ArrayList<ModelState>();
+			states = new ArrayList<HierarchicalModel>();
 		}
 
 		states.add(modelstate);
 	}
 
-	public List<ModelState> getListOfModelStates()
+	public List<HierarchicalModel> getListOfModelStates()
 	{
 		return states;
 	}
@@ -702,7 +702,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	/**
 	 * @return the submodels
 	 */
-	public Map<String, ModelState> getSubmodels()
+	public Map<String, HierarchicalModel> getSubmodels()
 	{
 		return submodels;
 	}
@@ -710,7 +710,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	/**
 	 * @return the topmodel
 	 */
-	public ModelState getTopmodel()
+	public HierarchicalModel getTopmodel()
 	{
 		return topmodel;
 	}
@@ -754,11 +754,11 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	 * @param submodels
 	 *            the submodels to set
 	 */
-	public void addSubmodel(String id, ModelState modelstate)
+	public void addSubmodel(String id, HierarchicalModel modelstate)
 	{
 		if (submodels == null)
 		{
-			submodels = new HashMap<String, ModelState>();
+			submodels = new HashMap<String, HierarchicalModel>();
 		}
 		submodels.put(id, modelstate);
 	}
@@ -767,12 +767,12 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	 * @param topmodel
 	 *            the topmodel to set
 	 */
-	public void setTopmodel(ModelState topmodel)
+	public void setTopmodel(HierarchicalModel topmodel)
 	{
 		this.topmodel = topmodel;
 	}
 
-	public ModelState getModelState(String id)
+	public HierarchicalModel getModelState(String id)
 	{
 		if (id.equals("topmodel"))
 		{
@@ -810,7 +810,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 		List<ReactionNode> reactions = new ArrayList<ReactionNode>();
 
-		for (ModelState submodel : states)
+		for (HierarchicalModel submodel : states)
 		{
 
 			if (submodel.getNumOfReactions() > 0)
@@ -853,7 +853,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 		List<EventNode> events = new ArrayList<EventNode>();
 
-		for (ModelState modelstate : states)
+		for (HierarchicalModel modelstate : states)
 		{
 
 			if (modelstate.getNumOfEvents() > 0)
@@ -876,7 +876,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 		List<VariableNode> variables = new ArrayList<VariableNode>();
 
-		for (ModelState modelstate : states)
+		for (HierarchicalModel modelstate : states)
 		{
 			if (modelstate.getNumOfVariables() > 0)
 			{
@@ -898,7 +898,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 		List<ConstraintNode> constraints = new ArrayList<ConstraintNode>();
 
-		for (ModelState modelstate : states)
+		for (HierarchicalModel modelstate : states)
 		{
 			if (modelstate.getNumOfConstraints() > 0)
 			{
@@ -920,7 +920,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 		List<VariableNode> constants = new ArrayList<VariableNode>();
 
-		for (ModelState modelstate : states)
+		for (HierarchicalModel modelstate : states)
 		{
 			if (modelstate.getNumOfConstants() > 0)
 			{
@@ -984,15 +984,15 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
 	}
 
-	protected List<ModelState> getModelStateList()
+	protected List<HierarchicalModel> getModelStateList()
 	{
 
-		List<ModelState> listOfStates = new ArrayList<ModelState>();
+		List<HierarchicalModel> listOfStates = new ArrayList<HierarchicalModel>();
 
-		ModelState topmodel = getTopmodel();
+		HierarchicalModel topmodel = getTopmodel();
 		listOfStates.add(topmodel);
 
-		for (ModelState submodel : getSubmodels().values())
+		for (HierarchicalModel submodel : getSubmodels().values())
 		{
 			listOfStates.add(submodel);
 		}
@@ -1009,7 +1009,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		}
 		ValueNode propensity;
 		totalPropensity = new ValueNode(0);
-		for (ModelState modelstate : states)
+		for (HierarchicalModel modelstate : states)
 		{
 
 			if (modelstate.getNumOfReactions() > 0)
@@ -1095,7 +1095,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	{
 		this.initTotalPropensity = totalPropensity.getValue();
 
-		for (ModelState state : states)
+		for (HierarchicalModel state : states)
 		{
 			state.setInitPropensity();
 
@@ -1109,7 +1109,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	protected void restoreInitialPropensity()
 	{
 		totalPropensity.setValue(initTotalPropensity);
-		for (ModelState state : states)
+		for (HierarchicalModel state : states)
 		{
 			state.restoreInitPropensity();
 

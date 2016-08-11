@@ -19,9 +19,9 @@ import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 
 import analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import analysis.dynamicsim.hierarchical.model.Container.ModelType;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
-import analysis.dynamicsim.hierarchical.states.ModelState;
-import analysis.dynamicsim.hierarchical.states.State.ModelType;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
@@ -40,7 +40,7 @@ public class ModelSetup implements Setup
 		SBMLDocument document = sim.getDocument();
 		Model model = document.getModel();
 		String rootPath = sim.getRootDirectory();
-		List<ModelState> listOfModules = new ArrayList<ModelState>();
+		List<HierarchicalModel> listOfModules = new ArrayList<HierarchicalModel>();
 		List<Model> listOfModels = new ArrayList<Model>();
 		List<String> listOfPrefix = new ArrayList<String>();
 		List<ReplacementHandler> listOfHandlers = new ArrayList<ReplacementHandler>();
@@ -49,7 +49,7 @@ public class ModelSetup implements Setup
 		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document.getPlugin(CompConstants.namespaceURI);
 
 		CompModelPlugin sbmlCompModel = (CompModelPlugin) model.getPlugin(CompConstants.namespaceURI);
-		ModelState topmodel = new ModelState("topmodel");
+		HierarchicalModel topmodel = new HierarchicalModel("topmodel");
 		sim.setTopmodel(topmodel);
 		setModelType(topmodel, model);
 		indexToModel.put("topmodel", 0);
@@ -71,7 +71,7 @@ public class ModelSetup implements Setup
 		}
 	}
 
-	private static void setupSubmodels(HierarchicalSimulation sim, String path, String prefix, CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel, List<ModelState> listOfModules, List<Model> listOfModels, List<String> listOfPrefix, Map<String, Integer> mapOfModels)
+	private static void setupSubmodels(HierarchicalSimulation sim, String path, String prefix, CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel, List<HierarchicalModel> listOfModules, List<Model> listOfModels, List<String> listOfPrefix, Map<String, Integer> mapOfModels)
 			throws XMLStreamException, IOException
 	{
 
@@ -125,7 +125,7 @@ public class ModelSetup implements Setup
 			if (model != null)
 			{
 				String id = prefix + submodel.getId();
-				ModelState modelstate = new ModelState(id);
+				HierarchicalModel modelstate = new HierarchicalModel(id);
 				sim.addSubmodel(id, modelstate);
 				mapOfModels.put(id, mapOfModels.size());
 				listOfPrefix.add(newPrefix);
@@ -137,7 +137,7 @@ public class ModelSetup implements Setup
 		}
 	}
 
-	private static void initializeModelStates(HierarchicalSimulation sim, List<ReplacementHandler> listOfHandlers, List<ModelState> listOfModules, List<Model> listOfModels, VariableNode time, boolean isSSA) throws IOException
+	private static void initializeModelStates(HierarchicalSimulation sim, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, VariableNode time, boolean isSSA) throws IOException
 	{
 		for (int i = 0; i < listOfModules.size(); i++)
 		{
@@ -160,17 +160,17 @@ public class ModelSetup implements Setup
 		}
 	}
 
-	private static void initializeHybridSimulation(HierarchicalMixedSimulator sim, List<Model> listOfModels, List<ModelState> listOfModules) throws IOException
+	private static void initializeHybridSimulation(HierarchicalMixedSimulator sim, List<Model> listOfModels, List<HierarchicalModel> listOfModules) throws IOException
 	{
-		List<ModelState> listOfODEStates = new ArrayList<ModelState>();
-		List<ModelState> listOfSSAStates = new ArrayList<ModelState>();
-		List<ModelState> listOfFBAStates = new ArrayList<ModelState>();
+		List<HierarchicalModel> listOfODEStates = new ArrayList<HierarchicalModel>();
+		List<HierarchicalModel> listOfSSAStates = new ArrayList<HierarchicalModel>();
+		List<HierarchicalModel> listOfFBAStates = new ArrayList<HierarchicalModel>();
 		List<Model> listOfFBAModels = new ArrayList<Model>();
 
 		for (int i = 0; i < listOfModels.size(); i++)
 		{
 			Model model = listOfModels.get(i);
-			ModelState state = listOfModules.get(i);
+			HierarchicalModel state = listOfModules.get(i);
 
 			if (state.getModelType() == ModelType.HFBA)
 			{
@@ -192,16 +192,16 @@ public class ModelSetup implements Setup
 		addFBA(sim, listOfFBAModels, listOfFBAStates);
 	}
 
-	private static void addSimulationMethod(HierarchicalMixedSimulator sim, List<ModelState> listOfODEStates, boolean isSSA)
+	private static void addSimulationMethod(HierarchicalMixedSimulator sim, List<HierarchicalModel> listOfODEStates, boolean isSSA)
 	{
 		if (listOfODEStates.size() > 0)
 		{
-			ModelState topmodel = listOfODEStates.get(0);
-			Map<String, ModelState> submodels = listOfODEStates.size() > 1 ? new HashMap<String, ModelState>() : null;
+			HierarchicalModel topmodel = listOfODEStates.get(0);
+			Map<String, HierarchicalModel> submodels = listOfODEStates.size() > 1 ? new HashMap<String, HierarchicalModel>() : null;
 
 			for (int i = 1; i < listOfODEStates.size(); i++)
 			{
-				ModelState submodel = listOfODEStates.get(i);
+				HierarchicalModel submodel = listOfODEStates.get(i);
 				submodels.put(submodel.getID(), submodel);
 			}
 
@@ -217,17 +217,17 @@ public class ModelSetup implements Setup
 	}
 
 	// TODO: generalize this
-	private static void addFBA(HierarchicalMixedSimulator sim, List<Model> listOfFBAModels, List<ModelState> listOfFBAStates)
+	private static void addFBA(HierarchicalMixedSimulator sim, List<Model> listOfFBAModels, List<HierarchicalModel> listOfFBAStates)
 	{
 		if (listOfFBAModels.size() > 0)
 		{
-			ModelState state = listOfFBAStates.get(0);
+			HierarchicalModel state = listOfFBAStates.get(0);
 			Model model = listOfFBAModels.get(0);
 			sim.createFBASim(state, model);
 		}
 	}
 
-	private static void setModelType(ModelState modelstate, Model model)
+	private static void setModelType(HierarchicalModel modelstate, Model model)
 	{
 		int sboTerm = model.isSetSBOTerm() ? model.getSBOTerm() : -1;
 		if (sboTerm == GlobalConstants.SBO_FLUX_BALANCE)

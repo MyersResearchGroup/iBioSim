@@ -87,7 +87,7 @@ public class ValueNode extends HierarchicalNode
 	@Override
 	public String toString()
 	{
-		return "NUMBER = " + String.valueOf(value);
+		return String.valueOf(value);
 	}
 
 	@Override

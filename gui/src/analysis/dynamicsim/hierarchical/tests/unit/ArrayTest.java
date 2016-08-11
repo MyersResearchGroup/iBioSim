@@ -22,7 +22,7 @@ import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.arrays.Index;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.math.ArrayNode.ArraysType;
 import analysis.dynamicsim.hierarchical.util.math.EventAssignmentNode;
 import analysis.dynamicsim.hierarchical.util.math.EventNode;
@@ -171,7 +171,7 @@ public class ArrayTest
 	@Test
 	public void test01() throws IOException, XMLStreamException
 	{
-		ModelState modelstate = new ModelState("toplevel");
+		HierarchicalModel modelstate = new HierarchicalModel("toplevel");
 		modelstate.addVariable(new VariableNode("n", 1));
 		ArraysSetup.setupDimensions(modelstate, compartment, compNode, ArraysType.COMPARTMENT);
 		ArraysSetup.linkDimensionSize(modelstate);
@@ -187,7 +187,7 @@ public class ArrayTest
 	@Test
 	public void test02() throws IOException, XMLStreamException
 	{
-		ModelState modelstate = new ModelState("toplevel");
+		HierarchicalModel modelstate = new HierarchicalModel("toplevel");
 		modelstate.addVariable(new VariableNode("n", 1));
 		ArraysSetup.setupDimensions(modelstate, parameter, varNode, ArraysType.PARAMETER);
 		ArraysSetup.linkDimensionSize(modelstate);
@@ -201,7 +201,7 @@ public class ArrayTest
 	@Test
 	public void test03() throws IOException, XMLStreamException
 	{
-		ModelState modelstate = new ModelState("toplevel");
+		HierarchicalModel modelstate = new HierarchicalModel("toplevel");
 		modelstate.addVariable(new VariableNode("n", 2));
 		ArraysSetup.setupDimensions(modelstate, species, node, ArraysType.SPECIES);
 
@@ -218,7 +218,7 @@ public class ArrayTest
 	@Test
 	public void test04() throws IOException, XMLStreamException
 	{
-		ModelState modelstate = new ModelState("toplevel");
+		HierarchicalModel modelstate = new HierarchicalModel("toplevel");
 		modelstate.addVariable(new VariableNode("n", 2));
 		ArraysSetup.setupDimensions(modelstate, parameter, varNode, ArraysType.PARAMETER);
 		ArraysSetup.linkDimensionSize(modelstate);

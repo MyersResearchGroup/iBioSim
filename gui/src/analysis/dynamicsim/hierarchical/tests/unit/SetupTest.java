@@ -4,11 +4,12 @@ import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 
 public class SetupTest
 {
@@ -24,10 +25,11 @@ public class SetupTest
 	{
 		String SBMLFile = "./gui/src/analysis/dynamicsim/hierarchical/tests/resources/test00.xml";
 		HierarchicalODERKSimulator odeSim = new HierarchicalODERKSimulator(SBMLFile, "", 10);
-		ModelState topModel = odeSim.getTopmodel();
-		assert (topModel.getNode("A").getValue() == 3);
-		assert (topModel.getNode("B").getValue() == 2);
-		assert (topModel.getNode("C").getValue() == 1);
+		odeSim.initialize(0, 1);
+		HierarchicalModel topModel = odeSim.getTopmodel();
+		Assert.assertTrue(topModel.getNode("A").getValue() == 2);
+		Assert.assertTrue(topModel.getNode("B").getValue() == 1);
+		Assert.assertTrue(topModel.getNode("C").getValue() == 3);
 
 	}
 

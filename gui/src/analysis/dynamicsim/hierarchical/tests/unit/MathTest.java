@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.text.parser.ParseException;
@@ -20,24 +21,24 @@ public class MathTest
 	public void test01() throws ParseException
 	{
 		ASTNode node = ASTNode.parseFormula("k * (a - b)");
-		ASTNode split0 = ASTNode.parseFormula("k * a");
-		ASTNode split1 = ASTNode.parseFormula("k * (-b) ");
+		ASTNode split0 = ASTNode.parseFormula("k*a");
+		ASTNode split1 = ASTNode.parseFormula("-(k*b)");
 		List<ASTNode> listOfNodes = RateSplitterInterpreter.parseASTNode(node);
-		assert (listOfNodes.size() == 2);
-		assert (listOfNodes.get(0).equals(split0));
-		assert (listOfNodes.get(1).equals(split1));
+		Assert.assertTrue(listOfNodes.size() == 2);
+		Assert.assertTrue(listOfNodes.get(0).equals(split0));
+		Assert.assertTrue(listOfNodes.get(1).equals(split1));
 	}
 
 	@Test
 	public void test02() throws ParseException
 	{
 		ASTNode node = ASTNode.parseFormula("k * (a * (b - c) )");
-		ASTNode split0 = ASTNode.parseFormula("k * a * b");
-		ASTNode split1 = ASTNode.parseFormula("- k * b * c ");
+		ASTNode split0 = ASTNode.parseFormula("k*(a*b)");
+		ASTNode split1 = ASTNode.parseFormula("-(k*(a*c))");
 		List<ASTNode> listOfNodes = RateSplitterInterpreter.parseASTNode(node);
-		assert (listOfNodes.size() == 2);
-		assert (listOfNodes.get(0).equals(split0));
-		assert (listOfNodes.get(1).equals(split1));
+		Assert.assertTrue(listOfNodes.size() == 2);
+		Assert.assertTrue(listOfNodes.get(0).equals(split0));
+		Assert.assertTrue(listOfNodes.get(1).equals(split1));
 	}
 
 	@Test
@@ -45,7 +46,7 @@ public class MathTest
 	{
 		ASTNode node = ASTNode.parseFormula("(a + b) * (c - d)");
 		List<ASTNode> listOfNodes = RateSplitterInterpreter.parseASTNode(node);
-		assert (listOfNodes.size() == 4);
+		Assert.assertTrue(listOfNodes.size() == 4);
 	}
 
 	@Test
@@ -53,7 +54,7 @@ public class MathTest
 	{
 		ASTNode node = ASTNode.parseFormula("(a + b) * (c + d)");
 		List<ASTNode> listOfNodes = RateSplitterInterpreter.parseASTNode(node);
-		assert (listOfNodes.size() == 4);
+		Assert.assertTrue(listOfNodes.size() == 4);
 	}
 
 	@Test
@@ -61,7 +62,7 @@ public class MathTest
 	{
 		ASTNode node = ASTNode.parseFormula("1/(a - b)");
 		List<ASTNode> listOfNodes = RateSplitterInterpreter.parseASTNode(node);
-		assert (listOfNodes.size() == 1);
+		Assert.assertTrue(listOfNodes.size() == 1);
 	}
 
 	@Test
@@ -69,7 +70,7 @@ public class MathTest
 	{
 		ASTNode node = ASTNode.parseFormula("(a + b * (c - d)) * (e + f)");
 		List<ASTNode> listOfNodes = RateSplitterInterpreter.parseASTNode(node);
-		assert (listOfNodes.size() == 1);
+		Assert.assertTrue(listOfNodes.size() == 6);
 	}
 
 	@Test
@@ -80,8 +81,8 @@ public class MathTest
 		variableToNodes.put("b", new VariableNode("b", 0));
 		ASTNode node = ASTNode.parseFormula("( a + 1) - b");
 		HierarchicalNode newNode = MathInterpreter.parseASTNode(node, variableToNodes);
-		HierarchicalNode copyNode = new HierarchicalNode(newNode);
-		assert (newNode.toString().equals(copyNode.toString()));
+		HierarchicalNode copyNode = newNode.clone();
+		Assert.assertTrue(newNode.toString().equals(copyNode.toString()));
 	}
 
 	@Test
@@ -92,26 +93,42 @@ public class MathTest
 		ASTNode node = ASTNode.parseFormula("a");
 		HierarchicalNode newNode = MathInterpreter.parseASTNode(node, variableToNodes);
 		HierarchicalNode copyNode = newNode.clone();
-		assert (newNode.toString().equals(copyNode.toString()));
+		Assert.assertTrue(newNode.toString().equals(copyNode.toString()));
 
-		assert (newNode.getChild(0) != copyNode.getChild(0));
+		Assert.assertTrue(newNode != copyNode);
 
 		((VariableNode) copyNode).setValue(1);
 
-		assert (((VariableNode) newNode).getValue() == 0);
-		assert (((VariableNode) copyNode).getValue() == 0);
+		Assert.assertTrue(((VariableNode) newNode).getValue() == 0);
+		Assert.assertTrue(((VariableNode) copyNode).getValue() == 1);
 	}
 
 	@Test
 	public void test09() throws ParseException
 	{
-		Map<String, VariableNode> variableToNodes = new HashMap<String, VariableNode>();
-		variableToNodes.put("a", new VariableNode("a", 2));
-		variableToNodes.put("b", new VariableNode("b", 2));
-		ASTNode node = ASTNode.parseFormula("a+b");
-		HierarchicalNode newNode = MathInterpreter.parseASTNode(node, variableToNodes);
-		MathInterpreter.replaceNameNodes(newNode, variableToNodes);
 
-		assert (newNode.toString() == "2 + 2");
+		Map<String, VariableNode> variableToNodes = new HashMap<String, VariableNode>();
+		Map<String, VariableNode> dimensionMap = new HashMap<String, VariableNode>();
+		dimensionMap.put("a", new VariableNode("a", 2));
+		dimensionMap.put("b", new VariableNode("b", 2));
+		variableToNodes.put("c", new VariableNode("c", 1));
+		ASTNode node = ASTNode.parseFormula("a+b");
+		HierarchicalNode newNode = MathInterpreter.parseASTNode(node, dimensionMap);
+		newNode = MathInterpreter.copyMath(newNode, dimensionMap, true);
+
+		Assert.assertTrue(newNode.toString().equals("(PLUS 2.0 2.0)"));
+
+		node = ASTNode.parseFormula("a");
+		newNode = MathInterpreter.parseASTNode(node, dimensionMap);
+		newNode = MathInterpreter.copyMath(newNode, dimensionMap, true);
+
+		Assert.assertTrue(newNode.toString().equals("2.0"));
+
+		node = ASTNode.parseFormula("c");
+		newNode = MathInterpreter.parseASTNode(node, variableToNodes);
+		newNode = MathInterpreter.copyMath(newNode, dimensionMap, true);
+
+		Assert.assertTrue(!newNode.toString().equals("c"));
 	}
+
 }

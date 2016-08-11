@@ -1,7 +1,4 @@
-package analysis.dynamicsim.hierarchical.util.setup;
-
-import analysis.dynamicsim.hierarchical.util.math.Evaluator;
-import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
+package analysis.dynamicsim.hierarchical.util.math;
 
 public class ConstraintNode extends HierarchicalNode
 {
@@ -11,9 +8,17 @@ public class ConstraintNode extends HierarchicalNode
 
 	public ConstraintNode(String id, HierarchicalNode copy)
 	{
-		super(copy);
+		super(Type.PLUS);
+		this.addChild(copy);
 		this.id = id;
 		this.failures = 0;
+	}
+
+	private ConstraintNode(ConstraintNode constraintNode)
+	{
+		super(constraintNode);
+		this.id = constraintNode.id;
+		this.failures = constraintNode.failures;
 	}
 
 	public String getName()
@@ -34,5 +39,11 @@ public class ConstraintNode extends HierarchicalNode
 			failures++;
 		}
 		return value;
+	}
+
+	@Override
+	public ConstraintNode clone()
+	{
+		return new ConstraintNode(this);
 	}
 }

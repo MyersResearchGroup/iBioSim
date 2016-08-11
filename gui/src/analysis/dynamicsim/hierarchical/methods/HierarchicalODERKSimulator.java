@@ -15,8 +15,8 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
-import analysis.dynamicsim.hierarchical.states.ModelState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
 import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
@@ -77,7 +77,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 
 	}
 
-	public HierarchicalODERKSimulator(HierarchicalMixedSimulator sim, ModelState topmodel, Map<String, ModelState> submodels) throws IOException, XMLStreamException
+	public HierarchicalODERKSimulator(HierarchicalMixedSimulator sim, HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels) throws IOException, XMLStreamException
 	{
 		super(sim);
 		this.relativeError = 1e-6;
