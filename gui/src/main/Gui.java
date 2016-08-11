@@ -5243,7 +5243,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private String importSBMLDocument(String file,SBMLDocument document) throws SBMLException, FileNotFoundException, XMLStreamException {
 		String newFile = null;
 		SBMLutilities.checkModelCompleteness(document,true);
-		// TODO: removed due to bug with file from BioPax2SBML convert
 		SBMLutilities.check(null, document, false);
 		newFile = file;
 		newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
