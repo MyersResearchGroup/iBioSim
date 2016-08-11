@@ -7648,6 +7648,7 @@ public class BioModel {
 			s = s.replace("(" + origVar + ",", "(" + newVar + ",");
 			s = s.replace(" " + origVar + ")", " " + newVar + ")");
 			s = s.replace(" " + origVar + "^", " " + newVar + "^");
+			s = s.replace("^" + origVar + ")", "^" + newVar + ")");
 		} while (s != olds);
 		return s.trim();
 	}
