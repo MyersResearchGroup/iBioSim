@@ -6582,10 +6582,14 @@ public class SBMLutilities
 		return null;
 	}
 
-	public static void checkModelCompleteness(SBMLDocument document)
+	public static void checkModelCompleteness(SBMLDocument document,boolean addDefaults)
 	{
 		JTextArea messageArea = new JTextArea();
-		messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
+		if (addDefaults) {
+			messageArea.append("Model is incomplete.  Default values being added.\n");
+		} else {
+			messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
+		}
 		boolean display = false;
 		org.sbml.jsbml.Model model = document.getModel();
 		for (int i = 0; i < model.getCompartmentCount(); i++)
@@ -6594,7 +6598,12 @@ public class SBMLutilities
 			if (!compartment.isSetSize() && model.getInitialAssignment(compartment.getId())==null)
 			{
 				messageArea.append("--------------------------------------------------------------------------\n");
-				messageArea.append("Compartment " + compartment.getId() + " needs a size.\n");
+				if (addDefaults) {
+					messageArea.append("Compartment " + compartment.getId() + " needs a size, setting to 1.0.\n");
+					compartment.setSize(1.0);
+				} else {
+					messageArea.append("Compartment " + compartment.getId() + " needs a size.\n");
+				}
 				display = true;
 			}
 		}
@@ -6605,7 +6614,12 @@ public class SBMLutilities
 					 && model.getInitialAssignment(species.getId())==null)
 			{
 				messageArea.append("--------------------------------------------------------------------------\n");
-				messageArea.append("Species " + species.getId() + " needs an initial amount or concentration.\n");
+				if (addDefaults) {
+					messageArea.append("Species " + species.getId() + " needs an initial amount, setting to 0.\n");
+					species.setInitialAmount(0.0);
+				} else {
+					messageArea.append("Species " + species.getId() + " needs an initial amount or concentration.\n");
+				}
 				display = true;
 			}
 		}
@@ -6615,13 +6629,42 @@ public class SBMLutilities
 			if (!(parameter.isSetValue()) && model.getInitialAssignment(parameter.getId())==null)
 			{
 				messageArea.append("--------------------------------------------------------------------------\n");
-				messageArea.append("Parameter " + parameter.getId() + " needs an initial value.\n");
+				if (addDefaults) {
+					messageArea.append("Parameter " + parameter.getId() + " needs an initial value, setting to 0.\n");
+					parameter.setValue(0.0);
+				} else {
+					messageArea.append("Parameter " + parameter.getId() + " needs an initial value.\n");
+				}
 				display = true;
 			}
 		}
 		for (int i = 0; i < model.getReactionCount(); i++)
 		{
 			Reaction reaction = model.getReaction(i);
+			for (SpeciesReference reactant : reaction.getListOfReactants()) {
+				if (!reactant.isSetStoichiometry() || reactant.getStoichiometry()==Double.NaN) {
+					messageArea.append("--------------------------------------------------------------------------\n");
+					if (addDefaults) {
+						messageArea.append("Reaction " + reaction.getId() + " reactant " + reactant.getSpecies() + " needs a stoichiometry, setting to 1.0.\n");
+						reactant.setStoichiometry(1.0);
+					} else {
+						messageArea.append("Reaction " + reaction.getId() + " reactant " + reactant.getSpecies() + " needs a stoichiometry.\n");
+					}
+					display = true;
+				}
+			}
+			for (SpeciesReference product : reaction.getListOfProducts()) {
+				if (!product.isSetStoichiometry() || product.getStoichiometry()==Double.NaN) {
+					messageArea.append("--------------------------------------------------------------------------\n");
+					if (addDefaults) {
+						messageArea.append("Reaction " + reaction.getId() + " product " + product.getSpecies() + " needs a stoichiometry, setting to 1.0.\n");
+						product.setStoichiometry(1.0);
+					} else {
+						messageArea.append("Reaction " + reaction.getId() + " product " + product.getSpecies() + " needs a stoichiometry.\n");
+					}
+					display = true;
+				}
+			}
 			FBCReactionPlugin rBounds = SBMLutilities.getFBCReactionPlugin(reaction);
 			if (rBounds.isSetLowerFluxBound() || rBounds.isSetUpperFluxBound()) {
 				continue;
@@ -6629,7 +6672,13 @@ public class SBMLutilities
 			if (!(reaction.isSetKineticLaw()))
 			{
 				messageArea.append("--------------------------------------------------------------------------\n");
-				messageArea.append("Reaction " + reaction.getId() + " needs a kinetic law.\n");
+				if (addDefaults) {
+					messageArea.append("Reaction " + reaction.getId() + " needs a kinetic law, creating one.\n");
+					KineticLaw kl = reaction.createKineticLaw();
+					kl.setMath(SBMLutilities.myParseFormula("NaN"));
+				} else {
+					messageArea.append("Reaction " + reaction.getId() + " needs a kinetic law.\n");
+				}
 				display = true;
 			}
 			else
@@ -6640,7 +6689,12 @@ public class SBMLutilities
 					if (!(param.isSetValue()))
 					{
 						messageArea.append("--------------------------------------------------------------------------\n");
-						messageArea.append("Local parameter " + param.getId() + " for reaction " + reaction.getId() + " needs an initial value.\n");
+						if (addDefaults) {
+							messageArea.append("Local parameter " + param.getId() + " for reaction " + reaction.getId() + " needs an initial value, setting to 0.\n");
+							param.setValue(0.0);
+						} else {
+							messageArea.append("Local parameter " + param.getId() + " for reaction " + reaction.getId() + " needs an initial value.\n");
+						}
 						display = true;
 					}
 				}
