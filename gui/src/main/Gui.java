@@ -5242,9 +5242,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	private String importSBMLDocument(String file,SBMLDocument document) throws SBMLException, FileNotFoundException, XMLStreamException {
 		String newFile = null;
-		SBMLutilities.checkModelCompleteness(document);
+		SBMLutilities.checkModelCompleteness(document,true);
 		// TODO: removed due to bug with file from BioPax2SBML convert
-		//SBMLutilities.check(null, document, false);
+		SBMLutilities.check(null, document, false);
 		newFile = file;
 		newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 		if (Character.isDigit(newFile.charAt(0))) {
@@ -5312,7 +5312,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						try
 						{
 							SBMLDocument document = SBMLutilities.readSBML(filename.trim() + separator + s);
-							SBMLutilities.checkModelCompleteness(document);
+							SBMLutilities.checkModelCompleteness(document,true);
 							if (overwrite(root + separator + s, s))
 							{
 								SBMLutilities.check(filename.trim(), document, false);
@@ -12004,6 +12004,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
+				SBMLutilities.checkModelCompleteness(document,true);
 				SBMLWriter writer = new SBMLWriter();
 				try
 				{

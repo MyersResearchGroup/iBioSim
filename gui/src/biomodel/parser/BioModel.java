@@ -2367,6 +2367,7 @@ public class BioModel {
 
 	public Reaction createProductionReaction(String promoterId, String reactionId, String ka, String np, String ko,
 			String kb, String KoStr, String KaoStr, boolean onPort, String[] dimensions) {
+		createProductionDefaultParameters();
 		Reaction r = getProductionReaction(promoterId);
 		KineticLaw k = null;
 		if (r == null) {
