@@ -1895,7 +1895,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG))
 		{
-			ODE.setSelected(true);
+			ODE.setSelected(true); 
 			enableODE();
 			simulators.setSelectedItem((String)"rkf45");
 			if (method!=null) {
