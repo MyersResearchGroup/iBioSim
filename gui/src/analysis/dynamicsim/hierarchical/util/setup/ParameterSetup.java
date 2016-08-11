@@ -6,7 +6,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
@@ -15,7 +15,7 @@ public class ParameterSetup
 	/**
 	 * puts parameter-related information into data structures
 	 */
-	public static void setupParameters(ModelState modelstate, Model model)
+	public static void setupParameters(HierarchicalModel modelstate, Model model)
 	{
 		for (Parameter parameter : model.getListOfParameters())
 		{
@@ -36,7 +36,7 @@ public class ParameterSetup
 	 * 
 	 * @param parameter
 	 */
-	private static void setupSingleParameter(ModelState modelstate, Parameter parameter, String parameterID)
+	private static void setupSingleParameter(HierarchicalModel modelstate, Parameter parameter, String parameterID)
 	{
 		double value = parameter.getValue();
 
@@ -59,7 +59,7 @@ public class ParameterSetup
 	 * @param kineticLaw
 	 * @param reactionID
 	 */
-	public static void setupLocalParameters(ModelState modelstate, KineticLaw kineticLaw, Reaction reaction)
+	public static void setupLocalParameters(HierarchicalModel modelstate, KineticLaw kineticLaw, Reaction reaction)
 	{
 
 		String reactionID = reaction.getId();

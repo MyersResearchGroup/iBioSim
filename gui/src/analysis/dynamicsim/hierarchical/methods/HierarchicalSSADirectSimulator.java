@@ -7,8 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
-import analysis.dynamicsim.hierarchical.states.ModelState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
 import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
@@ -271,7 +271,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		}
 		else
 		{
-			for (ModelState submodel : getSubmodels().values())
+			for (HierarchicalModel submodel : getSubmodels().values())
 			{
 				totalRunningPropensity += submodel.getPropensity();
 				if (totalRunningPropensity >= threshold)
@@ -282,7 +282,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		}
 	}
 
-	private void performReaction(ModelState modelstate, double threshold)
+	private void performReaction(HierarchicalModel modelstate, double threshold)
 	{
 		double runningSum = 0;
 		for (ReactionNode reactionNode : modelstate.getReactions())

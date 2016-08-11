@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Species;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.math.AbstractHierarchicalNode.Type;
 import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
 import analysis.dynamicsim.hierarchical.util.math.SpeciesNode;
@@ -20,7 +20,7 @@ public class SpeciesSetup
 	 * @param species
 	 * @param speciesID
 	 */
-	private static void setupSingleSpecies(ModelState modelstate, Species species, Model model)
+	private static void setupSingleSpecies(HierarchicalModel modelstate, Species species, Model model)
 	{
 
 		SpeciesNode node = createSpeciesNode(species);
@@ -41,7 +41,7 @@ public class SpeciesSetup
 	 * 
 	 * @throws IOException
 	 */
-	public static void setupSpecies(ModelState modelstate, Model model)
+	public static void setupSpecies(HierarchicalModel modelstate, Model model)
 	{
 		for (Species species : model.getListOfSpecies())
 		{
@@ -57,7 +57,7 @@ public class SpeciesSetup
 		}
 	}
 
-	public static void setupCompartmentToSpecies(ModelState modelstate, Model model)
+	public static void setupCompartmentToSpecies(HierarchicalModel modelstate, Model model)
 	{
 
 		for (Species species : model.getListOfSpecies())

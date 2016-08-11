@@ -8,7 +8,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Rule;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
 import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
@@ -16,14 +16,9 @@ import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 public class RuleSetup
 {
-	public static void setupRules(ModelState modelstate, Model model)
+	public static void setupRules(HierarchicalModel modelstate, Model model)
 	{
-		long size = model.getListOfRules().size();
-
-		if (size > 0)
-		{
-			modelstate.setNoRuleFlag(false);
-		}
+		model.getListOfRules().size();
 
 		for (Rule rule : model.getListOfRules())
 		{
@@ -44,7 +39,7 @@ public class RuleSetup
 		}
 	}
 
-	public static void setupSingleAssignmentRule(ModelState modelstate, String variable, ASTNode math, Model model, Map<String, VariableNode> variableToNodes)
+	public static void setupSingleAssignmentRule(HierarchicalModel modelstate, String variable, ASTNode math, Model model, Map<String, VariableNode> variableToNodes)
 	{
 
 		math = HierarchicalUtilities.inlineFormula(modelstate, math, model);
@@ -54,7 +49,7 @@ public class RuleSetup
 
 	}
 
-	public static void setupSingleRateRule(ModelState modelstate, String variable, ASTNode math, Model model, Map<String, VariableNode> variableToNodes)
+	public static void setupSingleRateRule(HierarchicalModel modelstate, String variable, ASTNode math, Model model, Map<String, VariableNode> variableToNodes)
 	{
 		math = HierarchicalUtilities.inlineFormula(modelstate, math, model);
 		VariableNode variableNode = variableToNodes.get(variable);

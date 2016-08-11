@@ -10,7 +10,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Priority;
 import org.sbml.jsbml.Trigger;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
 import analysis.dynamicsim.hierarchical.util.math.EventAssignmentNode;
@@ -23,7 +23,7 @@ public class EventSetup
 	/**
 	 * puts event-related information into data structures
 	 */
-	public static void setupEvents(ModelState modelstate, Model model)
+	public static void setupEvents(HierarchicalModel modelstate, Model model)
 	{
 		Map<String, VariableNode> variableToNodeMap = modelstate.getVariableToNodeMap();
 		for (Event event : model.getListOfEvents())
@@ -69,7 +69,7 @@ public class EventSetup
 		}
 	}
 
-	public static void setupEventAssignments(ModelState modelstate, EventNode eventNode, Event event, Model model, Map<String, VariableNode> variableToNodeMap)
+	public static void setupEventAssignments(HierarchicalModel modelstate, EventNode eventNode, Event event, Model model, Map<String, VariableNode> variableToNodeMap)
 	{
 		for (EventAssignment eventAssignment : event.getListOfEventAssignments())
 		{
@@ -86,14 +86,14 @@ public class EventSetup
 		}
 	}
 
-	public static void setupSinglePriority(ModelState modelstate, EventNode node, ASTNode math, Model model, Map<String, VariableNode> variableToNodeMap)
+	public static void setupSinglePriority(HierarchicalModel modelstate, EventNode node, ASTNode math, Model model, Map<String, VariableNode> variableToNodeMap)
 	{
 		math = HierarchicalUtilities.inlineFormula(modelstate, math, model);
 		HierarchicalNode priorityNode = MathInterpreter.parseASTNode(math, variableToNodeMap);
 		node.setPriorityValue(priorityNode);
 	}
 
-	public static void setupSingleDelay(ModelState modelstate, EventNode node, ASTNode math, Model model, Map<String, VariableNode> variableToNodeMap)
+	public static void setupSingleDelay(HierarchicalModel modelstate, EventNode node, ASTNode math, Model model, Map<String, VariableNode> variableToNodeMap)
 	{
 		math = HierarchicalUtilities.inlineFormula(modelstate, math, model);
 		HierarchicalNode delayNode = MathInterpreter.parseASTNode(math, variableToNodeMap);
@@ -106,7 +106,7 @@ public class EventSetup
 	 * 
 	 * @param event
 	 */
-	public static void setupSingleEvent(ModelState modelstate, EventNode node, ASTNode trigger, boolean useFromTrigger, boolean initValue, boolean persistent, Model model, Map<String, VariableNode> variableToNodeMap)
+	public static void setupSingleEvent(HierarchicalModel modelstate, EventNode node, ASTNode trigger, boolean useFromTrigger, boolean initValue, boolean persistent, Model model, Map<String, VariableNode> variableToNodeMap)
 	{
 		node.setUseTriggerValue(useFromTrigger);
 		node.setPersistent(persistent);

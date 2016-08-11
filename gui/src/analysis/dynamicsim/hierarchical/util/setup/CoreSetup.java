@@ -4,13 +4,13 @@ import java.io.IOException;
 
 import org.sbml.jsbml.Model;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 public class CoreSetup implements Setup
 {
 
-	public static void initializeVariables(ModelState modelstate, Model model, VariableNode time) throws IOException
+	public static void initializeVariables(HierarchicalModel modelstate, Model model, VariableNode time) throws IOException
 	{
 		modelstate.createVariableToNodeMap();
 		modelstate.addMappingNode(time.getName(), time);
@@ -20,12 +20,12 @@ public class CoreSetup implements Setup
 		ReactionSetup.setupReactions(modelstate, model);
 	}
 
-	public static void initializeModel(ModelState modelstate, Model model, VariableNode time)
+	public static void initializeModel(HierarchicalModel modelstate, Model model, VariableNode time)
 	{
 		initializeModel(modelstate, model, time, false);
 	}
 
-	public static void initializeModel(ModelState modelstate, Model model, VariableNode time, boolean split)
+	public static void initializeModel(HierarchicalModel modelstate, Model model, VariableNode time, boolean split)
 	{
 		ArraysSetup.linkDimensionSize(modelstate);
 		ArraysSetup.expandArrays(modelstate);
@@ -37,7 +37,7 @@ public class CoreSetup implements Setup
 		InitAssignmentSetup.setupInitialAssignments(modelstate, model);
 	}
 
-	public static void initializeLinks(ModelState modelstate, Model model, VariableNode time, boolean split)
+	public static void initializeLinks(HierarchicalModel modelstate, Model model, VariableNode time, boolean split)
 	{
 
 		SpeciesSetup.setupCompartmentToSpecies(modelstate, model);

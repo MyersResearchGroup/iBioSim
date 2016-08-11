@@ -1,15 +1,15 @@
 package analysis.dynamicsim.hierarchical.util.comp;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 
 public class ReplacementHandler
 {
-	private ModelState	fromModelState;
+	private HierarchicalModel	fromModelState;
 	private String		fromVariable;
-	private ModelState	toModelState;
+	private HierarchicalModel	toModelState;
 	private String		toVariable;
 
-	public ReplacementHandler(ModelState fromModelState, String fromVariable, ModelState toModelState, String toVariable)
+	public ReplacementHandler(HierarchicalModel fromModelState, String fromVariable, HierarchicalModel toModelState, String toVariable)
 	{
 		this.fromModelState = fromModelState;
 		this.fromVariable = fromVariable;
@@ -22,7 +22,7 @@ public class ReplacementHandler
 		toModelState.addMappingNode(toVariable, fromModelState.getNode(fromVariable));
 	}
 
-	public ModelState getFromModelState()
+	public HierarchicalModel getFromModelState()
 	{
 		return fromModelState;
 	}
@@ -32,7 +32,7 @@ public class ReplacementHandler
 		return fromVariable;
 	}
 
-	public ModelState getToModelState()
+	public HierarchicalModel getToModelState()
 	{
 		return toModelState;
 	}

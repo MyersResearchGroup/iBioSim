@@ -9,8 +9,8 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
 
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
-import analysis.dynamicsim.hierarchical.states.ModelState;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
 import analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
@@ -119,7 +119,7 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	{
 	}
 
-	public void createODESim(ModelState topmodel, Map<String, ModelState> submodels)
+	public void createODESim(HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels)
 	{
 		try
 		{
@@ -135,12 +135,12 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 		}
 	}
 
-	public void createSSASim(ModelState topmodel, Map<String, ModelState> submodels)
+	public void createSSASim(HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels)
 	{
 		// TODO:
 	}
 
-	public void createFBASim(ModelState topmodel, Model model)
+	public void createFBASim(HierarchicalModel topmodel, Model model)
 	{
 		fbaSim = new HierarchicalFBASimulator(this, topmodel);
 		fbaSim.setFBA(model);

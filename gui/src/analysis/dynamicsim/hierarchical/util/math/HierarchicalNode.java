@@ -19,7 +19,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 		super(copy);
 		for (int i = 0; i < copy.getNumOfChild(); i++)
 		{
-			addChild(new HierarchicalNode(copy.getChild(i)));
+			addChild(copy.getChild(i).clone());
 		}
 	}
 

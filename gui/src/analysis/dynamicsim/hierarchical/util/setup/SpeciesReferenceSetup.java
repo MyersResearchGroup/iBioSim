@@ -2,7 +2,7 @@ package analysis.dynamicsim.hierarchical.util.setup;
 
 import org.sbml.jsbml.SpeciesReference;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.math.SpeciesNode;
 import analysis.dynamicsim.hierarchical.util.math.SpeciesReferenceNode;
@@ -10,7 +10,7 @@ import analysis.dynamicsim.hierarchical.util.math.SpeciesReferenceNode;
 public class SpeciesReferenceSetup
 {
 
-	public static void setupSingleProduct(ModelState modelstate, ReactionNode reaction, String productID, SpeciesReference product)
+	public static void setupSingleProduct(HierarchicalModel modelstate, ReactionNode reaction, String productID, SpeciesReference product)
 	{
 
 		if (product.isSetId() && modelstate.isDeletedBySId(product.getId()))
@@ -48,7 +48,7 @@ public class SpeciesReferenceSetup
 
 	}
 
-	public static void setupSingleReactant(ModelState modelstate, ReactionNode reaction, String reactantID, SpeciesReference reactant)
+	public static void setupSingleReactant(HierarchicalModel modelstate, ReactionNode reaction, String reactantID, SpeciesReference reactant)
 	{
 
 		if (reactant.isSetId() && modelstate.isDeletedBySId(reactant.getId()))

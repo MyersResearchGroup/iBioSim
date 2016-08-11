@@ -3,12 +3,12 @@ package analysis.dynamicsim.hierarchical.util.setup;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Model;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 public class CompartmentSetup
 {
-	public static void setupCompartments(ModelState modelstate, Model model)
+	public static void setupCompartments(HierarchicalModel modelstate, Model model)
 	{
 		for (Compartment compartment : model.getListOfCompartments())
 		{
@@ -21,7 +21,7 @@ public class CompartmentSetup
 
 	}
 
-	private static void setupSingleCompartment(ModelState modelstate, Compartment compartment)
+	private static void setupSingleCompartment(HierarchicalModel modelstate, Compartment compartment)
 	{
 
 		String compartmentID = compartment.getId();

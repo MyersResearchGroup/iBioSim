@@ -20,9 +20,19 @@ public class EventNode extends HierarchicalNode
 	private double[]			assignmentValues;
 	List<EventAssignmentNode>	eventAssignments;
 
+	public EventNode(Type type)
+	{
+		super(type);
+		maxDisabledTime = Double.NEGATIVE_INFINITY;
+		minEnabledTime = Double.POSITIVE_INFINITY;
+		fireTime = Double.POSITIVE_INFINITY;
+	}
+
 	public EventNode(HierarchicalNode trigger)
 	{
-		super(trigger);
+		super(Type.PLUS);
+		this.addChild(trigger);
+
 		maxDisabledTime = Double.NEGATIVE_INFINITY;
 		minEnabledTime = Double.POSITIVE_INFINITY;
 		fireTime = Double.POSITIVE_INFINITY;
@@ -244,5 +254,12 @@ public class EventNode extends HierarchicalNode
 	public void setEventAssignments(List<EventAssignmentNode> eventAssignments)
 	{
 		this.eventAssignments = eventAssignments;
+	}
+
+	@Override
+	public EventNode clone()
+	{
+		// TODO
+		return null;
 	}
 }

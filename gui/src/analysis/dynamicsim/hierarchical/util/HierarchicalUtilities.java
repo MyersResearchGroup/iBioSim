@@ -14,12 +14,12 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.Model;
 
-import analysis.dynamicsim.hierarchical.states.ModelState;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.interpreter.RateSplitterInterpreter;
+import analysis.dynamicsim.hierarchical.util.math.ConstraintNode;
 import analysis.dynamicsim.hierarchical.util.math.EventNode;
 import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.math.VariableNode;
-import analysis.dynamicsim.hierarchical.util.setup.ConstraintNode;
 
 public class HierarchicalUtilities
 {
@@ -89,7 +89,7 @@ public class HierarchicalUtilities
 	 * @param formula
 	 * @return
 	 */
-	public static ASTNode inlineFormula(ModelState state, ASTNode formula, Model model)
+	public static ASTNode inlineFormula(HierarchicalModel state, ASTNode formula, Model model)
 	{
 		// TODO: Avoid calling this method
 		if (formula.isFunction() == false || formula.isOperator()/*

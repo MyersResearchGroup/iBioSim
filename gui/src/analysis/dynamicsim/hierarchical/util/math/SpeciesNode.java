@@ -165,4 +165,9 @@ public class SpeciesNode extends VariableNode
 	{
 		return new SpeciesNode(this);
 	}
+
+	public void setODERate(HierarchicalNode odeRate)
+	{
+		this.odeRate = odeRate;
+	}
 }

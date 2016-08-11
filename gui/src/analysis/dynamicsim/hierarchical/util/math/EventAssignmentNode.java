@@ -7,13 +7,19 @@ public class EventAssignmentNode extends HierarchicalNode
 
 	public EventAssignmentNode(VariableNode variable, HierarchicalNode math)
 	{
-		super(math);
+		this(math);
 		this.variable = variable;
+	}
+
+	public EventAssignmentNode(Type type)
+	{
+		super(type);
 	}
 
 	public EventAssignmentNode(HierarchicalNode math)
 	{
-		super(math);
+		super(Type.PLUS);
+		this.addChild(math);
 	}
 
 	public EventAssignmentNode(EventAssignmentNode math)
