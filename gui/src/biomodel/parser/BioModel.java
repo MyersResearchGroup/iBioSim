@@ -485,7 +485,8 @@ public class BioModel {
 
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) {
 		GCMParser parser = new GCMParser(this);
-		SBMLDocument sbml = this.flattenModel(true);		
+		SBMLDocument sbml = this.flattenModel(true);	
+		if (sbml == null) return null;
 		GeneticNetwork network = parser.buildNetwork(sbml);
 		if (network == null) return null;
 		network.markAbstractable();
@@ -2818,6 +2819,7 @@ public class BioModel {
 		ArrayList<String> booleans = new ArrayList<String>();
 		HashMap<String,String> rates = new HashMap<String,String>();
 		SBMLDocument flatSBML = flattenModel(true);
+		if (flatSBML==null) return false;
 		SBMLutilities.expandFunctionDefinitions(flatSBML);
 		SBMLutilities.expandInitialAssignments(flatSBML);
 		LhpnFile lpn = new LhpnFile();
@@ -6525,6 +6527,7 @@ public class BioModel {
 						ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
 						ArraysSBasePlugin sBasePluginSBaseRef = SBMLutilities.getArraysSBasePlugin(sbaseRef);
 						ArraysSBasePlugin sBasePluginSubPort = SBMLutilities.getArraysSBasePlugin(subPort);
+						sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
 						for (int k = 0; k < sBasePlugin.getListOfDimensions().size(); k++) {
 							Dimension dimen = sBasePlugin.getDimensionByArrayDimension(k);
 							Index portIndex = sBasePluginPort.createIndex();
@@ -6532,11 +6535,28 @@ public class BioModel {
 							portIndex.setArrayDimension(k);
 							portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
 						}
-						sBasePluginPort.setListOfDimensions(sBasePluginSubPort.getListOfDimensions().clone());
-						sBasePluginSBaseRef.setListOfIndices(sBasePluginSubPort.getListOfIndices().clone());
-						for (int k=0; k<sBasePluginSBaseRef.getIndexCount();k++) {
-							sBasePluginSBaseRef.getIndex(k).setReferencedAttribute("comp:portRef");
+						for (Dimension dim : sBasePluginSubPort.getListOfDimensions()) {
+							Dimension dimClone = dim.clone();
+							dimClone.setArrayDimension(dim.getArrayDimension()+sBasePlugin.getListOfDimensions().size());
+							dimClone.setId("d"+dimClone.getArrayDimension());
+							sBasePluginPort.addDimension(dimClone);
+							Parameter p = subBioModel.getSBMLDocument().getModel().getParameter(dim.getSize()).clone();
+							p.setId(submodel.getId()+"__"+p.getId());
+							p.setMetaId(submodel.getId()+"__"+p.getMetaId());
+							if (sbml.getModel().getParameter(p.getId())==null) {
+								sbml.getModel().addParameter(p);
+							}
+							dimClone.setSize(p.getId());
+							Index index = sBasePluginSBaseRef.createIndex();
+							index.setArrayDimension(dim.getArrayDimension());
+							index.setReferencedAttribute("comp:portRef");
+							index.setMath(SBMLutilities.myParseFormula(dimClone.getId()));
 						}
+						//sBasePluginPort.setListOfDimensions(sBasePluginSubPort.getListOfDimensions().clone());
+						//sBasePluginSBaseRef.setListOfIndices(sBasePluginSubPort.getListOfIndices().clone());
+						//for (int k=0; k<sBasePluginSBaseRef.getIndexCount();k++) {
+						//	sBasePluginSBaseRef.getIndex(k).setReferencedAttribute("comp:portRef");
+						//}
 					} else {
 						// TODO: need to deal with array replacedBy
 					}
@@ -6776,7 +6796,18 @@ public class BioModel {
 									port.setMetaIdRef(id+"__"+sbase.getMetaId());
 								}
 							}
-							SBMLutilities.setMetaId(sbase, id+"__"+sbase.getMetaId());
+							String newMetaId = id+"__"+sbase.getMetaId();
+							while (SBMLutilities.getElementByMetaId(document, newMetaId)!=null) {
+								newMetaId += "_";
+							}
+							while (SBMLutilities.getElementByMetaId(subDocument, newMetaId)!=null) {
+								newMetaId += "_";
+							}
+							while (SBMLutilities.getElementByMetaId(documentComp, newMetaId)!=null) {
+								newMetaId += "_";
+							}
+							sbase.unsetMetaId();
+							SBMLutilities.setMetaId(sbase, newMetaId);
 						}
 					}
 					ModelDefinition md = new ModelDefinition(subDocument.getModel());

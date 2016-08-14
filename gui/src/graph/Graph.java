@@ -5570,7 +5570,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			para.setAttribute("auto_resize", "" + resize.isSelected());
 			para.setAttribute("visibleLegend", "" + visibleLegend.isSelected());
 			Annotation ann = new Annotation(para);
-			output.addAnnotation(ann);
+			output.setAnnotation(ann);
 
 			for (int i = 0; i < graphed.size(); i++) {
 				String [] idSplit = graphed.get(i).getID().split(" ");
@@ -5614,7 +5614,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				para.setAttribute("paint", graphed.get(i).getShapeAndPaint().getPaintName());
 				para.setAttribute("shape", graphed.get(i).getShapeAndPaint().getShapeName());
 				ann = new Annotation(para);
-				curve.addAnnotation(ann);
+				curve.setAnnotation(ann);
 				
 				output.addCurve(curve);
 			}	
@@ -5640,7 +5640,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			para.setAttribute("shadow", "" + ((BarRenderer) chart.getCategoryPlot().getRenderer()).getShadowsVisible());
 			para.setAttribute("visibleLegend", "" + visibleLegend.isSelected());
 			Annotation ann = new Annotation(para);
-			report.addAnnotation(ann);		
+			report.setAnnotation(ann);		
 			
 			for (int i = 0; i < probGraphed.size(); i++) {
 				String [] id = probGraphed.get(i).getID().split(" ");
@@ -5657,7 +5657,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
 				para.setAttribute("paint", probGraphed.get(i).getPaintName());
 				ann = new Annotation(para);
-				ds.addAnnotation(ann);
+				ds.setAnnotation(ann);
 
 				report.addDataSet(ds);
 			}
