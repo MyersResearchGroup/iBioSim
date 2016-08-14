@@ -5872,7 +5872,7 @@ public class SBMLutilities
 		return m.findNamedSBase(id);
 	}
 
-	private static SBase getElementByMetaId(CompSBMLDocumentPlugin compDocument, String metaId)
+	public static SBase getElementByMetaId(CompSBMLDocumentPlugin compDocument, String metaId)
 	{
 		for (SBase sb : getListOfAllElements(compDocument))
 		{

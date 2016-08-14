@@ -1704,13 +1704,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
 				para.setAttribute("Print_Interval", interval.getText());
 				Annotation ann = new Annotation(para);
-				simulation.addAnnotation(ann);
+				simulation.setAnnotation(ann);
 			} else if (intervalLabel.getSelectedItem().equals("Minimum Print Interval")) {
 				Element para = new Element("printInterval");
 				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
 				para.setAttribute("Minimum_Print_Interval", interval.getText());
 				Annotation ann = new Annotation(para);
-				simulation.addAnnotation(ann);
+				simulation.setAnnotation(ann);
 			}
 		}
 		sedml.addSimulation(simulation);
@@ -1867,7 +1867,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			para.setAttribute("abstraction", "State-based");
 		}
 		Annotation ann = new Annotation(para);
-		algorithm.addAnnotation(ann);
+		algorithm.setAnnotation(ann);
 		AlgorithmParameter ap = new AlgorithmParameter(GlobalConstants.KISAO_MINIMUM_STEP_SIZE,minStep.getText());
 		algorithm.addAlgorithmParameter(ap);
 		ap = new AlgorithmParameter(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE, step.getText());
