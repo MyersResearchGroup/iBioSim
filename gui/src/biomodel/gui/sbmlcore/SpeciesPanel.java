@@ -20,15 +20,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Submodel;
 
 import biomodel.annotation.AnnotationUtility;
@@ -118,7 +115,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		PropertyField field = null;		
 		
 		// ID field
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
 		String dimInID = SBMLutilities.getDimensionString(species);
 		field = new PropertyField(GlobalConstants.ID, species.getId() + dimInID, null, null, Utility.IDDimString, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
@@ -165,13 +161,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel = new JPanel(new GridLayout(1, 2));
 		iIndex = new JTextField(20);
 		conviIndex = new JTextField(20);
-		String freshIndex = "";
-		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-			Index indie = sBasePlugin.getIndex(i,"compartment");
-			if(indie!=null){
-				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
-			}
-		}
+		String freshIndex = SBMLutilities.getIndicesString(species, "compartment");
 		iIndex.setText(freshIndex);
 		tempPanel.add(new JLabel("Compartment Indices"));
 		tempPanel.add(iIndex);
@@ -255,14 +245,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		tempPanel = new JPanel(new GridLayout(1, 2));
 
-		String cfreshIndex = "";
-		//This needs to be fixed for 2 different indices
-		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-			Index indie = sBasePlugin.getIndex(i,"conversionFactor");
-			if(indie!=null){
-				cfreshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
-			}
-		}
+		String cfreshIndex = SBMLutilities.getIndicesString(species, "conversion");
 		conviIndex.setText(cfreshIndex);
 
 		tempPanel.add(new JLabel("Conversion Factor Indices"));
@@ -722,22 +705,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						if (error) return false;
 						species.setInitialAmount(Double.parseDouble("0.0"));
 					}
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(species);
-					sBasePlugin.unsetListOfDimensions();
-					for(int i = 0; i<dimID.length-1; i++){
-						org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-						dimX.setSize(dimID[i+1].replace("]", "").trim());
-						dimX.setArrayDimension(i);
-					}
+					SBMLutilities.createDimensions(species, dimensionIds, dimID);
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
-					
 					species.setBoundaryCondition(specBoundary.isSelected());
 					species.setConstant(specConstant.isSelected());
 					species.setCompartment((String)compartBox.getSelectedItem());
 					species.setHasOnlySubstanceUnits(specHasOnly.isSelected());
-					
 					String unit = (String) unitsBox.getSelectedItem();
-					
 					if (unit.equals("( none )")) {
 						species.unsetUnits();
 					}
@@ -749,50 +723,19 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 					if (convFactor.equals("( none )")) {
 						species.unsetConversionFactor();
-						int limit = sBasePlugin.getIndexCount();
-						for(int i = limit-1; i>-1; i--){
-							Index indie = sBasePlugin.getIndex(i,"conversionFactor");
-							if(indie!=null)
-								sBasePlugin.removeIndex(indie);
-						}
+						SBMLutilities.addIndices(species, "conversionFactor", null, 1);
 					}
 					else {
 						species.setConversionFactor(convFactor);
 						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
 						cdex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "conversionFactor", dimID, null, null);
 						if(cdex==null)return false;
-						int limit = sBasePlugin.getIndexCount();
-						for(int i = limit-1; i>-1; i--){
-							Index indie = sBasePlugin.getIndex(i,"conversionFactor");
-							if(indie!=null)
-								sBasePlugin.removeIndex(indie);
-						}
-						for(int i = 0; i<cdex.length-1; i++){
-							Index indexRule = new Index();
-							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("conversionFactor");
-							ASTNode indexMath = SBMLutilities.myParseFormula(cdex[i+1]);
-							indexRule.setMath(indexMath);
-							sBasePlugin.addIndex(indexRule);
-						}
+						SBMLutilities.addIndices(species, "conversionFactor", cdex, 1);
 					}
 					SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
 					dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", dimID, null, null);
 					if(dex==null)return false;
-					int limit = sBasePlugin.getIndexCount();
-					for(int i = limit-1; i>-1; i--){
-						Index indie = sBasePlugin.getIndex(i,"compartment");
-						if(indie!=null)
-							sBasePlugin.removeIndex(indie);
-					}
-					for(int i = 0; i<dex.length-1; i++){
-						Index indexRule = new Index();
-						indexRule.setArrayDimension(i);
-						indexRule.setReferencedAttribute("compartment");
-						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-						indexRule.setMath(indexMath);
-						sBasePlugin.addIndex(indexRule);
-					}
+					SBMLutilities.addIndices(species, "compartment", dex, 1);
 				} else {
 					PropertyField f = fields.get(GlobalConstants.INITIAL_STRING);
 					if (f.getState() == null || f.getState().equals(f.getStates()[1])) {

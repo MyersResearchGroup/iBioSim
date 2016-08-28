@@ -31,8 +31,6 @@ import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -490,13 +488,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						} else {
 							c.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
 						}
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
-						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1]);
-							dimX.setArrayDimension(i);
-						}
+						SBMLutilities.createDimensions(c, dimensionIds, dimID);
 						c.setSpatialDimensions(dim);
 						if (compSize.getText().trim().equals("") || compSize.getText().trim().startsWith("(")) {
 							c.unsetSize();
@@ -521,16 +513,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							if (onPort.isSelected()) {
 								port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
 								port.setIdRef(c.getId());
-								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
-								sBasePluginPort.unsetListOfIndices();
-								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-									Index portIndex = sBasePluginPort.createIndex();
-									portIndex.setReferencedAttribute("comp:idRef");
-									portIndex.setArrayDimension(i);
-									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-								}
+								SBMLutilities.cloneDimensionAddIndex(c,port,"comp:idRef");
 							} else {
 								bioModel.getSBMLCompModel().removePort(port);
 							}
@@ -539,16 +522,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 								port = bioModel.getSBMLCompModel().createPort();
 								port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
 								port.setIdRef(c.getId());
-								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
-								sBasePluginPort.unsetListOfIndices();
-								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-									Index portIndex = sBasePluginPort.createIndex();
-									portIndex.setReferencedAttribute("comp:idRef");
-									portIndex.setArrayDimension(i);
-									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-								}
+								SBMLutilities.cloneDimensionAddIndex(c,port,"comp:idRef");
 							}
 						}
 						comps[index] = addComp;
@@ -599,12 +573,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						} else {
 							c.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
 						}
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
-						for(int i = 0; dimID!=null &&i<dimID.length-1; i++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1]);
-							dimX.setArrayDimension(i);
-						}
+						SBMLutilities.createDimensions(c, dimensionIds, dimID);
 						c.setSpatialDimensions(dim);
 						if (!compSize.getText().trim().equals("")) {
 							c.setSize(Double.parseDouble(compSize.getText().trim()));
@@ -622,16 +591,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							Port port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
 							port.setIdRef(c.getId());
-							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
-							sBasePluginPort.unsetListOfIndices();
-							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-								Index portIndex = sBasePluginPort.createIndex();
-								portIndex.setReferencedAttribute("comp:idRef");
-								portIndex.setArrayDimension(i);
-								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-							}
+							SBMLutilities.cloneDimensionAddIndex(c,port,"comp:idRef");
 						}
 						JList add = new JList();
 						String addStr;

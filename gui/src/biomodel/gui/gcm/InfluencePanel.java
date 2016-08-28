@@ -14,15 +14,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Dimension;
-import org.sbml.jsbml.ext.arrays.Index;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
@@ -160,14 +156,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			if (BioModel.isRegulator(modifier)) typeBox.setEnabled(false);
 			else if (!paramsOnly) typeBox.setEnabled(true);
 			if (bioModel.isArray(regulator)) {
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
-				String indexStr = "";
-				for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-					Index index = sBasePlugin.getIndex(i,"species");
-					if(index!=null){
-						indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-					}
-				}
+				String indexStr = SBMLutilities.getIndicesString(modifier, "species");
 				iIndex.setText(indexStr);
 			} else {
 				iIndex.setEnabled(false);
@@ -176,14 +165,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			production = bioModel.getComplexReaction(product);
 			if (bioModel.isArray(regulator)) {
 				SpeciesReference reactant = production.getReactantForSpecies(regulator);
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
-				String indexStr = "";
-				for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-					Index index = sBasePlugin.getIndex(i,"species");
-					if(index!=null){
-						indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-					}
-				}
+				String indexStr = SBMLutilities.getIndicesString(reactant, "species");
 				iIndex.setText(indexStr);
 			} else {
 				iIndex.setEnabled(false);
@@ -443,37 +425,22 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			} else{
 				reactant = production.getReactantForSpecies(regulator);
 			}
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(production);
-			String[] dimID = new String[sBasePlugin.getDimensionCount()+1];
+			String[] dimID = SBMLutilities.getDimensionIds(production);
 			dimID[0] = production.getId();
-			String[] dimensionIds = new String[sBasePlugin.getDimensionCount()];
-			for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
-				Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
-				dimensionIds[j] = dimX.getId(); 
-				dimID[j+1] = dimX.getSize();
-			}
-			sBasePlugin = null;
+			String[] dimensionIds = SBMLutilities.getDimensionSizes(production);
 			SBase variable = null;
 			if (modifier!=null) {
-				sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
 				variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), modifier.getSpecies());
-			} else if (reactant!=null){
-				sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
-				variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactant.getSpecies());
-			}
-			if (sBasePlugin!=null && variable!=null) {
 				String[] dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), 
 						dimensionIds, "species", dimID, null, null);
 				if(dex==null)return false;
-				sBasePlugin.unsetListOfIndices();
-				for(int i = 0; i<dex.length-1; i++){
-					Index indexRule = new Index();
-					indexRule.setArrayDimension(i);
-					indexRule.setReferencedAttribute("species");
-					ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-					indexRule.setMath(indexMath);
-					sBasePlugin.addIndex(indexRule);
-				}
+				SBMLutilities.addIndices(modifier, "species", dex, 1);
+			} else if (reactant!=null){
+				variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactant.getSpecies());
+				String[] dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), 
+						dimensionIds, "species", dimID, null, null);
+				if(dex==null)return false;
+				SBMLutilities.addIndices(reactant, "species", dex, 1);
 			}
 			if (!production.isSetKineticLaw()) {
 				production.createKineticLaw();

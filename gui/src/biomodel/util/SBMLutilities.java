@@ -181,6 +181,37 @@ public class SBMLutilities
 		size += model.getNumRules();
 		return size;
 	}
+	
+	public static void updatePortDimensionsIndices(Submodel submodel, Port port, SBaseRef sbaseRef, Port subPort,
+			SBMLDocument subDocument,SBMLDocument document)
+	{
+		ArraysSBasePlugin sBasePlugin = getArraysSBasePlugin(submodel);
+		ArraysSBasePlugin sBasePluginPort = getArraysSBasePlugin(port);
+		ArraysSBasePlugin sBasePluginSBaseRef = getArraysSBasePlugin(sbaseRef);
+		ArraysSBasePlugin sBasePluginSubPort = getArraysSBasePlugin(subPort);
+		for (Dimension dim : sBasePluginSubPort.getListOfDimensions()) {
+			Dimension dimClone = dim.clone();
+			dimClone.setArrayDimension(dim.getArrayDimension()+sBasePlugin.getListOfDimensions().size());
+			dimClone.setId("d"+dimClone.getArrayDimension());
+			sBasePluginPort.addDimension(dimClone);
+			Parameter p = subDocument.getModel().getParameter(dim.getSize()).clone();
+			p.setId(submodel.getId()+"__"+p.getId());
+			p.setMetaId(submodel.getId()+"__"+p.getMetaId());
+			if (document.getModel().getParameter(p.getId())==null) {
+				document.getModel().addParameter(p);
+			}
+			dimClone.setSize(p.getId());
+			Index index = sBasePluginSBaseRef.createIndex();
+			index.setArrayDimension(dim.getArrayDimension());
+			index.setReferencedAttribute("comp:portRef");
+			index.setMath(SBMLutilities.myParseFormula(dimClone.getId()));
+		}
+	}
+	
+	public static boolean hasDimensions(SBase sBase)
+	{
+		return (getArraysSBasePlugin(sBase).getDimensionCount()>0);
+	}
 
 	public static String getDimensionString(SBase sBase)
 	{
@@ -521,6 +552,28 @@ public class SBMLutilities
 		}
 		return dimensionIds;
 	}
+	
+	public static String[] getDimensionIds(SBase sBase) 
+	{
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
+		String[] dimensionIds = new String[sBasePlugin.getDimensionCount()];
+		for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+			Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+			dimensionIds[j] = dimX.getId(); 
+		}
+		return dimensionIds;
+	}
+	
+	public static String[] getDimensionSizes(SBase sBase) 
+	{
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
+		String[] dimensionSizes = new String[sBasePlugin.getDimensionCount()+1];
+		for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
+			Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
+			dimensionSizes[j+1] = dimX.getSize();
+		}
+		return dimensionSizes;
+	}
 
 	private static Map<String, Double> getDimensionSize(Model model, Map<String, String> dimNSize)
 	{
@@ -537,53 +590,63 @@ public class SBMLutilities
 		}
 		return dimensionSizes;
 	}
+	
+	public static void cloneDimensionAddIndex(SBase source,SBase target,String attribute) {
+		ArraysSBasePlugin sBasePluginSource = SBMLutilities.getArraysSBasePlugin(source);
+		ArraysSBasePlugin sBasePluginTarget = SBMLutilities.getArraysSBasePlugin(target);
+		sBasePluginTarget.unsetListOfDimensions();
+		sBasePluginTarget.unsetListOfIndices();
+		for (Dimension dim : sBasePluginSource.getListOfDimensions()) {
+			sBasePluginTarget.addDimension(dim.clone());
+			Index index = sBasePluginTarget.createIndex();
+			index.setReferencedAttribute(attribute);
+			index.setArrayDimension(dim.getArrayDimension());
+			index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+		}
+	}
+	
+	public static void cloneDimensions(SBase source,SBase target) {
+		ArraysSBasePlugin sBasePluginSource = SBMLutilities.getArraysSBasePlugin(source);
+		ArraysSBasePlugin sBasePluginTarget = SBMLutilities.getArraysSBasePlugin(target);
+		sBasePluginTarget.unsetListOfDimensions();
+		for (Dimension dim : sBasePluginSource.getListOfDimensions()) {
+			sBasePluginTarget.addDimension(dim.clone());
+		}
+	}
+	
+	public static void copyDimensionsToEdgeIndex(SBase source,SBase target,SBase edge,String attribute) {
+		if (SBMLutilities.dimensionsMatch(source,target)) {
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(source);
+			ArraysSBasePlugin sBasePluginEdge = SBMLutilities.getArraysSBasePlugin(edge);
+			sBasePluginEdge.unsetListOfIndices();
+			for (Dimension dim : sBasePlugin.getListOfDimensions()) {
+				Index index = sBasePluginEdge.createIndex();
+				index.setReferencedAttribute(attribute);
+				index.setArrayDimension(dim.getArrayDimension());
+				index.setMath(SBMLutilities.myParseFormula(dim.getId()));
+			}
+		}			
+	}
 
-//	public static void copyDimensionsIndices(SBase source, SBase destination, String indexedAttribute)
-//	{
-//		if (source == null)
-//		{
-//			return;
-//		}
-//		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(source);
-//		ArraysSBasePlugin sBasePluginDest = SBMLutilities.getArraysSBasePlugin(destination);
-//		sBasePluginDest.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
-//		sBasePluginDest.unsetListOfIndices();
-//		for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++)
-//		{
-//			Dimension dimension = sBasePlugin.getDimensionByArrayDimension(i);
-//			Index index = sBasePluginDest.createIndex();
-//			index.setReferencedAttribute(indexedAttribute);
-//			index.setArrayDimension(i);
-//			index.setMath(SBMLutilities.myParseFormula(dimension.getId()));
-//		}
-//	}
-
-//	public static void copyDimensions(SBase source, SBase destination)
-//	{
-//		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(source);
-//		ArraysSBasePlugin sBasePluginDest = SBMLutilities.getArraysSBasePlugin(destination);
-//		sBasePluginDest.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
-//	}
-
-//	public static void copyIndices(SBase source, SBase destination, String indexedAttribute)
-//	{
-//		if (source == null || destination == null)
-//		{
-//			return;
-//		}
-//		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(source);
-//		ArraysSBasePlugin sBasePluginDest = SBMLutilities.getArraysSBasePlugin(destination);
-//		// sBasePluginDest.unsetListOfIndices();
-//		for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++)
-//		{
-//			Dimension dimension = sBasePlugin.getDimensionByArrayDimension(i);
-//			Index index = sBasePluginDest.createIndex();
-//			index.setReferencedAttribute(indexedAttribute);
-//			index.setArrayDimension(i);
-//			index.setMath(SBMLutilities.myParseFormula(dimension.getId()));
-//		}
-//	}
-
+	public static void addIndices(SBase sBase,String attribute,String[] indices,int offset)
+	{
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
+		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
+	        Index indie = sBasePlugin.getIndex(i,attribute);
+	        if(indie!=null)
+	           sBasePlugin.removeIndex(indie);
+		}
+		if (indices!=null) {
+			for(int i = 0; i<indices.length-offset; i++){
+				Index indexRule = sBasePlugin.createIndex();
+				indexRule.setArrayDimension(i);
+				indexRule.setReferencedAttribute(attribute);
+				ASTNode indexMath = SBMLutilities.myParseFormula(indices[i+offset]);
+				indexRule.setMath(indexMath);
+			}
+		}
+	}
+	
 	/**
 	 * Displays the invalid variables
 	 * 
@@ -4576,7 +4639,7 @@ public class SBMLutilities
 		if (math.getType() == ASTNode.Type.LOGICAL_AND)
 		{
 			ASTNode rightChild = math.getRightChild();
-			if (rightChild.getType() == ASTNode.Type.RELATIONAL_EQ && rightChild.getLeftChild().getName().equals(place))
+			if (rightChild.getType() == ASTNode.Type.RELATIONAL_EQ && rightChild.getLeftChild().toFormula().equals(place))
 			{
 				return deepCopy(math.getLeftChild());
 			}
@@ -6077,7 +6140,7 @@ public class SBMLutilities
 		return reac;
 	}
 
-	public static ArraysSBasePlugin getArraysSBasePlugin(SBase sb)
+	private static ArraysSBasePlugin getArraysSBasePlugin(SBase sb)
 	{
 		if (sb.getExtension(ArraysConstants.namespaceURI) != null)
 		{
@@ -6572,6 +6635,18 @@ public class SBMLutilities
 		String dimInID = SBMLutilities.getDimensionString(sBase);
 		return arrayId + dimInID;
 	}
+	
+	public static String getSpeciesReferenceIndexedId(SBase sBase)
+	{
+		String indexStr = "";
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
+		for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
+			Index index = sBasePlugin.getIndex(j,"species");
+			if (index!=null)
+				indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
+		}
+		return indexStr;
+	}
 
 	public static ModifierSpeciesReference removeModifier(Reaction r, String species)
 	{
@@ -6950,22 +7025,17 @@ public class SBMLutilities
 			deletion.setId("delete_" + subPortId);
 			deletion.setPortRef(subPortId);
 		}
-		ArraysSBasePlugin sBasePlugin = getArraysSBasePlugin(deletion);
+		SBMLutilities.createDimensions(deletion, dimensionIds, dimensions);
+		SBMLutilities.addIndices(deletion, "comp:portRef", indices, 1);
+	}
+
+	public static void createDimensions(SBase sBase, String[] dimensionIds, String[] dimensionSizes) {
+		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
 		sBasePlugin.unsetListOfDimensions();
-		for (int i = 0; dimensions != null && i < dimensions.length - 1; i++)
-		{
-			Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-			dimX.setSize(dimensions[i + 1]);
+		for(int i = 0; dimensionSizes!=null && i<dimensionSizes.length-1; i++){
+			org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
+			dimX.setSize(dimensionSizes[i+1]);
 			dimX.setArrayDimension(i);
-		}
-		sBasePlugin.unsetListOfIndices();
-		for (int i = 0; indices != null && i < indices.length - 1; i++)
-		{
-			Index indexRule = sBasePlugin.createIndex();
-			indexRule.setArrayDimension(i);
-			indexRule.setReferencedAttribute("comp:portRef");
-			ASTNode indexMath = myParseFormula(indices[i + 1]);
-			indexRule.setMath(indexMath);
 		}
 	}
 
@@ -7032,14 +7102,8 @@ public class SBMLutilities
 		{
 			replacement.setConversionFactor(convFactor);
 		}
+		SBMLutilities.createDimensions(replacement, dimensionIds, dimensions);
 		ArraysSBasePlugin sBasePlugin = getArraysSBasePlugin(replacement);
-		sBasePlugin.unsetListOfDimensions();
-		for (int i = 0; dimensions != null && i < dimensions.length - 1; i++)
-		{
-			Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-			dimX.setSize(dimensions[i + 1]);
-			dimX.setArrayDimension(i);
-		}
 		sBasePlugin.unsetListOfIndices();
 		for (int i = 0; portIndices != null && i < portIndices.length - 1; i++)
 		{
@@ -7066,14 +7130,8 @@ public class SBMLutilities
 		ReplacedBy replacement = compElement.createReplacedBy();
 		replacement.setSubmodelRef(subModelId);
 		replacement.setPortRef(subPortId);
+		SBMLutilities.createDimensions(replacement, dimensionIds, dimensions);
 		ArraysSBasePlugin sBasePlugin = getArraysSBasePlugin(replacement);
-		sBasePlugin.unsetListOfDimensions();
-		for (int i = 0; dimensions != null && i < dimensions.length - 1; i++)
-		{
-			Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-			dimX.setSize(dimensions[i + 1]);
-			dimX.setArrayDimension(i);
-		}
 		sBasePlugin.unsetListOfIndices();
 		for (int i = 0; portIndices != null && i < portIndices.length - 1; i++)
 		{

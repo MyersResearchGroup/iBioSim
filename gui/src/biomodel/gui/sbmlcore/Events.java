@@ -28,8 +28,6 @@ import main.Gui;
 import main.util.Utility;
 
 import org.sbml.jsbml.*;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.layout.Layout;
 
@@ -353,19 +351,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
-						String freshIndex = "; ";
-						for(int i1 = sBasePlugin.getIndexCount()-1; i1>=0; i1--){
-							Index indie = sBasePlugin.getIndex(i1,"variable");
-							if (indie!=null) {
-								freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
-							}
-						}
-						String dimens = " ";
-						for(int i1 = sBasePlugin.getDimensionCount()-1; i1>=0; i1--){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.getDimensionByArrayDimension(i1);
-							dimens += "[" + dimX.getSize() + "]";							
-						}
+						String freshIndex = "; " + SBMLutilities.getIndicesString(ea, "variable");
+						String dimens = " " + SBMLutilities.getDimensionString(ea);
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (isTextual) {
 								assign[l] = ea.getVariable() + dimens + " := " 
@@ -611,22 +598,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
 							EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 						}
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
-						sBasePlugin.unsetListOfDimensions();
-						for(int i1 = 0; EAdimID!=null && i1<EAdimID.length-1; i1++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
-							dimX.setSize(EAdimID[i1+1]);
-							dimX.setArrayDimension(i1);
-						}
-						sBasePlugin.unsetListOfIndices();
-						for(int i1 = 0; EAdex!=null && i1<EAdex.length-1; i1++){
-							Index indexRule = new Index();
-							indexRule.setArrayDimension(i1);
-							indexRule.setReferencedAttribute("variable");
-							ASTNode indexMath = SBMLutilities.myParseFormula(EAdex[i1+1]);
-							indexRule.setMath(indexMath);
-							sBasePlugin.addIndex(indexRule);
-						}
+						SBMLutilities.createDimensions(ea, EAdimensionIds, EAdimID);
+						SBMLutilities.addIndices(ea, "variable", EAdex, 1);
 						Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
 						if (p != null && SBMLutilities.isBoolean(p)) {
 							ea.setMath(bioModel.addBooleanAssign(assign[i].split(":=")[1].split(";")[0].trim()));
@@ -654,7 +627,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ea.setVariable(placeAssign[i].split(" ")[0]);
 						String left = placeAssign[i].split(":=")[0].trim();
 						String rightSide = placeAssign[i].split(":=")[1].split(";")[1];
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 						EAdimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 						if(EAdimID!=null){
 							EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
@@ -670,21 +642,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							error = true;
 						}
 						if (error) break;
-						sBasePlugin.unsetListOfDimensions();
-						for(int i1 = 0; EAdimID!=null && i1<EAdimID.length-1; i1++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
-							dimX.setSize(EAdimID[i1+1]);
-							dimX.setArrayDimension(i1);
-						}
-						sBasePlugin.unsetListOfIndices();
-						for(int i1 = 0; EAdex!=null && i1<EAdex.length-1; i1++){
-							Index indexRule = new Index();
-							indexRule.setArrayDimension(i1);
-							indexRule.setReferencedAttribute("variable");
-							ASTNode indexMath = SBMLutilities.myParseFormula(EAdex[i1+1]);
-							indexRule.setMath(indexMath);
-							sBasePlugin.addIndex(indexRule);
-						}
+						SBMLutilities.createDimensions(ea, EAdimensionIds, EAdimID);
+						SBMLutilities.addIndices(ea, "variable", EAdex, 1);
 						ea.setMath(SBMLutilities.myParseFormula(placeAssign[i].split(":=")[1].split(";")[0].trim()));
 						error = checkEventAssignmentUnits(ea);
 						if (error) break;
@@ -838,28 +797,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								ea.removeFromParent();
 							}
 						}
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
-						sBasePlugin.unsetListOfDimensions();
-						for(int i1 = 0; dimID!=null && i1<dimID.length-1; i1++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i1]);
-							dimX.setSize(dimID[i1+1]);
-							dimX.setArrayDimension(i1);
-						}
+						SBMLutilities.createDimensions(e, dimensionIds, dimID);
 						Port port = bioModel.getPortByIdRef(selectedID);
 						if (port!=null) {
 							if (onPort.isSelected()) {
 								port.setId(GlobalConstants.EVENT+"__"+e.getId());
 								port.setIdRef(e.getId());
-								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-								sBasePluginPort.unsetListOfIndices();
-								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-									Index portIndex = sBasePluginPort.createIndex();
-									portIndex.setReferencedAttribute("comp:idRef");
-									portIndex.setArrayDimension(i);
-									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-								}
+								SBMLutilities.cloneDimensionAddIndex(e, port, "comp:idRef");
 							} else {
 								bioModel.getSBMLCompModel().removePort(port);
 							}
@@ -868,16 +812,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								port = bioModel.getSBMLCompModel().createPort();
 								port.setId(GlobalConstants.EVENT+"__"+e.getId());
 								port.setIdRef(e.getId());
-								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
-								sBasePluginPort.unsetListOfIndices();
-								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-									Index portIndex = sBasePluginPort.createIndex();
-									portIndex.setReferencedAttribute("comp:idRef");
-									portIndex.setArrayDimension(i);
-									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-								}
+								SBMLutilities.cloneDimensionAddIndex(e, port, "comp:idRef");
 							}
 						}
 						if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
@@ -1015,23 +950,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
 								EAdex = SBMLutilities.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
 							}
-							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ea);
 							if(!error){
-								sBasePlugin.unsetListOfDimensions();
-								for(int i1 = 0; EAdimID!=null && i1<EAdimID.length-1; i1++){
-									org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(EAdimensionIds[i1]);
-									dimX.setSize(EAdimID[i1+1]);
-									dimX.setArrayDimension(i1);
-								}
-								sBasePlugin.unsetListOfIndices();
-								for(int i1 = 0; EAdex!=null && i1<EAdex.length-1; i1++){
-									Index indexRule = new Index();
-									indexRule.setArrayDimension(i1);
-									indexRule.setReferencedAttribute("variable");
-									ASTNode indexMath = SBMLutilities.myParseFormula(EAdex[i1+1]);
-									indexRule.setMath(indexMath);
-									sBasePlugin.addIndex(indexRule);
-								}
+								SBMLutilities.createDimensions(ea, EAdimensionIds, EAdimID);
+								SBMLutilities.addIndices(ea, "variable", EAdex, 1);
 								if (var.endsWith("\'")) {
 									var = "rate_" + var.replace("\'","");
 								}
@@ -1091,26 +1012,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								ea.removeFromParent();
 							}
 						}
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(e);
-						for(int i1 = 0; dimID!=null && i1<dimID.length-1; i1++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i1]);
-							dimX.setSize(dimID[i1+1]);
-							dimX.setArrayDimension(i1);
-						}
+						SBMLutilities.createDimensions(e, dimensionIds, dimID);
 						if (onPort.isSelected()) {
 							Port port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.EVENT+"__"+e.getId());
 							port.setIdRef(e.getId());
-							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-							sBasePluginPort.unsetListOfIndices();
-							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-								Index portIndex = sBasePluginPort.createIndex();
-								portIndex.setReferencedAttribute("comp:idRef");
-								portIndex.setArrayDimension(i);
-								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-							}
+							SBMLutilities.cloneDimensionAddIndex(e, port, "comp:idRef");
 						}
 					}
 					if (SBOTerms.getSelectedItem().equals("(unspecified)")) {

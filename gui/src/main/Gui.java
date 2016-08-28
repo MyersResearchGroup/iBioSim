@@ -242,6 +242,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static String			reb2sacExecutable;
 	
+	public static String[]			envp;
+	
 	public static Boolean			geneNetFound		= true;
 
 	public static String			geneNetExecutable;
@@ -2679,7 +2681,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile
 						+ "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec(reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
+				Process graph = exec.exec(reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile, envp, work);
 				String error = "";
 				String output = "";
 				InputStream reb = graph.getErrorStream();
@@ -3013,7 +3015,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory
 						+ theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process browse = exec.exec(reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, null, work);
+				Process browse = exec.exec(reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, envp, work);
 				String error = "";
 				String output = "";
 				InputStream reb = browse.getErrorStream();
@@ -10389,8 +10391,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 */
 	public static void main(String args[])
 	{
-		if (System.getenv("DYLD_LIBRARY_PATH")==null) {
-			System.out.println("DYLD_LIBRARY_PATH is missing");
+		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+			if (System.getenv("DDLD_LIBRARY_PATH")==null) {
+				System.out.println("DDLD_LIBRARY_PATH is missing");
+			}
 		}
 
 		boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true, lpnFlag = false;
@@ -10460,11 +10464,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (System.getenv("LD_LIBRARY_PATH")!=null) {
 				env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
 			}
-			if (System.getenv("DYLD_LIBRARY_PATH")!=null) {
-				env.put("DYLD_LIBRARY_PATH", System.getenv("DYLD_LIBRARY_PATH"));
+			if (System.getenv("DDLD_LIBRARY_PATH")!=null) {
+				env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
 			}
 			if (System.getenv("PATH")!=null) {
 				env.put("PATH", System.getenv("PATH"));
+			}
+			envp = new String[env.size()];
+			int i = 0;
+			for (String envVar : env.keySet()) {
+				envp[i] = envVar + "=" + env.get(envVar);
+				i++;
 			}
 			ps.redirectErrorStream(true);
 			Process reb2sac = ps.start();
@@ -10514,8 +10524,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (System.getenv("LD_LIBRARY_PATH")!=null) {
 				env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
 			}
-			if (System.getenv("DYLD_LIBRARY_PATH")!=null) {
-				env.put("DYLD_LIBRARY_PATH", System.getenv("DYLD_LIBRARY_PATH"));
+			if (System.getenv("DDLD_LIBRARY_PATH")!=null) {
+				env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
 			}
 			if (System.getenv("PATH")!=null) {
 				env.put("PATH", System.getenv("PATH"));
