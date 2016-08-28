@@ -1045,7 +1045,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			reactionsPanel.refreshReactionPanel(bioModel);
 			parametersPanel.refreshParameterPanel(bioModel);
 		}
-		// if the add promoter button is clicked
+		// if the add complex button is clicked
 		else if (e.getSource() == addComplex) {
 			String id;
 			if ((id = bioModel.createSpecies(null, -1, -1)) != null) {

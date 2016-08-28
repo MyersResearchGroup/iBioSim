@@ -19,10 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FluxObjective;
 import org.sbml.jsbml.ext.fbc.Objective;
@@ -77,13 +74,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			boolean first = true;
 			for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
 				FluxObjective fluxObjective = fbc.getObjective(i).getListOfFluxObjectives().get(j);
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(fluxObjective);
-				String indexStr = "";
-				for(int k = sBasePlugin.getIndexCount()-1; k>=0; k--){
-					Index index = sBasePlugin.getIndex(k,"fbc:reaction");
-					if (index!=null)
-						indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-				}
+				String indexStr = SBMLutilities.getIndicesString(fluxObjective, "fbc:reaction");
 				if (!first) objective += " + "; else first = false;
 				objective += fluxObjective.getCoefficient() + " * " + fluxObjective.getReaction() + indexStr;
 			}
@@ -180,16 +171,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 						SBase reaction = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactionId);
 						String[] dex = SBMLutilities.checkIndices(indexStr, reaction, bioModel.getSBMLDocument(), null, "fbc:reaction", null, null, null);
 						fluxObjective.setReaction(reactionId);
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(fluxObjective);
-						sBasePlugin.unsetListOfIndices();
-						for(int k = 0; dex!=null && k<dex.length-1; k++){
-							Index indexRule = new Index();
-							indexRule.setArrayDimension(k);
-							indexRule.setReferencedAttribute("fbc:reaction");
-							ASTNode indexMath = SBMLutilities.myParseFormula(dex[k+1]);
-							indexRule.setMath(indexMath);
-							sBasePlugin.addIndex(indexRule);
-						}
+						SBMLutilities.addIndices(fluxObjective, "fbc:reaction", dex, 1);
 					}
 				}
 			}

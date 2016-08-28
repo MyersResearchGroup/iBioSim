@@ -28,8 +28,6 @@ import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.xml.XMLNode;
 
@@ -262,28 +260,13 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						else if (c.isSetMessage()){
 							c.unsetMessage();
 						}
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
-						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1]);
-							dimX.setArrayDimension(i);
-						}
+						SBMLutilities.createDimensions(c, dimensionIds, dimID);
 						Port port = bioModel.getPortByMetaIdRef(selectedID);
 						if (port!=null) {
 							if (onPort.isSelected()) {
 								port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
 								port.setMetaIdRef(c.getMetaId());
-								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());		
-								sBasePluginPort.unsetListOfIndices();
-								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-									Index portIndex = sBasePluginPort.createIndex();
-									portIndex.setReferencedAttribute("comp:metaIdRef");
-									portIndex.setArrayDimension(i);
-									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-								}
+								SBMLutilities.cloneDimensionAddIndex(c,port,"comp:metaIdRef");
 							} else {
 								bioModel.getSBMLCompModel().removePort(port);
 							}
@@ -292,16 +275,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 								port = bioModel.getSBMLCompModel().createPort();
 								port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
 								port.setMetaIdRef(c.getMetaId());
-								ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-								sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
-								sBasePluginPort.unsetListOfIndices();
-								for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-									org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-									Index portIndex = sBasePluginPort.createIndex();
-									portIndex.setReferencedAttribute("comp:metaIdRef");
-									portIndex.setArrayDimension(i);
-									portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-								}
+								SBMLutilities.cloneDimensionAddIndex(c,port,"comp:metaIdRef");
 							}
 						}
 						cons[index] = c.getMetaId();
@@ -341,26 +315,12 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 								e.printStackTrace();
 							}
 						}
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(c);
-						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1]);
-							dimX.setArrayDimension(i);
-						}
+						SBMLutilities.createDimensions(c, dimensionIds, dimID);
 						if (onPort.isSelected()) {
 							Port port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
 							port.setMetaIdRef(c.getMetaId());
-							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-							sBasePluginPort.unsetListOfIndices();
-							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-								Index portIndex = sBasePluginPort.createIndex();
-								portIndex.setReferencedAttribute("comp:metaIdRef");
-								portIndex.setArrayDimension(i);
-								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-							}
+							SBMLutilities.cloneDimensionAddIndex(c,port,"comp:metaIdRef");
 						}
 						String constraintEntry = c.getMetaId();
 						if (dimID!=null) {

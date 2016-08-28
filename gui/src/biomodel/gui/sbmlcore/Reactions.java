@@ -28,7 +28,6 @@ import main.Gui;
 import main.util.SpringUtilities;
 import main.util.Utility;
 
-import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
@@ -43,9 +42,6 @@ import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Dimension;
-import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
 
@@ -390,7 +386,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				ListOf<LocalParameter> listOfParameters = reac.getKineticLaw().getListOfLocalParameters();
 				reacParams = new String[reac.getKineticLaw().getLocalParameterCount()];
 				for (int i = 0; i < reac.getKineticLaw().getLocalParameterCount(); i++) {
-					/*
+					/* TODO
 					 * This code is a hack to get around a local parameter
 					 * conversion bug in libsbml
 					 */
@@ -475,18 +471,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < reac.getReactantCount(); i++) {
 				SpeciesReference reactant = listOfReactants.get(i);
 				changedReactants.add(reactant);
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
 				if (reactant.isSetId()) {
 					reacta[i] = reactant.getId() + SBMLutilities.getDimensionString(reactant);
 					reacta[i] += " : " + reactant.getSpecies();
 				} else {
 					reacta[i] = reactant.getSpecies();
 				}
-				for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-					Index index = sBasePlugin.getIndex(i,"species");
-					if (index!=null)
-						reacta[i] += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-				}
+				reacta[i] += SBMLutilities.getIndicesString(reactant, "species");
 				reacta[i] += " " + reactant.getStoichiometry();
 			}
 		}
@@ -525,18 +516,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < reac.getProductCount(); i++) {
 				SpeciesReference product = listOfProducts.get(i);
 				changedProducts.add(product);
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(product);
 				if (product.isSetId()) {
 					proda[i] = product.getId() + SBMLutilities.getDimensionString(product);
 					proda[i] += " : " + product.getSpecies();
 				} else {
 					proda[i] = product.getSpecies();
 				}
-				for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-					Index index = sBasePlugin.getIndex(i,"species");
-					if (index!=null)
-						proda[i] += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-				}
+				proda[i] += SBMLutilities.getIndicesString(product, "species");
 				proda[i] += " " + product.getStoichiometry();
 			}
 		}
@@ -575,18 +561,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < reac.getModifierCount(); i++) {
 				ModifierSpeciesReference modifier = listOfModifiers.get(i);
 				changedModifiers.add(modifier);
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
 				if (modifier.isSetId()) {
 					modifierArray[i] = modifier.getId() + SBMLutilities.getDimensionString(modifier);
 					modifierArray[i] += " : " + modifier.getSpecies();
 				} else {
 					modifierArray[i] = modifier.getSpecies();
 				}
-				for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-					Index index = sBasePlugin.getIndex(i,"species");
-					if (index!=null)
-						modifierArray[i] += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-				}
+				modifierArray[i] += SBMLutilities.getIndicesString(modifier, "species");
 			}
 		}
 		Utility.sort(modifierArray);
@@ -701,14 +682,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (option.equals("OK")) {
 			Reaction reac = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
 			copyReact = reac.clone();
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reac);
 			String dimInID = SBMLutilities.getDimensionString(reac);
-			String freshIndex = "";
-			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i,"compartment");
-				if (indie!=null)
-					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
-			}
+			String freshIndex = SBMLutilities.getIndicesString(reac, "compartment");
 			CiIndex.setText(freshIndex);
 			reacID.setText(reac.getId()+dimInID);
 			reacName.setText(reac.getName());
@@ -987,37 +962,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					react.setId(reactionID);
 					react.setName(reacName.getText().trim());
 					Port port = bioModel.getPortByIdRef(val);
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
-					sBasePlugin.unsetListOfDimensions();
-					for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-						Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-						dimX.setSize(dimID[i+1]);
-						dimX.setArrayDimension(i);
-					}
-					// Add the indices
-					sBasePlugin.unsetListOfIndices();
-					for(int i = 0; dex!=null && i<dex.length-1; i++){
-						Index indexRule = new Index();
-						indexRule.setArrayDimension(i);
-						indexRule.setReferencedAttribute("compartment");
-						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-						indexRule.setMath(indexMath);
-						sBasePlugin.addIndex(indexRule);
-					}
+					SBMLutilities.createDimensions(react, dimensionIds, dimID);
+					SBMLutilities.addIndices(react, "compartment", dex, 1);
 					if (port!=null) {
 						if (onPort.isSelected()) {
 							port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 							port.setIdRef(react.getId());
-							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-							sBasePluginPort.unsetListOfIndices();
-							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-								Index portIndex = sBasePluginPort.createIndex();
-								portIndex.setReferencedAttribute("comp:idRef");
-								portIndex.setArrayDimension(i);
-								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-							}
+							SBMLutilities.cloneDimensionAddIndex(react, port, "comp:idRef");
 						} else {
 							bioModel.getSBMLCompModel().removePort(port);
 						}
@@ -1026,16 +977,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 							port.setIdRef(react.getId());
-							ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-							sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());		
-							sBasePluginPort.unsetListOfIndices();
-							for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-								org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-								Index portIndex = sBasePluginPort.createIndex();
-								portIndex.setReferencedAttribute("comp:idRef");
-								portIndex.setArrayDimension(i);
-								portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-							}
+							SBMLutilities.cloneDimensionAddIndex(react, port, "comp:idRef");
 						}
 					}
 					if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
@@ -1158,37 +1100,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					react.setCompartment((String) reactionComp.getSelectedItem());
 					react.setId(reactionID);
 					react.setName(reacName.getText().trim());
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(react);
-					sBasePlugin.unsetListOfDimensions();
-					for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-						Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-						dimX.setSize(dimID[i+1]);
-						dimX.setArrayDimension(i);
-					}
-					// Add the indices
-					sBasePlugin.unsetListOfIndices();
-					for(int i = 0; dex!=null && i<dex.length-1; i++){
-						Index indexRule = new Index();
-						indexRule.setArrayDimension(i);
-						indexRule.setReferencedAttribute("compartment");
-						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-						indexRule.setMath(indexMath);
-						sBasePlugin.addIndex(indexRule);
-					}
+					SBMLutilities.createDimensions(react, dimensionIds, dimID);
+					SBMLutilities.addIndices(react, "compartment", dex, 1);
 					if (onPort.isSelected()) {
 						Port port = bioModel.getSBMLCompModel().createPort();
 						port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 						port.setIdRef(react.getId());
-						ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-						sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-						sBasePluginPort.unsetListOfIndices();
-						for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-							org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-							Index portIndex = sBasePluginPort.createIndex();
-							portIndex.setReferencedAttribute("comp:idRef");
-							portIndex.setArrayDimension(i);
-							portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-						}
+						SBMLutilities.cloneDimensionAddIndex(react, port, "comp:idRef");
 					}
 					if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 						if (complex==null && production==null) {
@@ -1905,15 +1823,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (!product.getConstant()) {
 				productConstant.setSelectedItem("false");
 			}
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(product);
 			String dimInID = SBMLutilities.getDimensionString(product);
 			productId.setText(productId.getText()+dimInID);
-			String freshIndex = "";
-			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i,"species");
-				if (indie!=null)
-					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
-			}
+			String freshIndex = SBMLutilities.getIndicesString(product, "species");
 			PiIndex.setText(freshIndex);
 		}
 		if (production!=null) {
@@ -1927,15 +1839,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String[] reactdimIDs = null; 
 		String[] reactdimIDSizes = null;
 		if (reaction!=null) {
-			ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-			reactdimIDs = new String[reactPlugin.getDimensionCount()];
-			reactdimIDSizes = new String[reactPlugin.getDimensionCount()+1];
+			reactdimIDs = SBMLutilities.getDimensionIds(reaction);
+			reactdimIDSizes = SBMLutilities.getDimensionSizes(reaction);
 			reactdimIDSizes[0] = reaction.getId();
-			for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
-				Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
-				reactdimIDs[i] =  dimX.getId();
-				reactdimIDSizes[i+1] = dimX.getSize();
-			}
 		} else {
 			reactdimIDs = new String[]{""};
 			reactdimIDSizes = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
@@ -2143,23 +2049,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						produ.setConstant(false);
 					}
 					if(!error){
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(produ);
-						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1]);
-							dimX.setArrayDimension(i);
-						}
-						// Add the indices
-						sBasePlugin.unsetListOfIndices();
-						for(int i = 0; dex!=null && i<dex.length-1; i++){
-							Index indexRule = new Index();
-							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("species");
-							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-							indexRule.setMath(indexMath);
-							sBasePlugin.addIndex(indexRule);
-						}
+						SBMLutilities.createDimensions(produ, dimensionIds, dimID);
+						SBMLutilities.addIndices(produ, "species", dex, 1);
 					}
 					if (product == null || !inSchematic) {
 						proda[index] = prod;
@@ -2193,22 +2084,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						produ.setConstant(false);
 					}
 					if(!error){
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(produ);
-						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1]);
-							dimX.setArrayDimension(i);
-						}
-
-						// Add the indices
-						for(int i = 0; dex!=null && i<dex.length-1; i++){
-							Index indexRule = new Index();
-							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("species");
-							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-							indexRule.setMath(indexMath);
-							sBasePlugin.addIndex(indexRule);
-						}
+						SBMLutilities.createDimensions(produ, dimensionIds, dimID);
+						SBMLutilities.addIndices(produ, "species", dex, 1);
 					}
 					JList add = new JList();
 					Object[] adding = { prod };
@@ -2265,15 +2142,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			index = split[offset].substring(split[offset].indexOf("["));
 		if (ref.isSetId() && !ref.getId().equals(id)) return false;
 		if (!ref.getSpecies().equals(species)) return false;
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ref);
 		String refDim = SBMLutilities.getDimensionString(ref);
 		if (!refDim.equals(dim)) return false;
-		String refIndex = "";
-		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-			Index ind = sBasePlugin.getIndex(i,"species");
-			if (ind!=null)
-				refIndex += "[" + SBMLutilities.myFormulaToString(ind.getMath()) + "]";
-		}
+		String refIndex = SBMLutilities.getIndicesString(ref, "species");
 		if (!refIndex.equals(index)) return false;
 		return true;
 	}
@@ -2328,15 +2199,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				modifierId.setText(modifier.getId());
 			}
 
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
 			String dimInID = SBMLutilities.getDimensionString(modifier);
 			modifierId.setText(modifierId.getText()+dimInID);
-			String freshIndex = "";
-			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i,"species");
-				if (indie!=null)
-					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
-			}
+			String freshIndex = SBMLutilities.getIndicesString(modifier, "species");
 			MiIndex.setText(freshIndex);
 			modifierSpecies.setSelectedItem(modifier.getSpecies());
 			if (modifier.isSetSBOTerm()) {
@@ -2355,15 +2220,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String[] reactdimIDs = null; 
 		String[] reactdimIDSizes = null;
 		if (reaction!=null) {
-			ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-			reactdimIDs = new String[reactPlugin.getDimensionCount()];
-			reactdimIDSizes = new String[reactPlugin.getDimensionCount()+1];
+			reactdimIDs = SBMLutilities.getDimensionIds(reaction);
+			reactdimIDSizes = SBMLutilities.getDimensionSizes(reaction);
 			reactdimIDSizes[0] = reaction.getId();
-			for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
-				Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
-				reactdimIDs[i] =  dimX.getId();
-				reactdimIDSizes[i+1] = dimX.getSize();
-			}
 		} else {
 			reactdimIDs = new String[]{""};
 			reactdimIDSizes = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
@@ -2613,22 +2472,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						modifiers.setListData(modifierArray);
 						modifiers.setSelectedIndex(index);
 					}
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modifier);
-					sBasePlugin.unsetListOfDimensions();
-					for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-						Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-						dimX.setSize(dimID[i+1]);
-						dimX.setArrayDimension(i);
-					}
-					sBasePlugin.unsetListOfIndices();
-					for(int i = 0; dex!=null && i<dex.length-1; i++){
-						Index indexRule = new Index();
-						indexRule.setArrayDimension(i);
-						indexRule.setReferencedAttribute("species");
-						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-						indexRule.setMath(indexMath);
-						sBasePlugin.addIndex(indexRule);
-					}
+					SBMLutilities.createDimensions(modifier, dimensionIds, dimID);
+					SBMLutilities.addIndices(modifier, "species", dex, 1);
 				}
 				else {
 					modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -2722,20 +2567,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					catch (Exception e2) {
 						modifiers.setSelectedIndex(0);
 					}
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(modi);
-					for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-						Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-						dimX.setSize(dimID[i+1]);
-						dimX.setArrayDimension(i);
-					}
-					for(int i = 0; dex!=null && i<dex.length-1; i++){
-						Index indexRule = new Index();
-						indexRule.setArrayDimension(i);
-						indexRule.setReferencedAttribute("species");
-						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-						indexRule.setMath(indexMath);
-						sBasePlugin.addIndex(indexRule);
-					}
+					SBMLutilities.createDimensions(modi, dimensionIds, dimID);
+					SBMLutilities.addIndices(modi, "species", dex, 1);
 				}
 			}
 			modelEditor.setDirty(true);
@@ -2771,15 +2604,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (ref.isSetId() && !ref.getId().equals(id)) return false;
 		if (!ref.getSpecies().equals(species)) return false;
 		if (ref.getStoichiometry() != Double.parseDouble(stoich)) return false;
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(ref);
 		String refDim = SBMLutilities.getDimensionString(ref);
 		if (!refDim.equals(dim)) return false;
-		String refIndex = "";
-		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-			Index ind = sBasePlugin.getIndex(i,"species");
-			if (ind!=null)
-				refIndex += "[" + SBMLutilities.myFormulaToString(ind.getMath()) + "]";
-		}
+		String refIndex = SBMLutilities.getIndicesString(ref, "species");
 		if (!refIndex.equals(index)) return false;
 		return true;
 	}
@@ -2856,15 +2683,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (!reactant.getConstant()) {
 				reactantConstant.setSelectedItem("false");
 			}
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactant);
 			String dimInID = SBMLutilities.getDimensionString(reactant);
 			reactantId.setText(reactantId.getText()+dimInID);
-			String freshIndex = "";
-			for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-				Index indie = sBasePlugin.getIndex(i,"species");
-				if (indie!=null)
-					freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
-			}
+			String freshIndex = SBMLutilities.getIndicesString(reactant, "species");
 			RiIndex.setText(freshIndex);			
 			if (complex!=null) {
 				if (complex.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+selectedID)!=null) {
@@ -2876,15 +2697,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String[] reactdimIDs = null; 
 		String[] reactdimIDSizes = null;
 		if (reaction!=null) {
-			ArraysSBasePlugin reactPlugin = SBMLutilities.getArraysSBasePlugin(reaction);
-			reactdimIDs = new String[reactPlugin.getDimensionCount()];
-			reactdimIDSizes = new String[reactPlugin.getDimensionCount()+1];
+			reactdimIDs = SBMLutilities.getDimensionIds(reaction);
+			reactdimIDSizes = SBMLutilities.getDimensionSizes(reaction);
 			reactdimIDSizes[0] = reaction.getId();
-			for(int i = 0; i<reactPlugin.getDimensionCount(); i++){
-				Dimension dimX = reactPlugin.getDimensionByArrayDimension(i);
-				reactdimIDs[i] =  dimX.getId();
-				reactdimIDSizes[i+1] = dimX.getSize();
-			}
 		} else {
 			reactdimIDs = new String[]{""};
 			reactdimIDSizes = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), reacID.getText(), false);
@@ -3113,23 +2928,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactan.setConstant(false);
 					}
 					if(!error){
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactan);
-						sBasePlugin.unsetListOfDimensions();
-						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1]);
-							dimX.setArrayDimension(i);
-						}
-						// Add the indices
-						sBasePlugin.unsetListOfIndices();
-						for(int i = 0; dex!=null && i<dex.length-1; i++){
-							Index indexRule = new Index();
-							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("species");
-							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-							indexRule.setMath(indexMath);
-							sBasePlugin.addIndex(indexRule);
-						}
+						SBMLutilities.createDimensions(reactan, dimensionIds, dimID);
+						SBMLutilities.addIndices(reactan, "species", dex, 1);
 					} 
 					if (reactant == null || !inSchematic) {
 						reacta[index] = react;
@@ -3186,21 +2986,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactan.setConstant(false);
 					}
 					if(!error){
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reactan);
-						for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-							Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-							dimX.setSize(dimID[i+1]);
-							dimX.setArrayDimension(i);
-						}
-						// Add the indices
-						for(int i = 0; dex!=null && i<dex.length-1; i++){
-							Index indexRule = new Index();
-							indexRule.setArrayDimension(i);
-							indexRule.setReferencedAttribute("species");
-							ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-							indexRule.setMath(indexMath);
-							sBasePlugin.addIndex(indexRule);
-						}
+						SBMLutilities.createDimensions(reactan, dimensionIds, dimID);
+						SBMLutilities.addIndices(reactan, "species", dex, 1);
 					}
 					JList add = new JList();
 					Object[] adding = { react };
@@ -3357,12 +3144,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private static String indexedSpeciesRef(SimpleSpeciesReference reference) {
 		String result = reference.getSpecies();
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reference);
-		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-			Index index = sBasePlugin.getIndex(i,"species");
-			if (index!=null)
-				result += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-		}
+		result += SBMLutilities.getIndicesString(reference, "species");
 		return result;
 	}
 		
@@ -3404,7 +3186,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		boolean addEquil = false;
 		String equilExpr = "";
 		for (SpeciesReference s : changedReactants) {
-			if (SBMLutilities.getArraysSBasePlugin(s).getDimensionCount()>0) {
+			if (SBMLutilities.hasDimensions(s)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
 						+ "Dimensions on species references not currently supported for use mass action button.", "Unable to Create Kinetic Law",
 						JOptionPane.ERROR_MESSAGE);
@@ -3439,7 +3221,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		for (ModifierSpeciesReference s : changedModifiers) {
-			if (SBMLutilities.getArraysSBasePlugin(s).getDimensionCount()>0) {
+			if (SBMLutilities.hasDimensions(s)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
 						+ "Dimensions on species references not currently supported for use mass action button.", "Unable to Create Kinetic Law",
 						JOptionPane.ERROR_MESSAGE);
@@ -3452,7 +3234,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			addEquil = false;
 			equilExpr = "";
 			for (SpeciesReference s : changedProducts) {
-				if (SBMLutilities.getArraysSBasePlugin(s).getDimensionCount()>0) {
+				if (SBMLutilities.hasDimensions(s)) {
 					JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
 							+ "Dimensions on species references not currently supported for use mass action button.", "Unable to Create Kinetic Law",
 							JOptionPane.ERROR_MESSAGE);

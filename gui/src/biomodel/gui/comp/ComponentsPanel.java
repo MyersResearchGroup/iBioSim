@@ -23,7 +23,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.Deletion;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
@@ -626,13 +625,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 					if (!portmapId.equals("--delete--")) {
 						variable = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 						variable = new Submodel();
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(variable);
-						sBasePlugin.unsetListOfDimensions();
-						for(int j = 0; j<dimensions.length-1; j++){
-							org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[j]);
-							dimX.setSize(dimensions[j+1].replace("]", "").trim());
-							dimX.setArrayDimension(j);
-						}
+						SBMLutilities.createDimensions(variable, dimensionIds, dimensions);
 						subModelIndices = SBMLutilities.checkIndices(subModelIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
 								portDimensions, topDimensionIds, topDimensions);
 						if (subModelIndices==null) return false;
@@ -642,13 +635,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			Submodel instance = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId);
 			if (instance != null) {
 				instance.setName(fields.get(GlobalConstants.NAME).getValue());
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(instance);
-				sBasePlugin.unsetListOfDimensions();
-				for(int i = 0; i<dimensions.length-1; i++){
-					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-					dimX.setSize(dimensions[i+1].replace("]", "").trim());
-					dimX.setArrayDimension(i);
-				}
+				SBMLutilities.createDimensions(instance, dimensionIds, dimensions);
 				while (instance.getListOfDeletions().size()>0) {
 					Deletion deletion = instance.getListOfDeletions().get(0);
 					instance.removeDeletion(deletion);
@@ -928,13 +915,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 								fields.get(GlobalConstants.ID).getValue(), false);
 						if(dimensions!=null && dimensions.length>0) {
 							dimensionIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
-							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(variable);
-							sBasePlugin.unsetListOfDimensions();
-							for(int i = 0; i<dimensions.length-1; i++){
-								org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-								dimX.setSize(dimensions[i+1].replace("]", "").trim());
-								dimX.setArrayDimension(i);
-							}
+							SBMLutilities.createDimensions(variable, dimensionIds, dimensions);
 						}
 						subModelIndices = SBMLutilities.checkIndices(subModelIndicesField.get(selectedIndex).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
 								portDimensions, topDimensionIds, topDimensions);

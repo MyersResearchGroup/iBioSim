@@ -29,8 +29,6 @@ import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -752,17 +750,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 
-							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
 							if (dimID!=null) {
 								paramet.setId(dimID[0].trim());
 							}
-							sBasePlugin.unsetListOfDimensions();
-							for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-								dimX.setSize(dimID[i+1]);
-								dimX.setArrayDimension(i);
-							}
-							
+							SBMLutilities.createDimensions(paramet, dimensionIds, dimID);
 							paramet.setName(paramName.getText().trim());
 							if (SBOTerms.getSelectedItem().equals("(unspecified)")) {
 								paramet.unsetSBOTerm();
@@ -900,12 +891,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							} else {
 								paramet.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
 							}
-							ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(paramet);
-							for(int i = 0; dimID!=null && i<dimID.length-1; i++){
-								Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-								dimX.setSize(dimID[i+1]);
-								dimX.setArrayDimension(i);
-							}
+							SBMLutilities.createDimensions(paramet, dimensionIds, dimID);
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}

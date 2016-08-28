@@ -15,14 +15,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Index;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -115,16 +112,9 @@ public class PromoterPanel extends JPanel implements ActionListener {
 		if (!paramsOnly) add(tempPanel);
 		
 		// indices field
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(promoter);
 		tempPanel = new JPanel(new GridLayout(1, 2));
 		iIndex = new JTextField(20);
-		String freshIndex = "";
-		for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-			Index indie = sBasePlugin.getIndex(i,"compartment");
-			if(indie!=null){
-				freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
-			}
-		}
+		String freshIndex = SBMLutilities.getIndicesString(promoter, "compartment");
 		iIndex.setText(freshIndex);
 		tempPanel.add(new JLabel("Compartment Indices"));
 		tempPanel.add(iIndex);
@@ -447,45 +437,12 @@ public class PromoterPanel extends JPanel implements ActionListener {
 //				}
 				id = idDims[0];
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(promoter);
-				sBasePlugin.unsetListOfDimensions();
-				for(int i = 0; i<idDims.length-1; i++){
-					org.sbml.jsbml.ext.arrays.Dimension dimX = sBasePlugin.createDimension(dimensionIds[i]);
-					dimX.setSize(idDims[i+1].replace("]", "").trim());
-					dimX.setArrayDimension(i);
-				}
+				SBMLutilities.createDimensions(promoter, dimensionIds, idDims);
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
 				dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", idDims, null, null);
 				if(dex==null)return false;
-				int limit = sBasePlugin.getIndexCount();
-				for(int i = limit-1; i>-1; i--){
-			        Index indie = sBasePlugin.getIndex(i,"compartment");
-			        if(indie!=null)
-			           sBasePlugin.removeIndex(indie);
-				}
-				for(int i = 0; i<dex.length-1; i++){
-					Index indexRule = new Index();
-				    indexRule.setArrayDimension(i);
-				    indexRule.setReferencedAttribute("compartment");
-				    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-				    indexRule.setMath(indexMath);
-				    sBasePlugin.addIndex(indexRule);
-				}
-				sBasePlugin = SBMLutilities.getArraysSBasePlugin(production);
-				limit = sBasePlugin.getIndexCount();
-				for(int i = limit-1; i>-1; i--){
-			        Index indie = sBasePlugin.getIndex(i,"compartment");
-			        if(indie!=null)
-			           sBasePlugin.removeIndex(indie);
-				}
-				for(int i = 0; i<dex.length-1; i++){
-					Index indexRule = new Index();
-				    indexRule.setArrayDimension(i);
-				    indexRule.setReferencedAttribute("compartment");
-				    ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-				    indexRule.setMath(indexMath);
-				    sBasePlugin.addIndex(indexRule);
-				}
+				SBMLutilities.addIndices(promoter, "compartment", dex, 1);
+				SBMLutilities.addIndices(production, "compartment", dex, 1);
 			}
 			promoter.setCompartment((String)compartBox.getSelectedItem());
 			production.setCompartment((String)compartBox.getSelectedItem());

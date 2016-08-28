@@ -483,7 +483,7 @@ public class Run implements ActionListener
 				log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=nary-level " + filename + "\n");
 				logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=nary-level " + filename + "\n\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=nary-level " + theFile, null, work);
+				reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=nary-level " + theFile, Gui.envp, work);
 			}
 			else if (fba.isSelected())
 			{
@@ -654,7 +654,7 @@ public class Run implements ActionListener
 							log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + Gui.separator + sbmlName + " " + filename + "\n");
 							logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + Gui.separator + sbmlName + " " + filename + "\n\n");
 							time1 = System.nanoTime();
-							reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + Gui.separator + sbmlName + " " + theFile, null, work);
+							reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + Gui.separator + sbmlName + " " + theFile, Gui.envp, work);
 						}
 						else
 						{
@@ -712,7 +712,7 @@ public class Run implements ActionListener
 					log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + filename + "\n");
 					logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + filename + "\n\n");
 					time1 = System.nanoTime();
-					reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
+					reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile, Gui.envp, work);
 				}
 			}
 			else if (xhtml.isSelected())
@@ -722,7 +722,7 @@ public class Run implements ActionListener
 				time1 = System.nanoTime();
 				Simulator.expandArrays(filename, 1);
 
-				reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, null, work);
+				reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, Gui.envp, work);
 			}
 			else
 			{
@@ -731,7 +731,7 @@ public class Run implements ActionListener
 					log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=hse2 " + filename + "\n");
 					logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=hse2 " + filename + "\n\n");
 					time1 = System.nanoTime();
-					reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=hse2 " + theFile, null, work);
+					reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=hse2 " + theFile, Gui.envp, work);
 				}
 				else if (sim.equals("prism"))
 				{
@@ -1438,7 +1438,7 @@ public class Run implements ActionListener
 
 						Simulator.expandArrays(filename, stoichAmpValue);
 
-						reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=" + sim + " " + theFile, null, work);
+						reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=" + sim + " " + theFile, Gui.envp, work);
 					}
 					else
 					{

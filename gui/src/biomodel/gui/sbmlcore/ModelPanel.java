@@ -18,13 +18,10 @@ import javax.swing.JTextField;
 
 import main.Gui;
 
-import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Index;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -177,12 +174,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				conversionFactor.setSelectedItem(model.getConversionFactor());
 				
 				String freshIndex = "";
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
-				for(int i = sBasePlugin.getIndexCount()-1; i>=0; i--){
-					Index indie = sBasePlugin.getIndex(i,"conversionFactor");
-					if (indie!=null)
-						freshIndex += "[" + SBMLutilities.myFormulaToString(indie.getMath()) + "]";
-				}
+				SBMLutilities.getIndicesString(model, "conversionFactor");
 				conviIndex.setText(freshIndex);
 			}
 			
@@ -282,22 +274,13 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				else {
 					model.setExtentUnits((String) extentUnits.getSelectedItem());
 				}
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(model);
 				if (conversionFactor.getSelectedItem().equals("( none )")) {
 					model.unsetConversionFactor();
-					sBasePlugin.unsetListOfIndices();
+					SBMLutilities.addIndices(model, "conversionFactor", null, 1);
 				}
 				else {
 					model.setConversionFactor((String) conversionFactor.getSelectedItem());
-					sBasePlugin.unsetListOfIndices();
-					for(int i = 0; dex!=null && i<dex.length-1; i++){
-						Index indexRule = new Index();
-						indexRule.setArrayDimension(i);
-						indexRule.setReferencedAttribute("conversionFactor");
-						ASTNode indexMath = SBMLutilities.myParseFormula(dex[i+1]);
-						indexRule.setMath(indexMath);
-						sBasePlugin.addIndex(indexRule);
-					}
+					SBMLutilities.addIndices(model, "conversionFactor", dex, 1);
 				}
 				if (framework.getSelectedItem().equals("(unspecified)")) {
 					model.unsetSBOTerm();

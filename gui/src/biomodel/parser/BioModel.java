@@ -25,9 +25,6 @@ import org.sbml.jsbml.ext.layout.BoundingBox;
 import org.sbml.jsbml.ext.layout.GraphicalObject;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
-import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
-import org.sbml.jsbml.ext.arrays.Dimension;
-import org.sbml.jsbml.ext.arrays.Index;
 import org.sbml.jsbml.ext.arrays.flattening.ArraysFlattening;
 import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
@@ -1456,8 +1453,8 @@ public class BioModel {
 		}		
 	}
 	
-	public Reaction createBiochemicalReaction(String id,String SBOid,ArrayList<String> reactants,
-			ArrayList<String> modifiers,ArrayList<String> products) {
+	public Reaction createBiochemicalReaction(String id,String SBOid,HashMap<String,String> reactants,
+			HashMap<String,String> modifiers,HashMap<String,String> products) {
 		Reaction r = sbml.getModel().getReaction(id);
 		if (r==null) {
 			r = sbml.getModel().createReaction();
@@ -1466,20 +1463,23 @@ public class BioModel {
 			r.setReversible(false);
 			r.setFast(false);
 			String kLaw = "k";
-			for (String reactant : reactants) {
+			for (String reactant : reactants.keySet()) {
 				SpeciesReference ref = r.createReactant();
 				ref.setSpecies(reactant);
+				ref.setSBOTerm(reactants.get(reactant));
 				ref.setStoichiometry(1);
 				ref.setConstant(true);
 				kLaw += "*" + reactant;
 			}
-			for (String modifier : modifiers) {
+			for (String modifier : modifiers.keySet()) {
 				ModifierSpeciesReference ref = r.createModifier();
 				ref.setSpecies(modifier);
+				ref.setSBOTerm(modifiers.get(modifier));
 			}
-			for (String product : products) {
+			for (String product : products.keySet()) {
 				SpeciesReference ref = r.createProduct();
 				ref.setSpecies(product);
+				ref.setSBOTerm(products.get(product));
 				ref.setStoichiometry(1);
 				ref.setConstant(true);
 			}
@@ -1499,6 +1499,7 @@ public class BioModel {
 			r.setId(GlobalConstants.COMPLEXATION + "_" + s);
 			r.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
 			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
+			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(true);
 			r.setFast(false);
 			SpeciesReference product = r.createProduct();
@@ -1515,23 +1516,8 @@ public class BioModel {
 				k.getListOfLocalParameters().remove(GlobalConstants.REVERSE_KCOMPLEX_STRING);
 			}
 		}
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-		ArraysSBasePlugin sBasePluginSpecies = SBMLutilities.getArraysSBasePlugin(sbml.getModel().getSpecies(s));
-		ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(r.getProduct(0));
-		sBasePlugin.unsetListOfDimensions();
-		sBasePluginProduct.unsetListOfIndices();
-		String indexStr = "";
-		for (int i = 0; i < sBasePluginSpecies.getListOfDimensions().size(); i++) {
-			Dimension prodDim = sBasePluginSpecies.getDimensionByArrayDimension(i);
-			Dimension dim = sBasePlugin.createDimension(prodDim.getId());
-			dim.setSize(prodDim.getSize());
-			dim.setArrayDimension(prodDim.getArrayDimension());
-			Index index = sBasePluginProduct.createIndex();
-			index.setReferencedAttribute("species");
-			index.setArrayDimension(i);
-			index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-			indexStr = "[" + dim.getId() + "]" + indexStr;
-		}
+		SBMLutilities.cloneDimensions(sbml.getModel().getSpecies(s), r);
+		SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(s), r.getProduct(0), "species");
 		updateComplexParameters(r,KcStr);
 		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(r)));
 		Port port = getPortByIdRef(r.getId());
@@ -1539,16 +1525,7 @@ public class BioModel {
 			if (onPort) {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());		
-				sBasePluginPort.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("comp:idRef");
-					portIndex.setArrayDimension(i);
-					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-				}
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -1557,16 +1534,7 @@ public class BioModel {
 				port = sbmlCompModel.createPort();
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());		
-				sBasePluginPort.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("comp:idRef");
-					portIndex.setArrayDimension(i);
-					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-				}
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			}
 		}
 		return r;
@@ -1583,22 +1551,12 @@ public class BioModel {
 			return r;
 		}
 		if (modifier!=null) {
-			if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(regulatorId))) {
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(modifier);
-				sBasePluginProduct.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
-					Index index = sBasePluginProduct.createIndex();
-					index.setReferencedAttribute("species");
-					index.setArrayDimension(i);
-					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-				}
-			}			
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(regulatorId), modifier, "species");
 		}
 		if (!productId.equals("none") && r.getProductForSpecies(productId)==null) {
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(productId);
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
 			double np = sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue();
 			product.setStoichiometry(np);
 			product.setConstant(true);
@@ -1884,18 +1842,7 @@ public class BioModel {
 				product.setStoichiometry(np);
 			}
 			product.setConstant(true);
-			if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(productId))) {
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(product);
-				sBasePluginProduct.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
-					Index index = sBasePluginProduct.createIndex();
-					index.setReferencedAttribute("species");
-					index.setArrayDimension(i);
-					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-				}
-			}
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
 			if (r.getProductForSpecies(promoterId+"_mRNA")!=null) {
 				r.removeProduct(promoterId+"_mRNA");
 			}
@@ -1923,18 +1870,7 @@ public class BioModel {
 			modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
 		}
 		if (modifier!=null) {
-			if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(activatorId))) {
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(modifier);
-				sBasePluginProduct.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
-					Index index = sBasePluginProduct.createIndex();
-					index.setReferencedAttribute("species");
-					index.setArrayDimension(i);
-					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-				}
-			}			
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(activatorId), modifier, "species");
 		}
 		if (!productId.equals("none") && r.getProductForSpecies(productId)==null) {
 			SpeciesReference product = r.createProduct();
@@ -1947,18 +1883,7 @@ public class BioModel {
 				product.setStoichiometry(np);
 			}
 			product.setConstant(true);
-			if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(productId))) {
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(product);
-				sBasePluginProduct.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
-					Index index = sBasePluginProduct.createIndex();
-					index.setReferencedAttribute("species");
-					index.setArrayDimension(i);
-					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-				}
-			}
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
 			if (r.getProductForSpecies(promoterId + "_mRNA")!=null) {
 				r.removeProduct(promoterId + "_mRNA");
 			}
@@ -1987,18 +1912,7 @@ public class BioModel {
 			modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
 		}
 		if (modifier!=null) {
-			if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(repressorId))) {
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(modifier);
-				sBasePluginProduct.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
-					Index index = sBasePluginProduct.createIndex();
-					index.setReferencedAttribute("species");
-					index.setArrayDimension(i);
-					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-				}
-			}			
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(repressorId), modifier, "species");
 		}
 		if (!productId.equals("none") && r.getProductForSpecies(productId)==null) {
 			SpeciesReference product = r.createProduct();
@@ -2011,6 +1925,7 @@ public class BioModel {
 				product.setStoichiometry(np);
 			}
 			product.setConstant(true);
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
 			if (r.getProductForSpecies(promoterId + "_mRNA")!=null) {
 				r.removeProduct(promoterId + "_mRNA");
 			}
@@ -2051,18 +1966,7 @@ public class BioModel {
 			reactant.setSpecies(reactantId);
 			reactant.setConstant(true);
 		}
-		if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(reactantId))) {
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-			ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(reactant);
-			sBasePluginProduct.unsetListOfIndices();
-			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-				Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
-				Index index = sBasePluginProduct.createIndex();
-				index.setReferencedAttribute("species");
-				index.setArrayDimension(i);
-				index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-			}
-		}			
+		SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(reactantId), reactant, "species");
 		updateComplexCooperativity(reactantId, r, CoopStr, sbml.getModel());
 		return r;
 	}
@@ -2104,6 +2008,7 @@ public class BioModel {
 			reaction.setId("MembraneDiffusion_"+s);
 			reaction.setSBOTerm(GlobalConstants.SBO_DIFFUSION);
 			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
+			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
 			reaction.setReversible(true);
 			reaction.setFast(false);
 			SpeciesReference reactant = reaction.createReactant();
@@ -2112,22 +2017,11 @@ public class BioModel {
 			reactant.setConstant(true);
 		}
 		String indexStr = "";
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
 		if (dimensions!=null && dimensions.length>0) {
 			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
-			sBasePlugin.unsetListOfDimensions();
-			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(reaction.getReactant(0));
-			sBasePluginReactant.unsetListOfIndices();
-			for (int i = 1; i < dimensions.length; i++) {
-				Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
-				dim.setSize(dimensions[i]);
-				dim.setArrayDimension(i-1);
-				Index index = sBasePluginReactant.createIndex();
-				index.setReferencedAttribute("species");
-				index.setArrayDimension(i-1);
-				index.setMath(SBMLutilities.myParseFormula(dimIds[i-1]));
-				indexStr = "[" + SBMLutilities.myParseFormula(dimIds[i-1]) + "]" + indexStr;
-			}
+			SBMLutilities.createDimensions(reaction, dimIds, dimensions);
+			SBMLutilities.addIndices(reaction.getReactant(0), "species", dimIds, 0);
+			indexStr = SBMLutilities.getIndicesString(reaction.getReactant(0), "species");
 		}
 		reaction.createKineticLaw();
 		updateDiffusionParameters(reaction,kmdiffStr);
@@ -2138,16 +2032,7 @@ public class BioModel {
 			if (onPort) {
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
-				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-				sBasePluginPort.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("comp:idRef");
-					portIndex.setArrayDimension(i);
-					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-				}
+				SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -2156,16 +2041,7 @@ public class BioModel {
 				port = sbmlCompModel.createPort();
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
-				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-				sBasePluginPort.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("comp:idRef");
-					portIndex.setArrayDimension(i);
-					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-				}
+				SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
 			}
 		}
 		return reaction;
@@ -2180,6 +2056,7 @@ public class BioModel {
 			r.setId("Constitutive_"+s);
 			r.setSBOTerm(GlobalConstants.SBO_CONSTITUTIVE);
 			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
+			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
 			r.setFast(false);
 			SpeciesReference product = r.createProduct();
@@ -2192,21 +2069,10 @@ public class BioModel {
 		} else {
 			k = r.getKineticLaw();
 		}
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
 		if (dimensions!=null && dimensions.length>0) {
 			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
-			sBasePlugin.unsetListOfDimensions();
-			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(r.getProduct(0));
-			sBasePluginReactant.unsetListOfIndices();
-			for (int i = 1; i < dimensions.length; i++) {
-				Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
-				dim.setSize(dimensions[i]);
-				dim.setArrayDimension(i-1);
-				Index index = sBasePluginReactant.createIndex();
-				index.setReferencedAttribute("species");
-				index.setArrayDimension(i-1);
-				index.setMath(SBMLutilities.myParseFormula(dimIds[i-1]));
-			}
+			SBMLutilities.createDimensions(r, dimIds, dimensions);
+			SBMLutilities.addIndices(r.getProduct(0), "species", dimIds, 0);
 		}
 		if (np != null) {
 			LocalParameter p = k.getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
@@ -2247,16 +2113,7 @@ public class BioModel {
 			if (onPort) {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-				sBasePluginPort.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("comp:idRef");
-					portIndex.setArrayDimension(i);
-					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-				}
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -2265,16 +2122,7 @@ public class BioModel {
 				port = sbmlCompModel.createPort();
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-				sBasePluginPort.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("comp:idRef");
-					portIndex.setArrayDimension(i);
-					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-				}
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			}
 		}
 		return r;
@@ -2288,6 +2136,7 @@ public class BioModel {
 			reaction.setId(GlobalConstants.DEGRADATION + "_" + s);
 			reaction.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
 			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
+			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
 			reaction.setReversible(false);
 			reaction.setFast(false);
 			SpeciesReference reactant = reaction.createReactant();
@@ -2296,22 +2145,11 @@ public class BioModel {
 			reactant.setConstant(true);
 		} 
 		String indexStr = "";
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction);
 		if (dimensions!=null && dimensions.length>0) {
 			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
-			sBasePlugin.unsetListOfDimensions();
-			ArraysSBasePlugin sBasePluginReactant = SBMLutilities.getArraysSBasePlugin(reaction.getReactant(0));
-			sBasePluginReactant.unsetListOfIndices();
-			for (int i = 1; i < dimensions.length; i++) {
-				Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
-				dim.setSize(dimensions[i]);
-				dim.setArrayDimension(i-1);
-				Index index = sBasePluginReactant.createIndex();
-				index.setReferencedAttribute("species");
-				index.setArrayDimension(i-1);
-				index.setMath(SBMLutilities.myParseFormula(dimIds[i-1]));
-				indexStr = "[" + SBMLutilities.myParseFormula(dimIds[i-1]) + "]" + indexStr;
-			}
+			SBMLutilities.createDimensions(reaction, dimIds, dimensions);
+			SBMLutilities.addIndices(reaction.getReactant(0), "species", dimIds, 0);
+			indexStr = SBMLutilities.getIndicesString(reaction.getReactant(0), "species");
 		}
 		KineticLaw k = reaction.createKineticLaw();
 		if (kd > 0 || sweep != null) {
@@ -2328,16 +2166,7 @@ public class BioModel {
 			if (onPort) {
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
-				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-				sBasePluginPort.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("comp:idRef");
-					portIndex.setArrayDimension(i);
-					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-				}
+				SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -2346,16 +2175,7 @@ public class BioModel {
 				port = sbmlCompModel.createPort();
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
-				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());		
-				sBasePluginPort.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("comp:idRef");
-					portIndex.setArrayDimension(i);
-					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-				}
+				SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
 			}
 		}
 		return reaction;
@@ -2379,16 +2199,19 @@ public class BioModel {
 				r.setId(reactionId);
 			r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
 			r.setCompartment(sbml.getModel().getSpecies(promoterId).getCompartment());
+			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
 			r.setFast(false);
 			ModifierSpeciesReference modifier = r.createModifier();
 			modifier.setSpecies(promoterId);
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterId), modifier, "species");
 			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
-			Species mRNA = sbml.getModel().getSpecies(promoterId+"_mRNA");
+			Species mRNA = sbml.getModel().getSpecies(promoterId+"_mRNA"); 
 			if (mRNA==null) {
 				mRNA = sbml.getModel().createSpecies();
 				mRNA.setId(promoterId + "_mRNA");
 				mRNA.setCompartment(r.getCompartment());
+				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),mRNA,"compartment");
 				mRNA.setInitialAmount(0.0);
 				mRNA.setBoundaryCondition(false);
 				mRNA.setConstant(false);
@@ -2397,6 +2220,7 @@ public class BioModel {
 			}
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(mRNA.getId());
+			SBMLutilities.copyDimensionsToEdgeIndex(r, mRNA, product, "species");
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
 			k = r.createKineticLaw();
@@ -2430,24 +2254,10 @@ public class BioModel {
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, r, metaIDIndex);
 		if (dimensions!=null && dimensions.length>0) {
 			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-			sBasePlugin.unsetListOfDimensions();
-			for (int i = 1; i < dimensions.length; i++) {
-				Dimension dim = sBasePlugin.createDimension(dimIds[i-1]);
-				dim.setSize(dimensions[i]);
-				dim.setArrayDimension(i-1);
-			}
+			SBMLutilities.createDimensions(r, dimIds, dimensions);
 			for (int j=0;j<r.getModifierCount();j++) {
 				if (BioModel.isPromoter(r.getModifier(j))) {
-					ArraysSBasePlugin sBasePluginModifier = SBMLutilities.getArraysSBasePlugin(r.getModifier(j));
-					sBasePluginModifier.unsetListOfIndices();
-					for (int i = 1; i < dimensions.length; i++) {
-						Index index = sBasePluginModifier.createIndex();
-						index.setReferencedAttribute("species");
-						index.setArrayDimension(i-1);
-						index.setMath(SBMLutilities.myParseFormula(dimIds[i-1]));
-						//indexStr = "[" + SBMLutilities.myParseFormula(dimIds[i-1]) + "]" + indexStr;
-					}
+					SBMLutilities.addIndices(r.getModifier(j), "species", dimIds, 0);
 				}
 			}
 		}
@@ -2469,20 +2279,9 @@ public class BioModel {
 				r.getProduct(i).setStoichiometry(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
 			}
 		}
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
 		for (int i = 0; i < r.getProductCount(); i++) {
 			String productId = r.getProduct(i).getSpecies();
-			if (SBMLutilities.dimensionsMatch(r, sbml.getModel().getSpecies(productId))) {
-				ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(r.getProduct(i));
-				sBasePluginProduct.unsetListOfIndices();
-				for (int j = 0; j < sBasePlugin.getListOfDimensions().size(); j++) {
-					Dimension dim = sBasePlugin.getDimensionByArrayDimension(j);
-					Index index = sBasePluginProduct.createIndex();
-					index.setReferencedAttribute("species");
-					index.setArrayDimension(j);
-					index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-				}
-			}
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), r.getProduct(i), "species");
 		}
 		if (ko != null) {
 			LocalParameter p = k.createLocalParameter();
@@ -2552,16 +2351,7 @@ public class BioModel {
 			if (onPort) {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-				sBasePluginPort.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("comp:idRef");
-					portIndex.setArrayDimension(i);
-					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-				}
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -2570,16 +2360,7 @@ public class BioModel {
 				port = sbmlCompModel.createPort();
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-				sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-				sBasePluginPort.unsetListOfIndices();
-				for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-					org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-					Index portIndex = sBasePluginPort.createIndex();
-					portIndex.setReferencedAttribute("comp:idRef");
-					portIndex.setArrayDimension(i);
-					portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-				}
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			}
 		}
 		return r;
@@ -2590,13 +2371,7 @@ public class BioModel {
 		kineticLaw = GlobalConstants.FORWARD_KCOMPLEX_STRING;
 		for (int i=0;i<reaction.getReactantCount();i++) {
 			String reactant = reaction.getReactant(i).getSpecies();
-			String indexStr = "";
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getReactant(i));
-			for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-				Index index = sBasePlugin.getIndex(j,"species");
-				if (index!=null)
-					indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-			}
+			String indexStr = SBMLutilities.getSpeciesReferenceIndexedId(reaction.getReactant(i));
 			if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + 
 					reaction.getReactant(i).getSpecies())==null) {
 				kineticLaw += "*pow(" + reactant+indexStr + "," + GlobalConstants.COOPERATIVITY_STRING + ")";
@@ -2605,13 +2380,7 @@ public class BioModel {
 						"_" + reactant + ")";
 			}
 		}
-		String indexStr = "";
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getProduct(0));
-		for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-			Index index = sBasePlugin.getIndex(j,"species");
-			if (index!=null)
-				indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-		}
+		String indexStr = SBMLutilities.getSpeciesReferenceIndexedId(reaction.getProduct(0));
 		kineticLaw += "-" + GlobalConstants.REVERSE_KCOMPLEX_STRING + "*" + reaction.getProduct(0).getSpecies()+indexStr;
 		return kineticLaw;
 	}
@@ -2625,12 +2394,8 @@ public class BioModel {
 				activated = true;
 			} else if (BioModel.isPromoter(reaction.getModifier(i))) {
 				promoter = reaction.getModifier(i).getSpecies();
-				ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getModifier(i));
-				for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-					Index index = sBasePlugin.getIndex(j,"species");
-					if (index!=null)
-						promoter += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-				}
+				String indexStr = SBMLutilities.getSpeciesReferenceIndexedId(reaction.getModifier(i));
+				promoter += indexStr;
 			}
 		}
 		if (activated) {
@@ -2641,13 +2406,7 @@ public class BioModel {
 			for (int i=0;i<reaction.getModifierCount();i++) {
 				if (BioModel.isActivator(reaction.getModifier(i)) || BioModel.isRegulator(reaction.getModifier(i))) {
 					String activator = reaction.getModifier(i).getSpecies();
-					String indexStr = "";
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getModifier(i));
-					for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-						Index index = sBasePlugin.getIndex(j,"species");
-						if (index!=null)
-							indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-					}
+					String indexStr = SBMLutilities.getSpeciesReferenceIndexedId(reaction.getModifier(i));
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+activator+"_"))==null) {
 						kineticLaw += "+" + GlobalConstants.ACTIVATED_STRING + "*" + 
 								"(" + GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING + "/" + 
@@ -2683,13 +2442,7 @@ public class BioModel {
 			for (int i=0;i<reaction.getModifierCount();i++) {
 				if (BioModel.isRepressor(reaction.getModifier(i)) || BioModel.isRegulator(reaction.getModifier(i))) {
 					String repressor = reaction.getModifier(i).getSpecies();
-					String indexStr = "";
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getModifier(i));
-					for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-						Index index = sBasePlugin.getIndex(j,"species");
-						if (index!=null)
-							indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-					}
+					String indexStr = SBMLutilities.getSpeciesReferenceIndexedId(reaction.getModifier(i));
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+repressor+"_"))==null) {
 						kineticLaw += "+pow((" + GlobalConstants.FORWARD_KREP_STRING + "/" + GlobalConstants.REVERSE_KREP_STRING + ")*" 
 								+ repressor+indexStr;
@@ -2714,13 +2467,7 @@ public class BioModel {
 			for (int i=0;i<reaction.getModifierCount();i++) {
 				if (BioModel.isRepressor(reaction.getModifier(i))) {
 					String repressor = reaction.getModifier(i).getSpecies();
-					String indexStr = "";
-					ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(reaction.getModifier(i));
-					for(int j = sBasePlugin.getIndexCount()-1; j>=0; j--){
-						Index index = sBasePlugin.getIndex(j,"species");
-						if (index!=null)
-							indexStr += "[" + SBMLutilities.myFormulaToString(index.getMath()) + "]";
-					}
+					String indexStr = SBMLutilities.getSpeciesReferenceIndexedId(reaction.getModifier(i));
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+repressor+"_"))==null) {
 						kineticLaw += "+pow((" + GlobalConstants.FORWARD_KREP_STRING + "/" + GlobalConstants.REVERSE_KREP_STRING + ")*" 
 								+ repressor+indexStr;
@@ -3370,18 +3117,7 @@ public class BioModel {
 		s.setSpecies(reactantId);
 		s.setStoichiometry(1.0);
 		s.setConstant(true);
-		if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(reactantId))) {
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-			ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(s);
-			sBasePluginProduct.unsetListOfIndices();
-			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-				Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
-				Index index = sBasePluginProduct.createIndex();
-				index.setReferencedAttribute("species");
-				index.setArrayDimension(i);
-				index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-			}
-		}			
+		SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(reactantId), s, "species");
 	}
 	
 	public void addProductToReaction(String productID, Reaction rxn) {
@@ -3389,18 +3125,7 @@ public class BioModel {
 		s.setSpecies(productID);
 		s.setStoichiometry(1.0);
 		s.setConstant(true);
-		if (SBMLutilities.dimensionsMatch(rxn,sbml.getModel().getSpecies(productID))) {
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(rxn);
-			ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(s);
-			sBasePluginProduct.unsetListOfIndices();
-			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-				Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
-				Index index = sBasePluginProduct.createIndex();
-				index.setReferencedAttribute("species");
-				index.setArrayDimension(i);
-				index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-			}
-		}	
+		SBMLutilities.copyDimensionsToEdgeIndex(rxn, sbml.getModel().getSpecies(productID), s, "species");
 	}
 
 	public void addProductToReaction(String productID, String rxnID) {
@@ -3412,18 +3137,7 @@ public class BioModel {
 		Reaction r = sbml.getModel().getReaction(reactionId);
 		ModifierSpeciesReference s = r.createModifier();
 		s.setSpecies(modifierId);
-		if (SBMLutilities.dimensionsMatch(r,sbml.getModel().getSpecies(modifierId))) {
-			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(r);
-			ArraysSBasePlugin sBasePluginProduct = SBMLutilities.getArraysSBasePlugin(s);
-			sBasePluginProduct.unsetListOfIndices();
-			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-				Dimension dim = sBasePlugin.getDimensionByArrayDimension(i);
-				Index index = sBasePluginProduct.createIndex();
-				index.setReferencedAttribute("species");
-				index.setArrayDimension(i);
-				index.setMath(SBMLutilities.myParseFormula(dim.getId()));
-			}
-		}			
+		SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(modifierId), s, "species");
 	}
 	
 	public void addReaction(String sourceID,String targetID,boolean isModifier) {
@@ -3466,6 +3180,7 @@ public class BioModel {
 			Reaction r = m.getReaction(reactionId);
 			SpeciesReference s = r.createReactant();
 			s.setSpecies(sourceID);
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(sourceID), s, "species");
 			s.setStoichiometry(1.0);
 			s.setConstant(true);
 		} else if (((String)reactionList.getSelectedItem()).contains("modifier")) {
@@ -3474,12 +3189,14 @@ public class BioModel {
 			Reaction r = m.getReaction(reactionId);
 			ModifierSpeciesReference s = r.createModifier();
 			s.setSpecies(sourceID);
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(sourceID), s, "species");
 		} else if (((String)reactionList.getSelectedItem()).contains("product")) {
 			String[] selection = ((String)reactionList.getSelectedItem()).split(" ");
 			String reactionId = selection[selection.length-1];
 			Reaction r = m.getReaction(reactionId);
 			SpeciesReference s = r.createProduct();
 			s.setSpecies(targetID);
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(targetID), s, "species");
 			s.setStoichiometry(1.0);
 			s.setConstant(true);
 		} else {
@@ -3499,6 +3216,8 @@ public class BioModel {
 				source.setSpecies(sourceID);
 				CompChoices.add(sbml.getModel().getSpecies(sourceID).getCompartment());
 				r.setCompartment(sbml.getModel().getSpecies(sourceID).getCompartment());
+				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
+				SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(sourceID), source, "species");
 			} else {
 				SpeciesReference source = r.createReactant();
 				source.setSpecies(sourceID);
@@ -3506,9 +3225,12 @@ public class BioModel {
 				source.setStoichiometry(1.0);
 				CompChoices.add(sbml.getModel().getSpecies(sourceID).getCompartment());
 				r.setCompartment(sbml.getModel().getSpecies(sourceID).getCompartment());
+				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
+				SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(sourceID), source, "species");
 			}
 			SpeciesReference target = r.createProduct();
 			target.setSpecies(targetID);
+			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(targetID), target, "species");
 			target.setConstant(true);
 			target.setStoichiometry(1.0);
 			if (!r.getCompartment().equals(sbml.getModel().getSpecies(targetID).getCompartment())) {
@@ -3519,6 +3241,7 @@ public class BioModel {
 				JOptionPane.showOptionDialog(Gui.frame, compartmentListPanel, "Compartment Choice",
 						JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				r.setCompartment((String)compartmentList.getSelectedItem());
+				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			}
 			KineticLaw k = r.createKineticLaw();
 			LocalParameter p = k.createLocalParameter();
@@ -4577,7 +4300,6 @@ public class BioModel {
 		Port port = getPortByIdRef(SId);
 		//if (port!=null) return;
 		SBase variable = SBMLutilities.getElementBySId(sbml,SId);
-		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(variable);
 		if (dir.equals(GlobalConstants.INPUT)) {
 			if (port==null) {
 				port = sbmlCompModel.createPort();
@@ -4585,16 +4307,7 @@ public class BioModel {
 			port.setId(dir + "__" + SId);
 			port.setIdRef(SId);
 			port.setSBOTerm(GlobalConstants.SBO_INPUT_PORT);
-			ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-			sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-			sBasePluginPort.unsetListOfIndices();
-			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-				org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-				Index portIndex = sBasePluginPort.createIndex();
-				portIndex.setReferencedAttribute("comp:idRef");
-				portIndex.setArrayDimension(i);
-				portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-			}
+			SBMLutilities.cloneDimensionAddIndex(variable,port,"comp:idRef");
 		} else if (dir.equals(GlobalConstants.OUTPUT)) {
 			if (port==null) {
 				port = sbmlCompModel.createPort();
@@ -4602,16 +4315,7 @@ public class BioModel {
 			port.setId(dir + "__" + SId);
 			port.setIdRef(SId);
 			port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
-			ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-			sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());	
-			sBasePluginPort.unsetListOfIndices();
-			for (int i = 0; i < sBasePlugin.getListOfDimensions().size(); i++) {
-				org.sbml.jsbml.ext.arrays.Dimension dimen = sBasePlugin.getDimensionByArrayDimension(i);
-				Index portIndex = sBasePluginPort.createIndex();
-				portIndex.setReferencedAttribute("comp:idRef");
-				portIndex.setArrayDimension(i);
-				portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-			}
+			SBMLutilities.cloneDimensionAddIndex(variable,port,"comp:idRef");
 		} else if (port != null) {
 			sbmlCompModel.removePort(port);
 		}
@@ -5198,7 +4902,8 @@ public class BioModel {
 				if (reaction.getProductCount()==0) {
 					Species mRNA = sbml.getModel().createSpecies();
 					mRNA.setId(promoterId+"_mRNA");
-					mRNA.setCompartment(reaction.getCompartment());
+					mRNA.setCompartment(reaction.getCompartment()); 
+					SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),mRNA,"compartment");
 					mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);
 					mRNA.setInitialAmount(0.0);
 					mRNA.setBoundaryCondition(false);
@@ -5206,6 +4911,7 @@ public class BioModel {
 					mRNA.setHasOnlySubstanceUnits(true);
 					SpeciesReference product = reaction.createProduct();
 					product.setSpecies(mRNA.getId());
+					SBMLutilities.copyDimensionsToEdgeIndex(reaction, mRNA, product, "species");
 					product.setStoichiometry(1.0);
 					product.setConstant(true);
 				}
@@ -5472,6 +5178,7 @@ public class BioModel {
 			r.setId(GlobalConstants.DEGRADATION + "_" + speciesID);
 			SBMLutilities.setMetaId(r, r.getId());
 			r.setCompartment(sbml.getModel().getCompartment(0).getId());
+			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
 			r.setFast(false);
 			r.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
@@ -5573,6 +5280,7 @@ public class BioModel {
 				r.setId("Diffusion_" + speciesID + "_" + direction);
 				SBMLutilities.setMetaId(r, r.getId());
 				r.setCompartment(diffComp);
+				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 				r.setReversible(true);
 				r.setFast(false);
 
@@ -5914,6 +5622,7 @@ public class BioModel {
 			// Set default species metaID
 			metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, species, metaIDIndex); 
 			species.setCompartment(compartment);
+			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),species,"compartment");
 			species.setBoundaryCondition(false);
 			species.setConstant(false);
 			species.setInitialAmount(0);
@@ -5990,6 +5699,7 @@ public class BioModel {
 		// Set default reaction metaID
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, r, metaIDIndex); 
 		r.setCompartment(compartment);
+		SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),r,"compartment");
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw k = r.createKineticLaw();
@@ -6117,6 +5827,7 @@ public class BioModel {
 		promoter.setInitialAmount(sbml.getModel().getParameter(GlobalConstants.PROMOTER_COUNT_STRING).getValue());
 
 		promoter.setCompartment(compartment);
+		SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),promoter,"compartment");
 		promoter.setBoundaryCondition(false);
 		promoter.setConstant(false);
 		promoter.setHasOnlySubstanceUnits(true);
@@ -6523,40 +6234,9 @@ public class BioModel {
 						SBaseRef sbaseRef = port.createSBaseRef();
 						sbaseRef.setPortRef(subPort.getId());
 						// TODO: need to support arrays of subModels which has arrays of ports
-						ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(submodel);
-						ArraysSBasePlugin sBasePluginPort = SBMLutilities.getArraysSBasePlugin(port);
-						ArraysSBasePlugin sBasePluginSBaseRef = SBMLutilities.getArraysSBasePlugin(sbaseRef);
-						ArraysSBasePlugin sBasePluginSubPort = SBMLutilities.getArraysSBasePlugin(subPort);
-						sBasePluginPort.setListOfDimensions(sBasePlugin.getListOfDimensions().clone());
-						for (int k = 0; k < sBasePlugin.getListOfDimensions().size(); k++) {
-							Dimension dimen = sBasePlugin.getDimensionByArrayDimension(k);
-							Index portIndex = sBasePluginPort.createIndex();
-							portIndex.setReferencedAttribute("comp:idRef");
-							portIndex.setArrayDimension(k);
-							portIndex.setMath(SBMLutilities.myParseFormula(dimen.getId()));
-						}
-						for (Dimension dim : sBasePluginSubPort.getListOfDimensions()) {
-							Dimension dimClone = dim.clone();
-							dimClone.setArrayDimension(dim.getArrayDimension()+sBasePlugin.getListOfDimensions().size());
-							dimClone.setId("d"+dimClone.getArrayDimension());
-							sBasePluginPort.addDimension(dimClone);
-							Parameter p = subBioModel.getSBMLDocument().getModel().getParameter(dim.getSize()).clone();
-							p.setId(submodel.getId()+"__"+p.getId());
-							p.setMetaId(submodel.getId()+"__"+p.getMetaId());
-							if (sbml.getModel().getParameter(p.getId())==null) {
-								sbml.getModel().addParameter(p);
-							}
-							dimClone.setSize(p.getId());
-							Index index = sBasePluginSBaseRef.createIndex();
-							index.setArrayDimension(dim.getArrayDimension());
-							index.setReferencedAttribute("comp:portRef");
-							index.setMath(SBMLutilities.myParseFormula(dimClone.getId()));
-						}
-						//sBasePluginPort.setListOfDimensions(sBasePluginSubPort.getListOfDimensions().clone());
-						//sBasePluginSBaseRef.setListOfIndices(sBasePluginSubPort.getListOfIndices().clone());
-						//for (int k=0; k<sBasePluginSBaseRef.getIndexCount();k++) {
-						//	sBasePluginSBaseRef.getIndex(k).setReferencedAttribute("comp:portRef");
-						//}
+						SBMLutilities.cloneDimensionAddIndex(submodel, port, "comp:idRef");
+						SBMLutilities.updatePortDimensionsIndices(submodel, port, sbaseRef, subPort, 
+								subBioModel.getSBMLDocument(), sbml);
 					} else {
 						// TODO: need to deal with array replacedBy
 					}
@@ -6572,9 +6252,7 @@ public class BioModel {
 	public boolean isArray(String id) {
 		SBase variable = SBMLutilities.getElementBySId(sbml,id);
 		if (variable!=null) {
-			ArraysSBasePlugin ABV = SBMLutilities.getArraysSBasePlugin(variable);
-			int varDimCount = ABV.getDimensionCount();
-			if (varDimCount > 0) {
+			if (SBMLutilities.hasDimensions(variable)) {
 				return true;
 			} 
 			return false;

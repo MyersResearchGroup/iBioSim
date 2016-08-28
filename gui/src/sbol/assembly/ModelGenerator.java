@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -29,10 +30,9 @@ import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.Identified;
+import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
-import sbol.util.ChEBI;
-import sbol.util.MyersOntology;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.parser.BioModel;
@@ -73,14 +73,15 @@ public class ModelGenerator {
 				} else if (isOutputComponent(comp)){
 					generateOutputPort(comp, targetModel);
 				}
-			}
-			if (isPromoterComponent(comp, sbolDoc)) {
+			} else if (isPromoterComponent(comp, sbolDoc)) {
 				generatePromoterSpecies(comp, sbolDoc, targetModel);
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
 				} else if (isOutputComponent(comp)){
 					generateOutputPort(comp, targetModel);
 				}
+			} else {
+				//System.out.println("Dropping "+comp.getIdentity());
 			}
 		}
 		
@@ -335,18 +336,32 @@ public class ModelGenerator {
 				SBOid = sbo.getId(type);
 			}
 		}
-		ArrayList<String> reactants = new ArrayList<String>();
-		ArrayList<String> modifiers = new ArrayList<String>();
-		ArrayList<String> products = new ArrayList<String>();
+		HashMap<String,String> reactants = new HashMap<String,String>();
+		HashMap<String,String> modifiers = new HashMap<String,String>();
+		HashMap<String,String> products = new HashMap<String,String>();
+		Set<URI> reactantSBO = sbo.getDescendantURIsOf(SystemsBiologyOntology.REACTANT);
+		reactantSBO.add(SystemsBiologyOntology.REACTANT);
+		Set<URI> modifierSBO = sbo.getDescendantURIsOf(SystemsBiologyOntology.MODIFIER);
+		modifierSBO.add(SystemsBiologyOntology.MODIFIER);
+		modifierSBO.add(SystemsBiologyOntology.FUNCTIONAL_COMPARTMENT);
+		modifierSBO.add(SystemsBiologyOntology.NEUTRAL_PARTICIPANT);
+		modifierSBO.add(SystemsBiologyOntology.PROMOTER);
+		Set<URI> productSBO = sbo.getDescendantURIsOf(SystemsBiologyOntology.PRODUCT);
+		productSBO.add(SystemsBiologyOntology.PRODUCT);
+
 		for (Participation participation : interaction.getParticipations()) {
-			if (participation.containsRole(SystemsBiologyOntology.REACTANT)) {
-				reactants.add(participation.getDisplayId());
-			}
-			if (participation.containsRole(SystemsBiologyOntology.MODIFIER)) {
-				modifiers.add(participation.getDisplayId());
-			}
-			if (participation.containsRole(SystemsBiologyOntology.PRODUCT)) {
-				products.add(participation.getDisplayId());
+			for (URI role : participation.getRoles()) {
+				String id = getDisplayID(moduleDef.getFunctionalComponent(participation.getParticipantURI())); 
+				if (reactantSBO.contains(role)) {
+					reactants.put(id,sbo.getId(role));
+					break;
+				} else if (modifierSBO.contains(role)) {
+					modifiers.put(id,sbo.getId(role));
+					break;
+				} else if (productSBO.contains(role)) {
+					products.put(id,sbo.getId(role));
+					break;
+				}
 			}
 		}
 		targetModel.createBiochemicalReaction(interaction.getDisplayId(),SBOid,reactants,modifiers,products);
@@ -415,7 +430,7 @@ public class ModelGenerator {
 		} else {
 			rxnID = promoter.getDisplayId() + "_Production";
 		}
-		rxnID = rxnID.substring(1);
+		//rxnID = rxnID.substring(1);
 		Reaction productionRxn = targetModel.createProductionReaction(getDisplayID(promoter), rxnID, null, null, null, null, 
 				null, null, false, null);
 		
@@ -611,7 +626,7 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isDNADefinition(ComponentDefinition compDef) {
-		return compDef.containsType(ChEBI.DNA) ||
+		return /*compDef.containsType(ChEBI.DNA) ||*/
 				compDef.containsType(ComponentDefinition.DNA);
 	}
 	
@@ -622,7 +637,7 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isProteinDefinition(ComponentDefinition compDef) {
-		return compDef.containsType(ChEBI.PROTEIN) ||
+		return /*compDef.containsType(ChEBI.PROTEIN) ||*/
 				compDef.containsType(ComponentDefinition.PROTEIN);
 	}
 		
@@ -644,9 +659,9 @@ public class ModelGenerator {
 	
 	// TODO: need to figure out better if the CD is a promoter, need to look carefully at its subComponents
 	public static boolean isPromoterDefinition(ComponentDefinition compDef) {
-		return isDNADefinition(compDef) /*
-				&& (compDef.containsRole(SequenceOntology.PROMOTER)||
-						(compDef.containsRole(SequenceOntology.PROMOTER)))*/;
+		return isDNADefinition(compDef) 
+				&& (compDef.containsRole(SequenceOntology.PROMOTER) ||
+						isGeneDefinition(compDef));
 	}
 	
 	public static boolean isGeneComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -656,8 +671,15 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isGeneDefinition(ComponentDefinition compDef) {
-		return isDNADefinition(compDef) 
-				&& compDef.containsRole(MyersOntology.GENE);
+		SequenceOntology so = new SequenceOntology();
+		boolean isGene = false;
+		for (URI role : compDef.getRoles()) {
+			if (role.equals(SequenceOntology.GENE) || so.isDescendantOf(role, SequenceOntology.GENE)) {
+				isGene = true;
+				break;
+			}
+		}
+		return isDNADefinition(compDef) && isGene;
 	}
 	
 	public static boolean isSpeciesComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -670,9 +692,9 @@ public class ModelGenerator {
 		return isComplexDefinition(compDef)
 				|| isProteinDefinition(compDef)
 				|| isRNADefinition(compDef)
-				|| isTFDefinition(compDef)
+//				|| isTFDefinition(compDef)
 				|| isSmallMoleculeDefinition(compDef)
-				|| compDef.containsType(ChEBI.EFFECTOR);
+				|| compDef.containsType(ComponentDefinition.EFFECTOR);
 	}
 	
 	public static boolean isComplexComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -688,23 +710,23 @@ public class ModelGenerator {
 	}
 	
 	public static boolean isComplexDefinition(ComponentDefinition compDef) {
-		return compDef.containsType(ChEBI.NON_COVALENTLY_BOUND_MOLECULAR_ENTITY) ||
+		return /*compDef.containsType(ChEBI.NON_COVALENTLY_BOUND_MOLECULAR_ENTITY) ||*/
 				compDef.containsType(ComponentDefinition.COMPLEX);
 	}
 	public static boolean isSmallMoleculeDefinition(ComponentDefinition compDef) {
 		return compDef.containsType(ComponentDefinition.SMALL_MOLECULE);
 	}
 	
-	public static boolean isTFComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
-		if (compDef==null) return false;
-		return isTFDefinition(compDef);
-	}
-	
-	public static boolean isTFDefinition(ComponentDefinition compDef) {
-		return (isProteinDefinition(compDef) || isComplexDefinition(compDef))
-				&& compDef.containsRole(MyersOntology.TF);
-	}
+//	public static boolean isTFComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+//		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+//		if (compDef==null) return false;
+//		return isTFDefinition(compDef);
+//	}
+//	
+//	public static boolean isTFDefinition(ComponentDefinition compDef) {
+//		return (isProteinDefinition(compDef) || isComplexDefinition(compDef))
+//				&& compDef.containsRole(MyersOntology.TF);
+//	}
 	
 	public static boolean isDegradationInteraction(Interaction interact, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc) {
