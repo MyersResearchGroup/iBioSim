@@ -3237,17 +3237,19 @@ public class SBMLutilities
 				}
 			}
 		}
-		FBCModelPlugin fbc = getFBCModelPlugin(model);
-		for (int i = 0; i < fbc.getNumObjective(); i++)
-		{
-			Objective obj = fbc.getObjective(i);
-			for (int j = 0; j < obj.getListOfFluxObjectives().size(); j++)
+		FBCModelPlugin fbc = getFBCModelPlugin(model,false);
+		if (fbc!=null) {
+			for (int i = 0; i < fbc.getNumObjective(); i++)
 			{
-				FluxObjective fluxObj = obj.getListOfFluxObjectives().get(j);
-				if (fluxObj.getReaction().equals(id))
+				Objective obj = fbc.getObjective(i);
+				for (int j = 0; j < obj.getListOfFluxObjectives().size(); j++)
 				{
-					fluxObjUsing.add(obj.getId());
-					inUse = true;
+					FluxObjective fluxObj = obj.getListOfFluxObjectives().get(j);
+					if (fluxObj.getReaction().equals(id))
+					{
+						fluxObjUsing.add(obj.getId());
+						inUse = true;
+					}
 				}
 			}
 		}
@@ -6063,15 +6065,21 @@ public class SBMLutilities
 		return JSBML.OPERATION_SUCCESS;
 	}
 
-	public static FBCModelPlugin getFBCModelPlugin(Model model)
+	public static FBCModelPlugin getFBCModelPlugin(Model model,boolean create)
 	{
 		if (model.getExtension(FBCConstants.namespaceURI) != null)
 		{
-			return (FBCModelPlugin) model.getExtension(FBCConstants.namespaceURI);
+			FBCModelPlugin fbc = (FBCModelPlugin) model.getExtension(FBCConstants.namespaceURI);
+			fbc.setStrict(false);
+			return fbc;
 		}
-		FBCModelPlugin fbc = new FBCModelPlugin(model);
-		model.addExtension(FBCConstants.namespaceURI, fbc);
-		return fbc;
+		if (create) {
+			FBCModelPlugin fbc = new FBCModelPlugin(model);
+			fbc.setStrict(false);
+			model.addExtension(FBCConstants.namespaceURI, fbc);
+			return fbc;
+		}
+		return null;
 	}
 
 	public static DistribFunctionDefinitionPlugin getDistribFunctionDefinitionPlugin(FunctionDefinition function)
@@ -6901,8 +6909,7 @@ public class SBMLutilities
 				return null;
 			}
 		} else {
-			FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
-			fbc.setStrict(false);
+			FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel(),true);
 		}
 		return document;
 	}

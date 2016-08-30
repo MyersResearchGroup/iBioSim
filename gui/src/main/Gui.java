@@ -114,6 +114,7 @@ import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
 import org.jlibsedml.Plot3D;
+import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.Report;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
@@ -2485,7 +2486,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// if the delete popup menu is selected
 		else if (e.getActionCommand().contains("delete") || e.getSource() == delete)
 		{
-			delete(tree.getFile());
+			for (String file : tree.getFiles()) {
+				delete(file);
+			}
 		}
 		else if (e.getActionCommand().equals("openLPN"))
 		{
@@ -4097,6 +4100,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		for (Simulation sim : sedml.getSimulations()) {
 			remove.add(sim);
 			for (AbstractTask task : sedml.getTasks()) {
+				if (task instanceof RepeatedTask) continue;
 				if (task.getSimulationReference().equals(sim.getId())) {
 					remove.remove(sim);
 					break;
@@ -5261,8 +5265,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			document.enablePackage(LayoutConstants.namespaceURI);
 			document.enablePackage(CompConstants.namespaceURI);
 			document.enablePackage(FBCConstants.namespaceURI);
-			FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
-			fbc.setStrict(false);
+			SBMLutilities.getFBCModelPlugin(document.getModel(),true);
 			document.enablePackage(ArraysConstants.namespaceURI);
 			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 			CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
@@ -11996,8 +11999,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				document.enablePackage(LayoutConstants.namespaceURI);
 				document.enablePackage(CompConstants.namespaceURI);
 				document.enablePackage(FBCConstants.namespaceURI);
-				FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
-				fbc.setStrict(false);
+				SBMLutilities.getFBCModelPlugin(document.getModel(),true);
 				document.enablePackage(ArraysConstants.namespaceURI);
 				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);

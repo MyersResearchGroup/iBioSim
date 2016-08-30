@@ -38,7 +38,7 @@ public class FluxBalanceAnalysis {
 		fluxes = new HashMap<String,Double>();
 		SBMLDocument sbml = SBMLutilities.readSBML(root + sbmlFileName);
 		model = sbml.getModel();
-		fbc = SBMLutilities.getFBCModelPlugin(sbml.getModel());
+		fbc = SBMLutilities.getFBCModelPlugin(sbml.getModel(),true);
 	}
 	
 	public FluxBalanceAnalysis(Model model,double absError) {
@@ -46,7 +46,7 @@ public class FluxBalanceAnalysis {
 		this.absError = absError;
 		fluxes = new HashMap<String,Double>();
 		this.model = model;
-		fbc = SBMLutilities.getFBCModelPlugin(model);
+		fbc = SBMLutilities.getFBCModelPlugin(model,true);
 	}
 	
 	public static String vectorToString(double[] objective, HashMap<String,Integer> reactionIndex) {

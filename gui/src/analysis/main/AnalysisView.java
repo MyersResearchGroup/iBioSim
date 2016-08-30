@@ -1114,7 +1114,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		String directory = null;
 		if (!direct.equals("."))
 		{
-			simulationName = simName + " " + direct;
+			simulationName = simName + Gui.separator + direct;
 			directory = direct;
 		}
 		exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
