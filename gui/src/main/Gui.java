@@ -3956,7 +3956,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, 
 				"Export " + fileType.replace("1", ""), -1);
 		if (!exportPath.equals("")) {
-			biosimrc.put("biosim.general.export_dir",exportPath);
+			String dir = exportPath.substring(0, exportPath.lastIndexOf(Gui.separator));
+			biosimrc.put("biosim.general.export_dir",dir);
 			log.addText("Exporting " + fileType + " file:\n" + exportPath + "\n");
 			try {
 				sbolDesignerPlugin.exportSBOL(exportPath,fileType);
@@ -5613,11 +5614,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		File sedmlFile = new File(sedmlFilename);
 		if (sedmlFile.exists())	{
 			try {
-				//long time1 = System.nanoTime();
+				long time1 = System.nanoTime();
 				sedmlDocument = Libsedml.readDocument(sedmlFile);
-				//long time2 = System.nanoTime();
-				//String time = Run.createTimeString(time1, time2);
-				//System.out.println(time);
+				long time2 = System.nanoTime();
+				String time = Run.createTimeString(time1, time2);
+				System.out.println(time);
 			}
 			catch (XMLException exception) {
 				JOptionPane.showMessageDialog(frame, "Unable to open project's SED-ML file.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -5746,7 +5747,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SED-ML", -1);
 		if (!exportPath.equals("")) {
-			biosimrc.put("biosim.general.export_dir",exportPath);
+			String dir = exportPath.substring(0, exportPath.lastIndexOf(Gui.separator));
+			biosimrc.put("biosim.general.export_dir",dir);
 			log.addText("Exporting SED-ML file:\n" + exportPath + "\n");
 			List<IModelContent> models = new ArrayList<IModelContent>();
 			for (String s : new File(root).list()) {
