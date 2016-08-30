@@ -35,6 +35,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
@@ -152,6 +154,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	private Vector<Object> recurseTSDFiles(String directoryName) {
 		
+		
 		Vector<Object> filenames = new Vector<Object>();
 		
 		filenames.add(new File(directoryName).getName());
@@ -168,7 +171,14 @@ public class MovieContainer extends JPanel implements ActionListener {
 				filenames.add(recurseTSDFiles(fullFileName));
 			}
 		}
-		
+
+		Object[] col = filenames.toArray();
+		Arrays.sort(col);
+		filenames.clear();
+		for (Object obj : col) {
+			filenames.add(obj);
+		}
+
 		return filenames;
 	}
 	
