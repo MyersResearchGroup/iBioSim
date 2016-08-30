@@ -5006,7 +5006,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			if (!filename.equals("")) {
 				file = new File(filename);
-				biosimrc.put("biosim.general.export_dir", filename);
+				String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(Gui.separator));
+				biosimrc.put("biosim.general.export_dir", dir);
 				boolean exportIt = true;
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
@@ -5140,7 +5141,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String filename = Utility.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY, export, output);
 			if (!filename.equals("")) {
 				file = new File(filename);
-				biosimrc.put("biosim.general.export_dir", filename);
+				String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(Gui.separator));
+				biosimrc.put("biosim.general.export_dir", dir);
 				boolean exportIt = true;
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };

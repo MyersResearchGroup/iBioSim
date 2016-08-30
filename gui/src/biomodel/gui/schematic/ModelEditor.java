@@ -638,7 +638,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, 
 				"Export "+fileType.replace("1",""), -1);
 		if (!exportFilePath.equals("")) {
-			biosimrc.put("biosim.general.export_dir", exportFilePath);
+			String dir = exportFilePath.substring(0, exportFilePath.lastIndexOf(Gui.separator));
+			biosimrc.put("biosim.general.export_dir", dir);
 			sbmltosbol.export(exportFilePath,fileType);
 		}
 	}
@@ -654,7 +655,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
-			biosimrc.put("biosim.general.export_dir",exportPath);
+			String dir = exportPath.substring(0, exportPath.lastIndexOf(Gui.separator));
+			biosimrc.put("biosim.general.export_dir",dir);
 			biomodel.exportSingleFile(exportPath);
 			log.addText("Exporting SBML file:\n" + exportPath + "\n");
 		}
@@ -671,7 +673,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
-			biosimrc.put("biosim.general.export_dir",exportPath);
+			String dir = exportPath.substring(0, exportPath.lastIndexOf(Gui.separator));
+			biosimrc.put("biosim.general.export_dir",dir);
 			GCMParser parser = new GCMParser(path + separator + modelId + ".xml");
 			GeneticNetwork network = null;
 			BioModel bioModel = new BioModel(path);
@@ -757,7 +760,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "Schematic", -1);
 		if (!exportPath.equals("")) {
-			biosimrc.put("biosim.general.export_dir",exportPath);
+			String dir = exportPath.substring(0, exportPath.lastIndexOf(Gui.separator));
+			biosimrc.put("biosim.general.export_dir",dir);
             schematic.outputFrame(exportPath, false);
 			log.addText("Exporting schmeatic image:\n" + exportPath + "\n");
 		}
