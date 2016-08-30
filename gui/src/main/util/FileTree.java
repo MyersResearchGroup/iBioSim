@@ -32,6 +32,8 @@ public class FileTree extends JPanel implements MouseListener {
 
 	private String fileLocation; // location of selected file
 
+	private String[] fileLocations; // location of selected file
+
 	private DefaultMutableTreeNode root; // root node
 	
 	private Gui gui;
@@ -182,6 +184,30 @@ public class FileTree extends JPanel implements MouseListener {
 						node = (DefaultMutableTreeNode) node.getParent();
 					}
 					fileLocation = dir.getAbsolutePath() + fileLocation;
+					
+					fileLocations = new String[tree.getSelectionPaths().length];
+					int i = 0;
+					for (TreePath path : tree.getSelectionPaths()) {
+						node = (DefaultMutableTreeNode) path.getLastPathComponent();
+						fileLocations[i] = "";
+						while (node != null) {
+							if (node.getParent() != null) {
+								fileLocations[i] = separator + node + fileLocations[i];
+								String parentNode = node.getParent().toString();   //DK
+								if (parentNode.endsWith(".xml") || parentNode.endsWith(".sbml") || parentNode.endsWith(".gcm")
+										|| parentNode.endsWith(".vhd") ||  parentNode.endsWith(".prop") || parentNode.endsWith(".s") || parentNode.endsWith(".inst")
+										|| parentNode.endsWith(".g") || parentNode.endsWith(".lpn") || parentNode.endsWith(".csp")
+										|| parentNode.endsWith(".hse") || parentNode.endsWith(".unc") || parentNode.endsWith(".csp")
+										|| parentNode.endsWith(".rsg") || parentNode.endsWith(".vams") || parentNode.endsWith(".sv")
+										|| parentNode.endsWith(".grf") || parentNode.endsWith(".prb")) {
+									node = (DefaultMutableTreeNode) node.getParent();
+								}
+							}
+							node = (DefaultMutableTreeNode) node.getParent();
+						}
+						fileLocations[i] = dir.getAbsolutePath() + fileLocations[i];
+						i++;
+					}
 				}
 			});
 			tree.addMouseListener(this);
@@ -526,6 +552,10 @@ public class FileTree extends JPanel implements MouseListener {
 
 	public String getFile() {
 		return fileLocation;
+	}
+
+	public String[] getFiles() {
+		return fileLocations;
 	}
 
 	public void addToTree(String item, String dir) {

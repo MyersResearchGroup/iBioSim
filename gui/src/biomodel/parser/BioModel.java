@@ -1407,8 +1407,7 @@ public class BioModel {
 
 	public void createFBCPlugin() {
 		sbml.enablePackage(FBCConstants.namespaceURI);
-		sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel());
-		sbmlFBC.setStrict(false);
+		sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel(),true);
 	}
 
 	public void createCompPlugin() {
@@ -6380,7 +6379,7 @@ public class BioModel {
 			e.printStackTrace();
 		}
 		sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
-		sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel());
+		sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel(),true);
 		sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbml);
 		sbmlCompModel = SBMLutilities.getCompModelPlugin(sbml.getModel());
 		loadDefaultEnclosingCompartment();
