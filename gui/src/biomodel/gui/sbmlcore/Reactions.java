@@ -279,6 +279,59 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		this.add(scroll2, "Center");
 		this.add(addReacs, "South");
 	}
+
+	private static boolean checkFluxBound(SBMLDocument document,String boundStr, String attribute,
+			String[] dimensionIds,String[] idDims) 
+	{
+		if (boundStr.contains("[")) {
+			String id = boundStr.substring(0,boundStr.indexOf("["));
+			if (document.getModel().getParameter(id)==null) return false;
+			String index = boundStr.substring(boundStr.indexOf("["));
+			SBase variable = SBMLutilities.getElementBySId(document, id);
+			String[] dex = SBMLutilities.checkIndices(index, variable, document, dimensionIds, attribute, 
+					idDims, null, null);
+			if (dex==null) return false;
+		} else {
+			return (document.getModel().getParameter(boundStr)!=null);
+		}
+		return true;
+	}
+	
+	private boolean setLowerFluxBound(Reaction reaction,FBCReactionPlugin rBounds,String boundStr,
+			String[] dimensionIds,String[] idDims) 
+	{
+		if (boundStr.contains("[")) {
+			String id = boundStr.substring(0,boundStr.indexOf("["));
+			rBounds.setLowerFluxBound(id);
+			String index = boundStr.substring(boundStr.indexOf("["));
+			SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), id);
+			String[] dex = SBMLutilities.checkIndices(index, variable, bioModel.getSBMLDocument(), dimensionIds, "fbc:lowerFluxBound", 
+					idDims, null, null);
+			if (dex==null) return false;
+			SBMLutilities.addIndices(reaction, "fbc:lowerFluxBound", dex, 1);
+		} else {
+			rBounds.setLowerFluxBound(boundStr);
+		}
+		return true;
+	}
+	
+	private boolean setUpperFluxBound(Reaction reaction,FBCReactionPlugin rBounds,String boundStr,
+			String[] dimensionIds,String[] idDims) 
+	{
+		if (boundStr.contains("[")) {
+			String id = boundStr.substring(0,boundStr.indexOf("["));
+			rBounds.setUpperFluxBound(id);
+			String index = boundStr.substring(boundStr.indexOf("["));
+			SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), id);
+			String[] dex = SBMLutilities.checkIndices(index, variable, bioModel.getSBMLDocument(), dimensionIds, 
+					"fbc:upperFluxBound", idDims, null, null);
+			if (dex==null) return false;
+			SBMLutilities.addIndices(reaction, "fbc:upperFluxBound", dex, 1);
+		} else {
+			rBounds.setUpperFluxBound(boundStr);
+		}
+		return true;
+	}
 	
 	private boolean createReactionFluxBounds(String reactionId,String[] dimID,String[] dimensionIds) {
 		Reaction r = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
@@ -286,39 +339,39 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if(kineticLaw.getText().contains("<=")){
 			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
 			if (userInput.length==3) {
-				rBounds.setLowerFluxBound(userInput[0]);
-				rBounds.setUpperFluxBound(userInput[2]);
+				if (!setLowerFluxBound(r,rBounds,userInput[0],dimensionIds,dimID)) return false;
+				if (!setUpperFluxBound(r,rBounds,userInput[2],dimensionIds,dimID)) return false;
 			} 
 			else {
 				if (userInput[0].startsWith(reactionId)) {
-					rBounds.setUpperFluxBound(userInput[1]);
+					if (!setUpperFluxBound(r,rBounds,userInput[1],dimensionIds,dimID)) return false;
 				} else {
-					rBounds.setLowerFluxBound(userInput[0]);
+					if (!setLowerFluxBound(r,rBounds,userInput[0],dimensionIds,dimID)) return false;
 				}
 			}			
 		} 
 		else if(kineticLaw.getText().contains(">=")){
 			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split(">=");
 			if (userInput.length==3) {
-				rBounds.setLowerFluxBound(userInput[2]);
-				rBounds.setUpperFluxBound(userInput[0]);
+				if (!setLowerFluxBound(r,rBounds,userInput[2],dimensionIds,dimID)) return false;
+				if (!setUpperFluxBound(r,rBounds,userInput[0],dimensionIds,dimID)) return false;
 			} 
 			else {
 				if (userInput[0].startsWith(reactionId)) {
-					rBounds.setLowerFluxBound(userInput[1]);
+					if (!setLowerFluxBound(r,rBounds,userInput[1],dimensionIds,dimID)) return false;
 				} else {
-					rBounds.setUpperFluxBound(userInput[0]);
+					if (!setUpperFluxBound(r,rBounds,userInput[0],dimensionIds,dimID)) return false;
 				}
 			}	
 		}
 		else{
 			String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("=");
 			if(userInput[0].startsWith(reactionId)){
-				rBounds.setLowerFluxBound(userInput[1]);
-				rBounds.setUpperFluxBound(userInput[1]);
+				if (!setLowerFluxBound(r,rBounds,userInput[1],dimensionIds,dimID)) return false;
+				if (!setUpperFluxBound(r,rBounds,userInput[1],dimensionIds,dimID)) return false;
 			} else {
-				rBounds.setLowerFluxBound(userInput[0]);
-				rBounds.setUpperFluxBound(userInput[0]);
+				if (!setLowerFluxBound(r,rBounds,userInput[0],dimensionIds,dimID)) return false;
+				if (!setUpperFluxBound(r,rBounds,userInput[0],dimensionIds,dimID)) return false;
 			}
 		}
 		return true;
@@ -605,11 +658,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				if (rBounds != null) {
 					fluxbounds = "";
 					if (rBounds.isSetLowerFluxBound()) {
-						fluxbounds += rBounds.getLowerFluxBound() + "<="; 
+						fluxbounds += rBounds.getLowerFluxBound() + 
+								SBMLutilities.getIndicesString(r, "fbc:lowerFluxBound") + "<="; 
 					} 
 					fluxbounds += reactionId;
 					if (rBounds.isSetUpperFluxBound()) {
-						fluxbounds += "<=" + rBounds.getUpperFluxBound();
+						fluxbounds += "<=" + rBounds.getUpperFluxBound() + 
+								SBMLutilities.getIndicesString(r, "fbc:upperFluxBound");
 					} 
 				}
 				kineticLaw.setText(fluxbounds);
@@ -887,8 +942,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				else {
-					error = !fluxBoundisGood2(bioModel.getSBMLDocument().getModel(),
-							kineticLaw.getText().replaceAll("\\s",""), reacID.getText().trim());
+					// TODO: need to update for arrays
+					error = !isFluxBoundValid(bioModel.getSBMLDocument(),
+							kineticLaw.getText().replaceAll("\\s",""), reactionId,dimensionIds,dimID);
+					error = false;
 				}
 			}
 			if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
@@ -1119,8 +1176,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = checkKineticLawUnits(react.getKineticLaw());
 					}
 					else{
-						error = !fluxBoundisGood2(bioModel.getSBMLDocument().getModel(),
-								kineticLaw.getText().replaceAll("\\s",""), reacID.getText().trim());
+						error = !isFluxBoundValid(bioModel.getSBMLDocument(),
+								kineticLaw.getText().replaceAll("\\s",""), reactionId,dimensionIds,dimID);
 						if (!error)	error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
 					}
 						
@@ -1912,8 +1969,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
 						} else {
-							error = InitialAssignments.addInitialAssignment(bioModel, productStoichiometry.getText().trim(), dimID);
-							val = 1.0;
+							if (dimID.length>1) {
+								JOptionPane.showMessageDialog(Gui.frame, "Initial assignments on arrayed reactants not currently allowed.", "Illegal Initial Assignment",
+										JOptionPane.ERROR_MESSAGE);
+								error = true;
+							} else {
+								error = InitialAssignments.addInitialAssignment(bioModel, productStoichiometry.getText().trim(), dimID);
+								val = 1.0;
+							}
 						}
 					}
 					if (val <= 0) {
@@ -2770,8 +2833,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
 						} else {
-							error = InitialAssignments.addInitialAssignment(bioModel, reactantStoichiometry.getText().trim(), dimID);
-							val = 1.0;
+							if (dimID.length>1) {
+								JOptionPane.showMessageDialog(Gui.frame, "Initial assignments on arrayed reactants not currently allowed.", "Illegal Initial Assignment",
+										JOptionPane.ERROR_MESSAGE);
+								error = true;
+							} else {
+								error = InitialAssignments.addInitialAssignment(bioModel, reactantStoichiometry.getText().trim(), dimID);
+								val = 1.0;
+							}
 						}
 					}
 					if (val <= 0) {
@@ -3581,16 +3650,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Checks the string to see if there are any errors. Retruns true if there are no errors, else returns false.
 	 */
-	public static boolean fluxBoundisGood2(Model m, String s, String reactionId){
+	public static boolean isFluxBoundValid(SBMLDocument document, String s, String reactionId, 
+			String[] dimensionIds, String[] dimId){
 		if(s.contains("<=")){
 			String [] correctnessTest = s.split("<=");
 			if(correctnessTest.length == 3){
-				if (m.getParameter(correctnessTest[0])==null) {
+				if (!checkFluxBound(document,correctnessTest[0],"fbc:lowerFluxBound",dimensionIds,dimId)) {
 					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " is not a valid parameter.",
 							"Invalid Bound", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
-				if (m.getParameter(correctnessTest[2])==null) {
+				if (!checkFluxBound(document,correctnessTest[2],"fbc:upperFluxBound",dimensionIds,dimId)) {
 					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2]+ " is not a valid parameter.",
 							"Invalid Bound", JOptionPane.ERROR_MESSAGE);
 					return false;
@@ -3628,14 +3698,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					return false;
 				}
 				if(correctnessTest[0].equals(reactionId)){
-					if (m.getParameter(correctnessTest[1])==null) {
+					if (!checkFluxBound(document,correctnessTest[1],"fbc:upperFluxBound",dimensionIds,dimId)) {
 						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1]+ " is not a valid parameter.",
 								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
 						return false;
 					}
 				}
 				else{
-					if (m.getParameter(correctnessTest[0])==null) {
+					if (!checkFluxBound(document,correctnessTest[0],"fbc:lowerFluxBound",dimensionIds,dimId)) {
 						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " is not a valid parameter.",
 								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
 						return false;
@@ -3651,12 +3721,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else if(s.contains(">=")){
 			String [] correctnessTest = s.split(">=");
 			if(correctnessTest.length == 3){
-				if (m.getParameter(correctnessTest[0])==null) {
+				if (!checkFluxBound(document,correctnessTest[0],"fbc:upperFluxBound",dimensionIds,dimId)) {
 					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " is not a valid parameter.",
 							"Invalid Bound", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
-				if (m.getParameter(correctnessTest[2])==null) {
+				if (!checkFluxBound(document,correctnessTest[2],"fbc:lowerFluxBound",dimensionIds,dimId)) {
 					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2]+ " is not a valid parameter.",
 							"Invalid Bound", JOptionPane.ERROR_MESSAGE);
 					return false;
@@ -3694,14 +3764,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					return false;
 				}
 				if(correctnessTest[0].equals(reactionId)){
-					if (m.getParameter(correctnessTest[1])==null) {
+					if (!checkFluxBound(document,correctnessTest[1],"fbc:lowerFluxBound",dimensionIds,dimId)) {
 						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1]+ " is not a valid parameter.",
 								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
 						return false;
 					}
 				}
 				else{
-					if (m.getParameter(correctnessTest[0])==null) {
+					if (!checkFluxBound(document,correctnessTest[0],"fbc:upperFluxBound",dimensionIds,dimId)) {
 						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " is not a valid parameter.",
 								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
 						return false;
@@ -3731,14 +3801,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					return false;
 				}
 				if(correctnessTest[0].equals(reactionId)){
-					if (m.getParameter(correctnessTest[1])==null) {
+					if (!checkFluxBound(document,correctnessTest[1],"fbc:lowerFluxBound",dimensionIds,dimId)||
+							!checkFluxBound(document,correctnessTest[1],"fbc:upperFluxBound",dimensionIds,dimId)) {
 						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1]+ " is not a valid parameter.",
 								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
 						return false;
 					}
 				}
 				else{
-					if (m.getParameter(correctnessTest[0])==null) {
+					if (!checkFluxBound(document,correctnessTest[0],"fbc:lowerFluxBound",dimensionIds,dimId)||
+							!checkFluxBound(document,correctnessTest[0],"fbc:upperFluxBound",dimensionIds,dimId)) {
 						JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " is not a valid parameter.",
 								"Invalid Bound", JOptionPane.ERROR_MESSAGE);
 						return false;
