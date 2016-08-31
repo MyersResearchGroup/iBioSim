@@ -1280,8 +1280,8 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 					String command = "open method.dot";
 					log.addText("Executing:\n" + "open " + directory + separator + "method.dot\n");
 					Runtime exec = Runtime.getRuntime();
-					exec.exec("cp method.gcm method.dot", null, work);
-					exec = Runtime.getRuntime();
+					//exec.exec("cp method.gcm method.dot", null, work);
+					//exec = Runtime.getRuntime();
 					exec.exec(command, null, work);
 				}
 				else
@@ -1801,8 +1801,8 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 					String command = "open method.dot";
 					log.addText("Executing:\n" + "open " + directory + separator + "method.dot\n");
 					exec = Runtime.getRuntime();
-					exec.exec("cp method.gcm method.dot", null, work);
-					exec = Runtime.getRuntime();
+					//exec.exec("cp method.gcm method.dot", null, work);
+					//exec = Runtime.getRuntime();
 					exec.exec(command, null, work);
 				}
 				else
