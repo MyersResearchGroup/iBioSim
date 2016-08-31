@@ -54,7 +54,7 @@ public class BuildProperty {
 		numEndPlaces=0;
 
 		LhpnFile lpn = new LhpnFile();
-		lpn.load(propFileName);
+		//lpn.load(propFileName);
 		
 		String lpnFileString= propFileName.substring(0, propFileName.length()-4);
 		String lpnFileName = lpnFileString.concat("lpn");
