@@ -1,12 +1,13 @@
 #!/bin/sh
-
+#
+source detect-java.sh
+if [ -z "$JAVA_HOME" ]; then
+    echo "Must install Java JDK Version 1.7 or later"
+    exit
+fi
+if [ -z "$BIOSIM" ]; then
+    export BIOSIM=$PWD/..
+fi  
 export PATH=$BIOSIM/bin:$PATH
 export LD_LIBRARY_PATH=$BIOSIM/lib64:$LD_LIBRARY_PATH
-CLASSPATH=$BIOSIM/gui/dist/classes
-
-for jarFile in $BIOSIM/gui/lib/*.jar
-do
-    CLASSPATH=$CLASSPATH:$jarFile
-done
-
-exec java -Xmx2048M -Xms2048M -XX:+UseSerialGC -classpath $CLASSPATH main.Gui
+exec java -Xmx2048M -Xms2048M -XX:+UseSerialGC -jar iBioSim.jar 
