@@ -31,6 +31,7 @@ public class Run
 		Learn learn = new Learn(3);
 		learn.learnNetwork(S, E, C, T, L);
 		learn.getDotFile("method.gcm", directory, S, C);
+		learn.getDotFile("method.dot", directory, S, C);
 	}
 
 	public static void loadExperiments(String directory, SpeciesCollection S, Experiments E)
