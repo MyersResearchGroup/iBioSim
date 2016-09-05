@@ -32,7 +32,7 @@ property
 declaration
   :BOOLEAN^ ID (COMMA! ID)* SEMICOL!
   | REAL^ ID (COMMA! ID)* SEMICOL!
-  | INT^ ID (COMMA! ID)* SEMICOL!
+  | INTEGER^ ID (COMMA! ID)* SEMICOL!
   ;
   
 SENALWAYS

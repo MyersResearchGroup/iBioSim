@@ -1216,16 +1216,16 @@ public class ExprTree {
 			} else {
 				if ((this).isit == 'c') {
 					comp = variable;
-					comp += "=";
-//					int paren = 0;
-//					for (i = spos; i < position; i++) {
-//						if (expr.charAt(i) == '(')
-//							paren++;
-//						if (expr.charAt(i) == ')')
-//							paren--;
-//						ineq = ineq + expr.charAt(i);
-//					}
-					comp += ineq;
+//					comp += "=";
+////					int paren = 0;
+////					for (i = spos; i < position; i++) {
+////						if (expr.charAt(i) == '(')
+////							paren++;
+////						if (expr.charAt(i) == ')')
+////							paren--;
+////						ineq = ineq + expr.charAt(i);
+////					}
+//					comp += ineq;
 					if (booleanSignals.contains(comp)) {
 						this.isit = 'b';
 						this.variable = comp;
