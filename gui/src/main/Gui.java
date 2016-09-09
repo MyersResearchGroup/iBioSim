@@ -9573,6 +9573,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			JOptionPane.showMessageDialog(frame, "Analysis view ID's are not allowed to include two consecutive underscores.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
+		if (!(IDpat.matcher(simName).matches()))
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "An ID can only contain letters, numbers, and underscores.", "Invalid ID",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		simName = simName.trim();
 		if (!overwrite(root + separator + simName, simName))
 		{

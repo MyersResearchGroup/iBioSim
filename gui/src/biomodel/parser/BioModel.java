@@ -6308,6 +6308,10 @@ public class BioModel {
 		if (!isGridEnabled()) {
 			i = 0;
 			while (i < layout.getListOfAdditionalGraphicalObjects().size()) {
+				if (!(layout.getListOfAdditionalGraphicalObjects().get(i) instanceof GeneralGlyph)) {
+					i++;
+					continue;
+				}
 				GeneralGlyph g = (GeneralGlyph) layout.getListOfAdditionalGraphicalObjects().get(i);
 				if (g.getReference() == null && g.getMetaidRef() == null) {
 					layout.removeGeneralGlyph(g);
