@@ -256,6 +256,24 @@ public class Utility {
 						}
 					});
 				}
+				else if (approve.equals("Import Archive")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".omex");
+						}
+					});
+				}
+				else if (approve.equals("Export Archive")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".omex");
+						}
+					});
+				}
 				else if (approve.equals("Import SBML")) {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
@@ -381,6 +399,10 @@ public class Utility {
 								&& !selectedFile.endsWith(".sedx"))
 							selectedFile += ".xml";
 					}
+					else if (approve.equals("Import Archive") || approve.equals("Export Archive")) {
+						if (!selectedFile.endsWith(".omex"))
+							selectedFile += ".omex";
+					}
 					else if (approve.equals("Import SBML") || (approve.equals("Export SBML"))) {
 						if (!selectedFile.endsWith(".sbml") && !selectedFile.endsWith(".xml")) {
 							selectedFile += ".xml";
@@ -449,7 +471,10 @@ public class Utility {
 		sedmlFilter.addExtension("xml");
 		sedmlFilter.addExtension("sedml");
 		sedmlFilter.addExtension("sedx");
-		sedmlFilter.setDescription("Simulation Experiment Description");
+		sedmlFilter.setDescription("COMBINE Archive");
+		ExampleFileFilter archiveFilter = new ExampleFileFilter();
+		archiveFilter.addExtension("omex");
+		archiveFilter.setDescription("Simulation Experiment Description");
 		ExampleFileFilter sbmlFilter = new ExampleFileFilter();
 		sbmlFilter.addExtension("sbml");
 		sbmlFilter.setDescription("Systems Biology Markup Language");
@@ -566,6 +591,12 @@ public class Utility {
 			fc.addChoosableFileFilter(xmlFilter);
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileFilter(xmlFilter);
+			retValue = fc.showDialog(frame, approve);
+		}
+		else if (approve.equals("Import Archive") || approve.equals("Export Archive")) {
+			fc.addChoosableFileFilter(archiveFilter);
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileFilter(archiveFilter);
 			retValue = fc.showDialog(frame, approve);
 		}
 		else if (approve.equals("Import SBML")) {
@@ -716,6 +747,10 @@ public class Utility {
 			else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
 				if (!filename.endsWith(".xml")&&!filename.endsWith(".sedml")&&!filename.endsWith(".sedx"))
 					filename += ".xml";
+			}
+			else if (approve.equals("Import Archive") || approve.equals("Export Archive")) {
+				if (!filename.endsWith(".omex"));
+					filename += ".omex";
 			}
 		}
 		return filename;

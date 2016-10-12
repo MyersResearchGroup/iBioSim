@@ -194,6 +194,7 @@ import biomodel.parser.BioModel;
 import biomodel.parser.GCM2SBML;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
+import de.unirostock.sems.cbarchive.CombineArchive;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the
@@ -225,7 +226,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem				graph;
 	private JMenuItem				probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf;
 	private JMenuItem				exportPng, exportSvg, exportTsd, exportSBML,exportFlatSBML;
-	private JMenuItem				exportSBOL1, exportSBOL2, exportGenBank, exportFasta, exportSEDML, exportAvi, exportMp4;
+	private JMenuItem				exportSBOL1, exportSBOL2, exportGenBank, exportFasta, exportArchive, exportAvi, exportMp4;
 	private JMenu					exportDataMenu, exportMovieMenu, exportImageMenu;
 	private String					root;
 	private String 					currentProjectId;
@@ -581,7 +582,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSBOL2 = new JMenuItem("SBOL 2.0");
 		exportGenBank = new JMenuItem("GenBank");
 		exportFasta = new JMenuItem("Fasta");
-		exportSEDML = new JMenuItem("SED-ML");
+		exportArchive = new JMenuItem("Archive");
 		exportCsv = new JMenuItem("CSV");
 		exportDat = new JMenuItem("DAT");
 		exportEps = new JMenuItem("EPS");
@@ -702,7 +703,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSBOL2.addActionListener(this);
 		exportGenBank.addActionListener(this);
 		exportFasta.addActionListener(this);
-		exportSEDML.addActionListener(this);
+		exportArchive.addActionListener(this);
 		exportCsv.addActionListener(this);
 		exportDat.addActionListener(this);
 		exportEps.addActionListener(this);
@@ -844,7 +845,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSBOL2.setEnabled(false);
 		exportGenBank.setEnabled(false);
 		exportFasta.setEnabled(false);
-		exportSEDML.setEnabled(false);
+		exportArchive.setEnabled(false);
 		exportCsv.setEnabled(false);
 		exportDat.setEnabled(false);
 		exportEps.setEnabled(false);
@@ -1067,7 +1068,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportGenBank);
 		exportMenu.add(exportFasta);
 		// Removed for now since not working
-		exportMenu.add(exportSEDML);
+		exportMenu.add(exportArchive);
 
 		exportDataMenu.add(exportTsd);
 		exportDataMenu.add(exportCsv);
@@ -2050,10 +2051,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				exportSBOL((SBOLDesignerPlugin) comp,"Fasta");
 			}
 		}
-		else if (e.getSource() == exportSEDML)
+		else if (e.getSource() == exportArchive)
 		{
-			// Removed, not working
-			exportSEDML();
+//			exportSEDML();
+			exportCombineArchive();
 		}
 //		else if (e.getSource() == saveSBOL)
 //		{
@@ -5738,8 +5739,46 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 	
-	// Removed not working
-	public void exportSEDML() {
+//	public void exportSEDML() {
+//		File lastFilePath;
+//		Preferences biosimrc = Preferences.userRoot();
+//		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+//			lastFilePath = null;
+//		}
+//		else {
+//			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+//		}
+//		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SED-ML", -1);
+//		if (!exportPath.equals("")) {
+//			String dir = exportPath.substring(0, exportPath.lastIndexOf(Gui.separator));
+//			biosimrc.put("biosim.general.export_dir",dir);
+//			log.addText("Exporting SED-ML file:\n" + exportPath + "\n");
+//			List<IModelContent> models = new ArrayList<IModelContent>();
+//			for (String s : new File(root).list()) {
+//				if (s.endsWith(".xml")) {
+//					File modelFile = new File(root + separator + s); 
+//					FileModelContent fmc = new FileModelContent(modelFile);
+//					//System.out.println(fmc.getName());
+//					//System.out.println(fmc.getContents());
+//					models.add(fmc);
+//				}
+//			}
+//			try {
+//				byte [] sedx = Libsedml.writeSEDMLArchive(new ArchiveComponents(models,sedmlDocument),
+//						root.split(Gui.separator)[root.split(Gui.separator).length-1]);
+//				File file = new File(exportPath);
+//				FileOutputStream fos = new FileOutputStream(file);
+//				fos.write(sedx);
+//				fos.flush();
+//				fos.close();
+//			}
+//			catch (Exception e) {
+//				JOptionPane.showMessageDialog(frame, "Unable to export SED-ML file.", "Error", JOptionPane.ERROR_MESSAGE);
+//			}
+//		}
+//	}
+
+	public void exportCombineArchive() {
 		File lastFilePath;
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
@@ -5748,37 +5787,40 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else {
 			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
 		}
-		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SED-ML", -1);
+		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export Archive", -1);
 		if (!exportPath.equals("")) {
 			String dir = exportPath.substring(0, exportPath.lastIndexOf(Gui.separator));
 			biosimrc.put("biosim.general.export_dir",dir);
-			log.addText("Exporting SED-ML file:\n" + exportPath + "\n");
-			List<IModelContent> models = new ArrayList<IModelContent>();
-			for (String s : new File(root).list()) {
-				if (s.endsWith(".xml")) {
-					File modelFile = new File(root + separator + s); 
-					FileModelContent fmc = new FileModelContent(modelFile);
-					//System.out.println(fmc.getName());
-					//System.out.println(fmc.getContents());
-					models.add(fmc);
-				}
+			log.addText("Exporting COMBINE archive file:\n" + exportPath + "\n");
+			File file = new File(exportPath);
+			if (file.exists()) {
+				file.delete();
 			}
 			try {
-				byte [] sedx = Libsedml.writeSEDMLArchive(new ArchiveComponents(models,sedmlDocument),
-						root.split(Gui.separator)[root.split(Gui.separator).length-1]);
-				File file = new File(exportPath);
-				FileOutputStream fos = new FileOutputStream(file);
-				fos.write(sedx);
-				fos.flush();
-				fos.close();
+				CombineArchive archive = new CombineArchive(file);
+				File baseDir = new File(root);
+				for (String s : new File(root).list()) {
+					if (s.endsWith(".xml")) {
+						File modelFile = new File(root + separator + s); 
+						archive.addEntry(baseDir, modelFile, 
+								URI.create("http://identifiers.org/combine.specifications/sbml.level-3.version-1.core"));
+					}
+					// TODO: add other file types
+				}
+				File sedmlFile = new File(root + separator + root.split(Gui.separator)[root.split(Gui.separator).length-1]+".sedml");
+				archive.addEntry(baseDir, sedmlFile,
+						URI.create("http://identifiers.org/combine.specifications/sed-ml.level-1.version-2"),
+						true);
+				archive.pack();
+				archive.close();
 			}
 			catch (Exception e) {
+				e.printStackTrace();
 				JOptionPane.showMessageDialog(frame, "Unable to export SED-ML file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 
-	
 	private boolean checkSBOL(SBOLDocument sbolDoc,boolean bestPractice) 
 	{
 		SBOLValidate.validateSBOL(sbolDoc,true,true,bestPractice);
@@ -11020,7 +11062,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		run.setEnabled(false);
 		check.setEnabled(false);
 		exportMenu.setEnabled(true);
-		exportSEDML.setEnabled(true);
+		exportArchive.setEnabled(true);
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
 		exportSBOL1.setEnabled(false);
