@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="biomodel/gui/sbol/SBOLAssociationPanel.java|biomodel/gui/sbol/SBOLField.java|biomodel/gui/sbol/SBOLDescriptorPanel.java|sbol/assembly/Assembler.java|sbol/assembly/AssemblyGraph.java|sbol/assembly/AssemblyNode.java|sbol/browser/CollectionBrowserPanel.java|sbol/browser/SBOLBrowser.java|sbol/browser/DNAComponentBrowserPanel.java|sbol/util/SBOLFileManager.java|sbol/util/SBOLIdentityManager.java|sbol/util/SBOLUtility.java" kind="src" path="gui/src"/>
+	<classpathentry excluding="biomodel/gui/sbol/SBOLAssociationPanel.java|biomodel/gui/sbol/SBOLField.java|biomodel/gui/sbol/SBOLDescriptorPanel.java|sbol/assembly/Assembler.java|sbol/assembly/AssemblyGraph.java|sbol/assembly/AssemblyNode.java|sbol/browser/CollectionBrowserPanel.java|sbol/browser/SBOLBrowser.java|sbol/browser/DNAComponentBrowserPanel.java|sbol/util/SBOLFileManager.java|sbol/util/SBOLIdentityManager.java|sbol/util/SBOLUtility.java|sbol/util/SBOLTestFactory.java|sbol/util/MyersOntology.java|sbol/util/SBOLOntology.java|sbol/util/SBO.java|sbol/util/ChEBI.java" kind="src" path="gui/src"/>
 	<classpathentry kind="lib" path="gui/lib/epsgraphics.jar"/>
 	<classpathentry kind="lib" path="gui/lib/js.jar"/>
 	<classpathentry kind="lib" path="gui/lib/junit.jar"/>
@@ -66,6 +66,7 @@
 	<classpathentry kind="lib" path="gui/lib/httpmime-4.5.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/gson-2.3.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/sbolstack-frontend-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="gui/lib/CombineArchive-1.1.1-jar-with-dependencies.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="gui/lib/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jlibsedml.jar"/>
