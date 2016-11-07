@@ -38,6 +38,7 @@ public class SBOLGraph
 	 * for the graph.
 	 * @param md
 	 */
+	// TODO: SBO terms seem out-of-date here
 	public void createGraph(ModuleDefinition md)
 	{
 

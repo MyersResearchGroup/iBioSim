@@ -460,7 +460,7 @@ public class SBMLtoSBOL {
 			
 			Interaction interaction = moduleDef.createInteraction(inter_id, types);
 			
-			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
+			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.INHIBITED);
 			interaction.createParticipation(r.getSpecies(), r.getSpecies(),SystemsBiologyOntology.INHIBITOR);
 		}
 		
@@ -474,7 +474,7 @@ public class SBMLtoSBOL {
 			
 			Interaction interaction = moduleDef.createInteraction(inter_id, types);
 			
-			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
+			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.STIMULATED);
 			interaction.createParticipation(a.getSpecies(), a.getSpecies(),SystemsBiologyOntology.STIMULATOR);
 		}
 		
@@ -486,7 +486,7 @@ public class SBMLtoSBOL {
 			type.add(SystemsBiologyOntology.GENETIC_PRODUCTION);
 			
 			Interaction interaction = moduleDef.createInteraction(i_id, type);
-			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.PROMOTER);
+			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.TEMPLATE);
 			interaction.createParticipation(product.getSpecies(), product.getSpecies(),SystemsBiologyOntology.PRODUCT);
 		}
 	}

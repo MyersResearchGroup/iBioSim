@@ -320,11 +320,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static Object			ICON_COLLAPSE		= UIManager.get("Tree.collapsedIcon");
 
-	private static final String		lemaVersion			= "2.9.2";
+	private static final String		lemaVersion			= "2.9.3";
 
 	private static final String		atacsVersion		= "6.1";
 
-	private static final String		iBioSimVersion		= "2.9.2";	
+	private static final String		iBioSimVersion		= "2.9.3";	
 	
 	private SEDMLDocument 			sedmlDocument		= null;
 	
