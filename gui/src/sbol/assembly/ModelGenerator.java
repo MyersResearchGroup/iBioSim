@@ -113,7 +113,8 @@ public class ModelGenerator {
 			} else if (isProductionInteraction(interact, moduleDef, sbolDoc)) {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
-					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)) {
+					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)||
+							partici.containsRole(SystemsBiologyOntology.TEMPLATE)) {
 						promoter = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
@@ -128,7 +129,8 @@ public class ModelGenerator {
 							promoterToProducts.put(promoter, new LinkedList<Participation>());
 						promoterToProducts.get(promoter).add(partici);
 					// TRANSCRIBED
-					} else if (partici.containsRole(SystemsBiologyOntology.PROMOTER)) {
+					} else if (partici.containsRole(SystemsBiologyOntology.PROMOTER)||
+							partici.containsRole(SystemsBiologyOntology.TEMPLATE)) {
 						if (!promoterToTranscribed.containsKey(promoter))
 							promoterToTranscribed.put(promoter, new LinkedList<Participation>());
 						promoterToTranscribed.get(promoter).add(partici);
@@ -144,7 +146,8 @@ public class ModelGenerator {
 			} else if (isActivationInteraction(interact, moduleDef, sbolDoc)) {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
-					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)) {
+					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)||
+							partici.containsRole(SystemsBiologyOntology.STIMULATED)) {
 						promoter = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
@@ -161,7 +164,8 @@ public class ModelGenerator {
 			} else if (isRepressionInteraction(interact, moduleDef, sbolDoc)) {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
-					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)) {
+					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)||
+							partici.containsRole(SystemsBiologyOntology.INHIBITED)) {
 						promoter = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
@@ -659,9 +663,9 @@ public class ModelGenerator {
 	
 	// TODO: need to figure out better if the CD is a promoter, need to look carefully at its subComponents
 	public static boolean isPromoterDefinition(ComponentDefinition compDef) {
-		return isDNADefinition(compDef) 
+		return isDNADefinition(compDef) /*
 				&& (compDef.containsRole(SequenceOntology.PROMOTER) ||
-						isGeneDefinition(compDef));
+						isGeneDefinition(compDef))*/;
 	}
 	
 	public static boolean isGeneComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
@@ -779,7 +783,8 @@ public class ModelGenerator {
 			//boolean hasTranscribed = false;
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
-				if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isPromoterComponent(comp, sbolDoc))
+				if ((partici.containsRole(SystemsBiologyOntology.PROMOTER)||
+						partici.containsRole(SystemsBiologyOntology.TEMPLATE)) && isPromoterComponent(comp, sbolDoc))
 					hasPromoter = true;
 				else if (partici.containsRole(SystemsBiologyOntology.PRODUCT) && 
 						(isProteinComponent(comp, sbolDoc)||isRNAComponent(comp, sbolDoc)))
@@ -803,7 +808,8 @@ public class ModelGenerator {
 			boolean hasActivator = false;
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
-				if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isPromoterComponent(comp, sbolDoc))
+				if ((partici.containsRole(SystemsBiologyOntology.PROMOTER)||
+						partici.containsRole(SystemsBiologyOntology.STIMULATED)) && isPromoterComponent(comp, sbolDoc))
 					hasActivated = true;
 				else if (partici.containsRole(SystemsBiologyOntology.STIMULATOR) /*&& isTFComponent(comp, sbolDoc)*/)
 					hasActivator = true;
@@ -823,7 +829,8 @@ public class ModelGenerator {
 			boolean hasRepressor = false;
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
-				if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isPromoterComponent(comp, sbolDoc))
+				if ((partici.containsRole(SystemsBiologyOntology.PROMOTER) ||
+						partici.containsRole(SystemsBiologyOntology.INHIBITED)) && isPromoterComponent(comp, sbolDoc))
 					hasRepressed = true;
 				else if (partici.containsRole(SystemsBiologyOntology.INHIBITOR) /*&& isTFComponent(comp, sbolDoc)*/)
 					hasRepressor = true;
