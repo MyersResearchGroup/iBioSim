@@ -252,7 +252,7 @@ public class ModelGenerator {
 			BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		List<BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
-		BioModel subTargetModel = subModels.get(0);
+		BioModel subTargetModel = subModels.get(subModels.size()-1);
 		generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
 		return subModels;
 	}
@@ -263,9 +263,13 @@ public class ModelGenerator {
 		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
 		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocalURI());
 		
+		//System.out.println(mapping.getRemoteURI()+" <-> " + mapping.getLocalURI());
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(localSpecies));
 		Port port = subTargetModel.getPortByIdRef(getDisplayID(remoteSpecies));
-		if (port==null) System.out.println("Cannot find "+getDisplayID(remoteSpecies));
+		if (port==null) {
+			System.out.println("Cannot find "+getDisplayID(remoteSpecies));
+			//return;
+		}
 		
 		Submodel subModel = targetModel.getSBMLCompModel().getSubmodel(getDisplayID(subModule));
 		SBMLutilities.addReplacement(localSBMLSpecies, subModel, getDisplayID(subModule), port.getId(), "(none)", 
