@@ -149,6 +149,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidate;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SequenceOntology;
 
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
@@ -7331,6 +7332,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				SBOLDesignerPlugin sbolDesignerPlugin;
 				try {
 					ComponentDefinition cd = getSBOLDocument().createComponentDefinition(partId, "1", ComponentDefinition.DNA);
+					cd.addRole(SequenceOntology.ENGINEERED_REGION);
 					writeSBOLDocument();
 					sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,currentProjectId+".sbol",cd.getIdentity(),sbolDocument.getDefaultURIprefix());
 					addTab(partId,sbolDesignerPlugin,"SBOL Designer");
