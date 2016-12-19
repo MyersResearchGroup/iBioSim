@@ -24,11 +24,6 @@
 	<classpathentry kind="lib" path="gui/lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="lib" path="gui/lib/antlr-3.4-complete.jar"/>
-	<classpathentry kind="lib" path="gui/lib/libSBOLj-2.1.1-SNAPSHOT-withDependencies.jar" sourcepath="gui/lib/libSBOLj-2.1.1-SNAPSHOT-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/myers/research/nobackup/workspace/BioSim/gui/lib/libSBOLj-2.1.1-SNAPSHOT-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="gui/lib/biomodels-wslib-1.21.jar"/>
 	<classpathentry kind="lib" path="gui/lib/axis.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-discovery-0.5.jar"/>
@@ -85,6 +80,7 @@
 	<classpathentry kind="lib" path="gui/lib/csparsej-1.1.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-math3-3.6.1.jar" sourcepath="gui/lib/commons-math3-3.6.1-sources.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jsbml-1.2-SNAPSHOT-with-dependencies1998.jar"/>
+	<classpathentry kind="lib" path="gui/lib/libSBOLj-2.1.1-SNAPSHOT-withDependencies.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jsbml-1.2-with-dependencies.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
