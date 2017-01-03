@@ -14,12 +14,13 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.Model;
 
+import analysis.dynamicsim.hierarchical.math.ConstraintNode;
+import analysis.dynamicsim.hierarchical.math.EventNode;
+import analysis.dynamicsim.hierarchical.math.FunctionNode;
+import analysis.dynamicsim.hierarchical.math.ReactionNode;
+import analysis.dynamicsim.hierarchical.math.VariableNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.interpreter.RateSplitterInterpreter;
-import analysis.dynamicsim.hierarchical.util.math.ConstraintNode;
-import analysis.dynamicsim.hierarchical.util.math.EventNode;
-import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
-import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 public class HierarchicalUtilities
 {
@@ -203,77 +204,9 @@ public class HierarchicalUtilities
 		}
 	}
 
-	/**
-	 * Calculate fixed-point of initial assignments
-	 * 
-	 * @param modelstate
-	 * @param variables
-	 * @param math
-	 */
-	public static void computeFixedPoint(List<VariableNode> variableNodes, List<ReactionNode> reactionNodes)
-	{
-		boolean changed = true;
 
-		while (changed)
-		{
-			changed = false;
-			if (variableNodes != null)
-			{
-				for (VariableNode node : variableNodes)
-				{
-					changed = changed | node.computeInitialValue();
-					changed = changed | node.computeAssignmentValue();
-				}
-			}
-			if (reactionNodes != null)
-			{
-				for (ReactionNode node : reactionNodes)
-				{
-					changed = changed | node.computePropensity();
-				}
-			}
-		}
 
-	}
 
-	public static void computeAssignmentRules(List<VariableNode> nodes)
-	{
-		if (nodes == null)
-		{
-			return;
-		}
-
-		boolean changed = true;
-		while (changed)
-		{
-			changed = false;
-			for (int i = 0; i < nodes.size(); i++)
-			{
-				VariableNode node = nodes.get(i);
-				changed = changed | node.computeAssignmentValue();
-			}
-		}
-	}
-
-	public static void computeAssignmentRules(double[] state, List<VariableNode> nodes)
-	{
-		if (nodes == null)
-		{
-			return;
-		}
-
-		boolean changed = true;
-		while (changed)
-		{
-			changed = false;
-			for (int i = 0; i < nodes.size(); i++)
-			{
-				VariableNode node = nodes.get(i);
-				changed = changed | node.computeAssignmentValue();
-				state[i] = node.getValue();
-			}
-		}
-	}
 
 	public static void triggerAndFireEvents(List<EventNode> eventList, PriorityQueue<EventNode> triggeredEventList, double time)
 	{
@@ -284,7 +217,7 @@ public class HierarchicalUtilities
 			for (int i = eventList.size() - 1; i >= 0; i--)
 			{
 				EventNode event = eventList.get(i);
-				if (event.computeEnabled(time))
+				if (event.computeEnabled(0, time))
 				{
 					eventList.remove(i);
 					triggeredEventList.add(event);
@@ -298,7 +231,7 @@ public class HierarchicalUtilities
 				if (event.getFireTime() <= time)
 				{
 					triggeredEventList.poll();
-					event.fireEvent(time);
+					event.fireEvent(0, time);
 					eventList.add(event);
 					changed = true;
 				}
@@ -310,13 +243,7 @@ public class HierarchicalUtilities
 		}
 	}
 
-	public static void computeReactionPropensities(List<ReactionNode> reactionList)
-	{
-		for (ReactionNode reaction : reactionList)
-		{
-			reaction.computePropensity();
-		}
-	}
+
 
 	public static ASTNode[] splitMath(ASTNode math)
 	{
@@ -342,9 +269,10 @@ public class HierarchicalUtilities
 	public static boolean evaluateConstraints(List<ConstraintNode> listOfConstraints)
 	{
 		boolean hasSuccess = true;
-		for (ConstraintNode constraintNode : listOfConstraints)
+		for (int i = listOfConstraints.size() - 1; i >= 0; i--)
 		{
-			hasSuccess = hasSuccess && constraintNode.evaluateConstraint();
+			ConstraintNode constraintNode = listOfConstraints.get(i);
+			hasSuccess = hasSuccess && constraintNode.evaluateConstraint(constraintNode.getSubmodelIndex(i));
 		}
 		return hasSuccess;
 	}
