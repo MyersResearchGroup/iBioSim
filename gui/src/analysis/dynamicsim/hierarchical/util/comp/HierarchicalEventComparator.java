@@ -2,7 +2,7 @@ package analysis.dynamicsim.hierarchical.util.comp;
 
 import java.util.Comparator;
 
-import analysis.dynamicsim.hierarchical.util.math.EventNode;
+import analysis.dynamicsim.hierarchical.math.EventNode;
 
 // EVENT COMPARATOR INNER CLASS
 /**
