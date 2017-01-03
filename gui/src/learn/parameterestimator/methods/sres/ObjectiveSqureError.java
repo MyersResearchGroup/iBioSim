@@ -6,8 +6,8 @@ import java.util.List;
 
 import learn.genenet.Experiments;
 import learn.genenet.SpeciesCollection;
+import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 
 public class ObjectiveSqureError extends Objective
 {

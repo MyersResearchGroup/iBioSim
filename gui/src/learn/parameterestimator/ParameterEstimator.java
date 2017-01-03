@@ -15,8 +15,8 @@ import learn.parameterestimator.methods.sres.SRES;
 
 import org.sbml.jsbml.SBMLDocument;
 
+import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 
 public class ParameterEstimator
 {

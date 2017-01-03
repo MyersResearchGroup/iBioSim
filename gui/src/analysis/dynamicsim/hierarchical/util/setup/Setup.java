@@ -1,9 +1,0 @@
-package analysis.dynamicsim.hierarchical.util.setup;
-
-public interface Setup
-{
-	public static enum SetupType
-	{
-		PARAMETER, SPECIES, COMPARTMENT, ASSIGNMENT_RULE, RATE_RULE, EVENT, CONSTRAINT, INITIAL_ASSIGNMENT, REV_REACTION, REACTION, EVENT_ASSIGNMENT, SPECIES_REFERENCE, REACTANT, MODIFIER, PRODUCT;
-	}
-}
