@@ -4,19 +4,20 @@ import java.io.IOException;
 
 import org.sbml.jsbml.Model;
 
+import analysis.dynamicsim.hierarchical.math.VariableNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import analysis.dynamicsim.hierarchical.util.math.VariableNode;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
 
-public class CoreSetup implements Setup
+public class CoreSetup
 {
 
-	public static void initializeVariables(HierarchicalModel modelstate, Model model, VariableNode time) throws IOException
+	public static void initializeVariables(HierarchicalModel modelstate, Model model, ModelType type, VariableNode time) throws IOException
 	{
 		modelstate.createVariableToNodeMap();
 		modelstate.addMappingNode(time.getName(), time);
-		ParameterSetup.setupParameters(modelstate, model);
-		CompartmentSetup.setupCompartments(modelstate, model);
-		SpeciesSetup.setupSpecies(modelstate, model);
+		ParameterSetup.setupParameters(modelstate, type, model);
+		CompartmentSetup.setupCompartments(modelstate, type,  model);
+		SpeciesSetup.setupSpecies(modelstate, type, model);
 		ReactionSetup.setupReactions(modelstate, model);
 	}
 

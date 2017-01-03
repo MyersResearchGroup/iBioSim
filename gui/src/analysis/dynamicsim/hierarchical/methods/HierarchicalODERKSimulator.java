@@ -15,13 +15,16 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 
+import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
+import analysis.dynamicsim.hierarchical.math.EventNode;
+import analysis.dynamicsim.hierarchical.math.ReactionNode;
+import analysis.dynamicsim.hierarchical.math.VariableNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import analysis.dynamicsim.hierarchical.states.VectorWrapper;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
-import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
-import analysis.dynamicsim.hierarchical.util.math.EventNode;
-import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 
 public final class HierarchicalODERKSimulator extends HierarchicalSimulation
@@ -34,7 +37,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 	private List<ReactionNode>			reactionList;
 	private List<EventNode>				eventList;
 	private PriorityQueue<EventNode>	triggeredEventList;
-
+	private VectorWrapper vectorWrapper;
+	
 	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, double timeLimit) throws IOException, XMLStreamException
 	{
 
@@ -64,9 +68,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		this.isSingleStep = false;
 		this.absoluteError = absoluteError == 0 ? 1e-12 : absoluteError;
 		this.relativeError = absoluteError == 0 ? 1e-9 : relativeError;
-
 		this.printTime = outputStartTime;
-
+		this.vectorWrapper = new VectorWrapper();
+		
 		if (numSteps > 0)
 		{
 			setPrintInterval(timeLimit / numSteps);
@@ -100,7 +104,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 			odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20, 10000);
 			triggeredEventList = new PriorityQueue<EventNode>(0, new HierarchicalEventComparator());
 
-			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue());
+			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue(0));
 
 		}
 		state = getArrayState(variableList);
@@ -126,14 +130,13 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		if (!isInitialized)
 		{
 			setCurrentTime(getInitialTime());
-			ModelSetup.setupModels(this, false);
+			ModelSetup.setupModels(this, ModelType.HODE);
 			eventList = getEventList();
 			variableList = getVariableList();
 			reactionList = getReactionList();
-			constraintList = getConstraintList();
 
 			de = new DifferentialEquations();
-			HierarchicalUtilities.computeFixedPoint(getInitAssignmentList(), reactionList);
+			computeFixedPoint();
 
 			if (!eventList.isEmpty())
 			{
@@ -184,10 +187,10 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		while (currentTime.getValue() < getTimeLimit() && !isCancelFlag())
 		{
 
-			if (!HierarchicalUtilities.evaluateConstraints(constraintList))
-			{
-				return;
-			}
+//			if (!HierarchicalUtilities.evaluateConstraints(constraintList))
+//			{
+//				return;
+//			}
 
 			nextEndTime = currentTime.getValue() + getMaxTimeStep();
 
@@ -206,8 +209,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 				try
 				{
 
-					odecalc.integrate(de, currentTime.getValue(), state, nextEndTime, state);
-					HierarchicalUtilities.computeAssignmentRules(state, variableList);
+					odecalc.integrate(de, currentTime.getValue(0), state, nextEndTime, state);
+					computeAssignmentRules(state);
 
 				}
 				catch (Exception e)
@@ -258,7 +261,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 	{
 		for (int i = 0; i < y.length; i++)
 		{
-			variableList.get(i).setValue(y[i]);
+			VariableNode node = variableList.get(i);
+			node.setValue(0, y[i]);
 		}
 	}
 
@@ -277,15 +281,17 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		{
 			double returnValue = -value;
 
-			currentTime.setValue(t);
+			currentTime.setValue(0, t);
 			for (int i = 0; i < y.length; i++)
 			{
-				variableList.get(i).setValue(y[i]);
+				VariableNode node = variableList.get(i);
+				node.setValue(0, y[i]);
 			}
 
-			for (EventNode event : eventList)
+			for (int i = eventList.size()-1; i >= 0; i--)
 			{
-				if (event.isTriggeredAtTime(t))
+				EventNode event = eventList.get(i);
+				if (event.isTriggeredAtTime(t, 0))
 				{
 					returnValue = value;
 				}
@@ -298,17 +304,23 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		{
 			value = -value;
 
-			currentTime.setValue(t);
+			currentTime.setValue(0, t);
 
 			for (int i = 0; i < y.length; i++)
 			{
-				variableList.get(i).setValue(y[i]);
+				VariableNode variableNode = variableList.get(i);
+				variableNode.setValue(0, y[i]);
 			}
 
-			HierarchicalUtilities.computeAssignmentRules(state, variableList);
+			computeAssignmentRules(state);
 			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, t);
-			HierarchicalUtilities.computeAssignmentRules(y, variableList);
-
+			computeAssignmentRules(y);
+			for (int i = 0; i < y.length; i++)
+      {
+        VariableNode variableNode = variableList.get(i);
+        //TODO
+        y[i] = variableNode.getValue(0);
+      }
 			return EventHandler.Action.STOP;
 		}
 
@@ -334,7 +346,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		@Override
 		public double g(double t, double[] y)
 		{
-			currentTime.setValue(t);
+			currentTime.setValue(0, t);
 			if (!triggeredEventList.isEmpty())
 			{
 				if (triggeredEventList.peek().getFireTime() <= t)
@@ -350,17 +362,24 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		{
 			value = -value;
 
-			currentTime.setValue(t);
+			currentTime.setValue(0, t);
 
 			for (int i = 0; i < y.length; i++)
 			{
-				variableList.get(i).setValue(y[i]);
+				VariableNode variableNode = variableList.get(i);
+				//TODO
+				variableNode.setValue(0, y[i]);
 			}
 
-			HierarchicalUtilities.computeAssignmentRules(state, variableList);
+			computeAssignmentRules(state);
 			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, t);
-			HierarchicalUtilities.computeAssignmentRules(y, variableList);
-
+			computeAssignmentRules(y);
+			for (int i = 0; i < y.length; i++)
+      {
+        VariableNode variableNode = variableList.get(i);
+        //TODO
+        y[i] = variableNode.getValue(0);
+      }
 			return EventHandler.Action.STOP;
 		}
 
@@ -382,19 +401,28 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 			return variableList.size();
 		}
 
+    public void computeReactionPropensities()
+    {
+      for (int i = reactionList.size() - 1; i >= 0; i--)
+      {
+        ReactionNode reaction = reactionList.get(i);
+        reaction.computePropensity(reaction.getSubmodelIndex(i));
+      }
+    }
+    
 		@Override
 		public void computeDerivatives(double t, double[] y, double[] yDot) throws MaxCountExceededException, DimensionMismatchException
 		{
 
 			setCurrentTime(t);
-			// Copy values
 			updateVariables(y);
-			HierarchicalUtilities.computeAssignmentRules(y, variableList);
-			HierarchicalUtilities.computeReactionPropensities(reactionList);
+			computeAssignmentRules(y);
+			computeReactionPropensities();
 			//
 			for (int i = 0; i < yDot.length; i++)
 			{
-				yDot[i] = variableList.get(i).computeRateOfChange(t);
+				VariableNode variableNode = variableList.get(i);
+				yDot[i] = variableNode.computeRateOfChange(0, t);
 			}
 		}
 	}

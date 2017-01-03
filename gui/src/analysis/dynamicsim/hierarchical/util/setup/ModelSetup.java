@@ -18,16 +18,16 @@ import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 
+import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.math.VariableNode;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import analysis.dynamicsim.hierarchical.model.Container.ModelType;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
-import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 import biomodel.util.GlobalConstants;
 
-public class ModelSetup implements Setup
+public class ModelSetup
 {
 	/**
 	 * Initializes the modelstate array
@@ -35,35 +35,42 @@ public class ModelSetup implements Setup
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	public static void setupModels(HierarchicalSimulation sim, boolean isSSA) throws XMLStreamException, IOException
+	public static void setupModels(HierarchicalSimulation sim, ModelType type) throws XMLStreamException, IOException
 	{
+	  
 		SBMLDocument document = sim.getDocument();
 		Model model = document.getModel();
 		String rootPath = sim.getRootDirectory();
+
 		List<HierarchicalModel> listOfModules = new ArrayList<HierarchicalModel>();
 		List<Model> listOfModels = new ArrayList<Model>();
 		List<String> listOfPrefix = new ArrayList<String>();
 		List<ReplacementHandler> listOfHandlers = new ArrayList<ReplacementHandler>();
-		Map<String, Integer> indexToModel = new HashMap<String, Integer>();
+		
+		Map<String, Integer> mapOfModels = new HashMap<String, Integer>();
+		
+		sim.setListOfModules(listOfModules);
+
+		
 
 		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document.getPlugin(CompConstants.namespaceURI);
-
 		CompModelPlugin sbmlCompModel = (CompModelPlugin) model.getPlugin(CompConstants.namespaceURI);
 		HierarchicalModel topmodel = new HierarchicalModel("topmodel");
 		sim.setTopmodel(topmodel);
+		mapOfModels.put("topmodel", 0);
 		setModelType(topmodel, model);
-		indexToModel.put("topmodel", 0);
+
 		listOfPrefix.add("");
 		listOfModules.add(topmodel);
 		listOfModels.add(model);
 
 		if (sbmlCompModel != null)
 		{
-			setupSubmodels(sim, rootPath, "", sbmlComp, sbmlCompModel, listOfModules, listOfModels, listOfPrefix, indexToModel);
-			ReplacementSetup.setupReplacements(listOfHandlers, listOfModules, listOfModels, listOfPrefix, indexToModel);
+			setupSubmodels(sim, rootPath, "", sbmlComp, sbmlCompModel, listOfModules, listOfModels, listOfPrefix, mapOfModels);
+			ReplacementSetup.setupReplacements(listOfHandlers, listOfModules, listOfModels, listOfPrefix, mapOfModels);
 		}
 
-		initializeModelStates(sim, listOfHandlers, listOfModules, listOfModels, sim.getCurrentTime(), isSSA);
+		initializeModelStates(sim, listOfHandlers, listOfModules, listOfModels, sim.getCurrentTime(), type);
 
 		if (sim instanceof HierarchicalMixedSimulator)
 		{
@@ -137,11 +144,11 @@ public class ModelSetup implements Setup
 		}
 	}
 
-	private static void initializeModelStates(HierarchicalSimulation sim, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, VariableNode time, boolean isSSA) throws IOException
+	private static void initializeModelStates(HierarchicalSimulation sim, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, VariableNode time, ModelType type) throws IOException
 	{
 		for (int i = 0; i < listOfModules.size(); i++)
 		{
-			CoreSetup.initializeVariables(listOfModules.get(i), listOfModels.get(i), time);
+			CoreSetup.initializeVariables(listOfModules.get(i), listOfModels.get(i), type, time);
 		}
 
 		for (int i = listOfHandlers.size() - 1; i >= 0; i--)
@@ -149,6 +156,8 @@ public class ModelSetup implements Setup
 			listOfHandlers.get(i).copyNodeTo();
 		}
 
+		boolean isSSA = type == ModelType.HSSA;
+		
 		for (int i = 0; i < listOfModules.size(); i++)
 		{
 			CoreSetup.initializeModel(listOfModules.get(i), listOfModels.get(i), time, isSSA);
@@ -246,5 +255,6 @@ public class ModelSetup implements Setup
 		{
 			modelstate.setModelType(ModelType.NONE);
 		}
+
 	}
 }

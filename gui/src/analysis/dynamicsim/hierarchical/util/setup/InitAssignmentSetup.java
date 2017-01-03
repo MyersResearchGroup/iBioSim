@@ -4,13 +4,14 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.Model;
 
+import analysis.dynamicsim.hierarchical.math.FunctionNode;
+import analysis.dynamicsim.hierarchical.math.HierarchicalNode;
+import analysis.dynamicsim.hierarchical.math.SpeciesNode;
+import analysis.dynamicsim.hierarchical.math.VariableNode;
+import analysis.dynamicsim.hierarchical.math.AbstractHierarchicalNode.Type;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
-import analysis.dynamicsim.hierarchical.util.math.AbstractHierarchicalNode.Type;
-import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
-import analysis.dynamicsim.hierarchical.util.math.SpeciesNode;
-import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 public class InitAssignmentSetup
 {
@@ -25,7 +26,7 @@ public class InitAssignmentSetup
 			}
 			String variable = initAssignment.getVariable();
 			VariableNode variableNode = modelstate.getNode(variable);
-
+			
 			ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, initAssignment.getMath(), model);
 			HierarchicalNode initAssignNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
 
@@ -33,7 +34,7 @@ public class InitAssignmentSetup
 			{
 				SpeciesNode node = (SpeciesNode) variableNode;
 
-				if (!node.hasOnlySubstance())
+				if (!node.hasOnlySubstance(modelstate.getIndex()))
 				{
 					HierarchicalNode amountNode = new HierarchicalNode(Type.TIMES);
 					amountNode.addChild(initAssignNode);
@@ -42,7 +43,9 @@ public class InitAssignmentSetup
 				}
 			}
 
-			variableNode.setInitialAssignment(initAssignNode);
+			FunctionNode node = new FunctionNode(variableNode, initAssignNode);
+			node.setIsInitAssignment(true);
+			modelstate.addInitAssignment(node);
 
 		}
 

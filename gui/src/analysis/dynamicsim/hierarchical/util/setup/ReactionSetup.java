@@ -6,11 +6,12 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 
+import analysis.dynamicsim.hierarchical.math.HierarchicalNode;
+import analysis.dynamicsim.hierarchical.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
-import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
-import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 
 public class ReactionSetup
 {
@@ -30,8 +31,9 @@ public class ReactionSetup
 			{
 				continue;
 			}
-			modelstate.addReaction(reaction.getId());
-
+			ReactionNode reactionNode = modelstate.addReaction(reaction.getId());
+			reactionNode.createState(StateType.SPARSE);
+			reactionNode.setValue(modelstate.getIndex(), 0);
 		}
 
 	}
@@ -93,7 +95,7 @@ public class ReactionSetup
 	{
 		HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, modelstate.getVariableToNodeMap(), reactionNode);
 		reactionNode.setForwardRate(math);
-		reactionNode.computeNotEnoughEnoughMolecules();
+		reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
 	}
 
 	private static void setupSingleRevReaction(HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula, double currentTime)
@@ -103,7 +105,7 @@ public class ReactionSetup
 		{
 			HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, modelstate.getVariableToNodeMap(), reactionNode);
 			reactionNode.setForwardRate(math);
-			reactionNode.computeNotEnoughEnoughMolecules();
+			reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
 		}
 		else
 		{
@@ -111,7 +113,7 @@ public class ReactionSetup
 			HierarchicalNode reverseRate = MathInterpreter.parseASTNode(splitMath[1], modelstate.getVariableToNodeMap(), reactionNode);
 			reactionNode.setForwardRate(forwardRate);
 			reactionNode.setReverseRate(reverseRate);
-			reactionNode.computeNotEnoughEnoughMolecules();
+			reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
 		}
 	}
 

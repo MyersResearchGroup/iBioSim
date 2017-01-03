@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical.util.math;
+package analysis.dynamicsim.hierarchical.math;
 
 public class ArrayDimensionNode extends VariableNode
 {
@@ -8,12 +8,7 @@ public class ArrayDimensionNode extends VariableNode
 
 	public ArrayDimensionNode(String name)
 	{
-		super(name, 0);
-	}
-
-	public ArrayDimensionNode(String name, double value)
-	{
-		super(name, value);
+		super(name);
 	}
 
 	public VariableNode getSize()

@@ -4,10 +4,10 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Model;
 
+import analysis.dynamicsim.hierarchical.math.HierarchicalNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
-import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
 
 public class ConstraintSetup
 {

@@ -9,8 +9,8 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 
+import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
 import analysis.fba.FluxBalanceAnalysis;
 
 public class HierarchicalFBASimulator extends HierarchicalSimulation
@@ -18,7 +18,6 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 
 	private FluxBalanceAnalysis		fba;
 	private HashMap<String, Double>	values;
-	//private boolean					isInitialized;
 
 	public HierarchicalFBASimulator(HierarchicalSimulation simulation, HierarchicalModel topmodel)
 	{
@@ -39,6 +38,7 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 	@Override
 	public void simulate()
 	{
+	  //TODO: check return value of fba
 		getState();
 		fba.setBoundParameters(values);
 		fba.PerformFluxBalanceAnalysis();
@@ -51,7 +51,7 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 		HierarchicalModel topmodel = getTopmodel();
 		for (String reaction : flux.keySet())
 		{
-			topmodel.getNode(reaction).setValue(flux.get(reaction));
+			topmodel.getNode(reaction).setValue(0, flux.get(reaction));
 		}
 
 	}
@@ -96,7 +96,7 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 		HierarchicalModel topmodel = getTopmodel();
 		for (String name : values.keySet())
 		{
-			values.put(name, topmodel.getNode(name).getValue());
+			values.put(name, topmodel.getNode(name).getValue(0));
 		}
 	}
 

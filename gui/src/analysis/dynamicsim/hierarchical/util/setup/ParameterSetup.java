@@ -6,16 +6,18 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 
+import analysis.dynamicsim.hierarchical.math.VariableNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
-import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 public class ParameterSetup
 {
 	/**
 	 * puts parameter-related information into data structures
 	 */
-	public static void setupParameters(HierarchicalModel modelstate, Model model)
+	public static void setupParameters(HierarchicalModel modelstate, ModelType type, Model model)
 	{
 		for (Parameter parameter : model.getListOfParameters())
 		{
@@ -27,7 +29,7 @@ public class ParameterSetup
 			{
 				continue;
 			}
-			setupSingleParameter(modelstate, parameter, parameter.getId());
+			setupSingleParameter(modelstate, parameter, type);
 		}
 	}
 
@@ -36,15 +38,16 @@ public class ParameterSetup
 	 * 
 	 * @param parameter
 	 */
-	private static void setupSingleParameter(HierarchicalModel modelstate, Parameter parameter, String parameterID)
+	private static void setupSingleParameter(HierarchicalModel modelstate, Parameter parameter, ModelType type)
 	{
-		double value = parameter.getValue();
-
-		VariableNode node = new VariableNode(parameter.getId(), value);
-
+	
+		VariableNode node = new VariableNode(parameter.getId());
+		node.createState(StateType.SPARSE);
+		node.setValue(modelstate.getIndex(), parameter.getValue());
+		
 		if (parameter.isConstant())
 		{
-			modelstate.addConstant(node);
+			modelstate.addMappingNode(parameter.getId(), node);
 		}
 		else
 		{
@@ -82,7 +85,9 @@ public class ParameterSetup
 
 				String parameterID = reactionID + "_" + id;
 
-				modelstate.addConstant(parameterID, localParameter.getValue());
+				VariableNode node = new VariableNode(parameterID, StateType.SCALAR);
+				node.setValue(0, localParameter.getValue());
+				modelstate.addMappingNode(parameterID, node);
 
 				HierarchicalUtilities.alterLocalParameter(kineticLaw.getMath(), id, parameterID);
 			}

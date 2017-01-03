@@ -29,7 +29,7 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 
-public class ReplacementSetup implements Setup
+public class ReplacementSetup
 {
 
 	public static void setupReplacements(List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, List<String> listOfPrefix, Map<String, Integer> mapOfModels)

@@ -10,13 +10,13 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Priority;
 import org.sbml.jsbml.Trigger;
 
+import analysis.dynamicsim.hierarchical.math.EventNode;
+import analysis.dynamicsim.hierarchical.math.FunctionNode;
+import analysis.dynamicsim.hierarchical.math.HierarchicalNode;
+import analysis.dynamicsim.hierarchical.math.VariableNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
-import analysis.dynamicsim.hierarchical.util.math.EventAssignmentNode;
-import analysis.dynamicsim.hierarchical.util.math.EventNode;
-import analysis.dynamicsim.hierarchical.util.math.HierarchicalNode;
-import analysis.dynamicsim.hierarchical.util.math.VariableNode;
 
 public class EventSetup
 {
@@ -81,7 +81,7 @@ public class EventSetup
 			ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, eventAssignment.getMath(), model);
 			HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, variableToNodeMap);
 			VariableNode variable = variableToNodeMap.get(eventAssignment.getVariable());
-			EventAssignmentNode eventAssignmentNode = new EventAssignmentNode(variable, assignmentNode);
+			FunctionNode eventAssignmentNode = new FunctionNode(variable, assignmentNode);
 			eventNode.addEventAssignment(eventAssignmentNode);
 		}
 	}
@@ -114,7 +114,7 @@ public class EventSetup
 		if (!initValue)
 		{
 			node.setMaxDisabledTime(0);
-			if (node.computeTrigger())
+			if (node.computeTrigger(modelstate.getIndex()))
 			{
 				node.setMinEnabledTime(0);
 			}

@@ -2,10 +2,11 @@ package analysis.dynamicsim.hierarchical.util.setup;
 
 import org.sbml.jsbml.SpeciesReference;
 
+import analysis.dynamicsim.hierarchical.math.ReactionNode;
+import analysis.dynamicsim.hierarchical.math.SpeciesNode;
+import analysis.dynamicsim.hierarchical.math.SpeciesReferenceNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
-import analysis.dynamicsim.hierarchical.util.math.SpeciesNode;
-import analysis.dynamicsim.hierarchical.util.math.SpeciesReferenceNode;
+import analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 
 public class SpeciesReferenceSetup
 {
@@ -24,8 +25,10 @@ public class SpeciesReferenceSetup
 
 		double stoichiometryValue = Double.isNaN(product.getStoichiometry()) ? 1 : product.getStoichiometry();
 
-		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode(stoichiometryValue);
-
+		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode();
+		speciesReferenceNode.createState(StateType.SPARSE);
+		speciesReferenceNode.setValue(modelstate.getIndex(), stoichiometryValue);
+		
 		SpeciesNode species = (SpeciesNode) modelstate.getNode(productID);
 		speciesReferenceNode.setSpecies(species);
 		reaction.addProduct(speciesReferenceNode);
@@ -41,7 +44,7 @@ public class SpeciesReferenceSetup
 			}
 			else
 			{
-				modelstate.addConstant(speciesReferenceNode);
+				modelstate.addMappingNode(product.getId(), speciesReferenceNode);
 			}
 		}
 		species.addODERate(reaction, speciesReferenceNode);
@@ -61,7 +64,9 @@ public class SpeciesReferenceSetup
 		}
 
 		double stoichiometryValue = Double.isNaN(reactant.getStoichiometry()) ? 1 : reactant.getStoichiometry();
-		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode(stoichiometryValue);
+		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode();
+    speciesReferenceNode.createState(StateType.SPARSE);
+    speciesReferenceNode.setValue(modelstate.getIndex(), stoichiometryValue);
 		SpeciesNode species = (SpeciesNode) modelstate.getNode(reactantID);
 		speciesReferenceNode.setSpecies(species);
 		reaction.addReactant(speciesReferenceNode);
@@ -77,7 +82,7 @@ public class SpeciesReferenceSetup
 			}
 			else
 			{
-				modelstate.addConstant(speciesReferenceNode);
+				modelstate.addMappingNode(reactant.getId(), speciesReferenceNode);
 			}
 		}
 		species.subtractODERate(reaction, speciesReferenceNode);
