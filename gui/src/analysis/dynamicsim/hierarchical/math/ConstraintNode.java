@@ -1,4 +1,4 @@
-package analysis.dynamicsim.hierarchical.util.math;
+package analysis.dynamicsim.hierarchical.math;
 
 public class ConstraintNode extends HierarchicalNode
 {
@@ -31,9 +31,10 @@ public class ConstraintNode extends HierarchicalNode
 		return failures;
 	}
 
-	public boolean evaluateConstraint()
+	public boolean evaluateConstraint(int index)
 	{
-		boolean value = Evaluator.evaluateExpressionRecursive(this) > 0;
+
+		boolean value = Evaluator.evaluateExpressionRecursive(this, index) > 0;
 		if (!value)
 		{
 			failures++;

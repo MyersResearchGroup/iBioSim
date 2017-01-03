@@ -7,13 +7,14 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
+import analysis.dynamicsim.hierarchical.math.EventNode;
+import analysis.dynamicsim.hierarchical.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
-import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
-import analysis.dynamicsim.hierarchical.util.math.EventNode;
-import analysis.dynamicsim.hierarchical.util.math.ReactionNode;
 import analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 
 public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
@@ -54,16 +55,15 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		if (!isInitialized)
 		{
 			setCurrentTime(getInitialTime());
-			ModelSetup.setupModels(this, true);
+			ModelSetup.setupModels(this, ModelType.HSSA);
 			eventList = getEventList();
 			variableList = getVariableList();
-			getAssignmentRuleList();
-			constraintList = getConstraintList();
-			HierarchicalUtilities.computeFixedPoint(getInitAssignmentList(), getReactionList());
+			//constraintList = getConstraintList();
+			computeFixedPoint();
 			if (!eventList.isEmpty())
 			{
 				triggeredEventList = new PriorityQueue<EventNode>(1, new HierarchicalEventComparator());
-				HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue());
+				HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue(0));
 			}
 
 			initStateCopy = getArrayState(variableList);
@@ -106,7 +106,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
 		for (int i = initStateCopy.length - 1; i >= 0; i--)
 		{
-			variableList.get(i).setValue(initStateCopy[i]);
+			variableList.get(i).setValue(i, initStateCopy[i]);
 		}
 		restoreInitialPropensity();
 
@@ -156,21 +156,21 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 			printToFile();
 		}
 
-		while (currentTime.getValue() < getTimeLimit() && !isCancelFlag())
+		while (currentTime.getValue(0) < getTimeLimit() && !isCancelFlag())
 		{
-			if (!HierarchicalUtilities.evaluateConstraints(constraintList))
-			{
-				return;
-			}
+//			if (!HierarchicalUtilities.evaluateConstraints(constraintList))
+//			{
+//				return;
+//			}
 
 			r1 = getRandomNumberGenerator().nextDouble();
 			r2 = getRandomNumberGenerator().nextDouble();
 			totalPropensity = getTotalPropensity();
 			delta_t = computeNextTimeStep(r1, totalPropensity);
-			nextReactionTime = currentTime.getValue() + delta_t;
+			nextReactionTime = currentTime.getValue(0) + delta_t;
 			nextEventTime = getNextEventTime();
-			nextMaxTime = currentTime.getValue() + getMaxTimeStep();
-			previousTime = currentTime.getValue();
+			nextMaxTime = currentTime.getValue(0) + getMaxTimeStep();
+			previousTime = currentTime.getValue(0);
 
 			if (nextReactionTime < nextEventTime && nextReactionTime < nextMaxTime)
 			{
@@ -185,16 +185,16 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 				setCurrentTime(nextMaxTime);
 			}
 
-			if (currentTime.getValue() > getTimeLimit())
+			if (currentTime.getValue(0) > getTimeLimit())
 			{
 				break;
 			}
 
-			if (currentTime.getValue() == nextReactionTime)
+			if (currentTime.getValue(0) == nextReactionTime)
 			{
 				update(true, false, false, r2, previousTime);
 			}
-			else if (currentTime.getValue() == nextEventTime)
+			else if (currentTime.getValue(0) == nextEventTime)
 			{
 				update(false, false, true, r2, previousTime);
 			}
@@ -245,9 +245,9 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
 		if (events)
 		{
-			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue());
+			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue(0));
 		}
-		HierarchicalUtilities.computeAssignmentRules(assignmentList);
+		computeAssignmentRules();
 
 	}
 
@@ -264,7 +264,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 	private void selectAndPerformReaction(double r2)
 	{
 		double threshold = getTotalPropensity() * r2;
-		double totalRunningPropensity = getTopmodel().getPropensity();
+		double totalRunningPropensity = getTopmodel().getPropensity(0);
 		if (totalRunningPropensity >= threshold)
 		{
 			performReaction(getTopmodel(), threshold);
@@ -273,10 +273,10 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		{
 			for (HierarchicalModel submodel : getSubmodels().values())
 			{
-				totalRunningPropensity += submodel.getPropensity();
+				totalRunningPropensity += submodel.getPropensity(0);
 				if (totalRunningPropensity >= threshold)
 				{
-					performReaction(submodel, threshold - (totalRunningPropensity - submodel.getPropensity()));
+					performReaction(submodel, threshold - (totalRunningPropensity - submodel.getPropensity(submodel.getIndex())));
 				}
 			}
 		}
@@ -287,11 +287,11 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		double runningSum = 0;
 		for (ReactionNode reactionNode : modelstate.getReactions())
 		{
-			runningSum += reactionNode.getValue();
+			runningSum += reactionNode.getValue(modelstate.getIndex());
 
 			if (runningSum >= threshold)
 			{
-				reactionNode.fireReaction(runningSum - threshold);
+				reactionNode.fireReaction(modelstate.getIndex(), runningSum - threshold);
 				return;
 			}
 		}
@@ -305,11 +305,12 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
 	public double getNextEventTime()
 	{
-		for (EventNode event : eventList)
+		for (int i = eventList.size() - 1; i >= 0; i--)
 		{
-			event.isTriggeredAtTime(currentTime.getValue());
+			EventNode event = eventList.get(i);
+			event.isTriggeredAtTime(currentTime.getValue(0), event.getSubmodelIndex(i));
 		}
-		HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue());
+		HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue(0));
 
 		if (triggeredEventList != null && !triggeredEventList.isEmpty())
 		{

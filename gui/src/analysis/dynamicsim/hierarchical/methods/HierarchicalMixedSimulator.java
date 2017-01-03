@@ -9,10 +9,11 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
 
+import analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import analysis.dynamicsim.hierarchical.simulator.HierarchicalSimulation;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
-import analysis.dynamicsim.hierarchical.util.io.HierarchicalWriter;
 import analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 
 public final class HierarchicalMixedSimulator extends HierarchicalSimulation
@@ -20,7 +21,8 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 	private HierarchicalFBASimulator	fbaSim;
 	private HierarchicalODERKSimulator	odeSim;
-	//private HierarchicalSimulation		ssaSim;
+
+	// private HierarchicalSimulation ssaSim;
 
 	public HierarchicalMixedSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
 			String[] interestingSpecies, String quantityType, String abstraction, double initialTime, double outputStartTime) throws IOException, XMLStreamException
@@ -35,10 +37,8 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 		if (!isInitialized)
 		{
 			setCurrentTime(0);
-			ModelSetup.setupModels(this, false);
-			variableList = getVariableList();
-			assignmentList = getAssignmentRuleList();
-			HierarchicalUtilities.computeFixedPoint(getInitAssignmentList(), getReactionList());
+			ModelSetup.setupModels(this, ModelType.HODE);
+			computeFixedPoint();
 
 			setupForOutput(runNumber);
 			HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
@@ -66,10 +66,10 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 				e.printStackTrace();
 			}
 		}
-		double nextEndTime = currentTime.getValue();
-		while (currentTime.getValue() < timeLimit)
+		double nextEndTime = currentTime.getValue(0);
+		while (currentTime.getValue(0) < timeLimit)
 		{
-			nextEndTime = currentTime.getValue() + getMaxTimeStep();
+			nextEndTime = currentTime.getValue(0) + getMaxTimeStep();
 
 			if (nextEndTime > printTime)
 			{
@@ -84,11 +84,11 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 			odeSim.setTimeLimit(nextEndTime);
 			fbaSim.simulate();
 
-			HierarchicalUtilities.computeAssignmentRules(assignmentList);
+			computeAssignmentRules();
 
 			odeSim.simulate();
 
-			currentTime.setValue(nextEndTime);
+			currentTime.setValue(0, nextEndTime);
 
 			printToFile();
 		}

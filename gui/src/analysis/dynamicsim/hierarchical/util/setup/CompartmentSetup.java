@@ -3,12 +3,14 @@ package analysis.dynamicsim.hierarchical.util.setup;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Model;
 
+import analysis.dynamicsim.hierarchical.math.VariableNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import analysis.dynamicsim.hierarchical.util.math.VariableNode;
+import analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 
 public class CompartmentSetup
 {
-	public static void setupCompartments(HierarchicalModel modelstate, Model model)
+	public static void setupCompartments(HierarchicalModel modelstate,  ModelType type, Model model)
 	{
 		for (Compartment compartment : model.getListOfCompartments())
 		{
@@ -16,26 +18,28 @@ public class CompartmentSetup
 			{
 				continue;
 			}
-			setupSingleCompartment(modelstate, compartment);
+			setupSingleCompartment(modelstate, compartment, type);
 		}
-
 	}
 
-	private static void setupSingleCompartment(HierarchicalModel modelstate, Compartment compartment)
+	private static void setupSingleCompartment(HierarchicalModel modelstate, Compartment compartment, ModelType type)
 	{
 
 		String compartmentID = compartment.getId();
-
-		VariableNode node = new VariableNode(compartmentID, compartment.getSize());
-
+		VariableNode node = new VariableNode(compartmentID);
+		node.createState(StateType.SPARSE);
 		if (Double.isNaN(compartment.getSize()))
 		{
-			node.setValue(1);
+			node.setValue(modelstate.getIndex(), 1);
 		}
-
+		else
+		{
+		  node.setValue(modelstate.getIndex(), compartment.getSize());
+		}
+		
 		if (compartment.getConstant())
 		{
-			modelstate.addConstant(node);
+			modelstate.addMappingNode(compartmentID, node);
 		}
 		else
 		{
