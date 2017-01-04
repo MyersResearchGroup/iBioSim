@@ -197,6 +197,7 @@ public class SBMLtoSBOL {
 			sbolDoc.removeModuleDefinition(moduleDef);
 		}
 		moduleDef = sbolDoc.createModuleDefinition(identityStr, VERSION);
+		moduleDef.addModel(sbolModel);
 		collection.addMember(moduleDef.getIdentity());
 
 		for (int i = 0; i < model.getSpeciesCount(); i++) 
