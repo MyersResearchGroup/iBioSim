@@ -59,7 +59,6 @@ import backend.lpn.parser.LpnDecomposition.Component;
 import backend.lpn.parser.LpnDecomposition.LpnComponentList;
 import backend.lpn.parser.LpnDecomposition.LpnProcess;
 import backend.util.GlobalConstants;
-import backend.verification.AbstPane;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
 import backend.verification.timed_state_exploration.zoneProject.Zone;

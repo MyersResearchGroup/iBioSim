@@ -159,7 +159,6 @@ import backend.lpn.parser.properties.BuildProperty;
 import backend.sbol.assembly.ModelGenerator;
 import backend.sbol.util.SBOLUtility2;
 import backend.util.GlobalConstants;
-import backend.verification.AbstPane;
 import backend.verification.platu.lpn.io.PlatuGrammarLexer;
 import backend.verification.platu.lpn.io.PlatuGrammarParser;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
@@ -183,6 +182,7 @@ import frontend.main.util.tabs.CloseAndMaxTabbedPane;
 import frontend.sbol.browser.SBOLBrowser2;
 import frontend.synthesis.async.Synthesis;
 import frontend.synthesis.genetic.SynthesisView;
+import frontend.verification.AbstPane;
 import frontend.verification.Verification;
 
 /**
@@ -286,10 +286,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			createVer, close, closeAll, saveAll, convertToLPN;
 
 	public String					ENVVAR;
-
-	public static int				SBML_LEVEL			= 3;
-
-	public static int				SBML_VERSION		= 1;
 
 	public static final Object[]	OPTIONS				= { "Yes", "No", "Yes To All", "No To All", "Cancel" };
 
@@ -1216,8 +1212,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		openRecent.addSeparator();
 		openRecent.add(clearRecent);
 		SBMLLevelVersion = "L3V1";
-		SBML_LEVEL = 3;
-		SBML_VERSION = 1;
+		GlobalConstants.SBML_LEVEL = 3;
+		GlobalConstants.SBML_VERSION = 1;
 
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
@@ -12030,7 +12026,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				Model model = new Model(md);
 				model.unsetNamespace();
-				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+				SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 				document.setModel(model);
 				
 				document.enablePackage(LayoutConstants.namespaceURI);

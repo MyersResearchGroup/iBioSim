@@ -6938,11 +6938,11 @@ public class SBMLutilities
 			document.getModel().setId(document.getModel().getId().replace(".", "_"));
 		}
 
-		if (document.getLevel() < Gui.SBML_LEVEL || document.getVersion() < Gui.SBML_VERSION)
+		if (document.getLevel() < GlobalConstants.SBML_LEVEL || document.getVersion() < GlobalConstants.SBML_VERSION)
 		{
 			if (!Gui.libsbmlFound)
 			{
-				document.setLevelAndVersion(Gui.SBML_LEVEL, Gui.SBML_VERSION, false);
+				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
 				SBMLWriter Xwriter = new SBMLWriter();
 				try
 				{
@@ -6951,13 +6951,13 @@ public class SBMLutilities
 				}
 				catch (FileNotFoundException e)
 				{
-					JOptionPane.showMessageDialog(Gui.frame, "Unable convert model to Level " + Gui.SBML_LEVEL + " Version " + Gui.SBML_VERSION,
+					JOptionPane.showMessageDialog(Gui.frame, "Unable convert model to Level " + GlobalConstants.SBML_LEVEL + " Version " + GlobalConstants.SBML_VERSION,
 							"Error Opening File", JOptionPane.ERROR_MESSAGE);
 					return null;
 				}
 				catch (XMLStreamException e)
 				{
-					JOptionPane.showMessageDialog(Gui.frame, "Unable convert model to Level " + Gui.SBML_LEVEL + " Version " + Gui.SBML_VERSION,
+					JOptionPane.showMessageDialog(Gui.frame, "Unable convert model to Level " + GlobalConstants.SBML_LEVEL + " Version " + GlobalConstants.SBML_VERSION,
 							"Error Opening File", JOptionPane.ERROR_MESSAGE);
 					return null;
 				}
@@ -6968,7 +6968,7 @@ public class SBMLutilities
 			numErrors = doc.checkL3v1Compatibility();
 			if (numErrors > 0)
 			{
-				String message = "Conversion to SBML level " + Gui.SBML_LEVEL + " version " + Gui.SBML_VERSION
+				String message = "Conversion to SBML level " + GlobalConstants.SBML_LEVEL + " version " + GlobalConstants.SBML_VERSION
 						+ " produced the errors listed below.";
 				message += "It is recommended that you fix them before using these models or you may get unexpected results.\n\n";
 				message += "--------------------------------------------------------------------------------------\n";
@@ -6989,7 +6989,7 @@ public class SBMLutilities
 				JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Conversion Errors and Warnings", JOptionPane.ERROR_MESSAGE);
 			}
 			convertToL3(doc);
-			doc.setLevelAndVersion(Gui.SBML_LEVEL, Gui.SBML_VERSION, false);
+			doc.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
 			/*
 			 * for (int i = 0; i < doc.getNumErrors(); i++) {
 			 * System.out.println(doc.getError(i).getMessage()); }

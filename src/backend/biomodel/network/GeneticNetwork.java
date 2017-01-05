@@ -120,7 +120,7 @@ public class GeneticNetwork {
 		setSpecies(species);
 		setPromoters(promoters);
 		
-		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		currentDocument = document;
 		Model m = document.createModel(new File(filename).getName().replace(".xml", ""));
 		document.setModel(m);
@@ -200,7 +200,7 @@ public class GeneticNetwork {
 	 * @return the sbml document
 	 */
 	public SBMLDocument outputSBML(String filename) {
-		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		currentDocument = document;
 		Model m = document.createModel(new File(filename).getName().replace(".xml", ""));
 		document.setModel(m);
@@ -314,7 +314,7 @@ public class GeneticNetwork {
 			String rnapName = "RNAP";
 			if (!compartment.equals(document.getModel().getCompartment(0).getId()))
 				rnapName = compartment + "__RNAP";
-			org.sbml.jsbml.Reaction r = new org.sbml.jsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+			org.sbml.jsbml.Reaction r = new org.sbml.jsbml.Reaction(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 			r.setCompartment(compartment); 
 			r.setId("R_" + p.getId() + "_RNAP");
 			r.addReactant(Utility.SpeciesReference(rnapName, 1));
@@ -596,7 +596,7 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
 			String compartment = p.getCompartment();
-			org.sbml.jsbml.Reaction r = new org.sbml.jsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+			org.sbml.jsbml.Reaction r = new org.sbml.jsbml.Reaction(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 			r.setCompartment(compartment);
 			for (SpeciesInterface species : p.getOutputs()) {
 				r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
@@ -1057,7 +1057,7 @@ public class GeneticNetwork {
 				}
 			}
 		}
-		UnitDefinition t = new UnitDefinition(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		UnitDefinition t = new UnitDefinition(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		String name = "u_";
 		for (int i = 0; i < unitNames.size(); i++) {
 			String sign = "";

@@ -8,8 +8,6 @@ import java.nio.charset.Charset;
 import java.util.*;
 import javax.swing.*;
 
-import frontend.main.*;
-
 public class DataParser {
 
 	protected ArrayList<String> species;
@@ -23,7 +21,6 @@ public class DataParser {
 	public DataParser(ArrayList<String> species, ArrayList<ArrayList<Double>> data) {
 		this.species = species;
 		this.data = data;
-		component = Gui.frame;
 	}
 
 	public ArrayList<String> getSpecies() {

@@ -1,4 +1,4 @@
-package backend.verification;
+package frontend.verification;
 
 import javax.swing.*;
 
@@ -6,7 +6,6 @@ import backend.lpn.parser.LhpnFile;
 import backend.util.GlobalConstants;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.*;
-import frontend.verification.Verification;
 
 import java.awt.*;
 import java.awt.event.*;

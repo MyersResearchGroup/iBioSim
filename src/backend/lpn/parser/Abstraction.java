@@ -6,8 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import backend.biomodel.util.Utility;
-import backend.verification.AbstPane;
 import frontend.main.Log;
+import frontend.verification.AbstPane;
 import frontend.verification.Verification;
 
 public class Abstraction extends LhpnFile {

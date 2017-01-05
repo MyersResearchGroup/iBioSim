@@ -69,13 +69,13 @@ import backend.lpn.parser.LhpnFile;
 import backend.lpn.parser.Translator;
 import backend.util.GlobalConstants;
 import backend.util.dataparser.DataParser;
-import backend.verification.AbstPane;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.graph.Graph;
 import frontend.lpn.gui.LHPNEditor;
 import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.Utility;
+import frontend.verification.AbstPane;
 
 /**
  * This class creates a GUI for analysis. It implements the ActionListener

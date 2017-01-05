@@ -1,4 +1,4 @@
-package backend.verification;
+package frontend.verification;
 
 import javax.swing.*;
 

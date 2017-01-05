@@ -86,7 +86,7 @@ public class Utility {
 	}
 
 	public static Reaction Reaction(String id) {
-		Reaction r = new Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		Reaction r = new Reaction(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		r.setId(id);
 		r.setReversible(false);
 		r.setFast(false);
@@ -94,7 +94,7 @@ public class Utility {
 	}
 
 	public static SpeciesReference SpeciesReference(String id, double stoichiometry) {
-		SpeciesReference sr = new SpeciesReference(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		SpeciesReference sr = new SpeciesReference(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		sr.setSpecies(id);
 		sr.setStoichiometry(stoichiometry);
 		sr.setConstant(true);
@@ -102,13 +102,13 @@ public class Utility {
 	}
 
 	public static ModifierSpeciesReference ModifierSpeciesReference(String id) {
-		ModifierSpeciesReference sr = new ModifierSpeciesReference(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		ModifierSpeciesReference sr = new ModifierSpeciesReference(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		sr.setSpecies(id);
 		return sr;
 	}
 	
 	public static LocalParameter Parameter(String id, double value, String units) {
-		LocalParameter p = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		LocalParameter p = new LocalParameter(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		p.setId(id);
 		p.setValue(value);
 		p.setUnits(units);
@@ -116,14 +116,14 @@ public class Utility {
 	}
 	
 	public static LocalParameter Parameter(String id, double value) {
-		LocalParameter p = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		LocalParameter p = new LocalParameter(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		p.setId(id);
 		p.setValue(value);
 		return p;
 	}
 	
 	public static Species makeSpecies(String id, String compartment, double amount, double concentration) {
-		Species specie = new Species(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		Species specie = new Species(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		specie.setId(id);
 		specie.setName(id);
 		specie.setCompartment(compartment);

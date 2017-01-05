@@ -16,7 +16,6 @@ import backend.biomodel.network.SpeciesInterface;
 import backend.biomodel.util.SBMLutilities;
 import backend.biomodel.util.Utility;
 import backend.util.GlobalConstants;
-import frontend.main.Gui;
 
 public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
@@ -82,7 +81,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		
-		r = new org.sbml.jsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		r = new org.sbml.jsbml.Reaction(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		r.setId("Constitutive_production_" + s.getId());
 		r.setCompartment(compartment);
 		r.addProduct(Utility.SpeciesReference(s.getId(), specie.getnp()));
@@ -116,7 +115,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		
-		r = new org.sbml.jsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		r = new org.sbml.jsbml.Reaction(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		r.setId("Constitutive_production_" + s.getId());
 		r.setCompartment(compartment);
 		r.addProduct(Utility.SpeciesReference(s.getId(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));

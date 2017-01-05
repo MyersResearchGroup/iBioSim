@@ -32,10 +32,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import backend.util.GlobalConstants;
-import backend.verification.AbstPane;
 import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.Utility;
+import frontend.verification.AbstPane;
 
 /**
  * This is the Nary_Run class. It creates a GUI for input in the nary

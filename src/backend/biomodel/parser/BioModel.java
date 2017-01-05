@@ -133,7 +133,7 @@ public class BioModel {
 	}
 	
 	public void createSBMLDocument(String modelId,boolean grid,boolean lema) {
-		sbml = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		sbml = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		modelId = modelId.replaceAll("[\\W]|_", "_");
 		if (Character.isDigit(modelId.charAt(0))) modelId = "m" + modelId;
 		Model m = sbml.createModel(modelId);
@@ -6424,7 +6424,7 @@ public class BioModel {
 	
 	public void exportSingleFile(String exportFile) {
 		ArrayList<String> comps = new ArrayList<String>();
-		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		Model model = new Model(sbml.getModel());
 		document.setModel(model);
 		document.enablePackage(LayoutConstants.namespaceURI);
