@@ -8,9 +8,9 @@ import java.util.HashSet;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
 import backend.biomodel.util.Utility;
+import backend.util.GlobalConstants;
 
 public class AbstractionEngine {
 

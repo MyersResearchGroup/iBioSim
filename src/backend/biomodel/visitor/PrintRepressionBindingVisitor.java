@@ -15,9 +15,9 @@ import backend.biomodel.network.Influence;
 import backend.biomodel.network.Promoter;
 import backend.biomodel.network.SpasticSpecies;
 import backend.biomodel.network.SpeciesInterface;
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
 import backend.biomodel.util.Utility;
+import backend.util.GlobalConstants;
 
 public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 

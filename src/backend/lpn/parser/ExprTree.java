@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
 import backend.verification.timed_state_exploration.zoneProject.IntervalPair;
 import backend.verification.timed_state_exploration.zoneProject.LPNContAndRate;

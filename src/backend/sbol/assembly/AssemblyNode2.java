@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import org.sbolstandard.core2.ComponentDefinition;
 
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 
 public class AssemblyNode2 {
 

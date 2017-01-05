@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 
 public class SBOLAnnotation {
 	

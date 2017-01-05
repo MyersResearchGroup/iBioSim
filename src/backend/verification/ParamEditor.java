@@ -2,11 +2,11 @@ package backend.verification;
 
 import javax.swing.*;
 
-import backend.biomodel.gui.util.AbstractRunnableNamedButton;
-import backend.biomodel.gui.util.PropertyList;
-import backend.biomodel.gui.util.Runnable;
 import backend.biomodel.util.Utility;
-import frontend.main.Gui;
+import backend.util.GlobalConstants;
+import frontend.biomodel.gui.util.AbstractRunnableNamedButton;
+import frontend.biomodel.gui.util.PropertyList;
+import frontend.biomodel.gui.util.Runnable;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -69,7 +69,7 @@ public class ParamEditor extends JPanel implements ActionListener {
 	 * then displays the frame.
 	 */
 	public ParamEditor(String directory, boolean lema, boolean atacs) {
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 		//this.atacs = atacs;
 		//this.biosim = biosim;
 		//this.log = log;

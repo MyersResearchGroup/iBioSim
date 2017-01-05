@@ -2,9 +2,11 @@ package backend.verification;
 
 import javax.swing.*;
 
-import backend.biomodel.gui.util.PropertyList;
 import backend.lpn.parser.LhpnFile;
+import backend.util.GlobalConstants;
+import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.*;
+import frontend.verification.Verification;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -102,7 +104,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	 * then displays the frame.
 	 */
 	public AbstPane(String directory, Verification verification, Log log) {
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 		this.directory = directory;
 		this.log = log;
 		this.verification = verification;
@@ -248,7 +250,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 
 	public AbstPane(String directory, String lpnFile, Log log) {
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 		this.directory = directory;
 		this.log = log;
 		this.setLayout(new BorderLayout());

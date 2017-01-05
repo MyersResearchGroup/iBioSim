@@ -12,10 +12,10 @@ import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 
 import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
 import backend.biomodel.util.Utility;
 import backend.synthesis.genetic.SynthesisMatcher;
+import backend.util.GlobalConstants;
 
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;

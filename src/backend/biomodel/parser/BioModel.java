@@ -82,27 +82,27 @@ import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.libsbml.libsbmlConstants;
 
 import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.gui.comp.Grid;
-import backend.biomodel.gui.sbmlcore.Compartments;
-import backend.biomodel.gui.sbmlcore.Constraints;
-import backend.biomodel.gui.sbmlcore.Events;
-import backend.biomodel.gui.sbmlcore.MySpecies;
-import backend.biomodel.gui.sbmlcore.Parameters;
-import backend.biomodel.gui.sbmlcore.Reactions;
-import backend.biomodel.gui.sbmlcore.Rules;
 import backend.biomodel.network.AbstractionEngine;
 import backend.biomodel.network.GeneticNetwork;
 import backend.biomodel.network.Promoter;
 import backend.biomodel.network.SpeciesInterface;
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
-import backend.biomodel.util.UndoManager;
 import backend.biomodel.util.Utility;
 import backend.lpn.parser.ExprTree;
 import backend.lpn.parser.LhpnFile;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
+import backend.util.GlobalConstants;
+import frontend.biomodel.gui.comp.Grid;
+import frontend.biomodel.gui.sbmlcore.Compartments;
+import frontend.biomodel.gui.sbmlcore.Constraints;
+import frontend.biomodel.gui.sbmlcore.Events;
+import frontend.biomodel.gui.sbmlcore.MySpecies;
+import frontend.biomodel.gui.sbmlcore.Parameters;
+import frontend.biomodel.gui.sbmlcore.Reactions;
+import frontend.biomodel.gui.sbmlcore.Rules;
+import frontend.biomodel.util.UndoManager;
 import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.MutableString;
@@ -126,7 +126,7 @@ public class BioModel {
 	public BioModel(String path) {
 		//gcm2sbml = new GCM2SBML(this);
 		undoManager = new UndoManager();
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 		this.path = path;
 		grid = new Grid();
 		compartments = new HashMap<String, Properties>();
@@ -7308,7 +7308,7 @@ public class BioModel {
 				if (model.getUnitDefinition(u.getId())==null) {
 					model.addUnitDefinition(u);
 				} 
-				backend.biomodel.gui.sbmlcore.Units.updateUnitId(model, oldName, newName);
+				frontend.biomodel.gui.sbmlcore.Units.updateUnitId(model, oldName, newName);
 			}
 		}
 		// TODO: functions not flattened right, no replacements

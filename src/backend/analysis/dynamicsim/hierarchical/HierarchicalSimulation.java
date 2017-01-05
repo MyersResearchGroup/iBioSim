@@ -33,6 +33,7 @@ import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import backend.util.GlobalConstants;
 import frontend.main.Gui;
 
 /**
@@ -177,7 +178,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 			sbmlHasErrorsFlag = true;
 		}
 
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 	}
 
 	public HierarchicalSimulation(HierarchicalSimulation copy)

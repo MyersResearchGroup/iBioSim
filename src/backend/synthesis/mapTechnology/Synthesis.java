@@ -21,7 +21,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 
 public class Synthesis
 {

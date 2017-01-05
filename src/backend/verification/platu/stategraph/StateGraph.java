@@ -16,6 +16,7 @@ import backend.lpn.parser.LhpnFile;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
+import backend.util.GlobalConstants;
 import backend.verification.platu.common.IndexObjMap;
 import backend.verification.platu.logicAnalysis.Constraint;
 import backend.verification.platu.lpn.DualHashMap;
@@ -36,7 +37,6 @@ import backend.verification.timed_state_exploration.zoneProject.LPNTransitionPai
 import backend.verification.timed_state_exploration.zoneProject.TimedPrjState;
 import backend.verification.timed_state_exploration.zoneProject.UpdateContinuous;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
-import frontend.main.Gui;
 
 import java.util.Set;
 import java.util.Stack;
@@ -64,7 +64,7 @@ public class StateGraph {
     protected Set<Constraint> constraintSet = new HashSet<Constraint>();
     protected LhpnFile lpn;
     protected static Set<Entry<Transition, State>> emptySet = new HashSet<Entry<Transition, State>>(0);
-    private String separator = Gui.separator;
+    private String separator = GlobalConstants.separator;
     
     public StateGraph(LhpnFile lpn) {
     	this.lpn = lpn;   	

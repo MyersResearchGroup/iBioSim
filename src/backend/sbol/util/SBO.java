@@ -2,7 +2,7 @@ package backend.sbol.util;
 
 import java.net.URI;
 
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 
 public class SBO {
 	

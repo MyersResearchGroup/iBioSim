@@ -8,7 +8,7 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 import frontend.main.Gui;
 
 public class SequenceTypeValidator {

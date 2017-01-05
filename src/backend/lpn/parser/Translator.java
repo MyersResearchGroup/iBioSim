@@ -35,9 +35,9 @@ import org.sbml.jsbml.text.parser.FormulaParserLL3;
 import org.sbml.jsbml.text.parser.IFormulaParser;
 import org.sbml.jsbml.text.parser.ParseException;
 
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
 import backend.lpn.parser.ExprTree;
+import backend.util.GlobalConstants;
 import frontend.main.Gui;
 
 /**
@@ -716,7 +716,7 @@ public class Translator {
 		// create sbml file
 		//document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		document = new SBMLDocument(3,1);
-		String[] filenameSplit = filename.split(Gui.separator);
+		String[] filenameSplit = filename.split(GlobalConstants.separator);
 		String modelId = filenameSplit[filenameSplit.length-1].replace(".xml","");
 		Model m = document.createModel(modelId);
 		

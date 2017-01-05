@@ -8,8 +8,9 @@ import java.util.*;
 import javax.swing.*;
 
 import backend.lpn.parser.LhpnFile;
+import backend.util.GlobalConstants;
+import backend.util.dataparser.*;
 import frontend.main.*;
-import frontend.main.util.dataparser.*;
 
 
 
@@ -574,7 +575,7 @@ public class LearnModel { // added ItemListener SB
 			ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, 
 			HashMap<String, ArrayList<String>> dstab, Boolean netForStable, boolean pseudoEnable, 
 			boolean transientPlaceReqd, Double vScaleFactor, Double dScaleFactor, String failProp) throws IOException {
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 		// Assign the parameters received from the call to the fields of this class
 		this.directory = directory;
 		this.reqdVarsL = rVarsL;

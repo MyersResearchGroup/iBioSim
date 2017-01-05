@@ -5,9 +5,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 import backend.lpn.parser.LhpnFile;
+import backend.util.GlobalConstants;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
-import frontend.main.Gui;
 
 
 
@@ -20,7 +20,7 @@ import frontend.main.Gui;
 
 public class VerificationCommandLine {
 	
-	static String separator = Gui.separator;
+	static String separator = GlobalConstants.separator;
 	
 	public static void main (String[] args) {
 		if (args.length == 0) {

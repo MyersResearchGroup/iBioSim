@@ -146,44 +146,44 @@ import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse; 
 import com.clarkparsia.sbol.editor.SBOLDesignerPlugin;
 
-import backend.analysis.main.AnalysisThread;
-import backend.analysis.main.AnalysisView;
-import backend.analysis.main.Run;
-import backend.analysis.main.SEDMLutilities;
+import backend.analysis.util.SEDMLutilities;
 import backend.biomodel.annotation.AnnotationUtility;
 import backend.biomodel.annotation.SBOLAnnotation;
-import backend.biomodel.gui.movie.MovieContainer;
-import backend.biomodel.gui.sbmlcore.ElementsPanel;
-import backend.biomodel.gui.schematic.ModelEditor;
 import backend.biomodel.parser.BioModel;
 import backend.biomodel.parser.GCM2SBML;
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
-import backend.learn.AMSModel.LearnLPN;
-import backend.learn.GCM.LearnGCM;
-import backend.learn.datamanager.DataManager;
-import backend.lpn.gui.LHPNEditor;
 import backend.lpn.parser.LhpnFile;
 import backend.lpn.parser.Lpn2verilog;
 import backend.lpn.parser.Translator;
 import backend.lpn.parser.properties.BuildProperty;
 import backend.sbol.assembly.ModelGenerator;
-import backend.sbol.browser.SBOLBrowser2;
 import backend.sbol.util.SBOLUtility2;
-import backend.synthesis.async.Synthesis;
-import backend.synthesis.genetic.SynthesisView;
+import backend.util.GlobalConstants;
 import backend.verification.AbstPane;
-import backend.verification.Verification;
 import backend.verification.platu.lpn.io.PlatuGrammarLexer;
 import backend.verification.platu.lpn.io.PlatuGrammarParser;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import de.unirostock.sems.cbarchive.CombineArchive;
+import frontend.analysis.AnalysisThread;
+import frontend.analysis.AnalysisView;
+import frontend.analysis.Run;
+import frontend.biomodel.gui.movie.MovieContainer;
+import frontend.biomodel.gui.sbmlcore.ElementsPanel;
+import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.graph.Graph;
+import frontend.learn.AMSModel.LearnLPN;
+import frontend.learn.GCM.LearnGCM;
+import frontend.learn.datamanager.DataManager;
+import frontend.lpn.gui.LHPNEditor;
 import frontend.main.util.EditPreferences;
 import frontend.main.util.FileTree;
 import frontend.main.util.Utility;
 import frontend.main.util.tabs.CloseAndMaxTabbedPane;
+import frontend.sbol.browser.SBOLBrowser2;
+import frontend.synthesis.async.Synthesis;
+import frontend.synthesis.genetic.SynthesisView;
+import frontend.verification.Verification;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the
@@ -244,8 +244,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JPopupMenu				popup;																					// popup
 																															// menu
-
-	public static final String		separator			= (File.separator.equals("\\")) ? "\\\\" : File.separator;
 
 	private KeyEventDispatcher		dispatcher;
 
@@ -1559,15 +1557,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				if (lema)
 				{
-					new FileWriter(new File(filename + separator + "LEMA.prj")).close();
+					new FileWriter(new File(filename + GlobalConstants.separator + "LEMA.prj")).close();
 				}
 				else if (atacs)
 				{
-					new FileWriter(new File(filename + separator + "ATACS.prj")).close();
+					new FileWriter(new File(filename + GlobalConstants.separator + "ATACS.prj")).close();
 				}
 				else
 				{
-					new FileWriter(new File(filename + separator + "BioSim.prj")).close();
+					new FileWriter(new File(filename + GlobalConstants.separator + "BioSim.prj")).close();
 				}
 			}
 			catch (IOException e1)
@@ -1576,7 +1574,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				return;
 			}
 			root = filename;
-			currentProjectId = root.split(Gui.separator)[root.split(Gui.separator).length-1];
+			currentProjectId = root.split(GlobalConstants.separator)[root.split(GlobalConstants.separator).length-1];
 			
 			sedmlDocument = new SEDMLDocument(1,2);
 			writeSEDMLDocument();
@@ -1666,11 +1664,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (projDir.endsWith(".prj"))
 			{
 				biosimrc.put("biosim.general.project_dir", projDir);
-				String[] tempArray = projDir.split(separator);
+				String[] tempArray = projDir.split(GlobalConstants.separator);
 				projDir = "";
 				for (int i = 0; i < tempArray.length - 1; i++)
 				{
-					projDir = projDir + tempArray[i] + separator;
+					projDir = projDir + tempArray[i] + GlobalConstants.separator;
 				}
 			}
 		}
@@ -1743,7 +1741,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (isProject)
 				{
 					root = projDir;
-					currentProjectId = root.split(Gui.separator)[root.split(Gui.separator).length-1];
+					currentProjectId = root.split(GlobalConstants.separator)[root.split(GlobalConstants.separator).length-1];
 					readSEDMLDocument();
 					readSBOLDocument();
 					refresh();
@@ -2342,7 +2340,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				for (int i = 0; i < tab.getTabCount(); i++)
 				{
-					if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+					if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 					{
 						tab.setSelectedIndex(i);
 						if (save(i, 0) == 0)
@@ -2364,15 +2362,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						synthName = synthName.trim();
 						try
 						{
-							if (overwrite(root + separator + synthName, synthName))
+							if (overwrite(root + GlobalConstants.separator + synthName, synthName))
 							{
-								new File(root + separator + synthName).mkdir();
+								new File(root + GlobalConstants.separator + synthName).mkdir();
 								String sbmlFile = tree.getFile();
-								String[] getFilename = sbmlFile.split(separator);
+								String[] getFilename = sbmlFile.split(GlobalConstants.separator);
 								String circuitFileNoPath = getFilename[getFilename.length - 1];
 								try
 								{
-									FileOutputStream out = new FileOutputStream(new File(root + separator + synthName.trim() + separator
+									FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + synthName.trim() + GlobalConstants.separator
 											+ synthName.trim() + ".syn"));
 									out.write(("synthesis.file=" + circuitFileNoPath + "\n").getBytes());
 									out.close();
@@ -2384,8 +2382,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 								try
 								{
-									FileInputStream in = new FileInputStream(new File(root + separator + circuitFileNoPath));
-									FileOutputStream out = new FileOutputStream(new File(root + separator + synthName.trim() + separator
+									FileInputStream in = new FileInputStream(new File(root + GlobalConstants.separator + circuitFileNoPath));
+									FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + synthName.trim() + GlobalConstants.separator
 											+ circuitFileNoPath));
 									int read = in.read();
 									while (read != -1)
@@ -2402,8 +2400,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 											JOptionPane.ERROR_MESSAGE);
 								}
 								addToTree(synthName.trim());
-								String work = root + separator + synthName;
-								String circuitFile = root + separator + synthName.trim() + separator + circuitFileNoPath;
+								String work = root + GlobalConstants.separator + synthName;
+								String circuitFile = root + GlobalConstants.separator + synthName.trim() + GlobalConstants.separator + circuitFileNoPath;
 								JPanel synthPane = new JPanel();
 								Synthesis synth = new Synthesis(work, circuitFile, log, this);
 								synthPane.add(synth);
@@ -2429,7 +2427,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				for (int i = 0; i < tab.getTabCount(); i++)
 				{
-					if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+					if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 					{
 						tab.setSelectedIndex(i);
 						if (save(i, 0) == 0)
@@ -2444,15 +2442,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				{
 					verName = verName.trim();
 					// try {
-					if (overwrite(root + separator + verName, verName))
+					if (overwrite(root + GlobalConstants.separator + verName, verName))
 					{
-						new File(root + separator + verName).mkdir();
+						new File(root + GlobalConstants.separator + verName).mkdir();
 						String sbmlFile = tree.getFile();
-						String[] getFilename = sbmlFile.split(separator);
+						String[] getFilename = sbmlFile.split(GlobalConstants.separator);
 						String circuitFileNoPath = getFilename[getFilename.length - 1];
 						try
 						{
-							FileOutputStream out = new FileOutputStream(new File(root + separator + verName.trim() + separator + verName.trim()
+							FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + verName.trim() + GlobalConstants.separator + verName.trim()
 									+ ".ver"));
 							out.write(("verification.file=" + circuitFileNoPath + "\n").getBytes());
 							out.close();
@@ -2462,7 +2460,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 						}
 						addToTree(verName.trim());
-						Verification verify = new Verification(root + separator + verName, verName, circuitFileNoPath, log, this, lema, atacs);
+						Verification verify = new Verification(root + GlobalConstants.separator + verName, verName, circuitFileNoPath, log, this, lema, atacs);
 						verify.save();
 						addTab(verName, verify, "Verification");
 					}
@@ -2515,7 +2513,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		{
 			try
 			{
-				String directory = root + separator + getTitleAt(tab.getSelectedIndex());
+				String directory = root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex());
 				File work = new File(directory);
 				for (String f : new File(directory).list())
 				{
@@ -2524,17 +2522,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						Runtime exec = Runtime.getRuntime();
 						if (System.getProperty("os.name").contentEquals("Linux"))
 						{
-							log.addText("Executing:\ndotty " + directory + separator + f + "\n");
+							log.addText("Executing:\ndotty " + directory + GlobalConstants.separator + f + "\n");
 							exec.exec("dotty " + f, null, work);
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
 						{
-							log.addText("Executing:\nopen " + directory + separator + f + "\n");
+							log.addText("Executing:\nopen " + directory + GlobalConstants.separator + f + "\n");
 							exec.exec("open " + f, null, work);
 						}
 						else
 						{
-							log.addText("Executing:\ndotty " + directory + separator + f + "\n");
+							log.addText("Executing:\ndotty " + directory + GlobalConstants.separator + f + "\n");
 							exec.exec("dotty " + f, null, work);
 						}
 						return;
@@ -2564,7 +2562,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			for (int i = 0; i < tab.getTabCount(); i++)
 			{
-				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+				if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 				{
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0)
@@ -2583,11 +2581,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					String file = theFile;
 					String[] findTheFile = file.split("\\.");
 					theFile = findTheFile[0] + ".dot";
-					File dot = new File(root + separator + theFile);
+					File dot = new File(root + GlobalConstants.separator + theFile);
 					dot.delete();
 					LhpnFile lhpn = new LhpnFile(log);
-					lhpn.load(directory + separator + theFile);
-					lhpn.printDot(directory + separator + file);
+					lhpn.load(directory + GlobalConstants.separator + theFile);
+					lhpn.printDot(directory + GlobalConstants.separator + file);
 					// String cmd = "atacs -cPllodpl " + file;
 					Runtime exec = Runtime.getRuntime();
 					// Process ATACS = exec.exec(cmd, null, work);
@@ -2597,12 +2595,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 						Preferences biosimrc = Preferences.userRoot();
 						String command = biosimrc.get("biosim.general.graphviz", "");
-						log.addText(command + " " + root + separator + theFile + "\n");
+						log.addText(command + " " + root + GlobalConstants.separator + theFile + "\n");
 						exec.exec(command + theFile, null, work);
 					}
 					else
 					{
-						File log = new File(root + separator + "atacs.log");
+						File log = new File(root + GlobalConstants.separator + "atacs.log");
 						BufferedReader input = new BufferedReader(new FileReader(log));
 						String line = null;
 						JTextArea messageArea = new JTextArea();
@@ -2669,7 +2667,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
 				Run.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
-						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty,
+						(directory + theFile).split(GlobalConstants.separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty,
 						null, false, false, false);
 				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile
 						+ "\n");
@@ -2777,7 +2775,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			for (int i = 0; i < tab.getTabCount(); i++)
 			{
-				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+				if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 				{
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0)
@@ -2797,11 +2795,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					String file = theFile;
 					String[] findTheFile = file.split("\\.");
 					theFile = findTheFile[0] + ".dot";
-					File dot = new File(root + separator + theFile);
+					File dot = new File(root + GlobalConstants.separator + theFile);
 					dot.delete();
 					LhpnFile lhpn = new LhpnFile(log);
-					lhpn.load(root + separator + file);
-					lhpn.printDot(root + separator + theFile);
+					lhpn.load(root + GlobalConstants.separator + file);
+					lhpn.printDot(root + GlobalConstants.separator + theFile);
 					// String cmd = "atacs -cPllodpl " + file;
 					Runtime exec = Runtime.getRuntime();
 					// Process ATACS = exec.exec(cmd, null, work);
@@ -2811,12 +2809,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 						Preferences biosimrc = Preferences.userRoot();
 						String command = biosimrc.get("biosim.general.graphviz", "");
-						log.addText(command + " " + root + separator + theFile + "\n");
+						log.addText(command + " " + root + GlobalConstants.separator + theFile + "\n");
 						exec.exec(command + " " + theFile, null, work);
 					}
 					else
 					{
-						File log = new File(root + separator + "atacs.log");
+						File log = new File(root + GlobalConstants.separator + "atacs.log");
 						BufferedReader input = new BufferedReader(new FileReader(log));
 						String line = null;
 						JTextArea messageArea = new JTextArea();
@@ -2883,7 +2881,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
 				Run.createProperties(0,0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
-						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty,
+						(directory + theFile).split(GlobalConstants.separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty,
 						null, false, false, false);
 				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile
 						+ "\n");
@@ -2975,7 +2973,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			for (int i = 0; i < tab.getTabCount(); i++)
 			{
-				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+				if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 				{
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0)
@@ -3003,7 +3001,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JList empty = new JList();
 				dummy.setSelected(false);
 				Run.createProperties(0,0,0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, 0, directory, 314159L, 1, 1, new String[0], "tsd.printer", "amount",
-						"false", (directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty,
+						"false", (directory + theFile).split(GlobalConstants.separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty,
 						empty, null, false, false, false);
 				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory
 						+ theFile + "\n");
@@ -3154,7 +3152,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String fileName = getTitleAt(tab.getSelectedIndex());
 				try
 				{
-					File output = new File(root + separator + fileName);
+					File output = new File(root + GlobalConstants.separator + fileName);
 					output.createNewFile();
 					FileOutputStream outStream = new FileOutputStream(output);
 					Component[] array = ((JScrollPane) comp).getComponents();
@@ -3169,7 +3167,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 					}
 					outStream.close();
-					log.addText("Saving file:\n" + root + separator + fileName);
+					log.addText("Saving file:\n" + root + GlobalConstants.separator + fileName);
 					this.updateAsyncViews(fileName);
 				}
 				catch (Exception e1)
@@ -3383,7 +3381,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				try
 				{
-					File output = new File(root + separator + newName);
+					File output = new File(root + GlobalConstants.separator + newName);
 					output.createNewFile();
 					FileOutputStream outStream = new FileOutputStream(output);
 					Component[] array = ((JScrollPane) comp).getComponents();
@@ -3398,8 +3396,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 					}
 					outStream.close();
-					log.addText("Saving file:\n" + root + separator + newName);
-					File oldFile = new File(root + separator + fileName);
+					log.addText("Saving file:\n" + root + GlobalConstants.separator + newName);
+					File oldFile = new File(root + GlobalConstants.separator + fileName);
 					oldFile.delete();
 					tab.setTitleAt(tab.getSelectedIndex(), newName);
 					addToTree(newName);
@@ -3514,7 +3512,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				SBOLDocument sbolDoc;
 				try {
 					SBOLReader.setKeepGoing(true);
-					sbolDoc = SBOLReader.read(root + separator + ((SBOLDesignerPlugin) comp).getFileName());
+					sbolDoc = SBOLReader.read(root + GlobalConstants.separator + ((SBOLDesignerPlugin) comp).getFileName());
 					checkSBOL(sbolDoc,true);
 				}
 				catch (Exception e1) {
@@ -3949,7 +3947,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String exportPath = frontend.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, 
 				"Export " + fileType.replace("1", ""), -1);
 		if (!exportPath.equals("")) {
-			String dir = exportPath.substring(0, exportPath.lastIndexOf(Gui.separator));
+			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
 			biosimrc.put("biosim.general.export_dir",dir);
 			log.addText("Exporting " + fileType + " file:\n" + exportPath + "\n");
 			try {
@@ -4110,7 +4108,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			int value = JOptionPane.YES_OPTION;
 			if (new File(fullPath).isDirectory())
 			{
-				String dirName = fullPath.split(separator)[fullPath.split(separator).length - 1];
+				String dirName = fullPath.split(GlobalConstants.separator)[fullPath.split(GlobalConstants.separator).length - 1];
 				for (int i = 0; i < tab.getTabCount(); i++)
 				{
 					if (getTitleAt(i).equals(dirName))
@@ -4133,7 +4131,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else
 			{
-				String filename = fullPath.split(separator)[fullPath.split(separator).length - 1];
+				String filename = fullPath.split(GlobalConstants.separator)[fullPath.split(GlobalConstants.separator).length - 1];
 				String[] views = canDelete(filename);
 				if (views.length != 0)
 				{
@@ -4184,9 +4182,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				{
 					for (int i = 0; i < views.length; i++)
 					{
-						delete(root + separator + views[i]);
+						delete(root + GlobalConstants.separator + views[i]);
 					}
-					String fileName = fullPath.split(separator)[fullPath.split(separator).length - 1];
+					String fileName = fullPath.split(GlobalConstants.separator)[fullPath.split(GlobalConstants.separator).length - 1];
 					for (int i = 0; i < tab.getTabCount(); i++)
 					{
 						if (getTitleAt(i).equals(fileName))
@@ -4387,19 +4385,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String filename = ModelId + ".xml";
 			try
 			{
-				if (overwrite(root + separator + filename, filename))
+				if (overwrite(root + GlobalConstants.separator + filename, filename))
 				{
 					String model = client.getModelSBMLById(ModelId);
-					Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(root + separator + filename), "UTF-8"));
+					Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(root + GlobalConstants.separator + filename), "UTF-8"));
 					out.write(model);
 					out.close();
-					String[] file = filename.trim().split(separator);
-					SBMLDocument document = SBMLutilities.readSBML(root + separator + filename.trim());
-					SBMLutilities.check(root + separator + filename.trim(), document, false);
+					String[] file = filename.trim().split(GlobalConstants.separator);
+					SBMLDocument document = SBMLutilities.readSBML(root + GlobalConstants.separator + filename.trim());
+					SBMLutilities.check(root + GlobalConstants.separator + filename.trim(), document, false);
 					SBMLWriter writer = new SBMLWriter();
-					writer.writeSBMLToFile(document, root + separator + file[file.length - 1]);
+					writer.writeSBMLToFile(document, root + GlobalConstants.separator + file[file.length - 1]);
 					addToTree(file[file.length - 1]);
-					openSBML(root + separator + file[file.length - 1]);
+					openSBML(root + GlobalConstants.separator + file[file.length - 1]);
 				}
 			}
 			catch (MalformedURLException e1)
@@ -4987,9 +4985,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else
 				{
-					if (overwrite(root + separator + lhpnName, lhpnName))
+					if (overwrite(root + GlobalConstants.separator + lhpnName, lhpnName))
 					{
-						File f = new File(root + separator + lhpnName);
+						File f = new File(root + GlobalConstants.separator + lhpnName);
 						f.createNewFile();
 						new LhpnFile(log).save(f.getAbsolutePath());
 						int i = getTab(f.getName());
@@ -4997,7 +4995,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						{
 							tab.remove(i);
 						}
-						LHPNEditor lhpn = new LHPNEditor(root + separator, f.getName(), null, this);
+						LHPNEditor lhpn = new LHPNEditor(root + GlobalConstants.separator, f.getName(), null, this);
 						// lhpn.addMouseListener(this);
 						addTab(f.getName(), lhpn, "LHPN Editor");
 						addToTree(f.getName());
@@ -5033,7 +5031,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (!filename.equals(""))
 		{
 			biosimrc.put("biosim.general.import_dir", filename);
-			String[] file = filename.split(separator);
+			String[] file = filename.split(GlobalConstants.separator);
 			try
 			{
 				if (new File(filename).exists())
@@ -5043,9 +5041,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 						file[file.length - 1] = "M" + file[file.length - 1];
 					}
-					if (checkFiles(root + separator + file[file.length - 1], filename.trim()))
+					if (checkFiles(root + GlobalConstants.separator + file[file.length - 1], filename.trim()))
 					{
-						if (overwrite(root + separator + file[file.length - 1], file[file.length - 1]))
+						if (overwrite(root + GlobalConstants.separator + file[file.length - 1], file[file.length - 1]))
 						{
 							// Identify which LPN format is imported.
 							BufferedReader input = new BufferedReader(new FileReader(filename));
@@ -5078,13 +5076,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								{
 									Translator t1 = new Translator();
 									t1.convertLPN2SBML(filename, "");
-									t1.setFilename(root + separator + outFileName.replace(".lpn", ".xml"));
+									t1.setFilename(root + GlobalConstants.separator + outFileName.replace(".lpn", ".xml"));
 									t1.outputSBML();
 									outFileName = outFileName.replace(".lpn", ".xml");
 								}
 								else
 								{
-									FileOutputStream out = new FileOutputStream(new File(root + separator + outFileName));
+									FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + outFileName));
 									FileInputStream in = new FileInputStream(new File(filename));
 									// log.addText(filename);
 									int read = in.read();
@@ -5107,7 +5105,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								Set<LhpnFile> lpnSet = antlrParser.lpn();
 								for (LhpnFile lpn : lpnSet)
 								{
-									lpn.save(root + separator + lpn.getLabel() + ".lpn");
+									lpn.save(root + GlobalConstants.separator + lpn.getLabel() + ".lpn");
 									addToTree(lpn.getLabel() + ".lpn");
 								}
 							}
@@ -5118,7 +5116,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				{
 					// log.addText(filename + file[file.length - 1]);
 					File work = new File(root);
-					String oldName = root + separator + file[file.length - 1];
+					String oldName = root + GlobalConstants.separator + file[file.length - 1];
 					// String newName = oldName.replace(".lpn",
 					// "_NEW.g");
 					Process atacs = Runtime.getRuntime().exec("atacs -lgsl " + oldName, null, work);
@@ -5211,17 +5209,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					else
 					{
-						if (overwrite(root + separator + modelId, modelId))
+						if (overwrite(root + GlobalConstants.separator + modelId, modelId))
 						{
 							BioModel bioModel = new BioModel(root);
 							bioModel.createSBMLDocument(modelId.replace(".xml", ""), grid, lema);
-							bioModel.save(root + separator + modelId);
+							bioModel.save(root + GlobalConstants.separator + modelId);
 							int i = getTab(modelId);
 							if (i != -1)
 							{
 								tab.remove(i);
 							}
-							ModelEditor modelEditor = new ModelEditor(root + separator, modelId, this, log, false, null, null, null, false, grid);
+							ModelEditor modelEditor = new ModelEditor(root + GlobalConstants.separator, modelId, this, log, false, null, null, null, false, grid);
 							modelEditor.save(false);
 							addTab(modelId, modelEditor, "Model Editor");
 							addToTree(modelId);
@@ -5272,10 +5270,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			} else {
 				newFile = document.getModel().getId() + ".xml";
 			}
-			if (overwrite(root + separator + newFile, newFile))	{
-				writer.writeSBMLToFile(document, root + separator + newFile);
+			if (overwrite(root + GlobalConstants.separator + newFile, newFile))	{
+				writer.writeSBMLToFile(document, root + GlobalConstants.separator + newFile);
 				addToTree(newFile);
-				openSBML(root + separator + newFile);
+				openSBML(root + GlobalConstants.separator + newFile);
 			}
 		}
 		return newFile;
@@ -5306,14 +5304,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 						try
 						{
-							SBMLDocument document = SBMLutilities.readSBML(filename.trim() + separator + s);
+							SBMLDocument document = SBMLutilities.readSBML(filename.trim() + GlobalConstants.separator + s);
 							SBMLutilities.checkModelCompleteness(document,true);
-							if (overwrite(root + separator + s, s))
+							if (overwrite(root + GlobalConstants.separator + s, s))
 							{
 								SBMLutilities.check(filename.trim(), document, false);
 								SBMLWriter writer = new SBMLWriter();
 								s = s.replaceAll("[^a-zA-Z0-9_.]+", "_");
-								writer.writeSBMLToFile(document, root + separator + s);
+								writer.writeSBMLToFile(document, root + GlobalConstants.separator + s);
 							}
 						}
 						catch (Exception e1)
@@ -5331,7 +5329,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				{
 					SBMLDocument document = SBMLutilities.readSBML(filename.trim());
 					if (document==null) return null;
-					String[] file = filename.trim().split(separator);
+					String[] file = filename.trim().split(GlobalConstants.separator);
 					newFile = importSBMLDocument(file[file.length-1],document);
 				}
 				catch (Exception e1)
@@ -5346,14 +5344,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private void performAnalysis(String modelId, String simName) throws Exception
 	{
-		String sbmlFile = root + separator + modelId + ".xml";
-		String modelFileName = sbmlFile.split(separator)[sbmlFile.split(separator).length - 1];
+		String sbmlFile = root + GlobalConstants.separator + modelId + ".xml";
+		String modelFileName = sbmlFile.split(GlobalConstants.separator)[sbmlFile.split(GlobalConstants.separator).length - 1];
 		String sbmlFileProp;
-		sbmlFileProp = root + separator + simName + separator + modelFileName;
+		sbmlFileProp = root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFileName;
 		new FileOutputStream(new File(sbmlFileProp)).close();
 		try
 		{
-			FileOutputStream out = new FileOutputStream(new File(root + separator + simName + separator + simName + ".sim"));
+			FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".sim"));
 			out.write((modelFileName + "\n").getBytes());
 			out.close();
 		}
@@ -5370,7 +5368,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		simTab.addTab("Advanced Options", analysisView.getAdvanced());
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		String gcmFile = modelFileName.replace(".xml", ".gcm");
-		ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName, root + separator + simName + separator
+		ModelEditor modelEditor = new ModelEditor(root + GlobalConstants.separator, gcmFile, this, log, true, simName, root + GlobalConstants.separator + simName + GlobalConstants.separator
 				+ simName + ".sim", analysisView, false, false);
 		analysisView.setModelEditor(modelEditor);
 		ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
@@ -5382,9 +5380,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		modelEditor.createSBML("", ".", "");
 		new AnalysisThread(analysisView).start(".", true);
 		Graph tsdGraph;
-		if (new File(root + separator + simName + separator + simName + ".grf").exists())
+		if (new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".grf").exists())
 		{
-			tsdGraph = analysisView.createGraph(root + separator + simName + separator + simName + ".grf");
+			tsdGraph = analysisView.createGraph(root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".grf");
 		}
 		else
 		{
@@ -5393,9 +5391,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		simTab.addTab("TSD Graph", tsdGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
 		Graph probGraph;
-		if (new File(root + separator + simName + separator + simName + ".prb").exists())
+		if (new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".prb").exists())
 		{
-			probGraph = analysisView.createProbGraph(root + separator + simName + separator + simName + ".prb");
+			probGraph = analysisView.createProbGraph(root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".prb");
 		}
 		else
 		{
@@ -5474,9 +5472,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				String modelId = modelMap.get(task.getModelReference()).replace(".xml", "");
 				String analysisId = task.getId();
-				if (overwrite(root + separator + analysisId, analysisId))
+				if (overwrite(root + GlobalConstants.separator + analysisId, analysisId))
 				{
-					new File(root + separator + analysisId).mkdir();
+					new File(root + GlobalConstants.separator + analysisId).mkdir();
 					performAnalysis(modelId, analysisId);
 				}
 			}
@@ -5491,10 +5489,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				Properties graph = new Properties();
 				try
 				{
-					FileOutputStream store = new FileOutputStream(new File(root + separator + plot.getId() + ".grf"));
+					FileOutputStream store = new FileOutputStream(new File(root + GlobalConstants.separator + plot.getId() + ".grf"));
 					graph.store(store, "Graph Data");
 					store.close();
-					log.addText("Creating graph file:\n" + root + separator + plot.getId() + ".grf" + "\n");
+					log.addText("Creating graph file:\n" + root + GlobalConstants.separator + plot.getId() + ".grf" + "\n");
 					String graphFile = plot.getId() + ".grf";
 					addToTree(graphFile);
 					//								}
@@ -5510,10 +5508,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				Properties graph = new Properties();
 				try
 				{
-					FileOutputStream store = new FileOutputStream(new File(root + separator + report.getId() + ".prb"));
+					FileOutputStream store = new FileOutputStream(new File(root + GlobalConstants.separator + report.getId() + ".prb"));
 					graph.store(store, "Probability Data");
 					store.close();
-					log.addText("Creating probability file:\n" + root + separator + report.getId() + ".prb"
+					log.addText("Creating probability file:\n" + root + GlobalConstants.separator + report.getId() + ".prb"
 							+ "\n");
 					String graphFile = report.getId() + ".prb";
 					addToTree(graphFile);
@@ -5537,7 +5535,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				addTab(graphFile, new Graph(null, "Number of molecules", "title", "tsd.printer", root, 
-						"Time", this, root + separator + graphFile, log, graphFile, true, false), "TSD Graph");
+						"Time", this, root + GlobalConstants.separator + graphFile, log, graphFile, true, false), "TSD Graph");
 			} else if (output.isReport()) {
 				Report report = (Report) output;
 				String graphFile = report.getId() + ".prb";
@@ -5549,7 +5547,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				addTab(graphFile, new Graph(null, "Percent", "title", "tsd.printer",
-						root, "Time", this, root + separator + graphFile, log, graphFile, false, false), "Histogram");
+						root, "Time", this, root + GlobalConstants.separator + graphFile, log, graphFile, false, false), "Histogram");
 			}
 		}
 	}
@@ -5560,7 +5558,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	private void readSBOLDocument() {
-		String sbolFilename = root + Gui.separator + currentProjectId + ".sbol";
+		String sbolFilename = root + GlobalConstants.separator + currentProjectId + ".sbol";
 		File sbolFile = new File(sbolFilename);
 		if (sbolFile.exists()) {
 			try {
@@ -5582,7 +5580,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	public void writeSBOLDocument() {
-		String sbolFilename = root + Gui.separator + currentProjectId + ".sbol";
+		String sbolFilename = root + GlobalConstants.separator + currentProjectId + ".sbol";
 		try {
 			sbolDocument.write(sbolFilename);
 		}
@@ -5603,7 +5601,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	private void readSEDMLDocument() {
-		String sedmlFilename = root + Gui.separator + currentProjectId + ".sedml";
+		String sedmlFilename = root + GlobalConstants.separator + currentProjectId + ".sedml";
 		File sedmlFile = new File(sedmlFilename);
 		if (sedmlFile.exists())	{
 			try {
@@ -5623,7 +5621,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	public void writeSEDMLDocument() {
-		String sedmlFilename = root + Gui.separator + currentProjectId + ".sedml";
+		String sedmlFilename = root + GlobalConstants.separator + currentProjectId + ".sedml";
 		sedmlDocument.writeDocument(new File(sedmlFilename));
 	}
 	
@@ -5717,7 +5715,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scroll.setViewportView(messageArea);
 					JOptionPane.showMessageDialog(Gui.frame, scroll, "SED-ML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
 				}
-				String path = filename.substring(0, filename.lastIndexOf(separator));
+				String path = filename.substring(0, filename.lastIndexOf(GlobalConstants.separator));
 				importSEDMLDocument(path,sedmlDoc,ac);
 			}
 			catch (Exception e1)
@@ -5778,7 +5776,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		String exportPath = frontend.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export Archive", -1);
 		if (!exportPath.equals("")) {
-			String dir = exportPath.substring(0, exportPath.lastIndexOf(Gui.separator));
+			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
 			biosimrc.put("biosim.general.export_dir",dir);
 			log.addText("Exporting COMBINE archive file:\n" + exportPath + "\n");
 			File file = new File(exportPath);
@@ -5790,13 +5788,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				File baseDir = new File(root);
 				for (String s : new File(root).list()) {
 					if (s.endsWith(".xml")) {
-						File modelFile = new File(root + separator + s); 
+						File modelFile = new File(root + GlobalConstants.separator + s); 
 						archive.addEntry(baseDir, modelFile, 
 								URI.create("http://identifiers.org/combine.specifications/sbml.level-3.version-1.core"));
 					}
 					// TODO: add other file types
 				}
-				File sedmlFile = new File(root + separator + root.split(Gui.separator)[root.split(Gui.separator).length-1]+".sedml");
+				File sedmlFile = new File(root + GlobalConstants.separator + root.split(GlobalConstants.separator)[root.split(GlobalConstants.separator).length-1]+".sedml");
 				archive.addEntry(baseDir, sedmlFile,
 						URI.create("http://identifiers.org/combine.specifications/sed-ml.level-1.version-2"),
 						true);
@@ -5908,16 +5906,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (!filename.equals(""))
 		{
 			biosimrc.put("biosim.general.import_dir", filename);
-			String[] file = filename.split(separator);
+			String[] file = filename.split(GlobalConstants.separator);
 			try
 			{
 				file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+", "_");
 				file[file.length - 1] = file[file.length - 1].replaceAll(extension2, extension1);
-				if (checkFiles(root + separator + file[file.length - 1], filename.trim()))
+				if (checkFiles(root + GlobalConstants.separator + file[file.length - 1], filename.trim()))
 				{
-					if (overwrite(root + separator + file[file.length - 1], file[file.length - 1]))
+					if (overwrite(root + GlobalConstants.separator + file[file.length - 1], file[file.length - 1]))
 					{
-						FileOutputStream out = new FileOutputStream(new File(root + separator + file[file.length - 1]));
+						FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
 						int read = in.read();
 						while (read != -1)
@@ -5961,7 +5959,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "TSD Graph ID's are not allowed to include two consecutive underscores.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			if (overwrite(root + separator + graphName, graphName))
+			if (overwrite(root + GlobalConstants.separator + graphName, graphName))
 			{
 				Graph g = new Graph(null, "Number of molecules", graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "Time",
 						this, null, log, graphName.trim(), true, false);
@@ -5994,7 +5992,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "Histogram ID's are not allowed to include two consecutive underscores.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			if (overwrite(root + separator + graphName, graphName))
+			if (overwrite(root + GlobalConstants.separator + graphName, graphName))
 			{
 				Graph g = new Graph(null, "Number of Molecules", graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "Time",
 						this, null, log, graphName.trim(), false, false);
@@ -6009,11 +6007,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	{
 		if (root != null)
 		{
-			String modelFileName = modelFile.split(separator)[modelFile.split(separator).length - 1];
+			String modelFileName = modelFile.split(GlobalConstants.separator)[modelFile.split(GlobalConstants.separator).length - 1];
 			String modelId = modelFileName.replace(".xml", "").replace(".lpn", "");
 			for (int i = 0; i < tab.getTabCount(); i++)
 			{
-				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+				if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 				{
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0)
@@ -6034,15 +6032,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			lrnName = lrnName.trim();
 			// try {
-			if (overwrite(root + separator + lrnName, lrnName))
+			if (overwrite(root + GlobalConstants.separator + lrnName, lrnName))
 			{
-				new File(root + separator + lrnName).mkdir();
+				new File(root + GlobalConstants.separator + lrnName).mkdir();
 				// new FileWriter(new File(root + separator +
 				// lrnName + separator
 				// +
 				// ".lrn")).close();
 				String sbmlFile = tree.getFile();
-				String[] getFilename = sbmlFile.split(separator);
+				String[] getFilename = sbmlFile.split(GlobalConstants.separator);
 				String sbmlFileNoPath = getFilename[getFilename.length - 1];
 				if (sbmlFileNoPath.endsWith(".vhd"))
 				{
@@ -6061,7 +6059,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				try
 				{
-					FileOutputStream out = new FileOutputStream(new File(root + separator + lrnName.trim() + separator + lrnName.trim() + ".lrn"));
+					FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + lrnName.trim() + GlobalConstants.separator + lrnName.trim() + ".lrn"));
 					if (lema)
 					{
 						out.write(("learn.file=" + sbmlFileNoPath + "\n").getBytes());
@@ -6079,12 +6077,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				addToTree(lrnName);
 				JTabbedPane lrnTab = new JTabbedPane();
 				lrnTab.addMouseListener(this);
-				DataManager data = new DataManager(root + separator + lrnName, this);
+				DataManager data = new DataManager(root + GlobalConstants.separator + lrnName, this);
 				lrnTab.addTab("Data Manager", data);
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 				if (lema)
 				{
-					LearnLPN learn = new LearnLPN(root + separator + lrnName, log, this);
+					LearnLPN learn = new LearnLPN(root + GlobalConstants.separator + lrnName, log, this);
 					lrnTab.addTab("Learn Options", learn);
 					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
 					lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
@@ -6092,7 +6090,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else
 				{
-					LearnGCM learn = new LearnGCM(root + separator + lrnName, log, this);
+					LearnGCM learn = new LearnGCM(root + GlobalConstants.separator + lrnName, log, this);
 					lrnTab.addTab("Learn Options", learn);
 					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
 					lrnTab.addTab("Parameter Estimator Options", learn.getParamEstimator());
@@ -6101,7 +6099,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 				}
 				Graph tsdGraph;
-				tsdGraph = new Graph(null, "Number of molecules", lrnName + " data", "tsd.printer", root + separator + lrnName, "Time", this, null,
+				tsdGraph = new Graph(null, "Number of molecules", lrnName + " data", "tsd.printer", root + GlobalConstants.separator + lrnName, "Time", this, null,
 						log, null, true, false);
 				lrnTab.addTab("TSD Graph", tsdGraph);
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
@@ -6120,26 +6118,26 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		{
 			if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn"))
 			{
-				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+				String filename = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
 				String[] findTheFile = filename.split("\\.");
 				String theFile = findTheFile[0] + ".dot";
-				File dot = new File(root + separator + theFile);
+				File dot = new File(root + GlobalConstants.separator + theFile);
 				dot.delete();
 				LhpnFile lhpn = new LhpnFile(log);
 				lhpn.load(tree.getFile());
-				lhpn.printDot(root + separator + theFile);
+				lhpn.printDot(root + GlobalConstants.separator + theFile);
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
 				if (dot.exists())
 				{
 					Preferences biosimrc = Preferences.userRoot();
 					String command = biosimrc.get("biosim.general.graphviz", "");
-					log.addText(command + " " + root + separator + theFile + "\n");
+					log.addText(command + " " + root + GlobalConstants.separator + theFile + "\n");
 					exec.exec(command + " " + theFile, null, work);
 				}
 				else
 				{
-					File log = new File(root + separator + "atacs.log");
+					File log = new File(root + GlobalConstants.separator + "atacs.log");
 					BufferedReader input = new BufferedReader(new FileReader(log));
 					String line = null;
 					JTextArea messageArea = new JTextArea();
@@ -6161,10 +6159,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (tree.getFile().length() >= 2 && tree.getFile().substring(tree.getFile().length() - 2).equals(".g"))
 			{
-				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+				String filename = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
 				String[] findTheFile = filename.split("\\.");
 				String theFile = findTheFile[0] + ".dot";
-				File dot = new File(root + separator + theFile);
+				File dot = new File(root + GlobalConstants.separator + theFile);
 				dot.delete();
 				String cmd = "atacs -cPlgodpe " + filename;
 				File work = new File(root);
@@ -6176,12 +6174,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				{
 					Preferences biosimrc = Preferences.userRoot();
 					String command = biosimrc.get("biosim.general.graphviz", "");
-					log.addText(command + " " + root + separator + theFile + "\n");
+					log.addText(command + " " + root + GlobalConstants.separator + theFile + "\n");
 					exec.exec(command + " " + theFile, null, work);
 				}
 				else
 				{
-					File log = new File(root + separator + "atacs.log");
+					File log = new File(root + GlobalConstants.separator + "atacs.log");
 					BufferedReader input = new BufferedReader(new FileReader(log));
 					String line = null;
 					JTextArea messageArea = new JTextArea();
@@ -6311,7 +6309,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".csp"))
 			{
-				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+				String filename = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
 				String cmd = "atacs -lcslllodpl " + filename;
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
@@ -6321,7 +6319,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String[] findTheFile = filename.split("\\.");
 				// String directory = "";
 				String theFile = findTheFile[0] + ".dot";
-				if (new File(root + separator + theFile).exists())
+				if (new File(root + GlobalConstants.separator + theFile).exists())
 				{
 					Preferences biosimrc = Preferences.userRoot();
 					String command = biosimrc.get("biosim.general.graphviz", "");
@@ -6330,7 +6328,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else
 				{
-					File log = new File(root + separator + "atacs.log");
+					File log = new File(root + GlobalConstants.separator + "atacs.log");
 					BufferedReader input = new BufferedReader(new FileReader(log));
 					String line = null;
 					JTextArea messageArea = new JTextArea();
@@ -6352,7 +6350,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".hse"))
 			{
-				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+				String filename = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
 				String cmd = "atacs -lhslllodpl " + filename;
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
@@ -6362,7 +6360,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String[] findTheFile = filename.split("\\.");
 				// String directory = "";
 				String theFile = findTheFile[0] + ".dot";
-				if (new File(root + separator + theFile).exists())
+				if (new File(root + GlobalConstants.separator + theFile).exists())
 				{
 					Preferences biosimrc = Preferences.userRoot();
 					String command = biosimrc.get("biosim.general.graphviz", "");
@@ -6371,7 +6369,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else
 				{
-					File log = new File(root + separator + "atacs.log");
+					File log = new File(root + GlobalConstants.separator + "atacs.log");
 					BufferedReader input = new BufferedReader(new FileReader(log));
 					String line = null;
 					JTextArea messageArea = new JTextArea();
@@ -6393,7 +6391,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".unc"))
 			{
-				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+				String filename = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
 				String cmd = "atacs -lxodps " + filename;
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
@@ -6403,7 +6401,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String[] findTheFile = filename.split("\\.");
 				// String directory = "";
 				String theFile = findTheFile[0] + ".dot";
-				if (new File(root + separator + theFile).exists())
+				if (new File(root + GlobalConstants.separator + theFile).exists())
 				{
 					Preferences biosimrc = Preferences.userRoot();
 					String command = biosimrc.get("biosim.general.graphviz", "");
@@ -6412,7 +6410,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else
 				{
-					File log = new File(root + separator + "atacs.log");
+					File log = new File(root + GlobalConstants.separator + "atacs.log");
 					BufferedReader input = new BufferedReader(new FileReader(log));
 					String line = null;
 					JTextArea messageArea = new JTextArea();
@@ -6434,7 +6432,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg"))
 			{
-				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+				String filename = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
 				String cmd = "atacs -lsodps " + filename;
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
@@ -6444,7 +6442,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String[] findTheFile = filename.split("\\.");
 				// String directory = "";
 				String theFile = findTheFile[0] + ".dot";
-				if (new File(root + separator + theFile).exists())
+				if (new File(root + GlobalConstants.separator + theFile).exists())
 				{
 					Preferences biosimrc = Preferences.userRoot();
 					String command = biosimrc.get("biosim.general.graphviz", "");
@@ -6453,7 +6451,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else
 				{
-					File log = new File(root + separator + "atacs.log");
+					File log = new File(root + GlobalConstants.separator + "atacs.log");
 					BufferedReader input = new BufferedReader(new FileReader(log));
 					String line = null;
 					JTextArea messageArea = new JTextArea();
@@ -6620,17 +6618,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		{
 			if (file.endsWith(".sbml") || file.equals(".xml"))
 			{
-				SBMLDocument document = SBMLutilities.readSBML(srcDir + separator + file);
+				SBMLDocument document = SBMLutilities.readSBML(srcDir + GlobalConstants.separator + file);
 				SBMLWriter writer = new SBMLWriter();
-				writer.writeSBMLToFile(document, destDir + separator + file);
+				writer.writeSBMLToFile(document, destDir + GlobalConstants.separator + file);
 			}
-			else if (new File(srcDir + separator + file).isFile()) {
-				FileOutputStream out = new FileOutputStream(new File(destDir + separator + file));
+			else if (new File(srcDir + GlobalConstants.separator + file).isFile()) {
+				FileOutputStream out = new FileOutputStream(new File(destDir + GlobalConstants.separator + file));
 				if (file.endsWith(".sim")||file.endsWith(".grf")||file.endsWith(".prb")||file.endsWith(".lrn")) {
 					String ext = file.substring(file.lastIndexOf("."));
-					out = new FileOutputStream(new File(destDir + separator + copyName + ext));
+					out = new FileOutputStream(new File(destDir + GlobalConstants.separator + copyName + ext));
 				}
-				FileInputStream in = new FileInputStream(new File(srcDir + separator + file));
+				FileInputStream in = new FileInputStream(new File(srcDir + GlobalConstants.separator + file));
 				int read = in.read();
 				while (read != -1)
 				{
@@ -6639,8 +6637,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				in.close();
 				out.close();
-			} else if (new File(srcDir + separator + file).isDirectory()) {
-				copyDirectory(srcDir + separator + file,destDir + separator + file, copyName+"__"+file);
+			} else if (new File(srcDir + GlobalConstants.separator + file).isDirectory()) {
+				copyDirectory(srcDir + GlobalConstants.separator + file,destDir + GlobalConstants.separator + file, copyName+"__"+file);
 			}
 		}
 	}
@@ -6650,7 +6648,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	{
 		if (!tree.getFile().equals(root))
 		{
-			String oldName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+			String oldName = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
 			for (int i = 0; i < tab.getTabCount(); i++)
 			{
 				if (getTitleAt(i).equals(oldName))
@@ -6687,7 +6685,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				if (checkFiles(oldName, copy))
 				{
-					if (overwrite(root + separator + copy, copy))
+					if (overwrite(root + GlobalConstants.separator + copy, copy))
 					{
 						if (copy.endsWith(".xml"))
 						{
@@ -6714,11 +6712,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 							document.getModel().setId(copy.substring(0, copy.lastIndexOf(".")));
 							SBMLWriter writer = new SBMLWriter();
-							writer.writeSBMLToFile(document, root + separator + copy);
+							writer.writeSBMLToFile(document, root + GlobalConstants.separator + copy);
 						}
 						else if (copy.contains("."))
 						{
-							FileOutputStream out = new FileOutputStream(new File(root + separator + copy));
+							FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + copy));
 							FileInputStream in = new FileInputStream(new File(tree.getFile()));
 							int read = in.read();
 							while (read != -1)
@@ -6731,7 +6729,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else
 						{
-							copyDirectory(tree.getFile(), root + separator + copy, copy);
+							copyDirectory(tree.getFile(), root + GlobalConstants.separator + copy, copy);
 						}
 						addToTree(copy);
 						copySEDML(oldName,copy);
@@ -6748,7 +6746,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void renameTabs(String oldName,String rename) {
 		for (int i = 0; i < tab.getTabCount(); i++)
 		{
-			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 			{
 				if (tree.getFile().length() > 3
 						&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree.getFile()
@@ -6805,13 +6803,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 								else if (c instanceof ModelEditor)
 								{
-									((ModelEditor) c).setParamFile(root + separator + rename + separator + rename + ".sim");
+									((ModelEditor) c).setParamFile(root + GlobalConstants.separator + rename + GlobalConstants.separator + rename + ".sim");
 									t.addTab("Parameters", c);
 									t.getComponentAt(t.getComponents().length - 1).setName("Model Editor");
 								}
 								else if (c instanceof Graph)
 								{
-									((Graph) c).setDirectory(root + separator + rename);
+									((Graph) c).setDirectory(root + GlobalConstants.separator + rename);
 									if (((Graph) c).isTSDGraph())
 									{
 										t.addTab("TSD Graph", c);
@@ -6845,7 +6843,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								else if (c instanceof Graph)
 								{
 									Graph g = ((Graph) c);
-									g.setDirectory(root + separator + rename);
+									g.setDirectory(root + GlobalConstants.separator + rename);
 									if (g.isTSDGraph())
 									{
 										g.setGraphName(rename + ".grf");
@@ -6858,12 +6856,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								else if (c instanceof LearnGCM)
 								{
 									LearnGCM l = ((LearnGCM) c);
-									l.setDirectory(root + separator + rename);
+									l.setDirectory(root + GlobalConstants.separator + rename);
 								}
 								else if (c instanceof DataManager)
 								{
 									DataManager d = ((DataManager) c);
-									d.setDirectory(root + separator + rename);
+									d.setDirectory(root + GlobalConstants.separator + rename);
 								}
 							}
 						}
@@ -6987,7 +6985,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 			if (!new File(tree.getFile()).isDirectory())
 			{
-				String[] views = canDelete(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]);
+				String[] views = canDelete(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]);
 				if (views.length != 0)
 				{
 					String view = "";
@@ -7030,10 +7028,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 
-			String oldName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+			String oldName = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
 			for (int i = 0; i < tab.getTabCount(); i++)
 			{
-				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+				if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 				{
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0)
@@ -7057,7 +7055,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					newName += extension;
 				}
 			}
-			if (newName.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			if (newName.equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 			{
 				JOptionPane.showMessageDialog(frame, "Unable to rename file." + "\nNew filename must be different than old filename.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -7071,9 +7069,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			try
 			{
-				if (checkFiles(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], newName))
+				if (checkFiles(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], newName))
 				{
-					if (overwrite(root + separator + newName, newName))
+					if (overwrite(root + GlobalConstants.separator + newName, newName))
 					{
 						if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
 								|| tree.getFile().endsWith(".lpn") || tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp")
@@ -7084,15 +7082,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						if (tree.getFile().endsWith(".xml"))
 						{
-							new File(tree.getFile()).renameTo(new File(root + separator + newName));
-							SBMLDocument document = SBMLutilities.readSBML(root + separator + newName);
+							new File(tree.getFile()).renameTo(new File(root + GlobalConstants.separator + newName));
+							SBMLDocument document = SBMLutilities.readSBML(root + GlobalConstants.separator + newName);
 							document.getModel().setId(modelID);
 							SBMLWriter writer = new SBMLWriter();
-							writer.writeSBMLToFile(document, root + separator + newName);
+							writer.writeSBMLToFile(document, root + GlobalConstants.separator + newName);
 						}
 						else
 						{
-							new File(tree.getFile()).renameTo(new File(root + separator + newName));
+							new File(tree.getFile()).renameTo(new File(root + GlobalConstants.separator + newName));
 						}
 						if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
 								|| tree.getFile().endsWith(".lpn") || tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp")
@@ -7101,11 +7099,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						{
 							updateAsyncViews(newName);
 						}
-						if (new File(root + separator + newName).isDirectory())
+						if (new File(root + GlobalConstants.separator + newName).isDirectory())
 						{
-							String subFilePath = root + separator + newName + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
-							String renamedSubFilePath = root + separator + newName + separator + newName;
+							String subFilePath = root + GlobalConstants.separator + newName + GlobalConstants.separator
+									+ tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
+							String renamedSubFilePath = root + GlobalConstants.separator + newName + GlobalConstants.separator + newName;
 							if (new File(subFilePath + ".sim").exists())
 							{
 								new File(subFilePath + ".sim").renameTo(new File(renamedSubFilePath + ".sim"));
@@ -7165,7 +7163,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private void openModelEditor(boolean textBased)
 	{
-		String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+		String filename = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
 		openModelEditor(filename, textBased);
 	}
 
@@ -7202,7 +7200,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		try
 		{
 			boolean done = false;
-			String theSBMLFile = fullPath.split(separator)[fullPath.split(separator).length - 1];
+			String theSBMLFile = fullPath.split(GlobalConstants.separator)[fullPath.split(GlobalConstants.separator).length - 1];
 			String theGCMFile = theSBMLFile.replace(".xml", ".gcm");
 			for (int i = 0; i < tab.getTabCount(); i++)
 			{
@@ -7218,7 +7216,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// createGCMFromSBML(root, fullPath, theSBMLFile, theGCMFile,
 				// false);
 				// addToTree(theGCMFile);
-				ModelEditor gcm = new ModelEditor(root + separator, theGCMFile, this, log, false, null, null, null, false, false);
+				ModelEditor gcm = new ModelEditor(root + GlobalConstants.separator, theGCMFile, this, log, false, null, null, null, false, false);
 				addTab(theSBMLFile, gcm, "Model Editor");
 			}
 		}
@@ -7233,7 +7231,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	{
 		String filePath = tree.getFile();
 		String fileName = "";
-		fileName = filePath.substring(filePath.lastIndexOf(Gui.separator) + 1);
+		fileName = filePath.substring(filePath.lastIndexOf(GlobalConstants.separator) + 1);
 		int i = getTab(fileName);
 		if (i != -1)
 		{
@@ -7276,12 +7274,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	private void openSBOLDesigner() {
 		//if (sbolDesignerOpen()) return;
-		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(Gui.separator) + 1);
+		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(GlobalConstants.separator) + 1);
 		try {
 			if (getSBOLDocument().getComponentDefinitions().size()==0) {
 				createPart();
 			} else {
-				SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,fileName,null,getSBOLDocument().getDefaultURIprefix());
+				SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root+GlobalConstants.separator,fileName,null,getSBOLDocument().getDefaultURIprefix());
 				//if (sbolDesignerPlugin.getRootDisplayId().equals("NewDesign")) return;
 				if (sbolDesignerPlugin.getRootDisplayId()==null) return;
 				addTab(sbolDesignerPlugin.getRootDisplayId(),sbolDesignerPlugin,"SBOL Designer");
@@ -7322,7 +7320,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					ComponentDefinition cd = getSBOLDocument().createComponentDefinition(partId, "1", ComponentDefinition.DNA);
 					cd.addRole(SequenceOntology.ENGINEERED_REGION);
 					writeSBOLDocument();
-					sbolDesignerPlugin = new SBOLDesignerPlugin(root+Gui.separator,currentProjectId+".sbol",cd.getIdentity(),sbolDocument.getDefaultURIprefix());
+					sbolDesignerPlugin = new SBOLDesignerPlugin(root+GlobalConstants.separator,currentProjectId+".sbol",cd.getIdentity(),sbolDocument.getDefaultURIprefix());
 					addTab(partId,sbolDesignerPlugin,"SBOL Designer");
 				}
 				catch (Exception e) {
@@ -7382,7 +7380,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String fileName = tree.getChild(tree.getRoot(), i).toString();
 			if (fileName.endsWith(fileExtension))
 			{
-				filePaths.add(getRoot() + Gui.separator + fileName);
+				filePaths.add(getRoot() + GlobalConstants.separator + fileName);
 			}
 		}
 		return filePaths;
@@ -7393,7 +7391,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++)
 		{
-			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 			{
 				tab.setSelectedIndex(i);
 				done = true;
@@ -7401,9 +7399,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		if (!done)
 		{
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], new Graph(null, "Number of molecules", "title",
+			addTab(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], new Graph(null, "Number of molecules", "title",
 					"tsd.printer", root, "Time", this, tree.getFile(), log,
-					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], true, false), "TSD Graph");
+					tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], true, false), "TSD Graph");
 		}
 	}
 
@@ -7412,7 +7410,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++)
 		{
-			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 			{
 				tab.setSelectedIndex(i);
 				done = true;
@@ -7420,8 +7418,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		if (!done)
 		{
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], new Graph(null, "Percent", "title", "tsd.printer",
-					root, "Time", this, tree.getFile(), log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], false,
+			addTab(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], new Graph(null, "Percent", "title", "tsd.printer",
+					root, "Time", this, tree.getFile(), log, tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], false,
 					false), "Histogram");
 		}
 	}
@@ -7498,12 +7496,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					else
 					{
-						File f = new File(root + separator + fileName);
+						File f = new File(root + GlobalConstants.separator + fileName);
 						f.createNewFile();
 						addToTree(fileName);
 						if (!viewer.equals(""))
 						{
-							String command = viewer + " " + root + separator + fileName;
+							String command = viewer + " " + root + GlobalConstants.separator + fileName;
 							Runtime exec = Runtime.getRuntime();
 							try
 							{
@@ -7560,7 +7558,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				if (!viewer.equals(""))
 				{
-					String command = viewer + " " + directory + separator + theFile;
+					String command = viewer + " " + directory + GlobalConstants.separator + theFile;
 					Runtime exec = Runtime.getRuntime();
 					try
 					{
@@ -7573,7 +7571,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else
 				{
-					File file = new File(work + separator + theFile);
+					File file = new File(work + GlobalConstants.separator + theFile);
 					String input = "";
 					FileReader in = new FileReader(file);
 					int read = in.read();
@@ -7649,7 +7647,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				for (int j = 0; j <= i; j++)
 				{
 					String save = recentProjectPaths[j];
-					recentProjects[j].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
+					recentProjects[j].setText(projDir.split(GlobalConstants.separator)[projDir.split(GlobalConstants.separator).length - 1]);
 					openRecent.insert(recentProjects[j], j);
 					recentProjectPaths[j] = projDir;
 					projDir = save;
@@ -7668,7 +7666,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		for (int i = 0; i < numberRecentProj; i++)
 		{
 			String save = recentProjectPaths[i];
-			recentProjects[i].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
+			recentProjects[i].setText(projDir.split(GlobalConstants.separator)[projDir.split(GlobalConstants.separator).length - 1]);
 			openRecent.insert(recentProjects[i], i);
 			recentProjectPaths[i] = projDir;
 			projDir = save;
@@ -8452,9 +8450,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	{
 		try
 		{
-			if (overwrite(root + separator + filename, filename))
+			if (overwrite(root + GlobalConstants.separator + filename, filename))
 			{
-				FileOutputStream out = new FileOutputStream(new File(root + separator + filename));
+				FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + filename));
 				FileInputStream in = new FileInputStream(new File(path));
 				int read = in.read();
 				while (read != -1)
@@ -8466,12 +8464,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				out.close();
 
 				BioModel bioModel = new BioModel(root);
-				bioModel.load(root + separator + filename);
+				bioModel.load(root + GlobalConstants.separator + filename);
 				GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
-				gcm2sbml.load(root + separator + filename);
+				gcm2sbml.load(root + GlobalConstants.separator + filename);
 				gcm2sbml.convertGCM2SBML(root, filename);
 				String sbmlFile = filename.replace(".gcm", ".xml");
-				bioModel.save(root + separator + sbmlFile);
+				bioModel.save(root + GlobalConstants.separator + sbmlFile);
 				addToTree(sbmlFile);
 			}
 		}
@@ -8488,10 +8486,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	{
 		try
 		{
-			if ((lpn && overwrite(root + separator + filename, filename))
-					|| (!lpn && overwrite(root + separator + filename.replace(".lpn", ".xml"), filename.replace(".lpn", ".xml"))))
+			if ((lpn && overwrite(root + GlobalConstants.separator + filename, filename))
+					|| (!lpn && overwrite(root + GlobalConstants.separator + filename.replace(".lpn", ".xml"), filename.replace(".lpn", ".xml"))))
 			{
-				BufferedWriter out = new BufferedWriter(new FileWriter(root + separator + filename));
+				BufferedWriter out = new BufferedWriter(new FileWriter(root + GlobalConstants.separator + filename));
 				BufferedReader in = new BufferedReader(new FileReader(path));
 				String str;
 				while ((str = in.readLine()) != null)
@@ -8505,8 +8503,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					addToTree(filename);
 				}
 				Translator t1 = new Translator();
-				t1.convertLPN2SBML(root + separator + filename, "");
-				t1.setFilename(root + separator + filename.replace(".lpn", ".xml"));
+				t1.convertLPN2SBML(root + GlobalConstants.separator + filename, "");
+				t1.setFilename(root + GlobalConstants.separator + filename.replace(".lpn", ".xml"));
 				t1.outputSBML();
 				addToTree(filename.replace(".lpn", ".xml"));
 			}
@@ -8525,7 +8523,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 		try
 		{
-			BufferedReader in = new BufferedReader(new FileReader(directory + separator + filename));
+			BufferedReader in = new BufferedReader(new FileReader(directory + GlobalConstants.separator + filename));
 			String str;
 			while ((str = in.readLine()) != null)
 			{
@@ -8546,10 +8544,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String sFilename = sLineMatcher.group(1);
 			try
 			{
-				File newFile = new File(directory + separator + sFilename);
+				File newFile = new File(directory + GlobalConstants.separator + sFilename);
 				newFile.createNewFile();
 				FileOutputStream copyin = new FileOutputStream(newFile);
-				FileInputStream copyout = new FileInputStream(new File(root + separator + sFilename));
+				FileInputStream copyout = new FileInputStream(new File(root + GlobalConstants.separator + sFilename));
 				int read = copyout.read();
 				while (read != -1)
 				{
@@ -9523,7 +9521,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				ModelEditor modelEditor;
 				try
 				{
-					modelEditor = new ModelEditor(root + separator, solutionFileIDs.get(0), this, log, false, null, null, null, false, false);
+					modelEditor = new ModelEditor(root + GlobalConstants.separator, solutionFileIDs.get(0), this, log, false, null, null, null, false, false);
 					ActionEvent applyLayout = new ActionEvent(synthView, ActionEvent.ACTION_PERFORMED, "layout_verticalHierarchical");
 					modelEditor.getSchematic().actionPerformed(applyLayout);
 					addTab(solutionFileIDs.get(0), modelEditor, "Model Editor");
@@ -9538,7 +9536,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private void createSBOLSynthesisView()
 	{
-		String specFileID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+		String specFileID = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
 		String defaultSynthID = specFileID.replace(".xml", "");
 		String synthID = JOptionPane.showInputDialog(frame, "Enter synthesis ID (default = " + defaultSynthID + "):", "Synthesis ID",
 				JOptionPane.PLAIN_MESSAGE);
@@ -9552,9 +9550,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				synthID = synthID.trim();
 			}
-			if (overwrite(root + separator + synthID, synthID))
+			if (overwrite(root + GlobalConstants.separator + synthID, synthID))
 			{
-				SynthesisView synthView = new SynthesisView(synthID, separator, root, log);
+				SynthesisView synthView = new SynthesisView(synthID, GlobalConstants.separator, root, log);
 				synthView.loadDefaultSynthesisProperties(specFileID);
 				addTab(synthID, synthView, null);
 				addToTree(synthID);
@@ -9564,11 +9562,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private void openSBOLSynthesisView()
 	{
-		Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(tree.getFile(), separator, frame);
+		Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(tree.getFile(), GlobalConstants.separator, frame);
 		if (synthProps != null)
 		{
-			String synthID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
-			SynthesisView synthView = new SynthesisView(synthID, separator, root, log);
+			String synthID = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
+			SynthesisView synthView = new SynthesisView(synthID, GlobalConstants.separator, root, log);
 			synthView.loadSynthesisProperties(synthProps);
 			addTab(synthID, synthView, null);
 		}
@@ -9576,7 +9574,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private void createAnalysisView(String modelFile) throws Exception
 	{
-		String modelFileName = modelFile.split(separator)[modelFile.split(separator).length - 1];
+		String modelFileName = modelFile.split(GlobalConstants.separator)[modelFile.split(GlobalConstants.separator).length - 1];
 		String modelId = modelFileName.replace(".xml", "").replace(".lpn", "");
 		// If model file is open, save if needed.
 		for (int i = 0; i < tab.getTabCount(); i++)
@@ -9613,25 +9611,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			return;
 		}
 		simName = simName.trim();
-		if (!overwrite(root + separator + simName, simName))
+		if (!overwrite(root + GlobalConstants.separator + simName, simName))
 		{
 			return;
 		}
-		new File(root + separator + simName).mkdir();
+		new File(root + GlobalConstants.separator + simName).mkdir();
 		if (modelFile.endsWith(".lpn"))
 		{
 			Translator t1 = new Translator();
 			t1.convertLPN2SBML(modelFile, "");
-			t1.setFilename(root + separator + simName + separator + modelId + ".xml");
+			t1.setFilename(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelId + ".xml");
 			t1.outputSBML();
 		}
 		else
 		{
-			new File(root + separator + simName + separator + modelFileName).createNewFile();
+			new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFileName).createNewFile();
 		}
 		try
 		{
-			FileOutputStream out = new FileOutputStream(new File(root + separator + simName + separator + simName + ".sim"));
+			FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".sim"));
 			out.write((modelFileName + "\n").getBytes());
 			out.close();
 		}
@@ -9640,7 +9638,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			JOptionPane.showMessageDialog(frame, "Unable to create analysis view!", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		addToTree(simName);
-		openAnalysisView(root + separator + simName);
+		openAnalysisView(root + GlobalConstants.separator + simName);
 	}
 
 	private void openLearn()
@@ -9648,7 +9646,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++)
 		{
-			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 			{
 				tab.setSelectedIndex(i);
 				done = true;
@@ -9688,14 +9686,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else if (end.equals(".grf"))
 						{
-							open = tree.getFile() + separator + list[i];
+							open = tree.getFile() + GlobalConstants.separator + list[i];
 						}
 					}
 				}
 			}
 
-			String lrnFile = tree.getFile() + separator + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn";
-			String lrnFile2 = tree.getFile() + separator + ".lrn";
+			String lrnFile = tree.getFile() + GlobalConstants.separator + tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1] + ".lrn";
+			String lrnFile2 = tree.getFile() + GlobalConstants.separator + ".lrn";
 			Properties load = new Properties();
 			String learnFile = "";
 			try
@@ -9715,7 +9713,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (load.containsKey("genenet.file"))
 					{
 						learnFile = load.getProperty("genenet.file");
-						learnFile = learnFile.split(separator)[learnFile.split(separator).length - 1];
+						learnFile = learnFile.split(GlobalConstants.separator)[learnFile.split(GlobalConstants.separator).length - 1];
 						if (learnFile.endsWith(".gcm"))
 						{
 							learnFile = learnFile.replace(".gcm", ".xml");
@@ -9744,7 +9742,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					break;
 				}
 			}
-			if (!(new File(root + separator + learnFile).exists()))
+			if (!(new File(root + GlobalConstants.separator + learnFile).exists()))
 			{
 				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile + " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
@@ -9762,12 +9760,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Parameter Estimator Options");
 			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
-			Graph tsdGraph = new Graph(null, "Number of molecules", tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+			Graph tsdGraph = new Graph(null, "Number of molecules", tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
 					+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
 			// tsdGraph.addMouseListener(this);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], lrnTab, null);
+			addTab(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], lrnTab, null);
 		}
 	}
 
@@ -9776,7 +9774,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++)
 		{
-			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 			{
 				tab.setSelectedIndex(i);
 				done = true;
@@ -9816,14 +9814,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else if (end.equals(".grf"))
 						{
-							open = tree.getFile() + separator + list[i];
+							open = tree.getFile() + GlobalConstants.separator + list[i];
 						}
 					}
 				}
 			}
 
-			String lrnFile = tree.getFile() + separator + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn";
-			String lrnFile2 = tree.getFile() + separator + ".lrn";
+			String lrnFile = tree.getFile() + GlobalConstants.separator + tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1] + ".lrn";
+			String lrnFile2 = tree.getFile() + GlobalConstants.separator + ".lrn";
 			Properties load = new Properties();
 			String learnFile = "";
 			try
@@ -9843,7 +9841,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (load.containsKey("genenet.file"))
 					{
 						learnFile = load.getProperty("genenet.file");
-						learnFile = learnFile.split(separator)[learnFile.split(separator).length - 1];
+						learnFile = learnFile.split(GlobalConstants.separator)[learnFile.split(GlobalConstants.separator).length - 1];
 					}
 				}
 				FileOutputStream out = new FileOutputStream(new File(lrnFile));
@@ -9867,7 +9865,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					break;
 				}
 			}
-			if (!(new File(root + separator + learnFile).exists()))
+			if (!(new File(root + GlobalConstants.separator + learnFile).exists()))
 			{
 				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile + " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
@@ -9880,11 +9878,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
 			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
-			Graph tsdGraph = new Graph(null, "Number of molecules", tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+			Graph tsdGraph = new Graph(null, "Number of molecules", tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
 					+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], lrnTab, null);
+			addTab(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], lrnTab, null);
 		}
 	}
 
@@ -9893,7 +9891,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++)
 		{
-			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 			{
 				tab.setSelectedIndex(i);
 				done = true;
@@ -9953,8 +9951,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 
-				String synthFile = tree.getFile() + separator + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".syn";
-				String synthFile2 = tree.getFile() + separator + ".syn";
+				String synthFile = tree.getFile() + GlobalConstants.separator + tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1] + ".syn";
+				String synthFile2 = tree.getFile() + GlobalConstants.separator + ".syn";
 				Properties load = new Properties();
 				String synthesisFile = "";
 				try
@@ -9974,7 +9972,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (load.containsKey("synthesis.file"))
 						{
 							synthesisFile = load.getProperty("synthesis.file");
-							synthesisFile = synthesisFile.split(separator)[synthesisFile.split(separator).length - 1];
+							synthesisFile = synthesisFile.split(GlobalConstants.separator)[synthesisFile.split(GlobalConstants.separator).length - 1];
 						}
 					}
 					// FileOutputStream out = new FileOutputStream(new
@@ -9999,7 +9997,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						break;
 					}
 				}
-				if (!(new File(root + separator + synthesisFile).exists()))
+				if (!(new File(root + GlobalConstants.separator + synthesisFile).exists()))
 				{
 					JOptionPane.showMessageDialog(frame, "Unable to open view because " + synthesisFile + " is missing.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -10009,7 +10007,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				Synthesis synth = new Synthesis(tree.getFile(), "flag", log, this);
 				// synth.addMouseListener(this);
 				synthPanel.add(synth);
-				addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], synthPanel, "Synthesis");
+				addTab(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], synthPanel, "Synthesis");
 			}
 		}
 	}
@@ -10019,7 +10017,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++)
 		{
-			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]))
+			if (getTitleAt(i).equals(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]))
 			{
 				tab.setSelectedIndex(i);
 				done = true;
@@ -10044,8 +10042,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			 * = tree.getFile() + separator + // list[i]; } } } } } }
 			 */
 
-			String verName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
-			String verFile = tree.getFile() + separator + verName + ".ver";
+			String verName = tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
+			String verFile = tree.getFile() + GlobalConstants.separator + verName + ".ver";
 			Properties load = new Properties();
 			String verifyFile = "";
 			try
@@ -10058,7 +10056,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (load.containsKey("verification.file"))
 					{
 						verifyFile = load.getProperty("verification.file");
-						verifyFile = verifyFile.split(separator)[verifyFile.split(separator).length - 1];
+						verifyFile = verifyFile.split(GlobalConstants.separator)[verifyFile.split(GlobalConstants.separator).length - 1];
 					}
 				}
 				// FileOutputStream out = new FileOutputStream(new
@@ -10089,7 +10087,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				return;
 			}
 			// if (!graphFile.equals("")) {
-			Verification ver = new Verification(root + separator + verName, verName, "flag", log, this, lema, atacs);
+			Verification ver = new Verification(root + GlobalConstants.separator + verName, verName, "flag", log, this, lema, atacs);
 			// ver.addMouseListener(this);
 			// verPanel.add(ver);
 			// AbstPane abst = new AbstPane(root + separator + verName, ver,
@@ -10098,7 +10096,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// abstPanel.add(abst);
 			// verTab.add("verify", verPanel);
 			// verTab.add("abstract", abstPanel);
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], ver, "Verification");
+			addTab(tree.getFile().split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], ver, "Verification");
 		}
 	}
 
@@ -10107,9 +10105,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	// that file already exits
 	private void updateSimulationFile(String fileName, String simFile)
 	{
-		if (new File(fileName + separator + ".sim").exists())
+		if (new File(fileName + GlobalConstants.separator + ".sim").exists())
 		{
-			new File(fileName + separator + ".sim").delete();
+			new File(fileName + GlobalConstants.separator + ".sim").delete();
 		}
 		if (new File(simFile.replace(".sim", ".pms")).exists())
 		{
@@ -10145,7 +10143,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (s.hasNextLine())
 			{
 				modelFileName = s.nextLine();
-				modelFileName = modelFileName.split(separator)[modelFileName.split(separator).length - 1];
+				modelFileName = modelFileName.split(GlobalConstants.separator)[modelFileName.split(GlobalConstants.separator).length - 1];
 			}
 			s.close();
 		}
@@ -10170,7 +10168,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						JOptionPane.ERROR_MESSAGE);
 				return "";
 			}
-			else if (!(new File(root + separator + sbmlLoadFile).exists()))
+			else if (!(new File(root + GlobalConstants.separator + sbmlLoadFile).exists()))
 			{
 				JOptionPane.showMessageDialog(frame, "Unable to open analysis view because " + sbmlLoadFile + " is missing.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -10178,11 +10176,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			if (sbmlLoadFile.contains(".lpn"))
 			{
-				sbmlLoadFile = root + separator + analysisName + separator + sbmlLoadFile.replace(".lpn", ".xml");
+				sbmlLoadFile = root + GlobalConstants.separator + analysisName + GlobalConstants.separator + sbmlLoadFile.replace(".lpn", ".xml");
 			}
 			else
 			{
-				sbmlLoadFile = root + separator + sbmlLoadFile;
+				sbmlLoadFile = root + GlobalConstants.separator + sbmlLoadFile;
 			}
 			/*
 			 * File f = new File(sbmlLoadFile); if (!f.exists()) { sbmlLoadFile
@@ -10191,7 +10189,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else
 		{
-			sbmlLoadFile = root + separator + analysisModelFile.split(separator)[analysisModelFile.split(separator).length - 1];
+			sbmlLoadFile = root + GlobalConstants.separator + analysisModelFile.split(GlobalConstants.separator)[analysisModelFile.split(GlobalConstants.separator).length - 1];
 			if (!new File(sbmlLoadFile).exists())
 			{
 				sbmlLoadFile = analysisModelFile;
@@ -10200,7 +10198,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (!new File(sbmlLoadFile).exists())
 		{
 			JOptionPane.showMessageDialog(frame,
-					"Unable to open analysis view because " + sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1]
+					"Unable to open analysis view because " + sbmlLoadFile.split(GlobalConstants.separator)[sbmlLoadFile.split(GlobalConstants.separator).length - 1]
 							+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 			return "";
 		}
@@ -10217,11 +10215,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			{
 				if (list[i].endsWith(".xml"))
 				{
-					analysisModelFile = fileName + separator + list[i];
+					analysisModelFile = fileName + GlobalConstants.separator + list[i];
 				}
 				else if (list[i].endsWith("sbml") && analysisModelFile.equals(""))
 				{
-					analysisModelFile = fileName + separator + list[i];
+					analysisModelFile = fileName + GlobalConstants.separator + list[i];
 				}
 			}
 		}
@@ -10243,7 +10241,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		{
 			return;
 		}
-		String analysisName = fileName.split(separator)[fileName.split(separator).length - 1];
+		String analysisName = fileName.split(GlobalConstants.separator)[fileName.split(GlobalConstants.separator).length - 1];
 		// If already open, make it the selected tab and return.
 		for (int i = 0; i < tab.getTabCount(); i++)
 		{
@@ -10253,7 +10251,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				return;
 			}
 		}
-		String simFile = fileName + separator + analysisName + ".sim";
+		String simFile = fileName + GlobalConstants.separator + analysisName + ".sim";
 		updateSimulationFile(fileName, simFile);
 		String analysisModelFile = findAnalysisModelFile(fileName);
 		if (analysisModelFile.equals(""))
@@ -10270,7 +10268,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// If currently open and dirty, then save
 		for (int i = 0; i < tab.getTabCount(); i++)
 		{
-			if (getTitleAt(i).equals(sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1]))
+			if (getTitleAt(i).equals(sbmlLoadFile.split(GlobalConstants.separator)[sbmlLoadFile.split(GlobalConstants.separator).length - 1]))
 			{
 				tab.setSelectedIndex(i);
 				if (save(i, 0) == 0)
@@ -10307,8 +10305,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		if (modelFileName.contains(".xml"))
 		{
-			ModelEditor modelEditor = new ModelEditor(root + separator, modelFileName, this, log, true, analysisName, root + separator + analysisName
-					+ separator + analysisName + ".sim", analysisView, false, false);
+			ModelEditor modelEditor = new ModelEditor(root + GlobalConstants.separator, modelFileName, this, log, true, analysisName, root + GlobalConstants.separator + analysisName
+					+ GlobalConstants.separator + analysisName + ".sim", analysisView, false, false);
 			analysisView.setModelEditor(modelEditor);
 			ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(), 
 					sedmlDocument,analysisName);
@@ -10319,10 +10317,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			simTab.addTab("Parameters", modelEditor);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Model Editor");
 		}
-		Graph tsdGraph = analysisView.createGraph(fileName + separator + analysisName + ".grf");
+		Graph tsdGraph = analysisView.createGraph(fileName + GlobalConstants.separator + analysisName + ".grf");
 		simTab.addTab("TSD Graph", tsdGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
-		Graph probGraph = analysisView.createProbGraph(fileName + separator + analysisName + ".prb");
+		Graph probGraph = analysisView.createProbGraph(fileName + GlobalConstants.separator + analysisName + ".prb");
 		simTab.addTab("Histogram", probGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Histogram");
 		addTab(analysisName, simTab, null);
@@ -10639,7 +10637,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						else
 						{
 							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(null, "Number of molecules", learnName + " data",
-									"tsd.printer", root + separator + learnName, "Time", this, null, log, null, true, true));
+									"tsd.printer", root + GlobalConstants.separator + learnName, "Time", this, null, log, null, true, true));
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("TSD Graph");
 						}
 					}
@@ -10652,13 +10650,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						{
 							if (lema)
 							{
-								LearnLPN learn = new LearnLPN(root + separator + learnName, log, this);
+								LearnLPN learn = new LearnLPN(root + GlobalConstants.separator + learnName, log, this);
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j + 1, learn.getAdvancedOptionsPanel());
 							}
 							else
 							{
-								LearnGCM learn = new LearnGCM(root + separator + learnName, log, this);
+								LearnGCM learn = new LearnGCM(root + GlobalConstants.separator + learnName, log, this);
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j + 1, learn.getAdvancedOptionsPanel());
 							}
@@ -10712,9 +10710,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		for (int i = 0; i < tab.getTabCount(); i++)
 		{
 			String tab = this.getTitleAt(i);
-			String properties = root + separator + tab + separator + tab + ".ver";
-			String properties1 = root + separator + tab + separator + tab + ".synth";
-			String properties2 = root + separator + tab + separator + tab + ".lrn";
+			String properties = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".ver";
+			String properties1 = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".synth";
+			String properties2 = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".lrn";
 			if (new File(properties).exists())
 			{
 				Verification verify = ((Verification) (this.tab.getComponentAt(i)));
@@ -10743,7 +10741,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					load.close();
 					if (p.containsKey("learn.file"))
 					{
-						String[] getProp = p.getProperty("learn.file").split(separator);
+						String[] getProp = p.getProperty("learn.file").split(GlobalConstants.separator);
 						check = getProp[getProp.length - 1];
 					}
 					else
@@ -10767,7 +10765,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else if (learn.getComponentAt(j).getName().equals("Learn Options"))
 						{
-							((LearnLPN) (learn.getComponentAt(j))).updateSpecies(root + separator + updatedFile);
+							((LearnLPN) (learn.getComponentAt(j))).updateSpecies(root + GlobalConstants.separator + updatedFile);
 							((LearnLPN) (learn.getComponentAt(j))).reload(updatedFile);
 						}
 						else if (learn.getComponentAt(j).getName().contains("Graph"))
@@ -10802,8 +10800,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((SBOLBrowser2) this.tab.getComponentAt(i)).reload(this, tab);
 			}
 
-			String properties = root + separator + tab + separator + tab + ".sim";
-			String properties2 = root + separator + tab + separator + tab + ".lrn";
+			String properties = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".sim";
+			String properties2 = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".lrn";
 			if (new File(properties).exists())
 			{
 
@@ -10814,7 +10812,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (s.hasNextLine())
 					{
 						check = s.nextLine();
-						check = check.split(separator)[check.split(separator).length - 1];
+						check = check.split(GlobalConstants.separator)[check.split(GlobalConstants.separator).length - 1];
 					}
 					s.close();
 				}
@@ -10884,7 +10882,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					load.close();
 					if (p.containsKey("genenet.file"))
 					{
-						String[] getProp = p.getProperty("genenet.file").split(separator);
+						String[] getProp = p.getProperty("genenet.file").split(GlobalConstants.separator);
 						check = getProp[getProp.length - 1];
 					}
 					else
@@ -10908,7 +10906,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else if (learn.getComponentAt(j).getName().equals("Learn Options"))
 						{
-							((LearnGCM) (learn.getComponentAt(j))).updateSpecies(root + separator + updatedFile);
+							((LearnGCM) (learn.getComponentAt(j))).updateSpecies(root + GlobalConstants.separator + updatedFile);
 						}
 						else if (learn.getComponentAt(j).getName().contains("Graph"))
 						{
@@ -10924,14 +10922,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	{
 		File work = new File(root);
 		String[] fileList = work.list();
-		String[] temp = oldname.split(separator);
+		String[] temp = oldname.split(GlobalConstants.separator);
 		oldname = temp[temp.length - 1];
 		for (int i = 0; i < fileList.length; i++)
 		{
 			String tabTitle = fileList[i];
-			String properties = root + separator + tabTitle + separator + tabTitle + ".ver";
-			String properties1 = root + separator + tabTitle + separator + tabTitle + ".synth";
-			String properties2 = root + separator + tabTitle + separator + tabTitle + ".lrn";
+			String properties = root + GlobalConstants.separator + tabTitle + GlobalConstants.separator + tabTitle + ".ver";
+			String properties1 = root + GlobalConstants.separator + tabTitle + GlobalConstants.separator + tabTitle + ".synth";
+			String properties2 = root + GlobalConstants.separator + tabTitle + GlobalConstants.separator + tabTitle + ".lrn";
 			if (new File(properties).exists())
 			{
 				String check;
@@ -10943,7 +10941,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					load.close();
 					if (p.containsKey("verification.file"))
 					{
-						String[] getProp = p.getProperty("verification.file").split(separator);
+						String[] getProp = p.getProperty("verification.file").split(GlobalConstants.separator);
 						check = getProp[getProp.length - 1];
 					}
 					else
@@ -10976,7 +10974,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					load.close();
 					if (p.containsKey("synthesis.file"))
 					{
-						String[] getProp = p.getProperty("synthesis.file").split(separator);
+						String[] getProp = p.getProperty("synthesis.file").split(GlobalConstants.separator);
 						check = getProp[getProp.length - 1];
 					}
 					else
@@ -11009,7 +11007,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					load.close();
 					if (p.containsKey("learn.file"))
 					{
-						String[] getProp = p.getProperty("learn.file").split(separator);
+						String[] getProp = p.getProperty("learn.file").split(GlobalConstants.separator);
 						check = getProp[getProp.length - 1];
 					}
 					else
@@ -11220,7 +11218,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component learnComponent = null;
 			Boolean learn = false;
 			Boolean learnLHPN = false;
-			for (String s : new File(root + separator + getTitleAt(tab.getSelectedIndex())).list())
+			for (String s : new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())).list())
 			{
 				if (s.contains("_sg.dot"))
 				{
@@ -11254,7 +11252,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				run.setEnabled(true);
 				if (learn && learnComponent != null)
 				{
-					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists())
+					if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex()) + GlobalConstants.separator + "method.gcm").exists())
 					{
 						viewLearnedModel.setEnabled(true);
 					}
@@ -11329,7 +11327,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (component instanceof LearnGCM)
 			{
-				if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists())
+				if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex()) + GlobalConstants.separator + "method.gcm").exists())
 				{
 					viewLearnedModel.setEnabled(true);
 				}
@@ -11370,7 +11368,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				closeAll.setEnabled(true);
 				if (learn && learnComponent != null)
 				{
-					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists())
+					if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex()) + GlobalConstants.separator + "method.gcm").exists())
 					{
 						viewLearnedModel.setEnabled(true);
 					}
@@ -11400,7 +11398,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				run.setEnabled(true);
 				if (learn && learnComponent != null)
 				{
-					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists())
+					if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex()) + GlobalConstants.separator + "method.gcm").exists())
 					{
 						viewLearnedModel.setEnabled(true);
 					}
@@ -11792,18 +11790,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String[] files = new File(root).list();
 		for (String s : files)
 		{
-			if (new File(root + separator + s).isDirectory())
+			if (new File(root + GlobalConstants.separator + s).isDirectory())
 			{
 				String check = "";
-				if (new File(root + separator + s + separator + s + ".sim").exists())
+				if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim").exists())
 				{
 					try
 					{
-						Scanner scan = new Scanner(new File(root + separator + s + separator + s + ".sim"));
+						Scanner scan = new Scanner(new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim"));
 						if (scan.hasNextLine())
 						{
 							check = scan.nextLine();
-							check = check.split(separator)[check.split(separator).length - 1];
+							check = check.split(GlobalConstants.separator)[check.split(GlobalConstants.separator).length - 1];
 						}
 						scan.close();
 					}
@@ -11811,22 +11809,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 					}
 				}
-				else if (new File(root + separator + s + separator + s + ".lrn").exists())
+				else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn").exists())
 				{
 					try
 					{
 						Properties p = new Properties();
-						FileInputStream load = new FileInputStream(new File(root + separator + s + separator + s + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
 						p.load(load);
 						load.close();
 						if (p.containsKey("genenet.file"))
 						{
-							String[] getProp = p.getProperty("genenet.file").split(separator);
+							String[] getProp = p.getProperty("genenet.file").split(GlobalConstants.separator);
 							check = getProp[getProp.length - 1];
 						}
 						else if (p.containsKey("learn.file"))
 						{
-							String[] getProp = p.getProperty("learn.file").split(separator);
+							String[] getProp = p.getProperty("learn.file").split(GlobalConstants.separator);
 							check = getProp[getProp.length - 1];
 						}
 						else
@@ -11839,17 +11837,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						check = "";
 					}
 				}
-				else if (new File(root + separator + s + separator + s + ".ver").exists())
+				else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".ver").exists())
 				{
 					try
 					{
 						Properties p = new Properties();
-						FileInputStream load = new FileInputStream(new File(root + separator + s + separator + s + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
 						p.load(load);
 						load.close();
 						if (p.containsKey("verification.file"))
 						{
-							String[] getProp = p.getProperty("verification.file").split(separator);
+							String[] getProp = p.getProperty("verification.file").split(GlobalConstants.separator);
 							check = getProp[getProp.length - 1];
 						}
 						else
@@ -11862,17 +11860,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						check = "";
 					}
 				}
-				else if (new File(root + separator + s + separator + s + ".synth").exists())
+				else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".synth").exists())
 				{
 					try
 					{
 						Properties p = new Properties();
-						FileInputStream load = new FileInputStream(new File(root + separator + s + separator + s + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
 						p.load(load);
 						load.close();
 						if (p.containsKey("synthesis.file"))
 						{
-							String[] getProp = p.getProperty("synthesis.file").split(separator);
+							String[] getProp = p.getProperty("synthesis.file").split(GlobalConstants.separator);
 							check = getProp[getProp.length - 1];
 						}
 						else
@@ -11885,9 +11883,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						check = "";
 					}
 				}
-				else if (new File(root + separator + s + separator + s + ".sbolsynth.properties").exists())
+				else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sbolsynth.properties").exists())
 				{
-					Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(root + separator + s, separator, Gui.frame);
+					Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(root + GlobalConstants.separator + s, GlobalConstants.separator, Gui.frame);
 					if (synthProps != null)
 					{
 						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY))
@@ -11916,7 +11914,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				BioModel gcm = new BioModel(root);
 				try
 				{
-					gcm.load(root + separator + s);
+					gcm.load(root + GlobalConstants.separator + s);
 					if (gcm.getSBMLComp() != null)
 					{
 						for (int i = 0; i < gcm.getSBMLComp().getListOfExternalModelDefinitions().size(); i++)
@@ -11945,19 +11943,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String[] files = new File(root).list();
 		for (String s : files)
 		{
-			if (new File(root + separator + s).isDirectory())
+			if (new File(root + GlobalConstants.separator + s).isDirectory())
 			{
 				String check = "";
-				if (new File(root + separator + s + separator + s + ".sim").exists())
+				if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim").exists())
 				{
 					try
 					{
 						ArrayList<String> copy = new ArrayList<String>();
-						Scanner scan = new Scanner(new File(root + separator + s + separator + s + ".sim"));
+						Scanner scan = new Scanner(new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim"));
 						if (scan.hasNextLine())
 						{
 							check = scan.nextLine();
-							check = check.split(separator)[check.split(separator).length - 1];
+							check = check.split(GlobalConstants.separator)[check.split(GlobalConstants.separator).length - 1];
 							if (check.equals(oldName))
 							{
 								while (scan.hasNextLine())
@@ -11965,7 +11963,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									copy.add(scan.nextLine());
 								}
 								scan.close();
-								FileOutputStream out = new FileOutputStream(new File(root + separator + s + separator + s + ".sim"));
+								FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim"));
 								out.write((newName + "\n").getBytes());
 								for (String cop : copy)
 								{
@@ -11983,22 +11981,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 					}
 				}
-				else if (new File(root + separator + s + separator + s + ".lrn").exists())
+				else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn").exists())
 				{
 					try
 					{
 						Properties p = new Properties();
-						FileInputStream load = new FileInputStream(new File(root + separator + s + separator + s + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
 						p.load(load);
 						load.close();
 						if (p.containsKey("genenet.file"))
 						{
-							String[] getProp = p.getProperty("genenet.file").split(separator);
+							String[] getProp = p.getProperty("genenet.file").split(GlobalConstants.separator);
 							check = getProp[getProp.length - 1];
 							if (check.equals(oldName))
 							{
 								p.setProperty("genenet.file", newName);
-								FileOutputStream store = new FileOutputStream(new File(root + separator + s + separator + s + ".lrn"));
+								FileOutputStream store = new FileOutputStream(new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
 								p.store(store, "Learn File Data");
 								store.close();
 							}
@@ -12028,7 +12026,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		{
 			ModelDefinition md = sbmlComp.getListOfModelDefinitions().get(i);
 			String extId = md.getId();
-			if (overwrite(root + separator + extId + ".xml", extId + ".xml"))
+			if (overwrite(root + GlobalConstants.separator + extId + ".xml", extId + ".xml"))
 			{
 				Model model = new Model(md);
 				model.unsetNamespace();
@@ -12060,7 +12058,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				SBMLWriter writer = new SBMLWriter();
 				try
 				{
-					writer.writeSBMLToFile(document, root + separator + extId + ".xml");
+					writer.writeSBMLToFile(document, root + GlobalConstants.separator + extId + ".xml");
 				}
 				catch (SBMLException e)
 				{

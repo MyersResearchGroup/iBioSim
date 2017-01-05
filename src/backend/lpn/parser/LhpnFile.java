@@ -7,12 +7,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import backend.biomodel.util.Utility;
-import backend.verification.Verification;
+import backend.util.GlobalConstants;
 import backend.verification.platu.lpn.DualHashMap;
 import backend.verification.platu.stategraph.StateGraph;
 import backend.verification.timed_state_exploration.zoneProject.InequalityVariable;
-import frontend.main.Gui;
 import frontend.main.Log;
+import frontend.verification.Verification;
 
 
 public class LhpnFile {
@@ -91,7 +91,7 @@ public class LhpnFile {
     private static int implicitPlaceCount=0;
 	
 	public LhpnFile(Log log) {
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 		this.log = log;
 		transitions = new HashMap<String, Transition>();
 		places = new HashMap<String, Place>();
@@ -106,7 +106,7 @@ public class LhpnFile {
 	}
 	
 	public LhpnFile() {
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 		transitions = new HashMap<String, Transition>();
 		places = new HashMap<String, Place>();
 		implicitPlaceMap = new HashMap<String,String>();

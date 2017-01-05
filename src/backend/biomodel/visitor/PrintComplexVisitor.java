@@ -10,9 +10,9 @@ import backend.biomodel.network.ComplexSpecies;
 import backend.biomodel.network.GeneticNetwork;
 import backend.biomodel.network.Influence;
 import backend.biomodel.network.SpeciesInterface;
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
 import backend.biomodel.util.Utility;
+import backend.util.GlobalConstants;
 
 public class PrintComplexVisitor extends AbstractPrintVisitor {
 	

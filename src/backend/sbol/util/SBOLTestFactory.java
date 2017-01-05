@@ -41,7 +41,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 import backend.biomodel.annotation.AnnotationUtility;
 import backend.biomodel.annotation.SBOLAnnotation;
 import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 
 public class SBOLTestFactory {
 

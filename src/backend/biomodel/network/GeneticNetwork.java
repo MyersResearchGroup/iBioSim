@@ -31,7 +31,6 @@ import org.sbml.jsbml.Unit.Kind;
 
 import backend.biomodel.annotation.AnnotationUtility;
 import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
 import backend.biomodel.util.Utility;
 import backend.biomodel.visitor.AbstractPrintVisitor;
@@ -43,6 +42,7 @@ import backend.biomodel.visitor.PrintRepressionBindingVisitor;
 import backend.biomodel.visitor.PrintSpeciesVisitor;
 import backend.lpn.parser.LhpnFile;
 import backend.lpn.parser.Translator;
+import backend.util.GlobalConstants;
 import frontend.main.Gui;
 import frontend.main.util.MutableString;
 

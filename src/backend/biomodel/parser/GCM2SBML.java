@@ -17,9 +17,8 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.ext.comp.Port;
 
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
-import frontend.main.Gui;
+import backend.util.GlobalConstants;
 
 
 public class GCM2SBML {
@@ -720,7 +719,7 @@ public class GCM2SBML {
 	 * @return
 	 */
 	public void convertGCM2SBML(String root, String fileName) {
-		String filename = root + Gui.separator + fileName;
+		String filename = root + GlobalConstants.separator + fileName;
 		int condCnt = 0;
 		for (String s : conditions) {
 			bioModel.createCondition(s,condCnt);
@@ -829,7 +828,7 @@ public class GCM2SBML {
 			bioModel.createComponentFromGCM(s,components.get(s));
 		}
 		if (sbmlFile!=null && !sbmlFile.equals("")) {
-			SBMLDocument document = SBMLutilities.readSBML(root + Gui.separator + sbmlFile);
+			SBMLDocument document = SBMLutilities.readSBML(root + GlobalConstants.separator + sbmlFile);
 			if (document!=null) {
 				Model model = document.getModel();
 				Model modelNew = bioModel.getSBMLDocument().getModel();
@@ -841,7 +840,7 @@ public class GCM2SBML {
 				for (int i = 0; i < model.getEventCount(); i++) {
 					modelNew.addEvent(model.getEvent(i).clone());
 				}
-				new File(root + Gui.separator + sbmlFile).delete();
+				new File(root + GlobalConstants.separator + sbmlFile).delete();
 			}
 		}
 		new File(filename).delete();

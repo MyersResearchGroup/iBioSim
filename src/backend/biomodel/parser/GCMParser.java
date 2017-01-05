@@ -22,8 +22,7 @@ import backend.biomodel.network.Influence;
 import backend.biomodel.network.Promoter;
 import backend.biomodel.network.SpasticSpecies;
 import backend.biomodel.network.SpeciesInterface;
-import backend.biomodel.util.GlobalConstants;
-import frontend.main.Gui;
+import backend.util.GlobalConstants;
 
 /**
  * This class parses a genetic circuit model.
@@ -36,7 +35,7 @@ public class GCMParser {
 	private String separator;
 
 	public GCMParser(String filename) {
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 		//this.debug = debug;
 		biomodel = new BioModel(filename.substring(0, filename.length()
 				- filename.split(separator)[filename.split(separator).length - 1]
@@ -58,7 +57,7 @@ public class GCMParser {
 	}
 	
 	public GCMParser(BioModel gcm) {
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 		//this.debug = debug;
 		this.biomodel = gcm;
 	}

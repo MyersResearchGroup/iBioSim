@@ -117,17 +117,18 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
-import backend.analysis.main.AnalysisView;
-import backend.analysis.main.SEDMLutilities;
+import backend.analysis.util.SEDMLutilities;
 import backend.biomodel.parser.BioModel;
 import backend.biomodel.util.SBMLutilities;
 import backend.lpn.parser.LhpnFile;
+import backend.util.GlobalConstants;
+import backend.util.dataparser.DTSDParser;
+import backend.util.dataparser.DataParser;
+import backend.util.dataparser.TSDParser;
+import frontend.analysis.AnalysisView;
 import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.Utility;
-import frontend.main.util.dataparser.DTSDParser;
-import frontend.main.util.dataparser.DataParser;
-import frontend.main.util.dataparser.TSDParser;
 
 
 /**
@@ -271,7 +272,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		averageOrder = null;
 		popup = new JPopupMenu();
 		warn = false;
-		separator = Gui.separator;
+		separator = GlobalConstants.separator;
 
 		// initializes member variables
 		this.log = log;
@@ -5005,7 +5006,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			if (!filename.equals("")) {
 				file = new File(filename);
-				String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(Gui.separator));
+				String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(GlobalConstants.separator));
 				biosimrc.put("biosim.general.export_dir", dir);
 				boolean exportIt = true;
 				if (file.exists()) {
@@ -5140,7 +5141,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String filename = Utility.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY, export, output);
 			if (!filename.equals("")) {
 				file = new File(filename);
-				String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(Gui.separator));
+				String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(GlobalConstants.separator));
 				biosimrc.put("biosim.general.export_dir", dir);
 				boolean exportIt = true;
 				if (file.exists()) {

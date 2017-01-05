@@ -3,7 +3,7 @@ package backend.biomodel.network;
 
 import java.util.Properties;
 
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 
 
 /**

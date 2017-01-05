@@ -36,9 +36,9 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 import backend.biomodel.annotation.AnnotationUtility;
 import backend.biomodel.annotation.SBOLAnnotation;
 import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
 import backend.biomodel.util.Utility;
+import backend.util.GlobalConstants;
 
 public class ModelGenerator {
 	

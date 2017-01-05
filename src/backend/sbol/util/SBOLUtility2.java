@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 
 import org.sbolstandard.core2.*;
 
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 import frontend.main.Gui;
 
 public class SBOLUtility2 

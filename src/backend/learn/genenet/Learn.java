@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import frontend.main.Gui;
+import backend.util.GlobalConstants;
 
 public class Learn
 {
@@ -605,7 +605,7 @@ public class Learn
 	public void getDotFile(String filename, String directory, SpeciesCollection collection, NetCon network)
 	{
 		Map<String, String> speciesToNode;
-		File fout = new File(directory + Gui.separator + filename);
+		File fout = new File(directory + GlobalConstants.separator + filename);
 		FileOutputStream fos = null;
 		OutputStreamWriter osw = null;
 		try

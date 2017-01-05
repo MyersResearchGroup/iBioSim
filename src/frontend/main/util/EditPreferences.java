@@ -28,8 +28,8 @@ import javax.swing.plaf.metal.MetalButtonUI;
 import com.mxgraph.util.mxConstants;
 
 import backend.biomodel.parser.CompatibilityFixer;
-import backend.biomodel.util.GlobalConstants;
 import backend.sbol.util.SBOLUtility2;
+import backend.util.GlobalConstants;
 import frontend.main.Gui;
 
 

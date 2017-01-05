@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 import backend.lpn.parser.LhpnFile;
+import backend.util.GlobalConstants;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
-import frontend.main.Gui;
 
 public class Conolse7_26_2012 {
 	
@@ -68,8 +68,8 @@ public class Conolse7_26_2012 {
 		
 		LhpnFile lpn = new LhpnFile();
 
-		lpn.load(directory + Gui.separator + lpnList[0]);
-		Options.set_TimingLogFile(directory + Gui.separator
+		lpn.load(directory + GlobalConstants.separator + lpnList[0]);
+		Options.set_TimingLogFile(directory + GlobalConstants.separator
 				+ lpnList[0] + ".tlog");
 
 		
@@ -80,7 +80,7 @@ public class Conolse7_26_2012 {
 		for (int i=1; i < lpnList.length; i++) {
 			 String curLPNname = lpnList[i];
 			 LhpnFile curLPN = new LhpnFile();
-			 curLPN.load(directory + Gui.separator + curLPNname);
+			 curLPN.load(directory + GlobalConstants.separator + curLPNname);
 			 selectedLPNs.add(curLPN);
 		}
 		

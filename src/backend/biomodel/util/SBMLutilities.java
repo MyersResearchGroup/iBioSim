@@ -101,6 +101,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import backend.biomodel.annotation.AnnotationUtility;
 import backend.biomodel.parser.BioModel;
+import backend.util.GlobalConstants;
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 import frontend.main.Gui;
@@ -7309,9 +7310,9 @@ public class SBMLutilities
 			Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(sbaseRef.getIdRef());
 			String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()
 					.replace("file://", "").replace("file:", "").replace(".gcm", ".xml");
-			subModel.load(root + Gui.separator + extModel);
+			subModel.load(root + GlobalConstants.separator + extModel);
 			id += changeIdToPortRef(root, sbaseRef.getSBaseRef(), subModel);
-			subModel.save(root + Gui.separator + extModel);
+			subModel.save(root + GlobalConstants.separator + extModel);
 		}
 		if (sbaseRef.isSetIdRef())
 		{
@@ -7414,7 +7415,7 @@ public class SBMLutilities
 			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
 			String extModel = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource().replace("file://", "")
 					.replace("file:", "").replace(".gcm", ".xml");
-			subModel.load(root + Gui.separator + extModel);
+			subModel.load(root + GlobalConstants.separator + extModel);
 			ArrayList<SBase> elements = getListOfAllElements(document.getModel());
 			for (int j = 0; j < elements.size(); j++)
 			{
@@ -7433,7 +7434,7 @@ public class SBMLutilities
 				Deletion deletion = submodel.getListOfDeletions().get(j);
 				changeIdToPortRef(root, deletion, subModel);
 			}
-			subModel.save(root + Gui.separator + extModel);
+			subModel.save(root + GlobalConstants.separator + extModel);
 		}
 
 		return true;

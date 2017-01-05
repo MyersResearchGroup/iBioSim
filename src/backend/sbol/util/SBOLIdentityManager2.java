@@ -14,8 +14,8 @@ import org.sbolstandard.core2.ComponentDefinition;
 import backend.biomodel.annotation.AnnotationUtility;
 import backend.biomodel.annotation.SBOLAnnotation;
 import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
+import backend.util.GlobalConstants;
 
 public class SBOLIdentityManager2 {
 

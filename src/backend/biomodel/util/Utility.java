@@ -31,6 +31,7 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
+import backend.util.GlobalConstants;
 import frontend.main.Gui;
 
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -270,7 +271,7 @@ public class Utility {
 	}
 
 	public static HashMap<String, double[]> calculateAverage(String folder) {
-		String separator = Gui.separator;
+		String separator = GlobalConstants.separator;
 		HashMap<String, double[]> result = new HashMap<String, double[]>();
 		HashMap<String, double[]> average = null;
 		String[] files = getTSDFiles(folder);

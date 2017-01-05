@@ -3,7 +3,7 @@ package backend.biomodel.parser;
 
 import java.util.HashMap;
 
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 
 
 public class CompatibilityFixer {

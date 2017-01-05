@@ -15,8 +15,8 @@ import javax.swing.JProgressBar;
 import backend.lpn.parser.ExprTree;
 import backend.lpn.parser.LhpnFile;
 import backend.lpn.parser.Translator;
+import backend.util.dataparser.DataParser;
 import frontend.main.Gui;
-import frontend.main.util.dataparser.DataParser;
 
 public class StateGraph implements Runnable {
 	// private HashMap<String, LinkedList<State>> stateGraph;

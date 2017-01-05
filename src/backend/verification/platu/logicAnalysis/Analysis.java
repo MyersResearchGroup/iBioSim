@@ -20,6 +20,7 @@ import backend.lpn.parser.LhpnFile;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.LpnDecomposition.LpnProcess;
+import backend.util.GlobalConstants;
 import backend.verification.platu.MDD.MDT;
 import backend.verification.platu.MDD.Mdd;
 import backend.verification.platu.MDD.mddNode;
@@ -58,7 +59,7 @@ public class Analysis {
 	 */
 	private HashSet<Transition> visitedTrans;
 	HashMap<Transition, StaticDependencySets> staticDependency = new HashMap<Transition, StaticDependencySets>();
-	private String separator = Gui.separator;
+	private String separator = GlobalConstants.separator;
 		
 	public Analysis(StateGraph[] lpnList, State[] initStateArray, LPNTranRelation lpnTranRelation, String method) {
 		traceCex = new LinkedList<Transition>();

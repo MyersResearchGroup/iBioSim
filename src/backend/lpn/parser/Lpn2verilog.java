@@ -3,7 +3,7 @@ package backend.lpn.parser;
 import java.io.*;
 import java.util.*;
 
-import frontend.main.Gui;
+import backend.util.GlobalConstants;
 
 
 public class Lpn2verilog {
@@ -12,7 +12,7 @@ public class Lpn2verilog {
 	public static void convert(String lpnFileName) {
 		HashMap<String,Boolean> visitedPlaces;
 		String enable = "";
-		String separator = Gui.separator;
+		String separator = GlobalConstants.separator;
 		try{
 			LhpnFile lpn = new LhpnFile();
 			lpn.load(lpnFileName);

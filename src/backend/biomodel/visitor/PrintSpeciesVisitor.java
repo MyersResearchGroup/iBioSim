@@ -13,9 +13,9 @@ import backend.biomodel.network.DiffusibleConstitutiveSpecies;
 import backend.biomodel.network.DiffusibleSpecies;
 import backend.biomodel.network.SpasticSpecies;
 import backend.biomodel.network.SpeciesInterface;
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
 import backend.biomodel.util.Utility;
+import backend.util.GlobalConstants;
 import frontend.main.Gui;
 
 public class PrintSpeciesVisitor extends AbstractPrintVisitor {

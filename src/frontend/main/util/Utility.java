@@ -21,7 +21,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.*;
 
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 import frontend.main.Gui;
 
 /**
@@ -355,7 +355,7 @@ public class Utility {
 					fd.setDirectory(file.getPath());
 				}
 				else {
-					fd.setDirectory(file.getPath().substring(file.getPath().indexOf(Gui.separator)+1));
+					fd.setDirectory(file.getPath().substring(file.getPath().indexOf(GlobalConstants.separator)+1));
 					fd.setFile(file.getName());
 				}
 			}
@@ -423,7 +423,7 @@ public class Utility {
 							selectedFile += ".tsd";
 						}
 					}
-					return fd.getDirectory() + Gui.separator + selectedFile;
+					return fd.getDirectory() + GlobalConstants.separator + selectedFile;
 				}
 				return "";
 			}

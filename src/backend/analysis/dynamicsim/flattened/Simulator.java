@@ -3,9 +3,6 @@ package backend.analysis.dynamicsim.flattened;
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 import frontend.main.Gui;
-import frontend.main.util.dataparser.DTSDParser;
-import frontend.main.util.dataparser.DataParser;
-import frontend.main.util.dataparser.TSDParser;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
 import java.awt.Point;
@@ -61,8 +58,11 @@ import org.sbml.jsbml.text.parser.ParseException;
 
 import backend.analysis.dynamicsim.ParentSimulator;
 import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.util.GlobalConstants;
 import backend.biomodel.util.SBMLutilities;
+import backend.util.GlobalConstants;
+import backend.util.dataparser.DTSDParser;
+import backend.util.dataparser.DataParser;
+import backend.util.dataparser.TSDParser;
 
 public abstract class Simulator implements ParentSimulator
 {

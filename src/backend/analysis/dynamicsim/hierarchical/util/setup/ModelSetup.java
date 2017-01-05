@@ -25,7 +25,7 @@ import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
-import backend.biomodel.util.GlobalConstants;
+import backend.util.GlobalConstants;
 
 public class ModelSetup
 {
