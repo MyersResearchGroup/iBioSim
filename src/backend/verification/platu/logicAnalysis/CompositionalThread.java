@@ -3,7 +3,7 @@ package backend.verification.platu.logicAnalysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 import backend.verification.platu.stategraph.StateGraph;
 
@@ -111,7 +111,7 @@ public class CompositionalThread extends Thread{
 	private static void extractConstraints(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		newConstraintSet.clear();
 		oldConstraintSet.clear();
-		LhpnFile srcLpn = srcSG.getLpn();
+		LPN srcLpn = srcSG.getLpn();
 		for(Constraint newConstraint : sg.getNewConstraintSet()){
 			if(newConstraint.getLpn() != srcLpn) continue;
 			newConstraintSet.add(newConstraint);

@@ -43,7 +43,7 @@ import backend.analysis.markov.StateGraph.Property;
 import backend.biomodel.parser.BioModel;
 import backend.biomodel.util.SBMLutilities;
 import backend.lpn.parser.Abstraction;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Translator;
 import backend.util.GlobalConstants;
 import backend.util.dataparser.DataParser;
@@ -451,7 +451,7 @@ public class Run implements ActionListener
 					}
 				}
 				MutableString mutProp = new MutableString(prop);
-				LhpnFile lpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
+				LPN lpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
 				prop = mutProp.getString();
 				if (lpnFile == null)
 				{
@@ -463,7 +463,7 @@ public class Run implements ActionListener
 				Translator t1 = new Translator();
 				if (abstraction.isSelected())
 				{
-					LhpnFile lhpnFile = new LhpnFile();
+					LPN lhpnFile = new LPN();
 					lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
 					Abstraction abst = new Abstraction(lhpnFile, abstPane);
 					abst.abstractSTG(false);
@@ -532,7 +532,7 @@ public class Run implements ActionListener
 						Translator t1 = new Translator();
 						if (abstraction.isSelected())
 						{
-							LhpnFile lhpnFile = new LhpnFile();
+							LPN lhpnFile = new LPN();
 							lhpnFile.load(root + GlobalConstants.separator + modelFile);
 							Abstraction abst = new Abstraction(lhpnFile, abstPane);
 							abst.abstractSTG(false);
@@ -611,7 +611,7 @@ public class Run implements ActionListener
 								}
 							}
 							MutableString mutProp = new MutableString(prop);
-							LhpnFile lpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
+							LPN lpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
 							prop = mutProp.getString();
 							if (lpnFile == null)
 							{
@@ -623,7 +623,7 @@ public class Run implements ActionListener
 							Translator t1 = new Translator();
 							if (abstraction.isSelected())
 							{
-								LhpnFile lhpnFile = new LhpnFile();
+								LPN lhpnFile = new LPN();
 								lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
 								Abstraction abst = new Abstraction(lhpnFile, abstPane);
 								abst.abstractSTG(false);
@@ -683,7 +683,7 @@ public class Run implements ActionListener
 			{
 				if (nary.isSelected() && modelEditor != null)
 				{
-					LhpnFile lhpnFile = new LhpnFile(log);
+					LPN lhpnFile = new LPN(log);
 					lhpnFile.load(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
 					lhpnFile.printDot(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".dot");
 					time1 = System.nanoTime();
@@ -691,7 +691,7 @@ public class Run implements ActionListener
 				}
 				else if (modelFile.contains(".lpn"))
 				{
-					LhpnFile lhpnFile = new LhpnFile();
+					LPN lhpnFile = new LPN();
 					lhpnFile.load(root + GlobalConstants.separator + modelFile);
 					if (abstraction.isSelected())
 					{
@@ -737,10 +737,10 @@ public class Run implements ActionListener
 					String prop = null;
 					time1 = System.nanoTime();
 					progress.setIndeterminate(true);
-					LhpnFile lhpnFile = null;
+					LPN lhpnFile = null;
 					if (modelFile.contains(".lpn"))
 					{
-						lhpnFile = new LhpnFile();
+						lhpnFile = new LPN();
 						lhpnFile.load(root + GlobalConstants.separator + modelFile);
 					}
 					else
@@ -898,10 +898,10 @@ public class Run implements ActionListener
 					String prop = null;
 					time1 = System.nanoTime();
 					progress.setIndeterminate(true);
-					LhpnFile lhpnFile = null;
+					LPN lhpnFile = null;
 					if (modelFile.contains(".lpn"))
 					{
-						lhpnFile = new LhpnFile();
+						lhpnFile = new LPN();
 						lhpnFile.load(root + GlobalConstants.separator + modelFile);
 					}
 					else

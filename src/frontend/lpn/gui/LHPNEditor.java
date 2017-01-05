@@ -51,7 +51,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	private String[] varOptions = new String[] { "Boolean", "Continuous",
 			"Discrete" };
 
-	private LhpnFile lhpnFile = null;
+	private LPN lhpnFile = null;
 
 	private JPanel mainPanel;
 
@@ -65,7 +65,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		super();
 	}
 
-	public LHPNEditor(String directory, String filename, LhpnFile lhpn,
+	public LHPNEditor(String directory, String filename, LPN lhpn,
 			Gui biosim) {
 		super();
 		this.biosim = biosim;
@@ -75,7 +75,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		
 		lhpnFile = lhpn;
 		if (lhpnFile == null) {
-			lhpnFile = new LhpnFile();
+			lhpnFile = new LPN();
 		}
 		this.directory = directory;
 		if (filename != null) {

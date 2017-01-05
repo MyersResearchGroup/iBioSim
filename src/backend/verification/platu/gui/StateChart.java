@@ -11,8 +11,8 @@ import org.jfree.chart.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.xy.*;
 
-import backend.verification.platu.lpn.LPN;
 import backend.verification.platu.main.Main;
+import backend.verification.platu.platuLpn.PlatuLPN;
 
 /**
  *
@@ -24,10 +24,10 @@ public class StateChart extends Thread {
     XYSeries states = new XYSeries("States");
     XYSeries stateTrans = new XYSeries("StateTrans");
     XYSeries level = new XYSeries("Recursion depth");
-    LPN sg;
+    PlatuLPN sg;
     public boolean running = true;
 
-    public StateChart(LPN sg) {
+    public StateChart(PlatuLPN sg) {
         this.sg = sg;
     }
 

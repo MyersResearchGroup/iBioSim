@@ -1,6 +1,6 @@
 // $ANTLR 3.4 /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g 2013-06-26 17:00:34
 
-    package backend.verification.platu.lpn.io;
+    package backend.verification.platu.platuLpn.io;
     
     import java.util.Map.Entry;
     import java.util.HashMap;
@@ -12,18 +12,18 @@
 import org.antlr.runtime.*;
 
 import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
 import backend.verification.platu.expression.*;
-import backend.verification.platu.lpn.DualHashMap;
-import backend.verification.platu.lpn.LPN;
-import backend.verification.platu.lpn.LPNTran;
-import backend.verification.platu.lpn.LpnTranList;
-import backend.verification.platu.lpn.VarExpr;
-import backend.verification.platu.lpn.VarExprList;
-import backend.verification.platu.lpn.VarSet;
+import backend.verification.platu.platuLpn.DualHashMap;
+import backend.verification.platu.platuLpn.PlatuLPN;
+import backend.verification.platu.platuLpn.LPNTran;
+import backend.verification.platu.platuLpn.LpnTranList;
+import backend.verification.platu.platuLpn.VarExpr;
+import backend.verification.platu.platuLpn.VarExprList;
+import backend.verification.platu.platuLpn.VarSet;
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.StateGraph;
 
@@ -123,11 +123,11 @@ public class PlatuGrammarParser extends Parser {
         static private boolean main = false;
     //    static private ExprTree ZERO = new ExprTree("false"); // constant false node
     //    static private ExprTree ONE = new ExprTree("true");  // constant true node    
-        static private HashMap<String, LhpnFile> LpnMap = new HashMap<String, LhpnFile>();  // all modules parsed, keyed by module name
+        static private HashMap<String, LPN> LpnMap = new HashMap<String, LPN>();  // all modules parsed, keyed by module name
         static private HashMap<String, Integer> GlobalVarHashMap = new HashMap<String, Integer>();  // global variables and associated values
-        static private HashMap<String, LhpnFile> GlobalOutputMap = new HashMap<String, LhpnFile>();  // maps potential output variables to associated lpn
+        static private HashMap<String, LPN> GlobalOutputMap = new HashMap<String, LPN>();  // maps potential output variables to associated lpn
         static private HashMap<String, Integer> GlobalInterfaceMap = new HashMap<String, Integer>();  // maps variables to initial values, input have null value until associated output is found
-        static private HashMap<String, List<LhpnFile>> GlobalInputMap = new HashMap<String, List<LhpnFile>>(); // maps input variables to associated lpn
+        static private HashMap<String, List<LPN>> GlobalInputMap = new HashMap<String, List<LPN>>(); // maps input variables to associated lpn
         static private HashMap<String, List<Transition>> GlobalTranMap = new HashMap<String, List<Transition>>();  // maps potential output variables to lpn transitions which affect it
         static private HashMap<String, ExprTree> GlobalVarNodeMap = new HashMap<String, ExprTree>(); // maps global variable name to variable object
         //static private ExpressionNode ZERO = new ConstNode("FALSE", 0);  
@@ -185,18 +185,18 @@ public class PlatuGrammarParser extends Parser {
 
     // $ANTLR start "lpn"
     // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:120:3: lpn returns [Set<LhpnFile> lpnSet] : ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )? ( module | main )+ EOF ;
-    public final Set<LhpnFile> lpn() throws RecognitionException {
-        Set<LhpnFile> lpnSet = null;
+    public final Set<LPN> lpn() throws RecognitionException {
+        Set<LPN> lpnSet = null;
 
 
-        LhpnFile module1 =null;
+        LPN module1 =null;
 
 
         try {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:121:5: ( ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )? ( module | main )+ EOF )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:121:9: ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )? ( module | main )+ EOF
             {
-            lpnSet = new HashSet<LhpnFile>();
+            lpnSet = new HashSet<LPN>();
 
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:122:9: ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )?
             int alt1=5;
@@ -506,8 +506,8 @@ public class PlatuGrammarParser extends Parser {
 
     // $ANTLR start "module"
     // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:156:1: module returns [LhpnFile lpn] : ( '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>' ) ;
-    public final LhpnFile module() throws RecognitionException {
-        LhpnFile lpn = null;
+    public final LPN module() throws RecognitionException {
+        LPN lpn = null;
 
 
         Token ID2=null;
@@ -684,7 +684,7 @@ public class PlatuGrammarParser extends Parser {
 
             //				lpn = new LPN(prj, (ID2!=null?ID2.getText():null), Inputs, Outputs, Internals, VarNodeMap, (logic3!=null?logic3.lpnTranSet:null), 
             //	         			StatevectorMap, initialMarking);
-                    lpn = new LhpnFile();
+                    lpn = new LPN();
                     lpn.setLabel((ID2!=null?ID2.getText():null));
                     System.out.println("---- LPN : " + lpn.getLabel() + " ----");
                     for (Transition t: (logic3!=null?logic3.lpnTranSet:null)) {
@@ -751,7 +751,7 @@ public class PlatuGrammarParser extends Parser {
                           System.out.println("@1: Added input variable " + input + " to LPN " + lpn.getLabel() + " with initial value " + StatevectorMap.get(input) + ".");
             	          }
                       	else{
-                      	  List<LhpnFile> lpnList = new ArrayList<LhpnFile>();//List<LPN> lpnList = new ArrayList<LPN>();
+                      	  List<LPN> lpnList = new ArrayList<LPN>();//List<LPN> lpnList = new ArrayList<LPN>();
                        	  lpnList.add(lpn);
                        	  GlobalInputMap.put(input, lpnList);
                        	  lpn.addInput(input, "integer", StatevectorMap.get(input)+"");
@@ -1366,9 +1366,9 @@ public class PlatuGrammarParser extends Parser {
             	    					Outputs.add(var_tmp);
             	    					// TODO: Is it needed for our LPN?
             	    					// initialize associated input variables with output value
-            	    					List<LhpnFile> lpnList = GlobalInputMap.get(var_tmp);
+            	    					List<LPN> lpnList = GlobalInputMap.get(var_tmp);
             	    					if(lpnList != null){
-            	    						for(LhpnFile lpn : lpnList){
+            	    						for(LPN lpn : lpnList){
             	    							//lpn.getInitVector().put(varNode.getText(), value);
             	    							//(delete) lpn.addInput(var_tmp, "integer", value+"");
             	    						}
@@ -3337,7 +3337,7 @@ public class PlatuGrammarParser extends Parser {
                        				Integer value = GlobalInterfaceMap.get(ID_tmp);
                        				if(value != null){
                        					StatevectorMap.put(ID_tmp, value);		
-                       					LhpnFile outputLPN = GlobalOutputMap.get(ID_tmp);
+                       					LPN outputLPN = GlobalOutputMap.get(ID_tmp);
                        					if(outputLPN.getAllInternals().keySet().contains(ID_tmp)){
                        						outputLPN.getAllInternals().remove(ID_tmp);
                     //   						for (String varID : outputLPN.getAllInternals().keySet()) {

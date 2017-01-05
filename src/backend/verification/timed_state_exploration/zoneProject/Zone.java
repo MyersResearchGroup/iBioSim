@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Map;
 
 import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
-import backend.verification.platu.lpn.DualHashMap;
-import backend.verification.platu.lpn.LpnTranList;
 import backend.verification.platu.main.Options;
+import backend.verification.platu.platuLpn.DualHashMap;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
 
@@ -205,7 +205,7 @@ public class Zone implements Equivalence{
 		}
 	}
 	
-	private LhpnFile[] _lpnList;
+	private LPN[] _lpnList;
 	
 	/* 
 	 * Turns on and off subsets for the zones.
@@ -413,21 +413,21 @@ public class Zone implements Equivalence{
 	public Zone(State initialState)
 	{	
 		// Extract the associated LPN.
-		LhpnFile lpn = initialState.getLpn();
+		LPN lpn = initialState.getLpn();
 		
 		int LPNIndex = lpn.getLpnIndex();
 		
 		if(_lpnList == null){
 			// If no LPN exists yet, create it and put lpn in it.
-			_lpnList = new LhpnFile[LPNIndex+1];
+			_lpnList = new LPN[LPNIndex+1];
 			_lpnList[LPNIndex] = lpn;
 		}
 		else if(_lpnList.length <= LPNIndex){
 			// The list does not contain the lpn.
 			
-			LhpnFile[] tmpList = _lpnList;
+			LPN[] tmpList = _lpnList;
 			
-			_lpnList = new LhpnFile[LPNIndex+1];
+			_lpnList = new LPN[LPNIndex+1];
 			_lpnList[LPNIndex] = lpn;
 			
 			// Copy any that exist already.
@@ -764,7 +764,7 @@ public class Zone implements Equivalence{
 	private void initialize_lpnList(State[] localStates){
 		
 		// Create the LPN list.
-		_lpnList = new LhpnFile[localStates.length];
+		_lpnList = new LPN[localStates.length];
 		
 		// Get the LPNs.
 		for(int i=0; i<localStates.length; i++){
@@ -820,7 +820,7 @@ public class Zone implements Equivalence{
 								new ArrayList<LPNTransitionPair>();
 			
 			// Get the associated LPN.
-			LhpnFile lpn = localStates[i].getLpn();
+			LPN lpn = localStates[i].getLpn();
 			
 			// Get the continuous variables for this LPN.
 			String[] continuousVariables = lpn.getContVars();
@@ -1134,7 +1134,7 @@ public class Zone implements Equivalence{
 		_matrix = new int[0][0];
 		_indexToTimerPair = new LPNTransitionPair[0];
 		_hashCode = -1;
-		_lpnList = new LhpnFile[0];
+		_lpnList = new LPN[0];
 		_rateZeroContinuous = new DualHashMap<LPNContAndRate, VariableRangePair>();
 	}
 	
@@ -1147,7 +1147,7 @@ public class Zone implements Equivalence{
 	 */
 	public int getUpperBoundbyTransition(Transition t)
 	{
-		LhpnFile lpn = t.getLpn();
+		LPN lpn = t.getLpn();
 		
 		int lpnIndex = lpn.getLpnIndex();
 		
@@ -1169,7 +1169,7 @@ public class Zone implements Equivalence{
 	 * 		The (0,var) entry of the zone, that is the maximum as recored by
 	 * 		the zone.
 	 */
-	public int getUpperBoundbyContinuousVariable(String contVar, LhpnFile lpn){
+	public int getUpperBoundbyContinuousVariable(String contVar, LPN lpn){
 		
 		// TODO : Finish.
 		
@@ -1314,7 +1314,7 @@ public class Zone implements Equivalence{
 	 */
 	public void setUpperBoundbyTransition(Transition t, int value)
 	{
-		LhpnFile lpn = t.getLpn();
+		LPN lpn = t.getLpn();
 		
 		int lpnIndex = lpn.getLpnIndex();
 		
@@ -1361,7 +1361,7 @@ public class Zone implements Equivalence{
 	@Override
 	public int getLowerBoundbyTransition(Transition t)
 	{
-		LhpnFile lpn = t.getLpn();
+		LPN lpn = t.getLpn();
 		
 		int lpnIndex = lpn.getLpnIndex();
 		
@@ -1382,7 +1382,7 @@ public class Zone implements Equivalence{
 	 * 		The (0,var) entry of the zone, that is the minimum as recored by
 	 * 		the zone.
 	 */
-	public int getLowerBoundbyContinuousVariable(String contVar, LhpnFile lpn){
+	public int getLowerBoundbyContinuousVariable(String contVar, LPN lpn){
 
 		// Extract the necessary indecies.
 		int lpnIndex = lpn.getLpnIndex();
@@ -1465,7 +1465,7 @@ public class Zone implements Equivalence{
 	 */
 	public void setLowerBoundbyTransition(Transition t, int value)
 	{
-		LhpnFile lpn = t.getLpn();
+		LPN lpn = t.getLpn();
 		
 		int lpnIndex = lpn.getLpnIndex();
 		
@@ -1508,7 +1508,7 @@ public class Zone implements Equivalence{
 	 * 		The upper and lower bounds according to the Zone.
 	 */
 	@Override
-	public IntervalPair getContinuousBounds(String contVar, LhpnFile lpn){
+	public IntervalPair getContinuousBounds(String contVar, LPN lpn){
 		
 		/*
 		 * Need to determine whether this is suppose to be a rate zero variable or a non-zero 
@@ -1761,7 +1761,7 @@ public class Zone implements Equivalence{
 	 * @param range
 	 * 		The new range of the continuous variable.
 	 */
-	public void setContinuousBounds(String contVar, LhpnFile lpn,
+	public void setContinuousBounds(String contVar, LPN lpn,
 			IntervalPair range){
 
 		// Extract the necessary indecies.
@@ -2240,7 +2240,7 @@ public class Zone implements Equivalence{
 	 */
 	public boolean exceedsLowerBoundbyTransitionIndex(Transition t)
 	{
-		LhpnFile lpn = t.getLpn();
+		LPN lpn = t.getLpn();
 		
 		int lpnIndex = lpn.getLpnIndex();
 		
@@ -2322,7 +2322,7 @@ public class Zone implements Equivalence{
 		
 		// Create the LPNTransitionPair to check if the Transitions is in the zone and to 
 		// find the index.
-		LhpnFile lpn = t.getLpn();
+		LPN lpn = t.getLpn();
 		
 		int lpnIndex = lpn.getLpnIndex();
 		
@@ -2402,7 +2402,7 @@ public class Zone implements Equivalence{
 		HashSet<LPNTransitionPair> oldTimers = new HashSet<LPNTransitionPair>();
 		
 		// Copy the LPNs over.
-		newZone._lpnList = new LhpnFile[this._lpnList.length];
+		newZone._lpnList = new LPN[this._lpnList.length];
 		for(int i=0; i<this._lpnList.length; i++){
 			newZone._lpnList[i] = this._lpnList[i];
 		}
@@ -2600,7 +2600,7 @@ public class Zone implements Equivalence{
 		HashSet<LPNTransitionPair> oldTimers = new HashSet<LPNTransitionPair>();
 		
 		// Copy the LPNs over.
-		newZone._lpnList = new LhpnFile[this._lpnList.length];
+		newZone._lpnList = new LPN[this._lpnList.length];
 		for(int i=0; i<this._lpnList.length; i++){
 			newZone._lpnList[i] = this._lpnList[i];
 		}
@@ -3792,7 +3792,7 @@ public class Zone implements Equivalence{
 		Zone newZone = new Zone();
 		
 		// Copy the LPNs over.
-		newZone._lpnList = new LhpnFile[this._lpnList.length];
+		newZone._lpnList = new LPN[this._lpnList.length];
 		for(int i=0; i<this._lpnList.length; i++){
 			newZone._lpnList[i] = this._lpnList[i];
 		}
@@ -5555,7 +5555,7 @@ public class Zone implements Equivalence{
 	public void updateContinuousAssignment(Transition firedTran, State s){
 
 		// Get the LPN.
-		LhpnFile lpn = _lpnList[firedTran.getLpn().getLpnIndex()];
+		LPN lpn = _lpnList[firedTran.getLpn().getLpnIndex()];
 		
 		// Get the current values of the (local) state.
 		HashMap<String,String> currentValues = 
@@ -6199,7 +6199,7 @@ public class Zone implements Equivalence{
 	 * 		The lits of LhpnFile objects that this Zone depends on.
 	 */
 	@Override
-	public LhpnFile[] get_lpnList(){
+	public LPN[] get_lpnList(){
 		return _lpnList;
 	}
 	
@@ -6557,7 +6557,7 @@ public class Zone implements Equivalence{
 		Zone newZone = new Zone();
 		
 		// Copy the LPNs over.
-		newZone._lpnList = new LhpnFile[this._lpnList.length];
+		newZone._lpnList = new LPN[this._lpnList.length];
 		for(int i=0; i<this._lpnList.length; i++){
 			newZone._lpnList[i] = this._lpnList[i];
 		}

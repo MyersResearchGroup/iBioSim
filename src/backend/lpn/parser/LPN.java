@@ -8,14 +8,14 @@ import java.util.regex.Pattern;
 
 import backend.biomodel.util.Utility;
 import backend.util.GlobalConstants;
-import backend.verification.platu.lpn.DualHashMap;
+import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.StateGraph;
 import backend.verification.timed_state_exploration.zoneProject.InequalityVariable;
 import frontend.main.Log;
 import frontend.verification.Verification;
 
 
-public class LhpnFile {
+public class LPN {
 
 	protected String separator;
 
@@ -90,7 +90,7 @@ public class LhpnFile {
     
     private static int implicitPlaceCount=0;
 	
-	public LhpnFile(Log log) {
+	public LPN(Log log) {
 		separator = GlobalConstants.separator;
 		this.log = log;
 		transitions = new HashMap<String, Transition>();
@@ -105,7 +105,7 @@ public class LhpnFile {
 		tranIndex = 0;		
 	}
 	
-	public LhpnFile() {
+	public LPN() {
 		separator = GlobalConstants.separator;
 		transitions = new HashMap<String, Transition>();
 		places = new HashMap<String, Place>();
@@ -2652,7 +2652,7 @@ public class LhpnFile {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LhpnFile other = (LhpnFile) obj;
+		LPN other = (LPN) obj;
 		if (booleans == null) {
 			if (other.booleans != null)
 				return false;
@@ -2692,7 +2692,7 @@ public class LhpnFile {
      * @param varIndexArrayOtherLpn
      * @param otherLpn
      */
-    public void genIndexLists(int[] varIndexArrayThisLpn, int[] varIndexArrayOtherLpn, LhpnFile otherLpn){
+    public void genIndexLists(int[] varIndexArrayThisLpn, int[] varIndexArrayOtherLpn, LPN otherLpn){
     	int arrayIndex = 0;
     	DualHashMap<String, Integer> otherVarIndexMap = otherLpn.getVarIndexMap();
     	String[] interfaceVars = otherLpn.getInterfaceVariables();

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
-import backend.verification.platu.lpn.DualHashMap;
+import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.State;
 
 public class Constraint{
-	private LhpnFile lpn; // lpn that generates the constraint
+	private LPN lpn; // lpn that generates the constraint
 	final private int[] interfaceValues;
 	final private Transition lpnTransition;
 	final private int[] vector;
@@ -19,7 +19,7 @@ public class Constraint{
 	List<Integer> valueList = new ArrayList<Integer>(1);
 	private int hashVal = -1;
 
-	public Constraint(State start, State end, Transition firedTran, LhpnFile lpn2) {
+	public Constraint(State start, State end, Transition firedTran, LPN lpn2) {
 	    this.lpnTransition = firedTran;
 	    this.lpn = firedTran.getLpn();		
 		this.vector = start.getVariableVector();
@@ -72,7 +72,7 @@ public class Constraint{
 	/**
      * @return LPN where the constraint was generated.
      */
-	public LhpnFile getLpn(){
+	public LPN getLpn(){
 		return this.lpn;
 	}
 

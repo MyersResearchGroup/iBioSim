@@ -28,14 +28,14 @@ public class LPNTranslator{
 													  // of the transition to its index.
 	
 
-	private LhpnFile lpn;		// The LPN to translate between.
+	private LPN lpn;		// The LPN to translate between.
 	
 	/**
 	 * Creates a translator between the names of the associated Lhpnfile and
 	 * the indices.
 	 * @param lpn
 	 */
-	public LPNTranslator(LhpnFile lpn)
+	public LPNTranslator(LPN lpn)
 	{
 		this.lpn = lpn;
 		createDictionaries();	// Create the dictionaries that translate between

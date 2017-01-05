@@ -1,4 +1,4 @@
-package backend.verification.platu.lpn.io;
+package backend.verification.platu.platuLpn.io;
 
 import java.util.List;
 

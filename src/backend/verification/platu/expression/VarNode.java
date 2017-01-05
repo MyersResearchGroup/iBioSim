@@ -3,7 +3,7 @@ package backend.verification.platu.expression;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import backend.verification.platu.lpn.VarType;
+import backend.verification.platu.platuLpn.VarType;
 
 public class VarNode implements ExpressionNode {
 	protected String name;		 // if input, associated output var name

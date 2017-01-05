@@ -10,7 +10,7 @@ import frontend.main.Log;
 import frontend.verification.AbstPane;
 import frontend.verification.Verification;
 
-public class Abstraction extends LhpnFile {
+public class Abstraction extends LPN {
 
 	private HashMap<Transition, Integer> process_trans = new HashMap<Transition, Integer>();
 
@@ -44,7 +44,7 @@ public class Abstraction extends LhpnFile {
 		this.abstPane = pane.getAbstPane();
 	}
 
-	public Abstraction(LhpnFile lhpn, Verification pane) {
+	public Abstraction(LPN lhpn, Verification pane) {
 		super(lhpn.log);
 		this.abstPane = pane.getAbstPane();
 		transitions = lhpn.transitions;
@@ -56,7 +56,7 @@ public class Abstraction extends LhpnFile {
 		properties = lhpn.properties;
 	}
 
-	public Abstraction(LhpnFile lhpn, AbstPane abst) {
+	public Abstraction(LPN lhpn, AbstPane abst) {
 		super(lhpn.log);
 		this.abstPane = abst;
 		transitions = lhpn.transitions;
@@ -68,7 +68,7 @@ public class Abstraction extends LhpnFile {
 		properties = lhpn.properties;
 	}
 	
-	public Abstraction(LhpnFile lhpn) {
+	public Abstraction(LPN lhpn) {
 		super(lhpn.log);
 		transitions = lhpn.transitions;
 		places = lhpn.places;

@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import backend.lpn.parser.Transition;
-import backend.verification.platu.lpn.LPNTranRelation;
-import backend.verification.platu.lpn.LpnTranList;
+import backend.verification.platu.platuLpn.LPNTranRelation;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.StateGraph;
 
 /**

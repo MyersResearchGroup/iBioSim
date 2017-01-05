@@ -12,12 +12,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 import backend.verification.platu.common.PlatuObj;
-import backend.verification.platu.lpn.DualHashMap;
-import backend.verification.platu.lpn.LpnTranList;
-import backend.verification.platu.lpn.VarSet;
+import backend.verification.platu.platuLpn.DualHashMap;
+import backend.verification.platu.platuLpn.LpnTranList;
+import backend.verification.platu.platuLpn.VarSet;
 import backend.verification.timed_state_exploration.zone.TimedState;
 
 /**
@@ -32,7 +32,7 @@ public class State extends PlatuObj {
     protected int[] vector;
     protected boolean[] tranVector; // an indicator vector showing whether each transition is enabled or not 
     private int hashVal = 0;
-    protected LhpnFile lpn;
+    protected LPN lpn;
     private int index;
     private boolean localEnabledOnly;
     protected boolean failure = false;
@@ -51,7 +51,7 @@ public class State extends PlatuObj {
     	return this.print();
     }
 
-    public State(final LhpnFile lpn, int[] new_marking, int[] new_vector, boolean[] new_isTranEnabled) {
+    public State(final LPN lpn, int[] new_marking, int[] new_vector, boolean[] new_isTranEnabled) {
     	this.lpn = lpn;
         this.marking = new_marking;
         this.vector = new_vector;
@@ -121,11 +121,11 @@ public class State extends PlatuObj {
 //        counts[0]++;
 //    }
     
-    public void setLpn(final LhpnFile thisLpn) {
+    public void setLpn(final LPN thisLpn) {
     	this.lpn = thisLpn;
     }
     
-    public LhpnFile getLpn() {
+    public LPN getLpn() {
     	return this.lpn;
     }
     

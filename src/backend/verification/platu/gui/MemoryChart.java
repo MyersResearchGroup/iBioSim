@@ -11,8 +11,8 @@ import org.jfree.chart.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.xy.*;
 
-import backend.verification.platu.lpn.LPN;
 import backend.verification.platu.main.Main;
+import backend.verification.platu.platuLpn.PlatuLPN;
 
 /**
  *
@@ -25,13 +25,13 @@ public class MemoryChart extends Thread {
     XYSeries used = new XYSeries("Used");
     XYSeries total = new XYSeries("Total");
     XYSeries max = new XYSeries("Max");
-    LPN sg;
+    PlatuLPN sg;
     public boolean running = true;
 
 //    public MemoryChart(StateGraph sg) {
 //        this.sg = sg;
 //    }
-    public MemoryChart(LPN sg) {
+    public MemoryChart(PlatuLPN sg) {
         this.sg = sg;
     }
 

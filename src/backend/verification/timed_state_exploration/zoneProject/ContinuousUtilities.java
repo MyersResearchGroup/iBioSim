@@ -2,9 +2,9 @@ package backend.verification.timed_state_exploration.zoneProject;
 
 import java.util.ArrayList;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Variable;
-import backend.verification.platu.lpn.DualHashMap;
+import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
 
@@ -727,7 +727,7 @@ public class ContinuousUtilities {
 		
 		// Find the index of the continuous variable this inequality refers to.
 		// I'm assuming there is a single variable.
-		LhpnFile lpn = ineq.get_lpn();
+		LPN lpn = ineq.get_lpn();
 		Variable contVar = ineq.getContVariables().get(0);
 		DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
 		int contIndex = variableIndecies.getValue(contVar.getName());
@@ -868,7 +868,7 @@ public class ContinuousUtilities {
 	//*public static void updateInitialInequalities(Zone z, State s){
 	public static void updateInitialInequalities(Equivalence z, State s){
 		// Extract the LPN.
-		LhpnFile lpn = s.getLpn();
+		LPN lpn = s.getLpn();
 
 		// Get the state vector to update.
 //		int[] vector = s.getVector();
@@ -907,7 +907,7 @@ public class ContinuousUtilities {
 	 */
 	public static void updateInequalities(Zone z, State s){
 		// Extract the LPN.
-		LhpnFile lpn = s.getLpn();
+		LPN lpn = s.getLpn();
 
 		// Get the state vector to update.
 		int[] vector = s.getVariableVector();

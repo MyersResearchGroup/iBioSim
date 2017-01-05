@@ -4,7 +4,7 @@ import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.util.GlobalConstants;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
@@ -29,7 +29,7 @@ public class VerificationCommandLine {
 		}
 		String directory = null;
 		File dir = null;
-		ArrayList<LhpnFile> lpnList = new ArrayList<LhpnFile>();
+		ArrayList<LPN> lpnList = new ArrayList<LPN>();
 		ArrayList<String> lpnNames = new ArrayList<String>();
 		boolean allLPNs = false;
 		for (int i=0; i<args.length; i++) {
@@ -128,14 +128,14 @@ public class VerificationCommandLine {
 			lpnList.clear();
 			for (int i=0; i < lpns.length; i++) {
 				String curLPNname = lpns[i].getName();
-				LhpnFile curLPN = new LhpnFile();
+				LPN curLPN = new LPN();
 				curLPN.load(directory + separator + curLPNname);
 				lpnList.add(curLPN);
 			}
 		}
 		else {
 			for (int i=0; i < lpnNames.size(); i++) {
-				LhpnFile curLPN = new LhpnFile();
+				LPN curLPN = new LPN();
 				curLPN.load(directory + separator + lpnNames.get(i));//load(directory + curLPNname);
 				lpnList.add(curLPN);
 			}

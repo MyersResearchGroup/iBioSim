@@ -52,7 +52,7 @@ public class StateExploration {
 			File fileName = fc.getSelectedFile();
 			
 			// Create the LhpnFile object and load it with the file.
-			LhpnFile lpn = new LhpnFile();
+			LPN lpn = new LPN();
 			lpn.load(fileName.getAbsolutePath());
 			
 			// Run the state exploration algorithm which will produce a log file.
@@ -70,7 +70,7 @@ public class StateExploration {
 	}
 	
 	
-	public static void findStateGraph(LhpnFile lpn, String directory, String fileName)
+	public static void findStateGraph(LPN lpn, String directory, String fileName)
 			throws FileNotFoundException
 	{
 		// Create the printStreams for the dot file and log file.
@@ -99,7 +99,7 @@ public class StateExploration {
 	 * internal representation.
 	 * @param lpn The associated LHPN
 	 */
-	private void createPlaceDictionaries(LhpnFile lpn)
+	private void createPlaceDictionaries(LPN lpn)
 	{
 		int i = 0;
 		for(String s : lpn.getPlaceList())
@@ -115,7 +115,7 @@ public class StateExploration {
 	 * internal representation.
 	 * @param lpn
 	 */
-	private void createBooleanDictionaries(LhpnFile lpn)
+	private void createBooleanDictionaries(LPN lpn)
 	{
 		int i=0;
 		for(String s : lpn.getBooleans().keySet())
@@ -131,14 +131,14 @@ public class StateExploration {
 	 * @param lpn
 	 */
 	@SuppressWarnings("unused")
-	private void createDictionaries(LhpnFile lpn)
+	private void createDictionaries(LPN lpn)
 	{
 		createPlaceDictionaries(lpn);
 		createBooleanDictionaries(lpn);
 	}
 	
 //	private static ArrayDeque<LPNState> exploreStateGraph(LhpnFile lpn, PrintStream writer)
-	private static Collection<LPNState> exploreStateGraph(LhpnFile lpn, PrintStream writer)
+	private static Collection<LPNState> exploreStateGraph(LPN lpn, PrintStream writer)
 	{
 		// Stacks for the states remaining to explore and the states that are found.
 		ArrayDeque<LPNTransitionState> statesToExplore = new ArrayDeque<LPNTransitionState>();

@@ -40,7 +40,7 @@ import backend.biomodel.visitor.PrintComplexVisitor;
 import backend.biomodel.visitor.PrintDecaySpeciesVisitor;
 import backend.biomodel.visitor.PrintRepressionBindingVisitor;
 import backend.biomodel.visitor.PrintSpeciesVisitor;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Translator;
 import backend.util.GlobalConstants;
 import frontend.main.Gui;
@@ -241,7 +241,7 @@ public class GeneticNetwork {
 					levels.add(new Object[0]);
 				}
 				MutableString prop = new MutableString(property);
-				LhpnFile lpn = properties.convertToLHPN(species, levels, prop);
+				LPN lpn = properties.convertToLHPN(species, levels, prop);
 				property = prop.getString();
 				Translator.generateSBMLConstraints(document, property, lpn);
 			}

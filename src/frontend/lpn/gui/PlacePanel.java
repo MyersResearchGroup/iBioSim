@@ -34,12 +34,12 @@ public class PlacePanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private LhpnFile lhpn;
+	private LPN lhpn;
 
 	private HashMap<String, PropertyField> fields = null;
 
 	public PlacePanel(String selected, PropertyList placeList, PropertyList controlList,
-			LhpnFile lhpn) {
+			LPN lhpn) {
 		super(new GridLayout(2, 1));
 		this.selected = selected;
 		this.placeList = placeList;

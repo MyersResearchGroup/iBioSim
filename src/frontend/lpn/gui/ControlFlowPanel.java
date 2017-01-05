@@ -34,13 +34,13 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private LhpnFile lhpn;
+	private LPN lhpn;
 	
 	private boolean flag = false;
 
 	private HashMap<String, PropertyField> fields = null;
 
-	public ControlFlowPanel(String selected, PropertyList flowList, LhpnFile lhpn) {
+	public ControlFlowPanel(String selected, PropertyList flowList, LPN lhpn) {
 		super(new GridLayout(2, 1));
 		this.selected = selected;
 		this.flowList = flowList;

@@ -3,12 +3,12 @@ package backend.lpn.parser.LpnDecomposition;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
 
-public class LpnProcess extends LhpnFile {
+public class LpnProcess extends LPN {
 	
 	private ArrayList<Transition> processTrans = new ArrayList<Transition>();
 	private ArrayList<Place> processPlaces = new ArrayList<Place>();
@@ -319,7 +319,7 @@ public class LpnProcess extends LhpnFile {
 		return processInternal.size() + processInput.size() + processOutput.size();
 	}
 
-	public LhpnFile buildLPN(LhpnFile lpnProc) {
+	public LPN buildLPN(LPN lpnProc) {
 		// Places
 		for (int i=0; i< this.getProcessPlaces().size(); i++) {
 			Place p = this.getProcessPlaces().get(i);

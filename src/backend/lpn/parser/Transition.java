@@ -52,14 +52,14 @@ public class Transition {
 
 	private HashMap<String, ExprTree> rateAssignTrees;
 
-	private LhpnFile lhpn;
+	private LPN lhpn;
 	
 	private int index;
 	
 	/**
 	 * List of LPNs that can be affected by firing this transition. 
 	 */
-	private List<LhpnFile> dstLpnList = new ArrayList<LhpnFile>();
+	private List<LPN> dstLpnList = new ArrayList<LPN>();
 	
 	/**
 	 * This field variable collects each product term of the transition's enabling condition. 
@@ -82,7 +82,7 @@ public class Transition {
 //		rateAssignTrees = new HashMap<String, ExprTree>();
 //	}
 	
-	public Transition(String name, int index, LhpnFile lhpn) {
+	public Transition(String name, int index, LPN lhpn) {
 		this.label = name;
 		this.lhpn = lhpn;
 		this.index = index;
@@ -818,14 +818,14 @@ public class Transition {
     /**
      * @return LPN object containing this LPN transition.
      */
-    public LhpnFile getLpn() {
+    public LPN getLpn() {
         return lhpn;
     }
 
 	/**
      * @param lpn - Associated LPN containing this LPN transition.
      */
-	public void setLpn(LhpnFile lpn) {
+	public void setLpn(LPN lpn) {
         this.lhpn = lpn;
     }
 
@@ -845,7 +845,7 @@ public class Transition {
 //		this.local = local;
 //	}
 	
-	public List<LhpnFile> getDstLpnList(){
+	public List<LPN> getDstLpnList(){
     	return this.dstLpnList;
     }
     
@@ -909,7 +909,7 @@ public class Transition {
 	 * then it is added to the dstLpnList for this transition.
 	 * @param curLPN
 	 */
-	public void setDstLpnList(LhpnFile curLPN) {	
+	public void setDstLpnList(LPN curLPN) {	
 		for (Transition curTran : curLPN.getAllTransitions()) {
 			ExprTree curTranEnablingTree = curTran.getEnablingTree();
 			if (curTranEnablingTree != null

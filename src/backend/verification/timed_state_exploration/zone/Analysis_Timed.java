@@ -5,11 +5,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 import backend.verification.platu.logicAnalysis.Analysis;
-import backend.verification.platu.lpn.LPNTranRelation;
-import backend.verification.platu.lpn.LpnTranList;
+import backend.verification.platu.platuLpn.LPNTranRelation;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.project.PrjState;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
@@ -192,7 +192,7 @@ public class Analysis_Timed extends Analysis{
 	
 	private static void constructDstLpnList(StateGraph[] lpnList) {
 		for (int i=0; i<lpnList.length; i++) {
-			LhpnFile curLPN = lpnList[i].getLpn();
+			LPN curLPN = lpnList[i].getLpn();
 			Transition[] allTrans = curLPN.getAllTransitions();
 			for (int j=0; j<allTrans.length; j++) {
 				Transition curTran = allTrans[j];
@@ -207,7 +207,7 @@ public class Analysis_Timed extends Analysis{
 	private static void printDstLpnList(StateGraph[] lpnList) {
 		System.out.println("++++++ dstLpnList ++++++");
 		for (int i=0; i<lpnList.length; i++) {
-			LhpnFile curLPN = lpnList[i].getLpn();
+			LPN curLPN = lpnList[i].getLpn();
 			System.out.println("LPN: " + curLPN.getLabel());
 			Transition[] allTrans = curLPN.getAllTransitions(); 
 			for (int j=0; j< allTrans.length; j++) {

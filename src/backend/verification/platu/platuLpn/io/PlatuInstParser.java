@@ -1,6 +1,6 @@
 // $ANTLR 3.3 Nov 30, 2010 12:50:56 /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g 2011-09-05 15:36:30
 
-    package backend.verification.platu.lpn.io;
+    package backend.verification.platu.platuLpn.io;
     
     import java.util.StringTokenizer;
 import java.io.File;
@@ -13,8 +13,8 @@ import java.util.Queue;
 import org.antlr.runtime.*;
 
 import backend.verification.platu.expression.*;
-import backend.verification.platu.lpn.*;
-import backend.verification.platu.lpn.io.Instance;
+import backend.verification.platu.platuLpn.*;
+import backend.verification.platu.platuLpn.io.Instance;
 import backend.verification.platu.project.Project;
 
 import java.util.List;
@@ -129,7 +129,7 @@ public class PlatuInstParser extends Parser {
         static private ExpressionNode ZERO = new ConstNode("FALSE", 0);  // constant false node
         static private ExpressionNode ONE = new ConstNode("TRUE", 1);  // constant true node
         static private Expression TrueExpr = new Expression(ONE); // constant true expression
-        static public HashMap<String, LPN> LpnMap = new HashMap<String, LPN>();  // all modules parsed, keyed by module name
+        static public HashMap<String, PlatuLPN> LpnMap = new HashMap<String, PlatuLPN>();  // all modules parsed, keyed by module name
         static private HashMap<String, Integer> GlobalVarHashMap = new HashMap<String, Integer>();  // global variables and associated values
         static private HashMap<String, VarNode> GlobalVarNodeMap = new HashMap<String, VarNode>();
         static public List<Instance> InstanceList = new ArrayList<Instance>();
@@ -198,7 +198,7 @@ public class PlatuInstParser extends Parser {
     				
     				int index = VariableIndex++;
     				VarNode element = new VarNode(name, index);
-    				element.setType(backend.verification.platu.lpn.VarType.GLOBAL);
+    				element.setType(backend.verification.platu.platuLpn.VarType.GLOBAL);
     				array.add(i, element);
     				varList.add(element);
     				
@@ -212,7 +212,7 @@ public class PlatuInstParser extends Parser {
     		}
 
     		ArrayNode newArray = new ArrayNode(var, topLevelArray, dimensionList.size(), dimensionList, varList);
-    		newArray.setType(backend.verification.platu.lpn.VarType.GLOBAL);
+    		newArray.setType(backend.verification.platu.platuLpn.VarType.GLOBAL);
     		VarNodeMap.put(var, newArray);
     //  		VarCountMap.put(var, 0);
     //		Inputs.add(var);
@@ -258,7 +258,7 @@ public class PlatuInstParser extends Parser {
     				
     				int index = VariableIndex++;
     				VarNode element = new VarNode(name, index);
-    				element.setType(backend.verification.platu.lpn.VarType.INPUT);
+    				element.setType(backend.verification.platu.platuLpn.VarType.INPUT);
     				array.add(i, element);
     				varList.add(element);
     				
@@ -272,7 +272,7 @@ public class PlatuInstParser extends Parser {
     		}
 
     		ArrayNode newArray = new ArrayNode(var, topLevelArray, dimensionList.size(), dimensionList, varList);
-    		newArray.setType(backend.verification.platu.lpn.VarType.INPUT);
+    		newArray.setType(backend.verification.platu.platuLpn.VarType.INPUT);
     		VarNodeMap.put(var, newArray);
     //  		VarCountMap.put(var, 0);
     		Inputs.add(var);
@@ -562,7 +562,7 @@ public class PlatuInstParser extends Parser {
             	    			VarIndexMap.insert(globalVar, index);
             	    			
             	    			VarNode globalVarNode = new VarNode(globalVar, index);
-            	    			globalVarNode.setType(backend.verification.platu.lpn.VarType.GLOBAL);
+            	    			globalVarNode.setType(backend.verification.platu.platuLpn.VarType.GLOBAL);
             	    			VarNodeMap.put(globalVar, globalVarNode);
             //	    			Inputs.add(globalVar);
             	    			Outputs.add(globalVar);
@@ -691,8 +691,8 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "moduleClass"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:278:1: moduleClass[Project prj] returns [LPN lpn] : ( '<' 'class' 'name' '=' '\"' modName= ID '\"' 'arg' '=' '\"' ( ( (arrayArg2= ID ( '[' arrayExpr2= expression ']' )+ ) | (arg2= ID ) ) ( ( ',' arrayArg= ID ( '[' arrayExpr= expression ']' )+ ) | ( ',' arg= ID ) )* )? '\"' '>' ( constants )? variables logic '<' '/class' '>' ) ;
-    public final LPN moduleClass(Project prj) {
-        LPN lpn = null;
+    public final PlatuLPN moduleClass(Project prj) {
+        PlatuLPN lpn = null;
 
         Token modName=null;
         Token arrayArg2=null;
@@ -754,7 +754,7 @@ public class PlatuInstParser extends Parser {
             	    			VarIndexMap.insert(globalVar, index);
             	    			
             	    			VarNode globalVarNode = new VarNode(globalVar, index);
-            	    			globalVarNode.setType(backend.verification.platu.lpn.VarType.GLOBAL);
+            	    			globalVarNode.setType(backend.verification.platu.platuLpn.VarType.GLOBAL);
             	    			VarNodeMap.put(globalVar, globalVarNode);
             //	    			Inputs.add(globalVar);
             	    			Outputs.add(globalVar);
@@ -910,7 +910,7 @@ public class PlatuInstParser extends Parser {
                             VarIndexMap.insert(arg2.getText(), index);
 
                             VarNode inputVarNode =  new VarNode(arg2.getText(), index);
-                            inputVarNode.setType(backend.verification.platu.lpn.VarType.INPUT);
+                            inputVarNode.setType(backend.verification.platu.platuLpn.VarType.INPUT);
                             VarNodeMap.put(arg2.getText(), inputVarNode);
                             //    			VarCountMap.put(arg2.getText(), 0);
 
@@ -1058,7 +1058,7 @@ public class PlatuInstParser extends Parser {
                     	       				VarIndexMap.insert(arg.getText(), index);
                     	       				
                     	       				VarNode inputVarNode = new VarNode(arg.getText(), index);
-                    	       				inputVarNode.setType(backend.verification.platu.lpn.VarType.INPUT);
+                    	       				inputVarNode.setType(backend.verification.platu.platuLpn.VarType.INPUT);
                     	       				VarNodeMap.put(arg.getText(), inputVarNode);
                     	    //    			VarCountMap.put(arg.getText(), 0);
                     	        			
@@ -1150,7 +1150,7 @@ public class PlatuInstParser extends Parser {
             	            	initialMarking[i++] = mark;
             	            }
             	            
-            				lpn = new LPN(prj, (modName!=null?modName.getText():null), Inputs, Outputs, Internals, VarNodeMap, (logic2!=null?logic2.lpnTranSet:null), 
+            				lpn = new PlatuLPN(prj, (modName!=null?modName.getText():null), Inputs, Outputs, Internals, VarNodeMap, (logic2!=null?logic2.lpnTranSet:null), 
             	         			StatevectorMap, initialMarking);
             				
             				lpn.addAllInputTrans(inputTranList);
@@ -1860,7 +1860,7 @@ public class PlatuInstParser extends Parser {
             	VarIndexMap.insert(varNode.getText(), index);
 
             	VarNode internalVar = new VarNode(varNode.getText(), index);
-            	internalVar.setType(backend.verification.platu.lpn.VarType.INTERNAL);
+            	internalVar.setType(backend.verification.platu.platuLpn.VarType.INTERNAL);
             	VarNodeMap.put(varNode.getText(), internalVar);
             	VarCountMap.put(varNode.getText(), 0);
 
@@ -1986,7 +1986,7 @@ public class PlatuInstParser extends Parser {
             						
             						int index = VariableIndex++;
             						VarNode element = new VarNode(name, index);
-            						element.setType(backend.verification.platu.lpn.VarType.INTERNAL);
+            						element.setType(backend.verification.platu.platuLpn.VarType.INTERNAL);
             						array.add(i, element);
             						varList.add(element);
             						
@@ -2000,7 +2000,7 @@ public class PlatuInstParser extends Parser {
             				}
 
             				ArrayNode newArray = new ArrayNode((var!=null?var.getText():null), topLevelArray, dimensionList.size(), dimensionList, varList);
-            				newArray.setType(backend.verification.platu.lpn.VarType.INTERNAL);
+            				newArray.setType(backend.verification.platu.platuLpn.VarType.INTERNAL);
             				VarNodeMap.put((var!=null?var.getText():null), newArray);
                 			VarCountMap.put((var!=null?var.getText():null), 0);
             				Internals.add((var!=null?var.getText():null));
@@ -3455,7 +3455,7 @@ public class PlatuInstParser extends Parser {
                     	    			assign = new VarExpr(node1, expr);
                        				}
                        				
-                       				if(node1.getType() == backend.verification.platu.lpn.VarType.INTERNAL || node1.getType() == backend.verification.platu.lpn.VarType.OUTPUT){
+                       				if(node1.getType() == backend.verification.platu.platuLpn.VarType.INTERNAL || node1.getType() == backend.verification.platu.platuLpn.VarType.OUTPUT){
                     	   				Integer varCount = VarCountMap.get((var1!=null?var1.getText():null));
                     		    		VarCountMap.put((var1!=null?var1.getText():null), ++varCount);
                     	    		}
@@ -3503,7 +3503,7 @@ public class PlatuInstParser extends Parser {
                        					System.exit(1);
                        				}
                        				
-                       				if(node.getType() == backend.verification.platu.lpn.VarType.INTERNAL || node.getType() == backend.verification.platu.lpn.VarType.OUTPUT){
+                       				if(node.getType() == backend.verification.platu.platuLpn.VarType.INTERNAL || node.getType() == backend.verification.platu.platuLpn.VarType.OUTPUT){
                     	   				Integer varCount = VarCountMap.get((var!=null?var.getText():null));
                     		    		VarCountMap.put((var!=null?var.getText():null), ++varCount);
                     	    		}
@@ -3608,7 +3608,7 @@ public class PlatuInstParser extends Parser {
                     	    			System.exit(1);
                     	    		}
                     	    		
-                    	    		if(arrayNode.getType() == backend.verification.platu.lpn.VarType.INTERNAL || arrayNode.getType() == backend.verification.platu.lpn.VarType.OUTPUT){
+                    	    		if(arrayNode.getType() == backend.verification.platu.platuLpn.VarType.INTERNAL || arrayNode.getType() == backend.verification.platu.platuLpn.VarType.OUTPUT){
                     	   				Integer varCount = VarCountMap.get((arrayVar!=null?arrayVar.getText():null));
                     		    		VarCountMap.put((arrayVar!=null?arrayVar.getText():null), ++varCount);
                     	    		}

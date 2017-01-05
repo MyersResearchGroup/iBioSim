@@ -12,17 +12,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
 import backend.util.GlobalConstants;
 import backend.verification.platu.common.IndexObjMap;
 import backend.verification.platu.logicAnalysis.Constraint;
-import backend.verification.platu.lpn.DualHashMap;
-import backend.verification.platu.lpn.LpnTranList;
 import backend.verification.platu.main.Main;
 import backend.verification.platu.main.Options;
+import backend.verification.platu.platuLpn.DualHashMap;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.project.PrjState;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
 import backend.verification.timed_state_exploration.zoneProject.ContinuousRecordSet;
@@ -62,11 +62,11 @@ public class StateGraph {
     protected List<Constraint> newConstraintSet = new LinkedList<Constraint>();
     protected List<Constraint> frontierConstraintSet = new LinkedList<Constraint>();
     protected Set<Constraint> constraintSet = new HashSet<Constraint>();
-    protected LhpnFile lpn;
+    protected LPN lpn;
     protected static Set<Entry<Transition, State>> emptySet = new HashSet<Entry<Transition, State>>(0);
     private String separator = GlobalConstants.separator;
     
-    public StateGraph(LhpnFile lpn) {
+    public StateGraph(LPN lpn) {
     	this.lpn = lpn;   	
         this.stateCache = new IndexObjMap<State>();        
         //this.localStateCache = new IndexObjMap<State>();
@@ -75,7 +75,7 @@ public class StateGraph {
        	this.nextStateMap = new HashMap<State, HashMap<Transition, State>>();   
     }
     
-    public LhpnFile getLpn(){
+    public LPN getLpn(){
     	return this.lpn;
     }
     
@@ -123,7 +123,7 @@ public class StateGraph {
             		newTransitions++;
             		// TODO: (original) check that a variable was changed before creating a constraint
 	            	if(!firedTran.isLocal()){
-	            		for(LhpnFile lpn : firedTran.getDstLpnList()){
+	            		for(LPN lpn : firedTran.getDstLpnList()){
 	            			//TODO: No need to generate constraint for the lpn where firedTran lives. 
 	            			if (firedTran.getLpn().equals(lpn))
 	            				continue;
@@ -192,7 +192,7 @@ public class StateGraph {
 	        		
 	            	if(!firedTran.isLocal()){
 	            		// TODO: (original) check that a variable was changed before creating a constraint
-	            		for(LhpnFile lpn : firedTran.getDstLpnList()){
+	            		for(LPN lpn : firedTran.getDstLpnList()){
 	                  		Constraint c = new Constraint(currentState, nextState, firedTran, lpn);
 	                  		lpn.getStateGraph().synchronizedAddConstraint(c);
 	        			}
@@ -713,7 +713,7 @@ public class StateGraph {
 		//nextStateArray[this.lpn.getIndex()] = nextState;      
 //		if (!firedTran.getDstLpnList().contains(this.lpn))
 //			firedTran.getDstLpnList().add(this.lpn);
-		for(LhpnFile curLPN : firedTran.getDstLpnList()) {
+		for(LPN curLPN : firedTran.getDstLpnList()) {
         	int curIdx = curLPN.getLpnIndex();
     		State newState = curSgArray[curIdx].getNextState(curStateArray[curIdx], firedTran);
     		if(newState != null) {
@@ -1718,7 +1718,7 @@ public class StateGraph {
 		// Get any inequality events that need to change.
 		LpnTranList inequalityList = new LpnTranList();
 		
-		LhpnFile[] lpnList = newZones[0].get_lpnList();
+		LPN[] lpnList = newZones[0].get_lpnList();
 
 		
 		// Check all the inequalities for inclusion.
@@ -1737,7 +1737,7 @@ public class StateGraph {
 					
 					// Find the index of the continuous variable this inequality refers to.
 					// I'm assuming there is a single variable.
-					LhpnFile lpn = iv.get_lpn();
+					LPN lpn = iv.get_lpn();
 					Variable tmpVar = iv.getContVariables().get(0);
 					DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
 					int contIndex = variableIndecies.getValue(tmpVar.getName());
@@ -2143,7 +2143,7 @@ public class StateGraph {
 			int ineqIndex = this.lpn.getVarIndexMap().
 					get(ineq.getName());
 			
-			LhpnFile lpn = ineq.get_lpn();
+			LPN lpn = ineq.get_lpn();
 			
 			// Build the index object
 			LPNContinuousPair lcv =

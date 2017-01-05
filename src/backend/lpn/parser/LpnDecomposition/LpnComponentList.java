@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
 import backend.verification.platu.main.Options;
 
-public class LpnComponentList extends LhpnFile{
+public class LpnComponentList extends LPN{
 	private Integer maxNumVarsInOneComp;
 	private HashMap<Integer, Component> compMap;  // <ComponentId, Component>
 	private HashMap<Variable, ArrayList<Integer>> sharedCompVarsMap;

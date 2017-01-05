@@ -3,7 +3,7 @@ package backend.verification.timed_state_exploration.zoneProject;
 import java.io.File;
 import java.util.ArrayList;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.util.GlobalConstants;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
@@ -66,7 +66,7 @@ public class Conolse7_26_2012 {
 			return;
 		}
 		
-		LhpnFile lpn = new LhpnFile();
+		LPN lpn = new LPN();
 
 		lpn.load(directory + GlobalConstants.separator + lpnList[0]);
 		Options.set_TimingLogFile(directory + GlobalConstants.separator
@@ -74,12 +74,12 @@ public class Conolse7_26_2012 {
 
 		
 		
-		ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
+		ArrayList<LPN> selectedLPNs = new ArrayList<LPN>();
 		// Add the current LPN to the list.
 		selectedLPNs.add(lpn);
 		for (int i=1; i < lpnList.length; i++) {
 			 String curLPNname = lpnList[i];
-			 LhpnFile curLPN = new LhpnFile();
+			 LPN curLPN = new LPN();
 			 curLPN.load(directory + GlobalConstants.separator + curLPNname);
 			 selectedLPNs.add(curLPN);
 		}

@@ -1,6 +1,6 @@
 package backend.verification.timed_state_exploration.archive;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 
 /**
  * Base class for the member variables of the octagons.
@@ -18,7 +18,7 @@ public abstract class OctMember {
 	/*
 	 *  The associated LPN for this variable.
 	 */
-	protected LhpnFile _lpn;
+	protected LPN _lpn;
 	
 	/*
 	 * The variable number taking into account all variables for the
@@ -39,7 +39,7 @@ public abstract class OctMember {
 	 * Get the associated LPN.
 	 * @return The associated LPN.
 	 */
-	public LhpnFile get_Lpn() {
+	public LPN get_Lpn() {
 		return _lpn;
 	}
 
@@ -47,7 +47,7 @@ public abstract class OctMember {
 	 * Set the associated LPN.
 	 * @param _lpn
 	 */
-	public void set_Lpn(LhpnFile _lpn) {
+	public void set_Lpn(LPN _lpn) {
 		this._lpn = _lpn;
 	}
 

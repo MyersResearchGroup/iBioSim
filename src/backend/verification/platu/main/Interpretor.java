@@ -12,7 +12,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.StateGraph;
 
@@ -105,7 +105,7 @@ public class Interpretor {
             return 0;
         } else if (command.compareToIgnoreCase(mapCMD.get(enCMD.del)) == 0) {
             for (StateGraph sg : prj.getDesignUnitSet()) {
-            	LhpnFile lpn = sg.getLpn();
+            	LPN lpn = sg.getLpn();
             	
                 if (lpn.getLabel().compareTo(argument1) == 0) {
                     prj.getDesignUnitSet().remove(lpn);
@@ -145,7 +145,7 @@ public class Interpretor {
         }else if (command.compareToIgnoreCase(mapCMD.get(enCMD.draw)) == 0){
         	if(argumentcount > 0){
         		for(StateGraph sg : prj.getDesignUnitSet()){
-        			LhpnFile lpn = sg.getLpn();
+        			LPN lpn = sg.getLpn();
         			
         			if(argument1.equals(lpn.getLabel())){
         				System.out.print("drawing " + lpn.getLabel() + "...");
@@ -156,7 +156,7 @@ public class Interpretor {
         	}
         	else{
         		for(StateGraph sg : prj.getDesignUnitSet()){
-        			LhpnFile lpn = sg.getLpn();
+        			LPN lpn = sg.getLpn();
         			System.out.print("drawing " + lpn.getLabel() + "...");
         			sg.draw();
         			System.out.println("Done");

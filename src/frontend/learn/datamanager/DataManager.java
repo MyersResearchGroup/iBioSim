@@ -21,7 +21,7 @@ import org.sbml.jsbml.SBMLDocument;
 
 import backend.biomodel.parser.BioModel;
 import backend.biomodel.util.SBMLutilities;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.util.GlobalConstants;
 import backend.util.dataparser.*;
 import frontend.main.*;
@@ -1139,7 +1139,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			}
 			else if (background.contains(".lpn")) {
 				ArrayList<String> getSpecies = new ArrayList<String>();
-				LhpnFile lhpn = new LhpnFile(biosim.log);
+				LPN lhpn = new LPN(biosim.log);
 				// System.out.println(background);
 				lhpn.load(background);
 				HashMap<String, Properties> speciesMap = lhpn.getContinuous();

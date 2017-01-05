@@ -4,15 +4,15 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
-import backend.verification.platu.lpn.LpnTranList;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
 
 public class StateGraph_timed extends StateGraph{
 
-	public StateGraph_timed(LhpnFile lpn) {
+	public StateGraph_timed(LPN lpn) {
 		super(lpn);
 	}
 	

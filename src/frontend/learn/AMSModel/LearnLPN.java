@@ -11,7 +11,7 @@ import javax.swing.*;
 import backend.learn.AMSModel.DMVCrun;
 import backend.learn.AMSModel.LearnModel;
 import backend.learn.AMSModel.Variable;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.util.GlobalConstants;
 import backend.util.dataparser.*;
 import frontend.main.*;
@@ -94,7 +94,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 
 	private int rateSampling ; //= -1 ; //intFixed 250; 20; //-1;
 
-	private LhpnFile g;
+	private LPN g;
 
 	private Integer numPlaces = 0;
 
@@ -180,7 +180,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 
 	private String[] currPlaceBin;
 
-	private LhpnFile lpnWithPseudo;
+	private LPN lpnWithPseudo;
 
 	private int pseudoTransNum = 0;
 
@@ -466,7 +466,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		variablesList = new ArrayList<String>();
-		LhpnFile lhpn = new LhpnFile(log);
+		LPN lhpn = new LPN(log);
 		lhpn.load(seedLpnFile);
 		HashMap<String, Properties> variablesMap = lhpn.getContinuous(); //System.out.println("Variables MAp :"+variablesMap.keySet());
 		for (String s : variablesMap.keySet()) {  //System.out.println("Variables MAp :"+s);
@@ -1639,7 +1639,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 				String dotFile = lhpnFile.replace(".lpn", ".dot");
 				File dot = new File(directory + separator + dotFile);
 				dot.delete();
-				LhpnFile lhpn = new LhpnFile(log);
+				LPN lhpn = new LPN(log);
 				lhpn.load(directory + separator + lhpnFile);
 				lhpn.printDot(directory + separator + dotFile);
 				//log.addText("Executing:\n" + "atacs -cPllodpl " + lhpnFile);
@@ -2472,11 +2472,11 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 						}
 					}
 				}
-				LhpnFile g = l.learnModel(directory, log, gui, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, false, false, valScaleFactor, delayScaleFactor, failProp);
+				LPN g = l.learnModel(directory, log, gui, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, false, false, valScaleFactor, delayScaleFactor, failProp);
 				
 				// the false parameter above says that it's not generating a net for stable
 				if (new File(seedLpnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
-					LhpnFile seedLpn = new LhpnFile();
+					LPN seedLpn = new LPN();
 					seedLpn.load(seedLpnFile);
 					g = mergeLhpns(seedLpn,g);
 				}
@@ -2507,7 +2507,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 							varsT.add(input);
 							l = new LearnModel();
 							//LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, false, false, valScaleFactor, delayScaleFactor, null);
-							LhpnFile moduleLPN = l.learnModel(directory, log, gui, j, thresholds, tPar, varsT, destabMap, false, false, false, valScaleFactor, delayScaleFactor, null);
+							LPN moduleLPN = l.learnModel(directory, log, gui, j, thresholds, tPar, varsT, destabMap, false, false, false, valScaleFactor, delayScaleFactor, null);
 							// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 							g = mergeLhpns(moduleLPN,g);
 						}	
@@ -2737,7 +2737,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		variablesList = new ArrayList<String>();
 		thresholds = new HashMap<String, ArrayList<Double>>(); // SB
 		reqdVarsL = new ArrayList<Variable>();				// SB
-		LhpnFile lhpn = new LhpnFile();
+		LPN lhpn = new LPN();
 		lhpn.load(seedLpnFile);
 		HashMap<String, Properties> variablesMap = lhpn.getContinuous();
 		for (String s : variablesMap.keySet()) {
@@ -4539,7 +4539,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 	}
 
 	public void addPseudo(HashMap<String,ArrayList<Double>> scaledThresholds){
-		lpnWithPseudo = new LhpnFile();
+		lpnWithPseudo = new LPN();
 		lpnWithPseudo = mergeLhpns(lpnWithPseudo,g);
 		pseudoVars = new HashMap<String,Boolean>();
 		pseudoVars.put("ctl",true);
@@ -5649,7 +5649,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 	}
 	//T[] aux = (T[])a.clone();
 	 */	
-	private LhpnFile mergeLhpns(LhpnFile l1,LhpnFile l2){//(LhpnFile l1, LhpnFile l2){
+	private LPN mergeLhpns(LPN l1,LPN l2){//(LhpnFile l1, LhpnFile l2){
 		String place1 = "p([-\\d]+)", place2 = "P([-\\d]+)";
 		String transition1 = "t([-\\d]+)", transition2 = "T([-\\d]+)";
 		int placeNum, transitionNum;

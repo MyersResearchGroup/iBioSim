@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 
 import backend.lpn.parser.Abstraction;
 import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.LpnDecomposition.LpnProcess;
@@ -25,8 +25,6 @@ import backend.verification.platu.MDD.MDT;
 import backend.verification.platu.MDD.Mdd;
 import backend.verification.platu.MDD.mddNode;
 import backend.verification.platu.common.IndexObjMap;
-import backend.verification.platu.lpn.LPNTranRelation;
-import backend.verification.platu.lpn.LpnTranList;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.markovianAnalysis.ProbGlobalState;
 import backend.verification.platu.markovianAnalysis.ProbGlobalStateSet;
@@ -35,6 +33,8 @@ import backend.verification.platu.partialOrders.DependentSet;
 import backend.verification.platu.partialOrders.DependentSetComparator;
 import backend.verification.platu.partialOrders.ProbStaticDependencySets;
 import backend.verification.platu.partialOrders.StaticDependencySets;
+import backend.verification.platu.platuLpn.LPNTranRelation;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.por1.AmpleSet;
 import backend.verification.platu.project.PrjState;
 import backend.verification.platu.stategraph.State;
@@ -973,7 +973,7 @@ public class Analysis {
 		private HashMap<String, Integer> getCareVars(PrjState globalState)	{
 			HashMap<String, Integer> vars = new HashMap<String, Integer>();				
 			for (State curLocalState : globalState.toStateArray()) {
-				LhpnFile curLpn = curLocalState.getLpn();
+				LPN curLpn = curLocalState.getLpn();
 				for(int i = 0; i < curLpn.getVarIndexMap().size(); i++) {						
 					if (careVars.contains(curLpn.getVarIndexMap().getKey(i))) 
 						vars.put(curLpn.getVarIndexMap().getKey(i), curLocalState.getVariableVector()[i]);
@@ -1134,7 +1134,7 @@ public class Analysis {
 				HashMap<String, Integer> vars = new HashMap<String, Integer>();				
 				for (State curLocalState : curGlobalState.toStateArray()) {
 					curGlobalStateLabel = curGlobalStateLabel + "_" + "S" + curLocalState.getIndex();										
-					LhpnFile curLpn = curLocalState.getLpn();
+					LPN curLpn = curLocalState.getLpn();
 					for(int i = 0; i < curLpn.getVarIndexMap().size(); i++) {						
 						vars.put(curLpn.getVarIndexMap().getKey(i), curLocalState.getVariableVector()[i]);
 					}
@@ -1252,7 +1252,7 @@ public class Analysis {
 		}	
 	}
 	
-	private void drawDependencyGraphs(LhpnFile[] lpnList) {
+	private void drawDependencyGraphs(LPN[] lpnList) {
 		String fileName = Options.getPrjSgPath() + separator + "dependencyGraph.dot";
 		BufferedWriter out;
 		try {
@@ -1385,7 +1385,7 @@ public class Analysis {
 	private static void printDstLpnList(StateGraph[] lpnList) {
 		System.out.println("++++++ dstLpnList ++++++");
 		for (int i=0; i<lpnList.length; i++) {
-			LhpnFile curLPN = lpnList[i].getLpn();
+			LPN curLPN = lpnList[i].getLpn();
 			System.out.println("LPN: " + curLPN.getLabel());
 			Transition[] allTrans = curLPN.getAllTransitions(); 
 			for (int j=0; j< allTrans.length; j++) {
@@ -1402,7 +1402,7 @@ public class Analysis {
 
 	private static void constructDstLpnList(StateGraph[] sgList) {
 		for (int i=0; i<sgList.length; i++) {
-			LhpnFile curLPN = sgList[i].getLpn();
+			LPN curLPN = sgList[i].getLpn();
 			Transition[] allTrans = curLPN.getAllTransitions();
 			for (int j=0; j<allTrans.length; j++) {
 				Transition curTran = allTrans[j];
@@ -1435,7 +1435,7 @@ public class Analysis {
 		int numLpns = sgList.length;
 		Transition firedFailure = null;
 		
-		LhpnFile[] lpnList = new LhpnFile[numLpns];
+		LPN[] lpnList = new LPN[numLpns];
 		for (int i=0; i<numLpns; i++) {
 			lpnList[i] = sgList[i].getLpn();
 		}
@@ -2247,7 +2247,7 @@ public class Analysis {
 //		return null;
 //	}
 
-	private void printStaticSetsMap( LhpnFile[] lpnList) {		
+	private void printStaticSetsMap( LPN[] lpnList) {		
 		System.out.println("============ staticSetsMap ============");			
 		for (Transition lpnTranPair : staticDependency.keySet()) {
 			StaticDependencySets statSets = staticDependency.get(lpnTranPair);			
@@ -2341,7 +2341,7 @@ public class Analysis {
      * @return
      */
     private LpnTranList buildStrongStubbornSet(State[] curStateArray, State[] nextStateArray, 
-    			HashMap<Transition, Integer> tranFiringFreq, StateGraph[] sgList, LhpnFile[] lpnList,
+    			HashMap<Transition, Integer> tranFiringFreq, StateGraph[] sgList, LPN[] lpnList,
     			StateSetInterface prjStateSet, PrjState stateStackTop, Transition lastFiredTran) {
     	State[] stateArray = null;
     	if (nextStateArray == null)
@@ -4697,7 +4697,7 @@ public class Analysis {
 	 */
 	public static LpnTranList[] checkStickyTrans(
 			LpnTranList[] curStickyTransArray, LpnTranList[] nextEnabledArray, 
-			LpnTranList[] nextStickyTransArray, State nextState, LhpnFile LPN) {
+			LpnTranList[] nextStickyTransArray, State nextState, LPN LPN) {
 		int arraySize = curStickyTransArray.length;
 		LpnTranList[] stickyTransArray = new LpnTranList[arraySize];
 		boolean[] hasStickyTrans = new boolean[arraySize];

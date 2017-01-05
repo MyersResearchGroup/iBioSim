@@ -2,7 +2,7 @@ package backend.verification.timed_state_exploration.zone;
 
 import java.util.Arrays;
 
-import backend.verification.platu.lpn.LpnTranList;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.project.PrjState;
 import backend.verification.platu.stategraph.State;
 

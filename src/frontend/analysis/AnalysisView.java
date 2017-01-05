@@ -65,7 +65,7 @@ import org.jmathml.ASTNode;
 
 import backend.analysis.util.SEDMLutilities;
 import backend.lpn.parser.Abstraction;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Translator;
 import backend.util.GlobalConstants;
 import backend.util.dataparser.DataParser;
@@ -518,7 +518,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			JLabel prop = new JLabel("Property:");
 			String[] props = new String[] { "none" };
-			LhpnFile lpn = new LhpnFile();
+			LPN lpn = new LPN();
 			lpn.load(root + GlobalConstants.separator + modelFile);
 			String[] getProps = lpn.getProperties().toArray(new String[0]);
 			props = new String[getProps.length + 1];
@@ -3056,7 +3056,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			Translator t1 = new Translator();
 			if (reactionAbstraction.isSelected())
 			{
-				LhpnFile lhpnFile = new LhpnFile();
+				LPN lhpnFile = new LPN();
 				lhpnFile.load(root + GlobalConstants.separator + modelFile);
 				Abstraction abst = new Abstraction(lhpnFile, lpnAbstraction);
 				abst.abstractSTG(false);
@@ -3578,7 +3578,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		{
 			Object selected = transientProperties.getSelectedItem();
 			String[] props = new String[] { "none" };
-			LhpnFile lpn = new LhpnFile();
+			LPN lpn = new LPN();
 			lpn.load(root + GlobalConstants.separator + modelFile);
 			String[] getProps = lpn.getProperties().toArray(new String[0]);
 			props = new String[getProps.length + 1];

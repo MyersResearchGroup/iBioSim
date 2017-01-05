@@ -1,16 +1,16 @@
-package backend.verification.platu.lpn;
+package backend.verification.platu.platuLpn;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 
 final public class LpnTranList extends LinkedList<Transition> {
 
 	private static final long serialVersionUID = 1L;
-	private LhpnFile lpn;
+	private LPN lpn;
 
     public LpnTranList() {
         super();
@@ -35,14 +35,14 @@ final public class LpnTranList extends LinkedList<Transition> {
     /**
      * @return the lpn
      */
-    public LhpnFile getLpn() {
+    public LPN getLpn() {
         return lpn;
     }
 
     /**
      * @param lpn2 the lpn to set
      */
-    public void setLPN(LhpnFile lpn2) {
+    public void setLPN(LPN lpn2) {
         this.lpn = lpn2;
         for (Transition t : this) {
             t.setLpn(lpn2);
@@ -86,7 +86,7 @@ final public class LpnTranList extends LinkedList<Transition> {
     	return copy;
     }
 
-	public void setLPN(LPN lpn2) {
+	public void setLPN(PlatuLPN lpn2) {
 		// Hack here. This is used to get rid of errors in PlatuGrammearParser.
 		
 	}

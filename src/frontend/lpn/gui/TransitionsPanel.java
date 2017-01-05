@@ -46,14 +46,14 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 
 	private JCheckBox fail, persistent;
 
-	private LhpnFile lhpn;
+	private LPN lhpn;
 
 	private HashMap<String, PropertyField> fields = null;
 	
 	private boolean flag = false;
 
 	public TransitionsPanel(String selected, PropertyList transitionsList,
-			PropertyList controlList, LhpnFile lhpn) {
+			PropertyList controlList, LPN lhpn) {
 		super(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		this.selected = selected;

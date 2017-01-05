@@ -2,7 +2,7 @@ package frontend.verification;
 
 import javax.swing.*;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.util.GlobalConstants;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.*;
@@ -110,12 +110,12 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		this.setLayout(new BorderLayout());
 		absFile = verification.getVerName() + ".abs";
 		verification.copyFile();
-		LhpnFile lhpn = new LhpnFile();
+		LPN lhpn = new LPN();
 		lhpn.load(directory + separator + verification.verifyFile);
 		createGUI(lhpn);
 	}
 	
-    public void createGUI(LhpnFile lhpn) {
+    public void createGUI(LPN lhpn) {
 		// Creates the interesting species JList
 		listModel = new DefaultListModel();
 		intSpecies = new JList(lhpn.getVariables());
@@ -254,7 +254,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		this.log = log;
 		this.setLayout(new BorderLayout());
 		this.setMaximumSize(new Dimension(300, 150));
-		LhpnFile lhpn = new LhpnFile();
+		LPN lhpn = new LPN();
 		lhpn.load(directory + separator + lpnFile);
 		createGUI(lhpn);
 	}

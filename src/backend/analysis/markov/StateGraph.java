@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Translator;
 import backend.util.dataparser.DataParser;
 import frontend.main.Gui;
@@ -25,7 +25,7 @@ public class StateGraph implements Runnable {
 
 	private ArrayList<String> variables;
 
-	private LhpnFile lhpn;
+	private LPN lhpn;
 
 	private boolean stop;
 
@@ -39,7 +39,7 @@ public class StateGraph implements Runnable {
 	
 	private double totalUsedMemory, usedMemory;
 
-	public StateGraph(LhpnFile lhpn) {
+	public StateGraph(LPN lhpn) {
 		this.lhpn = lhpn;
 		stop = false;
 		markovResults = null;

@@ -1,4 +1,4 @@
-package backend.verification.platu.lpn;
+package backend.verification.platu.platuLpn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +25,7 @@ public class LPNTran {
     }
     
     /* LPN where this transition is defined. */
-    private LPN lpn;
+    private PlatuLPN lpn;
     
     /* Transition labels in the same LPN must be unique. */
     private String label;   
@@ -56,7 +56,7 @@ public class LPNTran {
     private ArrayList<Expression> assertions = new ArrayList<Expression>(1);
     
     /* LPNs that share variables in the assignedVarSet of this transition. */
-    private List<LPN> dstLpnList = new ArrayList<LPN>();
+    private List<PlatuLPN> dstLpnList = new ArrayList<PlatuLPN>();
     
     /* true indicating this transition follows non-disabling semantics. */
     private boolean stickyFlag = true;
@@ -100,7 +100,7 @@ public class LPNTran {
         }
     }
     
-    public void initialize(final LPN lpnModel) {
+    public void initialize(final PlatuLPN lpnModel) {
     	// Computer the variables on the left hand side of the assignments.
     	this.lpn = lpnModel;
     	this.supportSet = new HashSet<String>();
@@ -560,11 +560,11 @@ public class LPNTran {
     }
 	
     
-    public List<LPN> getDstLpnList(){
+    public List<PlatuLPN> getDstLpnList(){
     	return this.dstLpnList;
     }
     
-    public void addDstLpn(LPN lpn){
+    public void addDstLpn(PlatuLPN lpn){
     	this.dstLpnList.add(lpn);
     }
     
@@ -678,14 +678,14 @@ public class LPNTran {
     /**
      * @return LPN object containing this LPN transition.
      */
-    public LPN getLpn() {
+    public PlatuLPN getLpn() {
         return lpn;
     }
 
     /**
      * @param lpn - Associated LPN containing this LPN transition.
      */
-    public void setLpn(LPN lpn) {
+    public void setLpn(PlatuLPN lpn) {
         this.lpn = lpn;
     }
 

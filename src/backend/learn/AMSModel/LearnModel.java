@@ -7,7 +7,7 @@ import java.util.*;
 //import javax.jws.soap.InitParam;
 import javax.swing.*;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.util.GlobalConstants;
 import backend.util.dataparser.*;
 import frontend.main.*;
@@ -68,7 +68,7 @@ public class LearnModel { // added ItemListener SB
 
 	private int rateSampling ; //= -1 ; //intFixed 250; 20; //-1;
 
-	private LhpnFile g;
+	private LPN g;
 
 	private Integer numPlaces = 0;
 
@@ -141,7 +141,7 @@ public class LearnModel { // added ItemListener SB
 
 	private String[] currPlaceBin;
 
-	private LhpnFile lpnWithPseudo;
+	private LPN lpnWithPseudo;
 
 	private int pseudoTransNum = 0;
 
@@ -571,7 +571,7 @@ public class LearnModel { // added ItemListener SB
 
 
 	@SuppressWarnings("null")
-	public LhpnFile learnModel(String directory, Log log, Gui biosim, int moduleNumber, HashMap<String, 
+	public LPN learnModel(String directory, Log log, Gui biosim, int moduleNumber, HashMap<String, 
 			ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, 
 			HashMap<String, ArrayList<String>> dstab, Boolean netForStable, boolean pseudoEnable, 
 			boolean transientPlaceReqd, Double vScaleFactor, Double dScaleFactor, String failProp) throws IOException {
@@ -625,7 +625,7 @@ public class LearnModel { // added ItemListener SB
 			File cvgFile = new File(directory + separator + "run.cvg");
 			//cvgFile.createNewFile();
 			BufferedWriter coverage = new BufferedWriter(new FileWriter(cvgFile));
-			g = new LhpnFile(); // The generated lhpn is stored in this object
+			g = new LPN(); // The generated lhpn is stored in this object
 			placeInfo = new HashMap<String, Properties>();
 			transitionInfo = new HashMap<String, Properties>();
 			cvgInfo = new HashMap<String, Properties>();
@@ -1548,7 +1548,7 @@ public class LearnModel { // added ItemListener SB
 			
 		
 			
-			lpnWithPseudo = new LhpnFile();
+			lpnWithPseudo = new LPN();
 			lpnWithPseudo = mergeLhpns(lpnWithPseudo,g);
 			//if (pseudoEnable & ((moduleNumber == 0) || (moduleNumber == 1000))){
 			if (pseudoEnable) {
@@ -1580,7 +1580,7 @@ public class LearnModel { // added ItemListener SB
 					varsT.add(output);
 					out.write(output.getName() + "\n");
 					LearnModel l = new LearnModel();
-					LhpnFile moduleLPN = l.learnModel(directory, log, biosim, mNum, thresholds, tPar, varsT, dMap, true, true, false, valScaleFactor, delayScaleFactor, null);
+					LPN moduleLPN = l.learnModel(directory, log, biosim, mNum, thresholds, tPar, varsT, dMap, true, true, false, valScaleFactor, delayScaleFactor, null);
 					//true parameter above indicates that the net being generated is for assigning stable
 					// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 					//		g = mergeLhpns(moduleLPN,g); // If pseudoTrans never required
@@ -1630,7 +1630,7 @@ public class LearnModel { // added ItemListener SB
 		return (lpnWithPseudo);
 	}
 
-	private void addLastTransitionInfo(LhpnFile lpn, Double traceLength) {
+	private void addLastTransitionInfo(LPN lpn, Double traceLength) {
 		for (String st1 : lpn.getPlaceList()) {
 			if (lpn.getPostset(st1).length == 0){ // a place without a postset transition
 				if (getPlaceInfoIndex(st1) != null)
@@ -5410,7 +5410,7 @@ public class LearnModel { // added ItemListener SB
 	}
 	//T[] aux = (T[])a.clone();
 
-	public LhpnFile mergeLhpns(LhpnFile l1,LhpnFile l2){//(LhpnFile l1, LhpnFile l2){
+	public LPN mergeLhpns(LPN l1,LPN l2){//(LhpnFile l1, LhpnFile l2){
 		l1.save(directory + separator + "l1.lpn"); //since there's no deep copy method
 		l2.save(directory + separator + "l2.lpn");
 		String place1 = "p([-\\d]+)", place2 = "P([-\\d]+)";
@@ -5419,7 +5419,7 @@ public class LearnModel { // added ItemListener SB
 		int placeNum, transitionNum, ptNum;
 		int minPlace=0, maxPlace=0, minTransition = 0, maxTransition = 0, minPT=0, maxPT=0;
 		Boolean first = true;
-		LhpnFile l3 = new LhpnFile();
+		LPN l3 = new LPN();
 		try{
 			for (String st1: l1.getPlaceList()){
 				if ((st1.matches(place1)) || (st1.matches(place2))){
@@ -5550,10 +5550,10 @@ public class LearnModel { // added ItemListener SB
 				}
 			}
 			l2.save(directory + separator + "tmp.lpn");
-			l3 = new LhpnFile();
+			l3 = new LPN();
 			l3.load(directory + separator + "l1.lpn");
 			l3.load(directory + separator + "tmp.lpn");
-			l2 = new LhpnFile();
+			l2 = new LPN();
 			l2.load(directory + separator + "l2.lpn");
 			File l1File = new File(directory + separator + "l1.lpn");
 			File l2File = new File(directory + separator + "l2.lpn");

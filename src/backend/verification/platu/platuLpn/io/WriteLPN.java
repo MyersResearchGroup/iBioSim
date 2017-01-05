@@ -1,5 +1,5 @@
 
-package backend.verification.platu.lpn.io;
+package backend.verification.platu.platuLpn.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,24 +7,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-import backend.verification.platu.lpn.LPN;
-import backend.verification.platu.lpn.LPNTran;
-import backend.verification.platu.lpn.VarSet;
-import backend.verification.platu.lpn.VarVal;
+import backend.verification.platu.platuLpn.PlatuLPN;
+import backend.verification.platu.platuLpn.LPNTran;
+import backend.verification.platu.platuLpn.VarSet;
+import backend.verification.platu.platuLpn.VarVal;
 
 /**
  * @author ldtwo
  */
 public class WriteLPN {
 
-    public static void write(String file, LPN[] lpnArr) throws Exception {
+    public static void write(String file, PlatuLPN[] lpnArr) throws Exception {
         if (file == null || lpnArr == null) {
             throw new NullPointerException();
         }
         write(new File(file), lpnArr);
     }
 
-    public static void write(File file, LPN[] lpnArr) throws Exception {
+    public static void write(File file, PlatuLPN[] lpnArr) throws Exception {
         if (file == null || lpnArr == null) {
             throw new NullPointerException();
         }
@@ -35,25 +35,25 @@ public class WriteLPN {
 
     }
 
-    public static void write(FileOutputStream out, LPN[] lpnArr) throws Exception {
+    public static void write(FileOutputStream out, PlatuLPN[] lpnArr) throws Exception {
         if (out == null || lpnArr == null) {
             throw new NullPointerException();
         }
-        for (LPN lpn : lpnArr) {
+        for (PlatuLPN lpn : lpnArr) {
             write(out, lpn);
         }
         out.write((".end\n").getBytes());
 
     }
 
-    public static void write(String file, LPN lpn) throws Exception {
+    public static void write(String file, PlatuLPN lpn) throws Exception {
         if (file == null || lpn == null) {
             throw new NullPointerException();
         }
         write(new File(file), lpn);
     }
 
-    public static void write(File file, LPN lpn) throws Exception {
+    public static void write(File file, PlatuLPN lpn) throws Exception {
         if (file == null || lpn == null) {
             throw new NullPointerException();
         }
@@ -74,7 +74,7 @@ static final Comparator<VarVal> vvComparator=new Comparator<VarVal>() {
             }
         };
 
-    public static void write(FileOutputStream out, LPN lpn) throws Exception {
+    public static void write(FileOutputStream out, PlatuLPN lpn) throws Exception {
         if (out == null || lpn == null) {
             throw new NullPointerException();
         }

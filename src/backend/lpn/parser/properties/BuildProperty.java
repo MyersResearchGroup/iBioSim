@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Translator;
 import backend.lpn.parser.Variable;
 import frontend.main.Gui;
@@ -57,7 +57,7 @@ public class BuildProperty {
 
 
 
-		LhpnFile lpn = new LhpnFile();
+		LPN lpn = new LPN();
 		//lpn.load(propFileName);
 
 		String lpnFileString= propFileName.substring(0, propFileName.length()-4);
@@ -116,8 +116,8 @@ public class BuildProperty {
 		generateFile(r0, lpn,lpnFileName);
 	}
 
-	public static void generateFile(CommonTree r0, LhpnFile lpn, String lpnFileName){
-		LhpnFile lpnFinal = new LhpnFile();
+	public static void generateFile(CommonTree r0, LPN lpn, String lpnFileName){
+		LPN lpnFinal = new LPN();
 		File lpnFile = new File(".lpn");
 		try {
 			lpnFile.createNewFile();
@@ -158,14 +158,14 @@ public class BuildProperty {
 		}
 	} 
 
-	public static LhpnFile generateLPN(CommonTree t, LhpnFile lpn2, boolean recursiveCall, String stayConditions) throws IOException {
+	public static LPN generateLPN(CommonTree t, LPN lpn2, boolean recursiveCall, String stayConditions) throws IOException {
 
 		String enablingCond="";
 		String delay="";
 		String varType = " ";
 		String varName = "";
 
-		LhpnFile lpnObj= lpn2;
+		LPN lpnObj= lpn2;
 		if ( t != null ) {
 			int childCount=0;
 			if(recursiveCall){

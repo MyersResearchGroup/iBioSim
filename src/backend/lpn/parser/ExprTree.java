@@ -38,7 +38,7 @@ public class ExprTree {
 
 	private ArrayList<String> booleanSignals, integerSignals, continuousSignals;
 
-	private LhpnFile lhpn;
+	private LPN lhpn;
 	
 	public String expression;
 
@@ -59,7 +59,7 @@ public class ExprTree {
 //		intexpr_L(expression);
 	}
 
-	public ExprTree(LhpnFile lhpn) {
+	public ExprTree(LPN lhpn) {
 		this.lhpn = lhpn;
 		String[] bools = lhpn.getBooleanVars();
 		String[] conts = lhpn.getContVars();

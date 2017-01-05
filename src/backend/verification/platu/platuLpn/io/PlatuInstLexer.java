@@ -1,6 +1,6 @@
 // $ANTLR 3.3 Nov 30, 2010 12:50:56 /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g 2011-09-05 15:36:31
 
-    package backend.verification.platu.lpn.io;
+    package backend.verification.platu.platuLpn.io;
 
 
 import org.antlr.runtime.*;

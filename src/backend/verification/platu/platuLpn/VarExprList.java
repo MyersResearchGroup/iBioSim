@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package backend.verification.platu.lpn;
+package backend.verification.platu.platuLpn;
 
 import java.util.*;
 

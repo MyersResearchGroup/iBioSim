@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.verification.platu.main.Options;
@@ -18,7 +18,7 @@ public class ProbLocalStateGraph extends StateGraph {
 	 */
 	private HashMap<State, HashMap<Transition, Double>> nextTranRateMap;
 
-	public ProbLocalStateGraph(LhpnFile lpn) {
+	public ProbLocalStateGraph(LPN lpn) {
     	super(lpn);
     	nextTranRateMap = new HashMap<State, HashMap<Transition, Double>>();
     }
@@ -362,7 +362,7 @@ public class ProbLocalStateGraph extends StateGraph {
     	vvSet = this.lpn.getAllVarsWithValuesAsInt(nextState.getVariableVector());
     	// update state graphs that are affected by firedTran.
     	// TODO: Need to deal with immediate transitions. 
-    	for(LhpnFile curLPN : firedTran.getDstLpnList()) {
+    	for(LPN curLPN : firedTran.getDstLpnList()) {
     		int curIdx = curLPN.getLpnIndex();
     		State newState = curSgArray[curIdx].getNextState(curStateArray[curIdx], firedTran);
     		if(newState != null) {

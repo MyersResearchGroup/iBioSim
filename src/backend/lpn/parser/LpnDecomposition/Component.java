@@ -2,13 +2,13 @@ package backend.lpn.parser.LpnDecomposition;
 
 import java.util.ArrayList;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
 import backend.verification.platu.main.Options;
 
-public class Component extends LhpnFile{
+public class Component extends LPN{
 	private ArrayList<Integer> processIDList;
 	private ArrayList<Transition> compTrans;
 	private ArrayList<Place> compPlaces; 
@@ -75,7 +75,7 @@ public class Component extends LhpnFile{
 		return compInputs;
 	}
 
-	public LhpnFile buildLPN(LhpnFile lpnComp) {
+	public LPN buildLPN(LPN lpnComp) {
 		// Places
 		for (int i=0; i< this.getComponentPlaces().size(); i++) {
 			Place p = this.getComponentPlaces().get(i);

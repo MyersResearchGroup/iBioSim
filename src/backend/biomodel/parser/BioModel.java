@@ -89,7 +89,7 @@ import backend.biomodel.network.SpeciesInterface;
 import backend.biomodel.util.SBMLutilities;
 import backend.biomodel.util.Utility;
 import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
@@ -480,7 +480,7 @@ public class BioModel {
 		return Double.parseDouble(value);
 	}
 
-	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) {
+	public LPN convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) {
 		GCMParser parser = new GCMParser(this);
 		SBMLDocument sbml = this.flattenModel(true);	
 		if (sbml == null) return null;
@@ -489,7 +489,7 @@ public class BioModel {
 		network.markAbstractable();
 		AbstractionEngine abs = network.createAbstractionEngine();
 		ArrayList<String> biochemical = getBiochemicalSpecies();
-		LhpnFile LHPN = new LhpnFile();
+		LPN LHPN = new LPN();
 		for (int i = 0; i < specs.size(); i++) {
 			if (sbml.getModel().getSpecies(specs.get(i))==null) continue;
 			double initial = parseValue(getParameter(GlobalConstants.INITIAL_STRING));
@@ -780,7 +780,7 @@ public class BioModel {
 		return LHPN;
 	}
 	
-	public void convertLPN2PRISM(Log log,FileWriter logFile,LhpnFile LPN,String filename) {
+	public void convertLPN2PRISM(Log log,FileWriter logFile,LPN LPN,String filename) {
 		File file = new File(filename);
 		log.addText("Saving SBML file as PRISM file:\n" + filename + "\n");
 		try {
@@ -2568,7 +2568,7 @@ public class BioModel {
 		if (flatSBML==null) return false;
 		SBMLutilities.expandFunctionDefinitions(flatSBML);
 		SBMLutilities.expandInitialAssignments(flatSBML);
-		LhpnFile lpn = new LhpnFile();
+		LPN lpn = new LPN();
 		String message = "The following items cannot be converted to an LPN:\n";
 		boolean error = false;
 		if (flatSBML.getModel().getCompartmentCount()>0) {

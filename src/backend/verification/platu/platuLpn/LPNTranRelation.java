@@ -1,4 +1,4 @@
-package backend.verification.platu.lpn;
+package backend.verification.platu.platuLpn;
 
 import java.util.HashMap;
 import java.util.HashSet;

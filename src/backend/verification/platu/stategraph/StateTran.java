@@ -4,7 +4,7 @@
  */
 package backend.verification.platu.stategraph;
 
-import backend.verification.platu.lpn.LPNTran;
+import backend.verification.platu.platuLpn.LPNTran;
 
 /**
  *

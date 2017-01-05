@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.verification.platu.logicAnalysis.Analysis;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
@@ -21,7 +21,7 @@ public class Project_Timed extends Project{
 		super();
 	}
 
-	public Project_Timed(ArrayList<LhpnFile> lpns) {
+	public Project_Timed(ArrayList<LPN> lpns) {
 		super(lpns);
 	}
 
@@ -38,7 +38,7 @@ public class Project_Timed extends Project{
 	 * 			True for timing analysis and false otherwise. The option should match
 	 * 			Options.getTimingAnalysisFlag().
 	 */
-	public Project_Timed(LhpnFile lpn, boolean OptionsFlag, boolean usegraph)
+	public Project_Timed(LPN lpn, boolean OptionsFlag, boolean usegraph)
 	{
 		_useGraph = usegraph;
 		
@@ -59,7 +59,7 @@ public class Project_Timed extends Project{
 		}
 	}
 
-	public Project_Timed(LhpnFile lpn) {
+	public Project_Timed(LPN lpn) {
 		super(lpn);
 	}
 	
@@ -97,7 +97,7 @@ public class Project_Timed extends Project{
 		{
 			for(StateGraph_timed du : this.designUnitTimedSet)
 			{
-				LhpnFile lpn = du.getLpn();
+				LPN lpn = du.getLpn();
 				lpn.setLpnIndex(idx++);
 				sgArray[lpn.getLpnIndex()] = du;
 			}
@@ -109,7 +109,7 @@ public class Project_Timed extends Project{
 		State[] initStateArray = new State[lpnCnt];
 		
 		for (int index = 0; index < lpnCnt; index++) {
-			LhpnFile curLpn = sgArray[index].getLpn();
+			LPN curLpn = sgArray[index].getLpn();
 			StateGraph_timed curSg = sgArray[index];
 			
 			// TODO: Does this method need to be different than getInitState()

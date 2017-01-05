@@ -55,7 +55,7 @@ public class Translator {
 	public void oldBuildTemplate(String lhpnFilename, String property) {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
 		// load lhpn file
-		LhpnFile lhpn = new LhpnFile();
+		LPN lhpn = new LPN();
 		lhpn.load(lhpnFilename);
 		
 		// create sbml file
@@ -710,7 +710,7 @@ public class Translator {
 	public void convertLPN2SBML(String lhpnFilename, String property) {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
 		// load lhpn file
-		LhpnFile lhpn = new LhpnFile();
+		LPN lhpn = new LPN();
 		lhpn.load(lhpnFilename);
 		
 		// create sbml file
@@ -1204,7 +1204,7 @@ public class Translator {
 		return filename;
 	}
 	
-	public static SBMLDocument generateSBMLConstraints(SBMLDocument doc, String property, LhpnFile lhpn) {
+	public static SBMLDocument generateSBMLConstraints(SBMLDocument doc, String property, LPN lhpn) {
 		String probprop = "";
 		String[] probpropParts = new String[4];
 		if(!(property == null) && !property.equals("") && !property.equals("none")){
@@ -1881,7 +1881,7 @@ public class Translator {
 		return probpropParts;
 	}
 	
-	public static ExprTree String2ExprTree(LhpnFile lhpn, String str) {
+	public static ExprTree String2ExprTree(LPN lhpn, String str) {
 		ExprTree result = new ExprTree(lhpn);
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(str);

@@ -51,7 +51,7 @@ import javax.swing.JTextField;
 import backend.biomodel.parser.BioModel;
 import backend.biomodel.util.Utility;
 import backend.lpn.parser.Abstraction;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Place;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
@@ -1120,18 +1120,18 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			lpnFileName = verifyFile;
 		}
 		if (untimedStateSearch.isSelected()) {
-			LhpnFile lpn = new LhpnFile();
+			LPN lpn = new LPN();
 			lpn.load(directory + separator + lpnFileName);
 			Options.setLogName(lpn.getLabel());
 			boolean canPerformMarkovianAnalysisTemp = true;
 			if (!canPerformMarkovianAnalysis(lpn))
 				canPerformMarkovianAnalysisTemp = false;
 			if (!decomposeLPN.isSelected()) {
-				ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
+				ArrayList<LPN> selectedLPNs = new ArrayList<LPN>();
 				selectedLPNs.add(lpn);
 				for (int i=0; i < lpnList.getSelectedValuesList().toArray().length; i++) {
 					String curLPNname = (String) lpnList.getSelectedValuesList().toArray()[i];
-					LhpnFile curLPN = new LhpnFile();
+					LPN curLPN = new LPN();
 					curLPN.load(directory + separator + curLPNname);
 					selectedLPNs.add(curLPN);
 					if (!canPerformMarkovianAnalysis(curLPN))
@@ -1550,7 +1550,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						if (!possibleDecomps.contains(compMap.size())) {
 							possibleDecomps.add(compMap.size());
 							for (Component comp : compMap.values()) {
-								LhpnFile lpnComp = new LhpnFile();
+								LPN lpnComp = new LPN();
 								lpnComp = comp.buildLPN(lpnComp);
 								lpnComp.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + comp.getComponentId() + ".lpn");		
 							}
@@ -1597,7 +1597,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						// Store each process as individual LPN.
 						for (Integer curProcId : processMap.keySet()) {						
 							LpnProcess curProcess = processMap.get(curProcId);	
-							LhpnFile lpnProc = new LhpnFile();
+							LPN lpnProc = new LPN();
 							lpnProc = curProcess.buildLPN(lpnProc);
 							lpnProc.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + curProcId + ".lpn");
 							//lpnProc.save(directory + separator + lpn.getLabel() + curProcId + ".lpn");
@@ -1612,7 +1612,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					componentList.buildComponents(processMap, directory, lpn.getLabel());
 					HashMap<Integer, Component> compMap = componentList.getComponentMap();
 					for (Component comp : compMap.values()) {
-						LhpnFile lpnComp = new LhpnFile();
+						LPN lpnComp = new LPN();
 						lpnComp = comp.buildLPN(lpnComp);
 						// --- TEMP ----
 						//checkDecomposition(lpn, lpnComp);
@@ -1667,7 +1667,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		for (int i = 0; i < array.length - 1; i++) {
 			tempDir = tempDir + array[i] + separator;
 		}
-		LhpnFile lhpnFile = new LhpnFile();
+		LPN lhpnFile = new LPN();
 		lhpnFile.load(directory + separator + lpnFileName);
 		Abstraction abstraction = lhpnFile.abstractLhpn(this);
 		String abstFilename;
@@ -1778,13 +1778,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			//			return;
 
 			// Uses the timed_state_exploration.zoneProject infrastructure.
-			LhpnFile lpn = new LhpnFile();
+			LPN lpn = new LPN();
 			lpn.load(directory + separator + lpnFileName);			
 			Options.set_TimingLogFile(directory + separator
 					+ lpnFileName + ".tlog");
 
 			// Load any other listed LPNs.
-			ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
+			ArrayList<LPN> selectedLPNs = new ArrayList<LPN>();
 			// Add the current LPN to the list.
 			selectedLPNs.add(lpn);
 			//			for (int i=0; i < lpnList.getSelectedValues().length; i++) {
@@ -1797,7 +1797,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			String[] guiLPNList = lpnList.getItems();
 			for (int i=0; i < guiLPNList.length; i++) {
 				String curLPNname = guiLPNList[i];
-				LhpnFile curLPN = new LhpnFile();
+				LPN curLPN = new LPN();
 				curLPN.load(directory + separator + curLPNname);
 				selectedLPNs.add(curLPN);
 			}
@@ -3109,7 +3109,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 	
 	
-	public static boolean canPerformMarkovianAnalysis(LhpnFile lpn) {
+	public static boolean canPerformMarkovianAnalysis(LPN lpn) {
 		for (String trans : lpn.getTransitionList()) {
 			if (!lpn.isExpTransitionRateTree(trans)) {
 //				JOptionPane.showMessageDialog(Gui.frame, "LPN has transitions without exponential delay.",

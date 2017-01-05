@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
-import backend.verification.platu.lpn.LpnTranList;
 import backend.verification.platu.main.Options;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.project.PrjState;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
@@ -328,7 +328,7 @@ public class TimedPrjState extends PrjState{
 		
 		for(State s : this.stateArray){
 			// Extract the LPN.
-			LhpnFile lpn = s.getLpn();
+			LPN lpn = s.getLpn();
 			
 			// Get the state vector to update.
 			int[] vector = s.getVariableVector();

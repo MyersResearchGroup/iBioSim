@@ -10,7 +10,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 import backend.verification.platu.stategraph.State;
 
@@ -211,7 +211,7 @@ public class Zone extends ZoneType {
 	public Zone(State initialState)
 	{
 		
-		LhpnFile lpn = initialState.getLpn();
+		LPN lpn = initialState.getLpn();
 		
 		Transition[] allTran = lpn.getAllTransitions();
 		
@@ -1042,7 +1042,7 @@ public class Zone extends ZoneType {
 		
 		// Set the upper and lower bounds for the new timers.
 		
-		LhpnFile lpn = state.getLpn();
+		LPN lpn = state.getLpn();
 		
 		// Associate the Transition with its index.
 //		TreeMap<Integer, Transition> indexToTran = new TreeMap<Integer, Transition>();

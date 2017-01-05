@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
-import backend.verification.platu.lpn.DualHashMap;
-import backend.verification.platu.lpn.VarSet;
+import backend.verification.platu.platuLpn.DualHashMap;
+import backend.verification.platu.platuLpn.VarSet;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
 
@@ -39,12 +39,12 @@ public class TimedState extends State{
 	private State _state;
 	
 	@Override
-	public void setLpn(LhpnFile thisLpn) {
+	public void setLpn(LPN thisLpn) {
 		_state.setLpn(thisLpn);
 	}
 
 	@Override
-	public LhpnFile getLpn() {
+	public LPN getLpn() {
 		return _state.getLpn();
 	}
 
@@ -217,7 +217,7 @@ public class TimedState extends State{
 		_state.addTimeExtension(s);
 	}
 
-	public TimedState(LhpnFile lpn, int[] new_marking, int[] new_vector,
+	public TimedState(LPN lpn, int[] new_marking, int[] new_vector,
 			boolean[] new_isTranEnabled, boolean usegraph) {
 		super(lpn, new_marking, new_vector, new_isTranEnabled);
 		// TODO Find a way to remove the super call. 

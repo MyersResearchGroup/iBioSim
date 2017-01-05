@@ -152,15 +152,15 @@ import backend.biomodel.annotation.SBOLAnnotation;
 import backend.biomodel.parser.BioModel;
 import backend.biomodel.parser.GCM2SBML;
 import backend.biomodel.util.SBMLutilities;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Lpn2verilog;
 import backend.lpn.parser.Translator;
 import backend.lpn.parser.properties.BuildProperty;
 import backend.sbol.assembly.ModelGenerator;
 import backend.sbol.util.SBOLUtility2;
 import backend.util.GlobalConstants;
-import backend.verification.platu.lpn.io.PlatuGrammarLexer;
-import backend.verification.platu.lpn.io.PlatuGrammarParser;
+import backend.verification.platu.platuLpn.io.PlatuGrammarLexer;
+import backend.verification.platu.platuLpn.io.PlatuGrammarParser;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import de.unirostock.sems.cbarchive.CombineArchive;
@@ -2579,7 +2579,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					theFile = findTheFile[0] + ".dot";
 					File dot = new File(root + GlobalConstants.separator + theFile);
 					dot.delete();
-					LhpnFile lhpn = new LhpnFile(log);
+					LPN lhpn = new LPN(log);
 					lhpn.load(directory + GlobalConstants.separator + theFile);
 					lhpn.printDot(directory + GlobalConstants.separator + file);
 					// String cmd = "atacs -cPllodpl " + file;
@@ -2793,7 +2793,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					theFile = findTheFile[0] + ".dot";
 					File dot = new File(root + GlobalConstants.separator + theFile);
 					dot.delete();
-					LhpnFile lhpn = new LhpnFile(log);
+					LPN lhpn = new LPN(log);
 					lhpn.load(root + GlobalConstants.separator + file);
 					lhpn.printDot(root + GlobalConstants.separator + theFile);
 					// String cmd = "atacs -cPllodpl " + file;
@@ -4985,7 +4985,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 						File f = new File(root + GlobalConstants.separator + lhpnName);
 						f.createNewFile();
-						new LhpnFile(log).save(f.getAbsolutePath());
+						new LPN(log).save(f.getAbsolutePath());
 						int i = getTab(f.getName());
 						if (i != -1)
 						{
@@ -5098,8 +5098,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								PlatuGrammarLexer lexer = new PlatuGrammarLexer(in);
 								TokenStream tokenStream = new CommonTokenStream(lexer);
 								PlatuGrammarParser antlrParser = new PlatuGrammarParser(tokenStream);
-								Set<LhpnFile> lpnSet = antlrParser.lpn();
-								for (LhpnFile lpn : lpnSet)
+								Set<LPN> lpnSet = antlrParser.lpn();
+								for (LPN lpn : lpnSet)
 								{
 									lpn.save(root + GlobalConstants.separator + lpn.getLabel() + ".lpn");
 									addToTree(lpn.getLabel() + ".lpn");
@@ -6119,7 +6119,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String theFile = findTheFile[0] + ".dot";
 				File dot = new File(root + GlobalConstants.separator + theFile);
 				dot.delete();
-				LhpnFile lhpn = new LhpnFile(log);
+				LPN lhpn = new LPN(log);
 				lhpn.load(tree.getFile());
 				lhpn.printDot(root + GlobalConstants.separator + theFile);
 				File work = new File(root);
@@ -7437,7 +7437,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
 				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 			}
-			LhpnFile lhpn = new LhpnFile(log);
+			LPN lhpn = new LPN(log);
 			File work = new File(directory);
 			int i = getTab(theFile);
 			if (i != -1)

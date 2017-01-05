@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 import backend.verification.platu.common.Pair;
-import backend.verification.platu.lpn.VarSet;
 import backend.verification.platu.main.Options;
+import backend.verification.platu.platuLpn.VarSet;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
 
@@ -854,7 +854,7 @@ public class CompositionalAnalysis {
 		
 		// create new composite state graph
 		StateGraph[] sgArray = new StateGraph[size];
-		List<LhpnFile> lpnList = new ArrayList<LhpnFile>(size);
+		List<LPN> lpnList = new ArrayList<LPN>(size);
 		for(int i = 0; i < sg1Size; i++){
 			sgArray[i] = stateGraphArray1[i];
 			// TOOD: is this needed???
@@ -1188,7 +1188,7 @@ public class CompositionalAnalysis {
 		
 		// create new composite state graph
 		StateGraph[] sgArray = new StateGraph[size];
-		List<LhpnFile> lpnList = new ArrayList<LhpnFile>(size);
+		List<LPN> lpnList = new ArrayList<LPN>(size);
 		for(int i = 0; i < sg1Size; i++){
 			sgArray[i] = stateGraphArray1[i];
 			// TODO: (future) Is this needed??
@@ -2390,7 +2390,7 @@ public class CompositionalAnalysis {
 		long start = System.currentTimeMillis();
 		HashMap<StateGraph, List<StateGraph>> inputSrcMap = new HashMap<StateGraph, List<StateGraph>>();
 		for (StateGraph sg : sgArray) {
-			LhpnFile lpn = sg.getLpn();
+			LPN lpn = sg.getLpn();
 		    // Add initial state to state graph
 			State init = sg.genInitialState();
 			sg.setInitialState(init);
@@ -2403,7 +2403,7 @@ public class CompositionalAnalysis {
 			for(StateGraph sg2 : sgArray){
 				if(sg == sg2) 
 					continue;
-				LhpnFile lpn2 = sg2.getLpn();
+				LPN lpn2 = sg2.getLpn();
 				Set<String> outputs = lpn2.getAllOutputs().keySet();
 				for(String output : outputs){
 					if (inputSet.contains(output)){
@@ -2432,7 +2432,7 @@ public class CompositionalAnalysis {
 				for(StateGraph sg2 : sgArray){
 					if(sg == sg2) 
 						continue;
-					LhpnFile lpn2 = sg2.getLpn();					
+					LPN lpn2 = sg2.getLpn();					
 					int interfaceSize = 0;
 					Set<String> outputs = lpn2.getAllOutputs().keySet();
 					Set<String> inputs = lpn2.getAllInputs().keySet();
@@ -2568,7 +2568,7 @@ public class CompositionalAnalysis {
 		HashMap<StateGraph, StateGraph[]> inputSrcMap = new HashMap<StateGraph, StateGraph[]>();
 		
 		for (StateGraph sg : designUnitSet) {
-			LhpnFile lpn = sg.getLpn();
+			LPN lpn = sg.getLpn();
 			
             // Add initial state to state graph
 			State init = sg.genInitialState();
@@ -2605,7 +2605,7 @@ public class CompositionalAnalysis {
 			if(size > 0){
 				int index = 0;
 				for(StateGraph sg2 : designUnitSet){	
-					LhpnFile lpn2 = sg2.getLpn();
+					LPN lpn2 = sg2.getLpn();
 					if(sg == sg2) continue;
 					
 					boolean src = false;
@@ -2657,7 +2657,7 @@ public class CompositionalAnalysis {
 			inputSrcMap.put(sg, srcArray);
 		}
 		
-		LhpnFile[] lpnList = new LhpnFile[designUnitSet.size()];
+		LPN[] lpnList = new LPN[designUnitSet.size()];
 
 		int idx = 0;
 		for (StateGraph sg : designUnitSet) {
@@ -2748,8 +2748,8 @@ public class CompositionalAnalysis {
      */
 	private static int applyConstraintSet(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		int newTransitions = 0;
-		LhpnFile srcLpn = srcSG.getLpn();
-		LhpnFile lpn = sg.getLpn();
+		LPN srcLpn = srcSG.getLpn();
+		LPN lpn = sg.getLpn();
 		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.getLpnIndex());
 		int[] otherIndexList = lpn.getOtherIndexArray(srcLpn.getLpnIndex());
 //		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.ID - 1);
@@ -2790,7 +2790,7 @@ public class CompositionalAnalysis {
 	private static void extractConstraints(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		newConstraintSet.clear();
 		oldConstraintSet.clear();
-		LhpnFile srcLpn = srcSG.getLpn();
+		LPN srcLpn = srcSG.getLpn();
 		for(Constraint newConstraint : sg.getNewConstraintSet()){
 			if(newConstraint.getLpn() != srcLpn) 
 				continue;	    	
@@ -2880,7 +2880,7 @@ public class CompositionalAnalysis {
      * @param newVector
      * @return
      */
-    public static void updateTranVectorByConstraint(LhpnFile lpn, boolean[] enabledTran,
+    public static void updateTranVectorByConstraint(LPN lpn, boolean[] enabledTran,
 			int[] marking, int[] newVector) {    	
         // find newly enabled transition(s) based on the updated variables vector.
         for (Transition tran : lpn.getAllTransitions()) {
@@ -2928,7 +2928,7 @@ public class CompositionalAnalysis {
 
 	private static void constructDstLpnList(StateGraph[] sgArray) {
 		for (int i=0; i<sgArray.length; i++) {
-			LhpnFile curLPN = sgArray[i].getLpn();
+			LPN curLPN = sgArray[i].getLpn();
 			Transition[] allTrans = curLPN.getAllTransitions();
 			for (int j=0; j<allTrans.length; j++) {
 				Transition curTran = allTrans[j];

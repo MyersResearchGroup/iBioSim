@@ -37,7 +37,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private LhpnFile lhpn;
+	private LPN lhpn;
 
 	private JComboBox varBox;
 
@@ -49,7 +49,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 	public AssignmentPanel(String selected, PropertyList assignmentList, PropertyList continuousList,
 			PropertyList rateList, PropertyList booleanList, PropertyList integerList,
-			LhpnFile lhpn) {
+			LPN lhpn) {
 		super(new GridLayout(3, 1));
 		this.selected = selected;
 		this.assignmentList = assignmentList;

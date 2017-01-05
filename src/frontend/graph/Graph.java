@@ -120,7 +120,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import backend.analysis.util.SEDMLutilities;
 import backend.biomodel.parser.BioModel;
 import backend.biomodel.util.SBMLutilities;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.util.GlobalConstants;
 import backend.util.dataparser.DTSDParser;
 import backend.util.dataparser.DataParser;
@@ -8711,7 +8711,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				learnSpecs = gcm.getSpecies();
 			}
 			else if (background.endsWith(".lpn")) {
-				LhpnFile lhpn = new LhpnFile(gui.log);
+				LPN lhpn = new LPN(gui.log);
 				lhpn.load(background);
 				/*
 				HashMap<String, Properties> speciesMap = lhpn.getContinuous();

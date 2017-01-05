@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Map;
 
 import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
-import backend.verification.platu.lpn.DualHashMap;
-import backend.verification.platu.lpn.LpnTranList;
 import backend.verification.platu.main.Options;
+import backend.verification.platu.platuLpn.DualHashMap;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.zoneProject.ContinuousRecordSet;
 import backend.verification.timed_state_exploration.zoneProject.ContinuousUtilities;
@@ -87,7 +87,7 @@ public class Octagon implements Equivalence {
 	/*
 	 * The list of LPN for the variables.
 	 */
-	private LhpnFile[] _lpnList;
+	private LPN[] _lpnList;
 	
 	/*
 	 * The matrix for storing the DBM.
@@ -438,7 +438,7 @@ public class Octagon implements Equivalence {
 	private void initialize_lpnList(State[] localStates){
 		
 		// Create the LPN list.
-		_lpnList = new LhpnFile[localStates.length];
+		_lpnList = new LPN[localStates.length];
 		
 		// Get the LPNs.
 		for(int i=0; i<localStates.length; i++){
@@ -523,7 +523,7 @@ public class Octagon implements Equivalence {
 			//*LhpnFile lpn = localStates[i].getLpn();
 			
 			// Get the associated LPN.
-			LhpnFile lpn = localStates[i].getLpn();
+			LPN lpn = localStates[i].getLpn();
 			
 			// Get the continuous variables for this LPN.
 			//*String[] continuousVariables = lpn.getContVars();
@@ -1062,7 +1062,7 @@ public class Octagon implements Equivalence {
 	 * the max and min, so one needs to adjust the division by 2 to an integer.
 	 */
 	@Override
-	public IntervalPair getContinuousBounds(String contVar, LhpnFile lpn){
+	public IntervalPair getContinuousBounds(String contVar, LPN lpn){
 		
 		// Extract the necessary indecies.
 		int lpnIndex = lpn.getLpnIndex();
@@ -1744,7 +1744,7 @@ public class Octagon implements Equivalence {
 		//*	newZone._lpnList[i] = this._lpnList[i];
 		//*}
 		// Copy the LPNs over.
-		newOct._lpnList = new LhpnFile[this._lpnList.length];
+		newOct._lpnList = new LPN[this._lpnList.length];
 		for (int i=0; i<this._lpnList.length; i++){
 			newOct._lpnList[i] = this._lpnList[i];
 		}
@@ -2860,7 +2860,7 @@ public class Octagon implements Equivalence {
 		//*for(int i=0; i<this._lpnList.length; i++){
 			//*newZone._lpnList[i] = this._lpnList[i];
 		//*}
-		newOct._lpnList = new LhpnFile[this._lpnList.length];
+		newOct._lpnList = new LPN[this._lpnList.length];
 		for (int i=0; i<this._lpnList.length; i++){
 			newOct._lpnList[i] = this._lpnList[i];
 		}
@@ -4378,7 +4378,7 @@ public class Octagon implements Equivalence {
 	 * 		The list of LhpnFile objects that this Octagon depends on.
 	 */
 	@Override
-	public LhpnFile[] get_lpnList(){
+	public LPN[] get_lpnList(){
 		return _lpnList;
 	}
 	
@@ -5018,7 +5018,7 @@ public class Octagon implements Equivalence {
 		//*for(int i=0; i<this._lpnList.length; i++){
 			//*newZone._lpnList[i] = this._lpnList[i];
 		//*}
-		newOct._lpnList = new LhpnFile[this._lpnList.length];
+		newOct._lpnList = new LPN[this._lpnList.length];
 		for(int i=0; i<this._lpnList.length; i++){
 			newOct._lpnList[i] = this._lpnList[i];
 		}
@@ -5409,7 +5409,7 @@ public class Octagon implements Equivalence {
 	
 	@Override
 	public int getLowerBoundbyTransition(Transition t){
-		LhpnFile lpn = t.getLpn();
+		LPN lpn = t.getLpn();
 		
 		int lpnIndex = lpn.getLpnIndex();
 		

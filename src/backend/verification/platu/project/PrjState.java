@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.stategraph.State;
@@ -106,7 +106,7 @@ public class PrjState {
 //		}
 //	}
 	
-	public void print(final LhpnFile[] lpnList) {
+	public void print(final LPN[] lpnList) {
 		for(int i = 0; i < stateArray.length; i++) {
 			System.out.println(lpnList[i].getLabel() + ".lpn" +": ");
 			//stateArray[i].print(lpnList[i].getVarIndexMap());

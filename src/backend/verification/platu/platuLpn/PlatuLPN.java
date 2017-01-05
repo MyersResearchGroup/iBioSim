@@ -1,4 +1,4 @@
-package backend.verification.platu.lpn;
+package backend.verification.platu.platuLpn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +13,7 @@ import backend.verification.platu.expression.VarNode;
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.StateGraph;
 
-public class LPN {
+public class PlatuLPN {
 	public static int nextID=1;
     static private List<String> emptyStringList = new ArrayList<String>();
     static private List<int[]> emptyArrayList = new ArrayList<int[]>();
@@ -80,7 +80,7 @@ public class LPN {
         return ret;
     }
 
-    public LPN(Project prj, String label, VarSet inputs, VarSet outputs,
+    public PlatuLPN(Project prj, String label, VarSet inputs, VarSet outputs,
             VarSet internals, LpnTranList transitions) {
         this.prj = prj;
         this.label = label;
@@ -107,7 +107,7 @@ public class LPN {
         this.stateGraph = null; //new StateGraph(this);
     }
     
-    public LPN(Project prj, String label, VarSet inputs, VarSet outputs,
+    public PlatuLPN(Project prj, String label, VarSet inputs, VarSet outputs,
             VarSet internals, HashMap<String, VarNode> varNodeMap, LpnTranList transitions, 
             HashMap<String, Integer> initialVector, int[] initialMarkings) {
         this.prj = prj;
@@ -141,7 +141,7 @@ public class LPN {
     }
 
     @Override
-    public LPN clone() {
+    public PlatuLPN clone() {
         // copy varNodeMap
         HashMap<String, VarNode> varNodeMap = new HashMap<String, VarNode>();
         List<ArrayNode> arrayNodes = new LinkedList<ArrayNode>();
@@ -172,7 +172,7 @@ public class LPN {
         HashMap<String, Integer> initVector = new HashMap<String, Integer>(this.initVector);
         
         // copy of zone
-        LPN newLPN = new LPN(this.prj, this.label, this.inputs.clone(), this.outputs.clone(),
+        PlatuLPN newLPN = new PlatuLPN(this.prj, this.label, this.inputs.clone(), this.outputs.clone(),
                 this.internals.clone(), varNodeMap, transitions, initVector, this.initMark);
         
         // TODO: have to cut below because transitions is null
@@ -251,8 +251,8 @@ public class LPN {
     	this.outputs.addAll(addList);
     }
     
-    public LPN instantiate(String label){
-    	LPN newLpn = this.clone();
+    public PlatuLPN instantiate(String label){
+    	PlatuLPN newLpn = this.clone();
     	int[] currentVector = null;//newLpn.getInitState().getVector();
     	newLpn.setLabel(label);
 //    	StateGraph sg = (StateGraph) newLpn;
@@ -357,7 +357,7 @@ public class LPN {
     	return newLpn;
     }
     
-    public void connect(String outputVar, LPN dstLpn, String inputVar){
+    public void connect(String outputVar, PlatuLPN dstLpn, String inputVar){
     	int[] initVector = null; // this.getInitState().getVector();
     	
     	// change outputVar to an output if not already
@@ -799,7 +799,7 @@ public class LPN {
         return this.varIndexMap;
     }
     
-    public void genIndexLists(int[] thisIndexList, int[] otherIndexList, LPN otherLpn){
+    public void genIndexLists(int[] thisIndexList, int[] otherIndexList, PlatuLPN otherLpn){
     	int arrayIndex = 0;
     	DualHashMap<String, Integer> otherVarIndexMap = otherLpn.getVarIndexMap();
     	String[] interfaceVars = otherLpn.getInterfaceVariables();
@@ -918,7 +918,7 @@ public class LPN {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LPN other = (LPN) obj;
+		PlatuLPN other = (PlatuLPN) obj;
 		if (label == null) {
 			if (other.label != null)
 				return false;

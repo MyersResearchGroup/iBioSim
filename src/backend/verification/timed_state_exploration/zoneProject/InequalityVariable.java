@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.Properties;
 
 import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 import backend.lpn.parser.Variable;
-import backend.verification.platu.lpn.DualHashMap;
+import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
 
@@ -46,7 +46,7 @@ public class InequalityVariable extends Variable {
 	private HashSet<Transition> _transitions;
 	
 	/* The LhpnFile object that this InequalityVariable belongs to. */
-	private LhpnFile _lpn;
+	private LPN _lpn;
 	
 	/* 
 	 * The constant. Note: getConstant will set this variable. 
@@ -146,7 +146,7 @@ public class InequalityVariable extends Variable {
 	 * 		An expression tree that defines the boolean value. This tree should
 	 * 		represent a relational operator.
 	 */
-	public InequalityVariable(String name, String initValue, ExprTree ET, LhpnFile lpn) {
+	public InequalityVariable(String name, String initValue, ExprTree ET, LPN lpn) {
 		super(name, BOOLEAN, initValue);
 		
 		// Check if the name starts with a '$'. If not, yell.
@@ -685,7 +685,7 @@ public class InequalityVariable extends Variable {
 	 * @return
 	 * 		The LPN that contains this variable.
 	 */
-	public LhpnFile get_lpn(){
+	public LPN get_lpn(){
 		return _lpn;
 	}
 	

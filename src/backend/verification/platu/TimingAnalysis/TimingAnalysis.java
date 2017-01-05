@@ -2,11 +2,11 @@ package backend.verification.platu.TimingAnalysis;
 
 import java.util.*;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
 import backend.verification.platu.logicAnalysis.Analysis;
-import backend.verification.platu.lpn.DualHashMap;
-import backend.verification.platu.lpn.LpnTranList;
+import backend.verification.platu.platuLpn.DualHashMap;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.project.PrjState;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
@@ -35,7 +35,7 @@ public class TimingAnalysis {
 		ArrayList<LinkedList<Transition>> enabledList = new ArrayList<LinkedList<Transition>>(
 				1);
 		for (int index = 0; index < ArraySize; index++) {
-			LhpnFile curLpn = SgArray[index].getLpn();
+			LPN curLpn = SgArray[index].getLpn();
 			StateGraph curSg = SgArray[index];
 			// TODO: (Check) check if curSg is correct
 			initStateArray[index] = curSg.genInitialState();

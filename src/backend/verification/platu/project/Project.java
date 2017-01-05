@@ -16,21 +16,21 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Translator;
 import backend.util.GlobalConstants;
 import backend.verification.platu.logicAnalysis.Analysis;
 import backend.verification.platu.logicAnalysis.CompositionalAnalysis;
-import backend.verification.platu.lpn.LPN;
-import backend.verification.platu.lpn.LPNTranRelation;
-import backend.verification.platu.lpn.io.Instance;
-import backend.verification.platu.lpn.io.PlatuInstLexer;
-import backend.verification.platu.lpn.io.PlatuInstParser;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.markovianAnalysis.MarkovianAnalysis;
 import backend.verification.platu.markovianAnalysis.PerfromTransientMarkovAnalysisThread;
 import backend.verification.platu.markovianAnalysis.ProbGlobalStateSet;
 import backend.verification.platu.markovianAnalysis.ProbLocalStateGraph;
+import backend.verification.platu.platuLpn.PlatuLPN;
+import backend.verification.platu.platuLpn.LPNTranRelation;
+import backend.verification.platu.platuLpn.io.Instance;
+import backend.verification.platu.platuLpn.io.PlatuInstLexer;
+import backend.verification.platu.platuLpn.io.PlatuInstParser;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
@@ -62,7 +62,7 @@ public class Project {
 		lpnTranRelation = new LPNTranRelation(this.designUnitSet);
 	}
   	
-	public Project(LhpnFile lpn) {
+	public Project(LPN lpn) {
 		this.label = "";
 		this.designUnitSet = new ArrayList<StateGraph>(1);
 		StateGraph stateGraph = new StateGraph(lpn);
@@ -102,19 +102,19 @@ public class Project {
 //		}
 //	}
 
-	public Project(ArrayList<LhpnFile> lpns) {
+	public Project(ArrayList<LPN> lpns) {
 		this.label = "";
 		this.designUnitSet = new ArrayList<StateGraph>(lpns.size());
 		if (!Options.getMarkovianModelFlag())
 			for (int i=0; i<lpns.size(); i++) {
-				LhpnFile lpn = lpns.get(i);
+				LPN lpn = lpns.get(i);
 				StateGraph stateGraph = new StateGraph(lpn);
 				lpn.addStateGraph(stateGraph);
 				designUnitSet.add(stateGraph);
 			}
 		else 
 			for (int i=0; i<lpns.size(); i++) {
-				LhpnFile lpn = lpns.get(i);
+				LPN lpn = lpns.get(i);
 				ProbLocalStateGraph stateGraph = new ProbLocalStateGraph(lpn);
 				lpn.addStateGraph(stateGraph);
 				designUnitSet.add(stateGraph);
@@ -152,7 +152,7 @@ public class Project {
         StateGraph[] sgArray = new StateGraph[lpnCnt];
         int idx = 0;
 		for (StateGraph du : designUnitSet) {
-			LhpnFile lpn = du.getLpn();
+			LPN lpn = du.getLpn();
 			lpn.setLpnIndex(idx++);
 			sgArray[lpn.getLpnIndex()] = du;
 		}
@@ -172,7 +172,7 @@ public class Project {
 		HashMap<String, Integer> varValMap = new HashMap<String, Integer>();
 		State[] initStateArray = new State[lpnCnt];
 		for (int index = 0; index < lpnCnt; index++) {
-			LhpnFile curLpn = sgArray[index].getLpn();
+			LPN curLpn = sgArray[index].getLpn();
 			StateGraph curSg = sgArray[index];			
 			initStateArray[index] = curSg.genInitialState();			
 			int[] curVariableVector = initStateArray[index].getVariableVector();
@@ -375,8 +375,8 @@ public class Project {
 //				sgArray[i].drawLocalStateGraph();				
 	}
 
-	public static Set<LPN> readLpn(final String src_file) {
-		Set<LPN> lpnSet = null;
+	public static Set<PlatuLPN> readLpn(final String src_file) {
+		Set<PlatuLPN> lpnSet = null;
 
 		try {
 			if (!src_file.endsWith(".lpn")) {
@@ -465,17 +465,17 @@ public class Project {
 			parser.parseLpnFile(this);
 		}
 		
-		backend.verification.platu.lpn.LPN.nextID = 1;
+		backend.verification.platu.platuLpn.PlatuLPN.nextID = 1;
 		
-		HashMap<String, LPN> instanceMap = new HashMap<String, LPN>();
+		HashMap<String, PlatuLPN> instanceMap = new HashMap<String, PlatuLPN>();
 		for(Instance inst : PlatuInstParser.InstanceList){
-			LPN lpn = PlatuInstParser.LpnMap.get(inst.getLpnLabel());
+			PlatuLPN lpn = PlatuInstParser.LpnMap.get(inst.getLpnLabel());
 			if(lpn == null){
 				System.err.println("error: class " + inst.getLpnLabel() + " does not exist");
 				return;
 			}
 			
-			LPN instLpn = lpn.instantiate(inst.getName());
+			PlatuLPN instLpn = lpn.instantiate(inst.getName());
 			
 			instanceMap.put(instLpn.getLabel(), instLpn);
 			this.designUnitSet.add(instLpn.getStateGraph());
@@ -489,7 +489,7 @@ public class Project {
 		*/
 		
 		for(Instance inst : PlatuInstParser.InstanceList){
-			LPN dstLpn = instanceMap.get(inst.getName());
+			PlatuLPN dstLpn = instanceMap.get(inst.getName());
 			if(dstLpn == null){
 				System.err.println("error: instance " + inst.getName() + " does not exist");
 				return;
@@ -505,7 +505,7 @@ public class Project {
 			}
 			
 			for(int i = 0; i < argumentList.size(); i++){
-				LPN srcLpn = instanceMap.get(modList.get(i));
+				PlatuLPN srcLpn = instanceMap.get(modList.get(i));
 				if(srcLpn == null){
 					System.err.println("error: instance " + modList.get(i) + " does not exist");
 					return;

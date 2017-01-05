@@ -23,13 +23,13 @@ public class PropertyPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private LhpnFile lhpn;
+	private LPN lhpn;
 
 	private PropertyField field;
 
 	private PropertyList propertyList;
 
-	public PropertyPanel(String selected, PropertyList propertyList, LhpnFile lhpn) {
+	public PropertyPanel(String selected, PropertyList propertyList, LPN lhpn) {
 		super(new GridLayout(1, 1));
 		this.selected = selected;
 		this.propertyList = propertyList;

@@ -14,7 +14,7 @@ public class Lpn2verilog {
 		String enable = "";
 		String separator = GlobalConstants.separator;
 		try{
-			LhpnFile lpn = new LhpnFile();
+			LPN lpn = new LPN();
 			lpn.load(lpnFileName);
 			String svFileName = lpnFileName.replaceAll(".lpn", ".sv");
 			File svFile = new File(svFileName);
@@ -624,7 +624,7 @@ public class Lpn2verilog {
 		return(initBufferString);
 	}
 
-	private static HashMap<String,Integer> tagNet(LhpnFile g, String place, int id, HashMap<String,Integer> tag,
+	private static HashMap<String,Integer> tagNet(LPN g, String place, int id, HashMap<String,Integer> tag,
 			HashMap<String,Boolean> visitedPlaces){
 		//System.out.println("Place is :"+place);
 		if (!visitedPlaces.containsKey(place)){

@@ -3,9 +3,9 @@ package backend.verification.timed_state_exploration.octagon;
 import java.util.Collection;
 import java.util.HashSet;
 
-import backend.lpn.parser.LhpnFile;
+import backend.lpn.parser.LPN;
 import backend.lpn.parser.Transition;
-import backend.verification.platu.lpn.LpnTranList;
+import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.zoneProject.ContinuousRecordSet;
 import backend.verification.timed_state_exploration.zoneProject.EventSet;
@@ -22,7 +22,7 @@ import backend.verification.timed_state_exploration.zoneProject.LPNTransitionPai
  */
 public interface Equivalence {
 
-	public IntervalPair getContinuousBounds(String variable, LhpnFile lhpn);
+	public IntervalPair getContinuousBounds(String variable, LPN lhpn);
 
 	public int getCurrentRate(LPNTransitionPair index);
 
@@ -34,7 +34,7 @@ public interface Equivalence {
 	
 	public int getLowerBoundTrue(int index);
 
-	public LhpnFile[] get_lpnList();
+	public LPN[] get_lpnList();
 	
 	public int getDbmEntry(int i, int j);
 	
