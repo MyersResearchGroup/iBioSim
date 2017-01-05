@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="biomodel/gui/sbol/SBOLField.java|biomodel/gui/sbol/SBOLDescriptorPanel.java|biomodel/gui/sbol/SBOLAssociationPanel.java" kind="src" path="src"/>
+	<classpathentry excluding="biomodel/gui/sbol/SBOLField.java|biomodel/gui/sbol/SBOLDescriptorPanel.java|biomodel/gui/sbol/SBOLAssociationPanel.java|backend/biomodel/gui/sbol/SBOLAssociationPanel.java|backend/biomodel/gui/sbol/SBOLDescriptorPanel.java|backend/biomodel/gui/sbol/SBOLField.java|backend/biomodel/scripts/|frontend/biomodel/gui/sbol/SBOLAssociationPanel.java|frontend/biomodel/gui/sbol/SBOLDescriptorPanel.java|frontend/biomodel/gui/sbol/SBOLField.java|backend/biomodel/util/Validation.java|backend/sbol/util/SBOLFileManager.java|backend/sbol/util/SBOLIdentityManager.java|backend/sbol/util/SBOLUtility.java|backend/sbol/assembly/Assembler.java|backend/sbol/assembly/AssemblyGraph.java|backend/sbol/assembly/AssemblyNode.java|frontend/sbol/browser/CollectionBrowserPanel.java|frontend/sbol/browser/DNAComponentBrowserPanel.java|frontend/sbol/browser/SBOLBrowser.java" kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/epsgraphics.jar"/>
 	<classpathentry kind="lib" path="lib/js.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
