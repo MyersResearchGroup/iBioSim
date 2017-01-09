@@ -3,68 +3,68 @@ package backend.analysis.dynamicsim.hierarchical.states;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DenseState extends HierarchicalState
+public class DenseState extends TreeState
 {
 
-	private List<HierarchicalState>	listOfStates;
+  private List<HierarchicalState>  listOfStates;
 
-	public DenseState()
-	{
-		this.listOfStates = new ArrayList<HierarchicalState>(1);
-	}
+  public DenseState()
+  {
+    this.listOfStates = new ArrayList<HierarchicalState>(1);
+  }
 
-	public DenseState(int capacity)
-	{
-		this.listOfStates = new ArrayList<HierarchicalState>(capacity);
-	}
+  public DenseState(int capacity)
+  {
+    this.listOfStates = new ArrayList<HierarchicalState>(capacity);
+  }
 
-	@Override
-	public double getStateValue()
-	{
-		return value;
-	}
+  @Override
+  public double getStateValue()
+  {
+    return value;
+  }
 
-	@Override
-	public void setStateValue(double value)
-	{
-		this.value = value;
-	}
+  @Override
+  public void setStateValue(double value)
+  {
+    this.value = value;
+  }
 
-	@Override
-	public void addState(int index, double value)
-	{
-		if (listOfStates == null)
-		{
-			listOfStates = new ArrayList<HierarchicalState>();
-		}
+  @Override
+  public void addState(int index, double value)
+  {
+    if (listOfStates == null)
+    {
+      listOfStates = new ArrayList<HierarchicalState>();
+    }
 
-		while (index > listOfStates.size())
-		{
-			listOfStates.add(new ValueState());
-		}
+    while (index > listOfStates.size())
+    {
+      listOfStates.add(new ValueState());
+    }
 
-	}
+  }
 
-	@Override
-	public HierarchicalState getState(int index)
-	{
-		return listOfStates.get(index);
-	}
+  @Override
+  public HierarchicalState getState(int index)
+  {
+    return listOfStates.get(index);
+  }
 
-	@Override
-	public void addState(int index)
-	{
-		if (listOfStates == null)
-		{
-			listOfStates = new ArrayList<HierarchicalState>();
-		}
+  @Override
+  public void addState(int index)
+  {
+    if (listOfStates == null)
+    {
+      listOfStates = new ArrayList<HierarchicalState>();
+    }
 
-		while (index > listOfStates.size())
-		{
-			listOfStates.add(new DenseState());
-		}
+    while (index > listOfStates.size())
+    {
+      listOfStates.add(new DenseState());
+    }
 
-	}
+  }
 
   @Override
   public String toString() {
@@ -78,4 +78,5 @@ public class DenseState extends HierarchicalState
     }
     return builder.toString();
   }
+
 }
