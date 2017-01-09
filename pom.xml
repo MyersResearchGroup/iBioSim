@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>MyersResearchGroup</groupId>
+	<artifactId>iBioSim</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>iBioSim</name>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+  <dependencies>
+  	<dependency>
+  		<groupId>org.sbolstandard</groupId>
+  		<artifactId>libSBOLj</artifactId>
+  	</dependency>
+  	<dependency>
+  			<groupId>org.sbolstandard</groupId>
+  			<artifactId>libSBOLj</artifactId>
+  			<version>2.1.1</version>
+  		</dependency>
+  		<dependency>
+    <groupId>org.antlr</groupId>
+    <artifactId>antlr</artifactId>
+    <version>3.4</version>
+</dependency>
+<dependency>
+    <groupId>org.antlr</groupId>
+    <artifactId>antlr-runtime</artifactId>
+    <version>3.4</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-awt-util</artifactId>
+    <version>1.8</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-anim</artifactId>
+    <version>1.8</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-bridge</artifactId>
+    <version>1.8</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-codec</artifactId>
+    <version>1.8</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-css</artifactId>
+    <version>1.8</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-dom</artifactId>
+    <version>1.8</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-ext</artifactId>
+    <version>1.8</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-extension</artifactId>
+    <version>1.8</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-gui-util</artifactId>
+    <version>1.8</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-gvt</artifactId>
+    <version>1.8</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-parser</artifactId>
+    <version>1.8</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-script</artifactId>
+    <version>1.8</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-svg-dom</artifactId>
+    <version>1.8</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-svggen</artifactId>
+    <version>1.8</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-swing</artifactId>
+    <version>1.8</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-transcoder</artifactId>
+    <version>1.8</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-util</artifactId>
+    <version>1.8</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.xmlgraphics</groupId>
+    <artifactId>batik-xml</artifactId>
+    <version>1.8</version>
+</dependency>
+
+  	
+  </dependencies>
+  <dependencyManagement>
+  	<dependencies>
+  		
+  	</dependencies>
+  </dependencyManagement>
+</project>

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="biomodel/gui/sbol/SBOLField.java|biomodel/gui/sbol/SBOLDescriptorPanel.java|biomodel/gui/sbol/SBOLAssociationPanel.java|backend/biomodel/gui/sbol/SBOLAssociationPanel.java|backend/biomodel/gui/sbol/SBOLDescriptorPanel.java|backend/biomodel/gui/sbol/SBOLField.java|backend/biomodel/scripts/|frontend/biomodel/gui/sbol/SBOLAssociationPanel.java|frontend/biomodel/gui/sbol/SBOLDescriptorPanel.java|frontend/biomodel/gui/sbol/SBOLField.java|backend/biomodel/util/Validation.java|backend/sbol/util/SBOLFileManager.java|backend/sbol/util/SBOLIdentityManager.java|backend/sbol/util/SBOLUtility.java|backend/sbol/assembly/Assembler.java|backend/sbol/assembly/AssemblyGraph.java|backend/sbol/assembly/AssemblyNode.java|frontend/sbol/browser/CollectionBrowserPanel.java|frontend/sbol/browser/DNAComponentBrowserPanel.java|frontend/sbol/browser/SBOLBrowser.java" kind="src" path="src"/>
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/epsgraphics.jar"/>
 	<classpathentry kind="lib" path="lib/js.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
@@ -23,7 +28,6 @@
 	<classpathentry kind="lib" path="lib/flanagan.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar"/>
-	<classpathentry kind="lib" path="lib/antlr-3.4-complete.jar"/>
 	<classpathentry kind="lib" path="lib/biomodels-wslib-1.21.jar"/>
 	<classpathentry kind="lib" path="lib/axis.jar"/>
 	<classpathentry kind="lib" path="lib/commons-discovery-0.5.jar"/>
@@ -31,23 +35,8 @@
 	<classpathentry kind="lib" path="lib/wsdl4j.jar"/>
 	<classpathentry kind="lib" path="lib/saaj.jar"/>
 	<classpathentry kind="lib" path="lib/w3c-dom.jar"/>
-	<classpathentry kind="lib" path="lib/batik-awt-util.jar"/>
-	<classpathentry kind="lib" path="lib/batik-ext.jar"/>
-	<classpathentry kind="lib" path="lib/batik-svggen.jar"/>
-	<classpathentry kind="lib" path="lib/batik-util.jar"/>
-	<classpathentry kind="lib" path="lib/batik-xml.jar"/>
 	<classpathentry kind="lib" path="lib/javax.servlet-api-3.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/jdom-contrib.jar"/>
-	<classpathentry kind="lib" path="lib/batik-dom.jar"/>
-	<classpathentry kind="lib" path="lib/batik-css.jar"/>
-	<classpathentry kind="lib" path="lib/batik-gui-util.jar"/>
-	<classpathentry kind="lib" path="lib/batik-bridge.jar"/>
-	<classpathentry kind="lib" path="lib/batik-transcoder.jar"/>
-	<classpathentry kind="lib" path="lib/batik-svg-dom.jar"/>
-	<classpathentry kind="lib" path="lib/batik-anim.jar"/>
-	<classpathentry kind="lib" path="lib/batik-parser.jar"/>
-	<classpathentry kind="lib" path="lib/batik-gvt.jar"/>
-	<classpathentry kind="lib" path="lib/batik-script.jar"/>
 	<classpathentry kind="lib" path="lib/SBOLDesigner.jar"/>
 	<classpathentry kind="lib" path="lib/simpleeventbus-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/guava-18.0.jar"/>
@@ -62,7 +51,11 @@
 	<classpathentry kind="lib" path="lib/gson-2.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/sbolstack-frontend-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/CombineArchive-1.1.1-jar-with-dependencies.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jlibsedml.jar"/>
 	<classpathentry kind="lib" path="lib/xom-1.2.1.jar"/>
@@ -80,7 +73,11 @@
 	<classpathentry kind="lib" path="lib/csparsej-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/libsbmlj.jar"/>
 	<classpathentry kind="lib" path="lib/commons-math3-3.6.1.jar" sourcepath="lib/commons-math3-3.6.1-sources.jar"/>
-	<classpathentry kind="lib" path="lib/libSBOLj-2.1.1-SNAPSHOT-withDependencies.jar"/>
 	<classpathentry kind="lib" path="lib/jsbml-1.2-with-dependencies.jar"/>
-	<classpathentry kind="output" path="dist/classes"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
