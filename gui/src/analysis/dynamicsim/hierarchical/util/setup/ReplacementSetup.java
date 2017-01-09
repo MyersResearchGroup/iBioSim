@@ -58,15 +58,6 @@ public class ReplacementSetup
 			}
 			for (Reaction reaction : model.getListOfReactions())
 			{
-				// if (reaction.isSetKineticLaw())
-				// {
-				// KineticLaw law = reaction.getKineticLaw();
-				// for (LocalParameter local : law.getListOfLocalParameters())
-				// {
-				// setupReplacement(local, modelstate, topCompModel, prefix,
-				// listOfHandlers, listOfModules, listOfModels, mapOfModels);
-				// }
-				// }
 				setupReplacement(reaction, modelstate, topCompModel, prefix, listOfHandlers, listOfModules, listOfModels, mapOfModels);
 				for (SpeciesReference reactant : reaction.getListOfReactants())
 				{

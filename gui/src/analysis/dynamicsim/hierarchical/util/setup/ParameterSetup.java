@@ -17,7 +17,7 @@ public class ParameterSetup
 	/**
 	 * puts parameter-related information into data structures
 	 */
-	public static void setupParameters(HierarchicalModel modelstate, ModelType type, Model model)
+	public static void setupParameters(HierarchicalModel modelstate, StateType type, Model model)
 	{
 		for (Parameter parameter : model.getListOfParameters())
 		{
@@ -38,11 +38,11 @@ public class ParameterSetup
 	 * 
 	 * @param parameter
 	 */
-	private static void setupSingleParameter(HierarchicalModel modelstate, Parameter parameter, ModelType type)
+	private static void setupSingleParameter(HierarchicalModel modelstate, Parameter parameter, StateType type)
 	{
 	
 		VariableNode node = new VariableNode(parameter.getId());
-		node.createState(StateType.SPARSE);
+		node.createState(type);
 		node.setValue(modelstate.getIndex(), parameter.getValue());
 		
 		if (parameter.isConstant())
@@ -86,7 +86,7 @@ public class ParameterSetup
 				String parameterID = reactionID + "_" + id;
 
 				VariableNode node = new VariableNode(parameterID, StateType.SCALAR);
-				node.setValue(0, localParameter.getValue());
+				node.setValue(localParameter.getValue());
 				modelstate.addMappingNode(parameterID, node);
 
 				HierarchicalUtilities.alterLocalParameter(kineticLaw.getMath(), id, parameterID);

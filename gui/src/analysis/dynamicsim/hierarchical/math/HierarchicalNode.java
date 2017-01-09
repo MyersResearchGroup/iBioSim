@@ -8,6 +8,8 @@ import analysis.dynamicsim.hierarchical.states.HierarchicalState;
 import analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 import analysis.dynamicsim.hierarchical.states.SparseState;
 import analysis.dynamicsim.hierarchical.states.ValueState;
+import analysis.dynamicsim.hierarchical.states.VectorState;
+import analysis.dynamicsim.hierarchical.states.VectorWrapper;
 
 public class HierarchicalNode extends AbstractHierarchicalNode
 {
@@ -132,12 +134,17 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 		{
 			state = new SparseState();
 		}
-		else
+		else if(type == StateType.DENSE)
 		{
 			state = new DenseState();
 		}
+		else if(type == StateType.VECTOR)
+		{
+		  state = new VectorState();
+		}
 		return state;
 	}
+	
 
 	public void setValue(double value)
   {
@@ -159,8 +166,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 	
 	public double getValue(int index)
 	{
-	  
-		return state.getState(index).getStateValue();
+		return state.getStateValue(index);
 	}
 
 	public HierarchicalState getState()

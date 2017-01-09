@@ -14,9 +14,11 @@ public abstract class AbstractHierarchicalNode
 
 	private Type					type;
 
+	private String metaId;
 	protected boolean				isSpecies;
 	protected boolean				isReaction;
-
+	
+	
 	public AbstractHierarchicalNode(Type type)
 	{
 		this.type = type;
@@ -91,5 +93,14 @@ public abstract class AbstractHierarchicalNode
 	{
 		return isReaction;
 	}
+	
+	public void setMetaId(String metaId)
+	{
+	  this.metaId = metaId;
+	}
 
+	public String getMetaId()
+	{
+	  return metaId;
+	}
 }

@@ -22,10 +22,26 @@ public class SpeciesSetup
 	 * @param species
 	 * @param speciesID
 	 */
-	private static void setupSingleSpecies(HierarchicalModel modelstate, Species species, Model model, ModelType type)
+	private static void setupSingleSpecies(HierarchicalModel modelstate, Species species, Model model, StateType type)
 	{
 
 		SpeciesNode node = createSpeciesNode(species, type, modelstate.getIndex());
+		
+	  VariableNode compartment = modelstate.getNode(species.getCompartment());
+    node.setCompartment(compartment);
+    if (species.isSetInitialAmount())
+    {
+      node.setValue(modelstate.getIndex(), species.getInitialAmount());
+    }
+    else if (species.isSetInitialConcentration())
+    {
+      HierarchicalNode initConcentration = new HierarchicalNode(Type.TIMES);
+      initConcentration.addChild(new HierarchicalNode(species.getInitialConcentration()));
+      initConcentration.addChild(compartment);
+      FunctionNode functionNode = new FunctionNode(node, initConcentration);
+      modelstate.addInitAssignment(functionNode);
+      functionNode.setIsInitAssignment(true);
+    }
 		if (species.getConstant())
 		{
 			modelstate.addMappingNode(species.getId(), node);
@@ -43,7 +59,7 @@ public class SpeciesSetup
 	 * 
 	 * @throws IOException
 	 */
-	public static void setupSpecies(HierarchicalModel modelstate,  ModelType type, Model model)
+	public static void setupSpecies(HierarchicalModel modelstate,  StateType type, Model model)
 	{
 		for (Species species : model.getListOfSpecies())
 		{
@@ -59,46 +75,17 @@ public class SpeciesSetup
 		}
 	}
 
-	public static void setupCompartmentToSpecies(HierarchicalModel modelstate, Model model)
-	{
 
-		for (Species species : model.getListOfSpecies())
-		{
-			if (modelstate.isDeletedBySId(species.getId()))
-			{
-				continue;
-			}
-
-			SpeciesNode node = (SpeciesNode) modelstate.getNode(species.getId());
-			VariableNode compartment = modelstate.getNode(species.getCompartment());
-			node.setCompartment(compartment);
-			if (species.isSetInitialAmount())
-			{
-				node.setValue(modelstate.getIndex(), species.getInitialAmount());
-			}
-			else if (species.isSetInitialConcentration())
-			{
-				HierarchicalNode initConcentration = new HierarchicalNode(Type.TIMES);
-				initConcentration.addChild(new HierarchicalNode(species.getInitialConcentration()));
-				initConcentration.addChild(compartment);
-				FunctionNode functionNode = new FunctionNode(node, initConcentration);
-				modelstate.addInitAssignment(functionNode);
-				functionNode.setIsInitAssignment(true);
-			}
-
-		}
-	}
-
-	private static SpeciesNode createSpeciesNode(Species species, ModelType type, int index)
+	private static SpeciesNode createSpeciesNode(Species species, StateType type, int index)
 	{
 		SpeciesNode node = new SpeciesNode(species.getId());
 		node.createSpeciesTemplate(index);
-		node.createState(StateType.SPARSE);
+		node.createState(type);
 		node.setValue(index, 0);
 		node.setBoundaryCondition(species.getBoundaryCondition(), index);
 		node.setHasOnlySubstance(species.getHasOnlySubstanceUnits(), index);
 		node.setIsVariableConstant(species.getConstant());
-		
+	
 		return node;
 	}
 

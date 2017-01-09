@@ -652,7 +652,6 @@ public final class Evaluator
 				return reaction.getValue(index);
 			}
 		}
-
 		return ((VariableNode) node).getValue(index);
 	}
 

@@ -49,5 +49,13 @@ public class ValueState extends HierarchicalState
     
     return String.valueOf(value);
   }
+  @Override
+  public double getStateValue(int index) {
+    return value;
+  }
 
+  @Override
+  public void setStateValue(int index, double value) {
+    this.value = value;
+  }
 }

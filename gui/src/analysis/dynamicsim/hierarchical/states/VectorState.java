@@ -5,11 +5,7 @@ public class VectorState extends HierarchicalState{
   
   private int vectorIndex;
   private VectorWrapper vectorState;
-  
-  public VectorState(int vectorIndex)
-  {
-    this.vectorIndex = vectorIndex;
-  }
+ 
   
   @Override
   public double getStateValue() {
@@ -35,5 +31,14 @@ public class VectorState extends HierarchicalState{
     return null;
   }
 
+  @Override
+  public double getStateValue(int index) {
+    return getStateValue();
+  }
+
+  @Override
+  public void setStateValue(int index, double value) {
+    setStateValue(value);
+  }
   
 }

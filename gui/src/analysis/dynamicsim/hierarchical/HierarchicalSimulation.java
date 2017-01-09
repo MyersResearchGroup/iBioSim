@@ -52,11 +52,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 	{
 		HSSA, HODE, FBA, MIXED, NONE;
 	}
-
-	protected final static String			PRODUCT		= "product";
-	protected final static String			REACTANT	= "reactant";
-	protected final static String			MODIFIER	= "modifier";
-
+	
 	protected final VariableNode			currentTime;
 	protected double						printTime;
 	private BufferedWriter					bufferedTSDWriter;
@@ -131,16 +127,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 		this.randomNumberGenerator = new Random(randomSeed);
 		this.initialTime = initialTime;
 		this.outputStartTime = outputStartTime;
-
-		if (abstraction != null)
-		{
-			if (abstraction.equals("expandReaction"))
-			{
-				// this.document =
-				// HierarchicalUtilities.getFlattenedRegulations(rootDirectory,
-				// SBMLFileName);
-			}
-		}
 
 		if (quantityType != null)
 		{

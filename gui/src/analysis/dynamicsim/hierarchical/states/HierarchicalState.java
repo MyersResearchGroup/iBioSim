@@ -9,21 +9,24 @@ public abstract class HierarchicalState
 
   public enum StateType
   {
-    DENSE, SPARSE, SCALAR
+    DENSE, SPARSE, SCALAR, VECTOR
   };
 
   /**
    * 
-   * @param index
    * @return
    */
   public abstract double getStateValue();
 
+  public abstract double getStateValue(int index);
+  
   /**
    * 
    * @param index
    * @param value
    */
+  public abstract void setStateValue(int index, double value);
+  
   public abstract void setStateValue(double value);
 
   /**

@@ -7,11 +7,14 @@ import org.sbml.jsbml.Model;
 import analysis.dynamicsim.hierarchical.math.VariableNode;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import analysis.dynamicsim.hierarchical.states.HierarchicalState;
+import analysis.dynamicsim.hierarchical.states.VectorWrapper;
+import analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 
 public class CoreSetup
 {
 
-	public static void initializeVariables(HierarchicalModel modelstate, Model model, ModelType type, VariableNode time) throws IOException
+	public static void initializeVariables(HierarchicalModel modelstate, Model model, StateType type, VariableNode time, VectorWrapper wrapper) throws IOException
 	{
 		modelstate.createVariableToNodeMap();
 		modelstate.addMappingNode(time.getName(), time);
@@ -21,6 +24,7 @@ public class CoreSetup
 		ReactionSetup.setupReactions(modelstate, model);
 	}
 
+	//TODO: might be able to merge these
 	public static void initializeModel(HierarchicalModel modelstate, Model model, VariableNode time)
 	{
 		initializeModel(modelstate, model, time, false);
@@ -30,20 +34,12 @@ public class CoreSetup
 	{
 		ArraysSetup.linkDimensionSize(modelstate);
 		ArraysSetup.expandArrays(modelstate);
-
-		initializeLinks(modelstate, model, time, split);
 		EventSetup.setupEvents(modelstate, model);
 		ConstraintSetup.setupConstraints(modelstate, model);
 		RuleSetup.setupRules(modelstate, model);
 		InitAssignmentSetup.setupInitialAssignments(modelstate, model);
 	}
 
-	public static void initializeLinks(HierarchicalModel modelstate, Model model, VariableNode time, boolean split)
-	{
-
-		SpeciesSetup.setupCompartmentToSpecies(modelstate, model);
-		ReactionSetup.setupSpeciesReferenceToReaction(modelstate, model, split);
-
-	}
+	
 
 }

@@ -23,19 +23,31 @@ import analysis.dynamicsim.hierarchical.math.VariableNode;
 import analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import analysis.dynamicsim.hierarchical.states.VectorWrapper;
 import analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 import biomodel.util.GlobalConstants;
 
 public class ModelSetup
 {
+  /**
+   * Initializes the modelstate array
+   * 
+   * @throws IOException
+   * @throws XMLStreamException
+   */
+  public static void setupModels(HierarchicalSimulation sim, ModelType type) throws XMLStreamException, IOException
+  {
+    setupModels(sim, type, null);
+  }
 	/**
 	 * Initializes the modelstate array
 	 * 
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	public static void setupModels(HierarchicalSimulation sim, ModelType type) throws XMLStreamException, IOException
+	public static void setupModels(HierarchicalSimulation sim, ModelType type, VectorWrapper wrapper) throws XMLStreamException, IOException
 	{
 	  
 		SBMLDocument document = sim.getDocument();
@@ -70,7 +82,7 @@ public class ModelSetup
 			ReplacementSetup.setupReplacements(listOfHandlers, listOfModules, listOfModels, listOfPrefix, mapOfModels);
 		}
 
-		initializeModelStates(sim, listOfHandlers, listOfModules, listOfModels, sim.getCurrentTime(), type);
+		initializeModelStates(sim, listOfHandlers, listOfModules, listOfModels, sim.getCurrentTime(), type, wrapper);
 
 		if (sim instanceof HierarchicalMixedSimulator)
 		{
@@ -144,11 +156,18 @@ public class ModelSetup
 		}
 	}
 
-	private static void initializeModelStates(HierarchicalSimulation sim, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, VariableNode time, ModelType type) throws IOException
+	private static void initializeModelStates(HierarchicalSimulation sim, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, VariableNode time, ModelType modelType, VectorWrapper wrapper) throws IOException
 	{
+	  StateType type = StateType.SPARSE;
+	  
+	  if(modelType == ModelType.HODE)
+	  {
+	    type = StateType.VECTOR;
+	  }
+	  
 		for (int i = 0; i < listOfModules.size(); i++)
 		{
-			CoreSetup.initializeVariables(listOfModules.get(i), listOfModels.get(i), type, time);
+			CoreSetup.initializeVariables(listOfModules.get(i), listOfModels.get(i), type, time, wrapper);
 		}
 
 		for (int i = listOfHandlers.size() - 1; i >= 0; i--)
@@ -156,7 +175,7 @@ public class ModelSetup
 			listOfHandlers.get(i).copyNodeTo();
 		}
 
-		boolean isSSA = type == ModelType.HSSA;
+		boolean isSSA = modelType == ModelType.HSSA;
 		
 		for (int i = 0; i < listOfModules.size(); i++)
 		{

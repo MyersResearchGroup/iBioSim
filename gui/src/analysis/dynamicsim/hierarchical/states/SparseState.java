@@ -3,7 +3,7 @@ package analysis.dynamicsim.hierarchical.states;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SparseState extends HierarchicalState
+public class SparseState extends TreeState
 {
 	private Map<Integer, HierarchicalState>	mapOfStates;
 
@@ -55,6 +55,7 @@ public class SparseState extends HierarchicalState
     }
     return builder.toString();
   }
+
 
 
 }

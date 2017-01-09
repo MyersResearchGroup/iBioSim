@@ -3,7 +3,7 @@ package analysis.dynamicsim.hierarchical.states;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DenseState extends HierarchicalState
+public class DenseState extends TreeState
 {
 
 	private List<HierarchicalState>	listOfStates;
@@ -78,4 +78,6 @@ public class DenseState extends HierarchicalState
     }
     return builder.toString();
   }
+
+
 }
