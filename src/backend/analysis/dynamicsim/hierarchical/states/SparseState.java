@@ -56,5 +56,4 @@ public class SparseState extends TreeState
     return builder.toString();
   }
 
-
 }

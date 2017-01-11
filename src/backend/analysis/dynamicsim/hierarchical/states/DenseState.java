@@ -79,4 +79,5 @@ public class DenseState extends TreeState
     return builder.toString();
   }
 
+
 }

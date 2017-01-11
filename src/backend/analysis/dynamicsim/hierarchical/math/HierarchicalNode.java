@@ -152,16 +152,14 @@ public class HierarchicalNode extends AbstractHierarchicalNode
 
   public void setValue(double value)
   {
-    state.setStateValue( value);
+    state.setStateValue(value);
   }
   
   public void setValue(int index, double value)
   {
     //TODO:
-    setValue(value);
+    state.setStateValue(value);
   }
-  
-  
   
   public double getValue()
   {
@@ -170,7 +168,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   
   public double getValue(int index)
   {
-    return state.getStateValue(index);
+    return state.getStateValue();
   }
 
   public HierarchicalState getState()

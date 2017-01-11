@@ -20,7 +20,7 @@ public class CoreSetup
     ParameterSetup.setupParameters(modelstate, type, model, wrapper);
     CompartmentSetup.setupCompartments(modelstate, type,  model, wrapper);
     SpeciesSetup.setupSpecies(modelstate, type, model, wrapper);
-    ReactionSetup.setupReactions(modelstate, model);
+    ReactionSetup.setupReactions(modelstate, model, type, wrapper);
   }
 
   //TODO: might be able to merge these

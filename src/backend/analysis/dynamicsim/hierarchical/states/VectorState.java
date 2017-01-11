@@ -1,25 +1,39 @@
 package backend.analysis.dynamicsim.hierarchical.states;
 
 public class VectorState extends HierarchicalState{
-  
+
   private int vectorIndex;
   private final VectorWrapper vectorState;
- 
+
   public VectorState(VectorWrapper vectorState)
   {
     this.vectorState = vectorState;
     this.vectorIndex = vectorState.incrementSize();
   }
-  
+
   @Override
   public double getStateValue() {
-    return vectorState.getValues()[vectorIndex];
+    if(vectorState.isSet())
+    {
+      return vectorState.getValues()[vectorIndex];
+    }
+    else
+    {
+      return vectorState.getInitValues().get(vectorIndex);
+    }
   }
 
   @Override
   public void setStateValue(double value) {
-    // TODO Auto-generated method stub
-    vectorState.getValues()[vectorIndex] = value;
+    if(vectorState.isSet())
+    {
+      vectorState.getValues()[vectorIndex] = value;
+    }
+    else
+    {
+      vectorState.getInitValues().set(vectorIndex, value);
+    }
+    
   }
 
   @Override
@@ -45,4 +59,5 @@ public class VectorState extends HierarchicalState{
     setStateValue(value);
   }
   
+
 }

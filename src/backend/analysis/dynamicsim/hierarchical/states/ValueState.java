@@ -58,4 +58,6 @@ public class ValueState extends HierarchicalState
   public void setStateValue(int index, double value) {
     this.value = value;
   }
+
+  
 }
