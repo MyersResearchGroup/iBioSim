@@ -3,18 +3,23 @@ package backend.analysis.dynamicsim.hierarchical.states;
 public class VectorState extends HierarchicalState{
   
   private int vectorIndex;
-  private VectorWrapper vectorState;
+  private final VectorWrapper vectorState;
  
+  public VectorState(VectorWrapper vectorState)
+  {
+    this.vectorState = vectorState;
+    this.vectorIndex = vectorState.incrementSize();
+  }
   
   @Override
   public double getStateValue() {
-    return vectorState.getVector()[vectorIndex];
+    return vectorState.getValues()[vectorIndex];
   }
 
   @Override
   public void setStateValue(double value) {
     // TODO Auto-generated method stub
-    vectorState.getVector()[vectorIndex] = value;
+    vectorState.getValues()[vectorIndex] = value;
   }
 
   @Override

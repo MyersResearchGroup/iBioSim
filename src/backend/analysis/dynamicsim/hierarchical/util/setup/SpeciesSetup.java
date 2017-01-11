@@ -13,6 +13,7 @@ import backend.analysis.dynamicsim.hierarchical.math.AbstractHierarchicalNode.Ty
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
 
 public class SpeciesSetup
 {
@@ -22,10 +23,10 @@ public class SpeciesSetup
    * @param species
    * @param speciesID
    */
-  private static void setupSingleSpecies(HierarchicalModel modelstate, Species species, Model model, StateType type)
+  private static void setupSingleSpecies(HierarchicalModel modelstate, Species species, Model model, StateType type, VectorWrapper wrapper)
   {
 
-    SpeciesNode node = createSpeciesNode(species, type, modelstate.getIndex());
+    SpeciesNode node = createSpeciesNode(species, type, modelstate.getIndex(), wrapper);
     
     VariableNode compartment = modelstate.getNode(species.getCompartment());
     node.setCompartment(compartment);
@@ -46,7 +47,6 @@ public class SpeciesSetup
     {
       modelstate.addMappingNode(species.getId(), node);
     }
-
     else
     {
       modelstate.addVariable(node);
@@ -59,7 +59,7 @@ public class SpeciesSetup
    * 
    * @throws IOException
    */
-  public static void setupSpecies(HierarchicalModel modelstate,  StateType type, Model model)
+  public static void setupSpecies(HierarchicalModel modelstate,  StateType type, Model model, VectorWrapper wrapper)
   {
     for (Species species : model.getListOfSpecies())
     {
@@ -71,16 +71,24 @@ public class SpeciesSetup
       {
         continue;
       }
-      setupSingleSpecies(modelstate, species, model, type);
+      setupSingleSpecies(modelstate, species, model, type, wrapper);
     }
   }
 
 
-  private static SpeciesNode createSpeciesNode(Species species, StateType type, int index)
+  private static SpeciesNode createSpeciesNode(Species species, StateType type, int index, VectorWrapper wrapper)
   {
     SpeciesNode node = new SpeciesNode(species.getId());
     node.createSpeciesTemplate(index);
-    node.createState(type);
+    
+    if(species.getConstant())
+    {
+      node.createState(StateType.SCALAR, wrapper);
+    }
+    else
+    {
+      node.createState(type, wrapper);
+    }
     node.setValue(index, 0);
     node.setBoundaryCondition(species.getBoundaryCondition(), index);
     node.setHasOnlySubstance(species.getHasOnlySubstanceUnits(), index);

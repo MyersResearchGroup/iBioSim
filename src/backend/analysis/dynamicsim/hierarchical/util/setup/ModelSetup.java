@@ -29,6 +29,10 @@ import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 import backend.util.GlobalConstants;
 
+/**
+ * 
+ * 
+ */
 public class ModelSetup
 {
   /**
@@ -41,6 +45,7 @@ public class ModelSetup
   {
     setupModels(sim, type, null);
   }
+  
   /**
    * Initializes the modelstate array
    * 
