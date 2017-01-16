@@ -13,9 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import backend.biomodel.util.Utility;
-import backend.lpn.parser.*;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.util.Utility;
+import dataModels.lpn.parser.*;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.util.AbstractRunnableNamedButton;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.biomodel.gui.util.Runnable;

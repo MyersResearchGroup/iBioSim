@@ -5,7 +5,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceAnnotation;
 
 import backend.sbol.util.SBOLUtility2;
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
 
 import java.net.URI;

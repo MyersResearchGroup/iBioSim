@@ -14,8 +14,8 @@ import org.sbml.jsbml.SBMLWriter;
 
 import backend.analysis.dynamicsim.DynamicSimulation;
 import backend.analysis.dynamicsim.DynamicSimulation.SimulationType;
-import backend.biomodel.parser.BioModel;
-import backend.util.dataparser.TSDParser;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.util.dataparser.TSDParser;
 
 public class HierarchicalSimulatorRunner
 {

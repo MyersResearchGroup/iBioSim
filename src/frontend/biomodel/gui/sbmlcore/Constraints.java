@@ -27,9 +27,9 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.xml.XMLNode;
 
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.main.Gui;
 import frontend.main.util.SpringUtilities;

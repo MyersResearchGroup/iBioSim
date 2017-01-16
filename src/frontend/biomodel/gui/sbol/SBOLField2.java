@@ -18,7 +18,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import backend.sbol.util.SBOLUtility2;
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
 
 public class SBOLField2 extends JPanel implements ActionListener {

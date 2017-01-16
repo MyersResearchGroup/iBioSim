@@ -21,11 +21,11 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.UnitDefinition;
 
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.annotation.SBOLAnnotation;
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.annotation.SBOLAnnotation;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.fba.FBAObjective;
 import frontend.biomodel.gui.sbol.SBOLField2;
 import frontend.biomodel.gui.schematic.ModelEditor;

@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import backend.lpn.parser.LPN;
 import backend.verification.platu.logicAnalysis.Analysis;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.LPN;
 
 public class Project_Timed extends Project{
 

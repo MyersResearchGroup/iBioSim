@@ -31,9 +31,9 @@ import org.sbml.jsbml.SpeciesReference;
 //import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.UnitDefinition;
 
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.main.Gui;
 import frontend.main.util.Utility;

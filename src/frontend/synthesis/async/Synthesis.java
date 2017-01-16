@@ -3,8 +3,8 @@ package frontend.synthesis.async;
 
 import javax.swing.*;
 
-import backend.biomodel.util.Utility;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.util.Utility;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.*;
 

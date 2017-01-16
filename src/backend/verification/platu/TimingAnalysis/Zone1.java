@@ -2,8 +2,8 @@ package backend.verification.platu.TimingAnalysis;
 
 import java.util.*;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.platuLpn.*;
+import dataModels.lpn.parser.Transition;
 
 public class Zone1 {
 	public static final int INFINITY = backend.verification.platu.common.Common.INFINITY;

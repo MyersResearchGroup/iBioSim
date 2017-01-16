@@ -33,7 +33,7 @@ import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
 
 

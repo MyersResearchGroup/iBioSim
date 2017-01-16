@@ -11,9 +11,9 @@ import javax.swing.*;
 import backend.learn.AMSModel.DMVCrun;
 import backend.learn.AMSModel.LearnModel;
 import backend.learn.AMSModel.Variable;
-import backend.lpn.parser.LPN;
-import backend.util.GlobalConstants;
-import backend.util.dataparser.*;
+import dataModels.lpn.parser.LPN;
+import dataModels.util.GlobalConstants;
+import dataModels.util.dataparser.*;
 import frontend.main.*;
 
 

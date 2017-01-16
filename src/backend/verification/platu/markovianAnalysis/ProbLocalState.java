@@ -2,12 +2,12 @@ package backend.verification.platu.markovianAnalysis;
 
 import java.util.HashMap;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 public class ProbLocalState extends State{
 	

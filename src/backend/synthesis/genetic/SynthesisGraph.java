@@ -13,9 +13,9 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SpeciesReference;
 
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
 import backend.sbol.util.SBOLFileManager2;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
 
 public class SynthesisGraph {
 

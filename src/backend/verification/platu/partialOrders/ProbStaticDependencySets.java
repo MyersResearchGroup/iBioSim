@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.Transition;
-import backend.lpn.parser.LpnDecomposition.LpnProcess;
 import backend.verification.platu.main.Options;
+import dataModels.lpn.parser.ExprTree;
+import dataModels.lpn.parser.Transition;
+import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
 
 /**
  * This class extends the non-probabilistic static dependency transition set. 

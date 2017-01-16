@@ -24,7 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.movie.MovieScheme.Scheme;
 import frontend.main.Gui;
 

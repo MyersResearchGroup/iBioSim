@@ -14,9 +14,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.Utility;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.Utility;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.main.Gui;
 

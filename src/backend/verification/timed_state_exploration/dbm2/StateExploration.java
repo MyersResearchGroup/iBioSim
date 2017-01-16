@@ -7,8 +7,8 @@ import java.util.*;
 
 import javax.swing.JFileChooser;
 
-import backend.lpn.parser.*;
 import backend.verification.timed_state_exploration.dbm2.LPNTranslator.UnsafeLPNException;
+import dataModels.lpn.parser.*;
 
 /**
  * This class finds the state graph for an LPN from an LPNFile object.

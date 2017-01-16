@@ -1,6 +1,6 @@
 package backend.verification.timed_state_exploration.archive;
 
-import backend.lpn.parser.LPN;
+import dataModels.lpn.parser.LPN;
 
 /**
  * Base class for the member variables of the octagons.

@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.platuLpn.LPNTranRelation;
 import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.Transition;
 
 public class AmpleSet {
 	

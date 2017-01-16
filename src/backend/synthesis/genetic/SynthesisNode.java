@@ -10,10 +10,10 @@ import org.sbml.jsbml.SBase;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SequenceOntology;
 
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.util.SBMLutilities;
 import backend.sbol.util.SBOLFileManager2;
 import backend.sbol.util.SBOLUtility2;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.util.SBMLutilities;
 
 public class SynthesisNode {
 	private String id;

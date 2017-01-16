@@ -4,10 +4,10 @@ import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 
-import backend.lpn.parser.LPN;
-import backend.util.GlobalConstants;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
+import dataModels.lpn.parser.LPN;
+import dataModels.util.GlobalConstants;
 
 
 

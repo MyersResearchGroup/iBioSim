@@ -12,10 +12,10 @@ import java.util.Stack;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
-import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Translator;
-import backend.util.dataparser.DataParser;
+import dataModels.lpn.parser.ExprTree;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Translator;
+import dataModels.util.dataparser.DataParser;
 import frontend.main.Gui;
 
 public class StateGraph implements Runnable {

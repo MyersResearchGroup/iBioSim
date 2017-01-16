@@ -3,9 +3,9 @@ package backend.verification.platu.logicAnalysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 public class CompositionalThread extends Thread{
 	

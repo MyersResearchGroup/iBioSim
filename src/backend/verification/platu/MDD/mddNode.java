@@ -2,9 +2,9 @@ package backend.verification.platu.MDD;
 
 import java.util.*;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.Transition;
 
 public class mddNode {
 	static int blockSize = 8;

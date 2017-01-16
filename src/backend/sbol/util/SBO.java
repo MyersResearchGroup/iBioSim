@@ -2,7 +2,7 @@ package backend.sbol.util;
 
 import java.net.URI;
 
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 
 public class SBO {
 	

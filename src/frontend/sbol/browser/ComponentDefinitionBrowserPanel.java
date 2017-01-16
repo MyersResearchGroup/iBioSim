@@ -8,7 +8,7 @@ import javax.swing.*;
 import org.sbolstandard.core2.Component;
 
 import backend.sbol.util.SBOLUtility2;
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 
 //import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 import org.sbolstandard.core2.*;

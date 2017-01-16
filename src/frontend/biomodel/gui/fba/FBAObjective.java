@@ -25,8 +25,8 @@ import org.sbml.jsbml.ext.fbc.FluxObjective;
 import org.sbml.jsbml.ext.fbc.Objective;
 import org.sbml.jsbml.ext.fbc.Objective.Type;
 
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
 import frontend.main.Gui;
 import frontend.main.util.Utility;
 

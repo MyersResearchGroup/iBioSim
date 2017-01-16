@@ -21,12 +21,12 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.annotation.SBOLAnnotation;
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
-import backend.biomodel.util.Utility;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.annotation.SBOLAnnotation;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.biomodel.util.Utility;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.sbmlcore.MySpecies;
 import frontend.biomodel.gui.sbol.SBOLField2;
 import frontend.biomodel.gui.schematic.ModelEditor;

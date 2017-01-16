@@ -2,11 +2,11 @@ package backend.verification.timed_state_exploration.zoneProject;
 
 import java.util.ArrayList;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Variable;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Variable;
 
 /**
  * This class is meant as a utilities package. It contains static methods for

@@ -14,10 +14,10 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 
-import backend.biomodel.parser.BioModel;
 import backend.sbol.util.SBOLIdentityManager2;
 import backend.sbol.util.SBOLUtility2;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
 
 public class SBOLFileManager2 {

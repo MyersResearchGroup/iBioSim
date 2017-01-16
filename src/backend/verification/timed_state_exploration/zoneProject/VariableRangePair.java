@@ -1,6 +1,6 @@
 package backend.verification.timed_state_exploration.zoneProject;
 
-import backend.lpn.parser.Variable;
+import dataModels.lpn.parser.Variable;
 
 /**
  * A Variable and Range class packages an lpn.parser.Variable with an

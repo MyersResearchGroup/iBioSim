@@ -3,8 +3,6 @@ package backend.verification.timed_state_exploration.octagon;
 import java.util.Collection;
 import java.util.HashSet;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
 import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.zoneProject.ContinuousRecordSet;
@@ -12,6 +10,8 @@ import backend.verification.timed_state_exploration.zoneProject.EventSet;
 import backend.verification.timed_state_exploration.zoneProject.IntervalPair;
 import backend.verification.timed_state_exploration.zoneProject.LPNContinuousPair;
 import backend.verification.timed_state_exploration.zoneProject.LPNTransitionPair;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 /**
  * The purpose of this interface is to define the methods of Zones
