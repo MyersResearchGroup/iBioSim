@@ -94,6 +94,7 @@ import dataModels.lpn.parser.Place;
 import dataModels.lpn.parser.Transition;
 import dataModels.lpn.parser.Variable;
 import dataModels.util.GlobalConstants;
+import dataModels.util.MutableString;
 import frontend.biomodel.gui.comp.Grid;
 import frontend.biomodel.gui.sbmlcore.Compartments;
 import frontend.biomodel.gui.sbmlcore.Constraints;
@@ -105,7 +106,6 @@ import frontend.biomodel.gui.sbmlcore.Rules;
 import frontend.biomodel.util.UndoManager;
 import frontend.main.Gui;
 import frontend.main.Log;
-import frontend.main.util.MutableString;
 
 
 /**

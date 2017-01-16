@@ -1,4 +1,4 @@
-package frontend.main.util;
+package dataModels.util;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more

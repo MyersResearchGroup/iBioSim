@@ -46,12 +46,12 @@ import dataModels.lpn.parser.Abstraction;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
 import dataModels.util.GlobalConstants;
+import dataModels.util.MutableString;
 import dataModels.util.dataparser.DataParser;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.graph.Graph;
 import frontend.main.Gui;
 import frontend.main.Log;
-import frontend.main.util.MutableString;
 import frontend.verification.AbstPane;
 
 /**

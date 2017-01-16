@@ -1,4 +1,4 @@
-package frontend.main.util;
+package dataModels.util;
 
 import java.io.Serializable;
 

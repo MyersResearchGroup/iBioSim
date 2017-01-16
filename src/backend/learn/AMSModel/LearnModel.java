@@ -10,7 +10,9 @@ import javax.swing.*;
 import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
 import dataModels.util.dataparser.*;
-import frontend.main.*;
+import frontend.main.Gui;
+import frontend.main.Log;
+
 
 
 

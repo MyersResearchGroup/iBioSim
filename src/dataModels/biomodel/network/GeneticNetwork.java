@@ -43,8 +43,8 @@ import dataModels.biomodel.visitor.PrintSpeciesVisitor;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
 import dataModels.util.GlobalConstants;
+import dataModels.util.MutableString;
 import frontend.main.Gui;
-import frontend.main.util.MutableString;
 
 /**
  * This class represents a genetic network

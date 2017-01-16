@@ -80,6 +80,7 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.biomodel.util.Utility;
 import dataModels.lpn.parser.Lpn2verilog;
 import dataModels.util.GlobalConstants;
+import dataModels.util.MutableBoolean;
 import frontend.analysis.AnalysisThread;
 import frontend.analysis.AnalysisView;
 import frontend.analysis.ConstraintTermThread;
@@ -108,7 +109,6 @@ import frontend.biomodel.gui.util.PropertyList;
 import frontend.biomodel.gui.util.Runnable;
 import frontend.main.Gui;
 import frontend.main.Log;
-import frontend.main.util.MutableBoolean;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
