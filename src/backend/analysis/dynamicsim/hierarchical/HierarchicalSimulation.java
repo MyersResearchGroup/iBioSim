@@ -871,7 +871,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     return state;
 
   }
-
   public void linkPropensities()
   {
     HierarchicalNode propensity;
