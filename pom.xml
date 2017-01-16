@@ -27,131 +27,255 @@
 			</plugin>
 		</plugins>
 	</build>
-  <dependencies>
-  	<dependency>
-  		<groupId>org.sbolstandard</groupId>
-  		<artifactId>libSBOLj</artifactId>
-  	</dependency>
-  	<dependency>
-  			<groupId>org.sbolstandard</groupId>
-  			<artifactId>libSBOLj</artifactId>
-  			<version>2.1.1</version>
-  		</dependency>
-  		<dependency>
-    <groupId>org.antlr</groupId>
-    <artifactId>antlr</artifactId>
-    <version>3.4</version>
+	<repositories>
+		<repository>
+			<id>ebi</id>
+			<name>ebi</name>
+			<url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
+		</repository>
+		<repository>
+			<id>jboss</id>
+			<name>jboss</name>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
+		</repository>
+		<repository>
+			<id>netbeans</id>
+			<name>netbeans</name>
+			<url>http://bits.netbeans.org/maven2/</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.sbolstandard</groupId>
+			<artifactId>libSBOLj</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr-runtime</artifactId>
+			<version>3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-awt-util</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-anim</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-bridge</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-codec</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-css</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-dom</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-ext</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-extension</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-gui-util</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-gvt</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-parser</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-script</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-svg-dom</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-svggen</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-swing</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-transcoder</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-util</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-xml</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+    <groupId>uk.ac.ebi.biomodels</groupId>
+    <artifactId>biomodels-wslib</artifactId>
+    <version>1.21</version>
 </dependency>
+
+
+		
+
+		<dependency>
+			<groupId>colt</groupId>
+			<artifactId>colt</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
 <dependency>
-    <groupId>org.antlr</groupId>
-    <artifactId>antlr-runtime</artifactId>
-    <version>3.4</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-awt-util</artifactId>
-    <version>1.8</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-anim</artifactId>
-    <version>1.8</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-bridge</artifactId>
-    <version>1.8</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-codec</artifactId>
-    <version>1.8</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-css</artifactId>
-    <version>1.8</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-dom</artifactId>
-    <version>1.8</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-ext</artifactId>
-    <version>1.8</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-extension</artifactId>
-    <version>1.8</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-gui-util</artifactId>
-    <version>1.8</version>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-math3</artifactId>
+    <version>3.6.1</version>
 </dependency>
 
 <dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-gvt</artifactId>
-    <version>1.8</version>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.0</version>
 </dependency>
 
 <dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-parser</artifactId>
-    <version>1.8</version>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpclient-cache</artifactId>
+    <version>4.5.2</version>
 </dependency>
 
 <dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-script</artifactId>
-    <version>1.8</version>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpcore</artifactId>
+    <version>4.4.4</version>
 </dependency>
 
 <dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-svg-dom</artifactId>
-    <version>1.8</version>
+    <groupId>org.jfree</groupId>
+    <artifactId>jcommon</artifactId>
+    <version>1.0.17</version>
 </dependency>
 
 <dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-svggen</artifactId>
-    <version>1.8</version>
+    <groupId>org.jdom</groupId>
+    <artifactId>jdom-contrib</artifactId>
+    <version>1.1.3</version>
 </dependency>
 
 <dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-swing</artifactId>
-    <version>1.8</version>
+    <groupId>org.jfree</groupId>
+    <artifactId>jfreechart</artifactId>
+    <version>1.0.14</version>
 </dependency>
 
 <dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-transcoder</artifactId>
-    <version>1.8</version>
+    <groupId>org.jmathml</groupId>
+    <artifactId>jmathml</artifactId>
+    <version>2.2.1</version>
 </dependency>
 
 <dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-util</artifactId>
-    <version>1.8</version>
+    <groupId>com.joptimizer</groupId>
+    <artifactId>joptimizer</artifactId>
+    <version>3.4.0</version>
 </dependency>
 
 <dependency>
-    <groupId>org.apache.xmlgraphics</groupId>
-    <artifactId>batik-xml</artifactId>
-    <version>1.8</version>
+    <groupId>org.sbml.jsbml</groupId>
+    <artifactId>jsbml</artifactId>
+    <version>1.2</version>
 </dependency>
 
-  	
-  </dependencies>
-  <dependencyManagement>
-  	<dependencies>
-  		
-  	</dependencies>
-  </dependencyManagement>
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+</dependency>
+
+<dependency>
+    <groupId>javax.mail</groupId>
+    <artifactId>mail</artifactId>
+    <version>1.4.7</version>
+</dependency>
+
+<dependency>
+    <groupId>org.netbeans.api</groupId>
+    <artifactId>org-jdesktop-layout</artifactId>
+    <version>RELEASE691</version>
+</dependency>
+
+<dependency>
+    <groupId>org.w3c</groupId>
+    <artifactId>dom</artifactId>
+    <version>2.3.0-jaxb-1.0.6</version>
+</dependency>
+
+<dependency>
+    <groupId>wsdl4j</groupId>
+    <artifactId>wsdl4j</artifactId>
+    <version>1.6.2</version>
+</dependency>
+
+<dependency>
+    <groupId>xalan</groupId>
+    <artifactId>xalan</artifactId>
+    <version>2.6.0</version>
+</dependency>
+
+<dependency>
+    <groupId>xom</groupId>
+    <artifactId>xom</artifactId>
+    <version>1.2</version>
+</dependency>
+
+	</dependencies>
 </project>
