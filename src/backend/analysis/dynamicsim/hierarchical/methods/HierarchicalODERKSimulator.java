@@ -410,6 +410,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 				VariableNode variableNode = variableList.get(i);
 				yDot[i] = variableNode.computeRateOfChange(0, t);
 			}
+			vectorWrapper.setRates(yDot);
 		}
 	}
 

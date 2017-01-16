@@ -59,5 +59,21 @@ public class VectorState extends HierarchicalState{
     setStateValue(value);
   }
   
+  @Override
+  public double getRateValue() {
+    if(vectorState.isSet())
+    {
+      return vectorState.getRates()[vectorIndex];
+    }
+    else
+    {
+      return 0;
+    }
+  }
+
+  @Override
+  public double getRateValue(int index) {
+    return getRateValue();
+  }
 
 }

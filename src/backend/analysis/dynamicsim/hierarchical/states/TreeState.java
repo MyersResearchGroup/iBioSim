@@ -11,4 +11,15 @@ public abstract class TreeState extends HierarchicalState{
   public void setStateValue(int index, double value) {
     getState(index).setStateValue(value);
   }
+  
+  @Override
+  public double getRateValue() {
+    return 0;
+  }
+
+  @Override
+  public double getRateValue(int index) {
+    return 0;
+  }
+  
 }

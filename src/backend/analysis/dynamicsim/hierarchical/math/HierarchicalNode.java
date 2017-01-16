@@ -170,6 +170,16 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   {
     return state.getStateValue();
   }
+  
+  public double getRate()
+  {
+    return state.getRateValue();
+  }
+  
+  public double getRate(int index)
+  {
+    return state.getRateValue();
+  }
 
   public HierarchicalState getState()
   {
