@@ -557,7 +557,7 @@ public class SBMLutilities
 	public static String[] getDimensionIds(SBase sBase) 
 	{
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
-		String[] dimensionIds = new String[sBasePlugin.getDimensionCount()];
+		String[] dimensionIds = new String[sBasePlugin.getDimensionCount()+1];
 		for(int j = sBasePlugin.getDimensionCount()-1; j>=0; j--){
 			Dimension dimX = sBasePlugin.getDimensionByArrayDimension(j);
 			dimensionIds[j] = dimX.getId(); 

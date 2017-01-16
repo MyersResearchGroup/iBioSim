@@ -58,6 +58,7 @@ import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.comp.Submodel;
+import org.sbolstack.frontend.StackException;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
@@ -637,6 +638,38 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			biosimrc.put("biosim.general.export_dir", dir);
 			sbmltosbol.export(exportFilePath,fileType);
 		}
+	}
+	
+	
+	public void exportSynBioHub(String fileType) {
+		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(biosim,path,biomodel);
+		// TODO: select registry, input submission data
+//		ArrayList<Registry> list = new ArrayList<Registry>();
+//		for (Registry r : Registries.get()) {
+//			if (r.getLocation().startsWith("http://")) {
+//				list.add(r);
+//			}
+//		}
+//		Object[] options = list.toArray();
+//		Registry registry = (Registry) JOptionPane.showInputDialog(panel,
+//				"Please select the SBOL Stack instance you want to upload the current desgin to.", "Upload",
+//				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+//		if (registry == null) {
+//			return;
+//		}
+
+		try {
+			sbmltosbol.upload("http://localhost:9090");
+		}
+		catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (StackException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void exportSBML() {

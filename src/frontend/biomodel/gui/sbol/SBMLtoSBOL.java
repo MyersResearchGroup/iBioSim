@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.prefs.Preferences;
 import javax.swing.JOptionPane;
+import javax.xml.namespace.QName;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -21,6 +22,8 @@ import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
+import org.sbolstack.frontend.StackException;
+import org.sbolstack.frontend.StackFrontend;
 import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.Collection;
 import org.sbolstandard.core2.ComponentDefinition;
@@ -37,6 +40,14 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+import org.sbolstandard.core2.TopLevel;
+
+import com.clarkparsia.sbol.editor.Registries;
+import com.clarkparsia.sbol.editor.Registry;
+import com.clarkparsia.sbol.editor.SBOLEditorPreferences;
+import com.clarkparsia.versioning.PersonInfo;
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 
 import backend.biomodel.annotation.AnnotationUtility;
 import backend.biomodel.parser.BioModel;
@@ -128,11 +139,57 @@ public class SBMLtoSBOL {
 		sbolDoc.setTypesInURIs(false);
 	}
 	
+	public void upload(String location) throws SBOLValidationException, StackException {
+		SBOLDocument uploadDoc = new SBOLDocument();
+		uploadDoc.setComplete(false);
+		export(uploadDoc);
+		StackFrontend stack = new StackFrontend(location);
+		PersonInfo info = SBOLEditorPreferences.INSTANCE.getUserInfo();
+		String email = info == null || info.getEmail() == null ? null : info.getEmail().getLocalName();
+		String uri = info == null ? null : info.getURI().stringValue();
+		if (email == null || email.equals("") || uri == null) {
+			JOptionPane.showMessageDialog(Gui.frame, "Make sure your email and URI are both set and valid in preferences.",
+					"Upload failed", JOptionPane.ERROR_MESSAGE);
+		}
+		String emailHash = Hashing.sha1().hashString(email, Charsets.UTF_8).toString();
+		String userId = email.replace("@", "%40");
+		// TODO: need to revise this when revised on stack
+		String storename = "synbiohub_user_" + Hashing.sha1()
+				.hashString("synbiohub_" + emailHash + "synbiohub_change_me", Charsets.UTF_8).toString();
+		// TODO: uploadDoc should only include objects in your namespace.
+		// filter for member collections works, but it ends up uploading extra
+		// objects
+		// TODO: would this ever be more than one root?
+		for (ModuleDefinition cd : uploadDoc.getRootModuleDefinitions()) {
+			// TODO: should ask the user for a submissionId and perhaps other
+			// fields as done for synbiohub
+			String submissionId = cd.getDisplayId();
+			String submissionName = cd.isSetName() ? cd.getName() : cd.getDisplayId();
+			String submissionDescription = cd.isSetDescription() ? cd.getDescription() : "";
+			String submissionVersion = cd.isSetVersion() ? cd.getVersion() : "1";
+			Collection collection = uploadDoc.createCollection(submissionId + "_collection", "1");
+			collection.setName(submissionName + " " + "Collection");
+			collection.setDescription(submissionDescription);
+			collection.createAnnotation(new QName("http://synbiohub.org#", "uploadedBy", "synbiohub"), email);
+			collection.createAnnotation(new QName("http://purl.org/dc/terms/", "creator", "dcterms"), info.getName());
+			for (TopLevel topLevel : uploadDoc.getTopLevels()) {
+				if (topLevel.getIdentity().equals(collection.getIdentity())) continue;
+				if (!topLevel.getIdentity().toString().startsWith(uri))
+					continue;
+				collection.addMember(topLevel.getIdentity());
+			}
+			uploadDoc = uploadDoc.changeURIPrefixVersion("http://synbiohub.org/user/" + userId + "/" + submissionId + "/",
+					submissionVersion);
+			stack.upload(storename, uploadDoc);
+		}
+
+	}
+	
 	public void export(String exportFilePath,String fileType) {
 		SBOLDocument sbolDoc = new SBOLDocument();
-		sbolDoc.setTypesInURIs(true);
-		export(sbolDoc,exportFilePath);
-		sbolDoc.setTypesInURIs(false);
+		//sbolDoc.setTypesInURIs(true);
+		export(sbolDoc);
+		//sbolDoc.setTypesInURIs(false);
 		try 
 		{
 			if (fileType.equals("SBOL")) {	
@@ -156,12 +213,12 @@ public class SBMLtoSBOL {
 		}
 	}
 	
-	public void export(SBOLDocument sbolDoc, String exportFilePath) {
+	public void export(SBOLDocument sbolDoc) {
 		// TODO read existing 1.1 document in the project to get sequences etc.
 		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 		Preferences biosimrc = Preferences.userRoot();
 		sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-		sbolDoc.setComplete(true);
+		sbolDoc.setComplete(false);
 		//sbolDoc.setTypesInURIs(true);
 		
 		String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
@@ -172,6 +229,7 @@ public class SBMLtoSBOL {
 		}
 		catch (SBOLValidationException e1) {
 			// TODO Auto-generated catch block
+			e1.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Error export SBOL file.", 
 					"SBOL Export Error", JOptionPane.ERROR_MESSAGE);
 		}

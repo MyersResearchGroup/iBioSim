@@ -60,8 +60,12 @@
 	<classpathentry kind="lib" path="lib/httpcore-4.4.4.jar"/>
 	<classpathentry kind="lib" path="lib/httpmime-4.5.2.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.3.1.jar"/>
-	<classpathentry kind="lib" path="lib/sbolstack-frontend-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/CombineArchive-1.1.1-jar-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="lib/libSBOLj-2.1.2-SNAPSHOT-withDependencies.jar" sourcepath="lib/libSBOLj-2.1.2-SNAPSHOT-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/iBioSim/lib/libSBOLj-2.1.2-SNAPSHOT-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jlibsedml.jar"/>
@@ -80,7 +84,6 @@
 	<classpathentry kind="lib" path="lib/csparsej-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/libsbmlj.jar"/>
 	<classpathentry kind="lib" path="lib/commons-math3-3.6.1.jar" sourcepath="lib/commons-math3-3.6.1-sources.jar"/>
-	<classpathentry kind="lib" path="lib/libSBOLj-2.1.1-SNAPSHOT-withDependencies.jar"/>
 	<classpathentry kind="lib" path="lib/jsbml-1.2-with-dependencies.jar"/>
 	<classpathentry kind="output" path="dist/classes"/>
 </classpath>
