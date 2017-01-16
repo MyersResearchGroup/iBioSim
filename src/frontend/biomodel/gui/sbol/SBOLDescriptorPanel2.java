@@ -21,10 +21,10 @@ import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 
-import backend.biomodel.util.Utility;
 import backend.sbol.util.SBOLFileManager2;
 import backend.sbol.util.SBOLIdentityManager2;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.util.Utility;
+import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
 
 public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {

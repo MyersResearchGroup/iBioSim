@@ -30,9 +30,9 @@ import org.sbml.jsbml.text.parser.FormulaParserLL3;
 import org.sbml.jsbml.text.parser.IFormulaParser;
 import org.sbml.jsbml.text.parser.ParseException;
 
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.main.Gui;
 import frontend.main.util.SpringUtilities;

@@ -3,8 +3,8 @@ package backend.verification.platu.partialOrders;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.main.Options;
+import dataModels.lpn.parser.Transition;
 
 public class DependentSetComparator implements Comparator<DependentSet>{
 	private HashMap<Transition, Integer> tranFiringFreqMap;

@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
 import backend.verification.platu.common.Pair;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.platuLpn.VarSet;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 public class CompositionalAnalysis {  
 	public CompositionalAnalysis(){
@@ -906,7 +906,7 @@ public class CompositionalAnalysis {
 			independentTrans2.clear();
 			
 			for(CompositeStateTran stateTran : stateTrans1){
-				backend.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
+				dataModels.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
 
 				if(!stateTran.visible()){
 					independentTrans1.add(stateTran);
@@ -914,7 +914,7 @@ public class CompositionalAnalysis {
 				else{
 					if(synchronousTrans.contains(lpnTran.getIndex())){
 						for(CompositeStateTran stateTran2 : stateTrans2){
-							backend.lpn.parser.Transition lpnTran2  = stateTran2.getLPNTran();
+							dataModels.lpn.parser.Transition lpnTran2  = stateTran2.getLPNTran();
 							if(lpnTran == lpnTran2){
 								intersectingTrans1.add(stateTran);
 								intersectingTrans2.add(stateTran2);
@@ -928,7 +928,7 @@ public class CompositionalAnalysis {
 			}
 			
 			for(CompositeStateTran stateTran : stateTrans2){
-				backend.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
+				dataModels.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
 
 				if(!stateTran.visible()){
 					independentTrans2.add(stateTran);
@@ -941,7 +941,7 @@ public class CompositionalAnalysis {
 			}
 
 			for(CompositeStateTran stateTran : independentTrans1){
-				backend.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
+				dataModels.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
 				CompositeState nextState = sg1.getState(stateTran.getNextState());
 				int[] nextStateTuple = nextState.getStateTuple();
 				int[] newStateTuple = new int[size];
@@ -973,7 +973,7 @@ public class CompositionalAnalysis {
 			}
 			
 			for(CompositeStateTran stateTran : independentTrans2){
-				backend.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
+				dataModels.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
 				CompositeState nextState = sg2.getState(stateTran.getNextState());
 				int[] nextStateTuple = nextState.getStateTuple();
 				int[] newStateTuple = new int[size];
@@ -1011,7 +1011,7 @@ public class CompositionalAnalysis {
 				CompositeStateTran stateTran1 = iter1.next();
 				CompositeStateTran stateTran2 = iter2.next();
 				
-				backend.lpn.parser.Transition lpnTran = stateTran1.getLPNTran();
+				dataModels.lpn.parser.Transition lpnTran = stateTran1.getLPNTran();
 				CompositeState nextState1 = sg1.getState(stateTran1.getNextState());
 				int[] nextState1Tuple = nextState1.getStateTuple();
 				CompositeState nextState2 = sg2.getState(stateTran2.getNextState());
@@ -1213,12 +1213,12 @@ public class CompositionalAnalysis {
 		subStateStack1.push(sg1.getInitState());
 		subStateStack2.push(sg2.getInitState());
 		
-		List<backend.lpn.parser.Transition> intersectingTrans = new ArrayList<backend.lpn.parser.Transition>();
+		List<dataModels.lpn.parser.Transition> intersectingTrans = new ArrayList<dataModels.lpn.parser.Transition>();
 		List<CompositeState> intStateList1 = new ArrayList<CompositeState>();
 		List<CompositeState> intStateList2 = new ArrayList<CompositeState>();
-		List<backend.lpn.parser.Transition> independentTrans1 = new ArrayList<backend.lpn.parser.Transition>();
+		List<dataModels.lpn.parser.Transition> independentTrans1 = new ArrayList<dataModels.lpn.parser.Transition>();
 		List<CompositeState> indStateList1 = new ArrayList<CompositeState>();
-		List<backend.lpn.parser.Transition> independentTrans2 = new ArrayList<backend.lpn.parser.Transition>();
+		List<dataModels.lpn.parser.Transition> independentTrans2 = new ArrayList<dataModels.lpn.parser.Transition>();
 		List<CompositeState> indStateList2 = new ArrayList<CompositeState>();
 		
 		long peakUsed = 0;
@@ -1246,7 +1246,7 @@ public class CompositionalAnalysis {
 			indStateList2.clear();
 			
 			for(CompositeStateTran stateTran : stateTrans1){
-				backend.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
+				dataModels.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
 				CompositeState nextState = sg1.getState(stateTran.getNextState());
 				
 				if(!stateTran.visible()){
@@ -1256,7 +1256,7 @@ public class CompositionalAnalysis {
 				else{
 					if(synchronousTrans.contains(lpnTran)){
 						for(CompositeStateTran stateTran2 : stateTrans2){
-							backend.lpn.parser.Transition lpnTran2  = stateTran2.getLPNTran();
+							dataModels.lpn.parser.Transition lpnTran2  = stateTran2.getLPNTran();
 							CompositeState nextState2 = sg2.getState(stateTran2.getNextState());
 							if(lpnTran == lpnTran2){
 								intersectingTrans.add(lpnTran);
@@ -1273,7 +1273,7 @@ public class CompositionalAnalysis {
 			}
 			
 			for(CompositeStateTran stateTran : stateTrans2){
-				backend.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
+				dataModels.lpn.parser.Transition lpnTran = stateTran.getLPNTran();
 				CompositeState nextState = sg2.getState(stateTran.getNextState());
 				
 				if(!stateTran.visible()){
@@ -1289,7 +1289,7 @@ public class CompositionalAnalysis {
 			}
 
 			for(int i = 0; i < independentTrans1.size(); i++){
-				backend.lpn.parser.Transition lpnTran = independentTrans1.get(i);
+				dataModels.lpn.parser.Transition lpnTran = independentTrans1.get(i);
 				CompositeState nextState = indStateList1.get(i);
 				int[] nextStateTuple = nextState.getStateTuple();
 				int[] newStateTuple = new int[size];
@@ -1321,7 +1321,7 @@ public class CompositionalAnalysis {
 			}
 			
 			for(int j = 0; j < independentTrans2.size(); j++){
-				backend.lpn.parser.Transition lpnTran = independentTrans2.get(j);
+				dataModels.lpn.parser.Transition lpnTran = independentTrans2.get(j);
 				CompositeState nextState = indStateList2.get(j);
 				int[] nextStateTuple = nextState.getStateTuple();
 				int[] newStateTuple = new int[size];
@@ -1661,7 +1661,7 @@ public class CompositionalAnalysis {
 //			System.out.println(count + "/" + sg.getStateTranSet().size());
 //			if(!sg.containsStateTran(nonlocalStateTran)) continue;
 			
-			backend.lpn.parser.Transition lpnTran = nonlocalStateTran.getLPNTran();
+			dataModels.lpn.parser.Transition lpnTran = nonlocalStateTran.getLPNTran();
 			if(!nonlocalStateTran.visible()){
 				continue;
 			}
@@ -1829,7 +1829,7 @@ public class CompositionalAnalysis {
 			}
 			
 			for(CompositeStateTran succStateTran : nextState.getOutgoingStateTranList()){
-				backend.lpn.parser.Transition lpnTran = succStateTran.getLPNTran();
+				dataModels.lpn.parser.Transition lpnTran = succStateTran.getLPNTran();
 				
 				if(succStateTran.visible()){
 					// create a state tran from initial state to succStateTran.currentState

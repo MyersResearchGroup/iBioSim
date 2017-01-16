@@ -14,13 +14,6 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
-import backend.lpn.parser.Abstraction;
-import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Place;
-import backend.lpn.parser.Transition;
-import backend.lpn.parser.LpnDecomposition.LpnProcess;
-import backend.util.GlobalConstants;
 import backend.verification.platu.MDD.MDT;
 import backend.verification.platu.MDD.Mdd;
 import backend.verification.platu.MDD.mddNode;
@@ -44,6 +37,13 @@ import backend.verification.timed_state_exploration.zoneProject.EventSet;
 import backend.verification.timed_state_exploration.zoneProject.TimedPrjState;
 import backend.verification.timed_state_exploration.zoneProject.TimedStateSet;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
+import dataModels.lpn.parser.Abstraction;
+import dataModels.lpn.parser.ExprTree;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Place;
+import dataModels.lpn.parser.Transition;
+import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
+import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
 
 import java.util.Queue;

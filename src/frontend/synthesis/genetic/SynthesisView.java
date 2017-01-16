@@ -31,11 +31,11 @@ import javax.swing.JTextField;
 
 import org.sbolstandard.core2.SBOLValidationException;
 
-import backend.biomodel.parser.BioModel;
 import backend.sbol.util.SBOLFileManager2;
 import backend.synthesis.genetic.SynthesisGraph;
 import backend.synthesis.genetic.Synthesizer;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.util.GlobalConstants;
 import frontend.main.Log;
 import frontend.main.util.Utility;
 
@@ -400,8 +400,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	}
 	
 	private static boolean compareModels(BioModel subModel1, BioModel subModel2) {
-		String hash1 = backend.biomodel.util.Utility.MD5(subModel1.getSBMLDocument());
-		String hash2 = backend.biomodel.util.Utility.MD5(subModel2.getSBMLDocument());
+		String hash1 = dataModels.biomodel.util.Utility.MD5(subModel1.getSBMLDocument());
+		String hash2 = dataModels.biomodel.util.Utility.MD5(subModel2.getSBMLDocument());
 		return hash1 == hash2;
 	}
 	

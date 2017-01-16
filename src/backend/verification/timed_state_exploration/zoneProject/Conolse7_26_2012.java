@@ -3,11 +3,11 @@ package backend.verification.timed_state_exploration.zoneProject;
 import java.io.File;
 import java.util.ArrayList;
 
-import backend.lpn.parser.LPN;
-import backend.util.GlobalConstants;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
+import dataModels.lpn.parser.LPN;
+import dataModels.util.GlobalConstants;
 
 public class Conolse7_26_2012 {
 	

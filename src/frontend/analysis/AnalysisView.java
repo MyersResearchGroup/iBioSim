@@ -64,11 +64,11 @@ import org.jlibsedml.modelsupport.KisaoTerm;
 import org.jmathml.ASTNode;
 
 import backend.analysis.util.SEDMLutilities;
-import backend.lpn.parser.Abstraction;
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Translator;
-import backend.util.GlobalConstants;
-import backend.util.dataparser.DataParser;
+import dataModels.lpn.parser.Abstraction;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Translator;
+import dataModels.util.GlobalConstants;
+import dataModels.util.dataparser.DataParser;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.graph.Graph;
 import frontend.lpn.gui.LHPNEditor;

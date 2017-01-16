@@ -2,8 +2,8 @@ package frontend.verification;
 
 import javax.swing.*;
 
-import backend.lpn.parser.LPN;
-import backend.util.GlobalConstants;
+import dataModels.lpn.parser.LPN;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.*;
 

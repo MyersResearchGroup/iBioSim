@@ -18,7 +18,7 @@ import org.sbml.jsbml.SpeciesReference;
 
 import com.joptimizer.optimizers.*;
 
-import backend.biomodel.util.SBMLutilities;
+import dataModels.biomodel.util.SBMLutilities;
 
 public class FluxBalanceAnalysis {
 	

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.Transition;
 
 import java.util.Set;
 

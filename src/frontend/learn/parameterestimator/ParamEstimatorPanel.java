@@ -31,7 +31,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
 
 public class ParamEstimatorPanel extends JPanel implements ActionListener, Runnable, ListSelectionListener

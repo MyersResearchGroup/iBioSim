@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.platuLpn.LPNTranRelation;
 import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.Transition;
 
 /**
  * in this approach, we do not consider transition interleaving

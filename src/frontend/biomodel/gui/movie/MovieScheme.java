@@ -11,9 +11,9 @@ import java.util.Map;
 
 import org.sbml.jsbml.Parameter;
 
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.parser.BioModel;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.movie.SerializableScheme;
 
 

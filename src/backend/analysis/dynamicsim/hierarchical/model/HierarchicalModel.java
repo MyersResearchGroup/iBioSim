@@ -16,7 +16,7 @@ import backend.analysis.dynamicsim.hierarchical.math.FunctionNode;
 import backend.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
 import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 
 public final class HierarchicalModel
 {

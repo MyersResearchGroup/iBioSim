@@ -3,9 +3,9 @@ package backend.verification.platu.markovianAnalysis;
 import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.project.PrjState;
 import backend.verification.platu.stategraph.State;
+import dataModels.lpn.parser.Transition;
 
 public class ProbGlobalState extends PrjState {	
 	

@@ -11,10 +11,10 @@ import javax.swing.JProgressBar;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 
+import dataModels.util.MutableBoolean;
 import flanagan.integration.DerivnFunction;
 import flanagan.integration.RungeKutta;
 import frontend.main.Gui;
-import frontend.main.util.MutableBoolean;
 
 public class SimulatorODERK extends Simulator
 {

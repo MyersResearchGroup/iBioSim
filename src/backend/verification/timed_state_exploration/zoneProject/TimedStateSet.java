@@ -6,10 +6,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.logicAnalysis.StateSetInterface;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.PrjState;
+import dataModels.lpn.parser.Transition;
 
 public class TimedStateSet extends HashSet<PrjState> implements StateSetInterface {
 

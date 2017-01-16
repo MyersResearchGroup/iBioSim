@@ -2,7 +2,7 @@ package backend.verification.timed_state_exploration.dbm2;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import backend.lpn.parser.*;
+import dataModels.lpn.parser.*;
 
 /**
  * This class mainly adds the ability to address the places and Boolean variables via

@@ -7,10 +7,12 @@ import java.util.*;
 //import javax.jws.soap.InitParam;
 import javax.swing.*;
 
-import backend.lpn.parser.LPN;
-import backend.util.GlobalConstants;
-import backend.util.dataparser.*;
-import frontend.main.*;
+import dataModels.lpn.parser.LPN;
+import dataModels.util.GlobalConstants;
+import dataModels.util.dataparser.*;
+import frontend.main.Gui;
+import frontend.main.Log;
+
 
 
 

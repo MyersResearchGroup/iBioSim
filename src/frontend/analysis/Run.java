@@ -40,18 +40,18 @@ import backend.analysis.markov.PerfromSteadyStateMarkovAnalysisThread;
 import backend.analysis.markov.PerfromTransientMarkovAnalysisThread;
 import backend.analysis.markov.StateGraph;
 import backend.analysis.markov.StateGraph.Property;
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
-import backend.lpn.parser.Abstraction;
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Translator;
-import backend.util.GlobalConstants;
-import backend.util.dataparser.DataParser;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.lpn.parser.Abstraction;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Translator;
+import dataModels.util.GlobalConstants;
+import dataModels.util.MutableString;
+import dataModels.util.dataparser.DataParser;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.graph.Graph;
 import frontend.main.Gui;
 import frontend.main.Log;
-import frontend.main.util.MutableString;
 import frontend.verification.AbstPane;
 
 /**

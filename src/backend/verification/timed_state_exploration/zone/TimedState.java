@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.platuLpn.VarSet;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 /**
  * Adds timing to a State.

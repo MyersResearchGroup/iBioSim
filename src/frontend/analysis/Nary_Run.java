@@ -31,7 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.Utility;

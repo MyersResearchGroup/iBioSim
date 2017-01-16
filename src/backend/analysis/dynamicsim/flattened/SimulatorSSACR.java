@@ -14,8 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import dataModels.util.MutableBoolean;
 import frontend.main.Gui;
-import frontend.main.util.MutableBoolean;
 import odk.lang.FastMath;
 
 public class SimulatorSSACR extends Simulator

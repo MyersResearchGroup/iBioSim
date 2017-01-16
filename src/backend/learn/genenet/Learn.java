@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 
 public class Learn
 {

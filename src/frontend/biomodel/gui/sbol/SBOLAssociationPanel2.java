@@ -11,7 +11,7 @@ import org.sbolstandard.core2.*;
 import backend.sbol.util.SBOLFileManager2;
 import backend.sbol.util.SBOLIdentityManager2;
 import backend.sbol.util.SBOLUtility2;
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.main.Gui;
 import frontend.sbol.browser.SBOLBrowser2;

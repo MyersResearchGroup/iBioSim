@@ -3,10 +3,10 @@ package backend.verification.platu.logicAnalysis;
 
 import java.util.*;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
 import backend.verification.platu.common.PlatuObj;
 import backend.verification.platu.stategraph.*;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 /**
  * State

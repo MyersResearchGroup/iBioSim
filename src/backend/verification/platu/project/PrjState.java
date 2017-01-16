@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.stategraph.State;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 public class PrjState {
 	protected  State[] stateArray;

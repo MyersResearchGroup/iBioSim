@@ -12,11 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Place;
-import backend.lpn.parser.Transition;
-import backend.lpn.parser.Variable;
-import backend.util.GlobalConstants;
 import backend.verification.platu.common.IndexObjMap;
 import backend.verification.platu.logicAnalysis.Constraint;
 import backend.verification.platu.main.Main;
@@ -37,6 +32,11 @@ import backend.verification.timed_state_exploration.zoneProject.LPNTransitionPai
 import backend.verification.timed_state_exploration.zoneProject.TimedPrjState;
 import backend.verification.timed_state_exploration.zoneProject.UpdateContinuous;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Place;
+import dataModels.lpn.parser.Transition;
+import dataModels.lpn.parser.Variable;
+import dataModels.util.GlobalConstants;
 
 import java.util.Set;
 import java.util.Stack;

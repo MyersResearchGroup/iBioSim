@@ -12,9 +12,9 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import backend.lpn.parser.LPN;
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.LPN;
 
 public class Interpretor {
 

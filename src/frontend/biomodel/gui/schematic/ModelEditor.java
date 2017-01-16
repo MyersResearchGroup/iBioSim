@@ -58,26 +58,29 @@ import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.comp.Submodel;
+import org.sbolstack.frontend.StackException;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 
 import backend.analysis.util.SEDMLutilities;
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.network.GeneticNetwork;
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.parser.GCMParser;
-import backend.biomodel.util.SBMLutilities;
-import backend.biomodel.util.Utility;
-import backend.lpn.parser.Lpn2verilog;
 import backend.sbol.assembly.Assembler2;
 import backend.sbol.assembly.AssemblyGraph2;
 import backend.sbol.assembly.SequenceTypeValidator;
 import backend.sbol.util.SBOLFileManager2;
 import backend.sbol.util.SBOLIdentityManager2;
 import backend.sbol.util.SBOLUtility2;
-import backend.util.GlobalConstants;
+import conversion.SBMLtoSBOL;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.network.GeneticNetwork;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.parser.GCMParser;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.biomodel.util.Utility;
+import dataModels.lpn.parser.Lpn2verilog;
+import dataModels.util.GlobalConstants;
+import dataModels.util.MutableBoolean;
 import frontend.analysis.AnalysisThread;
 import frontend.analysis.AnalysisView;
 import frontend.analysis.ConstraintTermThread;
@@ -100,14 +103,12 @@ import frontend.biomodel.gui.sbmlcore.Reactions;
 import frontend.biomodel.gui.sbmlcore.Rules;
 import frontend.biomodel.gui.sbmlcore.SpeciesPanel;
 import frontend.biomodel.gui.sbmlcore.Units;
-import frontend.biomodel.gui.sbol.SBMLtoSBOL;
 import frontend.biomodel.gui.schematic.Schematic;
 import frontend.biomodel.gui.util.AbstractRunnableNamedButton;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.biomodel.gui.util.Runnable;
 import frontend.main.Gui;
 import frontend.main.Log;
-import frontend.main.util.MutableBoolean;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
@@ -637,6 +638,38 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			biosimrc.put("biosim.general.export_dir", dir);
 			sbmltosbol.export(exportFilePath,fileType);
 		}
+	}
+	
+	
+	public void exportSynBioHub(String fileType) {
+		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(biosim,path,biomodel);
+		// TODO: select registry, input submission data
+//		ArrayList<Registry> list = new ArrayList<Registry>();
+//		for (Registry r : Registries.get()) {
+//			if (r.getLocation().startsWith("http://")) {
+//				list.add(r);
+//			}
+//		}
+//		Object[] options = list.toArray();
+//		Registry registry = (Registry) JOptionPane.showInputDialog(panel,
+//				"Please select the SBOL Stack instance you want to upload the current desgin to.", "Upload",
+//				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+//		if (registry == null) {
+//			return;
+//		}
+
+		try {
+			sbmltosbol.upload("http://localhost:9090");
+		}
+		catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (StackException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void exportSBML() {

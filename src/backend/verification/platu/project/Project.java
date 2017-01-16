@@ -16,9 +16,6 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Translator;
-import backend.util.GlobalConstants;
 import backend.verification.platu.logicAnalysis.Analysis;
 import backend.verification.platu.logicAnalysis.CompositionalAnalysis;
 import backend.verification.platu.main.Options;
@@ -37,6 +34,9 @@ import backend.verification.timed_state_exploration.octagon.Equivalence;
 import backend.verification.timed_state_exploration.octagon.Octagon;
 import backend.verification.timed_state_exploration.zoneProject.ContinuousUtilities;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Translator;
+import dataModels.util.GlobalConstants;
 
 public class Project {
 

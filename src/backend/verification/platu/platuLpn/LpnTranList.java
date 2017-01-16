@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 final public class LpnTranList extends LinkedList<Transition> {
 

@@ -8,7 +8,7 @@ import java.util.Random;
 
 import org.sbml.jsbml.*;
 
-import backend.biomodel.util.SBMLutilities;
+import dataModels.biomodel.util.SBMLutilities;
 import frontend.graph.Graph;
 import frontend.main.Gui;
 
