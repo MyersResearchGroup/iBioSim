@@ -10,41 +10,41 @@ import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateTy
 
 public class CompartmentSetup
 {
-	public static void setupCompartments(HierarchicalModel modelstate,  ModelType type, Model model)
-	{
-		for (Compartment compartment : model.getListOfCompartments())
-		{
-			if (modelstate.isDeletedBySId(compartment.getId()))
-			{
-				continue;
-			}
-			setupSingleCompartment(modelstate, compartment, type);
-		}
-	}
+  public static void setupCompartments(HierarchicalModel modelstate,  StateType type, Model model)
+  {
+    for (Compartment compartment : model.getListOfCompartments())
+    {
+      if (modelstate.isDeletedBySId(compartment.getId()))
+      {
+        continue;
+      }
+      setupSingleCompartment(modelstate, compartment, type);
+    }
+  }
 
-	private static void setupSingleCompartment(HierarchicalModel modelstate, Compartment compartment, ModelType type)
-	{
+  private static void setupSingleCompartment(HierarchicalModel modelstate, Compartment compartment, StateType type)
+  {
 
-		String compartmentID = compartment.getId();
-		VariableNode node = new VariableNode(compartmentID);
-		node.createState(StateType.SPARSE);
-		if (Double.isNaN(compartment.getSize()))
-		{
-			node.setValue(modelstate.getIndex(), 1);
-		}
-		else
-		{
-		  node.setValue(modelstate.getIndex(), compartment.getSize());
-		}
-		
-		if (compartment.getConstant())
-		{
-			modelstate.addMappingNode(compartmentID, node);
-		}
-		else
-		{
-			modelstate.addVariable(node);
-		}
-	}
+    String compartmentID = compartment.getId();
+    VariableNode node = new VariableNode(compartmentID);
+    node.createState(type);
+    if (Double.isNaN(compartment.getSize()))
+    {
+      node.setValue(modelstate.getIndex(), 1);
+    }
+    else
+    {
+      node.setValue(modelstate.getIndex(), compartment.getSize());
+    }
+    
+    if (compartment.getConstant())
+    {
+      modelstate.addMappingNode(compartmentID, node);
+    }
+    else
+    {
+      modelstate.addVariable(node);
+    }
+  }
 
 }
