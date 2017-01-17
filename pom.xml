@@ -311,17 +311,24 @@
 			<artifactId>jgraphx</artifactId>
 			<version>1.10.4.2</version>
 		</dependency>
-		
+
 		<dependency>
-    <groupId>net.sf.trove4j</groupId>
-    <artifactId>trove4j</artifactId>
-    <version>3.0.1</version>
-</dependency>
-		
+			<groupId>net.sf.trove4j</groupId>
+			<artifactId>trove4j</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+
 		<dependency>
-    <groupId>org.openrdf.sesame</groupId>
-    <artifactId>sesame-model</artifactId>
-    <version>4.1.2</version>
-</dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-model</artifactId>
+			<version>4.1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.kohsuke</groupId>
+			<artifactId>github-api</artifactId>
+			<version>1.84</version>
+		</dependency>
+
 	</dependencies>
 </project>
