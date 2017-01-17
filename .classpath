@@ -6,19 +6,13 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/js.jar"/>
 	<classpathentry kind="lib" path="lib/pdf-transcoder.jar"/>
-	<classpathentry kind="lib" path="lib/swing-layout-1.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/iText-2.1.5.jar"/>
-	<classpathentry kind="lib" path="lib/jgraphx.jar"/>
 	<classpathentry kind="lib" path="lib/SourceLibrary.jar"/>
-	<classpathentry kind="lib" path="lib/trove-3.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/openmali.jar"/>
 	<classpathentry kind="lib" path="lib/flanagan.jar"/>
 	<classpathentry kind="lib" path="lib/saaj.jar"/>
 	<classpathentry kind="lib" path="lib/SBOLDesigner.jar"/>
 	<classpathentry kind="lib" path="lib/simpleeventbus-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/openrdf-sesame-2.6.9-onejar.jar"/>
 	<classpathentry kind="lib" path="lib/sbolstack-frontend-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/CombineArchive-1.1.1-jar-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="lib/AppleJavaExtensions.jar"/>

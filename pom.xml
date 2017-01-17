@@ -43,6 +43,16 @@
 			<name>netbeans</name>
 			<url>http://bits.netbeans.org/maven2/</url>
 		</repository>
+		<repository>
+			<id>osgeo</id>
+			<name>osgeo</name>
+			<url>http://download.osgeo.org/webdav/geotools/</url>
+		</repository>
+		<repository>
+			<id>alfresco</id>
+			<name>alfresco</name>
+			<url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -156,13 +166,13 @@
 		</dependency>
 
 		<dependency>
-    <groupId>uk.ac.ebi.biomodels</groupId>
-    <artifactId>biomodels-wslib</artifactId>
-    <version>1.21</version>
-</dependency>
+			<groupId>uk.ac.ebi.biomodels</groupId>
+			<artifactId>biomodels-wslib</artifactId>
+			<version>1.21</version>
+		</dependency>
 
 
-		
+
 
 		<dependency>
 			<groupId>colt</groupId>
@@ -170,107 +180,148 @@
 			<version>1.2.0</version>
 		</dependency>
 
-<dependency>
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-math3</artifactId>
-    <version>3.6.1</version>
-</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.6.1</version>
+		</dependency>
 
-<dependency>
-    <groupId>com.google.code.gson</groupId>
-    <artifactId>gson</artifactId>
-    <version>2.8.0</version>
-</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.0</version>
+		</dependency>
 
-<dependency>
-    <groupId>org.apache.httpcomponents</groupId>
-    <artifactId>httpclient-cache</artifactId>
-    <version>4.5.2</version>
-</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient-cache</artifactId>
+			<version>4.5.2</version>
+		</dependency>
 
-<dependency>
-    <groupId>org.apache.httpcomponents</groupId>
-    <artifactId>httpcore</artifactId>
-    <version>4.4.4</version>
-</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.4</version>
+		</dependency>
 
-<dependency>
-    <groupId>org.jfree</groupId>
-    <artifactId>jcommon</artifactId>
-    <version>1.0.17</version>
-</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jcommon</artifactId>
+			<version>1.0.17</version>
+		</dependency>
 
-<dependency>
-    <groupId>org.jdom</groupId>
-    <artifactId>jdom-contrib</artifactId>
-    <version>1.1.3</version>
-</dependency>
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom-contrib</artifactId>
+			<version>1.1.3</version>
+		</dependency>
 
-<dependency>
-    <groupId>org.jfree</groupId>
-    <artifactId>jfreechart</artifactId>
-    <version>1.0.14</version>
-</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.14</version>
+		</dependency>
 
-<dependency>
-    <groupId>org.jmathml</groupId>
-    <artifactId>jmathml</artifactId>
-    <version>2.2.1</version>
-</dependency>
+		<dependency>
+			<groupId>org.jmathml</groupId>
+			<artifactId>jmathml</artifactId>
+			<version>2.2.1</version>
+		</dependency>
 
-<dependency>
-    <groupId>com.joptimizer</groupId>
-    <artifactId>joptimizer</artifactId>
-    <version>3.4.0</version>
-</dependency>
+		<dependency>
+			<groupId>com.joptimizer</groupId>
+			<artifactId>joptimizer</artifactId>
+			<version>3.4.0</version>
+		</dependency>
 
-<dependency>
-    <groupId>org.sbml.jsbml</groupId>
-    <artifactId>jsbml</artifactId>
-    <version>1.2</version>
-</dependency>
+		<dependency>
+			<groupId>org.sbml.jsbml</groupId>
+			<artifactId>jsbml</artifactId>
+			<version>1.2</version>
+		</dependency>
 
-<dependency>
-    <groupId>junit</groupId>
-    <artifactId>junit</artifactId>
-    <version>4.12</version>
-</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
 
-<dependency>
-    <groupId>javax.mail</groupId>
-    <artifactId>mail</artifactId>
-    <version>1.4.7</version>
-</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
+		</dependency>
 
-<dependency>
-    <groupId>org.netbeans.api</groupId>
-    <artifactId>org-jdesktop-layout</artifactId>
-    <version>RELEASE691</version>
-</dependency>
+		<dependency>
+			<groupId>org.netbeans.api</groupId>
+			<artifactId>org-jdesktop-layout</artifactId>
+			<version>RELEASE691</version>
+		</dependency>
 
-<dependency>
-    <groupId>org.w3c</groupId>
-    <artifactId>dom</artifactId>
-    <version>2.3.0-jaxb-1.0.6</version>
-</dependency>
+		<dependency>
+			<groupId>org.w3c</groupId>
+			<artifactId>dom</artifactId>
+			<version>2.3.0-jaxb-1.0.6</version>
+		</dependency>
 
-<dependency>
-    <groupId>wsdl4j</groupId>
-    <artifactId>wsdl4j</artifactId>
-    <version>1.6.2</version>
-</dependency>
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.6.2</version>
+		</dependency>
 
-<dependency>
-    <groupId>xalan</groupId>
-    <artifactId>xalan</artifactId>
-    <version>2.6.0</version>
-</dependency>
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.6.0</version>
+		</dependency>
 
-<dependency>
-    <groupId>xom</groupId>
-    <artifactId>xom</artifactId>
-    <version>1.2</version>
-</dependency>
+		<dependency>
+			<groupId>xom</groupId>
+			<artifactId>xom</artifactId>
+			<version>1.2</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
+			<artifactId>org.mozilla.javascript</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jdesktop</groupId>
+			<artifactId>swing-layout</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.tinyjee.jgraphx</groupId>
+			<artifactId>jgraphx</artifactId>
+			<version>3.4.1.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mxgraph</groupId>
+			<artifactId>jgraphx</artifactId>
+			<version>1.10.4.2</version>
+		</dependency>
+		
+		<dependency>
+    <groupId>net.sf.trove4j</groupId>
+    <artifactId>trove4j</artifactId>
+    <version>3.0.1</version>
+</dependency>
+		
+		<dependency>
+    <groupId>org.openrdf.sesame</groupId>
+    <artifactId>sesame-model</artifactId>
+    <version>4.1.2</version>
+</dependency>
 	</dependencies>
 </project>
