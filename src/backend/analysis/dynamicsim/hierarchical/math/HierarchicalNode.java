@@ -9,6 +9,7 @@ import backend.analysis.dynamicsim.hierarchical.states.SparseState;
 import backend.analysis.dynamicsim.hierarchical.states.ValueState;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 import backend.analysis.dynamicsim.hierarchical.states.VectorState;
+import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
 
 public class HierarchicalNode extends AbstractHierarchicalNode
 {
@@ -123,9 +124,13 @@ public class HierarchicalNode extends AbstractHierarchicalNode
     return arrayNode;
   }
 
-  public HierarchicalState createState(StateType type)
+  public HierarchicalState createState(StateType type, VectorWrapper wrapper)
   {
-    if (type == StateType.DENSE)
+    if(type == StateType.VECTOR)
+    {
+      state = new VectorState(wrapper);
+    }
+    else if (type == StateType.DENSE)
     {
       state = new ValueState();
     }
@@ -137,27 +142,25 @@ public class HierarchicalNode extends AbstractHierarchicalNode
     {
       state = new DenseState();
     }
-    else if(type == StateType.VECTOR)
+    else if(type == StateType.SCALAR)
     {
-      state = new VectorState();
+      state = new ValueState();
     }
+    //TODO: error on else
     return state;
   }
-  
 
   public void setValue(double value)
   {
-    state.setStateValue( value);
+    state.setStateValue(value);
   }
   
   public void setValue(int index, double value)
   {
-    if(state.getState(index) == null)
-    {
-      state.addState(index);
-    }
-    state.getState(index).setStateValue( value);
+    //TODO:
+    state.setStateValue(value);
   }
+  
   public double getValue()
   {
     return state.getStateValue();
@@ -165,7 +168,17 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   
   public double getValue(int index)
   {
-    return state.getStateValue(index);
+    return state.getStateValue();
+  }
+  
+  public double getRate()
+  {
+    return state.getRateValue();
+  }
+  
+  public double getRate(int index)
+  {
+    return state.getRateValue();
   }
 
   public HierarchicalState getState()

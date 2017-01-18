@@ -6,12 +6,13 @@ import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.SpeciesNode;
 import backend.analysis.dynamicsim.hierarchical.math.SpeciesReferenceNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 
 public class SpeciesReferenceSetup
 {
 
-	public static void setupSingleProduct(HierarchicalModel modelstate, ReactionNode reaction, String productID, SpeciesReference product)
+	public static void setupSingleProduct(HierarchicalModel modelstate, ReactionNode reaction, String productID, SpeciesReference product, StateType type, VectorWrapper wrapper)
 	{
 
 		if (product.isSetId() && modelstate.isDeletedBySId(product.getId()))
@@ -26,7 +27,14 @@ public class SpeciesReferenceSetup
 		double stoichiometryValue = Double.isNaN(product.getStoichiometry()) ? 1 : product.getStoichiometry();
 
 		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode();
-		speciesReferenceNode.createState(StateType.SPARSE);
+    if(!product.isConstant())
+    {
+      speciesReferenceNode.createState(type, wrapper);
+    }
+    else
+    {
+      speciesReferenceNode.createState(StateType.SCALAR, wrapper);
+    }
 		speciesReferenceNode.setValue(modelstate.getIndex(), stoichiometryValue);
 		
 		SpeciesNode species = (SpeciesNode) modelstate.getNode(productID);
@@ -51,7 +59,7 @@ public class SpeciesReferenceSetup
 
 	}
 
-	public static void setupSingleReactant(HierarchicalModel modelstate, ReactionNode reaction, String reactantID, SpeciesReference reactant)
+	public static void setupSingleReactant(HierarchicalModel modelstate, ReactionNode reaction, String reactantID, SpeciesReference reactant, StateType type, VectorWrapper wrapper)
 	{
 
 		if (reactant.isSetId() && modelstate.isDeletedBySId(reactant.getId()))
@@ -65,7 +73,15 @@ public class SpeciesReferenceSetup
 
 		double stoichiometryValue = Double.isNaN(reactant.getStoichiometry()) ? 1 : reactant.getStoichiometry();
 		SpeciesReferenceNode speciesReferenceNode = new SpeciesReferenceNode();
-    speciesReferenceNode.createState(StateType.SPARSE);
+		if(!reactant.isConstant())
+		{
+	    speciesReferenceNode.createState(type, wrapper);
+		}
+		else
+		{
+
+	    speciesReferenceNode.createState(StateType.SCALAR, wrapper);
+		}
     speciesReferenceNode.setValue(modelstate.getIndex(), stoichiometryValue);
 		SpeciesNode species = (SpeciesNode) modelstate.getNode(reactantID);
 		speciesReferenceNode.setSpecies(species);

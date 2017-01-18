@@ -1,3 +1,4 @@
+
 package backend.analysis.dynamicsim.hierarchical.states;
 
 public class ValueState extends HierarchicalState
@@ -58,4 +59,16 @@ public class ValueState extends HierarchicalState
   public void setStateValue(int index, double value) {
     this.value = value;
   }
+  
+  @Override
+  public double getRateValue() {
+    return 0;
+  }
+
+  @Override
+  public double getRateValue(int index) {
+    return 0;
+  }
+
+  
 }

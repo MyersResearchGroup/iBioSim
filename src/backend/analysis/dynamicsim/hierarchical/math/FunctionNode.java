@@ -70,5 +70,4 @@ public class FunctionNode extends HierarchicalNode
     return changed;
   }
 
-
 }
