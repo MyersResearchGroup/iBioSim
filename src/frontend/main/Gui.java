@@ -147,20 +147,20 @@ import com.apple.eawt.QuitResponse;
 import com.clarkparsia.sbol.editor.SBOLDesignerPlugin;
 
 import backend.analysis.util.SEDMLutilities;
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.annotation.SBOLAnnotation;
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.parser.GCM2SBML;
-import backend.biomodel.util.SBMLutilities;
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Lpn2verilog;
-import backend.lpn.parser.Translator;
-import backend.lpn.parser.properties.BuildProperty;
-import backend.sbol.assembly.ModelGenerator;
 import backend.sbol.util.SBOLUtility2;
-import backend.util.GlobalConstants;
 import backend.verification.platu.platuLpn.io.PlatuGrammarLexer;
 import backend.verification.platu.platuLpn.io.PlatuGrammarParser;
+import conversion.ModelGenerator;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.annotation.SBOLAnnotation;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.parser.GCM2SBML;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Lpn2verilog;
+import dataModels.lpn.parser.Translator;
+import dataModels.lpn.parser.properties.BuildProperty;
+import dataModels.util.GlobalConstants;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import de.unirostock.sems.cbarchive.CombineArchive;
@@ -215,7 +215,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem				graph;
 	private JMenuItem				probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf;
 	private JMenuItem				exportPng, exportSvg, exportTsd, exportSBML,exportFlatSBML;
-	private JMenuItem				exportSBOL1, exportSBOL2, exportGenBank, exportFasta, exportArchive, exportAvi, exportMp4;
+	private JMenuItem				exportSBOL1, exportSBOL2, exportSynBioHub, exportGenBank, exportFasta, exportArchive, exportAvi, exportMp4;
 	private JMenu					exportDataMenu, exportMovieMenu, exportImageMenu;
 	private String					root;
 	private String 					currentProjectId;
@@ -563,6 +563,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportFlatSBML = new JMenuItem("Flat SBML");
 		exportSBOL1 = new JMenuItem("SBOL 1.1");
 		exportSBOL2 = new JMenuItem("SBOL 2.0");
+		exportSynBioHub = new JMenuItem("SynBioHub");
 		exportGenBank = new JMenuItem("GenBank");
 		exportFasta = new JMenuItem("Fasta");
 		exportArchive = new JMenuItem("Archive");
@@ -684,6 +685,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportFlatSBML.addActionListener(this);
 		exportSBOL1.addActionListener(this);
 		exportSBOL2.addActionListener(this);
+		exportSynBioHub.addActionListener(this);
 		exportGenBank.addActionListener(this);
 		exportFasta.addActionListener(this);
 		exportArchive.addActionListener(this);
@@ -826,6 +828,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportFlatSBML.setEnabled(false);
 		exportSBOL1.setEnabled(false);
 		exportSBOL2.setEnabled(false);
+		exportSynBioHub.setEnabled(false);
 		exportGenBank.setEnabled(false);
 		exportFasta.setEnabled(false);
 		exportArchive.setEnabled(false);
@@ -1048,6 +1051,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportSBML);
 		exportMenu.add(exportSBOL1);
 		exportMenu.add(exportSBOL2);
+		exportMenu.add(exportSynBioHub);
 		exportMenu.add(exportGenBank);
 		exportMenu.add(exportFasta);
 		// Removed for now since not working
@@ -2007,6 +2011,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (comp instanceof SBOLDesignerPlugin)
 			{
+				exportSBOL((SBOLDesignerPlugin) comp,"SBOL");
+			}
+		}
+		else if (e.getSource() == exportSynBioHub)
+		{
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor)
+			{
+				((ModelEditor) comp).exportSynBioHub("SBOL");
+			}
+			else if (comp instanceof SBOLDesignerPlugin)
+			{
+				// TODO: change to upload for SBOLDesigner
 				exportSBOL((SBOLDesignerPlugin) comp,"SBOL");
 			}
 		}
@@ -11051,6 +11068,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportFlatSBML.setEnabled(false);
 		exportSBOL1.setEnabled(false);
 		exportSBOL2.setEnabled(false);
+		exportSynBioHub.setEnabled(false);
 		exportGenBank.setEnabled(false);
 		exportFasta.setEnabled(false);
 		exportDataMenu.setEnabled(false);
@@ -11141,6 +11159,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportFlatSBML.setEnabled(true);
 			exportSBOL1.setEnabled(true);
 			exportSBOL2.setEnabled(true);
+			exportSynBioHub.setEnabled(true);
 			exportGenBank.setEnabled(true);
 			exportFasta.setEnabled(true);
 			exportImageMenu.setEnabled(true);
@@ -11160,6 +11179,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportMenu.setEnabled(true);
 			exportSBOL1.setEnabled(true);
 			exportSBOL2.setEnabled(true);
+			exportSynBioHub.setEnabled(true);
 			exportGenBank.setEnabled(true);
 			exportFasta.setEnabled(true);
 		}

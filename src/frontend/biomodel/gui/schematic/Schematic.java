@@ -84,11 +84,11 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
 import com.mxgraph.util.mxRectangle;
 
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
-import backend.biomodel.util.Utility;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.biomodel.util.Utility;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.comp.DropComponentPanel;
 import frontend.biomodel.gui.comp.Grid;
 import frontend.biomodel.gui.comp.GridPanel;

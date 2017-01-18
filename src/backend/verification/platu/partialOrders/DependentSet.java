@@ -2,7 +2,7 @@ package backend.verification.platu.partialOrders;
 
 import java.util.HashSet;
 
-import backend.lpn.parser.Transition;
+import dataModels.lpn.parser.Transition;
 
 public class DependentSet {
 	HashSet<Transition> dependent;

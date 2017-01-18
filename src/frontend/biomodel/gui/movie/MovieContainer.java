@@ -4,12 +4,12 @@ package frontend.biomodel.gui.movie;
 import com.google.gson.Gson;
 import com.mxgraph.model.mxCell;
 
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.parser.BioModel;
-import backend.util.GlobalConstants;
-import backend.util.dataparser.DTSDParser;
-import backend.util.dataparser.DataParser;
-import backend.util.dataparser.TSDParser;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.util.GlobalConstants;
+import dataModels.util.dataparser.DTSDParser;
+import dataModels.util.dataparser.DataParser;
+import dataModels.util.dataparser.TSDParser;
 import frontend.analysis.AnalysisView;
 import frontend.biomodel.gui.comp.Grid;
 import frontend.biomodel.gui.movie.SerializableScheme;

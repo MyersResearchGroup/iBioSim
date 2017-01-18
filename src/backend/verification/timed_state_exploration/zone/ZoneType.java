@@ -3,8 +3,8 @@ package backend.verification.timed_state_exploration.zone;
 import java.util.HashMap;
 import java.util.List;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.stategraph.State;
+import dataModels.lpn.parser.Transition;
 
 public abstract class ZoneType {
 

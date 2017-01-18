@@ -57,12 +57,12 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.text.parser.ParseException;
 
 import backend.analysis.dynamicsim.ParentSimulator;
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.util.SBMLutilities;
-import backend.util.GlobalConstants;
-import backend.util.dataparser.DTSDParser;
-import backend.util.dataparser.DataParser;
-import backend.util.dataparser.TSDParser;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.util.GlobalConstants;
+import dataModels.util.dataparser.DTSDParser;
+import dataModels.util.dataparser.DataParser;
+import dataModels.util.dataparser.TSDParser;
 
 public abstract class Simulator implements ParentSimulator
 {

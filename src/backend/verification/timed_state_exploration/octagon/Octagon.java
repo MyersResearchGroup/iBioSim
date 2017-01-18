@@ -12,10 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
-import backend.lpn.parser.Variable;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.platuLpn.LpnTranList;
@@ -32,6 +28,10 @@ import backend.verification.timed_state_exploration.zoneProject.LPNTransitionPai
 import backend.verification.timed_state_exploration.zoneProject.UpdateContinuous;
 import backend.verification.timed_state_exploration.zoneProject.VariableRangePair;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
+import dataModels.lpn.parser.ExprTree;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
+import dataModels.lpn.parser.Variable;
 
 /**
  * Octagons ('The Octagon Abstract Domain' by Mine) are the subsets of

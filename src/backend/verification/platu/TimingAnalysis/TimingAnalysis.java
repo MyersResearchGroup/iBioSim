@@ -2,14 +2,14 @@ package backend.verification.platu.TimingAnalysis;
 
 import java.util.*;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
 import backend.verification.platu.logicAnalysis.Analysis;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.project.PrjState;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 public class TimingAnalysis {
 

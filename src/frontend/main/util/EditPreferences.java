@@ -27,9 +27,9 @@ import javax.swing.plaf.metal.MetalButtonUI;
 
 import com.mxgraph.util.mxConstants;
 
-import backend.biomodel.parser.CompatibilityFixer;
 import backend.sbol.util.SBOLUtility2;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.parser.CompatibilityFixer;
+import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
 
 

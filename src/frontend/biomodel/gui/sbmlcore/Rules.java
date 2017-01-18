@@ -28,11 +28,11 @@ import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.ext.layout.Layout;
 
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.annotation.SBOLAnnotation;
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.annotation.SBOLAnnotation;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.sbol.SBOLField2;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.main.Gui;

@@ -20,7 +20,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 
-import backend.biomodel.util.SBMLutilities;
+import dataModels.biomodel.util.SBMLutilities;
 
 public class ElementsPanel extends JPanel { 
 

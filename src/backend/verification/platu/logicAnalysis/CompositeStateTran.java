@@ -1,6 +1,6 @@
 package backend.verification.platu.logicAnalysis;
 
-import backend.lpn.parser.Transition;
+import dataModels.lpn.parser.Transition;
 
 public class CompositeStateTran {
 	private int nextState = 0;

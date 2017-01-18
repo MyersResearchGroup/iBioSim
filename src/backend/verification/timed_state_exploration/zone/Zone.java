@@ -9,10 +9,10 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
 import backend.verification.platu.stategraph.State;
+import dataModels.lpn.parser.ExprTree;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 
 /**

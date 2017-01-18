@@ -11,11 +11,11 @@ import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
-import backend.biomodel.util.Utility;
 import backend.synthesis.genetic.SynthesisMatcher;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.biomodel.util.Utility;
+import dataModels.util.GlobalConstants;
 
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;

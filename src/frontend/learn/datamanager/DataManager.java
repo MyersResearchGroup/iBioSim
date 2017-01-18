@@ -19,11 +19,11 @@ import javax.swing.table.TableModel;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
-import backend.lpn.parser.LPN;
-import backend.util.GlobalConstants;
-import backend.util.dataparser.*;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.lpn.parser.LPN;
+import dataModels.util.GlobalConstants;
+import dataModels.util.dataparser.*;
 import frontend.main.*;
 import frontend.main.util.*;
 

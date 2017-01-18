@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.Transition;
 
 /**
  * in this approach, we consider 7 conditions for dependent transition

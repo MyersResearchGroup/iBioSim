@@ -18,8 +18,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
-import backend.biomodel.parser.CompatibilityFixer;
-import backend.biomodel.util.Utility;
+import dataModels.biomodel.parser.CompatibilityFixer;
+import dataModels.biomodel.util.Utility;
 import frontend.main.Gui;
 
 

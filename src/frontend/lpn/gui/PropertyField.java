@@ -14,8 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import backend.biomodel.parser.CompatibilityFixer;
-import backend.biomodel.util.Utility;
+import dataModels.biomodel.parser.CompatibilityFixer;
+import dataModels.biomodel.util.Utility;
 import frontend.main.Gui;
 
 

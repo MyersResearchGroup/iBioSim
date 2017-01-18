@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import backend.lpn.parser.Transition;
+import dataModels.lpn.parser.Transition;
 
 /**
  * An EventSet represents a transition to fire, a set of inequalities that must

@@ -1,3 +1,4 @@
+
 package backend.analysis.dynamicsim.hierarchical.states;
 
 public abstract class TreeState extends HierarchicalState{
@@ -21,5 +22,5 @@ public abstract class TreeState extends HierarchicalState{
   public double getRateValue(int index) {
     return 0;
   }
-  
+ 
 }

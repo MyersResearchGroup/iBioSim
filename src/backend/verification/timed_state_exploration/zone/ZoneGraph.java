@@ -8,8 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.stategraph.State;
+import dataModels.lpn.parser.Transition;
 
 import java.util.ArrayList;
 

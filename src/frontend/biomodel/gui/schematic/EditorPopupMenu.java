@@ -6,7 +6,7 @@ import javax.swing.JPopupMenu;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.util.mxGraphActions;
 
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.comp.Grid;
 import frontend.biomodel.gui.comp.GridAction;
 import frontend.biomodel.gui.util.ComponentAction;

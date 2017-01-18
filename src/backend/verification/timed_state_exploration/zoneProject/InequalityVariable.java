@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 
-import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
-import backend.lpn.parser.Variable;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
+import dataModels.lpn.parser.ExprTree;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
+import dataModels.lpn.parser.Variable;
 
 
 /**

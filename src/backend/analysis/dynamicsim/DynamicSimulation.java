@@ -143,6 +143,7 @@ public class DynamicSimulation
 
 		System.gc();
 		double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
+		// TODO: send to log if log not null
 		System.out.println("Memory used: " + (mem));
 
 		double val2 = System.currentTimeMillis();

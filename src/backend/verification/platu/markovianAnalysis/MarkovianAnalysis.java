@@ -7,12 +7,12 @@ import java.util.Queue;
 
 import javax.swing.JProgressBar;
 
-import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.Transition;
-import backend.lpn.parser.Translator;
-import backend.util.dataparser.DataParser;
 import backend.verification.platu.project.PrjState;
 import backend.verification.platu.stategraph.State;
+import dataModels.lpn.parser.ExprTree;
+import dataModels.lpn.parser.Transition;
+import dataModels.lpn.parser.Translator;
+import dataModels.util.dataparser.DataParser;
 
 public class MarkovianAnalysis implements Runnable{
 	

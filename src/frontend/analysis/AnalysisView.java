@@ -64,11 +64,11 @@ import org.jlibsedml.modelsupport.KisaoTerm;
 import org.jmathml.ASTNode;
 
 import backend.analysis.util.SEDMLutilities;
-import backend.lpn.parser.Abstraction;
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Translator;
-import backend.util.GlobalConstants;
-import backend.util.dataparser.DataParser;
+import dataModels.lpn.parser.Abstraction;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Translator;
+import dataModels.util.GlobalConstants;
+import dataModels.util.dataparser.DataParser;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.graph.Graph;
 import frontend.lpn.gui.LHPNEditor;
@@ -1703,13 +1703,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
 				para.setAttribute("Print_Interval", interval.getText());
 				Annotation ann = new Annotation(para);
-				simulation.setAnnotation(ann);
+				simulation.addAnnotation(ann);
 			} else if (intervalLabel.getSelectedItem().equals("Minimum Print Interval")) {
 				Element para = new Element("printInterval");
 				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
 				para.setAttribute("Minimum_Print_Interval", interval.getText());
 				Annotation ann = new Annotation(para);
-				simulation.setAnnotation(ann);
+				simulation.addAnnotation(ann);
 			}
 		}
 		sedml.addSimulation(simulation);
@@ -1866,7 +1866,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			para.setAttribute("abstraction", "State-based");
 		}
 		Annotation ann = new Annotation(para);
-		algorithm.setAnnotation(ann);
+		algorithm.addAnnotation(ann);
 		AlgorithmParameter ap = new AlgorithmParameter(GlobalConstants.KISAO_MINIMUM_STEP_SIZE,minStep.getText());
 		algorithm.addAlgorithmParameter(ap);
 		ap = new AlgorithmParameter(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE, step.getText());

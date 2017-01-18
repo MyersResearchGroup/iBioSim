@@ -26,11 +26,11 @@ import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 ////import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core2.ComponentDefinition;
 
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.parser.BioModel;
-import backend.biomodel.util.SBMLutilities;
 import backend.sbol.util.SBOLFileManager2;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.util.SBMLutilities;
+import dataModels.util.GlobalConstants;
 
 public class AssemblyGraph2 {
 

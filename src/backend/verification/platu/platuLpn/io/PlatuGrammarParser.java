@@ -11,11 +11,6 @@
 
 import org.antlr.runtime.*;
 
-import backend.lpn.parser.ExprTree;
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Place;
-import backend.lpn.parser.Transition;
-import backend.lpn.parser.Variable;
 import backend.verification.platu.expression.*;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.platuLpn.PlatuLPN;
@@ -26,6 +21,11 @@ import backend.verification.platu.platuLpn.VarExprList;
 import backend.verification.platu.platuLpn.VarSet;
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.StateGraph;
+import dataModels.lpn.parser.ExprTree;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Place;
+import dataModels.lpn.parser.Transition;
+import dataModels.lpn.parser.Variable;
 
 import java.util.Stack;
 import java.util.List;

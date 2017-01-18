@@ -38,10 +38,10 @@ import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceConstraint;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
-import backend.biomodel.annotation.AnnotationUtility;
-import backend.biomodel.annotation.SBOLAnnotation;
-import backend.biomodel.parser.BioModel;
-import backend.util.GlobalConstants;
+import dataModels.biomodel.annotation.AnnotationUtility;
+import dataModels.biomodel.annotation.SBOLAnnotation;
+import dataModels.biomodel.parser.BioModel;
+import dataModels.util.GlobalConstants;
 
 public class SBOLTestFactory {
 

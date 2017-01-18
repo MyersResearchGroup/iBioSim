@@ -21,7 +21,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.*;
 
-import backend.util.GlobalConstants;
+import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
 
 /**

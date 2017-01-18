@@ -1,6 +1,6 @@
 package backend.verification.timed_state_exploration.zoneProject;
 
-import backend.lpn.parser.Transition;
+import dataModels.lpn.parser.Transition;
 
 /**
  * An Event is an action that is pending. This can be a transition to fire or an inequality.

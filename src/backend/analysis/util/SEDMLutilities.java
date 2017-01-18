@@ -106,7 +106,7 @@ public class SEDMLutilities {
 			para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
 			para.setAttribute("dataset", "" + dataSet);
 			Annotation ann = new Annotation(para);
-			dataGen.setAnnotation(ann);
+			dataGen.addAnnotation(ann);
 		}
 		sedml.addDataGenerator(dataGen);
 		return dataGen;

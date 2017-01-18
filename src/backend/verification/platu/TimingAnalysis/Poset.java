@@ -2,8 +2,8 @@ package backend.verification.platu.TimingAnalysis;
 
 import java.util.*;
 
-import backend.lpn.parser.Transition;
 import backend.verification.platu.platuLpn.*;
+import dataModels.lpn.parser.Transition;
 
 /*
  * This class implements the POSET algorithm in C Myers's book, section 7.5.

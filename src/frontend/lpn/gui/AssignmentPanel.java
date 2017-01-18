@@ -12,8 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import backend.biomodel.util.Utility;
-import backend.lpn.parser.*;
+import dataModels.biomodel.util.Utility;
+import dataModels.lpn.parser.*;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.Gui;
 

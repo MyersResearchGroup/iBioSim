@@ -12,13 +12,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
-import backend.lpn.parser.LPN;
-import backend.lpn.parser.Transition;
 import backend.verification.platu.common.PlatuObj;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.platuLpn.VarSet;
 import backend.verification.timed_state_exploration.zone.TimedState;
+import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.Transition;
 
 /**
  * State
