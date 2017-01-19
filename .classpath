@@ -13,7 +13,6 @@
 	<classpathentry kind="lib" path="lib/saaj.jar"/>
 	<classpathentry kind="lib" path="lib/SBOLDesigner.jar"/>
 	<classpathentry kind="lib" path="lib/simpleeventbus-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/sbolstack-frontend-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/CombineArchive-1.1.1-jar-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="lib/AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="lib/epsgraphics.jar"/>

@@ -961,6 +961,7 @@ public class Utility {
 		}
 		catch (IOException e1)
 		{
+			e1.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to open bug database.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
