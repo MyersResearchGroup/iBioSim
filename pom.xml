@@ -307,12 +307,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.mxgraph</groupId>
-			<artifactId>jgraphx</artifactId>
-			<version>1.10.4.2</version>
-		</dependency>
-
-		<dependency>
 			<groupId>net.sf.trove4j</groupId>
 			<artifactId>trove4j</artifactId>
 			<version>3.0.1</version>
