@@ -12,6 +12,7 @@ import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
+import org.sbml.jsbml.ASTNode;
 
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
@@ -102,46 +103,51 @@ public final class Evaluator
     }
     case LOGICAL_NOT:
     {
-      double value = HierarchicalUtilities.getDoubleFromBoolean(!(HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(0), checkSubstance, index))));
-      return value;
+      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      return value < 1 ? 1 : 0;
     }
     case LOGICAL_AND:
     {
-
-      boolean andResult = true;
-
       for (int childIter = 0; childIter < node.getNumOfChild(); ++childIter)
       {
-        andResult = andResult && HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index));
+        if(evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index) == 0)
+        {
+          return 0;
+        }
       }
 
-      return HierarchicalUtilities.getDoubleFromBoolean(andResult);
+      return 1;
     }
-
+    case LOGICAL_IMPLIES:
+    {
+      double a = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double b = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+      return a < 1 || b > 0 ? 1 : 0;
+    }
     case LOGICAL_OR:
     {
-
-      boolean orResult = false;
-
       for (int childIter = 0; childIter < node.getNumOfChild(); ++childIter)
       {
-        orResult = orResult || HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index));
+        if(evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index) == 1)
+        {
+          return 1;
+        }
       }
 
-      return HierarchicalUtilities.getDoubleFromBoolean(orResult);
+      return 0;
     }
 
     case LOGICAL_XOR:
     {
 
-      boolean xorResult = (node.getNumOfChild() == 0) ? false : HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(0), checkSubstance, index));
+      boolean xorResult = (node.getNumOfChild() == 0) ? false : evaluateExpressionRecursive(node.getChild(0), checkSubstance, index) > 0;
 
       for (int childIter = 1; childIter < node.getNumOfChild(); ++childIter)
       {
-        xorResult = xorResult ^ HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index));
+        xorResult = xorResult ^ evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index) > 0;
       }
 
-      return HierarchicalUtilities.getDoubleFromBoolean(xorResult);
+      return xorResult ? 1 : 0;
     }
 
     case RELATIONAL_EQ:
@@ -461,7 +467,7 @@ public final class Evaluator
       int childIter = 0;
       for (; childIter < node.getNumOfChild() - 1; childIter += 2)
       {
-        boolean condition = HierarchicalUtilities.getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(childIter + 1), checkSubstance, index));
+        boolean condition = evaluateExpressionRecursive(node.getChild(childIter + 1), checkSubstance, index) > 0;
         if (condition)
         {
           return evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index);
@@ -599,6 +605,50 @@ public final class Evaluator
       double result = Math.pow(leftValue, rightValue);
       return result;
 
+    }
+    case FUNCTION_RATEOF:
+    {
+      HierarchicalNode value = node.getChild(0);
+      
+      return value.getRate();
+    }
+    case FUNCTION_MIN:
+    {
+      if(node.getNumOfChild() == 0)
+      {
+        return Double.NaN;
+      }
+      
+      double min = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double tmp;
+      for (int childIter = 1; childIter < node.getNumOfChild(); childIter++)
+      {
+        tmp = evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index);
+        if(tmp < min)
+        {
+          min = tmp;
+        }
+      }
+      return min;
+    }
+    case FUNCTION_MAX:
+    {
+      if(node.getNumOfChild() == 0)
+      {
+        return Double.NaN;
+      }
+      
+      double max = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double tmp;
+      for (int childIter = 1; childIter < node.getNumOfChild(); childIter++)
+      {
+        tmp = evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index);
+        if(tmp < max)
+        {
+          max = tmp;
+        }
+      }
+      return max;
     }
     case FUNCTION_SELECTOR:
     {

@@ -1,3 +1,4 @@
+
 package backend.analysis.dynamicsim.hierarchical.util.setup;
 
 import java.io.File;
@@ -29,6 +30,10 @@ import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 import dataModels.util.GlobalConstants;
 
+/**
+ * 
+ * 
+ */
 public class ModelSetup
 {
   /**
@@ -41,6 +46,7 @@ public class ModelSetup
   {
     setupModels(sim, type, null);
   }
+  
   /**
    * Initializes the modelstate array
    * 

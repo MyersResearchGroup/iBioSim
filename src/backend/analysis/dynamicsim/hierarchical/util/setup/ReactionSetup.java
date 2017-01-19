@@ -9,6 +9,7 @@ import org.sbml.jsbml.SpeciesReference;
 import backend.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
 import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
@@ -16,7 +17,7 @@ import backend.analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter
 public class ReactionSetup
 {
 
-  public static void setupReactions(HierarchicalModel modelstate, Model model)
+  public static void setupReactions(HierarchicalModel modelstate, Model model, StateType type, VectorWrapper wrapper)
   {
     Reaction reaction;
     for (int i = 0; i < model.getNumReactions(); i++)
@@ -32,7 +33,7 @@ public class ReactionSetup
         continue;
       }
       
-      setupSingleReaction(modelstate, reaction, false, model);
+      setupSingleReaction(modelstate, reaction, false, model, type, wrapper);
     }
 
   }
@@ -48,20 +49,21 @@ public class ReactionSetup
    * @param productsList
    * @param modifiersList
    */
-  private static void setupSingleReaction(HierarchicalModel modelstate, Reaction reaction, boolean split, Model model)
+  private static void setupSingleReaction(HierarchicalModel modelstate, Reaction reaction, boolean split, Model model, StateType type, VectorWrapper wrapper)
   {
 
     ReactionNode reactionNode = modelstate.addReaction(reaction.getId());
-    reactionNode.createState(StateType.SPARSE);
+    //TODO: change scalar to other types too
+    reactionNode.createState(StateType.SCALAR, wrapper);
     reactionNode.setValue(modelstate.getIndex(), 0);
     
     for (SpeciesReference reactant : reaction.getListOfReactants())
     {
-      SpeciesReferenceSetup.setupSingleReactant(modelstate, reactionNode, reactant.getSpecies(), reactant);
+      SpeciesReferenceSetup.setupSingleReactant(modelstate, reactionNode, reactant.getSpecies(), reactant, type, wrapper);
     }
     for (SpeciesReference product : reaction.getListOfProducts())
     {
-      SpeciesReferenceSetup.setupSingleProduct(modelstate, reactionNode, product.getSpecies(), product);
+      SpeciesReferenceSetup.setupSingleProduct(modelstate, reactionNode, product.getSpecies(), product, type, wrapper);
     }
     KineticLaw kineticLaw = reaction.getKineticLaw();
     if (kineticLaw != null && kineticLaw.isSetMath())
@@ -85,7 +87,7 @@ public class ReactionSetup
   {
     HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, modelstate.getVariableToNodeMap(), reactionNode);
     reactionNode.setForwardRate(math);
-    reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
+    //reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
   }
 
   private static void setupSingleRevReaction(HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula)
@@ -95,7 +97,7 @@ public class ReactionSetup
     {
       HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, modelstate.getVariableToNodeMap(), reactionNode);
       reactionNode.setForwardRate(math);
-      reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
+      //reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
     }
     else
     {
@@ -103,7 +105,7 @@ public class ReactionSetup
       HierarchicalNode reverseRate = MathInterpreter.parseASTNode(splitMath[1], modelstate.getVariableToNodeMap(), reactionNode);
       reactionNode.setForwardRate(forwardRate);
       reactionNode.setReverseRate(reverseRate);
-      reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
+      //reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
     }
   }
 

@@ -1,3 +1,4 @@
+
 package backend.analysis.dynamicsim.hierarchical.states;
 
 import java.util.HashMap;
@@ -55,6 +56,5 @@ public class SparseState extends TreeState
     }
     return builder.toString();
   }
-
 
 }

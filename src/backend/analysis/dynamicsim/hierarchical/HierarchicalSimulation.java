@@ -53,7 +53,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   {
     HSSA, HODE, FBA, MIXED, NONE;
   }
-  
+
   protected final VariableNode      currentTime;
   protected double            printTime;
   private BufferedWriter          bufferedTSDWriter;
@@ -82,9 +82,11 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private String              abstraction;
   private int               totalRuns;
 
+  
+  protected final ArrayList<Double> initValues;
+  
   protected List<VariableNode>      variableList;
 
-  protected double[]            initStateCopy;
   protected double            initTotalPropensity;
 
   protected List<EventNode>       eventList;
@@ -102,8 +104,8 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private double              initialTime, outputStartTime;
 
   public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
-      String quantityType, String abstraction, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException
-  {
+    String quantityType, String abstraction, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException
+    {
     this.SBMLFileName = SBMLFileName;
     this.timeLimit = timeLimit;
     this.maxTimeStep = maxTimeStep;
@@ -123,12 +125,14 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.topmodel = new HierarchicalModel("topmodel");
     this.submodels = new HashMap<String, HierarchicalModel>(0);
     this.currentTime = new VariableNode("_time", StateType.SCALAR);
-    
+
     this.currentRun = 1;
     this.randomNumberGenerator = new Random(randomSeed);
     this.initialTime = initialTime;
     this.outputStartTime = outputStartTime;
 
+    this.initValues = new ArrayList<Double>();
+    
     if (quantityType != null)
     {
       String[] printConcentration = quantityType.replaceAll(" ", "").split(",");
@@ -166,7 +170,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     }
 
     separator = GlobalConstants.separator;
-  }
+    }
 
   public HierarchicalSimulation(HierarchicalSimulation copy)
   {
@@ -191,6 +195,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.separator = copy.separator;
     this.currentTime = copy.currentTime;
     this.randomNumberGenerator = copy.randomNumberGenerator;
+    this.initValues = copy.initValues;
   }
 
   public void addModelState(HierarchicalModel modelstate)
@@ -811,10 +816,11 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
     List<VariableNode> variableList = new ArrayList<VariableNode>();
     List<Integer> indexToSubmodel = new ArrayList<Integer>();
-
+    
     for (HierarchicalModel modelstate : modules)
     {
-      for (int i = modelstate.getNumOfVariables() - 1; i >= 0; i--)
+      int size =  modelstate.getNumOfVariables();
+      for (int i = 0; i < size; ++i)
       {
         VariableNode node = modelstate.getVariable(i);
         variableList.add(node);
@@ -859,23 +865,11 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     return outputStartTime;
   }
 
-  protected double[] getArrayState(List<VariableNode> variables)
-  {
-    //TODO:
-    double[] state = new double[variables.size()];
-    for (int i = 0; i < state.length; i++)
-    {
-      variables.get(i).getState().getState(0).setArrayIndex(i);
-      state[i] = variables.get(i).getValue(0);
-    }
-    return state;
-
-  }
   public void linkPropensities()
   {
     HierarchicalNode propensity;
     totalPropensity = new VariableNode("_totalPropensity", StateType.SCALAR);
-    
+
     for (HierarchicalModel modelstate : modules)
     {
 
@@ -996,51 +990,27 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   {
     this.modules = modules;
   }
-  
-  
 
-   public void computeAssignmentRules()
+
+
+  public void computeAssignmentRules()
+  {
+
+    boolean changed = true;
+    while (changed)
     {
-
-      boolean changed = true;
-      while (changed)
+      changed = false;
+      for(HierarchicalModel modelstate : this.modules)
       {
-        changed = false;
-        for(HierarchicalModel modelstate : this.modules)
-        {
-          if(modelstate.getAssignRules() != null)
+        if(modelstate.getAssignRules() != null)
           for (FunctionNode node : modelstate.getAssignRules())
           {
             changed = changed | node.computeFunction(modelstate.getIndex());
           }
-        }
       }
     }
-
-   //TODO:
-    public void computeAssignmentRules(double[] state)
-    {
-       boolean changed = true;
-        while (changed)
-        {
-          changed = false;
-          for(HierarchicalModel modelstate : this.modules)
-          {
-            if(modelstate.getAssignRules() != null)
-            {
-              for (FunctionNode node : modelstate.getAssignRules())
-              {
-                changed = changed | node.computeFunction(modelstate.getIndex());
-                state[node.getVariable().getState().getState(0).getArrayIndex()] = node.getVariable().getValue(0);
-              }
-            }
-            
-          }
-        }
-    }
-    
-
-    
+  }
+  
     /**
      * Calculate fixed-point of initial assignments
      * 
@@ -1055,27 +1025,31 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       while (changed)
       {
         changed = false;
-        
+
         for(HierarchicalModel modelstate : this.modules)
         {
-
           if(modelstate.getAssignRules() != null)
-          for(FunctionNode node : modelstate.getAssignRules())
           {
-            changed = changed | node.computeFunction(modelstate.getIndex());
+            for(FunctionNode node : modelstate.getAssignRules())
+            {
+              changed = changed | node.computeFunction(modelstate.getIndex());
+            }
           }
 
           if(modelstate.getInitAssignments() != null)
-          for(FunctionNode node : modelstate.getInitAssignments())
           {
-            changed = changed | node.computeFunction(modelstate.getIndex());
+            for(FunctionNode node : modelstate.getInitAssignments())
+            {
+              changed = changed | node.computeFunction(modelstate.getIndex());
+            }
           }
 
-
           if(modelstate.getReactions() != null)
-          for(ReactionNode node : modelstate.getReactions())
           {
-            changed = changed | node.computePropensity(modelstate.getIndex());
+            for(ReactionNode node : modelstate.getReactions())
+            {
+              changed = changed | node.computePropensity(modelstate.getIndex());
+            }
           }
         }
       }

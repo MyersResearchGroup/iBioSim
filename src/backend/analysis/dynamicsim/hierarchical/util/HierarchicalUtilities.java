@@ -50,26 +50,6 @@ public class HierarchicalUtilities
 		}
 	}
 
-	public static boolean getBooleanFromDouble(double value)
-	{
-
-		if (value == 0.0)
-		{
-			return false;
-		}
-		return true;
-	}
-
-	public static double getDoubleFromBoolean(boolean value)
-	{
-
-		if (value == true)
-		{
-			return 1.0;
-		}
-		return 0.0;
-	}
-
 	public static int getPercentage(int totalRuns, int currentRun, double currentTime, double timeLimit)
 	{
 

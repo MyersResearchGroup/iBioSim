@@ -65,8 +65,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 				triggeredEventList = new PriorityQueue<EventNode>(1, new HierarchicalEventComparator());
 				HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue(0));
 			}
-
-			initStateCopy = getArrayState(variableList);
+//TODO: get initial values
 			setInitialPropensity();
 
 			setupForOutput(runNumber);
@@ -103,11 +102,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		setCurrentTime(getInitialTime());
 		setConstraintFlag(true);
 		setupForOutput(newRun);
-
-		for (int i = initStateCopy.length - 1; i >= 0; i--)
-		{
-			variableList.get(i).setValue(i, initStateCopy[i]);
-		}
+		//TODO: restore init state
 		restoreInitialPropensity();
 
 		try

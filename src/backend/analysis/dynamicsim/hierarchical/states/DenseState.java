@@ -1,3 +1,4 @@
+
 package backend.analysis.dynamicsim.hierarchical.states;
 
 import java.util.ArrayList;
@@ -78,5 +79,6 @@ public class DenseState extends TreeState
     }
     return builder.toString();
   }
+
 
 }

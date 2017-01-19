@@ -17,10 +17,10 @@ public class CoreSetup
   {
     modelstate.createVariableToNodeMap();
     modelstate.addMappingNode(time.getName(), time);
-    ParameterSetup.setupParameters(modelstate, type, model);
-    CompartmentSetup.setupCompartments(modelstate, type,  model);
-    SpeciesSetup.setupSpecies(modelstate, type, model);
-    ReactionSetup.setupReactions(modelstate, model);
+    ParameterSetup.setupParameters(modelstate, type, model, wrapper);
+    CompartmentSetup.setupCompartments(modelstate, type,  model, wrapper);
+    SpeciesSetup.setupSpecies(modelstate, type, model, wrapper);
+    ReactionSetup.setupReactions(modelstate, model, type, wrapper);
   }
 
   //TODO: might be able to merge these

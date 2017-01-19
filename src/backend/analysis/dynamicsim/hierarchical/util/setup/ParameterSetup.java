@@ -10,6 +10,7 @@ import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
 public class ParameterSetup
@@ -17,7 +18,7 @@ public class ParameterSetup
   /**
    * puts parameter-related information into data structures
    */
-  public static void setupParameters(HierarchicalModel modelstate, StateType type, Model model)
+  public static void setupParameters(HierarchicalModel modelstate, StateType type, Model model, VectorWrapper wrapper)
   {
     for (Parameter parameter : model.getListOfParameters())
     {
@@ -29,7 +30,7 @@ public class ParameterSetup
       {
         continue;
       }
-      setupSingleParameter(modelstate, parameter, type);
+      setupSingleParameter(modelstate, parameter, type, wrapper);
     }
   }
 
@@ -38,21 +39,24 @@ public class ParameterSetup
    * 
    * @param parameter
    */
-  private static void setupSingleParameter(HierarchicalModel modelstate, Parameter parameter, StateType type)
+  private static void setupSingleParameter(HierarchicalModel modelstate, Parameter parameter, StateType type, VectorWrapper wrapper)
   {
   
     VariableNode node = new VariableNode(parameter.getId());
-    node.createState(type);
-    node.setValue(modelstate.getIndex(), parameter.getValue());
+    
     
     if (parameter.isConstant())
     {
+      node.createState(StateType.SCALAR, wrapper);
       modelstate.addMappingNode(parameter.getId(), node);
     }
     else
     {
+      node.createState(type, wrapper);
       modelstate.addVariable(node);
     }
+
+    node.setValue(modelstate.getIndex(), parameter.getValue());
 
   }
 

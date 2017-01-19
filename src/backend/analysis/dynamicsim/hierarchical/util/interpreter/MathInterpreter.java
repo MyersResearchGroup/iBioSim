@@ -181,6 +181,20 @@ public final class MathInterpreter
 				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
+		case FUNCTION_MAX:
+		  node = new HierarchicalNode(Type.FUNCTION_MAX);
+      for (ASTNode child : math.getListOfNodes())
+      {
+        node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
+      }
+      break;
+		case FUNCTION_MIN:
+		  node = new HierarchicalNode(Type.FUNCTION_MIN);
+      for (ASTNode child : math.getListOfNodes())
+      {
+        node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
+      }
+      break;
 		case FUNCTION_PIECEWISE:
 			node = new HierarchicalNode(Type.FUNCTION_PIECEWISE);
 			for (ASTNode child : math.getListOfNodes())
@@ -195,6 +209,13 @@ public final class MathInterpreter
 				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
+		case	FUNCTION_RATE_OF:
+		  node = new HierarchicalNode(Type.FUNCTION_RATEOF);
+      for (ASTNode child : math.getListOfNodes())
+      {
+        node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
+      }
+      break;
 		case FUNCTION_ROOT:
 			node = new HierarchicalNode(Type.FUNCTION_ROOT);
 			for (ASTNode child : math.getListOfNodes())
@@ -244,6 +265,13 @@ public final class MathInterpreter
 				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
+		case LOGICAL_IMPLIES:
+		  node = new HierarchicalNode(Type.LOGICAL_IMPLIES);
+		  for (ASTNode child : math.getListOfNodes())
+      {
+        node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
+      }
+      break;
 		case LOGICAL_NOT:
 			node = new HierarchicalNode(Type.LOGICAL_NOT);
 			node.addChild(parseASTNode(math.getChild(0), variableToNodes, parent));
@@ -386,6 +414,10 @@ public final class MathInterpreter
 				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
+		case SEMANTICS:
+		  //TODO:
+		  node = new HierarchicalNode(Type.SEMANTICS);
+		  break;
 		case SUM:
 			node = new HierarchicalNode(Type.SUM);
 			for (ASTNode child : math.getListOfNodes())
@@ -413,6 +445,7 @@ public final class MathInterpreter
 		default:
 			node = new HierarchicalNode(0);
 		}
+		
 		return node;
 	}
 
