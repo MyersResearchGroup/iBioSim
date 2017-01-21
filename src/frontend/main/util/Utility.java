@@ -777,13 +777,13 @@ public class Utility {
 	 * updates the JList.
 	 */
 	public static Object[] remove(JList currentList, Object[] list) {
-		Object[] removeSelected = currentList.getSelectedValuesList().toArray();
+		Object[] removeSelected = currentList.getSelectedValues();
 		int[] select = new int[list.length];
 		for (int i = 0; i < list.length; i++) {
 			select[i] = i;
 		}
 		currentList.setSelectedIndices(select);
-		Object[] getAll = currentList.getSelectedValuesList().toArray();
+		Object[] getAll = currentList.getSelectedValues();
 		currentList.removeSelectionInterval(0, list.length - 1);
 		ArrayList<Object> remove = new ArrayList<Object>();
 		for (int i = 0; i < getAll.length; i++) {
@@ -811,13 +811,13 @@ public class Utility {
 			list[i] = currentList.getModel().getElementAt(i);
 		}
 
-		Object[] removeSelected = currentList.getSelectedValuesList().toArray();
+		Object[] removeSelected = currentList.getSelectedValues();
 		int[] select = new int[list.length];
 		for (int i = 0; i < list.length; i++) {
 			select[i] = i;
 		}
 		currentList.setSelectedIndices(select);
-		Object[] getAll = currentList.getSelectedValuesList().toArray();
+		Object[] getAll = currentList.getSelectedValues();
 		currentList.removeSelectionInterval(0, list.length - 1);
 		ArrayList<Object> remove = new ArrayList<Object>();
 		for (int i = 0; i < getAll.length; i++) {
@@ -864,8 +864,8 @@ public class Utility {
 			select[i] = i;
 		}
 		list.setSelectedIndices(select);
-		currentList = list.getSelectedValuesList().toArray();
-		Object[] newSelected = add.getSelectedValuesList().toArray();
+		currentList = list.getSelectedValues();
+		Object[] newSelected = add.getSelectedValues();
 		Object[] temp = currentList;
 		int newLength = temp.length;
 		for (int i = 0; i < newSelected.length; i++) {
@@ -912,7 +912,7 @@ public class Utility {
 				select[i] = i;
 			}
 			objects.setSelectedIndices(select);
-			size = objects.getSelectedValuesList().toArray();
+			size = objects.getSelectedValues();
 			list = new String[size.length];
 			for (int i = 0; i < size.length; i++) {
 				list[i] = (String) size[i];

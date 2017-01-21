@@ -32,7 +32,7 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private String initialID;
 	private JTextField idText, nameText, descriptionText;
-	private JComboBox<String> saveFileIDBox;
+	private JComboBox saveFileIDBox;
 	private List<String> saveFilePaths;
 	private String[] options = {"Ok", "Cancel"};
 	private boolean removeBioSimURI = false;

@@ -223,7 +223,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 					p.load(load);
 					load.close();
-					Object[] delete = files.getSelectedValuesList().toArray();
+					Object[] delete = files.getSelectedValues();
 					for (Object file : delete) {
 						int run = 0;
 						String[] list = new File(directory).list();
