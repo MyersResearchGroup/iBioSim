@@ -15,6 +15,7 @@ import backend.analysis.dynamicsim.flattened.SimulatorSSADirect;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
+import backend.analysis.util.AnalysisException;
 import frontend.graph.Graph;
 import frontend.main.Gui;
 import frontend.main.Log;
@@ -106,7 +107,12 @@ public class DynamicSimulation
 			e.printStackTrace();
 			return;
 		}
-
+		catch (AnalysisException
+				e)
+		{
+			e.printStackTrace();
+			return;
+		}
 		double val1 = System.currentTimeMillis();
 
 		Runtime runtime = Runtime.getRuntime();

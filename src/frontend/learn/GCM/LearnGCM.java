@@ -55,6 +55,7 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
+import backend.analysis.util.AnalysisException;
 import backend.learn.genenet.Experiments;
 import backend.learn.genenet.Run;
 import backend.learn.genenet.SpeciesCollection;
@@ -1480,13 +1481,14 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 			}
 			catch (XMLStreamException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "Something went wrong", JOptionPane.ERROR_MESSAGE);
 			}
 			catch (IOException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "Something went wrong", JOptionPane.ERROR_MESSAGE);
+			} 
+			catch (AnalysisException e) {
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "Something went wrong", JOptionPane.ERROR_MESSAGE);
 			}
 
 		}

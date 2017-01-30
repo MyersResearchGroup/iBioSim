@@ -31,10 +31,9 @@ import backend.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
 import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import backend.analysis.util.AnalysisException;
 import dataModels.util.GlobalConstants;
-import frontend.main.Gui;
 
 
 /**
@@ -104,7 +103,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private double              initialTime, outputStartTime;
 
   public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
-    String quantityType, String abstraction, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException
+    String quantityType, String abstraction, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, AnalysisException
     {
     this.SBMLFileName = SBMLFileName;
     this.timeLimit = timeLimit;
@@ -164,9 +163,8 @@ public abstract class HierarchicalSimulation implements ParentSimulator
         errorString += errors.getError(i);
       }
 
-      JOptionPane.showMessageDialog(Gui.frame, "The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString, "SBML Error", JOptionPane.ERROR_MESSAGE);
-
-      sbmlHasErrorsFlag = true;
+      
+      throw new AnalysisException("The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString);
     }
 
     separator = GlobalConstants.separator;

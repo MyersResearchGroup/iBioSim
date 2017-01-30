@@ -10,6 +10,7 @@ import org.sbml.jsbml.SBMLDocument;
 
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
+import backend.analysis.util.AnalysisException;
 import backend.learn.genenet.Experiments;
 import backend.learn.genenet.SpeciesCollection;
 import backend.learn.parameterestimator.methods.sres.EvolutionMethodSetting;
@@ -32,7 +33,7 @@ public class ParameterEstimator
 	static ArrayList<String>	interestingSpecies	= new ArrayList<String>();
 	static String				quantityType		= "amount";
 
-	public static SBMLDocument estimate(String SBMLFileName, String root, List<String> parameterList, Experiments experiments, SpeciesCollection speciesCollection) throws IOException, XMLStreamException
+	public static SBMLDocument estimate(String SBMLFileName, String root, List<String> parameterList, Experiments experiments, SpeciesCollection speciesCollection) throws IOException, XMLStreamException, AnalysisException
 	{
 
 		int numberofparameters = parameterList.size();
