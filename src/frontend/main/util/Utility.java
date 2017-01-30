@@ -1,6 +1,5 @@
 package frontend.main.util;
 
-import java.io.*;
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -9,17 +8,34 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import org.kohsuke.github.GHIssueBuilder;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GitHub;
 
 import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
@@ -761,13 +777,13 @@ public class Utility {
 	 * updates the JList.
 	 */
 	public static Object[] remove(JList currentList, Object[] list) {
-		Object[] removeSelected = currentList.getSelectedValuesList().toArray();
+		Object[] removeSelected = currentList.getSelectedValues();
 		int[] select = new int[list.length];
 		for (int i = 0; i < list.length; i++) {
 			select[i] = i;
 		}
 		currentList.setSelectedIndices(select);
-		Object[] getAll = currentList.getSelectedValuesList().toArray();
+		Object[] getAll = currentList.getSelectedValues();
 		currentList.removeSelectionInterval(0, list.length - 1);
 		ArrayList<Object> remove = new ArrayList<Object>();
 		for (int i = 0; i < getAll.length; i++) {
@@ -795,13 +811,13 @@ public class Utility {
 			list[i] = currentList.getModel().getElementAt(i);
 		}
 
-		Object[] removeSelected = currentList.getSelectedValuesList().toArray();
+		Object[] removeSelected = currentList.getSelectedValues();
 		int[] select = new int[list.length];
 		for (int i = 0; i < list.length; i++) {
 			select[i] = i;
 		}
 		currentList.setSelectedIndices(select);
-		Object[] getAll = currentList.getSelectedValuesList().toArray();
+		Object[] getAll = currentList.getSelectedValues();
 		currentList.removeSelectionInterval(0, list.length - 1);
 		ArrayList<Object> remove = new ArrayList<Object>();
 		for (int i = 0; i < getAll.length; i++) {
@@ -848,8 +864,8 @@ public class Utility {
 			select[i] = i;
 		}
 		list.setSelectedIndices(select);
-		currentList = list.getSelectedValuesList().toArray();
-		Object[] newSelected = add.getSelectedValuesList().toArray();
+		currentList = list.getSelectedValues();
+		Object[] newSelected = add.getSelectedValues();
 		Object[] temp = currentList;
 		int newLength = temp.length;
 		for (int i = 0; i < newSelected.length; i++) {
@@ -896,7 +912,7 @@ public class Utility {
 				select[i] = i;
 			}
 			objects.setSelectedIndices(select);
-			size = objects.getSelectedValuesList().toArray();
+			size = objects.getSelectedValues();
 			list = new String[size.length];
 			for (int i = 0; i < size.length; i++) {
 				list[i] = (String) size[i];
@@ -937,7 +953,7 @@ public class Utility {
 	public static void submitBugReportTemp(String message) {
 		Preferences biosimrc = Preferences.userRoot();
 		String command = biosimrc.get("biosim.general.browser", "");
-		command = command + " http://www.async.ece.utah.edu/cgi-bin/atacs";
+		command = command + " http://www.github.com/MyersResearchGroup/iBioSim/issues";
 		Runtime exec = Runtime.getRuntime();
 		try
 		{
@@ -945,6 +961,7 @@ public class Utility {
 		}
 		catch (IOException e1)
 		{
+			e1.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to open bug database.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -953,10 +970,12 @@ public class Utility {
 		JPanel reportBugPanel = new JPanel(new GridLayout(4,1));
 		JLabel typeLabel = new JLabel("Type of Report:");
 		JComboBox reportType = new JComboBox(Utility.bugReportTypes);
+		
 		if (!message.equals("")) {
 			typeLabel.setEnabled(false);
 			reportType.setEnabled(false);
 		}
+		
 		JPanel typePanel = new JPanel(new GridLayout(1,2));
 		typePanel.add(typeLabel);
 		typePanel.add(reportType);
@@ -986,39 +1005,28 @@ public class Utility {
 		reportBugPanel.add(bugSubjectPanel);
 		reportBugPanel.add(bugDetailPanel);
 		Object[] options = { "Send", "Cancel" };
+		
 		int value = JOptionPane.showOptionDialog(Gui.frame, reportBugPanel, "Bug Report",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		if (value==0) {
-			String to = "atacs-bugs@vlsigroup.ece.utah.edu";
-			Properties props = new Properties();
-			props.put("mail.smtp.user", "ibiosim@gmail.com");
-			props.put("mail.smtp.host", "smtp.gmail.com");
-			props.put("mail.smtp.port", "465");
-			props.put("mail.smtp.starttls.enable", "true");
-			props.put("mail.smtp.debug", "true");
-			props.put("mail.smtp.auth", "true");
-			props.put("mail.smtp.socketFactory.port", "465");
-			props.put("mail.smtp.socketFactory.class", 
-					"javax.net.ssl.SSLSocketFactory");
-			props.put("mail.smtp.socketFactory.fallback", "false");
-			Utility.MyAuthenticator authentication = new Utility.MyAuthenticator("ibiosim@gmail.com","lambda123");
-			Session session = Session.getDefaultInstance(props,authentication);
-			MimeMessage mimeMessage = new MimeMessage(session);
+		
+		if (value == 0) {
 			try {
-				mimeMessage.setFrom(new InternetAddress(emailAddr.getText().trim()));
-				mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-				mimeMessage.setSubject(reportType.getSelectedItem() + ": "+bugSubject.getText().trim());
-				mimeMessage.setText(System.getProperty("software.running") + "\n\nOperating system: " + 
+				GitHub github = GitHub.connectUsingPassword("buggsley", "ibiosim3280");
+				GHRepository iBioSimRepository = github.getRepository("MyersResearchGroup/iBioSim");
+				GHIssueBuilder issue = iBioSimRepository.createIssue(bugSubject.getText().trim());
+				issue.body(System.getProperty("software.running") + "\n\nOperating system: " + 
 						System.getProperty("os.name") + "\n\nBug reported by: " + emailAddr.getText().trim() + 
 						"\n\nDescription:\n"+bugDetail.getText().trim()+message);
-				Transport.send(mimeMessage);
-			} catch (MessagingException mex) {
+				issue.label(reportType.getSelectedItem().toString());
+				issue.create();
+			} catch (IOException e) {
 				JOptionPane.showMessageDialog(Gui.frame, "Bug report failed, please submit manually.",
 						"Bug Report Failed", JOptionPane.ERROR_MESSAGE);
 				Preferences biosimrc = Preferences.userRoot();
 				String command = biosimrc.get("biosim.general.browser", "");
-				command = command + " http://www.async.ece.utah.edu/cgi-bin/atacs";
+				command = command + " http://www.github.com/MyersResearchGroup/iBioSim/issues";
 				Runtime exec = Runtime.getRuntime();
+				
 				try
 				{
 					exec.exec(command);
@@ -1029,9 +1037,9 @@ public class Utility {
 				}
 			}
 		}
+		
 		JOptionPane.showMessageDialog(Gui.frame, "Please verify that your bug report is in the incoming folder.\n" +
-				"If not, please submit your bug report manually using the web interface.\n"+
-				"You may also submit your bug by email as described in the manual.", 
+				"If not, please submit your bug report manually using the web interface.\n", 
 				"Bug Report", JOptionPane.ERROR_MESSAGE);
 		submitBugReportTemp(message);
 	}
