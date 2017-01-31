@@ -11,7 +11,7 @@ import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 
-import backend.synthesis.genetic.SynthesisMatcher;
+//import backend.synthesis.genetic.SynthesisMatcher;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.biomodel.util.Utility;

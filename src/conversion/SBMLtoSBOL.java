@@ -1,5 +1,6 @@
 package conversion;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -54,7 +55,8 @@ import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
-import frontend.main.Gui;
+//import frontend.main.Gui;
+import exceptions.SBOLException;
 
 public class SBMLtoSBOL {
 	BioModel bioModel;
@@ -67,16 +69,16 @@ public class SBMLtoSBOL {
 	URI LANGUAGE  = EDAMOntology.SBML;
 	URI FRAMEWORK = SystemsBiologyOntology.DISCRETE_FRAMEWORK;
 	
-	public SBMLtoSBOL(Gui gui,String path,BioModel bioModel) 
+	public SBMLtoSBOL(HashSet<String> sbolFilePaths,String path,BioModel bioModel) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		this.path = path;
 		this.bioModel = bioModel;
 		SBOLDOC = new SBOLDocument();
-		HashSet<String> sbolFilePaths = gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
+//		HashSet<String> sbolFilePaths = gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
 		loadSBOLFiles(sbolFilePaths);
 	}
 	
-	private boolean loadSBOLFiles(HashSet<String> sbolFilePaths) 
+	private boolean loadSBOLFiles(HashSet<String> sbolFilePaths) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		for (String filePath : sbolFilePaths) 
 		{
@@ -118,28 +120,35 @@ public class SBMLtoSBOL {
 		return true;
 	}
 	
-	public void saveAsSBOL(SBOLDocument sbolDoc) {
+	public void saveAsSBOL(SBOLDocument sbolDoc) throws SBOLValidationException {
 		sbolDoc.setTypesInURIs(true);
 		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 		String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
 		Collection collection;
-		try {
-			collection = sbolDoc.getCollection(collection_id, VERSION);
-			if (collection!=null) {
-				sbolDoc.removeCollection(collection);
-			}
-			collection = sbolDoc.createCollection(collection_id, VERSION);
-			export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
+		collection = sbolDoc.getCollection(collection_id, VERSION);
+		if (collection!=null) {
+			sbolDoc.removeCollection(collection);
 		}
-		catch (SBOLValidationException e1) {
-			e1.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL file.", 
-					"SBOL Save Error", JOptionPane.ERROR_MESSAGE);
-		}
+		collection = sbolDoc.createCollection(collection_id, VERSION);
+		export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
+		
+//		try {
+//			collection = sbolDoc.getCollection(collection_id, VERSION);
+//			if (collection!=null) {
+//				sbolDoc.removeCollection(collection);
+//			}
+//			collection = sbolDoc.createCollection(collection_id, VERSION);
+//			export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
+//		}
+//		catch (SBOLValidationException e1) {
+//			e1.printStackTrace();
+//			JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL file.", 
+//					"SBOL Save Error", JOptionPane.ERROR_MESSAGE);
+//		}
 		sbolDoc.setTypesInURIs(false);
 	}
 	
-	public void upload(String location) throws SBOLValidationException, StackException {
+	public void upload(String location) throws SBOLValidationException, StackException, SBOLException {
 		SBOLDocument uploadDoc = new SBOLDocument();
 		uploadDoc.setComplete(false);
 		export(uploadDoc);
@@ -148,8 +157,12 @@ public class SBMLtoSBOL {
 		String email = info == null || info.getEmail() == null ? null : info.getEmail().getLocalName();
 		String uri = info == null ? null : info.getURI().stringValue();
 		if (email == null || email.equals("") || uri == null) {
-			JOptionPane.showMessageDialog(Gui.frame, "Make sure your email and URI are both set and valid in preferences.",
-					"Upload failed", JOptionPane.ERROR_MESSAGE);
+//			JOptionPane.showMessageDialog(Gui.frame, "Make sure your email and URI are both set and valid in preferences.",
+//					"Upload failed", JOptionPane.ERROR_MESSAGE);
+			
+			String message = "Make sure your email and URI are both set and valid in preferences.";
+			String messageTitle = "Upload failed";
+			throw new SBOLException(message, messageTitle);
 		}
 		String emailHash = Hashing.sha1().hashString(email, Charsets.UTF_8).toString();
 		String userId = email.replace("@", "%40");
@@ -185,35 +198,46 @@ public class SBMLtoSBOL {
 
 	}
 	
-	public void export(String exportFilePath,String fileType) {
+	public void export(String exportFilePath,String fileType) throws IOException, SBOLConversionException, SBOLValidationException {
 		SBOLDocument sbolDoc = new SBOLDocument();
 		//sbolDoc.setTypesInURIs(true);
 		export(sbolDoc);
 		//sbolDoc.setTypesInURIs(false);
-		try 
-		{
-			if (fileType.equals("SBOL")) {	
-				sbolDoc.write(exportFilePath,SBOLDocument.RDF);
-			} else if (fileType.equals("SBOL1")) {	
-				sbolDoc.write(exportFilePath,SBOLDocument.RDFV1);
-			} else if (fileType.equals("GenBank")) {	
-				sbolDoc.write(exportFilePath,SBOLDocument.GENBANK);
-			} else if (fileType.equals("Fasta")) {	
-				sbolDoc.write(exportFilePath,SBOLDocument.FASTAformat);
-			} 
+		
+		if (fileType.equals("SBOL")) {	
+			sbolDoc.write(exportFilePath,SBOLDocument.RDF);
+		} else if (fileType.equals("SBOL1")) {	
+			sbolDoc.write(exportFilePath,SBOLDocument.RDFV1);
+		} else if (fileType.equals("GenBank")) {	
+			sbolDoc.write(exportFilePath,SBOLDocument.GENBANK);
+		} else if (fileType.equals("Fasta")) {	
+			sbolDoc.write(exportFilePath,SBOLDocument.FASTAformat);
 		} 
-		catch (SBOLConversionException e)
-		{
-			JOptionPane.showMessageDialog(Gui.frame, "Error writing "+fileType+" file at " + exportFilePath + ".", 
-					fileType+" Conversion Error", JOptionPane.ERROR_MESSAGE);
-		}
-		catch (IOException e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Error writing "+fileType+" file at " + exportFilePath + ".", 
-					fileType+" Write Error", JOptionPane.ERROR_MESSAGE);
-		}
+		
+//		try 
+//		{
+//			if (fileType.equals("SBOL")) {	
+//				sbolDoc.write(exportFilePath,SBOLDocument.RDF);
+//			} else if (fileType.equals("SBOL1")) {	
+//				sbolDoc.write(exportFilePath,SBOLDocument.RDFV1);
+//			} else if (fileType.equals("GenBank")) {	
+//				sbolDoc.write(exportFilePath,SBOLDocument.GENBANK);
+//			} else if (fileType.equals("Fasta")) {	
+//				sbolDoc.write(exportFilePath,SBOLDocument.FASTAformat);
+//			} 
+//		} 
+//		catch (SBOLConversionException e)
+//		{
+//			JOptionPane.showMessageDialog(Gui.frame, "Error writing "+fileType+" file at " + exportFilePath + ".", 
+//					fileType+" Conversion Error", JOptionPane.ERROR_MESSAGE);
+//		}
+//		catch (IOException e) {
+//			JOptionPane.showMessageDialog(Gui.frame, "Error writing "+fileType+" file at " + exportFilePath + ".", 
+//					fileType+" Write Error", JOptionPane.ERROR_MESSAGE);
+//		}
 	}
 	
-	public void export(SBOLDocument sbolDoc) {
+	public void export(SBOLDocument sbolDoc) throws SBOLValidationException {
 		// TODO read existing 1.1 document in the project to get sequences etc.
 		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 		Preferences biosimrc = Preferences.userRoot();
@@ -223,16 +247,19 @@ public class SBMLtoSBOL {
 		
 		String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
 		Collection collection;
-		try {
-			collection = sbolDoc.createCollection(collection_id, VERSION);
-			export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
-		}
-		catch (SBOLValidationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "Error export SBOL file.", 
-					"SBOL Export Error", JOptionPane.ERROR_MESSAGE);
-		}
+		collection = sbolDoc.createCollection(collection_id, VERSION);
+		export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection);
+		
+//		try {
+//			collection = sbolDoc.createCollection(collection_id, VERSION);
+//			export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
+//		}
+//		catch (SBOLValidationException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//			JOptionPane.showMessageDialog(Gui.frame, "Error export SBOL file.", 
+//					"SBOL Export Error", JOptionPane.ERROR_MESSAGE);
+//		}
 	}
 	
 	public void export_recurse(String source,SBMLDocument sbmlDoc,SBOLDocument sbolDoc,Collection collection) throws SBOLValidationException 

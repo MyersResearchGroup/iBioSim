@@ -31,6 +31,7 @@ import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
+import exceptions.SBOLException;
 
 public class AssemblyGraph2 {
 
@@ -323,7 +324,7 @@ public class AssemblyGraph2 {
 		return inputs;
 	}
 	
-	public boolean loadDNAComponents(SBOLFileManager2 fileManager) {
+	public boolean loadDNAComponents(SBOLFileManager2 fileManager) throws SBOLException {
 		boolean error = false;
 		for (AssemblyNode2 assemblyNode : assemblyNodes) {
 			List<ComponentDefinition> dnaComps = fileManager.resolveURIs(assemblyNode.getURIs());

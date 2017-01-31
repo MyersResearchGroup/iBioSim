@@ -9,7 +9,8 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import dataModels.util.GlobalConstants;
-import frontend.main.Gui;
+//import frontend.main.Gui;
+import exceptions.SBOLException;
 
 public class SequenceTypeValidator {
 	private DFA completeConstructDFA;
@@ -18,7 +19,7 @@ public class SequenceTypeValidator {
 	private DFA partialConstructDFA;
 	private int stateIndex;
 	
-	public SequenceTypeValidator(String regex) {
+	public SequenceTypeValidator(String regex) throws SBOLException {
 		regex = kleeneRegex(regex);
 		String rightAltRegex = altFragmentRegex(regex);
 		String revRegex = reverseRegex(regex);
@@ -115,7 +116,7 @@ public class SequenceTypeValidator {
 			acceptStates.addAll(startStates);
 	}
 	
-	private static String kleeneRegex(String regex) {
+	private static String kleeneRegex(String regex) throws SBOLException {
 		if (isBalanced(regex)) {
 			regex = trimOuterParentheses(regex);
 			if ((isQuantifier(regex.substring(regex.length() - 1, regex.length())) &&  
@@ -371,7 +372,7 @@ public class SequenceTypeValidator {
 		return (token.equals("+") || token.equals("*") || token.equals("?"));
 	}
 	
-	private static boolean isBalanced(String regex) {
+	private static boolean isBalanced(String regex) throws SBOLException {
 		int uncapturedCount = 0;
 		for (int i = 0; i < regex.length(); i++)
 			if (regex.substring(i, i + 1).equals("("))
@@ -380,9 +381,13 @@ public class SequenceTypeValidator {
 				uncapturedCount--;
 		if (uncapturedCount == 0)
 			return true;
-		JOptionPane.showMessageDialog(Gui.frame, "Regular expression for SBOL assembly has unbalanced parentheses.", 
-				"Unbalanced Regex", JOptionPane.ERROR_MESSAGE);
-		return false;
+//		JOptionPane.showMessageDialog(Gui.frame, "Regular expression for SBOL assembly has unbalanced parentheses.", 
+//				"Unbalanced Regex", JOptionPane.ERROR_MESSAGE);
+
+		String message = "Regular expression for SBOL assembly has unbalanced parentheses.";
+		String messageTitle = "Unbalanced Regex";
+		throw new SBOLException(message, messageTitle);
+//		return false;
 	}
 	
 	

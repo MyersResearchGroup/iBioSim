@@ -16,6 +16,7 @@ import org.sbml.jsbml.SpeciesReference;
 import backend.sbol.util.SBOLFileManager2;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
+import exceptions.SBOLException;
 
 public class SynthesisGraph {
 
@@ -31,7 +32,7 @@ public class SynthesisGraph {
 	private List<SynthesisNode> inputs;
 	private List<String> paths;
 	
-	public SynthesisGraph(BioModel biomodel, SBOLFileManager2 fileManager) {
+	public SynthesisGraph(BioModel biomodel, SBOLFileManager2 fileManager) throws SBOLException {
 		Model sbmlModel = biomodel.getSBMLDocument().getModel();
 		projectPath = biomodel.getPath();
 		modelFileID = biomodel.getSBMLFile();
@@ -208,7 +209,7 @@ public class SynthesisGraph {
 			edges.put(interPromoterNodes.get(i), inputSpeciesNodes.subList(i - 1, i));
 	}
 
-	private Set<SynthesisNode> constructGraph(Model sbmlModel, SBOLFileManager2 fileManager) {
+	private Set<SynthesisNode> constructGraph(Model sbmlModel, SBOLFileManager2 fileManager) throws SBOLException {
 		HashMap<String, SynthesisNode> idToNode = new HashMap<String, SynthesisNode>();
 		edges = new HashMap<SynthesisNode, List<SynthesisNode>>();
 		nucleotideCount = 0;
@@ -233,7 +234,7 @@ public class SynthesisGraph {
 	}
 	
 	private void constructTranscriptionMotif(Reaction sbmlReaction, HashMap<String, SynthesisNode> idToNode, 
-			Model sbmlModel, SBOLFileManager2 fileManager) {
+			Model sbmlModel, SBOLFileManager2 fileManager) throws SBOLException {
 		SynthesisNode promoterNode = null;
 		//NOTE: go through reaction and check if there is a promoter to create a node for and add to idToNode
 		for (int j = 0; j < sbmlReaction.getModifierCount(); j++) {
@@ -276,7 +277,7 @@ public class SynthesisGraph {
 	}
 	
 	private void constructComplexationMotif(Reaction sbmlReaction, HashMap<String, SynthesisNode> idToNode, 
-			Model sbmlModel, SBOLFileManager2 fileManager) {
+			Model sbmlModel, SBOLFileManager2 fileManager) throws SBOLException {
 		//TODO: complexationMotif = complex formation ?
 		// 		complex formation always has only 1 product?
 		//NOTE: create nodes for products and reactants and add to edges table to represent complex formation
@@ -295,7 +296,7 @@ public class SynthesisGraph {
 	}
 	
 	private SynthesisNode constructNode(String type, SBase sbmlElement, HashMap<String, SynthesisNode> idToNode, 
-			SBOLFileManager2 fileManager) { 
+			SBOLFileManager2 fileManager) throws SBOLException { 
 		SynthesisNode node;
 		//NOTE: sbmlElement - is a reaction
 		//NOTE: check if table idToNode contains the reaction. 

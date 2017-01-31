@@ -16,6 +16,7 @@ import dataModels.biomodel.annotation.SBOLAnnotation;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
+import exceptions.SBOLException;
 
 public class SBOLIdentityManager2 {
 
@@ -117,7 +118,7 @@ public class SBOLIdentityManager2 {
 ////		}
 ////	}
 	
-	public boolean loadBioSimComponent(SBOLFileManager2 fileManager) {
+	public boolean loadBioSimComponent(SBOLFileManager2 fileManager) throws SBOLException {
 		bioSimComp = fileManager.resolveURI(modelURIs.get(indexOfBioSimURI));
 		if (bioSimComp == null) {
 			String[] options = new String[]{"Ok", "Cancel"};
@@ -130,7 +131,7 @@ public class SBOLIdentityManager2 {
 		return true;
 	}
 	
-	public boolean loadAndLocateBioSimComponent(SBOLFileManager2 fileManager) {
+	public boolean loadAndLocateBioSimComponent(SBOLFileManager2 fileManager) throws SBOLException {
 		bioSimComp = fileManager.resolveAndLocateTopLevelURI(modelURIs.get(indexOfBioSimURI));
 		if (bioSimComp == null) {
 			String[] options = new String[]{"Ok", "Cancel"};

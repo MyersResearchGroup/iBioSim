@@ -3,6 +3,8 @@ package frontend.biomodel.gui.sbol;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 //import java.net.URISyntaxException;
 import java.util.HashSet;
@@ -11,15 +13,18 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import backend.sbol.util.SBOLUtility2;
 import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.main.Gui;
 
 public class SBOLField2 extends JPanel implements ActionListener {
 	
@@ -174,10 +179,24 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	public void deleteRemovedBioSimComponent() throws SBOLValidationException {
 		if (removedBioSimURI != null) {
 			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
-				SBOLDocument sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
-				SBOLUtility2.deleteDNAComponent(removedBioSimURI, sbolDoc);
-				SBOLUtility2.writeSBOLDocument(filePath, sbolDoc);
+				SBOLDocument sbolDoc;
+				try {
+					sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+					SBOLUtility2.deleteDNAComponent(removedBioSimURI, sbolDoc);
+					SBOLUtility2.writeSBOLDocument(filePath, sbolDoc);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SBOLConversionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
+			
 			removedBioSimURI = null;
 		}
 	}

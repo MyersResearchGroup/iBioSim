@@ -25,6 +25,7 @@ import backend.sbol.util.SBOLFileManager2;
 import backend.sbol.util.SBOLIdentityManager2;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
+import exceptions.SBOLException;
 import frontend.main.Gui;
 
 public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
@@ -116,21 +117,31 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 	}
 	
 	private boolean loadBioSimComponentDescriptors(SBOLIdentityManager2 identityManager, SBOLFileManager2 fileManager) {
-		if (identityManager.loadAndLocateBioSimComponent(fileManager)) {
+		try {
+			if (identityManager.loadAndLocateBioSimComponent(fileManager)) {
 //			DnaComponent bioSimComp = identityManager.getBioSimComponent();
-			ComponentDefinition bioSimComp = identityManager.getBioSimComponent();
-			if (bioSimComp != null) {
-				saveFileIDBox.setSelectedIndex(saveFilePaths.indexOf(identityManager.getSaveFilePath()));
-				initialID = bioSimComp.getDisplayId();
-				idText.setText(initialID);
-				if (bioSimComp.getName() != null)
-					nameText.setText(bioSimComp.getName());
-				if (bioSimComp.getDescription() != null)
-					descriptionText.setText(bioSimComp.getDescription());
-			} else 
-				removeBioSimURI = true;
-			return true;
+				ComponentDefinition bioSimComp = identityManager.getBioSimComponent();
+				if (bioSimComp != null) {
+					saveFileIDBox.setSelectedIndex(saveFilePaths.indexOf(identityManager.getSaveFilePath()));
+					initialID = bioSimComp.getDisplayId();
+					idText.setText(initialID);
+					if (bioSimComp.getName() != null)
+						nameText.setText(bioSimComp.getName());
+					if (bioSimComp.getDescription() != null)
+						descriptionText.setText(bioSimComp.getDescription());
+				} else 
+					removeBioSimURI = true;
+				return true;
+			}
+		} catch (SBOLException e) {
+			// TODO Auto-generated catch block
+			
+			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
+					e.getTitle(), JOptionPane.ERROR_MESSAGE);
+
+			e.printStackTrace();
 		}
+		
 		return false;
 	}
 	
