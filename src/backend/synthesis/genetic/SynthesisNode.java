@@ -14,7 +14,7 @@ import backend.sbol.util.SBOLFileManager2;
 import backend.sbol.util.SBOLUtility2;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.util.SBMLutilities;
-import exceptions.SBOLException;
+import dataModels.util.exceptions.SBOLException;
 
 public class SynthesisNode {
 	private String id;

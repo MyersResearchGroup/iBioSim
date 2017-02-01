@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import dataModels.util.exceptions.AnalysisException;
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import backend.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import backend.analysis.dynamicsim.hierarchical.math.EventNode;
@@ -16,7 +17,6 @@ import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelTyp
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
 import backend.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
-import backend.analysis.util.AnalysisException;
 
 public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 {

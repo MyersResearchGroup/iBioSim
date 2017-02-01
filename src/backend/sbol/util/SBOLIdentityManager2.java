@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
+
 import org.sbml.jsbml.Model;
 import org.sbolstandard.core2.ComponentDefinition;
 
@@ -16,7 +17,7 @@ import dataModels.biomodel.annotation.SBOLAnnotation;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
-import exceptions.SBOLException;
+import dataModels.util.exceptions.SBOLException;
 
 public class SBOLIdentityManager2 {
 

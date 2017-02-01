@@ -11,12 +11,12 @@ import javax.swing.JTabbedPane;
 import javax.xml.stream.XMLStreamException;
 
 import dataModels.util.Message;
+import dataModels.util.exceptions.AnalysisException;
 import backend.analysis.dynamicsim.flattened.SimulatorSSACR;
 import backend.analysis.dynamicsim.flattened.SimulatorSSADirect;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
-import backend.analysis.util.AnalysisException;
 import frontend.graph.Graph;
 
 public class DynamicSimulation extends Observable

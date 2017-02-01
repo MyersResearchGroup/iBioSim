@@ -38,7 +38,7 @@ import backend.synthesis.genetic.SynthesisGraph;
 import backend.synthesis.genetic.Synthesizer;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.util.GlobalConstants;
-import exceptions.SBOLException;
+import dataModels.util.exceptions.SBOLException;
 import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.Utility;

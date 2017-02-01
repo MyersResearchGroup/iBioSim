@@ -16,7 +16,7 @@ import org.sbml.jsbml.SpeciesReference;
 import backend.sbol.util.SBOLFileManager2;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
-import exceptions.SBOLException;
+import dataModels.util.exceptions.SBOLException;
 
 public class SynthesisGraph {
 

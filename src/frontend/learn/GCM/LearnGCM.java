@@ -55,7 +55,6 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
-import backend.analysis.util.AnalysisException;
 import backend.learn.genenet.Experiments;
 import backend.learn.genenet.Run;
 import backend.learn.genenet.SpeciesCollection;
@@ -63,6 +62,7 @@ import backend.learn.parameterestimator.ParameterEstimator;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.AnalysisException;
 import frontend.learn.parameterestimator.ParamEstimatorPanel;
 import frontend.main.Gui;
 import frontend.main.Log;

@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.prefs.Preferences;
+
 import javax.swing.JOptionPane;
 import javax.xml.namespace.QName;
 
@@ -56,7 +57,7 @@ import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
 //import frontend.main.Gui;
-import exceptions.SBOLException;
+import dataModels.util.exceptions.SBOLException;
 
 public class SBMLtoSBOL {
 	BioModel bioModel;

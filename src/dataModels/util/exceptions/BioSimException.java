@@ -1,4 +1,4 @@
-package exceptions;
+package dataModels.util.exceptions;
 
 public class BioSimException extends Exception{
 

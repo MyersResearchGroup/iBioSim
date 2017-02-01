@@ -83,7 +83,7 @@ import dataModels.biomodel.util.Utility;
 import dataModels.lpn.parser.Lpn2verilog;
 import dataModels.util.GlobalConstants;
 import dataModels.util.MutableBoolean;
-import exceptions.SBOLException;
+import dataModels.util.exceptions.SBOLException;
 import frontend.analysis.AnalysisThread;
 import frontend.analysis.AnalysisView;
 import frontend.analysis.ConstraintTermThread;

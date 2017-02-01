@@ -25,7 +25,7 @@ import backend.sbol.util.SBOLFileManager2;
 import backend.sbol.util.SBOLIdentityManager2;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
-import exceptions.SBOLException;
+import dataModels.util.exceptions.SBOLException;
 import frontend.main.Gui;
 
 public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {

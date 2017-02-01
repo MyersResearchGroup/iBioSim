@@ -31,7 +31,7 @@ import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
-import exceptions.SBOLException;
+import dataModels.util.exceptions.SBOLException;
 
 public class AssemblyGraph2 {
 

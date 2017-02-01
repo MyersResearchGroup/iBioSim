@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 
 import dataModels.util.GlobalConstants;
 //import frontend.main.Gui;
-import exceptions.SBOLException;
+import dataModels.util.exceptions.SBOLException;
 
 public class SequenceTypeValidator {
 	private DFA completeConstructDFA;

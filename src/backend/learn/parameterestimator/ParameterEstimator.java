@@ -8,9 +8,9 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
 
+import dataModels.util.exceptions.AnalysisException;
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
-import backend.analysis.util.AnalysisException;
 import backend.learn.genenet.Experiments;
 import backend.learn.genenet.SpeciesCollection;
 import backend.learn.parameterestimator.methods.sres.EvolutionMethodSetting;
