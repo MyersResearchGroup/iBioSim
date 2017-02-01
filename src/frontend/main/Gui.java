@@ -2019,7 +2019,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor)
 			{
-				((ModelEditor) comp).exportSynBioHub("SBOL");
+				((ModelEditor) comp).exportSynBioHub();
 			}
 			else if (comp instanceof SBOLDesignerPlugin)
 			{

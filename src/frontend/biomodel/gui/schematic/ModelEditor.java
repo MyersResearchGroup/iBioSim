@@ -19,11 +19,15 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 //import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.stream.XMLStreamException;
@@ -60,11 +64,14 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbolstack.frontend.StackException;
+import org.sbolstack.frontend.StackFrontend;
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
+import org.sbolstandard.core2.TopLevel;
 
 import backend.analysis.util.SEDMLutilities;
 import backend.sbol.assembly.Assembler2;
@@ -112,6 +119,7 @@ import frontend.biomodel.gui.util.PropertyList;
 import frontend.biomodel.gui.util.Runnable;
 import frontend.main.Gui;
 import frontend.main.Log;
+import frontend.main.util.SpringUtilities;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
@@ -681,53 +689,166 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 	}
 	
-	
-	public void exportSynBioHub(String fileType) {
-		try {
-		SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),path,biomodel);
-		// TODO: select registry, input submission data
-//		ArrayList<Registry> list = new ArrayList<Registry>();
-//		for (Registry r : Registries.get()) {
-//			if (r.getLocation().startsWith("http://")) {
-//				list.add(r);
-//			}
-//		}
-//		Object[] options = list.toArray();
-//		Registry registry = (Registry) JOptionPane.showInputDialog(panel,
-//				"Please select the SBOL Stack instance you want to upload the current design to.", "Upload",
-//				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-//		if (registry == null) {
-//			return;
-//		}
+	/**
+	 * Creates a frame used to edit SynBioHub submission information 
+	 */
+	public void exportSynBioHub() {
+		JPanel submissionInfoPanel = new JPanel();
+		JPanel submissionPanel = new JPanel(new SpringLayout());
 
-//		try {
-			sbmltosbol.upload("http://localhost:9090");
+		JLabel registryLabel = new JLabel("Registry:");
+		JLabel userLabel = new JLabel("User:");
+		JLabel passwordLabel = new JLabel("Password:");
+		JLabel idLabel = new JLabel("ID:");
+		JLabel versionLabel = new JLabel("Version:");
+		JLabel nameLabel = new JLabel("Name:");
+		JLabel descriptionLabel = new JLabel("Description:");
+		JLabel citationLabel = new JLabel("Citations:");
+		JLabel keywordLabel = new JLabel("Keywords:");
+		JLabel ifExistingLabel = new JLabel("If Existing:");
+
+		//PersonInfo info = SBOLEditorPreferences.INSTANCE.getUserInfo();
+		//String email = info == null || info.getEmail() == null ? null : info.getEmail().getLocalName();
+		//String uri = info == null ? null : info.getURI().stringValue();
+		//String submissionId = cd.getDisplayId();
+		//String submissionName = cd.isSetName() ? cd.getName() : cd.getDisplayId();
+		//String submissionDescription = cd.isSetDescription() ? cd.getDescription() : "Test";
+		//String submissionVersion = cd.isSetVersion() ? cd.getVersion() : "1";
+		
+		JComboBox registries = new JComboBox();
+		registries.addItem("http://localhost:7777");
+		JTextField userField = new JTextField(12);
+		JTextField passwordField = new JTextField(12);
+		JTextField idField = new JTextField(12);
+		JTextField versionField = new JTextField(12);
+		JTextField nameField = new JTextField(12);
+		JTextField descriptionField = new JTextField(12);
+		JTextField citationField = new JTextField(12);
+		JTextField keywordField = new JTextField(12);
+		JComboBox ifExisting = new JComboBox();
+		ifExisting.addItem("Prevent Submission");
+		ifExisting.addItem("Overwrite Submission");
+		ifExisting.addItem("Merge and Prevent, If Existing");
+		ifExisting.addItem("Merge and Replace, If Existing");
+
+		submissionPanel.add(registryLabel);
+		submissionPanel.add(registries);
+		submissionPanel.add(userLabel);
+		submissionPanel.add(userField);
+		submissionPanel.add(passwordLabel);
+		submissionPanel.add(passwordField);
+		submissionPanel.add(idLabel);
+		submissionPanel.add(idField);
+		submissionPanel.add(versionLabel);
+		submissionPanel.add(versionField);
+		submissionPanel.add(nameLabel);
+		submissionPanel.add(nameField);
+		submissionPanel.add(descriptionLabel);
+		submissionPanel.add(descriptionField);
+		submissionPanel.add(citationLabel);
+		submissionPanel.add(citationField);
+		submissionPanel.add(keywordLabel);
+		submissionPanel.add(keywordField);
+		submissionPanel.add(ifExistingLabel);
+		submissionPanel.add(ifExisting);
+		
+		SpringUtilities.makeCompactGrid(submissionPanel,
+                10, 2, //rows, cols
+                6, 6,        //initX, initY
+                6, 6);       //xPad, yPad
+		submissionInfoPanel.add(submissionPanel);
+		Object[] options = { "Submit", "Cancel" };
+		int value = JOptionPane.showOptionDialog(Gui.frame, submissionInfoPanel, "Submission Information", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+				null, options, options[0]);
+		boolean error = true;
+		while (error && value == JOptionPane.YES_OPTION) {
+			error = false;
+			String user = userField.getText().trim();
+			if (user.equals("")) {
+				JOptionPane.showMessageDialog(Gui.frame, "User Id Required",
+						"Submission Error", JOptionPane.ERROR_MESSAGE);
+				error = true;
+			}
+			String password = passwordField.getText().trim();
+			if (password.equals("")) {
+				JOptionPane.showMessageDialog(Gui.frame, "Password Required",
+						"Submission Error", JOptionPane.ERROR_MESSAGE);
+				error = true;
+			}
+			String id = idField.getText().trim();
+			if (id.equals("")) {
+				JOptionPane.showMessageDialog(Gui.frame, "Id Required",
+						"Submission Error", JOptionPane.ERROR_MESSAGE);
+				error = true;
+			}
+			String version = versionField.getText().trim();
+			if (version.equals("")) {
+				JOptionPane.showMessageDialog(Gui.frame, "Version Required",
+						"Submission Error", JOptionPane.ERROR_MESSAGE);
+				error = true;
+			}
+			String name = nameField.getText().trim();
+			if (name.equals("")) {
+				JOptionPane.showMessageDialog(Gui.frame, "Name Required",
+						"Submission Error", JOptionPane.ERROR_MESSAGE);
+				error = true;
+			}
+			String description = descriptionField.getText().trim();
+			if (description.equals("")) {
+				JOptionPane.showMessageDialog(Gui.frame, "Description Required",
+						"Submission Error", JOptionPane.ERROR_MESSAGE);
+				error = true;
+			}
+			String citations = citationField.getText().trim();
+			String keywords = keywordField.getText().trim();
+			
+			if (!error) {
+				submitSBOL((String)registries.getSelectedItem(),user,password,id,version,name,description,
+						citations,keywords,ifExisting.getSelectedIndex()+"");
+			} else {
+				value = JOptionPane.showOptionDialog(Gui.frame, submissionInfoPanel, "Submission Information", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			}
 		}
-		catch (SBOLValidationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (value == JOptionPane.NO_OPTION) {
+			return;
 		}
-		catch (StackException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SBOLException e) {
-			// TODO Auto-generated catch block
+	}
+	
+	public void submitSBOL(String registry, String user, String password, String id, String version, 
+			String name, String description, String citations, String keywords, String ifExisting) {
+		SBOLDocument uploadDoc = new SBOLDocument();
+		uploadDoc.setComplete(false);
+		try {
+			SBMLtoSBOL sbmltosbol = new SBMLtoSBOL(biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),path,biomodel);
+			sbmltosbol.export(uploadDoc);
+			Preferences biosimrc = Preferences.userRoot();
+			String defaultURIprefix = biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"");
+			for (TopLevel topLevel : uploadDoc.getTopLevels()) {
+				if (!topLevel.getIdentity().toString().startsWith(defaultURIprefix)) {
+					uploadDoc.removeTopLevel(topLevel);
+				}
+			}
+		}
+		catch (SBOLValidationException | IOException | SBOLConversionException e) {
 			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
-					e.getTitle(), JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SBOLConversionException e) {
-			// TODO Auto-generated catch block
+					"Error Creating SBOL File", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 		
+		StackFrontend stack = new StackFrontend(registry);
+		try {
+			stack.login(user, password);
+			stack.submit(id, version, name, description, citations, keywords, ifExisting, uploadDoc);
+			JOptionPane.showMessageDialog(Gui.frame, "Submission Successful", 
+					"Submssion Successful", JOptionPane.INFORMATION_MESSAGE);
+		}		
+		catch (StackException e) {
+			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
+					"Error Submitting to SynBioHub", JOptionPane.ERROR_MESSAGE);
+		}	
 	}
-	
+
 	public void exportSBML() {
 		File lastFilePath;
 		Preferences biosimrc = Preferences.userRoot();

@@ -131,7 +131,7 @@ public class SBMLtoSBOL {
 			sbolDoc.removeCollection(collection);
 		}
 		collection = sbolDoc.createCollection(collection_id, VERSION);
-		export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
+		export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc); 
 		
 //		try {
 //			collection = sbolDoc.getCollection(collection_id, VERSION);
@@ -149,61 +149,11 @@ public class SBMLtoSBOL {
 		sbolDoc.setTypesInURIs(false);
 	}
 	
-	public void upload(String location) throws SBOLValidationException, StackException, SBOLException {
-		SBOLDocument uploadDoc = new SBOLDocument();
-		uploadDoc.setComplete(false);
-		export(uploadDoc);
-		StackFrontend stack = new StackFrontend(location);
-		PersonInfo info = SBOLEditorPreferences.INSTANCE.getUserInfo();
-		String email = info == null || info.getEmail() == null ? null : info.getEmail().getLocalName();
-		String uri = info == null ? null : info.getURI().stringValue();
-		if (email == null || email.equals("") || uri == null) {
-//			JOptionPane.showMessageDialog(Gui.frame, "Make sure your email and URI are both set and valid in preferences.",
-//					"Upload failed", JOptionPane.ERROR_MESSAGE);
-			
-			String message = "Make sure your email and URI are both set and valid in preferences.";
-			String messageTitle = "Upload failed";
-			throw new SBOLException(message, messageTitle);
-		}
-		String emailHash = Hashing.sha1().hashString(email, Charsets.UTF_8).toString();
-		String userId = email.replace("@", "%40");
-		// TODO: need to revise this when revised on stack
-		String storename = "synbiohub_user_" + Hashing.sha1()
-				.hashString("synbiohub_" + emailHash + "synbiohub_change_me", Charsets.UTF_8).toString();
-		// TODO: uploadDoc should only include objects in your namespace.
-		// filter for member collections works, but it ends up uploading extra
-		// objects
-		// TODO: would this ever be more than one root?
-		for (ModuleDefinition cd : uploadDoc.getRootModuleDefinitions()) {
-			// TODO: should ask the user for a submissionId and perhaps other
-			// fields as done for synbiohub
-			String submissionId = cd.getDisplayId();
-			String submissionName = cd.isSetName() ? cd.getName() : cd.getDisplayId();
-			String submissionDescription = cd.isSetDescription() ? cd.getDescription() : "";
-			String submissionVersion = cd.isSetVersion() ? cd.getVersion() : "1";
-			Collection collection = uploadDoc.createCollection(submissionId + "_collection", "1");
-			collection.setName(submissionName + " " + "Collection");
-			collection.setDescription(submissionDescription);
-			collection.createAnnotation(new QName("http://synbiohub.org#", "uploadedBy", "synbiohub"), email);
-			collection.createAnnotation(new QName("http://purl.org/dc/terms/", "creator", "dcterms"), info.getName());
-			for (TopLevel topLevel : uploadDoc.getTopLevels()) {
-				if (topLevel.getIdentity().equals(collection.getIdentity())) continue;
-				if (!topLevel.getIdentity().toString().startsWith(uri))
-					continue;
-				collection.addMember(topLevel.getIdentity());
-			}
-			uploadDoc = uploadDoc.changeURIPrefixVersion("http://synbiohub.org/user/" + userId + "/" + submissionId + "/",
-					submissionVersion);
-			stack.upload(storename, uploadDoc);
-		}
 
-	}
 	
 	public void export(String exportFilePath,String fileType) throws IOException, SBOLConversionException, SBOLValidationException {
 		SBOLDocument sbolDoc = new SBOLDocument();
-		//sbolDoc.setTypesInURIs(true);
 		export(sbolDoc);
-		//sbolDoc.setTypesInURIs(false);
 		
 		if (fileType.equals("SBOL")) {	
 			sbolDoc.write(exportFilePath,SBOLDocument.RDF);
@@ -214,56 +164,22 @@ public class SBMLtoSBOL {
 		} else if (fileType.equals("Fasta")) {	
 			sbolDoc.write(exportFilePath,SBOLDocument.FASTAformat);
 		} 
-		
-//		try 
-//		{
-//			if (fileType.equals("SBOL")) {	
-//				sbolDoc.write(exportFilePath,SBOLDocument.RDF);
-//			} else if (fileType.equals("SBOL1")) {	
-//				sbolDoc.write(exportFilePath,SBOLDocument.RDFV1);
-//			} else if (fileType.equals("GenBank")) {	
-//				sbolDoc.write(exportFilePath,SBOLDocument.GENBANK);
-//			} else if (fileType.equals("Fasta")) {	
-//				sbolDoc.write(exportFilePath,SBOLDocument.FASTAformat);
-//			} 
-//		} 
-//		catch (SBOLConversionException e)
-//		{
-//			JOptionPane.showMessageDialog(Gui.frame, "Error writing "+fileType+" file at " + exportFilePath + ".", 
-//					fileType+" Conversion Error", JOptionPane.ERROR_MESSAGE);
-//		}
-//		catch (IOException e) {
-//			JOptionPane.showMessageDialog(Gui.frame, "Error writing "+fileType+" file at " + exportFilePath + ".", 
-//					fileType+" Write Error", JOptionPane.ERROR_MESSAGE);
-//		}
 	}
 	
 	public void export(SBOLDocument sbolDoc) throws SBOLValidationException {
-		// TODO read existing 1.1 document in the project to get sequences etc.
 		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 		Preferences biosimrc = Preferences.userRoot();
 		sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 		sbolDoc.setComplete(false);
-		//sbolDoc.setTypesInURIs(true);
 		
-		String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
-		Collection collection;
-		collection = sbolDoc.createCollection(collection_id, VERSION);
-		export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection);
-		
-//		try {
-//			collection = sbolDoc.createCollection(collection_id, VERSION);
-//			export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
-//		}
-//		catch (SBOLValidationException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//			JOptionPane.showMessageDialog(Gui.frame, "Error export SBOL file.", 
-//					"SBOL Export Error", JOptionPane.ERROR_MESSAGE);
-//		}
+		// TODO: not sure we need collection anymore, since added by synbiohub
+		//String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
+		//Collection collection;
+		//collection = sbolDoc.createCollection(collection_id, VERSION);
+		export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc); //,collection);
 	}
 	
-	public void export_recurse(String source,SBMLDocument sbmlDoc,SBOLDocument sbolDoc,Collection collection) throws SBOLValidationException 
+	public void export_recurse(String source,SBMLDocument sbmlDoc,SBOLDocument sbolDoc) throws SBOLValidationException 
 	{
 		Model model    = sbmlDoc.getModel();
 		//String modelId = model.getId();
@@ -274,7 +190,7 @@ public class SBMLtoSBOL {
 			sbolDoc.removeModel(sbolModel);
 		}
 		sbolModel = sbolDoc.createModel(model.getId()+"_model", VERSION, sourceURI, LANGUAGE, FRAMEWORK);
-		collection.addMember(sbolModel.getIdentity());	
+		//collection.addMember(sbolModel.getIdentity());	
 		
 		String identityStr  = model.getId();
 		ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(identityStr, VERSION);
@@ -283,14 +199,14 @@ public class SBMLtoSBOL {
 		}
 		moduleDef = sbolDoc.createModuleDefinition(identityStr, VERSION);
 		moduleDef.addModel(sbolModel);
-		collection.addMember(moduleDef.getIdentity());
+		//collection.addMember(moduleDef.getIdentity());
 
 		for (int i = 0; i < model.getSpeciesCount(); i++) 
 		{
 			// convert species to a component definition
 			Species species = model.getSpecies(i);
-			ComponentDefinition compDef = setComponentDefinition(sbolDoc, model, species, collection);
-			collection.addMember(compDef.getIdentity());
+			ComponentDefinition compDef = setComponentDefinition(sbolDoc, model, species);
+			//collection.addMember(compDef.getIdentity());
 			
 			setFunctionalComponent(sbmlDoc, moduleDef, compDef, species);
 		}
@@ -349,28 +265,27 @@ public class SBMLtoSBOL {
 				}
 			}
 		}
-		extractSubModels(sbmlDoc, sbolDoc, collection, moduleDef, model);
+		extractSubModels(sbmlDoc, sbolDoc, moduleDef, model);
 	}
 	
-	public void recurseComponentDefinition(SBOLDocument sbolDoc,ComponentDefinition cd,Collection collection) throws SBOLValidationException {
+	public void recurseComponentDefinition(SBOLDocument sbolDoc,ComponentDefinition cd) throws SBOLValidationException {
 		for (org.sbolstandard.core2.Component comp : cd.getComponents()) {
 			if (sbolDoc.getComponentDefinition(comp.getDefinitionURI())==null) {
 				ComponentDefinition compDef = comp.getDefinition();
 				sbolDoc.createCopy(compDef);
-				collection.addMember(compDef.getIdentity());
+				//collection.addMember(compDef.getIdentity());
 				for (Sequence sequence : compDef.getSequences()) {
 					if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 						sbolDoc.createCopy(sequence);
-						collection.addMember(sequence.getIdentity());
+						//collection.addMember(sequence.getIdentity());
 					}
 				}
-				recurseComponentDefinition(sbolDoc,compDef,collection);
+				recurseComponentDefinition(sbolDoc,compDef);
 			}
 		}
 	}
 	
-	public ComponentDefinition setComponentDefinition(SBOLDocument sbolDoc, Model model, Species species, 
-			Collection collection) throws SBOLValidationException
+	public ComponentDefinition setComponentDefinition(SBOLDocument sbolDoc, Model model, Species species) throws SBOLValidationException
 	{
 		String compDef_identity =  model.getId() + "__" + species.getId();
 		
@@ -390,14 +305,14 @@ public class SBMLtoSBOL {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 						sbolDoc.createCopy(compDef);
 					}
-					collection.addMember(compDef.getIdentity());
+					//collection.addMember(compDef.getIdentity());
 					for (Sequence sequence : compDef.getSequences()) {
 						if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 							sbolDoc.createCopy(sequence);
-							collection.addMember(sequence.getIdentity());
+							//collection.addMember(sequence.getIdentity());
 						}
 					}
-					recurseComponentDefinition(sbolDoc,compDef,collection);
+					recurseComponentDefinition(sbolDoc,compDef);
 					return compDef;
 				}
 			}
@@ -412,14 +327,14 @@ public class SBMLtoSBOL {
 						if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 							sbolDoc.createCopy(compDef);
 						}
-						collection.addMember(compDef.getIdentity());
+						//collection.addMember(compDef.getIdentity());
 						for (Sequence sequence : compDef.getSequences()) {
 							if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 								sbolDoc.createCopy(sequence);
-								collection.addMember(sequence.getIdentity());
+								//collection.addMember(sequence.getIdentity());
 							}
 						}
-						recurseComponentDefinition(sbolDoc,compDef,collection);
+						recurseComponentDefinition(sbolDoc,compDef);
 						return compDef;
 					}
 				}
@@ -440,14 +355,14 @@ public class SBMLtoSBOL {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 						sbolDoc.createCopy(compDef);
 					}
-					collection.addMember(compDef.getIdentity());
+					//collection.addMember(compDef.getIdentity());
 					for (Sequence sequence : compDef.getSequences()) {
 						if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 							sbolDoc.createCopy(sequence);
-							collection.addMember(sequence.getIdentity());
+							//collection.addMember(sequence.getIdentity());
 						}
 					}
-					recurseComponentDefinition(sbolDoc,compDef,collection);
+					recurseComponentDefinition(sbolDoc,compDef);
 					return compDef;
 				}
 			}
@@ -608,7 +523,7 @@ public class SBMLtoSBOL {
 		}
 	}
 	
-	public void extractSubModels(SBMLDocument sbmlDoc, SBOLDocument sbolDoc, Collection collection, ModuleDefinition moduleDef, Model model) throws SBOLValidationException
+	public void extractSubModels(SBMLDocument sbmlDoc, SBOLDocument sbolDoc, ModuleDefinition moduleDef, Model model) throws SBOLValidationException
 	{
 		ArrayList<String> comps = new ArrayList<String>();
 		CompSBMLDocumentPlugin sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
@@ -626,7 +541,7 @@ public class SBMLtoSBOL {
 				{
 					comps.add(extModel);
 					export_recurse(sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
-							.getModelRef()).getSource(),subDocument,sbolDoc,collection);
+							.getModelRef()).getSource(),subDocument,sbolDoc);
 				}
 				Module m = moduleDef.createModule(subModelId, subDocument.getModel().getId(), VERSION);
 				
