@@ -716,6 +716,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		//String submissionVersion = cd.isSetVersion() ? cd.getVersion() : "1";
 		
 		JComboBox registries = new JComboBox();
+		registries.addItem("http://synbiohub.org");
+		registries.addItem("http://synbiohub.utah.edu");
 		registries.addItem("http://localhost:7777");
 		JTextField userField = new JTextField(12);
 		JTextField passwordField = new JTextField(12);
