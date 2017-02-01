@@ -4,6 +4,8 @@ package frontend.sbol.browser;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.*;
 import org.sbolstandard.core2.*;
@@ -145,7 +147,21 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 			if (browsePath.equals("") || browseFile.equals(file)) 
 			{
 				SBOLDocument sbolDoc = null;
-				sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+				try {
+					sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SBOLValidationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SBOLConversionException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 //				if (first) {
 //					SBOLDOC = SBOLUtility2.loadSBOLFile(filePath);
 //					for(ComponentDefinition c : SBOLDOC.getComponentDefinitions())

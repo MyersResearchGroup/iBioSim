@@ -3,6 +3,8 @@ package frontend.biomodel.gui.sbol;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.*;
 
@@ -12,6 +14,7 @@ import backend.sbol.util.SBOLFileManager2;
 import backend.sbol.util.SBOLIdentityManager2;
 import backend.sbol.util.SBOLUtility2;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.SBOLException;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.main.Gui;
 import frontend.sbol.browser.SBOLBrowser2;
@@ -20,8 +23,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
-
-import javax.swing.JCheckBox;
 
 public class SBOLAssociationPanel2 extends JPanel implements ActionListener 
 {
@@ -144,29 +145,47 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 		
 		for (String filePath : sbolFilePaths) 
 		{
-			SBOLDocument sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
-			if (sbolDoc != null) 
-			{
-				//Remove duplicate objects within an sbol document
-//				SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
-//				compResolvers.add(flattenedDoc.getComponentUriResolver());
-				for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
+			SBOLDocument sbolDoc;
+			try {
+				sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+				
+				if (sbolDoc != null) 
 				{
-					if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
+					//Remove duplicate objects within an sbol document
+//					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
+//					compResolvers.add(flattenedDoc.getComponentUriResolver());
+					for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
 					{
-						try {
-							SBOLDOC.createCopy(c);
-						}
-						catch (SBOLValidationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
+						{
+							try {
+								SBOLDOC.createCopy(c);
+							}
+							catch (SBOLValidationException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 					}
-				}
+					
+				} 
+				else
+					return false;
 				
-			} 
-			else
-				return false;
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SBOLValidationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SBOLConversionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 		}
 		
 //		aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
@@ -371,39 +390,60 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 		{
 			Gui gui = modelEditor.getGui();
 //			SBOLFileManager fileManager = new SBOLFileManager(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
-			SBOLFileManager2 fileManager = new SBOLFileManager2(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
-			if (compList.getSelectedIndex()==-1) return;
-			if (((String)compList.getSelectedValue()).contains("(Placeholder for iBioSim Composite DNA Component)")) 
-			{
-				if (fileManager.sbolFilesAreLoaded()) 
+			SBOLFileManager2 fileManager;
+			try {
+				fileManager = new SBOLFileManager2(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
+
+				if (compList.getSelectedIndex()==-1) return;
+				if (((String)compList.getSelectedValue()).contains("(Placeholder for iBioSim Composite DNA Component)")) 
 				{
-//					SBOLIdentityManager identityManager = new SBOLIdentityManager(modelEditor.getBioModel());
-					SBOLIdentityManager2 identityManager = new SBOLIdentityManager2(modelEditor.getBioModel());
-//					SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
-					SBOLDescriptorPanel2 descriptorPanel = new SBOLDescriptorPanel2(identityManager, fileManager);
-					while (descriptorPanel.panelOpen(identityManager, fileManager));
-				}
-			} 
-			else 
-			{
-//				DnaComponent dnaComponent = null;
-				ComponentDefinition dnaComponent = null;
-				String SBOLFileName = "";
-				for (String s : fileManager.getSBOLFilePaths()) 
-				{
-//					dnaComponent = fileManager.resolveDisplayID((String)compList.getSelectedValue(), s);
-					dnaComponent = SBOLDOC.getComponentDefinition(compURIs.get(compList.getSelectedIndex()));
-					if (dnaComponent!= null) 
+					if (fileManager.sbolFilesAreLoaded()) 
 					{
-						SBOLFileName = s;
-						break;
+//						SBOLIdentityManager identityManager = new SBOLIdentityManager(modelEditor.getBioModel());
+						SBOLIdentityManager2 identityManager = new SBOLIdentityManager2(modelEditor.getBioModel());
+//						SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
+						SBOLDescriptorPanel2 descriptorPanel = new SBOLDescriptorPanel2(identityManager, fileManager);
+						while (descriptorPanel.panelOpen(identityManager, fileManager));
+					}
+				} 
+				else 
+				{
+//					DnaComponent dnaComponent = null;
+					ComponentDefinition dnaComponent = null;
+					String SBOLFileName = "";
+					for (String s : fileManager.getSBOLFilePaths()) 
+					{
+//						dnaComponent = fileManager.resolveDisplayID((String)compList.getSelectedValue(), s);
+						dnaComponent = SBOLDOC.getComponentDefinition(compURIs.get(compList.getSelectedIndex()));
+						if (dnaComponent!= null) 
+						{
+							SBOLFileName = s;
+							break;
+						}
+					}
+					if (dnaComponent!=null) {
+						SBOLDescriptorPanel2 descriptorPanel = new SBOLDescriptorPanel2(SBOLFileName.substring(SBOLFileName.lastIndexOf(GlobalConstants.separator)+1),
+								dnaComponent.getDisplayId(),dnaComponent.getName(),dnaComponent.getDescription());
+						descriptorPanel.openViewer();
 					}
 				}
-				if (dnaComponent!=null) {
-					SBOLDescriptorPanel2 descriptorPanel = new SBOLDescriptorPanel2(SBOLFileName.substring(SBOLFileName.lastIndexOf(GlobalConstants.separator)+1),
-							dnaComponent.getDisplayId(),dnaComponent.getName(),dnaComponent.getDescription());
-					descriptorPanel.openViewer();
-				}
+			} catch (SBOLException e1) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), 
+						e1.getTitle(), JOptionPane.ERROR_MESSAGE);
+				e1.printStackTrace();
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SBOLValidationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SBOLConversionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		} 
 		else if (e.getSource() == add) 

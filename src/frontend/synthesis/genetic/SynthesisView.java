@@ -24,11 +24,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import backend.sbol.util.SBOLFileManager2;
@@ -36,6 +38,8 @@ import backend.synthesis.genetic.SynthesisGraph;
 import backend.synthesis.genetic.Synthesizer;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.SBOLException;
+import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.Utility;
 
@@ -280,6 +284,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	
 	public List<String> run(String synthFilePath) {
 		//NOTE: find all .sbol files and create an sbol document to its corresponding .sbol file.
+		try{
 		Set<String> sbolFilePaths = new HashSet<String>();
 		for (String libFilePath : libFilePaths) 
 			for (String fileID : new File(libFilePath).list())
@@ -308,15 +313,30 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		Synthesizer synthesizer = new Synthesizer(graphlibrary, synthProps);
 		List<List<SynthesisGraph>> solutions = synthesizer.mapSpecification(spec);
 		List<String> solutionFileIDs;
-		try {
+//		try {
 			solutionFileIDs = importSolutions(solutions, spec, fileManager, synthFilePath);
+			return solutionFileIDs;
 		}
 		catch (SBOLValidationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
+		} catch (SBOLException e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
+					e.getTitle(), JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SBOLConversionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return solutionFileIDs;
+		return null;
 	}
 	
 	private List<String> importSolutions(List<List<SynthesisGraph>> solutions, SynthesisGraph spec, 
@@ -414,9 +434,23 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					compURIs.add(compURI);
 		}
 		String sbolFileID = getSpecFileID().replace(".xml", GlobalConstants.SBOL_FILE_EXTENSION);
-		SBOLFileManager2.saveDNAComponents(fileManager.resolveURIs(new LinkedList<URI>(compURIs)), 
-				synthFilePath + separator + sbolFileID);
-		return sbolFileID;
+		try {
+			SBOLFileManager2.saveDNAComponents(fileManager.resolveURIs(new LinkedList<URI>(compURIs)), 
+					synthFilePath + separator + sbolFileID);
+			return sbolFileID;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SBOLException e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
+					e.getTitle(), JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		} catch (SBOLConversionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public void save() {

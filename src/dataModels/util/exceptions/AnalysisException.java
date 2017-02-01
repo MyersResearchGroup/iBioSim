@@ -1,4 +1,4 @@
-package backend.analysis.util;
+package dataModels.util.exceptions;
 
 public class AnalysisException extends Exception{
 

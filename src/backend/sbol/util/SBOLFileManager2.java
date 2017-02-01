@@ -1,5 +1,7 @@
 package backend.sbol.util;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,15 +12,18 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 
-import backend.sbol.util.SBOLIdentityManager2;
-import backend.sbol.util.SBOLUtility2;
+
+//import backend.sbol.util.SBOLIdentityManager2;
+//import backend.sbol.util.SBOLUtility2;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.util.GlobalConstants;
-import frontend.main.Gui;
+//import frontend.main.Gui;
+import dataModels.util.exceptions.SBOLException;
 
 public class SBOLFileManager2 {
 	
@@ -29,13 +34,16 @@ public class SBOLFileManager2 {
 	private String locatedFilePath;
 //	private UseFirstFound<DnaComponent, URI> aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
 	
-	public SBOLFileManager2(Set<String> sbolFilePaths) 
+	public SBOLFileManager2(Set<String> sbolFilePaths) throws SBOLException, FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		if (sbolFilePaths.size() == 0) 
 		{
-			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
-					"File Not Found", JOptionPane.ERROR_MESSAGE);
+//			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
+//					"File Not Found", JOptionPane.ERROR_MESSAGE);
 			sbolFilesAreLoaded = false;
+			String message = "No SBOL files are found in project.";
+			String messageTitle = "File Not Found";
+			throw new SBOLException(message, messageTitle);
 		} 
 		else 
 		{
@@ -95,33 +103,43 @@ public class SBOLFileManager2 {
 		return sbolFilesAreLoaded;
 	}
 	
-	public ComponentDefinition resolveURI(URI uri) {
+	public ComponentDefinition resolveURI(URI uri) throws SBOLException {
 		ComponentDefinition resolvedComp = null;
 		resolvedComp = SBOLDOC.getComponentDefinition(uri);
-		if (resolvedComp == null)
-			JOptionPane.showMessageDialog(Gui.frame, "DNA component with URI " + uri.toString() +
-					" could not be found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+		if (resolvedComp == null){
+//			JOptionPane.showMessageDialog(Gui.frame, "DNA component with URI " + uri.toString() +
+//					" could not be found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+			String message = "DNA component with URI " + uri.toString() +
+					" could not be found in project SBOL files.";
+			String messageTitle = "DNA Component Not Found";
+			throw new SBOLException(message, messageTitle);
+		}
 		return resolvedComp;
 	}
 	
-	public List<ComponentDefinition> resolveURIs(List<URI> uris) {
+	public List<ComponentDefinition> resolveURIs(List<URI> uris) throws SBOLException {
 		boolean error = false;
 		List<ComponentDefinition> resolvedComps = new LinkedList<ComponentDefinition>();
 		for (URI uri : uris) {
 			ComponentDefinition resolvedComp = null;
 			resolvedComp = SBOLDOC.getComponentDefinition(uri);
 			if (resolvedComp == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "DNA component with URI " + uri.toString() +
-						" could not be found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+//				JOptionPane.showMessageDialog(Gui.frame, "DNA component with URI " + uri.toString() +
+//						" could not be found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
 				error = true;
 				resolvedComps.clear();
-			} else if (!error)
+				String message = "DNA component with URI " + uri.toString() +
+						" could not be found in project SBOL files.";
+				String messageTitle = "DNA Component Not Found";
+				throw new SBOLException(message, messageTitle);
+			} 
+			else if (!error)
 				resolvedComps.add(resolvedComp);
 		}
 		return resolvedComps;
 	}
 	
-	public ComponentDefinition resolveAndLocateTopLevelURI(URI uri) {
+	public ComponentDefinition resolveAndLocateTopLevelURI(URI uri) throws SBOLException {
 		for (String sbolFilePath : fileDocMap.keySet()) {
 //			DnaComponent resolvedComp = ((SBOLDocumentImpl) fileDocMap.get(sbolFilePath))
 			ComponentDefinition resolvedComp = fileDocMap.get(sbolFilePath).getComponentDefinition(uri);
@@ -130,9 +148,13 @@ public class SBOLFileManager2 {
 				return resolvedComp;
 			}
 		}
-		JOptionPane.showMessageDialog(Gui.frame, "DNA component with URI " + uri.toString() +
-				" could not be found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
-		return null;
+//		JOptionPane.showMessageDialog(Gui.frame, "DNA component with URI " + uri.toString() +
+//				" could not be found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+		String message = "DNA component with URI " + uri.toString() +
+				" could not be found in project SBOL files.";
+		String messageTitle = "DNA Component Not Found";
+		throw new SBOLException(message, messageTitle);
+//		return null;
 	}
 	
 	
@@ -152,7 +174,7 @@ public class SBOLFileManager2 {
 		return SBOLDOC.getComponentDefinition(displayId, version);
 	}
 	
-	public void saveDNAComponent(ComponentDefinition dnaComp, SBOLIdentityManager2 identityManager, SBOLDocument tempSbolDoc) throws SBOLValidationException {
+	public void saveDNAComponent(ComponentDefinition dnaComp, SBOLIdentityManager2 identityManager, SBOLDocument tempSbolDoc) throws SBOLValidationException, FileNotFoundException, SBOLConversionException {
 		BioModel biomodel = identityManager.getBioModel();
 		String targetFilePath = biomodel.getSBOLSaveFilePath();
 		if (biomodel.getSBOLSaveFilePath() != null)
@@ -179,7 +201,7 @@ public class SBOLFileManager2 {
 		}
 	}
 	
-	public static void saveDNAComponents(List<ComponentDefinition> dnaComps, String filePath) throws SBOLValidationException {
+	public static void saveDNAComponents(List<ComponentDefinition> dnaComps, String filePath) throws SBOLValidationException, FileNotFoundException, SBOLConversionException {
 		SBOLDocument sbolDoc = new SBOLDocument();
 		for (ComponentDefinition dnaComp : dnaComps)
 			SBOLUtility2.addDNAComponent(dnaComp, sbolDoc, false);

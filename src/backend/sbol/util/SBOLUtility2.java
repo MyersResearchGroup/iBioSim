@@ -2,6 +2,7 @@ package backend.sbol.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 //import java.io.IOException;
@@ -21,7 +22,7 @@ import javax.swing.JOptionPane;
 import org.sbolstandard.core2.*;
 
 import dataModels.util.GlobalConstants;
-import frontend.main.Gui;
+//import frontend.main.Gui;
 
 public class SBOLUtility2 
 {
@@ -91,8 +92,12 @@ public class SBOLUtility2
 	 * Return the SBOLDocument parsed by the given file
 	 * @param filePath
 	 * @return
+	 * @throws SBOLConversionException 
+	 * @throws IOException 
+	 * @throws SBOLValidationException 
+	 * @throws FileNotFoundException 
 	 */
-	public static SBOLDocument loadSBOLFile(String filePath) 
+	public static SBOLDocument loadSBOLFile(String filePath) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		SBOLDocument sbolDoc = null; 
 //		try
@@ -101,46 +106,48 @@ public class SBOLUtility2
 			String fileName = f.getName().replace(".sbol", "");
 			Preferences biosimrc = Preferences.userRoot();
 			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
-			try
-			{
-				sbolDoc = SBOLReader.read(new FileInputStream(filePath));
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", 
-						"File Not Found", JOptionPane.ERROR_MESSAGE);
-			}
-			catch (SBOLValidationException e)
-			{
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
-						"Invalid SBOL File", JOptionPane.ERROR_MESSAGE);
-			}
-			catch (SBOLConversionException e)
-			{
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
-						"Invalid SBOL File", JOptionPane.ERROR_MESSAGE);
-			}
+			sbolDoc = SBOLReader.read(new FileInputStream(filePath));
+//			try
+//			{
+//				sbolDoc = SBOLReader.read(new FileInputStream(filePath));
+//			}
+//			catch (IOException e)
+//			{
+//				e.printStackTrace();
+//				JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", 
+//						"File Not Found", JOptionPane.ERROR_MESSAGE);
+//			}
+//			catch (SBOLValidationException e)
+//			{
+//				e.printStackTrace();
+//				JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
+//						"Invalid SBOL File", JOptionPane.ERROR_MESSAGE);
+//			}
+//			catch (SBOLConversionException e)
+//			{
+//				e.printStackTrace();
+//				JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
+//						"Invalid SBOL File", JOptionPane.ERROR_MESSAGE);
+//			}
 		return sbolDoc; 
 	}
 	
-	public static void writeSBOLDocument(String filePath, SBOLDocument sbolDoc) 
+	public static void writeSBOLDocument(String filePath, SBOLDocument sbolDoc) throws FileNotFoundException, SBOLConversionException 
 	{
-		try
-		{
-			SBOLWriter.write(sbolDoc, new FileOutputStream(filePath));
-		}
-		catch (SBOLConversionException e)
-		{
-			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + filePath + ".", 
-					"SBOL Conversion Error", JOptionPane.ERROR_MESSAGE);
-		}
-		catch (IOException e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + filePath + ".", 
-					"SBOL Write Error", JOptionPane.ERROR_MESSAGE);
-		}
+		SBOLWriter.write(sbolDoc, new FileOutputStream(filePath));
+//		try
+//		{
+//			SBOLWriter.write(sbolDoc, new FileOutputStream(filePath));
+//		}
+//		catch (SBOLConversionException e)
+//		{
+//			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + filePath + ".", 
+//					"SBOL Conversion Error", JOptionPane.ERROR_MESSAGE);
+//		}
+//		catch (IOException e) {
+//			JOptionPane.showMessageDialog(Gui.frame, "Error writing SBOL file at " + filePath + ".", 
+//					"SBOL Write Error", JOptionPane.ERROR_MESSAGE);
+//		}
 	}
 	
 	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present

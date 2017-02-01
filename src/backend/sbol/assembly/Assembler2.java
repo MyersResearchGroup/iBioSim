@@ -6,7 +6,8 @@ import org.sbolstandard.core2.SequenceAnnotation;
 
 import backend.sbol.util.SBOLUtility2;
 import dataModels.util.GlobalConstants;
-import frontend.main.Gui;
+//import frontend.main.Gui;
+import dataModels.util.exceptions.SBOLException;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -43,7 +44,7 @@ public class Assembler2
 //		return assemblyComp;
 //	}
 //	
-	public ComponentDefinition assembleDNAComponent(SBOLDocument sbolDoc) throws SBOLValidationException 
+	public ComponentDefinition assembleDNAComponent(SBOLDocument sbolDoc) throws SBOLValidationException, SBOLException 
 	{	
 		// Orders list of subcomponents (to be assembled into composite component) 
 		// by walking synthesis nodes
@@ -66,10 +67,16 @@ public class Assembler2
 		}
 //		assemblyGraph.print(orderedNodes);
 		if (orderedNodes == null || loadNodeTypes(orderedNodes).size() == 0) {
-			JOptionPane.showMessageDialog(Gui.frame, "Failed to assemble composite DNA component with valid ordering of sequence types among its subcomponents.\n" +
-					"(No orderings matching regular expressions for complete or partial genetic constructs were found.)", 
-					"No Valid Sequence Type Order", JOptionPane.ERROR_MESSAGE);
-			return null;
+			
+//			JOptionPane.showMessageDialog(Gui.frame, "Failed to assemble composite DNA component with valid ordering of sequence types among its subcomponents.\n" +
+//					"(No orderings matching regular expressions for complete or partial genetic constructs were found.)", 
+//					"No Valid Sequence Type Order", JOptionPane.ERROR_MESSAGE);
+			
+			String message = "Failed to assemble composite DNA component with valid ordering of sequence types among its subcomponents.\n" +
+					"(No orderings matching regular expressions for complete or partial genetic constructs were found.)";
+			String messageTitle = "No Valid Sequence Type Order";
+			throw new SBOLException(message, messageTitle);
+//			return null;
 		}
 		// Create composite component and its sequence
 //		DnaComponent assembledComp = new DnaComponentImpl();
@@ -195,7 +202,7 @@ public class Assembler2
 		return flatOrderedNodes;
 	}
 
-	private static int addSubComponent(int position, ComponentDefinition subComp, ComponentDefinition parentComp, String strand,Sequence parentSeq) throws SBOLValidationException 
+	private static int addSubComponent(int position, ComponentDefinition subComp, ComponentDefinition parentComp, String strand,Sequence parentSeq) throws SBOLValidationException, SBOLException 
 	{
 		//Assume that each CompDef given only has 1 Sequence and 1 element?
 //		if (subComp.getSequences() != null && subComp.getSequences().iterator().next().getElements() != null 
@@ -251,9 +258,12 @@ public class Assembler2
 		} 
 		else 
 		{
-			JOptionPane.showMessageDialog(Gui.frame, "DNA Component " + subComp.getDisplayId() + " has no DNA sequence.", 
-					"Missing DNA Sequence", JOptionPane.ERROR_MESSAGE);
-			return -1;
+//			JOptionPane.showMessageDialog(Gui.frame, "DNA Component " + subComp.getDisplayId() + " has no DNA sequence.", 
+//					"Missing DNA Sequence", JOptionPane.ERROR_MESSAGE);
+			String message = "DNA Component " + subComp.getDisplayId() + " has no DNA sequence.";
+			String messageTitle = "Missing DNA Sequence";
+			throw new SBOLException(message, messageTitle);
+//			return -1;
 		}	
 		return position;
 	}

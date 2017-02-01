@@ -14,6 +14,7 @@ import backend.sbol.util.SBOLFileManager2;
 import backend.sbol.util.SBOLUtility2;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.util.SBMLutilities;
+import dataModels.util.exceptions.SBOLException;
 
 public class SynthesisNode {
 	private String id;
@@ -28,7 +29,7 @@ public class SynthesisNode {
 	private List<SynthesisNode> uncoveredNodes;
 	private int uncoveredBound;
 	
-	public SynthesisNode(String type, SBase sbmlElement, SBOLFileManager2 fileManager) {
+	public SynthesisNode(String type, SBase sbmlElement, SBOLFileManager2 fileManager) throws SBOLException {
 		id = SBMLutilities.getId(sbmlElement);
 		this.type = type;
 		compURIs = new LinkedList<URI>();
@@ -45,7 +46,7 @@ public class SynthesisNode {
 		uncoveredBound = 0;
 	}
 	
-	private void processDNAComponents(SBase sbmlElement, SBOLFileManager2 fileManager) {
+	private void processDNAComponents(SBase sbmlElement, SBOLFileManager2 fileManager) throws SBOLException {
 		//NOTE: Get all DnaComponent
 		AnnotationUtility.parseSBOLAnnotation(sbmlElement, compURIs);
 		List<ComponentDefinition> dnaComps = fileManager.resolveURIs(compURIs);

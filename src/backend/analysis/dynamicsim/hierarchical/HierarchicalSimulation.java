@@ -32,8 +32,8 @@ import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
-import backend.analysis.util.AnalysisException;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.AnalysisException;
 
 
 /**
