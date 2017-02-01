@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -45,7 +46,9 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.lpn.parser.Abstraction;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
+import dataModels.util.BioObserver;
 import dataModels.util.GlobalConstants;
+import dataModels.util.Message;
 import dataModels.util.MutableString;
 import dataModels.util.dataparser.DataParser;
 import frontend.biomodel.gui.schematic.ModelEditor;
@@ -60,7 +63,7 @@ import frontend.verification.AbstPane;
  * 
  * @author Curtis Madsen
  */
-public class Run implements ActionListener
+public class Run extends BioObserver implements ActionListener
 {
 
 	private Process				reb2sac;
@@ -1267,13 +1270,14 @@ public class Run implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.CR);
+						dynSim.addObserver(this);
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
 							outDir = outDir + GlobalConstants.separator + direct;
 						}
 
-						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
+						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + GlobalConstants.separator + "running").delete();
 						logFile.close();
@@ -1287,12 +1291,13 @@ public class Run implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.DIRECT);
+						dynSim.addObserver(this);
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
 							outDir = outDir + GlobalConstants.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
+						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + GlobalConstants.separator + "running").delete();
 						logFile.close();
@@ -1306,12 +1311,13 @@ public class Run implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
+						dynSim.addObserver(this);
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
 							outDir = outDir + GlobalConstants.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
+						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + GlobalConstants.separator + "running").delete();
 						logFile.close();
@@ -1325,12 +1331,13 @@ public class Run implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
+						dynSim.addObserver(this);
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
 							outDir = outDir + GlobalConstants.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
+						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + GlobalConstants.separator + "running").delete();
 						logFile.close();
@@ -1344,12 +1351,13 @@ public class Run implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_MIXED);
+						dynSim.addObserver(this);
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
 							outDir = outDir + GlobalConstants.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
+						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + GlobalConstants.separator + "running").delete();
 						logFile.close();
@@ -1363,12 +1371,13 @@ public class Run implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_HYBRID);
+						dynSim.addObserver(this);
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
 							outDir = outDir + GlobalConstants.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
+						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + GlobalConstants.separator + "running").delete();
 						logFile.close();
@@ -1380,13 +1389,14 @@ public class Run implements ActionListener
 						double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
 
 						dynSim = new DynamicSimulation(SimulationType.RK);
+						dynSim.addObserver(this);
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
 							outDir = outDir + GlobalConstants.separator + direct;
 						}
 						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, (int) Math.floor(timeLimit / printInterval), 0, absError, printer_track_quantity, genStats,
-								simTab, reactionAbstraction, log, initialTime, outputStartTime);
+								simTab, reactionAbstraction, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + GlobalConstants.separator + "running").delete();
 						logFile.close();
@@ -1398,12 +1408,13 @@ public class Run implements ActionListener
 						double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
+						dynSim.addObserver(this);
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
 							outDir = outDir + GlobalConstants.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
+						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + GlobalConstants.separator + "running").delete();
 						logFile.close();
@@ -1415,12 +1426,13 @@ public class Run implements ActionListener
 						double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
+						dynSim.addObserver(this);
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
 							outDir = outDir + GlobalConstants.separator + direct;
 						}
-						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, log, initialTime, outputStartTime);
+						dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction,  initialTime, outputStartTime);
 						exitValue = 0;
 						new File(directory + GlobalConstants.separator + "running").delete();
 						logFile.close();
@@ -2416,4 +2428,19 @@ public class Run implements ActionListener
 			sg.stop();
 		}
 	}
+
+  @Override
+  public void update(Observable o, Object arg) {
+    // TODO Auto-generated method stub
+    Message message = (Message) arg;
+    
+    if(message.isCancel())
+    {
+      JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled", "Canceled", JOptionPane.ERROR_MESSAGE);
+    }
+    else if(message.isLog())
+    {
+      
+    }
+  }
 }

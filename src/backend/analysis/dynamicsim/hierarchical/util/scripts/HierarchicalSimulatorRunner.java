@@ -103,7 +103,7 @@ public class HierarchicalSimulatorRunner
 			try
 			{
 
-				simulator.simulate(filename, root, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, null, 0, 0);
+				simulator.simulate(filename, root, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, 0, 0);
 
 				TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
 				tsdp.outputCSV(outputDirectory + testcase + ".csv");
@@ -159,12 +159,12 @@ public class HierarchicalSimulatorRunner
 					double t2 = System.currentTimeMillis();
 					System.out.println("Flattening time: " + (t2 - t1) / 1000);
 
-					simulator.simulate(newFilename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, null, 0,
+					simulator.simulate(newFilename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, 0,
 							0);
 				}
 				else
 				{
-					simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, null, 0, 0);
+					simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, 0, 0);
 				}
 
 			}

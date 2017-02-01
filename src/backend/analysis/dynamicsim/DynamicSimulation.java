@@ -2,14 +2,15 @@ package backend.analysis.dynamicsim;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.util.Observable;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.xml.stream.XMLStreamException;
 
+import dataModels.util.Message;
 import backend.analysis.dynamicsim.flattened.SimulatorSSACR;
 import backend.analysis.dynamicsim.flattened.SimulatorSSADirect;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
@@ -17,20 +18,20 @@ import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulat
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
 import backend.analysis.util.AnalysisException;
 import frontend.graph.Graph;
-import frontend.main.Gui;
-import frontend.main.Log;
 
-public class DynamicSimulation
+public class DynamicSimulation extends Observable
 {
 
 	// simulator type
 	private final SimulationType	simulatorType;
-
+	private final Message message;
+	
 	// the simulator object
 	private ParentSimulator			simulator;
 	private boolean					cancelFlag;
 	private boolean					statisticsFlag;
-
+	
+	
 	public static enum SimulationType
 	{
 		CR, DIRECT, RK, HIERARCHICAL_DIRECT, HIERARCHICAL_HYBRID, HIERARCHICAL_RK, HIERARCHICAL_MIXED;
@@ -41,12 +42,12 @@ public class DynamicSimulation
 	 */
 	public DynamicSimulation(SimulationType type)
 	{
-
 		simulatorType = type;
+		message = new Message();
 	}
 
 	public void simulate(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, int runs, JLabel progressLabel, JFrame running, double stoichAmpValue,
-			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType, Boolean genStats, JTabbedPane simTab, String abstraction, Log log, double initialTime, double outputStartTime)
+			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType, Boolean genStats, JTabbedPane simTab, String abstraction,  double initialTime, double outputStartTime)
 	{
 		String progressText = "";
 
@@ -93,7 +94,9 @@ public class DynamicSimulation
 				simulator = new HierarchicalMixedSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, initialTime, outputStartTime);
 				break;
 			default:
-				log.addText("The simulation selection was invalid.");
+		    message.setLog("The simulation selection was invalid.");
+		    notifyObservers(message);
+				return;
 
 			}
 		}
@@ -149,24 +152,16 @@ public class DynamicSimulation
 
 		System.gc();
 		double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
-		// TODO: send to log if log not null
-		System.out.println("Memory used: " + (mem));
-
 		double val2 = System.currentTimeMillis();
 
 		simulator = null;
 		System.gc();
 		System.runFinalization();
 
-		if (log == null)
-		{
-			System.out.println("Simulation Time: " + (val2 - val1) / 1000);
-			// System.out.println("Count: " + count + " Total: " + total);
-		}
-		else
-		{
-			log.addText("Simulation Time: " + (val2 - val1) / 1000);
-		}
+
+    message.setLog("Memory used: " + (mem) + "MB, Simulation Time: " + (val2 - val1) / 1000 + "secs");
+    notifyObservers(message);
+
 		if (cancelFlag == false && statisticsFlag == true)
 		{
 			if (progressLabel != null && running != null)
@@ -209,9 +204,13 @@ public class DynamicSimulation
 
 			simulator.cancel();
 
-			JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled", "Canceled", JOptionPane.ERROR_MESSAGE);
-
+			
 			cancelFlag = true;
+
+      message.setCancel();
+      notifyObservers(message);
 		}
 	}
+
+
 }
