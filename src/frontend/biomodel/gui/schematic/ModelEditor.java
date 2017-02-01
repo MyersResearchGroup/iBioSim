@@ -25,6 +25,7 @@ import javax.swing.JLabel;
 //import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
@@ -720,7 +721,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		registries.addItem("http://synbiohub.utah.edu");
 		registries.addItem("http://localhost:7777");
 		JTextField userField = new JTextField(12);
-		JTextField passwordField = new JTextField(12);
+		JPasswordField passwordField = new JPasswordField(12);
 		JTextField idField = new JTextField(12);
 		JTextField versionField = new JTextField(12);
 		JTextField nameField = new JTextField(12);
