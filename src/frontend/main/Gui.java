@@ -2503,7 +2503,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 //		{
 //			generateSBMLFromSBOL(tree.getFile());
 //		}
-		else if (e.getActionCommand().equals("SBOLDesinger"))
+		else if (e.getActionCommand().equals("SBOLDesigner"))
 		{
 			openSBOLDesigner();
 		}
@@ -8663,7 +8663,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JMenuItem view = new JMenuItem("View");
 				view.addActionListener(this);
 				view.addMouseListener(this);
-				view.setActionCommand("SBOLDesinger");
+				view.setActionCommand("SBOLDesigner");
 //				JMenuItem copy = new JMenuItem("Copy");
 //				copy.addActionListener(this);
 //				copy.addMouseListener(this);
