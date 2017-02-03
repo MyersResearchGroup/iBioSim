@@ -60,11 +60,11 @@ import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.SBOLException;
 
 public class SBMLtoSBOL {
-	BioModel bioModel;
-	String path;
-	SBOLDocument SBOLDOC;
+	private BioModel bioModel;
+	private String path;
+	private SBOLDocument SBOLDOC;
 	
-	String VERSION = "";
+	private String VERSION = "";
 	
 	URI COLLECTION_ID ;
 	URI LANGUAGE  = EDAMOntology.SBML;
@@ -75,7 +75,6 @@ public class SBMLtoSBOL {
 		this.path = path;
 		this.bioModel = bioModel;
 		SBOLDOC = new SBOLDocument();
-//		HashSet<String> sbolFilePaths = gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
 		loadSBOLFiles(sbolFilePaths);
 	}
 	
