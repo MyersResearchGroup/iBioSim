@@ -636,7 +636,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveAsSBOL2() 
 	{
 		try {
-		SBML2SBOL sbmltosbol = new SBML2SBOL(biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),path,biomodel);
+		SBML2SBOL sbmltosbol = new SBML2SBOL(biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),path,
+				biomodel.getSBMLDocument(),biomodel.getSBMLFile());
 		
 			sbmltosbol.saveAsSBOL(biosim.getSBOLDocument());
 		} catch (SBOLValidationException e) {
@@ -658,7 +659,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void exportSBOL2(String fileType) {
 		SBML2SBOL sbmltosbol;
 		try {
-			sbmltosbol = new SBML2SBOL(biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),path,biomodel);
+			sbmltosbol = new SBML2SBOL(biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),path,
+					biomodel.getSBMLDocument(),biomodel.getSBMLFile());
 			
 			File lastFilePath;
 			Preferences biosimrc = Preferences.userRoot();
@@ -824,7 +826,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		SBOLDocument uploadDoc = new SBOLDocument();
 		uploadDoc.setComplete(false);
 		try {
-			SBML2SBOL sbmltosbol = new SBML2SBOL(biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),path,biomodel);
+			SBML2SBOL sbmltosbol = new SBML2SBOL(biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),path,
+					biomodel.getSBMLDocument(),biomodel.getSBMLFile());
 			sbmltosbol.export(uploadDoc);
 			Preferences biosimrc = Preferences.userRoot();
 			String defaultURIprefix = biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"");

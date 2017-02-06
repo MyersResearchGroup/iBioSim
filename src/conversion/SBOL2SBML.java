@@ -615,6 +615,8 @@ public class SBOL2SBML {
 	public static boolean isIOMapping(MapsTo mapping, Module subModule, SBOLDocument sbolDoc) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		FunctionalComponent remoteComp = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
+		System.out.println("subModule:"+subModule.getDefinitionURI());
+		System.out.println("mapping:"+mapping.getRemoteURI());
 		return isInputComponent(remoteComp) || isOutputComponent(remoteComp);
 	}
 	
@@ -625,6 +627,7 @@ public class SBOL2SBML {
 	}
 	
 	public static boolean isInputComponent(FunctionalComponent comp) {
+		System.out.println(comp.getIdentity());
 		return comp.getDirection().equals(DirectionType.IN);
 	}
 	

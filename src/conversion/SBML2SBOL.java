@@ -19,6 +19,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
+import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbolstandard.core2.AccessType;
@@ -46,7 +47,8 @@ import dataModels.util.GlobalConstants;
 //import frontend.main.Gui;
 
 public class SBML2SBOL {
-	private BioModel bioModel;
+	private SBMLDocument sbmlDoc;
+	private String fileName;
 	private String path;
 	private SBOLDocument SBOLDOC;
 	
@@ -56,10 +58,11 @@ public class SBML2SBOL {
 	URI LANGUAGE  = EDAMOntology.SBML;
 	URI FRAMEWORK = SystemsBiologyOntology.DISCRETE_FRAMEWORK;
 	
-	public SBML2SBOL(HashSet<String> sbolFilePaths,String path,BioModel bioModel) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
+	public SBML2SBOL(HashSet<String> sbolFilePaths,String path,SBMLDocument sbmlDocument, String fileName) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		this.path = path;
-		this.bioModel = bioModel;
+		this.fileName = fileName;
+		this.sbmlDoc = sbmlDocument;
 		SBOLDOC = new SBOLDocument();
 		loadSBOLFiles(sbolFilePaths);
 	}
@@ -108,15 +111,14 @@ public class SBML2SBOL {
 	
 	public void saveAsSBOL(SBOLDocument sbolDoc) throws SBOLValidationException {
 		sbolDoc.setTypesInURIs(true);
-		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
-		String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
+		String collection_id = "collection__" + sbmlDoc.getModel().getId();
 		Collection collection;
 		collection = sbolDoc.getCollection(collection_id, VERSION);
 		if (collection!=null) {
 			sbolDoc.removeCollection(collection);
 		}
 		collection = sbolDoc.createCollection(collection_id, VERSION);
-		export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc); 
+		export_recurse("file:" + fileName,sbmlDoc,sbmlDoc.getModel(),sbolDoc); 
 		
 //		try {
 //			collection = sbolDoc.getCollection(collection_id, VERSION);
@@ -134,8 +136,6 @@ public class SBML2SBOL {
 		sbolDoc.setTypesInURIs(false);
 	}
 	
-
-	
 	public void export(String exportFilePath,String fileType) throws IOException, SBOLConversionException, SBOLValidationException {
 		SBOLDocument sbolDoc = new SBOLDocument();
 		export(sbolDoc);
@@ -152,7 +152,6 @@ public class SBML2SBOL {
 	}
 	
 	public void export(SBOLDocument sbolDoc) throws SBOLValidationException {
-		SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 		Preferences biosimrc = Preferences.userRoot();
 		sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 		sbolDoc.setComplete(false);
@@ -161,12 +160,11 @@ public class SBML2SBOL {
 		//String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
 		//Collection collection;
 		//collection = sbolDoc.createCollection(collection_id, VERSION);
-		export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc); //,collection);
+		export_recurse("file:" + fileName,sbmlDoc,sbmlDoc.getModel(),sbolDoc); //,collection);
 	}
 	
-	public void export_recurse(String source,SBMLDocument sbmlDoc,SBOLDocument sbolDoc) throws SBOLValidationException 
+	public void export_recurse(String source,SBMLDocument sbmlDoc,Model model,SBOLDocument sbolDoc) throws SBOLValidationException 
 	{
-		Model model    = sbmlDoc.getModel();
 		//String modelId = model.getId();
 		URI sourceURI  = URI.create(source);
 
@@ -250,7 +248,7 @@ public class SBML2SBOL {
 				}
 			}
 		}
-		extractSubModels(sbmlDoc, sbolDoc, moduleDef, model);
+		extractSubModels(source, sbmlDoc, sbolDoc, moduleDef, model);
 	}
 	
 	public void recurseComponentDefinition(SBOLDocument sbolDoc,ComponentDefinition cd) throws SBOLValidationException {
@@ -508,27 +506,40 @@ public class SBML2SBOL {
 		}
 	}
 	
-	public void extractSubModels(SBMLDocument sbmlDoc, SBOLDocument sbolDoc, ModuleDefinition moduleDef, Model model) throws SBOLValidationException
+	public void extractSubModels(String source, SBMLDocument sbmlDoc, SBOLDocument sbolDoc, ModuleDefinition moduleDef, Model model) throws SBOLValidationException
 	{
 		ArrayList<String> comps = new ArrayList<String>();
 		CompSBMLDocumentPlugin sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
-		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
+		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(model);
 
 		if (sbmlCompModel.getListOfSubmodels().size()>0) 
 		{
 //			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
 			for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
 				String subModelId = sbmlCompModel.getListOfSubmodels().get(i).getId();
-				String extModel = sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
-						.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-				SBMLDocument subDocument = SBMLutilities.readSBML(path + GlobalConstants.separator + extModel);
-				if (!comps.contains(extModel)) 
-				{
-					comps.add(extModel);
-					export_recurse(sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
-							.getModelRef()).getSource(),subDocument,sbolDoc);
-				}
-				Module m = moduleDef.createModule(subModelId, subDocument.getModel().getId(), VERSION);
+				String modelRef = sbmlCompModel.getListOfSubmodels().get(subModelId).getModelRef();
+				ExternalModelDefinition extModelRef = sbmlComp.getListOfExternalModelDefinitions().get(modelRef);
+				Model subModel = null;
+				if (extModelRef!=null) {
+					String extModel = extModelRef.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+					SBMLDocument subDocument = SBMLutilities.readSBML(path + GlobalConstants.separator + extModel);
+					subModel = subDocument.getModel();
+					if (!comps.contains(modelRef)) {
+						comps.add(modelRef);
+						export_recurse(extModelRef.getSource(),subDocument,subModel,sbolDoc);
+					}
+				} else {
+					subModel = sbmlComp.getListOfModelDefinitions().get(modelRef);
+					if (subModel==null) {
+						System.out.println("Cannot find "+modelRef);
+					} else {
+						if (!comps.contains(modelRef)) {
+							comps.add(modelRef);
+							export_recurse(source,sbmlDoc,subModel,sbolDoc);
+						}
+					}	
+				}	
+				Module m = moduleDef.createModule(subModelId, subModel.getId(), VERSION);
 				
 				for (int j = 0; j < model.getSpeciesCount(); j++) 
 				{
@@ -584,7 +595,7 @@ public class SBML2SBOL {
 	public static void main(String[] args) {
 		String inputName = null;
 		String outputName = null;
-		String includePath = ".";
+		String includePath = null;
 		HashSet<String> sbolInputFiles = new HashSet<String>();
 		
 		//GOAL: inputFile -I SBML_ExternalPath -o outputFileName
@@ -618,17 +629,20 @@ public class SBML2SBOL {
 				}
 				
 			}
-			BioModel bioModel = null;
-			if(includePath != null && inputName != null)
+			SBMLDocument sbmlDoc = null;
+			if(inputName != null)
 			{
-				bioModel = new BioModel(includePath);
-				bioModel.load(inputName);
+				if (includePath == null) {
+					sbmlDoc = SBMLutilities.readSBML(inputName);
+				} else {
+					sbmlDoc = SBMLutilities.readSBML(includePath + GlobalConstants.separator + inputName);
+				}
 			} else {
 				usage();
 			}
 			try {
 				
-				SBML2SBOL sbml2Sbol = new SBML2SBOL(sbolInputFiles, includePath, bioModel);
+				SBML2SBOL sbml2Sbol = new SBML2SBOL(sbolInputFiles, includePath, sbmlDoc, inputName);
 				sbml2Sbol.export(outputName, "SBOL");
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
