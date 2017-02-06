@@ -1,9 +1,13 @@
 package conversion;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -28,11 +32,15 @@ import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.RefinementType;
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLReader;
+import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Identified;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
+import conversion.scripts.Arguments;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.annotation.SBOLAnnotation;
 import dataModels.biomodel.parser.BioModel;
@@ -40,9 +48,9 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 
-public class ModelGenerator {
+public class SBOL2SBML {
 	
-	public ModelGenerator() {
+	public SBOL2SBML() {
 	}
 	
 	public static String getDisplayID(Identified sbolElement) { 
@@ -843,6 +851,99 @@ public class ModelGenerator {
 				return true;
 		}
 		return false;
+	}
+	
+	private static void usage() {
+		System.err.println("SBOL2SBML");
+		System.err.println("Description: converts SBOL into SBML.");
+		System.err.println();
+		System.err.println("Usage:");
+		System.err.println("\tjava --jar SBOL2SBML.jar [options] <inputFile> [-o <outputLocation>]");
+		System.err.println();
+		System.err.println("Options:");
+		System.err.println("\t-u  URI of ModuleDefinition to convert (optional)");
+		System.exit(1);
+	}
+		
+	public static void main(String[] args) {
+		String inputName=null;
+		String outputName=null;
+		String uri=null;
+		
+		//GOAL: inputFile -o outputLocation -u optionalURI
+		
+		if(args.length == 0){
+			usage();
+		}
+
+
+		if(args[0].equals("-h")){
+			usage();	
+		}
+		else{
+			inputName = args[0];
+			if (inputName==null) {
+				usage();
+			}
+			for(int i = 1; i< args.length-1; i=i+2){
+				String flag = args[i];
+				String value = args[i+1];
+				switch(flag)
+				{
+				case "-o":
+					outputName = value;
+					break;
+				case "-u":
+					uri = value;
+					break;
+				default:
+					usage();
+					return;
+				}
+				
+			}
+
+			SBOLDocument sbolDoc;
+			try {
+				sbolDoc = SBOLReader.read(new FileInputStream(inputName));
+				String projectDirectory = ".";
+				if (outputName!=null) 
+					projectDirectory = outputName;
+				
+				if(uri!=null){
+					ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(uri));
+					List<BioModel> models = SBOL2SBML.generateModel(projectDirectory, topModuleDef, sbolDoc);
+					for (BioModel model : models)
+					{
+						model.save(projectDirectory + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+					}
+				}
+				else{
+					//No ModuleDefinition URI provided so loop over all rootModuleDefinition
+					for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
+					{
+						List<BioModel> models = SBOL2SBML.generateModel(projectDirectory, moduleDef, sbolDoc);
+						for (BioModel model : models)
+						{
+							model.save(projectDirectory + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+						}
+					}
+				}
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SBOLValidationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SBOLConversionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
 	}
 
 }

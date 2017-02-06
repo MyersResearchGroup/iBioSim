@@ -150,7 +150,7 @@ import backend.analysis.util.SEDMLutilities;
 import backend.sbol.util.SBOLUtility2;
 import backend.verification.platu.platuLpn.io.PlatuGrammarLexer;
 import backend.verification.platu.platuLpn.io.PlatuGrammarParser;
-import conversion.ModelGenerator;
+import conversion.SBOL2SBML;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.annotation.SBOLAnnotation;
 import dataModels.biomodel.parser.BioModel;
@@ -7356,7 +7356,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				//BioModel targetModel = new BioModel(projectDirectory);
 				//if (!targetModel.load(projectDirectory + File.separator + ModelGenerator.getDisplayID(moduleDef) + ".xml"))
 				//{
-				List<BioModel> models = ModelGenerator.generateModel(root, moduleDef, sbolDoc);
+				List<BioModel> models = SBOL2SBML.generateModel(root, moduleDef, sbolDoc);
 				for (BioModel model : models)
 				{
 					if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml", 

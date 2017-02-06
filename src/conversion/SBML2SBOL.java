@@ -52,6 +52,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 
 import backend.sbol.util.SBOLUtility2;
+import conversion.scripts.Arguments;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
@@ -59,7 +60,7 @@ import dataModels.util.GlobalConstants;
 //import frontend.main.Gui;
 import dataModels.util.exceptions.SBOLException;
 
-public class SBMLtoSBOL {
+public class SBML2SBOL {
 	private BioModel bioModel;
 	private String path;
 	private SBOLDocument SBOLDOC;
@@ -70,7 +71,7 @@ public class SBMLtoSBOL {
 	URI LANGUAGE  = EDAMOntology.SBML;
 	URI FRAMEWORK = SystemsBiologyOntology.DISCRETE_FRAMEWORK;
 	
-	public SBMLtoSBOL(HashSet<String> sbolFilePaths,String path,BioModel bioModel) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
+	public SBML2SBOL(HashSet<String> sbolFilePaths,String path,BioModel bioModel) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		this.path = path;
 		this.bioModel = bioModel;
@@ -578,6 +579,84 @@ public class SBMLtoSBOL {
 						}
 					}
 				}
+			}
+		}
+	}
+	
+	private static void usage() {
+		System.err.println("SBML2SBOL");
+		System.err.println("Description: converts SBML into SBOL.");
+		System.err.println();
+		System.err.println("Usage:");
+		System.err.println("\tjava --jar SBML2SBOL.jar [options] <inputFile> [-o <outputFile>]");
+		System.err.println();
+		System.err.println("Options:");
+		System.err.println("\t-I  include path for SBML files (optional)");
+		System.err.println("\t-s  SBOL library file (optional)");
+		System.exit(1);
+	}
+	
+	public static void main(String[] args) {
+		String inputName = null;
+		String outputName = null;
+		String includePath = ".";
+		HashSet<String> sbolInputFiles = new HashSet<String>();
+		
+		//GOAL: inputFile -I SBML_ExternalPath -o outputFileName
+		if(args.length == 0){
+			usage();
+		}
+		
+		
+		if(args[0].equals("-h")){
+			usage();
+		}
+		else{
+			inputName = args[0];
+			for(int i = 1; i< args.length-1; i=i+2){
+				String flag = args[i];
+				String value = args[i+1];
+				
+				switch(flag)
+				{
+				case "-I":
+					includePath = value;
+					break;
+				case "-o":
+					outputName = value;
+					break;
+				case "-s":
+					sbolInputFiles.add(value);
+					break;
+				default:
+					usage();
+				}
+				
+			}
+			BioModel bioModel = null;
+			if(includePath != null && inputName != null)
+			{
+				bioModel = new BioModel(includePath);
+				bioModel.load(inputName);
+			} else {
+				usage();
+			}
+			try {
+				
+				SBML2SBOL sbml2Sbol = new SBML2SBOL(sbolInputFiles, includePath, bioModel);
+				sbml2Sbol.export(outputName, "SBOL");
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SBOLValidationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SBOLConversionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
