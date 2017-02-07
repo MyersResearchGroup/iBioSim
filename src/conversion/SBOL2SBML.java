@@ -627,7 +627,6 @@ public class SBOL2SBML {
 	}
 	
 	public static boolean isInputComponent(FunctionalComponent comp) {
-		System.out.println(comp.getIdentity());
 		return comp.getDirection().equals(DirectionType.IN);
 	}
 	

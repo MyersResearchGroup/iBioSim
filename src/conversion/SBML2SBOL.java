@@ -552,10 +552,10 @@ public class SBML2SBOL {
 							if (replacement.isSetPortRef()) 
 							{
 								String mapId = model.getSpecies(j).getId();
-					
 								RefinementType refinement = RefinementType.USELOCAL;
-								m.createMapsTo(mapId, refinement, model.getSpecies(j).getId(), 
-										replacement.getPortRef().replace("output__","").replace("input__",""));
+								CompModelPlugin subCompModel = SBMLutilities.getCompModelPlugin(subModel);
+								String idRef = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
+								m.createMapsTo(mapId, refinement, model.getSpecies(j).getId(), idRef);
 							}
 						}
 					}
@@ -567,10 +567,10 @@ public class SBML2SBOL {
 							if (replacement.isSetPortRef()) 
 							{
 								String mapId = model.getSpecies(j).getId(); 
-
 								RefinementType refinement = RefinementType.USEREMOTE;
-								m.createMapsTo(mapId, refinement, model.getSpecies(j).getId(), 
-										replacement.getPortRef().replace("output__","").replace("input__",""));
+								CompModelPlugin subCompModel = SBMLutilities.getCompModelPlugin(subModel);
+								String idRef = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
+								m.createMapsTo(mapId, refinement, model.getSpecies(j).getId(), idRef);
 							} 
 						}
 					}
