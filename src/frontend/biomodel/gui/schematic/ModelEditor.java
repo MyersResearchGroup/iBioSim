@@ -726,9 +726,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		JTextField userField = new JTextField(12);
 		JPasswordField passwordField = new JPasswordField(12);
 		JTextField idField = new JTextField(12);
+		idField.setText(biomodel.getSBMLDocument().getModel().getId());
 		JTextField versionField = new JTextField(12);
+		versionField.setText("1");
 		JTextField nameField = new JTextField(12);
+		nameField.setText(biomodel.getSBMLDocument().getModel().getName());
 		JTextField descriptionField = new JTextField(12);
+		descriptionField.setText(biomodel.getSBMLDocument().getModel().getName());
 		JTextField citationField = new JTextField(12);
 		JTextField keywordField = new JTextField(12);
 		JComboBox ifExisting = new JComboBox();
