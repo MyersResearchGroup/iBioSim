@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observer;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,6 +54,8 @@ public class Project {
 	protected LPNTranRelation lpnTranRelation = null;
 	
 	protected CompositionalAnalysis analysis = null;
+	
+	private Observer observer;
 	
 	private static String separator = GlobalConstants.separator;
   	
@@ -241,6 +244,7 @@ public class Project {
 //		}
 
 		Analysis dfsStateExploration = new Analysis(sgArray);
+		dfsStateExploration.addObserver(observer);
 		if (!Options.getMarkovianModelFlag()) {
 			if (Options.getPOR().toLowerCase().equals("off")) {
 				// DFS state exploration without any state reduction.
@@ -551,5 +555,10 @@ public class Project {
         if(error){
         	System.exit(1);
         }
+    }
+    
+    public void setObserver(Observer observer)
+    {
+      this.observer = observer;
     }
 }

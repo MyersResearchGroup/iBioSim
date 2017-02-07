@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import javax.swing.JProgressBar;
 
 import backend.analysis.markov.StateGraph.Property;
-import frontend.main.util.Utility;
 
 public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 
@@ -19,7 +18,7 @@ public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 
 	public PerfromSteadyStateMarkovAnalysisThread(StateGraph sg, JProgressBar progress) {
 		super(sg);
-		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
+		//Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
 		this.sg = sg;
 		this.progress = progress;
 	}
