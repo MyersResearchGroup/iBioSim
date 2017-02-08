@@ -150,7 +150,7 @@ import backend.analysis.util.SEDMLutilities;
 import backend.sbol.util.SBOLUtility2;
 import backend.verification.platu.platuLpn.io.PlatuGrammarLexer;
 import backend.verification.platu.platuLpn.io.PlatuGrammarParser;
-import conversion.ModelGenerator;
+import conversion.SBOL2SBML;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.annotation.SBOLAnnotation;
 import dataModels.biomodel.parser.BioModel;
@@ -2019,7 +2019,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor)
 			{
-				((ModelEditor) comp).exportSynBioHub("SBOL");
+				((ModelEditor) comp).exportSynBioHub();
 			}
 			else if (comp instanceof SBOLDesignerPlugin)
 			{
@@ -2503,7 +2503,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 //		{
 //			generateSBMLFromSBOL(tree.getFile());
 //		}
-		else if (e.getActionCommand().equals("SBOLDesinger"))
+		else if (e.getActionCommand().equals("SBOLDesigner"))
 		{
 			openSBOLDesigner();
 		}
@@ -7356,7 +7356,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				//BioModel targetModel = new BioModel(projectDirectory);
 				//if (!targetModel.load(projectDirectory + File.separator + ModelGenerator.getDisplayID(moduleDef) + ".xml"))
 				//{
-				List<BioModel> models = ModelGenerator.generateModel(root, moduleDef, sbolDoc);
+				List<BioModel> models = SBOL2SBML.generateModel(root, moduleDef, sbolDoc);
 				for (BioModel model : models)
 				{
 					if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml", 
@@ -8663,7 +8663,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JMenuItem view = new JMenuItem("View");
 				view.addActionListener(this);
 				view.addMouseListener(this);
-				view.setActionCommand("SBOLDesinger");
+				view.setActionCommand("SBOLDesigner");
 //				JMenuItem copy = new JMenuItem("Copy");
 //				copy.addActionListener(this);
 //				copy.addMouseListener(this);
