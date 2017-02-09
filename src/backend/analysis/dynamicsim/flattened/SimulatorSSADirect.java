@@ -9,7 +9,6 @@ import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import dataModels.util.MutableBoolean;
-import frontend.main.Gui;
 import odk.lang.FastMath;
 
 public class SimulatorSSADirect extends Simulator
@@ -80,8 +79,8 @@ public class SimulatorSSADirect extends Simulator
 			// if a constraint fails
 			if (constraintFailureFlag == true)
 			{
-
-				JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled Due To Constraint Failure", "Constraint Failure", JOptionPane.ERROR_MESSAGE);
+			  message.setErrorDialog("Simulation Canceled Due To Constraint Failure", "Constraint Failure");
+        this.notifyObservers(message);
 				return;
 			}
 
