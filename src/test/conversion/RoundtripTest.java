@@ -42,8 +42,7 @@ public class RoundtripTest extends ConversionAbstractTests{
 		inputFile = outputFile;
 		outputFile = sbol2sbml_outputDir + fileName + ".xml";
 		String[] sbol2sbml_cmdArgs = {inputFile,"-o", outputFile};
-		SBOL2SBML.main(sbol2sbml_cmdArgs);
-		
+		SBOL2SBML.main(sbol2sbml_cmdArgs);	
 	}
 	
 	public void convertSBML(String fileName){
