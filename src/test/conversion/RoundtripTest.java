@@ -66,6 +66,6 @@ public class RoundtripTest extends ConversionAbstractTests{
 	public void run_repressibleTU_Connected(){
 		
 		String fileName = "repressibleTU_Connected";
-		roundtripSBMLFile(fileName);
+		roundtripSBMLFile(fileName);   
 	}
 }
