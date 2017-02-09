@@ -46,6 +46,22 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
 //import frontend.main.Gui;
 
+/**
+ * This class will convert SBML L3V1 to SBOL 2.0. 
+ * During the course of the conversion from SBML to SBOL: 
+ * Each SBML Model will be mapped to its corresponding SBOL ModuleDefinition. 
+ * All SBML Species will be mapped to SBOL ComponentDefinitions and FunctionalComponents.
+ * All SBML Reactions will be mapped to SBOL Interactions.
+ * All SBML Replacements objects will be converted to SBOL MapsTo object.
+ * 
+ * SBO terms are assigned to SBOL Participation objects to indicate whether SBML reactions is a degradation, production, or complex reactions.
+ * 
+ * For any SBML elements that is unable to directly convert to SBOL data objects, their information will be dropped.
+ * (i.e. paramaters, kinetic values...etc)
+ * @author Tramy Nguyen 
+ * @author Chris Myers
+ *
+ */
 public class SBML2SBOL {
 	private SBMLDocument sbmlDoc;
 	private String fileName;
@@ -598,7 +614,7 @@ public class SBML2SBOL {
 		String includePath = null;
 		HashSet<String> sbolInputFiles = new HashSet<String>();
 		
-		//GOAL: inputFile -I SBML_ExternalPath -o outputFileName
+		//GOAL: inputFile -o outputFileName
 		if(args.length == 0){
 			usage();
 		}

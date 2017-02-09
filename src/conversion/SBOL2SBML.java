@@ -45,6 +45,12 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 
+/**
+ * 
+ * @author Nicholas Rhoener
+ * @author Chris Myers
+ * @author Tramy Nguyen
+ */
 public class SBOL2SBML {
 	
 	public SBOL2SBML() {
