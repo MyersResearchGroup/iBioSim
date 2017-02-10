@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
+import javax.swing.JOptionPane;
+import javax.xml.namespace.QName;
+
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
@@ -22,6 +25,8 @@ import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
+import org.sbolstack.frontend.StackException;
+import org.sbolstack.frontend.StackFrontend;
 import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.Collection;
 import org.sbolstandard.core2.ComponentDefinition;
@@ -38,13 +43,23 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+import org.sbolstandard.core2.TopLevel;
+
+import com.clarkparsia.sbol.editor.Registries;
+import com.clarkparsia.sbol.editor.Registry;
+import com.clarkparsia.sbol.editor.SBOLEditorPreferences;
+import com.clarkparsia.versioning.PersonInfo;
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 
 import backend.sbol.util.SBOLUtility2;
+import conversion.scripts.Arguments;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
 //import frontend.main.Gui;
+import dataModels.util.exceptions.SBOLException;
 
 /**
  * This class will convert SBML L3V1 to SBOL 2.0. 
