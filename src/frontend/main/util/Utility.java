@@ -16,7 +16,11 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -44,85 +48,85 @@ import frontend.main.Gui;
  */
 public class Utility {
 
-public static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
-    
-    String message;
-    
-    //Implements Thread.UncaughtExceptionHandler.uncaughtException()
-    @Override
-    public void uncaughtException(Thread th, Throwable ex) {
-      final JFrame exp = new JFrame("Unhandled Exception");
-      StringWriter sw = new StringWriter();
-      PrintWriter pw = new PrintWriter(sw);
-      ex.printStackTrace(pw);
-      ex.printStackTrace();
-      message = sw.toString(); // stack trace as a string
-      JLabel error = new JLabel("Program has thrown an exception of the type:");
-      JLabel errMsg = new JLabel(ex.toString());
-      JButton details = new JButton("Details");
-      details.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          Object[] options = { "Close" };
-          JTextArea textArea = new JTextArea(message);
-          JScrollPane scrollPane = new JScrollPane(textArea);  
-          textArea.setLineWrap(false);  
-          textArea.setWrapStyleWord(false); 
-          scrollPane.setPreferredSize( new Dimension( 500, 500 ) );
-          JOptionPane.showOptionDialog(exp, scrollPane, "Details", JOptionPane.YES_OPTION, 
-              JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        }
-      });
-      JButton report = new JButton("Send Bug Report");
-      report.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          Utility.submitBugReport("\n\nStack trace:\n"+message);
-        }
-      });
-      JButton close = new JButton("Close");
-      close.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          exp.dispose();
-        }
-      });
-      JPanel errMessage = new JPanel();
-      errMessage.add(error);
-      JPanel errMsgPanel = new JPanel();
-      errMsgPanel.add(errMsg);
-      JPanel buttons = new JPanel();
-      buttons.add(details);
-      buttons.add(report);
-      buttons.add(close);
-      JPanel expPanel = new JPanel(new BorderLayout());
-      expPanel.add(errMessage,"North");
-      expPanel.add(errMsgPanel,"Center");
-      expPanel.add(buttons,"South");
-      exp.setContentPane(expPanel);
-      exp.pack();
-      Dimension screenSize;
-      try {
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        screenSize = tk.getScreenSize();
-      }
-      catch (AWTError awe) {
-        screenSize = new Dimension(640, 480);
-      }
-      Dimension frameSize = exp.getSize();
-  
-      if (frameSize.height > screenSize.height) {
-        frameSize.height = screenSize.height;
-      }
-      if (frameSize.width > screenSize.width) {
-        frameSize.width = screenSize.width;
-      }
-      int x = screenSize.width / 2 - frameSize.width / 2;
-      int y = screenSize.height / 2 - frameSize.height / 2;
-      exp.setLocation(x, y);
-      exp.setVisible(true);
-    }
-  }
+	public static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+		
+		String message;
+		
+		//Implements Thread.UncaughtExceptionHandler.uncaughtException()
+		@Override
+		public void uncaughtException(Thread th, Throwable ex) {
+			final JFrame exp = new JFrame("Unhandled Exception");
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ex.printStackTrace(pw);
+			ex.printStackTrace();
+			message = sw.toString(); // stack trace as a string
+			JLabel error = new JLabel("Program has thrown an exception of the type:");
+			JLabel errMsg = new JLabel(ex.toString());
+			JButton details = new JButton("Details");
+			details.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Object[] options = { "Close" };
+					JTextArea textArea = new JTextArea(message);
+					JScrollPane scrollPane = new JScrollPane(textArea);  
+					textArea.setLineWrap(false);  
+					textArea.setWrapStyleWord(false); 
+					scrollPane.setPreferredSize( new Dimension( 500, 500 ) );
+					JOptionPane.showOptionDialog(exp, scrollPane, "Details", JOptionPane.YES_OPTION, 
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				}
+			});
+			JButton report = new JButton("Send Bug Report");
+			report.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Utility.submitBugReport("\n\nStack trace:\n"+message);
+				}
+			});
+			JButton close = new JButton("Close");
+			close.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					exp.dispose();
+				}
+			});
+			JPanel errMessage = new JPanel();
+			errMessage.add(error);
+			JPanel errMsgPanel = new JPanel();
+			errMsgPanel.add(errMsg);
+			JPanel buttons = new JPanel();
+			buttons.add(details);
+			buttons.add(report);
+			buttons.add(close);
+			JPanel expPanel = new JPanel(new BorderLayout());
+			expPanel.add(errMessage,"North");
+			expPanel.add(errMsgPanel,"Center");
+			expPanel.add(buttons,"South");
+			exp.setContentPane(expPanel);
+			exp.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			}
+			catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
+			}
+			Dimension frameSize = exp.getSize();
+	
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			exp.setLocation(x, y);
+			exp.setVisible(true);
+		}
+	}
 
 	public static class MyAuthenticator extends javax.mail.Authenticator {
 		String User;

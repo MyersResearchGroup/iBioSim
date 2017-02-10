@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
@@ -45,18 +44,16 @@ import dataModels.lpn.parser.Place;
 import dataModels.lpn.parser.Transition;
 import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
 import dataModels.util.GlobalConstants;
-import dataModels.util.Message;
+import frontend.main.Gui;
 
 import java.util.Queue;
 import java.util.Iterator;
  
-public class Analysis extends Observable{
+public class Analysis {
 
 	private LinkedList<Transition> traceCex;
 	protected Mdd mddMgr = null;
 	private HashMap<Transition, HashSet<Transition>> cachedNecessarySets = new HashMap<Transition, HashSet<Transition>>();
-	private final Message message = new Message();
-	
 	/*
 	 * visitedTrans is used in computeNecessary for a disabled transition of interest, to keep track of all transitions visited during trace-back.
 	 */
@@ -447,8 +444,9 @@ public class Analysis extends Observable{
 					System.out.println("*** Verification failed: deadlock.");
 					failure = true;
 					if(Options.get_displayResults()){
-					  message.setErrorDialog("Error",   "The system deadlocked.");
-					  this.notifyObservers(message);
+						JOptionPane.showMessageDialog(Gui.frame,
+								"The system deadlocked.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 					break main_while_loop;
 				}
@@ -572,8 +570,9 @@ public class Analysis extends Observable{
 		if(Options.getTimingAnalysisFlag()){// && !failure){
 			if(!failure){
 				if(Options.get_displayResults()){
-				  message.setErrorDialog("Success", "Verification was successful.");
-				  this.notifyObservers(message);
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Verification was successful.", "Success",
+							JOptionPane.INFORMATION_MESSAGE);
 				}
 				System.out.println("Verification was successful");
 			}
@@ -581,17 +580,17 @@ public class Analysis extends Observable{
 				System.out.println("************ System failed. ***********");
 				if(firedFailure != null){
 					if(Options.get_displayResults()){
-
-	          message.setErrorDialog("Error", "Failure transition " + firedFailure.getLabel() + " is enabled.");
-	          this.notifyObservers(message);
+						JOptionPane.showMessageDialog(Gui.frame,
+								"Failure transition " + firedFailure.getLabel() + " is enabled.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 					System.out.println("The failure transition" + firedFailure.getLabel() + "fired.");
 				}
 				else{
 					if(Options.get_displayResults()){
-
-            message.setErrorDialog("Error",    "System failed for reason other\nthan a failure transition.");
-            this.notifyObservers(message);
+						JOptionPane.showMessageDialog(Gui.frame,
+								"System failed for reason other\nthan a failure transition.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}

@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -36,6 +35,7 @@ import backend.analysis.dynamicsim.DynamicSimulation;
 import backend.analysis.dynamicsim.DynamicSimulation.SimulationType;
 import backend.analysis.dynamicsim.flattened.Simulator;
 import backend.analysis.fba.FluxBalanceAnalysis;
+import backend.analysis.incrementalsim.GillespieSSAJavaSingleStep;
 import backend.analysis.markov.BuildStateGraphThread;
 import backend.analysis.markov.PerfromSteadyStateMarkovAnalysisThread;
 import backend.analysis.markov.PerfromTransientMarkovAnalysisThread;
@@ -46,6 +46,7 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.lpn.parser.Abstraction;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
+import dataModels.util.BioObserver;
 import dataModels.util.GlobalConstants;
 import dataModels.util.Message;
 import dataModels.util.MutableString;
@@ -62,7 +63,7 @@ import frontend.verification.AbstPane;
  * 
  * @author Curtis Madsen
  */
-public class Run implements ActionListener, Observer
+public class Run extends BioObserver implements ActionListener
 {
 
 	private Process				reb2sac;
@@ -986,7 +987,6 @@ public class Run implements ActionListener, Observer
 						}
 					}
 					sg = new StateGraph(lhpnFile);
-					sg.addObserver(this);
 					BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, progress);
 					buildStateGraph.start();
 					buildStateGraph.join();
@@ -1242,7 +1242,27 @@ public class Run implements ActionListener, Observer
 					Preferences biosimrc = Preferences.userRoot();
 					String reactionAbstraction = abstraction == null ? "None" : abstraction.isSelected() ? "reactionAbstraction" : abstraction == null ? "None" : expandReaction.isSelected() ? "expandReaction" : "None";
 
-					if (sim.equals("SSA-CR (Dynamic)"))
+					if (sim.equals("interactive"))
+					{
+						time1 = System.nanoTime();
+						int index = -1;
+						for (int i = 0; i < simTab.getComponentCount(); i++)
+						{
+							if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
+							{
+								simTab.setSelectedIndex(i);
+								index = i;
+							}
+						}
+						GillespieSSAJavaSingleStep javaSim = new GillespieSSAJavaSingleStep();
+						String SBMLFileName = directory + GlobalConstants.separator + theFile;
+						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep, rndSeed, ((Graph) simTab.getComponentAt(index)));
+						exitValue = 0;
+						new File(directory + GlobalConstants.separator + "running").delete();
+						logFile.close();
+						return exitValue;
+					}
+					else if (sim.equals("SSA-CR (Dynamic)"))
 					{
 
 						double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
@@ -2418,17 +2438,9 @@ public class Run implements ActionListener, Observer
     {
       JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled", "Canceled", JOptionPane.ERROR_MESSAGE);
     }
-    else if(message.isConsole())
+    else if(message.isLog())
     {
-      System.out.println(message.getMessage());
-    }
-    else if(message.isErrorDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
-    }
-    else if(message.isDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
+      
     }
   }
 }

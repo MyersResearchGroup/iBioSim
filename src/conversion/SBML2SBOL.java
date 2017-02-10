@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
-import javax.swing.JOptionPane;
-import javax.xml.namespace.QName;
-
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
@@ -25,8 +22,6 @@ import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
-import org.sbolstack.frontend.StackException;
-import org.sbolstack.frontend.StackFrontend;
 import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.Collection;
 import org.sbolstandard.core2.ComponentDefinition;
@@ -43,40 +38,14 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
-import org.sbolstandard.core2.TopLevel;
-
-import com.clarkparsia.sbol.editor.Registries;
-import com.clarkparsia.sbol.editor.Registry;
-import com.clarkparsia.sbol.editor.SBOLEditorPreferences;
-import com.clarkparsia.versioning.PersonInfo;
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
 
 import backend.sbol.util.SBOLUtility2;
-import conversion.scripts.Arguments;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
 //import frontend.main.Gui;
-import dataModels.util.exceptions.SBOLException;
 
-/**
- * This class will convert SBML L3V1 to SBOL 2.0. 
- * During the course of the conversion from SBML to SBOL: 
- * Each SBML Model will be mapped to its corresponding SBOL ModuleDefinition. 
- * All SBML Species will be mapped to SBOL ComponentDefinitions and FunctionalComponents.
- * All SBML Reactions will be mapped to SBOL Interactions.
- * All SBML Replacements objects will be converted to SBOL MapsTo object.
- * 
- * SBO terms are assigned to SBOL Participation objects to indicate whether SBML reactions is a degradation, production, or complex reactions.
- * 
- * For any SBML elements that is unable to directly convert to SBOL data objects, their information will be dropped.
- * (i.e. paramaters, kinetic values...etc)
- * @author Tramy Nguyen 
- * @author Chris Myers
- *
- */
 public class SBML2SBOL {
 	private SBMLDocument sbmlDoc;
 	private String fileName;
@@ -629,7 +598,7 @@ public class SBML2SBOL {
 		String includePath = null;
 		HashSet<String> sbolInputFiles = new HashSet<String>();
 		
-		//GOAL: inputFile -o outputFileName
+		//GOAL: inputFile -I SBML_ExternalPath -o outputFileName
 		if(args.length == 0){
 			usage();
 		}

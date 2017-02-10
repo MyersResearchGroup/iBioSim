@@ -14,6 +14,7 @@ import org.sbml.jsbml.AssignmentRule;
 import dataModels.util.MutableBoolean;
 import flanagan.integration.DerivnFunction;
 import flanagan.integration.RungeKutta;
+import frontend.main.Gui;
 
 public class SimulatorODERK extends Simulator
 {
@@ -315,8 +316,7 @@ public class SimulatorODERK extends Simulator
 			// if a constraint fails
 			if (constraintFailureFlag == true)
 			{
-				message.setErrorDialog("Simulation Canceled Due To Constraint Failure", "Constraint Failure");
-	      this.notifyObservers(message);
+				JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled Due To Constraint Failure", "Constraint Failure", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 

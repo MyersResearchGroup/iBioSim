@@ -2,6 +2,7 @@ package backend.analysis.dynamicsim.flattened;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
+import frontend.main.Gui;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
 import java.awt.Point;
@@ -19,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.PriorityQueue;
 
 import javax.swing.JFrame;
@@ -60,12 +60,11 @@ import backend.analysis.dynamicsim.ParentSimulator;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
-import dataModels.util.Message;
 import dataModels.util.dataparser.DTSDParser;
 import dataModels.util.dataparser.DataParser;
 import dataModels.util.dataparser.TSDParser;
 
-public abstract class Simulator extends Observable implements ParentSimulator
+public abstract class Simulator implements ParentSimulator
 {
 
 	// SBML model
@@ -242,9 +241,6 @@ public abstract class Simulator extends Observable implements ParentSimulator
 
 	PsRandom												prng										= new PsRandom();
 
-	
-	protected final Message message = new Message();
-	
 	/**
 	 * does lots of initialization
 	 * 
@@ -320,8 +316,7 @@ public abstract class Simulator extends Observable implements ParentSimulator
 				errorString += errors.getError(i);
 			}
 
-			message.setErrorDialog("The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString, "SBML Error");
-			this.notifyObservers(message);
+			JOptionPane.showMessageDialog(Gui.frame, "The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString, "SBML Error", JOptionPane.ERROR_MESSAGE);
 
 			sbmlHasErrorsFlag = true;
 		}

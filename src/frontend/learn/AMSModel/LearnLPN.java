@@ -13,7 +13,6 @@ import backend.learn.AMSModel.LearnModel;
 import backend.learn.AMSModel.Variable;
 import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
-import dataModels.util.Message;
 import dataModels.util.dataparser.*;
 import frontend.main.*;
 
@@ -27,7 +26,7 @@ import frontend.main.*;
  * 
  * @author Curtis Madsen
  */
-public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemListener, Observer { // added ItemListener SB
+public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemListener { // added ItemListener SB
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
@@ -2380,7 +2379,6 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 				//			reqdVarsL.get(k).setCare(false);
 				//	}
 				LearnModel l = new LearnModel();
-				l.addObserver(this);
 				out.write("Sending the following thresholds for model generation \n");
 				// Warn the user if the internal thresholds don't match those being 
 				// displayed in the GUI. Useful for debugging.
@@ -2474,7 +2472,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 						}
 					}
 				}
-				LPN g = l.learnModel(directory, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, false, false, valScaleFactor, delayScaleFactor, failProp, this);
+				LPN g = l.learnModel(directory, log, gui, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, false, false, valScaleFactor, delayScaleFactor, failProp);
 				
 				// the false parameter above says that it's not generating a net for stable
 				if (new File(seedLpnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
@@ -2509,7 +2507,7 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 							varsT.add(input);
 							l = new LearnModel();
 							//LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, false, false, valScaleFactor, delayScaleFactor, null);
-							LPN moduleLPN = l.learnModel(directory,  j, thresholds, tPar, varsT, destabMap, false, false, false, valScaleFactor, delayScaleFactor, null, this);
+							LPN moduleLPN = l.learnModel(directory, log, gui, j, thresholds, tPar, varsT, destabMap, false, false, false, valScaleFactor, delayScaleFactor, null);
 							// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 							g = mergeLhpns(moduleLPN,g);
 						}	
@@ -5755,24 +5753,4 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		}
 		return l1;
 	}
-
-  @Override
-  public void update(Observable o, Object arg) {
-    // TODO Auto-generated method stub
-    Message message = (Message) arg;
-    
-    if(message.isConsole())
-    {
-      System.out.println(message.getMessage());
-    }
-    else if(message.isErrorDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
-    }
-    else if(message.isDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
-    }
-    
-  }
 }

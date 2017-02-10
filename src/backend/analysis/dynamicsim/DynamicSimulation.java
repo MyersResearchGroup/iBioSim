@@ -17,6 +17,7 @@ import backend.analysis.dynamicsim.flattened.SimulatorSSADirect;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
+import frontend.graph.Graph;
 
 public class DynamicSimulation extends Observable
 {
@@ -176,19 +177,19 @@ public class DynamicSimulation extends Observable
 			}
 
 		}
-//		if (simTab != null)
-//		{
-//			for (int i = 0; i < simTab.getComponentCount(); i++)
-//			{
-//				if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
-//				{
-//					if (simTab.getComponentAt(i) instanceof Graph)
-//					{
-//						((Graph) simTab.getComponentAt(i)).refresh();
-//					}
-//				}
-//			}
-//		}
+		if (simTab != null)
+		{
+			for (int i = 0; i < simTab.getComponentCount(); i++)
+			{
+				if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
+				{
+					if (simTab.getComponentAt(i) instanceof Graph)
+					{
+						((Graph) simTab.getComponentAt(i)).refresh();
+					}
+				}
+			}
+		}
 	}
 
 	/**

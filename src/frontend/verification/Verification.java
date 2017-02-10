@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
@@ -64,7 +62,6 @@ import dataModels.lpn.parser.LpnDecomposition.Component;
 import dataModels.lpn.parser.LpnDecomposition.LpnComponentList;
 import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
 import dataModels.util.GlobalConstants;
-import dataModels.util.Message;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.Gui;
 import frontend.main.Log;
@@ -80,7 +77,7 @@ import frontend.main.Log;
  * @author Kevin Jones
  */
 
-public class Verification extends JPanel implements ActionListener, Runnable, Observer {
+public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
@@ -1174,7 +1171,7 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 				//				}			
 				//				//Project untimed_dfs = new Project(selectedLPNsManipulated);
 				Project untimed_dfs = new Project(selectedLPNs);				
-				untimed_dfs.setObserver(this);
+
 				// ------- Debugging Messages Settings ------------
 				 //Options for printing out intermediate results during POR
 				//Options.setDebugMode(true);
@@ -1389,7 +1386,6 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 					// Options for printing the final numbers from search_dfs.
 					Options.setOutputLogFlag(true);
 					untimed_dfs.search();
-					
 				//}				
 				//else { // No POR
 //					Options.setPrjSgPath(directory + separator);
@@ -3145,24 +3141,4 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 		}
 		return true;		
 	}
-
-  @Override
-  public void update(Observable o, Object arg) {
-    Message message = (Message) arg;
-    
-    if(message.isConsole())
-    {
-      System.out.println(message.getMessage());
-    }
-    else if(message.isErrorDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
-    }
-    else if(message.isDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
-    }
-    
-    
-  }
 }
