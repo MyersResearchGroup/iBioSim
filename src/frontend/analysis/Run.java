@@ -46,7 +46,6 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.lpn.parser.Abstraction;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
-import dataModels.util.BioObserver;
 import dataModels.util.GlobalConstants;
 import dataModels.util.Message;
 import dataModels.util.MutableString;
@@ -63,7 +62,7 @@ import frontend.verification.AbstPane;
  * 
  * @author Curtis Madsen
  */
-public class Run extends BioObserver implements ActionListener
+public class Run extends Observable implements ActionListener
 {
 
 	private Process				reb2sac;
@@ -1270,7 +1269,7 @@ public class Run extends BioObserver implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.CR);
-						dynSim.addObserver(this);
+						
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
@@ -1291,7 +1290,7 @@ public class Run extends BioObserver implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.DIRECT);
-						dynSim.addObserver(this);
+						
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
@@ -1311,7 +1310,7 @@ public class Run extends BioObserver implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
-						dynSim.addObserver(this);
+						
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
@@ -1331,7 +1330,7 @@ public class Run extends BioObserver implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
-						dynSim.addObserver(this);
+						
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
@@ -1351,7 +1350,7 @@ public class Run extends BioObserver implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_MIXED);
-						dynSim.addObserver(this);
+						
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
@@ -1371,7 +1370,7 @@ public class Run extends BioObserver implements ActionListener
 						double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_HYBRID);
-						dynSim.addObserver(this);
+						
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
@@ -1389,7 +1388,7 @@ public class Run extends BioObserver implements ActionListener
 						double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
 
 						dynSim = new DynamicSimulation(SimulationType.RK);
-						dynSim.addObserver(this);
+						
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
@@ -1408,7 +1407,7 @@ public class Run extends BioObserver implements ActionListener
 						double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
-						dynSim.addObserver(this);
+						
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
@@ -1426,7 +1425,7 @@ public class Run extends BioObserver implements ActionListener
 						double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
 
 						dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
-						dynSim.addObserver(this);
+						
 						String SBMLFileName = directory + GlobalConstants.separator + theFile;
 						if (direct != null && !direct.equals("."))
 						{
@@ -2428,19 +2427,4 @@ public class Run extends BioObserver implements ActionListener
 			sg.stop();
 		}
 	}
-
-  @Override
-  public void update(Observable o, Object arg) {
-    // TODO Auto-generated method stub
-    Message message = (Message) arg;
-    
-    if(message.isCancel())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled", "Canceled", JOptionPane.ERROR_MESSAGE);
-    }
-    else if(message.isLog())
-    {
-      
-    }
-  }
 }
