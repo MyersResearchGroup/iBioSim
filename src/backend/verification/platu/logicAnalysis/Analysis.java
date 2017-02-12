@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import javax.swing.JOptionPane;
 
 import backend.verification.platu.MDD.MDT;
 import backend.verification.platu.MDD.Mdd;
@@ -44,16 +44,18 @@ import dataModels.lpn.parser.Place;
 import dataModels.lpn.parser.Transition;
 import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
 import dataModels.util.GlobalConstants;
-import frontend.main.Gui;
+import dataModels.util.Message;
 
 import java.util.Queue;
 import java.util.Iterator;
  
-public class Analysis {
+public class Analysis extends Observable{
 
 	private LinkedList<Transition> traceCex;
 	protected Mdd mddMgr = null;
 	private HashMap<Transition, HashSet<Transition>> cachedNecessarySets = new HashMap<Transition, HashSet<Transition>>();
+	private final Message message = new Message();
+	
 	/*
 	 * visitedTrans is used in computeNecessary for a disabled transition of interest, to keep track of all transitions visited during trace-back.
 	 */
@@ -444,9 +446,8 @@ public class Analysis {
 					System.out.println("*** Verification failed: deadlock.");
 					failure = true;
 					if(Options.get_displayResults()){
-						JOptionPane.showMessageDialog(Gui.frame,
-								"The system deadlocked.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+					  message.setErrorDialog("Error",   "The system deadlocked.");
+					  this.notifyObservers(message);
 					}
 					break main_while_loop;
 				}
@@ -570,9 +571,8 @@ public class Analysis {
 		if(Options.getTimingAnalysisFlag()){// && !failure){
 			if(!failure){
 				if(Options.get_displayResults()){
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Verification was successful.", "Success",
-							JOptionPane.INFORMATION_MESSAGE);
+				  message.setErrorDialog("Success", "Verification was successful.");
+				  this.notifyObservers(message);
 				}
 				System.out.println("Verification was successful");
 			}
@@ -580,17 +580,17 @@ public class Analysis {
 				System.out.println("************ System failed. ***********");
 				if(firedFailure != null){
 					if(Options.get_displayResults()){
-						JOptionPane.showMessageDialog(Gui.frame,
-								"Failure transition " + firedFailure.getLabel() + " is enabled.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+
+	          message.setErrorDialog("Error", "Failure transition " + firedFailure.getLabel() + " is enabled.");
+	          this.notifyObservers(message);
 					}
 					System.out.println("The failure transition" + firedFailure.getLabel() + "fired.");
 				}
 				else{
 					if(Options.get_displayResults()){
-						JOptionPane.showMessageDialog(Gui.frame,
-								"System failed for reason other\nthan a failure transition.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+
+            message.setErrorDialog("Error",    "System failed for reason other\nthan a failure transition.");
+            this.notifyObservers(message);
 					}
 				}
 			}

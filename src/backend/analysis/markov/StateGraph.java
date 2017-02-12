@@ -6,19 +6,19 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Observable;
 import java.util.Queue;
 import java.util.Stack;
 
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import dataModels.lpn.parser.ExprTree;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
+import dataModels.util.Message;
 import dataModels.util.dataparser.DataParser;
-import frontend.main.Gui;
 
-public class StateGraph implements Runnable {
+public class StateGraph extends Observable implements Runnable {
 	// private HashMap<String, LinkedList<State>> stateGraph;
 
 	private ArrayList<State> stateGraph;
@@ -39,6 +39,8 @@ public class StateGraph implements Runnable {
 	
 	private double totalUsedMemory, usedMemory;
 
+	private final Message message = new Message(); 
+	
 	public StateGraph(LPN lhpn) {
 		this.lhpn = lhpn;
 		stop = false;
@@ -294,31 +296,32 @@ public class StateGraph implements Runnable {
 	public boolean canPerformMarkovianAnalysis() {
 		for (String trans : lhpn.getTransitionList()) {
 			if (!lhpn.isExpTransitionRateTree(trans)) {
-				JOptionPane.showMessageDialog(Gui.frame, "LPN has transitions without exponential delay.",
-						"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+				message.setErrorDialog("Unable to Perform Markov Chain Analysis", "LPN has transitions without exponential delay.");
+        this.notifyObservers(message);
 				return false;
 			}
 			for (String var : lhpn.getVariables()) {
 				if (lhpn.isRandomBoolAssignTree(trans, var)) {
-					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
-							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+				  message.setErrorDialog("Unable to Perform Markov Chain Analysis", "LPN has assignments containing random functions.");
+					this.notifyObservers(message);
 					return false;
 				}
 				if (lhpn.isRandomContAssignTree(trans, var)) {
-					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
-							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					message.setErrorDialog("Unable to Perform Markov Chain Analysis", "LPN has assignments containing random functions.");
+          this.notifyObservers(message);
 					return false;
 				}
 				if (lhpn.isRandomIntAssignTree(trans, var)) {
-					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
-							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					message.setErrorDialog("Unable to Perform Markov Chain Analysis", "LPN has assignments containing random functions.");
+          this.notifyObservers(message);
 					return false;
 				}
 			}
 		}
 		if (lhpn.getContVars().length > 0) {
-			JOptionPane.showMessageDialog(Gui.frame, "LPN contains continuous variables.",
-					"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+
+      message.setErrorDialog("Unable to Perform Markov Chain Analysis", "LPN contains continuous variables.");
+      this.notifyObservers(message);
 			return false;
 		}
 		return true;
