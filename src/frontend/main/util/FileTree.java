@@ -103,51 +103,51 @@ public class FileTree extends JPanel implements MouseListener {
 		async = lema || atacs;
 		separator = GlobalConstants.separator;
 
-		ICON_VHDL = new ImageIcon(getClass().getResource("/frontend/icons/iconVHDL.png"));
+		ICON_VHDL = new ImageIcon(getClass().getResource("/icons/iconVHDL.png"));
 
-		ICON_S = new ImageIcon(getClass().getResource("/frontend/icons/iconS.png"));
+		ICON_S = new ImageIcon(getClass().getResource("/icons/iconS.png"));
 
-		ICON_INST = new ImageIcon(getClass().getResource("/frontend/icons/iconInst.png"));
+		ICON_INST = new ImageIcon(getClass().getResource("/icons/iconInst.png"));
 
-		ICON_PROP = new ImageIcon(getClass().getResource("/frontend/icons/prop.png"));
+		ICON_PROP = new ImageIcon(getClass().getResource("/icons/prop.png"));
 
-		ICON_LHPN = new ImageIcon(getClass().getResource("/frontend/icons/icon_pnlogo.gif"));
+		ICON_LHPN = new ImageIcon(getClass().getResource("/icons/icon_pnlogo.gif"));
 
-		ICON_VERILOG = new ImageIcon(getClass().getResource("/frontend/icons/verilog.gif"));
+		ICON_VERILOG = new ImageIcon(getClass().getResource("/icons/verilog.gif"));
 
-		ICON_CSP = new ImageIcon(getClass().getResource("/frontend/icons/iconCSP.png"));
+		ICON_CSP = new ImageIcon(getClass().getResource("/icons/iconCSP.png"));
 
-		ICON_HSE = new ImageIcon(getClass().getResource("/frontend/icons/iconHSE.png"));
+		ICON_HSE = new ImageIcon(getClass().getResource("/icons/iconHSE.png"));
 
-		ICON_UNC = new ImageIcon(getClass().getResource("/frontend/icons/iconUNC.png"));
+		ICON_UNC = new ImageIcon(getClass().getResource("/icons/iconUNC.png"));
 
-		ICON_RSG = new ImageIcon(getClass().getResource("/frontend/icons/iconRSG.png"));
+		ICON_RSG = new ImageIcon(getClass().getResource("/icons/iconRSG.png"));
 
-		ICON_MODEL = new ImageIcon(getClass().getResource("/frontend/icons/model.png"));
+		ICON_MODEL = new ImageIcon(getClass().getResource("/icons/model.png"));
 
-		ICON_DOT = new ImageIcon(getClass().getResource("/frontend/icons/dot.jpg"));
+		ICON_DOT = new ImageIcon(getClass().getResource("/icons/dot.jpg"));
 
-		ICON_SBOL = new ImageIcon(getClass().getResource("/frontend/icons/sbol.jpg"));
+		ICON_SBOL = new ImageIcon(getClass().getResource("/icons/sbol.jpg"));
 
-		ICON_SBML = new ImageIcon(getClass().getResource("/frontend/icons/sbml.jpg"));
+		ICON_SBML = new ImageIcon(getClass().getResource("/icons/sbml.jpg"));
 
-		ICON_SIMULATION = new ImageIcon(getClass().getResource("/frontend/icons/simulation.jpg"));
+		ICON_SIMULATION = new ImageIcon(getClass().getResource("/icons/simulation.jpg"));
 
-		ICON_SYNTHESIS = new ImageIcon(getClass().getResource("/frontend/icons/synth.png"));
+		ICON_SYNTHESIS = new ImageIcon(getClass().getResource("/icons/synth.png"));
 
-		ICON_VERIFY = new ImageIcon(getClass().getResource("/frontend/icons/check.png"));
+		ICON_VERIFY = new ImageIcon(getClass().getResource("/icons/check.png"));
 
-		ICON_PROJECT = new ImageIcon(getClass().getResource("/frontend/icons/project.jpg"));
+		ICON_PROJECT = new ImageIcon(getClass().getResource("/icons/project.jpg"));
 
-		ICON_GRAPH = new ImageIcon(getClass().getResource("/frontend/icons/graph.jpg"));
+		ICON_GRAPH = new ImageIcon(getClass().getResource("/icons/graph.jpg"));
 
-		ICON_PROBGRAPH = new ImageIcon(getClass().getResource("/frontend/icons/probability.jpg"));
+		ICON_PROBGRAPH = new ImageIcon(getClass().getResource("/icons/probability.jpg"));
 
-		ICON_LEARN = new ImageIcon(getClass().getResource("/frontend/icons/learn.jpg"));
+		ICON_LEARN = new ImageIcon(getClass().getResource("/icons/learn.jpg"));
 
-		ICON_MINUS = new ImageIcon(getClass().getResource("/frontend/icons/treeMinus.gif"));
+		ICON_MINUS = new ImageIcon(getClass().getResource("/icons/treeMinus.gif"));
 
-		ICON_PLUS = new ImageIcon(getClass().getResource("/frontend/icons/treePlus.gif"));
+		ICON_PLUS = new ImageIcon(getClass().getResource("/icons/treePlus.gif"));
 
 		setLayout(new BorderLayout());
 

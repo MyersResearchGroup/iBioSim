@@ -1,4 +1,4 @@
-package gcm2sbml;
+package test.gcm2sbml;
 
 import gcm2sbml.scripts.GCMScript;
 import gcm2sbml.scripts.SpeciesThresholdTester;

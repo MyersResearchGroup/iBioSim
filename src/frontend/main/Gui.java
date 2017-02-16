@@ -303,11 +303,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static Object			ICON_COLLAPSE		= UIManager.get("Tree.collapsedIcon");
 
-	private static final String		lemaVersion			= "2.9.4";
+	private static final String		lemaVersion			= "2.9.5";
 
 	private static final String		atacsVersion		= "6.1";
 
-	private static final String		iBioSimVersion		= "2.9.4";	
+	private static final String		iBioSimVersion		= "2.9.5";	
 	
 	private SEDMLDocument 			sedmlDocument		= null;
 	
@@ -379,17 +379,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (lema)
 		{
 			frame = new JFrame("LEMA");
-			frame.setIconImage(new ImageIcon(getClass().getResource("/frontend/icons/LEMA.png")).getImage());
+			frame.setIconImage(new ImageIcon(getClass().getResource("/icons/LEMA.png")).getImage());
 		}
 		else if (atacs)
 		{
 			frame = new JFrame("ATACS");
-			frame.setIconImage(new ImageIcon(getClass().getResource("/frontend/icons/ATACS.png")).getImage());
+			frame.setIconImage(new ImageIcon(getClass().getResource("/icons/ATACS.png")).getImage());
 		}
 		else
 		{
 			frame = new JFrame("iBioSim");
-			frame.setIconImage(new ImageIcon(getClass().getResource("/frontend/icons/iBioSim.png")).getImage());
+			frame.setIconImage(new ImageIcon(getClass().getResource("/icons/iBioSim.png")).getImage());
 		}
 
 		// Makes it so that clicking the x in the corner closes the program
@@ -440,23 +440,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 		// Sets up the Tool Bar
 		toolbar = new JToolBar();
-		String imgName = "/frontend/icons/save.png";
+		String imgName = "/icons/save.png";
 		saveButton = makeToolButton(imgName, "save", "Save");
 		// toolButton = new JButton("Save");
 		toolbar.add(saveButton);
-		imgName = "/frontend/icons/saveas.png";
+		imgName = "/icons/saveas.png";
 		saveasButton = makeToolButton(imgName, "saveas", "Save As");
 		toolbar.add(saveasButton);
-		imgName = "/frontend/icons/savecheck.png";
+		imgName = "/icons/savecheck.png";
 		checkButton = makeToolButton(imgName, "check", "Save and Check");
 		toolbar.add(checkButton);
-		imgName = "/frontend/icons/export.jpg";
+		imgName = "/icons/export.jpg";
 		exportButton = makeToolButton(imgName, "export", "Export");
 		toolbar.add(exportButton);
-		imgName = "/frontend/icons/run-icon.jpg";
+		imgName = "/icons/run-icon.jpg";
 		runButton = makeToolButton(imgName, "run", "Save and Run");
 		toolbar.add(runButton);
-		imgName = "/frontend/icons/refresh.jpg";
+		imgName = "/icons/refresh.jpg";
 		refreshButton = makeToolButton(imgName, "refresh", "Refresh");
 		toolbar.add(refreshButton);
 		saveButton.setEnabled(false);
@@ -1381,15 +1381,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		uOfUPanel.add(uOfU, "South");
 		if (lema)
 		{
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource("/frontend/icons/LEMA.png"))), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource("/icons/LEMA.png"))), "North");
 		}
 		else if (atacs)
 		{
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource("/frontend/icons/ATACS.png"))), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource("/icons/ATACS.png"))), "North");
 		}
 		else
 		{
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource("/frontend/icons/iBioSim.png"))), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource("/icons/iBioSim.png"))), "North");
 		}
 		// aboutPanel.add(bioSim, "North");
 		aboutPanel.add(uOfUPanel, "Center");
