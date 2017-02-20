@@ -1,9 +1,9 @@
-package backend.biomodel.scripts;
+package test.scripts;
 
 
 import java.util.ArrayList;
 
-import backend.biomodel.util.ExperimentResult;
+import dataModels.biomodel.util.ExperimentResult;
 
 
 abstract public class AbstractTester implements TesterInterface {

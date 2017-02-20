@@ -1,10 +1,10 @@
-package backend.biomodel.scripts;
+package test.scripts;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
-import backend.biomodel.util.Utility;
+import dataModels.biomodel.util.Utility;
 import frontend.main.Gui;
 import junit.framework.TestCase;
 

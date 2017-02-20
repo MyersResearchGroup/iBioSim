@@ -2836,7 +2836,7 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Promoter", mxConstants.SHAPE_RHOMBUS));
 		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Promoter", "false").equals("true"));
 		//style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
-		style.put(mxConstants.STYLE_IMAGE,getClass().getResource("/frontend/icons/dna.png"));
+		style.put(mxConstants.STYLE_IMAGE,getClass().getResource("/icons/dna.png"));
 		if (biosimrc.get(prefix+".schematic.shape.Promoter", mxConstants.SHAPE_RHOMBUS).equals(mxConstants.SHAPE_IMAGE)) {
 			style.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
 		}
@@ -2851,7 +2851,7 @@ public class BioGraph extends mxGraph {
 		//style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Promoter", mxConstants.SHAPE_RHOMBUS));
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
 		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Promoter", "false").equals("true"));
-		style.put(mxConstants.STYLE_IMAGE,getClass().getResource("/frontend/icons/dna.png"));
+		style.put(mxConstants.STYLE_IMAGE,getClass().getResource("/icons/dna.png"));
 		style.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
 		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Promoter", "#F00E0E"));
 		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Promoter", "#000000"));

@@ -1,4 +1,4 @@
-package gcm2sbml;
+package test.gcm2sbml;
 
 
 import gcm2sbml.network.GeneticNetwork;

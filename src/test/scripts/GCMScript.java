@@ -1,10 +1,10 @@
-package backend.biomodel.scripts;
+package test.scripts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import backend.biomodel.util.ExperimentResult;
-import backend.biomodel.util.Utility;
+import dataModels.biomodel.util.ExperimentResult;
+import dataModels.biomodel.util.Utility;
 import frontend.main.Gui;
 
 
