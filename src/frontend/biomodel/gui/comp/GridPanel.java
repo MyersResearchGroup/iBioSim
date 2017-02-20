@@ -2,8 +2,10 @@ package frontend.biomodel.gui.comp;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JComboBox;
@@ -11,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.xml.stream.XMLStreamException;
 
 import dataModels.biomodel.parser.BioModel;
 import dataModels.util.GlobalConstants;
@@ -128,16 +131,27 @@ public class GridPanel extends JPanel implements ActionListener {
 				BioModel compGCM = new BioModel(gcm.getPath());
 				
 				//don't allow dropping a grid component
-				if (component != "none" && compGCM.getGridEnabledFromFile(gcm.getPath() + 
-						GlobalConstants.separator + component.replace(".gcm",".xml"))) {
-					
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Dropping grid modules is disallowed.\n" +
-							"Please choose a different module.",
-							"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
-					
-					continue;
-				}
+				try {
+          if (component != "none" && compGCM.getGridEnabledFromFile(gcm.getPath() + 
+          		GlobalConstants.separator + component.replace(".gcm",".xml"))) {
+          	
+          	JOptionPane.showMessageDialog(Gui.frame,
+          			"Dropping grid modules is disallowed.\n" +
+          			"Please choose a different module.",
+          			"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
+          	
+          	continue;
+          }
+        } catch (HeadlessException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        } catch (XMLStreamException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        } catch (IOException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        }
 				int rowCount = 0, colCount = 0;
 				
 				//try to get the number of rows and columns from the user
@@ -244,15 +258,26 @@ public class GridPanel extends JPanel implements ActionListener {
 				BioModel compGCM = new BioModel(gcm.getPath());
 				
 				//don't allow dropping a grid component
-				if (!component.equals("none") && compGCM.getGridEnabledFromFile(gcm.getPath() + 
-							GlobalConstants.separator + component.replace(".gcm",".xml"))) {
-					
-					JOptionPane.showMessageDialog(Gui.frame,
-						"Dropping grid modules is disallowed.\n" +
-						"Please choose a different module.",
-						"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
-					continue;
-				}
+				try {
+          if (!component.equals("none") && compGCM.getGridEnabledFromFile(gcm.getPath() + 
+          			GlobalConstants.separator + component.replace(".gcm",".xml"))) {
+          	
+          	JOptionPane.showMessageDialog(Gui.frame,
+          		"Dropping grid modules is disallowed.\n" +
+          		"Please choose a different module.",
+          		"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
+          	continue;
+          }
+        } catch (HeadlessException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        } catch (XMLStreamException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        } catch (IOException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        }
 				int rowCount = 0, colCount = 0;
 				
 				//try to get the number of rows and columns from the user

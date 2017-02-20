@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -32,6 +33,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.locks.ReentrantLock;
@@ -62,6 +65,7 @@ import javax.swing.plaf.metal.MetalIconFactory;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -122,6 +126,7 @@ import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
+import dataModels.util.Message;
 import dataModels.util.dataparser.DTSDParser;
 import dataModels.util.dataparser.DataParser;
 import dataModels.util.dataparser.TSDParser;
@@ -140,7 +145,7 @@ import frontend.main.util.Utility;
  * 
  * @author Curtis Madsen
  */
-public class Graph extends JPanel implements ActionListener, MouseListener, ChartProgressListener {
+public class Graph extends JPanel implements ActionListener, MouseListener, ChartProgressListener, Observer {
 
 	private static final long serialVersionUID = 4350596002373546900L;
 
@@ -8703,69 +8708,80 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to load background file.", "Error", JOptionPane.ERROR_MESSAGE);
 			background = null;
 		}
-		learnSpecs = new ArrayList<String>();
-		if (background != null) {
-			if (background.endsWith(".gcm")) {
-				BioModel gcm = new BioModel(gui.getRoot());
-				gcm.load(background);
-				learnSpecs = gcm.getSpecies();
-			}
-			else if (background.endsWith(".lpn")) {
-				LPN lhpn = new LPN(gui.log);
-				lhpn.load(background);
-				/*
+		try
+		{
+		  learnSpecs = new ArrayList<String>();
+		  if (background != null) {
+		    if (background.endsWith(".gcm")) {
+		      BioModel gcm = new BioModel(gui.getRoot());
+		      gcm.load(background);
+		      learnSpecs = gcm.getSpecies();
+		    }
+		    else if (background.endsWith(".lpn")) {
+		      LPN lhpn = new LPN();
+		      lhpn.addObserver(this);
+		      lhpn.load(background);
+		      /*
 				HashMap<String, Properties> speciesMap = lhpn.getContinuous();
-				 * for (String s : speciesMap.keySet()) { learnSpecs.add(s); }
-				 */
-				// ADDED BY SB.
-				TSDParser extractVars;
-				ArrayList<String> datFileVars = new ArrayList<String>();
-				// ArrayList<String> allVars = new ArrayList<String>();
-				Boolean varPresent = false;
-				// Finding the intersection of all the variables present in all
-				// data files.
-				for (int i = 1; (new File(outDir + separator + "run-" + i + ".tsd")).exists(); i++) {
-					extractVars = new TSDParser(outDir + separator + "run-" + i + ".tsd", false);
-					datFileVars = extractVars.getSpecies();
-					if (i == 1) {
-						learnSpecs.addAll(datFileVars);
-					}
-					for (String s : learnSpecs) {
-						varPresent = false;
-						for (String t : datFileVars) {
-							if (s.equalsIgnoreCase(t)) {
-								varPresent = true;
-								break;
-							}
-						}
-						if (!varPresent) {
-							learnSpecs.remove(s);
-						}
-					}
-				}
-				// END ADDED BY SB.
-			}
-			else {
-				SBMLDocument document = SBMLutilities.readSBML(background);
-				Model model = document.getModel();
-				ListOf<Species> ids = model.getListOfSpecies();
-				for (int i = 0; i < model.getSpeciesCount(); i++) {
-					learnSpecs.add(ids.get(i).getId());
-				}
-				ListOf<Parameter> idp = model.getListOfParameters();
-				for (int i = 0; i < model.getParameterCount(); i++) {
-					learnSpecs.add(idp.get(i).getId());
-				}
-			}
+		       * for (String s : speciesMap.keySet()) { learnSpecs.add(s); }
+		       */
+		      // ADDED BY SB.
+		      TSDParser extractVars;
+		      ArrayList<String> datFileVars = new ArrayList<String>();
+		      // ArrayList<String> allVars = new ArrayList<String>();
+		      Boolean varPresent = false;
+		      // Finding the intersection of all the variables present in all
+		      // data files.
+		      for (int i = 1; (new File(outDir + separator + "run-" + i + ".tsd")).exists(); i++) {
+		        extractVars = new TSDParser(outDir + separator + "run-" + i + ".tsd", false);
+		        datFileVars = extractVars.getSpecies();
+		        if (i == 1) {
+		          learnSpecs.addAll(datFileVars);
+		        }
+		        for (String s : learnSpecs) {
+		          varPresent = false;
+		          for (String t : datFileVars) {
+		            if (s.equalsIgnoreCase(t)) {
+		              varPresent = true;
+		              break;
+		            }
+		          }
+		          if (!varPresent) {
+		            learnSpecs.remove(s);
+		          }
+		        }
+		      }
+		      // END ADDED BY SB.
+		    }
+		    else {
+		      SBMLDocument document = SBMLutilities.readSBML(background);
+		      Model model = document.getModel();
+		      ListOf<Species> ids = model.getListOfSpecies();
+		      for (int i = 0; i < model.getSpeciesCount(); i++) {
+		        learnSpecs.add(ids.get(i).getId());
+		      }
+		      ListOf<Parameter> idp = model.getListOfParameters();
+		      for (int i = 0; i < model.getParameterCount(); i++) {
+		        learnSpecs.add(idp.get(i).getId());
+		      }
+		    }
+		  }
+		  for (int i = 0; i < learnSpecs.size(); i++) {
+		    String index = learnSpecs.get(i);
+		    int j = i;
+		    while ((j > 0) && learnSpecs.get(j - 1).compareToIgnoreCase(index) > 0) {
+		      learnSpecs.set(j, learnSpecs.get(j - 1));
+		      j = j - 1;
+		    }
+		    learnSpecs.set(j, index);
+		  }
 		}
-		for (int i = 0; i < learnSpecs.size(); i++) {
-			String index = learnSpecs.get(i);
-			int j = i;
-			while ((j > 0) && learnSpecs.get(j - 1).compareToIgnoreCase(index) > 0) {
-				learnSpecs.set(j, learnSpecs.get(j - 1));
-				j = j - 1;
-			}
-			learnSpecs.set(j, index);
+		catch (XMLStreamException e) {
+		  JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+		  e.printStackTrace();
+		} catch (IOException e) {
+		  JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+		  e.printStackTrace();
 		}
 	}
 
@@ -8862,6 +8878,29 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		chartTheme.apply(chart);
 	}
+
+  @Override
+  public void update(Observable o, Object arg) {
+    Message message = (Message) arg;
+    
+    if(message.isConsole())
+    {
+      System.out.println(message.getMessage());
+    }
+    else if(message.isErrorDialog())
+    {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
+    }
+    else if(message.isDialog())
+    {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
+    }
+    else if(message.isLog())
+    {
+      log.addText(message.getMessage());
+    }
+    
+  }
 }
 
 class IconNodeRenderer extends DefaultTreeCellRenderer {

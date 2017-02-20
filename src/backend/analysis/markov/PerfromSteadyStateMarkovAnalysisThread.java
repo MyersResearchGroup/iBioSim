@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JProgressBar;
 
 import backend.analysis.markov.StateGraph.Property;
+import dataModels.util.exceptions.BioSimException;
 
 public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 
@@ -32,6 +33,10 @@ public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 
 	@Override
 	public void run() {
-		sg.performSteadyStateMarkovianAnalysis(tolerance, conditions, null, progress);
+		try {
+      sg.performSteadyStateMarkovianAnalysis(tolerance, conditions, null, progress);
+    } catch (BioSimException e) {
+      e.printStackTrace();
+    }
 	}
 }

@@ -10,6 +10,7 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
@@ -333,13 +334,22 @@ public class FileTree extends JPanel implements MouseListener {
 				if (!async && thisObject.toString().endsWith(".gcm")) {
 					String sbmlFile = thisObject.replace(".gcm",".xml");
 					BioModel bioModel = new BioModel(curPath);
-					bioModel.load(curPath + separator + sbmlFile);
-					GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
-					gcm2sbml.load(curPath + separator + thisObject.toString());
-					System.out.println(curPath + separator + thisObject.toString());
-					gcm2sbml.convertGCM2SBML(curPath,thisObject.toString());
-					bioModel.save(curPath + separator + sbmlFile);
-					files.add(sbmlFile);
+					try {
+            bioModel.load(curPath + separator + sbmlFile);
+            GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
+            gcm2sbml.load(curPath + separator + thisObject.toString());
+            System.out.println(curPath + separator + thisObject.toString());
+            gcm2sbml.convertGCM2SBML(curPath,thisObject.toString());
+            bioModel.save(curPath + separator + sbmlFile);
+            files.add(sbmlFile);
+          } catch (XMLStreamException e) {
+	          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+	          e.printStackTrace();
+	        } catch (IOException e) {
+	          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+	          e.printStackTrace();
+	        }
+					
 				}
 				else {
 					files.add(thisObject);

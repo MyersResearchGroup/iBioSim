@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -265,7 +266,7 @@ public class Utility {
 		return allFiles.list(Utility.getFilter(filter));			
 	}
 	
-	public static SBMLDocument openDocument(String filename) {
+	public static SBMLDocument openDocument(String filename) throws XMLStreamException, IOException {
 		SBMLDocument document = SBMLutilities.readSBML(filename);
 		return document;
 	}
@@ -486,4 +487,18 @@ public class Utility {
 	public static final String directory = "/home/shang/namphuon/nobackup/BiologyProjects/muller";
 	
 	public static final boolean OVERWRITE_WARNING = false;
+
+  public static void sort(Object[] sort) {
+  	int i, j;
+  	String index;
+  	for (i = 1; i < sort.length; i++) {
+  		index = (String) sort[i];
+  		j = i;
+  		while ((j > 0) && ((String) sort[j - 1]).compareToIgnoreCase(index) > 0) {
+  			sort[j] = sort[j - 1];
+  			j = j - 1;
+  		}
+  		sort[j] = index;
+  	}
+  }
 }

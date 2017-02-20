@@ -1,6 +1,8 @@
 package backend.verification.platu.markovianAnalysis;
 import javax.swing.JProgressBar;
 
+import dataModels.util.exceptions.BioSimException;
+
 
 /**
  * This class is used to construct threads for transient or nested Markovian analysis. 
@@ -41,6 +43,11 @@ public class PerfromTransientMarkovAnalysisThread extends Thread {
 
 	@Override
 	public void run() {
-		markovianAnalysis.performTransientMarkovianAnalysis(timeLimit, timeStep, printInterval, error, condition, progress, globallyTrue);
+		try {
+      markovianAnalysis.performTransientMarkovianAnalysis(timeLimit, timeStep, printInterval, error, condition, progress, globallyTrue);
+    } catch (BioSimException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 	}
 }

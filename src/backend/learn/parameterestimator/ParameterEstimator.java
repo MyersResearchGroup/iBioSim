@@ -8,7 +8,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
 
-import dataModels.util.exceptions.AnalysisException;
+import dataModels.util.exceptions.BioSimException;
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import backend.learn.genenet.Experiments;
@@ -33,7 +33,7 @@ public class ParameterEstimator
 	static ArrayList<String>	interestingSpecies	= new ArrayList<String>();
 	static String				quantityType		= "amount";
 
-	public static SBMLDocument estimate(String SBMLFileName, String root, List<String> parameterList, Experiments experiments, SpeciesCollection speciesCollection) throws IOException, XMLStreamException, AnalysisException
+	public static SBMLDocument estimate(String SBMLFileName, String root, List<String> parameterList, Experiments experiments, SpeciesCollection speciesCollection) throws IOException, XMLStreamException, BioSimException
 	{
 
 		int numberofparameters = parameterList.size();

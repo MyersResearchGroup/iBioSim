@@ -62,7 +62,7 @@ import backend.learn.parameterestimator.ParameterEstimator;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.AnalysisException;
+import dataModels.util.exceptions.BioSimException;
 import frontend.learn.parameterestimator.ParamEstimatorPanel;
 import frontend.main.Gui;
 import frontend.main.Log;
@@ -482,82 +482,83 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		speciesList = new ArrayList<String>();
 		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml")))
 		{
-			SBMLDocument document = SBMLutilities.readSBML(learnFile);
-			Model model = document.getModel();
-			// ListOf ids = model.getListOfSpecies();
-			try
-			{
-				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
-				write.write("digraph G {\n");
-				for (int i = 0; i < model.getSpeciesCount(); i++)
-				{
-					Species species = model.getSpecies(i);
-					if (BioModel.isPromoterSpecies(species))
-					{
-						continue;
-					}
-					speciesList.add(species.getId());
-					write.write(species.getId() + " [shape=ellipse,color=black,label=\"" + species.getId() + "\"" + "];\n");
-				}
-				for (int i = 0; i < model.getReactionCount(); i++)
-				{
-					Reaction r = model.getReaction(i);
-					if (BioModel.isProductionReaction(r))
-					{
-						for (int j = 0; j < r.getModifierCount(); j++)
-						{
-							ModifierSpeciesReference modifier = r.getModifier(j);
-							if (BioModel.isNeutral(modifier))
-							{
-								for (int k = 0; k < r.getProductCount(); k++)
-								{
-									SpeciesReference product = r.getProduct(k);
-									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=diamond];\n");
-								}
-							}
-							if (BioModel.isActivator(modifier))
-							{
-								for (int k = 0; k < r.getProductCount(); k++)
-								{
-									SpeciesReference product = r.getProduct(k);
-									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
-								}
-							}
-							if (BioModel.isRepressor(modifier))
-							{
-								for (int k = 0; k < r.getProductCount(); k++)
-								{
-									SpeciesReference product = r.getProduct(k);
-									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
-								}
-							}
-							if (BioModel.isRegulator(modifier))
-							{
-								for (int k = 0; k < r.getProductCount(); k++)
-								{
-									SpeciesReference product = r.getProduct(k);
-									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
-									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
-								}
-							}
-						}
-					}
-				}
-				write.write("}\n");
-				write.close();
-			}
-			catch (Exception e)
-			{
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!", "Error Writing Background", JOptionPane.ERROR_MESSAGE);
-			}
+			SBMLDocument document;
+      try {
+        document = SBMLutilities.readSBML(learnFile);
+        Model model = document.getModel();
+        FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+        write.write("digraph G {\n");
+        for (int i = 0; i < model.getSpeciesCount(); i++)
+        {
+          Species species = model.getSpecies(i);
+          if (BioModel.isPromoterSpecies(species))
+          {
+            continue;
+          }
+          speciesList.add(species.getId());
+          write.write(species.getId() + " [shape=ellipse,color=black,label=\"" + species.getId() + "\"" + "];\n");
+        }
+        for (int i = 0; i < model.getReactionCount(); i++)
+        {
+          Reaction r = model.getReaction(i);
+          if (BioModel.isProductionReaction(r))
+          {
+            for (int j = 0; j < r.getModifierCount(); j++)
+            {
+              ModifierSpeciesReference modifier = r.getModifier(j);
+              if (BioModel.isNeutral(modifier))
+              {
+                for (int k = 0; k < r.getProductCount(); k++)
+                {
+                  SpeciesReference product = r.getProduct(k);
+                  write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=diamond];\n");
+                }
+              }
+              if (BioModel.isActivator(modifier))
+              {
+                for (int k = 0; k < r.getProductCount(); k++)
+                {
+                  SpeciesReference product = r.getProduct(k);
+                  write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
+                }
+              }
+              if (BioModel.isRepressor(modifier))
+              {
+                for (int k = 0; k < r.getProductCount(); k++)
+                {
+                  SpeciesReference product = r.getProduct(k);
+                  write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
+                }
+              }
+              if (BioModel.isRegulator(modifier))
+              {
+                for (int k = 0; k < r.getProductCount(); k++)
+                {
+                  SpeciesReference product = r.getProduct(k);
+                  write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
+                  write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
+                }
+              }
+            }
+          }
+        }
+        write.write("}\n");
+        write.close();
+      } 
+      catch (Exception e)
+      {
+        JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!", "Error Writing Background", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 		else
 		{
-			BioModel bioModel = new BioModel(biosim.getRoot());
-			bioModel.load(learnFile);
-			speciesList = bioModel.getSpecies();
 			try
 			{
+
+	      BioModel bioModel = new BioModel(biosim.getRoot());
+	      bioModel.load(learnFile);
+	      speciesList = bioModel.getSpecies();
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
 				String line = null;
@@ -571,6 +572,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 			catch (Exception e)
 			{
 				JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!", "Error Writing Background", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
 			}
 		}
 		sortSpecies();
@@ -1487,7 +1489,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 			{
 				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "Something went wrong", JOptionPane.ERROR_MESSAGE);
 			} 
-			catch (AnalysisException e) {
+			catch (BioSimException e) {
 				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "Something went wrong", JOptionPane.ERROR_MESSAGE);
 			}
 
@@ -1871,10 +1873,10 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		speciesList = new ArrayList<String>();
 		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml")))
 		{
-			SBMLDocument document = SBMLutilities.readSBML(learnFile);
-			Model model = document.getModel();
 			try
 			{
+	      SBMLDocument document = SBMLutilities.readSBML(learnFile);
+	      Model model = document.getModel();
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getSpeciesCount(); i++)
@@ -1941,11 +1943,11 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		}
 		else
 		{
-			BioModel bioModel = new BioModel(biosim.getRoot());
-			bioModel.load(learnFile);
-			speciesList = bioModel.getSpecies();
 			try
 			{
+	      BioModel bioModel = new BioModel(biosim.getRoot());
+	      bioModel.load(learnFile);
+	      speciesList = bioModel.getSpecies();
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
 				String line = null;

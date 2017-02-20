@@ -4,9 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.JOptionPane;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Parameter;
 
@@ -17,6 +21,7 @@ import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.BioGraph;
+import frontend.main.Gui;
 
 
 /**
@@ -1028,7 +1033,15 @@ public class Grid {
 		//don't put blank components onto the grid or model
 		if (!compGCM.equals("none")) {
 			BioModel compGCMFile = new BioModel(bioModel.getPath());
-			compGCMFile.load(bioModel.getPath() + GlobalConstants.separator + compGCM);
+			try {
+        compGCMFile.load(bioModel.getPath() + GlobalConstants.separator + compGCM);
+		  } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			String md5 = Utility.MD5(compGCMFile.getSBMLDocument());
 			bioModel.addComponent(null, compGCM, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 					col * (width + padding) + padding, row * (height + padding) + padding, md5);

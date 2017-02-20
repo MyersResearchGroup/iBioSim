@@ -275,7 +275,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void reload(String newName) {
 		filename = newName + ".xml";
 		modelId = newName;
-		biomodel.load(path + separator + newName + ".xml");
+		try {
+      biomodel.load(path + separator + newName + ".xml");
+    } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 	}
 	
 	public void renameComponents(String oldname, String newName) {
@@ -413,12 +421,20 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		}
-		biomodel.save(path + separator + modelId + ".xml");
+		try {
+      biomodel.save(path + separator + modelId + ".xml");
+    } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 		log.addText("Saving SBML file:\n" + path + separator + modelId  + ".xml");
 		saveAsSBOL2();
 		log.addText("Converting SBML into SBOL and saving into the project's SBOL library.");
 		if (check) {
-			SBMLutilities.check(path + separator + modelId + ".xml",biomodel.getSBMLDocument(),false);
+			Utils.check(path + separator + modelId + ".xml",biomodel.getSBMLDocument(),false);
 		}	
 		biosim.updateViews(modelId + ".xml");
 
@@ -604,10 +620,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
 					e.getTitle(), JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 		}
 	
 		
@@ -652,7 +671,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		} catch (SBOLConversionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} catch (XMLStreamException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 		biosim.writeSBOLDocument();
 	}
 	
@@ -688,7 +710,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		} catch (SBOLConversionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		} catch (XMLStreamException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } 
 		
 	}
 	
@@ -841,7 +866,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		}
-		catch (SBOLValidationException | IOException | SBOLConversionException e) {
+		catch (SBOLValidationException | IOException | SBOLConversionException | XMLStreamException e) {
 			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
 					"Error Creating SBOL File", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
@@ -873,8 +898,18 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (!exportPath.equals("")) {
 			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
 			biosimrc.put("biosim.general.export_dir",dir);
-			biomodel.exportSingleFile(exportPath);
-			log.addText("Exporting SBML file:\n" + exportPath + "\n");
+			try {
+        biomodel.exportSingleFile(exportPath);
+        log.addText("Exporting SBML file:\n" + exportPath + "\n");
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        log.addText("ERROR: Exporting SBML file:\n" + exportPath + "\n");
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        log.addText("ERROR: Exporting SBML file:\n" + exportPath + "\n");
+        e.printStackTrace();
+      }
 		}
 	}
 	
@@ -891,17 +926,28 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (!exportPath.equals("")) {
 			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
 			biosimrc.put("biosim.general.export_dir",dir);
-			GCMParser parser = new GCMParser(path + separator + modelId + ".xml");
-			GeneticNetwork network = null;
-			BioModel bioModel = new BioModel(path);
-			bioModel.load(path + separator + modelId + ".xml");
-			SBMLDocument sbml = bioModel.flattenModel(true);	
-			if (sbml==null) return;
-			network = parser.buildNetwork(sbml);
-			if (network==null) return;
-			network.loadProperties(biomodel);
-			network.mergeSBML(exportPath);
-			log.addText("Exporting flat SBML file:\n" + exportPath + "\n");
+			GCMParser parser;
+      try {
+        parser = new GCMParser(path + separator + modelId + ".xml");
+        GeneticNetwork network = null;
+        BioModel bioModel = new BioModel(path);
+        bioModel.load(path + separator + modelId + ".xml");
+        SBMLDocument sbml = bioModel.flattenModel(true);  
+        if (sbml==null) return;
+        network = parser.buildNetwork(sbml);
+        if (network==null) return;
+        network.loadProperties(biomodel);
+        network.mergeSBML(exportPath);
+        log.addText("Exporting flat SBML file:\n" + exportPath + "\n");
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+        log.addText("ERROR: Exporting flat SBML file:\n" + exportPath + " failed.\n");
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+        log.addText("ERROR: Exporting flat SBML file:\n" + exportPath + "failed.\n");
+      }
 		}
 	}
 	
@@ -915,10 +961,18 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		log.addText("Saving SBML file as SystemVerilog file:\n" + path + separator + newName + "\n");
-		if (biomodel.saveAsLPN(path + separator + newName.replace(".sv", ".lpn"))) {
-			Lpn2verilog.convert(path + separator + newName.replace(".sv", ".lpn"));
-			biosim.addToTree(newName);
-		}
+		try {
+      if (biomodel.saveAsLPN(path + separator + newName.replace(".sv", ".lpn"))) {
+      	Lpn2verilog.convert(path + separator + newName.replace(".sv", ".lpn"));
+      	biosim.addToTree(newName);
+      }
+    } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 	}
 	
 	public void saveAsLPN(String newName) {
@@ -931,35 +985,53 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		log.addText("Saving SBML file as LPN file:\n" + path + separator + newName + "\n");
-		if (biomodel.saveAsLPN(path + separator + newName)) {
-			biosim.addToTree(newName);
-		}
+		try {
+      if (biomodel.saveAsLPN(path + separator + newName)) {
+      	biosim.addToTree(newName);
+      }
+    } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when saving SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 		//biosim.updateTabName(modelId + ".xml", newName + ".xml");
 		//reload(newName);
 	}		
 	
 	public void saveAs(String newName) {
-		if (new File(path + separator + newName + ".xml").exists()) {
-			int value = JOptionPane.showOptionDialog(Gui.frame, newName
-					+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (value == JOptionPane.YES_OPTION) {
-				biomodel.save(path + separator + newName + ".xml");
-				log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
-				biosim.addToTree(newName + ".xml");
-			}
-			else {
-				// Do nothing
-				return;
-			}
-		}
-		else {
-			biomodel.save(path + separator + newName + ".xml");
-			log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
-			biosim.addToTree(newName + ".xml");
-		}
-		biosim.updateTabName(modelId + ".xml", newName + ".xml");
-		reload(newName);
+	  try
+	  {
+	    if (new File(path + separator + newName + ".xml").exists()) {
+	      int value = JOptionPane.showOptionDialog(Gui.frame, newName
+	        + " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
+	        JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+	      if (value == JOptionPane.YES_OPTION) {
+	        biomodel.save(path + separator + newName + ".xml");
+	        log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
+	        biosim.addToTree(newName + ".xml");
+	      }
+	      else {
+	        // Do nothing
+	        return;
+	      }
+	    }
+	    else {
+	      biomodel.save(path + separator + newName + ".xml");
+	      log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
+	      biosim.addToTree(newName + ".xml");
+	    }
+	    biosim.updateTabName(modelId + ".xml", newName + ".xml");
+	    reload(newName);
+	  }
+	  catch (XMLStreamException e) {
+	    JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+	    e.printStackTrace();
+	  } catch (IOException e) {
+	    JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+	    e.printStackTrace();
+	  }
 	}
 
 	/**
@@ -1746,8 +1818,18 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		if(analysisMethod != null && !analysisMethod.contains("Hierarchical"))
 		{
-			SBMLDocument sbml = biomodel.flattenModel(true);	
-			if (sbml==null) return false;
+			SBMLDocument sbml;
+      try {
+        sbml = biomodel.flattenModel(true);
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+        return false;
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+        return false;
+      }
 			performModifications(sbml,dd);
 			if (analysisView==null || !analysisView.noExpand()) {
 				GCMParser parser = new GCMParser(biomodel);
@@ -1764,11 +1846,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				network.markAbstractable();
 				network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
 			} else {
-				GeneticNetwork.reformatArrayContent(biomodel, sbml, 
-						path + separator + simName + separator + stem + direct + separator + modelId + ".xml");
 				SBMLWriter writer = new SBMLWriter();
 				PrintStream p;
 				try {
+				  GeneticNetwork.reformatArrayContent(biomodel, sbml, 
+            path + separator + simName + separator + stem + direct + separator + modelId + ".xml");
 					p = new PrintStream(new FileOutputStream(path + separator + simName + separator + stem + direct + separator + modelId + ".xml"),true,"UTF-8");
 					p.print(writer.writeSBMLToString(sbml));
 					p.close();
@@ -1784,13 +1866,23 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 				catch (XMLStreamException e) {
 					e.printStackTrace();
-				}
+				} catch (IOException e) {
+          e.printStackTrace();
+        }
 				performModelChanges(stem);
 			}
 		}
 		else
 		{
-			biomodel.save(path + separator + simName + separator + stem + direct + separator + modelId + ".xml");
+			try {
+        biomodel.save(path + separator + simName + separator + stem + direct + separator + modelId + ".xml");
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when saving SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 		return true;
 	}
@@ -2437,7 +2529,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		BioModel refGCM = null;
 		if (paramsOnly) {
 			refGCM = new BioModel(path);
-			refGCM.load(path + separator + refFile);
+			try {
+        refGCM.load(path + separator + refFile);
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 		PromoterPanel panel = new PromoterPanel(id, biomodel, species, paramsOnly, refGCM, this);	
 		
@@ -2465,7 +2565,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		if (paramsOnly) {
 			refGCM = new BioModel(path);
-			refGCM.load(path + separator + refFile);
+			try {
+        refGCM.load(path + separator + refFile);
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 		
 		SpeciesPanel panel = new SpeciesPanel(id, species, components, biomodel, paramsOnly, refGCM, this, inTab);
@@ -2493,7 +2601,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		BioModel refGCM = null;
 		if (paramsOnly) {
 			refGCM = new BioModel(path);
-			refGCM.load(path + separator + refFile);
+			try {
+        refGCM.load(path + separator + refFile);
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 		InfluencePanel panel = new InfluencePanel(id, biomodel, paramsOnly, refGCM, this);
 		
@@ -2574,7 +2690,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		gcm = gcm.replace(".gcm", ".xml");
 		boolean check = true;
 		BioModel g = new BioModel(path);
-		g.load(path + separator + checkFile);
+		try {
+      g.load(path + separator + checkFile);
+    } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 		for (int i = 0; i < g.getSBMLComp().getListOfExternalModelDefinitions().size(); i++) {
 			String compGCM = g.getSBMLComp().getListOfExternalModelDefinitions().get(i).getSource().substring(7);
 			if (compGCM.equals(gcm)) {
@@ -2648,8 +2772,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		if (comp != null && !comp.equals("")) {
 			BioModel subBioModel = new BioModel(path);
-			subBioModel.load(path + separator + comp);
-			subBioModel.flattenBioModel();
+			try {
+        subBioModel.load(path + separator + comp);
+        subBioModel.flattenBioModel();
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			String oldPort = null;
 			if (selected != null) {
 				oldPort = selected.substring(selected.split(" ")[0].length()

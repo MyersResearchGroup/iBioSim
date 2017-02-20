@@ -3,7 +3,10 @@ package backend.analysis.fba;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
@@ -32,7 +35,7 @@ public class FluxBalanceAnalysis {
 	
 	private HashMap<String,Double> fluxes;
 	
-	public FluxBalanceAnalysis(String root,String sbmlFileName,double absError) {
+	public FluxBalanceAnalysis(String root,String sbmlFileName,double absError) throws XMLStreamException, IOException {
 		this.root = root;
 		this.absError = absError;
 		fluxes = new HashMap<String,Double>();

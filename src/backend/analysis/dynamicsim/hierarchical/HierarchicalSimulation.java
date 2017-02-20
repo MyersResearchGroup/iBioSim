@@ -33,7 +33,7 @@ import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.AnalysisException;
+import dataModels.util.exceptions.BioSimException;
 
 
 /**
@@ -103,7 +103,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private double              initialTime, outputStartTime;
 
   public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
-    String quantityType, String abstraction, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, AnalysisException
+    String quantityType, String abstraction, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, BioSimException
     {
     this.SBMLFileName = SBMLFileName;
     this.timeLimit = timeLimit;
@@ -164,7 +164,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       }
 
       
-      throw new AnalysisException("The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString);
+      throw new BioSimException("The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString, "Error!");
     }
 
     separator = GlobalConstants.separator;

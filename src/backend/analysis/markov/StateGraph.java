@@ -17,6 +17,7 @@ import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
 import dataModels.util.Message;
 import dataModels.util.dataparser.DataParser;
+import dataModels.util.exceptions.BioSimException;
 
 public class StateGraph extends Observable implements Runnable {
 	// private HashMap<String, LinkedList<State>> stateGraph;
@@ -327,7 +328,7 @@ public class StateGraph extends Observable implements Runnable {
 		return true;
 	}
 
-	private String removeNesting(double error, double timeStep, String prop, JProgressBar progress) {
+	private String removeNesting(double error, double timeStep, String prop, JProgressBar progress) throws BioSimException {
 		if (prop.contains("Pr=?{") || prop.contains("St=?{")) {
 			if (progress != null) {
 				progress.setString("Determining Sat Sets.");
@@ -390,7 +391,7 @@ public class StateGraph extends Observable implements Runnable {
 	}
 
 	public boolean performTransientMarkovianAnalysis(double timeLimit, double timeStep, double printInterval,
-			double error, String[] condition, JProgressBar progress, boolean globallyTrue) {
+			double error, String[] condition, JProgressBar progress, boolean globallyTrue) throws BioSimException {
 		if (!canPerformMarkovianAnalysis()) {
 			stop = true;
 			return false;
@@ -765,7 +766,7 @@ public class StateGraph extends Observable implements Runnable {
 		}
 	}
 
-	private String determineNestedProbability(double error, double timeStep, String property) {
+	private String determineNestedProbability(double error, double timeStep, String property) throws BioSimException {
 		String prop = "";
 		int braces = 0;
 		for (int i = 0; i < property.length(); i++) {
@@ -1179,7 +1180,7 @@ public class StateGraph extends Observable implements Runnable {
 		}
 	}
 
-	public boolean performSteadyStateMarkovianAnalysis(double tolerance, ArrayList<Property> props, State initial, JProgressBar progress) {
+	public boolean performSteadyStateMarkovianAnalysis(double tolerance, ArrayList<Property> props, State initial, JProgressBar progress) throws BioSimException {
 		if (!canPerformMarkovianAnalysis()) {
 			stop = true;
 			return false;

@@ -12,6 +12,8 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
@@ -717,8 +719,10 @@ public class GCM2SBML {
 	 * other stream.
 	 * 
 	 * @return
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	public void convertGCM2SBML(String root, String fileName) {
+	public void convertGCM2SBML(String root, String fileName) throws XMLStreamException, IOException {
 		String filename = root + GlobalConstants.separator + fileName;
 		int condCnt = 0;
 		for (String s : conditions) {

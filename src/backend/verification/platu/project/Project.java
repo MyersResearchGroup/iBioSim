@@ -38,6 +38,7 @@ import backend.verification.timed_state_exploration.zoneProject.Zone;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 
 public class Project {
 
@@ -128,9 +129,10 @@ public class Project {
 	/**
 	 * Find the SG for the entire project where each project state is a tuple of
 	 * local states
+	 * @throws BioSimException 
 	 * 
 	 */
-	public void search() {
+	public void search() throws BioSimException {
 		// TODO: temporarily set the input validation only to non-stochastic LPN models.
 		if (!Options.getMarkovianModelFlag())
 			validateInputs();

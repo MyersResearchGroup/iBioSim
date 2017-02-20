@@ -40,12 +40,12 @@ public class Abstraction extends LPN {
 		
 	}
 	public Abstraction(Log log, Verification pane) {
-		super(log);
+		super();
 		this.abstPane = pane.getAbstPane();
 	}
 
 	public Abstraction(LPN lhpn, Verification pane) {
-		super(lhpn.log);
+		super();
 		this.abstPane = pane.getAbstPane();
 		transitions = lhpn.transitions;
 		places = lhpn.places;
@@ -57,7 +57,7 @@ public class Abstraction extends LPN {
 	}
 
 	public Abstraction(LPN lhpn, AbstPane abst) {
-		super(lhpn.log);
+		super();
 		this.abstPane = abst;
 		transitions = lhpn.transitions;
 		places = lhpn.places;
@@ -69,7 +69,7 @@ public class Abstraction extends LPN {
 	}
 	
 	public Abstraction(LPN lhpn) {
-		super(lhpn.log);
+		super();
 		transitions = lhpn.transitions;
 		places = lhpn.places;
 		booleans = lhpn.booleans;

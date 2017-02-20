@@ -44,6 +44,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
@@ -93,8 +95,6 @@ import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.Curve;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.DataSet;
-import org.jlibsedml.FileModelContent;
-import org.jlibsedml.IModelContent;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.Plot2D;
@@ -161,6 +161,8 @@ import dataModels.lpn.parser.Lpn2verilog;
 import dataModels.lpn.parser.Translator;
 import dataModels.lpn.parser.properties.BuildProperty;
 import dataModels.util.GlobalConstants;
+import dataModels.util.Message;
+import dataModels.util.exceptions.BioSimException;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import de.unirostock.sems.cbarchive.CombineArchive;
@@ -170,6 +172,7 @@ import frontend.analysis.Run;
 import frontend.biomodel.gui.movie.MovieContainer;
 import frontend.biomodel.gui.sbmlcore.ElementsPanel;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.graph.Graph;
 import frontend.learn.AMSModel.LearnLPN;
 import frontend.learn.GCM.LearnGCM;
@@ -193,7 +196,7 @@ import frontend.verification.Verification;
  * @author Curtis Madsen
  */
 
-public class Gui implements MouseListener, ActionListener, MouseMotionListener, MouseWheelListener
+public class Gui implements Observer, MouseListener, ActionListener, MouseMotionListener, MouseWheelListener
 {
 
 	public static JFrame			frame;	// Frame where components of the GUI are displayed
@@ -227,16 +230,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JSplitPane				topSplit;
 	private JSplitPane				mainSplit;
 
-	public static Boolean			libsbmlFound		= true;
-
-	public static Boolean			reb2sacFound		= true;
-
 	public static String			reb2sacExecutable;
 	
 	public static String[]			envp;
 	
-	public static Boolean			geneNetFound		= true;
-
 	public static String			geneNetExecutable;
 
 	public Log						log;																					// the
@@ -352,7 +349,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		this.lema = lema;
 		this.atacs = atacs;
 		this.lpn = lpn;
-		Gui.libsbmlFound = libsbmlFound;
+		SBMLutilities.libsbmlFound = libsbmlFound;
 		async = lema || atacs;
 		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
 		/*
@@ -2279,7 +2276,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getActionCommand().equals("convertToSBML"))
 		{
 			Translator t1 = new Translator();
-			t1.convertLPN2SBML(tree.getFile(), "");
+			try {
+        t1.convertLPN2SBML(tree.getFile(), "");
+      } catch (BioSimException e1) {
+        e1.printStackTrace();
+      }
 			t1.outputSBML();
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0)
@@ -2322,7 +2323,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			catch (RecognitionException e1)
 			{
 				e1.printStackTrace();
-			}
+			} catch (BioSimException e1) {
+        e1.printStackTrace();
+      }
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0)
 			{
@@ -2596,7 +2599,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					theFile = findTheFile[0] + ".dot";
 					File dot = new File(root + GlobalConstants.separator + theFile);
 					dot.delete();
-					LPN lhpn = new LPN(log);
+					LPN lhpn = new LPN();
+					lhpn.addObserver(this);
 					lhpn.load(directory + GlobalConstants.separator + theFile);
 					lhpn.printDot(directory + GlobalConstants.separator + file);
 					// String cmd = "atacs -cPllodpl " + file;
@@ -2810,7 +2814,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					theFile = findTheFile[0] + ".dot";
 					File dot = new File(root + GlobalConstants.separator + theFile);
 					dot.delete();
-					LPN lhpn = new LPN(log);
+					LPN lhpn = new LPN();
+					lhpn.addObserver(this);
 					lhpn.load(root + GlobalConstants.separator + file);
 					lhpn.printDot(root + GlobalConstants.separator + theFile);
 					// String cmd = "atacs -cPllodpl " + file;
@@ -4260,7 +4265,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		final JPanel BioModelsPanel = new JPanel(new BorderLayout());
 		final JList ListOfBioModels = new JList();
-		Utility.sort(BioModelIds);
+		dataModels.biomodel.util.Utility.sort(BioModelIds);
 		ListOfBioModels.setListData(BioModelIds);
 		ListOfBioModels.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JLabel TextBioModels = new JLabel("List of BioModels");
@@ -4406,7 +4411,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					out.close();
 					String[] file = filename.trim().split(GlobalConstants.separator);
 					SBMLDocument document = SBMLutilities.readSBML(root + GlobalConstants.separator + filename.trim());
-					SBMLutilities.check(root + GlobalConstants.separator + filename.trim(), document, false);
+					Utils.check(root + GlobalConstants.separator + filename.trim(), document, false);
 					SBMLWriter writer = new SBMLWriter();
 					writer.writeSBMLToFile(document, root + GlobalConstants.separator + file[file.length - 1]);
 					addToTree(file[file.length - 1]);
@@ -5002,7 +5007,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					{
 						File f = new File(root + GlobalConstants.separator + lhpnName);
 						f.createNewFile();
-						new LPN(log).save(f.getAbsolutePath());
+						LPN lpn = new LPN();
+						lpn.addObserver(this);
+						lpn.save(f.getAbsolutePath());
 						int i = getTab(f.getName());
 						if (i != -1)
 						{
@@ -5251,7 +5258,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private String importSBMLDocument(String file,SBMLDocument document) throws SBMLException, FileNotFoundException, XMLStreamException {
 		String newFile = null;
 		SBMLutilities.checkModelCompleteness(document,true);
-		SBMLutilities.check(null, document, false);
+		Utils.check(null, document, false);
 		newFile = file;
 		newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 		if (Character.isDigit(newFile.charAt(0))) {
@@ -5276,7 +5283,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					return null;
 				}
 			}
-			SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
+			try {
+        SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			SBMLWriter writer = new SBMLWriter();
 			if (document.getModel().getId() == null || document.getModel().getId().equals("")) {
 				document.getModel().setId(newFile.replace(".xml", ""));
@@ -5321,7 +5333,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							SBMLutilities.checkModelCompleteness(document,true);
 							if (overwrite(root + GlobalConstants.separator + s, s))
 							{
-								SBMLutilities.check(filename.trim(), document, false);
+								Utils.check(filename.trim(), document, false);
 								SBMLWriter writer = new SBMLWriter();
 								s = s.replaceAll("[^a-zA-Z0-9_.]+", "_");
 								writer.writeSBMLToFile(document, root + GlobalConstants.separator + s);
@@ -6136,7 +6148,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String theFile = findTheFile[0] + ".dot";
 				File dot = new File(root + GlobalConstants.separator + theFile);
 				dot.delete();
-				LPN lhpn = new LPN(log);
+				LPN lhpn = new LPN();
+				lhpn.addObserver(this);
 				lhpn.load(tree.getFile());
 				lhpn.printDot(root + GlobalConstants.separator + theFile);
 				File work = new File(root);
@@ -7356,16 +7369,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				//BioModel targetModel = new BioModel(projectDirectory);
 				//if (!targetModel.load(projectDirectory + File.separator + ModelGenerator.getDisplayID(moduleDef) + ".xml"))
 				//{
-				List<BioModel> models = SBOL2SBML.generateModel(root, moduleDef, sbolDoc);
-				for (BioModel model : models)
-				{
-					if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml", 
-							model.getSBMLDocument().getModel().getId() + ".xml"))
-					{
-						model.save(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
-						addToTree(model.getSBMLDocument().getModel().getId() + ".xml");
-					}
-				}
+				List<BioModel> models;
+        try {
+          models = SBOL2SBML.generateModel(root, moduleDef, sbolDoc);
+          for (BioModel model : models)
+          {
+            if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml", 
+                model.getSBMLDocument().getModel().getId() + ".xml"))
+            {
+              model.save(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+              addToTree(model.getSBMLDocument().getModel().getId() + ".xml");
+            }
+          }
+        } catch (XMLStreamException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        } 
+				
 				//}
 			}
 		}
@@ -7454,7 +7474,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
 				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 			}
-			LPN lhpn = new LPN(log);
+			LPN lhpn = new LPN();
+			lhpn.addObserver(this);
 			File work = new File(directory);
 			int i = getTab(theFile);
 			if (i != -1)
@@ -8477,13 +8498,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				out.close();
 
 				BioModel bioModel = new BioModel(root);
-				bioModel.load(root + GlobalConstants.separator + filename);
-				GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
-				gcm2sbml.load(root + GlobalConstants.separator + filename);
-				gcm2sbml.convertGCM2SBML(root, filename);
-				String sbmlFile = filename.replace(".gcm", ".xml");
-				bioModel.save(root + GlobalConstants.separator + sbmlFile);
-				addToTree(sbmlFile);
+				try {
+          bioModel.load(root + GlobalConstants.separator + filename);
+          GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
+          gcm2sbml.load(root + GlobalConstants.separator + filename);
+          gcm2sbml.convertGCM2SBML(root, filename);
+          String sbmlFile = filename.replace(".gcm", ".xml");
+          bioModel.save(root + GlobalConstants.separator + sbmlFile);
+          addToTree(sbmlFile);
+        } catch (XMLStreamException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        }
+				
 			}
 		}
 		catch (IOException e1)
@@ -8516,10 +8543,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					addToTree(filename);
 				}
 				Translator t1 = new Translator();
-				t1.convertLPN2SBML(root + GlobalConstants.separator + filename, "");
-				t1.setFilename(root + GlobalConstants.separator + filename.replace(".lpn", ".xml"));
-				t1.outputSBML();
-				addToTree(filename.replace(".lpn", ".xml"));
+				try {
+          t1.convertLPN2SBML(root + GlobalConstants.separator + filename, "");
+          t1.setFilename(root + GlobalConstants.separator + filename.replace(".lpn", ".xml"));
+          t1.outputSBML();
+          addToTree(filename.replace(".lpn", ".xml"));
+        } catch (BioSimException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+				
 			}
 		}
 		catch (IOException e1)
@@ -10539,16 +10572,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			if (exitValue != 255 && exitValue != -1)
 			{
-				reb2sacFound = false;
+				SBMLutilities.reb2sacFound = false;
 			}
 		}
 		catch (IOException e)
 		{
-			reb2sacFound = false;
+			SBMLutilities.reb2sacFound = false;
 		}
 		catch (InterruptedException e)
 		{
-			reb2sacFound = false;
+			SBMLutilities.reb2sacFound = false;
 		}
 		exitValue = 1;
 		try
@@ -10593,28 +10626,28 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			if (exitValue != 255 && exitValue != 134 && exitValue != -1)
 			{
-				geneNetFound = false;
+				SBMLutilities.geneNetFound = false;
 			}
 		}
 		catch (IOException e)
 		{
-			geneNetFound = false;
+			SBMLutilities.geneNetFound = false;
 		}
 		catch (InterruptedException e)
 		{
-			geneNetFound = false;
+			SBMLutilities.geneNetFound = false;
 		}
 		new Gui(lemaFlag, atacsFlag, libsbmlFound, lpnFlag);
 	}
 
 	public static boolean isLibsbmlFound()
 	{
-		return libsbmlFound;
+		return SBMLutilities.libsbmlFound;
 	}
 
 	public static boolean isReb2sacFound()
 	{
-		return reb2sacFound;
+		return SBMLutilities.reb2sacFound;
 	}
 
 	public static String getReb2sacExecutable()
@@ -10624,7 +10657,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	public static boolean isGeneNetFound()
 	{
-		return geneNetFound;
+		return SBMLutilities.geneNetFound;
 	}
 
 	public static String getGeneNetExecutable()
@@ -11950,7 +11983,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		String[] usingViews = views.toArray(new String[0]);
-		Utility.sort(usingViews);
+		dataModels.biomodel.util.Utility.sort(usingViews);
 		return usingViews;
 	}
 
@@ -12069,7 +12102,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						comps.add(subModelType);
 					}
 				}
-				SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
+				try {
+          SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
+        } catch (XMLStreamException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        } catch (IOException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        }
 				SBMLutilities.checkModelCompleteness(document,true);
 				SBMLWriter writer = new SBMLWriter();
 				try
@@ -12134,5 +12175,27 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		return true;
 	}
+
+  @Override
+  public void update(Observable o, Object arg) {
+    Message message = (Message) arg;
+    
+    if(message.isConsole())
+    {
+      System.out.println(message.getMessage());
+    }
+    else if(message.isErrorDialog())
+    {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
+    }
+    else if(message.isDialog())
+    {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
+    }
+    else if(message.isLog())
+    {
+      log.addText(message.getMessage());
+    }
+  }
 
 }

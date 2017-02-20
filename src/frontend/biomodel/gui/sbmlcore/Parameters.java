@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -20,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.ext.layout.Layout;
@@ -29,8 +31,10 @@ import dataModels.biomodel.annotation.SBOLAnnotation;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.sbol.SBOLField2;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 import frontend.main.util.Utility;
 
@@ -198,7 +202,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			j++;
 		}
 		
-		Utility.sort(params);
+		dataModels.biomodel.util.Utility.sort(params);
 		parameters.setListData(params);
 		parameters.setSelectedIndex(0);
 		parameters.addMouseListener(this);
@@ -251,7 +255,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			}
 			k++;
 		}
-		Utility.sort(params);
+		dataModels.biomodel.util.Utility.sort(params);
 		int selected = 0;
 		for (int i = 0; i < params.length; i++) {
 			if (params[i].split(" ")[0].equals(selectedParameter)) {
@@ -561,21 +565,31 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						paramValue.setEnabled(false);
 						placeMarking.setEnabled(false);
 						paramUnits.setEnabled(false);
-						SBMLDocument d = SBMLutilities.readSBML(file);
-						if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetValue()) {
-							paramValue.setText(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getValue() + "");
-						}
-						else {
-							paramValue.setText("");
-						}
-						if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetUnits()) {
-							paramUnits.setSelectedItem(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getUnits()	+ "");
-						}
-						if (paramValue.getText().equals(0)) {
-							placeMarking.setSelectedIndex(0);
-						} else {
-							placeMarking.setSelectedIndex(1);
-						}
+						SBMLDocument d;
+            try {
+              d = SBMLutilities.readSBML(file);
+              if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetValue()) {
+                paramValue.setText(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getValue() + "");
+              }
+              else {
+                paramValue.setText("");
+              }
+              if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetUnits()) {
+                paramUnits.setSelectedItem(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getUnits() + "");
+              }
+              if (paramValue.getText().equals(0)) {
+                placeMarking.setSelectedIndex(0);
+              } else {
+                placeMarking.setSelectedIndex(1);
+              }
+            } catch (XMLStreamException e1) {
+              JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+              e1.printStackTrace();
+            } catch (IOException e1) {
+              JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+              e1.printStackTrace();
+            }
+						
 
 					}
 				}
@@ -626,10 +640,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		String[] dimensionIds = new String[]{""};
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), paramID.getText(), false);
+			dimID = Utils.checkSizeParameters(bioModel.getSBMLDocument(), paramID.getText(), false);
 			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
-				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+				error = Utils.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 			} else {
 				error = true;
 			}
@@ -733,7 +747,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						 */
 					}
 					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("true")) {
-						error = SBMLutilities.checkConstant(bioModel.getSBMLDocument(), "Parameters", selected);
+						error = Utils.checkConstant(bioModel.getSBMLDocument(), "Parameters", selected);
 					}
 					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("false")) {
 						error = checkNotConstant(selected);
@@ -785,7 +799,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									params = Utility.getList(params, parameters);
 									parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 									params[index] = param;
-									Utility.sort(params);
+									dataModels.biomodel.util.Utility.sort(params);
 									parameters.setListData(params);
 									parameters.setSelectedIndex(index);
 								} else {
@@ -799,7 +813,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									for (int i = 0; i < adding.length; i++) {
 										params[i] = (String) adding[i];
 									}
-									Utility.sort(params);
+									dataModels.biomodel.util.Utility.sort(params);
 									parameters.setListData(params);
 									parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 									if (bioModel.getSBMLDocument().getModel().getParameterCount() == 1) {
@@ -841,13 +855,25 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							}
 							else {
-								if (dimID!=null) {
-									SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected, dimID[0].trim());
-								}
-								if (rateParam!=null && dimID!=null) {
-									SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected+"_"+GlobalConstants.RATE, 
-											dimID[0].trim()+"_"+GlobalConstants.RATE);
-								}
+							  try
+							  {
+							    if (dimID!=null) {
+							      try {
+							        SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected, dimID[0].trim());
+							      } catch (BioSimException e1) {
+							        // TODO Auto-generated catch block
+							        e1.printStackTrace();
+							      }
+							    }
+							    if (rateParam!=null && dimID!=null) {
+							      SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected+"_"+GlobalConstants.RATE, 
+							        dimID[0].trim()+"_"+GlobalConstants.RATE);
+							    }
+							  }
+							  catch (BioSimException e1) {
+	                JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
+	                e1.printStackTrace();
+	              }
 							}
 							if (paramet.getId().equals(GlobalConstants.STOICHIOMETRY_STRING)) {
 								for (int i=0; i<model.getReactionCount(); i++) {
@@ -920,7 +946,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								for (int i = 0; i < adding.length; i++) {
 									params[i] = (String) adding[i];
 								}
-								Utility.sort(params);
+								dataModels.biomodel.util.Utility.sort(params);
 								parameters.setListData(params);
 								parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 								if (bioModel.getSBMLDocument().getModel().getParameterCount() == 1) {

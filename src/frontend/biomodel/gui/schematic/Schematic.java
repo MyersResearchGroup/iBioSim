@@ -55,6 +55,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ext.layout.CompartmentGlyph;
 import org.sbml.jsbml.Event;
@@ -1392,7 +1393,7 @@ public class Schematic extends JPanel implements ActionListener {
 						doNotRemove = true;
 					}
 				} else if(type == GlobalConstants.COMPARTMENT) {
-					if (SBMLutilities.compartmentInUse(bioModel.getSBMLDocument(), cell.getId())) {
+					if (Utils.compartmentInUse(bioModel.getSBMLDocument(), cell.getId())) {
 						doNotRemove = true; 
 					} else if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
 						doNotRemove = true;
@@ -2101,13 +2102,22 @@ public class Schematic extends JPanel implements ActionListener {
 	public String connectComponentToSpecies(String compID, String specID) throws ListChooser.EmptyListException{
 		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
-		compBioModel.load(fullPath);
+		try {
+      compBioModel.load(fullPath);
 		ArrayList<String> ports = compBioModel.getOutputPorts(GlobalConstants.SBMLSPECIES);
 		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Output Port");
 		if(port == null)
 			return null;
 		bioModel.connectComponentAndSpecies(compID, compBioModel.getPortByIdRef(port).getId(), specID, true);
 		return port;
+    } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
+		return null;
 	}
 	
 	/**
@@ -2119,13 +2129,22 @@ public class Schematic extends JPanel implements ActionListener {
 	public String connectSpeciesToComponent(String specID, String compID) throws ListChooser.EmptyListException{
 		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
-		compBioModel.load(fullPath);	
-		ArrayList<String> ports = compBioModel.getInputPorts(GlobalConstants.SBMLSPECIES);
+		try {
+      compBioModel.load(fullPath);
+      ArrayList<String> ports = compBioModel.getInputPorts(GlobalConstants.SBMLSPECIES);
 		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Input Port");
 		if(port == null)
 			return null;
 		bioModel.connectComponentAndSpecies(compID, compBioModel.getPortByIdRef(port).getId(), specID, false);
 		return port;
+    } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
+		return null;
 	}
 	
 	/**
@@ -2138,20 +2157,29 @@ public class Schematic extends JPanel implements ActionListener {
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
 		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
-		compBioModel.load(fullPath);
-		ArrayList<String> ports;
-		if (SBMLutilities.isBoolean(p)) {
-			ports = compBioModel.getOutputPorts(GlobalConstants.BOOLEAN);
-		} else if (SBMLutilities.isPlace(p)) {
-			ports = compBioModel.getOutputPorts(GlobalConstants.PLACE);
-		} else {
-			ports = compBioModel.getOutputPorts(GlobalConstants.VARIABLE);
-		}
-		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Output Port");
-		if(port == null)
-			return null;
-		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), varID, true);
-		return port;
+		try {
+      compBioModel.load(fullPath);
+      ArrayList<String> ports;
+      if (SBMLutilities.isBoolean(p)) {
+        ports = compBioModel.getOutputPorts(GlobalConstants.BOOLEAN);
+      } else if (SBMLutilities.isPlace(p)) {
+        ports = compBioModel.getOutputPorts(GlobalConstants.PLACE);
+      } else {
+        ports = compBioModel.getOutputPorts(GlobalConstants.VARIABLE);
+      }
+      String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Output Port");
+      if(port == null)
+        return null;
+      bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), varID, true);
+      return port;
+    } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
+	  return null;
 	}
 	
 	/**
@@ -2164,8 +2192,9 @@ public class Schematic extends JPanel implements ActionListener {
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
 		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
-		compBioModel.load(fullPath);	
-		ArrayList<String> ports;
+		try {
+      compBioModel.load(fullPath);
+      ArrayList<String> ports;
 		if (SBMLutilities.isBoolean(p)) {
 			ports = compBioModel.getInputPorts(GlobalConstants.BOOLEAN);
 		} else if (SBMLutilities.isPlace(p)) {
@@ -2178,6 +2207,14 @@ public class Schematic extends JPanel implements ActionListener {
 			return null;
 		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), varID, false);
 		return port;
+    } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
+		return null;
 	}
 
 	/**
@@ -2542,11 +2579,20 @@ public class Schematic extends JPanel implements ActionListener {
 						BioModel subModel = new BioModel(bioModel.getPath());
 						String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(bioModel.getSBMLCompModel().getListOfSubmodels().get(s)
 									.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-						subModel.load(bioModel.getPath() + bioModel.getSeparator() + extModel);
-						Model submodel = subModel.getSBMLDocument().getModel();
-						
-						for (int j = 0; j < submodel.getSpeciesCount(); ++j)
-							compSpecies.add(cell.getId() + "__" + submodel.getSpecies(j).getId());
+						try {
+              subModel.load(bioModel.getPath() + bioModel.getSeparator() + extModel);
+              Model submodel = subModel.getSBMLDocument().getModel();
+              
+              for (int j = 0; j < submodel.getSpeciesCount(); ++j)
+                compSpecies.add(cell.getId() + "__" + submodel.getSpecies(j).getId());
+              
+						} catch (XMLStreamException e) {
+		          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+		          e.printStackTrace();
+		        } catch (IOException e) {
+		          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+		          e.printStackTrace();
+		        }
 						
 						break;						
 					}

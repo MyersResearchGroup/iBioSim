@@ -29,6 +29,7 @@ import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.fba.FBAObjective;
 import frontend.biomodel.gui.sbol.SBOLField2;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 
 
@@ -219,7 +220,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			error = false;
 			if(!error&&!conversionFactor.getSelectedItem().equals("( none )")){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)conversionFactor.getSelectedItem());
-				dex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), null, "conversionFactor", 
+				dex = Utils.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), null, "conversionFactor", 
 						null, null, null);
 				error = (dex==null);
 			}

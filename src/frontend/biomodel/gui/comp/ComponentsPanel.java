@@ -40,6 +40,7 @@ import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.sbol.SBOLField2;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.biomodel.gui.util.PropertyField;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.Gui;
@@ -571,7 +572,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			}
 			String[] dimensions = new String[]{""};
 			String[] dimensionIds = new String[]{""};
-			dimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+			dimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 					fields.get(GlobalConstants.ID).getValue(), false);
 			if(dimensions==null)return false;
 			dimensionIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
@@ -598,7 +599,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				String portmapId = (String)portmapBox.get(i).getSelectedItem();
 				if (!portmapId.equals("--none--")&&!portmapId.equals("--include--")) {
 					String portId = portIds.get(i);
-					portDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), dimensionsField.get(i).getText(), true);
+					portDimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), dimensionsField.get(i).getText(), true);
 					if(portDimensions!=null){
 						portDimensionIds = SBMLutilities.getDimensionIds("r",portDimensions.length-1);
 					} else {
@@ -606,26 +607,26 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 					}
 					SBase variable = subBioModel.getSBMLCompModel().getPort(portId);
 					if (portmapId.equals("--delete--")) {
-						topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+						topDimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 								fields.get(GlobalConstants.ID).getValue(), false);
 						if(topDimensions!=null) {
 							topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
 						}
 					} else {
-						topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+						topDimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 								SBMLutilities.getArrayId(bioModel.getSBMLDocument(), portmapId), false);
 						if(topDimensions!=null) {
 							topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
 						}
 					}
-					portIndices = SBMLutilities.checkIndices(portIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:portRef", 
+					portIndices = Utils.checkIndices(portIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:portRef", 
 							portDimensions, topDimensionIds, topDimensions);
 					if (portIndices==null) return false;
 					if (!portmapId.equals("--delete--")) {
 						variable = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 						variable = new Submodel();
 						SBMLutilities.createDimensions(variable, dimensionIds, dimensions);
-						subModelIndices = SBMLutilities.checkIndices(subModelIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
+						subModelIndices = Utils.checkIndices(subModelIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
 								portDimensions, topDimensionIds, topDimensions);
 						if (subModelIndices==null) return false;
 					}
@@ -676,29 +677,29 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 				String[] subModelIndices = new String[]{""};
 				String[] portDimensionIds = new String[]{""};
 				if (!portmapId.equals("--none--")&&!portmapId.equals("--include--")) {
-					portDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), dimensionsField.get(i).getText(), true);
+					portDimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), dimensionsField.get(i).getText(), true);
 					if(portDimensions!=null){
 						portDimensionIds = SBMLutilities.getDimensionIds("r",portDimensions.length-1);
 					}
 					SBase variable = subBioModel.getSBMLCompModel().getPort(portId);
 					if (portmapId.equals("--delete--")) {
-						topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+						topDimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 								fields.get(GlobalConstants.ID).getValue(), false);
 						if(topDimensions!=null) {
 							topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
 						}
 					} else {
-						topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+						topDimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 								SBMLutilities.getArrayId(bioModel.getSBMLDocument(), portmapId), false);
 						if(topDimensions!=null) {
 							topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
 						}
 					}
-					portIndices = SBMLutilities.checkIndices(portIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:portRef", 
+					portIndices = Utils.checkIndices(portIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:portRef", 
 							portDimensions, topDimensionIds, topDimensions);
 					if (!portmapId.equals("--delete--")) {
 						variable = bioModel.getSBMLCompModel().getSubmodel(subModelId);
-						subModelIndices = SBMLutilities.checkIndices(subModelIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
+						subModelIndices = Utils.checkIndices(subModelIndicesField.get(i).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
 								portDimensions, topDimensionIds, topDimensions);
 					}
 				}
@@ -876,20 +877,20 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			String[] portDimensionIds = new String[]{""};
 			String portmapId = (String)portmapBox.get(selectedIndex).getSelectedItem();
 			if (!portmapId.equals("--none--")&&!portmapId.equals("--include--")) {
-				portDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), dimensionsField.get(selectedIndex).getText(), true);
+				portDimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), dimensionsField.get(selectedIndex).getText(), true);
 				if(portDimensions!=null){
 					portDimensionIds = SBMLutilities.getDimensionIds("r",portDimensions.length-1);
 				}else{
 					error = true;
 				}
 				if (portmapId.equals("--delete--")) {
-					topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+					topDimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 							fields.get(GlobalConstants.ID).getValue(), false);
 					if(topDimensions!=null) {
 						topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
 					}
 				} else {
-					topDimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+					topDimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 							SBMLutilities.getArrayId(bioModel.getSBMLDocument(), portmapId), false);
 					if(topDimensions!=null) {
 						topDimensionIds = SBMLutilities.getDimensionIds("",topDimensions.length-1);
@@ -900,7 +901,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 					if (variable==null) {
 						error = true;
 					} else {
-						portIndices = SBMLutilities.checkIndices(portIndicesField.get(selectedIndex).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:portRef", 
+						portIndices = Utils.checkIndices(portIndicesField.get(selectedIndex).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:portRef", 
 								portDimensions, topDimensionIds, topDimensions);
 						error = (portIndices==null);
 					}
@@ -910,13 +911,13 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 						SBase variable = new Submodel();
 						String[] dimensions = new String[]{""};
 						String[] dimensionIds = new String[]{""};
-						dimensions = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+						dimensions = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 								fields.get(GlobalConstants.ID).getValue(), false);
 						if(dimensions!=null && dimensions.length>0) {
 							dimensionIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
 							SBMLutilities.createDimensions(variable, dimensionIds, dimensions);
 						}
-						subModelIndices = SBMLutilities.checkIndices(subModelIndicesField.get(selectedIndex).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
+						subModelIndices = Utils.checkIndices(subModelIndicesField.get(selectedIndex).getText(), variable, bioModel.getSBMLDocument(), portDimensionIds, "comp:submodelRef", 
 								portDimensions, topDimensionIds, topDimensions);
 						error = (subModelIndices==null);
 					}

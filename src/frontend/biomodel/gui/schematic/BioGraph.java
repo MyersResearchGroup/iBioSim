@@ -17,6 +17,7 @@ import java.util.Vector;
 import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.Compartment;
@@ -1322,7 +1323,15 @@ public class BioGraph extends mxGraph {
 			String id = bioModel.getSBMLCompModel().getListOfSubmodels().get(i).getId();
 			BioModel compBioModel = new BioModel(bioModel.getPath());
 			String modelFileName = bioModel.getModelFileName(id);
-			compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+			try {
+        compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			HashMap<String,String> connections = bioModel.getInputConnections(compBioModel,id);
 			for (String propName : connections.keySet()) {
 				String targetName = connections.get(propName);
@@ -2270,7 +2279,15 @@ public class BioGraph extends mxGraph {
 		File compFile = new File(bioModel.getPath() + GlobalConstants.separator + modelFileName);
 		
 		if (compFile.exists()) {
-			compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+			try {
+        compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			compart = compBioModel.IsWithinCompartment();
 		} else {
 			JOptionPane.showMessageDialog(Gui.frame, 

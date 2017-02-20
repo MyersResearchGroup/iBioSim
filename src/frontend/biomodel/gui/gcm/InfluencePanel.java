@@ -26,6 +26,7 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.biomodel.gui.util.PropertyField;
 import frontend.main.Gui;
 
@@ -431,13 +432,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			SBase variable = null;
 			if (modifier!=null) {
 				variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), modifier.getSpecies());
-				String[] dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), 
+				String[] dex = Utils.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), 
 						dimensionIds, "species", dimID, null, null);
 				if(dex==null)return false;
 				SBMLutilities.addIndices(modifier, "species", dex, 1);
 			} else if (reactant!=null){
 				variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactant.getSpecies());
-				String[] dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), 
+				String[] dex = Utils.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), 
 						dimensionIds, "species", dimID, null, null);
 				if(dex==null)return false;
 				SBMLutilities.addIndices(reactant, "species", dex, 1);

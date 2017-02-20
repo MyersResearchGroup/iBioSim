@@ -27,6 +27,7 @@ import org.sbml.jsbml.ext.fbc.Objective.Type;
 
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 import frontend.main.util.Utility;
 
@@ -102,7 +103,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(objectiveList);
 		
-		Utility.sort(objectiveStringArray);
+		dataModels.biomodel.util.Utility.sort(objectiveStringArray);
 		objectiveList.setListData(objectiveStringArray);
 		objectiveList.setSelectedIndex(0);
 		objectiveList.addMouseListener(this);
@@ -169,7 +170,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 							indexStr = reactionIdIndex.substring(reactionIdIndex.indexOf("["));
 						} 						
 						SBase reaction = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), reactionId);
-						String[] dex = SBMLutilities.checkIndices(indexStr, reaction, bioModel.getSBMLDocument(), null, "fbc:reaction", null, null, null);
+						String[] dex = Utils.checkIndices(indexStr, reaction, bioModel.getSBMLDocument(), null, "fbc:reaction", null, null, null);
 						fluxObjective.setReaction(reactionId);
 						SBMLutilities.addIndices(fluxObjective, "fbc:reaction", dex, 1);
 					}
@@ -269,7 +270,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), objectiveID.getText().trim(), selectedID, false);
+			error = Utils.checkID(bioModel.getSBMLDocument(), objectiveID.getText().trim(), selectedID, false);
 			if (!error) {
 				String tester = objective.getText().replaceAll("\\s", "");
 				if(!tester.matches("((\\d*\\.\\d*\\*)?[\\_\\da-zA-Z]+(\\[\\d+\\])?\\+?)+")){
@@ -333,7 +334,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					editedObjectiveString += "(" + objectiveID.getText().trim() + ") = " + 
 							objective.getText().trim();
 					listOfObjectives[index] = editedObjectiveString;
-					Utility.sort(listOfObjectives);
+					dataModels.biomodel.util.Utility.sort(listOfObjectives);
 					objectiveList.setListData(listOfObjectives);
 					objectiveList.setSelectedIndex(index);
 				}
@@ -364,7 +365,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 							listOfObjectives[i] = listOfObjectives[i].substring(1, listOfObjectives[i].length());
 						}
 					}
-					Utility.sort(listOfObjectives);
+					dataModels.biomodel.util.Utility.sort(listOfObjectives);
 					objectiveList.setListData(listOfObjectives);
 					objectiveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (adding.length == 1) {

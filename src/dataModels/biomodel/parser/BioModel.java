@@ -95,6 +95,7 @@ import dataModels.lpn.parser.Transition;
 import dataModels.lpn.parser.Variable;
 import dataModels.util.GlobalConstants;
 import dataModels.util.MutableString;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.comp.Grid;
 import frontend.biomodel.gui.sbmlcore.Compartments;
 import frontend.biomodel.gui.sbmlcore.Constraints;
@@ -480,7 +481,7 @@ public class BioModel {
 		return Double.parseDouble(value);
 	}
 
-	public LPN convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) {
+	public LPN convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) throws XMLStreamException, IOException {
 		GCMParser parser = new GCMParser(this);
 		SBMLDocument sbml = this.flattenModel(true);	
 		if (sbml == null) return null;
@@ -2539,8 +2540,10 @@ public class BioModel {
 	 * Save the current object to file.
 	 * 
 	 * @param filename
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	public void save(String filename) {		
+	public void save(String filename) throws XMLStreamException, IOException {		
 		updatePorts();
 		setGridSize(grid.getNumRows(),grid.getNumCols());
 		setLayoutSize();
@@ -2560,7 +2563,7 @@ public class BioModel {
 		}
 	}
 	
-	public boolean saveAsLPN(String filename) {
+	public boolean saveAsLPN(String filename) throws XMLStreamException, IOException {
 		HashMap<String,Integer> constants = new HashMap<String,Integer>();
 		ArrayList<String> booleans = new ArrayList<String>();
 		HashMap<String,String> rates = new HashMap<String,String>();
@@ -2854,7 +2857,7 @@ public class BioModel {
 		return buffer;
 	}
 	
-	public boolean load(String filename) {
+	public boolean load(String filename) throws XMLStreamException, IOException {
 		//gcm2sbml.load(filename);
 		this.filename = filename;
 		String[] splitPath = filename.split(separator);
@@ -2919,7 +2922,7 @@ public class BioModel {
 		placeHolderIndex = set;
 	}
 
-	public void changePromoterId(String oldId, String newId) {
+	public void changePromoterId(String oldId, String newId) throws BioSimException {
 		SBMLutilities.updateVarId(sbml, true, oldId, newId);
 		Species promoter = sbml.getModel().getSpecies(oldId); 
 		if (promoter != null) 
@@ -2954,7 +2957,7 @@ public class BioModel {
 		}
 	}
 
-	public void changeSpeciesId(String oldId, String newId) {
+	public void changeSpeciesId(String oldId, String newId) throws BioSimException {
 		if (sbml != null) {
 			if (sbml.getModel() != null) {
 				SBMLutilities.updateVarId(sbml, true, oldId, newId);
@@ -6186,7 +6189,7 @@ public class BioModel {
 		return false;
 	}
 	
-	private void updatePorts() {
+	private void updatePorts() throws XMLStreamException, IOException {
 		int j = 0;
 		while (j < sbmlCompModel.getPortCount()) {
 			Port port = sbmlCompModel.getListOfPorts().get(j);
@@ -6346,7 +6349,7 @@ public class BioModel {
 		}
 	}
 
-	private boolean loadSBMLFile(String sbmlFile) {
+	private boolean loadSBMLFile(String sbmlFile) throws XMLStreamException, IOException {
 		boolean successful = true;
 		if (!sbmlFile.equals("")) {
 			if (new File(path + separator + sbmlFile).exists()) {
@@ -6391,7 +6394,7 @@ public class BioModel {
 	}
 	
 	public void recurseExportSingleFile(ArrayList<String> comps,CompModelPlugin subCompModel,CompSBMLDocumentPlugin subComp,
-				CompSBMLDocumentPlugin documentComp) {
+				CompSBMLDocumentPlugin documentComp) throws XMLStreamException, IOException {
 		for (int i = 0; i < subCompModel.getListOfSubmodels().size(); i++) {
 			String subModelId = subCompModel.getListOfSubmodels().get(i).getId();
 			String extModel = subComp.getListOfExternalModelDefinitions().get(subCompModel.getListOfSubmodels().get(subModelId)
@@ -6422,7 +6425,7 @@ public class BioModel {
 		}
 	}
 	
-	public void exportSingleFile(String exportFile) {
+	public void exportSingleFile(String exportFile) throws XMLStreamException, IOException {
 		ArrayList<String> comps = new ArrayList<String>();
 		SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		Model model = new Model(sbml.getModel());
@@ -6510,7 +6513,7 @@ public class BioModel {
 		}
 	}
 	
-	private void expandListOfSubmodels(org.sbml.libsbml.CompModelPlugin docCompModel, org.sbml.libsbml.SBMLDocument sbml) {
+	private void expandListOfSubmodels(org.sbml.libsbml.CompModelPlugin docCompModel, org.sbml.libsbml.SBMLDocument sbml) throws XMLStreamException, IOException {
 		if (this.getGridEnabledFromFile(filename.replace(".gcm",".xml"))) {
 			
 			//look through the location parameter arrays
@@ -6535,7 +6538,7 @@ public class BioModel {
 		}
 	}
 	
-	private ArrayList<String> getListOfSubmodels() {
+	private ArrayList<String> getListOfSubmodels() throws XMLStreamException, IOException {
 		ArrayList<String> comps = new ArrayList<String>();
 
 		if (this.getGridEnabledFromFile(filename.replace(".gcm",".xml"))) {
@@ -6564,7 +6567,7 @@ public class BioModel {
 		return comps;
 	}
 	
-	private String getExtModelFileName(String s) {
+	private String getExtModelFileName(String s) throws XMLStreamException, IOException {
 		
 		String extModel;
 		String componentModelRef = "";
@@ -6660,7 +6663,7 @@ public class BioModel {
 		throw new Exception("libsbml not found.  Unable to flatten model.");
 	}
 		
-	public SBMLDocument flattenModel(boolean removeComp) {
+	public SBMLDocument flattenModel(boolean removeComp) throws XMLStreamException, IOException {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
 			//String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
@@ -6774,7 +6777,7 @@ public class BioModel {
 	}
 	
 	// TODO: check if this is up-to-date
-	public SBMLDocument flattenBioModel() {
+	public SBMLDocument flattenBioModel() throws XMLStreamException, IOException {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
 			SBMLDocument result = null;
@@ -6827,7 +6830,7 @@ public class BioModel {
 		return this.getSBMLDocument();
 	}
 	
-	private BioModel flattenModelRecurse(BioModel model, ArrayList<String> modelList) {
+	private BioModel flattenModelRecurse(BioModel model, ArrayList<String> modelList) throws XMLStreamException, IOException {
 		ArrayList<String> comps = new ArrayList<String>();
 		
 		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
@@ -7532,8 +7535,10 @@ public class BioModel {
 	 * 
 	 * @param filename
 	 * @return
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	public boolean getGridEnabledFromFile(String filename) {
+	public boolean getGridEnabledFromFile(String filename) throws XMLStreamException, IOException {
 		
 		BioModel subModel = new BioModel(path);
 		subModel.load(filename);

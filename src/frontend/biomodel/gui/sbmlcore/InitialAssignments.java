@@ -27,6 +27,7 @@ import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 import frontend.main.util.Utility;
 
@@ -118,7 +119,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(initAssigns);
-		Utility.sort(inits);
+		dataModels.biomodel.util.Utility.sort(inits);
 		initAssigns.setListData(inits);
 		initAssigns.setSelectedIndex(0);
 		initAssigns.addMouseListener(this);
@@ -202,13 +203,13 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			return true;
 		}
 		String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
-		if(SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimIds, assignment.trim(), "", false)){
+		if(Utils.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimIds, assignment.trim(), "", false)){
 			return true;
 		}
-		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment.trim()))) {
+		if (Utils.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment.trim()))) {
 			return true;
 		}
-		if (SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), bioModel.addBooleans(assignment.trim()))) {
+		if (Utils.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), bioModel.addBooleans(assignment.trim()))) {
 			return true;
 		}
 		if (SBMLutilities.returnsBoolean(bioModel.addBooleans(assignment.trim()), bioModel.getSBMLDocument().getModel())) {
@@ -324,13 +325,13 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is not valid.", "Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		if(SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), null, assignment, "", false)){
+		if(Utils.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), null, assignment, "", false)){
 			return true;
 		}
-		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment))) {
+		if (Utils.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment))) {
 			return true;
 		}
-		if (SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment))) {
+		if (Utils.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment))) {
 			return true;
 		}
 		if (SBMLutilities.returnsBoolean(SBMLutilities.myParseFormula(assignment), bioModel.getSBMLDocument().getModel())) {

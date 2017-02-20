@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import dataModels.biomodel.util.Utility;
 import dataModels.lpn.parser.*;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.util.AbstractRunnableNamedButton;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.biomodel.gui.util.Runnable;
@@ -228,10 +229,14 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	public void saveAs(String newName) {
 		if (newName.endsWith(".xml")) {
 			Translator t1 = new Translator();
-			t1.convertLPN2SBML(directory + separator + filename, "");
-			t1.setFilename(directory + separator + newName);
-			t1.outputSBML();
-			biosim.addToTree(newName);
+			try {
+        t1.convertLPN2SBML(directory + separator + filename, "");
+        t1.setFilename(directory + separator + newName);
+        t1.outputSBML();
+        biosim.addToTree(newName);
+      } catch (BioSimException e) {
+        e.printStackTrace();
+      }
 		} else {
 			dirty = false;
 			lhpnFile.save(directory + separator + newName);

@@ -467,7 +467,8 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		variablesList = new ArrayList<String>();
-		LPN lhpn = new LPN(log);
+		LPN lhpn = new LPN();
+		lhpn.addObserver(this);
 		lhpn.load(seedLpnFile);
 		HashMap<String, Properties> variablesMap = lhpn.getContinuous(); //System.out.println("Variables MAp :"+variablesMap.keySet());
 		for (String s : variablesMap.keySet()) {  //System.out.println("Variables MAp :"+s);
@@ -1640,7 +1641,8 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 				String dotFile = lhpnFile.replace(".lpn", ".dot");
 				File dot = new File(directory + separator + dotFile);
 				dot.delete();
-				LPN lhpn = new LPN(log);
+				LPN lhpn = new LPN();
+				lhpn.addObserver(this);
 				lhpn.load(directory + separator + lhpnFile);
 				lhpn.printDot(directory + separator + dotFile);
 				//log.addText("Executing:\n" + "atacs -cPllodpl " + lhpnFile);
@@ -5772,6 +5774,10 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
     else if(message.isDialog())
     {
       JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
+    }
+    else if(message.isLog())
+    {
+      log.addText(message.getMessage());
     }
     
   }

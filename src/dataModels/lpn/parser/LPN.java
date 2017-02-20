@@ -11,11 +11,11 @@ import backend.verification.platu.stategraph.StateGraph;
 import backend.verification.timed_state_exploration.zoneProject.InequalityVariable;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
-import frontend.main.Log;
+import dataModels.util.Message;
 import frontend.verification.Verification;
 
 
-public class LPN {
+public class LPN extends Observable {
 
 	protected String separator;
 
@@ -34,8 +34,6 @@ public class LPN {
 	protected ArrayList<Variable> variables;
 
 	protected ArrayList<String> properties;
-
-	protected Log log;
 	
 	protected String label;
 	
@@ -43,6 +41,8 @@ public class LPN {
 	
 	protected int lpnIndex;
 
+	private final Message message = new Message();
+	
 	/* 
 	 * Cached value of the map that associates a variable name with its
 	 * index. This field is initialized when a call to getVarIndexMap
@@ -89,21 +89,6 @@ public class LPN {
     protected HashMap<String,String> implicitPlaceMap;
     
     private static int implicitPlaceCount=0;
-	
-	public LPN(Log log) {
-		separator = GlobalConstants.separator;
-		this.log = log;
-		transitions = new HashMap<String, Transition>();
-		places = new HashMap<String, Place>();
-		implicitPlaceMap = new HashMap<String,String>();
-		booleans = new HashMap<String, Variable>();
-		continuous = new HashMap<String, Variable>();
-		integers = new HashMap<String, Variable>();
-		variables = new ArrayList<Variable>();
-		properties = new ArrayList<String>();
-		lpnIndex = 0;
-		tranIndex = 0;		
-	}
 	
 	public LPN() {
 		separator = GlobalConstants.separator;
@@ -482,9 +467,8 @@ public class LPN {
 			}
 			p.print(buffer);
 			p.close();
-			if (log != null) {
-				log.addText("Saving:\n" + file + "\n");
-			}
+			message.setLog("Saving:\n" + file + "\n");
+			this.notifyObservers(message);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -647,9 +631,8 @@ public class LPN {
 			buffer.append("}\n");
 			p.print(buffer);
 			p.close();
-			if (log != null) {
-				log.addText("Saving:\n" + file + "\n");
-			}
+			message.setLog("Saving:\n" + file + "\n");
+      this.notifyObservers(message);
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();

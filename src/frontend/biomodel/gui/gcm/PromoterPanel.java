@@ -27,9 +27,11 @@ import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.sbmlcore.MySpecies;
 import frontend.biomodel.gui.sbol.SBOLField2;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.biomodel.gui.util.PropertyField;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.Gui;
@@ -402,7 +404,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			String[] idDims = new String[]{""};
 			String[] dimensionIds = new String[]{""};
 			String[] dex = new String[]{""};
-			idDims = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+			idDims = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 					fields.get(GlobalConstants.ID).getValue(), false);
 			if(idDims==null)return false;
 			dimensionIds = SBMLutilities.getDimensionIds("",idDims.length-1);
@@ -438,7 +440,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 				SBMLutilities.createDimensions(promoter, dimensionIds, idDims);
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
-				dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", idDims, null, null);
+				dex = Utils.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", idDims, null, null);
 				if(dex==null)return false;
 				SBMLutilities.addIndices(promoter, "compartment", dex, 1);
 				SBMLutilities.addIndices(production, "compartment", dex, 1);
@@ -510,7 +512,12 @@ public class PromoterPanel extends JPanel implements ActionListener {
 
 				// rename all the influences that use this promoter if name was changed
 				if (selected != null && oldName != null && !oldName.equals(id)) {
-					bioModel.changePromoterId(oldName, id);
+					try {
+            bioModel.changePromoterId(oldName, id);
+          } catch (BioSimException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
 					this.secondToLastUsedPromoter = oldName;
 					promoterNameChange = true;
 				}

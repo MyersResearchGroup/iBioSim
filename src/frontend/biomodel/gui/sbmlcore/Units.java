@@ -31,9 +31,9 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.ext.comp.Port;
 
 import dataModels.biomodel.parser.BioModel;
-import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 import frontend.main.util.Utility;
 
@@ -98,7 +98,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(unitDefs);
-		Utility.sort(units);
+		dataModels.biomodel.util.Utility.sort(units);
 		unitDefs.setListData(units);
 		unitDefs.setSelectedIndex(0);
 		unitDefs.addMouseListener(this);
@@ -192,7 +192,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 
-		Utility.sort(uList);
+		dataModels.biomodel.util.Utility.sort(uList);
 		unitList.setListData(uList);
 		unitList.setSelectedIndex(0);
 		unitList.addMouseListener(this);
@@ -341,8 +341,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
 							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
 						}
+						String errorMessage = null;
 						if (Gui.getCheckUnits()) {
-							error = SBMLutilities.checkUnits(bioModel.getSBMLDocument());
+						  error = Utils.checkUnits(bioModel.getSBMLDocument());
 						}
 						if (!error) {
 							Port port = bioModel.getPortByUnitRef(val);
@@ -359,9 +360,10 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 									port.setId(GlobalConstants.UNIT+"__"+u.getId());
 									port.setUnitRef(u.getId());
 								}
+								
 							}
 							units[index] = addUnit;
-							Utility.sort(units);
+							dataModels.biomodel.util.Utility.sort(units);
 							unitDefs.setListData(units);
 							unitDefs.setSelectedIndex(index);
 							updateUnitId(bioModel.getSBMLDocument().getModel(), val, unitID.getText().trim());
@@ -402,7 +404,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.UNIT+"__"+u.getId());
 							port.setUnitRef(u.getId());
 						}
-						Utility.sort(units);
+						dataModels.biomodel.util.Utility.sort(units);
 						unitDefs.setListData(units);
 						unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (bioModel.getSBMLDocument().getModel().getUnitDefinitionCount() == 1) {
@@ -539,7 +541,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					if (!exp.getText().trim().equals("1")) {
 						uList[index] = "( " + uList[index] + " )^" + exp.getText().trim();
 					}
-					Utility.sort(uList);
+					dataModels.biomodel.util.Utility.sort(uList);
 					unitList.setListData(uList);
 					unitList.setSelectedIndex(index);
 				}
@@ -571,7 +573,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						uList[i] = (String) adding[i];
 					}
-					Utility.sort(uList);
+					dataModels.biomodel.util.Utility.sort(uList);
 					unitList.setListData(uList);
 					unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (adding.length == 1) {
@@ -606,7 +608,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			units[i] = unit.getId();
 			// GET OTHER THINGS
 		}
-		Utility.sort(units);
+		dataModels.biomodel.util.Utility.sort(units);
 		unitDefs.setListData(units);
 		unitDefs.setSelectedIndex(0);
 	}
@@ -763,7 +765,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			String[] ids;
 			if (modelUnitsUsing.size() != 0) {
 				ids = modelUnitsUsing.toArray(new String[0]);
-				Utility.sort(ids);
+				dataModels.biomodel.util.Utility.sort(ids);
 				message += "\n\nIt is used by the following model units:\n";
 				for (int i = 0; i < ids.length; i++) {
 					if (i == ids.length - 1) {
@@ -776,7 +778,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			if (compartmentsUsing.size() != 0) {
 				ids = compartmentsUsing.toArray(new String[0]);
-				Utility.sort(ids);
+				dataModels.biomodel.util.Utility.sort(ids);
 				message += "\n\nIt is used by the following compartments:\n";
 				for (int i = 0; i < ids.length; i++) {
 					if (i == ids.length - 1) {
@@ -789,7 +791,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			if (speciesUsing.size() != 0) {
 				ids = speciesUsing.toArray(new String[0]);
-				Utility.sort(ids);
+				dataModels.biomodel.util.Utility.sort(ids);
 				message += "\n\nIt is used by the following species:\n";
 				for (int i = 0; i < ids.length; i++) {
 					if (i == ids.length - 1) {
@@ -802,7 +804,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			if (parametersUsing.size() != 0) {
 				ids = parametersUsing.toArray(new String[0]);
-				Utility.sort(ids);
+				dataModels.biomodel.util.Utility.sort(ids);
 				message += "\n\nIt is used by the following parameters:\n";
 				for (int i = 0; i < ids.length; i++) {
 					if (i == ids.length - 1) {
@@ -815,7 +817,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			if (reacParametersUsing.size() != 0) {
 				ids = reacParametersUsing.toArray(new String[0]);
-				Utility.sort(ids);
+				dataModels.biomodel.util.Utility.sort(ids);
 				message += "\n\nIt is used by the following reaction/parameters:\n";
 				for (int i = 0; i < ids.length; i++) {
 					if (i == ids.length - 1) {
@@ -1076,7 +1078,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					comps[i] += " " + compartment.getUnits();
 				}
 			}
-			Utility.sort(comps);
+			dataModels.biomodel.util.Utility.sort(comps);
 		}
 		if (model.getSpeciesCount() > 0) {
 			String[] specs = new String[model.getSpeciesCount()];
@@ -1098,7 +1100,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					specs[i] += " " + species.getUnits();
 				}
 			}
-			Utility.sort(specs);
+			dataModels.biomodel.util.Utility.sort(specs);
 		}
 		if (model.getParameterCount() > 0) {
 			String[] params = new String[model.getParameterCount()];
@@ -1114,7 +1116,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					params[i] = parameter.getId() + " " + parameter.getValue();
 				}
 			}
-			Utility.sort(params);
+			dataModels.biomodel.util.Utility.sort(params);
 		}
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			if (!model.getReaction(i).isSetKineticLaw()) continue;

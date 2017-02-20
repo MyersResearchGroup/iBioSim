@@ -35,6 +35,7 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.sbol.SBOLField2;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 import frontend.main.util.SpringUtilities;
 import frontend.main.util.Utility;
@@ -146,7 +147,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(rules);
-		Utility.sort(rul);
+		dataModels.biomodel.util.Utility.sort(rul);
 		rules.setListData(rul);
 		rules.setSelectedIndex(0);
 		rules.addMouseListener(this);
@@ -340,10 +341,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), id.getText(), false);
+			dimID = Utils.checkSizeParameters(bioModel.getSBMLDocument(), id.getText(), false);
 			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
-				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), metaId, false);
+				error = Utils.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), metaId, false);
 			}
 			else{
 				error = true;
@@ -352,7 +353,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			addVar = (String) ruleVar.getSelectedItem();
 			if(ruleVar.isEnabled() && !error && !ruleType.getSelectedItem().equals("Algebraic")){
 				SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)ruleVar.getSelectedItem());
-				dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID, null, null);
+				dex = Utils.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "variable", dimID, null, null);
 				error = (dex==null);
 			}
 			if (!error) {
@@ -365,12 +366,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					error = true;
 				}
 				else {
-					error = SBMLutilities.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimensionIds, ruleMath.getText().trim(), "", false);
+					error = Utils.displayinvalidVariables("Rule", bioModel.getSBMLDocument(), dimensionIds, ruleMath.getText().trim(), "", false);
 					if (!error) {
-						error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(ruleMath.getText().trim()));
+						error = Utils.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(ruleMath.getText().trim()));
 					}
 					if (!error) {
-						error = SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), bioModel.addBooleans(ruleMath.getText().trim()));
+						error = Utils.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), bioModel.addBooleans(ruleMath.getText().trim()));
 					}
 					if (!error) {
 						if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
@@ -406,7 +407,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					if (ruleType.getSelectedItem().equals("Algebraic")) {
 						r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 						addStr = "0 = " + bioModel.removeBooleans(r.getMath());
-						error = !SBMLutilities.check("",bioModel.getSBMLDocument(),true);
+						error = !Utils.check("",bioModel.getSBMLDocument(),true);
 					}
 					else if (ruleType.getSelectedItem().equals("Rate")) {
 						oldVar = SBMLutilities.getVariable(r);
@@ -549,7 +550,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							r = sbmlDoc.getModel().createAlgebraicRule();
 							SBMLutilities.setMetaId(r, ruleId);
 							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
-							error = !SBMLutilities.check("",bioModel.getSBMLDocument(),true);
+							error = !Utils.check("",bioModel.getSBMLDocument(),true);
 						}
 						else if (ruleType.getSelectedItem().equals("Rate")) {
 							r = sbmlDoc.getModel().createRateRule();
@@ -782,7 +783,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			String id = species.getId();
 			if (!species.getConstant()) {
 				if (keepVarAssignRule(bioModel, selected, id))
-					if (species.getBoundaryCondition() || !SBMLutilities.usedInReaction(bioModel.getSBMLDocument(), id)) {
+					if (species.getBoundaryCondition() || !Utils.usedInReaction(bioModel.getSBMLDocument(), id)) {
 						ruleVar.addItem(species.getId());
 						assignOK = true;
 					}
@@ -845,7 +846,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			String id = species.getId();
 			if (!species.getConstant()) {
 				if (keepVarRateRule(bioModel, selected, id))
-					if (species.getBoundaryCondition() || !SBMLutilities.usedInReaction(bioModel.getSBMLDocument(), id)) {
+					if (species.getBoundaryCondition() || !Utils.usedInReaction(bioModel.getSBMLDocument(), id)) {
 						ruleVar.addItem(species.getId());
 						rateOK = true;
 					}
