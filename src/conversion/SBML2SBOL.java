@@ -1,5 +1,7 @@
 package conversion;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -34,17 +36,18 @@ import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
-import backend.sbol.util.SBOLUtility2;
+//import backend.sbol.util.SBOLUtility2;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
-//import frontend.main.Gui;
+
 
 public class SBML2SBOL {
 	private SBMLDocument sbmlDoc;
@@ -58,6 +61,17 @@ public class SBML2SBOL {
 	URI LANGUAGE  = EDAMOntology.SBML;
 	URI FRAMEWORK = SystemsBiologyOntology.DISCRETE_FRAMEWORK;
 	
+	/**
+	 * 
+	 * @param sbolFilePaths
+	 * @param path
+	 * @param sbmlDocument
+	 * @param fileName
+	 * @throws FileNotFoundException
+	 * @throws SBOLValidationException
+	 * @throws IOException
+	 * @throws SBOLConversionException
+	 */
 	public SBML2SBOL(HashSet<String> sbolFilePaths,String path,SBMLDocument sbmlDocument, String fileName) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		this.path = path;
@@ -71,7 +85,12 @@ public class SBML2SBOL {
 	{
 		for (String filePath : sbolFilePaths) 
 		{
-			SBOLDocument sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+			File f = new File(filePath);
+			String fileName = f.getName().replace(".sbol", "");
+			Preferences biosimrc = Preferences.userRoot();
+			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
+			SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(filePath));
+			
 			if (sbolDoc != null) 
 			{
 				for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
@@ -596,6 +615,10 @@ public class SBML2SBOL {
 		String inputName = null;
 		String outputName = null;
 		String includePath = null;
+		
+		String outputDir = null;
+		String inputDir = null; 
+		
 		HashSet<String> sbolInputFiles = new HashSet<String>();
 		
 		//GOAL: inputFile -I SBML_ExternalPath -o outputFileName

@@ -425,6 +425,18 @@
       </sbol:Module>
     </sbol:module>
   </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/repressibleTU_Connected">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/repressibleTU_Connected"/>
+    <sbol:displayId>repressibleTU_Connected</sbol:displayId>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/repressibleTU_Connected_model"/>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/repressibleTU_Connected/tu_model">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/repressibleTU_Connected/tu_model"/>
+        <sbol:displayId>tu_model</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model"/>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
   <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/BO_32077_model">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model"/>
     <sbol:displayId>BO_32077_model</sbol:displayId>
@@ -815,18 +827,6 @@
     </sbol:functionalComponent>
     <sbol:model rdf:resource="http://www.async.ece.utah.edu/rbs_template_model"/>
   </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/someModel">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/someModel"/>
-    <sbol:displayId>someModel</sbol:displayId>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/someModel_model"/>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/someModel/tu_model">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/someModel/tu_model"/>
-        <sbol:displayId>tu_model</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model"/>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
   <sbol:Model rdf:about="http://www.async.ece.utah.edu/BO_2685_model_model">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model_model"/>
     <sbol:displayId>BO_2685_model_model</sbol:displayId>
@@ -869,13 +869,6 @@
     <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
     <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>
   </sbol:Model>
-  <sbol:Model rdf:about="http://www.async.ece.utah.edu/someModel_model">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/someModel_model"/>
-    <sbol:displayId>someModel_model</sbol:displayId>
-    <sbol:source rdf:resource="file:/Users/tramyn/Documents/research/iBioSim_workspace/iBioSim/src/test/conversion/resources/SBML/repressibleTU_Connected.xml"/>
-    <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
-    <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>
-  </sbol:Model>
   <sbol:Model rdf:about="http://www.async.ece.utah.edu/BO_27783_model_model">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model_model"/>
     <sbol:displayId>BO_27783_model_model</sbol:displayId>
@@ -907,6 +900,13 @@
   <sbol:Model rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model_model">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model_model"/>
     <sbol:displayId>BO_10845repressesBO_2685_model_model</sbol:displayId>
+    <sbol:source rdf:resource="file:/Users/tramyn/Documents/research/iBioSim_workspace/iBioSim/src/test/conversion/resources/SBML/repressibleTU_Connected.xml"/>
+    <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
+    <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>
+  </sbol:Model>
+  <sbol:Model rdf:about="http://www.async.ece.utah.edu/repressibleTU_Connected_model">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/repressibleTU_Connected_model"/>
+    <sbol:displayId>repressibleTU_Connected_model</sbol:displayId>
     <sbol:source rdf:resource="file:/Users/tramyn/Documents/research/iBioSim_workspace/iBioSim/src/test/conversion/resources/SBML/repressibleTU_Connected.xml"/>
     <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
     <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>

@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,6 +60,14 @@ public class SBOL2SBML {
 		return identity.substring(identity.lastIndexOf("/") + 1);
 	}
 	
+	/**
+	 * Perform conversion from SBOL to SBML. 
+	 * 
+	 * @param projectDirectory - The location to generate the SBML model
+	 * @param moduleDef - the current ModuleDefinition to convert all SBML object within the ModuleDefinition to its equivalent SBML component.
+	 * @param sbolDoc - The SBOL document to be converted to its equivalent SBML model.
+	 * @return
+	 */
 	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
 		List<BioModel> models = new LinkedList<BioModel>();
 		
@@ -861,12 +871,16 @@ public class SBOL2SBML {
 		System.err.println("\t-u  URI of ModuleDefinition to convert (optional)");
 		System.exit(1);
 	}
+	
 		
 	public static void main(String[] args) {
-		String inputName=null;
-		String outputName=null;
-		String uri=null;
+		String inputName = null;
+		String outputName = null;
+		String uri = null;
+		String outputDir = null;
+		String inputDir = null; 
 		
+		File fileFullPath;
 		//GOAL: inputFile -o outputLocation -u optionalURI
 		
 		if(args.length == 0){
@@ -878,9 +892,14 @@ public class SBOL2SBML {
 			usage();	
 		}
 		else{
-			inputName = args[0];
-			if (inputName==null) {
+			if (args[0] == null) {
 				usage();
+			}
+			else{
+				fileFullPath = new File(args[0]);
+				String absPath = fileFullPath.getAbsolutePath();
+				inputDir = absPath.substring(0, absPath.lastIndexOf(File.separator)+1);
+				inputName = absPath.substring(absPath.lastIndexOf(File.separator)+1);
 			}
 			for(int i = 1; i< args.length-1; i=i+2){
 				String flag = args[i];
@@ -888,7 +907,10 @@ public class SBOL2SBML {
 				switch(flag)
 				{
 				case "-o":
-					outputName = value;
+					fileFullPath = new File(value);
+					String absPath = fileFullPath.getAbsolutePath();
+					outputDir = absPath.substring(0, absPath.lastIndexOf(File.separator)+1);
+					outputName = absPath.substring(absPath.lastIndexOf(File.separator)+1);
 					break;
 				case "-u":
 					uri = value;
@@ -902,27 +924,27 @@ public class SBOL2SBML {
 
 			SBOLDocument sbolDoc;
 			try {
-				sbolDoc = SBOLReader.read(new FileInputStream(inputName));
-				String projectDirectory = ".";
+				sbolDoc = SBOLReader.read(new FileInputStream(inputDir + inputName));
+				String projectDirectory = "."; //TODO: why put . for project directory?
 				if (outputName!=null) 
 					projectDirectory = outputName;
 				
 				if(uri!=null){
 					ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(uri));
-					List<BioModel> models = SBOL2SBML.generateModel(projectDirectory, topModuleDef, sbolDoc);
+					List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
 					for (BioModel model : models)
 					{
-						model.save(projectDirectory + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+						model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
 					}
 				}
 				else{
 					//No ModuleDefinition URI provided so loop over all rootModuleDefinition
 					for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 					{
-						List<BioModel> models = SBOL2SBML.generateModel(projectDirectory, moduleDef, sbolDoc);
+						List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
 						for (BioModel model : models)
 						{
-							model.save(projectDirectory + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+							model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
 						}
 					}
 				}

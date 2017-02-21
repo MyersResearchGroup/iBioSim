@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import dataModels.util.GlobalConstants;
-//import frontend.main.Gui;
 import dataModels.util.exceptions.SBOLException;
 
 public class SequenceTypeValidator {

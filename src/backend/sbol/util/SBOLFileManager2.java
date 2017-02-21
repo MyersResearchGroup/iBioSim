@@ -1,5 +1,7 @@
 package backend.sbol.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -8,21 +10,19 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
 
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 
-
-//import backend.sbol.util.SBOLIdentityManager2;
-//import backend.sbol.util.SBOLUtility2;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.util.GlobalConstants;
-//import frontend.main.Gui;
 import dataModels.util.exceptions.SBOLException;
 
 public class SBOLFileManager2 {
@@ -47,24 +47,23 @@ public class SBOLFileManager2 {
 		} 
 		else 
 		{
-//			LinkedList<Resolver<DnaComponent, URI>> compResolvers = new LinkedList<Resolver<DnaComponent, URI>>();
 			SBOLDOC = new SBOLDocument();
 			SBOLDOC.setDefaultURIprefix(GlobalConstants.SBOL_AUTHORITY_DEFAULT); 
-//			SBOLDOC.setDefaultURIprefix(GlobalConstants.SO_AUTHORITY);
 			Iterator<String> sbolFileIterator = sbolFilePaths.iterator();
 			do //Go through each sbol file path and create an SBOLDocument
 			{
 				String sbolFilePath = sbolFileIterator.next();
-//				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(sbolFilePath);
-				SBOLDocument sbolDoc = SBOLUtility2.loadSBOLFile(sbolFilePath);
+				
+				File f = new File(sbolFilePath);
+				String fileName = f.getName().replace(".sbol", "");
+				Preferences biosimrc = Preferences.userRoot();
+				SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
+				SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(sbolFilePath));
 				if (sbolDoc != null) 
 				{
 					//store each sbol document to its corresponding sbol file path to fileDocMap to keep track of which sbol 
 					//document belong to which sbol file.
 					fileDocMap.put(sbolFilePath, sbolDoc); 
-//					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
-//					Resolver<DnaComponent, URI> compResolver = flattenedDoc.getComponentUriResolver();
-//					compResolvers.add(compResolver);
 					for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
 					{
 						if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 

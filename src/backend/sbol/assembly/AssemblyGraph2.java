@@ -23,7 +23,6 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
-////import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core2.ComponentDefinition;
 
 import backend.sbol.util.SBOLFileManager2;

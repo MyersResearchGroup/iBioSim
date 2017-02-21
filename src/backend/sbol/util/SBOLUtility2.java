@@ -5,24 +5,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-//import java.io.IOException;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-//import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.Preferences;
 import javax.swing.JFrame;
-//import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.sbolstandard.core2.*;
 
 import dataModels.util.GlobalConstants;
-//import frontend.main.Gui;
 
 public class SBOLUtility2 
 {
@@ -818,7 +814,6 @@ public class SBOLUtility2
 	public static String loadSONumber(ComponentDefinition dnaComp) {
 		for (URI uri : dnaComp.getRoles()) {
 			String authority = uri.getAuthority();
-//			if (authority != null && authority.equals(GlobalConstants.SO_AUTHORITY)) {
 			if (authority != null && authority.equals(GlobalConstants.SO_AUTHORITY2)) {
 				String path = uri.getPath();
 				if (path != null && path.length() > 0) {

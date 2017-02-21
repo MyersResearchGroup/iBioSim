@@ -11,7 +11,7 @@ import conversion.SBOL2SBML;
 
 
 /**
- * Class to test roundtripping of SBML and SBOL files in SBML2SBOL and SBOL2SBML conversion.
+ * Class to test roundtripping for SBML and SBOL files in SBML2SBOL and SBOL2SBML conversion.
  *  
  * @author Tramy Nguyen
  */
@@ -35,29 +35,26 @@ public class RoundtripTest extends ConversionAbstractTests{
 		String inputFile = sbmlDir + fileName + ".xml";
 		String outputFile = sbml2sbol_outputDir + fileName + ".rdf";
 		
-		//inputFile -o outputFileName
-		String[] sbml2sbol_cmdArgs = {inputFile,"-o", outputFile};
-		SBML2SBOL.main(sbml2sbol_cmdArgs);
+		convertSBML(inputFile, outputFile);
 		
 		inputFile = outputFile;
 		outputFile = sbol2sbml_outputDir + fileName + ".xml";
-		String[] sbol2sbml_cmdArgs = {inputFile,"-o", outputFile};
-		SBOL2SBML.main(sbol2sbml_cmdArgs);	
+		
+		convertSBOL(inputFile, outputFile);
+		
+		inputFile = outputFile;
+		outputFile = sbml2sbol_outputDir + fileName + ".xml";
+		
+		convertSBML(inputFile, outputFile);
 	}
 	
-	public void convertSBML(String fileName){
-		String inputFile = sbmlDir + fileName + ".xml";
-		String outputFile = sbml2sbol_outputDir + fileName + ".rdf";
-		
-		//inputFile -o outputFileName
-		String[] sbml2sbol_cmdArgs = {inputFile,"-o", outputFile};
+	public void convertSBML(String inputFullPath, String outputFullPath){
+		String[] sbml2sbol_cmdArgs = {inputFullPath,"-o", outputFullPath};
 		SBML2SBOL.main(sbml2sbol_cmdArgs);
 	}
 	
-	public void convertSBOL(String fileName){
-		String inputFile = sbml2sbol_outputDir + fileName + ".rdf";
-		String outputFile = sbol2sbml_outputDir + fileName + ".xml";
-		String[] sbol2sbml_cmdArgs = {inputFile,"-o", outputFile};
+	public void convertSBOL(String inputFullPath, String outputFullPath){
+		String[] sbol2sbml_cmdArgs = {inputFullPath,"-o", outputFullPath};
 		SBOL2SBML.main(sbol2sbml_cmdArgs);
 	}
 	

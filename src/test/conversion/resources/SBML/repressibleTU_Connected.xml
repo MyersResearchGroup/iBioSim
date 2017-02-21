@@ -818,7 +818,7 @@
       </listOfReactions>
     </comp:modelDefinition>
   </comp:listOfModelDefinitions>
-  <model id = "someModel" substanceUnits="nano_mole_per_litre" volumeUnits="volume">
+  <model id = "repressibleTU_Connected" substanceUnits="nano_mole_per_litre" volumeUnits="volume">
     <comp:listOfSubmodels xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
       <comp:submodel comp:id="tu_model" comp:modelRef="tu_model"/>
     </comp:listOfSubmodels>
