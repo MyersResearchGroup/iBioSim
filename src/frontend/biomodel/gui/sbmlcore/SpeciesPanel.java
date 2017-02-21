@@ -34,8 +34,10 @@ import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.sbol.SBOLField2;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.biomodel.gui.util.PropertyField;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.Gui;
@@ -663,7 +665,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+			dimID = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 					fields.get(GlobalConstants.ID).getValue(), false);
 			if(dimID==null)return false;
 			dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
@@ -727,12 +729,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					else {
 						species.setConversionFactor(convFactor);
 						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)convBox.getSelectedItem());
-						cdex = SBMLutilities.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "conversionFactor", dimID, null, null);
+						cdex = Utils.checkIndices(conviIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "conversionFactor", dimID, null, null);
 						if(cdex==null)return false;
 						SBMLutilities.addIndices(species, "conversionFactor", cdex, 1);
 					}
 					SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), (String)compartBox.getSelectedItem());
-					dex = SBMLutilities.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", dimID, null, null);
+					dex = Utils.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), dimensionIds, "compartment", dimID, null, null);
 					if(dex==null)return false;
 					SBMLutilities.addIndices(species, "compartment", dex, 1);
 				} else {
@@ -835,7 +837,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					AnnotationUtility.removeSBOLAnnotation(species);
 			}
 			
-			bioModel.changeSpeciesId(selected, newSpeciesID);
+			try {
+        bioModel.changeSpeciesId(selected, newSpeciesID);
+      } catch (BioSimException e1) {
+        JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
+        e1.printStackTrace();
+      }
 			((DefaultListModel) components.getModel()).clear();
 
 			for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
@@ -882,7 +889,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	public String updates() {
 		
 		String updates = "";
-		String[] dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), 
+		String[] dimID = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
 				fields.get(GlobalConstants.ID).getValue(), false);
 		if (paramsOnly) {
 			if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(

@@ -17,6 +17,7 @@ import java.util.Vector;
 import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.Compartment;
@@ -1322,7 +1323,15 @@ public class BioGraph extends mxGraph {
 			String id = bioModel.getSBMLCompModel().getListOfSubmodels().get(i).getId();
 			BioModel compBioModel = new BioModel(bioModel.getPath());
 			String modelFileName = bioModel.getModelFileName(id);
-			compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+			try {
+        compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			HashMap<String,String> connections = bioModel.getInputConnections(compBioModel,id);
 			for (String propName : connections.keySet()) {
 				String targetName = connections.get(propName);
@@ -2270,7 +2279,15 @@ public class BioGraph extends mxGraph {
 		File compFile = new File(bioModel.getPath() + GlobalConstants.separator + modelFileName);
 		
 		if (compFile.exists()) {
-			compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+			try {
+        compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			compart = compBioModel.IsWithinCompartment();
 		} else {
 			JOptionPane.showMessageDialog(Gui.frame, 
@@ -2819,7 +2836,7 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Promoter", mxConstants.SHAPE_RHOMBUS));
 		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Promoter", "false").equals("true"));
 		//style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
-		style.put(mxConstants.STYLE_IMAGE,getClass().getResource("/frontend/icons/dna.png"));
+		style.put(mxConstants.STYLE_IMAGE,getClass().getResource("/icons/dna.png"));
 		if (biosimrc.get(prefix+".schematic.shape.Promoter", mxConstants.SHAPE_RHOMBUS).equals(mxConstants.SHAPE_IMAGE)) {
 			style.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
 		}
@@ -2834,7 +2851,7 @@ public class BioGraph extends mxGraph {
 		//style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Promoter", mxConstants.SHAPE_RHOMBUS));
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
 		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Promoter", "false").equals("true"));
-		style.put(mxConstants.STYLE_IMAGE,getClass().getResource("/frontend/icons/dna.png"));
+		style.put(mxConstants.STYLE_IMAGE,getClass().getResource("/icons/dna.png"));
 		style.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
 		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Promoter", "#F00E0E"));
 		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Promoter", "#000000"));

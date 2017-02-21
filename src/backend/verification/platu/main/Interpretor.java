@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.StateGraph;
 import dataModels.lpn.parser.LPN;
+import dataModels.util.exceptions.BioSimException;
 
 public class Interpretor {
 
@@ -66,7 +67,7 @@ public class Interpretor {
         }
     }
 
-    public int interpretcommand(Project prj, final String commandline) {
+    public int interpretcommand(Project prj, final String commandline) throws BioSimException {
         if (prj == null) {
             new Exception("Main: interpretcommand: prj is NULL").printStackTrace();
             return 0;

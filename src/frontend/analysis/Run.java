@@ -50,6 +50,7 @@ import dataModels.util.GlobalConstants;
 import dataModels.util.Message;
 import dataModels.util.MutableString;
 import dataModels.util.dataparser.DataParser;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.graph.Graph;
 import frontend.main.Gui;
@@ -69,8 +70,10 @@ public class Run implements ActionListener, Observer
 
   private final AnalysisView  analysisView;
 
-  DynamicSimulation     dynSim  = null;
+  private DynamicSimulation     dynSim;
 
+  private Log log;
+  
   StateGraph          sg;
 
   public Run(AnalysisView analysisView)
@@ -358,6 +361,7 @@ public class Run implements ActionListener, Observer
     filename = filename.replace("\\", "/");
     Runtime exec = Runtime.getRuntime();
     int exitValue = 255;
+    this.log = log;
     while (outDir.split("/")[outDir.split("/").length - 1].equals("."))
     {
       outDir = outDir.substring(0, outDir.length() - 1 - outDir.split("/")[outDir.split("/").length - 1].length());
@@ -462,23 +466,31 @@ public class Run implements ActionListener, Observer
           return 0;
         }
         lpnFile.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
-        Translator t1 = new Translator();
-        if (abstraction.isSelected())
+        try
         {
-          LPN lhpnFile = new LPN();
-          lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
-          Abstraction abst = new Abstraction(lhpnFile, abstPane);
-          abst.abstractSTG(false);
-          abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
-          t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
+          Translator t1 = new Translator();
+          if (abstraction.isSelected())
+          {
+            LPN lhpnFile = new LPN();
+            lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+            Abstraction abst = new Abstraction(lhpnFile, abstPane);
+            abst.abstractSTG(false);
+            abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
+            t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
+          }
+          else
+          {
+            t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName, prop);
+          }
+          t1.setFilename(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName.replace(".lpn", ".xml"));
+          t1.outputSBML();
         }
-        else
+        catch(BioSimException e)
         {
-          t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName, prop);
+          e.printStackTrace();
         }
-        t1.setFilename(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName.replace(".lpn", ".xml"));
-        t1.outputSBML();
       }
+        
       if (nary.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && naryRun == 1)
       {
         log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=nary-level " + filename + "\n");
@@ -531,24 +543,31 @@ public class Run implements ActionListener, Observer
           {
             progress.setIndeterminate(true);
             time1 = System.nanoTime();
-            Translator t1 = new Translator();
-            if (abstraction.isSelected())
+            try
             {
-              LPN lhpnFile = new LPN();
-              lhpnFile.load(root + GlobalConstants.separator + modelFile);
-              Abstraction abst = new Abstraction(lhpnFile, abstPane);
-              abst.abstractSTG(false);
-              abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile);
-              t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, lpnProperty);
+              Translator t1 = new Translator();
+              if (abstraction.isSelected())
+              {
+                LPN lhpnFile = new LPN();
+                lhpnFile.load(root + GlobalConstants.separator + modelFile);
+                Abstraction abst = new Abstraction(lhpnFile, abstPane);
+                abst.abstractSTG(false);
+                abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile);
+                t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, lpnProperty);
+              }
+              else
+              {
+                t1.convertLPN2SBML(root + GlobalConstants.separator + modelFile, lpnProperty);
+              }
+              t1.setFilename(root + GlobalConstants.separator + sbmlName);
+              t1.outputSBML();
+              exitValue = 0;
+              logFile.close();
             }
-            else
+            catch(BioSimException e)
             {
-              t1.convertLPN2SBML(root + GlobalConstants.separator + modelFile, lpnProperty);
+              e.printStackTrace();
             }
-            t1.setFilename(root + GlobalConstants.separator + sbmlName);
-            t1.outputSBML();
-            exitValue = 0;
-            logFile.close();
             return exitValue;
           }
           else if (modelEditor != null && nary.isSelected())
@@ -622,22 +641,29 @@ public class Run implements ActionListener, Observer
                 return 0;
               }
               lpnFile.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
-              Translator t1 = new Translator();
-              if (abstraction.isSelected())
+              try
               {
-                LPN lhpnFile = new LPN();
-                lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
-                Abstraction abst = new Abstraction(lhpnFile, abstPane);
-                abst.abstractSTG(false);
-                abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
-                t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
+                Translator t1 = new Translator();
+                if (abstraction.isSelected())
+                {
+                  LPN lhpnFile = new LPN();
+                  lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+                  Abstraction abst = new Abstraction(lhpnFile, abstPane);
+                  abst.abstractSTG(false);
+                  abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
+                  t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
+                }
+                else
+                {
+                  t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName, prop);
+                }
+                t1.setFilename(root + GlobalConstants.separator + sbmlName);
+                t1.outputSBML();
               }
-              else
+              catch(BioSimException e)
               {
-                t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName, prop);
+                e.printStackTrace();
               }
-              t1.setFilename(root + GlobalConstants.separator + sbmlName);
-              t1.outputSBML();
             }
             else
             {
@@ -685,7 +711,8 @@ public class Run implements ActionListener, Observer
       {
         if (nary.isSelected() && modelEditor != null)
         {
-          LPN lhpnFile = new LPN(log);
+          LPN lhpnFile = new LPN();
+          lhpnFile.addObserver(this);
           lhpnFile.load(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
           lhpnFile.printDot(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".dot");
           time1 = System.nanoTime();
@@ -1136,18 +1163,24 @@ public class Run implements ActionListener, Observer
               time1 = System.nanoTime();
               if (prop != null)
               {
-                String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
-                boolean globallyTrue = false;
-                if (prop.contains("PF"))
-                {
-                  condition[0] = "true";
+                String[] condition;
+                try {
+                  condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
+                  boolean globallyTrue = false;
+                  if (prop.contains("PF"))
+                  {
+                    condition[0] = "true";
+                  }
+                  else if (prop.contains("PG"))
+                  {
+                    condition[0] = "true";
+                    globallyTrue = true;
+                  }
+                  performMarkovAnalysis.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
+                } catch (BioSimException e) {
+                  e.printStackTrace();
                 }
-                else if (prop.contains("PG"))
-                {
-                  condition[0] = "true";
-                  globallyTrue = true;
-                }
-                performMarkovAnalysis.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
+               
               }
               else
               {
@@ -2315,6 +2348,10 @@ public class Run implements ActionListener, Observer
       JOptionPane.showMessageDialog(Gui.frame, "File I/O Error!", "File I/O Error", JOptionPane.ERROR_MESSAGE);
       e1.printStackTrace();
     }
+    catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
     return exitValue;
   }
 
@@ -2411,7 +2448,6 @@ public class Run implements ActionListener, Observer
 
   @Override
   public void update(Observable o, Object arg) {
-    // TODO Auto-generated method stub
     Message message = (Message) arg;
     
     if(message.isCancel())
@@ -2429,6 +2465,10 @@ public class Run implements ActionListener, Observer
     else if(message.isDialog())
     {
       JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
+    }
+    else if(message.isLog())
+    {
+      log.addText(message.getMessage());
     }
   }
 }

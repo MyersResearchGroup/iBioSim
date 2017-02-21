@@ -2,6 +2,8 @@ package backend.analysis.markov;
 
 import javax.swing.JProgressBar;
 
+import dataModels.util.exceptions.BioSimException;
+
 public class PerfromTransientMarkovAnalysisThread extends Thread {
 
 	private StateGraph sg;
@@ -34,6 +36,10 @@ public class PerfromTransientMarkovAnalysisThread extends Thread {
 
 	@Override
 	public void run() {
-		sg.performTransientMarkovianAnalysis(timeLimit, timeStep, printInterval, error, condition, progress, globallyTrue);
+		try {
+      sg.performTransientMarkovianAnalysis(timeLimit, timeStep, printInterval, error, condition, progress, globallyTrue);
+    } catch (BioSimException e) {
+      e.printStackTrace();
+    }
 	}
 }

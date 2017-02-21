@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -34,7 +36,7 @@ public class GCMParser {
 	
 	private String separator;
 
-	public GCMParser(String filename) {
+	public GCMParser(String filename) throws XMLStreamException, IOException {
 		separator = GlobalConstants.separator;
 		//this.debug = debug;
 		biomodel = new BioModel(filename.substring(0, filename.length()

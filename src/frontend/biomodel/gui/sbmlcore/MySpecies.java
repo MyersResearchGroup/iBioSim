@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -17,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.InitialAssignment;
@@ -34,7 +36,9 @@ import org.sbml.jsbml.UnitDefinition;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 import frontend.main.util.Utility;
 
@@ -159,7 +163,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		Utility.sort(specs);
+		dataModels.biomodel.util.Utility.sort(specs);
 		species.setListData(specs);
 		species.setSelectedIndex(0);
 		species.addMouseListener(this);
@@ -199,7 +203,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		Utility.sort(specs);
+		dataModels.biomodel.util.Utility.sort(specs);
 		int selected = 0;
 		for (int i = 0; i < specs.length; i++) {
 			if (specs[i].split("\\[| ")[0].equals(selectedSpecies)) {
@@ -438,8 +442,10 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						sweep.setEnabled(false);
 						init.setEnabled(false);
 						initLabel.setEnabled(false);
-						SBMLDocument d = SBMLutilities.readSBML(file);
-						if (d.getModel().getSpecies(((String) species.getSelectedValue()).split("\\[| ")[0]).isSetInitialAmount()) {
+						SBMLDocument d;
+            try {
+              d = SBMLutilities.readSBML(file);
+              if (d.getModel().getSpecies(((String) species.getSelectedValue()).split("\\[| ")[0]).isSetInitialAmount()) {
 							init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split("\\[| ")[0]).getInitialAmount() + "");
 							initLabel.setSelectedItem("Initial Amount");
 						}
@@ -447,6 +453,14 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 							init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split("\\[| ")[0]).getInitialConcentration() + "");
 							initLabel.setSelectedItem("Initial Concentration");
 						}
+            } catch (XMLStreamException e1) {
+              JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+              e1.printStackTrace();
+            } catch (IOException e1) {
+              JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+              e1.printStackTrace();
+            }
+						
 					}
 				}
 			});
@@ -470,7 +484,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), ID.getText().trim(), selectedID, false);
+			error = Utils.checkID(bioModel.getSBMLDocument(), ID.getText().trim(), selectedID, false);
 			double initial = 0;
 			if (!error) {
 				if (init.getText().trim().startsWith("(") && init.getText().trim().endsWith(")")) {
@@ -564,7 +578,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 				if (!error && option.equals("OK") && specConstant.getSelectedItem().equals("true")) {
 					String val = ((String) species.getSelectedValue()).split("\\[| ")[0];
-					error = SBMLutilities.checkConstant(bioModel.getSBMLDocument(), "Species", val);
+					error = Utils.checkConstant(bioModel.getSBMLDocument(), "Species", val);
 				}
 				if (!error && option.equals("OK") && specBoundary.getSelectedItem().equals("false")) {
 					String val = ((String) species.getSelectedValue()).split("\\[| ")[0];
@@ -629,7 +643,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 							specie.setConversionFactor(convFactor);
 						}
 						specs[index1] = addSpec;
-						Utility.sort(specs);
+						dataModels.biomodel.util.Utility.sort(specs);
 						species.setListData(specs);
 						species.setSelectedIndex(index1);
 						if (paramsOnly) {
@@ -647,7 +661,12 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 						else {
-							SBMLutilities.updateVarId(bioModel.getSBMLDocument(), true, speciesName, specie.getId());
+							try {
+                SBMLutilities.updateVarId(bioModel.getSBMLDocument(), true, speciesName, specie.getId());
+              } catch (BioSimException e1) {
+                JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
+                e1.printStackTrace();
+              }
 						}
 					}
 					else {
@@ -706,7 +725,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < adding.length; i++) {
 							specs[i] = (String) adding[i];
 						}
-						Utility.sort(specs);
+						dataModels.biomodel.util.Utility.sort(specs);
 						species.setListData(specs);
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (bioModel.getSBMLDocument().getModel().getSpeciesCount() == 1) {

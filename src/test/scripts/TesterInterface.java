@@ -1,6 +1,6 @@
-package backend.biomodel.scripts;
+package test.scripts;
 
-import backend.biomodel.util.ExperimentResult;
+import dataModels.biomodel.util.ExperimentResult;
 
 public interface TesterInterface {
 	boolean[] passedTest(ExperimentResult results);

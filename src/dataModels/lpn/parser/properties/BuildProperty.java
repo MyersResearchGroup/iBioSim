@@ -7,25 +7,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
-
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
 
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
 import dataModels.lpn.parser.Variable;
-import frontend.main.Gui;
+import dataModels.util.exceptions.BioSimException;
 
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
-
-
-
-
-
 
 public class BuildProperty {
 	//public static JFrame frame;
@@ -40,7 +33,7 @@ public class BuildProperty {
 	static boolean loop = false;
 
 	static List list = new List();
-	public static void buildProperty(String propFileName) throws IOException, RecognitionException {
+	public static void buildProperty(String propFileName) throws IOException, RecognitionException, BioSimException {
 
 		//String propertyId = JOptionPane.showInputDialog(frame, "Enter the SVA property name:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 		//System.out.println(propertyId);
@@ -99,12 +92,11 @@ public class BuildProperty {
 		catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "Error parsing property file, check console.", "Parse Error",  JOptionPane.ERROR_MESSAGE);
+			//JOptionPane.showMessageDialog(Gui.frame, "Error parsing property file, check console.", "Parse Error",  JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		if (parser.getNumberOfSyntaxErrors()>0) {
-			JOptionPane.showMessageDialog(Gui.frame, "Error parsing property file, check console.", "Parse Error",  JOptionPane.ERROR_MESSAGE);
-			return;
+		  throw new BioSimException("Error parsing property file, check console.", "Parse Error");
 		}
 		//System.out.println("tree: "+((Tree)program.tree).toStringTree()+"\n");
 
@@ -116,7 +108,7 @@ public class BuildProperty {
 		generateFile(r0, lpn,lpnFileName);
 	}
 
-	public static void generateFile(CommonTree r0, LPN lpn, String lpnFileName){
+	public static void generateFile(CommonTree r0, LPN lpn, String lpnFileName) throws BioSimException{
 		LPN lpnFinal = new LPN();
 		File lpnFile = new File(".lpn");
 		try {

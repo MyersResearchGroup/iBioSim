@@ -49,6 +49,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.xml.stream.XMLStreamException;
 
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
@@ -65,6 +66,7 @@ import dataModels.lpn.parser.LpnDecomposition.LpnComponentList;
 import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
 import dataModels.util.GlobalConstants;
 import dataModels.util.Message;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.Gui;
 import frontend.main.Log;
@@ -1388,7 +1390,12 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 					Options.setPrjSgPath(directory);
 					// Options for printing the final numbers from search_dfs.
 					Options.setOutputLogFlag(true);
-					untimed_dfs.search();
+					try {
+            untimed_dfs.search();
+          } catch (BioSimException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
 					
 				//}				
 				//else { // No POR
@@ -1842,7 +1849,12 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 				Options.setOutputSgFlag(true);
 				Options.setPrjSgPath(directory + separator);				
 			}
-			timedStateSearch.search();
+			try {
+        timedStateSearch.search();
+      } catch (BioSimException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
 //			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
 			String graphFileName = "full_sg.dot";
 
@@ -3049,8 +3061,17 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 			}
 		} else if (sourceFile.endsWith(".xml")) {
 			BioModel bioModel = new BioModel(workDir);
-			bioModel.load(workDir + separator + sourceFile);
-			bioModel.saveAsLPN(directory + separator + sourceFile.replace(".xml", ".lpn"));
+			try {
+        bioModel.load(workDir + separator + sourceFile);
+        bioModel.saveAsLPN(directory + separator + sourceFile.replace(".xml", ".lpn"));
+      } catch (XMLStreamException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
+			
 		}
 	}
 

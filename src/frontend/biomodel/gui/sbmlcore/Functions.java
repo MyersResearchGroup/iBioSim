@@ -33,7 +33,9 @@ import org.sbml.jsbml.text.parser.ParseException;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 import frontend.main.util.SpringUtilities;
 import frontend.main.util.Utility;
@@ -81,13 +83,13 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		int count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = listOfFunctions.get(i);
-			if (!SBMLutilities.isSpecialFunction(model,function.getId())) count++;
+			if (!Utils.isSpecialFunction(model,function.getId())) count++;
 		}
 		String[] funcs = new String[count];
 		count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = listOfFunctions.get(i);
-			if (SBMLutilities.isSpecialFunction(model,function.getId())) continue;
+			if (Utils.isSpecialFunction(model,function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
 			for (int j = 0; j < function.getArgumentCount(); j++) {
 				if (j != 0) {
@@ -120,7 +122,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(functions);
-		Utility.sort(funcs);
+		dataModels.biomodel.util.Utility.sort(funcs);
 		functions.setListData(funcs);
 		functions.setSelectedIndex(0);
 		functions.addMouseListener(this);
@@ -256,7 +258,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), funcID.getText().trim(), selectedID, false);
+			error = Utils.checkID(bioModel.getSBMLDocument(), funcID.getText().trim(), selectedID, false);
 			if (!error) {
 				String[] vars = eqn.getText().trim().split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
 				for (int i = 0; i < vars.length; i++) {
@@ -289,7 +291,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							String [] dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), funcID.getText(), false);
 							String [] dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 							*/
-							error = SBMLutilities.displayinvalidVariables("Function", bioModel.getSBMLDocument(), null, 
+							error = Utils.displayinvalidVariables("Function", bioModel.getSBMLDocument(), null, 
 										eqn.getText().trim(), args.getText().trim(), true);
 						}
 					} catch (HeadlessException e) {
@@ -302,10 +304,10 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					}
 			}
 			if (!error) {
-				error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(eqn.getText().trim()));
+				error = Utils.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(eqn.getText().trim()));
 			}
 			if (!error) {
-				error = SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(eqn.getText().trim()));
+				error = Utils.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(eqn.getText().trim()));
 			}
 			if (!error) {
 				if (option.equals("OK")) {
@@ -367,7 +369,12 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					}
 					functions.setListData(funcs);
 					functions.setSelectedIndex(index);
-					SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, val, funcID.getText().trim());
+					try {
+            SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, val, funcID.getText().trim());
+          } catch (BioSimException e) {
+            JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+          }
 				}
 				else {
 					String[] funcs = new String[functions.getModel().getSize()];
@@ -492,13 +499,13 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		int count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = listOfFunctions.get(i);
-			if (!SBMLutilities.isSpecialFunction(model,function.getId())) count++;
+			if (!Utils.isSpecialFunction(model,function.getId())) count++;
 		}
 		String[] funcs = new String[count];
 		count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = listOfFunctions.get(i);
-			if (SBMLutilities.isSpecialFunction(model,function.getId())) continue;
+			if (Utils.isSpecialFunction(model,function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
 			for (int j = 0; j < function.getArgumentCount(); j++) {
 				if (j != 0) {
@@ -511,7 +518,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			}
 			count++;
 		}
-		Utility.sort(funcs);
+		dataModels.biomodel.util.Utility.sort(funcs);
 		functions.setListData(funcs);
 		functions.setSelectedIndex(0);
 	}

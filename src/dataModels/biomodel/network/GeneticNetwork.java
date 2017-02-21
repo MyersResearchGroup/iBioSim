@@ -8,9 +8,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Observable;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Event;
@@ -43,8 +43,8 @@ import dataModels.biomodel.visitor.PrintSpeciesVisitor;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
 import dataModels.util.GlobalConstants;
+import dataModels.util.Message;
 import dataModels.util.MutableString;
-import frontend.main.Gui;
 
 /**
  * This class represents a genetic network
@@ -52,7 +52,7 @@ import frontend.main.Gui;
  * @author Nam
  * 
  */
-public class GeneticNetwork {
+public class GeneticNetwork extends Observable {
 	
 	//private String separator;
 	
@@ -112,7 +112,7 @@ public class GeneticNetwork {
 	}
 	
 	public void buildTemplate(HashMap<String, SpeciesInterface> species,			
-			HashMap<String, Promoter> promoters, String gcm, String filename) {
+			HashMap<String, Promoter> promoters, String gcm, String filename) throws XMLStreamException, IOException {
 		
 		BioModel file = new BioModel(currentRoot);
 		file.load(currentRoot+gcm);
@@ -141,11 +141,13 @@ public class GeneticNetwork {
 			try {
 				p.print(writer.writeSBMLToString(document));
 			} catch (XMLStreamException e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			  message.setErrorDialog("Error Opening File", "Invalid XML in SBML file");
+			  this.notifyObservers(message);
 				p.close();
 				return;
 			} catch (SBMLException e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid SBML when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			  message.setErrorDialog("Error Opening File", "Invalid SBML when opening SBML file");
+			  this.notifyObservers(message);
 				p.close();
 				return;
 			}
@@ -358,8 +360,10 @@ public class GeneticNetwork {
 	 * the Type=Grid annotation with better information
 	 * 
 	 * @param document
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	public static void reformatArrayContent(BioModel bioModel, SBMLDocument document, String filename) {
+	public static void reformatArrayContent(BioModel bioModel, SBMLDocument document, String filename) throws XMLStreamException, IOException {
 		
 		ArrayList<Reaction> membraneDiffusionReactions = new ArrayList<Reaction>();
 		
@@ -383,16 +387,9 @@ public class GeneticNetwork {
 			for (int submodelIndex = 0; submodelIndex < bioModel.getSBMLCompModel().getListOfSubmodels().size(); ++submodelIndex) {
 				
 				Model submodel = null;
-				try {
-					submodel = SBMLReader.read(new File(bioModel.getPath() + 
+				submodel = SBMLReader.read(new File(bioModel.getPath() + 
 							bioModel.getSBMLCompModel().getListOfSubmodels().get(submodelIndex).getModelRef() + ".xml")).getModel();
-				} catch (XMLStreamException e1) {
-					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
-					return;
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
+
 				
 				if (submodel.getReaction(reactionID) != null)
 					validSubmodels.add(submodel.getId());				
@@ -527,16 +524,9 @@ public class GeneticNetwork {
 		for (String componentID : allComponents) {
 			
 			Model compModel = null;
-			try {
-				compModel = SBMLReader.read(new File(bioModel.getPath() + 
+			compModel = SBMLReader.read(new File(bioModel.getPath() + 
 						bioModel.getModelFileName(componentID))).getModel();
-			} catch (XMLStreamException e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
-				return;
-			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+
 			
 			//update the kmdiff values for membrane diffusion reactions
 			//takes rates from the internal model
@@ -1017,6 +1007,8 @@ public class GeneticNetwork {
 	
 	private String property;
 
+	private final Message message = new Message();
+	
 	/**
 	 * Returns the curent SBML document being built
 	 * 

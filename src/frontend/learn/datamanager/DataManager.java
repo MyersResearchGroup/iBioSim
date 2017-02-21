@@ -15,6 +15,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
@@ -23,12 +24,13 @@ import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
+import dataModels.util.Message;
 import dataModels.util.dataparser.*;
 import frontend.main.*;
 import frontend.main.util.*;
 
 
-public class DataManager extends JPanel implements ActionListener, TableModelListener, ListSelectionListener {
+public class DataManager extends JPanel implements ActionListener, TableModelListener, ListSelectionListener, Observer {
 
 	private static final long serialVersionUID = -2669704247953218544L;
 
@@ -1133,13 +1135,23 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			if (background.contains(".gcm")) {
 				ArrayList<String> getSpecies = new ArrayList<String>();
 				BioModel gcm = new BioModel(biosim.getRoot());
-				gcm.load(background);
-				getSpecies = gcm.getSpecies();
-				species = getSpecies.toArray(new String[0]);
+				try {
+          gcm.load(background);
+
+          getSpecies = gcm.getSpecies();
+          species = getSpecies.toArray(new String[0]);
+        } catch (XMLStreamException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        } catch (IOException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        }
 			}
 			else if (background.contains(".lpn")) {
 				ArrayList<String> getSpecies = new ArrayList<String>();
-				LPN lhpn = new LPN(biosim.log);
+				LPN lhpn = new LPN();
+				lhpn.addObserver(this);
 				// System.out.println(background);
 				lhpn.load(background);
 				HashMap<String, Properties> speciesMap = lhpn.getContinuous();
@@ -1177,17 +1189,26 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				// END ADDED BY SB.
 			}
 			else {
-				SBMLDocument document = SBMLutilities.readSBML(background);
-				Model model = document.getModel();
-				ArrayList<String> getSpecies = new ArrayList<String>();
-				for (int i = 0; i < model.getSpeciesCount(); i++) {
-					if (BioModel.isPromoterSpecies(model.getSpecies(i))) continue;
-					getSpecies.add(model.getSpecies(i).getId());
-				}
-				for (int i = 0; i < model.getParameterCount(); i++) {
-					getSpecies.add(model.getParameter(i).getId());
-				}
-				species = getSpecies.toArray(new String[0]);
+				SBMLDocument document;
+        try {
+          document = SBMLutilities.readSBML(background);
+          Model model = document.getModel();
+          ArrayList<String> getSpecies = new ArrayList<String>();
+          for (int i = 0; i < model.getSpeciesCount(); i++) {
+            if (BioModel.isPromoterSpecies(model.getSpecies(i))) continue;
+            getSpecies.add(model.getSpecies(i).getId());
+          }
+          for (int i = 0; i < model.getParameterCount(); i++) {
+            getSpecies.add(model.getParameter(i).getId());
+          }
+          species = getSpecies.toArray(new String[0]);
+        } catch (XMLStreamException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        } catch (IOException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        }
 			}
 		}
 		if (species != null) {
@@ -1307,6 +1328,29 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			}
 		}
 	}
+
+  @Override
+  public void update(Observable o, Object arg) {
+ Message message = (Message) arg;
+    
+    if(message.isConsole())
+    {
+      System.out.println(message.getMessage());
+    }
+    else if(message.isErrorDialog())
+    {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
+    }
+    else if(message.isDialog())
+    {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
+    }
+    else if(message.isLog())
+    {
+      biosim.log.addText(message.getMessage());
+    }
+    
+  }
 }
 
 class TableSorter extends TableMap {

@@ -1,11 +1,14 @@
 package backend.synthesis.genetic;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
@@ -218,7 +221,7 @@ public class Synthesizer {
 			specNodes.get(i).setCoverConstraint(coverNodes.get(i).getSignal());
 	}
 	
-	public static void composeSolutionModel(List<SynthesisGraph> solution, SynthesisGraph spec, BioModel solutionModel) {
+	public static void composeSolutionModel(List<SynthesisGraph> solution, SynthesisGraph spec, BioModel solutionModel) throws XMLStreamException, IOException {
 		List<SynthesisGraph> solutionCopy = new LinkedList<SynthesisGraph>();
 		solutionCopy.addAll(solution);
 		List<SynthesisNode> currentNodes = new LinkedList<SynthesisNode>();
@@ -262,7 +265,7 @@ public class Synthesizer {
 		} while (currentNodes.size() > 0);
 	}
 	
-	private static void composeOutput(SynthesisGraph currentCover, BioModel solutionModel, int submodelIndex) {
+	private static void composeOutput(SynthesisGraph currentCover, BioModel solutionModel, int submodelIndex) throws XMLStreamException, IOException {
 		currentCover.setSubmodelID("C" + submodelIndex);
 		createSubmodel(currentCover.getSubmodelID(), currentCover.getModelFileID(), solutionModel);
 		Species species = createIOSpecies(currentCover.getOutput().getID(), solutionModel);
@@ -277,7 +280,7 @@ public class Synthesizer {
 	}
 	
 	private static void composeIntermediate(SynthesisGraph currentCover, SynthesisGraph previousCover, BioModel solutionModel, 
-			List<Integer> inputIndices, int submodelIndex) {
+			List<Integer> inputIndices, int submodelIndex) throws XMLStreamException, IOException {
 		currentCover.setSubmodelID("C" + submodelIndex);
 		createSubmodel(currentCover.getSubmodelID(), currentCover.getModelFileID(), solutionModel);
 		submodelIndex++;
@@ -291,7 +294,7 @@ public class Synthesizer {
 				previousCover.getSubmodelID(), currentCover.getSubmodelID());
 	}
 	
-	private static void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) {
+	private static void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) throws XMLStreamException, IOException {
 		BioModel subBiomodel = new BioModel(biomodel.getPath());
 		subBiomodel.load(biomodel.getPath() + biomodel.getSeparator() + sbmlFileID);
 		String md5 = Utility.MD5(subBiomodel.getSBMLDocument());

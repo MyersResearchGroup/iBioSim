@@ -2,9 +2,11 @@ package frontend.biomodel.gui.comp;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JCheckBox;
@@ -13,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.xml.stream.XMLStreamException;
 
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.Utility;
@@ -194,46 +197,57 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				BioModel compGCM = new BioModel(bioModel.getPath());
 				
 				//don't allow dropping a grid component
-				if (compGCM.getGridEnabledFromFile(bioModel.getPath() + GlobalConstants.separator + component.replace(".gcm",".xml"))) {
-					
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Dropping grid modules is disallowed.\n" +
-							"Please choose a different module.",
-							"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
-				}
-				else {
-					
-					error = false;
-				
-					//if we're adding a single component
-					if (selected == false) {
-						
-						int row = bioModel.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
-						int col = bioModel.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
-						
-						//newComponentID = 
-						applyGridComponent(row, col, component);
-					}
-					//if we're adding components to selected location(s)
-					else {
-						
-						ArrayList<Point> selectedNodes = bioModel.getGrid().getSelectedUnoccupiedNodes();
-						
-						//loop through all selected locations; apply the component to that location
-						if (selectedNodes.size() > 0) {
-							
-							for (Point rowCol : selectedNodes)
-								//newComponentID = 
-								applyGridComponent(rowCol.x, rowCol.y, component);				
-						}
-					}
-					
-					Grid grid = bioModel.getGrid();
-					grid.refreshComponents();
-					gcm2sbml.getSpeciesPanel().refreshSpeciesPanel(bioModel);
-					
-					droppedComponent = true;
-				}
+				try {
+          if (compGCM.getGridEnabledFromFile(bioModel.getPath() + GlobalConstants.separator + component.replace(".gcm",".xml"))) {
+          	
+          	JOptionPane.showMessageDialog(Gui.frame,
+          			"Dropping grid modules is disallowed.\n" +
+          			"Please choose a different module.",
+          			"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
+          }
+          else {
+          	
+          	error = false;
+          
+          	//if we're adding a single component
+          	if (selected == false) {
+          		
+          		int row = bioModel.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
+          		int col = bioModel.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
+          		
+          		//newComponentID = 
+          		applyGridComponent(row, col, component);
+          	}
+          	//if we're adding components to selected location(s)
+          	else {
+          		
+          		ArrayList<Point> selectedNodes = bioModel.getGrid().getSelectedUnoccupiedNodes();
+          		
+          		//loop through all selected locations; apply the component to that location
+          		if (selectedNodes.size() > 0) {
+          			
+          			for (Point rowCol : selectedNodes)
+          				//newComponentID = 
+          				applyGridComponent(rowCol.x, rowCol.y, component);				
+          		}
+          	}
+          	
+          	Grid grid = bioModel.getGrid();
+          	grid.refreshComponents();
+          	gcm2sbml.getSpeciesPanel().refreshSpeciesPanel(bioModel);
+          	
+          	droppedComponent = true;
+          }
+        } catch (HeadlessException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (XMLStreamException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        } catch (IOException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        }
 			}
 			else {
 				
@@ -259,7 +273,15 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		double height = grid.getComponentGeomHeight();
 		
 		BioModel compGCMFile = new BioModel(bioModel.getPath());
-		compGCMFile.load(bioModel.getPath() + GlobalConstants.separator + component);
+		try {
+      compGCMFile.load(bioModel.getPath() + GlobalConstants.separator + component);
+	  } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 		String md5 = Utility.MD5(compGCMFile.getSBMLDocument());
 		return bioModel.addComponent(null, component, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 				col * (width + padding) + padding, row * (height + padding) + padding,md5);
@@ -309,22 +331,33 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				BioModel compGCM = new BioModel(bioModel.getPath());
 				
 				//don't allow grids within a grid
-				if (compGCM.getGridEnabledFromFile(bioModel.getPath() + GlobalConstants.separator + component.replace(".gcm",".xml"))) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Dropping grid modules is disallowed.\n" +
-							"Please choose a different module.",
-							"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
-				}
-				else if (!gcm2sbml.checkNoComponentLoop(gcm2sbml.getFilename(), component)) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Dropping this module creates a cycle of instantiations.\n" +
-							"Please choose a different module.",
-							"Cannot drop a module", JOptionPane.ERROR_MESSAGE);
-				} else {
-					applyComponents(mouseX, mouseY);
-					error = false;
-					bioModel.makeUndoPoint();
-				}
+				try {
+          if (compGCM.getGridEnabledFromFile(bioModel.getPath() + GlobalConstants.separator + component.replace(".gcm",".xml"))) {
+          	JOptionPane.showMessageDialog(Gui.frame,
+          			"Dropping grid modules is disallowed.\n" +
+          			"Please choose a different module.",
+          			"Cannot drop a grid module", JOptionPane.ERROR_MESSAGE);
+          }
+          else if (!gcm2sbml.checkNoComponentLoop(gcm2sbml.getFilename(), component)) {
+          	JOptionPane.showMessageDialog(Gui.frame,
+          			"Dropping this module creates a cycle of instantiations.\n" +
+          			"Please choose a different module.",
+          			"Cannot drop a module", JOptionPane.ERROR_MESSAGE);
+          } else {
+          	applyComponents(mouseX, mouseY);
+          	error = false;
+          	bioModel.makeUndoPoint();
+          }
+        } catch (HeadlessException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (XMLStreamException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        } catch (IOException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        }
 			}
 			else {
 				this.droppedComponent = false;
@@ -393,7 +426,15 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		for(int row=0; row<rowCount; row++) {
 			for(int col=0; col<colCount; col++) {
 				BioModel compBioModel = new BioModel(bioModel.getPath());
-				compBioModel.load(bioModel.getPath() + GlobalConstants.separator + comp);
+				try {
+          compBioModel.load(bioModel.getPath() + GlobalConstants.separator + comp);
+        } catch (XMLStreamException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        } catch (IOException e) {
+          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        }
 				String md5 = Utility.MD5(compBioModel.getSBMLDocument());
 				bioModel.addComponent(null, comp, compBioModel.IsWithinCompartment(), compBioModel.getCompartmentPorts(), -1, -1, 
 						col * separationX + topleftX, row * separationY + topleftY,md5);

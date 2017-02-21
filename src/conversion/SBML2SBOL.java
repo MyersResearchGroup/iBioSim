@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
@@ -128,7 +130,7 @@ public class SBML2SBOL {
 		return true;
 	}
 	
-	public void saveAsSBOL(SBOLDocument sbolDoc) throws SBOLValidationException {
+	public void saveAsSBOL(SBOLDocument sbolDoc) throws SBOLValidationException, XMLStreamException, IOException {
 		sbolDoc.setTypesInURIs(true);
 		String collection_id = "collection__" + sbmlDoc.getModel().getId();
 		Collection collection;
@@ -155,7 +157,7 @@ public class SBML2SBOL {
 		sbolDoc.setTypesInURIs(false);
 	}
 	
-	public void export(String exportFilePath,String fileType) throws IOException, SBOLConversionException, SBOLValidationException {
+	public void export(String exportFilePath,String fileType) throws IOException, SBOLConversionException, SBOLValidationException, XMLStreamException {
 		SBOLDocument sbolDoc = new SBOLDocument();
 		export(sbolDoc);
 		
@@ -170,7 +172,7 @@ public class SBML2SBOL {
 		} 
 	}
 	
-	public void export(SBOLDocument sbolDoc) throws SBOLValidationException {
+	public void export(SBOLDocument sbolDoc) throws SBOLValidationException, XMLStreamException, IOException {
 		Preferences biosimrc = Preferences.userRoot();
 		sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 		sbolDoc.setComplete(false);
@@ -182,7 +184,7 @@ public class SBML2SBOL {
 		export_recurse("file:" + fileName,sbmlDoc,sbmlDoc.getModel(),sbolDoc); //,collection);
 	}
 	
-	public void export_recurse(String source,SBMLDocument sbmlDoc,Model model,SBOLDocument sbolDoc) throws SBOLValidationException 
+	public void export_recurse(String source,SBMLDocument sbmlDoc,Model model,SBOLDocument sbolDoc) throws SBOLValidationException, XMLStreamException, IOException 
 	{
 		//String modelId = model.getId();
 		URI sourceURI  = URI.create(source);
@@ -525,7 +527,7 @@ public class SBML2SBOL {
 		}
 	}
 	
-	public void extractSubModels(String source, SBMLDocument sbmlDoc, SBOLDocument sbolDoc, ModuleDefinition moduleDef, Model model) throws SBOLValidationException
+	public void extractSubModels(String source, SBMLDocument sbmlDoc, SBOLDocument sbolDoc, ModuleDefinition moduleDef, Model model) throws SBOLValidationException, XMLStreamException, IOException
 	{
 		ArrayList<String> comps = new ArrayList<String>();
 		CompSBMLDocumentPlugin sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
@@ -653,18 +655,18 @@ public class SBML2SBOL {
 				
 			}
 			SBMLDocument sbmlDoc = null;
-			if(inputName != null)
-			{
-				if (includePath == null) {
-					sbmlDoc = SBMLutilities.readSBML(inputName);
-				} else {
-					sbmlDoc = SBMLutilities.readSBML(includePath + GlobalConstants.separator + inputName);
-				}
-			} else {
-				usage();
-			}
+		
 			try {
-				
+			  if(inputName != null)
+	      {
+	        if (includePath == null) {
+	          sbmlDoc = SBMLutilities.readSBML(inputName);
+	        } else {
+	          sbmlDoc = SBMLutilities.readSBML(includePath + GlobalConstants.separator + inputName);
+	        }
+	      } else {
+	        usage();
+	      }
 				SBML2SBOL sbml2Sbol = new SBML2SBOL(sbolInputFiles, includePath, sbmlDoc, inputName);
 				sbml2Sbol.export(outputName, "SBOL");
 			} catch (FileNotFoundException e) {
@@ -679,7 +681,10 @@ public class SBML2SBOL {
 			} catch (SBOLConversionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			} catch (XMLStreamException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
 		}
 	}
 }

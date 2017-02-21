@@ -13,6 +13,7 @@ import dataModels.lpn.parser.ExprTree;
 import dataModels.lpn.parser.Transition;
 import dataModels.lpn.parser.Translator;
 import dataModels.util.dataparser.DataParser;
+import dataModels.util.exceptions.BioSimException;
 
 public class MarkovianAnalysis implements Runnable{
 	
@@ -45,7 +46,7 @@ public class MarkovianAnalysis implements Runnable{
 	}	
 	
 	public boolean performSteadyStateMarkovianAnalysis(double tolerance, ArrayList<Property> props,
-			PrjState initial, JProgressBar progress) {
+			PrjState initial, JProgressBar progress) throws BioSimException {
 		// Moved the test to perform Markovian analysis to the run method in Verification.java, where LPN(s) are loaded
 		// or generated from decomposition. 
 		ArrayList<Property> conditions = new ArrayList<Property>();
@@ -281,7 +282,7 @@ public class MarkovianAnalysis implements Runnable{
 	}
 	
 	//private String removeNesting(double error, double timeStep, String prop, JProgressBar progress) {
-	private String removeNesting(double error, double timeStep, String prop, JProgressBar progress) {
+	private String removeNesting(double error, double timeStep, String prop, JProgressBar progress) throws BioSimException {
 		if (prop.contains("Pr=?{") || prop.contains("St=?{")) {
 			if (progress != null) {
 				progress.setString("Determining Sat Sets.");
@@ -343,7 +344,7 @@ public class MarkovianAnalysis implements Runnable{
 		return prop;
 	}
 
-	private String determineNestedProbability(double error, double timeStep, String property) {
+	private String determineNestedProbability(double error, double timeStep, String property) throws BioSimException {
 		String prop = "";
 		int braces = 0;
 		for (int i = 0; i < property.length(); i++) {
@@ -544,7 +545,7 @@ public class MarkovianAnalysis implements Runnable{
 	}
 	
 	public boolean performTransientMarkovianAnalysis(double timeLimit, double timeStep, double printInterval,
-			double error, String[] condition, JProgressBar progress, boolean globallyTrue) {
+			double error, String[] condition, JProgressBar progress, boolean globallyTrue) throws BioSimException {
 		// Moved the test for the ability to perform Markovian analysis to the run method in Verification.java, 
 		// where LPN(s) are loaded or generated from decomposition.	
 		computeTransitionRateSum();

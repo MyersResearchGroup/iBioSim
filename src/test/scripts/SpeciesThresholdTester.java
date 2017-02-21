@@ -1,4 +1,4 @@
-package backend.biomodel.scripts;
+package test.scripts;
 
 import java.util.ArrayList;
 

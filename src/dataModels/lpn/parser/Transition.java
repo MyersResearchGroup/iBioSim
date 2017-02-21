@@ -5,14 +5,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import backend.verification.platu.main.Options;
-import frontend.main.Gui;
+import dataModels.util.Message;
 
-public class Transition {
+public class Transition extends Observable {
 
 	private String label;
 
@@ -55,6 +54,8 @@ public class Transition {
 	private LPN lhpn;
 	
 	private int index;
+	
+	private final Message message = new Message();
 	
 	/**
 	 * List of LPNs that can be affected by firing this transition. 
@@ -149,8 +150,8 @@ public class Transition {
 				enabling = newEnab;
 				return true;
 			} catch (IllegalArgumentException e) {
-				JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",newEnab)+e.getMessage(),
-						"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+			  message.setErrorDialog("Parse Error in Property", String.format("Error parsing %s\n",newEnab)+e.getMessage());
+				this.notifyObservers(message);
 				return false;
 			}
 		}
@@ -173,8 +174,8 @@ public class Transition {
 			intAssignments.put(variable, assignment);
 			return true;
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",assignment)+e.getMessage(),
-					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+		  message.setErrorDialog("Parse Error in Property", String.format("Error parsing %s\n",assignment)+e.getMessage());
+      this.notifyObservers(message);
 			return false;
 		}
 	}
@@ -211,8 +212,8 @@ public class Transition {
 			contAssignments.put(variable, assignment);
 			return true;
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",assignment)+e.getMessage(),
-					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+		  message.setErrorDialog("Parse Error in Property", String.format("Error parsing %s\n",assignment)+e.getMessage());
+      this.notifyObservers(message);
 			return false;
 		}
 	}
@@ -226,8 +227,8 @@ public class Transition {
 			rateAssignments.put(variable, assignment);
 			return true;
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",assignment)+e.getMessage(),
-					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+		  message.setErrorDialog("Parse Error in Property", String.format("Error parsing %s\n",assignment)+e.getMessage());
+      this.notifyObservers(message);
 			return false;
 		}
 	}
@@ -249,8 +250,8 @@ public class Transition {
 			this.delay = delay;
 			return true;
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",delay)+e.getMessage(),
-					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+		  message.setErrorDialog("Parse Error in Property", String.format("Error parsing %s\n",delay)+e.getMessage());
+      this.notifyObservers(message);
 			return false;
 		}
 	}
@@ -269,8 +270,8 @@ public class Transition {
 			this.priority = priority;
 			return true;
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",priority)+e.getMessage(),
-					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+		  message.setErrorDialog("Parse Error in Property", String.format("Error parsing %s\n",priority)+e.getMessage());
+    this.notifyObservers(message);
 			return false;
 		}
 	}
@@ -284,8 +285,8 @@ public class Transition {
 			boolAssignments.put(variable, assignment);
 			return true;
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",assignment)+e.getMessage(),
-					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
+		  message.setErrorDialog("Parse Error in Property", String.format("Error parsing %s\n",assignment)+e.getMessage());
+      this.notifyObservers(message);
 			return false;
 		}
 	}

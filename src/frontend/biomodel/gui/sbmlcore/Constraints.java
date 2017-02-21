@@ -31,6 +31,7 @@ import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 import frontend.main.util.SpringUtilities;
 import frontend.main.util.Utility;
@@ -94,7 +95,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(constraints);
-		Utility.sort(cons);
+		dataModels.biomodel.util.Utility.sort(cons);
 		constraints.setListData(cons);
 		constraints.setSelectedIndex(0);
 		constraints.addMouseListener(this);
@@ -200,10 +201,10 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		String[] dimensionIds = new String[]{""};
 		String constraintId = "";
 		while (error && value == JOptionPane.YES_OPTION) {
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), consID.getText(), false);
+			dimID = Utils.checkSizeParameters(bioModel.getSBMLDocument(), consID.getText(), false);
 			if(dimID!=null){
 				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
-				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+				error = Utils.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 				constraintId = dimID[0].trim();
 			} else {
 				error = true;
@@ -218,14 +219,14 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				else if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(consMath.getText().trim()))) {
+				else if (Utils.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(consMath.getText().trim()))) {
 					error = true;
 				}
-				else if (SBMLutilities.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), bioModel.addBooleans(consMath.getText().trim()))) {
+				else if (Utils.checkFunctionArgumentTypes(bioModel.getSBMLDocument(), bioModel.addBooleans(consMath.getText().trim()))) {
 					error = true;
 				}
 				else {
-					error = SBMLutilities.displayinvalidVariables("Constraint", bioModel.getSBMLDocument(), dimensionIds, consMath.getText().trim(), "", false);
+					error = Utils.displayinvalidVariables("Constraint", bioModel.getSBMLDocument(), dimensionIds, consMath.getText().trim(), "", false);
 				}
 				if (!error) {
 					if (option.equals("OK")) {
@@ -283,7 +284,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 								cons[index] += "[" + dimID[i] + "]";
 							}
 						}
-						Utility.sort(cons);
+						dataModels.biomodel.util.Utility.sort(cons);
 						constraints.setListData(cons);
 						constraints.setSelectedIndex(index);
 						bioModel.makeUndoPoint();
@@ -336,7 +337,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						for (int i = 0; i < adding.length; i++) {
 							cons[i] = (String) adding[i];
 						}
-						Utility.sort(cons);
+						dataModels.biomodel.util.Utility.sort(cons);
 						constraints.setListData(cons);
 						constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (bioModel.getSBMLDocument().getModel().getConstraintCount() == 1) {
@@ -380,7 +381,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			}
 			cons[i] = constraint.getMetaId() + SBMLutilities.getDimensionString(constraint);
 		}
-		Utility.sort(cons);
+		dataModels.biomodel.util.Utility.sort(cons);
 		constraints.setListData(cons);
 		constraints.setSelectedIndex(0);
 	}

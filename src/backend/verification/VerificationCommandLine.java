@@ -7,6 +7,7 @@ import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
 import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 
 
 
@@ -144,6 +145,10 @@ public class VerificationCommandLine {
 			System.out.println(lpnList.get(i).getLabel());
 		}
 		Project untimed_dfs = new Project(lpnList);
-		untimed_dfs.search();
+		try {
+      untimed_dfs.search();
+    } catch (BioSimException e) {
+      e.printStackTrace();
+    }
 	}
 }

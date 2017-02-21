@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
@@ -60,6 +62,7 @@ public class SBOL2SBML {
 		return identity.substring(identity.lastIndexOf("/") + 1);
 	}
 	
+
 	/**
 	 * Perform conversion from SBOL to SBML. 
 	 * 
@@ -67,8 +70,11 @@ public class SBOL2SBML {
 	 * @param moduleDef - the current ModuleDefinition to convert all SBML object within the ModuleDefinition to its equivalent SBML component.
 	 * @param sbolDoc - The SBOL document to be converted to its equivalent SBML model.
 	 * @return
+	 * @throws XMLStreamException
+	 * @throws IOException
 	 */
-	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
+	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException {
+
 		List<BioModel> models = new LinkedList<BioModel>();
 		
 		BioModel targetModel = new BioModel(projectDirectory);
@@ -264,7 +270,7 @@ public class SBOL2SBML {
 	}
 	
 	public static List<BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
-			BioModel targetModel) {
+			BioModel targetModel) throws XMLStreamException, IOException {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		List<BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
 		BioModel subTargetModel = subModels.get(subModels.size()-1);
@@ -960,7 +966,10 @@ public class SBOL2SBML {
 			} catch (SBOLConversionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			} catch (XMLStreamException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
 
 		}
 	}

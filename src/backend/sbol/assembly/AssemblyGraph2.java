@@ -1,5 +1,6 @@
 package backend.sbol.assembly;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +8,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AbstractMathContainer;
@@ -42,7 +45,7 @@ public class AssemblyGraph2 {
 	private boolean containsSBOL = false;
 //	//private boolean minusFlag = true;
 	
-	public AssemblyGraph2(BioModel biomodel) {
+	public AssemblyGraph2(BioModel biomodel) throws XMLStreamException, IOException {
 		assemblyNodes = new HashSet<AssemblyNode2>(); // Initialize map of SBML element meta IDs to assembly nodes they identify
 		assemblyEdges = new HashMap<AssemblyNode2, Set<AssemblyNode2>>(); // Initialize map of assembly node IDs to sets of node IDs (node IDs are SBML meta IDs)
 		SBMLDocument sbmlDoc = biomodel.getSBMLDocument();
@@ -118,7 +121,7 @@ public class AssemblyGraph2 {
 	}
 	
 	// Creates assembly nodes for submodels and connects them to the nodes for their input/output species
-	private boolean parseSubModelSBOL(SBMLDocument sbmlDoc, String path, HashMap<String, AssemblyNode2> idToNode) {
+	private boolean parseSubModelSBOL(SBMLDocument sbmlDoc, String path, HashMap<String, AssemblyNode2> idToNode) throws XMLStreamException, IOException {
 		CompModelPlugin compSBMLModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
 		CompSBMLDocumentPlugin compSBMLDoc = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
 		if (compSBMLModel.getListOfSubmodels().size() > 0) {

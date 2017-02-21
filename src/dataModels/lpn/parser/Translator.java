@@ -5,10 +5,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Compartment;
@@ -38,7 +38,7 @@ import org.sbml.jsbml.text.parser.ParseException;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.lpn.parser.ExprTree;
 import dataModels.util.GlobalConstants;
-import frontend.main.Gui;
+import dataModels.util.exceptions.BioSimException;
 
 /**
  * This class converts a lph file to a sbml file
@@ -46,13 +46,13 @@ import frontend.main.Gui;
  * @author Zhen Zhang
  * 
  */
-public class Translator {
+public class Translator extends Observable {
 	private String filename;
 	private SBMLDocument document;
 	public static boolean isSteadyState = false;
 	public static boolean isHSF = false;
 	
-	public void oldBuildTemplate(String lhpnFilename, String property) {
+	public void oldBuildTemplate(String lhpnFilename, String property) throws BioSimException {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
 		// load lhpn file
 		LPN lhpn = new LPN();
@@ -707,7 +707,7 @@ public class Translator {
 		document = generateSBMLConstraints(document, property, lhpn);
 	}
 	
-	public void convertLPN2SBML(String lhpnFilename, String property) {
+	public void convertLPN2SBML(String lhpnFilename, String property) throws BioSimException {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
 		// load lhpn file
 		LPN lhpn = new LPN();
@@ -1204,7 +1204,7 @@ public class Translator {
 		return filename;
 	}
 	
-	public static SBMLDocument generateSBMLConstraints(SBMLDocument doc, String property, LPN lhpn) {
+	public static SBMLDocument generateSBMLConstraints(SBMLDocument doc, String property, LPN lhpn) throws BioSimException {
 		String probprop = "";
 		String[] probpropParts = new String[4];
 		if(!(property == null) && !property.equals("") && !property.equals("none")){
@@ -1401,7 +1401,7 @@ public class Translator {
 	
 	// getProbpropExpression strips off the "Pr"("St"), relop and REAL parts of a property
 	// Example: Pr>=0.99{(true)PU[3,10]((A<8)&&(R>4))]}
-	public static String getProbpropExpression(String property){
+	public static String getProbpropExpression(String property) throws BioSimException{
 		//System.out.println("property (getProbpropExpression)= " + property);
 		String probprop="";
 		// probproperty 
@@ -1434,8 +1434,7 @@ public class Translator {
 					probprop=property;
 				}
 				else{
-					JOptionPane.showMessageDialog(Gui.frame, "Invalid probability value",
-							"Error in Property", JOptionPane.ERROR_MESSAGE);
+				  throw new BioSimException("Invalid probability value", "Error in Property");
 				}
 			}
 			else if(property.startsWith("{")) { // shorthand version: Pr{Psi} and St{Psi}
@@ -1772,7 +1771,7 @@ public class Translator {
 	// getProbpropParts extracts the expressions before and after the PU (after PG and PF)
 	// and the time bound from the probprop
 	// Currently, we assume no nested until property
-	public static String[] getProbpropParts(String probprop){
+	public static String[] getProbpropParts(String probprop) throws BioSimException{
 		String symbol = "@";
 		String[] probpropParts;
 		probpropParts = new String[5];
@@ -1865,13 +1864,11 @@ public class Translator {
 				}		
 			}
 			else { // isHSF = true	
-				JOptionPane.showMessageDialog(Gui.frame, "Property does not contain the until operator",
-						"Warning in Property", JOptionPane.WARNING_MESSAGE);
+			  throw new BioSimException("Property does not contain the until operator", "Warning in Property");
 			}
 		}
 		else {
-			JOptionPane.showMessageDialog(Gui.frame, "Property contains white space",
-					"Error in Property", JOptionPane.ERROR_MESSAGE);
+		  throw new BioSimException("Property contains white space", "Error in Property");
 		}
 		probpropParts[0]=probpropLeft;
 		probpropParts[1]=probpropRight;
@@ -1885,13 +1882,8 @@ public class Translator {
 		ExprTree result = new ExprTree(lhpn);
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(str);
-		try {
-			expr.intexpr_L(str);
-			result = expr;
-		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(Gui.frame, String.format("Error parsing %s\n",str)+e.getMessage(),
-					"Parse Error in Property", JOptionPane.ERROR_MESSAGE);
-		}
+		expr.intexpr_L(str);
+		result = expr;
 		return result;
 	}
 	

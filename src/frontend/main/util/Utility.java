@@ -893,7 +893,7 @@ public class Utility {
 				num++;
 			}
 		}
-		sort(currentList);
+		dataModels.biomodel.util.Utility.sort(currentList);
 		list.setListData(currentList);
 		return currentList;
 	}
@@ -921,20 +921,6 @@ public class Utility {
 		return list;
 	}
 
-	public static void sort(Object[] sort) {
-		int i, j;
-		String index;
-		for (i = 1; i < sort.length; i++) {
-			index = (String) sort[i];
-			j = i;
-			while ((j > 0) && ((String) sort[j - 1]).compareToIgnoreCase(index) > 0) {
-				sort[j] = sort[j - 1];
-				j = j - 1;
-			}
-			sort[j] = index;
-		}
-	}
-	
 	public static ArrayList<String> sort(ArrayList<String> components){
 		int i, j;
 		String index;

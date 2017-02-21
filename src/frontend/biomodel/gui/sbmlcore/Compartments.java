@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -21,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Compartment;
 //CompartmentType not supported in Level 3
@@ -33,7 +35,9 @@ import org.sbml.jsbml.ext.comp.Port;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.schematic.ModelEditor;
+import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 import frontend.main.util.Utility;
 
@@ -140,7 +144,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(compartments);
-		Utility.sort(comps);
+		dataModels.biomodel.util.Utility.sort(comps);
 		compartments.setListData(comps);
 		compartments.setSelectedIndex(0);
 		compartments.addMouseListener(this);
@@ -344,10 +348,20 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					else {
 						sweep.setEnabled(false);
 						compSize.setEnabled(false);
-						SBMLDocument d = SBMLutilities.readSBML(file);
-						if (d.getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]).isSetSize()) {
-							compSize.setText(d.getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]).getSize() + "");
-						}
+						SBMLDocument d;
+            try {
+              d = SBMLutilities.readSBML(file);
+
+              if (d.getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]).isSetSize()) {
+                compSize.setText(d.getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]).getSize() + "");
+              }
+            } catch (XMLStreamException e1) {
+              JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+              e1.printStackTrace();
+            } catch (IOException e1) {
+              JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+              e1.printStackTrace();
+            }
 					}
 				}
 			});
@@ -374,17 +388,17 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		String[] dimensionIds = new String[]{""};
 		String compartmentId = "";
 		while (error && value == JOptionPane.YES_OPTION) {
-			dimID = SBMLutilities.checkSizeParameters(bioModel.getSBMLDocument(), compID.getText(), false);
+			dimID = Utils.checkSizeParameters(bioModel.getSBMLDocument(), compID.getText(), false);
 			if(dimID!=null){
 				compartmentId = dimID[0].trim();
 				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
-				error = SBMLutilities.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
+				error = Utils.checkID(bioModel.getSBMLDocument(), dimID[0].trim(), selectedID, false);
 			} else {
 				error = true;
 			}
 			if (!error && option.equals("OK") && CompConstants.getSelectedItem().equals("true")) {
 				String val = selected;
-				error = SBMLutilities.checkConstant(bioModel.getSBMLDocument(), "Compartment", val);
+				error = Utils.checkConstant(bioModel.getSBMLDocument(), "Compartment", val);
 			}
 			Double addCompSize = 1.0;
 			if ((!error)) {
@@ -526,7 +540,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							}
 						}
 						comps[index] = addComp;
-						Utility.sort(comps);
+						dataModels.biomodel.util.Utility.sort(comps);
 						compartments.setListData(comps);
 						compartments.setSelectedIndex(index);
 						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
@@ -556,7 +570,12 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							}
 						}
 						else {
-							SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, val, compartmentId);
+							try {
+                SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, val, compartmentId);
+              } catch (BioSimException e1) {
+                JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
+                e1.printStackTrace();
+              }
 						}
 					}
 					else {
@@ -605,7 +624,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						for (int i = 0; i < adding.length; i++) {
 							comps[i] = (String) adding[i];
 						}
-						Utility.sort(comps);
+						dataModels.biomodel.util.Utility.sort(comps);
 						compartments.setListData(comps);
 						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (bioModel.getSBMLDocument().getModel().getCompartmentCount() == 1) {
@@ -747,7 +766,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				}
 			}
 		}
-		Utility.sort(comparts);
+		dataModels.biomodel.util.Utility.sort(comparts);
 		int selected = 0;
 		for (int i = 0; i < comparts.length; i++) {
 			if (comparts[i].split("\\[| ")[0].equals(selectedCompartment)) {
@@ -764,7 +783,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private void removeCompartment() {
 		int index = compartments.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.compartmentInUse(bioModel.getSBMLDocument(),
+			if (!Utils.compartmentInUse(bioModel.getSBMLDocument(),
 					((String) compartments.getSelectedValue()).split("\\[| ")[0])) {
 				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) compartments.getSelectedValue()).split("\\[| ")[0], false, true, true)) {
 					Compartment tempComp = bioModel.getSBMLDocument().getModel().getCompartment(((String) compartments.getSelectedValue()).split("\\[| ")[0]);

@@ -8,6 +8,7 @@ import backend.verification.platu.project.Project;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
 import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 
 public class Conolse7_26_2012 {
 	
@@ -16,8 +17,9 @@ public class Conolse7_26_2012 {
 	 * 		'b' = no subsets
 	 * 		'p' = no supersets
 	 * @param args
+	 * @throws BioSimException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws BioSimException {
 
 		String lpnFileDirectory = "";
 		boolean subset = true;
