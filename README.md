@@ -52,4 +52,4 @@ Note: The remaining set of instructions assumes that you are using Eclipse as yo
   * All run configurations are complete. Make sure to apply all your changes.
 
 ## Running iBioSim
-1. Run the java application that you have created from the previous step.
+1. Run the java application that you have created from the previous step (i.e. iBioSim GUI)
