@@ -21,7 +21,7 @@ biology.
 ## Pre-installation Requirement(s)
 1. [Create](https://github.com/) a GitHub account.
 2. [Setup](https://help.github.com/articles/set-up-git) Git on your machine.
-3. [Ensure] (https://maven.apache.org/download.cgi) Maven plugin is setup on your machine.
+3. [Install] (https://maven.apache.org/download.cgi) Maven plugin is setup on your machine.
 4. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim GitHub repository to your machine.
 
 
