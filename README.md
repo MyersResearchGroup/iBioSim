@@ -37,14 +37,14 @@ Note: The remaining set of instructions assumes that you are using Eclipse as yo
       * User account: your user github and password account
     * Specify the branch you want to import into your Eclipse workspace. In this case, select ```master```
     * When given the option to select which project import, select ```Import existing Eclipse project```
-    * All installation should be complete so click Finish```
+    * All installation should be complete so click ```Finish```
 
 ## Setting up iBioSim Configurations
 1. Open up iBioSim ```Run Configurations``` window and create a new ```Java Application``` in your Eclipse workspace
   * Give the java application a name (i.e. iBioSim GUI)
   * Set the Main tab to the following information:
     * Project: ```iBioSim```
-    * Main class: frontend.main.Gui
+    * Main class: ```frontend.main.Gui```
   * Set the Environment tab to the following information:
     * Create 2 variable with the corresponding value:
       * BIOSIM: full path to your iBioSim project
