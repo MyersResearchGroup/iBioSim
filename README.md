@@ -39,6 +39,7 @@ Note: The remaining set of instructions assumes that you are using Eclipse as yo
     * Specify the branch you want to import into your Eclipse workspace. In this case, select ```master```
     * When given the option to select which project import, select ```Import existing Eclipse project```
     * All installation should be complete so click ```Finish```
+    * If you have import errors, perform Maven update on the iBioSim project.
 
 ## Setting up iBioSim Configurations
 1. Open up iBioSim ```Run Configurations``` window and create a new ```Java Application``` in your Eclipse workspace
