@@ -50,6 +50,9 @@ Note: The remaining set of instructions assumes that you are using Eclipse as yo
     * Create 2 variables with the corresponding value:
       * BIOSIM: full path to your iBioSim project
       * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable.
+  * Set Arguments tab to the following information:
+    * Program arguments: ```-Xms2048 -Xms2048 -XX:+UseSerialGC```
+    * VM arguments: ```-Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/src/resources/icons/iBioSim.jpg```
   * All run configurations are complete. Make sure to apply all your changes.
 
 ## Running iBioSim
