@@ -14,7 +14,8 @@ It has also been tested successfully on the stochastic benchmark suite and the c
 iBioSim also supports the Synthetic Biology Open Language (SBOL), an emerging standard for information exchange in synthetic 
 biology.
 
-##### Website: [iBioSim](http://www.async.ece.utah.edu)
+##### Website: [iBioSim](http://www.async.ece.utah.edu/ibiosim)
+##### Video Demo: [Tools Workflow](https://www.youtube.com/watch?v=g4xayzlyC2Q)
 ##### Contact: [Chris Myers](myers@ece.utah.edu)
 
 ## Pre-installation Requirement(s)
