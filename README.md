@@ -16,7 +16,7 @@ biology.
 
 ##### Website: [iBioSim](http://www.async.ece.utah.edu/ibiosim)
 ##### Video Demo: [Tools Workflow](https://www.youtube.com/watch?v=g4xayzlyC2Q)
-##### Contact: [Chris Myers](myers@ece.utah.edu)
+##### Contact: Chris Myers (@cjmyers) myers@ece.utah.edu
 
 ## Pre-installation Requirement(s)
 1. [Create](https://github.com/) a GitHub account.
@@ -47,7 +47,7 @@ Note: The remaining set of instructions assumes that you are using Eclipse as yo
     * Project: ```iBioSim```
     * Main class: ```frontend.main.Gui```
   * Set the Environment tab to the following information:
-    * Create 2 variable with the corresponding value:
+    * Create 2 variables with the corresponding value:
       * BIOSIM: full path to your iBioSim project
       * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable.
   * All run configurations are complete. Make sure to apply all your changes.
