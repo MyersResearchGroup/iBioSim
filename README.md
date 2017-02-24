@@ -41,7 +41,7 @@ Note: The remaining set of instructions assumes that you are using Eclipse as yo
 
 ## Setting up iBioSim Configurations
 1. Open up iBioSim ```Run Configurations``` window and create a new ```Java Application``` in your Eclipse workspace
-  * Give the java application a name (i.e. iBioSim GUI)
+  * Give the java application a name (i.e. iBioSim_GUI)
   * Set the Main tab to the following information:
     * Project: ```iBioSim```
     * Main class: ```frontend.main.Gui```
@@ -52,4 +52,4 @@ Note: The remaining set of instructions assumes that you are using Eclipse as yo
   * All run configurations are complete. Make sure to apply all your changes.
 
 ## Running iBioSim
-1. Run the java application that you have created from the previous step (i.e. iBioSim GUI)
+1. Run the java application that you have created from the previous step (i.e. iBioSim_GUI)
