@@ -16,6 +16,14 @@ package backend.verification.platu.platuLpn;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public  class DualHashMap<Key, Value> extends HashMap<Key, Value> {
     private static final long serialVersionUID = 239875623984691837L;
     HashMap<Value, Key> ValueMap;

@@ -32,6 +32,9 @@ import backend.verification.platu.main.Main;
 /**
  *
  * @author ldtwo
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class MemoryWindow extends Thread {
 

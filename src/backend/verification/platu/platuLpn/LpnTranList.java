@@ -20,6 +20,14 @@ import java.util.LinkedList;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Transition;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 final public class LpnTranList extends LinkedList<Transition> {
 
 	private static final long serialVersionUID = 1L;

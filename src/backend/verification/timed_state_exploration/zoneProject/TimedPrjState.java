@@ -26,6 +26,14 @@ import backend.verification.timed_state_exploration.octagon.Octagon;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Transition;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class TimedPrjState extends PrjState{
 	
 	/*

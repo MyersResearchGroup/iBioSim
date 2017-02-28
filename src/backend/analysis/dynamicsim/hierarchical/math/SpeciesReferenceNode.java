@@ -13,6 +13,14 @@
  *******************************************************************************/
 package backend.analysis.dynamicsim.hierarchical.math;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SpeciesReferenceNode extends VariableNode
 {
 	private SpeciesNode	species;

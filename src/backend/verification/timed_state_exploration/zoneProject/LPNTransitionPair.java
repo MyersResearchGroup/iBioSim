@@ -27,8 +27,10 @@ package backend.verification.timed_state_exploration.zoneProject;
  * natural ordering on the LPNTransitionPair is the dictionary ordering on this
  * pairs of this form.
  * 
- * @author Andrew N. Fisher
- *
+ * @author Andrew N. Fisher 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	

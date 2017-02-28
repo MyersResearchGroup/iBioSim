@@ -17,6 +17,14 @@ import java.util.HashMap;
 
 import backend.verification.platu.common.PlatuObj;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class IndexObjMap<T extends PlatuObj> {
 	
 	protected HashMap<T, T> uniqueObjTbl;

@@ -26,9 +26,10 @@ import dataModels.lpn.parser.Transition;
  * in this approach, we consider 7 conditions for dependent transition
  * Separate the interleaving transition and dependent transition.
  * @author Administrator
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class SearchDepFromLPN {
 	
 	private HashMap<Transition, HashSet<Transition>> indepTranSet = new HashMap<Transition, HashSet<Transition>>();

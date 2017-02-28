@@ -24,6 +24,14 @@ import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
 import dataModels.lpn.parser.LPN;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Project_Timed extends Project{
 
 	/* The list for timing analysis */

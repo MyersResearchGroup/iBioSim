@@ -36,6 +36,14 @@ import backend.analysis.dynamicsim.hierarchical.util.interpreter.RateSplitterInt
 
 import org.sbml.jsbml.Model;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class HierarchicalUtilities
 {
 

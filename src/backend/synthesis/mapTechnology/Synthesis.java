@@ -36,6 +36,14 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import dataModels.util.GlobalConstants;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Synthesis
 {
 	private static List<SBOLGraph> _libraryGraph; 

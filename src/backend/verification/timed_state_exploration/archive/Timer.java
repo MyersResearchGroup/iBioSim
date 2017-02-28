@@ -13,7 +13,14 @@
  *******************************************************************************/
 package backend.verification.timed_state_exploration.archive;
 
-
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Timer extends OctMember {
 
 	/*

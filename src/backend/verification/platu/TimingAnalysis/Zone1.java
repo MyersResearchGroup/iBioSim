@@ -18,6 +18,14 @@ import java.util.*;
 import backend.verification.platu.platuLpn.*;
 import dataModels.lpn.parser.Transition;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Zone1 {
 	public static final int INFINITY = backend.verification.platu.common.Common.INFINITY;
 	

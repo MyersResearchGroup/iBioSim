@@ -18,6 +18,14 @@ import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public final class RateSplitterInterpreter
 {
 

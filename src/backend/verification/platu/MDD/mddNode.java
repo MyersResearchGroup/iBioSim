@@ -19,6 +19,14 @@ import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
 import dataModels.lpn.parser.Transition;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class mddNode {
 	static int blockSize = 8;
 	static int numBlocks = 16;

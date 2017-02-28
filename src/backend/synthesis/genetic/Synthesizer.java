@@ -35,6 +35,14 @@ import dataModels.util.GlobalConstants;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Synthesizer {
 	private SynthesisMatcher matcher;
 	private boolean exhaustive;

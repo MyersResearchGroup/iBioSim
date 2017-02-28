@@ -15,6 +15,14 @@ package backend.analysis.dynamicsim.hierarchical.util.comp;
 
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ReplacementHandler
 {
 	private HierarchicalModel	fromModelState;

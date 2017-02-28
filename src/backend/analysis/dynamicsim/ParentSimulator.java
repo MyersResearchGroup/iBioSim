@@ -17,6 +17,14 @@ import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public interface ParentSimulator
 {
 	/**

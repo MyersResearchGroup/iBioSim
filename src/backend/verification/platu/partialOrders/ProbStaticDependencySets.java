@@ -25,9 +25,12 @@ import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
 
 /**
  * This class extends the non-probabilistic static dependency transition set. 
- * It adds two more sets for dependency relations when transition rate expression is considered.  
+ * It adds two more sets for dependency relations when transition rate expression is considered. 
+ *  
  * @author Zhen Zhang
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class ProbStaticDependencySets extends StaticDependencySets {
 	

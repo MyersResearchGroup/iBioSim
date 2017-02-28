@@ -19,6 +19,14 @@ import java.util.List;
 import backend.analysis.dynamicsim.hierarchical.states.ValueState;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class VariableNode extends HierarchicalNode
 {
 

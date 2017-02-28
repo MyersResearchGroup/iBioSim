@@ -20,6 +20,14 @@ import javax.swing.JProgressBar;
 import backend.analysis.markov.StateGraph.Property;
 import dataModels.util.exceptions.BioSimException;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 
 	private StateGraph sg;

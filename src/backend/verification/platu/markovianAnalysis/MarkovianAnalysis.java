@@ -28,6 +28,14 @@ import dataModels.lpn.parser.Translator;
 import dataModels.util.dataparser.DataParser;
 import dataModels.util.exceptions.BioSimException;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class MarkovianAnalysis implements Runnable{
 	
 	private boolean stop;

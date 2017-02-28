@@ -31,7 +31,9 @@ import dataModels.lpn.parser.Variable;
  * An InequalityVariable is a Boolean variable for an inequality expression involving 
  * continuous variables. It extends lpn.parser.Variable. 
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class InequalityVariable extends Variable {
 

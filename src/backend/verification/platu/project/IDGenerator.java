@@ -19,10 +19,13 @@ package backend.verification.platu.project;
 
 import java.util.HashMap;
 
-	/**
-	 * 
-	 * @author ldmtwo
-	 */
+/**
+ * 
+ * @author ldmtwo
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class IDGenerator<T> extends HashMap<T, Integer> {
 	private static final long serialVersionUID = 98976418277654L;
 

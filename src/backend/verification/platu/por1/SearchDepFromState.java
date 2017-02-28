@@ -28,9 +28,10 @@ import dataModels.lpn.parser.Transition;
 /**
  * in this approach, we do not consider transition interleaving
  * @author Administrator
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class SearchDepFromState {
 	
 	private Set<Entry<Transition, Set<Transition>>> initialDepTrans;

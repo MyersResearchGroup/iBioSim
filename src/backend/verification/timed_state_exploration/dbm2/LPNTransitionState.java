@@ -18,7 +18,9 @@ import java.util.*;
 /**
  * LPNTransitionStates adds the ability to store unprocessed enabled transitions.
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class LPNTransitionState{
 

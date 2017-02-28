@@ -32,6 +32,14 @@ import dataModels.util.Message;
 import dataModels.util.dataparser.DataParser;
 import dataModels.util.exceptions.BioSimException;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class StateGraph extends Observable implements Runnable {
 	// private HashMap<String, LinkedList<State>> stateGraph;
 

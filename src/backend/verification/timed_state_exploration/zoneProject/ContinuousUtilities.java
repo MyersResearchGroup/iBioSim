@@ -26,8 +26,10 @@ import dataModels.lpn.parser.Variable;
  * handling inequalities to separate some of the more complicated methods
  * from the zone.
  * 
- * @author Andrew N. Fisher
- *
+ * @author Andrew N. Fisher 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class ContinuousUtilities {
 	

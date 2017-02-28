@@ -21,6 +21,11 @@ import java.util.Arrays;
  * the user to specify. Arbitrary value range is allowed for objective function.
  * Constraints are provided as { constraint_value <= 0} inequalities, the
  * computation of array should be implemented by user.
+ * 
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public abstract class Objective
 {

@@ -19,7 +19,9 @@ import dataModels.lpn.parser.LPN;
  * Base class for the member variables of the octagons.
  * 
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public abstract class OctMember {
 	

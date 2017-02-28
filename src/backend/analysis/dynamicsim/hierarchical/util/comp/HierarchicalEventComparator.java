@@ -17,10 +17,13 @@ import java.util.Comparator;
 
 import backend.analysis.dynamicsim.hierarchical.math.EventNode;
 
-// EVENT COMPARATOR INNER CLASS
 /**
- * compares two events to see which one should be before the other in the
- * priority queue
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class HierarchicalEventComparator implements Comparator<EventNode>
 {

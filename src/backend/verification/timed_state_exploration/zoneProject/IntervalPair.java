@@ -20,7 +20,9 @@ package backend.verification.timed_state_exploration.zoneProject;
  * interval [a,b] where a and b are integers.
  * 
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class IntervalPair {
 	

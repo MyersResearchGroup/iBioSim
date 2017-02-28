@@ -23,6 +23,14 @@ import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.StateGraph;
 import dataModels.lpn.parser.Transition;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class AmpleSubset {
 	
 	private HashSet<Transition> allInterleavingTrans = new HashSet<Transition>();

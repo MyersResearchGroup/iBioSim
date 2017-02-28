@@ -15,6 +15,14 @@ package backend.learn.AMSModel;
 
 import java.util.*;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class DMVCrun {
 	
 	private static int numDMVCruns = 0;

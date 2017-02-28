@@ -24,14 +24,15 @@ import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.BioSimException;
 
-
 /**
  * This class provides script to run depth-first search and partial order reduction (in the platu package)
  * without the need for a GUI.
- * @author Zhen Zhang
  *
+ * @author Zhen Zhang
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class VerificationCommandLine {
 	
 	static String separator = GlobalConstants.separator;

@@ -13,7 +13,14 @@
  *******************************************************************************/
 package backend.analysis.dynamicsim.hierarchical.methods;
 
-
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public final class HierarchicalHybridSimulator
 {
 

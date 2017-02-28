@@ -26,9 +26,10 @@ package backend.verification.timed_state_exploration.zoneProject;
  * all, and whether a value assignment has occurred.
  * 
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class UpdateContinuous {
 	
 	/*

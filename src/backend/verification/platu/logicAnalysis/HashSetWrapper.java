@@ -17,6 +17,14 @@ import java.util.HashSet;
 
 import backend.verification.platu.project.PrjState;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class HashSetWrapper extends HashSet<PrjState> implements StateSetInterface {
 
 	private static final long serialVersionUID = 1L;

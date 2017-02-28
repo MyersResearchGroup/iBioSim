@@ -29,6 +29,14 @@ import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.exceptions.SBOLException;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SynthesisNode {
 	private String id;
 	private String type;

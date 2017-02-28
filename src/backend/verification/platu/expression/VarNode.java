@@ -18,6 +18,14 @@ import java.util.HashSet;
 
 import backend.verification.platu.platuLpn.VarType;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class VarNode implements ExpressionNode {
 	protected String name;		 // if input, associated output var name
 	protected String alias = ""; 	 // if input, original var name

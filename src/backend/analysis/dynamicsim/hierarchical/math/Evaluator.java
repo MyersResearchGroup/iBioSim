@@ -31,10 +31,12 @@ import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
 /**
- * This class is used to evaluate math functions.
  * 
+ *
  * @author Leandro Watanabe
- * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public final class Evaluator
 {

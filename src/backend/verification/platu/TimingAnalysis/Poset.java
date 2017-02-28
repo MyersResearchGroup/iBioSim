@@ -18,8 +18,13 @@ import java.util.*;
 import backend.verification.platu.platuLpn.*;
 import dataModels.lpn.parser.Transition;
 
-/*
+/**
  * This class implements the POSET algorithm in C Myers's book, section 7.5.
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Poset {
 	public static final int INFINITY = backend.verification.platu.common.Common.INFINITY;

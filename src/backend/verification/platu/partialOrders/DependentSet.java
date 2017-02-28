@@ -17,6 +17,14 @@ import java.util.HashSet;
 
 import dataModels.lpn.parser.Transition;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class DependentSet {
 	HashSet<Transition> dependent;
 	Transition seed;

@@ -29,7 +29,9 @@ import dataModels.lpn.parser.Transition;
  * rate change it is said to be in Rate mode.
  * 
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class EventSet extends Transition implements Iterable<Event>{
 

@@ -55,6 +55,14 @@ import java.util.Set;
 import java.util.Stack;
 
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class StateGraph {
 
 	protected State init = null;

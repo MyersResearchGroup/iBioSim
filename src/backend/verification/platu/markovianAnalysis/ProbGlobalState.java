@@ -20,6 +20,14 @@ import backend.verification.platu.project.PrjState;
 import backend.verification.platu.stategraph.State;
 import dataModels.lpn.parser.Transition;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ProbGlobalState extends PrjState {	
 	
 	private int color;

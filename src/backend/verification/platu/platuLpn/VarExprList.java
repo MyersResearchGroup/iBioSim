@@ -24,6 +24,9 @@ import backend.verification.platu.expression.VarNode;
 
 /**
  * @author ldtwo
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class VarExprList extends ArrayList<VarExpr> {
 

@@ -29,7 +29,9 @@ import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
 /**
  * This class is used for constructing static dependent transition set for each seed transition.
  * @author Zhen Zhang
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class StaticDependencySets {
 	protected Transition seedTran;

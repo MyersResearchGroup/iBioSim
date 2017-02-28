@@ -57,6 +57,14 @@ import org.jlibsedml.VectorRange;
 import org.jlibsedml.modelsupport.SBMLSupport;
 import org.jmathml.ASTNode;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SEDMLutilities {
 	
 	public static String getXPathForReactant(String reactionId,String reactantId) {

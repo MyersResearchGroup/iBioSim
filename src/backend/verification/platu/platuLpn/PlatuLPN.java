@@ -26,6 +26,14 @@ import backend.verification.platu.expression.VarNode;
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.StateGraph;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class PlatuLPN {
 	public static int nextID=1;
     static private List<String> emptyStringList = new ArrayList<String>();

@@ -24,6 +24,14 @@ import javax.swing.JOptionPane;
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.SBOLException;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SequenceTypeValidator {
 	private DFA completeConstructDFA;
 	private DFA terminalConstructDFA;

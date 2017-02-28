@@ -31,6 +31,14 @@ import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulat
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class DynamicSimulation extends Observable
 {
 

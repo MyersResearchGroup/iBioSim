@@ -28,6 +28,14 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import static java.lang.Runtime.*;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Main {
 
 	// static variables

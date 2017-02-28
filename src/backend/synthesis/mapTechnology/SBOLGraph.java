@@ -31,7 +31,14 @@ import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
-
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SBOLGraph
 {
 	private Map<URI, SynthesisNode> _nodes; 

@@ -16,7 +16,14 @@ package backend.verification.platu.common;
 
 import backend.verification.platu.BinaryTree.*;
 
-
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class BinTreeTable extends SetIntTuple {
 	
 	BinaryTree StateTable = null;

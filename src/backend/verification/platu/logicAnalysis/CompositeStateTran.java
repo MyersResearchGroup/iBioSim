@@ -15,6 +15,14 @@ package backend.verification.platu.logicAnalysis;
 
 import dataModels.lpn.parser.Transition;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class CompositeStateTran {
 	private int nextState = 0;
 	private int currentState = 0;

@@ -17,7 +17,9 @@ package backend.verification.timed_state_exploration.dbm2;
  * This interface gives the method that are needed for the StateExploration pertaining
  * to the difference bound matrices.
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public interface IDBM {
 

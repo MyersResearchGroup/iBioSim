@@ -19,6 +19,14 @@ import java.util.Iterator;
 import backend.verification.platu.logicAnalysis.StateSetInterface;
 import backend.verification.platu.project.PrjState;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ProbGlobalStateSet extends HashMap<PrjState, PrjState> implements StateSetInterface, Runnable {//extends HashSet<PrjState>{
 
 	private static final long serialVersionUID = 1L;

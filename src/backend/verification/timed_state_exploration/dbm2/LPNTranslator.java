@@ -23,7 +23,9 @@ import dataModels.lpn.parser.*;
  * Boolean variables. This enables methods that ask whether the ith place is marked or
  * the ith Boolean variable is true.
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class LPNTranslator{
 	

@@ -19,7 +19,9 @@ package backend.verification.timed_state_exploration.zoneProject;
  * is to store a variable with its associated rate.
  * 
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class LPNContAndRate {
 

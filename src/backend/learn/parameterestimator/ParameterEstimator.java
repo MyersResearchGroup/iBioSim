@@ -31,6 +31,14 @@ import backend.learn.parameterestimator.methods.sres.Modelsettings;
 import backend.learn.parameterestimator.methods.sres.ObjectiveSqureError;
 import backend.learn.parameterestimator.methods.sres.SRES;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ParameterEstimator
 {
 	static double				relativeError		= 1e-6;

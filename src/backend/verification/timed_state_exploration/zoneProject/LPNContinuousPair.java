@@ -17,7 +17,9 @@ package backend.verification.timed_state_exploration.zoneProject;
  * This class is used for indexing a continuous variable in the Zone class. It pairs the index of the LPN
  * with the index of the continuous variables and stores the current rate of the continuous variable.
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class LPNContinuousPair extends LPNTransitionPair {
 

@@ -13,9 +13,15 @@
  *******************************************************************************/
 package backend.analysis.dynamicsim.flattened;
 
-/*
- * adapted from http://www.javamex.com/tutorials/random_numbers/java_util_random_subclassing.shtml
+
+/**
+ * Adapted from http://www.javamex.com/tutorials/random_numbers/java_util_random_subclassing.shtml
  * this uses the XORShift method published by George Marsaglia in 2003 in the journal of statistical software
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class XORShiftRandom {
 

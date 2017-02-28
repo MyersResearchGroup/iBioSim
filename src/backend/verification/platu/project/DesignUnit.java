@@ -12,6 +12,13 @@
  *  
  *******************************************************************************/
 package backend.verification.platu.project;
+/**
+*
+* @author ldmtwo
+* @author Chris Myers
+* @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+* @version %I%
+*/
 ///*
 // * To change this template, choose Tools | Templates
 // * and open the template in the editor.

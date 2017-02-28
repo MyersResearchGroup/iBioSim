@@ -33,6 +33,14 @@ import org.sbolstandard.core2.*;
 
 import dataModels.util.GlobalConstants;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SBOLUtility2 
 {
 	private static SBOLDocument SBOLDOC; 

@@ -48,12 +48,13 @@ import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateTy
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.BioSimException;
 
-
 /**
  * This class provides the state variables of the simulation.
- * 
+ *
+ * @author 
  * @author Leandro Watanabe
- * 
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public abstract class HierarchicalSimulation implements ParentSimulator
 {

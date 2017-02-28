@@ -20,9 +20,10 @@ import dataModels.util.exceptions.BioSimException;
 /**
  * This class is used to construct threads for transient or nested Markovian analysis. 
  * @author Zhen Zhang (adapted from Curtis Madsen's PerformTransientMarkovAnalysisThread class)
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class PerfromTransientMarkovAnalysisThread extends Thread {
 
 	//private ProbGlobalStateSet globalStateSet;

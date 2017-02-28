@@ -18,7 +18,14 @@ import java.util.Arrays;
 
 import backend.verification.platu.common.PlatuObj;
 
-
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class IntArrayObj extends PlatuObj {
 	int index;
 	int[] IntArray;

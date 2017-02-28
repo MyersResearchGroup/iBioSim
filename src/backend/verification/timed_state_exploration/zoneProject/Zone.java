@@ -80,7 +80,9 @@ import dataModels.lpn.parser.Variable;
  * for the method, then LPNContinuousPairs must be used.
  * 
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Zone implements Equivalence{
 	

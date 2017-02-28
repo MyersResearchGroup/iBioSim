@@ -31,6 +31,14 @@ import backend.analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventCompa
 import backend.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 import dataModels.util.exceptions.BioSimException;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 {
 	private final boolean	print;

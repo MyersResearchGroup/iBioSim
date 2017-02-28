@@ -18,6 +18,14 @@ import java.util.Arrays;
 import backend.verification.platu.TimingAnalysis.Zone1;
 import backend.verification.platu.stategraph.State;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class prjStateTimed extends PrjState {
 
     private Object zone;

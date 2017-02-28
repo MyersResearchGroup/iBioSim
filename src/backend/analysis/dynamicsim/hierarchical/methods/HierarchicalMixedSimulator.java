@@ -30,6 +30,14 @@ import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelTyp
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 {
 

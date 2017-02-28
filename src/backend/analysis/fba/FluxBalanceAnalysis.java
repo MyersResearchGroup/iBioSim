@@ -36,6 +36,14 @@ import com.joptimizer.optimizers.*;
 
 import dataModels.biomodel.util.SBMLutilities;
 
+/**
+ * 
+ *
+ * @author Chris Myers
+ * @author Scott Glass
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class FluxBalanceAnalysis {
 	
 	private String root;

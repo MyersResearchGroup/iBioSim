@@ -28,8 +28,13 @@ import java.util.Set;
 /**
  * The LPNTranRelation class stores information about LPN transitions such  as dependence, 
  * interleaving, and independence.
+ * 
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-public class LPNTranRelation {
+ public class LPNTranRelation {
 	private List<StateGraph> designUnitSet = null;
 	private Map<Transition, Set<Transition>> transitiveDependence = new HashMap<Transition, Set<Transition>>();  // type 1 transitive
 	private Map<Transition, Set<Transition>> interleavingDependence = new HashMap<Transition, Set<Transition>>();  // type 2 interleaving

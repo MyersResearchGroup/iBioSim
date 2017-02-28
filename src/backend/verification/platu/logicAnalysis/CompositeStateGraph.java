@@ -30,6 +30,14 @@ import dataModels.lpn.parser.Transition;
 
 import java.util.Set;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class CompositeStateGraph {
 	public Map<Integer, CompositeState> indexStateMap = new HashMap<Integer, CompositeState>();
 	public Map<CompositeState, CompositeState> stateMap = new HashMap<CompositeState, CompositeState>();

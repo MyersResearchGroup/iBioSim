@@ -37,7 +37,9 @@ import backend.verification.platu.project.PrjState;
  *						&& (ZoneType.getSubsetFlag() || ZoneType.getSupersetFlag())
  * is true or not. If this value is false, then the StateSet acts like HashSet<PrjState>.
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class StateSet implements Iterable<PrjState>{
 

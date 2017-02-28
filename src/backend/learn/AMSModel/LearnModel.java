@@ -34,13 +34,14 @@ import dataModels.util.dataparser.*;
  * in the learn view. The generated LHPN is stored in an object of type
  * lhpn2sbml.parser.LHPNfile . It is then saved in *.lpn file using the
  * save() method of the above class.
- * 
- * Rev. 1 - Kevin Jones
- * Rev. 2 - Scott Little (data2lhpn.py) 
- * Rev. 3 - Satish Batchu ( dataToLHPN() )
+ *
+ * @author Kevin Jones
+ * @author Scott Little (data2lhpn.py)
+ * @author Satish Batchu ( dataToLHPN() )
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
-
 public class LearnModel extends Observable { // added ItemListener SB
 
   private String directory;

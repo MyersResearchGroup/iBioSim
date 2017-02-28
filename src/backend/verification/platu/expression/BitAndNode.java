@@ -16,6 +16,14 @@ package backend.verification.platu.expression;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class BitAndNode implements ExpressionNode {
 	ExpressionNode LeftOperand = null;
 	ExpressionNode RightOperand = null;

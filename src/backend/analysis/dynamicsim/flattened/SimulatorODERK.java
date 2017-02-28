@@ -28,6 +28,14 @@ import dataModels.util.MutableBoolean;
 import flanagan.integration.DerivnFunction;
 import flanagan.integration.RungeKutta;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SimulatorODERK extends Simulator
 {
 

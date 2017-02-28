@@ -17,7 +17,9 @@ package backend.verification.timed_state_exploration.archive;
 /**
  * Continuous variables whose current rate is not zero.
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class RateNonZero extends PreContinuous {
 

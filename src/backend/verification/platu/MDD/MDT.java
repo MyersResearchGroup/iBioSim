@@ -17,10 +17,14 @@ import java.util.*;
 
 import backend.verification.platu.stategraph.*;
 
-/*
+/**
  * This data structure cannot be used as stack as it allows node sharing.
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class MDT {
 	static mdtNode terminal = new mdtNode();
 

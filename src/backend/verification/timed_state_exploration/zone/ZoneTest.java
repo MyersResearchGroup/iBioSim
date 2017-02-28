@@ -22,6 +22,14 @@ import java.util.Scanner;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ZoneTest {
 
 	static Zone zone1, zone2, zone3, zone4, zone5;

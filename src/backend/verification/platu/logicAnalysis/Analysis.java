@@ -62,6 +62,14 @@ import dataModels.util.Message;
 import java.util.Queue;
 import java.util.Iterator;
  
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Analysis extends Observable{
 
 	private LinkedList<Transition> traceCex;

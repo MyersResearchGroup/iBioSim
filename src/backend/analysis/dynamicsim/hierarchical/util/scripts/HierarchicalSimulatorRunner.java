@@ -30,6 +30,14 @@ import backend.analysis.dynamicsim.DynamicSimulation.SimulationType;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.util.dataparser.TSDParser;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class HierarchicalSimulatorRunner
 {
 

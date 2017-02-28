@@ -15,6 +15,14 @@ package backend.verification.platu.BinaryTree;
 
 import java.util.*;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class BinaryTree {
 
 	/* Tables for storing nodes that are not root. */

@@ -30,6 +30,14 @@ import backend.verification.platu.stategraph.StateGraph;
 import dataModels.lpn.parser.LPN;
 import dataModels.util.exceptions.BioSimException;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Interpretor {
 
     public static boolean OLD_LPN = false;

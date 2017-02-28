@@ -19,7 +19,9 @@ import dataModels.lpn.parser.Variable;
  * A Variable and Range class packages an lpn.parser.Variable with an
  * IntervalPair. This allows one to store the Variable along with its range.
  * @author Andrew N. Fisher
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class VariableRangePair {
 

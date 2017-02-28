@@ -29,6 +29,14 @@ import javax.xml.stream.XMLStreamException;
 import dataModels.util.MutableBoolean;
 import odk.lang.FastMath;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SimulatorSSACR extends Simulator
 {
 

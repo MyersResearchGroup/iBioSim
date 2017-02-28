@@ -22,6 +22,14 @@ import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulat
 import backend.learn.genenet.Experiments;
 import backend.learn.genenet.SpeciesCollection;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ObjectiveSqureError extends Objective
 {
 	private final double			valueAtSolution;

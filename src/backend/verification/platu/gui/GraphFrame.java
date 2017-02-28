@@ -29,6 +29,9 @@ import javax.swing.JPanel;
 /**
  *
  * @author ldtwo
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class GraphFrame extends javax.swing.JFrame {
 

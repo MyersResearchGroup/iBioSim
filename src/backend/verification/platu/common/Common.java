@@ -26,6 +26,9 @@ import java.util.logging.Logger;
  * Definitions of commonly used constants, and functions for the entire project.
  * 
  * @author ldtwo
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Common {
 	public static final int INFINITY = Integer.MAX_VALUE;
