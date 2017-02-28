@@ -1902,7 +1902,12 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 		else if (e.getSource() == saveAsVerilog)
 		{
-			Lpn2verilog.convert(tree.getFile());
+			try {
+        Lpn2verilog.convert(tree.getFile());
+      } catch (BioSimException e1) {
+        JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
+        e1.printStackTrace();
+      }
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0)
 			{
@@ -2296,7 +2301,12 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 		else if (e.getActionCommand().equals("convertToVerilog"))
 		{
-			Lpn2verilog.convert(tree.getFile());
+			try {
+        Lpn2verilog.convert(tree.getFile());
+      } catch (BioSimException e1) {
+        JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
+        e1.printStackTrace();
+      }
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0)
 			{
@@ -2601,7 +2611,12 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					dot.delete();
 					LPN lhpn = new LPN();
 					lhpn.addObserver(this);
-					lhpn.load(directory + GlobalConstants.separator + theFile);
+					try {
+            lhpn.load(directory + GlobalConstants.separator + theFile);
+          } catch (BioSimException e1) {
+            JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
+            e1.printStackTrace();
+          }
 					lhpn.printDot(directory + GlobalConstants.separator + file);
 					// String cmd = "atacs -cPllodpl " + file;
 					Runtime exec = Runtime.getRuntime();
@@ -2816,7 +2831,12 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					dot.delete();
 					LPN lhpn = new LPN();
 					lhpn.addObserver(this);
-					lhpn.load(root + GlobalConstants.separator + file);
+					try {
+            lhpn.load(root + GlobalConstants.separator + file);
+          } catch (BioSimException e1) {
+            JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
+            e1.printStackTrace();
+          }
 					lhpn.printDot(root + GlobalConstants.separator + theFile);
 					// String cmd = "atacs -cPllodpl " + file;
 					Runtime exec = Runtime.getRuntime();
@@ -6150,7 +6170,12 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				dot.delete();
 				LPN lhpn = new LPN();
 				lhpn.addObserver(this);
-				lhpn.load(tree.getFile());
+				try {
+          lhpn.load(tree.getFile());
+        } catch (BioSimException e) {
+          JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+          e.printStackTrace();
+        }
 				lhpn.printDot(root + GlobalConstants.separator + theFile);
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
@@ -6727,8 +6752,10 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 									sbolIterator = null;
 									if (sbolURIs.size() > 0)
 									{
-										AnnotationUtility.setSBOLAnnotation(document.getModel(), new SBOLAnnotation(document.getModel().getMetaId(),
-												sbolURIs, sbolStrand));
+										if(!AnnotationUtility.setSBOLAnnotation(document.getModel(), new SBOLAnnotation(document.getModel().getMetaId(),
+												sbolURIs, sbolStrand))){
+										  JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + document.getModel().getId() + " with SBOL.", JOptionPane.ERROR_MESSAGE);
+										}
 									}
 									else
 									{
@@ -8549,7 +8576,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
           t1.outputSBML();
           addToTree(filename.replace(".lpn", ".xml"));
         } catch (BioSimException e) {
-          // TODO Auto-generated catch block
+          JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
           e.printStackTrace();
         }
 				

@@ -3,7 +3,9 @@ package frontend.verification;
 import javax.swing.*;
 
 import dataModels.lpn.parser.LPN;
+import dataModels.lpn.parser.properties.AbstractionProperty;
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.*;
 
@@ -40,52 +42,11 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	public JList species, intSpecies, xforms, selectXforms, preAbs, loopAbs,
 			postAbs;
 
-	public DefaultListModel listModel, absListModel, preAbsModel, loopAbsModel,
-			postAbsModel;
-
 	private JTextField field;
 
 	private String directory, separator, root, absFile, oldBdd;
 
 	private JLabel preAbsLabel, loopAbsLabel, postAbsLabel;
-
-	public String xform0 = "Merge Parallel Places - simplification",
-			xform1 = "Remove Place in Self-Loop - simplification",
-			xform3 = "Remove Transitions with Single Place in Postset - simplification",
-			xform4 = "Remove Transitions with Single Place in Preset - simplification",
-			xform5 = "Merge Transitions with Same Preset and Postset - simplification",
-			xform6 = "Merge Transitions with Same Preset - simplification",
-			xform7 = "Merge Transitions with Same Postset - simplification",
-			xform8 = "Local Assignment Propagation - simplification",
-			xform9 = "Remove Write Before Write - simplification",
-			xform10 = "Simplify Expressions - simplification",
-			xform11 = "Constant False Enabling Conditions - simplification",
-			xform12 = "Abstract Assignments to the Same Variable - abstraction",
-			xform13 = "Remove Unread Variables - abstraction",
-			xform14 = "Remove Dead Places - simplification",
-			xform15 = "Remove Dead Transitions - simplification",
-			xform16 = "Constant True Enabling Conditions - simplification",
-			xform17 = "Eliminate Dominated Transitions - simplification",
-			xform18 = "Remove Unread Variables - simplification",
-			xform19 = "Correlated Variables - simplification",
-			xform20 = "Remove Arc after Failure Transitions - simplification",
-			xform21 = "Timing Bound Normalization - abstraction",
-			xform22 = "Remove Vacuous Transitions - simplification",
-			xform23 = "Remove Vacuous Transitions - abstraction",
-			xform24 = "Remove Pairwise Write Before Write - simplification",
-			xform25 = "Propagate Constant Variable Values - simplifiction",
-			xform26 = "Remove Dangling Transitions - simplification",
-			xform27 = "Combine Parallel Transitions - simplification",
-			xform28 = "Combine Parallel Transitions - abstraction",
-			xform29 = "Remove Uninteresting Variables - simplification",
-			xform30 = "Remove Uninteresting Transitions - simplification",
-			xform31 = "Simplify Uniform Expressions - abstraction";
-
-	public String[] transforms = { xform12, xform28, xform27, xform11, xform16,
-			xform19, xform17, xform8, xform0, xform7, xform6, xform5, xform25, xform20,
-			xform26, xform14, xform15, xform24, xform1, xform3, xform4,
-			xform30, xform29, xform13, xform18, xform23, xform22, xform9,
-			xform10, xform31, xform21 };
 
 	public JTextField factorField, iterField;
 
@@ -97,6 +58,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private Verification verification;
 
+	private final AbstractionProperty absProperty;
+	
 	/**
 	 * This is the constructor for the Verification class. It initializes all
 	 * the input fields, puts them on panels, adds the panels to the frame, and
@@ -110,16 +73,23 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		this.setLayout(new BorderLayout());
 		absFile = verification.getVerName() + ".abs";
 		verification.copyFile();
+		absProperty = new AbstractionProperty();
 		LPN lhpn = new LPN();
-		lhpn.load(directory + separator + verification.verifyFile);
-		createGUI(lhpn);
+		try {
+      lhpn.load(directory + separator + verification.verifyFile);
+
+      createGUI(lhpn);
+    } catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 	}
 	
     public void createGUI(LPN lhpn) {
 		// Creates the interesting species JList
-		listModel = new DefaultListModel();
 		intSpecies = new JList(lhpn.getVariables());
-		species = new JList(listModel);
+		species = new JList(absProperty.listModel);
 		JLabel spLabel = new JLabel("Available Variables:");
 		JLabel speciesLabel = new JLabel("Interesting Variables:");
 		JPanel speciesHolder = new JPanel(new BorderLayout());
@@ -167,14 +137,10 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		factorPanel.add(restore);
 		restore.addActionListener(this);
 		this.add(factorPanel);
-
-		// Creates Abstraction List
-		preAbsModel = new DefaultListModel();
-		loopAbsModel = new DefaultListModel();
-		postAbsModel = new DefaultListModel();
-		preAbs = new JList(preAbsModel);
-		loopAbs = new JList(loopAbsModel);
-		postAbs = new JList(postAbsModel);
+		
+		preAbs = new JList(absProperty.preAbsModel);
+		loopAbs = new JList(absProperty.loopAbsModel);
+		postAbs = new JList(absProperty.postAbsModel);
 		preAbsLabel = new JLabel("Preprocess abstraction methods:");
 		loopAbsLabel = new JLabel("Main loop abstraction methods:");
 		postAbsLabel = new JLabel("Postprocess abstraction methods:");
@@ -254,9 +220,15 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		this.log = log;
 		this.setLayout(new BorderLayout());
 		this.setMaximumSize(new Dimension(300, 150));
+		this.absProperty = new AbstractionProperty();
 		LPN lhpn = new LPN();
-		lhpn.load(directory + separator + lpnFile);
-		createGUI(lhpn);
+		try {
+      lhpn.load(directory + separator + lpnFile);
+      createGUI(lhpn);
+    } catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+    }
 	}
 	/*
 		// Creates the interesting species JList
@@ -434,29 +406,29 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == addIntSpecies) {
-			if (!listModel.contains(intSpecies.getSelectedValue())) {
-				listModel.addElement(intSpecies.getSelectedValue());
+			if (!absProperty.listModel.contains(intSpecies.getSelectedValue())) {
+			  absProperty.listModel.addElement(intSpecies.getSelectedValue());
 			}
 		}
 		if (e.getSource() == removeIntSpecies) {
-			listModel.removeElement(species.getSelectedValue());
+		  absProperty.listModel.removeElement(species.getSelectedValue());
 		}
 		if (e.getSource() == clearIntSpecies) {
-			listModel.removeAllElements();
+		  absProperty.listModel.removeAllElements();
 		}
 		if (e.getSource() == addXform) {
-			if (!absListModel.contains(selectXforms.getSelectedValue())) {
-				absListModel.addElement(selectXforms.getSelectedValue());
+			if (!absProperty.absListModel.contains(selectXforms.getSelectedValue())) {
+			  absProperty.absListModel.addElement(selectXforms.getSelectedValue());
 			}
 		}
 		if (e.getSource() == removeXform) {
-			absListModel.removeElement(xforms.getSelectedValue());
+		  absProperty.absListModel.removeElement(xforms.getSelectedValue());
 		}
 		if (e.getSource() == addPreAbs || e.getSource() == addLoopAbs
 				|| e.getSource() == addPostAbs) {
 			JPanel addAbsPanel = new JPanel(new BorderLayout());
 			JComboBox absList = new JComboBox();
-			for (String s : transforms) {
+			for (String s : absProperty.transforms) {
 				absList.addItem(s);
 			}
 			addAbsPanel.add(absList, "Center");
@@ -475,65 +447,80 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		if (e.getSource() == rmPreAbs) {
-			preAbsModel.removeElement(preAbs.getSelectedValue());
-			preAbs.setListData(preAbsModel.toArray());
+		  absProperty.preAbsModel.removeElement(preAbs.getSelectedValue());
+			preAbs.setListData(absProperty.preAbsModel.toArray());
 		}
 		if (e.getSource() == rmLoopAbs) {
-			loopAbsModel.removeElement(loopAbs.getSelectedValue());
-			loopAbs.setListData(loopAbsModel.toArray());
+		  absProperty.loopAbsModel.removeElement(loopAbs.getSelectedValue());
+			loopAbs.setListData(absProperty.loopAbsModel.toArray());
 		}
 		if (e.getSource() == rmPostAbs) {
-			postAbsModel.removeElement(postAbs.getSelectedValue());
-			postAbs.setListData(postAbsModel.toArray());
+		  absProperty.postAbsModel.removeElement(postAbs.getSelectedValue());
+			postAbs.setListData(absProperty.postAbsModel.toArray());
 		}
 		if (e.getSource() == clearPreAbs) {
-			preAbsModel.removeAllElements();
-			preAbs.setListData(preAbsModel.toArray());
+		  absProperty.preAbsModel.removeAllElements();
+			preAbs.setListData(absProperty.preAbsModel.toArray());
 		}
 		if (e.getSource() == clearLoopAbs) {
-			loopAbsModel.removeAllElements();
-			loopAbs.setListData(loopAbsModel.toArray());
+		  absProperty.loopAbsModel.removeAllElements();
+			loopAbs.setListData(absProperty.loopAbsModel.toArray());
 		}
 		if (e.getSource() == clearPostAbs) {
-			postAbsModel.removeAllElements();
-			postAbs.setListData(postAbsModel.toArray());
+		  absProperty.postAbsModel.removeAllElements();
+			postAbs.setListData(absProperty.postAbsModel.toArray());
 		}
 		if (e.getSource() == addAllXforms) {
-			for (String s : transforms) {
-				if (!absListModel.contains(s)) {
-					absListModel.addElement(s);
+			for (String s : absProperty.transforms) {
+				if (!absProperty.absListModel.contains(s)) {
+				  absProperty.absListModel.addElement(s);
 				}
 			}
 		}
 		if (e.getSource() == clearXforms) {
-			absListModel.removeAllElements();
+		  absProperty.absListModel.removeAllElements();
 		}
 		if (e.getSource() == restore) {
 			restoreDefaults();
 		}
+		
+		if(e.getSource() == iterField)
+		{
+		  absProperty.maxIter = iterField.getText();
+		}
+		
+		if(e.getSource() == factorField)
+    {
+      absProperty.factor = factorField.getText();
+    }
+		
+		if(e.getSource() == field)
+    {
+      absProperty.field = field.getText();
+    }
 	}
 
 	public void addIntVar(String variable) {
-		if (!listModel.contains(variable)) {
-			listModel.addElement(variable);
+		if (!absProperty.listModel.contains(variable)) {
+		  absProperty.listModel.addElement(variable);
 		}
 	}
 
 	public void addPreXform(String xform) {
-		if (!preAbsModel.contains(xform)) {
-			add(preAbs, preAbsModel, xform);
+		if (!absProperty.preAbsModel.contains(xform)) {
+			add(preAbs, absProperty.preAbsModel, xform);
 		}
 	}
 
 	public void addLoopXform(String xform) {
-		if (!loopAbsModel.contains(xform)) {
-			add(loopAbs, loopAbsModel, xform);
+		if (!absProperty.loopAbsModel.contains(xform)) {
+			add(loopAbs, absProperty.loopAbsModel, xform);
 		}
 	}
 
 	public void addPostXform(String xform) {
-		if (!postAbsModel.contains(xform)) {
-			add(postAbs, postAbsModel, xform);
+		if (!absProperty.postAbsModel.contains(xform)) {
+			add(postAbs, absProperty.postAbsModel, xform);
 		}
 	}
 
@@ -556,19 +543,19 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		}
 		newModel.removeElement(null);
 		currentList.setListData(list);
-		if (currentModel.equals(preAbsModel)) {
-			preAbsModel = newModel;
-		} else if (currentModel.equals(loopAbsModel)) {
-			loopAbsModel = newModel;
-		} else if (currentModel.equals(postAbsModel)) {
-			postAbsModel = newModel;
+		if (currentModel.equals(absProperty.preAbsModel)) {
+		  absProperty.preAbsModel = newModel;
+		} else if (currentModel.equals(absProperty.loopAbsModel)) {
+		  absProperty.loopAbsModel = newModel;
+		} else if (currentModel.equals(absProperty.postAbsModel)) {
+		  absProperty.postAbsModel = newModel;
 		}
 	}
 
 	public void removeAllXform() {
-		preAbsModel.removeAllElements();
-		loopAbsModel.removeAllElements();
-		postAbsModel.removeAllElements();
+	  absProperty.preAbsModel.removeAllElements();
+	  absProperty.loopAbsModel.removeAllElements();
+	  absProperty.postAbsModel.removeAllElements();
 		// absListModel.removeAllElements();
 	}
 
@@ -594,19 +581,19 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		try {
 			Properties prop = new Properties();
 			String intVars = "";
-			for (int i = 0; i < listModel.getSize(); i++) {
-				intVars = listModel.getElementAt(i) + " ";
+			for (int i = 0; i < absProperty.listModel.getSize(); i++) {
+				intVars = absProperty.listModel.getElementAt(i) + " ";
 			}
 			if (!intVars.equals("")) {
 				prop.setProperty("abstraction.interesting", intVars);
 			}
-			for (int i = 0; i < absListModel.getSize(); i++) {
-				String s = absListModel.getElementAt(i).toString();
-				if (preAbsModel.contains(s)) {
+			for (int i = 0; i < absProperty.absListModel.getSize(); i++) {
+				String s = absProperty.absListModel.getElementAt(i).toString();
+				if (absProperty.preAbsModel.contains(s)) {
 					prop.setProperty(s, "preloop");
-				} else if (absListModel.contains(s)) {
+				} else if (absProperty.absListModel.contains(s)) {
 					prop.setProperty(s, "mainloop");
-				} else if (postAbsModel.contains(s)) {
+				} else if (absProperty.postAbsModel.contains(s)) {
 					prop.setProperty(s, "postloop");
 				}
 			}
@@ -657,60 +644,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		field.setText(newname);
 	}
 
-	public String[] getIntVars() {
-		String[] intVars = new String[listModel.getSize()];
-		for (int i = 0; i < listModel.getSize(); i++) {
-			if (listModel.elementAt(i) != null) {
-				intVars[i] = listModel.elementAt(i).toString();
-			}
-		}
-		return intVars;
-	}
-
-	public void viewCircuit() {
-		String[] getFilename;
-		if (field.getText().trim().equals("")) {
-		} else {
-			getFilename = new String[1];
-			getFilename[0] = field.getText().trim();
-		}
-	}
-
-	public boolean isSimplify() {
-		if (verification == null) {
-			return true;
-		}
-		if (verification.simplify.isSelected()
-				|| verification.abstractLhpn.isSelected()) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean isAbstract() {
-		if (verification == null) {
-			return true;
-		}
-		return verification.abstractLhpn.isSelected();
-	}
-
-	public Integer getNormFactor() {
-		String factorString = factorField.getText();
-		Integer factor;
-		try {
-			factor = Integer.parseInt(factorString);
-		}
-		catch (NumberFormatException e) {
-			factor =  -1;
-		}
-		return factor;
-	}
-
-	public Integer maxIterations() {
-		String iterString = iterField.getText();
-		return Integer.parseInt(iterString);
-	}
-
 	public void viewLog() {
 		try {
 			if (new File(directory + separator + "run.log").exists()) {
@@ -745,40 +678,40 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 	
 	private void restoreDefaults() {
-		preAbsModel.removeAllElements();
-		loopAbsModel.removeAllElements();
-		postAbsModel.removeAllElements();
-		preAbsModel.addElement(xform12);
-		loopAbsModel.addElement(xform0);
-		loopAbsModel.addElement(xform1);
-		loopAbsModel.addElement(xform3);
-		loopAbsModel.addElement(xform4);
-		loopAbsModel.addElement(xform5);
-		loopAbsModel.addElement(xform6);
-		loopAbsModel.addElement(xform7);
-		loopAbsModel.addElement(xform8);
-		loopAbsModel.addElement(xform9);
-		loopAbsModel.addElement(xform11);
-		loopAbsModel.addElement(xform13);
-		loopAbsModel.addElement(xform14);
-		loopAbsModel.addElement(xform15);
-		loopAbsModel.addElement(xform16);
-		loopAbsModel.addElement(xform17);
-		loopAbsModel.addElement(xform18);
-		loopAbsModel.addElement(xform19);
-		loopAbsModel.addElement(xform20);
-		loopAbsModel.addElement(xform22);
-		loopAbsModel.addElement(xform23);
-		loopAbsModel.addElement(xform24);
-		loopAbsModel.addElement(xform25);
-		loopAbsModel.addElement(xform26);
-		loopAbsModel.addElement(xform29);
-		loopAbsModel.addElement(xform30);
-		postAbsModel.addElement(xform21);
-		postAbsModel.addElement(xform31);
-		preAbs.setListData(preAbsModel.toArray());
-		loopAbs.setListData(loopAbsModel.toArray());
-		postAbs.setListData(postAbsModel.toArray());
+	  absProperty.preAbsModel.removeAllElements();
+	  absProperty.loopAbsModel.removeAllElements();
+	  absProperty.postAbsModel.removeAllElements();
+	  absProperty.preAbsModel.addElement(absProperty.xform12);
+	  absProperty.loopAbsModel.addElement(absProperty.xform0);
+	  absProperty.loopAbsModel.addElement(absProperty.xform1);
+	  absProperty.loopAbsModel.addElement(absProperty.xform3);
+	  absProperty.loopAbsModel.addElement(absProperty.xform4);
+	  absProperty.loopAbsModel.addElement(absProperty.xform5);
+	  absProperty.loopAbsModel.addElement(absProperty.xform6);
+	  absProperty.loopAbsModel.addElement(absProperty.xform7);
+	  absProperty.loopAbsModel.addElement(absProperty.xform8);
+	  absProperty.loopAbsModel.addElement(absProperty.xform9);
+	  absProperty.loopAbsModel.addElement(absProperty.xform11);
+	  absProperty.loopAbsModel.addElement(absProperty.xform13);
+	  absProperty.loopAbsModel.addElement(absProperty.xform14);
+	  absProperty.loopAbsModel.addElement(absProperty.xform15);
+	  absProperty.loopAbsModel.addElement(absProperty.xform16);
+	  absProperty.loopAbsModel.addElement(absProperty.xform17);
+	  absProperty.loopAbsModel.addElement(absProperty.xform18);
+	  absProperty.loopAbsModel.addElement(absProperty.xform19);
+	  absProperty.loopAbsModel.addElement(absProperty.xform20);
+	  absProperty.loopAbsModel.addElement(absProperty.xform22);
+	  absProperty.loopAbsModel.addElement(absProperty.xform23);
+	  absProperty.loopAbsModel.addElement(absProperty.xform24);
+	  absProperty.loopAbsModel.addElement(absProperty.xform25);
+	  absProperty.loopAbsModel.addElement(absProperty.xform26);
+	  absProperty.loopAbsModel.addElement(absProperty.xform29);
+	  absProperty.loopAbsModel.addElement(absProperty.xform30);
+	  absProperty.postAbsModel.addElement(absProperty.xform21);
+	  absProperty.postAbsModel.addElement(absProperty.xform31);
+		preAbs.setListData(absProperty.preAbsModel.toArray());
+		loopAbs.setListData(absProperty.loopAbsModel.toArray());
+		postAbs.setListData(absProperty.postAbsModel.toArray());
 	}
 
 	public boolean hasChanged() {
@@ -790,5 +723,10 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	public void mouseClicked() {
 	}
+	
+  public AbstractionProperty getAbstractionProperty()
+  {
+    return this.absProperty;
+  }
 
 }

@@ -4,12 +4,13 @@ import java.io.*;
 import java.util.*;
 
 import dataModels.util.GlobalConstants;
+import dataModels.util.exceptions.BioSimException;
 
 
 public class Lpn2verilog {
 	//String place;
 
-	public static void convert(String lpnFileName) {
+	public static void convert(String lpnFileName) throws BioSimException {
 		HashMap<String,Boolean> visitedPlaces;
 		String enable = "";
 		String separator = GlobalConstants.separator;

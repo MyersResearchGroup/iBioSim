@@ -610,7 +610,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 				catch (NumberFormatException e) {
 	
-					Utility.createErrorMessage("Error", "Threshold values must be comma-separated integers");
+				  JOptionPane.showMessageDialog(Gui.frame,"Error", "Threshold values must be comma-separated integers", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 	
@@ -662,7 +662,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (options[value].equals(options[0])) {
 			boolean valueCheck = checkValues();			
 			if (!valueCheck) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
+				JOptionPane.showMessageDialog(Gui.frame,"Error", "Illegal values entered.", JOptionPane.ERROR_MESSAGE);
+        
 				return false;
 			}
 			dimID = Utils.checkSizeParameters(bioModel.getSBMLDocument(), 
@@ -671,7 +672,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 			if (selected == null) {
 				if (bioModel.isSIdInUse(dimID[0])) {
-					Utility.createErrorMessage("Error", "ID already exists.");
+					JOptionPane.showMessageDialog(Gui.frame,"Error", "ID already exists.", JOptionPane.ERROR_MESSAGE);
+          
 					return false;
 				}
 			}
@@ -679,7 +681,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				
 				if (bioModel.isSIdInUse(dimID[0])) {
 					
-					Utility.createErrorMessage("Error", "ID already exists.");
+					JOptionPane.showMessageDialog(Gui.frame,"Error", "ID already exists.", JOptionPane.ERROR_MESSAGE);
+          
 					return false;
 				}
 			}
@@ -748,7 +751,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							species.setInitialConcentration(Double.parseDouble(f.getValue().substring(1,f.getValue().length()-1)));
 							AnnotationUtility.removeSweepAnnotation(species);
 						} else {
-							AnnotationUtility.setSweepAnnotation(species, f.getValue());
+							if(!AnnotationUtility.setSweepAnnotation(species, f.getValue()))
+					     {
+				        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML Operation", "Error occurred while annotating SBML element " 
+				            + SBMLutilities.getId(species), JOptionPane.ERROR_MESSAGE); 
+				        
+				      }
 						}
 					} else {
 						if (refGCM.getSBMLDocument().getModel().getSpecies(selected).isSetInitialAmount()) {
@@ -832,7 +840,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 								bioModel.getMetaIDIndex());
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
 							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
-					AnnotationUtility.setSBOLAnnotation(species, sbolAnnot);
+					if(!AnnotationUtility.setSBOLAnnotation(species, sbolAnnot))
+					{
+					    JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+					}
 				} else 
 					AnnotationUtility.removeSBOLAnnotation(species);
 			}

@@ -1478,12 +1478,12 @@ public class BioGraph extends mxGraph {
 	 */
 	public void addGridCells() {
 		
-		if (bioModel.getGrid().isEnabled()) {
+		if (modelEditor.getGrid().isEnabled()) {
 			
-			int gridRows = bioModel.getGrid().getNumRows();
-			int gridCols = bioModel.getGrid().getNumCols();
-			double gridWidth = bioModel.getGrid().getGridGeomWidth();
-			double gridHeight = bioModel.getGrid().getGridGeomHeight();
+			int gridRows = bioModel.getGridTable().getNumRows();
+			int gridCols = bioModel.getGridTable().getNumCols();
+			double gridWidth = modelEditor.getGrid().getGridGeomWidth();
+			double gridHeight = modelEditor.getGrid().getGridGeomHeight();
 			
 			//creates an mxCell/vertex for each grid rectangle
 			//these are later accessible via ID via the hash map
@@ -1589,7 +1589,7 @@ public class BioGraph extends mxGraph {
 				geom.setWidth(speciesGlyph.getBoundingBox().getDimensions().getWidth());
 				geom.setHeight(speciesGlyph.getBoundingBox().getDimensions().getHeight());
 				if (warn) {
-					Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
+				  JOptionPane.showMessageDialog(Gui.frame, "Species must be placed within a compartment.", "Compartment Required", JOptionPane.ERROR_MESSAGE); 
 				}
 				return;
 			} 
@@ -1661,7 +1661,8 @@ public class BioGraph extends mxGraph {
 					geom.setWidth(reactionGlyph.getBoundingBox().getDimensions().getWidth());
 					geom.setHeight(reactionGlyph.getBoundingBox().getDimensions().getHeight());
 					if (warn) {
-						Utility.createErrorMessage("Compartment Required", "Reaction must be placed within a compartment.");
+					  JOptionPane.showMessageDialog(Gui.frame,"Reaction must be placed within a compartment.", "Compartment Required", JOptionPane.ERROR_MESSAGE); 
+		
 					}
 					return;
 				} 
@@ -1739,7 +1740,7 @@ public class BioGraph extends mxGraph {
 				geom.setWidth(width);
 				geom.setHeight(height);
 				if (warn) {
-					Utility.createErrorMessage("Compartment Overlap", "Compartments must not overlap.");
+					 JOptionPane.showMessageDialog(Gui.frame, "Compartments must not overlap.", "Compartment Overlap", JOptionPane.ERROR_MESSAGE); 
 				}
 				return;
 			}
@@ -1749,7 +1750,8 @@ public class BioGraph extends mxGraph {
 				geom.setWidth(width);
 				geom.setHeight(height);
 				if (warn) {
-					Utility.createErrorMessage("Compartment Location", "Compartments must include their species and reactions.");
+				  JOptionPane.showMessageDialog(Gui.frame,"Compartments must include their species and reactions.", "Compartment Location", JOptionPane.ERROR_MESSAGE); 
+			    
 				}
 				return;
 			}
@@ -1765,7 +1767,7 @@ public class BioGraph extends mxGraph {
 				compGlyph.getBoundingBox().getDimensions().setWidth(width);
 				compGlyph.getBoundingBox().getDimensions().setHeight(height);
 				if (warn) {
-					Utility.createErrorMessage("Missing Compartment", "All species and reactions must be within a compartment.");
+				  JOptionPane.showMessageDialog(Gui.frame, "All species and reactions must be within a compartment.", "Missing Compartment", JOptionPane.ERROR_MESSAGE); 
 				}
 			}
 			geom.setX(compGlyph.getBoundingBox().getPosition().getX());
@@ -1999,15 +2001,15 @@ public class BioGraph extends mxGraph {
 		
 		componentsToMxCellMap.clear();
 		
-		Grid grid = bioModel.getGrid();
+		Grid grid = modelEditor.getGrid();
 		double gridWidth = grid.getGridGeomWidth();
 		double gridHeight = grid.getGridGeomHeight();
 		
 		componentsToMxCellMap.clear();
 		
 		//ADD COMPONENTS
-		for (int row = 0; row < grid.getNumRows(); ++row) {
-			for (int col = 0; col < grid.getNumCols(); ++col) {
+		for (int row = 0; row < bioModel.getGridTable().getNumRows(); ++row) {
+			for (int col = 0; col < bioModel.getGridTable().getNumCols(); ++col) {
 				
 				if (grid.getOccupancyFromLocation(row, col) == true) {
 					
@@ -3243,7 +3245,7 @@ public class BioGraph extends mxGraph {
 		
 		String style = "";
 		
-		if (bioModel.getGrid().isEnabled()) {
+		if (modelEditor.getGrid().isEnabled()) {
 			
 			if (compart) style = "GRIDCOMPARTMENT;";
 			else style = "GRIDCOMPONENT;";

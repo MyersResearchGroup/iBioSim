@@ -15,6 +15,7 @@ import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
 import dataModels.util.Message;
 import dataModels.util.dataparser.*;
+import dataModels.util.exceptions.BioSimException;
 import frontend.main.*;
 
 
@@ -469,7 +470,11 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		variablesList = new ArrayList<String>();
 		LPN lhpn = new LPN();
 		lhpn.addObserver(this);
-		lhpn.load(seedLpnFile);
+		try {
+      lhpn.load(seedLpnFile);
+    } catch (BioSimException e1) {
+      JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
+    }
 		HashMap<String, Properties> variablesMap = lhpn.getContinuous(); //System.out.println("Variables MAp :"+variablesMap.keySet());
 		for (String s : variablesMap.keySet()) {  //System.out.println("Variables MAp :"+s);
 			variablesList.add(s);
@@ -2481,7 +2486,12 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 				// the false parameter above says that it's not generating a net for stable
 				if (new File(seedLpnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
 					LPN seedLpn = new LPN();
-					seedLpn.load(seedLpnFile);
+					try {
+            seedLpn.load(seedLpnFile);
+          } catch (BioSimException e1) {
+            JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
+            e1.printStackTrace();
+          }
 					g = mergeLhpns(seedLpn,g);
 				}
 				valScaleFactor = l.getValueScaleFactor();
@@ -2742,7 +2752,12 @@ public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemLi
 		thresholds = new HashMap<String, ArrayList<Double>>(); // SB
 		reqdVarsL = new ArrayList<Variable>();				// SB
 		LPN lhpn = new LPN();
-		lhpn.load(seedLpnFile);
+		try {
+      lhpn.load(seedLpnFile);
+    } catch (BioSimException e1) {
+      JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
+      e1.printStackTrace();
+    }
 		HashMap<String, Properties> variablesMap = lhpn.getContinuous();
 		for (String s : variablesMap.keySet()) {
 			variablesList.add(s);

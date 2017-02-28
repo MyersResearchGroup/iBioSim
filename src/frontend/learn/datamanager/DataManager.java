@@ -26,6 +26,7 @@ import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
 import dataModels.util.Message;
 import dataModels.util.dataparser.*;
+import dataModels.util.exceptions.BioSimException;
 import frontend.main.*;
 import frontend.main.util.*;
 
@@ -1153,7 +1154,12 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				LPN lhpn = new LPN();
 				lhpn.addObserver(this);
 				// System.out.println(background);
-				lhpn.load(background);
+				try {
+          lhpn.load(background);
+        } catch (BioSimException e) {
+          JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+          e.printStackTrace();
+        }
 				HashMap<String, Properties> speciesMap = lhpn.getContinuous();
 				for (String s : speciesMap.keySet()) {
 					getSpecies.add(s);

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Observable;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -94,19 +95,9 @@ import dataModels.lpn.parser.Place;
 import dataModels.lpn.parser.Transition;
 import dataModels.lpn.parser.Variable;
 import dataModels.util.GlobalConstants;
+import dataModels.util.Message;
 import dataModels.util.MutableString;
 import dataModels.util.exceptions.BioSimException;
-import frontend.biomodel.gui.comp.Grid;
-import frontend.biomodel.gui.sbmlcore.Compartments;
-import frontend.biomodel.gui.sbmlcore.Constraints;
-import frontend.biomodel.gui.sbmlcore.Events;
-import frontend.biomodel.gui.sbmlcore.MySpecies;
-import frontend.biomodel.gui.sbmlcore.Parameters;
-import frontend.biomodel.gui.sbmlcore.Reactions;
-import frontend.biomodel.gui.sbmlcore.Rules;
-import frontend.biomodel.util.UndoManager;
-import frontend.main.Gui;
-import frontend.main.Log;
 
 
 /**
@@ -116,22 +107,28 @@ import frontend.main.Log;
  * @organization University of Utah
  * @email namphuon@cs.utah.edu
  */
-public class BioModel {
+public class BioModel extends Observable{
 
 	private String separator;
 
 	private String filename = null;
 
-	private UndoManager undoManager;
+	private Message message = new Message();
 
+	private GridTable gridTable;
+	
 	public BioModel(String path) {
 		//gcm2sbml = new GCM2SBML(this);
-		undoManager = new UndoManager();
 		separator = GlobalConstants.separator;
 		this.path = path;
-		grid = new Grid();
 		compartments = new HashMap<String, Properties>();
+		gridTable = new GridTable();
 	}
+	
+	public GridTable getGridTable()
+  {
+    return this.gridTable;
+  }
 	
 	public void createSBMLDocument(String modelId,boolean grid,boolean lema) {
 		sbml = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
@@ -370,62 +367,6 @@ public class BioModel {
 		sbmlFile = file;
 	}
 
-	public MySpecies getSpeciesPanel() {
-		return speciesPanel;
-	}
-
-	public void setSpeciesPanel(MySpecies speciesPanel) {
-		this.speciesPanel = speciesPanel;
-	}
-
-	public Compartments getCompartmentPanel() {
-		return compartmentPanel;
-	}
-
-	public void setCompartmentPanel(Compartments compartmentPanel) {
-		this.compartmentPanel = compartmentPanel;
-	}
-
-	public Reactions getReactionPanel() {
-		return reactionPanel;
-	}
-
-	public void setReactionPanel(Reactions reactionPanel) {
-		this.reactionPanel = reactionPanel;
-	}
-
-	public Rules getRulePanel() {
-		return rulePanel;
-	}
-
-	public void setRulePanel(Rules rulePanel) {
-		this.rulePanel = rulePanel;
-	}
-
-	public Constraints getConstraintPanel() {
-		return constraintPanel;
-	}
-
-	public void setConstraintPanel(Constraints constraintPanel) {
-		this.constraintPanel = constraintPanel;
-	}
-
-	public Events getEventPanel() {
-		return eventPanel;
-	}
-
-	public void setEventPanel(Events eventPanel) {
-		this.eventPanel = eventPanel;
-	}
-
-	public Parameters getParameterPanel() {
-		return parameterPanel;
-	}
-
-	public void setParameterPanel(Parameters parameterPanel) {
-		this.parameterPanel = parameterPanel;
-	}
-
 	public SBMLDocument getSBMLDocument() {
 		return sbml;
 	}
@@ -455,6 +396,10 @@ public class BioModel {
 	public void setSBMLLayout(LayoutModelPlugin sbmlLayout) {
 		this.sbmlLayout = sbmlLayout;
 	}
+	
+	public void setSBMLFBC(FBCModelPlugin sbmlFBC) {
+    this.sbmlFBC = sbmlFBC;
+  }
 
 	public void setSBMLComp(CompSBMLDocumentPlugin sbmlComp) {
 		this.sbmlComp = sbmlComp;
@@ -781,9 +726,10 @@ public class BioModel {
 		return LHPN;
 	}
 	
-	public void convertLPN2PRISM(Log log,FileWriter logFile,LPN LPN,String filename) {
+	public void convertLPN2PRISM(FileWriter logFile,LPN LPN,String filename) {
 		File file = new File(filename);
-		log.addText("Saving SBML file as PRISM file:\n" + filename + "\n");
+		message.setLog("Saving SBML file as PRISM file:\n" + filename + "\n");
+		this.notifyObservers(message);
 		try {
 			logFile.write("Saving SBML file as PRISM file:\n" + filename + "\n\n");
 			FileWriter out = new FileWriter(file);
@@ -830,7 +776,8 @@ public class BioModel {
 			out.close();
 			for (int i = 0; i < sbml.getModel().getConstraintCount(); i++) {
 				file = new File(filename.replace(".prism", ".pctl"));
-				log.addText("Saving PRISM Property file:\n" + filename + "\n");
+				message.setLog("Saving SBML file as PRISM file:\n" + filename + "\n");
+		    this.notifyObservers(message);
 				logFile.write("Saving PRISM Property file:\n" + filename + "\n\n");
 				out = new FileWriter(file);
 				out.write(SBMLutilities.convertMath2PrismProperty(sbml.getModel().getConstraint(i).getMath()));
@@ -838,7 +785,7 @@ public class BioModel {
 			}
 		}
 		catch (IOException e) {
-			JOptionPane.showMessageDialog(Gui.frame, "I/O error when writing PRISM file","Error Writing File", JOptionPane.ERROR_MESSAGE);
+		  message.setErrorDialog("Error Writing File", "I/O error when writing PRISM file");
 		}
 	}
 	
@@ -2545,7 +2492,7 @@ public class BioModel {
 	 */
 	public void save(String filename) throws XMLStreamException, IOException {		
 		updatePorts();
-		setGridSize(grid.getNumRows(),grid.getNumCols());
+		setGridSize(gridTable.getNumRows(),gridTable.getNumCols());
 		setLayoutSize();
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
 		SBMLWriter writer = new SBMLWriter();
@@ -2562,301 +2509,7 @@ public class BioModel {
 			e.printStackTrace();
 		}
 	}
-	
-	public boolean saveAsLPN(String filename) throws XMLStreamException, IOException {
-		HashMap<String,Integer> constants = new HashMap<String,Integer>();
-		ArrayList<String> booleans = new ArrayList<String>();
-		HashMap<String,String> rates = new HashMap<String,String>();
-		SBMLDocument flatSBML = flattenModel(true);
-		if (flatSBML==null) return false;
-		SBMLutilities.expandFunctionDefinitions(flatSBML);
-		SBMLutilities.expandInitialAssignments(flatSBML);
-		LPN lpn = new LPN();
-		String message = "The following items cannot be converted to an LPN:\n";
-		boolean error = false;
-		if (flatSBML.getModel().getCompartmentCount()>0) {
-			message += "Compartments: ";
-			for (int i = 0; i < flatSBML.getModel().getCompartmentCount(); i++) {
-				message += flatSBML.getModel().getCompartment(i).getId() + " ";
-			}
-			message += "\n";
-			error = true;
-		}
-		if (flatSBML.getModel().getSpeciesCount()>0) {
-			message += "Species: ";
-			for (int i = 0; i < flatSBML.getModel().getSpeciesCount(); i++) {
-				message += flatSBML.getModel().getSpecies(i).getId() + " ";
-			}
-			message += "\n";
-			error = true;
-		}
-		for (int i = 0; i < flatSBML.getModel().getRuleCount(); i++) {
-			Rule r = flatSBML.getModel().getRule(i);
-			if (r.isRate()) {
-				if (r.getMath().isName()) {
-					rates.put(r.getMath().getName(), SBMLutilities.getVariable(r));
-				} else {
-					error = true;
-					message += "Rate rule: d(" + SBMLutilities.getVariable(r) + ")/dt := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
-				}
- 			} else if (r.isAssignment()) {
- 				if (!SBMLutilities.getVariable(r).startsWith(GlobalConstants.TRIGGER+"_")) {
- 					error = true;
- 					message += "Assignment rule: " + SBMLutilities.getVariable(r) + " := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
- 				}
- 			} else {
-				error = true;
- 				message += "Algebraic rule: 0 := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
- 			}
- 		}
-		for (int i = 0; i < flatSBML.getModel().getParameterCount(); i++) {
-			Parameter p = flatSBML.getModel().getParameter(i);
-			if (p.getId().startsWith(GlobalConstants.TRIGGER+"_")) continue;
-			if (SBMLutilities.isPlace(p)) {
-				lpn.addPlace(p.getId(), (p.getValue()==1));
-			} else if (SBMLutilities.isBoolean(p)){
-				booleans.add(p.getId());
-				if (p.getId().equals(GlobalConstants.FAIL)||
-						p.getId().endsWith("__"+GlobalConstants.FAIL)) continue;
-				Port port = getPortByIdRef(p.getId());
-				if (port != null) {
-					if (SBMLutilities.isInputPort(port)) {
-						if (p.getValue()==0) {	
-							lpn.addInput(p.getId(), "boolean", "false");
-						} else {
-							lpn.addInput(p.getId(), "boolean", "true");
-						}						
-					} else {
-						if (p.getValue()==0) {	
-							lpn.addOutput(p.getId(), "boolean", "false");
-						} else {
-							lpn.addOutput(p.getId(), "boolean", "true");
-						}						
-					}
-				} else {
-					if (p.getValue()==0) {	
-						lpn.addBoolean(p.getId(), "false");
-					} else {
-						lpn.addBoolean(p.getId(), "true");
-					}
-				}
-			} else {
-				//if (rates.containsKey(p.getId())) continue;
-				if (!p.getConstant()) {
-					String type = "integer";
-					if (rates.containsValue(p.getId())) type = "continuous"; 
-					Port port = getPortByIdRef(p.getId());
-					int lower = (int)Math.floor(p.getValue());
-					int upper = (int)Math.ceil(p.getValue());
-					String bound = String.valueOf(lower);
-					if (lower!=upper) {
-						bound = "[" + lower + "," + upper + "]";
-					}
-					InitialAssignment ia = flatSBML.getModel().getInitialAssignment(p.getId());
-					if (ia != null) {
-						ASTNode math = ia.getMath();
-						if (math.getType()==ASTNode.Type.FUNCTION && math.getName().equals("uniform")) {
-							ASTNode left = math.getLeftChild();
-							ASTNode right = math.getRightChild();
-							if (left.getType()==ASTNode.Type.INTEGER && right.getType()==ASTNode.Type.INTEGER) {
-								lower = left.getInteger();
-								upper = right.getInteger();
-							}
-						}
-					}
-					if (port != null) {
-						if (SBMLutilities.isInputPort(port)) {
-							lpn.addInput(p.getId(),type,bound);
-						} else {
-							lpn.addOutput(p.getId(),type,bound);
-						}
-					} 
-					if (type.equals("integer")) {
-						lpn.addInteger(p.getId(),bound);
-					} else {
-						for (String key : rates.keySet()) {
-							if (rates.get(key).equals(p.getId())) {
-								Parameter rp = flatSBML.getModel().getParameter(key);
-								int lrate = (int)Math.floor(rp.getValue());
-								int urate = (int)Math.ceil(rp.getValue());
-								String boundRate = String.valueOf(lrate);
-								if (lrate!=urate) {
-									boundRate = "[" + lrate + "," + urate + "]";
-								}
-								ia = flatSBML.getModel().getInitialAssignment(rp.getId());
-								if (ia != null) {
-									ASTNode math = ia.getMath();
-									if (math.getType()==ASTNode.Type.FUNCTION && math.getName().equals("uniform")) {
-										ASTNode left = math.getLeftChild();
-										ASTNode right = math.getRightChild();
-										if (left.getType()==ASTNode.Type.INTEGER && right.getType()==ASTNode.Type.INTEGER) {
-											lrate = left.getInteger();
-											urate = right.getInteger();
-										}
-									}
-								}
-								lpn.addContinuous(p.getId(), bound,	boundRate);
-								break;
-							}
-						}
-					}
-				} else {
-					constants.put(p.getId(),(int)p.getValue());
-				}
-			}
-		}
-		boolean foundFail = false;
-		for (int i = 0; i < flatSBML.getModel().getConstraintCount(); i++) {
-			Constraint c = flatSBML.getModel().getConstraint(i);
-			ASTNode math = c.getMath();
-			if (math.getType()==ASTNode.Type.RELATIONAL_EQ) {
-				ASTNode left = math.getLeftChild();
-				ASTNode right = math.getRightChild();
-				if (left.getType()==ASTNode.Type.NAME && 
-						(left.getName().equals(GlobalConstants.FAIL)||
-						left.getName().endsWith("__"+GlobalConstants.FAIL)) &&
-					right.getType()==ASTNode.Type.INTEGER && right.getInteger()==0) {
-					foundFail = true;
-					continue;
-				} else {
-					error = true;
-					message += "Constraint: " + SBMLutilities.myFormulaToString(math) + "\n";
-				}
-			}
-			/*
-			if (math.getType()==ASTNode.Type.FUNCTION && math.getName().equals("G") && math.getChildCount()==2) {
-				ASTNode left = c.getMath().getLeftChild();
-				ASTNode right = c.getMath().getRightChild();
-				if (left.getType()==ASTNode.Type.CONSTANT_TRUE && right.getType()==ASTNode.Type.LOGICAL_NOT) {
-					ASTNode child = right.getChild(0);
-					if (child.getType()==ASTNode.Type.RELATIONAL_EQ) {
-						left = child.getLeftChild();
-						right = child.getRightChild();
-						if (left.getType()==ASTNode.Type.NAME && left.getName().endsWith(GlobalConstants.FAIL) &&
-							right.getType()==ASTNode.Type.INTEGER && right.getInteger()==1) {
-							foundFail = true;
-							continue;
-						}
-					}
-				}
-			} 
-			*/
-			//lpn.addProperty(SBMLutilities.SBMLMathToLPNString(c.getMath(), constants, booleans));
-		}
-		for (int i = 0; i < flatSBML.getModel().getEventCount(); i++) {
-			Event e = flatSBML.getModel().getEvent(i);
-			if (SBMLutilities.isTransition(e)) {
-				Transition t = new Transition();
-				t.setLpn(lpn);
-				t.setName(e.getId());
-				t.setPersistent(false);
-				lpn.addTransition(t);
-				ArrayList<String> preset = SBMLutilities.getPreset(flatSBML,e);
-				for (int j = 0; j < preset.size(); j++) {
-					t.addPreset(lpn.getPlace(preset.get(j)));
-				}
-				ArrayList<String> postset = SBMLutilities.getPostset(flatSBML,e);
-				for (int j = 0; j < postset.size(); j++) {
-					t.addPostset(lpn.getPlace(postset.get(j)));
-				}
-				Rule r = sbml.getModel().getRule(GlobalConstants.TRIGGER + "_" + e.getId());
-				if (r != null) {
-					t.setPersistent(true);
-					ASTNode triggerMath = r.getMath();
-					String trigger = SBMLutilities.myFormulaToString(triggerMath);
-					if (triggerMath.getType()==ASTNode.Type.FUNCTION_PIECEWISE && triggerMath.getChildCount() > 2) {
-						triggerMath = triggerMath.getChild(1);
-						if (triggerMath.getType()==ASTNode.Type.LOGICAL_OR) {
-							triggerMath = triggerMath.getLeftChild();
-							for (int j = 0; j < sbml.getModel().getParameterCount(); j++) {
-								Parameter parameter = sbml.getModel().getParameter(j);
-								if (parameter!=null && SBMLutilities.isPlace(parameter)) {
-									if (trigger.contains("eq("+parameter.getId()+", 1)")||
-											trigger.contains("("+parameter.getId()+" == 1)")){
-										triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
-									}
-								} 
-							}
-						}
-					}
-					t.addEnabling(SBMLutilities.SBMLMathToLPNString(triggerMath,constants,booleans));
-				} else if (e.isSetTrigger()) {
-					ASTNode triggerMath = e.getTrigger().getMath();
-					String trigger = SBMLutilities.myFormulaToString(triggerMath);
-					for (int j = 0; j < flatSBML.getModel().getParameterCount(); j++) {
-						Parameter parameter = flatSBML.getSBMLDocument().getModel().getParameter(j);
-						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
-							if (trigger.contains("eq("+parameter.getId()+", 1)")||
-									trigger.contains("("+parameter.getId()+" == 1)")) {
-								triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
-							}
-						}						
-					}
-					t.addEnabling(SBMLutilities.SBMLMathToLPNString(triggerMath,constants,booleans));
-				}
-				if (e.isSetDelay()) {
-					t.addDelay(SBMLutilities.SBMLMathToLPNString(e.getDelay().getMath(),constants,booleans));
-				}
-				if (e.isSetPriority()) {
-					t.addPriority(SBMLutilities.SBMLMathToLPNString(e.getPriority().getMath(),constants,booleans));
-				}
-				for (int j = 0; j < e.getEventAssignmentCount(); j++) {
-					EventAssignment ea = e.getListOfEventAssignments().get(j);
-					Parameter p = flatSBML.getModel().getParameter(ea.getVariable());
-					if (p != null && !SBMLutilities.isPlace(p)) {
-						if (rates.containsKey(ea.getVariable())) {
-							t.addContAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
-							t.addRateAssign(rates.get(ea.getVariable()), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
-						} else if (rates.containsValue(ea.getVariable())) {
-							t.addContAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
-						} else if (booleans.contains(ea.getVariable())){
-							if ((ea.getVariable().equals(GlobalConstants.FAIL)||
-									ea.getVariable().endsWith("__"+GlobalConstants.FAIL)) && foundFail) {
-								t.setFail(true);
-							} else {
-								t.addBoolAssign(ea.getVariable(), SBMLutilities.SBMLMathToBoolLPNString(ea.getMath(),constants,booleans));
-							}
-						} else {
-							t.addIntAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
-						}
-					}
-				}
-			} else {
-				error = true;
-				message += "Event: " + e.getId() + "\n";
-			}
-		}
-		if (error) {
-			JTextArea messageArea = new JTextArea(message);
-			messageArea.setEditable(false);
-			JScrollPane scroll = new JScrollPane();
-			scroll.setMinimumSize(new java.awt.Dimension(400, 400));
-			scroll.setPreferredSize(new java.awt.Dimension(400, 400));
-			scroll.setViewportView(messageArea);		
-			Object[] options = { "OK", "Cancel" };
-			int value = JOptionPane.showOptionDialog(Gui.frame, scroll, "Conversion Errors",
-					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (value == JOptionPane.NO_OPTION) return false;
-		}
-		lpn.save(filename);
-		return true;
-	}
 
-	public StringBuffer saveToBuffer() {
-		setGridSize(grid.getNumRows(),grid.getNumCols());
-		SBMLWriter writer = new SBMLWriter();
-		String SBMLstr = null;
-		try {
-			SBMLstr = writer.writeSBMLToString(sbml);
-		} catch (SBMLException e) {
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
-		}
-		StringBuffer buffer = new StringBuffer(SBMLstr);
-		return buffer;
-	}
-	
 	public boolean load(String filename) throws XMLStreamException, IOException {
 		//gcm2sbml.load(filename);
 		this.filename = filename;
@@ -3142,119 +2795,7 @@ public class BioModel {
 		SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(modifierId), s, "species");
 	}
 	
-	public void addReaction(String sourceID,String targetID,boolean isModifier) {
-		Model m = sbml.getModel();
-		JPanel reactionListPanel = new JPanel(new GridLayout(1, 1));
-		ArrayList<String> choices = new ArrayList<String>();
-		choices.add("Create a new reaction");
-		for (int i=0; i < m.getReactionCount(); i++) {
-			Reaction r = m.getReaction(i);
-			if (BioModel.isDegradationReaction(r)) continue;
-			if (BioModel.isDiffusionReaction(r)) continue;
-			if (BioModel.isProductionReaction(r)) continue;
-			if (BioModel.isComplexReaction(r)) continue;
-			if (BioModel.isConstitutiveReaction(r)) continue;
-			if (isGridReaction(r)) continue;
-			
-			if (!isModifier && r.getReactantForSpecies(sourceID) != null) {
-				choices.add("Add " + targetID + " as a product of reaction " + r.getId());
-			}
-			if (r.getProductForSpecies(targetID) != null) {
-				if (isModifier) {
-					choices.add("Add " + sourceID + " as a modifier of reaction " + r.getId());
-				} else {
-					choices.add("Add " + sourceID + " as a reactant of reaction " + r.getId());
-				}
-			}
-		}
-		
-		Object[] options = { "OK", "Cancel" };
-		JComboBox reactionList = new JComboBox(choices.toArray());
-		if (choices.size()>1) {
-			reactionListPanel.add(reactionList);
-			int value = JOptionPane.showOptionDialog(Gui.frame, reactionListPanel, "Reaction Choice",
-					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (value == JOptionPane.NO_OPTION) return;
-		}
-		if (((String)reactionList.getSelectedItem()).contains("reactant")) {
-			String[] selection = ((String)reactionList.getSelectedItem()).split(" ");
-			String reactionId = selection[selection.length-1];
-			Reaction r = m.getReaction(reactionId);
-			SpeciesReference s = r.createReactant();
-			s.setSpecies(sourceID);
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(sourceID), s, "species");
-			s.setStoichiometry(1.0);
-			s.setConstant(true);
-		} else if (((String)reactionList.getSelectedItem()).contains("modifier")) {
-			String[] selection = ((String)reactionList.getSelectedItem()).split(" ");
-			String reactionId = selection[selection.length-1];
-			Reaction r = m.getReaction(reactionId);
-			ModifierSpeciesReference s = r.createModifier();
-			s.setSpecies(sourceID);
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(sourceID), s, "species");
-		} else if (((String)reactionList.getSelectedItem()).contains("product")) {
-			String[] selection = ((String)reactionList.getSelectedItem()).split(" ");
-			String reactionId = selection[selection.length-1];
-			Reaction r = m.getReaction(reactionId);
-			SpeciesReference s = r.createProduct();
-			s.setSpecies(targetID);
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(targetID), s, "species");
-			s.setStoichiometry(1.0);
-			s.setConstant(true);
-		} else {
-			Reaction r = m.createReaction();
-			String reactionId = "r0";
-			int i = 0;
-			while (SBMLutilities.getElementBySId(sbml, reactionId)!=null) {
-				i++;
-				reactionId = "r" + i;
-			}
-			r.setId(reactionId);
-			r.setReversible(false);
-			r.setFast(false);
-			ArrayList<String> CompChoices = new ArrayList<String>();
-			if (isModifier) { 
-				ModifierSpeciesReference source = r.createModifier();
-				source.setSpecies(sourceID);
-				CompChoices.add(sbml.getModel().getSpecies(sourceID).getCompartment());
-				r.setCompartment(sbml.getModel().getSpecies(sourceID).getCompartment());
-				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
-				SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(sourceID), source, "species");
-			} else {
-				SpeciesReference source = r.createReactant();
-				source.setSpecies(sourceID);
-				source.setConstant(true);
-				source.setStoichiometry(1.0);
-				CompChoices.add(sbml.getModel().getSpecies(sourceID).getCompartment());
-				r.setCompartment(sbml.getModel().getSpecies(sourceID).getCompartment());
-				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
-				SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(sourceID), source, "species");
-			}
-			SpeciesReference target = r.createProduct();
-			target.setSpecies(targetID);
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(targetID), target, "species");
-			target.setConstant(true);
-			target.setStoichiometry(1.0);
-			if (!r.getCompartment().equals(sbml.getModel().getSpecies(targetID).getCompartment())) {
-				CompChoices.add(sbml.getModel().getSpecies(targetID).getCompartment());
-				JComboBox compartmentList = new JComboBox(CompChoices.toArray());
-				JPanel compartmentListPanel = new JPanel(new GridLayout(1, 1));
-				compartmentListPanel.add(compartmentList);
-				JOptionPane.showOptionDialog(Gui.frame, compartmentListPanel, "Compartment Choice",
-						JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				r.setCompartment((String)compartmentList.getSelectedItem());
-				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
-			}
-			KineticLaw k = r.createKineticLaw();
-			LocalParameter p = k.createLocalParameter();
-			p.setId("kf");
-			p.setValue(0.1);
-			p = k.createLocalParameter();
-			p.setId("kr");
-			p.setValue(1.0);
-			k.setMath(SBMLutilities.myParseFormula("kf*"+sourceID));
-		}
-	}
+
 
 	/**
 	 * Add a component given the specified name and properties. If either is
@@ -3324,8 +2865,8 @@ public class BioModel {
 			sbml.getModel().getCompartment(comp);
 		}
 			
-		int numRows = grid.getNumRows();
-		int numCols = grid.getNumCols();
+		int numRows = gridTable.getNumRows();
+		int numCols = gridTable.getNumCols();
 		
 		//if a gridded/arrayed submodel exists, it'll have this ID
 		String gridSubmodelID = "GRID__" + extId;
@@ -3460,7 +3001,7 @@ public class BioModel {
 	 * 
 	 * @param data string data from a gcm file
 	 */
-	private void loadGridSize() {
+	public void loadGridSize() {
 		int[] gridSize = null;
 		if (sbml.getModel().getCompartment(0) != null) {
 			gridSize = AnnotationUtility.parseGridAnnotation(sbml.getModel().getCompartment(0));
@@ -3472,48 +3013,18 @@ public class BioModel {
 				AnnotationUtility.setGridAnnotation(sbml.getModel().getCompartment(0), gridSize[0], gridSize[1]);
 			}
 		}
-		if (gridSize != null && gridSize[0] > 0 && gridSize[1] > 0) {
-			buildGrid(gridSize[0], gridSize[1]);
+		if (gridSize != null) {
+		  gridTable.setNumRows(gridSize[0]);
+		  gridTable.setNumRows(gridSize[1]);
 		} 
-	}
-
-	public void removeSpecies(String id) {
-		if (id != null) {
-			ListOf<InitialAssignment> r = sbml.getModel().getListOfInitialAssignments();
-			for (int i = 0; i < sbml.getModel().getInitialAssignmentCount(); i++) {
-				if (r.get(i).getVariable().equals(id)) {
-					r.remove(i);
-				}
-			}
-			sbml.getModel().removeSpecies(id);
-			if (isSpeciesConstitutive(id)) {
-				removeReaction("Constitutive_"+id);
-			}
-			if (getDiffusionReaction(id,sbml.getModel())!=null) {
-				removeReaction("MembraneDiffusion_"+id);
-			}
-			Reaction degradation = getDegradationReaction(id);
-			if (degradation != null) {
-				removeReaction(degradation.getId());
-			}
-			Layout layout = getLayout();
-			if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
-				layout.getListOfSpeciesGlyphs().remove(GlobalConstants.GLYPH+"__"+id);
-			}
-			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+id) != null) {
-				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+id);
-			}
-			for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
-				Port port = sbmlCompModel.getListOfPorts().get(i);
-				if (port.isSetIdRef() && port.getIdRef().equals(id)) {
-					sbmlCompModel.removePort(port);
-				}
-			}
-			speciesPanel.refreshSpeciesPanel(this);
-			reactionPanel.refreshReactionPanel(this);
-			compartmentPanel.refreshCompartmentPanel(this);
+		else
+		{
+		  gridTable.setNumRows(0);
+      gridTable.setNumRows(0);
 		}
 	}
+
+
 	
 	public void removeReaction(String id) {
 		if (SBMLutilities.variableInUse(sbml, id, false, true, true)) return;
@@ -4650,35 +4161,6 @@ public class BioModel {
 	}
     */
 
-	public void removePromoter(String id) {
-		ListOf<InitialAssignment> r = sbml.getModel().getListOfInitialAssignments();
-		for (int i = 0; i < sbml.getModel().getInitialAssignmentCount(); i++) {
-			if (r.get(i).getVariable().equals(id)) {
-				r.remove(i);
-			}
-		}
-		sbml.getModel().removeSpecies(id);
-		if (sbml.getModel().getSpecies(id + "_mRNA")!=null) {
-			sbml.getModel().removeSpecies(id+"_mRNA");
-		}
-		removeReaction(getProductionReaction(id).getId());
-		Layout layout = getLayout();
-		if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
-			layout.getListOfSpeciesGlyphs().remove(GlobalConstants.GLYPH+"__"+id);
-		}
-		if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+id) != null) {
-			layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+id);
-		}
-		if (speciesPanel!=null)
-			speciesPanel.refreshSpeciesPanel(this);
-		if (reactionPanel!=null) {
-			reactionPanel.refreshReactionPanel(this);
-		}
-		if (compartmentPanel!=null) {
-			compartmentPanel.refreshCompartmentPanel(this);
-		}
-	}
-
 	/**
 	 * removes a component from the model
 	 * 
@@ -4751,7 +4233,7 @@ public class BioModel {
 					//remove the grid species this submodel had and its locations parameter
 					sbml.getModel().removeParameter(locationParameterString);
 					
-					if (grid.getNumCols() > 0 && grid.getNumRows() > 0)
+					if (gridTable.getNumCols() > 0 && gridTable.getNumRows() > 0)
 						removeGridSpecies(componentModelRef);
 					
 					sbmlComp.removeExternalModelDefinition(componentModelRef);
@@ -4995,10 +4477,12 @@ public class BioModel {
 		try {
 			document = SBMLReader.read(new File(path + externalModelID));
 		} catch (XMLStreamException e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+		  message.setErrorDialog("Error Opening File", "Invalid XML in SBML file");
+		  this.notifyObservers(message);
 			return;
 		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			message.setErrorDialog("Error Opening File", "I/O error when opening SBML file");
+      this.notifyObservers(message);
 			return;
 		}
 		Model componentModel = document.getModel();
@@ -5042,12 +4526,14 @@ public class BioModel {
 			try {
 				document = SBMLReader.read(new File(path + externalModelID));
 			} catch (XMLStreamException e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
-				return;
-			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+	      message.setErrorDialog("Error Opening File", "Invalid XML in SBML file");
+	      this.notifyObservers(message);
+	      return;
+	    } catch (IOException e1) {
+	      message.setErrorDialog("Error Opening File", "I/O error when opening SBML file");
+	      this.notifyObservers(message);
+	      return;
+	    }
 			componentModel = document.getModel();
 			
 			//check all species in the component for diffusibility
@@ -5097,12 +4583,14 @@ public class BioModel {
 		try {
 			document = SBMLReader.read(new File(this.getPath() + externalModelID));
 		} catch (XMLStreamException e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
-			return;
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
+      message.setErrorDialog("Error Opening File", "Invalid XML in SBML file");
+      this.notifyObservers(message);
+      return;
+    } catch (IOException e1) {
+      message.setErrorDialog("Error Opening File", "I/O error when opening SBML file");
+      this.notifyObservers(message);
+      return;
+    }
 		Model componentModel = document.getModel();
 		
 		ArrayList<Species> speciesToAdd = new ArrayList<Species>();
@@ -5132,7 +4620,7 @@ public class BioModel {
 			if (sbml.getModel().getSpecies(specToAdd.getId()) == null) {
 				Species newSpecies = this.getSBMLDocument().getModel().createSpecies();
 				newSpecies.setId(specToAdd.getId());
-				AnnotationUtility.setGridAnnotation(newSpecies, grid.getNumRows(), grid.getNumCols());
+				AnnotationUtility.setGridAnnotation(newSpecies, gridTable.getNumRows(), gridTable.getNumCols());
 				newSpecies.setInitialAmount(0.0);
 				newSpecies.setBoundaryCondition(specToAdd.getBoundaryCondition());
 				newSpecies.setConstant(specToAdd.getConstant());
@@ -5185,7 +4673,7 @@ public class BioModel {
 			r.setFast(false);
 			r.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
 			
-			AnnotationUtility.setGridAnnotation(r, grid.getNumRows(), grid.getNumCols());
+			AnnotationUtility.setGridAnnotation(r, gridTable.getNumRows(), gridTable.getNumCols());
 			
 			KineticLaw kl = r.createKineticLaw();
 			
@@ -5202,8 +4690,8 @@ public class BioModel {
 				LocalParameter i = kl.createLocalParameter();
 				LocalParameter j = kl.createLocalParameter();
 				
-				AnnotationUtility.setArraySizeAnnotation(i, this.getGrid().getNumRows());
-				AnnotationUtility.setArraySizeAnnotation(j, this.getGrid().getNumCols());
+				AnnotationUtility.setArraySizeAnnotation(i, gridTable.getNumRows());
+				AnnotationUtility.setArraySizeAnnotation(j, gridTable.getNumCols());
 
 				i.setId("i");
 				j.setId("j");
@@ -5286,7 +4774,7 @@ public class BioModel {
 				r.setReversible(true);
 				r.setFast(false);
 
-				AnnotationUtility.setGridAnnotation(r, grid.getNumRows(), grid.getNumCols());
+				AnnotationUtility.setGridAnnotation(r, gridTable.getNumRows(), gridTable.getNumCols());
 				KineticLaw kl = r.createKineticLaw();
 				
 				if (kecdiff > 0) {
@@ -5312,8 +4800,8 @@ public class BioModel {
 					LocalParameter i = kl.createLocalParameter();
 					LocalParameter j = kl.createLocalParameter();
 					
-					AnnotationUtility.setArraySizeAnnotation(i, this.getGrid().getNumRows());
-					AnnotationUtility.setArraySizeAnnotation(j, this.getGrid().getNumCols());
+					AnnotationUtility.setArraySizeAnnotation(i, this.gridTable.getNumRows());
+					AnnotationUtility.setArraySizeAnnotation(j, this.gridTable.getNumCols());
 					
 					i.setId("i");
 					j.setId("j");
@@ -5339,7 +4827,7 @@ public class BioModel {
 			r.setReversible(true);
 			r.setFast(false);
 			
-			AnnotationUtility.setGridAnnotation(r, grid.getNumRows(), grid.getNumCols());
+			AnnotationUtility.setGridAnnotation(r, gridTable.getNumRows(), gridTable.getNumCols());
 			
 			KineticLaw kl = r.createKineticLaw();
 			
@@ -5363,8 +4851,8 @@ public class BioModel {
 			LocalParameter i = kl.createLocalParameter();
 			LocalParameter j = kl.createLocalParameter();
 
-			AnnotationUtility.setArraySizeAnnotation(i, this.getGrid().getNumRows());
-			AnnotationUtility.setArraySizeAnnotation(j, this.getGrid().getNumCols());
+			AnnotationUtility.setArraySizeAnnotation(i, this.gridTable.getNumRows());
+			AnnotationUtility.setArraySizeAnnotation(j, this.gridTable.getNumCols());
 			
 			i.setId("i");
 			j.setId("j");
@@ -5601,12 +5089,14 @@ public class BioModel {
 			compartment = getCompartmentByLocation(x,y, GlobalConstants.DEFAULT_SPECIES_WIDTH, 
 					GlobalConstants.DEFAULT_SPECIES_HEIGHT);
 			if (compartment.equals("")) {
-				Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
+				message.setErrorDialog("Compartment Required", "Species must be placed within a compartment.");
+		    this.notifyObservers(message);
 				return null;
 			}
 		} else {
 			if (sbml.getModel().getCompartmentCount()==0) {
-				Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
+				message.setErrorDialog("Compartment Required", "Species must be placed within a compartment.");
+        this.notifyObservers(message);
 				return null;
 			}
 			compartment = sbml.getModel().getCompartment(0).getId();
@@ -5629,8 +5119,6 @@ public class BioModel {
 			species.setConstant(false);
 			species.setInitialAmount(0);
 			species.setHasOnlySubstanceUnits(true);
-			if (speciesPanel!=null)
-				speciesPanel.refreshSpeciesPanel(this);
 			if (x >= 0 && y >= 0) {
 				Layout layout = getLayout();
 				SpeciesGlyph speciesGlyph = null;
@@ -5663,7 +5151,8 @@ public class BioModel {
 		String compartment = getCompartmentByLocation(x,y, GlobalConstants.DEFAULT_REACTION_WIDTH, 
 				GlobalConstants.DEFAULT_REACTION_HEIGHT);
 		if (compartment.equals("")) {
-			Utility.createErrorMessage("Compartment Required", "Reactions must be placed within a compartment.");
+			message.setErrorDialog("Compartment Required", "Reactions must be placed within a compartment.");
+      this.notifyObservers(message);
 			return;
 		}
 		if (id == null) {
@@ -5807,7 +5296,8 @@ public class BioModel {
 		compartment = getCompartmentByLocation(x,y,GlobalConstants.DEFAULT_SPECIES_WIDTH,GlobalConstants.DEFAULT_SPECIES_HEIGHT);
 		if (compartment.equals("")) {
 			if (sbml.getModel().getCompartmentCount()==0) {
-				Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
+			  message.setErrorDialog("Compartment Required", "Species must be placed within a compartment.");
+        this.notifyObservers(message);
 				return "";
 			}
 			compartment = sbml.getModel().getCompartment(0).getId();
@@ -5835,8 +5325,6 @@ public class BioModel {
 		promoter.setHasOnlySubstanceUnits(true);
 		if (createProduction)
 			createProductionReaction(promoterId, reactionId, null, null, null, null, null, null, false, null);
-		if (speciesPanel!=null)
-			speciesPanel.refreshSpeciesPanel(this);
 		if (isExplicit) {
 			Layout layout = getLayout();
 			SpeciesGlyph speciesGlyph = null;
@@ -5924,8 +5412,9 @@ public class BioModel {
 	
 	public String createCompartment(String id, float x, float y) {
 		if (!checkCompartmentOverlap(id,x,y,
-				GlobalConstants.DEFAULT_COMPARTMENT_WIDTH,GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT)) {
-			Utility.createErrorMessage("Compartment Overlap", "Compartments must not overlap.");
+			GlobalConstants.DEFAULT_COMPARTMENT_WIDTH,GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT)) {
+			message.setErrorDialog("Compartment Overlap", "Compartments must not overlap.");
+      this.notifyObservers(message);
 			return "";
 		}
 		Compartment compartment = sbml.getModel().createCompartment();
@@ -6105,7 +5594,7 @@ public class BioModel {
 	}
 	*/
 
-	private void loadDefaultEnclosingCompartment() {
+	public void loadDefaultEnclosingCompartment() {
 		if (sbml != null) {
 			if (sbml.getModel().getCompartmentCount()==0) {
 				/*
@@ -6379,19 +5868,7 @@ public class BioModel {
 		return successful;
 	}
 
-	private void loadSBMLFromBuffer(StringBuffer buffer) {	
-		try {
-			sbml = SBMLReader.read(buffer.toString());
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
-		}
-		sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
-		sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel(),true);
-		sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbml);
-		sbmlCompModel = SBMLutilities.getCompModelPlugin(sbml.getModel());
-		loadDefaultEnclosingCompartment();
-		loadGridSize();
-	}
+
 	
 	public void recurseExportSingleFile(ArrayList<String> comps,CompModelPlugin subCompModel,CompSBMLDocumentPlugin subComp,
 				CompSBMLDocumentPlugin documentComp) throws XMLStreamException, IOException {
@@ -6602,7 +6079,7 @@ public class BioModel {
 	}
 	
 	public SBMLDocument flattenModelWithLibSBML(boolean removeComp) throws Exception {
-		if (Gui.isLibsbmlFound()) {
+		if (SBMLutilities.libsbmlFound) {
 			String tempFile = filename.replace(".gcm", "").replace(".xml", "") + "_temp.xml";
 			save(tempFile);
 			
@@ -6694,7 +6171,8 @@ public class BioModel {
 			try {
 				SBMLDocument arrayFlat = ArraysFlattening.convert(model.getSBMLDocument());
 				if (arrayFlat==null) {
-					Utility.createErrorMessage("Array Flattening Failed", "Cannot flatten model.\n" + "There is a problem with arrays.");
+					message.setErrorDialog("Array Flattening Failed", "Cannot flatten model.\n" + "There is a problem with arrays.");
+		      this.notifyObservers(message);
 					load(tempFile);
 					new File(tempFile).delete();
 					return null;
@@ -6703,8 +6181,9 @@ public class BioModel {
 				model.createCompPlugin();
 				model.createFBCPlugin();
 			} catch (Exception e) {
-				Utility.createErrorMessage("Array Flattening Failed", "Cannot flatten model.\n" + "There is a problem with arrays.");
-				load(tempFile);
+        message.setErrorDialog("Array Flattening Failed", "Cannot flatten model.\n" + "There is a problem with arrays.");
+        this.notifyObservers(message);
+			  load(tempFile);
 				new File(tempFile).delete();
 				return null;
 			}
@@ -6734,7 +6213,8 @@ public class BioModel {
 			subModel.load(path + separator + extModelFile);
 			ArrayList<String> modelListCopy = copyArray(modelList);
 			if (modelListCopy.contains(subModel.getFilename())) {
-				Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+        message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+        this.notifyObservers(message);
 				load(tempFile);
 				new File(tempFile).delete();
 				return null;
@@ -6747,13 +6227,15 @@ public class BioModel {
 			if (flatSubModel!=null) {
 				unionSBML(model, flatSubModel, subModelId, subModel.getParameter(GlobalConstants.RNAP_STRING));
 			} else if (modelListCopy.isEmpty()) {
-				Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
-				load(tempFile);
+			  message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+        this.notifyObservers(message);
+			  load(tempFile);
 				new File(tempFile).delete();
 				return null;
 			}
 			else {
-				Utility.createErrorMessage("Cannot Flatten Model", "Unable to flatten sbml files from components.");
+			  message.setErrorDialog("Cannot Flatten Model", "Unable to flatten sbml files from components.");
+        this.notifyObservers(message);
 				load(tempFile);
 				new File(tempFile).delete();
 				return null;
@@ -6804,7 +6286,8 @@ public class BioModel {
 			subModel.load(path + separator + extModelFile);
 			ArrayList<String> modelListCopy = copyArray(modelList);
 			if (modelListCopy.contains(subModel.getFilename())) {
-				Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+				message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+        this.notifyObservers(message);
 				return null;
 			}
 			modelListCopy.add(subModel.getFilename());
@@ -6815,11 +6298,13 @@ public class BioModel {
 			if (flatSubModel!=null) {
 				unionSBML(this, flatSubModel, subModelId, subModel.getParameter(GlobalConstants.RNAP_STRING));
 			} else if (modelListCopy.isEmpty()) {
-				Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+				message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+        this.notifyObservers(message);
 				return null;
 			}
 			else {
-				Utility.createErrorMessage("Cannot Flatten Model", "Unable to flatten sbml files from components.");
+				message.setErrorDialog("Cannot Flatten Model", "Unable to flatten sbml files from components.");
+        this.notifyObservers(message);
 				return null;
 			}
 		}
@@ -7311,7 +6796,7 @@ public class BioModel {
 				if (model.getUnitDefinition(u.getId())==null) {
 					model.addUnitDefinition(u);
 				} 
-				frontend.biomodel.gui.sbmlcore.Units.updateUnitId(model, oldName, newName);
+				dataModels.biomodel.parser.BioModel.updateUnitId(model, oldName, newName);
 			}
 		}
 		// TODO: functions not flattened right, no replacements
@@ -7489,44 +6974,16 @@ public class BioModel {
 	
 	//UNDO-REDO METHODS
 	
-	public void makeUndoPoint() {
-		StringBuffer up = saveToBuffer();
-		undoManager.makeUndoPoint(up);
-	}
-
-	public void undo() {
-		StringBuffer p = (StringBuffer) undoManager.undo();
-		
-		if (p != null)
-			this.loadSBMLFromBuffer(p);
-	}
-
-	public void redo() {
-		StringBuffer p = (StringBuffer) undoManager.redo();
-		if (p != null)
-			this.loadSBMLFromBuffer(p);
-	}
-	
-	
-	//GRID
-
-	public Grid getGrid() {
-		return grid;
-	}
-	
 	/*
 	public void setGrid(Grid g) {
 		grid = g;
 	}	
 	*/
 	
-	public void buildGrid(int rows, int cols) {
-		
-		grid.createGrid(rows, cols, this, null);
-	}
+
 	
 	public boolean isGridEnabled() {
-		if ((getGrid().getNumRows() > 0) && (getGrid().getNumCols() > 0)) return true;
+		if ((gridTable.getNumRows() > 0) && (gridTable.getNumCols() > 0)) return true;
 		return false;
 	}
 	
@@ -7542,7 +6999,7 @@ public class BioModel {
 		
 		BioModel subModel = new BioModel(path);
 		subModel.load(filename);
-		if ((subModel.getGrid().getNumRows() > 0) || (subModel.getGrid().getNumCols() > 0)) return true;
+		if ((subModel.gridTable.getNumRows() > 0) || (subModel.gridTable.getNumCols() > 0)) return true;
 		return false;
 
 		/*
@@ -7628,7 +7085,112 @@ public class BioModel {
 		this.metaIDIndex = metaIDIndex;
 	}
 	
-	private SBMLDocument sbml = null;
+	/**
+   * Update unit Id
+   */
+  public static void updateUnitId(Model model, String origId, String newId) {
+  	
+  	//System.err.println("update unit id");
+  	
+  	if (origId.equals(newId))
+  		return;
+  	if (model.isSetSubstanceUnits()) {
+  		if (model.getSubstanceUnits().equals(origId)) {
+  			model.setSubstanceUnits(newId);
+  		}
+  	}
+  	if (model.isSetTimeUnits()) {
+  		if (model.getTimeUnits().equals(origId)) {
+  			model.setTimeUnits(newId);
+  		}
+  	}
+  	if (model.isSetVolumeUnits()) {
+  		if (model.getVolumeUnits().equals(origId)) {
+  			model.setVolumeUnits(newId);
+  		}
+  	}
+  	if (model.isSetAreaUnits()) {
+  		if (model.getAreaUnits().equals(origId)) {
+  			model.setAreaUnits(newId);
+  		}
+  	}
+  	if (model.isSetLengthUnits()) {
+  		if (model.getLengthUnits().equals(origId)) {
+  			model.setLengthUnits(newId);
+  		}
+  	}
+  	if (model.isSetExtentUnits()) {
+  		if (model.getExtentUnits().equals(origId)) {
+  			model.setExtentUnits(newId);
+  		}
+  	}
+  	if (model.getCompartmentCount() > 0) {
+  		String[] comps = new String[model.getCompartmentCount()];
+  		for (int i = 0; i < model.getCompartmentCount(); i++) {
+  			Compartment compartment = model.getListOfCompartments().get(i);
+  			if (compartment.getUnits().equals(origId)) {
+  				compartment.setUnits(newId);
+  			}
+  			comps[i] = compartment.getId();
+  			if (compartment.isSetSize()) {
+  				comps[i] += " " + compartment.getSize();
+  			}
+  			if (compartment.isSetUnits()) {
+  				comps[i] += " " + compartment.getUnits();
+  			}
+  		}
+  		dataModels.biomodel.util.Utility.sort(comps);
+  	}
+  	if (model.getSpeciesCount() > 0) {
+  		String[] specs = new String[model.getSpeciesCount()];
+  		for (int i = 0; i < model.getSpeciesCount(); i++) {
+  			Species species = model.getListOfSpecies().get(i);
+  			if (species.getUnits().equals(origId)) {
+  				species.setUnits(newId);
+  			}
+  			else {
+  				specs[i] = species.getId() + " " + species.getCompartment();
+  			}
+  			if (species.isSetInitialAmount()) {
+  				specs[i] += " " + species.getInitialAmount();
+  			}
+  			else {
+  				specs[i] += " " + species.getInitialConcentration();
+  			}
+  			if (species.isSetUnits()) {
+  				specs[i] += " " + species.getUnits();
+  			}
+  		}
+  		dataModels.biomodel.util.Utility.sort(specs);
+  	}
+  	if (model.getParameterCount() > 0) {
+  		String[] params = new String[model.getParameterCount()];
+  		for (int i = 0; i < model.getParameterCount(); i++) {
+  			Parameter parameter = model.getListOfParameters().get(i);
+  			if (parameter.getUnits().equals(origId)) {
+  				parameter.setUnits(newId);
+  			}
+  			if (parameter.isSetUnits()) {
+  				params[i] = parameter.getId() + " " + parameter.getValue() + " " + parameter.getUnits();
+  			}
+  			else {
+  				params[i] = parameter.getId() + " " + parameter.getValue();
+  			}
+  		}
+  		dataModels.biomodel.util.Utility.sort(params);
+  	}
+  	for (int i = 0; i < model.getReactionCount(); i++) {
+  		if (!model.getReaction(i).isSetKineticLaw()) continue;
+  		KineticLaw kineticLaw = model.getReaction(i).getKineticLaw();
+  		for (int j = 0; j < kineticLaw.getLocalParameterCount(); j++) {
+  			if (kineticLaw.getLocalParameter(j).getUnits().equals(origId)) {
+  				kineticLaw.getLocalParameter(j).setUnits(newId);
+  			}
+  		}
+  	}
+  }
+
+  private SBMLDocument sbml = null;
 	
 	private LayoutModelPlugin sbmlLayout = null;
 	
@@ -7637,22 +7199,6 @@ public class BioModel {
 	private CompModelPlugin sbmlCompModel = null;
 	
 	private FBCModelPlugin sbmlFBC = null;
-	
-	private MySpecies speciesPanel = null;
-	
-	private Compartments compartmentPanel = null;
-	
-	private Reactions reactionPanel = null;
-	
-	private Rules rulePanel = null;
-	
-	private Constraints constraintPanel = null;
-	
-	private Events eventPanel = null;
-	
-	private Parameters parameterPanel = null;
-	
-	private Grid grid = null;
 	
 	private HashMap<String,String> defaultParameters = null;
 	

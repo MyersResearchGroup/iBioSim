@@ -355,7 +355,10 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			// TODO: if sbolURIs.size > 0, add them to the promoter species, and remove from reaction
 			if (sbolURIs.size()>0) {
 				SBOLAnnotation sbolAnnot = new SBOLAnnotation(selected, sbolURIs, sbolStrand);
-				AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);
+				if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
+				{
+          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(promoter) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+        }
 				AnnotationUtility.removeSBOLAnnotation(production);
 			} else {
 				sbolStrand = AnnotationUtility.parseSBOLAnnotation(promoter, sbolURIs);
@@ -398,7 +401,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 		if (value == JOptionPane.YES_OPTION) {
 			boolean valueCheck = checkValues();
 			if (!valueCheck) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
+			  JOptionPane.showMessageDialog(Gui.frame, "Illegal values entered.", "Error", JOptionPane.ERROR_MESSAGE); 
 				return false;
 			}
 			String[] idDims = new String[]{""};
@@ -413,13 +416,14 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			if (!paramsOnly) {
 				if (oldName == null) {
 					if (bioModel.isSIdInUse(idDims[0])) {
-						Utility.createErrorMessage("Error", "Id already exists.");
+					  JOptionPane.showMessageDialog(Gui.frame, "Id already exists.", "Error", JOptionPane.ERROR_MESSAGE); 
 						return false;
 					}
 				}
 				else if (!oldName.equals(idDims[0])) {
 					if (bioModel.isSIdInUse(idDims[0])) {
-						Utility.createErrorMessage("Error","Id already exists.");
+					  JOptionPane.showMessageDialog(Gui.frame, "Id already exists.", "Error", JOptionPane.ERROR_MESSAGE); 
+            
 						return false;
 					}
 				}
@@ -454,7 +458,12 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			PropertyField f = fields.get(GlobalConstants.PROMOTER_COUNT_STRING);
 			if (f.getValue().startsWith("(")) {
 				promoter.setInitialAmount(1.0);
-				AnnotationUtility.setSweepAnnotation(promoter, f.getValue());
+				if(!AnnotationUtility.setSweepAnnotation(promoter, f.getValue()))
+	      {
+	        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML Operation", "Error occurred while annotating SBML element " 
+	            + SBMLutilities.getId(promoter), JOptionPane.ERROR_MESSAGE); 
+	        
+	      }
 			} else {
 				promoter.setInitialAmount(Double.parseDouble(f.getValue()));
 			}
@@ -506,7 +515,10 @@ public class PromoterPanel extends JPanel implements ActionListener {
 								bioModel.getMetaIDIndex());
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(selected, sbolField.getSBOLURIs(),
 							sbolField.getSBOLStrand());
-					AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);
+					if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
+					{
+            JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(promoter) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+          }
 				} else
 					AnnotationUtility.removeSBOLAnnotation(promoter);
 

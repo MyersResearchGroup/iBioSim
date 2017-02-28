@@ -495,8 +495,8 @@ public class GeneticNetwork extends Observable {
 			if (AnnotationUtility.parseGridAnnotation(species) != null) {
 				AnnotationUtility.removeGridAnnotation(species);
 				String arrayAnnotation = "rowsLowerLimit=\"0\" colsLowerLimit=\"0\" rowsUpperLimit=\""+
-						String.valueOf(bioModel.getGrid().getNumRows() - 1) + "\" colsUpperLimit=\""+
-						String.valueOf(bioModel.getGrid().getNumCols() - 1);
+						String.valueOf(bioModel.getGridTable().getNumRows() - 1) + "\" colsUpperLimit=\""+
+						String.valueOf(bioModel.getGridTable().getNumCols() - 1);
 				AnnotationUtility.setArrayAnnotation(species, arrayAnnotation);		
 			}
 		}

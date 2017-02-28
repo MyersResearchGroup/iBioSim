@@ -823,7 +823,7 @@ public class GCM2SBML {
 		bioModel.updateLayoutDimensions();
 		
 		if (numRows > 0 || numCols > 0) {
-			bioModel.buildGrid(numRows, numCols);
+			//modelEditor.buildGrid();
 			bioModel.setGridSize(numRows,numCols);
 		}
 		

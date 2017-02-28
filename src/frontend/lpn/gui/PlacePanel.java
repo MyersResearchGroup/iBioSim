@@ -100,14 +100,14 @@ public class PlacePanel extends JPanel implements ActionListener {
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
+				 JOptionPane.showMessageDialog(Gui.frame,"Illegal values entered." , "Error", JOptionPane.ERROR_MESSAGE); 
 				return false;
 			}
 			String[] allVariables = lhpn.getAllIDs();
 			if (oldName == null) {
 				for (int i=0; i<allVariables.length; i++) {
 					if (allVariables[i].equals(fields.get(GlobalConstants.ID).getValue())) {
-						Utility.createErrorMessage("Error", "Place id already exists.");
+						 JOptionPane.showMessageDialog(Gui.frame, "Place id already exists.", "Error", JOptionPane.ERROR_MESSAGE); 
 						return false;
 					}
 				}
@@ -115,7 +115,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
 				for (int i=0; i<allVariables.length; i++) {
 					if (allVariables[i].equals(fields.get(GlobalConstants.ID).getValue())) {
-						Utility.createErrorMessage("Error", "Place id already exists.");
+					  JOptionPane.showMessageDialog(Gui.frame, "Place id already exists.", "Error", JOptionPane.ERROR_MESSAGE); 
 						return false;
 					}
 				}

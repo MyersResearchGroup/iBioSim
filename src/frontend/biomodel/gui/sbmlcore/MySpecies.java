@@ -736,7 +736,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					modelEditor.setDirty(true);
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 				}
 			}
 			if (error) {
@@ -1031,14 +1031,14 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (index != -1) {
 			String id = ((String) species.getSelectedValue()).split("\\[| ")[0];
 			if (BioModel.isPromoterSpecies(bioModel.getSBMLDocument().getModel().getSpecies(id))) {
-				bioModel.removePromoter(id);
+			  modelEditor.removePromoter(id);
 				modelEditor.setDirty(true);
-				bioModel.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 			} else {
 				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), id, false, true, true)) {
-					bioModel.removeSpecies(id);
+				  modelEditor.removeSpecies(id);
 					modelEditor.setDirty(true);
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 				}
 			}
 		}
@@ -1062,6 +1062,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			//speciesEditor("Add");
 			reactionsPanel.refreshReactionPanel(bioModel);
 			parametersPanel.refreshParameterPanel(bioModel);
+			this.refreshSpeciesPanel(bioModel);
 		}
 		// if the add complex button is clicked
 		else if (e.getSource() == addComplex) {
@@ -1083,6 +1084,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			//speciesEditor("Add");
 			reactionsPanel.refreshReactionPanel(bioModel);
 			parametersPanel.refreshParameterPanel(bioModel);
+      this.refreshSpeciesPanel(bioModel);
 		}
 		// if the edit species button is clicked
 		else if (e.getSource() == editSpec) {

@@ -9,6 +9,7 @@ import javax.swing.JFileChooser;
 
 import backend.verification.timed_state_exploration.dbm2.LPNTranslator.UnsafeLPNException;
 import dataModels.lpn.parser.*;
+import dataModels.util.exceptions.BioSimException;
 
 /**
  * This class finds the state graph for an LPN from an LPNFile object.
@@ -28,7 +29,7 @@ public class StateExploration {
 	
 	ArrayList<LPNState> States;				// Holds the states found so far.
 	
-	public static void main(String[] args) throws FileNotFoundException
+	public static void main(String[] args) throws FileNotFoundException, BioSimException
 	{
 		// Set up the path for where to store the resulting files.
 		String workingDirectory = System.getProperty("user.dir");

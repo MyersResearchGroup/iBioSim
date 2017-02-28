@@ -287,7 +287,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						dataModels.biomodel.util.Utility.sort(cons);
 						constraints.setListData(cons);
 						constraints.setSelectedIndex(index);
-						bioModel.makeUndoPoint();
+						modelEditor.makeUndoPoint();
 					}
 					else {
 						String[] cons = new String[constraints.getModel().getSize()];
@@ -412,7 +412,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+selected);
 		}
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 
 	@Override
@@ -420,7 +420,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		// if the add constraint button is clicked
 		if (e.getSource() == addConstraint) {
 			constraintEditor("Add","");
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 		// if the edit constraint button is clicked
 		else if (e.getSource() == editConstraint) {

@@ -443,7 +443,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		}
 		if (!error) {
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 		return error;
 	}
@@ -570,7 +570,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				initAssigns.setSelectedIndex(index - 1);
 			}
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 

@@ -18,6 +18,7 @@ import com.mxgraph.model.mxCell;
 
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
+import dataModels.biomodel.parser.GridTable;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.BioGraph;
@@ -55,7 +56,6 @@ public class Grid {
 	//map of compartment ID strings to the corresponding grid node
 	private HashMap<String, GridNode> componentIDToNodeMap;
 	
-	private int numRows, numCols;
 	private int verticalOffset;
 	private double padding; //padding for the grid rectangles
 	private double gridWidth;
@@ -73,7 +73,7 @@ public class Grid {
 	private Rectangle gridBounds;
 	private Point mouseClickLocation;
 	private Point mouseLocation;
-	
+	private GridTable gridTable;
 	private BioGraph graph;
 	
 	
@@ -96,8 +96,6 @@ public class Grid {
 		enabled = false;
 		mouseReleased = false;
 		verticalOffset = 0;
-		numRows = 0;
-		numCols = 0;
 		padding = 30;
 		zoomAmount = 1;
 		gridWidth = GlobalConstants.DEFAULT_COMPONENT_WIDTH + padding;
@@ -117,6 +115,7 @@ public class Grid {
 		locToComponentMap = new HashMap<Point, String>();
 		componentIDToNodeMap = new HashMap<String, GridNode>();
 		graph = null;
+		gridTable = null;
 	}
 	
 	/**
@@ -127,25 +126,24 @@ public class Grid {
 	 * @param cols number of columns in the grid
 	 * @param components the components that are located on the grid
 	 */
-	public void createGrid(int rows, int cols, BioModel gcm, String compGCM) {
+	public void createGrid(BioModel gcm, String compGCM) {
 		
 		//if the grid size is 0 by 0, don't make it
-		if (rows <= 0 || cols <= 0) {
+		if (gridTable.getNumRows() <= 0 || gridTable.getNumCols() <= 0) {
 			
 			enabled = false; //should be false already, but whatever
 			return;
 		}
 		
+		gridTable = gcm.getGridTable();
 		enabled = true;
-		numRows = rows;
-		numCols = cols;
 		
 		//gcm.setIsWithinCompartment(true);
-		for(int row = 0; row < numRows; ++row) {
+		for(int row = 0; row < gridTable.getNumRows(); ++row) {
 			
-			grid.add(new ArrayList<GridNode>(numCols));
+			grid.add(new ArrayList<GridNode>(gridTable.getNumCols()));
 			
-			for(int col = 0; col < numCols; ++col) {
+			for(int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				grid.get(row).add(new GridNode());
 				grid.get(row).get(col).setRow(row);
@@ -215,8 +213,8 @@ public class Grid {
 		}
 		
 		//draw the selection boxes for selected nodes
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				GridNode node = grid.get(row).get(col);
 				Rectangle rect = node.getZoomedRectangle();
@@ -403,8 +401,8 @@ public class Grid {
 		
 		//loop through all nodes
 		//if it's selected, clear it
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				if (grid.get(row).get(col).isSelected() && grid.get(row).get(col).isOccupied())
 					eraseNode(grid.get(row).get(col).getComponent(), gcm);
@@ -418,8 +416,8 @@ public class Grid {
 	public void selectAllNodes() {
 		
 		//loop through each grid node to see if one is selected
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				grid.get(row).get(col).setSelected(true);
 			}
@@ -434,8 +432,8 @@ public class Grid {
 	public void deselectAllNodes() {
 		
 		//loop through each grid node to see if one is selected
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				grid.get(row).get(col).setSelected(false);
 			}
@@ -451,8 +449,8 @@ public class Grid {
 		ArrayList<Point> selectedNodes = new ArrayList<Point>();
 		
 		//loop through each grid node to see if one is selected
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				if (grid.get(row).get(col).isSelected() && !grid.get(row).get(col).isOccupied())
 					selectedNodes.add(new Point(grid.get(row).get(col).getRow(), grid.get(row).get(col).getCol()));
@@ -568,8 +566,8 @@ public class Grid {
 		
 		//loop through each grid node
 		//if one is selected, return true
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				if (grid.get(row).get(col).isSelected())
 					return true;
@@ -653,8 +651,8 @@ public class Grid {
 	 */
 	public void changeGridSize(int rows, int cols, String compGCM, BioModel gcm) {
 		
-		int currentNumRows = this.numRows;
-		int currentNumCols = this.numCols;
+		int currentNumRows = this.gridTable.getNumRows();
+		int currentNumCols = this.gridTable.getNumCols();
 		int newNumRows = rows;
 		int newNumCols = cols;
 		int numRowsToAdd = newNumRows - currentNumRows;
@@ -732,8 +730,8 @@ public class Grid {
 			}
 		}
 		
-		this.numRows = newNumRows;
-		this.numCols = newNumCols;
+		this.gridTable.setNumRows(newNumRows);
+		this.gridTable.setNumCols(newNumCols);
 		
 		//put the components onto the grid and update hash maps and update the graph
 		refreshComponents();
@@ -747,8 +745,8 @@ public class Grid {
 	 */
 	public void updateComponentLocations(HashMap<String, Point> componentToLocationMap) {
 		
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				grid.get(row).get(col).setComponent("none");
 				grid.get(row).get(col).setOccupied(false);
@@ -778,17 +776,17 @@ public class Grid {
 	 */
 	public void resetGrid(int rows, int cols) {
 		
-		this.numRows = rows;
-		this.numCols = cols;
+		this.gridTable.setNumRows(rows);
+		this.gridTable.setNumCols(cols);
 		
-		grid = new ArrayList<ArrayList<GridNode> >(numRows);
+		grid = new ArrayList<ArrayList<GridNode> >(gridTable.getNumRows());
 		
 		//clear the grid of its components
-		for (int row = 0; row < numRows; ++row) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
 			
-			grid.add(new ArrayList<GridNode>(numCols));
+			grid.add(new ArrayList<GridNode>(gridTable.getNumCols()));
 			
-			for (int col = 0; col < numCols; ++col) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				grid.get(row).add(new GridNode());
 				
@@ -816,8 +814,8 @@ public class Grid {
 		
 		//loop through the rows and columns
 		//find the grid node and rectangle then make it a map entry
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 		
 				rectToNodeMap.put(grid.get(row).get(col).getZoomedRectangle(), grid.get(row).get(col));				
 			}
@@ -863,8 +861,8 @@ public class Grid {
 	 */
 	private void updateComponentIDToNodeMap() {
 		
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				GridNode node = grid.get(row).get(col);
 				
@@ -888,8 +886,8 @@ public class Grid {
 		//loop through every row and column
 		//check this location's rectangle against the x,y point
 		//if it contains it, return that node
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				Rectangle rect = grid.get(row).get(col).getZoomedRectangle();
 				
@@ -922,8 +920,8 @@ public class Grid {
 	private void updateGridRectangles() {
 
 		//create/set rectangles for each location in grid
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				//find the bounds from the cell at this row/col
 				//use that rectangle as the node's rectangle
@@ -969,8 +967,8 @@ public class Grid {
 		}
 		
 		//set the total grid bounds
-		int outerX = (int)gridWidth * numCols;
-		int outerY = (int)gridHeight * numRows + verticalOffset;
+		int outerX = (int)gridWidth * gridTable.getNumCols();
+		int outerY = (int)gridHeight * gridTable.getNumRows() + verticalOffset;
 		
 		gridBounds.setBounds(15, 15, outerX, outerY);
 	}
@@ -1095,8 +1093,8 @@ public class Grid {
 		
 		//loop through all of the grid locations
 		//if its rectangle is contained within the rubberband, select it
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
+		for (int row = 0; row < gridTable.getNumRows(); ++row) {
+			for (int col = 0; col < gridTable.getNumCols(); ++col) {
 				
 				if (rubberbandBounds.contains(grid.get(row).get(col).getZoomedRectangle()))
 					grid.get(row).get(col).setSelected(true);
@@ -1145,20 +1143,6 @@ public class Grid {
 		//change the grid's rectangle locations based on this offset
 		updateGridRectangles();
 		updateRectToNodeMap();
-	}
-
-	/**
-	 * @return the numRows
-	 */
-	public int getNumRows() {
-		return numRows;
-	}
-
-	/**
-	 * @return the numCols
-	 */
-	public int getNumCols() {
-		return numCols;
 	}
 	
 	/**
@@ -1349,6 +1333,11 @@ public class Grid {
 	
 	public void setGraph(BioGraph graph) {
 		this.graph = graph;
+	}
+	
+	public void setGridTable(GridTable gridTable)
+	{
+	  this.gridTable = gridTable;
 	}
 	
 	

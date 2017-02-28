@@ -232,7 +232,10 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 								bioModel.getMetaIDIndex());
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolField.getSBOLURIs(),
 							sbolField.getSBOLStrand());
-					AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
+					if(!AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot))
+					{
+					  JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(sbmlModel) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+					}
 				} else 
 					AnnotationUtility.removeSBOLAnnotation(sbmlModel);
 			}
@@ -288,7 +291,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				}
 				model.setName(modelName.getText());
 				modelEditor.setDirty(true);
-				bioModel.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Units Editor", JOptionPane.YES_NO_OPTION,

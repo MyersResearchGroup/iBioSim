@@ -827,12 +827,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						dataModels.biomodel.util.Utility.sort(ev);
 						events.setListData(ev);
 						events.setSelectedIndex(index);
-						bioModel.makeUndoPoint();
+						modelEditor.makeUndoPoint();
 					}
 					//edit dynamic process
 					if (!error) {
 						if (!((String)dynamicProcess.getSelectedItem()).equals("none")) {
-							AnnotationUtility.setDynamicAnnotation(e, (String)dynamicProcess.getSelectedItem());
+							if(!AnnotationUtility.setDynamicAnnotation(e, (String)dynamicProcess.getSelectedItem()))
+					     {
+				        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML Operation", "Error occurred while annotating SBML element " 
+				            + SBMLutilities.getId(e), JOptionPane.ERROR_MESSAGE); 
+				        
+				      }
 						}
 						else {
 							AnnotationUtility.removeDynamicAnnotation(e);
@@ -1066,7 +1071,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 									bioModel.getMetaIDIndex());
 						SBOLAnnotation sbolAnnot = new SBOLAnnotation(e.getMetaId(), sbolField.getSBOLURIs(), 
 								sbolField.getSBOLStrand());
-						AnnotationUtility.setSBOLAnnotation(e, sbolAnnot);
+						if(!AnnotationUtility.setSBOLAnnotation(e, sbolAnnot))
+						{
+						  JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(e) + " with SBOL.", JOptionPane.ERROR_MESSAGE);}
 					} else
 						AnnotationUtility.removeSBOLAnnotation(e);
 				}
@@ -1182,7 +1189,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				events.setSelectedIndex(index - 1);
 			}
 			modelEditor.setDirty(true);
-			gcm.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 
@@ -1506,10 +1513,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		// if the add event button is clicked
 		if (e.getSource() == addEvent) {
 			eventEditor("Add","",false);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}else if (e.getSource() == addTrans) {
 			eventEditor("Add","",true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 		// if the edit event button is clicked
 		else if (e.getSource() == editEvent) {

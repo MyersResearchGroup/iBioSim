@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Annotation;
@@ -25,12 +26,12 @@ import org.sbml.jsbml.JSBML;
 
 public class AnnotationUtility {
 
-	public static void setSBOLAnnotation(SBase sbmlObject, SBOLAnnotation sbolAnnot) {
+	public static boolean setSBOLAnnotation(SBase sbmlObject, SBOLAnnotation sbolAnnot) {
 		if (sbmlObject.isSetAnnotation())
 			removeSBOLAnnotation(sbmlObject);
 		if (SBMLutilities.appendAnnotation(sbmlObject, sbolAnnot.toXMLString()) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject) + " with SBOL.");
+		  return false;
+		return true;
 	}
 	
 	public static void removeSBOLAnnotation(SBase sbmlObject) {
@@ -132,16 +133,15 @@ public class AnnotationUtility {
 		return null;
 	}
 
-	public static void setSweepAnnotation(SBase sbmlObject, String sweep) {
+	public static boolean setSweepAnnotation(SBase sbmlObject, String sweep) {
 		if (sbmlObject.isSetAnnotation())
 			removeSweepAnnotation(sbmlObject);
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 		attr.add("ibiosim:sweep", sweep);
 		XMLNode node = new XMLNode(new XMLTriple("ibiosim","http://www.fakeuri.com ","ibiosim"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject));
+		return SBMLutilities.appendAnnotation(sbmlObject, node) == JSBML.OPERATION_SUCCESS;
+
 	}
 	
 	public static void removeSweepAnnotation(SBase sbmlObject) {
@@ -185,28 +185,25 @@ public class AnnotationUtility {
 		return null;
 	}
 	
-	public static void setDistributionAnnotation(SBase sbmlObject,String definition) {
+	public static boolean setDistributionAnnotation(SBase sbmlObject,String definition) {
 		if (sbmlObject.isSetAnnotation())
 			sbmlObject.unsetAnnotation();
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns", "http://sbml.org/annotations/distribution");
 		attr.add("definition", definition);
 		XMLNode node = new XMLNode(new XMLTriple("distribution","http://sbml.org/annotations/distribution",""), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject));
+		return SBMLutilities.appendAnnotation(sbmlObject, node) == JSBML.OPERATION_SUCCESS;
+		
 	}
 	
-	public static void setArraySizeAnnotation(SBase sbmlObject, int size) {
+	public static boolean setArraySizeAnnotation(SBase sbmlObject, int size) {
 		if (sbmlObject.isSetAnnotation())
 			removeArraySizeAnnotation(sbmlObject);
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:array", "http://www.fakeuri.com");
 		attr.add("array:size", ""+size);
 		XMLNode node = new XMLNode(new XMLTriple("array","http://www.fakeuri.com ","array"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject));
+		return (SBMLutilities.appendAnnotation(sbmlObject, node) == JSBML.OPERATION_SUCCESS);
 	}
 	
 	public static void removeArraySizeAnnotation(SBase sbmlObject) {
@@ -267,16 +264,14 @@ public class AnnotationUtility {
 		return -1;
 	}
 	
-	public static void setDynamicAnnotation(SBase sbmlObject, String dynamic) {
+	public static boolean setDynamicAnnotation(SBase sbmlObject, String dynamic) {
 		if (sbmlObject.isSetAnnotation())
 			removeDynamicAnnotation(sbmlObject);
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 		attr.add("ibiosim:type", dynamic);
 		XMLNode node = new XMLNode(new XMLTriple("ibiosim","http://www.fakeuri.com ","ibiosim"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject));
+		return (SBMLutilities.appendAnnotation(sbmlObject, node) == JSBML.OPERATION_SUCCESS);
 	}
 	
 	public static void removeDynamicAnnotation(SBase sbmlObject) {
@@ -320,16 +315,14 @@ public class AnnotationUtility {
 		return null;
 	}
 	
-	public static void setGridAnnotation(SBase sbmlObject, int rows, int cols) {
+	public static boolean setGridAnnotation(SBase sbmlObject, int rows, int cols) {
 		if (sbmlObject.isSetAnnotation())
 			removeGridAnnotation(sbmlObject);
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 		attr.add("ibiosim:grid", "(" + rows + "," + cols + ")");
 		XMLNode node = new XMLNode(new XMLTriple("ibiosim","http://www.fakeuri.com ","ibiosim"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject));
+		return SBMLutilities.appendAnnotation(sbmlObject, node) == JSBML.OPERATION_SUCCESS;
 	}
 	
 	public static void removeGridAnnotation(SBase sbmlObject) {
@@ -403,7 +396,7 @@ public class AnnotationUtility {
 		
 	}
 	
-	public static void setArrayAnnotation(SBase sbmlObject, String array) {
+	public static boolean setArrayAnnotation(SBase sbmlObject, String array) {
 		if (sbmlObject.isSetAnnotation())
 			removeArrayAnnotation(sbmlObject);
 		String [] attributes = array.split(" ");
@@ -413,9 +406,7 @@ public class AnnotationUtility {
 			attr.add("array:"+attributes[i].split("=")[0], attributes[i].split("=")[1].replace("\"", ""));
 		}
 		XMLNode node = new XMLNode(new XMLTriple("array","http://www.fakeuri.com ","array"), attr);
-		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ SBMLutilities.getId(sbmlObject));
+		return SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS;
 	}
 	
 	public static void appendArrayAnnotation(SBase sbmlObject, String newElement) {

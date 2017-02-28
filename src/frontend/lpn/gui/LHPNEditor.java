@@ -82,7 +82,12 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		if (filename != null) {
 			File f = new File(directory + separator + filename);
 			if (!(f.length() == 0)) {
-				lhpnFile.load(directory + separator + filename);
+				try {
+          lhpnFile.load(directory + separator + filename);
+        } catch (BioSimException e) {
+          JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+          e.printStackTrace();
+        }
 			}
 			this.filename = filename;
 		} else {
@@ -297,7 +302,12 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	public void reload(String newName) {
 		filename = newName + ".lpn";
 		if (new File(directory + separator + newName).exists()) {
-			lhpnFile.load(directory + separator + newName);
+			try {
+        lhpnFile.load(directory + separator + newName);
+      } catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+        e.printStackTrace();
+      }
 		}
 		lhpnNameTextField.setText(newName);
 	}
@@ -509,11 +519,11 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		@Override
 		public void run() {
 			if (name == null || name.equals("")) {
-				Utility.createErrorMessage("Error", "Nothing selected to edit");
+			  JOptionPane.showMessageDialog(Gui.frame, "Nothing selected to edit", "Error", JOptionPane.ERROR_MESSAGE); 
 				return;
 			}
 			if (list.getSelectedValue() == null && getName().contains("Edit")) {
-				Utility.createErrorMessage("Error", "Nothing selected to edit");
+				 JOptionPane.showMessageDialog(Gui.frame, "Nothing selected to edit", "Error", JOptionPane.ERROR_MESSAGE); 
 				return;
 			}
 			if (getName().contains("Variable")) {

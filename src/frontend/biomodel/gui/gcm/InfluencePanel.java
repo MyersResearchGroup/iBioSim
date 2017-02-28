@@ -347,7 +347,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
+			  JOptionPane.showMessageDialog(Gui.frame, "Illegal values entered.", "Error", JOptionPane.ERROR_MESSAGE); 
 				return false;
 			}
 
@@ -453,7 +453,12 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					LocalParameter nc = production.getKineticLaw().createLocalParameter();
 					nc.setId(GlobalConstants.COOPERATIVITY_STRING +  "_" + regulator + "_r");
 					if (f.getValue().startsWith("(")) {
-						AnnotationUtility.setSweepAnnotation(nc, f.getValue());
+						if(!AnnotationUtility.setSweepAnnotation(nc, f.getValue()))
+			      {
+			        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML Operation", "Error occurred while annotating SBML element " 
+			            + SBMLutilities.getId(nc), JOptionPane.ERROR_MESSAGE); 
+			        
+			      }
 						nc.setValue(1.0);
 					} else {
 						nc.setValue(Double.parseDouble(f.getValue()));

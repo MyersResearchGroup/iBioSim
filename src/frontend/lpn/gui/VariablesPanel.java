@@ -198,8 +198,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 					if (allVariables[i] != null) {
 						if (allVariables[i].equals(fields.get(
 								GlobalConstants.ID).getValue())) {
-							Utility.createErrorMessage("Error",
-									"Variable id already exists.");
+							 JOptionPane.showMessageDialog(Gui.frame, "Variable id already exists.", "Error", JOptionPane.ERROR_MESSAGE); 
 							return false;
 						}
 					}
@@ -209,8 +208,8 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				for (int i = 0; i < allVariables.length; i++) {
 					if (allVariables[i].equals(fields.get(GlobalConstants.ID)
 							.getValue())) {
-						Utility.createErrorMessage("Error",
-								"Variable id already exists.");
+					  JOptionPane.showMessageDialog(Gui.frame, 
+              "Variable id already exists.", "Error", JOptionPane.ERROR_MESSAGE); 
 						return false;
 					}
 				}
@@ -218,18 +217,15 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			if (fields.containsKey("Initial value")) {
 				if (!(fields.get("Initial value").getValue().matches("-?\\d+") || fields
 						.get("Initial value").getValue().matches("\\[-?\\d+,-?\\d+\\]"))) {
-					Utility
-							.createErrorMessage("Error",
-									"Initial value must be an integer or a range of integers.");
+					 JOptionPane.showMessageDialog(Gui.frame, "Initial value must be an integer or a range of integers.", "Error", JOptionPane.ERROR_MESSAGE); 
 					return false;
 				}
 			}
 			if (fields.containsKey("Initial rate")) {
 				if (!(fields.get("Initial rate").getValue().matches("-?\\d+") || fields
 						.get("Initial rate").getValue().matches("\\[-?\\d+,-?\\d+\\]"))) {
-					Utility
-							.createErrorMessage("Error",
-									"Initial rate must be an integer or a range of integers.");
+				  JOptionPane.showMessageDialog(Gui.frame, "Initial rate must be an integer or a range of integers.", "Error", JOptionPane.ERROR_MESSAGE); 
+          
 					return false;
 				}
 			}

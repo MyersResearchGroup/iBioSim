@@ -65,7 +65,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		if (onGrid) {
 			
 			//if the location isn't occupied, go ahead and show the menu
-			if (!bioModel.getGrid().getOccupancyFromPoint(new Point((int)mouseX, (int)mouseY)))
+			if (!gcm2sbml.getGrid().getOccupancyFromPoint(new Point((int)mouseX, (int)mouseY)))
 				panel.openGridGUI(mouseX, mouseY, false);
 			else 
 				return false;
@@ -212,8 +212,8 @@ public class DropComponentPanel extends JPanel implements ActionListener {
           	//if we're adding a single component
           	if (selected == false) {
           		
-          		int row = bioModel.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
-          		int col = bioModel.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
+          		int row = gcm2sbml.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
+          		int col = gcm2sbml.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
           		
           		//newComponentID = 
           		applyGridComponent(row, col, component);
@@ -221,7 +221,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
           	//if we're adding components to selected location(s)
           	else {
           		
-          		ArrayList<Point> selectedNodes = bioModel.getGrid().getSelectedUnoccupiedNodes();
+          		ArrayList<Point> selectedNodes = gcm2sbml.getGrid().getSelectedUnoccupiedNodes();
           		
           		//loop through all selected locations; apply the component to that location
           		if (selectedNodes.size() > 0) {
@@ -232,7 +232,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
           		}
           	}
           	
-          	Grid grid = bioModel.getGrid();
+          	Grid grid = gcm2sbml.getGrid();
           	grid.refreshComponents();
           	gcm2sbml.getSpeciesPanel().refreshSpeciesPanel(bioModel);
           	
@@ -266,7 +266,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 */
 	private String applyGridComponent(int row, int col, String component) {
 		
-		Grid grid = bioModel.getGrid();
+		Grid grid = gcm2sbml.getGrid();
 		
 		double padding = 30;
 		double width = grid.getComponentGeomWidth();
@@ -346,7 +346,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
           } else {
           	applyComponents(mouseX, mouseY);
           	error = false;
-          	bioModel.makeUndoPoint();
+          	gcm2sbml.makeUndoPoint();
           }
         } catch (HeadlessException e) {
           // TODO Auto-generated catch block

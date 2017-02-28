@@ -520,18 +520,24 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       JLabel prop = new JLabel("Property:");
       String[] props = new String[] { "none" };
       LPN lpn = new LPN();
-      lpn.load(root + GlobalConstants.separator + modelFile);
-      String[] getProps = lpn.getProperties().toArray(new String[0]);
-      props = new String[getProps.length + 1];
-      props[0] = "none";
-      for (int i = 0; i < getProps.length; i++)
-      {
-        props[i + 1] = getProps[i];
+      try {
+        lpn.load(root + GlobalConstants.separator + modelFile);
+        String[] getProps = lpn.getProperties().toArray(new String[0]);
+        props = new String[getProps.length + 1];
+        props[0] = "none";
+        for (int i = 0; i < getProps.length; i++)
+        {
+          props[i + 1] = getProps[i];
+        }
+        transientProperties = new JComboBox(props);
+        transientProperties.setPreferredSize(new Dimension(5, 10));
+        inputHolderLeft.add(prop);
+        inputHolderRight.add(transientProperties);
+      } catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+        e.printStackTrace();
       }
-      transientProperties = new JComboBox(props);
-      transientProperties.setPreferredSize(new Dimension(5, 10));
-      inputHolderLeft.add(prop);
-      inputHolderRight.add(transientProperties);
+      
     }	
     inputHolder.add(inputHolderLeft, "West");
     inputHolder.add(inputHolderRight, "Center");
@@ -2345,7 +2351,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
         boolean containsAbstractions = false;
         if (lpnAbstraction != null)
         {
-          for (String s : lpnAbstraction.transforms)
+          for (String s : lpnAbstraction.getAbstractionProperty().transforms)
           {
             if (load.containsKey("abstraction.transform." + s))
             {
@@ -2365,7 +2371,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
               }
               else
               {
-                lpnAbstraction.preAbsModel.removeElement(s);
+                lpnAbstraction.getAbstractionProperty().preAbsModel.removeElement(s);
               }
               if (load.getProperty("abstraction.transform." + s).contains("mainloop"))
               {
@@ -2383,7 +2389,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
               }
               else
               {
-                lpnAbstraction.loopAbsModel.removeElement(s);
+                lpnAbstraction.getAbstractionProperty().loopAbsModel.removeElement(s);
               }
               if (load.getProperty("abstraction.transform." + s).contains("postloop"))
               {
@@ -2401,43 +2407,43 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
               }
               else
               {
-                lpnAbstraction.postAbsModel.removeElement(s);
+                lpnAbstraction.getAbstractionProperty().postAbsModel.removeElement(s);
               }
             }
             else if (containsAbstractions && !containsXform.get(s))
             {
-              lpnAbstraction.preAbsModel.removeElement(s);
-              lpnAbstraction.loopAbsModel.removeElement(s);
-              lpnAbstraction.postAbsModel.removeElement(s);
+              lpnAbstraction.getAbstractionProperty().preAbsModel.removeElement(s);
+              lpnAbstraction.getAbstractionProperty().loopAbsModel.removeElement(s);
+              lpnAbstraction.getAbstractionProperty().postAbsModel.removeElement(s);
             }
           }
           if (preOrder.size() > 0)
           {
-            lpnAbstraction.preAbsModel.removeAllElements();
+            lpnAbstraction.getAbstractionProperty().preAbsModel.removeAllElements();
           }
           for (Integer j = 0; j < preOrder.size(); j++)
           {
-            lpnAbstraction.preAbsModel.addElement(preOrder.get(j));
+            lpnAbstraction.getAbstractionProperty().preAbsModel.addElement(preOrder.get(j));
           }
           if (loopOrder.size() > 0)
           {
-            lpnAbstraction.loopAbsModel.removeAllElements();
+            lpnAbstraction.getAbstractionProperty().loopAbsModel.removeAllElements();
           }
           for (Integer j = 0; j < loopOrder.size(); j++)
           {
-            lpnAbstraction.loopAbsModel.addElement(loopOrder.get(j));
+            lpnAbstraction.getAbstractionProperty().loopAbsModel.addElement(loopOrder.get(j));
           }
           if (postOrder.size() > 0)
           {
-            lpnAbstraction.postAbsModel.removeAllElements();
+            lpnAbstraction.getAbstractionProperty().postAbsModel.removeAllElements();
           }
           for (Integer j = 0; j < postOrder.size(); j++)
           {
-            lpnAbstraction.postAbsModel.addElement(postOrder.get(j));
+            lpnAbstraction.getAbstractionProperty().postAbsModel.addElement(postOrder.get(j));
           }
-          lpnAbstraction.preAbs.setListData(lpnAbstraction.preAbsModel.toArray());
-          lpnAbstraction.loopAbs.setListData(lpnAbstraction.loopAbsModel.toArray());
-          lpnAbstraction.postAbs.setListData(lpnAbstraction.postAbsModel.toArray());
+          lpnAbstraction.preAbs.setListData(lpnAbstraction.getAbstractionProperty().preAbsModel.toArray());
+          lpnAbstraction.loopAbs.setListData(lpnAbstraction.getAbstractionProperty().loopAbsModel.toArray());
+          lpnAbstraction.postAbs.setListData(lpnAbstraction.getAbstractionProperty().postAbsModel.toArray());
         }
         if (load.getProperty("reb2sac.abstraction.method").equals("none"))
         {
@@ -3057,12 +3063,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       Translator t1 = new Translator();
       if (reactionAbstraction.isSelected())
       {
-        LPN lhpnFile = new LPN();
-        lhpnFile.load(root + GlobalConstants.separator + modelFile);
-        Abstraction abst = new Abstraction(lhpnFile, lpnAbstraction);
-        abst.abstractSTG(false);
-        abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile);
         try {
+          LPN lhpnFile = new LPN();
+          lhpnFile.load(root + GlobalConstants.separator + modelFile);
+          Abstraction abst = new Abstraction(lhpnFile, lpnAbstraction.getAbstractionProperty());
+          abst.abstractSTG(false);
+          abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile);
+        
           if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
           {
 
@@ -3075,6 +3082,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
           }
         } catch (BioSimException e) {
           // TODO Auto-generated catch block
+          JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+          
           e.printStackTrace();
         }
       }
@@ -3592,20 +3601,26 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       Object selected = transientProperties.getSelectedItem();
       String[] props = new String[] { "none" };
       LPN lpn = new LPN();
-      lpn.load(root + GlobalConstants.separator + modelFile);
-      String[] getProps = lpn.getProperties().toArray(new String[0]);
-      props = new String[getProps.length + 1];
-      props[0] = "none";
-      for (int i = 0; i < getProps.length; i++)
-      {
-        props[i + 1] = getProps[i];
+      try {
+        lpn.load(root + GlobalConstants.separator + modelFile);
+        String[] getProps = lpn.getProperties().toArray(new String[0]);
+        props = new String[getProps.length + 1];
+        props[0] = "none";
+        for (int i = 0; i < getProps.length; i++)
+        {
+          props[i + 1] = getProps[i];
+        }
+        transientProperties.removeAllItems();
+        for (String s : props)
+        {
+          transientProperties.addItem(s);
+        }
+        transientProperties.setSelectedItem(selected);
+      } catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+        e.printStackTrace();
       }
-      transientProperties.removeAllItems();
-      for (String s : props)
-      {
-        transientProperties.addItem(s);
-      }
-      transientProperties.setSelectedItem(selected);
+      
     }
   }
 

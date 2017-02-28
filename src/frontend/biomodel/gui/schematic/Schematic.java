@@ -189,7 +189,7 @@ public class Schematic extends JPanel implements ActionListener {
 		this.constraints = constraints;
 		this.parameters = parameters;
 		this.events = events;
-		this.grid = gcm.getGrid();
+		this.grid = modelEditor.getGrid();
 		this.lema = lema;
 		//this.compartmentList = compartmentList;
 		this.tabbedPane = biosim.getTab();
@@ -211,7 +211,7 @@ public class Schematic extends JPanel implements ActionListener {
 			graph = new BioGraph(bioModel,biosim.lema,editable,modelEditor);	
 			graph.setResetEdgesOnMove(false);
 			addGraphListeners();
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 		
 		graph.buildGraph();
@@ -388,14 +388,14 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 		}
 		if (numberEdges==cells.length) {
-			Utility.createErrorMessage("Error Moving Edges", "Edges cannot be moved independently.");
+		  JOptionPane.showMessageDialog(Gui.frame, "Edges cannot be moved independently.","Error Moving Edges", JOptionPane.ERROR_MESSAGE); 
 			graph.buildGraph();
 			drawGrid();
 		} else {
 			graph.buildGraph();
 			graph.setSelectionCells(cells);
 			drawGrid();
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 			modelEditor.setDirty(true);
 		}
 	}
@@ -428,7 +428,7 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.buildGraph();
 		modelEditor.refresh();
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 	
 	public void addSpecies(int x, int y) {
@@ -439,7 +439,7 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.buildGraph();
 		modelEditor.refresh();
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 	
 	public void addReaction(int x, int y) {
@@ -450,7 +450,7 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.buildGraph();
 		modelEditor.refresh();
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 	
 	public void addComponent(int x, int y) {
@@ -478,7 +478,7 @@ public class Schematic extends JPanel implements ActionListener {
 			modelEditor.setDirty(true);
 			graph.buildGraph();
 			modelEditor.refresh();
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 	
@@ -490,7 +490,7 @@ public class Schematic extends JPanel implements ActionListener {
 		modelEditor.refresh();
 		graph.buildGraph();
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 	
 	public void addVariable(int x, int y) {
@@ -501,7 +501,7 @@ public class Schematic extends JPanel implements ActionListener {
 		modelEditor.refresh();
 		graph.buildGraph();
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 	
 	public void addBoolean(int x, int y) {
@@ -512,7 +512,7 @@ public class Schematic extends JPanel implements ActionListener {
 		modelEditor.refresh();
 		graph.buildGraph();
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 	
 	public void addPlace(int x, int y) {
@@ -523,7 +523,7 @@ public class Schematic extends JPanel implements ActionListener {
 		modelEditor.refresh();
 		graph.buildGraph();
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 	
 	public void addTransition(int x, int y) {
@@ -536,7 +536,7 @@ public class Schematic extends JPanel implements ActionListener {
 			modelEditor.refresh();
 			graph.buildGraph();
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 	
@@ -550,7 +550,7 @@ public class Schematic extends JPanel implements ActionListener {
 			modelEditor.refresh();
 			graph.buildGraph();
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 	
@@ -564,7 +564,7 @@ public class Schematic extends JPanel implements ActionListener {
 			modelEditor.refresh();
 			graph.buildGraph();
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 	
@@ -578,7 +578,7 @@ public class Schematic extends JPanel implements ActionListener {
 			modelEditor.refresh();
 			graph.buildGraph();
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 	
@@ -810,14 +810,14 @@ public class Schematic extends JPanel implements ActionListener {
 		else if(command.indexOf("layout_") == 0){
 			// Layout actioncommands are prepended with "_"
 			if (bioModel.getSBMLDocument().getModel().getCompartmentCount() > 1) {
-				Utility.createErrorMessage("Error Applying Layout", "Automatic layout routines cannot be used with multi-compartment models.");
+			  JOptionPane.showMessageDialog(Gui.frame,  "Automatic layout routines cannot be used with multi-compartment models.", "Error Applying Layout",JOptionPane.ERROR_MESSAGE); 
 				return;
 			}
 			command = command.substring(command.indexOf('_')+1);
 			graph.applyLayout(command, this.graphComponent);
 			graph.buildGraph(); // rebuild, quick way to clear out any edge midpoints.
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 		/*
 		else if(command == "compartment"){
@@ -874,7 +874,7 @@ public class Schematic extends JPanel implements ActionListener {
 				modelEditor.refresh();
 				graph.buildGraph();
 				drawGrid();
-				bioModel.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 			}
 		}
 		else if (command.equals("unZoom")) {
@@ -897,7 +897,7 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	public void refresh() {
 		if (grid.isEnabled()) {
-			grid = bioModel.getGrid();
+			grid = modelEditor.getGrid();
 			
 			//the new grid pointer may not have an accurate enabled state
 			//so make sure it's set to true
@@ -1148,7 +1148,7 @@ public class Schematic extends JPanel implements ActionListener {
 					if (editable)
 						graph.buildGraph();
 					
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 					
 //					if (cell != null) {
 //						
@@ -1258,13 +1258,13 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 				}
 				if (numberEdges==cells.length) {
-					Utility.createErrorMessage("Error Moving Edges", "Edges cannot be moved independently.");
+					 JOptionPane.showMessageDialog(Gui.frame, "Edges cannot be moved independently.", "Error Moving Edges", JOptionPane.ERROR_MESSAGE); 
 					graph.buildGraph();
 					drawGrid();
 				} else {
 					graph.buildGraph();
 					drawGrid();
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 					modelEditor.setDirty(true);
 				}
 			}
@@ -1291,7 +1291,7 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 				graph.buildGraph();
 				drawGrid();
-				bioModel.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 				modelEditor.setDirty(true);
 			}
 		});
@@ -1593,7 +1593,7 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 					*/
 					//gcm.removeSpeciesAndAssociations(cell.getId());
-					bioModel.removeSpecies(cell.getId());
+					modelEditor.removeSpecies(cell.getId());
 					//graph.speciesRemoved(cell.getId());
 				}
 				else if(type == GlobalConstants.COMPONENT){
@@ -1608,7 +1608,7 @@ public class Schematic extends JPanel implements ActionListener {
 						bioModel.removeComponent(cell.getId());
 				}
 				else if(type == GlobalConstants.PROMOTER){
-					bioModel.removePromoter(cell.getId());
+				  modelEditor.removePromoter(cell.getId());
 				}
 				else if(type == GlobalConstants.PETRI_NET_EDGE){
 					mxCell source = (mxCell)cell.getSource();
@@ -1647,7 +1647,7 @@ public class Schematic extends JPanel implements ActionListener {
 			modelEditor.refresh();
 			graph.buildGraph();
 			drawGrid();
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 
@@ -1888,7 +1888,7 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.updateComponentConnectionVisuals(edge, port);
 
 			graph.buildGraph();
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 			return;
 		} 
 		
@@ -1912,7 +1912,7 @@ public class Schematic extends JPanel implements ActionListener {
 			modelEditor.refresh();
 			modelEditor.setDirty(true);
 			graph.buildGraph();
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 			return;
 		} 
 		if (graph.getCellType(target) == GlobalConstants.PLACE) {
@@ -1933,7 +1933,7 @@ public class Schematic extends JPanel implements ActionListener {
 			modelEditor.refresh();
 			modelEditor.setDirty(true);
 			graph.buildGraph();
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 			return;
 		} 
 		
@@ -1960,7 +1960,7 @@ public class Schematic extends JPanel implements ActionListener {
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
-				bioModel.addReaction(sourceID,targetID,false);
+				modelEditor.addReaction(sourceID,targetID,false);
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
@@ -1982,7 +1982,7 @@ public class Schematic extends JPanel implements ActionListener {
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
-				bioModel.addReaction(sourceID,targetID,true);
+				modelEditor.addReaction(sourceID,targetID,true);
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
 				(graph.getCellType(target) == GlobalConstants.SPECIES)) {
@@ -2090,7 +2090,7 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.buildGraph();
 		modelEditor.refresh();
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 	
 	/**
@@ -2834,7 +2834,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		//this reload grid call isn't necessary anymore
 		//gcm.reloadGrid();
-		grid = bioModel.getGrid();
+		grid = modelEditor.getGrid();
 	}
 	
 	/**

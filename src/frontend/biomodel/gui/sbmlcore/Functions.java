@@ -442,7 +442,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				modelEditor.setDirty(true);
-				bioModel.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, functionPanel, "Function Editor", JOptionPane.YES_NO_OPTION,
@@ -485,7 +485,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					functions.setSelectedIndex(index - 1);
 				}
 				modelEditor.setDirty(true);
-				bioModel.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 			}
 		}
 	}

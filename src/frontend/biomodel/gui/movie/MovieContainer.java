@@ -121,8 +121,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		super(new BorderLayout());
 		
 		//JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm);
-		schematic = new Schematic(bioModel, biosim, gcm2sbml, false, this, bioModel.getCompartmentPanel(), bioModel.getReactionPanel(), bioModel.getRulePanel(),
-				bioModel.getConstraintPanel(),  bioModel.getEventPanel(), bioModel.getParameterPanel(), lema);
+		schematic = new Schematic(bioModel, biosim, gcm2sbml, false, this, gcm2sbml.getCompartmentPanel(), gcm2sbml.getReactionPanel(), gcm2sbml.getRulePanel(),
+		  gcm2sbml.getConstraintPanel(),  gcm2sbml.getEventPanel(), gcm2sbml.getParameterPanel(), lema);
 		this.add(schematic, BorderLayout.CENTER);
 		
 		this.bioModel = bioModel;
@@ -130,8 +130,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.analysisView = analysisView;
 		this.modelEditor = gcm2sbml;
 		this.movieScheme = new MovieScheme();
-		this.originalGridRows = bioModel.getGrid().getNumRows();
-		this.originalGridCols = bioModel.getGrid().getNumCols();
+		this.originalGridRows = bioModel.getGridTable().getNumRows();
+		this.originalGridCols = bioModel.getGridTable().getNumCols();
 		
 		this.playTimer = new Timer(0, playTimerEventHandler);
 		mode = PAUSED;
@@ -139,7 +139,7 @@ public class MovieContainer extends JPanel implements ActionListener {
  	
  	public void resetGridToOriginalSize() {
  		
- 		bioModel.getGrid().resetGrid(originalGridRows, originalGridCols);
+ 	  modelEditor.getGrid().resetGrid(originalGridRows, originalGridCols);
  	}
 	
 	
@@ -316,7 +316,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	public void setupDynamicGrid() {
 		
 		Point gridSize = new Point(dynamicParser.getNumRows(), dynamicParser.getNumCols());
-		bioModel.getGrid().resetGrid((int) gridSize.getX(), (int) gridSize.getY());
+		modelEditor.getGrid().resetGrid((int) gridSize.getX(), (int) gridSize.getY());
 	}
 	
 	
@@ -461,7 +461,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		if (dynamic == true) {
 
-			Grid grid = bioModel.getGrid();
+			Grid grid = modelEditor.getGrid();
 			grid.updateComponentLocations(dynamicParser.getComponentToLocationMap(frameIndex));
 			speciesTSData = dynamicParser.getSpeciesToValueMap(frameIndex);
 			componentList.addAll(dynamicParser.getComponentToLocationMap(frameIndex).keySet());
@@ -554,8 +554,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 				schematic.getGraph().setComponentAnimationValue(componentID, compAppearance);
 		}
 		
-		int numRows = bioModel.getGrid().getNumRows();
-		int numCols = bioModel.getGrid().getNumCols();
+		int numRows = bioModel.getGridTable().getNumRows();
+		int numCols = bioModel.getGridTable().getNumCols();
 		int minRow = 0;
 		int minCol = 0;
 		
@@ -568,7 +568,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 			
 		//if there's a grid to set the appearance of
-		if (bioModel.getGrid().isEnabled()) {
+		if (modelEditor.getGrid().isEnabled()) {
 			
 			//loop through all grid locations and set appearances
 			for (int row = minRow; row < numRows + minRow; ++row) {

@@ -179,13 +179,15 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			newFlow[1] = (String) toBox.getSelectedItem();
 			if (oldName == null) {
 				if (lhpn.containsMovement(newFlow[0], newFlow[1])) {
-					Utility.createErrorMessage("Error", "Movement already exists.");
+				  JOptionPane.showMessageDialog(Gui.frame,  "Movement already exists.", "Error", JOptionPane.ERROR_MESSAGE); 
+					
 					return false;
 				}
 			}
 			else if (!oldName.equals(id)) {
 				if (lhpn.containsMovement(newFlow[0], newFlow[1])) {
-					Utility.createErrorMessage("Error", "Movement already exists.");
+				  JOptionPane.showMessageDialog(Gui.frame, "Movement already exists.", "Error", JOptionPane.ERROR_MESSAGE); 
+					
 					return false;
 				}
 			}

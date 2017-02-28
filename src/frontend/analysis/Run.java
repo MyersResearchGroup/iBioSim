@@ -162,39 +162,39 @@ public class Run implements ActionListener, Observer
     }
     if (abstPane != null)
     {
-      for (Integer i = 0; i < abstPane.preAbsModel.size(); i++)
+      for (Integer i = 0; i < abstPane.getAbstractionProperty().preAbsModel.size(); i++)
       {
-        abs.setProperty("abstraction.transform." + abstPane.preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
+        abs.setProperty("abstraction.transform." + abstPane.getAbstractionProperty().preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
       }
-      for (Integer i = 0; i < abstPane.loopAbsModel.size(); i++)
+      for (Integer i = 0; i < abstPane.getAbstractionProperty().loopAbsModel.size(); i++)
       {
-        if (abstPane.preAbsModel.contains(abstPane.loopAbsModel.getElementAt(i)))
+        if (abstPane.getAbstractionProperty().preAbsModel.contains(abstPane.getAbstractionProperty().loopAbsModel.getElementAt(i)))
         {
-          String value = abs.getProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString());
+          String value = abs.getProperty("abstraction.transform." + abstPane.getAbstractionProperty().loopAbsModel.getElementAt(i).toString());
           value = value + "mainloop" + i.toString();
-          abs.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(), value);
+          abs.setProperty("abstraction.transform." + abstPane.getAbstractionProperty().loopAbsModel.getElementAt(i).toString(), value);
         }
         else
         {
-          abs.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(), "mainloop" + i.toString());
+          abs.setProperty("abstraction.transform." + abstPane.getAbstractionProperty().loopAbsModel.getElementAt(i).toString(), "mainloop" + i.toString());
         }
       }
-      for (Integer i = 0; i < abstPane.postAbsModel.size(); i++)
+      for (Integer i = 0; i < abstPane.getAbstractionProperty().postAbsModel.size(); i++)
       {
-        if (abstPane.preAbsModel.contains(abstPane.postAbsModel.getElementAt(i)) || abstPane.preAbsModel.contains(abstPane.postAbsModel.get(i)))
+        if (abstPane.getAbstractionProperty().preAbsModel.contains(abstPane.getAbstractionProperty().postAbsModel.getElementAt(i)) || abstPane.getAbstractionProperty().preAbsModel.contains(abstPane.getAbstractionProperty().postAbsModel.get(i)))
         {
-          String value = abs.getProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString());
+          String value = abs.getProperty("abstraction.transform." + abstPane.getAbstractionProperty().postAbsModel.getElementAt(i).toString());
           value = value + "postloop" + i.toString();
-          abs.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(), value);
+          abs.setProperty("abstraction.transform." + abstPane.getAbstractionProperty().postAbsModel.getElementAt(i).toString(), value);
         }
         else
         {
-          abs.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(), "postloop" + i.toString());
+          abs.setProperty("abstraction.transform." + abstPane.getAbstractionProperty().postAbsModel.getElementAt(i).toString(), "postloop" + i.toString());
         }
       }
-      for (String s : abstPane.transforms)
+      for (String s : abstPane.getAbstractionProperty().transforms)
       {
-        if (!abstPane.preAbsModel.contains(s) && !abstPane.loopAbsModel.contains(s) && !abstPane.postAbsModel.contains(s))
+        if (!abstPane.getAbstractionProperty().preAbsModel.contains(s) && !abstPane.getAbstractionProperty().loopAbsModel.contains(s) && !abstPane.getAbstractionProperty().postAbsModel.contains(s))
         {
           abs.remove(s);
         }
@@ -473,7 +473,8 @@ public class Run implements ActionListener, Observer
           {
             LPN lhpnFile = new LPN();
             lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
-            Abstraction abst = new Abstraction(lhpnFile, abstPane);
+            Abstraction abst = new Abstraction(lhpnFile, abstPane.getAbstractionProperty());
+            abst.addObserver(this);
             abst.abstractSTG(false);
             abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
             t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
@@ -550,7 +551,7 @@ public class Run implements ActionListener, Observer
               {
                 LPN lhpnFile = new LPN();
                 lhpnFile.load(root + GlobalConstants.separator + modelFile);
-                Abstraction abst = new Abstraction(lhpnFile, abstPane);
+                Abstraction abst = new Abstraction(lhpnFile, abstPane.getAbstractionProperty());
                 abst.abstractSTG(false);
                 abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile);
                 t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, lpnProperty);
@@ -648,7 +649,7 @@ public class Run implements ActionListener, Observer
                 {
                   LPN lhpnFile = new LPN();
                   lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
-                  Abstraction abst = new Abstraction(lhpnFile, abstPane);
+                  Abstraction abst = new Abstraction(lhpnFile, abstPane.getAbstractionProperty());
                   abst.abstractSTG(false);
                   abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
                   t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
@@ -713,7 +714,13 @@ public class Run implements ActionListener, Observer
         {
           LPN lhpnFile = new LPN();
           lhpnFile.addObserver(this);
-          lhpnFile.load(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
+          try {
+            lhpnFile.load(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
+          } catch (BioSimException e) {
+            JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+              JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+          }
           lhpnFile.printDot(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".dot");
           time1 = System.nanoTime();
           exitValue = 0;
@@ -721,10 +728,15 @@ public class Run implements ActionListener, Observer
         else if (modelFile.contains(".lpn"))
         {
           LPN lhpnFile = new LPN();
-          lhpnFile.load(root + GlobalConstants.separator + modelFile);
+          try {
+            lhpnFile.load(root + GlobalConstants.separator + modelFile);
+          } catch (BioSimException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
           if (abstraction.isSelected())
           {
-            Abstraction abst = new Abstraction(lhpnFile, abstPane);
+            Abstraction abst = new Abstraction(lhpnFile, abstPane.getAbstractionProperty());
             abst.abstractSTG(false);
             abst.printDot(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile.replace(".lpn", ".dot"));
           }
@@ -770,7 +782,12 @@ public class Run implements ActionListener, Observer
           if (modelFile.contains(".lpn"))
           {
             lhpnFile = new LPN();
-            lhpnFile.load(root + GlobalConstants.separator + modelFile);
+            try {
+              lhpnFile.load(root + GlobalConstants.separator + modelFile);
+            } catch (BioSimException e) {
+              JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+                JOptionPane.ERROR_MESSAGE);
+            }
           }
           else
           {
@@ -794,6 +811,7 @@ public class Run implements ActionListener, Observer
               }
             }
             BioModel bioModel = new BioModel(root);
+            bioModel.addObserver(this);
             bioModel.load(root + GlobalConstants.separator + modelEditor.getRefFile());
             if (bioModel.flattenModel(true) != null)
             {
@@ -840,7 +858,7 @@ public class Run implements ActionListener, Observer
                 logFile.close();
                 return 0;
               }
-              bioModel.convertLPN2PRISM(log, logFile, lhpnFile, filename.replace(".xml", ".prism"));
+              bioModel.convertLPN2PRISM(logFile, lhpnFile, filename.replace(".xml", ".prism"));
               Preferences biosimrc = Preferences.userRoot();
               String prismCmd = biosimrc.get("biosim.general.prism", "");
               log.addText("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl" + "\n");
@@ -931,7 +949,13 @@ public class Run implements ActionListener, Observer
           if (modelFile.contains(".lpn"))
           {
             lhpnFile = new LPN();
-            lhpnFile.load(root + GlobalConstants.separator + modelFile);
+            try {
+              lhpnFile.load(root + GlobalConstants.separator + modelFile);
+            } catch (BioSimException e) {
+              JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+                JOptionPane.ERROR_MESSAGE);
+              e.printStackTrace();
+            }
           }
           else
           {

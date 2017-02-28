@@ -36,7 +36,7 @@ public class GridAction extends AbstractAction {
 			
 			grid.eraseSelectedNodes(schematic.getGCM());
 			schematic.getGCM2SBML().getSpeciesPanel().refreshSpeciesPanel(schematic.getGCM());
-			schematic.getGCM().makeUndoPoint();
+			schematic.getGCM2SBML().makeUndoPoint();
 		}
 		else if (event.getActionCommand().equals("Add Module(s) to (Non-Occupied) Selected Location(s)")) {
 			
@@ -52,7 +52,7 @@ public class GridAction extends AbstractAction {
 				schematic.getGraph().buildGraph();
 				schematic.repaint();
 				schematic.getGCM2SBML().getSpeciesPanel().refreshSpeciesPanel(schematic.getGCM());
-				schematic.getGCM().makeUndoPoint();
+				schematic.getGCM2SBML().makeUndoPoint();
 				
 				return;
 			}

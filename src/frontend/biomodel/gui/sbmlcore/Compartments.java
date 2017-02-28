@@ -635,7 +635,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						}
 					}
 					modelEditor.setDirty(true);
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 				}
 			}
 			if (error) {
@@ -810,7 +810,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						compartments.setSelectedIndex(index - 1);
 					}
 					modelEditor.setDirty(true);
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 				}
 			}
 		}
@@ -832,7 +832,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		// if the edit compartment button is clicked
 		else if (e.getSource() == editCompart) {
 			if (compartments.getSelectedIndex() == -1) {
-				JOptionPane.showMessageDialog(Gui.frame, "No compartment selected.", "Must Select a Compartment", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame,  "Must Select a Compartment", "No compartment selected.",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			String selected = ((String) compartments.getSelectedValue()).split("\\[| ")[0];

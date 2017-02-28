@@ -64,9 +64,11 @@ import dataModels.lpn.parser.Variable;
 import dataModels.lpn.parser.LpnDecomposition.Component;
 import dataModels.lpn.parser.LpnDecomposition.LpnComponentList;
 import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
+import dataModels.lpn.parser.properties.AbstractionProperty;
 import dataModels.util.GlobalConstants;
 import dataModels.util.Message;
 import dataModels.util.exceptions.BioSimException;
+import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.Gui;
 import frontend.main.Log;
@@ -127,6 +129,7 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 
 	private Gui biosim;
 
+	private final AbstractionProperty absProperty;
 	/**
 	 * This is the constructor for the Verification class. It initializes all
 	 * the input fields, puts them on panels, adds the panels to the frame, and
@@ -151,7 +154,7 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 		}
 		this.setMaximumSize(new Dimension(300,300));
 		this.setMinimumSize(new Dimension(300,300));
-
+		absProperty = new AbstractionProperty();
 		JPanel abstractionPanel = new JPanel();
 		abstractionPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel timingRadioPanel = new JPanel();
@@ -770,12 +773,12 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 			HashMap<Integer, String> loopOrder = new HashMap<Integer, String>();
 			HashMap<Integer, String> postOrder = new HashMap<Integer, String>();
 			boolean containsAbstractions = false;
-			for (String s : abstPane.transforms) {
+			for (String s : absProperty.transforms) {
 				if (load.containsKey(s)) {
 					containsAbstractions = true;
 				}
 			}
-			for (String s : abstPane.transforms) {
+			for (String s : absProperty.transforms) {
 				if (load.containsKey("abstraction.transform." + s)) {
 					if (load.getProperty("abstraction.transform." + s).contains("preloop")) {
 						Pattern prePattern = Pattern.compile("preloop(\\d+)");
@@ -789,7 +792,7 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 						}
 					}
 					else {
-						abstPane.preAbsModel.removeElement(s);
+					  absProperty.preAbsModel.removeElement(s);
 					}
 					if (load.getProperty("abstraction.transform." + s).contains("mainloop")) {
 						Pattern loopPattern = Pattern
@@ -804,7 +807,7 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 						}
 					}
 					else {
-						abstPane.loopAbsModel.removeElement(s);
+					  absProperty.loopAbsModel.removeElement(s);
 					}
 					if (load.getProperty("abstraction.transform." + s).contains("postloop")) {
 						Pattern postPattern = Pattern
@@ -819,36 +822,36 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 						}
 					}
 					else {
-						abstPane.postAbsModel.removeElement(s);
+					  absProperty.postAbsModel.removeElement(s);
 					}
 				}
 				else if (containsAbstractions) {
-					abstPane.preAbsModel.removeElement(s);
-					abstPane.loopAbsModel.removeElement(s);
-					abstPane.postAbsModel.removeElement(s);
+				  absProperty.preAbsModel.removeElement(s);
+				  absProperty.loopAbsModel.removeElement(s);
+				  absProperty.postAbsModel.removeElement(s);
 				}
 			}
 			if (preOrder.size() > 0) {
-				abstPane.preAbsModel.removeAllElements();
+			  absProperty.preAbsModel.removeAllElements();
 			}
 			for (Integer j = 0; j < preOrder.size(); j++) {
-				abstPane.preAbsModel.addElement(preOrder.get(j));
+			  absProperty.preAbsModel.addElement(preOrder.get(j));
 			}
 			if (loopOrder.size() > 0) {
-				abstPane.loopAbsModel.removeAllElements();
+			  absProperty.loopAbsModel.removeAllElements();
 			}
 			for (Integer j = 0; j < loopOrder.size(); j++) {
-				abstPane.loopAbsModel.addElement(loopOrder.get(j));
+			  absProperty.loopAbsModel.addElement(loopOrder.get(j));
 			}
 			if (postOrder.size() > 0) {
-				abstPane.postAbsModel.removeAllElements();
+			  absProperty.postAbsModel.removeAllElements();
 			}
 			for (Integer j = 0; j < postOrder.size(); j++) {
-				abstPane.postAbsModel.addElement(postOrder.get(j));
+			  absProperty.postAbsModel.addElement(postOrder.get(j));
 			}
-			abstPane.preAbs.setListData(abstPane.preAbsModel.toArray());
-			abstPane.loopAbs.setListData(abstPane.loopAbsModel.toArray());
-			abstPane.postAbs.setListData(abstPane.postAbsModel.toArray());
+			abstPane.preAbs.setListData(absProperty.preAbsModel.toArray());
+			abstPane.loopAbs.setListData(absProperty.loopAbsModel.toArray());
+			abstPane.postAbs.setListData(absProperty.postAbsModel.toArray());
 			if (load.containsKey("abstraction.transforms")) {
 				String xforms = load.getProperty("abstraction.transforms");
 				String[] array = xforms.split(", ");
@@ -1126,7 +1129,12 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 		}
 		if (untimedStateSearch.isSelected()) {
 			LPN lpn = new LPN();
-			lpn.load(directory + separator + lpnFileName);
+			try {
+        lpn.load(directory + separator + lpnFileName);
+      } catch (BioSimException e1) {
+        JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
+        e1.printStackTrace();
+      }
 			Options.setLogName(lpn.getLabel());
 			boolean canPerformMarkovianAnalysisTemp = true;
 			if (!canPerformMarkovianAnalysis(lpn))
@@ -1137,7 +1145,12 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 				for (int i=0; i < lpnList.getSelectedValues().length; i++) {
 					String curLPNname = (String) lpnList.getSelectedValues()[i];
 					LPN curLPN = new LPN();
-					curLPN.load(directory + separator + curLPNname);
+					try {
+            curLPN.load(directory + separator + curLPNname);
+          } catch (BioSimException e) {
+            JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+            e.printStackTrace();
+          }
 					selectedLPNs.add(curLPN);
 					if (!canPerformMarkovianAnalysis(curLPN))
 						canPerformMarkovianAnalysisTemp = false;
@@ -1412,7 +1425,7 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 			else if (decomposeLPN.isSelected() && lpnList.getSelectedValue() == null) {
 				HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
 				// create an Abstraction object to get all processes in one LPN
-				Abstraction abs = lpn.abstractLhpn(this);
+				Abstraction abs = new Abstraction(lpn, this.absProperty);
 				abs.decomposeLpnIntoProcesses();				 
 				allProcessTrans.putAll(abs.getTransWithProcIDs());
 				HashMap<Integer, LpnProcess> processMap = new HashMap<Integer, LpnProcess>();
@@ -1679,8 +1692,13 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 			tempDir = tempDir + array[i] + separator;
 		}
 		LPN lhpnFile = new LPN();
-		lhpnFile.load(directory + separator + lpnFileName);
-		Abstraction abstraction = lhpnFile.abstractLhpn(this);
+		try {
+      lhpnFile.load(directory + separator + lpnFileName);
+    } catch (BioSimException e2) {
+      JOptionPane.showMessageDialog(Gui.frame, e2.getMessage(), e2.getTitle(), JOptionPane.ERROR_MESSAGE); 
+      e2.printStackTrace();
+    }
+		Abstraction abstraction = new Abstraction(lhpnFile, this.absProperty);
 		String abstFilename;
 		//if(dbm2.isSelected())
 		//{
@@ -1790,7 +1808,12 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 
 			// Uses the timed_state_exploration.zoneProject infrastructure.
 			LPN lpn = new LPN();
-			lpn.load(directory + separator + lpnFileName);			
+			try {
+        lpn.load(directory + separator + lpnFileName);
+      } catch (BioSimException e2) {
+        JOptionPane.showMessageDialog(Gui.frame, e2.getMessage(), e2.getTitle(), JOptionPane.ERROR_MESSAGE); 
+        e2.printStackTrace();
+      }			
 			Options.set_TimingLogFile(directory + separator
 					+ lpnFileName + ".tlog");
 
@@ -1809,7 +1832,12 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 			for (int i=0; i < guiLPNList.length; i++) {
 				String curLPNname = guiLPNList[i];
 				LPN curLPN = new LPN();
-				curLPN.load(directory + separator + curLPNname);
+				try {
+          curLPN.load(directory + separator + curLPNname);
+        } catch (BioSimException e) {
+          JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+          e.printStackTrace();
+        }
 				selectedLPNs.add(curLPN);
 			}
 
@@ -1925,8 +1953,8 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 			}
 			if (!abstFilename.endsWith(".lpn"))
 				abstFilename = abstFilename + ".lpn";
-			if (abstPane.loopAbsModel.contains("Remove Variables")) {
-				abstraction.abstractVars(abstPane.getIntVars());
+			if (absProperty.loopAbsModel.contains("Remove Variables")) {
+				abstraction.abstractVars(absProperty.getIntVars());
 			}
 			abstraction.abstractSTG(true);
 			if (!lhpn.isSelected() && !view.isSelected()) {
@@ -2749,9 +2777,9 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 				prop.setProperty("verification.other.displayDBM", "false");
 			}
 			String intVars = "";
-			for (int i = 0; i < abstPane.listModel.getSize(); i++) {
-				if (abstPane.listModel.getElementAt(i) != null) {
-					intVars = intVars + abstPane.listModel.getElementAt(i)
+			for (int i = 0; i < absProperty.listModel.getSize(); i++) {
+				if (absProperty.listModel.getElementAt(i) != null) {
+					intVars = intVars + absProperty.listModel.getElementAt(i)
 							+ " ";
 				}
 			}
@@ -2770,34 +2798,34 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 			} else {
 				prop.remove("abstraction.interesting");
 			}
-			for (Integer i=0; i<abstPane.preAbsModel.size(); i++) {
-				prop.setProperty("abstraction.transform." + abstPane.preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
+			for (Integer i=0; i<absProperty.preAbsModel.size(); i++) {
+				prop.setProperty("abstraction.transform." + absProperty.preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
 			}
-			for (Integer i=0; i<abstPane.loopAbsModel.size(); i++) {
-				if (abstPane.loopAbsModel.getElementAt(i)==null) continue;
-				if (abstPane.preAbsModel.contains(abstPane.loopAbsModel.getElementAt(i))) {
-					String value = prop.getProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString());
+			for (Integer i=0; i<absProperty.loopAbsModel.size(); i++) {
+				if (absProperty.loopAbsModel.getElementAt(i)==null) continue;
+				if (absProperty.preAbsModel.contains(absProperty.loopAbsModel.getElementAt(i))) {
+					String value = prop.getProperty("abstraction.transform." + absProperty.loopAbsModel.getElementAt(i).toString());
 					value = value + "mainloop" + i.toString();
-					prop.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(), value);
+					prop.setProperty("abstraction.transform." + absProperty.loopAbsModel.getElementAt(i).toString(), value);
 				}
 				else {
-					prop.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(), "mainloop" + i.toString());
+					prop.setProperty("abstraction.transform." + absProperty.loopAbsModel.getElementAt(i).toString(), "mainloop" + i.toString());
 				}
 			}
-			for (Integer i=0; i<abstPane.postAbsModel.size(); i++) {
-				if (abstPane.preAbsModel.contains(abstPane.postAbsModel.getElementAt(i)) || abstPane.preAbsModel.contains(abstPane.postAbsModel.get(i))) {
-					String value = prop.getProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString());
+			for (Integer i=0; i<absProperty.postAbsModel.size(); i++) {
+				if (absProperty.preAbsModel.contains(absProperty.postAbsModel.getElementAt(i)) || absProperty.preAbsModel.contains(absProperty.postAbsModel.get(i))) {
+					String value = prop.getProperty("abstraction.transform." + absProperty.postAbsModel.getElementAt(i).toString());
 					value = value + "postloop" + i.toString();
-					prop.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(), value);
+					prop.setProperty("abstraction.transform." + absProperty.postAbsModel.getElementAt(i).toString(), value);
 				}
 				else {
-					prop.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(), "postloop" + i.toString());
+					prop.setProperty("abstraction.transform." + absProperty.postAbsModel.getElementAt(i).toString(), "postloop" + i.toString());
 				}
 			}
-			for (String s : abstPane.transforms) {
-				if (!abstPane.preAbsModel.contains(s)
-						&& !abstPane.loopAbsModel.contains(s)
-						&& !abstPane.postAbsModel.contains(s)) {
+			for (String s : absProperty.transforms) {
+				if (!absProperty.preAbsModel.contains(s)
+						&& !absProperty.loopAbsModel.contains(s)
+						&& !absProperty.postAbsModel.contains(s)) {
 					prop.remove(s);
 				}
 			}
@@ -3063,7 +3091,7 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
 			BioModel bioModel = new BioModel(workDir);
 			try {
         bioModel.load(workDir + separator + sourceFile);
-        bioModel.saveAsLPN(directory + separator + sourceFile.replace(".xml", ".lpn"));
+        ModelEditor.saveLPN(bioModel, directory + separator + sourceFile.replace(".xml", ".lpn"));
       } catch (XMLStreamException e) {
         JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
@@ -3186,4 +3214,5 @@ public class Verification extends JPanel implements ActionListener, Runnable, Ob
     
     
   }
+  
 }

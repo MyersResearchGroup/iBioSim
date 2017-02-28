@@ -965,12 +965,16 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 											bioModel.getMetaIDIndex());
 								SBOLAnnotation sbolAnnot = new SBOLAnnotation(paramet.getMetaId(), sbolField.getSBOLURIs(),
 										sbolField.getSBOLStrand());
-								AnnotationUtility.setSBOLAnnotation(paramet, sbolAnnot);
+								if(!AnnotationUtility.setSBOLAnnotation(paramet, sbolAnnot))
+								{
+			            JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(paramet) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+			            
+			          }
 							} else 
 								AnnotationUtility.removeSBOLAnnotation(paramet);
 						}
 						modelEditor.setDirty(true);
-						bioModel.makeUndoPoint();
+						modelEditor.makeUndoPoint();
 					}
 				}
 			}
@@ -1028,7 +1032,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+selected);
 			}
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 			return true;
 		}
 		return false;

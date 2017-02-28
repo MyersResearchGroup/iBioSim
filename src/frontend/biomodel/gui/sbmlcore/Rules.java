@@ -495,7 +495,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 					rules.setListData(rul);
 					rules.setSelectedIndex(index);
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 				}
 				else {
 					String[] rul = new String[rules.getModel().getSize()];
@@ -615,7 +615,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 									bioModel.getMetaIDIndex());
 						SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolField.getSBOLURIs(), 
 								sbolField.getSBOLStrand());
-						AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);
+						if(!AnnotationUtility.setSBOLAnnotation(r, sbolAnnot))
+						{
+	            JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(r) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+	          }
 					} else
 						AnnotationUtility.removeSBOLAnnotation(r);
 				}
@@ -649,7 +652,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				rules.setSelectedIndex(index - 1);
 			}
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 
@@ -998,7 +1001,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		// if the add event button is clicked
 		if (e.getSource() == addRule) {
 			ruleEditor("Add","");
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 		// if the edit event button is clicked
 		else if (e.getSource() == editRule) {

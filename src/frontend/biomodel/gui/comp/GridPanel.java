@@ -30,7 +30,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	private BioModel gcm;
 	private JComboBox componentChooser;
 	private ArrayList<String> componentList;	
-	
+	private ModelEditor modelEditor;
 	private static boolean built;
 	
 	/**
@@ -52,7 +52,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		}
 
 		this.gcm = bioModel;
-		
+		this.modelEditor = modelEditor;
 		//component list is the gcms that can be added to a spatial grid
 		//but components that aren't compartments are ineligible for
 		//being added to a cell population
@@ -183,9 +183,11 @@ public class GridPanel extends JPanel implements ActionListener {
 				
 				//create the grid with these components
 				//these will be added to the GCM as well
-				Grid grid = gcm.getGrid();
+				Grid grid = modelEditor.getGrid();
 				grid.setEnabled(true);
-				grid.createGrid(rowCount, colCount, gcm, compGCMName);
+				gcm.getGridTable().setNumRows(rowCount);
+				gcm.getGridTable().setNumCols(colCount);
+				grid.createGrid(gcm, compGCMName);
 				
 				return true;
 			} 
@@ -208,7 +210,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		JTextField rowsChooser;
 		JTextField columnsChooser;
 		
-		Grid grid = gcm.getGrid();
+		Grid grid = modelEditor.getGrid();
 		
 		infoPanel = new JPanel(new GridLayout(3,1));
 		infoPanel.add(new JLabel("Choose a new grid size"));
@@ -220,11 +222,11 @@ public class GridPanel extends JPanel implements ActionListener {
 		this.add(tilePanel, BorderLayout.CENTER);
 
 		tilePanel.add(new JLabel("Rows"));
-		rowsChooser = new JTextField(Integer.toString(grid.getNumRows()));
+		rowsChooser = new JTextField(Integer.toString(gcm.getGridTable().getNumRows()));
 		tilePanel.add(rowsChooser);
 		
 		tilePanel.add(new JLabel("Columns"));
-		columnsChooser = new JTextField(Integer.toString(grid.getNumCols()));
+		columnsChooser = new JTextField(Integer.toString(gcm.getGridTable().getNumCols()));
 		tilePanel.add(columnsChooser);
 		
 		//create a panel for the selection of components to add to the cells

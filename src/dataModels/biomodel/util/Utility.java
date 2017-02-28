@@ -33,7 +33,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
 import dataModels.util.GlobalConstants;
-import frontend.main.Gui;
 
 import org.sbml.jsbml.ModifierSpeciesReference;
 
@@ -80,12 +79,7 @@ public class Utility {
 		c.setSpatialDimensions(3);
 		return c;
 	}*/
-
-	public static void createErrorMessage(String title, String message) {
-		JOptionPane.showMessageDialog(Gui.frame, message, title,
-				JOptionPane.ERROR_MESSAGE);
-	}
-
+	
 	public static Reaction Reaction(String id) {
 		Reaction r = new Reaction(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		r.setId(id);

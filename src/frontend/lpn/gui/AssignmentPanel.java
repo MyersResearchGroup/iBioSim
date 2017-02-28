@@ -232,7 +232,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
+				 JOptionPane.showMessageDialog(Gui.frame, "Illegal values entered.", "Error", JOptionPane.ERROR_MESSAGE); 
 				return false;
 			}
 			if (oldName == null) {
@@ -245,7 +245,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				}
 				if (prop != null) {
 					if (prop.containsKey(varBox.getSelectedItem())) {
-						Utility.createErrorMessage("Error", "Assignment id already exists.");
+					  JOptionPane.showMessageDialog(Gui.frame, "Assignment id already exists.", "Error", JOptionPane.ERROR_MESSAGE); 
+						
 						return false;
 					}
 				}
@@ -281,8 +282,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 					rateList.addItem(id);
 				}
 				else {
-					Utility.createErrorMessage("Error",
-							"Rate assignments must be for continuous variables.");
+				  JOptionPane.showMessageDialog(Gui.frame, "Rate assignments must be for continuous variables.", "Error", JOptionPane.ERROR_MESSAGE); 
 					return false;
 				}
 			}

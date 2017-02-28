@@ -9,10 +9,9 @@ import java.util.regex.Pattern;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.StateGraph;
 import backend.verification.timed_state_exploration.zoneProject.InequalityVariable;
-import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 import dataModels.util.Message;
-import frontend.verification.Verification;
+import dataModels.util.exceptions.BioSimException;
 
 
 public class LPN extends Observable {
@@ -41,7 +40,7 @@ public class LPN extends Observable {
 	
 	protected int lpnIndex;
 
-	private final Message message = new Message();
+	protected final Message message = new Message();
 	
 	/* 
 	 * Cached value of the map that associates a variable name with its
@@ -474,7 +473,7 @@ public class LPN extends Observable {
 		}
 	}
 
-	public void load(String filename) {
+	public void load(String filename) throws BioSimException {
 		StringBuffer data = new StringBuffer();
 		label = filename.split(separator)[filename.split(separator).length - 1].replace(".lpn","");
 		try {
@@ -507,9 +506,8 @@ public class LPN extends Observable {
 		parsePersistentTransitions(data);
 
 		if (!error) {
-			Utility
-					.createErrorMessage("Invalid Expressions",
-							"The input file contained invalid expressions.  See console for details.");
+		  throw new BioSimException("Invalid Expressions",
+        "The input file contained invalid expressions.  See console for details.");
 		}
 	}
 	
@@ -1791,10 +1789,6 @@ public class LPN extends Observable {
 		return places.get(from).containsPostset(to);
 	}
 
-	public Abstraction abstractLhpn(Verification pane) {
-		Abstraction abstraction = new Abstraction(this, pane);
-		return abstraction;
-	}
 
 	private void parseProperty(StringBuffer data) {
 		Pattern pattern = Pattern.compile(PROPERTY);

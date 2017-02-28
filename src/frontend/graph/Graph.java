@@ -130,6 +130,7 @@ import dataModels.util.Message;
 import dataModels.util.dataparser.DTSDParser;
 import dataModels.util.dataparser.DataParser;
 import dataModels.util.dataparser.TSDParser;
+import dataModels.util.exceptions.BioSimException;
 import frontend.analysis.AnalysisView;
 import frontend.main.Gui;
 import frontend.main.Log;
@@ -8782,7 +8783,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		} catch (IOException e) {
 		  JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
 		  e.printStackTrace();
-		}
+		} catch (BioSimException e) {
+		  JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+    }
 	}
 
 	public boolean getWarning() {

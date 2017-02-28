@@ -3,12 +3,13 @@ package backend.verification;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
 import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.BioSimException;
-
 
 
 /**
@@ -123,13 +124,14 @@ public class VerificationCommandLine {
 		// If the "-allLPNs" option exists, then all LPNs under a directory (either specified by "-dir" or
 		// the current directory by default) are considered. If this option is followed by user specified LPNs, they
 		// get ignored.
+		try {
 		if (allLPNs) {
 			File[] lpns = dir.listFiles(new FileExtentionFilter(".lpn"));
 			lpnList.clear();
 			for (int i=0; i < lpns.length; i++) {
 				String curLPNname = lpns[i].getName();
 				LPN curLPN = new LPN();
-				curLPN.load(directory + separator + curLPNname);
+        curLPN.load(directory + separator + curLPNname);
 				lpnList.add(curLPN);
 			}
 		}
@@ -140,6 +142,9 @@ public class VerificationCommandLine {
 				lpnList.add(curLPN);
 			}
 		}
+		} catch (BioSimException e) {
+      e.printStackTrace();
+    }
 		System.out.println("====== LPN loading order ========");
 		for (int i=0; i<lpnList.size(); i++) {
 			System.out.println(lpnList.get(i).getLabel());

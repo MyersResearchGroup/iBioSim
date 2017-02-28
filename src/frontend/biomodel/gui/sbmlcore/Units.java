@@ -23,7 +23,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
@@ -366,7 +365,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							dataModels.biomodel.util.Utility.sort(units);
 							unitDefs.setListData(units);
 							unitDefs.setSelectedIndex(index);
-							updateUnitId(bioModel.getSBMLDocument().getModel(), val, unitID.getText().trim());
+							BioModel.updateUnitId(bioModel.getSBMLDocument().getModel(), val, unitID.getText().trim());
 						}
 						else {
 							u = uCopy;
@@ -415,7 +414,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					modelEditor.setDirty(true);
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 				}
 				if (error) {
 					value = JOptionPane.showOptionDialog(Gui.frame, unitDefPanel, "Unit Definition Editor", JOptionPane.YES_NO_OPTION,
@@ -584,7 +583,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				modelEditor.setDirty(true);
-				bioModel.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, unitListPanel, "Unit List Editor", JOptionPane.YES_NO_OPTION,
@@ -687,7 +686,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					unitDefs.setSelectedIndex(index - 1);
 				}
 				modelEditor.setDirty(true);
-				bioModel.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 			}
 		}
 	}
@@ -1022,111 +1021,6 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			return selected.substring(0, selected.indexOf("*") - 1);
 		}
 		return "1.0";
-	}
-
-	/**
-	 * Update unit Id
-	 */
-	public static void updateUnitId(Model model, String origId, String newId) {
-		
-		//System.err.println("update unit id");
-		
-		if (origId.equals(newId))
-			return;
-		if (model.isSetSubstanceUnits()) {
-			if (model.getSubstanceUnits().equals(origId)) {
-				model.setSubstanceUnits(newId);
-			}
-		}
-		if (model.isSetTimeUnits()) {
-			if (model.getTimeUnits().equals(origId)) {
-				model.setTimeUnits(newId);
-			}
-		}
-		if (model.isSetVolumeUnits()) {
-			if (model.getVolumeUnits().equals(origId)) {
-				model.setVolumeUnits(newId);
-			}
-		}
-		if (model.isSetAreaUnits()) {
-			if (model.getAreaUnits().equals(origId)) {
-				model.setAreaUnits(newId);
-			}
-		}
-		if (model.isSetLengthUnits()) {
-			if (model.getLengthUnits().equals(origId)) {
-				model.setLengthUnits(newId);
-			}
-		}
-		if (model.isSetExtentUnits()) {
-			if (model.getExtentUnits().equals(origId)) {
-				model.setExtentUnits(newId);
-			}
-		}
-		if (model.getCompartmentCount() > 0) {
-			String[] comps = new String[model.getCompartmentCount()];
-			for (int i = 0; i < model.getCompartmentCount(); i++) {
-				Compartment compartment = model.getListOfCompartments().get(i);
-				if (compartment.getUnits().equals(origId)) {
-					compartment.setUnits(newId);
-				}
-				comps[i] = compartment.getId();
-				if (compartment.isSetSize()) {
-					comps[i] += " " + compartment.getSize();
-				}
-				if (compartment.isSetUnits()) {
-					comps[i] += " " + compartment.getUnits();
-				}
-			}
-			dataModels.biomodel.util.Utility.sort(comps);
-		}
-		if (model.getSpeciesCount() > 0) {
-			String[] specs = new String[model.getSpeciesCount()];
-			for (int i = 0; i < model.getSpeciesCount(); i++) {
-				Species species = model.getListOfSpecies().get(i);
-				if (species.getUnits().equals(origId)) {
-					species.setUnits(newId);
-				}
-				else {
-					specs[i] = species.getId() + " " + species.getCompartment();
-				}
-				if (species.isSetInitialAmount()) {
-					specs[i] += " " + species.getInitialAmount();
-				}
-				else {
-					specs[i] += " " + species.getInitialConcentration();
-				}
-				if (species.isSetUnits()) {
-					specs[i] += " " + species.getUnits();
-				}
-			}
-			dataModels.biomodel.util.Utility.sort(specs);
-		}
-		if (model.getParameterCount() > 0) {
-			String[] params = new String[model.getParameterCount()];
-			for (int i = 0; i < model.getParameterCount(); i++) {
-				Parameter parameter = model.getListOfParameters().get(i);
-				if (parameter.getUnits().equals(origId)) {
-					parameter.setUnits(newId);
-				}
-				if (parameter.isSetUnits()) {
-					params[i] = parameter.getId() + " " + parameter.getValue() + " " + parameter.getUnits();
-				}
-				else {
-					params[i] = parameter.getId() + " " + parameter.getValue();
-				}
-			}
-			dataModels.biomodel.util.Utility.sort(params);
-		}
-		for (int i = 0; i < model.getReactionCount(); i++) {
-			if (!model.getReaction(i).isSetKineticLaw()) continue;
-			KineticLaw kineticLaw = model.getReaction(i).getKineticLaw();
-			for (int j = 0; j < kineticLaw.getLocalParameterCount(); j++) {
-				if (kineticLaw.getLocalParameter(j).getUnits().equals(origId)) {
-					kineticLaw.getLocalParameter(j).setUnits(newId);
-				}
-			}
-		}
 	}
 
 	@Override

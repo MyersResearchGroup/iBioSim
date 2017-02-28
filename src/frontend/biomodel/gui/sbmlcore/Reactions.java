@@ -1116,7 +1116,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 											bioModel.getMetaIDIndex());
 								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolField.getSBOLURIs(),
 										sbolField.getSBOLStrand());
-								AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
+								if(!AnnotationUtility.setSBOLAnnotation(react, sbolAnnot))
+								{
+			            JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(react) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+			            
+			          }
 							} else 
 								AnnotationUtility.removeSBOLAnnotation(react);
 						}
@@ -1222,7 +1226,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				modelEditor.setDirty(true);
-				bioModel.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, reactionPanel, "Reaction Editor", JOptionPane.YES_NO_OPTION,
@@ -1779,7 +1783,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					modelEditor.setDirty(true);
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 				}
 			}
 			if (error) {
@@ -1816,7 +1820,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		reacParameters.setSelectedIndex(0);
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 
 	/**
@@ -2184,7 +2188,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					products.setSelectedIndex(0);
 				}
 				modelEditor.setDirty(true);
-				bioModel.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, productsPanel, "Products Editor", JOptionPane.YES_NO_OPTION,
@@ -2653,7 +2657,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, modifiersPanel, "Modifiers Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -3097,7 +3101,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reactants.setSelectedIndex(0);
 				}
 				modelEditor.setDirty(true);
-				gcm.makeUndoPoint();
+				modelEditor.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, reactantsPanel, "Reactants Editor", JOptionPane.YES_NO_OPTION,
@@ -3118,7 +3122,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			String selected = ((String) reactions.getSelectedValue()).split("\\[| ")[0];
 			Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(selected);
 			if (BioModel.isProductionReaction(reaction)) {
-				bioModel.removePromoter(SBMLutilities.getPromoterId(reaction));
+			  modelEditor.removePromoter(SBMLutilities.getPromoterId(reaction));
 			} else {
 				bioModel.removeReaction(selected);
 				reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -3132,7 +3136,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 
@@ -3170,7 +3174,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactants.setSelectedIndex(index - 1);
 					}
 					modelEditor.setDirty(true);
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 				}
 			}
 		}
@@ -3197,7 +3201,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						products.setSelectedIndex(index - 1);
 					}
 					modelEditor.setDirty(true);
-					bioModel.makeUndoPoint();
+					modelEditor.makeUndoPoint();
 				}
 			}
 		}
@@ -3230,7 +3234,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				modifiers.setSelectedIndex(index - 1);
 			}
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 	
@@ -3366,7 +3370,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		kineticLaw.setText(kinetic);
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		modelEditor.makeUndoPoint();
 	}
 
 	/**
@@ -3406,7 +3410,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reacParameters.setSelectedIndex(index - 1);
 			}
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 	}
 
@@ -3428,7 +3432,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		reacParameters.setSelectedIndex(0);
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();		
+		modelEditor.makeUndoPoint();		
 	}
 
 	/**
@@ -3949,7 +3953,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == clearKineticLaw) {
 			kineticLaw.setText("");
 			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
+			modelEditor.makeUndoPoint();
 		}
 		// if the use mass action button is clicked
 		else if (e.getSource() == useMassAction) {

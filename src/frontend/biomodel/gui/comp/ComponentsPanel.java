@@ -567,7 +567,8 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 		if (value == JOptionPane.YES_OPTION) {
 			
 			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
+			  JOptionPane.showMessageDialog(Gui.frame, "Error", "Illegal values entered.", JOptionPane.ERROR_MESSAGE); 
+        
 				return false;
 			}
 			String[] dimensions = new String[]{""};
@@ -579,14 +580,14 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 			String id = dimensions[0];
 			if (oldName == null) {
 				if (bioModel.isSIdInUse(id)) {
-					Utility.createErrorMessage("Error", "Id already exists.");
+				  JOptionPane.showMessageDialog(Gui.frame, "Error", "Id already exists.", JOptionPane.ERROR_MESSAGE); 
 					return false;
 				}
 			}
 			else if (!oldName.equals(id)) {
 				if (bioModel.isSIdInUse(id)) {
-					Utility.createErrorMessage("Error", "Id already exists.");
-					return false;
+				  JOptionPane.showMessageDialog(Gui.frame, "Error", "Id already exists.", JOptionPane.ERROR_MESSAGE); 
+          return false;
 				}
 			}
 			for (int i = 0; i < portIds.size(); i++) {
@@ -651,7 +652,7 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 					instance.setExtentConversionFactor((String)extentConvFactorBox.getSelectedItem());
 				}
 			} else {
-				Utility.createErrorMessage("Error", "Submodel is missing.");
+			  JOptionPane.showMessageDialog(Gui.frame, "Error", "Submodel is missing.", JOptionPane.ERROR_MESSAGE); 
 				return false;
 			}
 			ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(bioModel.getSBMLDocument().getModel());
@@ -726,11 +727,11 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 									ReplacedBy replacement = sbmlSBase.getReplacedBy();
 									if (!replacement.getSubmodelRef().equals(subId) ||
 											!replacement.getPortRef().equals(portId)) {	
-										Utility.createErrorMessage("Error", portmapId + " is already replaced by " +
-											replacement.getPortRef().replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
-											" from subModel " + replacement.getSubmodelRef() + "\nCannot also replace with " + 
-											portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
-											" from subModel " + subId);
+									  JOptionPane.showMessageDialog(Gui.frame, "Error", portmapId + " is already replaced by " +
+	                      replacement.getPortRef().replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
+	                      " from subModel " + replacement.getSubmodelRef() + "\nCannot also replace with " + 
+	                      portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
+	                      " from subModel " + subId, JOptionPane.ERROR_MESSAGE); 
 										skip = true;
 									}
 								}
@@ -756,11 +757,11 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 									ReplacedBy replacement = sbmlSBase.getReplacedBy();
 									if (!replacement.getSubmodelRef().equals(subId) ||
 											!replacement.getPortRef().equals(portId)) {	
-										Utility.createErrorMessage("Error", portmapId + " is already replaced by " +
-											replacement.getPortRef().replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
-											" from subModel " + replacement.getSubmodelRef() + "\nCannot also replace with " + 
-											portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
-											" from subModel " + subId);
+									  JOptionPane.showMessageDialog(Gui.frame, "Error", portmapId + " is already replaced by " +
+	                      replacement.getPortRef().replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
+	                      " from subModel " + replacement.getSubmodelRef() + "\nCannot also replace with " + 
+	                      portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "") + 
+	                      " from subModel " + subId, JOptionPane.ERROR_MESSAGE);
 										skip = true;
 									}
 								}
@@ -794,7 +795,11 @@ public class ComponentsPanel extends JPanel implements ActionListener, MouseList
 									bioModel.getMetaIDIndex());
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(instance.getMetaId(), sbolField.getSBOLURIs(),
 							sbolField.getSBOLStrand());
-					AnnotationUtility.setSBOLAnnotation(instance, sbolAnnot);
+					if(!AnnotationUtility.setSBOLAnnotation(instance, sbolAnnot))
+					{
+					  JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(instance) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+	          
+					}
 
 				} else
 					AnnotationUtility.removeSBOLAnnotation(instance);

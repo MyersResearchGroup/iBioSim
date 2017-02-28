@@ -271,8 +271,8 @@ public class MovieScheme {
 				
 				//loop through every grid location
 				//add a new scheme for each grid rectangle
-				for (int row = 0; row < gcm.getGrid().getNumRows(); ++row) {
-					for (int col = 0; col < gcm.getGrid().getNumCols(); ++col) {
+				for (int row = 0; row < gcm.getGridTable().getNumRows(); ++row) {
+					for (int col = 0; col < gcm.getGridTable().getNumCols(); ++col) {
 						
 						String gridPrefix = "ROW" + row + "_COL" + col;
 						
