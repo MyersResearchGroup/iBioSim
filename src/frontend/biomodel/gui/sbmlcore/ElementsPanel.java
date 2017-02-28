@@ -35,6 +35,12 @@ import org.sbml.jsbml.SBMLDocument;
 
 import dataModels.biomodel.util.SBMLutilities;
 
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ElementsPanel extends JPanel { 
 
 	private static final long serialVersionUID = 1L;
@@ -58,26 +64,6 @@ public class ElementsPanel extends JPanel {
 				}
 			}
 		}
-//		ArrayList<String> getParams = new ArrayList<String>();
-//		try {
-//			Scanner scan = new Scanner(new File(paramFile));
-//			if (scan.hasNextLine()) {
-//				scan.nextLine();
-//			}
-//			while (scan.hasNextLine()) {
-//				String s = scan.nextLine();
-//				if (s.trim().equals("")) {
-//					break;
-//				}
-//				getParams.add(s);
-//			}
-//			while (scan.hasNextLine()) {
-//				elementChanges.add(scan.nextLine());
-//			}
-//			scan.close();
-//		}
-//		catch (Exception e) {
-//		}
 		Model m = document.getModel();
 		int consNum = m.getConstraintCount();
 		String[] cons = new String[consNum];

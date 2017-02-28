@@ -58,6 +58,9 @@ import frontend.main.Gui;
  * are pressed.
  * 
  * @author Curtis Madsen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Utility {
 

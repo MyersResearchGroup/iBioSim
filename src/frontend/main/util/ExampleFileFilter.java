@@ -48,8 +48,10 @@ import javax.swing.filechooser.*;
  * ExampleFileFilter( new String{"gif", "jpg"}, "JPEG & GIF Images")
  * chooser.addChoosableFileFilter(filter); chooser.showOpenDialog(this);
  * 
- * @version 1.9 04/23/99
  * @author Jeff Dinkins
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class ExampleFileFilter extends FileFilter {
 

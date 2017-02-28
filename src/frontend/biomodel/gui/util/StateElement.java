@@ -20,9 +20,11 @@ import javax.swing.JComponent;
 /**
  * Objects that implement this interface changes state,
  * which affects objects that monitor this element.
+ * 
  * @author Nam Nguyen
- * @organization University of Utah
- * @email namphuon@cs.utah.edu
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public interface StateElement {
 	/**

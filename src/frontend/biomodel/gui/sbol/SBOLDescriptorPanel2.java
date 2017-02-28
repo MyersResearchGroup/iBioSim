@@ -41,6 +41,15 @@ import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.SBOLException;
 import frontend.main.Gui;
 
+/**
+ * 
+ *
+ * @author Nicholas Roehner
+ * @author Tramy Nguyen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
@@ -53,16 +62,13 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 	private boolean display;
 	
 	public SBOLDescriptorPanel2(SBOLIdentityManager2 identityManager, SBOLFileManager2 fileManager) {
-		//super(new GridLayout(4, 2));
+		
 		super(new GridLayout(3, 2));
 		constructPanel(fileManager.getSBOLFilePaths());
 		display = (loadSBOLDescriptors(identityManager) || 
 				!identityManager.containsBioSimURI() || identityManager.containsPlaceHolderURI() ||
 				loadBioSimComponentDescriptors(identityManager, fileManager));
-		/*
-		while (display)
-			display = panelOpen(identityManager, fileManager);
-			*/
+		
 	}
 	
 	public SBOLDescriptorPanel2(String SBOLFileName, String displayId, String name, String description) {
@@ -99,13 +105,6 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 			saveFileIDBox.addItem(splitPath[splitPath.length - 1]);
 		}
 		
-//		add(new JLabel("Save SBOL ComponentDefinition to File:"));
-//		add(saveFileIDBox);
-		
-//		JPanel saveFileButton = new JPanel(new GridLayout(2, 1));
-//		saveFileButton.add(saveFileIDBox);
-//		add(saveFileButton);
-		
 		add(new JLabel("SBOL ComponentDefinition ID:"));
 		add(idText);
 		add(new JLabel("SBOL ComponentDefinition Name:"));
@@ -132,7 +131,6 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 	private boolean loadBioSimComponentDescriptors(SBOLIdentityManager2 identityManager, SBOLFileManager2 fileManager) {
 		try {
 			if (identityManager.loadAndLocateBioSimComponent(fileManager)) {
-//			DnaComponent bioSimComp = identityManager.getBioSimComponent();
 				ComponentDefinition bioSimComp = identityManager.getBioSimComponent();
 				if (bioSimComp != null) {
 					saveFileIDBox.setSelectedIndex(saveFilePaths.indexOf(identityManager.getSaveFilePath()));
@@ -147,7 +145,6 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 				return true;
 			}
 		} catch (SBOLException e) {
-			// TODO Auto-generated catch block
 			
 			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
 					e.getTitle(), JOptionPane.ERROR_MESSAGE);

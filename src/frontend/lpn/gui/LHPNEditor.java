@@ -51,6 +51,9 @@ import javax.swing.JButton;
  * tool.
  * 
  * @author Kevin Jones
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class LHPNEditor extends JPanel implements ActionListener, MouseListener {
 	private static final long serialVersionUID = 1L;

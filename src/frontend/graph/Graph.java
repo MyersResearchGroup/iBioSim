@@ -158,6 +158,9 @@ import frontend.main.util.Utility;
  * is clicked.
  * 
  * @author Curtis Madsen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Graph extends JPanel implements ActionListener, MouseListener, ChartProgressListener, Observer {
 

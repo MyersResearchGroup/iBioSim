@@ -37,6 +37,9 @@ import frontend.biomodel.gui.movie.SerializableScheme;
  * this combines/re-works a lot of the stuff that tyler had spread out among myriad classes
  * 
  * @author jason
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class MovieScheme {
 

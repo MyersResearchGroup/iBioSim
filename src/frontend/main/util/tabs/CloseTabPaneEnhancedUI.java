@@ -38,9 +38,11 @@ import frontend.main.Gui;
  * This UI displays a different interface, which is independent from the look
  * and feel.
  * 
- * 
- * @author David Bismut, davidou@mageos.com
- * 
+ * @author David Bismut
+ * @author davidou@mageos.com
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 

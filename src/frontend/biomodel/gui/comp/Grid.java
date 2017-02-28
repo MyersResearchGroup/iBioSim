@@ -44,7 +44,9 @@ import frontend.main.Gui;
  * and the locations of compartments/components/cells in a formal population
  * 
  * @author jason (sarbruis@gmail.com)
- * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Grid {
 	

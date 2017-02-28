@@ -74,7 +74,10 @@ import frontend.verification.AbstPane;
  * This class creates the properties file that is given to the reb2sac program.
  * It also executes the reb2sac program.
  * 
- * @author Curtis Madsen
+ * @author Curtis Madsen 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Run implements ActionListener, Observer
 {

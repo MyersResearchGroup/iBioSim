@@ -43,7 +43,12 @@ import frontend.biomodel.gui.schematic.Utils;
 import frontend.biomodel.gui.util.PropertyField;
 import frontend.main.Gui;
 
-
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class InfluencePanel extends JPanel implements ActionListener {
 	/**
 	 * 

@@ -42,10 +42,12 @@ import frontend.main.Gui;
  * icons are added to every tab, typically to let the user close or detach the
  * tab by clicking on these icons.
  * 
- * @version 1.1 06/07/04
- * @author David Bismut, davidou@mageos.com
+ * @author David Bismut
+ * @author davidou@mageos.com
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class CloseAndMaxTabbedPane extends JTabbedPane {
 
 	static final long serialVersionUID = 1L;

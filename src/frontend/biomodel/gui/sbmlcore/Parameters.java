@@ -66,7 +66,8 @@ import org.sbml.jsbml.UnitDefinition;
  * This is a class for creating SBML parameters
  * 
  * @author Chris Myers
- * 
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Parameters extends JPanel implements ActionListener, MouseListener {
 

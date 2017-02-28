@@ -88,18 +88,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		this.isModelPanelField = isModelPanelField;
 	}
 	
-//	public String getType() {
-//		return sbolType;
-//	}
-//	
-//	public String getText() {
-//		return sbolText.getText();
-//	}
-//	
-//	public void setText(String text) {
-//		sbolText.setText(text);
-//	}
-	
 	public List<URI> getSBOLURIs() {
 		return sbolURIs;
 	}
@@ -108,9 +96,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		this.sbolURIs = sbolURIs;
 	}
 	
-//	public void addSBOLURI(URI uri) {
-//		sbolURIs.add(uri);
-//	}
 	
 	public String getSBOLStrand() {
 		return sbolStrand;
@@ -120,40 +105,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		this.sbolStrand = sbolStrand;
 	}
 	
-//	public boolean isValidText() {
-//		if (sbolText.getText().equals(""))
-//			return true;
-//		else if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT))
-//			return true;
-//		else {
-//			URI sourceCompURI = null;
-//			try {
-//				sourceCompURI = new URI(sbolText.getText());
-//			} catch (URISyntaxException e) {
-//				Utility.createErrorMessage("Invalid URI", "SBOL association text could not be parsed as URI.");
-//				return false;
-//			}
-//			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
-//				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
-//				if (sbolDoc != null) {
-//					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
-//					DnaComponent resolvedDnac = flattenedDoc.getComponentUriResolver().resolve(sourceCompURI);
-//					if (resolvedDnac != null) {
-//						for (URI uri : resolvedDnac.getTypes())
-//							if (SBOLUtility.soSynonyms(sbolType).contains(uri.toString()))
-//								return true;
-//						Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component with URI " + sourceCompURI
-//								+ " is not a " + sbolLabel.getText() + ".");
-//						return false;
-//					}
-//				}
-//			}
-//			Utility.createErrorMessage("DNA Component Not Found", "Component with URI " + sourceCompURI 
-//					+ " is not found in project SBOL files.");
-//			return false;
-//		}
-//	}
-//	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {

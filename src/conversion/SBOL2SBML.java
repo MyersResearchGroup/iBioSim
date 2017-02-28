@@ -62,43 +62,62 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 
+
+/**
+ * Perform conversion from SBOL to SBML. 
+ * 
+ * @author Nicholas Roehner 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SBOL2SBML {
-	
+
 	public SBOL2SBML() {
 	}
-	
-	public static String getDisplayID(Identified sbolElement) { 
+
+	/**
+	 * Returns the specified SBOL object's displayId. This means the prefix of the SBOL element's displayId will be cut off.
+	 * @param sbolElement - The SBOL element to retrieve its displayId
+	 * @return The displayId of the given SBOL element.
+	 */
+	private static String getDisplayID(Identified sbolElement) { 
 		if (sbolElement.isSetDisplayId()) {
 			return sbolElement.getDisplayId();
 		}
 		String identity = sbolElement.getIdentity().toString();
 		return identity.substring(identity.lastIndexOf("/") + 1);
 	}
-	
+
 
 	/**
 	 * Perform conversion from SBOL to SBML. 
+	 * All SBOL Interactions are converted to SBML degradation, complex formation, and production reactions. Depending
+	 * on what SBML reactions are created, SBO terms are assigned to each reaction's role to preserve SBOL participant
+	 * and interaction type. 
+	 * All SBOL FunctionalComponents found in the given ModuleDefinition will be converted to SBML species.
+	 * All SBOL Modules are converted to SBML submodels that are encased within iBioSim's BioModel objects.
 	 * 
 	 * @param projectDirectory - The location to generate the SBML model
 	 * @param moduleDef - the current ModuleDefinition to convert all SBML object within the ModuleDefinition to its equivalent SBML component.
 	 * @param sbolDoc - The SBOL document to be converted to its equivalent SBML model.
-	 * @return
+	 * @return The list of SBML models converted from SBOL ModuleDefinition. Each of the converted SBML model are stored within iBioSim's BioModel object.
 	 * @throws XMLStreamException
 	 * @throws IOException
 	 */
 	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException {
 
 		List<BioModel> models = new LinkedList<BioModel>();
-		
+
 		BioModel targetModel = new BioModel(projectDirectory);
 		targetModel.createSBMLDocument(getDisplayID(moduleDef), false, false);
-		
+
 		// Annotate SBML model with SBOL module definition
 		Model sbmlModel = targetModel.getSBMLDocument().getModel();
 		SBOLAnnotation modelAnno = new SBOLAnnotation(sbmlModel.getMetaId(), 
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
-		
+
 		for (FunctionalComponent comp : moduleDef.getFunctionalComponents()) { 
 			if (isSpeciesComponent(comp, sbolDoc)) {
 				generateSpecies(comp, sbolDoc, targetModel);
@@ -118,7 +137,7 @@ public class SBOL2SBML {
 				//System.out.println("Dropping "+comp.getIdentity());
 			}
 		}
-		
+
 		HashMap<FunctionalComponent, List<Interaction>> promoterToProductions = new HashMap<FunctionalComponent, List<Interaction>>();
 		HashMap<FunctionalComponent, List<Interaction>> promoterToActivations = new HashMap<FunctionalComponent, List<Interaction>>();
 		HashMap<FunctionalComponent, List<Interaction>> promoterToRepressions = new HashMap<FunctionalComponent, List<Interaction>>();
@@ -162,7 +181,7 @@ public class SBOL2SBML {
 						if (!promoterToProducts.containsKey(promoter))
 							promoterToProducts.put(promoter, new LinkedList<Participation>());
 						promoterToProducts.get(promoter).add(partici);
-					// TRANSCRIBED
+						// TRANSCRIBED
 					} else if (partici.containsRole(SystemsBiologyOntology.PROMOTER)||
 							partici.containsRole(SystemsBiologyOntology.TEMPLATE)) {
 						if (!promoterToTranscribed.containsKey(promoter))
@@ -217,7 +236,7 @@ public class SBOL2SBML {
 				generateBiochemicalRxn(interact, moduleDef, targetModel);
 			}
 		}
-		
+
 		for (FunctionalComponent promoter : moduleDef.getFunctionalComponents()) { 
 			if (isPromoterComponent(promoter, sbolDoc)) {
 				if (!promoterToActivators.containsKey(promoter))
@@ -240,14 +259,14 @@ public class SBOL2SBML {
 						promoterToRepressors.get(promoter), moduleDef, sbolDoc, targetModel);
 			}
 		}
-		
-//		for (FunctionalComponent promoter : promoterToProductions.keySet()) {
-//			generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-//					promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-//					promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-//					promoterToRepressors.get(promoter), moduleDef, sbolDoc, targetModel);
-//		}
-		
+
+		//		for (FunctionalComponent promoter : promoterToProductions.keySet()) {
+		//			generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+		//					promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+		//					promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+		//					promoterToRepressors.get(promoter), moduleDef, sbolDoc, targetModel);
+		//		}
+
 		for (Module subModule : moduleDef.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 			BioModel subTargetModel = new BioModel(projectDirectory);
@@ -261,8 +280,8 @@ public class SBOL2SBML {
 		models.add(targetModel);
 		return models;
 	}
-	
-	public static void generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
+
+	private static void generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		String md5 = Utility.MD5(subTargetModel.getSBMLDocument());
@@ -281,8 +300,8 @@ public class SBOL2SBML {
 				}
 			}
 	}
-	
-	public static List<BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
+
+	private static List<BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel targetModel) throws XMLStreamException, IOException {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		List<BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
@@ -290,13 +309,13 @@ public class SBOL2SBML {
 		generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
 		return subModels;
 	}
-	
-	public static void generateReplacement(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
+
+	private static void generateReplacement(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI()); 
 		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
 		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocalURI());
-		
+
 		//System.out.println(mapping.getRemoteURI()+" <-> " + mapping.getLocalURI());
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(localSpecies));
 		Port port = subTargetModel.getPortByIdRef(getDisplayID(remoteSpecies));
@@ -304,43 +323,43 @@ public class SBOL2SBML {
 			System.out.println("Cannot find "+getDisplayID(remoteSpecies));
 			//return;
 		}
-		
+
 		Submodel subModel = targetModel.getSBMLCompModel().getSubmodel(getDisplayID(subModule));
 		SBMLutilities.addReplacement(localSBMLSpecies, subModel, getDisplayID(subModule), port.getId(), "(none)", 
 				new String[]{""}, new String[]{""}, new String[]{""}, new String[]{""}, false);
-		
+
 		// Annotate SBML replacment with SBOL maps-to
 		CompSBasePlugin compSBML = SBMLutilities.getCompSBasePlugin(localSBMLSpecies);
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), 1);
 		annotateReplacement(compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), mapping);
 	}
-	
-	public static void generateReplacedBy(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
+
+	private static void generateReplacedBy(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
 		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocalURI());
-		
+
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(localSpecies));
 		Port port = subTargetModel.getPortByIdRef(getDisplayID(remoteSpecies));
 		SBMLutilities.addReplacedBy(localSBMLSpecies, getDisplayID(subModule), port.getId(), new String[]{""}, 
 				new String[]{""}, new String[]{""}, new String[]{""});
-		
+
 		// Annotate SBML replaced-by with SBOL maps-to
 		CompSBasePlugin compSBML = SBMLutilities.getCompSBasePlugin(localSBMLSpecies);
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), compSBML.getReplacedBy(), 1);
 		annotateReplacedBy(compSBML.getReplacedBy(), mapping);
 	}
-	
-	public static void generateInputPort(FunctionalComponent species, BioModel targetModel) {
+
+	private static void generateInputPort(FunctionalComponent species, BioModel targetModel) {
 		targetModel.createDirPort(getDisplayID(species), GlobalConstants.INPUT);
 	}
-	
-	public static void generateOutputPort(FunctionalComponent species, BioModel targetModel) {
+
+	private static void generateOutputPort(FunctionalComponent species, BioModel targetModel) {
 		targetModel.createDirPort(getDisplayID(species), GlobalConstants.OUTPUT);
 	}
 
-	public static void generateSpecies(FunctionalComponent species, SBOLDocument sbolDoc, BioModel targetModel) {
+	private static void generateSpecies(FunctionalComponent species, SBOLDocument sbolDoc, BioModel targetModel) {
 		targetModel.createSpecies(getDisplayID(species), -1, -1);
 		Species sbmlSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(species));
 		sbmlSpecies.setBoundaryCondition(species.getDirection().equals(DirectionType.IN));
@@ -358,11 +377,11 @@ public class SBOL2SBML {
 		// Annotate SBML species with SBOL component and component definition
 		annotateSpecies(sbmlSpecies, species, sbolDoc);	
 	}
-	
-	public static void generatePromoterSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
+
+	private static void generatePromoterSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
 		targetModel.createPromoter(getDisplayID(promoter), -1, -1, true, false, null);
 		Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(promoter));
-		
+
 		// Annotate SBML promoter species with SBOL component and component definition
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
 		if (compDef!=null) {
@@ -370,7 +389,7 @@ public class SBOL2SBML {
 		}
 	}
 
-	public static void generateBiochemicalRxn(Interaction interaction, ModuleDefinition moduleDef, BioModel targetModel) {
+	private static void generateBiochemicalRxn(Interaction interaction, ModuleDefinition moduleDef, BioModel targetModel) {
 		SystemsBiologyOntology sbo = new SystemsBiologyOntology();
 		String SBOid = "";
 		for (URI type : interaction.getTypes()) {
@@ -409,8 +428,8 @@ public class SBOL2SBML {
 		targetModel.createBiochemicalReaction(interaction.getDisplayId(),SBOid,reactants,modifiers,products);
 	}
 
-	public static void generateDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) {
-//		Participation degraded = degradation.getParticipations().get(0); //OLD VERSION
+	private static void generateDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) {
+		//		Participation degraded = degradation.getParticipations().get(0); //OLD VERSION
 		Participation degraded = null;
 		for(Participation part : degradation.getParticipations())
 		{
@@ -430,8 +449,8 @@ public class SBOL2SBML {
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), degradationRxn.getReactant(0), 1);
 		annotateSpeciesReference(degradationRxn.getReactant(0), degraded);
 	}
-	
-	public static void generateComplexFormationRxn(Interaction complexFormation, Participation complex,
+
+	private static void generateComplexFormationRxn(Interaction complexFormation, Participation complex,
 			List<Participation> ligands, ModuleDefinition moduleDef, BioModel targetModel) {
 		FunctionalComponent complexSpecies = moduleDef.getFunctionalComponent(complex.getParticipantURI());
 		boolean onPort = (complexSpecies.getDirection().equals(DirectionType.IN) 
@@ -439,10 +458,10 @@ public class SBOL2SBML {
 		Reaction complexFormationRxn = targetModel.createComplexReaction(getDisplayID(complexSpecies), null, onPort);
 		complexFormationRxn.setId(getDisplayID(complexFormation));
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), complexFormationRxn, 1);
-		
+
 		// Annotate SBML complex formation reaction with SBOL interaction
 		annotateRxn(complexFormationRxn, complexFormation);
-		
+
 		// Annotate SBML complex product with SBOL participation
 		SimpleSpeciesReference complexRef = complexFormationRxn.getProductForSpecies(getDisplayID(complexSpecies));
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), complexRef, 1);
@@ -452,19 +471,19 @@ public class SBOL2SBML {
 			FunctionalComponent ligandSpecies = moduleDef.getFunctionalComponent(ligand.getParticipantURI());
 			targetModel.addReactantToComplexReaction(getDisplayID(ligandSpecies), getDisplayID(complexSpecies), 
 					null, null, complexFormationRxn);
-			
+
 			// Annotate SBML ligand reactant with SBOL participation
 			SimpleSpeciesReference ligandRef = complexFormationRxn.getReactantForSpecies(getDisplayID(ligandSpecies));
 			SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), ligandRef, 1);
 			annotateSpeciesReference(ligandRef, ligand);
 		}
 	}
-	
-	public static void generateProductionRxn(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
+
+	private static void generateProductionRxn(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
 			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {
-		
+
 		String rxnID = "";
 		if (productions!=null) {
 			for (Interaction production : productions)
@@ -475,7 +494,7 @@ public class SBOL2SBML {
 		//rxnID = rxnID.substring(1);
 		Reaction productionRxn = targetModel.createProductionReaction(getDisplayID(promoter), rxnID, null, null, null, null, 
 				null, null, false, null);
-		
+
 		// Annotate SBML production reaction with SBOL production interactions
 		List<Interaction> productionsRegulations = new LinkedList<Interaction>();
 		if (productions!=null) productionsRegulations.addAll(productions);
@@ -485,65 +504,65 @@ public class SBOL2SBML {
 			annotateRxn(productionRxn, productionsRegulations);
 		if (!partici.isEmpty()) 
 			annotateSpeciesReference(productionRxn.getModifier(0), partici);
-		
+
 		for (Participation activator : activators)
 			generateActivatorReference(activator, promoter, moduleDef, productionRxn, targetModel);
-		
+
 		for (Participation repressor : repressors)
 			generateRepressorReference(repressor, promoter, moduleDef, productionRxn, targetModel);
-		
+
 		for (Participation product : products)
 			generateProductReference(product, promoter, moduleDef, productionRxn, targetModel);
-		
+
 		for (int i = 0; i < transcribed.size(); i++) {
 			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(i).getParticipantURI());
 			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(i).getParticipantURI());
-			
+
 			ComponentDefinition compDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
 			if (compDef!=null) {
 				annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(protein)), compDef);
 			}
 		}
 	}
-	
-	public static void generateActivatorReference(Participation activator, FunctionalComponent promoter, 
+
+	private static void generateActivatorReference(Participation activator, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
 		FunctionalComponent tf = moduleDef.getFunctionalComponent(activator.getParticipantURI());
 
 		targetModel.addActivatorToProductionReaction(getDisplayID(promoter),  
 				getDisplayID(tf), "none", productionRxn, null, null, null);
-		
+
 		// Annotate SBML activator species reference with SBOL activator participation
 		ModifierSpeciesReference activatorRef = productionRxn.getModifierForSpecies(getDisplayID(tf));
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), activatorRef, 1);
 		annotateSpeciesReference(activatorRef, activator);
 	}
-	
-	public static void generateRepressorReference(Participation repressor, FunctionalComponent promoter, 
+
+	private static void generateRepressorReference(Participation repressor, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
 		FunctionalComponent tf = moduleDef.getFunctionalComponent(repressor.getParticipantURI());
 		targetModel.addRepressorToProductionReaction(getDisplayID(promoter),  
 				getDisplayID(tf), "none", productionRxn, null, null, null);
-		
+
 		// Annotate SBML repressor species reference with SBOL repressor participation
 		ModifierSpeciesReference repressorRef = productionRxn.getModifierForSpecies(getDisplayID(tf));
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), repressorRef, 1);
 		annotateSpeciesReference(repressorRef, repressor);
 	}
-	
-	public static void generateProductReference(Participation product, FunctionalComponent promoter, 
+
+	private static void generateProductReference(Participation product, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
 		FunctionalComponent protein = moduleDef.getFunctionalComponent(product.getParticipantURI());
 		targetModel.addActivatorToProductionReaction(getDisplayID(promoter),  
 				"none", getDisplayID(protein), productionRxn, null, null, null);
-		
+
 		// Annotate SBML product species reference with SBOL product participation
 		SpeciesReference productRef = productionRxn.getProductForSpecies(getDisplayID(protein));
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), productRef, 1);
 		annotateSpeciesReference(productRef, product);
 	}
-	
-	public static void annotateSpecies(Species species, FunctionalComponent comp, ComponentDefinition compDef, 
+
+	private static void annotateSpecies(Species species, FunctionalComponent comp, ComponentDefinition compDef, 
 			SBOLDocument sbolDoc) {
 		SBOLAnnotation speciesAnno = new SBOLAnnotation(species.getMetaId(), compDef.getIdentity());
 		speciesAnno.createSBOLElementsDescription(comp.getClass().getSimpleName(), 
@@ -552,10 +571,10 @@ public class SBOL2SBML {
 				compDef.getIdentity());
 		AnnotationUtility.setSBOLAnnotation(species, speciesAnno);	
 	}
-	
+
 	// Annotate SBML species with SBOL component, component definition, and any existing, annotating
 	// DNA components or strand sign
-	public static void annotateSpecies(Species species, FunctionalComponent comp, SBOLDocument sbolDoc) {
+	private static void annotateSpecies(Species species, FunctionalComponent comp, SBOLDocument sbolDoc) {
 		SBOLAnnotation speciesAnno;
 		List<URI> dnaCompIdentities = new LinkedList<URI>();
 		String strand = AnnotationUtility.parseSBOLAnnotation(species, dnaCompIdentities);
@@ -575,9 +594,9 @@ public class SBOL2SBML {
 			AnnotationUtility.setSBOLAnnotation(species, speciesAnno);	
 		}
 	}
-	
+
 	// Annotate SBML species with SBOL DNA component and any existing, annotating SBOL elements
-	public static void annotateSpecies(Species species, ComponentDefinition compDef) {
+	private static void annotateSpecies(Species species, ComponentDefinition compDef) {
 		SBOLAnnotation speciesAnno = new SBOLAnnotation(species.getMetaId(), compDef.getIdentity());
 		HashMap<String, List<URI>> sbolElementIdentities = new HashMap<String, List<URI>>();
 		AnnotationUtility.parseSBOLAnnotation(species, sbolElementIdentities);
@@ -586,9 +605,9 @@ public class SBOL2SBML {
 		}
 		AnnotationUtility.setSBOLAnnotation(species, speciesAnno);	
 	}
-	
+
 	// Annotate SBML reaction with SBOL interactions
-	public static void annotateRxn(Reaction rxn, List<Interaction> interacts) {
+	private static void annotateRxn(Reaction rxn, List<Interaction> interacts) {
 		List<URI> interactIdentities = new LinkedList<URI>();
 		for (Interaction interact : interacts)
 			interactIdentities.add(interact.getIdentity());
@@ -596,123 +615,155 @@ public class SBOL2SBML {
 				interacts.get(0).getClass().getSimpleName(), interactIdentities);
 		AnnotationUtility.setSBOLAnnotation(rxn, rxnAnno);
 	}
-	
+
 	// Annotate SBML reaction with SBOL interaction
-	public static void annotateRxn(Reaction rxn, Interaction interact) {
+	private static void annotateRxn(Reaction rxn, Interaction interact) {
 		SBOLAnnotation rxnAnno = new SBOLAnnotation(rxn.getMetaId(), 
 				interact.getClass().getSimpleName(), interact.getIdentity());
 		AnnotationUtility.setSBOLAnnotation(rxn, rxnAnno);
 	}
-	
+
 	// Annotate SBML species reference with SBOL participation
-	public static void annotateSpeciesReference(SimpleSpeciesReference speciesRef, Participation partici) {
+	private static void annotateSpeciesReference(SimpleSpeciesReference speciesRef, Participation partici) {
 		SBOLAnnotation speciesRefAnno = new SBOLAnnotation(speciesRef.getMetaId(),
 				partici.getClass().getSimpleName(), partici.getParticipantURI());
 		AnnotationUtility.setSBOLAnnotation(speciesRef, speciesRefAnno);
 	}
-	
+
 	// Annotate SBML species reference with SBOL participations
-	public static void annotateSpeciesReference(SimpleSpeciesReference speciesRef, List<Participation> partici) {
+	private static void annotateSpeciesReference(SimpleSpeciesReference speciesRef, List<Participation> partici) {
 		List<URI> particiIdentities = new LinkedList<URI>();
- 		for (Participation p : partici) {
+		for (Participation p : partici) {
 			particiIdentities.add(p.getIdentity());
 		}
 		SBOLAnnotation speciesRefAnno = new SBOLAnnotation(speciesRef.getMetaId(),
 				partici.get(0).getClass().getSimpleName(), particiIdentities);
 		AnnotationUtility.setSBOLAnnotation(speciesRef, speciesRefAnno);
 	}
-		
-	
-	public static void annotateReplacedBy(ReplacedBy replacedBy, MapsTo mapping) {
+
+
+	private static void annotateReplacedBy(ReplacedBy replacedBy, MapsTo mapping) {
 		SBOLAnnotation replacedByAnno = new SBOLAnnotation(replacedBy.getMetaId(),
 				mapping.getClass().getSimpleName(), mapping.getIdentity());
 		AnnotationUtility.setSBOLAnnotation(replacedBy, replacedByAnno);
 	}
-	
-	public static void annotateReplacement(ReplacedElement replacement, MapsTo mapping) {
+
+	private static void annotateReplacement(ReplacedElement replacement, MapsTo mapping) {
 		SBOLAnnotation replacementAnno = new SBOLAnnotation(replacement.getMetaId(),
 				mapping.getClass().getSimpleName(), mapping.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(replacement, replacementAnno);
 	}
-	
-	public static void annotateSubModel(Submodel subModel, Module subModule) {
+
+	private static void annotateSubModel(Submodel subModel, Module subModule) {
 		SBOLAnnotation subModelAnno = new SBOLAnnotation(subModel.getMetaId(),
 				subModule.getClass().getSimpleName(), subModule.getDefinitionURI()); 
 		AnnotationUtility.setSBOLAnnotation(subModel, subModelAnno);
 	}
-	
-	public static boolean isIOMapping(MapsTo mapping, Module subModule, SBOLDocument sbolDoc) {
+
+	private static boolean isIOMapping(MapsTo mapping, Module subModule, SBOLDocument sbolDoc) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		FunctionalComponent remoteComp = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
 		return isInputComponent(remoteComp) || isOutputComponent(remoteComp);
 	}
-	
-	public static boolean isTopDownMapping(MapsTo mapping) { 
+
+	private static boolean isTopDownMapping(MapsTo mapping) { 
 		RefinementType refinement = mapping.getRefinement();
 		return refinement == RefinementType.VERIFYIDENTICAL || refinement == RefinementType.MERGE
 				|| refinement == RefinementType.USELOCAL;
 	}
-	
-	public static boolean isInputComponent(FunctionalComponent comp) {
+
+	private static boolean isInputComponent(FunctionalComponent comp) {
 		return comp.getDirection().equals(DirectionType.IN);
 	}
-	
-	public static boolean isOutputComponent(FunctionalComponent comp) {
+
+	private static boolean isOutputComponent(FunctionalComponent comp) {
 		return comp.getDirection().equals(DirectionType.OUT) || comp.getDirection().equals(DirectionType.INOUT);
 	}
-	
-	public static boolean isDNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+
+	private static boolean isDNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isDNADefinition(compDef);
 	}
-	
-	public static boolean isDNADefinition(ComponentDefinition compDef) {
+
+	private static boolean isDNADefinition(ComponentDefinition compDef) {
 		return /*compDef.containsType(ChEBI.DNA) ||*/
 				compDef.containsType(ComponentDefinition.DNA);
 	}
-	
-	public static boolean isProteinComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+
+	private static boolean isProteinComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isProteinDefinition(compDef);
 	}
-	
-	public static boolean isProteinDefinition(ComponentDefinition compDef) {
+
+	private static boolean isProteinDefinition(ComponentDefinition compDef) {
 		return /*compDef.containsType(ChEBI.PROTEIN) ||*/
 				compDef.containsType(ComponentDefinition.PROTEIN);
 	}
-		
-	public static boolean isRNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+
+	private static boolean isRNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isRNADefinition(compDef);
 	}
-	
-	public static boolean isRNADefinition(ComponentDefinition compDef) {
+
+	/**
+	 * Determine if the given SBOL ComponentDefinition is a valid RNA species.
+	 * 
+	 * @param compDef - The SBOL ComponentDefinition to check if it is a valid RNA species.
+	 * @return True if the given ComponentDefinition is a valid RNA species
+	 */
+	private static boolean isRNADefinition(ComponentDefinition compDef) {
 		return compDef.containsType(ComponentDefinition.RNA);
 	}
-	
-	public static boolean isPromoterComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+
+	/**
+	 *  Determine if the given SBOL FunctionalComponent is a valid promoter.
+	 *  
+	 * @param comp - The SBOL FunctionalComponent to check if it is contained within the given SBOLDocument.
+	 * @param sbolDoc  - The SBOL Document to check if the given FunctionalComponent exist.
+	 * @return True if the given FunctionalComponent is a valid promoter. False otherwise.
+	 */
+	private static boolean isPromoterComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isPromoterDefinition(compDef);
 	}
-	
-	// TODO: need to figure out better if the CD is a promoter, need to look carefully at its subComponents
-	public static boolean isPromoterDefinition(ComponentDefinition compDef) {
+
+	/**
+	 * Determine if the given SBOL ComponentDefinition is a valid promoter.
+	 * 
+	 * @param compDef - The SBOL ComponentDefinition to check if it is a valid promoter.
+	 * @return True if the given ComponentDefinition is a valid promoter.
+	 */
+	private static boolean isPromoterDefinition(ComponentDefinition compDef) {
+		// TODO: need to figure out better if the CD is a promoter, need to look carefully at its subComponents
 		return isDNADefinition(compDef) /*
 				&& (compDef.containsRole(SequenceOntology.PROMOTER) ||
 						isGeneDefinition(compDef))*/;
 	}
-	
-	public static boolean isGeneComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+
+	/**
+	 * Determine if the given SBOL FunctionalComponent is Gene species.
+	 * 
+	 * @param comp - The SBOL FunctionalComponent to check if it is contained within the given SBOLDocument.
+	 * @param sbolDoc - The SBOL Document to check if the given FunctionalComponent exist 
+	 * @return True if the given FunctionalComponent could be converted to an SBML species. False otherwise.
+	 */
+	private static boolean isGeneComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isGeneDefinition(compDef);
 	}
-	
-	public static boolean isGeneDefinition(ComponentDefinition compDef) {
+
+	/**
+	 * Determine if the given SBOL ComponentDefinition is Gene species.
+	 * 
+	 * @param compDef - The SBOL ComponentDefinition to check if it is a valid Gene species
+	 * @return True if the given ComponentDefinition is a valid Gene species
+	 */
+	private static boolean isGeneDefinition(ComponentDefinition compDef) {
 		SequenceOntology so = new SequenceOntology();
 		boolean isGene = false;
 		for (URI role : compDef.getRoles()) {
@@ -723,54 +774,88 @@ public class SBOL2SBML {
 		}
 		return isDNADefinition(compDef) && isGene;
 	}
-	
-	public static boolean isSpeciesComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+
+	/**
+	 * Determine if the given SBOL FunctionComponent could be converted to an SBML species.
+	 * 
+	 * @param comp - The SBOL FunctionalComponent to check if it is contained within the given SBOLDocument.
+	 * @param sbolDoc - The SBOL Document to check if the given FunctionalComponent exist 
+	 * @return True if the given FunctionalComponent could be converted to an SBML species. False otherwise.
+	 * the FunctionalComponent is a valid SBML species type.
+	 */
+	private static boolean isSpeciesComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return true;
 		return isSpeciesDefinition(compDef);
 	}
-	
-	public static boolean isSpeciesDefinition(ComponentDefinition compDef) {
+
+	/**
+	 * Determine if the given SBOL ComponentDefinition is a valid SBML species.
+	 * 
+	 * @param compDef - The SBOL ComponentDefinition to check if it is a valid SBML species
+	 * @return True if the given ComponentDefinition is a valid SBML species
+	 */
+	private static boolean isSpeciesDefinition(ComponentDefinition compDef) {
 		return isComplexDefinition(compDef)
 				|| isProteinDefinition(compDef)
 				|| isRNADefinition(compDef)
-//				|| isTFDefinition(compDef)
+				//				|| isTFDefinition(compDef)
 				|| isSmallMoleculeDefinition(compDef)
 				|| compDef.containsType(ComponentDefinition.EFFECTOR);
 	}
-	
-	public static boolean isComplexComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+
+	private static boolean isComplexComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isComplexDefinition(compDef);
 	}
-	
-	public static boolean isSmallMoleculeComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+
+	/**
+	 * Determine if the given SBOL FunctionalComponent is Complex SBML species.
+	 * 
+	 * @param comp - The FunctionalComponent to determine if it is a Complex SBML species.
+	 * @param sbolDoc - The SBOL FunctionalComponent to check if it is a valid SBML species
+	 * @return True if the given FunctionalComponent is Complex SBML species. False otherwise. 
+	 */
+	private static boolean isSmallMoleculeComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isSmallMoleculeDefinition(compDef);
 	}
-	
-	public static boolean isComplexDefinition(ComponentDefinition compDef) {
+
+	/**
+	 * Determine if the given SBOL ComponentDefinition is Complex SBML species.
+	 * 
+	 * @param compDef - The ComponentDefinition to determine if it is a Complex SBML species.
+	 * @return True if the given ComponentDefinition is Complex SBML species. False otherwise. 
+	 */
+	private static boolean isComplexDefinition(ComponentDefinition compDef) {
 		return /*compDef.containsType(ChEBI.NON_COVALENTLY_BOUND_MOLECULAR_ENTITY) ||*/
 				compDef.containsType(ComponentDefinition.COMPLEX);
 	}
-	public static boolean isSmallMoleculeDefinition(ComponentDefinition compDef) {
+
+	/**
+	 * Determine if the given SBOL ComponentDefinition is Small Molecule SBML species.
+	 * 
+	 * @param compDef - The ComponentDefinition to determine if it is a Small Molecule SBML species.
+	 * @return True if the given ComponentDefinition is Small Molecule SBML species. False otherwise. 
+	 */
+	private static boolean isSmallMoleculeDefinition(ComponentDefinition compDef) {
 		return compDef.containsType(ComponentDefinition.SMALL_MOLECULE);
 	}
-	
-//	public static boolean isTFComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-//		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
-//		if (compDef==null) return false;
-//		return isTFDefinition(compDef);
-//	}
-//	
-//	public static boolean isTFDefinition(ComponentDefinition compDef) {
-//		return (isProteinDefinition(compDef) || isComplexDefinition(compDef))
-//				&& compDef.containsRole(MyersOntology.TF);
-//	}
-	
-	public static boolean isDegradationInteraction(Interaction interact, ModuleDefinition moduleDef, 
+
+	//	public static boolean isTFComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+	//		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
+	//		if (compDef==null) return false;
+	//		return isTFDefinition(compDef);
+	//	}
+	//	
+	//	public static boolean isTFDefinition(ComponentDefinition compDef) {
+	//		return (isProteinDefinition(compDef) || isComplexDefinition(compDef))
+	//				&& compDef.containsRole(MyersOntology.TF);
+	//	}
+
+	private static boolean isDegradationInteraction(Interaction interact, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc) {
 		if (interact.containsType(SystemsBiologyOntology.DEGRADATION) && interact.getParticipations().size() == 1) {
 			Participation partici = null;
@@ -787,18 +872,18 @@ public class SBOL2SBML {
 		}
 		return false;
 	}
-	
-	public static boolean isComplexFormationInteraction(Interaction interact, ModuleDefinition moduleDef, 
+
+	private static boolean isComplexFormationInteraction(Interaction interact, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc) {
 		if (interact.containsType(SystemsBiologyOntology.NON_COVALENT_BINDING)||
-			interact.containsType(URI.create("http://www.biopax.org/release/biopax-level3.owl#Complex"))) {
+				interact.containsType(URI.create("http://www.biopax.org/release/biopax-level3.owl#Complex"))) {
 			int complexCount = 0;
 			int ligandCount = 0;
 			for (Participation partici: interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 				if ((partici.containsRole(SystemsBiologyOntology.PRODUCT) ||
-					partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000253"))) && 
-					(isComplexComponent(comp, sbolDoc)||isSpeciesComponent(comp, sbolDoc))) 
+						partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000253"))) && 
+						(isComplexComponent(comp, sbolDoc)||isSpeciesComponent(comp, sbolDoc))) 
 					complexCount++;
 				else if ((partici.containsRole(SystemsBiologyOntology.REACTANT) ||
 						partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000280"))) && 
@@ -812,8 +897,8 @@ public class SBOL2SBML {
 		}
 		return false;
 	}
-	
-	public static boolean isProductionInteraction(Interaction interact, ModuleDefinition moduleDef,
+
+	private static boolean isProductionInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
 		if (interact.containsType(SystemsBiologyOntology.GENETIC_PRODUCTION) && interact.getParticipations().size() == 2/*3*/) {
 			boolean hasPromoter = false;
@@ -836,8 +921,8 @@ public class SBOL2SBML {
 		}
 		return false;
 	}
-	
-	public static boolean isActivationInteraction(Interaction interact, ModuleDefinition moduleDef,
+
+	private static boolean isActivationInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
 		if ((interact.containsType(SystemsBiologyOntology.GENETIC_ENHANCEMENT) ||
 				interact.containsType(SystemsBiologyOntology.STIMULATION)) 
@@ -857,8 +942,8 @@ public class SBOL2SBML {
 		}
 		return false;
 	}
-	
-	public static boolean isRepressionInteraction(Interaction interact, ModuleDefinition moduleDef,
+
+	private static boolean isRepressionInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
 		if ((interact.containsType(SystemsBiologyOntology.GENETIC_SUPPRESSION) ||
 				interact.containsType(SystemsBiologyOntology.INHIBITION))
@@ -878,7 +963,7 @@ public class SBOL2SBML {
 		}
 		return false;
 	}
-	
+
 	private static void usage() {
 		System.err.println("SBOL2SBML");
 		System.err.println("Description: converts SBOL into SBML.");
@@ -890,18 +975,18 @@ public class SBOL2SBML {
 		System.err.println("\t-u  URI of ModuleDefinition to convert (optional)");
 		System.exit(1);
 	}
-	
-		
+
+
 	public static void main(String[] args) {
 		String inputName = null;
 		String outputName = null;
 		String uri = null;
 		String outputDir = null;
 		String inputDir = null; 
-		
+
 		File fileFullPath;
 		//GOAL: inputFile -o outputLocation -u optionalURI
-		
+
 		if(args.length == 0){
 			usage();
 		}
@@ -938,16 +1023,16 @@ public class SBOL2SBML {
 					usage();
 					return;
 				}
-				
+
 			}
 
 			SBOLDocument sbolDoc;
 			try {
 				sbolDoc = SBOLReader.read(new FileInputStream(inputDir + inputName));
-				String projectDirectory = "."; //TODO: why put . for project directory?
+				String projectDirectory = ".";
 				if (outputName!=null) 
 					projectDirectory = outputName;
-				
+
 				if(uri!=null){
 					ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(uri));
 					List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
@@ -980,9 +1065,9 @@ public class SBOL2SBML {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (XMLStreamException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		}
 	}

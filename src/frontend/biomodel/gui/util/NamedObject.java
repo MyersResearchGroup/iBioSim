@@ -13,6 +13,12 @@
  *******************************************************************************/
 package frontend.biomodel.gui.util;
 
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public interface NamedObject {
 	/**
 	 * Returns the object's name

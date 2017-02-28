@@ -15,7 +15,12 @@ package frontend.biomodel.gui.util;
 
 import javax.swing.JButton;
 
-
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public abstract class AbstractRunnableNamedButton extends JButton implements NamedObject,
 		Runnable {		
 	

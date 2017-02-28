@@ -207,8 +207,11 @@ import frontend.verification.Verification;
  * are selected.
  * 
  * @author Curtis Madsen
+ * @author Tramy Nguyen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class Gui implements Observer, MouseListener, ActionListener, MouseMotionListener, MouseWheelListener
 {
 

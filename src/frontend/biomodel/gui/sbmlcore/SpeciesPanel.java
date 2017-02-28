@@ -55,6 +55,13 @@ import frontend.biomodel.gui.util.PropertyField;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.Gui;
 
+
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SpeciesPanel extends JPanel implements ActionListener {
 
 	/**

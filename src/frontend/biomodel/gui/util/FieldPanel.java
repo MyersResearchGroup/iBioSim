@@ -29,8 +29,9 @@ import javax.swing.JTextField;
  * Describes a panel that contains a label and field with a value
  * 
  * @author Nam Nguyen
- * @organization University of Utah
- * @email namphuon@cs.utah.edu
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class FieldPanel extends JPanel implements NamedObject, FocusListener {
 

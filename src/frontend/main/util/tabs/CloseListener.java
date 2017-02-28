@@ -22,6 +22,12 @@ package frontend.main.util.tabs;
 import java.awt.event.MouseEvent;
 import java.util.EventListener;
 
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public interface CloseListener extends EventListener {
 	public void closeOperation(MouseEvent e);
 }

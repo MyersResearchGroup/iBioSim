@@ -43,8 +43,10 @@ import java.util.prefs.Preferences;
  * results from the ATACS GUI.
  * 
  * @author Kevin Jones
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class Synthesis extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;

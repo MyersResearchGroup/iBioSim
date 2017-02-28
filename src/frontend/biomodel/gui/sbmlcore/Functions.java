@@ -60,7 +60,8 @@ import org.sbml.jsbml.JSBML;
  * This is a class for creating SBML functions
  * 
  * @author Chris Myers
- * 
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Functions extends JPanel implements ActionListener, MouseListener {
 

@@ -46,6 +46,9 @@ import frontend.main.Gui;
  * it allows you to change color gradients for things
  * 
  * @author jason (sarbruis@gmail.com)
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class SchemeChooserPanel extends JPanel implements ActionListener {
 

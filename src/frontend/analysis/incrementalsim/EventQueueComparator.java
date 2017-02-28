@@ -14,6 +14,12 @@
 package frontend.analysis.incrementalsim;
 import java.util.Comparator;
 
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class EventQueueComparator implements Comparator<EventQueueElement>{
 	@Override
 	public int compare(EventQueueElement e1, EventQueueElement e2) {

@@ -45,7 +45,13 @@ import dataModels.biomodel.parser.CompatibilityFixer;
 import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
 
-
+/**
+ * 
+ *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class EditPreferences {
 
 	private JCheckBox Undeclared, Units;

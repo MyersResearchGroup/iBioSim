@@ -165,6 +165,9 @@ import frontend.main.util.SpringUtilities;
  * when text is entered into the model's ID.
  * 
  * @author Nam Nguyen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class ModelEditor extends JPanel implements ActionListener, MouseListener, ChangeListener, Observer {
 

@@ -14,19 +14,18 @@
 package test.conversion;
 
 import java.io.File;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.junit.Test;
 import conversion.SBML2SBOL;
 import conversion.SBOL2SBML;
 
-
 /**
  * Class to test roundtripping for SBML and SBOL files in SBML2SBOL and SBOL2SBML conversion.
- *  
+ *
  * @author Tramy Nguyen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class RoundtripTest extends ConversionAbstractTests{
 	

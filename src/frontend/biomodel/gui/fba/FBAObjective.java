@@ -44,6 +44,12 @@ import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 import frontend.main.util.Utility;
 
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class FBAObjective extends JPanel implements ActionListener, MouseListener {
 	
 	private static final long serialVersionUID = 1L;
