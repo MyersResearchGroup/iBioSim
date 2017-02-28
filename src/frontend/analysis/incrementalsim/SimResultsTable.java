@@ -1,4 +1,4 @@
-package backend.analysis.incrementalsim;
+package frontend.analysis.incrementalsim;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;

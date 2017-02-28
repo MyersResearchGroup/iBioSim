@@ -1,4 +1,4 @@
-package backend.analysis.incrementalsim;
+package frontend.analysis.incrementalsim;
 import java.util.Comparator;
 
 public class EventQueueComparator implements Comparator<EventQueueElement>{
