@@ -99,6 +99,9 @@ import frontend.verification.AbstPane;
  * to execute many analysis programs at the same time on different threads.
  * 
  * @author Curtis Madsen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class AnalysisView extends JPanel implements ActionListener, Runnable, MouseListener
 {

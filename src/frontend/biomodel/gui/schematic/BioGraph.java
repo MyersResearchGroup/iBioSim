@@ -76,8 +76,11 @@ import frontend.biomodel.gui.movie.MovieAppearance;
 import frontend.main.Gui;
  
 /**
+ * 
  * @author Tyler tpatterson80@gmail.com
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class BioGraph extends mxGraph {
 

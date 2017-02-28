@@ -45,7 +45,12 @@ import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.biomodel.gui.schematic.Utils;
 import frontend.main.Gui;
 
-
+/**
+ *  
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ModelPanel extends JButton implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;

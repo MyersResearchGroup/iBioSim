@@ -20,7 +20,9 @@ import java.awt.GradientPaint;
  * this class exists to store information in a way that works with JSON
  * 
  * @author jason
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class SerializableScheme {
 		

@@ -16,6 +16,12 @@ package frontend.main;
 import java.awt.*;
 import javax.swing.*;
 
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Log extends JPanel {
 
 	/**

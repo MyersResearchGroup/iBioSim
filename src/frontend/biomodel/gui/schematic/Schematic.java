@@ -118,7 +118,12 @@ import frontend.biomodel.gui.sbmlcore.Rules;
 import frontend.biomodel.gui.sbmlcore.SpeciesPanel;
 import frontend.main.Gui;
 
-
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Schematic extends JPanel implements ActionListener {
 		
 	//CLASS VARIABLES

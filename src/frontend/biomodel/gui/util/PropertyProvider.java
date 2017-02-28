@@ -17,8 +17,9 @@ package frontend.biomodel.gui.util;
  * Objects that implement this interface provide
  * a key/value pair.
  * @author Nam Nguyen
- * @organization University of Utah
- * @email namphuon@cs.utah.edu
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public interface PropertyProvider {
 	public String getKey();

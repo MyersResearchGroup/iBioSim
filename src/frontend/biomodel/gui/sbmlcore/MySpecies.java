@@ -59,7 +59,8 @@ import frontend.main.util.Utility;
  * This is a class for creating SBML species
  * 
  * @author Chris Myers
- * 
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class MySpecies extends JPanel implements ActionListener, MouseListener {
 

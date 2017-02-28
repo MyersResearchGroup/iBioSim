@@ -69,7 +69,12 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
-
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class MovieContainer extends JPanel implements ActionListener {
 
 	public static final String COLOR_PREPEND = "_COLOR";

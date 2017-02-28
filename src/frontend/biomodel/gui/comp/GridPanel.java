@@ -34,8 +34,11 @@ import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.main.Gui;
 
 /**
+ * 
  * @author jason
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class GridPanel extends JPanel implements ActionListener {
 	

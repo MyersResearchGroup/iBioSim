@@ -38,8 +38,6 @@ import javax.swing.ListSelectionModel;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Compartment;
-//CompartmentType not supported in Level 3
-//import org.sbml.jsbml.CompartmentType;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
@@ -64,7 +62,9 @@ import org.sbml.jsbml.UnitDefinition;
  * This is a class for creating SBML comparments
  * 
  * @author Chris Myers
- * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Compartments extends JPanel implements ActionListener, MouseListener {
 
@@ -77,8 +77,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private JTextField compID, compSize, compName; // compartment fields;
 
 	private JComboBox compUnits, CompConstants; // compartment units
-
-//	private JComboBox compTypeBox; // compartment type combo box
 
 	private JTextField dimText;
 

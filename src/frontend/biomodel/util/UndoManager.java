@@ -13,9 +13,14 @@
  *******************************************************************************/
 package frontend.biomodel.util;
 
-//import java.util.Deque;
 import java.util.LinkedList;
 
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class UndoManager {
 	private LinkedList<Object> undoStack;
 	private LinkedList<Object> redoStack;

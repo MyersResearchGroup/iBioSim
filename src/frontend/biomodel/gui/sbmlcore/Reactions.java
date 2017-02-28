@@ -73,7 +73,8 @@ import frontend.main.util.Utility;
  * This is a class for creating SBML parameters
  * 
  * @author Chris Myers
- * 
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Reactions extends JPanel implements ActionListener, MouseListener {
 

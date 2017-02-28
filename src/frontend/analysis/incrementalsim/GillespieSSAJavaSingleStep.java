@@ -37,6 +37,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.xml.stream.XMLStreamException;
 
+
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class GillespieSSAJavaSingleStep {
 	// SpeciesIndex maps from each species to a column index. 
 	// ReactionsIndex maps from each reaction to a row index.
@@ -49,16 +56,15 @@ public class GillespieSSAJavaSingleStep {
 	private HashMap<String, Double> SpeciesList = new HashMap<String, Double>();
 	private HashMap<String, Double> GlobalParamsList = new HashMap<String, Double>();
 	private HashMap<String, ArrayList<Double>> EventAssignAtTriggerTime = new HashMap<String, ArrayList<Double>>();	
-	// static HashMap<String, Double> GlobalParamsChangeList = new HashMap<String, Double>();
-	// static HashMap<String, Double> CompartmentList = new HashMap<String, Double>();
+	
 	private HashMap<String, Double> PropensityFunctionList = new HashMap<String, Double>();
 	private HashMap<String, Boolean> EnoughMolecules = new HashMap<String, Boolean>();
 	private String SpeciesID;
 	private String GlobalParamID;
-	// private String CompartmentID;
+	
 	private double SpeciesInitAmount;
 	private double GlobalParamValue;
-	// private double ComparmentSize;
+	
 	private double PropensityFunctionValue = 0;
 	private double PropensitySum=0.0;
 	private double PropensityFunctionValueFW = 0;
@@ -92,7 +98,6 @@ public class GillespieSSAJavaSingleStep {
 	public void PerformSim (String SBMLFileName,String outDir, double timeLimit, double timeStep, long rndSeed, Graph graph) throws FileNotFoundException{  
 	 int optionValue = -1;
 	 randSeed = rndSeed;
-	 //  System.out.println("outDir = " + outDir);
 	 String outTSDName = outDir + "/run-1.tsd";
 	 output = new FileOutputStream(outTSDName);
 	 outTSD = new PrintStream(output);
@@ -115,24 +120,7 @@ public class GillespieSSAJavaSingleStep {
 		 else
 			 NumIrreversible ++;
 	 }
-/*
-    model = document.getModel();
-    long num = model.getReactionCount();	
-    int iter = 0;
-    while (iter < 100000) {
-    	for (long i = 0; i < num; i++) {
-   		  Reaction reaction = model.getReaction(i);
-   		  for (long a = 0; a < reaction.getReactantCount(); a++) {
-   			  SpeciesReference reactant = reaction.getReactant(a);
-   			  reactant.getSpecies();
-   			  reactant.getStoichiometry();
-   		  }
- 		}
-    	System.out.println(""+iter);
-    	++iter;
-    }
-    System.out.println("GOT HERE");
-*/
+
 	 
 	 NumReactions = 2*NumReversible + NumIrreversible;
 	 StateChangeVector=new double[NumReactions][model.getSpeciesCount()];
@@ -182,26 +170,13 @@ public class GillespieSSAJavaSingleStep {
 		 // print the initial values
 		 printTSDVals();
 	 }
-
-	 //Currently, we assume only one compartment in one SBML file
-	 // get compartments and their sizes. 
-	 //  if (model.getCompartmentCount() !=0){
-	 //  for (int i=0;i<model.getCompartmentCount();i++){
-	 //  CompartmentID = model.getListOfCompartments().get(i).getId();
-	 //  ComparmentSize = model.getListOfCompartments().get(i).getSize();
-	 ////  CompartmentList.put(CompartmentID, ComparmentSize);
-	 ////  System.out.println("Compartment " + i + "=" + CompartmentID);
-	 ////  System.out.println("CompartmentSize = " + ComparmentSize);
-	 //  }
-	 //  }
 	 
 	 // initialize state change vector
 	 int index = 0;
 	 int l = 0;
 	 while (index<NumReactions){
 		 Reaction currentReaction = model.getListOfReactions().get(l);
-		 // System.out.println("currentReaction = " + currentReaction.getId());
-		 // irreversible reaction
+		 
 		 if (!currentReaction.getReversible()){
 			 String currentReactionID = currentReaction.getId();
 			 ReactionsToIndex.put(currentReactionID, index);
@@ -252,11 +227,6 @@ public class GillespieSSAJavaSingleStep {
 		  for(int i=0; i< eventList.size();i++){
 			  Event event = eventList.get(i); 
 			  Trigger trigger = event.getTrigger();
-//			  if (event.getUseValuesFromTriggerTime()) {
-//				  JOptionPane.showMessageDialog(Gui.frame, "The simulator does not currently support UseValuesFromTriggerTime.",
-//							"Error in trigger", JOptionPane.ERROR_MESSAGE);
-//				  break;
-//			  }
 			  if (trigger.getInitialValue()) {
 				  prevTriggerValArray[i] = true;
 			  }
@@ -269,17 +239,7 @@ public class GillespieSSAJavaSingleStep {
 		  eventQueue = new PriorityQueue<EventQueueElement>(initEventQueueCap, comparator);
 	 }
 	 graph.editGraph();	  
-	 
-	//  // Create a table to hold the results
-	//  DefaultTableModel tableModel = new DefaultTableModel();
-	//  tableModel.addColumn("t");
-	//  tableModel.addColumn("tau");
-	//  tableModel.addColumn("Next Reaction");
-	//  SimResultsTable simResultsTbl = new SimResultsTable(tableModel);
-	//  JFrame tableFrame = new JFrame("Simulation Results");
-	//  simResultsTbl.showTable(tableFrame, simResultsTbl);
-	 
-	//  ##########################################
+
 	 double deltaTime = 0.01; // deltaTime is used to add to timeLimit, so that the while loop can terminate
 	 while (time<=timeLimit) {
 		  // 2. Update and fire events; evaluate propensity functions
@@ -310,13 +270,13 @@ public class GillespieSSAJavaSingleStep {
 		  // get the reactions  
 		  for (int i=0;i<model.getReactionCount();i++){
 			  Reaction currentReaction = model.getListOfReactions().get(i);
-			  //outTXT.println("Reactions" + i + ": " + currentReaction.getId());  
+			   
 			  boolean ModifierNotEmpty = true;
 			  if (currentReaction.getModifierCount()>0){
 				  for (int k=0; k<currentReaction.getModifierCount();k++){
 					  if (SpeciesList.get(currentReaction.getModifier(k).getSpecies())==0.0){
 						  ModifierNotEmpty = false;
-						  //break;
+						  
 					  }
 				  }
 			  }
@@ -335,7 +295,7 @@ public class GillespieSSAJavaSingleStep {
 			  if (currentListOfLocalParams.size() > 0){  
 				 for (int j=0; j<currentListOfLocalParams.size(); j++){
 					 LocalParamsList.put(currentListOfLocalParams.get(j).getId(), currentListOfLocalParams.get(j).getValue());  
-					//System.out.println("Local Param " + currentListOfLocalParams.get(j).getId()+ " = " + currentListOfLocalParams.get(j).getValue());
+					
 				 }
 			  }
 			  // calculate propensity function.
@@ -385,10 +345,8 @@ public class GillespieSSAJavaSingleStep {
 					  }
 				  }
 				  if (EnoughMolecules.get(currentReactionID)) {
-	//			  	System.out.println("FW current AST Node = " + currentASTNode.getType());
-	//			    System.out.println("FW current left child = " + currentASTNode.getLeftChild().getType());
 				    PropensityFunctionValueFW = Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), LocalParamsList));
-	//			    System.out.println("PropensityFunctionValueFW = " + PropensityFunctionValueFW);
+	
 				  }
 			      PropensitySum = PropensitySum + PropensityFunctionValueFW;
 			      PropensityFunctionList.put(currentReactionID, PropensityFunctionValueFW);
@@ -492,18 +450,7 @@ public class GillespieSSAJavaSingleStep {
 				 runUntil = Double.parseDouble(CustomParamsReactionMenu[0]);
 				 miu = ReactionsToIndex.get(CustomParamsReactionMenu[1]);
 				 hasRunModeStarted = true;
-				// ********************(obsolete) Create another pop-up window to specify the time to run ******************
-				//  String[] CustomParamsRun = openRunMenu();
-				//  int runUntil_optVal = Integer.parseInt(CustomParamsRun[1]);
-				//  // runUntil_optVal: 0=Run, 1=Cancel
-				//  if (runUntil_optVal == 0) {
-				//  runUntil = t + Double.parseDouble(CustomParamsRun[0]);
-				//  hasRunModeStarted = true;
-				//  }
-				//  else { // runUntil_optVal == 1 (Cancel)
-				//  continue;
-				//  }
-				// ****************************************************************************************************
+				
 			 }
 			 else {  // optionValue == 2 (terminate)
 				 break;
@@ -511,7 +458,7 @@ public class GillespieSSAJavaSingleStep {
 		 }
 		 
 		 // 5. Determine the new state: time = time + tau and x = x + v[miu]
-//		 double t_current = time;
+
 		 if (nextTime <= time+tau)
 			 time = nextTime;
 		 else
@@ -527,12 +474,7 @@ public class GillespieSSAJavaSingleStep {
 					SpeciesList.put(SpeciesToUpdate, SpeciesToUpdateAmount);
 				} 
 			 }
-		 }		 
-		 //  // Print results to a table and display it. 
-		 //  if ((!isRunMode && !hasRunModeStarted) || (isRunMode && t >= runUntil)){
-		 //  tableModel.addRow(new Object[]{t_current, tau, IndexToReactions.get(miu)});
-		 //  simResultsTbl.showTable(tableFrame, simResultsTbl);
-		 //  }
+		 }	
 		 printTSDVals();
 		 if ((!isRunMode && !hasRunModeStarted) || (isRunMode && time >= runUntil)) {
 			 graph.refresh();
@@ -719,11 +661,9 @@ public class GillespieSSAJavaSingleStep {
 		 for (int j = 0; j < eventToRemoveArray.size(); j ++) {
 			 String eventToRemove = eventToRemoveArray.get(j);
 			 for (Iterator<EventQueueElement> eventQueueIterator = eventQueue.iterator();eventQueueIterator.hasNext();) {
-//				 System.out.println("eventQueueIterator.hasNext() = " + eventQueueIterator.hasNext());
-//				 System.out.println("eventQueueIterator.next() = " + eventQueueIterator.next().getEventId());
+
 				 EventQueueElement currEventQueueElement = eventQueueIterator.next();
 			 	 if (eventToRemove.equals(currEventQueueElement.getEventId())) {
-//			 		 eventQueue.remove(currEventQueueElement);
 			 		 eventQueueElemToRemoveArray.add(currEventQueueElement);		 		 
 			 	 }
 			 }
@@ -1005,32 +945,6 @@ public class GillespieSSAJavaSingleStep {
 		return CustomParamsReactionMenu;
 	}
 	 
-	// public String[] openRunMenu(){
-	// int optlVal;
-	// String[] runTimeLimit_optVal = new String[2];
-	// do {
-	// JPanel runTimeLimitPanel = new JPanel();
-	// runTimeLimitPanel.add(new JLabel("Time limit to run:"));
-	// JTextField runTimeLimit = new JTextField(10);
-	// runTimeLimitPanel.add(runTimeLimit);
-	// Object[] options = {"Run", "Cancel"};
-	// optlVal = JOptionPane.showOptionDialog(BioSim.frame, runTimeLimitPanel, "Specify Run Time Limit",
-	// JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-	// runTimeLimit_optVal[0] = runTimeLimit.getText().trim();
-	// runTimeLimit_optVal[1] = "" + optlVal;
-	//// System.out.println("runUntil_optVal[0] = " +  runUntil_optVal[0]);
-	// if (optlVal == 0 && runTimeLimit_optVal[0].equals("")) {
-	//  JOptionPane.showMessageDialog(BioSim.frame, "Please specify a time limit.",
-	// "Error in Run", JOptionPane.ERROR_MESSAGE);  
-	// }
-	// if (optlVal == 1) {
-	// break;
-	// }
-	// }
-	// while (optlVal == 0 && runTimeLimit_optVal[0].equals(""));
-	// return runTimeLimit_optVal; 
-	// }
-	
 	public String[] openEventInteractiveMenu(ArrayList<EventQueueElement> eventReadyArray) {
 		String[] CustomParamsEventMenu=new String[2];
 		JPanel nextEventsPanel = new JPanel();
@@ -1085,9 +999,8 @@ public class GillespieSSAJavaSingleStep {
 	private int openReactionDialogue() {
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		JPanel tNextPanel = new JPanel();
-//		String newline = System.getProperty("line.separator");
 		tNextPanel.add(new JLabel("<html>The next simulation time will stop at " + nextTime + " in stead of " + nextReactionTime + " . <br></br>Would you like to enter a new next reaction time? </html>"));
-//		tNextPanel.add(new JLabel("Would you like to enter a new next reaction time? "));
+
 		mainPanel.add(tNextPanel, "Center");
 		Object[] options = {"Enter a new value", "Proceed with the current value"};
 		int optValue;

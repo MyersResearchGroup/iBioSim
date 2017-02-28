@@ -43,7 +43,12 @@ import dataModels.util.exceptions.BioSimException;
 import frontend.main.*;
 import frontend.main.util.*;
 
-
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class DataManager extends JPanel implements ActionListener, TableModelListener, ListSelectionListener, Observer {
 
 	private static final long serialVersionUID = -2669704247953218544L;

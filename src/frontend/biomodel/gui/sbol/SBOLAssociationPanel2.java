@@ -37,6 +37,15 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
 
+/**
+ * 
+ *
+ * @author Nicholas Roehner
+ * @author Tramy Nguyen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SBOLAssociationPanel2 extends JPanel implements ActionListener 
 {
 
@@ -45,14 +54,12 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 	 */
 	private static final long serialVersionUID = 1L;
 	private SBOLDocument SBOLDOC; 
-//	private static final long serialVersionUID = 1L;
 	private HashSet<String> sbolFilePaths;
 	private List<URI> compURIs;
 	private List<URI> defaultCompURIs;
 	private boolean defaultMinusBoxState;
 	private Set<URI> soTypes;
 	private ModelEditor modelEditor; 
-//	private UseFirstFound<DnaComponent, URI> aggregateCompResolver; 
 	private JList compList 	   = new JList();
 	private JCheckBox minusBox = new JCheckBox();
 	private String[] options;
@@ -145,16 +152,10 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 				panelOpen();
 		}
 		
-		//TODO: comment out for now
-//			SBOLDOC = SBOLUtility2.loadSBOLFiles(sbolFilePaths);
-//			
-//			if (setComponentIDList())
-//				panelOpen();
 	}
 	
 	private boolean loadSBOLFiles(HashSet<String> sbolFilePaths) 
 	{
-//		LinkedList<Resolver<DnaComponent, URI>> compResolvers = new LinkedList<Resolver<DnaComponent, URI>>();
 		
 		for (String filePath : sbolFilePaths) 
 		{
@@ -165,8 +166,6 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 				if (sbolDoc != null) 
 				{
 					//Remove duplicate objects within an sbol document
-//					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
-//					compResolvers.add(flattenedDoc.getComponentUriResolver());
 					for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
 					{
 						if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
@@ -201,8 +200,6 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 			
 		}
 		
-//		aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
-//		aggregateCompResolver.setResolvers(compResolvers);
 		
 		if (sbolFilePaths.size() == 0) 
 		{
@@ -230,7 +227,6 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 			} 
 			else 
 			{
-//				DnaComponent resolvedComp = null;
 				ComponentDefinition resolvedComp = null; 
 				resolvedComp = SBOLDOC.getComponentDefinition(uri);
 				if (resolvedComp == null) {
@@ -309,14 +305,6 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 		setComponentIDList();
 	}
 	
-//	@SuppressWarnings("unused")
-//	private LinkedList<URI> getSelectedURIs() {
-//		LinkedList<URI> selectedURIs = new LinkedList<URI>();
-//		int[] selectedIndices = compList.getSelectedIndices();
-//		for (int i = 0; i < selectedIndices.length; i++)
-//			selectedURIs.add(compURIs.get(selectedIndices[i]));
-//		return selectedURIs;
-//	}
 	
 	private void insertComponentURIs(LinkedList<URI> insertionURIs) 
 	{
@@ -361,8 +349,6 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 		int[] selectedIndices = compList.getSelectedIndices();
 		if (selectedIndices.length == 0) {
 			return;
-			// TODO: Removed, not sure purpose of this
-			//selectedIndices = new int[]{compURIs.size() - 1};
 		}
 		for (int i = selectedIndices.length; i > 0; i--) {
 			URI compURI = compURIs.remove(selectedIndices[i - 1]);
@@ -402,7 +388,6 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 		else if (e.getSource() == editDescriptors) 
 		{
 			Gui gui = modelEditor.getGui();
-//			SBOLFileManager fileManager = new SBOLFileManager(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
 			SBOLFileManager2 fileManager;
 			try {
 				fileManager = new SBOLFileManager2(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
@@ -412,21 +397,17 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 				{
 					if (fileManager.sbolFilesAreLoaded()) 
 					{
-//						SBOLIdentityManager identityManager = new SBOLIdentityManager(modelEditor.getBioModel());
 						SBOLIdentityManager2 identityManager = new SBOLIdentityManager2(modelEditor.getBioModel());
-//						SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
 						SBOLDescriptorPanel2 descriptorPanel = new SBOLDescriptorPanel2(identityManager, fileManager);
 						while (descriptorPanel.panelOpen(identityManager, fileManager));
 					}
 				} 
 				else 
 				{
-//					DnaComponent dnaComponent = null;
 					ComponentDefinition dnaComponent = null;
 					String SBOLFileName = "";
 					for (String s : fileManager.getSBOLFilePaths()) 
 					{
-//						dnaComponent = fileManager.resolveDisplayID((String)compList.getSelectedValue(), s);
 						dnaComponent = SBOLDOC.getComponentDefinition(compURIs.get(compList.getSelectedIndex()));
 						if (dnaComponent!= null) 
 						{
@@ -461,7 +442,6 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener
 		} 
 		else if (e.getSource() == add) 
 		{
-//			SBOLBrowser browser = new SBOLBrowser(sbolFilePaths, soTypes);
 			SBOLBrowser2 browser = new SBOLBrowser2(sbolFilePaths, soTypes);
 			insertComponentURIs(browser.getSelection());
 		} 

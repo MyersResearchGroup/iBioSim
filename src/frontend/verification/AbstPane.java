@@ -32,16 +32,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
-
-
 /**
  * This class creates a GUI front end for the Verification tool. It provides the
  * necessary options to run an atacs simulation of the circuit and manage the
  * results from the BioSim GUI.
  * 
  * @author Kevin Jones
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;

@@ -57,6 +57,14 @@ import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.Utility;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SynthesisView extends JTabbedPane implements ActionListener, Runnable {
 
   private static final long serialVersionUID = 1L;

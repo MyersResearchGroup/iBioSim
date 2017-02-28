@@ -23,9 +23,6 @@ import frontend.biomodel.gui.util.Runnable;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-
-
 
 /**
  * This class creates a GUI front end for the Verification tool. It provides the
@@ -33,8 +30,10 @@ import java.io.File;
  * results from the BioSim GUI.
  * 
  * @author Kevin Jones
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
-
 public class ParamEditor extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -5806315070287184299L;

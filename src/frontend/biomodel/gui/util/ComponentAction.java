@@ -19,6 +19,12 @@ import javax.swing.AbstractAction;
 
 import frontend.main.Gui;
 
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ComponentAction extends AbstractAction {
 
 	/**

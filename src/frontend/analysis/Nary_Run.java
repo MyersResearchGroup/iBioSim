@@ -56,6 +56,9 @@ import frontend.verification.AbstPane;
  * GUI to perform actions when buttons are pressed.
  * 
  * @author Curtis Madsen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Nary_Run implements ActionListener, Runnable
 {

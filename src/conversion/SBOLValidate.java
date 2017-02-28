@@ -29,7 +29,8 @@ import org.sbolstandard.core2.TopLevel;
  * 
  * @author Zhen Zhang
  * @author Chris Myers
- * @version 2.1
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class SBOLValidate {
 

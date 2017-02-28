@@ -31,15 +31,15 @@ import dataModels.util.dataparser.*;
 import dataModels.util.exceptions.BioSimException;
 import frontend.main.*;
 
-
-//import org.sbml.jsbml.*;
-
 /**
  * This class creates a GUI for the Learn program. It implements the
  * ActionListener class. This allows the GUI to perform actions when menu items
  * and buttons are selected.
  * 
  * @author Curtis Madsen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class LearnLPN extends JPanel implements ActionListener, Runnable, ItemListener, Observer { // added ItemListener SB
 

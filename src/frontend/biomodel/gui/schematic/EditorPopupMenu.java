@@ -25,6 +25,12 @@ import frontend.biomodel.gui.comp.GridAction;
 import frontend.biomodel.gui.util.ComponentAction;
 import frontend.main.Gui;
 
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class EditorPopupMenu extends JPopupMenu
 {
 

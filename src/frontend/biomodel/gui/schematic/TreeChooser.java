@@ -26,7 +26,12 @@ import javax.swing.tree.TreePath;
 
 import dataModels.util.GlobalConstants;
 
-
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class TreeChooser extends JPanel {
 
 	private static final long serialVersionUID = 1L;

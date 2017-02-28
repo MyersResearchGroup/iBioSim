@@ -53,7 +53,8 @@ import org.sbml.jsbml.SpeciesReference;
  * This is a class for creating SBML initial assignments
  * 
  * @author Chris Myers
- * 
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class InitialAssignments extends JPanel implements ActionListener, MouseListener {
 

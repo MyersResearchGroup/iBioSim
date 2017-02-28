@@ -75,14 +75,15 @@ import frontend.main.Gui;
 
 /**
  * UI for <code>CloseAndMaxTabbedPane</code>.
- * <p>
- * Credits to:
  * 
  * @author Amy Fowler
  * @author Philip Milne
  * @author Steve Wilson
  * @author Tom Santos
  * @author Dave Moore
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class CloseTabPaneUI extends BasicTabbedPaneUI {
 

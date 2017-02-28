@@ -19,7 +19,12 @@ import java.util.Properties;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
-
+/**
+ * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class PropertyList extends JList implements EnableElement, NamedObject,
 		Runnable {
 

@@ -18,8 +18,9 @@ package frontend.biomodel.gui.util;
  * This interface keeps track of when things
  * are enabled or disabled
  * @author Nam Nguyen
- * @organization University of Utah
- * @email namphuon@cs.utah.edu
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public interface EnableElement {
 	/**
