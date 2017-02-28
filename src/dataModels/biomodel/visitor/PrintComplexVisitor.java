@@ -27,6 +27,14 @@ import dataModels.biomodel.util.SBMLutilities;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class PrintComplexVisitor extends AbstractPrintVisitor {
 	
 	public PrintComplexVisitor(SBMLDocument document, HashMap<String, SpeciesInterface> species,

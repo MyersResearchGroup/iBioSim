@@ -20,8 +20,9 @@ import dataModels.biomodel.visitor.SpeciesVisitor;
  * are a construct created to handle special reactions where
  * production/degradation reactions are not created.
  * @author Nam Nguyen
- * @organization University of Utah
- * @email namphuon@cs.utah.edu
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class NullSpecies extends AbstractSpecies {
 

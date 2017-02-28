@@ -16,6 +16,14 @@ package dataModels.biomodel.network;
 
 import dataModels.biomodel.visitor.SpeciesVisitor;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ComplexSpecies extends AbstractSpecies {
 	
 

@@ -26,6 +26,14 @@ import java.util.Map;
 import gnu.trove.map.hash.TDoubleObjectHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class DTSDParser {
 
 	private LinkedHashMap<Double, HashMap<String, Double> > timeToDataMapMap = 

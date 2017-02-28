@@ -43,7 +43,9 @@ import dataModels.util.GlobalConstants;
  * This class parses a genetic circuit model.
  * 
  * @author Nam Nguyen
- * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class GCMParser {
 	

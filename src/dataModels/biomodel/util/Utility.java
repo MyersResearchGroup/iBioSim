@@ -56,7 +56,9 @@ import org.sbml.jsbml.ModifierSpeciesReference;
  * of the class exists at any time.
  * 
  * @author Nam
- * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Utility {
 	private Utility() {

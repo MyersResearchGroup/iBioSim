@@ -19,6 +19,14 @@ package dataModels.biomodel.util;
 
 import java.util.HashMap;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ExperimentResult {
 
 	public ExperimentResult(HashMap<String, double[]> results) {

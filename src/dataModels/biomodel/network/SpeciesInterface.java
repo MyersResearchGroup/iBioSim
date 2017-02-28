@@ -19,7 +19,9 @@ import dataModels.biomodel.visitor.VisitableSpecies;
  * This interface describes a species. Species are nodes in the graph
  * 
  * @author Nam Nguyen
- * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public interface SpeciesInterface extends VisitableSpecies {
 

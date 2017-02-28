@@ -18,7 +18,9 @@ package dataModels.biomodel.network;
  * graph. All species are derived from this class.
  * 
  * @author Nam Nguyen
- * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public abstract class AbstractSpecies implements SpeciesInterface {
 

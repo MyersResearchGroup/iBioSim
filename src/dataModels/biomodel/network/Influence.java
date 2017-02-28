@@ -23,7 +23,9 @@ import dataModels.util.GlobalConstants;
  * This class describes a reaction.  A reaction is a binding between
  * a species and a promoter.
  * @author Nam
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Influence {	
 	

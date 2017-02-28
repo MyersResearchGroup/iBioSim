@@ -25,6 +25,14 @@ import dataModels.util.GlobalConstants;
 
 import java.lang.Math;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class ExprTree {
 
 	String op;

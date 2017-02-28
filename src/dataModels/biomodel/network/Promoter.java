@@ -21,7 +21,9 @@ import java.util.HashMap;
  * This class describes a promoter
  * 
  * @author Nam
- * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class Promoter {
 

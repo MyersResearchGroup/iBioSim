@@ -22,7 +22,12 @@ package dataModels.lpn.parser;
  * parser.
  *
  * You can modify this class to customize your error reporting
- * mechanisms so long as you retain the public fields.
+ * mechanisms so long as you retain the public fields.  
+ * 
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class ParseException extends Exception {
 

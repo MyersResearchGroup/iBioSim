@@ -22,6 +22,14 @@ import dataModels.biomodel.network.NullSpecies;
 import dataModels.biomodel.network.SpasticSpecies;
 import dataModels.biomodel.network.SpeciesInterface;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public interface SpeciesVisitor {
 	/**
 	 * Visits a specie

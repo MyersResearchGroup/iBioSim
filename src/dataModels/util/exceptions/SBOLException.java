@@ -13,9 +13,20 @@
  *******************************************************************************/
 package dataModels.util.exceptions;
 
+/**
+ *
+ * @author Tramy Nguyen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SBOLException extends BioSimException{
 	
-	private String title;
+	/**
+   * 
+   */
+  private static final long serialVersionUID = -90538180738062903L;
+  private String title;
 	
 	public SBOLException(String message, String messageTitle){
 		super(message, messageTitle);

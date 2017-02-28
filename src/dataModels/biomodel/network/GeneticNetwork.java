@@ -63,7 +63,9 @@ import dataModels.util.MutableString;
  * This class represents a genetic network
  * 
  * @author Nam
- * 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class GeneticNetwork extends Observable {
 	

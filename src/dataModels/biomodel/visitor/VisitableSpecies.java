@@ -15,7 +15,9 @@ package dataModels.biomodel.visitor;
 /**
  * Describes a species that can be visited
  * @author Nam 
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public interface VisitableSpecies {
 	/**

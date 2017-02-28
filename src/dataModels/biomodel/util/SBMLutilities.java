@@ -112,6 +112,14 @@ import dataModels.util.exceptions.BioSimException;
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class SBMLutilities
 {
 

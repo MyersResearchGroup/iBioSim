@@ -17,6 +17,14 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class DATParser extends DataParser {
 	public DATParser(String filename, boolean warn) {
 		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>());

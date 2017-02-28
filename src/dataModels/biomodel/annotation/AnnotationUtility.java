@@ -37,6 +37,14 @@ import dataModels.util.GlobalConstants;
 
 import org.sbml.jsbml.JSBML;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class AnnotationUtility {
 
 	public static boolean setSBOLAnnotation(SBase sbmlObject, SBOLAnnotation sbolAnnot) {

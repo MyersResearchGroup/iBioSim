@@ -116,9 +116,10 @@ import dataModels.util.exceptions.BioSimException;
 /**
  * This class describes a GCM file
  * 
- * @author Nam Nguyen
- * @organization University of Utah
- * @email namphuon@cs.utah.edu
+ * @author Nam Nguyen 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class BioModel extends Observable{
 

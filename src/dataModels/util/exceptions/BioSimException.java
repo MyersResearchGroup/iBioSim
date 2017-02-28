@@ -13,11 +13,17 @@
  *******************************************************************************/
 package dataModels.util.exceptions;
 
+/**
+ * 
+ *
+ * @author Tramy Nguyen
+ * @author Leandro Watanabe 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class BioSimException extends Exception{
 
-  /**
-   * 
-   */
   private static final long serialVersionUID = 889807138206436229L;
   private String title;
   

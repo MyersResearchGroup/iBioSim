@@ -21,6 +21,14 @@ import java.util.regex.Pattern;
 import dataModels.biomodel.util.Utility;
 import dataModels.lpn.parser.properties.AbstractionProperty;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Abstraction extends LPN {
 
 	private HashMap<Transition, Integer> process_trans = new HashMap<Transition, Integer>();

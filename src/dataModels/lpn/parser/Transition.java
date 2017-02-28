@@ -24,6 +24,14 @@ import java.util.Set;
 import backend.verification.platu.main.Options;
 import dataModels.util.Message;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Transition extends Observable {
 
 	private String label;

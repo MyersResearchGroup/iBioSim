@@ -13,15 +13,14 @@
  *******************************************************************************/
 package dataModels.biomodel.network;
 
-
 import dataModels.biomodel.visitor.SpeciesVisitor;
-
-
 
 /**
  * This is the most basic implementation of the species class.  
  * @author Nam
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class BaseSpecies extends AbstractSpecies {
 	/**

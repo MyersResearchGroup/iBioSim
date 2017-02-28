@@ -15,6 +15,14 @@ package dataModels.util;
 
 import java.io.File;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class GlobalConstants {
 
 	public static final String ACTIVATED_RNAP_BINDING_STRING = "Kao";

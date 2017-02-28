@@ -21,7 +21,9 @@ import dataModels.biomodel.visitor.SpeciesVisitor;
 /**
  * This represents a spastic species.
  * @author Nam
- *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
  */
 public class SpasticSpecies extends AbstractSpecies {
 	public SpasticSpecies(String name, String stateName) {
