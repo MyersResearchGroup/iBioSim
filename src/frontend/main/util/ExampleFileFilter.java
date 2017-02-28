@@ -3,7 +3,7 @@ package frontend.main.util;
 /*
  * @(#)ExampleFileFilter.java	1.9 99/04/23
  *
- * Copyright (c) 1998, 1999 by Sun Microsystems, Inc. All Rights Reserved.
+ * Copyright (c) 1998, 2017 by Sun Microsystems, Inc. All Rights Reserved.
  * 
  * Sun grants you ("Licensee") a non-exclusive, royalty free, license to use,
  * modify and redistribute this software in source and binary code form,

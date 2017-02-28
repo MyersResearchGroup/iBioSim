@@ -9,7 +9,7 @@
  * Extended from
  * @(#)BasicTabbedPaneUI.java	1.126 03/01/23
  *
- * Copyright 2003 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 2003, 2017 Sun Microsystems, Inc. All rights reserved.
  * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
