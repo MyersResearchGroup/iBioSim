@@ -18,6 +18,9 @@ biology.
 ##### Video Demo: [Tools Workflow](https://www.youtube.com/watch?v=g4xayzlyC2Q)
 ##### Contact: Chris Myers (@cjmyers) myers@ece.utah.edu
 
+Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tramy Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe, Zhen Zhang, and Zach Zundel.
+
+
 ## Pre-installation Requirement(s)
 1. [Create](https://github.com/) a GitHub account.
 2. [Setup](https://help.github.com/articles/set-up-git) Git on your machine.
