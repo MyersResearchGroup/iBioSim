@@ -78,8 +78,9 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.layout.Layout;
-import org.sbolstack.frontend.StackException;
-import org.sbolstack.frontend.StackFrontend;
+//import org.sbolstack.frontend.StackException;
+//import org.sbolstack.frontend.StackFrontend;
+import org.synbiohub.frontend.*;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
@@ -899,14 +900,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			e.printStackTrace();
 		}
 		
-		StackFrontend stack = new StackFrontend(registry);
+		SynBioHubFrontend stack = new SynBioHubFrontend(registry);
 		try {
 			stack.login(user, password);
 			stack.submit(id, version, name, description, citations, keywords, ifExisting, uploadDoc);
 			JOptionPane.showMessageDialog(Gui.frame, "Submission Successful", 
 					"Submssion Successful", JOptionPane.INFORMATION_MESSAGE);
 		}		
-		catch (StackException e) {
+		catch (SynBioHubException e) {
 			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
 					"Error Submitting to SynBioHub", JOptionPane.ERROR_MESSAGE);
 		}	
