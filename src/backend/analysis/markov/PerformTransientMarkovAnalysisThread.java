@@ -25,7 +25,7 @@ import dataModels.util.exceptions.BioSimException;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class PerfromTransientMarkovAnalysisThread extends Thread {
+public class PerformTransientMarkovAnalysisThread extends Thread {
 
 	private StateGraph sg;
 
@@ -37,7 +37,7 @@ public class PerfromTransientMarkovAnalysisThread extends Thread {
 
 	private boolean globallyTrue;
 
-	public PerfromTransientMarkovAnalysisThread(StateGraph sg, JProgressBar progress) {
+	public PerformTransientMarkovAnalysisThread(StateGraph sg, JProgressBar progress) {
 		super(sg);
 		this.sg = sg;
 		this.progress = progress;

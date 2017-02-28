@@ -28,7 +28,7 @@ import dataModels.util.exceptions.BioSimException;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
+public class PerformSteadyStateMarkovAnalysisThread extends Thread {
 
 	private StateGraph sg;
 
@@ -38,7 +38,7 @@ public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 
 	private ArrayList<Property> conditions;
 
-	public PerfromSteadyStateMarkovAnalysisThread(StateGraph sg, JProgressBar progress) {
+	public PerformSteadyStateMarkovAnalysisThread(StateGraph sg, JProgressBar progress) {
 		super(sg);
 		//TODO: is this critical for the code?
 		//Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
