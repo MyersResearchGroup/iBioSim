@@ -1,4 +1,8 @@
-# iBioSim
+
+<p align="center">
+  <img  src="src/resources/icons/iBioSim_banner.png">
+</p>
+
 iBioSim is a computer-aided design (CAD) tool aimed for the modeling, analysis, and design of genetic circuits. 
 While iBioSim primarily targets models of genetic circuits, models representing metabolic networks, cell-signaling pathways, 
 and other biological and chemical systems can also be analyzed. 
