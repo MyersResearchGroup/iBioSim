@@ -260,12 +260,6 @@ public class SBOL2SBML {
 			}
 		}
 
-		//		for (FunctionalComponent promoter : promoterToProductions.keySet()) {
-		//			generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-		//					promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-		//					promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-		//					promoterToRepressors.get(promoter), moduleDef, sbolDoc, targetModel);
-		//		}
 
 		for (Module subModule : moduleDef.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
@@ -316,7 +310,6 @@ public class SBOL2SBML {
 		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
 		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocalURI());
 
-		//System.out.println(mapping.getRemoteURI()+" <-> " + mapping.getLocalURI());
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(localSpecies));
 		Port port = subTargetModel.getPortByIdRef(getDisplayID(remoteSpecies));
 		if (port==null) {
@@ -550,6 +543,14 @@ public class SBOL2SBML {
 		annotateSpeciesReference(repressorRef, repressor);
 	}
 
+	/**
+	 * 
+	 * @param product
+	 * @param promoter
+	 * @param moduleDef
+	 * @param productionRxn
+	 * @param targetModel
+	 */
 	private static void generateProductReference(Participation product, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
 		FunctionalComponent protein = moduleDef.getFunctionalComponent(product.getParticipantURI());
@@ -562,6 +563,14 @@ public class SBOL2SBML {
 		annotateSpeciesReference(productRef, product);
 	}
 
+	/**
+	 * Annotate SBML species with the given SBOL FunctionalComponent and ComponentDefinition.
+	 * 
+	 * @param species - The SBML species to be annotated with SBOL FunctionalComponent and ComponentDefinition.
+	 * @param comp - The SBOL FunctionalComponent to be annotated into SBML species.
+	 * @param compDef - The SBOL ComponentDefinition to be annotated into SBML species.
+	 * @param sbolDoc - The SBOL Document that contains the SBOL FunctionalComponent and ComponentDefinition to parse for annotation.
+	 */
 	private static void annotateSpecies(Species species, FunctionalComponent comp, ComponentDefinition compDef, 
 			SBOLDocument sbolDoc) {
 		SBOLAnnotation speciesAnno = new SBOLAnnotation(species.getMetaId(), compDef.getIdentity());
@@ -572,8 +581,15 @@ public class SBOL2SBML {
 		AnnotationUtility.setSBOLAnnotation(species, speciesAnno);	
 	}
 
-	// Annotate SBML species with SBOL component, component definition, and any existing, annotating
-	// DNA components or strand sign
+	
+	/**
+	 * Annotate SBML species with SBOL component, component definition, and any existing, annotating
+	 * DNA components or strand sign.
+	 * 
+	 * @param species - The SBML species to be annotated with SBOL FunctionalComponent 
+	 * @param comp - The SBOL FunctionalComponent to be annotated into SBML species.
+	 * @param sbolDoc - The SBOL Document that contains the SBOL FunctionalComponent to parse for annotation.
+	 */
 	private static void annotateSpecies(Species species, FunctionalComponent comp, SBOLDocument sbolDoc) {
 		SBOLAnnotation speciesAnno;
 		List<URI> dnaCompIdentities = new LinkedList<URI>();
@@ -595,7 +611,12 @@ public class SBOL2SBML {
 		}
 	}
 
-	// Annotate SBML species with SBOL DNA component and any existing, annotating SBOL elements
+	/**
+	 * Annotate SBML species with SBOL DNA ComponentDefinition and any existing, annotating SBOL elements.
+	 * 
+	 * @param species - The SBML species to be annotated with SBOL ComponentDefinition
+	 * @param compDef - The SBOL ComponentDefinition to be annotated into SBML species.
+	 */
 	private static void annotateSpecies(Species species, ComponentDefinition compDef) {
 		SBOLAnnotation speciesAnno = new SBOLAnnotation(species.getMetaId(), compDef.getIdentity());
 		HashMap<String, List<URI>> sbolElementIdentities = new HashMap<String, List<URI>>();
@@ -606,7 +627,13 @@ public class SBOL2SBML {
 		AnnotationUtility.setSBOLAnnotation(species, speciesAnno);	
 	}
 
-	// Annotate SBML reaction with SBOL interactions
+	
+	/**
+	 * Annotate SBML reaction with a list of SBOL interactions.
+	 * 
+	 * @param rxn - The SBML reaction to be annotated with SBOL interactions
+	 * @param interacts - The SBOL Interactions to be annotated into SBML reaction.
+	 */
 	private static void annotateRxn(Reaction rxn, List<Interaction> interacts) {
 		List<URI> interactIdentities = new LinkedList<URI>();
 		for (Interaction interact : interacts)
@@ -616,21 +643,39 @@ public class SBOL2SBML {
 		AnnotationUtility.setSBOLAnnotation(rxn, rxnAnno);
 	}
 
-	// Annotate SBML reaction with SBOL interaction
+	
+	/**
+	 * Annotate SBML reaction with SBOL interaction.
+	 * 
+	 * @param rxn - The SBML reaction to be annotated with SBOL interaction
+	 * @param interact - The SBOL Interaction to be annotated into SBML reaction.
+	 */
 	private static void annotateRxn(Reaction rxn, Interaction interact) {
 		SBOLAnnotation rxnAnno = new SBOLAnnotation(rxn.getMetaId(), 
 				interact.getClass().getSimpleName(), interact.getIdentity());
 		AnnotationUtility.setSBOLAnnotation(rxn, rxnAnno);
 	}
 
-	// Annotate SBML species reference with SBOL participation
+	
+	/**
+	 * Annotate SBML species reference with SBOL participation.
+	 * 
+	 * @param speciesRef - The SBML SimpleSpeciesReference to be annotated with SBOL participations
+	 * @param partici - The SBOL Participation to be annotated into SBML SimpleSpeciesReference.
+	 */
 	private static void annotateSpeciesReference(SimpleSpeciesReference speciesRef, Participation partici) {
 		SBOLAnnotation speciesRefAnno = new SBOLAnnotation(speciesRef.getMetaId(),
 				partici.getClass().getSimpleName(), partici.getParticipantURI());
 		AnnotationUtility.setSBOLAnnotation(speciesRef, speciesRefAnno);
 	}
 
-	// Annotate SBML species reference with SBOL participations
+	
+	/**
+	 * Annotate SBML species reference with SBOL Participation
+	 * 
+	 * @param speciesRef - The SBML SpeciesReference to be annotated with SBOL participations
+	 * @param partici - The SBOL Participation to be annotated into SBML SpeciesReference.
+	 */
 	private static void annotateSpeciesReference(SimpleSpeciesReference speciesRef, List<Participation> partici) {
 		List<URI> particiIdentities = new LinkedList<URI>();
 		for (Participation p : partici) {
@@ -641,25 +686,50 @@ public class SBOL2SBML {
 		AnnotationUtility.setSBOLAnnotation(speciesRef, speciesRefAnno);
 	}
 
-
+	/**
+	 * Annotate the given SBOL MapsTo to SBML ReplacedBy element.
+	 * 
+	 * @param replacedBy - The SBML ReplacedBy object that stores the annotated SBOL MapsTo.
+	 * @param mapping - The SBOL MapsTo object to annotate into SBML ReplacedBy.
+	 */
 	private static void annotateReplacedBy(ReplacedBy replacedBy, MapsTo mapping) {
 		SBOLAnnotation replacedByAnno = new SBOLAnnotation(replacedBy.getMetaId(),
 				mapping.getClass().getSimpleName(), mapping.getIdentity());
 		AnnotationUtility.setSBOLAnnotation(replacedBy, replacedByAnno);
 	}
 
+	/**
+	 * Annotate the given SBOL MapsTo to SBML replacements.
+	 * 
+	 * @param replacement - The SBML replacement object that stores the annotated SBOL MapsTo.
+	 * @param mapping - The SBOL MapsTo object to annotate into SBML replacement.
+	 */
 	private static void annotateReplacement(ReplacedElement replacement, MapsTo mapping) {
 		SBOLAnnotation replacementAnno = new SBOLAnnotation(replacement.getMetaId(),
 				mapping.getClass().getSimpleName(), mapping.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(replacement, replacementAnno);
 	}
 
+	/**
+	 * Annotate the given SBOL module to SBML models.
+	 * 
+	 * @param subModel - The SBML model that stores the annotated SBOL module.
+	 * @param subModule - The SBOL model to annotate into SBML model
+	 */
 	private static void annotateSubModel(Submodel subModel, Module subModule) {
 		SBOLAnnotation subModelAnno = new SBOLAnnotation(subModel.getMetaId(),
 				subModule.getClass().getSimpleName(), subModule.getDefinitionURI()); 
 		AnnotationUtility.setSBOLAnnotation(subModel, subModelAnno);
 	}
 
+	/**
+	 * Determine if SBOL MapsTo object has inputs or outputs to be mapped in SBML.
+	 * 
+	 * @param mapping - The SBOL MapsTo object to determine if it can be mapped to SBML input or output components.
+	 * @param subModule - The SBOL Module that the MapsTo object is referencing.
+	 * @param sbolDoc - The SBOL Document that contains the module being referenced and the MapsTo object is contained in.
+	 * @return
+	 */
 	private static boolean isIOMapping(MapsTo mapping, Module subModule, SBOLDocument sbolDoc) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		FunctionalComponent remoteComp = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
@@ -672,36 +742,80 @@ public class SBOL2SBML {
 				|| refinement == RefinementType.USELOCAL;
 	}
 
+	/**
+	 * Determine if the given SBOL FunctionalComponent is a valid input SBML component.
+	 * 
+	 * @param comp - The SBOL FunctionalComponent to check if it is a valid input SBML component.
+	 * @return True if the given FunctionalComponent is a valid input SBML component. False otherwise.
+	 */
 	private static boolean isInputComponent(FunctionalComponent comp) {
 		return comp.getDirection().equals(DirectionType.IN);
 	}
 
+	
+	/**
+	 * Determine if the given SBOL FunctionalComponent is a valid output SBML component.
+	 * 
+	 * @param comp - The SBOL FunctionalComponent to check if it is a valid input SBML component.
+	 * @return True if the given FunctionalComponent is a valid output SBML component. False otherwise.
+	 */
 	private static boolean isOutputComponent(FunctionalComponent comp) {
 		return comp.getDirection().equals(DirectionType.OUT) || comp.getDirection().equals(DirectionType.INOUT);
 	}
 
+	/**
+	 * Determine if the given SBOL FunctionalComponent is a valid DNA species.
+	 * 
+	 * @param comp - The SBOL FunctionalComponent to check if it is contained within the given SBOLDocument.
+	 * @param sbolDoc - The SBOL Document to check if the given FunctionalComponent exist.
+	 * @return True if the given FunctionalComponent is a valid DNA. False otherwise.
+	 */
 	private static boolean isDNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isDNADefinition(compDef);
 	}
 
+	/**
+	 * Determine if the given SBOL ComponentDefinition is a valid DNA species.
+	 * 
+	 * @param compDef - The SBOL ComponentDefinition to check if it is a valid DNA species.
+	 * @return True if the given ComponentDefinition is a valid DNA species
+	 */
 	private static boolean isDNADefinition(ComponentDefinition compDef) {
-		return /*compDef.containsType(ChEBI.DNA) ||*/
-				compDef.containsType(ComponentDefinition.DNA);
+		return compDef.containsType(ComponentDefinition.DNA);
 	}
 
+	/**
+	 * Determine if the given SBOL FunctionalComponent is a valid protein species.
+	 * 
+	 * @param comp - The SBOL FunctionalComponent to check if it is contained within the given SBOLDocument.
+	 * @param sbolDoc - The SBOL Document to check if the given FunctionalComponent exist.
+	 * @return True if the given FunctionalComponent is a valid protein. False otherwise.
+	 */
 	private static boolean isProteinComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isProteinDefinition(compDef);
 	}
 
+	/**
+	 * Determine if the given SBOL ComponentDefinition is a valid protein species.
+	 * 
+	 * @param compDef - The SBOL ComponentDefinition to check if it is a valid protein species.
+	 * @return True if the given ComponentDefinition is a valid protein species
+	 */
 	private static boolean isProteinDefinition(ComponentDefinition compDef) {
-		return /*compDef.containsType(ChEBI.PROTEIN) ||*/
-				compDef.containsType(ComponentDefinition.PROTEIN);
+		return compDef.containsType(ComponentDefinition.PROTEIN);
 	}
 
+	/**
+	 * Determine if the given SBOL FunctionalComponent is a valid RNA species.
+	 * 
+	 * @param comp - The SBOL FunctionalComponent to check if it is contained within the given SBOLDocument.
+	 * @param sbolDoc - The SBOL Document to check if the given FunctionalComponent exist.
+	 * @return True if the given FunctionalComponent is a valid RNA. False otherwise.
+	 */
 	private static boolean isRNAComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
@@ -739,9 +853,7 @@ public class SBOL2SBML {
 	 */
 	private static boolean isPromoterDefinition(ComponentDefinition compDef) {
 		// TODO: need to figure out better if the CD is a promoter, need to look carefully at its subComponents
-		return isDNADefinition(compDef) /*
-				&& (compDef.containsRole(SequenceOntology.PROMOTER) ||
-						isGeneDefinition(compDef))*/;
+		return isDNADefinition(compDef) ;
 	}
 
 	/**
@@ -804,6 +916,13 @@ public class SBOL2SBML {
 				|| compDef.containsType(ComponentDefinition.EFFECTOR);
 	}
 
+	/**
+	 * Determine if the given SBOL FunctionalComponent is a valid Complex SBML species.
+	 * 
+	 * @param comp - The FunctionalComponent to determine if it is a Complex SBML species.
+	 * @param sbolDoc - The SBOL FunctionalComponent to check if it is a valid SBML species
+	 * @return True if the given FunctionalComponent is Complex SBML species. False otherwise.
+	 */
 	private static boolean isComplexComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
@@ -811,11 +930,11 @@ public class SBOL2SBML {
 	}
 
 	/**
-	 * Determine if the given SBOL FunctionalComponent is Complex SBML species.
+	 * Determine if the given SBOL FunctionalComponent is Small Molecule SBML species.
 	 * 
-	 * @param comp - The FunctionalComponent to determine if it is a Complex SBML species.
+	 * @param comp - The FunctionalComponent to determine if it is a Small Molecule SBML species.
 	 * @param sbolDoc - The SBOL FunctionalComponent to check if it is a valid SBML species
-	 * @return True if the given FunctionalComponent is Complex SBML species. False otherwise. 
+	 * @return True if the given FunctionalComponent is Small Molecule SBML species. False otherwise. 
 	 */
 	private static boolean isSmallMoleculeComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
@@ -830,8 +949,7 @@ public class SBOL2SBML {
 	 * @return True if the given ComponentDefinition is Complex SBML species. False otherwise. 
 	 */
 	private static boolean isComplexDefinition(ComponentDefinition compDef) {
-		return /*compDef.containsType(ChEBI.NON_COVALENTLY_BOUND_MOLECULAR_ENTITY) ||*/
-				compDef.containsType(ComponentDefinition.COMPLEX);
+		return compDef.containsType(ComponentDefinition.COMPLEX);
 	}
 
 	/**
@@ -844,17 +962,15 @@ public class SBOL2SBML {
 		return compDef.containsType(ComponentDefinition.SMALL_MOLECULE);
 	}
 
-	//	public static boolean isTFComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
-	//		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
-	//		if (compDef==null) return false;
-	//		return isTFDefinition(compDef);
-	//	}
-	//	
-	//	public static boolean isTFDefinition(ComponentDefinition compDef) {
-	//		return (isProteinDefinition(compDef) || isComplexDefinition(compDef))
-	//				&& compDef.containsRole(MyersOntology.TF);
-	//	}
 
+	/**
+	 * Determine if the given SBOL Interaction is a valid degradation interaction.
+	 *  
+	 * @param interact - The SBOL Interaction to be determined if it is a valid degradation interaction.
+	 * @param moduleDef - The SBOL ModuleDefinition that contains the given SBOL Interaction.
+	 * @param sbolDoc - The SBOL Document that contains both the SBOL ModuleDefinition and SBOL Interaction.
+	 * @return True if the given SBOL Interaction is a valid degradation interaction. False otherwise.
+	 */
 	private static boolean isDegradationInteraction(Interaction interact, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc) {
 		if (interact.containsType(SystemsBiologyOntology.DEGRADATION) && interact.getParticipations().size() == 1) {
@@ -873,6 +989,14 @@ public class SBOL2SBML {
 		return false;
 	}
 
+	/**
+	 * Determine if the given SBOL Interaction is a valid complex formation interaction.
+	 * 
+	 * @param interact - The SBOL Interaction to be determined if it is a valid complex formation interaction.
+	 * @param moduleDef - The SBOL ModuleDefinition that contains the given SBOL Interaction.
+	 * @param sbolDoc - The SBOL Document that contains both the SBOL ModuleDefinition and SBOL Interaction.
+	 * @return True if the given SBOL Interaction is a valid complex formation interaction. False otherwise.
+	 */
 	private static boolean isComplexFormationInteraction(Interaction interact, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc) {
 		if (interact.containsType(SystemsBiologyOntology.NON_COVALENT_BINDING)||
@@ -898,12 +1022,19 @@ public class SBOL2SBML {
 		return false;
 	}
 
+	/**
+	 * Determine if the given SBOL Interaction is a valid production interaction.
+	 * 
+	 * @param interact - The SBOL Interaction to be determined if it is a valid production interaction.
+	 * @param moduleDef - The SBOL ModuleDefinition that contains the given SBOL Interaction.
+	 * @param sbolDoc - The SBOL Document that contains both the SBOL ModuleDefinition and SBOL Interaction.
+	 * @return True if the given SBOL Interaction is a valid production interaction. False otherwise.
+	 */
 	private static boolean isProductionInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
 		if (interact.containsType(SystemsBiologyOntology.GENETIC_PRODUCTION) && interact.getParticipations().size() == 2/*3*/) {
 			boolean hasPromoter = false;
 			boolean hasProduct = false;
-			//boolean hasTranscribed = false;
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 				if ((partici.containsRole(SystemsBiologyOntology.PROMOTER)||
@@ -914,14 +1045,22 @@ public class SBOL2SBML {
 					hasProduct = true;
 				// TRANSCRIBED
 				else if (partici.containsRole(SystemsBiologyOntology.PROMOTER) && isGeneComponent(comp, sbolDoc))
-					;//hasTranscribed = true;
+					;
 			}
-			if (hasPromoter && hasProduct /*&& hasTranscribed*/)
+			if (hasPromoter && hasProduct)
 				return true;
 		}
 		return false;
 	}
 
+	/**
+	 * Determine if the given SBOL Interaction is a valid activation interaction.
+	 * 
+	 * @param interact - The SBOL Interaction to be determined if it is a valid activation interaction.
+	 * @param moduleDef - The SBOL ModuleDefinition that contains the given SBOL Interaction.
+	 * @param sbolDoc - The SBOL Document that contains both the SBOL ModuleDefinition and SBOL Interaction.
+	 * @return True if the given SBOL Interaction is a valid activation interaction. False otherwise.
+	 */
 	private static boolean isActivationInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
 		if ((interact.containsType(SystemsBiologyOntology.GENETIC_ENHANCEMENT) ||
@@ -943,6 +1082,14 @@ public class SBOL2SBML {
 		return false;
 	}
 
+	/**
+	 * Determine if the given SBOL Interaction is a valid repression interaction.
+	 * 
+	 * @param interact - The SBOL Interaction to be determined if it is a valid repression interaction.
+	 * @param moduleDef - The SBOL ModuleDefinition that contains the given SBOL Interaction.
+	 * @param sbolDoc - The SBOL Document that contains both the SBOL ModuleDefinition and SBOL Interaction.
+	 * @return True if the given SBOL Interaction is a valid repression interaction. False otherwise.
+	 */
 	private static boolean isRepressionInteraction(Interaction interact, ModuleDefinition moduleDef,
 			SBOLDocument sbolDoc) {
 		if ((interact.containsType(SystemsBiologyOntology.GENETIC_SUPPRESSION) ||
@@ -955,7 +1102,7 @@ public class SBOL2SBML {
 				if ((partici.containsRole(SystemsBiologyOntology.PROMOTER) ||
 						partici.containsRole(SystemsBiologyOntology.INHIBITED)) && isPromoterComponent(comp, sbolDoc))
 					hasRepressed = true;
-				else if (partici.containsRole(SystemsBiologyOntology.INHIBITOR) /*&& isTFComponent(comp, sbolDoc)*/)
+				else if (partici.containsRole(SystemsBiologyOntology.INHIBITOR) )
 					hasRepressor = true;
 			}
 			if (hasRepressed && hasRepressor)
@@ -964,6 +1111,9 @@ public class SBOL2SBML {
 		return false;
 	}
 
+	/**
+	 * Print to console the command options and requirements to execute this converter.
+	 */
 	private static void usage() {
 		System.err.println("SBOL2SBML");
 		System.err.println("Description: converts SBOL into SBML.");
