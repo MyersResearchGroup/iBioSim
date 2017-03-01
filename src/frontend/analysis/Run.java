@@ -50,8 +50,8 @@ import backend.analysis.dynamicsim.DynamicSimulation.SimulationType;
 import backend.analysis.dynamicsim.flattened.Simulator;
 import backend.analysis.fba.FluxBalanceAnalysis;
 import backend.analysis.markov.BuildStateGraphThread;
-import backend.analysis.markov.PerfromSteadyStateMarkovAnalysisThread;
-import backend.analysis.markov.PerfromTransientMarkovAnalysisThread;
+import backend.analysis.markov.PerformSteadyStateMarkovAnalysisThread;
+import backend.analysis.markov.PerformTransientMarkovAnalysisThread;
 import backend.analysis.markov.StateGraph;
 import backend.analysis.markov.StateGraph.Property;
 import dataModels.biomodel.parser.BioModel;
@@ -1109,7 +1109,7 @@ public class Run implements ActionListener, Observer
             {
               log.addText("Performing steady state Markov chain analysis.\n");
               logFile.write("Performing steady state Markov chain analysis.\n\n");
-              PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(sg, progress);
+              PerformSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerformSteadyStateMarkovAnalysisThread(sg, progress);
               if (modelFile.contains(".lpn"))
               {
                 performMarkovAnalysis.start(absError, null);
@@ -1199,7 +1199,7 @@ public class Run implements ActionListener, Observer
             {
               log.addText("Performing transient Markov chain analysis with uniformization.\n");
               logFile.write("Performing transient Markov chain analysis with uniformization.\n\n");
-              PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(sg, progress);
+              PerformTransientMarkovAnalysisThread performMarkovAnalysis = new PerformTransientMarkovAnalysisThread(sg, progress);
               time1 = System.nanoTime();
               if (prop != null)
               {
