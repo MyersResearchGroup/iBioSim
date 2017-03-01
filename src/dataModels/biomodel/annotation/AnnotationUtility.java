@@ -40,13 +40,21 @@ import org.sbml.jsbml.JSBML;
 /**
  * 
  *
- * @author 
+ * @author Nicholas Roehner
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
 public class AnnotationUtility {
 
+	/**
+	 * Annotate the given SBML object with SBOL annotation. If there exist any annotation to the given SBML object,
+	 * this method will remove the existing annotation and replace it with the given SBOL Annotation.
+	 * 
+	 * @param sbmlObject - The SBML object to set the custom SBOL annotation to.
+	 * @param sbolAnnot - The SBOL annotation to set the SBML object to. 
+	 * @return True if the SBOL annotation was successfully annotated to the given SBML object. False otherwise.
+	 */
 	public static boolean setSBOLAnnotation(SBase sbmlObject, SBOLAnnotation sbolAnnot) {
 		if (sbmlObject.isSetAnnotation())
 			removeSBOLAnnotation(sbmlObject);
@@ -92,6 +100,13 @@ public class AnnotationUtility {
 		return false;
 	}
 	
+	/**
+	 * Annotate SBOL URI in the given SBML object.
+	 * 
+	 * @param sbmlObject - 
+	 * @param dnaCompURIs - 
+	 * @return
+	 */
 	public static String parseSBOLAnnotation(SBase sbmlObject, List<URI> dnaCompURIs) {
 		return parseSBOLAnnotation(sbmlObject, dnaCompURIs, new HashMap<String, List<URI>>());
 	}
@@ -99,6 +114,7 @@ public class AnnotationUtility {
 	public static String parseSBOLAnnotation(SBase sbmlObject, HashMap<String, List<URI>> sbolElementURIs) {
 		return parseSBOLAnnotation(sbmlObject, new LinkedList<URI>(), sbolElementURIs);
 	}
+	
 	
 	public static String parseSBOLAnnotation(SBase sbmlObject, List<URI> dnaCompURIs, HashMap<String, List<URI>> sbolElementURIs) {
 		String annotation;

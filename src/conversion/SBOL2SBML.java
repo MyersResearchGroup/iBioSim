@@ -472,6 +472,21 @@ public class SBOL2SBML {
 		}
 	}
 
+	/**
+	 * 
+	 * @param promoter
+	 * @param partici
+	 * @param productions
+	 * @param activations
+	 * @param repressions
+	 * @param products
+	 * @param transcribed
+	 * @param activators
+	 * @param repressors
+	 * @param moduleDef
+	 * @param sbolDoc
+	 * @param targetModel
+	 */
 	private static void generateProductionRxn(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
@@ -518,6 +533,15 @@ public class SBOL2SBML {
 		}
 	}
 
+	/**
+	 * Convert SBOL participation that takes on the role of activator into its equivalent SBML SpeciesReference.
+	 * 
+	 * @param activator - The SBOL participation to be annotated as SBML SpeciesReference.
+	 * @param promoter - The SBOL FunctionalComponent promoter of the activator.
+	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL Participation.
+	 * @param productionRxn - The SBML reaction that will store the SpeciesReference created from the converted activator SBOL Participation.
+	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
+	 */
 	private static void generateActivatorReference(Participation activator, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
 		FunctionalComponent tf = moduleDef.getFunctionalComponent(activator.getParticipantURI());
@@ -531,6 +555,15 @@ public class SBOL2SBML {
 		annotateSpeciesReference(activatorRef, activator);
 	}
 
+	/**
+	 * Convert SBOL participation that takes on the role of repressor into its equivalent SBML SpeciesReference.
+	 * 
+	 * @param repressor - The SBOL participation to be annotated as SBML SpeciesReference.
+	 * @param promoter - The SBOL FunctionalComponent promoter of the repressor.
+	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL Participation.
+	 * @param productionRxn - The SBML reaction that will store the SpeciesReference created from the converted repressor SBOL Participation.
+	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
+	 */
 	private static void generateRepressorReference(Participation repressor, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
 		FunctionalComponent tf = moduleDef.getFunctionalComponent(repressor.getParticipantURI());
@@ -544,12 +577,13 @@ public class SBOL2SBML {
 	}
 
 	/**
+	 * Convert SBOL participation that takes on the role of product into its equivalent SBML SpeciesReference.
 	 * 
-	 * @param product
-	 * @param promoter
-	 * @param moduleDef
-	 * @param productionRxn
-	 * @param targetModel
+	 * @param product - The SBOL participation to be annotated as SBML SpeciesReference.
+	 * @param promoter - The SBOL FunctionalComponent promoter of the product.
+	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL Participation.
+	 * @param productionRxn - The SBML reaction that will store the SpeciesReference created from the converted activation/product SBOL Participation.
+	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
 	 */
 	private static void generateProductReference(Participation product, FunctionalComponent promoter, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
