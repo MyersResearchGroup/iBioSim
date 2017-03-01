@@ -15,6 +15,13 @@ package dataModels.biomodel.util;
 
 import org.sbml.jsbml.SBMLDocument;
 
+/**
+ * 
+ *
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Validation implements Runnable {
 
     private String file;
