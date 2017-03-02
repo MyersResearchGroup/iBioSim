@@ -17,7 +17,7 @@ package backend.analysis.dynamicsim.hierarchical.states;
 /**
  * 
  *
- * @author 
+ * @author Leandro Watanabe
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%

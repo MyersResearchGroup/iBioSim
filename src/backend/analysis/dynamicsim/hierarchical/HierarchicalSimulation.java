@@ -51,7 +51,7 @@ import dataModels.util.exceptions.BioSimException;
 /**
  * This class provides the state variables of the simulation.
  *
- * @author 
+ * @author Leandro Watanabe
  * @author Leandro Watanabe
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
