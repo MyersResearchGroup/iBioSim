@@ -479,8 +479,7 @@ public final class Evaluator
     case FUNCTION_PIECEWISE:
     {
 
-      int childIter = 0;
-      for (; childIter < node.getNumOfChild() - 1; childIter += 2)
+      for (int childIter = 0; childIter < node.getNumOfChild() - 1; childIter += 2)
       {
         boolean condition = evaluateExpressionRecursive(node.getChild(childIter + 1), checkSubstance, index) > 0;
         if (condition)
@@ -489,17 +488,24 @@ public final class Evaluator
         }
 
       }
-      if (node.getNumOfChild() % 2 == 1)
-      {
-        return evaluateExpressionRecursive(node.getChild(node.getNumOfChild() - 1), checkSubstance, index);
-      }
-
-      return 0;
+       return evaluateExpressionRecursive(node.getChild(node.getNumOfChild() - 1), checkSubstance, index);
     }
-
+    case FUNCTION_REM:
+    {
+      double d0 = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double d1 = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+      int quo = (int) (d0/d1);
+      return d0 - d1*quo;
+    }
     case FUNCTION_ROOT:
     {
       return FastMath.pow(evaluateExpressionRecursive(node.getChild(1), checkSubstance, index), 1 / evaluateExpressionRecursive(node.getChild(0), checkSubstance, index));
+    }
+    case FUNCTION_QUOTIENT:
+    {
+      double d0 = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double d1 = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+      return (int) (d0/d1);
     }
     case FUNCTION_SEC:
     {
@@ -658,7 +664,7 @@ public final class Evaluator
       for (int childIter = 1; childIter < node.getNumOfChild(); childIter++)
       {
         tmp = evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index);
-        if(tmp < max)
+        if(tmp > max)
         {
           max = tmp;
         }

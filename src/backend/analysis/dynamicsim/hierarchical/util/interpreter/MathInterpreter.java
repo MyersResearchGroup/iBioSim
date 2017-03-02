@@ -230,8 +230,22 @@ public final class MathInterpreter
 				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
 			}
 			break;
+		case	FUNCTION_QUOTIENT:
+		  node = new HierarchicalNode(Type.FUNCTION_QUOTIENT);
+      for (ASTNode child : math.getListOfNodes())
+      {
+        node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
+      }
+      break;
 		case	FUNCTION_RATE_OF:
 		  node = new HierarchicalNode(Type.FUNCTION_RATEOF);
+      for (ASTNode child : math.getListOfNodes())
+      {
+        node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));
+      }
+      break;
+		case FUNCTION_REM:
+      node = new HierarchicalNode(Type.FUNCTION_REM);
       for (ASTNode child : math.getListOfNodes())
       {
         node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));

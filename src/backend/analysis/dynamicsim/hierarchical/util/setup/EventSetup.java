@@ -54,39 +54,43 @@ public class EventSetup
 				continue;
 			}
 
-			Trigger trigger = event.getTrigger();
-			ASTNode triggerMath = HierarchicalUtilities.inlineFormula(modelstate, trigger.getMath(), model);
-			HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, variableToNodeMap);
-
-			EventNode node = modelstate.addEvent(triggerNode);
-
-			boolean useValuesFromTrigger = event.getUseValuesFromTriggerTime();
-			boolean isPersistent = trigger.isSetPersistent() ? trigger.getPersistent() : false;
-			boolean initValue = trigger.isSetInitialValue() ? trigger.getInitialValue() : false;
-			setupSingleEvent(modelstate, node, event.getTrigger().getMath(), useValuesFromTrigger, initValue, isPersistent, model, variableToNodeMap);
-
-			if (event.isSetPriority())
+			if(event.isSetTrigger() && event.getTrigger().isSetMath())
 			{
-				Priority priority = event.getPriority();
 
-				if (!(priority.isSetMetaId() && modelstate.isDeletedByMetaId(priority.getMetaId())))
-				{
-					setupSinglePriority(modelstate, node, event.getPriority().getMath(), model, variableToNodeMap);
-				}
+	      Trigger trigger = event.getTrigger();
+			  ASTNode triggerMath = HierarchicalUtilities.inlineFormula(modelstate, trigger.getMath(), model);
+			  HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, variableToNodeMap);
+
+			  EventNode node = modelstate.addEvent(triggerNode);
+
+			  boolean useValuesFromTrigger = event.getUseValuesFromTriggerTime();
+			  boolean isPersistent = trigger.isSetPersistent() ? trigger.getPersistent() : false;
+			  boolean initValue = trigger.isSetInitialValue() ? trigger.getInitialValue() : false;
+			  setupSingleEvent(modelstate, node, event.getTrigger().getMath(), useValuesFromTrigger, initValue, isPersistent, model, variableToNodeMap);
+
+			  if (event.isSetPriority())
+			  {
+			    Priority priority = event.getPriority();
+
+			    if (!(priority.isSetMetaId() && modelstate.isDeletedByMetaId(priority.getMetaId())) && priority.isSetMath())
+			    {
+			      setupSinglePriority(modelstate, node, event.getPriority().getMath(), model, variableToNodeMap);
+			    }
+
+			  }
+			  if (event.isSetDelay())
+			  {
+			    Delay delay = event.getDelay();
+
+			    if (!(delay.isSetMetaId() && modelstate.isDeletedByMetaId(delay.getMetaId())) && delay.isSetMath())
+			    {
+			      setupSingleDelay(modelstate, node, event.getDelay().getMath(), model, variableToNodeMap);
+			    }
+			  }
+
+			  setupEventAssignments(modelstate, node, event, model, variableToNodeMap);
 
 			}
-			if (event.isSetDelay())
-			{
-				Delay delay = event.getDelay();
-
-				if (!(delay.isSetMetaId() && modelstate.isDeletedByMetaId(delay.getMetaId())))
-				{
-					setupSingleDelay(modelstate, node, event.getDelay().getMath(), model, variableToNodeMap);
-				}
-			}
-
-			setupEventAssignments(modelstate, node, event, model, variableToNodeMap);
-
 		}
 	}
 
@@ -94,7 +98,7 @@ public class EventSetup
 	{
 		for (EventAssignment eventAssignment : event.getListOfEventAssignments())
 		{
-			if (eventAssignment.isSetMetaId() && modelstate.isDeletedByMetaId(eventAssignment.getMetaId()))
+			if (eventAssignment.isSetMetaId() && modelstate.isDeletedByMetaId(eventAssignment.getMetaId()) || !eventAssignment.isSetMath())
 			{
 				continue;
 			}

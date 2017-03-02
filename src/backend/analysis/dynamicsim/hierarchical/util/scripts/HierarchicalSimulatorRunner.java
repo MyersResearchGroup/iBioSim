@@ -94,7 +94,11 @@ public class HierarchicalSimulatorRunner
 			String root = args[0] + separator + testcase + separator;
 
 			String filename = root + testcase + "-sbml-l3v1.xml";
-
+			File file = new File(filename);
+			if(!file.exists())
+			{
+			  filename = root + testcase + "-sbml-l3v2.xml";
+			}
 			String outputDirectory = args[2];
 
 			String settingsFile = args[0] + separator + testcase + separator + testcase + "-settings.txt";

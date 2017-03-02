@@ -42,10 +42,11 @@ public class RuleSetup
 	{
 		for (Rule rule : model.getListOfRules())
 		{
-			if (rule.isSetMetaId() && modelstate.isDeletedByMetaId(rule.getMetaId()))
+			if (rule.isSetMetaId() && modelstate.isDeletedByMetaId(rule.getMetaId()) || !rule.isSetMath())
 			{
 				continue;
 			}
+			
 			if (rule.isAssignment())
 			{
 				AssignmentRule assignRule = (AssignmentRule) rule;

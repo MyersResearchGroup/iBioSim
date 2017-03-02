@@ -48,26 +48,28 @@ public class InitAssignmentSetup
 			String variable = initAssignment.getVariable();
 			VariableNode variableNode = modelstate.getNode(variable);
 			
-			ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, initAssignment.getMath(), model);
-			HierarchicalNode initAssignNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
-
-			if (variableNode.isSpecies())
+			if(initAssignment.isSetMath())
 			{
-				SpeciesNode node = (SpeciesNode) variableNode;
+			  ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, initAssignment.getMath(), model);
+			  HierarchicalNode initAssignNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
 
-				if (!node.hasOnlySubstance(modelstate.getIndex()))
-				{
-					HierarchicalNode amountNode = new HierarchicalNode(Type.TIMES);
-					amountNode.addChild(initAssignNode);
-					amountNode.addChild(node.getCompartment());
-					initAssignNode = amountNode;
-				}
+			  if (variableNode.isSpecies())
+			  {
+			    SpeciesNode node = (SpeciesNode) variableNode;
+
+			    if (!node.hasOnlySubstance(modelstate.getIndex()))
+			    {
+			      HierarchicalNode amountNode = new HierarchicalNode(Type.TIMES);
+			      amountNode.addChild(initAssignNode);
+			      amountNode.addChild(node.getCompartment());
+			      initAssignNode = amountNode;
+			    }
+			  }
+
+			  FunctionNode node = new FunctionNode(variableNode, initAssignNode);
+			  node.setIsInitAssignment(true);
+			  modelstate.addInitAssignment(node);
 			}
-
-			FunctionNode node = new FunctionNode(variableNode, initAssignNode);
-			node.setIsInitAssignment(true);
-			modelstate.addInitAssignment(node);
-
 		}
 
 	}
