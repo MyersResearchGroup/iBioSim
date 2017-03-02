@@ -21,8 +21,13 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
+					<excludes>
+          				<exclude>dataModels/biomodel/util/Validation.java</exclude>
+          				<exclude>test/gcm2sbml/*.java</exclude>
+          				<exclude>test/scripts/*.java</exclude>          				
+        			</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
