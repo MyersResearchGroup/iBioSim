@@ -275,6 +275,18 @@ public class SBOL2SBML {
 		return models;
 	}
 
+	/**
+	 * Convert the given SBOL ModuleDefinition and its submodule to equivalent SBML models. 
+	 * SBML replacement and replacedBy objects will be created for each SBOL MapsTo that occur in the given SBML submodule.
+	 * Annotation will be performed on SBML the given SBML submodule for any SBOL subModule information that can't be mapped directly.
+	 * 
+	 * @param projectDirectory - The location to generate the SBML model. 
+	 * @param subModule - The SBOL subModule that is referenced within the given ModuleDefinition to be converted into SBML model.
+	 * @param moduleDef - The given ModuleDefinition that contains the submodule to be converted into SBML model.
+	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML model.
+	 * @param subTargetModel - The SBML submodel that the converted SBOL subModule will be converted to.
+	 * @param targetModel - The SBML local model that contain the SBML local model.
+	 */
 	private static void generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
@@ -295,15 +307,44 @@ public class SBOL2SBML {
 			}
 	}
 
+	/**
+	 * Perform conversion on the given SBOL Module and ModuleDefinition into SBML model. 
+	 * Each SBML model will be generated into its own .xml file that will be stored into the given project directory.
+	 * To retain the the submodels that are referenced in the given SBOL ModuleDefinition, SBML replacement and replacedBy
+	 * will handle each submodels that are referenced from the "top level" moduleDefinition.
+	 * 
+	 * @param projectDirectory - The location to generate the SBML model. 
+	 * @param subModule - The SBOL submodule referenced by the given SBOL ModuleDefinition.
+	 * @param moduleDef - The SBOL ModuleDefinition that contains the referenced submodules.
+	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML model.
+	 * @param targetModel - The SBML "top level" model that will referenced all converted SBML submodels. 
+	 * @return
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 */
 	private static List<BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel targetModel) throws XMLStreamException, IOException {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
+		//convert each submodules into its own SBML model stored in their own .xml file.
 		List<BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
 		BioModel subTargetModel = subModels.get(subModels.size()-1);
+		
+		//Perform replacement and replacedBy with each subModules to its referenced ModuleDefinition.
 		generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
 		return subModels;
 	}
 
+	/**
+	 * Convert the given SBOL MapsTo object into SBML replacement for the given remote and local SBOL ModuleDefinition.
+	 * Annotation will be performed on SBML replacement for any SBOL MapsTo information that can't be mapped directly.
+	 * 
+	 * @param mapping - The SBOL MapsTo to be converted to SBML replacement.  
+	 * @param subModule - The SBOL Module that is considered to be the remote model in the replacement object.
+	 * @param moduleDef - The SBOL ModuleDefinition that is considered to be the local model in the replacement object.
+	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML replacement.
+	 * @param subTargetModel - The SBML remote model that contain the SBML replacement.
+	 * @param targetModel - The SBML local model that contain the SBML replacement.
+	 */
 	private static void generateReplacement(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI()); 
@@ -327,6 +368,17 @@ public class SBOL2SBML {
 		annotateReplacement(compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), mapping);
 	}
 
+	/**
+	 * Convert the given SBOL MapsTo object into SBML replacedBy for the given remote and local SBOL ModuleDefinition.
+	 * Annotation will be performed on SBML replacedBy for any SBOL MapsTo information that can't be mapped directly.
+	 * 
+	 * @param mapping - The SBOL MapsTo to be converted to SBML replacedBy.  
+	 * @param subModule - The SBOL Module that is considered to be the remote model in the replacedBy object.
+	 * @param moduleDef - The SBOL ModuleDefinition that is considered to be the local model in the replacedBy object.
+	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML replacedBy.
+	 * @param subTargetModel - The SBML remote model that contain the SBML replacedBy.
+	 * @param targetModel - The SBML local model that contain the SBML replacedBy.
+	 */
 	private static void generateReplacedBy(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
@@ -344,14 +396,35 @@ public class SBOL2SBML {
 		annotateReplacedBy(compSBML.getReplacedBy(), mapping);
 	}
 
+	/**
+	 * Set the SBML port of the given FunctionalComponent in the given SBML model as an input species.
+	 * 
+	 * @param species - The SBOL FunctionalComponent to set as an input species in its equivalent SBML model.
+	 * @param targetModel - The SBML model that contain the input port for the given species.
+	 */
 	private static void generateInputPort(FunctionalComponent species, BioModel targetModel) {
 		targetModel.createDirPort(getDisplayID(species), GlobalConstants.INPUT);
 	}
 
+	/**
+	 * Set the SBML port of the given FunctionalComponent in the given SBML model as an output species.
+	 * 
+	 * @param species - The SBOL FunctionalComponent to set as an output species in its equivalent SBML model.
+	 * @param targetModel - The SBML model that contain the output port for the given species.
+	 */
 	private static void generateOutputPort(FunctionalComponent species, BioModel targetModel) {
 		targetModel.createDirPort(getDisplayID(species), GlobalConstants.OUTPUT);
 	}
 
+	/**
+	 * Convert the given SBOL FunctionalComponent to  its equivalent SBML species. 
+	 * SBO terms will be assigned to the generated SBML species to retain the type of SBOL FunctionalComponent.
+	 * Annotation will be performed on the species for any FunctionalComponent information that can't be mapped directly to the SBML species. 
+	 * 
+	 * @param species - The SBOL FunctionalComponent to convert to SBML species.
+	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML promoter species.
+	 * @param targetModel - The SBML model to store the SBML promoter species created from the conversion.
+	 */
 	private static void generateSpecies(FunctionalComponent species, SBOLDocument sbolDoc, BioModel targetModel) {
 		targetModel.createSpecies(getDisplayID(species), -1, -1);
 		Species sbmlSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(species));
@@ -371,6 +444,14 @@ public class SBOL2SBML {
 		annotateSpecies(sbmlSpecies, species, sbolDoc);	
 	}
 
+	/**
+	 *  Convert the given SBOL FunctionalComponent that plays the role of promoter to its equivalent SBML species.
+	 *  Annotation will be performed on the species for any FunctionalComponent information that can't be mapped directly to the SBML species. 
+	 *  
+	 * @param promoter - The SBOL FunctionalComponent to convert to SBML species.
+	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML promoter species.
+	 * @param targetModel - The SBML model to store the SBML promoter species created from the conversion.
+	 */
 	private static void generatePromoterSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
 		targetModel.createPromoter(getDisplayID(promoter), -1, -1, true, false, null);
 		Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(promoter));
@@ -382,6 +463,15 @@ public class SBOL2SBML {
 		}
 	}
 
+	/**
+	 * Convert the given SBOL biochemical reaction interaction to its equivalent SBML reaction with its corresponding SpeciesReference.
+	 * Each SBOL participation that takes place in the biochemical reaction will be given SBO terms to retain the role of the participation 
+	 * that occurred. 
+	 * 
+	 * @param interaction - The SBOL Interaction that has the role of reaction of the biochemical reaction.
+	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL biochemical reaction objects to convert to SBML biochemical reaction.
+	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
+	 */
 	private static void generateBiochemicalRxn(Interaction interaction, ModuleDefinition moduleDef, BioModel targetModel) {
 		SystemsBiologyOntology sbo = new SystemsBiologyOntology();
 		String SBOid = "";
@@ -421,8 +511,14 @@ public class SBOL2SBML {
 		targetModel.createBiochemicalReaction(interaction.getDisplayId(),SBOid,reactants,modifiers,products);
 	}
 
+	/**
+	 * Convert the given SBOL degradation interaction to its equivalent SBML reaction with its corresponding SpeciesReference.
+	 * 
+	 * @param degradation - The SBOL Interaction that has the role of reaction of the degradation reaction.
+	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL degradation objects to convert to SBML degradation reaction.
+	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
+	 */
 	private static void generateDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) {
-		//		Participation degraded = degradation.getParticipations().get(0); //OLD VERSION
 		Participation degraded = null;
 		for(Participation part : degradation.getParticipations())
 		{
@@ -443,6 +539,15 @@ public class SBOL2SBML {
 		annotateSpeciesReference(degradationRxn.getReactant(0), degraded);
 	}
 
+	/**
+	 * Convert the given list of SBOL complex formation interaction to its equivalent SBML reaction with its corresponding SpeciesReference.
+	 * 
+	 * @param complexFormation - The SBOL Interaction that has the role of reaction of the complex formation reaction.
+	 * @param complex - The SBOL Participation that has the role of product of the complex formation reaction
+	 * @param ligands - The list of SBOL Participations that has the role of reactant of the complex formation reaction
+	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL complex formation objects to convert to SBML complex formation reaction.
+	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
+	 */
 	private static void generateComplexFormationRxn(Interaction complexFormation, Participation complex,
 			List<Participation> ligands, ModuleDefinition moduleDef, BioModel targetModel) {
 		FunctionalComponent complexSpecies = moduleDef.getFunctionalComponent(complex.getParticipantURI());
@@ -473,19 +578,21 @@ public class SBOL2SBML {
 	}
 
 	/**
+	 * Convert the given list of SBOL production interaction and its related components to its equivalent SBML reaction with its corresponding SpeciesReference.
+	 * Annotation will be performed on the SBML species of the resulting production reaction from the SBOL object.
 	 * 
-	 * @param promoter
-	 * @param partici
-	 * @param productions
-	 * @param activations
-	 * @param repressions
-	 * @param products
-	 * @param transcribed
-	 * @param activators
-	 * @param repressors
-	 * @param moduleDef
-	 * @param sbolDoc
-	 * @param targetModel
+	 * @param promoter - The SBOL FunctionalComponent promoter that takes part in the production reaction.
+	 * @param partici  - The SBOL Interaction that takes part in the production reaction.
+	 * @param productions - The SBOL Interaction production that takes part in the production reaction.
+	 * @param activations - The SBOL Interaction activation that takes part in the production reaction.
+	 * @param repressions - The SBOL Interaction repressions that takes part in the production reaction.
+	 * @param products - The SBOL Participation products that takes part in the production reaction.
+	 * @param transcribed - The SBOL Participation transcribed that takes part in the production reaction.
+	 * @param activators - The SBOL Participation activators that takes part in the production reaction.
+	 * @param repressors - The SBOL Participation repressors that takes part in the production reaction.
+	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL production objects to convert to SBML production reaction.
+	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML production reaction.
+	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
 	 */
 	private static void generateProductionRxn(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
@@ -522,6 +629,8 @@ public class SBOL2SBML {
 		for (Participation product : products)
 			generateProductReference(product, promoter, moduleDef, productionRxn, targetModel);
 
+		//Note: find the resulting ComponentDefinition that creates or result in the production reaction to annotate in its equivalent
+		// SBML species. 
 		for (int i = 0; i < transcribed.size(); i++) {
 			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(i).getParticipantURI());
 			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(i).getParticipantURI());
@@ -705,7 +814,7 @@ public class SBOL2SBML {
 
 	
 	/**
-	 * Annotate SBML species reference with SBOL Participation
+	 * Annotate SBML SpeciesReference with SBOL Participation
 	 * 
 	 * @param speciesRef - The SBML SpeciesReference to be annotated with SBOL participations
 	 * @param partici - The SBOL Participation to be annotated into SBML SpeciesReference.
@@ -762,7 +871,7 @@ public class SBOL2SBML {
 	 * @param mapping - The SBOL MapsTo object to determine if it can be mapped to SBML input or output components.
 	 * @param subModule - The SBOL Module that the MapsTo object is referencing.
 	 * @param sbolDoc - The SBOL Document that contains the module being referenced and the MapsTo object is contained in.
-	 * @return
+	 * @return True if the given SBOL MapsTo object has components that can be mapped to input and output component. False otherwise. 
 	 */
 	private static boolean isIOMapping(MapsTo mapping, Module subModule, SBOLDocument sbolDoc) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
