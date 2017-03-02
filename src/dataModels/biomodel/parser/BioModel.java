@@ -6163,7 +6163,6 @@ public class BioModel extends Observable{
 			try {
 				result = flattenModelWithLibSBML(removeComp);
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 			if (result!=null) {
 				result.getModel().setName("Created by libsbml flatten routine");
