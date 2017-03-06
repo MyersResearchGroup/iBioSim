@@ -13,15 +13,21 @@
  *******************************************************************************/
 // $ANTLR 3.5 /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g 2016-09-01 11:02:46
  
-  package dataModels.lpn.parser.properties;
-  //package antlrPackage;
-
+package dataModels.lpn.parser.properties;
 
 import org.antlr.runtime.*;
 import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 @SuppressWarnings("all")
 public class PropertyLexer extends Lexer {
 	public static final int EOF=-1;

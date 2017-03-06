@@ -13,7 +13,14 @@
  *******************************************************************************/
 package dataModels.lpn.parser.LpnDecomposition;
 
-
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Edge {
 	public final Vertex target;
 	private Integer weight;

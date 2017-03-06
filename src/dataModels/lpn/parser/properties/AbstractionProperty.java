@@ -15,6 +15,14 @@ package dataModels.lpn.parser.properties;
 
 import javax.swing.DefaultListModel;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class AbstractionProperty {
   
   public String xform0 = "Merge Parallel Places - simplification",
