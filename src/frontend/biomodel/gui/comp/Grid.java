@@ -144,7 +144,7 @@ public class Grid {
 	public void createGrid(BioModel gcm, String compGCM) {
 		
 		//if the grid size is 0 by 0, don't make it
-		if (gridTable.getNumRows() <= 0 || gridTable.getNumCols() <= 0) {
+		if (gridTable == null || gridTable.getNumRows() <= 0 || gridTable.getNumCols() <= 0) {
 			
 			enabled = false; //should be false already, but whatever
 			return;
