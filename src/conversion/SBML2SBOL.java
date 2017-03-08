@@ -133,6 +133,7 @@ public class SBML2SBOL {
 	}
 
 
+
 	/**
 	 * Convert the given SBML Document to an SBOL Document.
 	 * 
@@ -420,10 +421,12 @@ public class SBML2SBOL {
 		compDef = sbolDoc.getComponentDefinition(compDef_identity, VERSION);
 		if (compDef==null) {
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
+			compDef.setName(species.getId());
 		} else if (!compDef.getTypes().containsAll(compDef_type)) {
 
 			sbolDoc.removeComponentDefinition(compDef);
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
+			compDef.setName(species.getId());
 		}
 		return compDef; 
 	}
@@ -462,8 +465,9 @@ public class SBML2SBOL {
 			access    = AccessType.PRIVATE; 
 			direction = DirectionType.NONE;
 		}
-
-		return moduleDef.createFunctionalComponent(funcComp_identity, access, compDef.getIdentity(), direction);
+		FunctionalComponent fc = moduleDef.createFunctionalComponent(funcComp_identity, access, compDef.getIdentity(), direction);
+		fc.setName(species.getId());
+		return fc;
 	}
 
 	/**
