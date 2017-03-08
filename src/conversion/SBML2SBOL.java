@@ -40,11 +40,13 @@ import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbolstandard.core2.AccessType;
+import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.EDAMOntology;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
+import org.sbolstandard.core2.MapsTo;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.RefinementType;
@@ -130,50 +132,6 @@ public class SBML2SBOL {
 		return true;
 	}
 
-	//	private static void saveAsSBOL(SBOLDocument sbolDoc) throws SBOLValidationException, XMLStreamException, IOException {
-	//		sbolDoc.setTypesInURIs(true);
-	//		String collection_id = "collection__" + sbmlDoc.getModel().getId();
-	//		Collection collection;
-	//		collection = sbolDoc.getCollection(collection_id, VERSION);
-	//		if (collection!=null) {
-	//			sbolDoc.removeCollection(collection);
-	//		}
-	//		collection = sbolDoc.createCollection(collection_id, VERSION);
-	//		//TODO: this will need to be altered to get inputFile Name and outputFileName
-	//		convert_currSBMLModel("file:" + fileName, sbmlDoc, sbmlDoc.getModel(), sbolDoc); 
-	//
-	//		sbolDoc.setTypesInURIs(false);
-	//	}
-
-//	/**
-//	 * Export the specified SBOL Document to the given file format and store it to the specified file location.
-//	 * Note that the output file format are only limited to 4 types: SBOL RDF v1 and v2, GENBANK, and FASTA.
-//	 * 
-//	 * @param sbolDoc - The specified SBOL Document to export
-//	 * @param exportFilePath - The directory path where the exported file will be stored
-//	 * @param fileType - The file format to be created from the SBOL Document
-//	 * @throws IOException
-//	 * @throws SBOLConversionException
-//	 * @throws SBOLValidationException
-//	 * @throws XMLStreamException
-//	 */
-//	public static void exportSBOL(SBOLDocument sbolDoc, String exportFilePath, String fileType) throws IOException, SBOLConversionException, SBOLValidationException, XMLStreamException {
-//	
-//		if (fileType.equals("SBOL")) {	
-//			sbolDoc.write(exportFilePath, SBOLDocument.RDF);
-//		} else if (fileType.equals("SBOL1")) {	
-//			sbolDoc.write(exportFilePath, SBOLDocument.RDFV1);
-//		} else if (fileType.equals("GenBank")) {	
-//			sbolDoc.write(exportFilePath, SBOLDocument.GENBANK);
-//		} else if (fileType.equals("Fasta")) {	
-//			sbolDoc.write(exportFilePath, SBOLDocument.FASTAformat);
-//		} 
-//		else{
-//			//assume this must be an SBOL file
-//			sbolDoc.write(exportFilePath, SBOLDocument.RDF);
-//		}
-//	}
-
 
 	/**
 	 * Convert the given SBML Document to an SBOL Document.
@@ -214,7 +172,7 @@ public class SBML2SBOL {
 	 * All SBML replacements will be converted to SBOL MapsTo.
 	 * 
 	 * @param source - reference to the source file for the given SBML model
-	 * @param externalSBMLPath - 
+	 * @param externalSBMLPath - The full path of external SBML files to be referenced in the SBML2SBOL conversion
 	 * @param sbmlDoc - The SBML Document to be converted to SBOL
 	 * @param model - The SBML model to be converted to SBOL ModuleDefinition
 	 * @param sbolDoc - The SBOL document to store all SBOL objects converted from the SBML Document
@@ -350,6 +308,7 @@ public class SBML2SBOL {
 
 	/**
 	 * Convert an SBOL ComponentDefinition from SBML Species.
+	 * 
 	 * @param sbol_Library - The global SBOL document that contains all SBOL objects referenced in conversion. 
 	 * @param sbolDoc - The SBOL Document that will store the ComponentDefinition.
 	 * @param model - The SBML model that contains the SBML species.
@@ -633,9 +592,9 @@ public class SBML2SBOL {
 	 * Any replacements connected to each SBML submodel will be converted to SBOL MapsTo object.
 	 * 
 	 * @param source - Reference to the source file for the given SBML model
-	 * @param externalSBMLPath - 
+	 * @param externalSBMLPath - The full path of external SBML files to be referenced in the SBML2SBOL conversion
 	 * @param sbmlDoc - The SBML Document that contains the SBML submodels to be converted to SBOL Module. 
-	 * @param sbol_Library - 
+	 * @param sbol_Library - The global SBOL document that contains all SBOL objects referenced in conversion. 
 	 * @param sbolDoc - The SBOL Document that will store the ModuleDefinition.
 	 * @param moduleDef - The SBOL ModuleDefinition to reference the converted SBOL Module.
 	 * @param model - The SBML Model external model to convert to SBML Module.
@@ -675,6 +634,7 @@ public class SBML2SBOL {
 						}
 					}	
 				}	
+				
 				Module m = moduleDef.createModule(subModelId, subModel.getId(), VERSION);
 
 				for (int j = 0; j < model.getSpeciesCount(); j++) 
@@ -690,8 +650,23 @@ public class SBML2SBOL {
 								String mapId = model.getSpecies(j).getId();
 								RefinementType refinement = RefinementType.USELOCAL;
 								CompModelPlugin subCompModel = SBMLutilities.getCompModelPlugin(subModel);
-								String idRef = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
-								m.createMapsTo(mapId, refinement, model.getSpecies(j).getId(), idRef);
+								String remoteId = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
+								String localId = model.getSpecies(j).getId();
+								
+								Component localComp = null, remoteComp = null;
+								ComponentDefinition remoteCompDef = sbol_Library.getComponentDefinition(URI.create(remoteId));
+								
+								if(remoteCompDef != null){
+									//TODO: should we check in sbolDoc_library if it already exist in sbolDoc?
+									//how to handel if compDef is null?
+									remoteComp = remoteCompDef.createComponent(remoteId + "_component", AccessType.PUBLIC, remoteId);
+								}
+								
+								ComponentDefinition localCompDef = sbol_Library.getComponentDefinition(URI.create(localId));
+								if(remoteCompDef != null){
+									localComp = localCompDef.createComponent(localId + "_component", AccessType.PUBLIC, localId);
+								}
+								m.createMapsTo(mapId, refinement, localComp.getPersistentIdentity(), remoteComp.getPersistentIdentity());
 							}
 						}
 					}
@@ -705,8 +680,22 @@ public class SBML2SBOL {
 								String mapId = model.getSpecies(j).getId(); 
 								RefinementType refinement = RefinementType.USEREMOTE;
 								CompModelPlugin subCompModel = SBMLutilities.getCompModelPlugin(subModel);
-								String idRef = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
-								m.createMapsTo(mapId, refinement, model.getSpecies(j).getId(), idRef);
+								String remoteId = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
+								String localId = model.getSpecies(j).getId();
+								
+								Component localComp = null, remoteComp = null;
+								ComponentDefinition remoteCompDef = sbol_Library.getComponentDefinition(URI.create(remoteId));
+								if(remoteCompDef != null){
+									//TODO: should we check in sbolDoc_library if it already exist in sbolDoc?
+									//how to handel if compDef is null?
+									remoteComp = remoteCompDef.createComponent(remoteId + "_component", AccessType.PUBLIC, remoteId);
+								}
+								
+								ComponentDefinition localCompDef = sbol_Library.getComponentDefinition(URI.create(localId));
+								if(remoteCompDef != null){
+									localComp = localCompDef.createComponent(localId + "_component", AccessType.PUBLIC, localId);
+								}
+								m.createMapsTo(mapId, refinement, localComp.getPersistentIdentity(), remoteComp.getPersistentIdentity());
 							} 
 						}
 					}
@@ -714,6 +703,7 @@ public class SBML2SBOL {
 			}
 		}
 	}
+	
 
 	/**
 	 * Conversion command features

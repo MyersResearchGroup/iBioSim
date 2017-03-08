@@ -38,8 +38,16 @@ public class RoundtripTest extends ConversionAbstractTests{
 	
 	
 	@Override
-	public void roundtripSBOLFile(final String file){
+	public void roundtripSBOLFile(final String fileName){
+		String inputFile = sbolDir + fileName + ".xml";
+		String outputFile = sbol2sbml_outputDir + fileName + ".xml";
 		
+		convertSBOL(inputFile, outputFile);
+		
+		inputFile = outputFile;
+		outputFile = sbml2sbol_outputDir + fileName + ".xml";
+		
+		convertSBML(inputFile, outputFile);
 	}
 	
 	@Override
@@ -57,8 +65,9 @@ public class RoundtripTest extends ConversionAbstractTests{
 		inputFile = outputFile;
 		outputFile = sbml2sbol_outputDir + fileName + ".xml";
 		
-//		convertSBML(inputFile, outputFile);
+		//convertSBML(inputFile, outputFile);
 	}
+	
 	
 	public void convertSBML(String inputFullPath, String outputFullPath){
 		String[] sbml2sbol_cmdArgs = {inputFullPath,"-o", outputFullPath};
@@ -76,5 +85,12 @@ public class RoundtripTest extends ConversionAbstractTests{
 		
 		String fileName = "repressibleTU_Connected";
 		roundtripSBMLFile(fileName);   
+	}
+	
+	@Test
+	public void run_CRISPR_example(){
+		
+		String fileName = "CRISPR_example";
+		roundtripSBOLFile(fileName);   
 	}
 }
