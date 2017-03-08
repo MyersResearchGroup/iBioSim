@@ -151,14 +151,14 @@ public class SBML2SBOL {
 	}
 	
 	public void saveAsSBOL(SBOLDocument sbolDoc) throws SBOLValidationException, XMLStreamException, IOException {
-		sbolDoc.setTypesInURIs(true);
-		String collection_id = "collection__" + sbmlDoc.getModel().getId();
-		Collection collection;
-		collection = sbolDoc.getCollection(collection_id, VERSION);
-		if (collection!=null) {
-			sbolDoc.removeCollection(collection);
-		}
-		collection = sbolDoc.createCollection(collection_id, VERSION);
+		//sbolDoc.setTypesInURIs(true);
+		//String collection_id = "collection__" + sbmlDoc.getModel().getId();
+		//Collection collection;
+		//collection = sbolDoc.getCollection(collection_id, VERSION);
+		//if (collection!=null) {
+		//	sbolDoc.removeCollection(collection);
+		//}
+		//collection = sbolDoc.createCollection(collection_id, VERSION);
 		export_recurse("file:" + fileName,sbmlDoc,sbmlDoc.getModel(),sbolDoc); 
 		
 //		try {
@@ -174,7 +174,7 @@ public class SBML2SBOL {
 //			JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL file.", 
 //					"SBOL Save Error", JOptionPane.ERROR_MESSAGE);
 //		}
-		sbolDoc.setTypesInURIs(false);
+		//sbolDoc.setTypesInURIs(false);
 	}
 	
 	public void export(String exportFilePath,String fileType) throws IOException, SBOLConversionException, SBOLValidationException, XMLStreamException {
@@ -415,10 +415,12 @@ public class SBML2SBOL {
 		compDef = sbolDoc.getComponentDefinition(compDef_identity, VERSION);
 		if (compDef==null) {
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
+			compDef.setName(species.getId());
 		} else if (!compDef.getTypes().containsAll(compDef_type)) {
 			// TODO: if the type has changed, then replace it
 			sbolDoc.removeComponentDefinition(compDef);
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
+			compDef.setName(species.getId());
 		}
 		return compDef; 
 	}
@@ -445,8 +447,9 @@ public class SBML2SBOL {
 			access    = AccessType.PRIVATE; 
 			direction = DirectionType.NONE;
 		}
-		
-		return moduleDef.createFunctionalComponent(funcComp_identity, access, compDef.getIdentity(), direction);
+		FunctionalComponent fc = moduleDef.createFunctionalComponent(funcComp_identity, access, compDef.getIdentity(), direction);
+		fc.setName(species.getId());
+		return fc;
 	}
 	
 	public void extractProductionReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
