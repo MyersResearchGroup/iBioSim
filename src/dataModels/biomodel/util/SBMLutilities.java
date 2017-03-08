@@ -5965,8 +5965,8 @@ public class SBMLutilities
 		return true;
 	}
 	
-	public static boolean isInput(SBMLDocument sbmlDoc,String id) {
-		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
+	public static boolean isInput(Model model,String id) {
+		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(model);
 		Port port = getPortByIdRef(sbmlCompModel,id);
 		if (port != null) {
 			return SBMLutilities.isInputPort(port);
@@ -5974,8 +5974,8 @@ public class SBMLutilities
 		return false;
 	}
 		
-	public static boolean isOutput(SBMLDocument sbmlDoc,String id) {
-		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
+	public static boolean isOutput(Model model,String id) {
+		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(model);
 		Port port = getPortByIdRef(sbmlCompModel,id);
 		if (port != null) {
 			return SBMLutilities.isOutputPort(port);
@@ -5984,8 +5984,8 @@ public class SBMLutilities
 	}
 	
 	
-	public static boolean isOnPort(SBMLDocument sbmlDoc,String id) {
-		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
+	public static boolean isOnPort(Model model,String id) {
+		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(model);
 		Port port = getPortByIdRef(sbmlCompModel,id);
 		if (port != null) {
 			return true;
