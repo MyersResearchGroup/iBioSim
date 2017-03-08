@@ -15,7 +15,14 @@ package dataModels.lpn.parser.LpnDecomposition;
 
 import java.util.Comparator;
 
-
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class VertexComparator implements Comparator<Vertex>{
 	private int maxNumVarsInOneComp;
 	

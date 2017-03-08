@@ -27,6 +27,7 @@ import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import backend.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 
@@ -43,7 +44,7 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 	private HierarchicalFBASimulator	fbaSim;
 	private HierarchicalODERKSimulator	odeSim;
-
+	private VectorWrapper wrapper;
 	// private HierarchicalSimulation ssaSim;
 
 	public HierarchicalMixedSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
@@ -59,7 +60,8 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 		if (!isInitialized)
 		{
 			setCurrentTime(0);
-			ModelSetup.setupModels(this, ModelType.HODE);
+			this.wrapper = new VectorWrapper(initValues); 
+			ModelSetup.setupModels(this, ModelType.HODE, wrapper);
 			computeFixedPoint();
 
 			setupForOutput(runNumber);

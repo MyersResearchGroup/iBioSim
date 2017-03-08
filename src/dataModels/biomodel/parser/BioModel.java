@@ -3029,12 +3029,12 @@ public class BioModel extends Observable{
 		}
 		if (gridSize != null) {
 		  gridTable.setNumRows(gridSize[0]);
-		  gridTable.setNumRows(gridSize[1]);
+		  gridTable.setNumCols(gridSize[1]);
 		} 
 		else
 		{
 		  gridTable.setNumRows(0);
-      gridTable.setNumRows(0);
+		  gridTable.setNumCols(0);
 		}
 	}
 

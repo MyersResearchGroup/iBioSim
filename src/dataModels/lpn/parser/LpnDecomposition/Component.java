@@ -21,6 +21,14 @@ import dataModels.lpn.parser.Place;
 import dataModels.lpn.parser.Transition;
 import dataModels.lpn.parser.Variable;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class Component extends LPN{
 	private ArrayList<Integer> processIDList;
 	private ArrayList<Transition> compTrans;

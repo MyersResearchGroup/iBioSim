@@ -13,10 +13,7 @@
  *******************************************************************************/
 // $ANTLR 3.5 /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g 2016-09-01 11:02:46
 
-  package dataModels.lpn.parser.properties;
-  //import lpn.parser.LhpnFile;
-  //package antlrPackage;
-
+package dataModels.lpn.parser.properties;
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -26,6 +23,14 @@ import java.util.ArrayList;
 import org.antlr.runtime.tree.*;
 
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 @SuppressWarnings("all")
 public class PropertyParser extends Parser {
 	public static final String[] tokenNames = new String[] {

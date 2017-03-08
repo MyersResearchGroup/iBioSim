@@ -22,6 +22,14 @@ import java.util.PriorityQueue;
 
 import dataModels.lpn.parser.Variable;
 
+/**
+ * 
+ *
+ * @author 
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
 public class LpnComponentGraph{
 	private Integer maxNumVarsInOneComp; 
 	private HashMap<Integer, Vertex> vertices; 
