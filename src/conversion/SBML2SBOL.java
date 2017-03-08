@@ -460,6 +460,11 @@ public class SBML2SBOL {
 			access    = AccessType.PUBLIC;
 			direction = DirectionType.OUT;
 		} 
+		else if (SBMLutilities.isOnPort(sbmlDoc,species.getId())) 
+		{
+			access    = AccessType.PUBLIC;
+			direction = DirectionType.NONE;
+		} 
 		else 
 		{
 			access    = AccessType.PRIVATE; 
@@ -656,7 +661,7 @@ public class SBML2SBOL {
 								CompModelPlugin subCompModel = SBMLutilities.getCompModelPlugin(subModel);
 								String remoteId = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
 								String localId = model.getSpecies(j).getId();
-								
+
 //								Component localComp = null, remoteComp = null;
 //								ComponentDefinition remoteCompDef = sbol_Library.getComponentDefinition(URI.create(remoteId));
 //								
