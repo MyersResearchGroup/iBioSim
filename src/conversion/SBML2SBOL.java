@@ -16,6 +16,7 @@ package conversion;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -23,7 +24,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.prefs.Preferences;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -40,7 +40,6 @@ import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbolstandard.core2.AccessType;
-import org.sbolstandard.core2.Collection;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.EDAMOntology;
@@ -57,14 +56,13 @@ import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
-//import backend.sbol.util.SBOLUtility2;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
 
 /**
- * 
+ * Perform conversion from SBML to SBOL. 
  *
  * @author Tramy Nguyen
  * @author Chris Myers
@@ -72,69 +70,51 @@ import dataModels.util.GlobalConstants;
  * @version %I%
  */
 public class SBML2SBOL {
-	private SBMLDocument sbmlDoc;
-	private String fileName;
-	private String path;
-	private SBOLDocument SBOLDOC;
-	
-	private String VERSION = "";
-	
-	URI COLLECTION_ID ;
-	URI LANGUAGE  = EDAMOntology.SBML;
-	URI FRAMEWORK = SystemsBiologyOntology.DISCRETE_FRAMEWORK;
+
+	private static String VERSION = "";
+
 	
 	/**
+	 * Load the given set of SBOL files for the converter to reference an existing object taken 
+	 * from the set of SBOL files rather than constructing a new SBOL object. 
 	 * 
-	 * @param sbolFilePaths
-	 * @param path
-	 * @param sbmlDocument
-	 * @param fileName
+	 * @param sbol_Library - The global SBOL document that contains all SBOL objects referenced in conversion. 
+	 * @param sbolFilePaths - The set of SBOL files to use for the conversion to reference from.
+	 * @param sbolURIPrefix - The SBOL URI prefix that the global SBOLDocument will contain
+	 * @return True if all referenced SBOL files were loaded successfully. False otherwise.
 	 * @throws FileNotFoundException
 	 * @throws SBOLValidationException
 	 * @throws IOException
 	 * @throws SBOLConversionException
 	 */
-	public SBML2SBOL(HashSet<String> sbolFilePaths,String path,SBMLDocument sbmlDocument, String fileName) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
-	{
-		this.path = path;
-		this.fileName = fileName;
-		this.sbmlDoc = sbmlDocument;
-		SBOLDOC = new SBOLDocument();
-		loadSBOLFiles(sbolFilePaths);
-	}
-	
-	private boolean loadSBOLFiles(HashSet<String> sbolFilePaths) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
+	private static boolean loadSBOLFiles(SBOLDocument sbol_Library, HashSet<String> sbolFilePaths, String sbolURIPrefix) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		for (String filePath : sbolFilePaths) 
 		{
-			File f = new File(filePath);
-			String fileName = f.getName().replace(".sbol", "");
-			Preferences biosimrc = Preferences.userRoot();
-			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
+			SBOLReader.setURIPrefix(sbolURIPrefix);
 			SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(filePath));
-			
+
 			if (sbolDoc != null) 
 			{
 				for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
 				{
-					if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
+					if(sbol_Library.getComponentDefinition(c.getIdentity()) == null) 
 					{
 						try {
-							SBOLDOC.createCopy(c);
+							sbol_Library.createCopy(c);
 						}
 						catch (SBOLValidationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-
 				}
 				for(Sequence c : sbolDoc.getSequences())
 				{
-					if(SBOLDOC.getSequence(c.getIdentity()) == null) 
+					if(sbol_Library.getSequence(c.getIdentity()) == null) 
 					{
 						try {
-							SBOLDOC.createCopy(c);
+							sbol_Library.createCopy(c);
 						}
 						catch (SBOLValidationException e) {
 							// TODO Auto-generated catch block
@@ -142,80 +122,121 @@ public class SBML2SBOL {
 						}
 					}
 				}
-				
 			} 
-			else
+			else{
 				return false;
+			}
 		}
 		return true;
 	}
-	
-	public void saveAsSBOL(SBOLDocument sbolDoc) throws SBOLValidationException, XMLStreamException, IOException {
-		sbolDoc.setTypesInURIs(true);
-		String collection_id = "collection__" + sbmlDoc.getModel().getId();
-		Collection collection;
-		collection = sbolDoc.getCollection(collection_id, VERSION);
-		if (collection!=null) {
-			sbolDoc.removeCollection(collection);
+
+	//	private static void saveAsSBOL(SBOLDocument sbolDoc) throws SBOLValidationException, XMLStreamException, IOException {
+	//		sbolDoc.setTypesInURIs(true);
+	//		String collection_id = "collection__" + sbmlDoc.getModel().getId();
+	//		Collection collection;
+	//		collection = sbolDoc.getCollection(collection_id, VERSION);
+	//		if (collection!=null) {
+	//			sbolDoc.removeCollection(collection);
+	//		}
+	//		collection = sbolDoc.createCollection(collection_id, VERSION);
+	//		//TODO: this will need to be altered to get inputFile Name and outputFileName
+	//		convert_currSBMLModel("file:" + fileName, sbmlDoc, sbmlDoc.getModel(), sbolDoc); 
+	//
+	//		sbolDoc.setTypesInURIs(false);
+	//	}
+
+//	/**
+//	 * Export the specified SBOL Document to the given file format and store it to the specified file location.
+//	 * Note that the output file format are only limited to 4 types: SBOL RDF v1 and v2, GENBANK, and FASTA.
+//	 * 
+//	 * @param sbolDoc - The specified SBOL Document to export
+//	 * @param exportFilePath - The directory path where the exported file will be stored
+//	 * @param fileType - The file format to be created from the SBOL Document
+//	 * @throws IOException
+//	 * @throws SBOLConversionException
+//	 * @throws SBOLValidationException
+//	 * @throws XMLStreamException
+//	 */
+//	public static void exportSBOL(SBOLDocument sbolDoc, String exportFilePath, String fileType) throws IOException, SBOLConversionException, SBOLValidationException, XMLStreamException {
+//	
+//		if (fileType.equals("SBOL")) {	
+//			sbolDoc.write(exportFilePath, SBOLDocument.RDF);
+//		} else if (fileType.equals("SBOL1")) {	
+//			sbolDoc.write(exportFilePath, SBOLDocument.RDFV1);
+//		} else if (fileType.equals("GenBank")) {	
+//			sbolDoc.write(exportFilePath, SBOLDocument.GENBANK);
+//		} else if (fileType.equals("Fasta")) {	
+//			sbolDoc.write(exportFilePath, SBOLDocument.FASTAformat);
+//		} 
+//		else{
+//			//assume this must be an SBOL file
+//			sbolDoc.write(exportFilePath, SBOLDocument.RDF);
+//		}
+//	}
+
+
+	/**
+	 * Convert the given SBML Document to an SBOL Document.
+	 * 
+	 * @param externalSBMLPath - The full path of external SBML files to be referenced in the SBML2SBOL conversion
+	 * @param sbmlDoc - The SBML document to be converted.
+	 * @param fileName - The name of the input SBML file
+	 * @param ref_sbolInputFilePath - The set of SBOL files to use for the conversion to reference from. If no ref_sbolInputfilePath is given, then null should be set to indicate no referencing SBOL files are given for conversion.
+	 * @param sbolURIPrefix - The URI prefix to be set on the SBOLDocument.
+	 * @return The converted SBOL Document
+	 * @throws SBOLValidationException
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 * @throws SBOLConversionException
+	 */
+	public static SBOLDocument convert_SBML2SBOL(String externalSBMLPath, SBMLDocument sbmlDoc, String fileName, HashSet<String> ref_sbolInputFilePath, String sbolURIPrefix) throws SBOLValidationException, XMLStreamException, IOException, SBOLConversionException {
+
+		//Load all SBOL files given from user to store reference SBOL objects
+		SBOLDocument sbol_Library = new SBOLDocument();
+		sbol_Library.setDefaultURIprefix(sbolURIPrefix);
+		if(!ref_sbolInputFilePath.isEmpty() || ref_sbolInputFilePath == null){
+			SBML2SBOL.loadSBOLFiles(sbol_Library, ref_sbolInputFilePath, sbolURIPrefix);
 		}
-		collection = sbolDoc.createCollection(collection_id, VERSION);
-		export_recurse("file:" + fileName,sbmlDoc,sbmlDoc.getModel(),sbolDoc); 
-		
-//		try {
-//			collection = sbolDoc.getCollection(collection_id, VERSION);
-//			if (collection!=null) {
-//				sbolDoc.removeCollection(collection);
-//			}
-//			collection = sbolDoc.createCollection(collection_id, VERSION);
-//			export_recurse("file:" + bioModel.getSBMLFile(),sbmlDoc,sbolDoc,collection); 
-//		}
-//		catch (SBOLValidationException e1) {
-//			e1.printStackTrace();
-//			JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL file.", 
-//					"SBOL Save Error", JOptionPane.ERROR_MESSAGE);
-//		}
-		sbolDoc.setTypesInURIs(false);
-	}
-	
-	public void export(String exportFilePath,String fileType) throws IOException, SBOLConversionException, SBOLValidationException, XMLStreamException {
+
 		SBOLDocument sbolDoc = new SBOLDocument();
-		export(sbolDoc);
-		
-		if (fileType.equals("SBOL")) {	
-			sbolDoc.write(exportFilePath,SBOLDocument.RDF);
-		} else if (fileType.equals("SBOL1")) {	
-			sbolDoc.write(exportFilePath,SBOLDocument.RDFV1);
-		} else if (fileType.equals("GenBank")) {	
-			sbolDoc.write(exportFilePath,SBOLDocument.GENBANK);
-		} else if (fileType.equals("Fasta")) {	
-			sbolDoc.write(exportFilePath,SBOLDocument.FASTAformat);
-		} 
-	}
-	
-	public void export(SBOLDocument sbolDoc) throws SBOLValidationException, XMLStreamException, IOException {
-		Preferences biosimrc = Preferences.userRoot();
-		sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+		sbolDoc.setDefaultURIprefix(sbolURIPrefix);
 		sbolDoc.setComplete(false);
-		
-		// TODO: not sure we need collection anymore, since added by synbiohub
-		//String collection_id = "collection__" + bioModel.getSBMLDocument().getModel().getId();
-		//Collection collection;
-		//collection = sbolDoc.createCollection(collection_id, VERSION);
-		export_recurse("file:" + fileName,sbmlDoc,sbmlDoc.getModel(),sbolDoc); //,collection);
+
+		parseSBMLModel("file:" + fileName, externalSBMLPath, sbmlDoc, sbmlDoc.getModel(), sbolDoc, sbol_Library); 
+		return sbolDoc;
 	}
 	
-	public void export_recurse(String source,SBMLDocument sbmlDoc,Model model,SBOLDocument sbolDoc) throws SBOLValidationException, XMLStreamException, IOException 
+	/**
+	 * Convert the specified SBML model to its equivalent SBOL ModuleDefinition.
+	 * All SBML SBase referencing this SBML model will be converted to SBOL data object.
+	 * In this case, all SBML species will be converted to SBOL ComponentDefinition and FunctionalComponent.
+	 * All SBML reactions will be converted to SBOL Interactions. 
+	 * All SBML replacements will be converted to SBOL MapsTo.
+	 * 
+	 * @param source - reference to the source file for the given SBML model
+	 * @param externalSBMLPath - 
+	 * @param sbmlDoc - The SBML Document to be converted to SBOL
+	 * @param model - The SBML model to be converted to SBOL ModuleDefinition
+	 * @param sbolDoc - The SBOL document to store all SBOL objects converted from the SBML Document
+	 * @param sbol_Library - The global SBOL document that contains all SBOL objects referenced in conversion. 
+	 * @throws SBOLValidationException
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 */
+	private static void parseSBMLModel(String source, String externalSBMLPath, SBMLDocument sbmlDoc, Model model, SBOLDocument sbolDoc, SBOLDocument sbol_Library) throws SBOLValidationException, XMLStreamException, IOException 
 	{
 		//String modelId = model.getId();
 		URI sourceURI  = URI.create(source);
+		URI LANGUAGE  = EDAMOntology.SBML;
+		URI FRAMEWORK = SystemsBiologyOntology.DISCRETE_FRAMEWORK;
 
-		org.sbolstandard.core2.Model sbolModel = sbolDoc.getModel(model.getId()+"_model", VERSION);
+		org.sbolstandard.core2.Model sbolModel = sbolDoc.getModel(model.getId() + "_model", VERSION);
 		if (sbolModel!=null) {
 			sbolDoc.removeModel(sbolModel);
 		}
-		sbolModel = sbolDoc.createModel(model.getId()+"_model", VERSION, sourceURI, LANGUAGE, FRAMEWORK);
-		//collection.addMember(sbolModel.getIdentity());	
 		
+		sbolModel = sbolDoc.createModel(model.getId() + "_model", VERSION, sourceURI, LANGUAGE, FRAMEWORK);
+
 		String identityStr  = model.getId();
 		ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(identityStr, VERSION);
 		if (moduleDef!=null) {
@@ -223,100 +244,127 @@ public class SBML2SBOL {
 		}
 		moduleDef = sbolDoc.createModuleDefinition(identityStr, VERSION);
 		moduleDef.addModel(sbolModel);
-		//collection.addMember(moduleDef.getIdentity());
 
 		for (int i = 0; i < model.getSpeciesCount(); i++) 
 		{
-			// convert species to a component definition
 			Species species = model.getSpecies(i);
-			ComponentDefinition compDef = setComponentDefinition(sbolDoc, model, species);
-			//collection.addMember(compDef.getIdentity());
-			
+			ComponentDefinition compDef = setComponentDefinition(sbol_Library, sbolDoc, model, species);
 			setFunctionalComponent(sbmlDoc, moduleDef, compDef, species);
 		}
-		
+
 		for (int i = 0; i < model.getReactionCount(); i++) 
 		{
 			Reaction reaction = model.getReaction(i);
 
-			// if production reaction, then you want to examine the modifiers, and create interactions for 
-			// each modifier that is a repressor from this species to the promoter
 			if(BioModel.isProductionReaction(reaction))
 			{
-				extractProductionReaction(moduleDef, reaction);
+				// if production reaction, then you want to examine the modifiers, and create interactions for 
+				// each modifier that is a repressor from this species to the promoter
+				parseProductionReaction(moduleDef, reaction);
 			}
-			// if complex reaction, then create on interaction
 			else if(BioModel.isComplexReaction(reaction))
 			{	
-				extractComplexReaction(moduleDef, reaction);
+				// if complex reaction, then create on interaction
+				parseComplexReaction(moduleDef, reaction);
 			}
-			// if degradation reaction, then create an interaction
 			else if(BioModel.isDegradationReaction(reaction))
 			{
-				extractDegradationReaction(moduleDef, reaction);
+				// if degradation reaction, then create an interaction
+				parseDegradationReaction(moduleDef, reaction);
 			}
 			else 
 			{
-				Set<URI> types = new HashSet<URI>();
-				types.add(SystemsBiologyOntology.BIOCHEMICAL_REACTION);
-				
-				Interaction inter = moduleDef.createInteraction(reaction.getId(), types);
-				
-				int j = 0;
-				for(SpeciesReference reactant : reaction.getListOfReactants())
-				{
-					Set<URI> roles_r = new HashSet<URI>();
-					roles_r.add(SystemsBiologyOntology.REACTANT);
-					inter.createParticipation(reactant.getSpecies()+"_r"+j, reactant.getSpecies(),roles_r);
-					j++;
-				}
-				j = 0;
-				for(ModifierSpeciesReference modifier : reaction.getListOfModifiers())
-				{
-					Set<URI> roles_r = new HashSet<URI>();
-					roles_r.add(SystemsBiologyOntology.MODIFIER);
-					inter.createParticipation(modifier.getSpecies()+"_m"+j, modifier.getSpecies(),roles_r);
-					j++;
-				}
-				j = 0;
-				for(SpeciesReference product : reaction.getListOfProducts())
-				{
-					// create participation from product.getSpecies() as type product
-					Set<URI> roles_p = new HashSet<URI>();
-					roles_p.add(SystemsBiologyOntology.PRODUCT);
-					inter.createParticipation(product.getSpecies()+"_p"+j, product.getSpecies(),roles_p);
-					j++;
-				}
+				parseBiochemicalReaction(moduleDef, reaction);
 			}
 		}
-		extractSubModels(source, sbmlDoc, sbolDoc, moduleDef, model);
+
+		extractSubModels(source, externalSBMLPath, sbmlDoc, sbol_Library, sbolDoc, moduleDef, model);
 	}
 	
-	public void recurseComponentDefinition(SBOLDocument sbolDoc,ComponentDefinition cd) throws SBOLValidationException {
+
+	/**
+	 * Convert the given SBML Biochemical Reaction to its equivalent SBOL Interaction and participants.
+	 * 
+	 * @param moduleDef - The SBOL ModuleDefinition the converted SBOL Interaction will be stored in.
+	 * @param reaction - The SBML reaction to be converted into SBOL Interaction.
+	 * @throws SBOLValidationException
+	 */
+	private static void parseBiochemicalReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException{
+		
+		Set<URI> types = new HashSet<URI>();
+		types.add(SystemsBiologyOntology.BIOCHEMICAL_REACTION);
+
+		Interaction inter = moduleDef.createInteraction(reaction.getId(), types);
+
+		int j = 0;
+		for(SpeciesReference reactant : reaction.getListOfReactants())
+		{
+			Set<URI> roles_r = new HashSet<URI>();
+			roles_r.add(SystemsBiologyOntology.REACTANT);
+			inter.createParticipation(reactant.getSpecies()+"_r"+j, reactant.getSpecies(),roles_r);
+			j++;
+		}
+		j = 0;
+		for(ModifierSpeciesReference modifier : reaction.getListOfModifiers())
+		{
+			Set<URI> roles_r = new HashSet<URI>();
+			roles_r.add(SystemsBiologyOntology.MODIFIER);
+			inter.createParticipation(modifier.getSpecies()+"_m"+j, modifier.getSpecies(),roles_r);
+			j++;
+		}
+		j = 0;
+		for(SpeciesReference product : reaction.getListOfProducts())
+		{
+			// create participation from product.getSpecies() as type product
+			Set<URI> roles_p = new HashSet<URI>();
+			roles_p.add(SystemsBiologyOntology.PRODUCT);
+			inter.createParticipation(product.getSpecies()+"_p"+j, product.getSpecies(),roles_p);
+			j++;
+		}
+	}
+
+	/**
+	 * Creates a copy of an SBOL ComponentDefintion from the given ComponentDefinition's Component if it does not already exist within the given SBOL Document.
+	 * 
+	 * @param sbolDoc - The SBOL Document that will store the created ComponentDefintion.
+	 * @param cd - The ComponentDefinition's Component to be created.
+	 * @throws SBOLValidationException
+	 */
+	private static void recurseComponentDefinition(SBOLDocument sbolDoc, ComponentDefinition cd) throws SBOLValidationException {
 		for (org.sbolstandard.core2.Component comp : cd.getComponents()) {
-			if (sbolDoc.getComponentDefinition(comp.getDefinitionURI())==null) {
+			if (sbolDoc.getComponentDefinition(comp.getDefinitionURI()) == null) {
 				ComponentDefinition compDef = comp.getDefinition();
 				sbolDoc.createCopy(compDef);
-				//collection.addMember(compDef.getIdentity());
+
 				for (Sequence sequence : compDef.getSequences()) {
-					if (sbolDoc.getSequence(sequence.getIdentity())==null) {
+					if (sbolDoc.getSequence(sequence.getIdentity()) == null) {
 						sbolDoc.createCopy(sequence);
-						//collection.addMember(sequence.getIdentity());
+
 					}
 				}
 				recurseComponentDefinition(sbolDoc,compDef);
 			}
 		}
 	}
-	
-	public ComponentDefinition setComponentDefinition(SBOLDocument sbolDoc, Model model, Species species) throws SBOLValidationException
+
+
+	/**
+	 * Convert an SBOL ComponentDefinition from SBML Species.
+	 * @param sbol_Library - The global SBOL document that contains all SBOL objects referenced in conversion. 
+	 * @param sbolDoc - The SBOL Document that will store the ComponentDefinition.
+	 * @param model - The SBML model that contains the SBML species.
+	 * @param species - The SBML Species to be converted to SBOL ComponentDefinition.
+	 * @return The ComponentDefintion that was created.
+	 * @throws SBOLValidationException
+	 */
+	private static ComponentDefinition setComponentDefinition(SBOLDocument sbol_Library, SBOLDocument sbolDoc, Model model, Species species) throws SBOLValidationException
 	{
 		String compDef_identity =  model.getId() + "__" + species.getId();
-		
+
 		Set<URI> compDef_type = new HashSet<URI>();
 		Set<URI> compDef_role = new HashSet<URI>();
 		ComponentDefinition compDef = null;
-		
+
 		if (BioModel.isPromoterSpecies(species)) 
 		{
 			List<URI> sbolURIs = new LinkedList<URI>();
@@ -324,16 +372,15 @@ public class SBML2SBOL {
 			AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			if (sbolURIs.size()>0) {
 				// TODO: need to figure out what to do when size is greater than 1
-				compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
-				if (compDef!=null) {
+				compDef = sbol_Library.getComponentDefinition(sbolURIs.get(0));
+				if (compDef != null) {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 						sbolDoc.createCopy(compDef);
 					}
-					//collection.addMember(compDef.getIdentity());
+
 					for (Sequence sequence : compDef.getSequences()) {
 						if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 							sbolDoc.createCopy(sequence);
-							//collection.addMember(sequence.getIdentity());
 						}
 					}
 					recurseComponentDefinition(sbolDoc,compDef);
@@ -346,16 +393,16 @@ public class SBML2SBOL {
 				//sbolStrand = 
 				AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
 				if (sbolURIs.size()>0) {
-					compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
-					if (compDef!=null) {
+					compDef = sbol_Library.getComponentDefinition(sbolURIs.get(0));
+					if (compDef != null) {
 						if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 							sbolDoc.createCopy(compDef);
 						}
-						//collection.addMember(compDef.getIdentity());
+
 						for (Sequence sequence : compDef.getSequences()) {
 							if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 								sbolDoc.createCopy(sequence);
-								//collection.addMember(sequence.getIdentity());
+
 							}
 						}
 						recurseComponentDefinition(sbolDoc,compDef);
@@ -366,24 +413,23 @@ public class SBML2SBOL {
 			compDef_type.add(ComponentDefinition.DNA);
 			compDef_role.add(SequenceOntology.PROMOTER);
 		} 
-		// TODO: other cases for other SBO terms
 		else 
 		{
 			List<URI> sbolURIs = new LinkedList<URI>();
-			//String sbolStrand = 
+
 			AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			if (sbolURIs.size()>0) {
-				// TODO: what if more than 1
-				compDef = SBOLDOC.getComponentDefinition(sbolURIs.get(0));
-				if (compDef!=null) {
+
+				compDef = sbol_Library.getComponentDefinition(sbolURIs.get(0));
+				if (compDef != null) {
 					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
 						sbolDoc.createCopy(compDef);
 					}
-					//collection.addMember(compDef.getIdentity());
+
 					for (Sequence sequence : compDef.getSequences()) {
 						if (sbolDoc.getSequence(sequence.getIdentity())==null) {
 							sbolDoc.createCopy(sequence);
-							//collection.addMember(sequence.getIdentity());
+
 						}
 					}
 					recurseComponentDefinition(sbolDoc,compDef);
@@ -416,20 +462,32 @@ public class SBML2SBOL {
 		if (compDef==null) {
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 		} else if (!compDef.getTypes().containsAll(compDef_type)) {
-			// TODO: if the type has changed, then replace it
+
 			sbolDoc.removeComponentDefinition(compDef);
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 		}
 		return compDef; 
 	}
-	
-	public FunctionalComponent setFunctionalComponent(SBMLDocument sbmlDoc, ModuleDefinition moduleDef, ComponentDefinition compDef, Species species) throws SBOLValidationException
+
+
+	/**
+	 * For each species that exist in an SBML model, this function will create a FunctionalComponent instance for the corresponding 
+	 * ComponentDefinition existing in the specified ModuleDefinition.
+	 * 
+	 * @param sbmlDoc - The SBML Document that contains the SBML species to be converted to SBOL FunctionalComponent. 
+	 * @param moduleDef - The SBOL ModuleDedfinition that the converted FunctionalComponent will be stored in.
+	 * @param compDef - The ComponentDefinition that the FunctionalComponent will reference from.
+	 * @param species - The SBML Species that will be converted to SBOL FunctionalComponent.
+	 * @return The FunctionalComponent that was created. 
+	 * @throws SBOLValidationException
+	 */
+	private static FunctionalComponent setFunctionalComponent(SBMLDocument sbmlDoc, ModuleDefinition moduleDef, ComponentDefinition compDef, Species species) throws SBOLValidationException
 	{
 		AccessType access; 
 		DirectionType direction;
 		// create FunctionalComponents for these within the module
 		String funcComp_identity =  species.getId();
-		
+
 		if (SBMLutilities.isInput(sbmlDoc,species.getId())) 
 		{
 			access    = AccessType.PUBLIC;
@@ -445,11 +503,18 @@ public class SBML2SBOL {
 			access    = AccessType.PRIVATE; 
 			direction = DirectionType.NONE;
 		}
-		
+
 		return moduleDef.createFunctionalComponent(funcComp_identity, access, compDef.getIdentity(), direction);
 	}
-	
-	public void extractProductionReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
+
+	/**
+	 * Convert SBOL Interaction from SBML production reactions.
+	 * 
+	 * @param moduleDef - The SBOL ModuleDefinition that the Interaction occurs in.
+	 * @param reaction - The SBML reaction to be converted to its corresponding SBOL Interaction.
+	 * @throws SBOLValidationException
+	 */
+	private static void parseProductionReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
 	{
 		List<ModifierSpeciesReference> repressors = new ArrayList<ModifierSpeciesReference>();
 		List<ModifierSpeciesReference> activators = new ArrayList<ModifierSpeciesReference>(); 
@@ -475,54 +540,62 @@ public class SBML2SBOL {
 				activators.add(modifier);
 			}
 		}
-		
+
 		for(ModifierSpeciesReference r : repressors)
 		{
 			String inter_id = r.getSpecies() + "_rep_" + promoterId;
-			
+
 			Set<URI> types = new HashSet<URI>();
 			types.add(SystemsBiologyOntology.INHIBITION);
-			
+
 			Interaction interaction = moduleDef.createInteraction(inter_id, types);
-			
+
 			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.INHIBITED);
 			interaction.createParticipation(r.getSpecies(), r.getSpecies(),SystemsBiologyOntology.INHIBITOR);
 		}
-		
+
 		// Repeat same steps for the list of activators
 		for(ModifierSpeciesReference a : activators)
 		{
 			String inter_id = a.getSpecies() + "_act_" + promoterId;
-			
+
 			Set<URI> types = new HashSet<URI>();
 			types.add(SystemsBiologyOntology.STIMULATION); 
-			
+
 			Interaction interaction = moduleDef.createInteraction(inter_id, types);
-			
+
 			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.STIMULATED);
 			interaction.createParticipation(a.getSpecies(), a.getSpecies(),SystemsBiologyOntology.STIMULATOR);
 		}
-		
+
 		for(SpeciesReference product : reaction.getListOfProducts())
 		{
 			String i_id = promoterId + "_prod_" + product.getSpecies();
-			
+
 			Set<URI> type = new HashSet<URI>();
 			type.add(SystemsBiologyOntology.GENETIC_PRODUCTION);
-			
+
 			Interaction interaction = moduleDef.createInteraction(i_id, type);
 			interaction.createParticipation(promoterId, promoterId,SystemsBiologyOntology.TEMPLATE);
 			interaction.createParticipation(product.getSpecies(), product.getSpecies(),SystemsBiologyOntology.PRODUCT);
 		}
 	}
-	
-	public void extractComplexReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
+
+
+	/**
+	 * Convert SBOL Interaction from SBML complex reactions.
+	 * 
+	 * @param moduleDef - The SBOL ModuleDefinition that the Interaction occurs in.
+	 * @param reaction - The SBML reaction to be converted to SBOL Interaction
+	 * @throws SBOLValidationException
+	 */
+	private static void parseComplexReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
 	{
 		Set<URI> type = new HashSet<URI>();
 		type.add(SystemsBiologyOntology.NON_COVALENT_BINDING);
-		
+
 		Interaction inter = moduleDef.createInteraction(reaction.getId(), type);
-		
+
 		for(SpeciesReference reactant : reaction.getListOfReactants())
 		{
 			inter.createParticipation(reactant.getSpecies(), reactant.getSpecies(),SystemsBiologyOntology.REACTANT);
@@ -532,22 +605,45 @@ public class SBML2SBOL {
 			inter.createParticipation(product.getSpecies(), product.getSpecies(),SystemsBiologyOntology.PRODUCT);
 		}
 	}
-	
-	public void extractDegradationReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
+
+	/**
+	 * Convert SBOL Interaction from SBML degradation reactions.
+	 * 
+	 * @param moduleDef - The SBOL ModuleDefinition that the Interaction occurs in.
+	 * @param reaction - The SBML reaction to be converted to SBOL Interaction
+	 * @throws SBOLValidationException
+	 */
+	private static void parseDegradationReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
 	{
 		Set<URI> types = new HashSet<URI>();
 		types.add(SystemsBiologyOntology.DEGRADATION);
-		
+
 		Interaction inter = moduleDef.createInteraction(reaction.getId(), types);
-		
+
 		for(SpeciesReference sp : reaction.getListOfReactants())
 		{
 			String p_id = sp.getSpecies();
 			inter.createParticipation(p_id, sp.getSpecies(),SystemsBiologyOntology.REACTANT);
 		}
 	}
+
 	
-	public void extractSubModels(String source, SBMLDocument sbmlDoc, SBOLDocument sbolDoc, ModuleDefinition moduleDef, Model model) throws SBOLValidationException, XMLStreamException, IOException
+	/**
+	 * Converts each SBML submodels contained within the given SBML Document to SBOL Modules.
+	 * Any replacements connected to each SBML submodel will be converted to SBOL MapsTo object.
+	 * 
+	 * @param source - Reference to the source file for the given SBML model
+	 * @param externalSBMLPath - 
+	 * @param sbmlDoc - The SBML Document that contains the SBML submodels to be converted to SBOL Module. 
+	 * @param sbol_Library - 
+	 * @param sbolDoc - The SBOL Document that will store the ModuleDefinition.
+	 * @param moduleDef - The SBOL ModuleDefinition to reference the converted SBOL Module.
+	 * @param model - The SBML Model external model to convert to SBML Module.
+	 * @throws SBOLValidationException
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 */
+	private static void extractSubModels(String source, String externalSBMLPath, SBMLDocument sbmlDoc, SBOLDocument sbol_Library, SBOLDocument sbolDoc, ModuleDefinition moduleDef, Model model) throws SBOLValidationException, XMLStreamException, IOException
 	{
 		ArrayList<String> comps = new ArrayList<String>();
 		CompSBMLDocumentPlugin sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
@@ -555,7 +651,6 @@ public class SBML2SBOL {
 
 		if (sbmlCompModel.getListOfSubmodels().size()>0) 
 		{
-//			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
 			for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
 				String subModelId = sbmlCompModel.getListOfSubmodels().get(i).getId();
 				String modelRef = sbmlCompModel.getListOfSubmodels().get(subModelId).getModelRef();
@@ -563,11 +658,11 @@ public class SBML2SBOL {
 				Model subModel = null;
 				if (extModelRef!=null) {
 					String extModel = extModelRef.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-					SBMLDocument subDocument = SBMLutilities.readSBML(path + GlobalConstants.separator + extModel);
+					SBMLDocument subDocument = SBMLutilities.readSBML(externalSBMLPath + GlobalConstants.separator + extModel);
 					subModel = subDocument.getModel();
 					if (!comps.contains(modelRef)) {
 						comps.add(modelRef);
-						export_recurse(extModelRef.getSource(),subDocument,subModel,sbolDoc);
+						parseSBMLModel(extModelRef.getSource(), externalSBMLPath, subDocument, subModel, sbolDoc, sbol_Library);
 					}
 				} else {
 					subModel = sbmlComp.getListOfModelDefinitions().get(modelRef);
@@ -576,12 +671,12 @@ public class SBML2SBOL {
 					} else {
 						if (!comps.contains(modelRef)) {
 							comps.add(modelRef);
-							export_recurse(source,sbmlDoc,subModel,sbolDoc);
+							parseSBMLModel(source, externalSBMLPath, sbmlDoc,subModel,sbolDoc, sbol_Library);
 						}
 					}	
 				}	
 				Module m = moduleDef.createModule(subModelId, subModel.getId(), VERSION);
-				
+
 				for (int j = 0; j < model.getSpeciesCount(); j++) 
 				{
 					CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(model.getSpecies(j));
@@ -619,92 +714,118 @@ public class SBML2SBOL {
 			}
 		}
 	}
-	
+
+	/**
+	 * Conversion command features
+	 */
 	private static void usage() {
 		System.err.println("SBML2SBOL");
 		System.err.println("Description: converts SBML into SBOL.");
 		System.err.println();
 		System.err.println("Usage:");
-		System.err.println("\tjava --jar SBML2SBOL.jar [options] <inputFile> [-o <outputFile>]");
+		System.err.println("\tjava --jar SBML2SBOL.jar [options] <inputFile> [-u sbolURIPre] [-o <outputFile>]");
 		System.err.println();
 		System.err.println("Options:");
 		System.err.println("\t-I  include path for SBML files (optional)");
 		System.err.println("\t-s  SBOL library file (optional)");
 		System.exit(1);
 	}
-	
+
+
 	public static void main(String[] args) {
-		String inputName = null;
+	
+		String inputFilePath = null;
 		String outputName = null;
-		String includePath = null;
-		
-		String outputDir = null;
-		String inputDir = null; 
-		
-		HashSet<String> sbolInputFiles = new HashSet<String>();
-		
-		//GOAL: inputFile -I SBML_ExternalPath -o outputFileName
-		if(args.length == 0){
-			usage();
-		}
-		
-		
-		if(args[0].equals("-h")){
+
+		String includeSBMLPath = null;
+		String includeSBOLPath = null;
+
+		String sbolURIPre = null;
+
+		HashSet<String> ref_sbolInputFilePath = new HashSet<String>();
+
+		//GOAL: <inputFile> [options -I(SBML files) -s<sbolLibraryFile>] -u <uriPrefix> [-o <outputFile>]
+		if(args.length == 0 || args[0].equals("-h") ||args[0] == null){
 			usage();
 		}
 		else{
-			inputName = args[0];
+			//Note: first argument must always be the input file name. Assume user is giving full path
+			inputFilePath = args[0];
+
 			for(int i = 1; i< args.length-1; i=i+2){
 				String flag = args[i];
 				String value = args[i+1];
-				
+
 				switch(flag)
 				{
 				case "-I":
-					includePath = value;
+					includeSBMLPath = value;
 					break;
 				case "-o":
 					outputName = value;
 					break;
 				case "-s":
-					sbolInputFiles.add(value);
+					includeSBOLPath = value;
+					break;
+				case "-u":
+					sbolURIPre = value;
 					break;
 				default:
 					usage();
 				}
-				
+
 			}
+
+			if(includeSBOLPath != null && !includeSBOLPath.isEmpty()){
+				//Note: this is an optional field. User provided sbol path to read in
+				File fileDir = new File(includeSBOLPath);
+				File[] sbolFiles =  fileDir.listFiles(new FilenameFilter() {
+					public boolean accept(File dir, String name) {
+						return (name.toLowerCase().endsWith(".rdf") || name.toLowerCase().endsWith(".sbol"));
+					}
+				});
+
+				for(File f : sbolFiles){
+					ref_sbolInputFilePath.add(f.getAbsolutePath());
+				}
+			}
+
+			if(sbolURIPre == null || sbolURIPre.isEmpty()){
+				//SBOL Default URI is a required field. Set SBOL Document to the given SBOL Prefix if the user did not provide one.
+				sbolURIPre = GlobalConstants.SBOL_AUTHORITY_DEFAULT;
+			}
+
 			SBMLDocument sbmlDoc = null;
-		
 			try {
-			  if(inputName != null)
-	      {
-	        if (includePath == null) {
-	          sbmlDoc = SBMLutilities.readSBML(inputName);
-	        } else {
-	          sbmlDoc = SBMLutilities.readSBML(includePath + GlobalConstants.separator + inputName);
-	        }
-	      } else {
-	        usage();
-	      }
-				SBML2SBOL sbml2Sbol = new SBML2SBOL(sbolInputFiles, includePath, sbmlDoc, inputName);
-				sbml2Sbol.export(outputName, "SBOL");
+				if(inputFilePath != null){
+					if (includeSBMLPath == null) {
+						//SBML file is relative. No external path was given for the input SBML file. 
+						sbmlDoc = SBMLutilities.readSBML(inputFilePath);
+					} 
+					else {
+						sbmlDoc = SBMLutilities.readSBML(includeSBMLPath + GlobalConstants.separator + inputFilePath);
+					}
+					//SBML2SBOL sbml2Sbol = new SBML2SBOL(sbolInputFiles, includePath, sbmlDoc, inputName);
+					//SBML2SBOL.exportSBOL(outputName, "SBOL");
+					SBOLDocument sbolOut = SBML2SBOL.convert_SBML2SBOL(includeSBMLPath, sbmlDoc, inputFilePath, ref_sbolInputFilePath, sbolURIPre);
+					sbolOut.write(outputName, SBOLDocument.RDF);
+				} 
+				else {
+					usage();
+				}
+
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (SBOLValidationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (SBOLConversionException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (XMLStreamException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+				e.printStackTrace();
+			}
 		}
+
 	}
 }

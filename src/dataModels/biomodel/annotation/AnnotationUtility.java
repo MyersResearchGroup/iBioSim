@@ -101,11 +101,11 @@ public class AnnotationUtility {
 	}
 	
 	/**
-	 * Annotate SBOL URI in the given SBML object.
+	 * Parse for SBOL annotation from the given SBML element.
 	 * 
-	 * @param sbmlObject - 
-	 * @param dnaCompURIs - 
-	 * @return
+	 * @param sbmlObject - The SBML element that contains the SBOL annotation to be parsed.
+	 * @param dnaCompURIs - A list of annotated SBOL ComponentDefinition URI that was retrieved from parsing the given SBML element.
+	 * @return The annotated SBOL strand (+ or -) found within the given SBML element.
 	 */
 	public static String parseSBOLAnnotation(SBase sbmlObject, List<URI> dnaCompURIs) {
 		return parseSBOLAnnotation(sbmlObject, dnaCompURIs, new HashMap<String, List<URI>>());
@@ -115,7 +115,14 @@ public class AnnotationUtility {
 		return parseSBOLAnnotation(sbmlObject, new LinkedList<URI>(), sbolElementURIs);
 	}
 	
-	
+	/**
+	 * Parse for SBOL annotation from the given SBML element.
+	 * 
+	 * @param sbmlObject - The SBML element that contains the SBOL annotation to be parsed.
+	 * @param dnaCompURIs - A list of annotated SBOL ComponentDefinition URI that was retrieved from parsing the given SBML element.
+	 * @param sbolElementURIs
+	 * @return The annotated SBOL strand (+ or -) found within the given SBML element.
+	 */
 	public static String parseSBOLAnnotation(SBase sbmlObject, List<URI> dnaCompURIs, HashMap<String, List<URI>> sbolElementURIs) {
 		String annotation;
 		try {

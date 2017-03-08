@@ -1278,8 +1278,8 @@ public class SBOL2SBML {
 		String inputDir = null; 
 
 		File fileFullPath;
+		
 		//GOAL: inputFile -o outputLocation -u optionalURI
-
 		if(args.length == 0){
 			usage();
 		}
@@ -1346,19 +1346,14 @@ public class SBOL2SBML {
 					}
 				}
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (SBOLValidationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (SBOLConversionException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

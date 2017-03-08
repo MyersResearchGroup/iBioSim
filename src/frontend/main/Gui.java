@@ -325,6 +325,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	private SEDMLDocument 			sedmlDocument		= null;
 	
 	private SBOLDocument			sbolDocument		= null;
+	private String 					sbolDirectory 		= null;
 	
 	public void OSXSetup() {
 		Application app = Application.getApplication();
@@ -739,7 +740,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		createVer.addActionListener(this);
 		save.setActionCommand("save");
 		saveAs.setActionCommand("saveas");
-		//saveSBOL.setActionCommand("saveSBOL");
+		
 		run.setActionCommand("run");
 		check.setActionCommand("check");
 		refresh.setActionCommand("refresh");
@@ -774,11 +775,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		else
 		{
 			check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
-			//saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | InputEvent.ALT_MASK));
+			
 			refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
 			newSBMLModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 			newSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey | InputEvent.ALT_MASK));
-			//newSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
+			
 			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | InputEvent.ALT_MASK));
 			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | InputEvent.SHIFT_MASK));
 			createSynth.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ShortCutKey | InputEvent.SHIFT_MASK));
@@ -879,7 +880,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		close.setEnabled(false);
 		closeAll.setEnabled(false);
 		importMenu.setEnabled(false);
-		//saveSBOL.setEnabled(false);
+		
 		run.setEnabled(false);
 		check.setEnabled(false);
 		refresh.setEnabled(false);
@@ -2013,7 +2014,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor)
 			{
-				((ModelEditor) comp).exportSBOL2("SBOL1");
+				((ModelEditor) comp).exportSBOLFileType("SBOL1");
 			}
 			else if (comp instanceof SBOLDesignerPlugin)
 			{
@@ -2025,7 +2026,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor)
 			{
-				((ModelEditor) comp).exportSBOL2("SBOL");
+				((ModelEditor) comp).exportSBOLFileType("SBOL");
 			}
 			else if (comp instanceof SBOLDesignerPlugin)
 			{
@@ -2050,7 +2051,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor)
 			{
-				((ModelEditor) comp).exportSBOL2("GenBank");
+				((ModelEditor) comp).exportSBOLFileType("GenBank");
 			}
 			else if (comp instanceof SBOLDesignerPlugin)
 			{
@@ -2062,7 +2063,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor)
 			{
-				((ModelEditor) comp).exportSBOL2("Fasta");
+				((ModelEditor) comp).exportSBOLFileType("Fasta");
 			}
 			else if (comp instanceof SBOLDesignerPlugin)
 			{
@@ -5613,11 +5614,47 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	}
 	
+	/**
+	 * Get the current SBOLDocument saved in iBioSim workspace.
+	 * 
+	 * @return The current SBOLDocument.
+	 */
 	public SBOLDocument getSBOLDocument() {
 		readSBOLDocument();
 		return sbolDocument;
 	}
 	
+	/**
+	 * Return True if the current SBOLDocument in the current iBioSim workspace exist. False is returned otherwise. 
+	 * @return True if the SBOLDocument is not null. False otherwise.
+	 */
+	public boolean isSetSBOLDocument(){
+		return this.sbolDocument != null ? true:false;
+	}
+	
+	/**
+	 * Get the directory of the SBOLDocument located in the project workspace. 
+	 * @return The directory of the SBOLDocument stored in the current project workspace. Otherwise, null is returned if the SBOLDocument doesn't exist.
+	 */
+	public String getSBOLDirectory(){
+		return isSetSBOLDocument() ? this.sbolDirectory : null;
+	}
+	
+	/**
+	 * Store the directory of the SBOLDocument in the project workspace.
+	 * 
+	 * @param sbolDir - Location of the of the SBOLDocument found in the project workspace.
+	 */
+	private void setSBOLDirectory(String sbolDir){
+		this.sbolDirectory = sbolDir; 
+	}
+	
+	/**
+	 * Read the SBOLDocument in the current iBioSim workspace and save it as an SBOL file. 
+	 * If there are no SBOL file found in the current iBioSim workspace project, 
+	 * the current SBOLDocument is saved in a new SBOL file with the current iBioSim workspace project name.
+	 *   
+	 */
 	private void readSBOLDocument() {
 		String sbolFilename = root + GlobalConstants.separator + currentProjectId + ".sbol";
 		File sbolFile = new File(sbolFilename);
@@ -5640,10 +5677,14 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	}
 	
+	/**
+	 * Write the current version of the SBOLDocument in iBioSim to the current workspace as an SBOL file.
+	 */
 	public void writeSBOLDocument() {
 		String sbolFilename = root + GlobalConstants.separator + currentProjectId + ".sbol";
 		try {
 			sbolDocument.write(sbolFilename);
+			setSBOLDirectory(sbolFilename);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -7447,6 +7488,12 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	}
 
+	/**
+	 * Return a list of files with the given file extension type. 
+	 * 
+	 * @param fileExtension - The file extension type. (i.e. .xml or .rdf) 
+	 * @return A list of all files that has the given extension type.
+	 */
 	public HashSet<String> getFilePaths(String fileExtension)
 	{
 		HashSet<String> filePaths = new HashSet<String>();
