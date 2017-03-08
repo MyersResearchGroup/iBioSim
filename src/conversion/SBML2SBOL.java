@@ -460,6 +460,11 @@ public class SBML2SBOL {
 			access    = AccessType.PUBLIC;
 			direction = DirectionType.OUT;
 		} 
+		else if (SBMLutilities.isOnPort(sbmlDoc,species.getId())) 
+		{
+			access    = AccessType.PUBLIC;
+			direction = DirectionType.NONE;
+		} 
 		else 
 		{
 			access    = AccessType.PRIVATE; 
@@ -656,21 +661,21 @@ public class SBML2SBOL {
 								CompModelPlugin subCompModel = SBMLutilities.getCompModelPlugin(subModel);
 								String remoteId = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
 								String localId = model.getSpecies(j).getId();
-								
-								Component localComp = null, remoteComp = null;
-								ComponentDefinition remoteCompDef = sbol_Library.getComponentDefinition(URI.create(remoteId));
-								
-								if(remoteCompDef != null){
-									//TODO: should we check in sbolDoc_library if it already exist in sbolDoc?
-									//how to handel if compDef is null?
-									remoteComp = remoteCompDef.createComponent(remoteId + "_component", AccessType.PUBLIC, remoteId);
-								}
-								
-								ComponentDefinition localCompDef = sbol_Library.getComponentDefinition(URI.create(localId));
-								if(remoteCompDef != null){
-									localComp = localCompDef.createComponent(localId + "_component", AccessType.PUBLIC, localId);
-								}
-								m.createMapsTo(mapId, refinement, localComp.getPersistentIdentity(), remoteComp.getPersistentIdentity());
+
+//								Component localComp = null, remoteComp = null;
+//								ComponentDefinition remoteCompDef = sbol_Library.getComponentDefinition(URI.create(remoteId));
+//								
+//								if(remoteCompDef != null){
+//									//TODO: should we check in sbolDoc_library if it already exist in sbolDoc?
+//									//how to handel if compDef is null?
+//									remoteComp = remoteCompDef.createComponent(remoteId + "_component", AccessType.PUBLIC, remoteId);
+//								}
+//								
+//								ComponentDefinition localCompDef = sbol_Library.getComponentDefinition(URI.create(localId));
+//								if(remoteCompDef != null){
+//									localComp = localCompDef.createComponent(localId + "_component", AccessType.PUBLIC, localId);
+//								}
+								m.createMapsTo(mapId, refinement, localId, remoteId);
 							}
 						}
 					}
@@ -687,19 +692,19 @@ public class SBML2SBOL {
 								String remoteId = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
 								String localId = model.getSpecies(j).getId();
 								
-								Component localComp = null, remoteComp = null;
-								ComponentDefinition remoteCompDef = sbol_Library.getComponentDefinition(URI.create(remoteId));
-								if(remoteCompDef != null){
-									//TODO: should we check in sbolDoc_library if it already exist in sbolDoc?
-									//how to handel if compDef is null?
-									remoteComp = remoteCompDef.createComponent(remoteId + "_component", AccessType.PUBLIC, remoteId);
-								}
-								
-								ComponentDefinition localCompDef = sbol_Library.getComponentDefinition(URI.create(localId));
-								if(remoteCompDef != null){
-									localComp = localCompDef.createComponent(localId + "_component", AccessType.PUBLIC, localId);
-								}
-								m.createMapsTo(mapId, refinement, localComp.getPersistentIdentity(), remoteComp.getPersistentIdentity());
+//								Component localComp = null, remoteComp = null;
+//								ComponentDefinition remoteCompDef = sbol_Library.getComponentDefinition(URI.create(remoteId));
+//								if(remoteCompDef != null){
+//									//TODO: should we check in sbolDoc_library if it already exist in sbolDoc?
+//									//how to handel if compDef is null?
+//									remoteComp = remoteCompDef.createComponent(remoteId + "_component", AccessType.PUBLIC, remoteId);
+//								}
+//								
+//								ComponentDefinition localCompDef = sbol_Library.getComponentDefinition(URI.create(localId));
+//								if(remoteCompDef != null){
+//									localComp = localCompDef.createComponent(localId + "_component", AccessType.PUBLIC, localId);
+//								}
+								m.createMapsTo(mapId, refinement, localId, remoteId);
 							} 
 						}
 					}

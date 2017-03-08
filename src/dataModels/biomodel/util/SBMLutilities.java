@@ -5983,6 +5983,16 @@ public class SBMLutilities
 		return false;
 	}
 	
+	
+	public static boolean isOnPort(SBMLDocument sbmlDoc,String id) {
+		CompModelPlugin sbmlCompModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
+		Port port = getPortByIdRef(sbmlCompModel,id);
+		if (port != null) {
+			return true;
+		}
+		return false;
+	}	
+	
 	public static Port getPortByIdRef(CompModelPlugin sbmlCompModel,String idRef) {
 		for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
 			Port port = sbmlCompModel.getListOfPorts().get(i);
