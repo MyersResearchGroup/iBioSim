@@ -208,7 +208,7 @@ public class SBML2SBOL {
 		{
 			Species species = model.getSpecies(i);
 			ComponentDefinition compDef = setComponentDefinition(sbol_Library, sbolDoc, model, species);
-			setFunctionalComponent(sbmlDoc, moduleDef, compDef, species);
+			setFunctionalComponent(sbmlDoc, model, moduleDef, compDef, species);
 		}
 
 		for (int i = 0; i < model.getReactionCount(); i++) 
@@ -443,24 +443,25 @@ public class SBML2SBOL {
 	 * @return The FunctionalComponent that was created. 
 	 * @throws SBOLValidationException
 	 */
-	private static FunctionalComponent setFunctionalComponent(SBMLDocument sbmlDoc, ModuleDefinition moduleDef, ComponentDefinition compDef, Species species) throws SBOLValidationException
+	private static FunctionalComponent setFunctionalComponent(SBMLDocument sbmlDoc, Model model, 
+			ModuleDefinition moduleDef, ComponentDefinition compDef, Species species) throws SBOLValidationException
 	{
 		AccessType access; 
 		DirectionType direction;
 		// create FunctionalComponents for these within the module
 		String funcComp_identity =  species.getId();
 
-		if (SBMLutilities.isInput(sbmlDoc,species.getId())) 
+		if (SBMLutilities.isInput(model,species.getId())) 
 		{
 			access    = AccessType.PUBLIC;
 			direction = DirectionType.IN;
 		} 
-		else if (SBMLutilities.isOutput(sbmlDoc,species.getId())) 
+		else if (SBMLutilities.isOutput(model,species.getId())) 
 		{
 			access    = AccessType.PUBLIC;
 			direction = DirectionType.OUT;
 		} 
-		else if (SBMLutilities.isOnPort(sbmlDoc,species.getId())) 
+		else if (SBMLutilities.isOnPort(model,species.getId())) 
 		{
 			access    = AccessType.PUBLIC;
 			direction = DirectionType.NONE;
