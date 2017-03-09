@@ -62,6 +62,7 @@ import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
+import frontend.main.util.EditPreferences;
 
 /**
  * Perform conversion from SBML to SBOL. 
@@ -140,7 +141,7 @@ public class SBML2SBOL {
 	 * @param externalSBMLPath - The full path of external SBML files to be referenced in the SBML2SBOL conversion
 	 * @param sbmlDoc - The SBML document to be converted.
 	 * @param fileName - The name of the input SBML file
-	 * @param ref_sbolInputFilePath - The set of SBOL files to use for the conversion to reference from. If no ref_sbolInputfilePath is given, then null should be set to indicate no referencing SBOL files are given for conversion.
+	 * @param sbolFiles - The set of SBOL files to use for the conversion to reference from. If no ref_sbolInputfilePath is given, then null should be set to indicate no referencing SBOL files are given for conversion.
 	 * @param sbolURIPrefix - The URI prefix to be set on the SBOLDocument.
 	 * @return The converted SBOL Document
 	 * @throws SBOLValidationException
@@ -148,21 +149,19 @@ public class SBML2SBOL {
 	 * @throws IOException
 	 * @throws SBOLConversionException
 	 */
-	public static SBOLDocument convert_SBML2SBOL(String externalSBMLPath, SBMLDocument sbmlDoc, String fileName, HashSet<String> ref_sbolInputFilePath, String sbolURIPrefix) throws SBOLValidationException, XMLStreamException, IOException, SBOLConversionException {
+	public static void convert_SBML2SBOL(SBOLDocument sbolDoc, String externalSBMLPath, SBMLDocument sbmlDoc, String fileName, HashSet<String> sbolFiles, String sbolURIPrefix) throws SBOLValidationException, XMLStreamException, IOException, SBOLConversionException {
 
 		//Load all SBOL files given from user to store reference SBOL objects
 		SBOLDocument sbol_Library = new SBOLDocument();
 		sbol_Library.setDefaultURIprefix(sbolURIPrefix);
-		if(!ref_sbolInputFilePath.isEmpty() || ref_sbolInputFilePath == null){
-			SBML2SBOL.loadSBOLFiles(sbol_Library, ref_sbolInputFilePath, sbolURIPrefix);
+		if(sbolFiles != null && !sbolFiles.isEmpty()){
+			SBML2SBOL.loadSBOLFiles(sbol_Library, sbolFiles, sbolURIPrefix);
 		}
 
-		SBOLDocument sbolDoc = new SBOLDocument();
 		sbolDoc.setDefaultURIprefix(sbolURIPrefix);
 		sbolDoc.setComplete(false);
 
 		parseSBMLModel("file:" + fileName, externalSBMLPath, sbmlDoc, sbmlDoc.getModel(), sbolDoc, sbol_Library); 
-		return sbolDoc;
 	}
 	
 	/**
@@ -792,7 +791,7 @@ public class SBML2SBOL {
 
 			if(sbolURIPre == null || sbolURIPre.isEmpty()){
 				//SBOL Default URI is a required field. Set SBOL Document to the given SBOL Prefix if the user did not provide one.
-				sbolURIPre = GlobalConstants.SBOL_AUTHORITY_DEFAULT;
+				sbolURIPre = EditPreferences.getDefaultUriPrefix();
 			}
 
 			SBMLDocument sbmlDoc = null;
@@ -807,8 +806,9 @@ public class SBML2SBOL {
 					}
 					//SBML2SBOL sbml2Sbol = new SBML2SBOL(sbolInputFiles, includePath, sbmlDoc, inputName);
 					//SBML2SBOL.exportSBOL(outputName, "SBOL");
-					SBOLDocument sbolOut = SBML2SBOL.convert_SBML2SBOL(includeSBMLPath, sbmlDoc, inputFilePath, ref_sbolInputFilePath, sbolURIPre);
-					sbolOut.write(outputName, SBOLDocument.RDF);
+					SBOLDocument sbolDoc = new SBOLDocument();
+					SBML2SBOL.convert_SBML2SBOL(sbolDoc,includeSBMLPath, sbmlDoc, inputFilePath, ref_sbolInputFilePath, sbolURIPre);
+					sbolDoc.write(outputName, SBOLDocument.RDF);
 				} 
 				else {
 					usage();

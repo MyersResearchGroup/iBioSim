@@ -31,6 +31,7 @@ import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.SBOLException;
+import frontend.main.util.EditPreferences;
 
 /**
  * 
@@ -291,7 +292,7 @@ public class SBOLIdentityManager2 {
 	}
 
 	private void loadAuthority() {
-		uriAuthority = Preferences.userRoot().get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, "");
+		uriAuthority = Preferences.userRoot().get(EditPreferences.getDefaultUriPrefix(), "");
 	}
 	
 //	private void setTime() {

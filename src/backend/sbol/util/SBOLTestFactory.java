@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
@@ -55,6 +56,7 @@ import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.annotation.SBOLAnnotation;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.util.GlobalConstants;
+import frontend.main.util.EditPreferences;
 
 /**
  * 
@@ -753,7 +755,8 @@ public class SBOLTestFactory {
 	
 	public static ComponentDefinition createComponentDefinition(String compDefID, URI role, URI type, SBOLDocument sbolDoc) {
 		try {
-			URI compDefIdentity = new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/cd/" + compDefID);
+			Preferences biosimrc = Preferences.userRoot();
+			URI compDefIdentity = new URI(EditPreferences.getDefaultUriPrefix() + "/cd/" + compDefID);
 			ComponentDefinition compDef = sbolDoc.getComponentDefinition(compDefIdentity);
 			if (compDef == null) {
 				Set<URI> compDefRoles = new HashSet<URI>();
@@ -820,7 +823,7 @@ public class SBOLTestFactory {
 	
 	public static ModuleDefinition createModuleDefinition(String moduleDefID, URI role, SBOLDocument sbolDoc) {
 		try {
-			URI moduleDefIdentity = new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/md/" + moduleDefID);
+			URI moduleDefIdentity = new URI(EditPreferences.getDefaultUriPrefix() + "/md/" + moduleDefID);
 			ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(moduleDefIdentity);
 			if (moduleDef == null) {
 				Set<URI> moduleDefRoles = new HashSet<URI>();
@@ -978,11 +981,11 @@ public class SBOLTestFactory {
 		Random rGen = new Random();
 		try {
 			DnaComponent sbolRBS = createTestDNAComponent(
-					new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/" + "RBS"),
+					new URI(EditPreferences.getDefaultUriPrefix() + "/" + "RBS"),
 					"RBS", GlobalConstants.SO_RBS, rGen, GlobalConstants.RBS_LENGTH, 0);
 			libraryComps.add(sbolRBS);
 			DnaComponent sbolTT = createTestDNAComponent(
-					new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/" + "TT"),
+					new URI(EditPreferences.getDefaultUriPrefix() + "/" + "TT"),
 					"TT", GlobalConstants.SO_TERMINATOR, rGen, GlobalConstants.TERMINATOR_LENGTH, 0);
 			libraryComps.add(sbolTT);
 			for (int i = 0; i < gateLibrary.size(); i++) {
@@ -991,7 +994,7 @@ public class SBOLTestFactory {
 				for (String promoterID : gateModel.getPromoters()) {
 					Reaction sbmlPromoter = gateModel.getProductionReaction(promoterID);
 					DnaComponent sbolPromoter = createTestDNAComponent(
-							new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/" + gateID + "_" + promoterID), 
+							new URI(EditPreferences.getDefaultUriPrefix() + "/" + gateID + "_" + promoterID), 
 							gateID + "_" + promoterID, GlobalConstants.SO_PROMOTER, rGen, 
 							GlobalConstants.MEAN_PROMOTER_LENGTH, GlobalConstants.SD_PROMOTER_LENGTH);
 					libraryComps.add(sbolPromoter);
@@ -1010,7 +1013,7 @@ public class SBOLTestFactory {
 							sbolCDS = previousCDS;
 						} else {
 							sbolCDS = createTestDNAComponent(
-									new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/" + gateID + "_" + speciesID),
+									new URI(EditPreferences.getDefaultUriPrefix() + "/" + gateID + "_" + speciesID),
 									gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
 									GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
 							libraryComps.add(sbolCDS);
@@ -1019,7 +1022,7 @@ public class SBOLTestFactory {
 						isFirstCDS = false;
 					} else {
 						sbolCDS = createTestDNAComponent(
-								new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/" + gateID + "_" + speciesID),
+								new URI(EditPreferences.getDefaultUriPrefix() + "/" + gateID + "_" + speciesID),
 								gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
 								GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
 						libraryComps.add(sbolCDS);

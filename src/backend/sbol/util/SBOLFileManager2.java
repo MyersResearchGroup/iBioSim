@@ -37,6 +37,7 @@ import org.sbolstandard.core2.Sequence;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.SBOLException;
+import frontend.main.util.EditPreferences;
 
 /**
  * 
@@ -69,7 +70,7 @@ public class SBOLFileManager2 {
 		else 
 		{
 			SBOLDOC = new SBOLDocument();
-			SBOLDOC.setDefaultURIprefix(GlobalConstants.SBOL_AUTHORITY_DEFAULT); 
+			SBOLDOC.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix()); 
 			Iterator<String> sbolFileIterator = sbolFilePaths.iterator();
 			do //Go through each sbol file path and create an SBOLDocument
 			{
@@ -78,7 +79,7 @@ public class SBOLFileManager2 {
 				File f = new File(sbolFilePath);
 				String fileName = f.getName().replace(".sbol", "");
 				Preferences biosimrc = Preferences.userRoot();
-				SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
+				SBOLReader.setURIPrefix(EditPreferences.getDefaultUriPrefix() + "/" + fileName);
 				SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(sbolFilePath));
 				if (sbolDoc != null) 
 				{
