@@ -16,6 +16,7 @@ package backend.sbol.util;
 import java.net.URI;
 
 import dataModels.util.GlobalConstants;
+import frontend.main.util.EditPreferences;
 
 /**
  * 
@@ -45,7 +46,7 @@ public class MyersOntology {
 	 * Namespace for Myers lab
 	 * (<a href="http://www.async.ece.utah.edu/">http://www.async.ece.utah.edu/</a>).
 	 */
-	public static final URI NAMESPACE = URI.create(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "/");
+	public static final URI NAMESPACE = URI.create(EditPreferences.getDefaultUriPrefix() + "/");
 	
 	/**
 	 * 	

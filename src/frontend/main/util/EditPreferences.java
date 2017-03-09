@@ -774,6 +774,11 @@ public class EditPreferences {
 		return modelPrefsFinal;
 	}
 	
+	public static String getDefaultUriPrefix() {
+		Preferences biosimrc = Preferences.userRoot();
+		return biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, GlobalConstants.SBOL_AUTHORITY_DEFAULT);
+	}
+	
 	private JPanel assemblyPreferences(Preferences biosimrc) {	
 		// assembly preferences
 		JPanel assemblyLabels = new JPanel(new GridLayout(13, 1));
@@ -784,7 +789,7 @@ public class EditPreferences {
 		assemblyLabels.add(new JLabel("Incomplete Construct Warning"));
 		
 		JPanel assemblyFields = new JPanel(new GridLayout(13 ,1));
-		uriField = new JTextField(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, ""),15);
+		uriField = new JTextField(EditPreferences.getDefaultUriPrefix(),15);
 		String regex = SBOLUtility2.convertRegexSOTermsToNumbers(
 				biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 		regexField = new JTextField(regex, 15);

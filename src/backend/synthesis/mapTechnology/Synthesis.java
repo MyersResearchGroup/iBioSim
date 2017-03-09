@@ -35,6 +35,7 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import dataModels.util.GlobalConstants;
+import frontend.main.util.EditPreferences;
 
 /**
  * 
@@ -338,7 +339,7 @@ public class Synthesis
 	{
 		//Set up SBOLDocument to write into
 		SBOLDocument sbolDoc = new SBOLDocument();
-		sbolDoc.setDefaultURIprefix(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
+		sbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 		try {
 			getSBOLfromTechMap(null, sbolDoc, solution, specificationGraph.getOutputNode());
 		}

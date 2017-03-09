@@ -138,7 +138,6 @@ import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.ModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
-import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.ModuleDefinition;
@@ -341,8 +340,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				EditPreferences editPreferences = new EditPreferences(frame, async, tree);
 				editPreferences.preferences();
 				if (sbolDocument!=null) {
-					Preferences biosimrc = Preferences.userRoot();
-					sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+					sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 				}
 		    }
 		});
@@ -1595,7 +1593,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			
 			sbolDocument = new SBOLDocument();
 			sbolDocument.setCreateDefaults(true);
-			sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+			sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			writeSBOLDocument();		
 
 			refresh();
@@ -3612,8 +3610,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			EditPreferences editPreferences = new EditPreferences(frame, async, tree);
 			editPreferences.preferences();
 			if (sbolDocument!=null) {
-				Preferences biosimrc = Preferences.userRoot();
-				sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+				sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			}
 		}
 		else if (e.getSource() == clearRecent)
@@ -5633,23 +5630,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	}
 	
 	/**
-	 * Get the directory of the SBOLDocument located in the project workspace. 
-	 * @return The directory of the SBOLDocument stored in the current project workspace. Otherwise, null is returned if the SBOLDocument doesn't exist.
-	 */
-	public String getSBOLDirectory(){
-		return isSetSBOLDocument() ? this.sbolDirectory : null;
-	}
-	
-	/**
-	 * Store the directory of the SBOLDocument in the project workspace.
-	 * 
-	 * @param sbolDir - Location of the of the SBOLDocument found in the project workspace.
-	 */
-	private void setSBOLDirectory(String sbolDir){
-		this.sbolDirectory = sbolDir; 
-	}
-	
-	/**
 	 * Read the SBOLDocument in the current iBioSim workspace and save it as an SBOL file. 
 	 * If there are no SBOL file found in the current iBioSim workspace project, 
 	 * the current SBOLDocument is saved in a new SBOL file with the current iBioSim workspace project name.
@@ -5663,7 +5643,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				sbolDocument = SBOLReader.read(sbolFilename);
 				sbolDocument.setCreateDefaults(true);
 				Preferences biosimrc = Preferences.userRoot();
-				sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+				sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			}
 			catch (Exception e) {
 				JOptionPane.showMessageDialog(frame, "Unable to open project's SBOL library.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -5672,7 +5652,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			sbolDocument = new SBOLDocument();
 			sbolDocument.setCreateDefaults(true);
 			Preferences biosimrc = Preferences.userRoot();
-			sbolDocument.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+			sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			writeSBOLDocument();
 		}
 	}
@@ -5684,7 +5664,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		String sbolFilename = root + GlobalConstants.separator + currentProjectId + ".sbol";
 		try {
 			sbolDocument.write(sbolFilename);
-			setSBOLDirectory(sbolFilename);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -5962,9 +5941,9 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			{
 				File sbolFile = new File(filename.trim());
 				SBOLReader.setKeepGoing(true);
-				SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+				SBOLReader.setURIPrefix(EditPreferences.getDefaultUriPrefix());
 				SBOLDocument sbolDoc = SBOLReader.read(sbolFile);
-				sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+				sbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 				if (!checkSBOL(sbolDoc,false)) return;
 				log.addText("Importing " + sbolFile + " into the project's SBOL library.");
 				generateSBMLFromSBOL(filename.trim());

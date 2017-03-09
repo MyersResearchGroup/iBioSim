@@ -40,6 +40,7 @@ import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.SBOLException;
 import frontend.main.Gui;
+import frontend.main.util.EditPreferences;
 
 /**
  * 
@@ -175,7 +176,7 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 					newName = newName.replace(".rdf", ".sbol");
 				
 				SBOLDocument newSBOLDoc = new SBOLDocument();
-				newSBOLDoc.setDefaultURIprefix(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
+				newSBOLDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 				
 				String filePath =  identityManager.getBioModel().getPath() + GlobalConstants.separator + newName;
 				try

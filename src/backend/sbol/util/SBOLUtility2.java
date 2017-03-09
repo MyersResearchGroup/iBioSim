@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import org.sbolstandard.core2.*;
 
 import dataModels.util.GlobalConstants;
+import frontend.main.util.EditPreferences;
 
 /**
  * 
@@ -53,9 +54,9 @@ public class SBOLUtility2
 		{
 			File f = new File(filePath);
 			String fileName = f.getName().replace(".sbol", "");
-			sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
+			sbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix() + "/" + fileName);
 			SBOLReader.setDropObjectsWithDuplicateURIs(true);
-			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
+			SBOLReader.setURIPrefix(EditPreferences.getDefaultUriPrefix() + "/" + fileName);
 			try
 			{
 				String sbolRDF = filePath.replace(".sbol", ".rdf");
@@ -122,7 +123,7 @@ public class SBOLUtility2
 			File f = new File(filePath);
 			String fileName = f.getName().replace(".sbol", "");
 			Preferences biosimrc = Preferences.userRoot();
-			SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,"") + "/" + fileName);
+			SBOLReader.setURIPrefix(EditPreferences.getDefaultUriPrefix() + "/" + fileName);
 			sbolDoc = SBOLReader.read(new FileInputStream(filePath));
 //			try
 //			{
