@@ -421,11 +421,12 @@ public class SBML2SBOL {
 		if (compDef==null) {
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 			compDef.setName(species.getId());
+			compDef.setRoles(compDef_role);
 		} else if (!compDef.getTypes().containsAll(compDef_type)) {
-
 			sbolDoc.removeComponentDefinition(compDef);
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 			compDef.setName(species.getId());
+			compDef.setRoles(compDef_role);
 		}
 		return compDef; 
 	}
