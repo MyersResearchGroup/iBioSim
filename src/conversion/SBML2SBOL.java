@@ -631,7 +631,7 @@ public class SBML2SBOL {
 					subModel = subDocument.getModel();
 					if (!comps.contains(modelRef)) {
 						comps.add(modelRef);
-						parseSBMLModel(extModelRef.getSource(), externalSBMLPath, subDocument, subModel, sbolDoc, sbol_Library);
+						parseSBMLModel("file:"+extModelRef.getSource(), externalSBMLPath, subDocument, subModel, sbolDoc, sbol_Library);
 					}
 				} else {
 					subModel = sbmlComp.getListOfModelDefinitions().get(modelRef);
@@ -640,7 +640,7 @@ public class SBML2SBOL {
 					} else {
 						if (!comps.contains(modelRef)) {
 							comps.add(modelRef);
-							parseSBMLModel(source, externalSBMLPath, sbmlDoc,subModel,sbolDoc, sbol_Library);
+							parseSBMLModel("file:"+source, externalSBMLPath, sbmlDoc,subModel,sbolDoc, sbol_Library);
 						}
 					}	
 				}	
