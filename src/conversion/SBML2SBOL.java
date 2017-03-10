@@ -133,17 +133,16 @@ public class SBML2SBOL {
 		return true;
 	}
 
-
-
+	
 	/**
 	 * Convert the given SBML Document to an SBOL Document.
 	 * 
+	 * @param sbolDoc - The SBOLDocument to store the converted SBML content to.
 	 * @param externalSBMLPath - The full path of external SBML files to be referenced in the SBML2SBOL conversion
 	 * @param sbmlDoc - The SBML document to be converted.
 	 * @param fileName - The name of the input SBML file
 	 * @param sbolFiles - The set of SBOL files to use for the conversion to reference from. If no ref_sbolInputfilePath is given, then null should be set to indicate no referencing SBOL files are given for conversion.
 	 * @param sbolURIPrefix - The URI prefix to be set on the SBOLDocument.
-	 * @return The converted SBOL Document
 	 * @throws SBOLValidationException
 	 * @throws XMLStreamException
 	 * @throws IOException
@@ -663,19 +662,6 @@ public class SBML2SBOL {
 								String remoteId = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
 								String localId = model.getSpecies(j).getId();
 
-//								Component localComp = null, remoteComp = null;
-//								ComponentDefinition remoteCompDef = sbol_Library.getComponentDefinition(URI.create(remoteId));
-//								
-//								if(remoteCompDef != null){
-//									//TODO: should we check in sbolDoc_library if it already exist in sbolDoc?
-//									//how to handel if compDef is null?
-//									remoteComp = remoteCompDef.createComponent(remoteId + "_component", AccessType.PUBLIC, remoteId);
-//								}
-//								
-//								ComponentDefinition localCompDef = sbol_Library.getComponentDefinition(URI.create(localId));
-//								if(remoteCompDef != null){
-//									localComp = localCompDef.createComponent(localId + "_component", AccessType.PUBLIC, localId);
-//								}
 								m.createMapsTo(mapId, refinement, localId, remoteId);
 							}
 						}
@@ -693,18 +679,6 @@ public class SBML2SBOL {
 								String remoteId = subCompModel.getListOfPorts().get(replacement.getPortRef()).getIdRef();
 								String localId = model.getSpecies(j).getId();
 								
-//								Component localComp = null, remoteComp = null;
-//								ComponentDefinition remoteCompDef = sbol_Library.getComponentDefinition(URI.create(remoteId));
-//								if(remoteCompDef != null){
-//									//TODO: should we check in sbolDoc_library if it already exist in sbolDoc?
-//									//how to handel if compDef is null?
-//									remoteComp = remoteCompDef.createComponent(remoteId + "_component", AccessType.PUBLIC, remoteId);
-//								}
-//								
-//								ComponentDefinition localCompDef = sbol_Library.getComponentDefinition(URI.create(localId));
-//								if(remoteCompDef != null){
-//									localComp = localCompDef.createComponent(localId + "_component", AccessType.PUBLIC, localId);
-//								}
 								m.createMapsTo(mapId, refinement, localId, remoteId);
 							} 
 						}
@@ -805,8 +779,6 @@ public class SBML2SBOL {
 					else {
 						sbmlDoc = SBMLutilities.readSBML(includeSBMLPath + GlobalConstants.separator + inputFilePath);
 					}
-					//SBML2SBOL sbml2Sbol = new SBML2SBOL(sbolInputFiles, includePath, sbmlDoc, inputName);
-					//SBML2SBOL.exportSBOL(outputName, "SBOL");
 					SBOLDocument sbolDoc = new SBOLDocument();
 					SBML2SBOL.convert_SBML2SBOL(sbolDoc,includeSBMLPath, sbmlDoc, inputFilePath, ref_sbolInputFilePath, sbolURIPre);
 					sbolDoc.write(outputName, SBOLDocument.RDF);
