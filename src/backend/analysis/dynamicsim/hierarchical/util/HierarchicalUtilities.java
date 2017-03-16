@@ -189,27 +189,7 @@ public class HierarchicalUtilities
 
 		}
 	}
-
-	public static void alterLocalParameter(ASTNode math, String id, String parameterID)
-	{
-		if (math.isName() && math.getName().equals(id))
-		{
-			// math.setVariable(null);
-			math.setName(parameterID);
-		}
-		else
-		{
-			for (ASTNode child : math.getChildren())
-			{
-				alterLocalParameter(child, id, parameterID);
-			}
-		}
-	}
-
-
-
-
-
+	
 	public static void triggerAndFireEvents(List<EventNode> eventList, PriorityQueue<EventNode> triggeredEventList, double time)
 	{
 		boolean changed = true;

@@ -14,8 +14,10 @@
 package backend.analysis.dynamicsim.hierarchical.math;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,6 +33,7 @@ public class ReactionNode extends VariableNode
 
 	private List<SpeciesReferenceNode>	reactants;
 	private List<SpeciesReferenceNode>	products;
+	private Map<String, VariableNode> 	localParameters;
 	private HierarchicalNode			forwardRate;
 	private HierarchicalNode			reverseRate;
 	private boolean						hasEnoughMoleculesFd;
@@ -229,6 +232,20 @@ public class ReactionNode extends VariableNode
 		this.initForwardPropensity = forwardRateValue;
 	}
 
+	public void addLocalParameter(String id, VariableNode node)
+	{
+		if(localParameters == null)
+		{
+			localParameters = new HashMap<String, VariableNode>();
+		}
+		localParameters.put(id, node);
+	}
+	
+	public Map<String, VariableNode> getLocalParameters()
+	{
+		return localParameters;
+	}
+	
 	public void restoreInitPropensity(int index)
 	{
 		setValue(index, initPropensity);

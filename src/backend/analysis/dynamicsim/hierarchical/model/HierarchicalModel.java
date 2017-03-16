@@ -42,37 +42,37 @@ import dataModels.util.GlobalConstants;
 public final class HierarchicalModel
 {
 
-  public static enum ModelType
-  {
-    HSSA, HODE, HFBA, NONE;
-  }
-  
-	private boolean						isInitSet;
+	public static enum ModelType
+	{
+		HSSA, HODE, HFBA, NONE;
+	}
+
 	private ModelType					type;
 
 	private Set<String>					deletedBySId;
 	private Set<String>					deletedByMetaId;
 
 	private List<EventNode>				events;
-	private List<VariableNode>			variables;
 	private List<ReactionNode>			reactions;
 	private List<VariableNode>			arrays;
 	private List<ConstraintNode>		constraints;
 	private List<FunctionNode> initAssignments;
-  private List<FunctionNode> assignRules;
-	
-	
+	private List<FunctionNode> assignRules;
+
+
 	private Map<String, VariableNode>	idToNode;
 
-	
-	 private String        ID;
-	  protected int       index;
-	  private double        maxPropensity;
-	  private double        minPropensity;
-	  private HierarchicalNode  propensity;
-	  private double      initPropensity;
-	// TODO: keep track of child model states because needed when cloning
 
+	private String        ID;
+	protected int       index;
+	private double        maxPropensity;
+	private double        minPropensity;
+	private HierarchicalNode  propensity;
+	private double      initPropensity;
+
+	private Map<String, HierarchicalModel>	idToSubmodel;
+	
+	
 	public HierarchicalModel(String submodelID)
 	{
 		this(submodelID, 0);
@@ -80,37 +80,35 @@ public final class HierarchicalModel
 
 	public HierarchicalModel(String submodelID, int index)
 	{
-		
+
 		this.ID = submodelID;
 		this.index = index;
-    minPropensity = Double.MAX_VALUE / 10.0;
-    maxPropensity = Double.MIN_VALUE / 10.0;
+		minPropensity = Double.MAX_VALUE / 10.0;
+		maxPropensity = Double.MIN_VALUE / 10.0;
 	}
 
 	public HierarchicalModel(HierarchicalModel state)
 	{
 		this.type = state.type;
-		this.isInitSet = state.isInitSet;
 		// TODO: fix this
 		this.deletedBySId = state.deletedBySId;
 		this.deletedByMetaId = state.deletedByMetaId;
 		this.events = state.events;
-		this.variables = state.variables;
 		this.reactions = state.reactions;
 		this.arrays = state.arrays;
 		this.constraints = state.constraints;
 		this.idToNode = state.idToNode;
-		
+
 		this.ID = state.ID;
-    this.minPropensity = state.minPropensity;
-    this.maxPropensity = state.maxPropensity;
-    this.index = state.index;
-    
-    if (state.propensity != null)
-    {
-      this.propensity = state.propensity;
-      this.initPropensity = state.initPropensity;
-    }
+		this.minPropensity = state.minPropensity;
+		this.maxPropensity = state.maxPropensity;
+		this.index = state.index;
+
+		if (state.propensity != null)
+		{
+			this.propensity = state.propensity;
+			this.initPropensity = state.initPropensity;
+		}
 	}
 
 	public void clear()
@@ -122,11 +120,6 @@ public final class HierarchicalModel
 	public HierarchicalModel clone()
 	{
 		return new HierarchicalModel(this);
-	}
-
-	public boolean isInitSet()
-	{
-		return isInitSet;
 	}
 
 	public Map<String, VariableNode> createVariableToNodeMap()
@@ -199,29 +192,6 @@ public final class HierarchicalModel
 		return node;
 	}
 
-	public VariableNode addVariable(String variable, double value)
-	{
-		VariableNode node = new VariableNode(variable);
-		return addVariable(node);
-	}
-
-	public VariableNode addVariable(VariableNode node)
-	{
-
-		if (variables == null)
-		{
-			variables = new ArrayList<VariableNode>();
-		}
-		if (idToNode == null)
-		{
-			idToNode = new HashMap<String, VariableNode>();
-		}
-
-		variables.add(node);
-		idToNode.put(node.getName(), node);
-		return node;
-	}
-
 	public ConstraintNode addConstraint(String variable, HierarchicalNode node)
 	{
 
@@ -250,16 +220,6 @@ public final class HierarchicalModel
 	public VariableNode getNode(String variable)
 	{
 		return idToNode.get(variable);
-	}
-
-	public List<VariableNode> getVariables()
-	{
-		return variables;
-	}
-
-	public VariableNode getVariable(int index)
-	{
-		return variables.get(index);
 	}
 
 	public List<ConstraintNode> getConstraints()
@@ -314,11 +274,6 @@ public final class HierarchicalModel
 		}
 
 		return deletedByMetaId.contains(metaid);
-	}
-
-	public int getNumOfVariables()
-	{
-		return variables == null ? 0 : variables.size();
 	}
 
 	public int getNumOfReactions()
@@ -406,107 +361,137 @@ public final class HierarchicalModel
 			type = ModelType.HSSA;
 		}
 	}
-	
+
 	public String getID()
-  {
-    return ID;
-  }
+	{
+		return ID;
+	}
 
-  public double getMaxPropensity()
-  {
-    return maxPropensity;
-  }
+	public double getMaxPropensity()
+	{
+		return maxPropensity;
+	}
 
-  public double getMinPropensity()
-  {
-    return minPropensity;
-  }
+	public double getMinPropensity()
+	{
+		return minPropensity;
+	}
 
-  public double getPropensity(int index)
-  {
-    return propensity.getValue(index);
-  }
+	public double getPropensity(int index)
+	{
+		return propensity.getValue(index);
+	}
 
-  public void setID(String iD)
-  {
-    ID = iD;
-  }
+	public void setID(String iD)
+	{
+		ID = iD;
+	}
 
-  public void setMaxPropensity(double maxPropensity)
-  {
-    this.maxPropensity = maxPropensity;
-  }
+	public void setMaxPropensity(double maxPropensity)
+	{
+		this.maxPropensity = maxPropensity;
+	}
 
-  public void setMinPropensity(double minPropensity)
-  {
-    this.minPropensity = minPropensity;
-  }
+	public void setMinPropensity(double minPropensity)
+	{
+		this.minPropensity = minPropensity;
+	}
 
-  public HierarchicalNode createPropensity()
-  {
-    this.propensity = new HierarchicalNode(0);
-    return propensity;
-  }
+	public HierarchicalNode createPropensity()
+	{
+		this.propensity = new HierarchicalNode(0);
+		return propensity;
+	}
 
-  public void setInitPropensity(int index)
-  {
-    if (propensity != null)
-    {
-      this.initPropensity = propensity.getValue(index);
-    }
-  }
+	public void setInitPropensity(int index)
+	{
+		if (propensity != null)
+		{
+			this.initPropensity = propensity.getValue(index);
+		}
+	}
 
-  public void restoreInitPropensity(int index)
-  {
-    this.propensity.setValue(index, initPropensity);
-  }
+	public void restoreInitPropensity(int index)
+	{
+		this.propensity.setValue(index, initPropensity);
+	}
 
-  public int getIndex()
-  {
-    return index;
-  }
-  
-  
-  public void addInitAssignment(FunctionNode node)
-  {
-      if(initAssignments == null)
-      {
-        initAssignments = new ArrayList<FunctionNode>();
-      }
-      
-      initAssignments.add(node);
-  }
-  
-  public void addAssignRule(FunctionNode node)
-  {
-      if(assignRules == null)
-      {
-        assignRules = new ArrayList<FunctionNode>();
-      }
-      assignRules.add(node);
-  }
-  
-  public List<FunctionNode> getInitAssignments() 
-  {
-    return initAssignments;
-  }
+	public int getIndex()
+	{
+		return index;
+	}
 
-  
-  public void setInitAssignments(List<FunctionNode> initAssignments) 
-  {
-    this.initAssignments = initAssignments;
-  }
 
-  
-  public List<FunctionNode> getAssignRules() 
-  {
-    return assignRules;
-  }
+	public void addInitAssignment(FunctionNode node)
+	{
+		if(initAssignments == null)
+		{
+			initAssignments = new ArrayList<FunctionNode>();
+		}
 
-  
-  public void setAssignRules(List<FunctionNode> assignRules) 
-  {
-    this.assignRules = assignRules;
-  }
+		initAssignments.add(node);
+	}
+
+	public void addAssignRule(FunctionNode node)
+	{
+		if(assignRules == null)
+		{
+			assignRules = new ArrayList<FunctionNode>();
+		}
+		assignRules.add(node);
+	}
+
+	public List<FunctionNode> getInitAssignments() 
+	{
+		return initAssignments;
+	}
+
+
+	public void setInitAssignments(List<FunctionNode> initAssignments) 
+	{
+		this.initAssignments = initAssignments;
+	}
+
+
+	public List<FunctionNode> getAssignRules() 
+	{
+		return assignRules;
+	}
+
+
+	public void setAssignRules(List<FunctionNode> assignRules) 
+	{
+		this.assignRules = assignRules;
+	}
+	
+	public void addSubmodel(HierarchicalModel submodel)
+	{
+		if(idToSubmodel == null)
+		{
+			idToSubmodel = new HashMap<String, HierarchicalModel>();
+		}
+		
+		idToSubmodel.put(submodel.getID(), submodel);
+	}
+	
+	public HierarchicalModel getSubmodel(String id)
+	{
+		HierarchicalModel submodel = null;
+		if(idToSubmodel != null)
+		{
+			submodel = idToSubmodel.get(id);
+		}
+		return submodel;
+	}
+	
+	public boolean containsSubmodel(String id)
+	{
+		
+		if(idToSubmodel != null)
+		{
+			return idToSubmodel.containsKey(id);
+		}
+		return false;
+	}
 
 }

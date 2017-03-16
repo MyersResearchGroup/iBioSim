@@ -30,7 +30,6 @@ import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 
 import dataModels.util.exceptions.BioSimException;
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
-import backend.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import backend.analysis.dynamicsim.hierarchical.math.EventNode;
 import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
@@ -172,13 +171,11 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 
 			}
 
-	    vectorWrapper.initStateValues();
+			vectorWrapper.initStateValues();
 			
 			if (!isSingleStep)
 			{
 				setupForOutput(runNumber);
-
-				HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
 			}
 			isInitialized = true;
 		}
@@ -230,10 +227,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 			{
 				try
 				{
-
 					odecalc.integrate(de, currentTime.getValue(0), vectorWrapper.getValues(), nextEndTime, vectorWrapper.getValues());
 					computeAssignmentRules();
-
 				}
 				catch (Exception e)
 				{
@@ -251,15 +246,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		}
 		if (!isSingleStep)
 		{
-			try
-			{
-				getBufferedTSDWriter().write(')');
-				getBufferedTSDWriter().flush();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+			print();
 		}
 	}
 

@@ -21,7 +21,6 @@ import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
-import backend.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import backend.analysis.dynamicsim.hierarchical.math.EventNode;
 import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
@@ -87,11 +86,10 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 				triggeredEventList = new PriorityQueue<EventNode>(1, new HierarchicalEventComparator());
 				HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue(0));
 			}
-//TODO: get initial values
+			//TODO: get initial values
 			setInitialPropensity();
 
 			setupForOutput(runNumber);
-			HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
 			isInitialized = true;
 		}
 
@@ -126,16 +124,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		setupForOutput(newRun);
 		//TODO: restore init state
 		restoreInitialPropensity();
-
-		try
-		{
-			HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
 	}
 
 	@Override
@@ -236,15 +224,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 				printToFile();
 			}
 
-			try
-			{
-				getBufferedTSDWriter().write(')');
-				getBufferedTSDWriter().flush();
-			}
-			catch (IOException e1)
-			{
-				e1.printStackTrace();
-			}
+			print();
 		}
 	}
 
@@ -288,14 +268,14 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		}
 		else
 		{
-			for (HierarchicalModel submodel : getSubmodels().values())
-			{
-				totalRunningPropensity += submodel.getPropensity(0);
-				if (totalRunningPropensity >= threshold)
-				{
-					performReaction(submodel, threshold - (totalRunningPropensity - submodel.getPropensity(submodel.getIndex())));
-				}
-			}
+//			for (HierarchicalModel submodel : getSubmodels().values())
+//			{
+//				totalRunningPropensity += submodel.getPropensity(0);
+//				if (totalRunningPropensity >= threshold)
+//				{
+//					performReaction(submodel, threshold - (totalRunningPropensity - submodel.getPropensity(submodel.getIndex())));
+//				}
+//			}
 		}
 	}
 

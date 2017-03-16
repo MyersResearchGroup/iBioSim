@@ -211,7 +211,7 @@ public class EventNode extends HierarchicalNode
 			if (variable.isSpecies())
 			{
 				SpeciesNode species = (SpeciesNode) variable;
-				if (!species.hasOnlySubstance(index))
+				if (!species.hasOnlySubstance())
 				{
 					assignmentValues[i] = value * species.getCompartment().getValue(0);
 					continue;

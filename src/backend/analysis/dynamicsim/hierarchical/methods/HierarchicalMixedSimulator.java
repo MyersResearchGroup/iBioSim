@@ -24,7 +24,6 @@ import org.sbml.jsbml.Model;
 
 import dataModels.util.exceptions.BioSimException;
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
-import backend.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
 import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
@@ -61,11 +60,12 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 		{
 			setCurrentTime(0);
 			this.wrapper = new VectorWrapper(initValues); 
+
+			setupForOutput(runNumber);
+			
 			ModelSetup.setupModels(this, ModelType.HODE, wrapper);
 			computeFixedPoint();
 
-			setupForOutput(runNumber);
-			HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
 			isInitialized = true;
 		}
 
@@ -116,16 +116,6 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 			printToFile();
 		}
-
-		try
-		{
-			getBufferedTSDWriter().write(')');
-			getBufferedTSDWriter().flush();
-		}
-		catch (IOException e)
-		{
-		}
-
 	}
 
 	@Override

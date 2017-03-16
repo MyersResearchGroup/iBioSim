@@ -13,21 +13,16 @@
  *******************************************************************************/
 package backend.analysis.dynamicsim.hierarchical;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Random;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
@@ -36,6 +31,7 @@ import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
 import backend.analysis.dynamicsim.ParentSimulator;
+import backend.analysis.dynamicsim.hierarchical.io.HierarchicalTSDWriter;
 import backend.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import backend.analysis.dynamicsim.hierarchical.math.ConstraintNode;
 import backend.analysis.dynamicsim.hierarchical.math.EventNode;
@@ -69,7 +65,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
   protected final VariableNode      currentTime;
   protected double            printTime;
-  private BufferedWriter          bufferedTSDWriter;
   private boolean             cancelFlag;
   private boolean             constraintFailureFlag;
   private boolean             constraintFlag;
@@ -90,7 +85,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private double              stoichAmpGridValue;
   protected double            timeLimit;
   private String              rootDirectory;
-  private FileWriter            TSDWriter;
   private SBMLDocument          document;
   private String              abstraction;
   private int               totalRuns;
@@ -110,12 +104,13 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private boolean             isGrid;
   private Random              randomNumberGenerator;
   private HierarchicalModel       topmodel;
-  private Map<String, HierarchicalModel>  submodels;
   final private SimType         type;
   private List<HierarchicalModel>     modules;
   private HierarchicalNode        totalPropensity;
   private double              initialTime, outputStartTime;
 
+  private HierarchicalWriter writer;
+  
   public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
     String quantityType, String abstraction, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, BioSimException
     {
@@ -136,7 +131,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.totalRuns = runs;
     this.type = type;
     this.topmodel = new HierarchicalModel("topmodel");
-    this.submodels = new HashMap<String, HierarchicalModel>(0);
     this.currentTime = new VariableNode("_time", StateType.SCALAR);
 
     this.currentRun = 1;
@@ -145,6 +139,10 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.outputStartTime = outputStartTime;
 
     this.initValues = new ArrayList<Double>();
+    
+    this.writer = new HierarchicalTSDWriter();
+    
+    this.variableList = new ArrayList<VariableNode>();
     
     if (quantityType != null)
     {
@@ -203,7 +201,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.type = copy.type;
     this.isGrid = copy.isGrid;
     this.topmodel = copy.topmodel;
-    this.submodels = copy.submodels;
     this.separator = copy.separator;
     this.currentTime = copy.currentTime;
     this.randomNumberGenerator = copy.randomNumberGenerator;
@@ -224,14 +221,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   public List<HierarchicalModel> getListOfModelStates()
   {
     return modules;
-  }
-
-  /**
-   * @return the bufferedTSDWriter
-   */
-  public BufferedWriter getBufferedTSDWriter()
-  {
-    return bufferedTSDWriter;
   }
 
   /**
@@ -416,23 +405,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   public String getRootDirectory()
   {
     return rootDirectory;
-  }
-
-  /**
-   * @return the tSDWriter
-   */
-  public FileWriter getTSDWriter()
-  {
-    return TSDWriter;
-  }
-
-  /**
-   * @param bufferedTSDWriter
-   *            the bufferedTSDWriter to set
-   */
-  public void setBufferedTSDWriter(BufferedWriter bufferedTSDWriter)
-  {
-    this.bufferedTSDWriter = bufferedTSDWriter;
   }
 
   /**
@@ -625,15 +597,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   }
 
   /**
-   * @param tSDWriter
-   *            the tSDWriter to set
-   */
-  public void setTSDWriter(FileWriter tSDWriter)
-  {
-    TSDWriter = tSDWriter;
-  }
-
-  /**
    * @return the document
    */
   public SBMLDocument getDocument()
@@ -693,13 +656,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     return randomNumberGenerator;
   }
 
-  /**
-   * @return the submodels
-   */
-  public Map<String, HierarchicalModel> getSubmodels()
-  {
-    return submodels;
-  }
+ 
 
   /**
    * @return the topmodel
@@ -735,19 +692,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   }
 
   /**
-   * @param submodels
-   *            the submodels to set
-   */
-  public void addSubmodel(String id, HierarchicalModel modelstate)
-  {
-    if (submodels == null)
-    {
-      submodels = new HashMap<String, HierarchicalModel>();
-    }
-    submodels.put(id, modelstate);
-  }
-
-  /**
    * @param topmodel
    *            the topmodel to set
    */
@@ -756,14 +700,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.topmodel = topmodel;
   }
 
-  public HierarchicalModel getModelState(String id)
-  {
-    if (id.equals("topmodel"))
-    {
-      return topmodel;
-    }
-    return submodels.get(id);
-  }
 
   public SimType getType()
   {
@@ -775,9 +711,19 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     setCurrentRun(currentRun);
     try
     {
-      setTSDWriter(new FileWriter(getOutputDirectory() + "run-" + currentRun + ".tsd"));
-      setBufferedTSDWriter(new BufferedWriter(getTSDWriter()));
-      getBufferedTSDWriter().write('(');
+      writer.init(getOutputDirectory() + "run-" + currentRun + ".tsd");
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  protected void print()
+  {
+    try
+    {
+      writer.print();
     }
     catch (IOException e)
     {
@@ -825,24 +771,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
   protected List<VariableNode> getVariableList()
   {
-
-    List<VariableNode> variableList = new ArrayList<VariableNode>();
-    List<Integer> indexToSubmodel = new ArrayList<Integer>();
-    
-    for (HierarchicalModel modelstate : modules)
-    {
-      int size =  modelstate.getNumOfVariables();
-      for (int i = 0; i < size; ++i)
-      {
-        VariableNode node = modelstate.getVariable(i);
-        variableList.add(node);
-        node.setIndexToSubmodel(indexToSubmodel);
-        indexToSubmodel.add(i);
-      }
-    }
-
     return variableList;
-
   }
 
   protected List<ConstraintNode> getConstraintList()
@@ -938,8 +867,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     {
       try
       {
-        HierarchicalWriter.printToTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies(), getPrintConcentrationSpecies(), printTime);
-        getBufferedTSDWriter().write(",\n");
+        writer.print();
       }
       catch (IOException e)
       {
@@ -992,18 +920,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       }
     }
   }
-
-  public List<HierarchicalModel> getListOfModules()
-  {
-    return modules;
-  }
-
-  public void setListOfModules(List<HierarchicalModel> modules)
-  {
-    this.modules = modules;
-  }
-
-
 
   public void computeAssignmentRules()
   {
@@ -1065,6 +981,10 @@ public abstract class HierarchicalSimulation implements ParentSimulator
           }
         }
       }
-
+    }
+    
+    public void addVariable(VariableNode node)
+    {
+    	this.variableList.add(node);
     }
 }
