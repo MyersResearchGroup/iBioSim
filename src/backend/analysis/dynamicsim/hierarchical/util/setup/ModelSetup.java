@@ -92,6 +92,8 @@ public class ModelSetup
     {
       ModelContainer container = unproc.pop();
       listOfContainers.add(container);
+      sim.addModelState(container.getHierarchicalModel());
+      
       if (container.getCompModel() != null)
       {
         for (Submodel submodel : container.getCompModel().getListOfSubmodels())
@@ -142,7 +144,6 @@ public class ModelSetup
         }
       }
     }
-    
     initializeModelStates(sim, listOfContainers, sim.getCurrentTime(), type, wrapper);
   }
 
@@ -160,13 +161,17 @@ public class ModelSetup
     for (int i = listOfContainers.size() - 1; i >= 0; i--)
     {
       ModelContainer container = listOfContainers.get(i);
-      CoreSetup.initializeVariables(container, type, time, wrapper);
-      CoreSetup.initializeModel(container, time);
+      CoreSetup.initializeModel(sim, container, type, time, wrapper, isSSA);
     }
 
     if (isSSA)
     {
       sim.linkPropensities();
+    }
+    
+    if(wrapper != null)
+    {
+      wrapper.initStateValues();
     }
   }
 

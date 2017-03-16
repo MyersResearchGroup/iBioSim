@@ -19,16 +19,22 @@ public class HierarchicalTSDWriter extends HierarchicalWriter{
 	@Override
 	public void print() throws IOException {
 		bufferedWriter.write(",\n(");
-		for(HierarchicalState state : listOfStates)
+		if(listOfStates.size() > 0)
 		{
-			bufferedWriter.write("," + state.getStateValue());
+		  bufferedWriter.write(String.valueOf(listOfStates.get(0).getStateValue()));
+		  
+		  for(int i = 1; i < this.listOfStates.size(); ++i)
+		  {
+		    bufferedWriter.write("," + listOfStates.get(i).getStateValue());
+		  }
 		}
+		
 		bufferedWriter.write(")");
 		bufferedWriter.flush();
 	}
 
 	@Override
-	public void addVariable(String id, HierarchicalState state) throws IOException  {
+	public void addVariable(String id, HierarchicalState state) {
 		if(header.length() == 0)
 		{
 			header.append("(\"" + id + "\"");
@@ -42,10 +48,18 @@ public class HierarchicalTSDWriter extends HierarchicalWriter{
 	}
 	@Override
 	public void init(String filename) throws IOException {
-		writer = new FileWriter(filename);
-		bufferedWriter = new BufferedWriter(writer);
-		bufferedWriter.write(header.toString());
-		bufferedWriter.flush();
+	  if(!isSet && header.length() > 0)
+    {
+      header.append(")");
+      isSet = true;
+    }
+	  if(isSet)
+	  {
+  		writer = new FileWriter(filename);
+  		bufferedWriter = new BufferedWriter(writer);
+  		bufferedWriter.write(header.toString());
+  		bufferedWriter.flush();
+	  }
 	}
 
 

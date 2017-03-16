@@ -17,14 +17,16 @@ public abstract class HierarchicalWriter {
 	
 	protected FileWriter            writer;
 	
+	protected boolean isSet;
 	public HierarchicalWriter()
 	{
 		listOfStates = new ArrayList<HierarchicalState>();
+		isSet = false;
 	}
 	
 	public abstract void init(String filename) throws IOException;
 	
 	public abstract void print() throws IOException;
 	
-	public abstract void addVariable(String id, HierarchicalState state) throws IOException;
+	public abstract void addVariable(String id, HierarchicalState state);
 }

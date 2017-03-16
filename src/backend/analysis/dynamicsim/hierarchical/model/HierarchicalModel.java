@@ -58,7 +58,7 @@ public final class HierarchicalModel
 	private List<ConstraintNode>		constraints;
 	private List<FunctionNode> initAssignments;
 	private List<FunctionNode> assignRules;
-
+	private List<VariableNode> variables;
 
 	private Map<String, VariableNode>	idToNode;
 
@@ -83,8 +83,10 @@ public final class HierarchicalModel
 
 		this.ID = submodelID;
 		this.index = index;
-		minPropensity = Double.MAX_VALUE / 10.0;
-		maxPropensity = Double.MIN_VALUE / 10.0;
+		this.minPropensity = Double.MAX_VALUE / 10.0;
+		this.maxPropensity = Double.MIN_VALUE / 10.0;
+		
+		this.idToNode = new HashMap<String, VariableNode>();
 	}
 
 	public HierarchicalModel(HierarchicalModel state)
@@ -121,14 +123,28 @@ public final class HierarchicalModel
 	{
 		return new HierarchicalModel(this);
 	}
-
-	public Map<String, VariableNode> createVariableToNodeMap()
+	
+	public VariableNode addVariable(VariableNode node)
 	{
-		Map<String, VariableNode> variableToNodes = new HashMap<String, VariableNode>();
-		this.idToNode = variableToNodes;
-		return variableToNodes;
+	  if(variables == null)
+	  {
+	    variables = new ArrayList<VariableNode>();
+	  }
+
+    if (idToNode == null)
+    {
+      idToNode = new HashMap<String, VariableNode>();
+    }
+	  variables.add(node);
+	  idToNode.put(node.getName(), node);
+	  return node;
 	}
 
+	public List<VariableNode> getListOfVariables()
+	{
+	  return variables;
+	}
+	
 	public Map<String, VariableNode> getVariableToNodeMap()
 	{
 		return idToNode;
@@ -141,7 +157,7 @@ public final class HierarchicalModel
 		return node;
 	}
 
-	public ReactionNode addReaction(ReactionNode node)
+	public void addReaction(ReactionNode node)
 	{
 		if (reactions == null)
 		{
@@ -153,17 +169,17 @@ public final class HierarchicalModel
 		}
 		reactions.add(node);
 		idToNode.put(node.getName(), node);
-		return node;
 	}
 
 	public EventNode addEvent(HierarchicalNode triggerNode)
 	{
 
 		EventNode node = new EventNode(triggerNode);
-		return addEvent(node);
+		addEvent(node);
+		return node;
 	}
 
-	public EventNode addEvent(EventNode node)
+	public void addEvent(EventNode node)
 	{
 
 		if (events == null)
@@ -172,7 +188,6 @@ public final class HierarchicalModel
 		}
 
 		events.add(node);
-		return node;
 	}
 
 	public VariableNode addArray(VariableNode node)

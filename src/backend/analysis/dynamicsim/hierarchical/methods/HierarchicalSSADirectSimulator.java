@@ -77,8 +77,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		{
 			setCurrentTime(getInitialTime());
 			ModelSetup.setupModels(this, ModelType.HSSA);
-			eventList = getEventList();
-			variableList = getVariableList();
 			//constraintList = getConstraintList();
 			computeFixedPoint();
 			if (!eventList.isEmpty())

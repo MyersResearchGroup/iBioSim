@@ -56,11 +56,14 @@ public  class ModelContainer
 	
 	private void addChild()
 	{
-		if(parent.children == null)
+		if(parent != null)
 		{
-			parent.children = new HashMap<String, ModelContainer>();
+		  if(parent.children == null)
+		  {
+		    parent.children = new HashMap<String, ModelContainer>();
+		  }
+		  parent.children.put(hierarchicalModel.getID(), this);
 		}
-		parent.children.put(hierarchicalModel.getID(), this);
 	}
 	
 	private void setModelType(HierarchicalModel modelstate, Model model)

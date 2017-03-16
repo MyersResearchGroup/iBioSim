@@ -40,6 +40,7 @@ import backend.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
 import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.BioSimException;
@@ -91,8 +92,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
   
   protected final ArrayList<Double> initValues;
-  
-  protected List<VariableNode>      variableList;
 
   protected double            initTotalPropensity;
 
@@ -105,7 +104,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private Random              randomNumberGenerator;
   private HierarchicalModel       topmodel;
   final private SimType         type;
-  private List<HierarchicalModel>     modules;
+  protected List<HierarchicalModel>     modules;
   private HierarchicalNode        totalPropensity;
   private double              initialTime, outputStartTime;
 
@@ -131,7 +130,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.totalRuns = runs;
     this.type = type;
     this.topmodel = new HierarchicalModel("topmodel");
-    this.currentTime = new VariableNode("_time", StateType.SCALAR);
+    this.currentTime = new VariableNode("time", StateType.SCALAR);
 
     this.currentRun = 1;
     this.randomNumberGenerator = new Random(randomSeed);
@@ -141,8 +140,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.initValues = new ArrayList<Double>();
     
     this.writer = new HierarchicalTSDWriter();
-    
-    this.variableList = new ArrayList<VariableNode>();
+   
     
     if (quantityType != null)
     {
@@ -217,10 +215,20 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
     modules.add(modelstate);
   }
+  
+  public void addPrintVariable(String id, HierarchicalState state)
+  {
+      writer.addVariable(id, state);
+  }
 
-  public List<HierarchicalModel> getListOfModelStates()
+  public List<HierarchicalModel> getListOfHierarchicalModels()
   {
     return modules;
+  }
+  
+  public void setListOfHierarchicalModels(List<HierarchicalModel> modules)
+  {
+     this.modules = modules;
   }
 
   /**
@@ -731,70 +739,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     }
   }
 
-  protected List<ReactionNode> getReactionList()
-  {
-    List<ReactionNode> reactions = new ArrayList<ReactionNode>();
-    List<Integer> indexToSubmodel = new ArrayList<Integer>();
-    for (HierarchicalModel submodel : modules)
-    {
-      for (int i = submodel.getNumOfReactions() - 1; i >= 0; i--)
-      {
-        ReactionNode node = submodel.getReaction(i);
-        reactions.add(node);
-        indexToSubmodel.add(submodel.getIndex());
-        node.setIndexToSubmodel(indexToSubmodel);
-      }
-    }
-
-    return reactions;
-
-  }
-
-
-  protected List<EventNode> getEventList()
-  {
-
-    List<EventNode> events = new ArrayList<EventNode>();
-
-    for (HierarchicalModel modelstate : modules)
-    {
-
-      if (modelstate.getNumOfEvents() > 0)
-      {
-        events.addAll(modelstate.getEvents());
-      }
-    }
-
-    return events;
-
-  }
-
-  protected List<VariableNode> getVariableList()
-  {
-    return variableList;
-  }
-
-  protected List<ConstraintNode> getConstraintList()
-  {
-
-    List<ConstraintNode> constraints = new ArrayList<ConstraintNode>();
-
-    List<Integer> indexToSubmodel = new ArrayList<Integer>();
-
-    for (HierarchicalModel modelstate : modules)
-    {
-      for (int i = modelstate.getNumOfConstraints() - 1; i >= 0; i--)
-      {
-        ConstraintNode node = modelstate.getConstraint(i);
-        constraints.add(node);
-        node.setIndexToSubmodel(indexToSubmodel);
-        indexToSubmodel.add(i);
-      }
-    }
-
-    return constraints;
-
-  }
 
   public double getInitialTime()
   {
@@ -983,8 +927,4 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       }
     }
     
-    public void addVariable(VariableNode node)
-    {
-    	this.variableList.add(node);
-    }
 }

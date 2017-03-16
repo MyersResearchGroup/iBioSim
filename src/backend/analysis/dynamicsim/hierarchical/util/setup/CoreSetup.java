@@ -43,6 +43,7 @@ import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.SpeciesNode;
 import backend.analysis.dynamicsim.hierarchical.math.SpeciesReferenceNode;
 import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
+import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import backend.analysis.dynamicsim.hierarchical.math.AbstractHierarchicalNode.Type;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
@@ -63,32 +64,23 @@ import backend.analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter
 public class CoreSetup
 {
 
-	public static void initializeModel(ModelContainer container, VariableNode time)
+	static void initializeModel(HierarchicalSimulation sim, ModelContainer container, StateType type, VariableNode time, VectorWrapper wrapper,  boolean split) throws IOException
 	{
-		initializeModel(container, time, false);
+		container.getHierarchicalModel().addMappingNode("_time", time);
+		sim.addPrintVariable(time.getName(), time.getState());
+		setupParameters(sim, container, type, wrapper);
+		setupCompartments(sim, container, type, wrapper);
+		setupSpecies(sim, container, type, wrapper);
+		setupReactions(sim, container, type, wrapper);
+	  setupEvents(sim, container);
+    setupConstraints(sim, container);
+    setupRules(sim, container);
+    setupInitialAssignments(sim, container);
+    //ArraysSetup.linkDimensionSize(modelstate);
+    //ArraysSetup.expandArrays(modelstate);
 	}
 
-	public static void initializeModel(ModelContainer container, VariableNode time, boolean split)
-	{
-		//ArraysSetup.linkDimensionSize(modelstate);
-		//ArraysSetup.expandArrays(modelstate);
-		setupEvents(container);
-		setupConstraints(container);
-		setupRules(container);
-		setupInitialAssignments(container);
-	}
-
-	public static void initializeVariables(ModelContainer container, StateType type, VariableNode time, VectorWrapper wrapper) throws IOException
-	{
-		container.getHierarchicalModel().createVariableToNodeMap();
-		container.getHierarchicalModel().addMappingNode(time.getName(), time);
-		setupParameters(container, type, wrapper);
-		setupCompartments(container, type, wrapper);
-		setupSpecies(container, type, wrapper);
-		setupReactions(container, type, wrapper);
-	}
-
-	private static void setupCompartments(ModelContainer container,  StateType type,  VectorWrapper wrapper)
+	private static void setupCompartments(HierarchicalSimulation sim, ModelContainer container,  StateType type,  VectorWrapper wrapper)
 	{
 		Model model = container.getModel();
 		HierarchicalModel modelstate = container.getHierarchicalModel();
@@ -108,13 +100,16 @@ public class CoreSetup
 				if (compartment.getConstant())
 				{
 					node.createState(StateType.SCALAR, wrapper);
+					modelstate.addMappingNode(compartmentID, node);
 					
 				}
 				else
 				{
 					node.createState(type, wrapper);
+					modelstate.addVariable(node);
+					sim.addPrintVariable(compartmentID, node.getState());
 				}
-				modelstate.addMappingNode(compartmentID, node);
+				
 
 				if (Double.isNaN(compartment.getSize()))
 				{
@@ -140,7 +135,7 @@ public class CoreSetup
 	/**
 	 * puts constraint-related information into data structures
 	 */
-	private static void setupConstraints(ModelContainer container)
+	private static void setupConstraints(HierarchicalSimulation sim, ModelContainer container)
 	{
 
 		int count = 0;
@@ -172,7 +167,7 @@ public class CoreSetup
 
 	}
 
-	private static void setupEventAssignments(HierarchicalModel modelstate, EventNode eventNode, Event event, Model model, Map<String, VariableNode> variableToNodeMap)
+	private static void setupEventAssignments(HierarchicalSimulation sim, HierarchicalModel modelstate, EventNode eventNode, Event event, Model model, Map<String, VariableNode> variableToNodeMap)
 	{
 		for (EventAssignment eventAssignment : event.getListOfEventAssignments())
 		{
@@ -192,7 +187,7 @@ public class CoreSetup
 	/**
 	 * puts event-related information into data structures
 	 */
-	private static void setupEvents(ModelContainer container)
+	private static void setupEvents(HierarchicalSimulation sim, ModelContainer container)
 	{
 		Model model = container.getModel();
 		HierarchicalModel modelstate = container.getHierarchicalModel();
@@ -252,14 +247,14 @@ public class CoreSetup
 					}
 				}
 
-				setupEventAssignments(modelstate, node, event, model, variableToNodeMap);
+				setupEventAssignments(sim, modelstate, node, event, model, variableToNodeMap);
 
 			}
 		}
 	}
 
 
-	private static void setupInitialAssignments(ModelContainer container)
+	private static void setupInitialAssignments(HierarchicalSimulation sim, ModelContainer container)
 	{
 		Model model = container.getModel();
 		HierarchicalModel modelstate = container.getHierarchicalModel();
@@ -301,7 +296,7 @@ public class CoreSetup
 	/**
 	 * puts parameter-related information into data structures
 	 */
-	private static void setupParameters(ModelContainer container, StateType type,  VectorWrapper wrapper)
+	private static void setupParameters(HierarchicalSimulation sim, ModelContainer container, StateType type,  VectorWrapper wrapper)
 	{
 		Model model = container.getModel();
 		HierarchicalModel modelstate = container.getHierarchicalModel();
@@ -325,20 +320,23 @@ public class CoreSetup
 				if (parameter.isConstant())
 				{
 					node.createState(StateType.SCALAR, wrapper);
+					 modelstate.addMappingNode(parameter.getId(), node);
 				}
 				else
 				{
 					node.createState(type, wrapper);
+					modelstate.addVariable(node);
+					sim.addPrintVariable(parameter.getId(), node.getState());
 				}
 
-				modelstate.addMappingNode(parameter.getId(), node);
+			
 			}
 			node.setValue(modelstate.getIndex(), parameter.getValue());
 		}
 	}
 
 
-	private static void setupProduct(HierarchicalModel modelstate, ReactionNode reaction, String productID, SpeciesReference product, StateType type, VectorWrapper wrapper)
+	private static void setupProduct(HierarchicalSimulation sim, HierarchicalModel modelstate, ReactionNode reaction, String productID, SpeciesReference product, StateType type, VectorWrapper wrapper)
 	{
 
 		if (product.isSetId() && modelstate.isDeletedBySId(product.getId()))
@@ -373,15 +371,18 @@ public class CoreSetup
 			if (!product.getConstant())
 			{
 				speciesReferenceNode.setIsVariableConstant(false);
+				modelstate.addVariable(speciesReferenceNode );
 			}
-			modelstate.addMappingNode(product.getId(), speciesReferenceNode);
-			
+			else
+			{
+			  modelstate.addMappingNode(product.getId(), speciesReferenceNode);
+			}			
 		}
 		species.addODERate(reaction, speciesReferenceNode);
 
 	}
 
-	private static void setupReactant(HierarchicalModel modelstate, ReactionNode reaction, String reactantID, SpeciesReference reactant, StateType type, VectorWrapper wrapper)
+	private static void setupReactant(HierarchicalSimulation sim, HierarchicalModel modelstate, ReactionNode reaction, String reactantID, SpeciesReference reactant, StateType type, VectorWrapper wrapper)
 	{
 
 		if (reactant.isSetId() && modelstate.isDeletedBySId(reactant.getId()))
@@ -416,15 +417,18 @@ public class CoreSetup
 			if (!reactant.getConstant())
 			{
 				speciesReferenceNode.setIsVariableConstant(false);
+				modelstate.addVariable(speciesReferenceNode );
 			}
-			modelstate.addMappingNode(reactant.getId(), speciesReferenceNode);
-			
+			else
+			{
+			  modelstate.addMappingNode(reactant.getId(), speciesReferenceNode);
+			}
 		}
 		species.subtractODERate(reaction, speciesReferenceNode);
 
 	}
 
-	private static void setupReactions(ModelContainer container, StateType type, VectorWrapper wrapper)
+	private static void setupReactions(HierarchicalSimulation sim, ModelContainer container, StateType type, VectorWrapper wrapper)
 	{
 		Reaction reaction;
 		Model model = container.getModel();
@@ -455,11 +459,11 @@ public class CoreSetup
 
 			for (SpeciesReference reactant : reaction.getListOfReactants())
 			{
-				setupReactant(modelstate, reactionNode, reactant.getSpecies(), reactant, type, wrapper);
+				setupReactant(sim, modelstate, reactionNode, reactant.getSpecies(), reactant, type, wrapper);
 			}
 			for (SpeciesReference product : reaction.getListOfProducts())
 			{
-				setupProduct(modelstate, reactionNode, product.getSpecies(), product, type, wrapper);
+				setupProduct(sim, modelstate, reactionNode, product.getSpecies(), product, type, wrapper);
 			}
 			KineticLaw kineticLaw = reaction.getKineticLaw();
 			if (kineticLaw != null)
@@ -485,11 +489,11 @@ public class CoreSetup
 
 					if (reaction.isReversible() && split)
 					{
-						setupSingleRevReaction(modelstate, reactionNode, reactionFormula);
+						setupSingleRevReaction(sim, modelstate, reactionNode, reactionFormula);
 					}
 					else
 					{
-						setupSingleNonRevReaction(modelstate, reactionNode, reactionFormula, model);
+						setupSingleNonRevReaction(sim, modelstate, reactionNode, reactionFormula, model);
 					}
 				}
 			}
@@ -497,7 +501,7 @@ public class CoreSetup
 
 	}
 
-	private static void setupRules(ModelContainer container)
+	private static void setupRules(HierarchicalSimulation sim, ModelContainer container)
 	{
 		Model model = container.getModel();
 		HierarchicalModel modelstate = container.getHierarchicalModel();
@@ -534,14 +538,14 @@ public class CoreSetup
 		}
 	}
 
-	private static void setupSingleNonRevReaction(HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula, Model model)
+	private static void setupSingleNonRevReaction(HierarchicalSimulation sim, HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula, Model model)
 	{
 		HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(), reactionNode);
 		reactionNode.setForwardRate(math);
 		//reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
 	}
 
-	private static void setupSingleRevReaction(HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula)
+	private static void setupSingleRevReaction(HierarchicalSimulation sim, HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula)
 	{
 		ASTNode[] splitMath = HierarchicalUtilities.splitMath(reactionFormula);
 		if (splitMath == null)
@@ -564,7 +568,7 @@ public class CoreSetup
 	 * puts species-related information into data structures
 	 * 
 	 */
-	private static void setupSpecies(ModelContainer container,  StateType type, VectorWrapper wrapper)
+	private static void setupSpecies(HierarchicalSimulation sim, ModelContainer container,  StateType type, VectorWrapper wrapper)
 	{
 		Model model = container.getModel();
 		HierarchicalModel modelstate = container.getHierarchicalModel();
@@ -590,10 +594,13 @@ public class CoreSetup
 				if(species.getConstant())
 				{
 					node.createState(StateType.SCALAR, wrapper);
+					modelstate.addMappingNode(node.getName(), node);
 				}
 				else
 				{
 					node.createState(type, wrapper);
+					modelstate.addVariable(node);
+					sim.addPrintVariable(species.getId(), node.getState());
 				}
 			}
 			node.setValue(index, 0);
@@ -614,9 +621,6 @@ public class CoreSetup
 				modelstate.addInitAssignment(functionNode);
 				functionNode.setIsInitAssignment(true);
 			}
-			
-			modelstate.addMappingNode(species.getId(), node);
-
 		}
 	}
 }
