@@ -57,99 +57,119 @@ public class Converter {
 				+ "and can convert to/from SBOL 1.1, GenBank, and FASTA formats.");
 		System.err.println();
 		System.err.println("Usage:");
-		System.err.println("\tjava --jar libSBOLj.jar [options] <inputFile> [-o <outputFile> -e <compareFile>]");
+		System.err.println("\tjava --jar libSBOLj.jar [options] <inputFile> <fileType> [-o <outputFile> -e <compareFile>]");
+		System.err.println();
+		System.err.println("Required:");
+		System.err.println("<inputFile> name of input file");
+		System.err.println("\t-e  specifies a file to compare if equal to");
+		System.err.println("\t-ft  Specify the input file type. This should be limited to: SBOL and SBML");
+		System.err.println("\t-o  <outputFile> specifies the output file produced from the converter");
 		System.err.println();
 		System.err.println("Options:");
-		System.err.println("\t-l  <language> specfies language (SBOL1/SBOL2/GenBank/FASTA) for output (default=SBOL2)");
-		System.err.println("\t-s  <topLevelURI> select only this object and those it references");
-		System.err.println("\t-p  <URIprefix> used for converted objects");
-		System.err.println("\t-v  <version> used for converted objects");
-		System.err.println("\t-t  uses types in URIs");
-		System.err.println("\t-n  allow non-compliant URIs");
-		System.err.println("\t-i  allow SBOL document to be incomplete");
 		System.err.println("\t-b  check best practices");
-		System.err.println("\t-f  continue after first error");
+		System.err.println("\t-cf  second SBOL file if file diff. option is selected");
 		System.err.println("\t-d  display detailed error trace");
+		System.err.println("\t-f  continue after first error");
+		System.err.println("\t-i  allow SBOL document to be incomplete");
+		System.err.println("\t-l  <language> specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML) for output (default=SBOL2)");
+		System.err.println("\t-mf  main SBOL file if file diff. option is selected");
+		System.err.println("\t-n  allow non-compliant URIs");
+		System.err.println("\t-no  indicate no output file to be generated from validation");
+		System.err.println("\t-p  <URIprefix> used for converted objects");
+		System.err.println("\t-rsbml  The full path of external SBML files to be referenced in the SBML2SBOL conversion");
+		System.err.println("\t-rsbol  The full path of external SBOL files to be referenced in the SBML2SBOL conversion");
+		System.err.println("\t-s  <topLevelURI> select only this object and those it references");
+		System.err.println("\t-t  uses types in URIs");
+		System.err.println("\t-v  <version> used for converted objects");
 		System.exit(1);
 	}
 
 	/**
-	 * Command line method for reading an input file and producing an output file.
+	 * Command line method for reading an input file and producing an output file. 
+	 * --jar libSBOLj.jar [options] <inputFile> <fileType> [-o <outputFile> -e <compareFile>]
 	 * <p>
 	 * By default, validations on compliance and completeness are performed, and types
 	 * for top-level objects are not used in URIs.
 	 * <p>
-	 * Options:
+	 * Requirements:
 	 * <p>
-	 * "-o" specifies an output filename
+	 * inputfile
 	 * <p>
 	 * "-e" specifies a file to compare if equal to
 	 * <p>
-	 * "-l" indicates the language for output (default=SBOL2, other options SBOL1, GenBank, FASTA, SBML)
+	 * "-ft" Specify the input file type. This should be limited to: SBOL and SBML
 	 * <p>
-	 * "-s" select only this topLevel object and those it references
+	 * "-o" specifies an output filename
 	 * <p>
-	 * "-p" specifies the default URI prefix for converted objects
-	 * <p>
-	 * "-v" specifies version to use for converted objects
-	 * <p>
-	 * "-t" uses types in URIs
-	 * <p>
-	 * "-n" allow non-compliant URIs
-	 * <p>
-	 * "-i" allow SBOL document to be incomplete
+	 * 
+	 * Options:
 	 * <p>
 	 * "-b" check best practices
 	 * <p>
-	 * "-f" fail on first error
+	 * "-cf" second SBOL file if file diff. option is selected
 	 * <p>
 	 * "-d" display detailed error trace
 	 * <p>
+	 * "-f" fail on first error
+	 * <p>
+	 * "-i" allow SBOL document to be incomplete
+	 * <p>
+	 * "-l" indicates the language for output (default=SBOL2, other options SBOL1, GenBank, FASTA, SBML)
+	 * <p>
 	 * "-mf" main SBOL file if file diff. option is selected
 	 * <p>
-	 * "-cf" second SBOL file if file diff. option is selected
+	 * "-n" allow non-compliant URIs
 	 * <p>
-	 * "-ft" Specify the input file type. This should be limited to: SBOL, SBML, and BioPAX
+	 * "-no" indicate no output file to be generated from validation
+	 * <p>
+	 * "-p" specifies the default URI prefix for converted objects
 	 * <p>
 	 * "-rsbml" The full path of external SBML files to be referenced in the SBML2SBOL conversion
 	 * <p>
 	 * "-rsbol" The full path of external SBOL files to be referenced in the SBML2SBOL conversion
 	 * <p>
-	 * "-no" indicate no output file to be generated from validation
+	 * "-s" select only this topLevel object and those it references
+	 * <p>
+	 * "-t" uses types in URIs
+	 * <p>
+	 * "-v" specifies version to use for converted objects
+	 * <p>
 	 *
 	 * @param args arguments supplied at command line
 	 */
 	public static void main(String[] args) {
+		
+		//-----REQUIRED FIELD-----
 		String fileName = ""; //input SBOL file name
-		String outputFile = "";
-		String compareFile = "";
-		String mainFileName = "";
-		String compareFileName = "";
-		String topLevelURIStr = "";
-		String URIPrefix = "";
-		String version = null;
+		String compareFile = ""; //-e
+		String inputFileType = ""; //-ft
+		String outputFile = ""; //-o
+		
+		//-----OPTIONAL FIELD-----
+		boolean bestPractice = false; //-b
+		String compareFileName = ""; //-cf
+		boolean showDetail = false; //-d
+		boolean keepGoing = true; //-f
+		boolean complete = true; //-i
+		boolean genBankOut = false; //-l
+		boolean fastaOut = false; //-l
+		boolean sbolV1out = false; //-l
+		boolean sbmlOut = false; //-l
+		String mainFileName = ""; //-mf
+		boolean compliant = true; //-n
+		boolean noOutput = false; //-no
+		String URIPrefix = ""; //-p
+		String externalSBMLPath = ""; //-rsbml
+		String includeSBOLPath = ""; //-rsbol
+		HashSet<String> ref_sbolInputFilePath = new HashSet<String>(); //rsbol
+		String topLevelURIStr = ""; //-s
+		boolean typesInURI = false; //-t
+		String version = null; //-v
+		
+		int index = 0;
 
-		String inputFileType = ""; //Required field
-		String externalSBMLPath = ""; //optional field
-		String includeSBOLPath = ""; //optional field
-		HashSet<String> ref_sbolInputFilePath = new HashSet<String>();
-
-		boolean complete = true;
-		boolean compliant = true;
-		boolean typesInURI = false;
-		boolean bestPractice = false;
-		boolean keepGoing = true;
-		boolean showDetail = false;
-		boolean genBankOut = false;
-		boolean fastaOut = false;
-		boolean sbolV1out = false;
-		boolean sbmlOut = false;
-		boolean noOutput = false;
-
-		int i = 0;
-
-		for(; i< args.length; i++){
-			String flag = args[i];
+		for(; index< args.length; index++){
+			String flag = args[index];
 			switch(flag)
 			{
 			case "-i":
@@ -171,89 +191,93 @@ public class Converter {
 				showDetail = true;
 				break;
 			case "-s":
-				if(i+1 >= args.length || args[i+1].equals("-")){
+				if(index+1 >= args.length || args[index+1].equals("-")){
 					usage();
 				}
-				topLevelURIStr = args[++i];
+				topLevelURIStr = args[++index];
 				break;
 			case "-l":
-				if(i+1 >= args.length || args[i+1].equals("-")){
+				if(index+1 >= args.length || args[index+1].equals("-")){
 					usage();
 				}
-				if (args[i+1].equals("SBOL1")) {
+				if (args[index+1].equals("SBOL1")) {
 					sbolV1out = true;
 				} 
-				else if (args[i+1].equals("GenBank")) {
+				else if (args[index+1].equals("GenBank")) {
 					genBankOut = true;
 				} 
-				else if (args[i+1].equals("FASTA")) {
+				else if (args[index+1].equals("FASTA")) {
 					fastaOut = true;
 				} 
-				else if (args[i+1].equals("SBOL2")) {
+				else if (args[index+1].equals("SBML")) {
+					sbmlOut = true;
+				}
+				else if (args[index+1].equals("SBOL2")) {
+					
 				} 
 				else {
 					usage();
 				}
 				break;
 			case "-o":
-				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
-				outputFile = args[++i];
+				outputFile = args[++index];
 				break;
 			case "-no":
 				noOutput = true;
 				break;
 			case "-e":
-				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
-				compareFile = args[i+1];
+				compareFile = args[++index];
 				break;
 			case "-mf":
-				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
-				mainFileName = args[++i];
+				mainFileName = args[++index];
 				break;
 			case "-cf":
-				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
-				compareFileName = args[i+1];
+				compareFileName = args[++index];
 				break;
 			case "-p":
-				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
-				URIPrefix = args[++i];
+				URIPrefix = args[++index];
 				break;
 			case "-v":
-				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
-				version = args[++i];
+				version = args[++index];
 				break;
 			case "-ft":
-				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
-				inputFileType = args[++i];
+				inputFileType = args[++index];
 				break;
 			case "-rsbml":
-				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
-				externalSBMLPath = args[++i];
+				externalSBMLPath = args[++index];
 				break;
 			case "-rsbol":
-				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
-				includeSBOLPath = args[++i];
+				includeSBOLPath = args[++index];
 				break;
 			default:
-				fileName = args[i];
+				fileName = args[index];
 			}
 		}
 		
@@ -278,10 +302,10 @@ public class Converter {
 		boolean isDirectory = file.isDirectory();
 		if (!isDirectory) {
 			/*
-			 * if(inputFileType is SBML){
-				Call converter
-				Write file to disk
-				Validate file of file created from the converter
+			 * inputFileType is SBML
+			 * Call converter
+			 * Write file to disk
+			 * Validate file of file created from the converter
 			 */
 			if(inputFileType.equals("SBML")){
 

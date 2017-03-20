@@ -27,17 +27,8 @@ import conversion.SBOL2SBML;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class RoundtripTest extends ConversionAbstractTests{
+public class RoundtripTests extends ConversionAbstractTests{
 	
-	String workingDirectory = System.getProperty("user.dir");
-	String resourceDir = workingDirectory + File.separator + "src" + File.separator + "test" + File.separator + "conversion" + File.separator + "resources" + File.separator ;
-	String sbml2sbol_outputDir = resourceDir + "SBML2SBOL_Output" + File.separator;
-	String sbol2sbml_outputDir = resourceDir + "SBOL2SBML_Output" + File.separator;
-	String sbmlDir = resourceDir + "SBML" + File.separator;
-	String sbolDir = resourceDir + "SBOL" + File.separator;
-	
-	
-	@Override
 	public void roundtripSBOLFile(final String fileName){
 		String inputFile = sbolDir + fileName + ".xml";
 		String outputFile = sbol2sbml_outputDir + fileName + ".xml";
@@ -50,7 +41,6 @@ public class RoundtripTest extends ConversionAbstractTests{
 		convertSBML(inputFile, outputFile);
 	}
 	
-	@Override
 	public void roundtripSBMLFile(final String fileName){
 		String inputFile = sbmlDir + fileName + ".xml";
 		String outputFile = sbml2sbol_outputDir + fileName + ".rdf";

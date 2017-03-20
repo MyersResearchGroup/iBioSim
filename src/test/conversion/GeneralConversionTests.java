@@ -18,22 +18,30 @@ import java.io.File;
 import org.junit.Test;
 
 /**
- * 
+ * General test cases for all conversion supported by iBioSim
  *
  * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public abstract class ConversionAbstractTests {
+public class GeneralConversionTests extends ConversionAbstractTests {
 	
-	protected String workingDirectory = System.getProperty("user.dir");
-	protected String resourceDir = workingDirectory + File.separator + "src" + File.separator + "test" + File.separator + "conversion" + File.separator + "resources" + File.separator ;
-	protected String sbml2sbol_outputDir = resourceDir + "SBML2SBOL_Output" + File.separator;
-	protected String sbol2sbml_outputDir = resourceDir + "SBOL2SBML_Output" + File.separator;
-	protected String sbmlDir = resourceDir + "SBML" + File.separator;
-	protected String sbolDir = resourceDir + "SBOL" + File.separator;
-	
-	
+	@Test
+	public void test_validation(){
+		/* test a valid sbol file. */
+		// [options] <inputFile> -ft <fileType> [-o <outputFile> -e <compareFile>]
+		String fileName = "CRISPR_example"; 
+		String inputfile = sbolDir + fileName + ".xml";
+		String fileType = "SBOL";
+		String outputFile = ""; 
+		String compareFile = "";
+		
+		//Options
+		String uriPrefix = "http://www.async.ece.utah.edu";
+		
+		String[] converter_cmdArgs = {"-no", "-p", uriPrefix, inputfile, "-ft", fileType,"-o", outputFile, "-e", compareFile};
+		conversion.Converter.main(converter_cmdArgs);
+	}
 	
 }
