@@ -148,111 +148,115 @@ public class Converter {
 
 		int i = 0;
 
-		while (i < args.length) {
-			if (args[i].equals("-i")) {
+		for(; i< args.length; i++){
+			String flag = args[i];
+			switch(flag)
+			{
+			case "-i":
 				complete = false;
-			} else if (args[i].equals("-t")) {
+				break;
+			case "-t":
 				typesInURI = true;
-			} else if (args[i].equals("-b")) {
+				break;
+			case "-b":
 				bestPractice = true;
-			} else if (args[i].equals("-n")) {
+				break;	
+			case "-n":
 				compliant = false;
-			} else if (args[i].equals("-f")) {
+				break;
+			case "-f":
 				keepGoing = false;
-			} else if (args[i].equals("-d")) {
+				break;
+			case "-d":
 				showDetail = true;
-			} else if (args[i].equals("-s")) { 	
-				if (i+1 >= args.length) {
+				break;
+			case "-s":
+				if(i+1 >= args.length || args[i+1].equals("-")){
 					usage();
 				}
-				topLevelURIStr = args[i+1];
-				i++;
-			} else if (args[i].equals("-l")) {
-				if (i+1 >= args.length) {
+				topLevelURIStr = args[++i];
+				break;
+			case "-l":
+				if(i+1 >= args.length || args[i+1].equals("-")){
 					usage();
 				}
 				if (args[i+1].equals("SBOL1")) {
 					sbolV1out = true;
-				} else if (args[i+1].equals("GenBank")) {
+				} 
+				else if (args[i+1].equals("GenBank")) {
 					genBankOut = true;
-				} else if (args[i+1].equals("FASTA")) {
+				} 
+				else if (args[i+1].equals("FASTA")) {
 					fastaOut = true;
 				} 
-				else if (args[i+1].equals("SBML")) {
-					sbmlOut = true;
-				}
 				else if (args[i+1].equals("SBOL2")) {
-				} else {
+				} 
+				else {
 					usage();
 				}
-				i++;
-			} else if (args[i].equals("-o")) {
-				if (i+1 >= args.length) {
+				break;
+			case "-o":
+				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
 					usage();
 				}
-				outputFile = args[i+1];
-				i++;
-			} else if (args[i].equals("-no")) {
+				outputFile = args[++i];
+				break;
+			case "-no":
 				noOutput = true;
-			} else if (args[i].equals("-e")) {
-				if (i+1 >= args.length) {
+				break;
+			case "-e":
+				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
 					usage();
 				}
 				compareFile = args[i+1];
-				i++;
-			} else if (args[i].equals("-mf")) { 
-				if (i+1 >= args.length) {
+				break;
+			case "-mf":
+				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
 					usage();
 				}
-				mainFileName = args[i+1];
-				i++;
-			} else if (args[i].equals("-cf")) {
-				if (i+1 >= args.length) {
+				mainFileName = args[++i];
+				break;
+			case "-cf":
+				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
 					usage();
 				}
 				compareFileName = args[i+1];
-				i++;
-			} else if (args[i].equals("-p")) {
-				if (i+1 >= args.length) {
+				break;
+			case "-p":
+				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
 					usage();
 				}
-				URIPrefix = args[i+1];
-				i++;
-			} else if (args[i].equals("-v")) {
-				if (i+1 >= args.length) {
+				URIPrefix = args[++i];
+				break;
+			case "-v":
+				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
 					usage();
 				}
-				version = args[i+1];
-				i++;
-			} 
-			else if (args[i].equals("-ft")) {
-				if (i+1 >= args.length) {
+				version = args[++i];
+				break;
+			case "-ft":
+				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
 					usage();
 				}
-				inputFileType = args[i+1];
-				i++;
-			}
-			else if (args[i].equals("-rsbml")) {
-				if (i+1 >= args.length) {
+				inputFileType = args[++i];
+				break;
+			case "-rsbml":
+				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
 					usage();
 				}
-				externalSBMLPath = args[i+1];
-				i++;
-			}
-			else if (args[i].equals("-rsbol")) {
-				if (i+1 >= args.length) {
+				externalSBMLPath = args[++i];
+				break;
+			case "-rsbol":
+				if(i+1 >= args.length || args[i+1].charAt(0)=='-'){
 					usage();
 				}
-				includeSBOLPath = args[i+1];
-				i++;
-			}
-			else if (fileName.equals("")) {
+				includeSBOLPath = args[++i];
+				break;
+			default:
 				fileName = args[i];
-			} else {
-				usage();
 			}
-			i++;
 		}
+		
 		if (fileName.equals("")) usage();
 		if (inputFileType.equals("")) usage();
 
