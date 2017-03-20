@@ -40,6 +40,7 @@ import backend.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
 import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import backend.analysis.dynamicsim.hierarchical.states.EventState;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 import dataModels.util.GlobalConstants;
@@ -67,8 +68,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   protected final VariableNode      currentTime;
   protected double            printTime;
   private boolean             cancelFlag;
-  private boolean             constraintFailureFlag;
-  private boolean             constraintFlag;
   private int               currentRun;
   private String[]            interestingSpecies;
   private double              maxTimeStep;
@@ -90,15 +89,13 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private String              abstraction;
   private int               totalRuns;
 
-  
   protected final ArrayList<Double> initValues;
-
   protected double            initTotalPropensity;
-
-  protected List<EventNode>       eventList;
-  protected PriorityQueue<EventNode>    triggeredEventList;
-
+  protected PriorityQueue<EventState>    triggeredEventList;
   protected boolean           isInitialized;
+  
+  protected boolean hasEvents;
+  
   private int               numSubmodels;
   private boolean             isGrid;
   private Random              randomNumberGenerator;
@@ -131,7 +128,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.type = type;
     this.topmodel = new HierarchicalModel("topmodel");
     this.currentTime = new VariableNode("time", StateType.SCALAR);
-
+    this.hasEvents = false;
     this.currentRun = 1;
     this.randomNumberGenerator = new Random(randomSeed);
     this.initialTime = initialTime;
@@ -203,6 +200,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.currentTime = copy.currentTime;
     this.randomNumberGenerator = copy.randomNumberGenerator;
     this.initValues = copy.initValues;
+    this.hasEvents = copy.hasEvents;
   }
 
   public void addModelState(HierarchicalModel modelstate)
@@ -231,28 +229,22 @@ public abstract class HierarchicalSimulation implements ParentSimulator
      this.modules = modules;
   }
 
+  public void setHasEvents(boolean value)
+  {
+    this.hasEvents = value;
+  }
+  
+  public boolean hasEvents()
+  {
+    return this.hasEvents;
+  }
+  
   /**
    * @return the cancelFlag
    */
   public boolean isCancelFlag()
   {
     return cancelFlag;
-  }
-
-  /**
-   * @return the constraintFailureFlag
-   */
-  public boolean isConstraintFailureFlag()
-  {
-    return constraintFailureFlag;
-  }
-
-  /**
-   * @return the constraintFlag
-   */
-  public boolean isConstraintFlag()
-  {
-    return constraintFlag;
   }
 
   /**
@@ -422,24 +414,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   public void setCancelFlag(boolean cancelFlag)
   {
     this.cancelFlag = cancelFlag;
-  }
-
-  /**
-   * @param constraintFailureFlag
-   *            the constraintFailureFlag to set
-   */
-  public void setConstraintFailureFlag(boolean constraintFailureFlag)
-  {
-    this.constraintFailureFlag = constraintFailureFlag;
-  }
-
-  /**
-   * @param constraintFlag
-   *            the constraintFlag to set
-   */
-  public void setConstraintFlag(boolean constraintFlag)
-  {
-    this.constraintFlag = constraintFlag;
   }
 
   /**
@@ -865,7 +839,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     }
   }
 
-  public void computeAssignmentRules()
+  protected void computeAssignmentRules()
   {
 
     boolean changed = true;
@@ -883,6 +857,50 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     }
   }
   
+  protected void computeEvents()
+  {
+    boolean changed = true;
+    double time = currentTime.getValue();
+    
+    while (changed)
+    {
+      changed = false;
+      for(HierarchicalModel modelstate : this.modules)
+      {
+        int index = modelstate.getIndex();
+        for (int i = modelstate.getNumOfEvents() - 1; i >= 0; i--)
+        {
+          EventNode event = modelstate.getEvent(i);
+          if(!event.isEnabled(index))
+          {
+            if (event.computeEnabled(index, time))
+            {
+              triggeredEventList.add(event.getEventState(index));
+            }
+          }
+        }
+      }
+      
+      while (triggeredEventList != null && !triggeredEventList.isEmpty())
+      {
+        EventState eventState = triggeredEventList.peek();
+        EventNode event = eventState.getParent();
+        int index = eventState.getIndex();
+        if (event.getFireTime(index) <= time)
+        {
+          triggeredEventList.poll();
+          event.fireEvent(index, time);
+          changed = true;
+        }
+        else
+        {
+          break;
+        }
+      }
+    }
+    
+  }
+  
     /**
      * Calculate fixed-point of initial assignments
      * 
@@ -890,7 +908,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
      * @param variables
      * @param math
      */
-    public void computeFixedPoint()
+    protected void computeFixedPoint()
     {
       boolean changed = true;
 
@@ -925,6 +943,20 @@ public abstract class HierarchicalSimulation implements ParentSimulator
           }
         }
       }
+    }
+    
+    public boolean evaluateConstraints()
+    {
+      boolean hasSuccess = true;
+      for(HierarchicalModel model : modules)
+      {
+        for (int i = model.getNumOfConstraints() - 1; i >= 0; i--)
+        {
+          ConstraintNode constraintNode = model.getConstraint(i);
+          hasSuccess = hasSuccess && constraintNode.evaluateConstraint(model.getIndex());
+        }
+      }
+      return hasSuccess;
     }
     
 }

@@ -227,8 +227,7 @@ public class ReactionNode extends VariableNode
 
 	public void setInitPropensity(int index)
 	{
-		int subModel = indexToSubmodel.get(index);
-		this.initPropensity = getValue(subModel);
+		this.initPropensity = getValue(index);
 		this.initForwardPropensity = forwardRateValue;
 	}
 

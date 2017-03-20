@@ -25,6 +25,7 @@ import backend.analysis.dynamicsim.hierarchical.math.EventNode;
 import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import backend.analysis.dynamicsim.hierarchical.states.EventState;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
 import backend.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
@@ -79,10 +80,10 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 			ModelSetup.setupModels(this, ModelType.HSSA);
 			//constraintList = getConstraintList();
 			computeFixedPoint();
-			if (!eventList.isEmpty())
+			if (hasEvents)
 			{
-				triggeredEventList = new PriorityQueue<EventNode>(1, new HierarchicalEventComparator());
-				HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue(0));
+				triggeredEventList = new PriorityQueue<EventState>(1, new HierarchicalEventComparator());
+				computeEvents();
 			}
 			//TODO: get initial values
 			setInitialPropensity();
@@ -118,7 +119,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 	public void setupForNewRun(int newRun)
 	{
 		setCurrentTime(getInitialTime());
-		setConstraintFlag(true);
 		setupForOutput(newRun);
 		//TODO: restore init state
 		restoreInitialPropensity();
@@ -240,7 +240,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
 		if (events)
 		{
-			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue(0));
+			computeEvents();
 		}
 		computeAssignmentRules();
 
@@ -300,13 +300,16 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
 	public double getNextEventTime()
 	{
-		for (int i = eventList.size() - 1; i >= 0; i--)
-		{
-			EventNode event = eventList.get(i);
-			event.isTriggeredAtTime(currentTime.getValue(0), event.getSubmodelIndex(i));
-		}
-		HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue(0));
-
+	  for(HierarchicalModel model : modules)
+	  {
+	    
+	    for (int i = model.getNumOfEvents() - 1; i >= 0; i--)
+	    {
+	      EventNode event = model.getEvent(i);
+	      event.isTriggeredAtTime(currentTime.getValue(), model.getIndex());
+	    }
+	  }
+		computeEvents();
 		if (triggeredEventList != null && !triggeredEventList.isEmpty())
 		{
 			return triggeredEventList.peek().getFireTime();

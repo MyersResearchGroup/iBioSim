@@ -38,7 +38,6 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   private List<HierarchicalNode>  children;
   private ArrayNode       arrayNode;
   protected HierarchicalState   state;
-  protected List<Integer>     indexToSubmodel;
 
   public HierarchicalNode(Type type)
   {
@@ -205,17 +204,6 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   public HierarchicalState getState()
   {
     return state;
-  }
-
-  
-  public void setIndexToSubmodel(List<Integer> indexToSubmodel)
-  {
-    this.indexToSubmodel = indexToSubmodel;
-  }
-
-  public int getSubmodelIndex(int index)
-  {
-    return indexToSubmodel.get(index);
   }
 
   @Override

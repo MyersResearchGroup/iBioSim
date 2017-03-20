@@ -15,7 +15,7 @@ package backend.analysis.dynamicsim.hierarchical.util.comp;
 
 import java.util.Comparator;
 
-import backend.analysis.dynamicsim.hierarchical.math.EventNode;
+import backend.analysis.dynamicsim.hierarchical.states.EventState;
 
 /**
  * 
@@ -25,10 +25,10 @@ import backend.analysis.dynamicsim.hierarchical.math.EventNode;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class HierarchicalEventComparator implements Comparator<EventNode>
+public class HierarchicalEventComparator implements Comparator<EventState>
 {
 	@Override
-	public int compare(EventNode event1, EventNode event2)
+	public int compare(EventState event1, EventState event2)
 	{
 		if (event1.getFireTime() > event2.getFireTime())
 		{

@@ -48,6 +48,7 @@ import backend.analysis.dynamicsim.hierarchical.math.AbstractHierarchicalNode.Ty
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import backend.analysis.dynamicsim.hierarchical.states.EventState;
 import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.comp.ModelContainer;
@@ -192,6 +193,7 @@ public class CoreSetup
 		Model model = container.getModel();
 		HierarchicalModel modelstate = container.getHierarchicalModel();
 		Map<String, VariableNode> variableToNodeMap = modelstate.getVariableToNodeMap();
+		int index = modelstate.getIndex();
 		for (Event event : model.getListOfEvents())
 		{
 			if (modelstate.isDeletedBySId(event.getId()))
@@ -199,6 +201,8 @@ public class CoreSetup
 				continue;
 			}
 
+			sim.setHasEvents(true);
+			
 			if(event.isSetTrigger() && event.getTrigger().isSetMath())
 			{
 
@@ -207,7 +211,8 @@ public class CoreSetup
 				HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, variableToNodeMap);
 
 				EventNode node = modelstate.addEvent(triggerNode);
-
+				EventState state = node.addEventState(index);
+				
 				boolean useValuesFromTrigger = event.getUseValuesFromTriggerTime();
 				boolean isPersistent = trigger.isSetPersistent() ? trigger.getPersistent() : false;
 				boolean initValue = trigger.isSetInitialValue() ? trigger.getInitialValue() : false;
@@ -216,10 +221,10 @@ public class CoreSetup
 
 				if (!initValue)
 				{
-					node.setMaxDisabledTime(0);
+					state.setMaxDisabledTime(0);
 					if (node.computeTrigger(modelstate.getIndex()))
 					{
-						node.setMinEnabledTime(0);
+						state.setMinEnabledTime(0);
 					}
 				}
 
@@ -249,6 +254,7 @@ public class CoreSetup
 
 				setupEventAssignments(sim, modelstate, node, event, model, variableToNodeMap);
 
+				
 			}
 		}
 	}

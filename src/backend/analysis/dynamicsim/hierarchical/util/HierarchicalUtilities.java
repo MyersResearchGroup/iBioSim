@@ -32,6 +32,7 @@ import backend.analysis.dynamicsim.hierarchical.math.FunctionNode;
 import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import backend.analysis.dynamicsim.hierarchical.states.EventState;
 import backend.analysis.dynamicsim.hierarchical.util.interpreter.RateSplitterInterpreter;
 
 import org.sbml.jsbml.Model;
@@ -190,43 +191,6 @@ public class HierarchicalUtilities
 		}
 	}
 	
-	public static void triggerAndFireEvents(List<EventNode> eventList, PriorityQueue<EventNode> triggeredEventList, double time)
-	{
-		boolean changed = true;
-		while (changed)
-		{
-			changed = false;
-			for (int i = eventList.size() - 1; i >= 0; i--)
-			{
-				EventNode event = eventList.get(i);
-				if (event.computeEnabled(0, time))
-				{
-					eventList.remove(i);
-					triggeredEventList.add(event);
-				}
-			}
-
-			while (triggeredEventList != null && !triggeredEventList.isEmpty())
-			{
-				EventNode event = triggeredEventList.peek();
-
-				if (event.getFireTime() <= time)
-				{
-					triggeredEventList.poll();
-					event.fireEvent(0, time);
-					eventList.add(event);
-					changed = true;
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-	}
-
-
-
 	public static ASTNode[] splitMath(ASTNode math)
 	{
 		ASTNode plus = new ASTNode(Type.PLUS);
@@ -248,14 +212,4 @@ public class HierarchicalUtilities
 		return plus.getChildCount() > 0 && minus.getChildCount() > 0 ? result : null;
 	}
 
-	public static boolean evaluateConstraints(List<ConstraintNode> listOfConstraints)
-	{
-		boolean hasSuccess = true;
-		for (int i = listOfConstraints.size() - 1; i >= 0; i--)
-		{
-			ConstraintNode constraintNode = listOfConstraints.get(i);
-			hasSuccess = hasSuccess && constraintNode.evaluateConstraint(constraintNode.getSubmodelIndex(i));
-		}
-		return hasSuccess;
-	}
 }
