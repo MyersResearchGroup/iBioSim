@@ -718,7 +718,6 @@ public class SBML2SBOL {
 
 		HashSet<String> ref_sbolInputFilePath = new HashSet<String>();
 
-		//GOAL: <inputFile> [options -I(SBML files) -s<sbolLibraryFile>] -u <uriPrefix> [-o <outputFile>]
 		if(args.length == 0 || args[0].equals("-h") ||args[0] == null){
 			usage();
 		}

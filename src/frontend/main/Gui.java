@@ -324,7 +324,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	private SEDMLDocument 			sedmlDocument		= null;
 	
 	private SBOLDocument			sbolDocument		= null;
-	private String 					sbolDirectory 		= null;
 	
 	public void OSXSetup() {
 		Application app = Application.getApplication();

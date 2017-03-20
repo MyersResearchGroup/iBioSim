@@ -93,7 +93,6 @@ import org.synbiohub.frontend.*;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
-import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.TopLevel;
@@ -613,7 +612,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveAsSBOL2() 
 	{
 		try {
-			Preferences biosimrc = Preferences.userRoot(); 
 			String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
 			HashSet<String> sbolFiles = biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
 			
@@ -838,7 +836,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		SBOLDocument uploadDoc = new SBOLDocument();
 		
 		try {
-			Preferences biosimrc = Preferences.userRoot();
 			String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
 
 			SBML2SBOL.convert_SBML2SBOL(uploadDoc, path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
