@@ -189,7 +189,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 				filenames.add(recurseTSDFiles(fullFileName));
 			}
 		}
-
 		Object[] col = filenames.toArray();
 		Arrays.sort(col);
 		filenames.clear();

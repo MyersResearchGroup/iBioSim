@@ -14,6 +14,7 @@
 package backend.analysis.dynamicsim.hierarchical.util.setup;
 
 import org.sbml.jsbml.AbstractNamedSBase;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
@@ -39,7 +40,7 @@ import backend.analysis.dynamicsim.hierarchical.util.comp.ModelContainer;
 public class ReplacementSetup
 {
 
-	private static void setupDeletion(ModelContainer container)
+	static void setupDeletion(ModelContainer container)
 	{
 		CompModelPlugin topCompModel = container.getCompModel();
 		HierarchicalModel top = container.getHierarchicalModel();
@@ -115,8 +116,29 @@ public class ReplacementSetup
 		}
 	}
 
+  static void setupReplacement(SBase sbase, ModelContainer container)
+  {
+    CompSBasePlugin sbasePlugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
 
-	public static void setupReplacement(AbstractNamedSBase sbase, VariableNode node, ModelContainer container)
+    if (sbasePlugin != null)
+    {
+      if (sbasePlugin.isSetReplacedBy())
+      {
+        setupReplacedBy(sbasePlugin.getReplacedBy(), container);
+      }
+
+      if (sbasePlugin.isSetListOfReplacedElements())
+      {
+        for (ReplacedElement element : sbasePlugin.getListOfReplacedElements())
+        {
+          setupReplacedElement(element, container);
+        }
+      }
+    }
+
+  }
+  
+	static void setupReplacement(AbstractNamedSBase sbase, VariableNode node, ModelContainer container)
 	{
 		CompSBasePlugin sbasePlugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
 
@@ -160,13 +182,20 @@ public class ReplacementSetup
 				}
 
 				String subId = ref.getIdRef();
-				sub.addMappingNode(subId, node);
+				if(node != null)
+				{
+				  sub.addMappingNode(subId, node);
+				}
+				
 				sub.addDeletedBySid(subId);
 			}
 			else
 			{
 				String subId = element.getIdRef();
-				sub.addMappingNode(subId, node);
+				if(node != null)
+        {
+				  sub.addMappingNode(subId, node);
+        }
 				sub.addDeletedBySid(subId);
 			}
 		}
@@ -174,7 +203,10 @@ public class ReplacementSetup
 		{
 			Port port = compModel.getListOfPorts().get(element.getPortRef());
 			String subId = port.getIdRef();
-			sub.addMappingNode(subId, node);
+			if(node != null)
+      {
+			  sub.addMappingNode(subId, node);
+      }
 			sub.addDeletedBySid(subId);
 		}
 	}
@@ -201,108 +233,115 @@ public class ReplacementSetup
 				}
 
 				String subId = ref.getIdRef();
-				sub.addMappingNode(subId, node);
+				if(node != null)
+        {
+				  sub.addMappingNode(subId, node);
+        }
+        top.addDeletedBySid(subId);
 			}
 			else
 			{
 				String subId = element.getIdRef();
-				sub.addMappingNode(subId, node);
+				if(node != null)
+        {
+          sub.addMappingNode(subId, node);
+        }
+				top.addDeletedBySid(subId);
 			}
 		}
 		else if (element.isSetPortRef())
 		{
 			Port port = compModel.getListOfPorts().get(element.getPortRef());
 			String subId = port.getIdRef();
-			sub.addMappingNode(subId, node);
+			if(node != null)
+      {
+        sub.addMappingNode(subId, node);
+      }
+			top.addDeletedBySid(subId);
 		}
 	}
+	
+	private static void setupReplacedElement(ReplacedElement element, ModelContainer container)
+  {
+    String subModelId = element.getSubmodelRef();
+    HierarchicalModel top = container.getHierarchicalModel();
+    HierarchicalModel sub = top.getSubmodel(subModelId);
+    CompModelPlugin compModel = container.getChild(subModelId).getCompModel();
 
+    if (element.isSetIdRef())
+    {
+      if (sub.containsSubmodel(element.getIdRef()))
+      {
+        sub = sub.getSubmodel(element.getMetaIdRef());
+      }
+      if (element.isSetSBaseRef())
+      {
+        SBaseRef ref = element.getSBaseRef();
+        while (ref.isSetSBaseRef())
+        {
+          sub = sub.getSubmodel(element.getMetaIdRef());
+        }
 
-	//  public static void setupReplacement(SBase sbase, HierarchicalModel top, CompModelPlugin topCompModel, String prefix, List<ReplacementHandler> listOfHandlers, List<HierarchicalModel> listOfModules, List<Model> listOfModels, Map<String, Integer> mapOfModels)
-	//  {
-	//    CompSBasePlugin sbasePlugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
-	//
-	//    if (sbasePlugin != null)
-	//    {
-	//      if (sbasePlugin.isSetReplacedBy())
-	//      {
-	//        setupReplacedBy(sbasePlugin.getReplacedBy(), prefix, top, topCompModel, listOfHandlers, listOfModules, listOfModels, mapOfModels);
-	//      }
-	//
-	//      if (sbasePlugin.isSetListOfReplacedElements())
-	//      {
-	//        for (ReplacedElement element : sbasePlugin.getListOfReplacedElements())
-	//        {
-	//          setupReplacedElement(element, prefix, top, topCompModel, listOfHandlers, listOfModules, listOfModels, mapOfModels);
-	//        }
-	//      }
-	//    }
-	//
-	//  }
-	//  
-	//  private static void setupReplacedBy(ReplacedBy replacement, HierarchicalModel top, CompModelPlugin topCompModel)
-	//  {
-	//    String subModelId = prefix + replacement.getSubmodelRef();
-	//    int subIndex = mapOfModels.get(subModelId);
-	//
-	//    if (replacement.isSetIdRef())
-	//    {
-	//      String tmp = subModelId + "__" + replacement.getIdRef();
-	//      if (mapOfModels.containsKey(tmp) && replacement.isSetSBaseRef())
-	//      {
-	//        subIndex = mapOfModels.get(tmp);
-	//        listOfModules.get(subIndex);
-	//        listOfModels.get(subIndex);
-	//      }
-	//      String subId = replacement.getSBaseRef().getMetaIdRef();
-	//      top.addDeletedBySid(subId);
-	//
-	//    }
-	//    else if (replacement.isSetMetaIdRef())
-	//    {
-	//      String subId = replacement.getMetaIdRef();
-	//      top.addDeletedByMetaId(subId);
-	//    }
-	//    else if (replacement.isSetPortRef())
-	//    {
-	//      Port port = topCompModel.getListOfPorts().get(replacement.getPortRef());
-	//      String subId = port.getMetaIdRef();
-	//      top.addDeletedByMetaId(subId);
-	//    }
-	//  }
-	//
-	//  private static void setupReplacedElement(ReplacedElement element, HierarchicalModel top, CompModelPlugin topCompModel)
-	//  {
-	//    String subModelId = prefix + element.getSubmodelRef();
-	//    int subIndex = mapOfModels.get(subModelId);
-	//    HierarchicalModel sub = listOfModules.get(subIndex);
-	//    Model submodel = listOfModels.get(subIndex);
-	//
-	//    CompModelPlugin compModel = (CompModelPlugin) submodel.getExtension("comp");
-	//
-	//    if (element.isSetIdRef())
-	//    {
-	//      String tmp = subModelId + "__" + element.getIdRef();
-	//      if (mapOfModels.containsKey(tmp) && element.isSetSBaseRef())
-	//      {
-	//        subIndex = mapOfModels.get(tmp);
-	//        sub = listOfModules.get(subIndex);
-	//        submodel = listOfModels.get(subIndex);
-	//        String subId = element.getSBaseRef().getMetaIdRef();
-	//        sub.addDeletedByMetaId(subId);
-	//      }
-	//    }
-	//    else if (element.isSetMetaIdRef())
-	//    {
-	//      String subId = element.getMetaIdRef();
-	//      sub.addDeletedByMetaId(subId);
-	//    }
-	//    else if (element.isSetPortRef())
-	//    {
-	//      Port port = compModel.getListOfPorts().get(element.getPortRef());
-	//      String subId = port.getMetaIdRef();
-	//      sub.addDeletedByMetaId(subId);
-	//    }
-	//  }
+        String subId = ref.getMetaIdRef();
+        sub.addDeletedBySid(subId);
+      }
+      else
+      {
+        String subId = element.getIdRef();
+        sub.addDeletedByMetaId(subId);
+      }
+    }
+    else if (element.isSetMetaIdRef())
+    {
+      String subId = element.getMetaIdRef();
+      sub.addDeletedByMetaId(subId);
+    }
+    else if (element.isSetPortRef())
+    {
+      Port port = compModel.getListOfPorts().get(element.getPortRef());
+      String subId = port.getMetaIdRef();
+      sub.addDeletedByMetaId(subId);
+    }
+  }
+
+  private static void setupReplacedBy(ReplacedBy element, ModelContainer container)
+  {
+    String subModelId = element.getSubmodelRef();
+    HierarchicalModel top = container.getHierarchicalModel();
+    HierarchicalModel sub = top.getSubmodel(subModelId);
+    CompModelPlugin compModel = container.getChild(subModelId).getCompModel();
+
+    if (element.isSetIdRef())
+    {
+      if (sub.containsSubmodel(element.getIdRef()))
+      {
+        sub = sub.getSubmodel(element.getIdRef());
+      }
+      if (element.isSetSBaseRef())
+      {
+        SBaseRef ref = element.getSBaseRef();
+        while (ref.isSetSBaseRef())
+        {
+          sub = sub.getSubmodel(element.getIdRef());
+        }
+
+        String subId = ref.getMetaIdRef();
+        top.addDeletedByMetaId(subId);
+      }
+    }
+    else if(element.isSetMetaId())
+    {
+      String subId = element.getMetaIdRef();
+      top.addDeletedBySid(subId);
+    }
+    else if (element.isSetPortRef())
+    {
+      Port port = compModel.getListOfPorts().get(element.getPortRef());
+      String subId = port.getMetaIdRef();
+      top.addDeletedByMetaId(subId);
+    }
+  }
+  
+
 
 }

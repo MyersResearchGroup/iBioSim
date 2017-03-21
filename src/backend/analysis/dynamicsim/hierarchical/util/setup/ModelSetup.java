@@ -158,9 +158,9 @@ public class ModelSetup
       type = StateType.VECTOR;
     }
     
-    for (int i = listOfContainers.size() - 1; i >= 0; i--)
+    for(ModelContainer container : listOfContainers)
     {
-      ModelContainer container = listOfContainers.get(i);
+      ReplacementSetup.setupDeletion(container);
       CoreSetup.initializeModel(sim, container, type, time, wrapper, isSSA);
     }
 
