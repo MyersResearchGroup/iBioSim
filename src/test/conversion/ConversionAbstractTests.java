@@ -15,8 +15,6 @@ package test.conversion;
 
 import java.io.File;
 
-import org.junit.Test;
-
 /**
  * 
  *
@@ -31,6 +29,7 @@ public abstract class ConversionAbstractTests {
 	protected String resourceDir = workingDirectory + File.separator + "src" + File.separator + "test" + File.separator + "conversion" + File.separator + "resources" + File.separator ;
 	protected String sbml2sbol_outputDir = resourceDir + "SBML2SBOL_Output" + File.separator;
 	protected String sbol2sbml_outputDir = resourceDir + "SBOL2SBML_Output" + File.separator;
+	protected String sbol2GenBank_outputDir = resourceDir + "SBOL2SBML_Output" + File.separator;
 	protected String sbmlDir = resourceDir + "SBML" + File.separator;
 	protected String sbolDir = resourceDir + "SBOL" + File.separator;
 	

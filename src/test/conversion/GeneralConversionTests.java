@@ -26,6 +26,10 @@ import org.junit.Test;
  * @version %I%
  */
 public class GeneralConversionTests extends ConversionAbstractTests {
+	/*
+	 * Note for all converter test cases that call src/conversion/Converter.java, flags in the command line can have empty strings for the flag value.
+	 * - 2 required fields can't be empty: fileName and inputFileType
+	 */
 	
 	@Test
 	public void test_validation(){
@@ -44,4 +48,91 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		conversion.Converter.main(converter_cmdArgs);
 	}
 	
+	@Test
+	public void test_cmd_e(){
+		/* compare SBOL files with same content but with different file name through required compareFile flag*/
+		// [options] <inputFile> -ft <fileType> [-o <outputFile> -e <compareFile>]
+		String fileName = "CRISPR_example"; 
+		String fileName2 = "meherGolden_RepressionModel";
+		
+		String inputfile = sbolDir + fileName + ".xml";
+		String inputfile2 = sbolDir + fileName2 + ".xml";
+		
+		String fileType = "SBOL";
+		String outputFile = ""; 
+		String compareFile = inputfile2;
+		
+		String[] converter_cmdArgs = {"-no", inputfile, "-ft", fileType,"-o", outputFile, "-e", compareFile};
+		conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_cf(){
+		/* compare SBOL files with same content but with different file name through required compareFileName flag*/
+		// [options] <inputFile> -ft <fileType> [-o <outputFile> -e <compareFile>]
+		String fileName = "CRISPR_example"; 
+		String fileName2 = "meherGolden_RepressionModel";
+		
+		String inputfile = sbolDir + fileName + ".xml";
+		String inputfile2 = sbolDir + fileName2 + ".xml";
+		
+		String fileType = "SBOL";
+		String outputFile = ""; 
+		String compareFile = "";
+		
+		String[] converter_cmdArgs = {"-no", "-cf", inputfile2, inputfile, "-ft", fileType,"-o", outputFile, "-e", compareFile};
+		conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_mf(){
+		/* compare SBOL files with same content but with different file name through required mf and cf flag*/
+		// [options] <inputFile> -ft <fileType> [-o <outputFile> -e <compareFile>]
+		String fileName = ""; 
+		String fileName2 = "meherGolden_RepressionModel";
+		
+		String mainfile = sbolDir + "CRISPR_example" + ".xml";
+		String inputfile2 = sbolDir + fileName2 + ".xml";
+		
+		String fileType = "SBOL";
+		String outputFile = ""; 
+		String compareFile = "";
+		
+		String[] converter_cmdArgs = {"-no", "-mf", mainfile, "-cf", inputfile2, fileName, "-ft", fileType,"-o", outputFile, "-e", compareFile};
+		conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_l_sbml(){
+		/* convert sbol2sbml*/
+		// [options] <inputFile> -ft <fileType> [-o <outputFile> -e <compareFile>]
+		String fileName = "CRISPR_example"; 
+		String inputfile = sbolDir + fileName + ".xml";
+		String fileType = "SBOL";
+		String outputFile = sbol2sbml_outputDir + fileName + "_sbmloutput" + ".xml";
+		String compareFile = "";
+		
+		//Options
+		String outputLang = "SBML";
+		
+		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-ft", fileType,"-o", outputFile, "-e", compareFile};
+		conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_l_genbank(){
+		/* convert sbol2sbml*/
+		// [options] <inputFile> -ft <fileType> [-o <outputFile> -e <compareFile>]
+		String fileName = "CRISPR_example"; 
+		String inputfile = sbolDir + fileName + ".xml";
+		String fileType = "SBOL";
+		String outputFile = sbol2GenBank_outputDir + fileName + "_output" + ".xml";
+		String compareFile = "";
+		
+		//Options
+		String outputLang = "GenBank";
+		
+		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-ft", fileType,"-o", outputFile, "-e", compareFile};
+		conversion.Converter.main(converter_cmdArgs);
+	}
 }

@@ -281,8 +281,16 @@ public class Converter {
 			}
 		}
 		
-		if (fileName.equals("")) usage();
-		if (inputFileType.equals("")) usage();
+		/*
+		 * Note: Check all required field has been set. If not, stop user from continuing.
+		 * Exception: 
+		 * 1. inputFile can be empty if -mf was set.
+		 * 2. outputFile can be empty if comparison or validation flags are set.
+		 * 3. comparingFile can be empty if validation or conversion flags are set.
+		 */
+		if (inputFileType.equals("")) {
+			usage();
+		}
 
 		if(includeSBOLPath != null && !includeSBOLPath.isEmpty()){
 			//Note: this is an optional field. User provided sbol path to read in
@@ -360,7 +368,7 @@ public class Converter {
 				try {
 					sbolDoc = SBOLReader.read(new FileInputStream(fileName));
 				
-				if(URIPrefix!=null){
+				if(!URIPrefix.isEmpty()){
 					ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(URIPrefix));
 					List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
 					for (BioModel model : models)
