@@ -462,7 +462,7 @@ public class CoreSetup
 			//TODO: change scalar to other types too
 			reactionNode.createState(StateType.SCALAR, wrapper);
 			reactionNode.setValue(modelstate.getIndex(), 0);
-
+			reactionNode.addReactionState(modelstate.getIndex());
 			for (SpeciesReference reactant : reaction.getListOfReactants())
 			{
 				setupReactant(sim, modelstate, reactionNode, reactant.getSpecies(), reactant, type, wrapper);
@@ -609,6 +609,7 @@ public class CoreSetup
 					sim.addPrintVariable(species.getId(), node.getState());
 				}
 			}
+			
 			node.setValue(index, 0);
 			node.setBoundaryCondition(species.getBoundaryCondition());
 			node.setHasOnlySubstance(species.getHasOnlySubstanceUnits());

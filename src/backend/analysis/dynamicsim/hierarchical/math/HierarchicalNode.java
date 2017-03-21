@@ -166,7 +166,6 @@ public class HierarchicalNode extends AbstractHierarchicalNode
     {
       state = new ValueState();
     }
-    //TODO: error on else
     return state;
   }
 
@@ -177,8 +176,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   
   public void setValue(int index, double value)
   {
-    //TODO:
-    state.setStateValue(value);
+    state.setStateValue(index, value);
   }
   
   public double getValue()
@@ -188,7 +186,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   
   public double getValue(int index)
   {
-    return state.getStateValue();
+    return state.getStateValue(index);
   }
   
   public double getRate()

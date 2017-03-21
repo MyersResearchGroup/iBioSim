@@ -820,7 +820,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
       for (int i = state.getNumOfReactions() - 1; i >= 0; i--)
       {
-        state.getReactions().get(i).setInitPropensity(0);
+        state.getReactions().get(i).setInitPropensity(state.getIndex());
       }
     }
   }

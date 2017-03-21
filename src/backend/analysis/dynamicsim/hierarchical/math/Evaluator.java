@@ -702,7 +702,7 @@ public final class Evaluator
     {
       ReactionNode reaction = (ReactionNode) node;
 
-      if (reaction.hasEnoughMolecules())
+      if (reaction.hasEnoughMoleculesFd(index))
       {
         return reaction.getValue(index);
       }
