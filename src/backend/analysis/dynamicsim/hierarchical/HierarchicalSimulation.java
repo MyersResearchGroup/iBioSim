@@ -137,7 +137,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.initValues = new ArrayList<Double>();
     
     this.writer = new HierarchicalTSDWriter();
-   
+    this.addPrintVariable(currentTime.getName(), currentTime.getState());
     
     if (quantityType != null)
     {
@@ -731,16 +731,12 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
     for (HierarchicalModel modelstate : modules)
     {
-
-      if (modelstate.getNumOfReactions() > 0)
-      {
         propensity = modelstate.createPropensity();
         for (ReactionNode node : modelstate.getReactions())
         {
           node.setTotalPropensityRef(totalPropensity);
           node.setModelPropensityRef(propensity);
         }
-      }
     }
 
   }
@@ -818,9 +814,9 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     {
       state.setInitPropensity(0);
 
-      for (int i = state.getNumOfReactions() - 1; i >= 0; i--)
+      for (ReactionNode node : state.getReactions())
       {
-        state.getReactions().get(i).setInitPropensity(state.getIndex());
+        node.setInitPropensity(state.getIndex());
       }
     }
   }
@@ -832,9 +828,9 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     {
       state.restoreInitPropensity(0);
 
-      for (int i = state.getNumOfReactions() - 1; i >= 0; i--)
+      for (ReactionNode node : state.getReactions())
       {
-        state.getReactions().get(i).restoreInitPropensity(state.getIndex());
+        node.restoreInitPropensity(state.getIndex());
       }
     }
   }
@@ -868,9 +864,8 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       for(HierarchicalModel modelstate : this.modules)
       {
         int index = modelstate.getIndex();
-        for (int i = modelstate.getNumOfEvents() - 1; i >= 0; i--)
+        for (EventNode event : modelstate.getEvents())
         {
-          EventNode event = modelstate.getEvent(i);
           if(!event.isEnabled(index))
           {
             if (event.computeEnabled(index, time))
@@ -950,9 +945,8 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       boolean hasSuccess = true;
       for(HierarchicalModel model : modules)
       {
-        for (int i = model.getNumOfConstraints() - 1; i >= 0; i--)
+        for (ConstraintNode constraintNode : model.getConstraints())
         {
-          ConstraintNode constraintNode = model.getConstraint(i);
           hasSuccess = hasSuccess && constraintNode.evaluateConstraint(model.getIndex());
         }
       }

@@ -18,6 +18,7 @@ public  class ModelContainer
 	private CompModelPlugin compModel;
 	private ModelContainer parent;
 	private Map<String, ModelContainer> children;
+	private String prefix;
 	
 	public ModelContainer(Model model, HierarchicalModel hierarchicalModel, ModelContainer parent)
 	{
@@ -25,6 +26,7 @@ public  class ModelContainer
 		this.hierarchicalModel = hierarchicalModel;
 		this.compModel = (CompModelPlugin) model.getPlugin(CompConstants.namespaceURI);
 		this.parent = parent;
+		setPrefix();
 		addChild();
 		setModelType(hierarchicalModel, model);
 	}
@@ -63,6 +65,7 @@ public  class ModelContainer
 		    parent.children = new HashMap<String, ModelContainer>();
 		  }
 		  parent.children.put(hierarchicalModel.getID(), this);
+	    parent.hierarchicalModel.addSubmodel(hierarchicalModel);
 		}
 	}
 	
@@ -86,6 +89,23 @@ public  class ModelContainer
 			modelstate.setModelType(ModelType.NONE);
 		}
 
+	}
+	
+	private void setPrefix()
+	{
+	  if(parent != null)
+	  {
+	    this.prefix = hierarchicalModel.getID() + "__" + parent.prefix;
+	  }
+	  else
+	  {
+	    this.prefix = "";
+	  }
+	}
+	
+	public String getPrefix()
+	{
+	  return prefix;
 	}
 
 }

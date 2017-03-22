@@ -87,6 +87,11 @@ public final class HierarchicalModel
 		this.maxPropensity = Double.MIN_VALUE / 10.0;
 		
 		this.idToNode = new HashMap<String, VariableNode>();
+		this.variables = new ArrayList<VariableNode>();
+		this.events = new LinkedList<EventNode>();
+		this.constraints = new ArrayList<ConstraintNode>();
+		this.reactions = new ArrayList<ReactionNode>();
+		this.arrays = new ArrayList<VariableNode>();
 	}
 
 	public HierarchicalModel(HierarchicalModel state)
@@ -126,15 +131,6 @@ public final class HierarchicalModel
 	
 	public VariableNode addVariable(VariableNode node)
 	{
-	  if(variables == null)
-	  {
-	    variables = new ArrayList<VariableNode>();
-	  }
-
-    if (idToNode == null)
-    {
-      idToNode = new HashMap<String, VariableNode>();
-    }
 	  variables.add(node);
 	  idToNode.put(node.getName(), node);
 	  return node;
@@ -159,14 +155,6 @@ public final class HierarchicalModel
 
 	public void addReaction(ReactionNode node)
 	{
-		if (reactions == null)
-		{
-			reactions = new ArrayList<ReactionNode>();
-		}
-		if (idToNode == null)
-		{
-			idToNode = new HashMap<String, VariableNode>();
-		}
 		reactions.add(node);
 		idToNode.put(node.getName(), node);
 	}
@@ -181,27 +169,11 @@ public final class HierarchicalModel
 
 	public void addEvent(EventNode node)
 	{
-
-		if (events == null)
-		{
-			events = new LinkedList<EventNode>();
-		}
-
 		events.add(node);
 	}
 
 	public VariableNode addArray(VariableNode node)
 	{
-
-		if (arrays == null)
-		{
-			arrays = new ArrayList<VariableNode>();
-		}
-
-		if (idToNode == null)
-		{
-			idToNode = new HashMap<String, VariableNode>();
-		}
 		arrays.add(node);
 		idToNode.put(node.getName(), node);
 		return node;
@@ -209,12 +181,6 @@ public final class HierarchicalModel
 
 	public ConstraintNode addConstraint(String variable, HierarchicalNode node)
 	{
-
-		if (constraints == null)
-		{
-			constraints = new ArrayList<ConstraintNode>();
-		}
-
 		ConstraintNode constraintNode = new ConstraintNode(variable, node);
 
 		constraints.add(constraintNode);
@@ -289,26 +255,6 @@ public final class HierarchicalModel
 		}
 
 		return deletedByMetaId.contains(metaid);
-	}
-
-	public int getNumOfReactions()
-	{
-		return reactions == null ? 0 : reactions.size();
-	}
-
-	public int getNumOfEvents()
-	{
-		return events == null ? 0 : events.size();
-	}
-
-	public int getNumOfConstraints()
-	{
-		return constraints == null ? 0 : constraints.size();
-	}
-
-	public int getNumOfArrays()
-	{
-		return arrays == null ? 0 : arrays.size();
 	}
 
 	public List<VariableNode> getArrays()
@@ -507,6 +453,14 @@ public final class HierarchicalModel
 			return idToSubmodel.containsKey(id);
 		}
 		return false;
+	}
+	
+	public void computePropensities()
+	{
+	  for(ReactionNode node : reactions)
+    {
+      node.computePropensity(index);
+    }
 	}
 
 }

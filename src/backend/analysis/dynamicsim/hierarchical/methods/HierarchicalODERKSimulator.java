@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
@@ -152,7 +153,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 	      HierarchicalTriggeredEventHandler triggeredHandler = new HierarchicalTriggeredEventHandler();
 	      odecalc.addEventHandler(handler, getPrintInterval(), 1e-20, 10000);
 	      odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20, 10000);
-	      triggeredEventList = new PriorityQueue<EventState>(0, new HierarchicalEventComparator());
+	      triggeredEventList = new PriorityQueue<EventState>(1, new HierarchicalEventComparator());
 	      computeEvents();
 	    }
 
@@ -214,7 +215,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 					odecalc.integrate(de, currentTime.getValue(), vectorWrapper.getValues(), nextEndTime, vectorWrapper.getValues());
 					computeAssignmentRules();
 				}
-				catch (Exception e)
+				catch (NumberIsTooSmallException e)
 				{
 					setCurrentTime(nextEndTime);
 				}
@@ -261,14 +262,13 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
 		{
 			double returnValue = -value;
 
-			currentTime.setValue(0, t);
+			currentTime.setValue(t);
 			vectorWrapper.setValues(y);
 			for(HierarchicalModel modelstate : modules)
       {
         int index = modelstate.getIndex();
-        for (int i = modelstate.getNumOfEvents() - 1; i >= 0; i--)
+        for (EventNode event : modelstate.getEvents())
         {
-          EventNode event = modelstate.getEvent(i);
           if(!event.isEnabled(index))
           {
             if (event.isTriggeredAtTime(t, index))
@@ -360,10 +360,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation
     {
       for(HierarchicalModel hierarchicalModel : modules)
       {
-        for(ReactionNode node : hierarchicalModel.getReactions())
-        {
-          node.computePropensity(hierarchicalModel.getIndex());
-        }
+        hierarchicalModel.computePropensities();
       }
     }
     

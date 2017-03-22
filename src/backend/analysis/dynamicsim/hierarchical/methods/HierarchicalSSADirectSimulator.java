@@ -303,9 +303,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 	  for(HierarchicalModel model : modules)
 	  {
 	    
-	    for (int i = model.getNumOfEvents() - 1; i >= 0; i--)
+	    for (EventNode event : model.getEvents())
 	    {
-	      EventNode event = model.getEvent(i);
 	      event.isTriggeredAtTime(currentTime.getValue(), model.getIndex());
 	    }
 	  }

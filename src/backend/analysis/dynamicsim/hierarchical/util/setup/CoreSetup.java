@@ -68,7 +68,6 @@ public class CoreSetup
   static void initializeModel(HierarchicalSimulation sim, ModelContainer container, StateType type, VariableNode time, VectorWrapper wrapper,  boolean split) throws IOException
   {
     container.getHierarchicalModel().addMappingNode("_time", time);
-    sim.addPrintVariable(time.getName(), time.getState());
     setupParameters(sim, container, type, wrapper);
     setupCompartments(sim, container, type, wrapper);
     setupSpecies(sim, container, type, wrapper);
@@ -109,7 +108,7 @@ public class CoreSetup
       {
         node.createState(type, wrapper);
         modelstate.addVariable(node);
-        sim.addPrintVariable(compartmentID, node.getState());
+        sim.addPrintVariable(container.getPrefix() + compartmentID, node.getState());
       }
 
       if (Double.isNaN(compartment.getSize()))
@@ -336,7 +335,7 @@ public class CoreSetup
       {
         node.createState(type, wrapper);
         modelstate.addVariable(node);
-        sim.addPrintVariable(parameter.getId(), node.getState());
+        sim.addPrintVariable(container.getPrefix() + parameter.getId(), node.getState());
       }
       
       node.setValue(modelstate.getIndex(), parameter.getValue());
@@ -449,6 +448,8 @@ public class CoreSetup
       if(reactionNode == null)
       {
         reactionNode = modelstate.addReaction(reaction.getId());
+        reactionNode.addReactionState(modelstate.getIndex());
+        reactionNode.createState(type, wrapper);
       }
       ReplacementSetup.setupReplacement(reaction, reactionNode, container);
       if (modelstate.isDeletedBySId(reaction.getId()))
@@ -456,11 +457,6 @@ public class CoreSetup
         continue;
       }
       else if (ArraysSetup.checkArray(reaction))
-      {
-        continue;
-      }
-
-      if(modelstate.getNode(reaction.getId()) != null)
       {
         continue;
       }
@@ -603,7 +599,7 @@ public class CoreSetup
         {
           node.createState(type, wrapper);
           modelstate.addVariable(node);
-          sim.addPrintVariable(species.getId(), node.getState());
+          sim.addPrintVariable(container.getPrefix() + species.getId(), node.getState());
         }
       }
       ReplacementSetup.setupReplacement(species, node, container);
