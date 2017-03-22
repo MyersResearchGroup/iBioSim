@@ -5485,20 +5485,8 @@ public class SBMLutilities
 
 	public static SBMLDocument readSBML(String filename) throws XMLStreamException, IOException
 	{
-		// SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
 			document = SBMLReader.read(new File(filename));
-//		}
-//		catch (XMLStreamException e1)
-//		{
-//			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
-//			return null;
-//		}
-//		catch (IOException e1)
-//		{
-//			JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
-//			return null;
-//		}
 		if (document.getModel().isSetId())
 		{
 			document.getModel().setId(document.getModel().getId().replace(".", "_"));

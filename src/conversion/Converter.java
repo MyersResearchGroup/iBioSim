@@ -19,20 +19,29 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.ext.comp.ModelDefinition;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.w3c.dom.Document;
 
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
+import dataModels.util.GlobalConstants;
+import frontend.main.util.EditPreferences;
 
 /**
  * Provides functionality for validating SBOL data models.
@@ -62,7 +71,6 @@ public class Converter {
 		System.err.println("Required:");
 		System.err.println("<inputFile> name of input file");
 		System.err.println("\t-e  specifies a file to compare if equal to");
-		System.err.println("\t-ft  Specify the input file type. This should be limited to: SBOL and SBML");
 		System.err.println("\t-o  <outputFile> specifies the output file produced from the converter");
 		System.err.println();
 		System.err.println("Options:");
@@ -97,8 +105,6 @@ public class Converter {
 	 * <p>
 	 * "-e" specifies a file to compare if equal to
 	 * <p>
-	 * "-ft" Specify the input file type. This should be limited to: SBOL and SBML
-	 * <p>
 	 * "-o" specifies an output filename
 	 * <p>
 	 * 
@@ -109,6 +115,8 @@ public class Converter {
 	 * "-cf" second SBOL file if file diff. option is selected
 	 * <p>
 	 * "-d" display detailed error trace
+	 * <p>
+	 * "-esf" export single SBML file
 	 * <p>
 	 * "-f" fail on first error
 	 * <p>
@@ -138,17 +146,17 @@ public class Converter {
 	 * @param args arguments supplied at command line
 	 */
 	public static void main(String[] args) {
-		
+
 		//-----REQUIRED FIELD-----
-		String fileName = ""; //input SBOL file name
+		String fileName = ""; //input file name
 		String compareFile = ""; //-e
-		String inputFileType = ""; //-ft
 		String outputFile = ""; //-o
-		
+
 		//-----OPTIONAL FIELD-----
 		boolean bestPractice = false; //-b
 		String compareFileName = ""; //-cf
 		boolean showDetail = false; //-d
+		boolean singleSBMLOutput = false; //-esf;
 		boolean keepGoing = true; //-f
 		boolean complete = true; //-i
 		boolean genBankOut = false; //-l
@@ -165,30 +173,36 @@ public class Converter {
 		String topLevelURIStr = ""; //-s
 		boolean typesInURI = false; //-t
 		String version = null; //-v
-		
+
 		int index = 0;
 
 		for(; index< args.length; index++){
 			String flag = args[index];
 			switch(flag)
 			{
-			case "-i":
-				complete = false;
-				break;
-			case "-t":
-				typesInURI = true;
-				break;
 			case "-b":
 				bestPractice = true;
 				break;	
-			case "-n":
-				compliant = false;
+			case "-d":
+				showDetail = true;
+				break;
+			case "-esf":
+				singleSBMLOutput = true;
 				break;
 			case "-f":
 				keepGoing = false;
 				break;
-			case "-d":
-				showDetail = true;
+			case "-i":
+				complete = false;
+				break;
+			case "-n":
+				compliant = false;
+				break;
+			case "-no":
+				noOutput = true;
+				break;
+			case "-t":
+				typesInURI = true;
 				break;
 			case "-s":
 				if(index+1 >= args.length || args[index+1].equals("-")){
@@ -202,18 +216,22 @@ public class Converter {
 				}
 				if (args[index+1].equals("SBOL1")) {
 					sbolV1out = true;
+					++index;
 				} 
 				else if (args[index+1].equals("GenBank")) {
 					genBankOut = true;
+					++index;
 				} 
 				else if (args[index+1].equals("FASTA")) {
 					fastaOut = true;
+					++index;
 				} 
 				else if (args[index+1].equals("SBML")) {
 					sbmlOut = true;
+					++index;
 				}
 				else if (args[index+1].equals("SBOL2")) {
-					
+					++index;
 				} 
 				else {
 					usage();
@@ -224,9 +242,6 @@ public class Converter {
 					usage();
 				}
 				outputFile = args[++index];
-				break;
-			case "-no":
-				noOutput = true;
 				break;
 			case "-e":
 				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
@@ -258,12 +273,6 @@ public class Converter {
 				}
 				version = args[++index];
 				break;
-			case "-ft":
-				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
-					usage();
-				}
-				inputFileType = args[++index];
-				break;
 			case "-rsbml":
 				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
@@ -280,15 +289,37 @@ public class Converter {
 				fileName = args[index];
 			}
 		}
-		
+
 		/*
 		 * Note: Check all required field has been set. If not, stop user from continuing.
 		 * Exception: 
-		 * 1. inputFile can be empty if -mf was set.
-		 * 2. outputFile can be empty if comparison or validation flags are set.
-		 * 3. comparingFile can be empty if validation or conversion flags are set.
+		 * 1. input file can be empty if -mf was set.
+		 * 2. output file can be empty if comparison or validation flags are set.
+		 * 3. comparing file can be empty if validation or conversion flags are set.
 		 */
-		if (inputFileType.equals("")) {
+		boolean inputIsSBOL = false; 
+		boolean inputIsSBML = false;
+		if(!fileName.isEmpty()){
+			//find out what input file format is
+			String inputFileType = getXMLFileType(fileName);
+			if(inputFileType.equals("sbml")){
+				inputIsSBML = true;
+			}
+			else if(inputFileType.equals("rdf:RDF")){
+				inputIsSBOL = true;
+			}
+		}
+		else if(!mainFileName.isEmpty()){
+			//find out what input file format is
+			String inputFileType = getXMLFileType(mainFileName);
+			if(inputFileType.equals("sbml")){
+				inputIsSBML = true;
+			}
+			else if(inputFileType.equals("rdf:RDF")){
+				inputIsSBOL = true;
+			}
+		}
+		else{
 			usage();
 		}
 
@@ -306,7 +337,7 @@ public class Converter {
 			}
 		}
 
-		File file = new File(fileName);
+		File file = new File(fileName); //TODO: while only check for fileName and not mainFileName if user provide?
 		boolean isDirectory = file.isDirectory();
 		if (!isDirectory) {
 			/*
@@ -315,30 +346,32 @@ public class Converter {
 			 * Write file to disk
 			 * Validate file of file created from the converter
 			 */
-			if(inputFileType.equals("SBML")){
+			if(inputIsSBML){
 
 				SBOLDocument outSBOLDoc = new SBOLDocument();
 				SBMLDocument inputSBMLDoc;
 				try {
-					inputSBMLDoc = SBMLutilities.readSBML(externalSBMLPath);
-					SBML2SBOL.convert_SBML2SBOL(outSBOLDoc, externalSBMLPath,inputSBMLDoc, fileName, ref_sbolInputFilePath, URIPrefix); 
-					if(sbolV1out){
-						outSBOLDoc.write(outputFile, SBOLDocument.RDFV1);
-					}
-					else if(fastaOut){
-						outSBOLDoc.write(outputFile, SBOLDocument.FASTAformat);
-					}
-					else if(genBankOut){
-						outSBOLDoc.write(outputFile, SBOLDocument.GENBANK);
-					}
-					else {
+					if(fileName != null){
+						if (externalSBMLPath.isEmpty()) {
+							//SBML file is relative. No external path was given for the input SBML file. 
+							inputSBMLDoc = SBMLutilities.readSBML(fileName);
+						} 
+						else {
+							inputSBMLDoc = SBMLutilities.readSBML(externalSBMLPath + GlobalConstants.separator + fileName);
+						}
+						if(URIPrefix.isEmpty()){
+							//TODO: if user wants to convert SBML2SBOL, we must guarantee user must provide SBOL default URI or else we set to default value.
+							URIPrefix =  EditPreferences.getDefaultUriPrefix();
+						}
+						SBML2SBOL.convert_SBML2SBOL(outSBOLDoc, externalSBMLPath,inputSBMLDoc, fileName, ref_sbolInputFilePath, URIPrefix); 
 						outSBOLDoc.write(outputFile, SBOLDocument.RDF);
-					}
+
+					} 
 					org.sbolstandard.core2.SBOLValidate.validate(outputFile, URIPrefix, complete, compliant, bestPractice, typesInURI, 
 							version, keepGoing, compareFile, compareFileName, mainFileName, 
 							topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFile + "_validated", 
 							showDetail, noOutput);
-					
+
 				} catch (XMLStreamException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -353,55 +386,93 @@ public class Converter {
 					e.printStackTrace();
 				}
 			}
-			else if(sbmlOut){
-				file = new File(outputFile);
-				String absPath = file.getAbsolutePath();
-				String outputDir = absPath.substring(0, absPath.lastIndexOf(File.separator)+1);
-				String outputName = absPath.substring(absPath.lastIndexOf(File.separator)+1);
-				
+			else if(inputIsSBOL){
+
+				//Perform validation on the input SBOL file if no SBML output file is expected
 				org.sbolstandard.core2.SBOLValidate.validate(fileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compareFileName, mainFileName, 
 						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFile, 
 						showDetail, noOutput);
 				
-				SBOLDocument sbolDoc;
-				try {
-					sbolDoc = SBOLReader.read(new FileInputStream(fileName));
-				
-				if(!URIPrefix.isEmpty()){
-					ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(URIPrefix));
-					List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
-					for (BioModel model : models)
-					{
-						model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
-					}
-				}
-				else{
-					//No ModuleDefinition URI provided so loop over all rootModuleDefinition
-					for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
-					{
-						List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
-						for (BioModel model : models)
-						{
-							model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+				if(sbmlOut){
+					file = new File(outputFile);
+					String absPath = file.getAbsolutePath();
+					String outputDir = absPath.substring(0, absPath.lastIndexOf(File.separator)+1);
+					absPath.substring(absPath.lastIndexOf(File.separator)+1);
+
+					SBOLDocument sbolDoc;
+					try {
+						sbolDoc = SBOLReader.read(new FileInputStream(fileName));
+
+						if(!URIPrefix.isEmpty()){
+							ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(URIPrefix));
+							List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
+							
+							if(singleSBMLOutput)
+							{
+
+								BioModel target = models.get(models.size() - 1);
+								SBMLDocument doc = target.getSBMLDocument();
+								ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(doc);
+								target.getSBMLComp().unsetListOfExternalModelDefinitions();
+								for(SBase element : elements)
+								{
+									element.unsetMetaId();
+								}
+								for (int i = 0; i < models.size()-1; ++i)
+								{
+									BioModel bioModel = models.get(i);
+									doc = bioModel.getSBMLDocument();
+									elements = SBMLutilities.getListOfAllElements(doc);
+									for(SBase element : elements)
+									{
+										element.unsetMetaId();
+									}
+									ModelDefinition md = new ModelDefinition(doc.getModel());
+									target.getSBMLComp().addModelDefinition(md);
+									
+								}
+								SBMLWriter.write(target.getSBMLDocument(), new File(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml"), ' ', (short) 4);
+								//target.save(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml");
+								//target.exportSingleFile(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml");
+							}
+							else
+							{
+								for (BioModel model : models)
+								{
+									model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+									
+								}
+							}
+							
 						}
+						else{
+							//No ModuleDefinition URI provided so loop over all rootModuleDefinition
+							for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
+							{
+								List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
+								for (BioModel model : models)
+								{
+									model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+								}
+							}
+						}
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (SBOLValidationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (SBOLConversionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (XMLStreamException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				}
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SBOLValidationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SBOLConversionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (XMLStreamException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 
@@ -415,6 +486,28 @@ public class Converter {
 						showDetail, noOutput);
 			}
 		}
+	}
+
+	/**
+	 * Determine what file format the given xml file is. (i.e. sbml or rdf:RDF)
+	 * @param file - The given xml file.
+	 * @return The type of the given xml file.
+	 */
+	private static String getXMLFileType(String file){
+		String fileType = "";
+		File xmlFile = new File(file);
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder;
+		try {
+			docBuilder = factory.newDocumentBuilder();
+			Document doc = docBuilder.parse(xmlFile); 
+			fileType = doc.getDocumentElement().getNodeName();
+			return fileType;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fileType;
+
 	}
 
 }

@@ -260,7 +260,7 @@ public class SBOL2SBML {
 			}
 		}
 
-
+		//option 1
 		for (Module subModule : moduleDef.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 			BioModel subTargetModel = new BioModel(projectDirectory);
@@ -271,6 +271,8 @@ public class SBOL2SBML {
 				models.addAll(subModels);
 			}
 		}
+		
+		
 		models.add(targetModel);
 		return models;
 	}
@@ -285,7 +287,7 @@ public class SBOL2SBML {
 	 * @param moduleDef - The given ModuleDefinition that contains the submodule to be converted into SBML model.
 	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML model.
 	 * @param subTargetModel - The SBML submodel that the converted SBOL subModule will be converted to.
-	 * @param targetModel - The SBML local model that contain the SBML local model.
+	 * @param targetModel - The SBML local model.
 	 */
 	private static void generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel subTargetModel, BioModel targetModel) {
