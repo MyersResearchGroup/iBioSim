@@ -1063,6 +1063,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							react.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(production)));
 						}
 						error = checkKineticLawUnits(react.getKineticLaw());
+						FBCReactionPlugin rBounds = SBMLutilities.getFBCReactionPlugin(react);
+						rBounds.unsetLowerFluxBound();
+						rBounds.unsetUpperFluxBound();
 					}
 					else{
 						react.unsetKineticLaw();
