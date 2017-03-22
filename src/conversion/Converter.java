@@ -410,31 +410,31 @@ public class Converter {
 							
 							if(singleSBMLOutput)
 							{
-
+								// Note last one is always the top model
 								BioModel target = models.get(models.size() - 1);
-								SBMLDocument doc = target.getSBMLDocument();
-								ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(doc);
-								target.getSBMLComp().unsetListOfExternalModelDefinitions();
-								for(SBase element : elements)
-								{
-									element.unsetMetaId();
-								}
-								for (int i = 0; i < models.size()-1; ++i)
-								{
-									BioModel bioModel = models.get(i);
-									doc = bioModel.getSBMLDocument();
-									elements = SBMLutilities.getListOfAllElements(doc);
-									for(SBase element : elements)
-									{
-										element.unsetMetaId();
-									}
-									ModelDefinition md = new ModelDefinition(doc.getModel());
-									target.getSBMLComp().addModelDefinition(md);
-									
-								}
-								SBMLWriter.write(target.getSBMLDocument(), new File(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml"), ' ', (short) 4);
+//								SBMLDocument doc = target.getSBMLDocument();
+//								ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(doc);
+//								target.getSBMLComp().unsetListOfExternalModelDefinitions();
+//								for(SBase element : elements)
+//								{
+//									element.unsetMetaId();
+//								}
+//								for (int i = 0; i < models.size()-1; ++i)
+//								{
+//									BioModel bioModel = models.get(i);
+//									doc = bioModel.getSBMLDocument();
+//									elements = SBMLutilities.getListOfAllElements(doc);
+//									for(SBase element : elements)
+//									{
+//										element.unsetMetaId();
+//									}
+//									ModelDefinition md = new ModelDefinition(doc.getModel());
+//									target.getSBMLComp().addModelDefinition(md);
+//									
+//								}
+//								SBMLWriter.write(target.getSBMLDocument(), new File(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml"), ' ', (short) 4);
 								//target.save(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml");
-								//target.exportSingleFile(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml");
+								target.exportSingleFile(outputFile);
 							}
 							else
 							{

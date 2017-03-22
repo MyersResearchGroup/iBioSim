@@ -5917,6 +5917,20 @@ public class BioModel extends Observable{
 	}
 	
 	public void exportSingleFile(String exportFile) throws XMLStreamException, IOException {
+		SBMLDocument document = createSingleDocument();
+		SBMLWriter writer = new SBMLWriter();
+		try {
+			writer.writeSBMLToFile(document, exportFile);
+		} catch (SBMLException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public SBMLDocument createSingleDocument() throws XMLStreamException, IOException {
 		ArrayList<String> comps = new ArrayList<String>();
 		SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		Model model = new Model(sbml.getModel());
@@ -5992,16 +6006,7 @@ public class BioModel extends Observable{
 				}
 			}
 		}
-		SBMLWriter writer = new SBMLWriter();
-		try {
-			writer.writeSBMLToFile(document, exportFile);
-		} catch (SBMLException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
-		}
+		return document;
 	}
 	
 	private void expandListOfSubmodels(org.sbml.libsbml.CompModelPlugin docCompModel, org.sbml.libsbml.SBMLDocument sbml) throws XMLStreamException, IOException {

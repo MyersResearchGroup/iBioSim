@@ -79,10 +79,10 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 	@Test
 	public void test_cmd_mf(){
 		/* compare SBOL files with same content but with different file name through required mf and cf flag*/
-		String fileName = ""; 
+		String fileName = sbolDir + "CRISPR_example" + ".xml"; 
 		String fileName2 = "meherGolden_RepressionModel";
 		
-		String mainfile = sbolDir + "CRISPR_example" + ".xml";
+		String mainfile = "";
 		String inputfile2 = sbolDir + fileName2 + ".xml";
 		
 		String outputFile = ""; 
