@@ -14,6 +14,7 @@
 package backend.analysis.dynamicsim.hierarchical.methods;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -27,7 +28,6 @@ import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
 import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
-import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 
 /**
@@ -133,20 +133,10 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	{
 	}
 
-	public void createODESim(HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels)
+	public void createODESim(HierarchicalModel topmodel, List<HierarchicalModel> odeModels) throws IOException, XMLStreamException
 	{
-		try
-		{
-			odeSim = new HierarchicalODERKSimulator(this, topmodel, submodels);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		catch (XMLStreamException e)
-		{
-			e.printStackTrace();
-		}
+			odeSim = new HierarchicalODERKSimulator(this, topmodel);
+			odeSim.setListOfHierarchicalModels(odeModels);
 	}
 
 	public void createSSASim(HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels)

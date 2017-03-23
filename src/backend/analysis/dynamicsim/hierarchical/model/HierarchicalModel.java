@@ -463,4 +463,8 @@ public final class HierarchicalModel
     }
 	}
 
+	public void removeSubmodel(String id)
+	{
+	  idToSubmodel.remove(id);
+	}
 }

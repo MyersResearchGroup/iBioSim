@@ -526,7 +526,7 @@ public class CoreSetup
       {
         AssignmentRule assignRule = (AssignmentRule) rule;
         ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, assignRule.getMath(), model);
-        VariableNode variableNode = variableToNodes.get(assignRule.getMath());
+        VariableNode variableNode = variableToNodes.get(assignRule.getVariable());
         HierarchicalNode assignRuleNode = MathInterpreter.parseASTNode(math, variableToNodes, variableNode);
         FunctionNode node = new FunctionNode(variableNode, assignRuleNode);
         modelstate.addAssignRule(node);

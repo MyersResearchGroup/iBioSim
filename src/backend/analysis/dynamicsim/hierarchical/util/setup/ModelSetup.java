@@ -145,6 +145,11 @@ public class ModelSetup
       }
     }
     initializeModelStates(sim, listOfContainers, sim.getCurrentTime(), type, wrapper);
+    
+    if (sim instanceof HierarchicalMixedSimulator)
+    {
+      initializeHybridSimulation((HierarchicalMixedSimulator) sim, listOfContainers);
+    }
   }
 
   private static void initializeModelStates(HierarchicalSimulation sim, List<ModelContainer> listOfContainers, VariableNode time, ModelType modelType, VectorWrapper wrapper) throws IOException
@@ -175,5 +180,25 @@ public class ModelSetup
     }
   }
 
+  private static void initializeHybridSimulation(HierarchicalMixedSimulator sim, List<ModelContainer> listOfContainers) throws IOException, XMLStreamException
+  {
+
+    List<HierarchicalModel> listOfODEModels = new ArrayList<HierarchicalModel>();
+    for (ModelContainer container : listOfContainers)
+    {
+      HierarchicalModel state = container.getHierarchicalModel();
+
+      if (state.getModelType() == ModelType.HFBA)
+      {
+        sim.createFBASim(state, container.getModel());
+      }
+      else if(state.getModelType() == ModelType.HODE)
+      {
+        listOfODEModels.add(state);
+      }
+    }
+    
+    sim.createODESim(listOfContainers.get(0).getHierarchicalModel(), listOfODEModels);
+  }
  
 }
