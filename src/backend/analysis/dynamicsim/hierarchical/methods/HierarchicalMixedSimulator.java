@@ -61,11 +61,12 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 			setCurrentTime(0);
 			this.wrapper = new VectorWrapper(initValues); 
 
-			setupForOutput(runNumber);
 			
 			ModelSetup.setupModels(this, ModelType.HODE, wrapper);
 			computeFixedPoint();
 
+
+      setupForOutput(runNumber);
 			isInitialized = true;
 		}
 
@@ -91,9 +92,9 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 			}
 		}
 		double nextEndTime = currentTime.getValue(0);
-		while (currentTime.getValue(0) < timeLimit)
+		while (currentTime.getValue() < timeLimit)
 		{
-			nextEndTime = currentTime.getValue(0) + getMaxTimeStep();
+			nextEndTime = currentTime.getValue() + getMaxTimeStep();
 
 			if (nextEndTime > printTime)
 			{
@@ -112,7 +113,7 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 			odeSim.simulate();
 
-			currentTime.setValue(0, nextEndTime);
+			currentTime.setValue(nextEndTime);
 
 			printToFile();
 		}
@@ -155,6 +156,11 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	{
 		// TODO Auto-generated method stub
 
+	}
+	
+	VectorWrapper getVectorWrapper()
+	{
+	  return this.wrapper;
 	}
 
 }
