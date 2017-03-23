@@ -11,10 +11,10 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package test.gcm2sbml;
+package gcm2sbml;
 
 
-import gcm2sbml.util.Utility;
+//import gcm2sbml.util.Utility;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -57,7 +57,7 @@ public class SBMLTest extends TestCase {
 			m.setName("foo");
 			m.setId("foo");
 			
-			SBMLWriter writer = new SBMLWriter();
+			SBMLWriter writer = new SBMLWriter(); 
 			p.print(writer.writeToString(document));
 
 			p.close();

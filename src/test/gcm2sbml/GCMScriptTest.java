@@ -14,7 +14,7 @@
 /**
  * 
  */
-package test.gcm2sbml;
+package gcm2sbml;
 
 
 import java.io.File;
