@@ -407,10 +407,12 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 
 			// TODO currently only works with parts in the working document
 			SBOLDocument selection = new RegistryInputDialog(null, Parts.CDS,
-					com.clarkparsia.sbol.SBOLUtils.Types.All_types, null, null).getInput();
-			LinkedList<URI> list = new LinkedList<URI>();
-			list.add(selection.getRootComponentDefinitions().iterator().next().getIdentity());
-			insertComponentURIs(list);
+					com.clarkparsia.sbol.SBOLUtils.Types.All_types, null).getInput();
+			if (selection != null) {
+				LinkedList<URI> list = new LinkedList<URI>();
+				list.add(selection.getRootComponentDefinitions().iterator().next().getIdentity());
+				insertComponentURIs(list);
+			}
 		} else if (e.getSource() == remove) {
 			removeSelectedURIs();
 		}
