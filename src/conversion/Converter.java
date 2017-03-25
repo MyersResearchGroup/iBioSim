@@ -13,6 +13,7 @@
  *******************************************************************************/
 package conversion;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,6 +26,9 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
@@ -37,6 +41,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
@@ -66,7 +71,7 @@ public class Converter {
 				+ "and can convert to/from SBOL 1.1, GenBank, and FASTA formats.");
 		System.err.println();
 		System.err.println("Usage:");
-		System.err.println("\tjava --jar libSBOLj.jar [options] <inputFile> <fileType> [-o <outputFile> -e <compareFile>]");
+		System.err.println("\tjava --jar libSBOLj.jar [options] <inputFile> [-o <outputFile> -e <compareFile>]");
 		System.err.println();
 		System.err.println("Required:");
 		System.err.println("<inputFile> name of input file");
@@ -80,9 +85,10 @@ public class Converter {
 		System.err.println("\t-f  continue after first error");
 		System.err.println("\t-i  allow SBOL document to be incomplete");
 		System.err.println("\t-l  <language> specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML) for output (default=SBOL2)");
-		System.err.println("\t-mf  main SBOL file if file diff. option is selected");
+		System.err.println("\t-mf  main SBOL file if file diff. option is selected.");
 		System.err.println("\t-n  allow non-compliant URIs");
 		System.err.println("\t-no  indicate no output file to be generated from validation");
+		System.err.println("\t-oDir  output directory of resulting conversion and validation file");
 		System.err.println("\t-p  <URIprefix> used for converted objects");
 		System.err.println("\t-rsbml  The full path of external SBML files to be referenced in the SBML2SBOL conversion");
 		System.err.println("\t-rsbol  The full path of external SBOL files to be referenced in the SBML2SBOL conversion");
@@ -94,7 +100,7 @@ public class Converter {
 
 	/**
 	 * Command line method for reading an input file and producing an output file. 
-	 * --jar libSBOLj.jar [options] <inputFile> <fileType> [-o <outputFile> -e <compareFile>]
+	 * --jar libSBOLj.jar [options] <inputFile> [-o <outputFile> -e <compareFile>]
 	 * <p>
 	 * By default, validations on compliance and completeness are performed, and types
 	 * for top-level objects are not used in URIs.
@@ -130,6 +136,8 @@ public class Converter {
 	 * <p>
 	 * "-no" indicate no output file to be generated from validation
 	 * <p>
+	 * "-oDir" output directory of resulting conversion and validation file
+	 * <p>
 	 * "-p" specifies the default URI prefix for converted objects
 	 * <p>
 	 * "-rsbml" The full path of external SBML files to be referenced in the SBML2SBOL conversion
@@ -150,7 +158,7 @@ public class Converter {
 		//-----REQUIRED FIELD-----
 		String fileName = ""; //input file name
 		String compareFile = ""; //-e
-		String outputFile = ""; //-o
+		String outputFileName = ""; //-o
 
 		//-----OPTIONAL FIELD-----
 		boolean bestPractice = false; //-b
@@ -166,9 +174,10 @@ public class Converter {
 		String mainFileName = ""; //-mf
 		boolean compliant = true; //-n
 		boolean noOutput = false; //-no
+		String outputDir = ""; //-oDir
 		String URIPrefix = ""; //-p
 		String externalSBMLPath = ""; //-rsbml
-		String includeSBOLPath = ""; //-rsbol
+		String externalSBOLPath = ""; //-rsbol
 		HashSet<String> ref_sbolInputFilePath = new HashSet<String>(); //rsbol
 		String topLevelURIStr = ""; //-s
 		boolean typesInURI = false; //-t
@@ -237,23 +246,11 @@ public class Converter {
 					usage();
 				}
 				break;
-			case "-o":
-				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
-					usage();
-				}
-				outputFile = args[++index];
-				break;
 			case "-e":
 				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
 				compareFile = args[++index];
-				break;
-			case "-mf":
-				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
-					usage();
-				}
-				mainFileName = args[++index];
 				break;
 			case "-cf":
 				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
@@ -261,17 +258,29 @@ public class Converter {
 				}
 				compareFileName = args[++index];
 				break;
+			case "-mf":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
+					usage();
+				}
+				mainFileName = args[++index];
+				break;
+			case "-o":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
+					usage();
+				}
+				outputFileName = args[++index];
+				break;
+			case "-oDir":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
+					usage();
+				}
+				outputDir = args[++index];
+				break;
 			case "-p":
 				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
 				URIPrefix = args[++index];
-				break;
-			case "-v":
-				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
-					usage();
-				}
-				version = args[++index];
 				break;
 			case "-rsbml":
 				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
@@ -283,20 +292,20 @@ public class Converter {
 				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
 					usage();
 				}
-				includeSBOLPath = args[++index];
+				externalSBOLPath = args[++index];
+				break;
+			case "-v":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-')){
+					usage();
+				}
+				version = args[++index];
 				break;
 			default:
 				fileName = args[index];
 			}
 		}
 
-		/*
-		 * Note: Check all required field has been set. If not, stop user from continuing.
-		 * Exception: 
-		 * 1. input file can be empty if -mf was set.
-		 * 2. output file can be empty if comparison or validation flags are set.
-		 * 3. comparing file can be empty if validation or conversion flags are set.
-		 */
+		/* Note: Check all required field has been set. If not, stop user from continuing.*/
 		boolean inputIsSBOL = false; 
 		boolean inputIsSBML = false;
 		if(!fileName.isEmpty()){
@@ -309,23 +318,14 @@ public class Converter {
 				inputIsSBOL = true;
 			}
 		}
-		else if(!mainFileName.isEmpty()){
-			//find out what input file format is
-			String inputFileType = getXMLFileType(mainFileName);
-			if(inputFileType.equals("sbml")){
-				inputIsSBML = true;
-			}
-			else if(inputFileType.equals("rdf:RDF")){
-				inputIsSBOL = true;
-			}
-		}
 		else{
 			usage();
 		}
 
-		if(includeSBOLPath != null && !includeSBOLPath.isEmpty()){
+		/* Note: Initialize any optional variables that are required for conversion, validation, or file diff.*/
+		if(externalSBOLPath != null && !externalSBOLPath.isEmpty()){
 			//Note: this is an optional field. User provided sbol path to read in
-			File fileDir = new File(includeSBOLPath);
+			File fileDir = new File(externalSBOLPath);
 			File[] sbolFiles =  fileDir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					return (name.toLowerCase().endsWith(".rdf") || name.toLowerCase().endsWith(".sbol"));
@@ -337,21 +337,23 @@ public class Converter {
 			}
 		}
 
-		File file = new File(fileName); //TODO: while only check for fileName and not mainFileName if user provide?
+		File file = new File(fileName); 
 		boolean isDirectory = file.isDirectory();
 		if (!isDirectory) {
-			/*
+			/* 
+			 * SBML2SBOL: 
 			 * inputFileType is SBML
 			 * Call converter
 			 * Write file to disk
 			 * Validate file of file created from the converter
 			 */
 			if(inputIsSBML){
-
+				
 				SBOLDocument outSBOLDoc = new SBOLDocument();
 				SBMLDocument inputSBMLDoc;
 				try {
-					if(fileName != null){
+					//We must guarantee user must provide SBOL default URI or else tell user to provide one.
+					if(!URIPrefix.isEmpty()){
 						if (externalSBMLPath.isEmpty()) {
 							//SBML file is relative. No external path was given for the input SBML file. 
 							inputSBMLDoc = SBMLutilities.readSBML(fileName);
@@ -359,17 +361,32 @@ public class Converter {
 						else {
 							inputSBMLDoc = SBMLutilities.readSBML(externalSBMLPath + GlobalConstants.separator + fileName);
 						}
-						if(URIPrefix.isEmpty()){
-							//TODO: if user wants to convert SBML2SBOL, we must guarantee user must provide SBOL default URI or else we set to default value.
-							URIPrefix =  EditPreferences.getDefaultUriPrefix();
+						
+						SBML2SBOL.convert_SBML2SBOL(outSBOLDoc, externalSBMLPath, inputSBMLDoc, fileName, ref_sbolInputFilePath, URIPrefix); 
+						
+						if(!noOutput){
+							if(outputFileName.isEmpty()){
+								System.err.println("You must provide an output file name to convert SBML to SBOL.");
+								usage();
+							}
+							if(outputDir.isEmpty()){
+								System.err.println("You must provide an output directory to store the SBOL file after SBML to SBOL conversion is performed.");
+								usage();
+							}
+							outSBOLDoc.write(outputDir + outputFileName, SBOLDocument.RDF);
 						}
-						SBML2SBOL.convert_SBML2SBOL(outSBOLDoc, externalSBMLPath,inputSBMLDoc, fileName, ref_sbolInputFilePath, URIPrefix); 
-						outSBOLDoc.write(outputFile, SBOLDocument.RDF);
+						else{
+							outSBOLDoc.write(new ByteArrayOutputStream());
+						}
 
 					} 
-					org.sbolstandard.core2.SBOLValidate.validate(outputFile, URIPrefix, complete, compliant, bestPractice, typesInURI, 
+					else{
+						System.err.println("You must provide an SBOL URI prefix in order to convert SBML to SBOL.");
+						usage();
+					}
+					org.sbolstandard.core2.SBOLValidate.validate(outputFileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
 							version, keepGoing, compareFile, compareFileName, mainFileName, 
-							topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFile + "_validated", 
+							topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFileName + "_validated", 
 							showDetail, noOutput);
 
 				} catch (XMLStreamException e) {
@@ -391,14 +408,10 @@ public class Converter {
 				//Perform validation on the input SBOL file if no SBML output file is expected
 				org.sbolstandard.core2.SBOLValidate.validate(fileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compareFileName, mainFileName, 
-						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFile, 
+						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFileName, 
 						showDetail, noOutput);
 				
 				if(sbmlOut){
-					file = new File(outputFile);
-					String absPath = file.getAbsolutePath();
-					String outputDir = absPath.substring(0, absPath.lastIndexOf(File.separator)+1);
-					absPath.substring(absPath.lastIndexOf(File.separator)+1);
 
 					SBOLDocument sbolDoc;
 					try {
@@ -410,7 +423,7 @@ public class Converter {
 							
 							if(singleSBMLOutput)
 							{
-								// Note last one is always the top model
+								// Note: last one is always the top model base on SBOL2SBML converter
 								BioModel target = models.get(models.size() - 1);
 //								SBMLDocument doc = target.getSBMLDocument();
 //								ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(doc);
@@ -434,14 +447,17 @@ public class Converter {
 //								}
 //								SBMLWriter.write(target.getSBMLDocument(), new File(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml"), ' ', (short) 4);
 								//target.save(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml");
-								target.exportSingleFile(outputFile);
+								target.exportSingleFile(outputDir + outputFileName);
+							}
+							else if(noOutput){
+								//TODO: print result of SBOL2SBML to OutputStream
 							}
 							else
-							{
+							{ 
+								//Multiple SBML output
 								for (BioModel model : models)
 								{
 									model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
-									
 								}
 							}
 							
@@ -474,6 +490,10 @@ public class Converter {
 						e.printStackTrace();
 					}
 				}
+				else{
+					System.err.println("You must provide an SBOL URI prefix in order to convert SBOL to SBML.");
+					usage();
+				}
 			}
 
 		} else {
@@ -482,7 +502,7 @@ public class Converter {
 				System.out.println(eachFile.getAbsolutePath());
 				org.sbolstandard.core2.SBOLValidate.validate(eachFile.getAbsolutePath(), URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compareFileName, mainFileName, 
-						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFile, 
+						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFileName, 
 						showDetail, noOutput);
 			}
 		}
@@ -508,6 +528,21 @@ public class Converter {
 		}
 		return fileType;
 
+	}
+	
+	private boolean isSBMLFile(String file){
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+        try {
+			SAXParser saxParser = factory.newSAXParser();
+			
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return false;
 	}
 
 }

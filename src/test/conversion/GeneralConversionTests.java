@@ -115,7 +115,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String fileName = "CRISPR_example"; 
 		String inputfile = sbolDir + fileName + ".xml";
 		
-		String outputFile = sbol2GenBank_outputDir + fileName + "_output" + ".xml";
+		String outputFile = genBank_outputDir + fileName + "_output" + ".xml";
 		String compareFile = "";
 		
 		//Options
