@@ -38,7 +38,7 @@ public class TreeChooser extends JPanel {
 	
 	private JTree tree;
 	
-	private TreeChooser(JFrame frame, Vector<Object> list, String message) {
+	private TreeChooser(JFrame frame, Vector<String> list, String message) {
 		
 		super(new BorderLayout());
 		
@@ -79,14 +79,14 @@ public class TreeChooser extends JPanel {
 	// modified from
 	// http://www.apl.jhu.edu/~hall/java/Swing-Tutorial/Swing-Tutorial-JTree.html
 	@SuppressWarnings("unchecked")
-	private DefaultMutableTreeNode processHierarchy(Vector<Object> hierarchy) {
+	private DefaultMutableTreeNode processHierarchy(Vector<String> hierarchy) {
 		DefaultMutableTreeNode node =
 			new DefaultMutableTreeNode(hierarchy.get(0));
 		DefaultMutableTreeNode child;
 		for(int i=1; i<hierarchy.size(); i++) {
 			Object nodeSpecifier = hierarchy.get(i);
 			if (nodeSpecifier instanceof Vector<?>)  // Ie node with children
-				child = processHierarchy((Vector<Object>)nodeSpecifier);
+				child = processHierarchy((Vector<String>)nodeSpecifier);
 			else
 				child = new DefaultMutableTreeNode(nodeSpecifier); // Ie Leaf
 			node.add(child);
@@ -108,7 +108,7 @@ public class TreeChooser extends JPanel {
 		private static final long serialVersionUID = 1L;
 	}
 	
-	public static String selectFromTree(JFrame frame, Vector<Object> list, String message) throws EmptyTreeException {
+	public static String selectFromTree(JFrame frame, Vector<String> list, String message) throws EmptyTreeException {
 		
 		if (list.size() == 0)
 			throw new EmptyTreeException();

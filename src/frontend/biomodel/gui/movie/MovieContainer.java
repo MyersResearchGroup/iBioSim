@@ -50,6 +50,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
@@ -170,10 +171,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * @param directoryName directory for search for files in
 	 * @return TSD filenames within the directory
 	 */
-	private Vector<Object> recurseTSDFiles(String directoryName) {
+	private Vector<String> recurseTSDFiles(String directoryName) {
 		
 		
-		Vector<Object> filenames = new Vector<Object>();
+		Vector<String> filenames = new Vector<String>();
 		
 		filenames.add(new File(directoryName).getName());
 		
@@ -186,17 +187,14 @@ public class MovieContainer extends JPanel implements ActionListener {
 				filenames.add(s);
 			}
 			else if (f.isDirectory()) {
-				filenames.add(recurseTSDFiles(fullFileName));
+				filenames.addAll(recurseTSDFiles(fullFileName));
 			}
 		}
-
-		Object[] col = filenames.toArray();
-		Arrays.sort(col);
-		filenames.clear();
-		for (Object obj : col) {
-			filenames.add(obj);
-		}
-
+		filenames.sort(new Comparator<String>(){
+      @Override
+      public int compare(String o1, String o2) {
+        return o1.compareTo(o2);
+      }});
 		return filenames;
 	}
 	
@@ -217,7 +215,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			simPath = new File(simPath).getParent();
 		}
 		
-		Vector<Object> filenames = recurseTSDFiles(simPath);
+		Vector<String> filenames = recurseTSDFiles(simPath);
 		
 		String filename;
 		
