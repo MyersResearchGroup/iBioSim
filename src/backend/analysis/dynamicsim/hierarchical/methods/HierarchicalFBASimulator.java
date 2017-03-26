@@ -23,6 +23,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.fba.FluxBalanceAnalysis;
 
@@ -72,7 +73,7 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 		HierarchicalModel topmodel = getTopmodel();
 		for (String reaction : flux.keySet())
 		{
-			topmodel.getNode(reaction).setValue(0, flux.get(reaction));
+			topmodel.getNode(reaction).setValue(topmodel.getIndex(), flux.get(reaction));
 		}
 
 	}
@@ -117,7 +118,13 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 		HierarchicalModel topmodel = getTopmodel();
 		for (String name : values.keySet())
 		{
-			values.put(name, topmodel.getNode(name).getValue(0));
+		  VariableNode node = topmodel.getNode(name);
+      double value = node.getValue(topmodel.getIndex());
+      if(value < 1e-9)
+      {
+        value = 0;
+      }
+			values.put(name, value);
 		}
 	}
 

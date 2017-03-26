@@ -461,8 +461,6 @@ public class CoreSetup
         continue;
       }
 
-      //TODO: change scalar to other types too
-      reactionNode.createState(StateType.SCALAR, wrapper);
       reactionNode.setValue(modelstate.getIndex(), 0);
       reactionNode.addReactionState(modelstate.getIndex());
       for (SpeciesReference reactant : reaction.getListOfReactants())

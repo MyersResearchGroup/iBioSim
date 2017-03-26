@@ -338,9 +338,9 @@ public final class HierarchicalModel
 		return minPropensity;
 	}
 
-	public double getPropensity(int index)
+	public double getPropensity()
 	{
-		return propensity.getValue(index);
+		return propensity.getValue();
 	}
 
 	public void setID(String iD)

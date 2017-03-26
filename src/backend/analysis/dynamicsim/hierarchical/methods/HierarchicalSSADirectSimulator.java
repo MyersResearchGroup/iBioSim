@@ -78,7 +78,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 		{
 			setCurrentTime(getInitialTime());
 			ModelSetup.setupModels(this, ModelType.HSSA);
-			//constraintList = getConstraintList();
 			computeFixedPoint();
 			if (hasEvents)
 			{
@@ -120,7 +119,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 	{
 		setCurrentTime(getInitialTime());
 		setupForOutput(newRun);
-		//TODO: restore init state
 		restoreInitialPropensity();
 	}
 
@@ -259,7 +257,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 	private void selectAndPerformReaction(double r2)
 	{
 		double threshold = getTotalPropensity() * r2;
-		double totalRunningPropensity = getTopmodel().getPropensity(0);
+		double totalRunningPropensity = getTopmodel().getPropensity();
 		if (totalRunningPropensity >= threshold)
 		{
 			performReaction(getTopmodel(), threshold);
