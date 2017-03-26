@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package conversion;
+package java.main.java.edu.utah.ece.async;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -14,10 +14,10 @@
 package conversion;
 
 import java.io.File;
+import java.main.java.edu.utah.ece.async.SBML2SBOL;
+import java.main.java.edu.utah.ece.async.SBOL2SBML;
 
 import org.junit.Test;
-import conversion.SBML2SBOL;
-import conversion.SBOL2SBML;
 
 /**
  * Class to test roundtripping for SBML and SBOL files in SBML2SBOL and SBOL2SBML conversion.
