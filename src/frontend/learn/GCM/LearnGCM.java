@@ -1458,8 +1458,15 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		}
 		else if (methods.getSelectedItem().equals("GeneNet (Java)"))
 		{
-			Run.run(learnFile, directory);
-			opendot(Runtime.getRuntime(), new File(directory));
+			if(Run.run(learnFile, directory))
+			{
+
+	      opendot(Runtime.getRuntime(), new File(directory));
+			}
+			else
+			{
+			  JOptionPane.showMessageDialog(Gui.frame, "Something went wrong and could not learn model.", "Error in learning.", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 
 		if (estimator.getSelection().equals("SRES"))

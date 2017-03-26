@@ -40,8 +40,9 @@ public class Run
 
 	private static int	experiment;
 
-	public static void run(String filename, String directory)
+	public static boolean run(String filename, String directory)
 	{
+	  experiment = 0;
 		SpeciesCollection S = new SpeciesCollection();
 		Experiments E = new Experiments();
 		Encodings L = new Encodings();
@@ -49,17 +50,21 @@ public class Run
 		NetCon C = new NetCon();
 		init(filename, S);
 		loadExperiments(directory, S, E);
+		if(experiment < 1)
+		{
+		  return false;
+		}
 		Learn learn = new Learn(3);
 		learn.learnNetwork(S, E, C, T, L);
 		learn.getDotFile("method.gcm", directory, S, C);
 		learn.getDotFile("method.dot", directory, S, C);
+		
+		return true;
 	}
 
 	public static void loadExperiments(String directory, SpeciesCollection S, Experiments E)
 	{
 		File path = new File(directory);
-
-		experiment = 0;
 
 		for (File file : path.listFiles())
 		{
