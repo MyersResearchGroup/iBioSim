@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.comp;
+package edu.utah.ece.async.biomodel.gui.comp;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -29,13 +29,13 @@ import org.sbml.jsbml.Parameter;
 
 import com.mxgraph.model.mxCell;
 
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.BioGraph;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.parser.GridTable;
-import main.java.edu.utah.ece.async.biomodel.util.Utility;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.gui.schematic.BioGraph;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.parser.GridTable;
+import edu.utah.ece.async.biomodel.util.Utility;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.util.GlobalConstants;
 
 
 /**

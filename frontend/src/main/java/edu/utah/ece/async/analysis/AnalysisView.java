@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis;
+package edu.utah.ece.async.analysis;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
@@ -77,20 +77,20 @@ import org.jlibsedml.modelsupport.KisaoTerm;
 //import org.jmathml.ASTNode;
 import org.sbml.libsbml.ASTNode;
 
-import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
-import main.java.edu.utah.ece.async.graph.Graph;
-import main.java.edu.utah.ece.async.lpn.gui.LHPNEditor;
-import main.java.edu.utah.ece.async.lpn.parser.Abstraction;
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Translator;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.main.Log;
-import main.java.edu.utah.ece.async.main.util.Utility;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.dataparser.DataParser;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.verification.AbstPane;
+import edu.utah.ece.async.analysis.util.SEDMLutilities;
+import edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
+import edu.utah.ece.async.graph.Graph;
+import edu.utah.ece.async.lpn.gui.LHPNEditor;
+import edu.utah.ece.async.lpn.parser.Abstraction;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Translator;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.Log;
+import edu.utah.ece.async.main.util.Utility;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.dataparser.DataParser;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.verification.AbstPane;
 
 /**
  * This class creates a GUI for analysis. It implements the ActionListener

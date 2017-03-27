@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
 
 import java.util.Map;
 
@@ -21,12 +21,12 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Rule;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
 
 /**
  * 

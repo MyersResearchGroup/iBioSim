@@ -22,7 +22,7 @@
  * Created on Mar 27, 2011, 4:18:21 PM
  */
 
-package main.java.edu.utah.ece.async.verification.platu.gui;
+package edu.utah.ece.async.verification.platu.gui;
 
 import java.awt.Component;
 import java.awt.GridLayout;

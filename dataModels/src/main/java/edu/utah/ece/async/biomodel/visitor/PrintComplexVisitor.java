@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.visitor;
+package edu.utah.ece.async.biomodel.visitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,13 +19,13 @@ import java.util.Properties;
 
 import org.sbml.jsbml.SBMLDocument;
 
-import main.java.edu.utah.ece.async.biomodel.network.ComplexSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.GeneticNetwork;
-import main.java.edu.utah.ece.async.biomodel.network.Influence;
-import main.java.edu.utah.ece.async.biomodel.network.SpeciesInterface;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.biomodel.util.Utility;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.biomodel.network.ComplexSpecies;
+import edu.utah.ece.async.biomodel.network.GeneticNetwork;
+import edu.utah.ece.async.biomodel.network.Influence;
+import edu.utah.ece.async.biomodel.network.SpeciesInterface;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.biomodel.util.Utility;
+import edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

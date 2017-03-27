@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.fba;
+package edu.utah.ece.async.analysis.fba;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,7 +34,7 @@ import org.sbml.jsbml.SpeciesReference;
 
 import com.joptimizer.optimizers.*;
 
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
 
 /**
  * 

@@ -11,12 +11,12 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.learn.parameterestimator.methods.sres;
+package edu.utah.ece.async.learn.parameterestimator.methods.sres;
 
 import java.util.Arrays;
 import java.util.Random;
 
-import main.java.edu.utah.ece.async.learn.parameterestimator.methods.AbstractEstimator;
+import edu.utah.ece.async.learn.parameterestimator.methods.AbstractEstimator;
 
 /**
  * A class that implements Stochastic Ranking Evolutionary Strategy (SRES), an

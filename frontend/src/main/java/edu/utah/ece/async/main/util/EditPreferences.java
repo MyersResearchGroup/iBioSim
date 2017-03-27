@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.main.util;
+package edu.utah.ece.async.main.util;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -40,10 +40,10 @@ import javax.swing.plaf.metal.MetalButtonUI;
 
 import com.mxgraph.util.mxConstants;
 
-import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
-import main.java.edu.utah.ece.async.biomodel.parser.CompatibilityFixer;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.biomodel.parser.CompatibilityFixer;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

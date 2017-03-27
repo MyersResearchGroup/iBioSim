@@ -13,7 +13,7 @@
  *******************************************************************************/
 // $ANTLR 3.5 /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g 2016-09-01 11:02:46
  
-package main.java.edu.utah.ece.async.lpn.parser.properties;
+package edu.utah.ece.async.lpn.parser.properties;
 
 import org.antlr.runtime.*;
 import java.util.Stack;

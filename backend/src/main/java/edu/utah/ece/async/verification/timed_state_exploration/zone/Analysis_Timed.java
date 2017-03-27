@@ -11,21 +11,21 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.zone;
+package edu.utah.ece.async.verification.timed_state_exploration.zone;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.Analysis;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LPNTranRelation;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
-import main.java.edu.utah.ece.async.verification.platu.project.PrjState;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.verification.platu.logicAnalysis.Analysis;
+import edu.utah.ece.async.verification.platu.platuLpn.LPNTranRelation;
+import edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
+import edu.utah.ece.async.verification.platu.project.PrjState;
+import edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 
 /**
  * 

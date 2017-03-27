@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis;
+package edu.utah.ece.async.analysis;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -45,30 +45,30 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation.SimulationType;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.flattened.Simulator;
-import main.java.edu.utah.ece.async.analysis.fba.FluxBalanceAnalysis;
-import main.java.edu.utah.ece.async.analysis.markov.BuildStateGraphThread;
-import main.java.edu.utah.ece.async.analysis.markov.PerformSteadyStateMarkovAnalysisThread;
-import main.java.edu.utah.ece.async.analysis.markov.PerformTransientMarkovAnalysisThread;
-import main.java.edu.utah.ece.async.analysis.markov.StateGraph;
-import main.java.edu.utah.ece.async.analysis.markov.StateGraph.Property;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.graph.Graph;
-import main.java.edu.utah.ece.async.lpn.parser.Abstraction;
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Translator;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.main.Log;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.MutableString;
-import main.java.edu.utah.ece.async.util.dataparser.DataParser;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.verification.AbstPane;
+import edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation;
+import edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation.SimulationType;
+import edu.utah.ece.async.analysis.dynamicsim.flattened.Simulator;
+import edu.utah.ece.async.analysis.fba.FluxBalanceAnalysis;
+import edu.utah.ece.async.analysis.markov.BuildStateGraphThread;
+import edu.utah.ece.async.analysis.markov.PerformSteadyStateMarkovAnalysisThread;
+import edu.utah.ece.async.analysis.markov.PerformTransientMarkovAnalysisThread;
+import edu.utah.ece.async.analysis.markov.StateGraph;
+import edu.utah.ece.async.analysis.markov.StateGraph.Property;
+import edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.graph.Graph;
+import edu.utah.ece.async.lpn.parser.Abstraction;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Translator;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.Log;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.MutableString;
+import edu.utah.ece.async.util.dataparser.DataParser;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.verification.AbstPane;
 
 /**
  * This class creates the properties file that is given to the reb2sac program.

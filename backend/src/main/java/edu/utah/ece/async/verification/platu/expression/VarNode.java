@@ -11,12 +11,12 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.expression;
+package edu.utah.ece.async.verification.platu.expression;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.VarType;
+import edu.utah.ece.async.verification.platu.platuLpn.VarType;
 
 /**
  * 

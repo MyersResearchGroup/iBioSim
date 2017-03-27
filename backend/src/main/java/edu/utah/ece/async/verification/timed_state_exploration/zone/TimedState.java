@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.zone;
+package edu.utah.ece.async.verification.timed_state_exploration.zone;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.VarSet;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
+import edu.utah.ece.async.verification.platu.platuLpn.VarSet;
+import edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 
 /**
  * Adds timing to a State.

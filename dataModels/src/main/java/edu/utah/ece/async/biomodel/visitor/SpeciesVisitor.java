@@ -11,16 +11,16 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.visitor;
+package edu.utah.ece.async.biomodel.visitor;
 
-import main.java.edu.utah.ece.async.biomodel.network.BaseSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.ComplexSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.ConstantSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.DiffusibleConstitutiveSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.DiffusibleSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.NullSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.SpasticSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.SpeciesInterface;
+import edu.utah.ece.async.biomodel.network.BaseSpecies;
+import edu.utah.ece.async.biomodel.network.ComplexSpecies;
+import edu.utah.ece.async.biomodel.network.ConstantSpecies;
+import edu.utah.ece.async.biomodel.network.DiffusibleConstitutiveSpecies;
+import edu.utah.ece.async.biomodel.network.DiffusibleSpecies;
+import edu.utah.ece.async.biomodel.network.NullSpecies;
+import edu.utah.ece.async.biomodel.network.SpasticSpecies;
+import edu.utah.ece.async.biomodel.network.SpeciesInterface;
 
 /**
  * 

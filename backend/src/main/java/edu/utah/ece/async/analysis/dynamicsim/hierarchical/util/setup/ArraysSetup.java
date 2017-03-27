@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.EventAssignment;
@@ -25,15 +25,15 @@ import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.arrays.Index;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ArrayNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.EventNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.AbstractHierarchicalNode.Type;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ArrayNode.ArraysType;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ArrayNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.EventNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.AbstractHierarchicalNode.Type;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ArrayNode.ArraysType;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.interpreter.MathInterpreter;
 
 /**
  * 

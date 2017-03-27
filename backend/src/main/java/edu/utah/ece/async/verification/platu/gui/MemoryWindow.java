@@ -15,7 +15,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package main.java.edu.utah.ece.async.verification.platu.gui;
+package edu.utah.ece.async.verification.platu.gui;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -27,7 +27,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import main.java.edu.utah.ece.async.verification.platu.main.Main;
+import edu.utah.ece.async.verification.platu.main.Main;
 
 /**
  *

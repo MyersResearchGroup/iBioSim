@@ -14,7 +14,7 @@
 /**
  * 
  */
-package main.java.edu.utah.ece.async.biomodel.gui.schematic;
+package edu.utah.ece.async.biomodel.gui.schematic;
 
 import java.awt.Rectangle;
 import java.io.File;
@@ -66,14 +66,14 @@ import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.gui.comp.Grid;
-import main.java.edu.utah.ece.async.biomodel.gui.movie.MovieAppearance;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.biomodel.util.Utility;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.gui.comp.Grid;
+import edu.utah.ece.async.biomodel.gui.movie.MovieAppearance;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.biomodel.util.Utility;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.util.GlobalConstants;
  
 /**
  * 

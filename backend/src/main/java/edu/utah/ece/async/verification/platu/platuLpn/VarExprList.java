@@ -15,12 +15,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package main.java.edu.utah.ece.async.verification.platu.platuLpn;
+package edu.utah.ece.async.verification.platu.platuLpn;
 
 import java.util.*;
 
-import main.java.edu.utah.ece.async.verification.platu.expression.Expression;
-import main.java.edu.utah.ece.async.verification.platu.expression.VarNode;
+import edu.utah.ece.async.verification.platu.expression.Expression;
+import edu.utah.ece.async.verification.platu.expression.VarNode;
 
 /**
  * @author ldtwo

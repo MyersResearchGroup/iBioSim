@@ -11,20 +11,20 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.octagon;
+package edu.utah.ece.async.verification.timed_state_exploration.octagon;
 
 import java.util.Collection;
 import java.util.HashSet;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.ContinuousRecordSet;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.EventSet;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.IntervalPair;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContinuousPair;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNTransitionPair;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
+import edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.ContinuousRecordSet;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.EventSet;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.IntervalPair;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContinuousPair;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNTransitionPair;
 
 /**
  * The purpose of this interface is to define the methods of Zones

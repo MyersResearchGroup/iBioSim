@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.math;
 
 import odk.lang.FastMath;
 
@@ -27,8 +27,8 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.sbml.jsbml.ASTNode;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 
 /**
  * 

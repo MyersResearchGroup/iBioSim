@@ -11,18 +11,18 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification;
+package edu.utah.ece.async.verification;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.verification.platu.main.Options;
-import main.java.edu.utah.ece.async.verification.platu.project.Project;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.project.Project;
 
 /**
  * This class provides script to run depth-first search and partial order reduction (in the platu package)

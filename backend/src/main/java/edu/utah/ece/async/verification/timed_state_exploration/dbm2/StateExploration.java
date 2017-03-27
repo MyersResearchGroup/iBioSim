@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.dbm2;
+package edu.utah.ece.async.verification.timed_state_exploration.dbm2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,9 +20,9 @@ import java.util.*;
 
 import javax.swing.JFileChooser;
 
-import main.java.edu.utah.ece.async.lpn.parser.*;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.dbm2.LPNTranslator.UnsafeLPNException;
+import edu.utah.ece.async.lpn.parser.*;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.verification.timed_state_exploration.dbm2.LPNTranslator.UnsafeLPNException;
 
 /**
  * This class finds the state graph for an LPN from an LPNFile object.

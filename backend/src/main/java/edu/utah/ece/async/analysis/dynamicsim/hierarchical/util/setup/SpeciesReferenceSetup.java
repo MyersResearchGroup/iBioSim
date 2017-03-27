@@ -11,16 +11,16 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
 
 import org.sbml.jsbml.SpeciesReference;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ReactionNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.SpeciesNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.SpeciesReferenceNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorWrapper;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ReactionNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.SpeciesNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.SpeciesReferenceNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorWrapper;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 
 /**
  * 

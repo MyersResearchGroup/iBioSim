@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.sbol.browser;
+package edu.utah.ece.async.sbol.browser;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -20,8 +20,8 @@ import javax.swing.*;
 
 import org.sbolstandard.core2.Component;
 
-import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.util.GlobalConstants;
 
 //import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 import org.sbolstandard.core2.*;

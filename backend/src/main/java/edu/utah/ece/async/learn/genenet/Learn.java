@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.learn.genenet;
+package edu.utah.ece.async.learn.genenet;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

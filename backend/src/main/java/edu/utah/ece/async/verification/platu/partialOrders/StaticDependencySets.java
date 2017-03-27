@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.partialOrders;
+package edu.utah.ece.async.verification.platu.partialOrders;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
-import main.java.edu.utah.ece.async.lpn.parser.Place;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnProcess;
-import main.java.edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.lpn.parser.ExprTree;
+import edu.utah.ece.async.lpn.parser.Place;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnProcess;
+import edu.utah.ece.async.verification.platu.main.Options;
 
 /**
  * This class is used for constructing static dependent transition set for each seed transition.

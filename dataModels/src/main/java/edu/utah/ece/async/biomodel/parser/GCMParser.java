@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.parser;
+package edu.utah.ece.async.biomodel.parser;
 
 
 import java.io.BufferedReader;
@@ -29,15 +29,15 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
-import main.java.edu.utah.ece.async.biomodel.network.BaseSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.DiffusibleConstitutiveSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.DiffusibleSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.GeneticNetwork;
-import main.java.edu.utah.ece.async.biomodel.network.Influence;
-import main.java.edu.utah.ece.async.biomodel.network.Promoter;
-import main.java.edu.utah.ece.async.biomodel.network.SpasticSpecies;
-import main.java.edu.utah.ece.async.biomodel.network.SpeciesInterface;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.biomodel.network.BaseSpecies;
+import edu.utah.ece.async.biomodel.network.DiffusibleConstitutiveSpecies;
+import edu.utah.ece.async.biomodel.network.DiffusibleSpecies;
+import edu.utah.ece.async.biomodel.network.GeneticNetwork;
+import edu.utah.ece.async.biomodel.network.Influence;
+import edu.utah.ece.async.biomodel.network.Promoter;
+import edu.utah.ece.async.biomodel.network.SpasticSpecies;
+import edu.utah.ece.async.biomodel.network.SpeciesInterface;
+import edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * This class parses a genetic circuit model.

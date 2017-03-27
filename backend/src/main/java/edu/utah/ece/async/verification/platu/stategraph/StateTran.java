@@ -15,9 +15,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package main.java.edu.utah.ece.async.verification.platu.stategraph;
+package edu.utah.ece.async.verification.platu.stategraph;
 
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LPNTran;
+import edu.utah.ece.async.verification.platu.platuLpn.LPNTran;
 
 /**
  *

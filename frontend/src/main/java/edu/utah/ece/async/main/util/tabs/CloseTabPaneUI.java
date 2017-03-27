@@ -13,7 +13,7 @@
  * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package main.java.edu.utah.ece.async.main.util.tabs;
+package edu.utah.ece.async.main.util.tabs;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -71,7 +71,7 @@ import javax.swing.text.View;
 
 import com.sun.java.swing.plaf.windows.WindowsIconFactory;
 
-import main.java.edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.Gui;
 
 /**
  * UI for <code>CloseAndMaxTabbedPane</code>.

@@ -17,7 +17,7 @@
  * Ecole des Mines de Nantes, France
  */
 
-package main.java.edu.utah.ece.async.main.util.tabs;
+package edu.utah.ece.async.main.util.tabs;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -32,7 +32,7 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
 import javax.swing.text.View;
 
-import main.java.edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.Gui;
 
 /**
  * This UI displays a different interface, which is independent from the look

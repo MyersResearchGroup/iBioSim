@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.comp;
+package edu.utah.ece.async.biomodel.gui.comp;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -45,18 +45,18 @@ import org.sbml.jsbml.Event;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.ext.comp.Submodel;
 
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.annotation.SBOLAnnotation;
-import main.java.edu.utah.ece.async.biomodel.gui.sbol.SBOLField2;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.Utils;
-import main.java.edu.utah.ece.async.biomodel.gui.util.PropertyField;
-import main.java.edu.utah.ece.async.biomodel.gui.util.PropertyList;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.biomodel.util.Utility;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.annotation.SBOLAnnotation;
+import edu.utah.ece.async.biomodel.gui.sbol.SBOLField2;
+import edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
+import edu.utah.ece.async.biomodel.gui.schematic.Utils;
+import edu.utah.ece.async.biomodel.gui.util.PropertyField;
+import edu.utah.ece.async.biomodel.gui.util.PropertyList;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.biomodel.util.Utility;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

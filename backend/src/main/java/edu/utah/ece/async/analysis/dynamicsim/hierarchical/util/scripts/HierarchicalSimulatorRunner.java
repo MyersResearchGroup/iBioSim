@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.scripts;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.scripts;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,10 +25,10 @@ import javax.swing.JProgressBar;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
 
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.util.dataparser.TSDParser;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation.SimulationType;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.util.dataparser.TSDParser;
+import edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation;
+import edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation.SimulationType;
 
 /**
  * 

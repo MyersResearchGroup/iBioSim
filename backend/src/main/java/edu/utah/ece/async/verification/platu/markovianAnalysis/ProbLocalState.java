@@ -11,16 +11,16 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.markovianAnalysis;
+package edu.utah.ece.async.verification.platu.markovianAnalysis;
 
 import java.util.HashMap;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.verification.platu.main.Options;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
+import edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 
 /**
  * 

@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.util.dataparser;
+package edu.utah.ece.async.util.dataparser;
 
 import java.awt.*;
 import java.io.*;

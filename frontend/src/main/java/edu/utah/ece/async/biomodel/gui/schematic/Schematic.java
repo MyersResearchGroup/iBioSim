@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.schematic;
+package edu.utah.ece.async.biomodel.gui.schematic;
 
 
 import java.awt.BorderLayout;
@@ -98,25 +98,25 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
 import com.mxgraph.util.mxRectangle;
 
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.gui.comp.DropComponentPanel;
-import main.java.edu.utah.ece.async.biomodel.gui.comp.Grid;
-import main.java.edu.utah.ece.async.biomodel.gui.comp.GridPanel;
-import main.java.edu.utah.ece.async.biomodel.gui.movie.MovieContainer;
-import main.java.edu.utah.ece.async.biomodel.gui.movie.SchemeChooserPanel;
-import main.java.edu.utah.ece.async.biomodel.gui.sbmlcore.Compartments;
-import main.java.edu.utah.ece.async.biomodel.gui.sbmlcore.Constraints;
-import main.java.edu.utah.ece.async.biomodel.gui.sbmlcore.Events;
-import main.java.edu.utah.ece.async.biomodel.gui.sbmlcore.ModelPanel;
-import main.java.edu.utah.ece.async.biomodel.gui.sbmlcore.Parameters;
-import main.java.edu.utah.ece.async.biomodel.gui.sbmlcore.Reactions;
-import main.java.edu.utah.ece.async.biomodel.gui.sbmlcore.Rules;
-import main.java.edu.utah.ece.async.biomodel.gui.sbmlcore.SpeciesPanel;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.biomodel.util.Utility;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.gui.comp.DropComponentPanel;
+import edu.utah.ece.async.biomodel.gui.comp.Grid;
+import edu.utah.ece.async.biomodel.gui.comp.GridPanel;
+import edu.utah.ece.async.biomodel.gui.movie.MovieContainer;
+import edu.utah.ece.async.biomodel.gui.movie.SchemeChooserPanel;
+import edu.utah.ece.async.biomodel.gui.sbmlcore.Compartments;
+import edu.utah.ece.async.biomodel.gui.sbmlcore.Constraints;
+import edu.utah.ece.async.biomodel.gui.sbmlcore.Events;
+import edu.utah.ece.async.biomodel.gui.sbmlcore.ModelPanel;
+import edu.utah.ece.async.biomodel.gui.sbmlcore.Parameters;
+import edu.utah.ece.async.biomodel.gui.sbmlcore.Reactions;
+import edu.utah.ece.async.biomodel.gui.sbmlcore.Rules;
+import edu.utah.ece.async.biomodel.gui.sbmlcore.SpeciesPanel;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.biomodel.util.Utility;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

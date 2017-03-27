@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification;
+package edu.utah.ece.async.verification;
 
 import java.io.File;
 import java.io.FileFilter;

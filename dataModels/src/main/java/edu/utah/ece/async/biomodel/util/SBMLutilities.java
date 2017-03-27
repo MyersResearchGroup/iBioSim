@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.util;
+package edu.utah.ece.async.biomodel.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -106,11 +106,11 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

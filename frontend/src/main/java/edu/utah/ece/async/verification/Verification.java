@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification;
+package edu.utah.ece.async.verification;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
@@ -64,27 +64,27 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.xml.stream.XMLStreamException;
 
-import main.java.edu.utah.ece.async.verification.platu.main.Options;
-import main.java.edu.utah.ece.async.verification.platu.project.Project;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
-import main.java.edu.utah.ece.async.biomodel.gui.util.PropertyList;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.util.Utility;
-import main.java.edu.utah.ece.async.lpn.parser.Abstraction;
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Place;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.lpn.parser.Variable;
-import main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition.Component;
-import main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnComponentList;
-import main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnProcess;
-import main.java.edu.utah.ece.async.lpn.parser.properties.AbstractionProperty;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.main.Log;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.project.Project;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
+import edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
+import edu.utah.ece.async.biomodel.gui.util.PropertyList;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.util.Utility;
+import edu.utah.ece.async.lpn.parser.Abstraction;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Place;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.lpn.parser.Variable;
+import edu.utah.ece.async.lpn.parser.LpnDecomposition.Component;
+import edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnComponentList;
+import edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnProcess;
+import edu.utah.ece.async.lpn.parser.properties.AbstractionProperty;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.Log;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.exceptions.BioSimException;
 
 
 /**

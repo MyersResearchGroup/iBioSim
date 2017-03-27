@@ -11,15 +11,15 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition;
+package edu.utah.ece.async.lpn.parser.LpnDecomposition;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Place;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.lpn.parser.Variable;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Place;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.lpn.parser.Variable;
 
 /**
  * 

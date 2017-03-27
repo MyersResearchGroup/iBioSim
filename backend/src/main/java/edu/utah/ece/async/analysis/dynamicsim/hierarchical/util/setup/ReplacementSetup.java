@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
 
 import java.util.List;
 import java.util.Map;
@@ -39,8 +39,8 @@ import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.SBaseRef;
 import org.sbml.jsbml.ext.comp.Submodel;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 
 /**
  * 

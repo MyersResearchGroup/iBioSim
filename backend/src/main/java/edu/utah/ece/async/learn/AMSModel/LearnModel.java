@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.learn.AMSModel;
+package edu.utah.ece.async.learn.AMSModel;
 
 import java.io.*;
 import java.text.DecimalFormat;
@@ -19,10 +19,10 @@ import java.util.*;
 
 //import javax.jws.soap.InitParam;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.dataparser.*;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.dataparser.*;
 
 
 

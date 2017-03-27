@@ -11,12 +11,12 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.lpn.parser;
+package edu.utah.ece.async.lpn.parser;
 
 import java.util.ArrayList;
 import java.util.Properties;
 
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.InequalityVariable;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.InequalityVariable;
 
 /**
  * 

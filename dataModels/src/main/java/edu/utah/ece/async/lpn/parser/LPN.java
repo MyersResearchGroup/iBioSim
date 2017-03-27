@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.lpn.parser;
+package edu.utah.ece.async.lpn.parser;
 
 
 import java.io.*;
@@ -19,12 +19,12 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.InequalityVariable;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.InequalityVariable;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

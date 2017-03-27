@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-package main.java.edu.utah.ece.async.main.util;
+package edu.utah.ece.async.main.util;
 
 import javax.swing.*;
 import javax.swing.SpringLayout;

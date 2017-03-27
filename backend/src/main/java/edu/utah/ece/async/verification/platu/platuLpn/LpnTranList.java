@@ -11,14 +11,14 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.platuLpn;
+package edu.utah.ece.async.verification.platu.platuLpn;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * 

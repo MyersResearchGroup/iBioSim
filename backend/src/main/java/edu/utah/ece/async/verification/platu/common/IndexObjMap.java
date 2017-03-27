@@ -11,11 +11,11 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.common;
+package edu.utah.ece.async.verification.platu.common;
 
 import java.util.HashMap;
 
-import main.java.edu.utah.ece.async.verification.platu.common.PlatuObj;
+import edu.utah.ece.async.verification.platu.common.PlatuObj;
 
 /**
  * 

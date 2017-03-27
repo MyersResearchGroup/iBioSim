@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,18 +35,18 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.ParentSimulator;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ConstraintNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.EventNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ReactionNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.analysis.dynamicsim.ParentSimulator;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ConstraintNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.EventNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ReactionNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 
 /**
  * This class provides the state variables of the simulation.

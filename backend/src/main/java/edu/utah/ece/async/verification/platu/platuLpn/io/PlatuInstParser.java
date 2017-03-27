@@ -13,7 +13,7 @@
  *******************************************************************************/
 // $ANTLR 3.3 Nov 30, 2010 12:50:56 /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g 2011-09-05 15:36:30
 
-    package main.java.edu.utah.ece.async.verification.platu.platuLpn.io;
+    package edu.utah.ece.async.verification.platu.platuLpn.io;
     
     import java.util.StringTokenizer;
 import java.io.File;
@@ -25,10 +25,10 @@ import java.util.Queue;
 
 import org.antlr.runtime.*;
 
-import main.java.edu.utah.ece.async.verification.platu.expression.*;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.*;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.Instance;
-import main.java.edu.utah.ece.async.verification.platu.project.Project;
+import edu.utah.ece.async.verification.platu.expression.*;
+import edu.utah.ece.async.verification.platu.platuLpn.*;
+import edu.utah.ece.async.verification.platu.platuLpn.io.Instance;
+import edu.utah.ece.async.verification.platu.project.Project;
 
 import java.util.List;
 import java.util.ArrayList;

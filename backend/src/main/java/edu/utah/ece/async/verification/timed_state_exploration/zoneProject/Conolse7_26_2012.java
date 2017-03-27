@@ -11,17 +11,17 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
+package edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.verification.platu.main.Options;
-import main.java.edu.utah.ece.async.verification.platu.project.Project;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.project.Project;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
 
 /**
  * 

@@ -22,7 +22,7 @@
  * Created on Jun 15, 2010, 1:18:38 AM
  */
 
-package main.java.edu.utah.ece.async.verification.platu.gui;
+package edu.utah.ece.async.verification.platu.gui;
 
 import javax.swing.JPanel;
 

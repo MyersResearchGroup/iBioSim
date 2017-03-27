@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.lpn.gui;
+package edu.utah.ece.async.lpn.gui;
 
 
 import java.awt.GridLayout;
@@ -27,9 +27,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import main.java.edu.utah.ece.async.biomodel.parser.CompatibilityFixer;
-import main.java.edu.utah.ece.async.biomodel.util.Utility;
-import main.java.edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.biomodel.parser.CompatibilityFixer;
+import edu.utah.ece.async.biomodel.util.Utility;
+import edu.utah.ece.async.main.Gui;
 
 /**
  * 

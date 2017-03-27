@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.learn.GCM;
+package edu.utah.ece.async.learn.GCM;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
@@ -68,17 +68,17 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
-import main.java.edu.utah.ece.async.learn.genenet.Experiments;
-import main.java.edu.utah.ece.async.learn.genenet.Run;
-import main.java.edu.utah.ece.async.learn.genenet.SpeciesCollection;
-import main.java.edu.utah.ece.async.learn.parameterestimator.ParameterEstimator;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.learn.parameterestimator.ParamEstimatorPanel;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.main.Log;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.learn.genenet.Experiments;
+import edu.utah.ece.async.learn.genenet.Run;
+import edu.utah.ece.async.learn.genenet.SpeciesCollection;
+import edu.utah.ece.async.learn.parameterestimator.ParameterEstimator;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.learn.parameterestimator.ParamEstimatorPanel;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.Log;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * This class creates a GUI for the Learn program. It implements the

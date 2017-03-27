@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.lpn.parser.properties;
+package edu.utah.ece.async.lpn.parser.properties;
 
 import java.awt.List;
 import java.io.BufferedReader;
@@ -23,10 +23,10 @@ import java.util.Properties;
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Translator;
-import main.java.edu.utah.ece.async.lpn.parser.Variable;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Translator;
+import edu.utah.ece.async.lpn.parser.Variable;
+import edu.utah.ece.async.util.exceptions.BioSimException;
 
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;

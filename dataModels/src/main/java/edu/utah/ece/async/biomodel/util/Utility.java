@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.util;
+package edu.utah.ece.async.biomodel.util;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -45,7 +45,7 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.GlobalConstants;
 
 import org.sbml.jsbml.ModifierSpeciesReference;
 

@@ -15,7 +15,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package main.java.edu.utah.ece.async.verification.platu.gui;
+package edu.utah.ece.async.verification.platu.gui;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,8 +24,8 @@ import org.jfree.chart.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.xy.*;
 
-import main.java.edu.utah.ece.async.verification.platu.main.Main;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN;
+import edu.utah.ece.async.verification.platu.main.Main;
+import edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN;
 
 /**
  *

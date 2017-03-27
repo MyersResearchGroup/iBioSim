@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.movie;
+package edu.utah.ece.async.biomodel.gui.movie;
 
 
 import java.awt.Color;
@@ -24,10 +24,10 @@ import java.util.Map;
 
 import org.sbml.jsbml.Parameter;
 
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.gui.movie.SerializableScheme;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.gui.movie.SerializableScheme;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.util.GlobalConstants;
 
 
 /**

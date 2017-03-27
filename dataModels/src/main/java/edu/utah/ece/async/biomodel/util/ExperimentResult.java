@@ -15,7 +15,7 @@
  * This class contains eperimental results.
  */
 
-package main.java.edu.utah.ece.async.biomodel.util;
+package edu.utah.ece.async.biomodel.util;
 
 import java.util.HashMap;
 

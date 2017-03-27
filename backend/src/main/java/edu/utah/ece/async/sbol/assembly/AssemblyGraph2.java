@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.sbol.assembly;
+package edu.utah.ece.async.sbol.assembly;
 
 import java.io.IOException;
 import java.net.URI;
@@ -41,12 +41,12 @@ import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbolstandard.core2.ComponentDefinition;
 
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
-import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.SBOLException;
+import edu.utah.ece.async.sbol.util.SBOLFileManager2;
 
 /**
  * 

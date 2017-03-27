@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.learn.parameterestimator;
+package edu.utah.ece.async.learn.parameterestimator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,15 +21,15 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
 
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
-import main.java.edu.utah.ece.async.learn.genenet.Experiments;
-import main.java.edu.utah.ece.async.learn.genenet.SpeciesCollection;
-import main.java.edu.utah.ece.async.learn.parameterestimator.methods.sres.EvolutionMethodSetting;
-import main.java.edu.utah.ece.async.learn.parameterestimator.methods.sres.Modelsettings;
-import main.java.edu.utah.ece.async.learn.parameterestimator.methods.sres.ObjectiveSqureError;
-import main.java.edu.utah.ece.async.learn.parameterestimator.methods.sres.SRES;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
+import edu.utah.ece.async.learn.genenet.Experiments;
+import edu.utah.ece.async.learn.genenet.SpeciesCollection;
+import edu.utah.ece.async.learn.parameterestimator.methods.sres.EvolutionMethodSetting;
+import edu.utah.ece.async.learn.parameterestimator.methods.sres.Modelsettings;
+import edu.utah.ece.async.learn.parameterestimator.methods.sres.ObjectiveSqureError;
+import edu.utah.ece.async.learn.parameterestimator.methods.sres.SRES;
 
 /**
  * 

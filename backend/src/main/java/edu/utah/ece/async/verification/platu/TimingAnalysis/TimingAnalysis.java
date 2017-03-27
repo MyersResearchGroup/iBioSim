@@ -11,18 +11,18 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.TimingAnalysis;
+package edu.utah.ece.async.verification.platu.TimingAnalysis;
 
 import java.util.*;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.Analysis;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
-import main.java.edu.utah.ece.async.verification.platu.project.PrjState;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.verification.platu.logicAnalysis.Analysis;
+import edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
+import edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
+import edu.utah.ece.async.verification.platu.project.PrjState;
+import edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 
 /**
  * 

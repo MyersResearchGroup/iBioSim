@@ -11,13 +11,13 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.markovianAnalysis;
+package edu.utah.ece.async.verification.platu.markovianAnalysis;
 
 import java.util.HashMap;
 import java.util.Iterator;
 
-import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.StateSetInterface;
-import main.java.edu.utah.ece.async.verification.platu.project.PrjState;
+import edu.utah.ece.async.verification.platu.logicAnalysis.StateSetInterface;
+import edu.utah.ece.async.verification.platu.project.PrjState;
 
 /**
  * 

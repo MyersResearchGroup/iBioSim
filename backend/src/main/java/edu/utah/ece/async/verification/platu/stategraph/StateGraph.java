@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.stategraph;
+package edu.utah.ece.async.verification.platu.stategraph;
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -25,31 +25,31 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Place;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.lpn.parser.Variable;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.verification.platu.common.IndexObjMap;
-import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.Constraint;
-import main.java.edu.utah.ece.async.verification.platu.main.Main;
-import main.java.edu.utah.ece.async.verification.platu.main.Options;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
-import main.java.edu.utah.ece.async.verification.platu.project.PrjState;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.ContinuousRecordSet;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.ContinuousUtilities;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Event;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.EventSet;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.InequalityVariable;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.IntervalPair;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContAndRate;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContinuousPair;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNTransitionPair;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.TimedPrjState;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.UpdateContinuous;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Place;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.lpn.parser.Variable;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.verification.platu.common.IndexObjMap;
+import edu.utah.ece.async.verification.platu.logicAnalysis.Constraint;
+import edu.utah.ece.async.verification.platu.main.Main;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
+import edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
+import edu.utah.ece.async.verification.platu.project.PrjState;
+import edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.ContinuousRecordSet;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.ContinuousUtilities;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Event;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.EventSet;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.InequalityVariable;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.IntervalPair;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContAndRate;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContinuousPair;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNTransitionPair;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.TimedPrjState;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.UpdateContinuous;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
 
 import java.util.Set;
 import java.util.Stack;

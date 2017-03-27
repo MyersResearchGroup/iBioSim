@@ -11,14 +11,14 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.markov;
+package edu.utah.ece.async.analysis.markov;
 
 import java.util.ArrayList;
 
 import javax.swing.JProgressBar;
 
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.analysis.markov.StateGraph.Property;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.analysis.markov.StateGraph.Property;
 
 /**
  * 

@@ -12,7 +12,7 @@
  *  
  *******************************************************************************/
 
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,16 +32,16 @@ import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorWrapper;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorWrapper;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
 
 /**
  * 

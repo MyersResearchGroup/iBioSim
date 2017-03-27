@@ -11,12 +11,12 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.TimingAnalysis;
+package edu.utah.ece.async.verification.platu.TimingAnalysis;
 
 import java.util.*;
 
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.*;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.verification.platu.platuLpn.*;
 
 /**
  * This class implements the POSET algorithm in C Myers's book, section 7.5.

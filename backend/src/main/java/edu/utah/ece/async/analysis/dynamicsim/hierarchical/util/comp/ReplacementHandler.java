@@ -11,9 +11,9 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.comp;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.comp;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 
 /**
  * 

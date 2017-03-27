@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis;
+package edu.utah.ece.async.analysis;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
@@ -44,11 +44,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.main.Log;
-import main.java.edu.utah.ece.async.main.util.Utility;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.verification.AbstPane;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.Log;
+import edu.utah.ece.async.main.util.Utility;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.verification.AbstPane;
 
 /**
  * This is the Nary_Run class. It creates a GUI for input in the nary

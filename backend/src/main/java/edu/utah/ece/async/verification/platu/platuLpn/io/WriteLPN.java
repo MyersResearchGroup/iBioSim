@@ -12,7 +12,7 @@
  *  
  *******************************************************************************/
 
-package main.java.edu.utah.ece.async.verification.platu.platuLpn.io;
+package edu.utah.ece.async.verification.platu.platuLpn.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,10 +20,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LPNTran;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.VarSet;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.VarVal;
+import edu.utah.ece.async.verification.platu.platuLpn.LPNTran;
+import edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN;
+import edu.utah.ece.async.verification.platu.platuLpn.VarSet;
+import edu.utah.ece.async.verification.platu.platuLpn.VarVal;
 
 /**
  * @author ldtwo

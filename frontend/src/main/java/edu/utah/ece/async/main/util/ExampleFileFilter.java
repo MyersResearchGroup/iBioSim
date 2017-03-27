@@ -1,4 +1,4 @@
-package main.java.edu.utah.ece.async.main.util;
+package edu.utah.ece.async.main.util;
 
 /*
  * @(#)ExampleFileFilter.java	1.9 99/04/23

@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.lpn.gui;
+package edu.utah.ece.async.lpn.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -33,14 +33,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import main.java.edu.utah.ece.async.biomodel.gui.util.AbstractRunnableNamedButton;
-import main.java.edu.utah.ece.async.biomodel.gui.util.PropertyList;
-import main.java.edu.utah.ece.async.biomodel.gui.util.Runnable;
-import main.java.edu.utah.ece.async.biomodel.util.Utility;
-import main.java.edu.utah.ece.async.lpn.parser.*;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.biomodel.gui.util.AbstractRunnableNamedButton;
+import edu.utah.ece.async.biomodel.gui.util.PropertyList;
+import edu.utah.ece.async.biomodel.gui.util.Runnable;
+import edu.utah.ece.async.biomodel.util.Utility;
+import edu.utah.ece.async.lpn.parser.*;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.BioSimException;
 
 import javax.swing.JButton;
 

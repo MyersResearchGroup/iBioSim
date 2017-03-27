@@ -11,11 +11,11 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.main;
+package edu.utah.ece.async.verification.platu.main;
 
 import java.util.concurrent.Executors;
 
-import main.java.edu.utah.ece.async.verification.platu.project.Project;
+import edu.utah.ece.async.verification.platu.project.Project;
 
 import java.util.concurrent.ExecutorService;
 import java.io.FileReader;

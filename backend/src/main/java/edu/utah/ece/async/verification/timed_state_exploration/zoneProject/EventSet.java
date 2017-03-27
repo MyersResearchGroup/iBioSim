@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
+package edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * An EventSet represents a transition to fire, a set of inequalities that must

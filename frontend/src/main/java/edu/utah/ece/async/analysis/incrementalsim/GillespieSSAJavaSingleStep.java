@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.incrementalsim;
+package edu.utah.ece.async.analysis.incrementalsim;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,9 +21,9 @@ import java.util.Random;
 
 import org.sbml.jsbml.*;
 
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.graph.Graph;
-import main.java.edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.graph.Graph;
+import edu.utah.ece.async.main.Gui;
 
 import java.awt.BorderLayout;
 import java.io.*;

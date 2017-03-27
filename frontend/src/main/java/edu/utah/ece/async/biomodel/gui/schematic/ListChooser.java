@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.schematic;
+package edu.utah.ece.async.biomodel.gui.schematic;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

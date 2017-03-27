@@ -11,11 +11,11 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition;
+package edu.utah.ece.async.lpn.parser.LpnDecomposition;
 
 import java.util.HashMap;
 
-import main.java.edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.main.Options;
 
 /**
  * 

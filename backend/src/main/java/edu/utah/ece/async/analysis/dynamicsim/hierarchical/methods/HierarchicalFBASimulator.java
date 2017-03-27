@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,9 +22,9 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.fba.FluxBalanceAnalysis;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.fba.FluxBalanceAnalysis;
 
 /**
  * 

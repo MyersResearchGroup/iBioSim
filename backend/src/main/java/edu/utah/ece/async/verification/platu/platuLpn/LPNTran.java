@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.platuLpn;
+package edu.utah.ece.async.verification.platu.platuLpn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import main.java.edu.utah.ece.async.verification.platu.TimingAnalysis.Zone1;
-import main.java.edu.utah.ece.async.verification.platu.expression.Expression;
-import main.java.edu.utah.ece.async.verification.platu.expression.VarNode;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.verification.platu.TimingAnalysis.Zone1;
+import edu.utah.ece.async.verification.platu.expression.Expression;
+import edu.utah.ece.async.verification.platu.expression.VarNode;
+import edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 
 /**
  * 

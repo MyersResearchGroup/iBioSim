@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim;
+package edu.utah.ece.async.analysis.dynamicsim;
 
 import java.awt.Dimension;
 import java.io.IOException;
@@ -23,13 +23,13 @@ import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.xml.stream.XMLStreamException;
 
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.flattened.SimulatorSSACR;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.flattened.SimulatorSSADirect;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.analysis.dynamicsim.flattened.SimulatorSSACR;
+import edu.utah.ece.async.analysis.dynamicsim.flattened.SimulatorSSADirect;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalSSADirectSimulator;
 
 /**
  * 

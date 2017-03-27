@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.synthesis.mapTechnology;
+package edu.utah.ece.async.synthesis.mapTechnology;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +34,8 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.main.util.EditPreferences;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.main.util.EditPreferences;
 
 /**
  * 

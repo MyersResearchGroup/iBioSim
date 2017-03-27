@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.sbol.assembly;
+package edu.utah.ece.async.sbol.assembly;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,8 +21,8 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.SBOLException;
 
 /**
  * 

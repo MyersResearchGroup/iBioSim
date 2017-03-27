@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.schematic;
+package edu.utah.ece.async.biomodel.gui.schematic;
 
 import java.awt.BorderLayout;
 import java.util.Vector;
@@ -24,7 +24,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

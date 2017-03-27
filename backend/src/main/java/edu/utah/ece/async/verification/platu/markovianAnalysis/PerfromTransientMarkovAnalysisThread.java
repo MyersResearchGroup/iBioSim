@@ -11,10 +11,10 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.markovianAnalysis;
+package edu.utah.ece.async.verification.platu.markovianAnalysis;
 import javax.swing.JProgressBar;
 
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.util.exceptions.BioSimException;
 
 
 /**

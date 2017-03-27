@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.movie;
+package edu.utah.ece.async.biomodel.gui.movie;
 
 
 import java.awt.BorderLayout;
@@ -37,9 +37,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import main.java.edu.utah.ece.async.biomodel.gui.movie.MovieScheme.Scheme;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.biomodel.gui.movie.MovieScheme.Scheme;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * this is the panel that pops up in the movie schematic

@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.incrementalsim;
+package edu.utah.ece.async.analysis.incrementalsim;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;

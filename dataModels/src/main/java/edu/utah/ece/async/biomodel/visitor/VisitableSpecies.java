@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.visitor;
+package edu.utah.ece.async.biomodel.visitor;
 /**
  * Describes a species that can be visited
  * @author Nam 

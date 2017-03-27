@@ -11,13 +11,13 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.annotation;
+package edu.utah.ece.async.biomodel.annotation;
 
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

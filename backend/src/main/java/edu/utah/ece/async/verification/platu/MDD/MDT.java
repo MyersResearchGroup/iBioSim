@@ -11,11 +11,11 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.MDD;
+package edu.utah.ece.async.verification.platu.MDD;
 
 import java.util.*;
 
-import main.java.edu.utah.ece.async.verification.platu.stategraph.*;
+import edu.utah.ece.async.verification.platu.stategraph.*;
 
 /**
  * This data structure cannot be used as stack as it allows node sharing.

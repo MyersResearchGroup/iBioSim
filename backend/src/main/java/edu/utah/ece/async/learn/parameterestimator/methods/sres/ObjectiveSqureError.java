@@ -11,16 +11,16 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.learn.parameterestimator.methods.sres;
+package edu.utah.ece.async.learn.parameterestimator.methods.sres;
 
 import static java.lang.Math.abs;
 
 import java.util.List;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
-import main.java.edu.utah.ece.async.learn.genenet.Experiments;
-import main.java.edu.utah.ece.async.learn.genenet.SpeciesCollection;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
+import edu.utah.ece.async.learn.genenet.Experiments;
+import edu.utah.ece.async.learn.genenet.SpeciesCollection;
 
 /**
  * 

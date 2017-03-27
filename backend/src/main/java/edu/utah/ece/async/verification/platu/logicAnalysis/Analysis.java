@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.logicAnalysis;
+package edu.utah.ece.async.verification.platu.logicAnalysis;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -26,37 +26,37 @@ import java.util.Observable;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import main.java.edu.utah.ece.async.lpn.parser.Abstraction;
-import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Place;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnProcess;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.verification.platu.MDD.MDT;
-import main.java.edu.utah.ece.async.verification.platu.MDD.Mdd;
-import main.java.edu.utah.ece.async.verification.platu.MDD.mddNode;
-import main.java.edu.utah.ece.async.verification.platu.common.IndexObjMap;
-import main.java.edu.utah.ece.async.verification.platu.main.Options;
-import main.java.edu.utah.ece.async.verification.platu.markovianAnalysis.ProbGlobalState;
-import main.java.edu.utah.ece.async.verification.platu.markovianAnalysis.ProbGlobalStateSet;
-import main.java.edu.utah.ece.async.verification.platu.markovianAnalysis.ProbLocalStateGraph;
-import main.java.edu.utah.ece.async.verification.platu.partialOrders.DependentSet;
-import main.java.edu.utah.ece.async.verification.platu.partialOrders.DependentSetComparator;
-import main.java.edu.utah.ece.async.verification.platu.partialOrders.ProbStaticDependencySets;
-import main.java.edu.utah.ece.async.verification.platu.partialOrders.StaticDependencySets;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LPNTranRelation;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
-import main.java.edu.utah.ece.async.verification.platu.por1.AmpleSet;
-import main.java.edu.utah.ece.async.verification.platu.project.PrjState;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.EventSet;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.TimedPrjState;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.TimedStateSet;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
+import edu.utah.ece.async.lpn.parser.Abstraction;
+import edu.utah.ece.async.lpn.parser.ExprTree;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Place;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnProcess;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.verification.platu.MDD.MDT;
+import edu.utah.ece.async.verification.platu.MDD.Mdd;
+import edu.utah.ece.async.verification.platu.MDD.mddNode;
+import edu.utah.ece.async.verification.platu.common.IndexObjMap;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.markovianAnalysis.ProbGlobalState;
+import edu.utah.ece.async.verification.platu.markovianAnalysis.ProbGlobalStateSet;
+import edu.utah.ece.async.verification.platu.markovianAnalysis.ProbLocalStateGraph;
+import edu.utah.ece.async.verification.platu.partialOrders.DependentSet;
+import edu.utah.ece.async.verification.platu.partialOrders.DependentSetComparator;
+import edu.utah.ece.async.verification.platu.partialOrders.ProbStaticDependencySets;
+import edu.utah.ece.async.verification.platu.partialOrders.StaticDependencySets;
+import edu.utah.ece.async.verification.platu.platuLpn.LPNTranRelation;
+import edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
+import edu.utah.ece.async.verification.platu.por1.AmpleSet;
+import edu.utah.ece.async.verification.platu.project.PrjState;
+import edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.EventSet;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.TimedPrjState;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.TimedStateSet;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
 
 import java.util.Queue;
 import java.util.Iterator;

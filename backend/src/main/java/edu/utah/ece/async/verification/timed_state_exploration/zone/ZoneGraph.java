@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.zone;
+package edu.utah.ece.async.verification.timed_state_exploration.zone;
 
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.verification.platu.stategraph.State;
 
 import java.util.ArrayList;
 

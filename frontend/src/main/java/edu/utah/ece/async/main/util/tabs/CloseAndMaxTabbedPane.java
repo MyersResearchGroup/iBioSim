@@ -17,7 +17,7 @@
  * Ecole des Mines de Nantes, France
  */
 
-package main.java.edu.utah.ece.async.main.util.tabs;
+package edu.utah.ece.async.main.util.tabs;
 
 import java.awt.Window;
 import java.awt.event.MouseEvent;
@@ -35,7 +35,7 @@ import javax.swing.border.Border;
 import javax.swing.event.EventListenerList;
 import javax.swing.plaf.TabbedPaneUI;
 
-import main.java.edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.Gui;
 
 /**
  * A JTabbedPane with some added UI functionalities. A close and max/detach

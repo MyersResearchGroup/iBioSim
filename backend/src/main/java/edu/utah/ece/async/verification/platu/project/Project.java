@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.project;
+package edu.utah.ece.async.verification.platu.project;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -30,28 +30,28 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Translator;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.Analysis;
-import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.CompositionalAnalysis;
-import main.java.edu.utah.ece.async.verification.platu.main.Options;
-import main.java.edu.utah.ece.async.verification.platu.markovianAnalysis.MarkovianAnalysis;
-import main.java.edu.utah.ece.async.verification.platu.markovianAnalysis.PerfromTransientMarkovAnalysisThread;
-import main.java.edu.utah.ece.async.verification.platu.markovianAnalysis.ProbGlobalStateSet;
-import main.java.edu.utah.ece.async.verification.platu.markovianAnalysis.ProbLocalStateGraph;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LPNTranRelation;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.Instance;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.PlatuInstLexer;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.PlatuInstParser;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.octagon.Octagon;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.ContinuousUtilities;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Translator;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.verification.platu.logicAnalysis.Analysis;
+import edu.utah.ece.async.verification.platu.logicAnalysis.CompositionalAnalysis;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.markovianAnalysis.MarkovianAnalysis;
+import edu.utah.ece.async.verification.platu.markovianAnalysis.PerfromTransientMarkovAnalysisThread;
+import edu.utah.ece.async.verification.platu.markovianAnalysis.ProbGlobalStateSet;
+import edu.utah.ece.async.verification.platu.markovianAnalysis.ProbLocalStateGraph;
+import edu.utah.ece.async.verification.platu.platuLpn.LPNTranRelation;
+import edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN;
+import edu.utah.ece.async.verification.platu.platuLpn.io.Instance;
+import edu.utah.ece.async.verification.platu.platuLpn.io.PlatuInstLexer;
+import edu.utah.ece.async.verification.platu.platuLpn.io.PlatuInstParser;
+import edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;
+import edu.utah.ece.async.verification.timed_state_exploration.octagon.Octagon;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.ContinuousUtilities;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
 
 /**
  * 

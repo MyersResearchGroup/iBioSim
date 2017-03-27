@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.sbol;
+package edu.utah.ece.async.biomodel.gui.sbol;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -34,13 +34,13 @@ import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 
-import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
-import main.java.edu.utah.ece.async.sbol.util.SBOLIdentityManager2;
-import main.java.edu.utah.ece.async.biomodel.util.Utility;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.main.util.EditPreferences;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
+import edu.utah.ece.async.sbol.util.SBOLFileManager2;
+import edu.utah.ece.async.sbol.util.SBOLIdentityManager2;
+import edu.utah.ece.async.biomodel.util.Utility;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.util.EditPreferences;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.SBOLException;
 
 /**
  * 

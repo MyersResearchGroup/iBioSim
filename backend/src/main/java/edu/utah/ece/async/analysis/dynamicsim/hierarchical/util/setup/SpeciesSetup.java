@@ -11,22 +11,22 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup;
 
 import java.io.IOException;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Species;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.SpeciesNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.AbstractHierarchicalNode.Type;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorWrapper;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.SpeciesNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.AbstractHierarchicalNode.Type;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorWrapper;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 
 /**
  * 

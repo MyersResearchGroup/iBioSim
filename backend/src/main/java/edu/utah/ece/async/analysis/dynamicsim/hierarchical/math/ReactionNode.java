@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.math;
 
 import java.util.ArrayList;
 import java.util.HashSet;

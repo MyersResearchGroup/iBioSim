@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.markov;
+package edu.utah.ece.async.analysis.markov;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -25,12 +25,12 @@ import java.util.Stack;
 
 import javax.swing.JProgressBar;
 
-import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Translator;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.dataparser.DataParser;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.lpn.parser.ExprTree;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Translator;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.dataparser.DataParser;
+import edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

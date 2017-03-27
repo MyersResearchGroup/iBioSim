@@ -11,15 +11,15 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.comp;
+package edu.utah.ece.async.biomodel.gui.comp;
 
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.Schematic;
+import edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
+import edu.utah.ece.async.biomodel.gui.schematic.Schematic;
 
 
 /**

@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.network;
+package edu.utah.ece.async.biomodel.network;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,22 +42,22 @@ import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Unit.Kind;
 
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.biomodel.util.Utility;
-import main.java.edu.utah.ece.async.biomodel.visitor.AbstractPrintVisitor;
-import main.java.edu.utah.ece.async.biomodel.visitor.PrintActivatedBindingVisitor;
-import main.java.edu.utah.ece.async.biomodel.visitor.PrintActivatedProductionVisitor;
-import main.java.edu.utah.ece.async.biomodel.visitor.PrintComplexVisitor;
-import main.java.edu.utah.ece.async.biomodel.visitor.PrintDecaySpeciesVisitor;
-import main.java.edu.utah.ece.async.biomodel.visitor.PrintRepressionBindingVisitor;
-import main.java.edu.utah.ece.async.biomodel.visitor.PrintSpeciesVisitor;
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Translator;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.MutableString;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.biomodel.util.Utility;
+import edu.utah.ece.async.biomodel.visitor.AbstractPrintVisitor;
+import edu.utah.ece.async.biomodel.visitor.PrintActivatedBindingVisitor;
+import edu.utah.ece.async.biomodel.visitor.PrintActivatedProductionVisitor;
+import edu.utah.ece.async.biomodel.visitor.PrintComplexVisitor;
+import edu.utah.ece.async.biomodel.visitor.PrintDecaySpeciesVisitor;
+import edu.utah.ece.async.biomodel.visitor.PrintRepressionBindingVisitor;
+import edu.utah.ece.async.biomodel.visitor.PrintSpeciesVisitor;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Translator;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.MutableString;
 
 /**
  * This class represents a genetic network

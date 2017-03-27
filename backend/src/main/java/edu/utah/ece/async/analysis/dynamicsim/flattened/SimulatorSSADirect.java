@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.flattened;
+package edu.utah.ece.async.analysis.dynamicsim.flattened;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -20,7 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import main.java.edu.utah.ece.async.util.MutableBoolean;
+import edu.utah.ece.async.util.MutableBoolean;
 import odk.lang.FastMath;
 
 /**

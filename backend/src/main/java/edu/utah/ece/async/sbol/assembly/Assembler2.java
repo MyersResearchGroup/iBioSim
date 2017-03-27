@@ -11,16 +11,16 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.sbol.assembly;
+package edu.utah.ece.async.sbol.assembly;
 
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceAnnotation;
 
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
-import main.java.edu.utah.ece.async.main.util.EditPreferences;
-import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.SBOLException;
+import edu.utah.ece.async.main.util.EditPreferences;
+import edu.utah.ece.async.sbol.util.SBOLUtility2;
 
 import java.net.URI;
 import java.util.Arrays;

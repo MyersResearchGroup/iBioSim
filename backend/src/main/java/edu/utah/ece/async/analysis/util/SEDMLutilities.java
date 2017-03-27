@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.util;
+package edu.utah.ece.async.analysis.util;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -13,7 +13,7 @@
  *******************************************************************************/
 // $ANTLR 3.4 /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g 2013-06-26 17:00:36
 
-    package main.java.edu.utah.ece.async.verification.platu.platuLpn.io;
+    package edu.utah.ece.async.verification.platu.platuLpn.io;
 
 
 import org.antlr.runtime.*;

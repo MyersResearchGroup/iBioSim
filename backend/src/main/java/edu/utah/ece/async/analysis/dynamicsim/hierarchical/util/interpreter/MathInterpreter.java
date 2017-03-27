@@ -11,16 +11,16 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.interpreter;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.interpreter;
 
 import java.util.Map;
 
 import org.sbml.jsbml.ASTNode;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ReactionNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.AbstractHierarchicalNode.Type;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ReactionNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.AbstractHierarchicalNode.Type;
 
 /**
  * 

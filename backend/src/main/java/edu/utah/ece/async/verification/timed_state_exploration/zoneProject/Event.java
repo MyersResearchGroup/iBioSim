@@ -11,9 +11,9 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
+package edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
 
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * An Event is an action that is pending. This can be a transition to fire or an inequality.

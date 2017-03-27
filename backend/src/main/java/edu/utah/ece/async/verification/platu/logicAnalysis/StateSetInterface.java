@@ -11,9 +11,9 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.logicAnalysis;
+package edu.utah.ece.async.verification.platu.logicAnalysis;
 
-import main.java.edu.utah.ece.async.verification.platu.project.PrjState;
+import edu.utah.ece.async.verification.platu.project.PrjState;
 
 /**
  * 

@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.graph;
+package edu.utah.ece.async.graph;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -134,20 +134,20 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
-import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
-import main.java.edu.utah.ece.async.analysis.AnalysisView;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.main.Log;
-import main.java.edu.utah.ece.async.main.util.Utility;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.dataparser.DTSDParser;
-import main.java.edu.utah.ece.async.util.dataparser.DataParser;
-import main.java.edu.utah.ece.async.util.dataparser.TSDParser;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.analysis.util.SEDMLutilities;
+import edu.utah.ece.async.analysis.AnalysisView;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.Log;
+import edu.utah.ece.async.main.util.Utility;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.dataparser.DTSDParser;
+import edu.utah.ece.async.util.dataparser.DataParser;
+import edu.utah.ece.async.util.dataparser.TSDParser;
+import edu.utah.ece.async.util.exceptions.BioSimException;
 
 
 /**

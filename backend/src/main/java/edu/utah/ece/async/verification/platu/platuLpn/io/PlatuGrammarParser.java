@@ -13,7 +13,7 @@
  *******************************************************************************/
 // $ANTLR 3.4 /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g 2013-06-26 17:00:34
 
-    package main.java.edu.utah.ece.async.verification.platu.platuLpn.io;
+    package edu.utah.ece.async.verification.platu.platuLpn.io;
     
     import java.util.Map.Entry;
     import java.util.HashMap;
@@ -24,21 +24,21 @@
 
 import org.antlr.runtime.*;
 
-import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Place;
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.lpn.parser.Variable;
-import main.java.edu.utah.ece.async.verification.platu.expression.*;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LPNTran;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.VarExpr;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.VarExprList;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.VarSet;
-import main.java.edu.utah.ece.async.verification.platu.project.Project;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.lpn.parser.ExprTree;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Place;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.lpn.parser.Variable;
+import edu.utah.ece.async.verification.platu.expression.*;
+import edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
+import edu.utah.ece.async.verification.platu.platuLpn.LPNTran;
+import edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
+import edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN;
+import edu.utah.ece.async.verification.platu.platuLpn.VarExpr;
+import edu.utah.ece.async.verification.platu.platuLpn.VarExprList;
+import edu.utah.ece.async.verification.platu.platuLpn.VarSet;
+import edu.utah.ece.async.verification.platu.project.Project;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 
 import java.util.Stack;
 import java.util.List;

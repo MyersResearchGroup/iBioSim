@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.synthesis.genetic;
+package edu.utah.ece.async.synthesis.genetic;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -47,15 +47,15 @@ import javax.xml.stream.XMLStreamException;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
-import main.java.edu.utah.ece.async.synthesis.genetic.SynthesisGraph;
-import main.java.edu.utah.ece.async.synthesis.genetic.Synthesizer;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.main.Log;
-import main.java.edu.utah.ece.async.main.util.Utility;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
+import edu.utah.ece.async.sbol.util.SBOLFileManager2;
+import edu.utah.ece.async.synthesis.genetic.SynthesisGraph;
+import edu.utah.ece.async.synthesis.genetic.Synthesizer;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.Log;
+import edu.utah.ece.async.main.util.Utility;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.SBOLException;
 
 /**
  * 

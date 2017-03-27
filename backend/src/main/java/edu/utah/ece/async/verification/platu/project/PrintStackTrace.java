@@ -16,7 +16,7 @@
  * and open the template in the editor.
  */
 
-package main.java.edu.utah.ece.async.verification.platu.project;
+package edu.utah.ece.async.verification.platu.project;
 
 /**
  *

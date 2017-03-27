@@ -1,4 +1,4 @@
-package main.java.edu.utah.ece.async.util;
+package edu.utah.ece.async.util;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -11,12 +11,12 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.flattened;
+package edu.utah.ece.async.analysis.dynamicsim.flattened;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.ParentSimulator;
+import edu.utah.ece.async.analysis.dynamicsim.ParentSimulator;
 
 import java.awt.Point;
 import java.io.BufferedWriter;
@@ -69,13 +69,13 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.text.parser.ParseException;
 
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.dataparser.DTSDParser;
-import main.java.edu.utah.ece.async.util.dataparser.DataParser;
-import main.java.edu.utah.ece.async.util.dataparser.TSDParser;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.dataparser.DTSDParser;
+import edu.utah.ece.async.util.dataparser.DataParser;
+import edu.utah.ece.async.util.dataparser.TSDParser;
 
 /**
  * 

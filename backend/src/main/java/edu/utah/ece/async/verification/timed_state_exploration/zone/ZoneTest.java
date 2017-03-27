@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.zone;
+package edu.utah.ece.async.verification.timed_state_exploration.zone;
 
 import static org.junit.Assert.*;
 

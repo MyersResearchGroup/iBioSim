@@ -11,9 +11,9 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
+package edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
 
-import main.java.edu.utah.ece.async.lpn.parser.Variable;
+import edu.utah.ece.async.lpn.parser.Variable;
 
 /**
  * A Variable and Range class packages an lpn.parser.Variable with an

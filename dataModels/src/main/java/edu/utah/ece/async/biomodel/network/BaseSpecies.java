@@ -11,9 +11,9 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.network;
+package edu.utah.ece.async.biomodel.network;
 
-import main.java.edu.utah.ece.async.biomodel.visitor.SpeciesVisitor;
+import edu.utah.ece.async.biomodel.visitor.SpeciesVisitor;
 
 /**
  * This is the most basic implementation of the species class.  

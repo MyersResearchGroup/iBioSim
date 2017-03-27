@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.sbol;
+package edu.utah.ece.async.biomodel.gui.sbol;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,14 +27,14 @@ import com.clarkparsia.sbol.editor.Part;
 import com.clarkparsia.sbol.editor.Parts;
 import com.clarkparsia.sbol.editor.dialog.RegistryInputDialog;
 
-import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
-import main.java.edu.utah.ece.async.sbol.util.SBOLIdentityManager2;
-import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.sbol.browser.SBOLBrowser2;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
+import edu.utah.ece.async.sbol.util.SBOLFileManager2;
+import edu.utah.ece.async.sbol.util.SBOLIdentityManager2;
+import edu.utah.ece.async.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.sbol.browser.SBOLBrowser2;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.exceptions.SBOLException;
 
 import java.net.URI;
 import java.net.URISyntaxException;

@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.main;
+package edu.utah.ece.async.main;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
@@ -161,47 +161,47 @@ import com.clarkparsia.sbol.SBOLUtils;
 import com.clarkparsia.sbol.editor.SBOLDesignerPlugin;
 import com.clarkparsia.sbol.editor.dialog.RegistryInputDialog;
 
-import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
-import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarLexer;
-import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarParser;
+import edu.utah.ece.async.analysis.util.SEDMLutilities;
+import edu.utah.ece.async.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarLexer;
+import edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarParser;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import de.unirostock.sems.cbarchive.CombineArchive;
-import main.java.edu.utah.ece.async.SBOL2SBML;
-import main.java.edu.utah.ece.async.analysis.AnalysisThread;
-import main.java.edu.utah.ece.async.analysis.AnalysisView;
-import main.java.edu.utah.ece.async.analysis.Run;
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.annotation.SBOLAnnotation;
-import main.java.edu.utah.ece.async.biomodel.gui.movie.MovieContainer;
-import main.java.edu.utah.ece.async.biomodel.gui.sbmlcore.ElementsPanel;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.Utils;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.biomodel.parser.GCM2SBML;
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.graph.Graph;
-import main.java.edu.utah.ece.async.learn.AMSModel.LearnLPN;
-import main.java.edu.utah.ece.async.learn.GCM.LearnGCM;
-import main.java.edu.utah.ece.async.learn.datamanager.DataManager;
-import main.java.edu.utah.ece.async.lpn.gui.LHPNEditor;
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.lpn.parser.Lpn2verilog;
-import main.java.edu.utah.ece.async.lpn.parser.Translator;
-import main.java.edu.utah.ece.async.lpn.parser.properties.BuildProperty;
-import main.java.edu.utah.ece.async.main.util.EditPreferences;
-import main.java.edu.utah.ece.async.main.util.FileTree;
-import main.java.edu.utah.ece.async.main.util.Utility;
-import main.java.edu.utah.ece.async.main.util.tabs.CloseAndMaxTabbedPane;
-import main.java.edu.utah.ece.async.sbol.browser.SBOLBrowser2;
-import main.java.edu.utah.ece.async.synthesis.async.Synthesis;
-import main.java.edu.utah.ece.async.synthesis.genetic.SynthesisView;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.verification.AbstPane;
-import main.java.edu.utah.ece.async.verification.Verification;
+import edu.utah.ece.async.SBOL2SBML;
+import edu.utah.ece.async.analysis.AnalysisThread;
+import edu.utah.ece.async.analysis.AnalysisView;
+import edu.utah.ece.async.analysis.Run;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.annotation.SBOLAnnotation;
+import edu.utah.ece.async.biomodel.gui.movie.MovieContainer;
+import edu.utah.ece.async.biomodel.gui.sbmlcore.ElementsPanel;
+import edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
+import edu.utah.ece.async.biomodel.gui.schematic.Utils;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.biomodel.parser.GCM2SBML;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.graph.Graph;
+import edu.utah.ece.async.learn.AMSModel.LearnLPN;
+import edu.utah.ece.async.learn.GCM.LearnGCM;
+import edu.utah.ece.async.learn.datamanager.DataManager;
+import edu.utah.ece.async.lpn.gui.LHPNEditor;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.Lpn2verilog;
+import edu.utah.ece.async.lpn.parser.Translator;
+import edu.utah.ece.async.lpn.parser.properties.BuildProperty;
+import edu.utah.ece.async.main.util.EditPreferences;
+import edu.utah.ece.async.main.util.FileTree;
+import edu.utah.ece.async.main.util.Utility;
+import edu.utah.ece.async.main.util.tabs.CloseAndMaxTabbedPane;
+import edu.utah.ece.async.sbol.browser.SBOLBrowser2;
+import edu.utah.ece.async.synthesis.async.Synthesis;
+import edu.utah.ece.async.synthesis.genetic.SynthesisView;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.verification.AbstPane;
+import edu.utah.ece.async.verification.Verification;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the

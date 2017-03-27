@@ -15,7 +15,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package main.java.edu.utah.ece.async.verification.platu.gui;
+package edu.utah.ece.async.verification.platu.gui;
 
 import java.util.HashMap;
 import java.util.LinkedList;

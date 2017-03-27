@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.lpn.parser;
+package edu.utah.ece.async.lpn.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 
-import main.java.edu.utah.ece.async.verification.platu.main.Options;
-import main.java.edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.util.Message;
 
 /**
  * 

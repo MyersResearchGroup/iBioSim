@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.por1;
+package edu.utah.ece.async.verification.platu.por1;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,8 +19,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import main.java.edu.utah.ece.async.lpn.parser.Transition;
-import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.lpn.parser.Transition;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 
 /**
  * in this approach, we consider 7 conditions for dependent transition

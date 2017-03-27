@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.sbmlcore;
+package edu.utah.ece.async.biomodel.gui.sbmlcore;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -33,7 +33,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
 
 /**
  * 

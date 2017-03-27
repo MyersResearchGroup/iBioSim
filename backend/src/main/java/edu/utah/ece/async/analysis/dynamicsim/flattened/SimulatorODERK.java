@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.flattened;
+package edu.utah.ece.async.analysis.dynamicsim.flattened;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import javax.swing.JProgressBar;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 
-import main.java.edu.utah.ece.async.util.MutableBoolean;
+import edu.utah.ece.async.util.MutableBoolean;
 import flanagan.integration.DerivnFunction;
 import flanagan.integration.RungeKutta;
 

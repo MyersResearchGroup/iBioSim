@@ -11,29 +11,29 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.gui.movie;
+package edu.utah.ece.async.biomodel.gui.movie;
 
 
 import com.google.gson.Gson;
 import com.mxgraph.model.mxCell;
 
-import main.java.edu.utah.ece.async.analysis.AnalysisView;
-import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
-import main.java.edu.utah.ece.async.biomodel.gui.comp.Grid;
-import main.java.edu.utah.ece.async.biomodel.gui.movie.SerializableScheme;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.ListChooser;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.Schematic;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.TreeChooser;
-import main.java.edu.utah.ece.async.biomodel.gui.schematic.Utils;
-import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
-import main.java.edu.utah.ece.async.main.Gui;
-import main.java.edu.utah.ece.async.main.util.ExampleFileFilter;
-import main.java.edu.utah.ece.async.main.util.Utility;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.dataparser.DTSDParser;
-import main.java.edu.utah.ece.async.util.dataparser.DataParser;
-import main.java.edu.utah.ece.async.util.dataparser.TSDParser;
+import edu.utah.ece.async.analysis.AnalysisView;
+import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import edu.utah.ece.async.biomodel.gui.comp.Grid;
+import edu.utah.ece.async.biomodel.gui.movie.SerializableScheme;
+import edu.utah.ece.async.biomodel.gui.schematic.ListChooser;
+import edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
+import edu.utah.ece.async.biomodel.gui.schematic.Schematic;
+import edu.utah.ece.async.biomodel.gui.schematic.TreeChooser;
+import edu.utah.ece.async.biomodel.gui.schematic.Utils;
+import edu.utah.ece.async.biomodel.parser.BioModel;
+import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.util.ExampleFileFilter;
+import edu.utah.ece.async.main.util.Utility;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.dataparser.DTSDParser;
+import edu.utah.ece.async.util.dataparser.DataParser;
+import edu.utah.ece.async.util.dataparser.TSDParser;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;

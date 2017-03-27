@@ -12,7 +12,7 @@
  *  
  *******************************************************************************/
 
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.states;
 
 import java.util.HashMap;
 import java.util.Map;

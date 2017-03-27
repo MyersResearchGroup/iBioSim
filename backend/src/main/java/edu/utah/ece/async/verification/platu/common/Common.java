@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.platu.common;
+package edu.utah.ece.async.verification.platu.common;
 
 import java.io.Console;
 import java.io.IOException;

@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,18 +28,18 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.EventNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ReactionNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorWrapper;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
+import edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.EventNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ReactionNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorWrapper;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
 
 /**
  * 

@@ -11,9 +11,9 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.verification.timed_state_exploration.archive;
+package edu.utah.ece.async.verification.timed_state_exploration.archive;
 
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.lpn.parser.LPN;
 
 /**
  * Base class for the member variables of the octagons.

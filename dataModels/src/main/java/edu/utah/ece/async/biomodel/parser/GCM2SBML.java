@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.biomodel.parser;
+package edu.utah.ece.async.biomodel.parser;
 
 
 import java.io.BufferedReader;
@@ -32,8 +32,8 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.ext.comp.Port;
 
-import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

@@ -17,7 +17,7 @@
  * Ecole des Mines de Nantes, France
  */
 
-package main.java.edu.utah.ece.async.main.util.tabs;
+package edu.utah.ece.async.main.util.tabs;
 
 import java.awt.event.MouseEvent;
 import java.util.EventListener;

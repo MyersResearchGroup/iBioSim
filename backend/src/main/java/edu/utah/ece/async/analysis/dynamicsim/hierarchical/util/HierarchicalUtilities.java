@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.util;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,13 +26,13 @@ import java.util.Set;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ConstraintNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.EventNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ReactionNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.interpreter.RateSplitterInterpreter;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ConstraintNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.EventNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ReactionNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.VariableNode;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.util.interpreter.RateSplitterInterpreter;
 
 import org.sbml.jsbml.Model;
 

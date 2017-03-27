@@ -11,17 +11,17 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.lpn.parser;
+package edu.utah.ece.async.lpn.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.IntervalPair;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContAndRate;
-import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContinuousPair;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.IntervalPair;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContAndRate;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContinuousPair;
+import edu.utah.ece.async.util.GlobalConstants;
 
 import java.lang.Math;
 

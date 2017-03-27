@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.learn.AMSModel;
+package edu.utah.ece.async.learn.AMSModel;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -21,15 +21,15 @@ import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
-import main.java.edu.utah.ece.async.learn.AMSModel.DMVCrun;
-import main.java.edu.utah.ece.async.learn.AMSModel.LearnModel;
-import main.java.edu.utah.ece.async.learn.AMSModel.Variable;
-import main.java.edu.utah.ece.async.lpn.parser.LPN;
-import main.java.edu.utah.ece.async.main.*;
-import main.java.edu.utah.ece.async.util.GlobalConstants;
-import main.java.edu.utah.ece.async.util.Message;
-import main.java.edu.utah.ece.async.util.dataparser.*;
-import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
+import edu.utah.ece.async.learn.AMSModel.DMVCrun;
+import edu.utah.ece.async.learn.AMSModel.LearnModel;
+import edu.utah.ece.async.learn.AMSModel.Variable;
+import edu.utah.ece.async.lpn.parser.LPN;
+import edu.utah.ece.async.main.*;
+import edu.utah.ece.async.util.GlobalConstants;
+import edu.utah.ece.async.util.Message;
+import edu.utah.ece.async.util.dataparser.*;
+import edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * This class creates a GUI for the Learn program. It implements the

@@ -11,18 +11,18 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math;
+package edu.utah.ece.async.analysis.dynamicsim.hierarchical.math;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.DenseState;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.SparseState;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.ValueState;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorState;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorWrapper;
-import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.DenseState;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.SparseState;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.ValueState;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorState;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.VectorWrapper;
+import edu.utah.ece.async.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
 
 /**
  * 
