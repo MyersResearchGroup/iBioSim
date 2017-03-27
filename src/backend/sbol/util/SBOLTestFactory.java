@@ -52,11 +52,11 @@ import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceConstraint;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
-import dataModels.biomodel.annotation.AnnotationUtility;
-import dataModels.biomodel.annotation.SBOLAnnotation;
-import dataModels.biomodel.parser.BioModel;
-import dataModels.util.GlobalConstants;
-import frontend.main.util.EditPreferences;
+import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import main.java.edu.utah.ece.async.biomodel.annotation.SBOLAnnotation;
+import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
+import main.java.edu.utah.ece.async.main.util.EditPreferences;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

@@ -22,7 +22,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
 
-import dataModels.util.exceptions.BioSimException;
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import backend.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
@@ -30,6 +29,7 @@ import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelTyp
 import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

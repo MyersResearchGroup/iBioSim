@@ -20,7 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import dataModels.util.MutableBoolean;
+import main.java.edu.utah.ece.async.util.MutableBoolean;
 import odk.lang.FastMath;
 
 /**

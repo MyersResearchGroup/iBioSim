@@ -27,8 +27,8 @@ import java.util.logging.Logger;
 
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.StateGraph;
-import dataModels.lpn.parser.LPN;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

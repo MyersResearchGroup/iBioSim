@@ -13,7 +13,7 @@
  *******************************************************************************/
 package backend.verification.platu.logicAnalysis;
 
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * 

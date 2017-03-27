@@ -45,8 +45,8 @@ import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
 import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
 import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateType;
-import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * This class provides the state variables of the simulation.

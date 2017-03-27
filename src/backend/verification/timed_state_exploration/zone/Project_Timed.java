@@ -22,7 +22,7 @@ import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
-import dataModels.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
 
 /**
  * 

@@ -23,8 +23,8 @@ import backend.verification.timed_state_exploration.zoneProject.EventSet;
 import backend.verification.timed_state_exploration.zoneProject.IntervalPair;
 import backend.verification.timed_state_exploration.zoneProject.LPNContinuousPair;
 import backend.verification.timed_state_exploration.zoneProject.LPNTransitionPair;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * The purpose of this interface is to define the methods of Zones

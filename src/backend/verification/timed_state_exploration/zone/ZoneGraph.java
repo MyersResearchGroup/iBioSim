@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import backend.verification.platu.stategraph.State;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 import java.util.ArrayList;
 

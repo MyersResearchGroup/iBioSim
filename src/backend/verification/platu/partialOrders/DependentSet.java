@@ -15,7 +15,7 @@ package backend.verification.platu.partialOrders;
 
 import java.util.HashSet;
 
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * 

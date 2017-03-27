@@ -26,7 +26,7 @@ import backend.verification.platu.main.Main;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 import java.util.Set;
 
@@ -75,7 +75,7 @@ public class CompositeStateGraph {
 		return this.indexStateMap.get(index);
 	}
 	
-	public CompositeStateTran addStateTran(CompositeState currentState, CompositeState nextState, dataModels.lpn.parser.Transition lpnTran){
+	public CompositeStateTran addStateTran(CompositeState currentState, CompositeState nextState, main.java.edu.utah.ece.async.lpn.parser.Transition lpnTran){
 		CompositeStateTran stateTran = new CompositeStateTran(currentState, nextState, lpnTran);
 		
 		CompositeStateTran tmpTran = this.stateTranMap.get(stateTran);

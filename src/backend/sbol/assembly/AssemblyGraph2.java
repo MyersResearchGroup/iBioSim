@@ -42,11 +42,11 @@ import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbolstandard.core2.ComponentDefinition;
 
 import backend.sbol.util.SBOLFileManager2;
-import dataModels.biomodel.annotation.AnnotationUtility;
-import dataModels.biomodel.parser.BioModel;
-import dataModels.biomodel.util.SBMLutilities;
-import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.SBOLException;
+import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
+import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
 
 /**
  * 

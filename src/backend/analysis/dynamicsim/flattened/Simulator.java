@@ -16,6 +16,13 @@ package backend.analysis.dynamicsim.flattened;
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
+import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.Message;
+import main.java.edu.utah.ece.async.util.dataparser.DTSDParser;
+import main.java.edu.utah.ece.async.util.dataparser.DataParser;
+import main.java.edu.utah.ece.async.util.dataparser.TSDParser;
 
 import java.awt.Point;
 import java.io.BufferedWriter;
@@ -69,13 +76,6 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.text.parser.ParseException;
 
 import backend.analysis.dynamicsim.ParentSimulator;
-import dataModels.biomodel.annotation.AnnotationUtility;
-import dataModels.biomodel.util.SBMLutilities;
-import dataModels.util.GlobalConstants;
-import dataModels.util.Message;
-import dataModels.util.dataparser.DTSDParser;
-import dataModels.util.dataparser.DataParser;
-import dataModels.util.dataparser.TSDParser;
 
 /**
  * 

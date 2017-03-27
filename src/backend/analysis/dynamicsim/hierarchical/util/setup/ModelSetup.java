@@ -41,7 +41,7 @@ import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState.StateTy
 import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.comp.ReplacementHandler;
-import dataModels.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

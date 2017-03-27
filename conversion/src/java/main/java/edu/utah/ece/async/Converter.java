@@ -43,10 +43,10 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import dataModels.biomodel.parser.BioModel;
-import dataModels.biomodel.util.SBMLutilities;
-import dataModels.util.GlobalConstants;
-import frontend.main.util.EditPreferences;
+import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
+import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
+import main.java.edu.utah.ece.async.main.util.EditPreferences;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * Provides functionality for validating SBOL data models.

@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import backend.verification.platu.main.Options;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * 

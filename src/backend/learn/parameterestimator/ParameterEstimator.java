@@ -21,7 +21,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
 
-import dataModels.util.exceptions.BioSimException;
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import backend.learn.genenet.Experiments;
@@ -30,6 +29,7 @@ import backend.learn.parameterestimator.methods.sres.EvolutionMethodSetting;
 import backend.learn.parameterestimator.methods.sres.Modelsettings;
 import backend.learn.parameterestimator.methods.sres.ObjectiveSqureError;
 import backend.learn.parameterestimator.methods.sres.SRES;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

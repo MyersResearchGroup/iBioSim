@@ -21,10 +21,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import backend.verification.platu.main.Options;
-import dataModels.lpn.parser.ExprTree;
-import dataModels.lpn.parser.Place;
-import dataModels.lpn.parser.Transition;
-import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
+import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
+import main.java.edu.utah.ece.async.lpn.parser.Place;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnProcess;
 
 /**
  * This class is used for constructing static dependent transition set for each seed transition.

@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import backend.verification.platu.stategraph.State;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * 

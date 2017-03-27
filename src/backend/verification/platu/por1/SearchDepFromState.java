@@ -23,7 +23,7 @@ import java.util.Map.Entry;
 import backend.verification.platu.platuLpn.LPNTranRelation;
 import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.StateGraph;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * in this approach, we do not consider transition interleaving

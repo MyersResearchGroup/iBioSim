@@ -15,8 +15,8 @@ package backend.sbol.util;
 
 import java.net.URI;
 
-import dataModels.util.GlobalConstants;
-import frontend.main.util.EditPreferences;
+import main.java.edu.utah.ece.async.main.util.EditPreferences;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

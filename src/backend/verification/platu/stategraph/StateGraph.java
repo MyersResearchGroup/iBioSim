@@ -45,11 +45,11 @@ import backend.verification.timed_state_exploration.zoneProject.LPNTransitionPai
 import backend.verification.timed_state_exploration.zoneProject.TimedPrjState;
 import backend.verification.timed_state_exploration.zoneProject.UpdateContinuous;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Place;
-import dataModels.lpn.parser.Transition;
-import dataModels.lpn.parser.Variable;
-import dataModels.util.GlobalConstants;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Place;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Variable;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 
 import java.util.Set;
 import java.util.Stack;

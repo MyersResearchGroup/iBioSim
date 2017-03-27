@@ -41,10 +41,10 @@ import backend.verification.timed_state_exploration.zoneProject.LPNTransitionPai
 import backend.verification.timed_state_exploration.zoneProject.UpdateContinuous;
 import backend.verification.timed_state_exploration.zoneProject.VariableRangePair;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
-import dataModels.lpn.parser.ExprTree;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Transition;
-import dataModels.lpn.parser.Variable;
+import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Variable;
 
 /**
  * Octagons ('The Octagon Abstract Domain' by Mine) are the subsets of

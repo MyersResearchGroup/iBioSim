@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 import backend.verification.platu.logicAnalysis.StateSetInterface;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.PrjState;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * 

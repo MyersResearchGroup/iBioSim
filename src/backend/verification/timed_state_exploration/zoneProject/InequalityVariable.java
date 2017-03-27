@@ -21,10 +21,10 @@ import java.util.Properties;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
-import dataModels.lpn.parser.ExprTree;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Transition;
-import dataModels.lpn.parser.Variable;
+import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Variable;
 
 
 /**

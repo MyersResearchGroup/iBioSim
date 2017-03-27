@@ -28,7 +28,6 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 
-import dataModels.util.exceptions.BioSimException;
 import backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import backend.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import backend.analysis.dynamicsim.hierarchical.math.EventNode;
@@ -40,6 +39,7 @@ import backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
 import backend.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Variable;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Variable;
 
 /**
  * This class is meant as a utilities package. It contains static methods for

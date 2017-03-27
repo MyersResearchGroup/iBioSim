@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import backend.verification.platu.main.Options;
 import backend.verification.platu.project.Project;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
-import dataModels.lpn.parser.LPN;
-import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

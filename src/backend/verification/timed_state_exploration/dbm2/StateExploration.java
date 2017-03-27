@@ -21,8 +21,8 @@ import java.util.*;
 import javax.swing.JFileChooser;
 
 import backend.verification.timed_state_exploration.dbm2.LPNTranslator.UnsafeLPNException;
-import dataModels.lpn.parser.*;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.lpn.parser.*;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * This class finds the state graph for an LPN from an LPNFile object.

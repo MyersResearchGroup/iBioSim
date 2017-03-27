@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import backend.verification.platu.stategraph.StateGraph;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * in this approach, we consider 7 conditions for dependent transition

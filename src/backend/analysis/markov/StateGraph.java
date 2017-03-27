@@ -25,12 +25,12 @@ import java.util.Stack;
 
 import javax.swing.JProgressBar;
 
-import dataModels.lpn.parser.ExprTree;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Translator;
-import dataModels.util.Message;
-import dataModels.util.dataparser.DataParser;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Translator;
+import main.java.edu.utah.ece.async.util.Message;
+import main.java.edu.utah.ece.async.util.dataparser.DataParser;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

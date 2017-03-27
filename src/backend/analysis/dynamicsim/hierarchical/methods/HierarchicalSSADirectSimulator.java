@@ -29,7 +29,7 @@ import backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelTyp
 import backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
 import backend.analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
 import backend.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

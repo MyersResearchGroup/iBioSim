@@ -34,7 +34,7 @@ import org.sbml.jsbml.SpeciesReference;
 
 import com.joptimizer.optimizers.*;
 
-import dataModels.biomodel.util.SBMLutilities;
+import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
 
 /**
  * 

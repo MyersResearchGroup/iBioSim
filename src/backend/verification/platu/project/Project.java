@@ -48,10 +48,10 @@ import backend.verification.timed_state_exploration.octagon.Equivalence;
 import backend.verification.timed_state_exploration.octagon.Octagon;
 import backend.verification.timed_state_exploration.zoneProject.ContinuousUtilities;
 import backend.verification.timed_state_exploration.zoneProject.Zone;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Translator;
-import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Translator;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

@@ -29,7 +29,7 @@ import backend.analysis.dynamicsim.hierarchical.math.FunctionNode;
 import backend.analysis.dynamicsim.hierarchical.math.HierarchicalNode;
 import backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
 import backend.analysis.dynamicsim.hierarchical.math.VariableNode;
-import dataModels.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

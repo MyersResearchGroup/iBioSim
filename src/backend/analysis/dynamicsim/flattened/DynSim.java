@@ -27,8 +27,8 @@ import org.sbml.jsbml.SBMLWriter;
 
 import backend.analysis.dynamicsim.DynamicSimulation;
 import backend.analysis.dynamicsim.DynamicSimulation.SimulationType;
-import dataModels.biomodel.parser.BioModel;
-import dataModels.util.dataparser.TSDParser;
+import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
+import main.java.edu.utah.ece.async.util.dataparser.TSDParser;
 
 /**
  * 

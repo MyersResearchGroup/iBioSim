@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import javax.swing.JProgressBar;
 
 import backend.analysis.markov.StateGraph.Property;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

@@ -18,8 +18,8 @@ import java.util.*;
 
 import backend.verification.platu.common.PlatuObj;
 import backend.verification.platu.stategraph.*;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * State

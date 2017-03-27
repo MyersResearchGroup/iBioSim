@@ -23,8 +23,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.xml.stream.XMLStreamException;
 
-import dataModels.util.Message;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.util.Message;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 import backend.analysis.dynamicsim.flattened.SimulatorSSACR;
 import backend.analysis.dynamicsim.flattened.SimulatorSSADirect;
 import backend.analysis.dynamicsim.hierarchical.methods.HierarchicalMixedSimulator;

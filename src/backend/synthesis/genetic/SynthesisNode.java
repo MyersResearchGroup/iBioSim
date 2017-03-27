@@ -25,9 +25,9 @@ import org.sbolstandard.core2.SequenceOntology;
 
 import backend.sbol.util.SBOLFileManager2;
 import backend.sbol.util.SBOLUtility2;
-import dataModels.biomodel.annotation.AnnotationUtility;
-import dataModels.biomodel.util.SBMLutilities;
-import dataModels.util.exceptions.SBOLException;
+import main.java.edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
+import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
+import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
 
 /**
  * 

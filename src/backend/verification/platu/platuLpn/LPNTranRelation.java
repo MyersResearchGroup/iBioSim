@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 import java.util.Set;
 

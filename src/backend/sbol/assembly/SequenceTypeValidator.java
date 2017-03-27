@@ -21,8 +21,8 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.SBOLException;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
 
 /**
  * 

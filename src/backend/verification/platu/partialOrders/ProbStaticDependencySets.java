@@ -19,9 +19,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import backend.verification.platu.main.Options;
-import dataModels.lpn.parser.ExprTree;
-import dataModels.lpn.parser.Transition;
-import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
+import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnProcess;
 
 /**
  * This class extends the non-probabilistic static dependency transition set. 

@@ -16,6 +16,7 @@ package backend.analysis.dynamicsim.flattened;
 import gnu.trove.map.hash.TIntDoubleHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.set.hash.TIntHashSet;
+import main.java.edu.utah.ece.async.util.MutableBoolean;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import dataModels.util.MutableBoolean;
 import odk.lang.FastMath;
 
 /**

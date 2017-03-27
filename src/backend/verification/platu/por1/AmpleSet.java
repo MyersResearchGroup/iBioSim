@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import backend.verification.platu.platuLpn.LPNTranRelation;
 import backend.verification.platu.platuLpn.LpnTranList;
 import backend.verification.platu.stategraph.StateGraph;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * 

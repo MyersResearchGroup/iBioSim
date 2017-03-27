@@ -23,8 +23,8 @@ import backend.verification.platu.project.PrjState;
 import backend.verification.platu.stategraph.State;
 import backend.verification.timed_state_exploration.octagon.Equivalence;
 import backend.verification.timed_state_exploration.octagon.Octagon;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * 

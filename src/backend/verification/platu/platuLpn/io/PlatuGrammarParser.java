@@ -34,11 +34,11 @@ import backend.verification.platu.platuLpn.VarExprList;
 import backend.verification.platu.platuLpn.VarSet;
 import backend.verification.platu.project.Project;
 import backend.verification.platu.stategraph.StateGraph;
-import dataModels.lpn.parser.ExprTree;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Place;
-import dataModels.lpn.parser.Transition;
-import dataModels.lpn.parser.Variable;
+import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Place;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Variable;
 
 import java.util.Stack;
 import java.util.List;

@@ -19,8 +19,8 @@ import backend.verification.platu.main.Options;
 import backend.verification.platu.platuLpn.DualHashMap;
 import backend.verification.platu.stategraph.State;
 import backend.verification.platu.stategraph.StateGraph;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * 
