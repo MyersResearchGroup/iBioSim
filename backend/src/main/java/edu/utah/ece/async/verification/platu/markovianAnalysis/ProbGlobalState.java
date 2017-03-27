@@ -16,7 +16,7 @@ package main.java.edu.utah.ece.async.verification.platu.markovianAnalysis;
 import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 import main.java.edu.utah.ece.async.verification.platu.project.PrjState;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
 

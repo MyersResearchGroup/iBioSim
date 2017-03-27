@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import dataModels.lpn.parser.ExprTree;
-import dataModels.lpn.parser.Place;
-import dataModels.lpn.parser.Transition;
-import dataModels.lpn.parser.LpnDecomposition.LpnProcess;
+import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
+import main.java.edu.utah.ece.async.lpn.parser.Place;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition.LpnProcess;
 import main.java.edu.utah.ece.async.verification.platu.main.Options;
 
 /**

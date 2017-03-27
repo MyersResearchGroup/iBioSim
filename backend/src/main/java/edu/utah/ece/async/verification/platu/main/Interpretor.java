@@ -25,8 +25,8 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import dataModels.lpn.parser.LPN;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 import main.java.edu.utah.ece.async.verification.platu.project.Project;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 

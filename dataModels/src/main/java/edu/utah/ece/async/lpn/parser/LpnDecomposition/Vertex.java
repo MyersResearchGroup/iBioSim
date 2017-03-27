@@ -15,7 +15,7 @@ package main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition;
 
 import java.util.HashMap;
 
-import backend.verification.platu.main.Options;
+import main.java.edu.utah.ece.async.verification.platu.main.Options;
 
 /**
  * 

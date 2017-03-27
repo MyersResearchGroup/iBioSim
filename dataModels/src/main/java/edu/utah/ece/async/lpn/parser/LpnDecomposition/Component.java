@@ -15,7 +15,7 @@ package main.java.edu.utah.ece.async.lpn.parser.LpnDecomposition;
 
 import java.util.ArrayList;
 
-import backend.verification.platu.main.Options;
+import main.java.edu.utah.ece.async.verification.platu.main.Options;
 import main.java.edu.utah.ece.async.lpn.parser.LPN;
 import main.java.edu.utah.ece.async.lpn.parser.Place;
 import main.java.edu.utah.ece.async.lpn.parser.Transition;

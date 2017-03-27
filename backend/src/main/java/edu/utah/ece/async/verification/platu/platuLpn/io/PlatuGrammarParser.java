@@ -24,11 +24,11 @@
 
 import org.antlr.runtime.*;
 
-import dataModels.lpn.parser.ExprTree;
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Place;
-import dataModels.lpn.parser.Transition;
-import dataModels.lpn.parser.Variable;
+import main.java.edu.utah.ece.async.lpn.parser.ExprTree;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Place;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Variable;
 import main.java.edu.utah.ece.async.verification.platu.expression.*;
 import main.java.edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
 import main.java.edu.utah.ece.async.verification.platu.platuLpn.LPNTran;

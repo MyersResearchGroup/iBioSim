@@ -16,8 +16,8 @@ package main.java.edu.utah.ece.async.verification.platu.logicAnalysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 
 /**

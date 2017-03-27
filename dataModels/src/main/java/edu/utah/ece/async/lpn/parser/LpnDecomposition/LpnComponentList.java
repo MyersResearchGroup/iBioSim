@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
-import backend.verification.platu.main.Options;
+import main.java.edu.utah.ece.async.verification.platu.main.Options;
 import main.java.edu.utah.ece.async.lpn.parser.LPN;
 import main.java.edu.utah.ece.async.lpn.parser.Place;
 import main.java.edu.utah.ece.async.lpn.parser.Transition;

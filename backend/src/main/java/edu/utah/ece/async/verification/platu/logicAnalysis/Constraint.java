@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 import main.java.edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
 

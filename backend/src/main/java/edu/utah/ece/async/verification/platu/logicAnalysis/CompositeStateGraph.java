@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 import main.java.edu.utah.ece.async.verification.platu.main.Main;
 import main.java.edu.utah.ece.async.verification.platu.main.Options;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
@@ -75,7 +75,7 @@ public class CompositeStateGraph {
 		return this.indexStateMap.get(index);
 	}
 	
-	public CompositeStateTran addStateTran(CompositeState currentState, CompositeState nextState, dataModels.lpn.parser.Transition lpnTran){
+	public CompositeStateTran addStateTran(CompositeState currentState, CompositeState nextState, Transition lpnTran){
 		CompositeStateTran stateTran = new CompositeStateTran(currentState, nextState, lpnTran);
 		
 		CompositeStateTran tmpTran = this.stateTranMap.get(stateTran);

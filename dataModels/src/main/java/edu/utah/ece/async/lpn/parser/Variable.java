@@ -16,7 +16,7 @@ package main.java.edu.utah.ece.async.lpn.parser;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import backend.verification.timed_state_exploration.zoneProject.InequalityVariable;
+import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.InequalityVariable;
 
 /**
  * 

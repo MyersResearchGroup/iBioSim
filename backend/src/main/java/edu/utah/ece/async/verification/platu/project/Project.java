@@ -30,10 +30,10 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Translator;
-import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Translator;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.Analysis;
 import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.CompositionalAnalysis;
 import main.java.edu.utah.ece.async.verification.platu.main.Options;

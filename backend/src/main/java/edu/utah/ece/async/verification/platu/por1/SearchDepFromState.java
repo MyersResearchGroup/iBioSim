@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 import main.java.edu.utah.ece.async.verification.platu.platuLpn.LPNTranRelation;
 import main.java.edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;

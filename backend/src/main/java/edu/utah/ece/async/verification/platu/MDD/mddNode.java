@@ -15,7 +15,7 @@ package main.java.edu.utah.ece.async.verification.platu.MDD;
 
 import java.util.*;
 
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 

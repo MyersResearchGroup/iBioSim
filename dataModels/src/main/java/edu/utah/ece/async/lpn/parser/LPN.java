@@ -19,9 +19,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import backend.verification.platu.platuLpn.DualHashMap;
-import backend.verification.platu.stategraph.StateGraph;
-import backend.verification.timed_state_exploration.zoneProject.InequalityVariable;
+import main.java.edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
+import main.java.edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.InequalityVariable;
 import main.java.edu.utah.ece.async.util.GlobalConstants;
 import main.java.edu.utah.ece.async.util.Message;
 import main.java.edu.utah.ece.async.util.exceptions.BioSimException;

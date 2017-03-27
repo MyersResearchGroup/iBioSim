@@ -25,11 +25,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Place;
-import dataModels.lpn.parser.Transition;
-import dataModels.lpn.parser.Variable;
-import dataModels.util.GlobalConstants;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Place;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Variable;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 import main.java.edu.utah.ece.async.verification.platu.common.IndexObjMap;
 import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.Constraint;
 import main.java.edu.utah.ece.async.verification.platu.main.Main;
