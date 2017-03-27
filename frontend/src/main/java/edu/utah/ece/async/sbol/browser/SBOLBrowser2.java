@@ -28,7 +28,7 @@ import java.util.*;
 
 import org.sbolstandard.core2.Collection;
 
-import backend.sbol.util.SBOLUtility2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 import main.java.edu.utah.ece.async.main.Gui;
 import main.java.edu.utah.ece.async.util.GlobalConstants;
 

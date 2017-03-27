@@ -20,7 +20,7 @@ import javax.swing.*;
 
 import org.sbolstandard.core2.Component;
 
-import backend.sbol.util.SBOLUtility2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 import main.java.edu.utah.ece.async.util.GlobalConstants;
 
 //import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;

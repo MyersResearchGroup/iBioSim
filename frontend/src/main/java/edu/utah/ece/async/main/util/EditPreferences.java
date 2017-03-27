@@ -40,7 +40,7 @@ import javax.swing.plaf.metal.MetalButtonUI;
 
 import com.mxgraph.util.mxConstants;
 
-import backend.sbol.util.SBOLUtility2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 import main.java.edu.utah.ece.async.biomodel.parser.CompatibilityFixer;
 import main.java.edu.utah.ece.async.main.Gui;
 import main.java.edu.utah.ece.async.util.GlobalConstants;

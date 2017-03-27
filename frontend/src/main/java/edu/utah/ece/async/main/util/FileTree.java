@@ -30,7 +30,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import backend.sbol.util.SBOLUtility2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
 import main.java.edu.utah.ece.async.biomodel.parser.GCM2SBML;
 import main.java.edu.utah.ece.async.main.Gui;

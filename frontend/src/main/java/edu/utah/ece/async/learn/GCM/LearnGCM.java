@@ -68,10 +68,10 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
-import backend.learn.genenet.Experiments;
-import backend.learn.genenet.Run;
-import backend.learn.genenet.SpeciesCollection;
-import backend.learn.parameterestimator.ParameterEstimator;
+import main.java.edu.utah.ece.async.learn.genenet.Experiments;
+import main.java.edu.utah.ece.async.learn.genenet.Run;
+import main.java.edu.utah.ece.async.learn.genenet.SpeciesCollection;
+import main.java.edu.utah.ece.async.learn.parameterestimator.ParameterEstimator;
 import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
 import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
 import main.java.edu.utah.ece.async.learn.parameterestimator.ParamEstimatorPanel;

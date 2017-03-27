@@ -134,7 +134,7 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
-import backend.analysis.util.SEDMLutilities;
+import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
 import main.java.edu.utah.ece.async.analysis.AnalysisView;
 import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
 import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;

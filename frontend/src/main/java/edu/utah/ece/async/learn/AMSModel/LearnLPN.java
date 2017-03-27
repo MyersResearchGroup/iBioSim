@@ -21,9 +21,9 @@ import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
-import backend.learn.AMSModel.DMVCrun;
-import backend.learn.AMSModel.LearnModel;
-import backend.learn.AMSModel.Variable;
+import main.java.edu.utah.ece.async.learn.AMSModel.DMVCrun;
+import main.java.edu.utah.ece.async.learn.AMSModel.LearnModel;
+import main.java.edu.utah.ece.async.learn.AMSModel.Variable;
 import main.java.edu.utah.ece.async.lpn.parser.LPN;
 import main.java.edu.utah.ece.async.main.*;
 import main.java.edu.utah.ece.async.util.GlobalConstants;

@@ -45,15 +45,15 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
 
-import backend.analysis.dynamicsim.DynamicSimulation;
-import backend.analysis.dynamicsim.DynamicSimulation.SimulationType;
-import backend.analysis.dynamicsim.flattened.Simulator;
-import backend.analysis.fba.FluxBalanceAnalysis;
-import backend.analysis.markov.BuildStateGraphThread;
-import backend.analysis.markov.PerformSteadyStateMarkovAnalysisThread;
-import backend.analysis.markov.PerformTransientMarkovAnalysisThread;
-import backend.analysis.markov.StateGraph;
-import backend.analysis.markov.StateGraph.Property;
+import main.java.edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation;
+import main.java.edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation.SimulationType;
+import main.java.edu.utah.ece.async.analysis.dynamicsim.flattened.Simulator;
+import main.java.edu.utah.ece.async.analysis.fba.FluxBalanceAnalysis;
+import main.java.edu.utah.ece.async.analysis.markov.BuildStateGraphThread;
+import main.java.edu.utah.ece.async.analysis.markov.PerformSteadyStateMarkovAnalysisThread;
+import main.java.edu.utah.ece.async.analysis.markov.PerformTransientMarkovAnalysisThread;
+import main.java.edu.utah.ece.async.analysis.markov.StateGraph;
+import main.java.edu.utah.ece.async.analysis.markov.StateGraph.Property;
 import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
 import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
 import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;

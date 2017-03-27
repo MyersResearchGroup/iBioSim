@@ -76,7 +76,7 @@ import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
 import org.jmathml.ASTNode;
 
-import backend.analysis.util.SEDMLutilities;
+import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
 import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
 import main.java.edu.utah.ece.async.graph.Graph;
 import main.java.edu.utah.ece.async.lpn.gui.LHPNEditor;

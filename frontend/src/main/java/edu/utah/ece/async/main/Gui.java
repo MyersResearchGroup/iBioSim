@@ -162,10 +162,10 @@ import com.clarkparsia.sbol.SBOLUtils;
 import com.clarkparsia.sbol.editor.SBOLDesignerPlugin;
 import com.clarkparsia.sbol.editor.dialog.RegistryInputDialog;
 
-import backend.analysis.util.SEDMLutilities;
-import backend.sbol.util.SBOLUtility2;
-import backend.verification.platu.platuLpn.io.PlatuGrammarLexer;
-import backend.verification.platu.platuLpn.io.PlatuGrammarParser;
+import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
+import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarLexer;
+import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarParser;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import de.unirostock.sems.cbarchive.CombineArchive;

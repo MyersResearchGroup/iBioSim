@@ -47,9 +47,9 @@ import javax.xml.stream.XMLStreamException;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import backend.sbol.util.SBOLFileManager2;
-import backend.synthesis.genetic.SynthesisGraph;
-import backend.synthesis.genetic.Synthesizer;
+import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
+import main.java.edu.utah.ece.async.synthesis.genetic.SynthesisGraph;
+import main.java.edu.utah.ece.async.synthesis.genetic.Synthesizer;
 import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
 import main.java.edu.utah.ece.async.main.Gui;
 import main.java.edu.utah.ece.async.main.Log;

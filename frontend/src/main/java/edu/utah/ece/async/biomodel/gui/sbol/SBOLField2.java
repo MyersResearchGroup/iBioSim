@@ -34,7 +34,7 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import backend.sbol.util.SBOLUtility2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
 import main.java.edu.utah.ece.async.main.Gui;
 import main.java.edu.utah.ece.async.util.GlobalConstants;

@@ -27,9 +27,9 @@ import com.clarkparsia.sbol.editor.Part;
 import com.clarkparsia.sbol.editor.Parts;
 import com.clarkparsia.sbol.editor.dialog.RegistryInputDialog;
 
-import backend.sbol.util.SBOLFileManager2;
-import backend.sbol.util.SBOLIdentityManager2;
-import backend.sbol.util.SBOLUtility2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLIdentityManager2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
 import main.java.edu.utah.ece.async.main.Gui;
 import main.java.edu.utah.ece.async.sbol.browser.SBOLBrowser2;
