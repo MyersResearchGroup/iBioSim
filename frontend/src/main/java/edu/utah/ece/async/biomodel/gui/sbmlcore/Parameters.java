@@ -216,7 +216,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			j++;
 		}
 		
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(params);
+		edu.utah.ece.async.biomodel.util.Utility.sort(params);
 		parameters.setListData(params);
 		parameters.setSelectedIndex(0);
 		parameters.addMouseListener(this);
@@ -269,7 +269,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			}
 			k++;
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(params);
+		edu.utah.ece.async.biomodel.util.Utility.sort(params);
 		int selected = 0;
 		for (int i = 0; i < params.length; i++) {
 			if (params[i].split(" ")[0].equals(selectedParameter)) {
@@ -813,7 +813,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									params = Utility.getList(params, parameters);
 									parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 									params[index] = param;
-									main.java.edu.utah.ece.async.biomodel.util.Utility.sort(params);
+									edu.utah.ece.async.biomodel.util.Utility.sort(params);
 									parameters.setListData(params);
 									parameters.setSelectedIndex(index);
 								} else {
@@ -827,7 +827,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									for (int i = 0; i < adding.length; i++) {
 										params[i] = (String) adding[i];
 									}
-									main.java.edu.utah.ece.async.biomodel.util.Utility.sort(params);
+									edu.utah.ece.async.biomodel.util.Utility.sort(params);
 									parameters.setListData(params);
 									parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 									if (bioModel.getSBMLDocument().getModel().getParameterCount() == 1) {
@@ -960,7 +960,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								for (int i = 0; i < adding.length; i++) {
 									params[i] = (String) adding[i];
 								}
-								main.java.edu.utah.ece.async.biomodel.util.Utility.sort(params);
+								edu.utah.ece.async.biomodel.util.Utility.sort(params);
 								parameters.setListData(params);
 								parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 								if (bioModel.getSBMLDocument().getModel().getParameterCount() == 1) {

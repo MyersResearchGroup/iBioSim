@@ -909,7 +909,7 @@ public class Utility {
 				num++;
 			}
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(currentList);
+		edu.utah.ece.async.biomodel.util.Utility.sort(currentList);
 		list.setListData(currentList);
 		return currentList;
 	}

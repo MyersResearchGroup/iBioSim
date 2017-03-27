@@ -177,7 +177,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(specs);
+		edu.utah.ece.async.biomodel.util.Utility.sort(specs);
 		species.setListData(specs);
 		species.setSelectedIndex(0);
 		species.addMouseListener(this);
@@ -217,7 +217,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(specs);
+		edu.utah.ece.async.biomodel.util.Utility.sort(specs);
 		int selected = 0;
 		for (int i = 0; i < specs.length; i++) {
 			if (specs[i].split("\\[| ")[0].equals(selectedSpecies)) {
@@ -657,7 +657,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 							specie.setConversionFactor(convFactor);
 						}
 						specs[index1] = addSpec;
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(specs);
+						edu.utah.ece.async.biomodel.util.Utility.sort(specs);
 						species.setListData(specs);
 						species.setSelectedIndex(index1);
 						if (paramsOnly) {
@@ -739,7 +739,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < adding.length; i++) {
 							specs[i] = (String) adding[i];
 						}
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(specs);
+						edu.utah.ece.async.biomodel.util.Utility.sort(specs);
 						species.setListData(specs);
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (bioModel.getSBMLDocument().getModel().getSpeciesCount() == 1) {

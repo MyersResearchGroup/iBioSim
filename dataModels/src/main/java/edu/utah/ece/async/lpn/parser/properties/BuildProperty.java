@@ -207,7 +207,7 @@ public class BuildProperty {
 				switch(switchCaseTree.getType())
 				{
 
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.SENALWAYS :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.SENALWAYS :
 
 
 					int senalways_pFirst;
@@ -228,7 +228,7 @@ public class BuildProperty {
 						// Check if the zero-th child is a sensitivity list.
 						CommonTree theList = (CommonTree) switchCaseTree.getChild(0);
 						if(theList.getType() ==
-								main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LPARA){
+								edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LPARA){
 
 							sensitivityList = new String[theList.getChildCount()];
 							sensitivityVariables = new String[theList.getChildCount()];
@@ -362,7 +362,7 @@ public class BuildProperty {
 					}
 					break;
 
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ALWAYS : 
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ALWAYS : 
 					//System.out.println("child count of always : "+switchCaseTree.getChildCount());
 					//					if(numPlaces==0) pFirst="p0";
 					//					else pFirst = "p"+(numPlaces-1);
@@ -402,17 +402,17 @@ public class BuildProperty {
 					numPlaces++;
 
 					break; 
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.RCURL :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.RCURL :
 					pLast= "p"+(numPlaces-1);
 					//loop=false;
 					//System.out.println("pLast is :"+pLast);
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.BOOLEAN : 
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.BOOLEAN : 
 					varType = "boolean";
 					varName = generateExpression((CommonTree)switchCaseTree.getChild(0));
 					lpnObj.addInput(varName, varType, "0");
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.REAL : 
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.REAL : 
 					varType = "continuous";
 					varName = generateExpression((CommonTree)switchCaseTree.getChild(0));
 					//					lpnObj.addInput(varName, varType);
@@ -420,12 +420,12 @@ public class BuildProperty {
 					Variable newVar = lpnObj.getVariable(varName);
 					newVar.addInitRate("0");
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.INTEGER : 
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.INTEGER : 
 					varType = "integer";
 					varName = generateExpression((CommonTree)switchCaseTree.getChild(0));
 					lpnObj.addInput(varName, varType, "0");
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ASSERT :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ASSERT :
 					//System.out.println("Assert statement ");
 					enablingCond= generateExpression((CommonTree)switchCaseTree.getChild(0));
 
@@ -464,10 +464,10 @@ public class BuildProperty {
 					numPlaces++;
 					lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ASSERT_STABLE :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ASSERT_STABLE :
 
 					break;	
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT_STABLE :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT_STABLE :
 					//System.out.println("child is :"+(CommonTree)switchCaseTree.getChild(0));
 					enablingCond= generateExpression((CommonTree)switchCaseTree.getChild(0));
 					delay= generateExpression((CommonTree)switchCaseTree.getChild(1));
@@ -485,7 +485,7 @@ public class BuildProperty {
 					lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
 					lpnObj.getTransition("t" +(numTransitions-1)).setPersistent(true);
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ASSERT_UNTIL :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ASSERT_UNTIL :
 					String string1 = generateExpression((CommonTree)switchCaseTree.getChild(0));
 					String string2 = generateExpression((CommonTree)switchCaseTree.getChild(1));
 					enablingCond= string2;
@@ -516,44 +516,44 @@ public class BuildProperty {
 					lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
 
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ID : 
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ID : 
 					//System.out.println("Property name ");
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.INT :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.INT :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.NOT :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.NOT :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.PLUS :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.PLUS :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MINUS :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MINUS :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MULT :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MULT :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.DIV :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.DIV :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MOD :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MOD :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.EQUAL :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.EQUAL :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.NOT_EQUAL :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.NOT_EQUAL :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.GET :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.GET :
 
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LET :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LET :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.GETEQ :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.GETEQ :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LETEQ :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LETEQ :
 					break;
 
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.AND :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.AND :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.OR :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.OR :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.SAMEAS :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.SAMEAS :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT :
 					//System.out.println("wait statement: ");
 					int count = switchCaseTree.getChildCount();
 					if (count==1){
@@ -623,7 +623,7 @@ public class BuildProperty {
 
 					break;
 
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT_DELAY:
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT_DELAY:
 					enablingCond = "t";
 					delay = generateExpression((CommonTree)switchCaseTree.getChild(0));
 
@@ -644,7 +644,7 @@ public class BuildProperty {
 
 					break;
 
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.IF :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.IF :
 					boolean elsePartExists = false;
 					//System.out.println("IF statement");
 					if(list.getItemCount()!=0){
@@ -655,7 +655,7 @@ public class BuildProperty {
 					list.add(condition);
 
 					for(int j=0;j<switchCaseTree.getChildCount();j++){
-						if(switchCaseTree.getChild(j).getType()==main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSEIF){
+						if(switchCaseTree.getChild(j).getType()==edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSEIF){
 
 							condition=  generateExpression((CommonTree)switchCaseTree.getChild(j).getChild(0));
 							list.add(condition);
@@ -733,7 +733,7 @@ public class BuildProperty {
 
 						}
 
-						else if(!(switchCaseTree.getChild(j).getType()==main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSEIF) & !(switchCaseTree.getChild(j).getType()==main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSE)){
+						else if(!(switchCaseTree.getChild(j).getType()==edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSEIF) & !(switchCaseTree.getChild(j).getType()==edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSE)){
 							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true, stayConditions);
 
 
@@ -746,13 +746,13 @@ public class BuildProperty {
 					lpnObj.addMovement("p"+(numPlaces-1),"t" +(numTransitions-1));
 					lpnObj.addMovement("t" +(numTransitions-1), "pEnd"+(numEndPlaces-1));
 					for(int j=0;j<switchCaseTree.getChildCount();j++){
-						if(switchCaseTree.getChild(j).getType()==main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSEIF){
+						if(switchCaseTree.getChild(j).getType()==edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSEIF){
 							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true, stayConditions);
 						}
 					}
 
 					for(int j=0;j<switchCaseTree.getChildCount();j++){
-						if(switchCaseTree.getChild(j).getType()==main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSE){
+						if(switchCaseTree.getChild(j).getType()==edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSE){
 							elsePartExists = true;
 							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true, stayConditions);
 						}
@@ -790,9 +790,9 @@ public class BuildProperty {
 					numPlaces++;
 					lpnObj.addMovement("t" +(numTransitions-1),"p"+(numPlaces-1));
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.END :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.END :
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSEIF :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSEIF :
 					//System.out.println("ELSEIF ");	
 					for(int j=0;j<switchCaseTree.getChildCount();j++){
 
@@ -849,7 +849,7 @@ public class BuildProperty {
 							numPlaces++;
 							lpnObj.addMovement("t" +(numTransitions-1), "p"+(numPlaces-1));
 						}
-						else if(switchCaseTree.getChild(j).getType()==main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.IF){
+						else if(switchCaseTree.getChild(j).getType()==edu.utah.ece.async.lpn.parser.properties.PropertyLexer.IF){
 							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true, stayConditions);
 						}
 						else{
@@ -864,7 +864,7 @@ public class BuildProperty {
 					lpnObj.addMovement("p"+(numPlaces-1),"t" +(numTransitions-1));
 					lpnObj.addMovement("t" +(numTransitions-1), "pEnd"+(numEndPlaces-1));
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSE :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ELSE :
 					//System.out.println("ELSE ");	
 
 					StringBuffer sb3 = new StringBuffer();
@@ -909,7 +909,7 @@ public class BuildProperty {
 					lpnObj.addMovement("p"+(numPlaces-1),"t" +(numTransitions-1));
 					lpnObj.addMovement("t" +(numTransitions-1), "pEnd"+(numEndPlaces-1));
 					break;
-				case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT_POSEDGE :
+				case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT_POSEDGE :
 					enablingCond=  generateExpression((CommonTree)switchCaseTree.getChild(0));
 					//System.out.println("");
 
@@ -964,131 +964,131 @@ public class BuildProperty {
 		if ( newChild != null ) {
 
 			switch (newChild.getType()) {
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT: 
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT: 
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.IF: 
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.IF: 
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ID : 
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.ID : 
 				result= newChild.toString();
 				//System.out.println("String in ID : "+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.FLOAT:
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.FLOAT:
 				result=newChild.toString();
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.INT	:
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.INT	:
 				result=newChild.toString();
 				//System.out.println("String in INT :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.STRING	:
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.STRING	:
 				result=newChild.toString();
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT_POSEDGE	:
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.WAIT_POSEDGE	:
 				result=generateExpression((CommonTree)newChild.getChild(0));
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.GET :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.GET :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + ">" +string2);
 				//System.out.println("String in GET :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.AND :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.AND :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= ("("+string1 + ")&(" +string2+")");
 				//result= (string1 + "&" +string2);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.DIV :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.DIV :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "/" +string2);
 				//System.out.println("result2 :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.EQUAL :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.EQUAL :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "=" +string2);
 				//System.out.println("result2 :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.GETEQ :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.GETEQ :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + ">=" +string2);
 
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LET :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LET :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "<" +string2);
 				//System.out.println("result2 :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LETEQ :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LETEQ :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "<=" +string2);
 				//System.out.println("result2 :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MINUS :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MINUS :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "-" +string2);
 				//System.out.println("result2 :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MOD :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MOD :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "%" +string2);
 				//System.out.println("result2 :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MULT :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.MULT :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "*" +string2);
 				//System.out.println("result2 :"+result);
 				break;
 
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.NOT :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.NOT :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				result= ("~(" +string1+")");
 				//result= "~"+string1;
 				//System.out.println("String in NOT :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.NOT_EQUAL :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.NOT_EQUAL :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "!=" +string2);
 				//System.out.println("result2 :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.OR :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.OR :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "|" +string2);
 				//System.out.println("result2 :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.PLUS :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.PLUS :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + " + " +string2);
 				//System.out.println("result2 :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.SAMEAS :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.SAMEAS :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "=" +string2);
 				//System.out.println("String in SAMEAS :"+result);
 				break;
 
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LPARA :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.LPARA :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= "(";
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.RPARA :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.RPARA :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= ")";
 				//System.out.println("String in SAMEAS :"+result);
 				break;
-			case main.java.edu.utah.ece.async.lpn.parser.properties.PropertyLexer.UNIFORM :
+			case edu.utah.ece.async.lpn.parser.properties.PropertyLexer.UNIFORM :
 				result= newChild.toString();
 				//System.out.println("String in UNIFORM :"+result);
 				break;

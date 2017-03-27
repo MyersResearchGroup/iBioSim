@@ -27,7 +27,7 @@ import edu.utah.ece.async.verification.platu.platuLpn.*;
  * @version %I%
  */
 public class Poset {
-	public static final int INFINITY = main.java.edu.utah.ece.async.verification.platu.common.Common.INFINITY;
+	public static final int INFINITY = edu.utah.ece.async.verification.platu.common.Common.INFINITY;
 
 	protected HashMap<Transition, HashSet<Transition>> causalityFwd;
 	protected HashMap<Transition, Transition> causalityBwd;

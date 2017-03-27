@@ -6814,7 +6814,7 @@ public class BioModel extends Observable{
 				if (model.getUnitDefinition(u.getId())==null) {
 					model.addUnitDefinition(u);
 				} 
-				main.java.edu.utah.ece.async.biomodel.parser.BioModel.updateUnitId(model, oldName, newName);
+				edu.utah.ece.async.biomodel.parser.BioModel.updateUnitId(model, oldName, newName);
 			}
 		}
 		// TODO: functions not flattened right, no replacements
@@ -7157,7 +7157,7 @@ public class BioModel extends Observable{
   				comps[i] += " " + compartment.getUnits();
   			}
   		}
-  		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(comps);
+  		edu.utah.ece.async.biomodel.util.Utility.sort(comps);
   	}
   	if (model.getSpeciesCount() > 0) {
   		String[] specs = new String[model.getSpeciesCount()];
@@ -7179,7 +7179,7 @@ public class BioModel extends Observable{
   				specs[i] += " " + species.getUnits();
   			}
   		}
-  		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(specs);
+  		edu.utah.ece.async.biomodel.util.Utility.sort(specs);
   	}
   	if (model.getParameterCount() > 0) {
   		String[] params = new String[model.getParameterCount()];
@@ -7195,7 +7195,7 @@ public class BioModel extends Observable{
   				params[i] = parameter.getId() + " " + parameter.getValue();
   			}
   		}
-  		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(params);
+  		edu.utah.ece.async.biomodel.util.Utility.sort(params);
   	}
   	for (int i = 0; i < model.getReactionCount(); i++) {
   		if (!model.getReaction(i).isSetKineticLaw()) continue;

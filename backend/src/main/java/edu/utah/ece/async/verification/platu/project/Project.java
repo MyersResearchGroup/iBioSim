@@ -492,7 +492,7 @@ public class Project {
 			parser.parseLpnFile(this);
 		}
 		
-		main.java.edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN.nextID = 1;
+		edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN.nextID = 1;
 		
 		HashMap<String, PlatuLPN> instanceMap = new HashMap<String, PlatuLPN>();
 		for(Instance inst : PlatuInstParser.InstanceList){

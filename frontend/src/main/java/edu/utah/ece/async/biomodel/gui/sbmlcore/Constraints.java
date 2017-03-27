@@ -109,7 +109,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(constraints);
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(cons);
+		edu.utah.ece.async.biomodel.util.Utility.sort(cons);
 		constraints.setListData(cons);
 		constraints.setSelectedIndex(0);
 		constraints.addMouseListener(this);
@@ -298,7 +298,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 								cons[index] += "[" + dimID[i] + "]";
 							}
 						}
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(cons);
+						edu.utah.ece.async.biomodel.util.Utility.sort(cons);
 						constraints.setListData(cons);
 						constraints.setSelectedIndex(index);
 						modelEditor.makeUndoPoint();
@@ -351,7 +351,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						for (int i = 0; i < adding.length; i++) {
 							cons[i] = (String) adding[i];
 						}
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(cons);
+						edu.utah.ece.async.biomodel.util.Utility.sort(cons);
 						constraints.setListData(cons);
 						constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (bioModel.getSBMLDocument().getModel().getConstraintCount() == 1) {
@@ -395,7 +395,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			}
 			cons[i] = constraint.getMetaId() + SBMLutilities.getDimensionString(constraint);
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(cons);
+		edu.utah.ece.async.biomodel.util.Utility.sort(cons);
 		constraints.setListData(cons);
 		constraints.setSelectedIndex(0);
 	}

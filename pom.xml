@@ -37,6 +37,18 @@
 	</modules>
 
 	<build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <resources>
+      <resource>
+		    <directory>resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+	      <directory>test</directory>
+      </testResource>
+    </testResources>
+    
 		<plugins>
 			<plugin>
 				<!-- settings for javac. -->

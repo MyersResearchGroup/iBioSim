@@ -133,7 +133,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(initAssigns);
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(inits);
+		edu.utah.ece.async.biomodel.util.Utility.sort(inits);
 		initAssigns.setListData(inits);
 		initAssigns.setSelectedIndex(0);
 		initAssigns.addMouseListener(this);

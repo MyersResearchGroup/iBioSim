@@ -136,7 +136,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(functions);
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(funcs);
+		edu.utah.ece.async.biomodel.util.Utility.sort(funcs);
 		functions.setListData(funcs);
 		functions.setSelectedIndex(0);
 		functions.addMouseListener(this);
@@ -532,7 +532,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			}
 			count++;
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(funcs);
+		edu.utah.ece.async.biomodel.util.Utility.sort(funcs);
 		functions.setListData(funcs);
 		functions.setSelectedIndex(0);
 	}

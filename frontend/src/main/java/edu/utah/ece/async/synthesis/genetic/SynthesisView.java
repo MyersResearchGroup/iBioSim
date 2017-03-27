@@ -493,8 +493,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
   }
 
   private static boolean compareModels(BioModel subModel1, BioModel subModel2) {
-    String hash1 = main.java.edu.utah.ece.async.biomodel.util.Utility.MD5(subModel1.getSBMLDocument());
-    String hash2 = main.java.edu.utah.ece.async.biomodel.util.Utility.MD5(subModel2.getSBMLDocument());
+    String hash1 = edu.utah.ece.async.biomodel.util.Utility.MD5(subModel1.getSBMLDocument());
+    String hash2 = edu.utah.ece.async.biomodel.util.Utility.MD5(subModel2.getSBMLDocument());
     return hash1 == hash2;
   }
 

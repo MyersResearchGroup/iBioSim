@@ -155,7 +155,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(compartments);
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(comps);
+		edu.utah.ece.async.biomodel.util.Utility.sort(comps);
 		compartments.setListData(comps);
 		compartments.setSelectedIndex(0);
 		compartments.addMouseListener(this);
@@ -551,7 +551,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							}
 						}
 						comps[index] = addComp;
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(comps);
+						edu.utah.ece.async.biomodel.util.Utility.sort(comps);
 						compartments.setListData(comps);
 						compartments.setSelectedIndex(index);
 						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
@@ -635,7 +635,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						for (int i = 0; i < adding.length; i++) {
 							comps[i] = (String) adding[i];
 						}
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(comps);
+						edu.utah.ece.async.biomodel.util.Utility.sort(comps);
 						compartments.setListData(comps);
 						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (bioModel.getSBMLDocument().getModel().getCompartmentCount() == 1) {
@@ -777,7 +777,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				}
 			}
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(comparts);
+		edu.utah.ece.async.biomodel.util.Utility.sort(comparts);
 		int selected = 0;
 		for (int i = 0; i < comparts.length; i++) {
 			if (comparts[i].split("\\[| ")[0].equals(selectedCompartment)) {

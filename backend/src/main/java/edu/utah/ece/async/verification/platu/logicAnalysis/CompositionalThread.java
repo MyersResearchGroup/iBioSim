@@ -148,7 +148,7 @@ public class CompositionalThread extends Thread{
      * @return True if compatible, otherwise False.
      */
 	@SuppressWarnings("unused")
-	private static boolean compatible(main.java.edu.utah.ece.async.verification.platu.stategraph.State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
+	private static boolean compatible(edu.utah.ece.async.verification.platu.stategraph.State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
 		int[] constraintVector = constr.getVector();
 		int[] currentVector = currentState.getVariableVector();
 		
@@ -169,11 +169,11 @@ public class CompositionalThread extends Thread{
      * @return Number of new transitions.
      */
 	@SuppressWarnings("unused")
-	private static int createNewState(StateGraph sg, main.java.edu.utah.ece.async.verification.platu.stategraph.State compatibleState, Constraint c){
+	private static int createNewState(StateGraph sg, edu.utah.ece.async.verification.platu.stategraph.State compatibleState, Constraint c){
 		int newTransitions = 0;
 
 		// Create new state and insert into state graph
-		main.java.edu.utah.ece.async.verification.platu.stategraph.State newState = new main.java.edu.utah.ece.async.verification.platu.stategraph.State(compatibleState);
+		edu.utah.ece.async.verification.platu.stategraph.State newState = new edu.utah.ece.async.verification.platu.stategraph.State(compatibleState);
 		int[] newVector = newState.getVariableVector();
 		
 		//List<VarNode> variableList = c.getVariableList();
@@ -187,7 +187,7 @@ public class CompositionalThread extends Thread{
 			newVector[index] = valueList.get(i);
 		}
 		
-		main.java.edu.utah.ece.async.verification.platu.stategraph.State nextState = sg.addState(newState);
+		edu.utah.ece.async.verification.platu.stategraph.State nextState = sg.addState(newState);
 		if(nextState == newState){
 			int result = sg.synchronizedConstrFindSG(nextState);
 			if(result < 0) return newTransitions;

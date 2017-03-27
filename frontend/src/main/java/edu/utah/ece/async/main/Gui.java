@@ -3217,7 +3217,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		} else {
 			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
 		}
-		String exportPath = main.java.edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY,
+		String exportPath = edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY,
 				"Export " + fileType.replace("1", ""), -1);
 		if (!exportPath.equals("")) {
 			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
@@ -3500,7 +3500,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 		final JPanel BioModelsPanel = new JPanel(new BorderLayout());
 		final JList ListOfBioModels = new JList();
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(BioModelIds);
+		edu.utah.ece.async.biomodel.util.Utility.sort(BioModelIds);
 		ListOfBioModels.setListData(BioModelIds);
 		ListOfBioModels.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JLabel TextBioModels = new JLabel("List of BioModels");
@@ -4977,7 +4977,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		} else {
 			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
 		}
-		String exportPath = main.java.edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY,
+		String exportPath = edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY,
 				"Export Archive", -1);
 		if (!exportPath.equals("")) {
 			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
@@ -10173,7 +10173,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			}
 		}
 		String[] usingViews = views.toArray(new String[0]);
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(usingViews);
+		edu.utah.ece.async.biomodel.util.Utility.sort(usingViews);
 		return usingViews;
 	}
 

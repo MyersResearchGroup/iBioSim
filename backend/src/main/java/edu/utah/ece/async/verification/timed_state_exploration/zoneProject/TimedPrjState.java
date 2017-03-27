@@ -134,7 +134,7 @@ public class TimedPrjState extends PrjState{
 			_previousProjectState = new HashMap<EventSet, HashSet<TimedPrjState>>();
 		}
 		
-		if(main.java.edu.utah.ece.async.verification.platu.main.Options.getTimingAnalysisType()
+		if(edu.utah.ece.async.verification.platu.main.Options.getTimingAnalysisType()
 				.equals("zone")){
 		
 			/*  
@@ -145,7 +145,7 @@ public class TimedPrjState extends PrjState{
 		
 			_zones[0] = new Zone(initStateArray);
 		}
-		else if (main.java.edu.utah.ece.async.verification.platu.main.Options.getTimingAnalysisType()
+		else if (edu.utah.ece.async.verification.platu.main.Options.getTimingAnalysisType()
 		.equals("octagon")){
 			
 			/*

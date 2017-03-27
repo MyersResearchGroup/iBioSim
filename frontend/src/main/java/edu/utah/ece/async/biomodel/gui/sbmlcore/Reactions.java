@@ -288,7 +288,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
+		edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
 		reactions.setListData(reacts);
 		reactions.setSelectedIndex(0);
 		reactions.addMouseListener(this);
@@ -506,7 +506,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			thisReactionParams.add("kf");
 			thisReactionParams.add("kr");
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacParams);
+		edu.utah.ece.async.biomodel.util.Utility.sort(reacParams);
 		reacParameters.setListData(reacParams);
 		reacParameters.setSelectedIndex(0);
 		reacParameters.addMouseListener(this);
@@ -551,7 +551,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reacta[i] += " " + reactant.getStoichiometry();
 			}
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacta);
+		edu.utah.ece.async.biomodel.util.Utility.sort(reacta);
 		reactants.setListData(reacta);
 		reactants.setSelectedIndex(0);
 		reactants.addMouseListener(this);
@@ -596,7 +596,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				proda[i] += " " + product.getStoichiometry();
 			}
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(proda);
+		edu.utah.ece.async.biomodel.util.Utility.sort(proda);
 		products.setListData(proda);
 		products.setSelectedIndex(0);
 		products.addMouseListener(this);
@@ -640,7 +640,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				modifierArray[i] += SBMLutilities.getIndicesString(modifier, "species");
 			}
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(modifierArray);
+		edu.utah.ece.async.biomodel.util.Utility.sort(modifierArray);
 		modifiers.setListData(modifierArray);
 		modifiers.setSelectedIndex(0);
 		modifiers.addMouseListener(this);
@@ -1090,7 +1090,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 							reacts = Utility.getList(reacts, reactions);
 							reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
+							edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
 							reactions.setListData(reacts);
 							reactions.setSelectedIndex(index);
 						}
@@ -1227,7 +1227,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < adding.length; i++) {
 							reacts[i] = (String) adding[i];
 						}
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
+						edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
 						reactions.setListData(reacts);
 						reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (bioModel.getSBMLDocument().getModel().getReactionCount() == 1) {
@@ -1697,7 +1697,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							paramet.setSBOTerm(SBMLutilities.sbo.getId((String)SBOTerms.getSelectedItem()));
 						}
 						reacParams[index] = param;
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacParams);
+						edu.utah.ece.async.biomodel.util.Utility.sort(reacParams);
 						reacParameters.setListData(reacParams);
 						reacParameters.setSelectedIndex(index);
 						if (paramsOnly) {
@@ -1715,7 +1715,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								reacts = Utility.getList(reacts, reactions);
 								reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 								reacts[index1] = reacValue.split("\\[| ")[0];
-								main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
+								edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
 								reactions.setListData(reacts);
 								reactions.setSelectedIndex(index1);
 							}
@@ -1725,7 +1725,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								reacts = Utility.getList(reacts, reactions);
 								reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 								reacts[index1] = reacValue + " Modified";
-								main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
+								edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
 								reactions.setListData(reacts);
 								reactions.setSelectedIndex(index1);
 							}
@@ -1783,7 +1783,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < adding.length; i++) {
 							reacParams[i] = (String) adding[i];
 						}
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacParams);
+						edu.utah.ece.async.biomodel.util.Utility.sort(reacParams);
 						reacParameters.setListData(reacParams);
 						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						try {
@@ -1832,7 +1832,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < adding.length; i++) {
 			reacParams[i] = (String) adding[i];
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacParams);
+		edu.utah.ece.async.biomodel.util.Utility.sort(reacParams);
 		reacParameters.setListData(reacParams);
 		reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		reacParameters.setSelectedIndex(0);
@@ -1863,7 +1863,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 			speciesList[i] = listOfSpecies.get(i).getId();
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(speciesList);
+		edu.utah.ece.async.biomodel.util.Utility.sort(speciesList);
 		productSpecies = new JComboBox();
 		PiIndex = new JTextField(10);
 		PiIndex.setEnabled(true);
@@ -2151,7 +2151,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					if (product == null || !inSchematic) {
 						proda[index] = prod;
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(proda);
+						edu.utah.ece.async.biomodel.util.Utility.sort(proda);
 						products.setListData(proda);
 						products.setSelectedIndex(index);
 					}
@@ -2199,7 +2199,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						proda[i] = (String) adding[i];
 					}
-					main.java.edu.utah.ece.async.biomodel.util.Utility.sort(proda);
+					edu.utah.ece.async.biomodel.util.Utility.sort(proda);
 					products.setListData(proda);
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					products.setSelectedIndex(0);
@@ -2267,7 +2267,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 			speciesList[i] = listOfSpecies.get(i).getId();
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(speciesList);
+		edu.utah.ece.async.biomodel.util.Utility.sort(speciesList);
 		Object[] choices = speciesList;
 		modifierSpecies = new JComboBox(choices);
 		modifierSpecies.addActionListener(this);
@@ -2570,7 +2570,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						} else {
 							modifierArray[index] = modifierId.getText() + " : " + mod + MiIndex.getText();
 						}
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(modifierArray);
+						edu.utah.ece.async.biomodel.util.Utility.sort(modifierArray);
 						modifiers.setListData(modifierArray);
 						modifiers.setSelectedIndex(index);
 					}
@@ -2655,7 +2655,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						modifierArray[i] = (String) adding[i];
 					}
-					main.java.edu.utah.ece.async.biomodel.util.Utility.sort(modifierArray);
+					edu.utah.ece.async.biomodel.util.Utility.sort(modifierArray);
 					modifiers.setListData(modifierArray);
 					modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					try {
@@ -2736,7 +2736,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 			speciesList[i] = listOfSpecies.get(i).getId();
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(speciesList);
+		edu.utah.ece.async.biomodel.util.Utility.sort(speciesList);
 		RiIndex = new JTextField(10);
 		RiIndex.setEnabled(true);
 		reactantSpecies = new JComboBox();
@@ -3041,7 +3041,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					} 
 					if (reactant == null || !inSchematic) {
 						reacta[index] = react;
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacta);
+						edu.utah.ece.async.biomodel.util.Utility.sort(reacta);
 						reactants.setListData(reacta);
 						reactants.setSelectedIndex(index);
 					}
@@ -3112,7 +3112,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						reacta[i] = (String) adding[i];
 					}
-					main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacta);
+					edu.utah.ece.async.biomodel.util.Utility.sort(reacta);
 					reactants.setListData(reacta);
 					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					reactants.setSelectedIndex(0);
@@ -4098,7 +4098,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
+		edu.utah.ece.async.biomodel.util.Utility.sort(reacts);
 		int selected = 0;
 		for (int i = 0; i < reacts.length; i++) {
 			if (reacts[i].split(" ")[0].equals(selectedReactionId)) {

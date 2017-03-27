@@ -27,7 +27,7 @@ import edu.utah.ece.async.verification.platu.platuLpn.*;
  * @version %I%
  */
 public class Zone1 {
-	public static final int INFINITY = main.java.edu.utah.ece.async.verification.platu.common.Common.INFINITY;
+	public static final int INFINITY = edu.utah.ece.async.verification.platu.common.Common.INFINITY;
 	
 	public static HashMap<Zone1, Zone1> uniqueCache = null;
 	public static HashMap<DualHashMap, DualHashMap> enabledArrayCache = null;

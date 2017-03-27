@@ -41,7 +41,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String uriPrefix = "http://www.async.ece.utah.edu";
 		
 		String[] converter_cmdArgs = {"-no", "-p", uriPrefix, inputfile, "-o", outputFile, "-e", compareFile};
-		main.java.edu.utah.ece.async.Converter.main(converter_cmdArgs);
+		edu.utah.ece.async.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
@@ -57,7 +57,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String compareFile = inputfile2;
 		
 		String[] converter_cmdArgs = {"-no", inputfile, "-o", outputFile, "-e", compareFile};
-		main.java.edu.utah.ece.async.Converter.main(converter_cmdArgs);
+		edu.utah.ece.async.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
@@ -73,7 +73,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String compareFile = "";
 		
 		String[] converter_cmdArgs = {"-no", "-cf", inputfile2, inputfile, "-o", outputFile, "-e", compareFile};
-		main.java.edu.utah.ece.async.Converter.main(converter_cmdArgs);
+		edu.utah.ece.async.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
@@ -89,7 +89,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String compareFile = "";
 		//TODO: validation fail because fileName is empty 
 		String[] converter_cmdArgs = {"-no", "-mf", mainfile, "-cf", inputfile2, fileName, "-o", outputFile, "-e", compareFile};
-		main.java.edu.utah.ece.async.Converter.main(converter_cmdArgs);
+		edu.utah.ece.async.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
@@ -106,7 +106,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String outputLang = "SBML";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, "-esf", "-p", uriPrefix, inputfile, "-o", outputFile, "-e", compareFile};
-		main.java.edu.utah.ece.async.Converter.main(converter_cmdArgs);
+		edu.utah.ece.async.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
@@ -122,7 +122,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String outputLang = "GenBank";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outputFile, "-e", compareFile};
-		main.java.edu.utah.ece.async.Converter.main(converter_cmdArgs);
+		edu.utah.ece.async.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
@@ -138,6 +138,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String outputLang = "SBOL2";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outputFile, "-e", compareFile};
-		main.java.edu.utah.ece.async.Converter.main(converter_cmdArgs);
+		edu.utah.ece.async.Converter.main(converter_cmdArgs);
 	}
 }

@@ -122,7 +122,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(objectiveList);
 		
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(objectiveStringArray);
+		edu.utah.ece.async.biomodel.util.Utility.sort(objectiveStringArray);
 		objectiveList.setListData(objectiveStringArray);
 		objectiveList.setSelectedIndex(0);
 		objectiveList.addMouseListener(this);
@@ -353,7 +353,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					editedObjectiveString += "(" + objectiveID.getText().trim() + ") = " + 
 							objective.getText().trim();
 					listOfObjectives[index] = editedObjectiveString;
-					main.java.edu.utah.ece.async.biomodel.util.Utility.sort(listOfObjectives);
+					edu.utah.ece.async.biomodel.util.Utility.sort(listOfObjectives);
 					objectiveList.setListData(listOfObjectives);
 					objectiveList.setSelectedIndex(index);
 				}
@@ -384,7 +384,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 							listOfObjectives[i] = listOfObjectives[i].substring(1, listOfObjectives[i].length());
 						}
 					}
-					main.java.edu.utah.ece.async.biomodel.util.Utility.sort(listOfObjectives);
+					edu.utah.ece.async.biomodel.util.Utility.sort(listOfObjectives);
 					objectiveList.setListData(listOfObjectives);
 					objectiveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (adding.length == 1) {

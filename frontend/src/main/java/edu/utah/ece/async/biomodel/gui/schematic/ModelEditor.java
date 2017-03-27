@@ -658,7 +658,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				lastFilePath = null;
 			else 
 				lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
-			String exportFilePath = main.java.edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, 
+			String exportFilePath = edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, 
 					"Export "+fileType.replace("1",""), -1);
 			if (!exportFilePath.equals("")) {
 				String dir = exportFilePath.substring(0, exportFilePath.lastIndexOf(GlobalConstants.separator));
@@ -876,7 +876,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		else {
 			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
 		}
-		String exportPath = main.java.edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
+		String exportPath = edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
 			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
 			biosimrc.put("biosim.general.export_dir",dir);
@@ -904,7 +904,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		else {
 			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
 		}
-		String exportPath = main.java.edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
+		String exportPath = edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
 			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
 			biosimrc.put("biosim.general.export_dir",dir);
@@ -1031,7 +1031,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		else {
 			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
 		}
-		String exportPath = main.java.edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "Schematic", -1);
+		String exportPath = edu.utah.ece.async.main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "Schematic", -1);
 		if (!exportPath.equals("")) {
 			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
 			biosimrc.put("biosim.general.export_dir",dir);
@@ -2714,7 +2714,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				components.add(s);
 			}
 		}
-		main.java.edu.utah.ece.async.main.util.Utility.sort(components);
+		edu.utah.ece.async.main.util.Utility.sort(components);
 
 		return components;
 	}

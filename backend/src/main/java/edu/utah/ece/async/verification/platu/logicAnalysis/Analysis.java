@@ -3867,7 +3867,7 @@ public class Analysis extends Observable{
 		mddNode reach = Mdd.newNode();
 				
 		//init por
-		main.java.edu.utah.ece.async.verification.platu.por1.AmpleSet ampleClass = new main.java.edu.utah.ece.async.verification.platu.por1.AmpleSet();
+		edu.utah.ece.async.verification.platu.por1.AmpleSet ampleClass = new edu.utah.ece.async.verification.platu.por1.AmpleSet();
 		//AmpleSubset ampleClass = new AmpleSubset();
 		HashMap<Transition,HashSet<Transition>> indepTranSet = new HashMap<Transition,HashSet<Transition>>();
 		

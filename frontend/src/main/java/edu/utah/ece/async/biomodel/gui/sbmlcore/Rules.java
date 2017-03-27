@@ -161,7 +161,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(rules);
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(rul);
+		edu.utah.ece.async.biomodel.util.Utility.sort(rul);
 		rules.setListData(rul);
 		rules.setSelectedIndex(0);
 		rules.addMouseListener(this);

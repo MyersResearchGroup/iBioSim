@@ -111,7 +111,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(unitDefs);
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(units);
+		edu.utah.ece.async.biomodel.util.Utility.sort(units);
 		unitDefs.setListData(units);
 		unitDefs.setSelectedIndex(0);
 		unitDefs.addMouseListener(this);
@@ -205,7 +205,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(uList);
+		edu.utah.ece.async.biomodel.util.Utility.sort(uList);
 		unitList.setListData(uList);
 		unitList.setSelectedIndex(0);
 		unitList.addMouseListener(this);
@@ -376,7 +376,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 								
 							}
 							units[index] = addUnit;
-							main.java.edu.utah.ece.async.biomodel.util.Utility.sort(units);
+							edu.utah.ece.async.biomodel.util.Utility.sort(units);
 							unitDefs.setListData(units);
 							unitDefs.setSelectedIndex(index);
 							BioModel.updateUnitId(bioModel.getSBMLDocument().getModel(), val, unitID.getText().trim());
@@ -417,7 +417,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.UNIT+"__"+u.getId());
 							port.setUnitRef(u.getId());
 						}
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(units);
+						edu.utah.ece.async.biomodel.util.Utility.sort(units);
 						unitDefs.setListData(units);
 						unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (bioModel.getSBMLDocument().getModel().getUnitDefinitionCount() == 1) {
@@ -554,7 +554,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					if (!exp.getText().trim().equals("1")) {
 						uList[index] = "( " + uList[index] + " )^" + exp.getText().trim();
 					}
-					main.java.edu.utah.ece.async.biomodel.util.Utility.sort(uList);
+					edu.utah.ece.async.biomodel.util.Utility.sort(uList);
 					unitList.setListData(uList);
 					unitList.setSelectedIndex(index);
 				}
@@ -586,7 +586,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						uList[i] = (String) adding[i];
 					}
-					main.java.edu.utah.ece.async.biomodel.util.Utility.sort(uList);
+					edu.utah.ece.async.biomodel.util.Utility.sort(uList);
 					unitList.setListData(uList);
 					unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (adding.length == 1) {
@@ -621,7 +621,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			units[i] = unit.getId();
 			// GET OTHER THINGS
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(units);
+		edu.utah.ece.async.biomodel.util.Utility.sort(units);
 		unitDefs.setListData(units);
 		unitDefs.setSelectedIndex(0);
 	}
@@ -778,7 +778,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			String[] ids;
 			if (modelUnitsUsing.size() != 0) {
 				ids = modelUnitsUsing.toArray(new String[0]);
-				main.java.edu.utah.ece.async.biomodel.util.Utility.sort(ids);
+				edu.utah.ece.async.biomodel.util.Utility.sort(ids);
 				message += "\n\nIt is used by the following model units:\n";
 				for (int i = 0; i < ids.length; i++) {
 					if (i == ids.length - 1) {
@@ -791,7 +791,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			if (compartmentsUsing.size() != 0) {
 				ids = compartmentsUsing.toArray(new String[0]);
-				main.java.edu.utah.ece.async.biomodel.util.Utility.sort(ids);
+				edu.utah.ece.async.biomodel.util.Utility.sort(ids);
 				message += "\n\nIt is used by the following compartments:\n";
 				for (int i = 0; i < ids.length; i++) {
 					if (i == ids.length - 1) {
@@ -804,7 +804,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			if (speciesUsing.size() != 0) {
 				ids = speciesUsing.toArray(new String[0]);
-				main.java.edu.utah.ece.async.biomodel.util.Utility.sort(ids);
+				edu.utah.ece.async.biomodel.util.Utility.sort(ids);
 				message += "\n\nIt is used by the following species:\n";
 				for (int i = 0; i < ids.length; i++) {
 					if (i == ids.length - 1) {
@@ -817,7 +817,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			if (parametersUsing.size() != 0) {
 				ids = parametersUsing.toArray(new String[0]);
-				main.java.edu.utah.ece.async.biomodel.util.Utility.sort(ids);
+				edu.utah.ece.async.biomodel.util.Utility.sort(ids);
 				message += "\n\nIt is used by the following parameters:\n";
 				for (int i = 0; i < ids.length; i++) {
 					if (i == ids.length - 1) {
@@ -830,7 +830,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			if (reacParametersUsing.size() != 0) {
 				ids = reacParametersUsing.toArray(new String[0]);
-				main.java.edu.utah.ece.async.biomodel.util.Utility.sort(ids);
+				edu.utah.ece.async.biomodel.util.Utility.sort(ids);
 				message += "\n\nIt is used by the following reaction/parameters:\n";
 				for (int i = 0; i < ids.length; i++) {
 					if (i == ids.length - 1) {

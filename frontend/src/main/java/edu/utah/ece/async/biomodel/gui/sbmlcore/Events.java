@@ -146,7 +146,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(events);
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(ev);
+		edu.utah.ece.async.biomodel.util.Utility.sort(ev);
 		events.setListData(ev);
 		events.setSelectedIndex(0);
 		events.addMouseListener(this);
@@ -417,7 +417,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			eventID.setText(eventId);
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(assign);
+		edu.utah.ece.async.biomodel.util.Utility.sort(assign);
 		eventAssign.setListData(assign);
 		eventAssign.setSelectedIndex(0);
 		eventAssign.addMouseListener(this);
@@ -839,7 +839,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						for (int i = 1; dimID!=null && i < dimID.length; i++) {
 							ev[index] += "[" + dimID[i] + "]";
 						}
-						main.java.edu.utah.ece.async.biomodel.util.Utility.sort(ev);
+						edu.utah.ece.async.biomodel.util.Utility.sort(ev);
 						events.setListData(ev);
 						events.setSelectedIndex(index);
 						modelEditor.makeUndoPoint();
@@ -1064,7 +1064,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						ev[i] = (String) adding[i];
 					}
-					main.java.edu.utah.ece.async.biomodel.util.Utility.sort(ev);
+					edu.utah.ece.async.biomodel.util.Utility.sort(ev);
 					int index = events.getSelectedIndex();
 					events.setListData(ev);
 					events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -1172,7 +1172,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			ev[i] = event.getId() + SBMLutilities.getDimensionString(event);
 		}
-		main.java.edu.utah.ece.async.biomodel.util.Utility.sort(ev);
+		edu.utah.ece.async.biomodel.util.Utility.sort(ev);
 		events.setListData(ev);
 		events.setSelectedIndex(0);
 	}
@@ -1437,7 +1437,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					String dimens = " " + EAdimensions.getText();
 					assign[index] = eaID.getSelectedItem() + dimens + " := " + eqn.getText().trim() 
 							+ assignIndex;
-					main.java.edu.utah.ece.async.biomodel.util.Utility.sort(assign);
+					edu.utah.ece.async.biomodel.util.Utility.sort(assign);
 					eventAssign.setListData(assign);
 					eventAssign.setSelectedIndex(index);
 				}
@@ -1458,7 +1458,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < adding.length; i++) {
 						assign[i] = (String) adding[i];
 					}
-					main.java.edu.utah.ece.async.biomodel.util.Utility.sort(assign);
+					edu.utah.ece.async.biomodel.util.Utility.sort(assign);
 					eventAssign.setListData(assign);
 					eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (adding.length == 1) {
