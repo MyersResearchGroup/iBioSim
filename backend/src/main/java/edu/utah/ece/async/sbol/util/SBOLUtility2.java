@@ -32,7 +32,6 @@ import javax.swing.JOptionPane;
 import org.sbolstandard.core2.*;
 
 import edu.utah.ece.async.util.GlobalConstants;
-import edu.utah.ece.async.main.util.EditPreferences;
 
 /**
  * 
@@ -46,7 +45,7 @@ public class SBOLUtility2
 {
 	private static SBOLDocument SBOLDOC; 
 
-	public static SBOLDocument loadSBOLFiles(HashSet<String> sbolFilePaths) {
+	public static SBOLDocument loadSBOLFiles(HashSet<String> sbolFilePaths, String defaultURIPrefix) {
 		SBOLDocument sbolDoc = new SBOLDocument();
 		Preferences biosimrc = Preferences.userRoot();
 		
@@ -54,9 +53,9 @@ public class SBOLUtility2
 		{
 			File f = new File(filePath);
 			String fileName = f.getName().replace(".sbol", "");
-			sbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix() + "/" + fileName);
+			sbolDoc.setDefaultURIprefix(defaultURIPrefix + "/" + fileName);
 			SBOLReader.setDropObjectsWithDuplicateURIs(true);
-			SBOLReader.setURIPrefix(EditPreferences.getDefaultUriPrefix() + "/" + fileName);
+			SBOLReader.setURIPrefix(defaultURIPrefix + "/" + fileName);
 			try
 			{
 				String sbolRDF = filePath.replace(".sbol", ".rdf");
@@ -115,7 +114,7 @@ public class SBOLUtility2
 	 * @throws SBOLValidationException 
 	 * @throws FileNotFoundException 
 	 */
-	public static SBOLDocument loadSBOLFile(String filePath) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
+	public static SBOLDocument loadSBOLFile(String filePath, String defaultURIPrefix) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		SBOLDocument sbolDoc = null; 
 //		try
@@ -123,7 +122,7 @@ public class SBOLUtility2
 			File f = new File(filePath);
 			String fileName = f.getName().replace(".sbol", "");
 			Preferences biosimrc = Preferences.userRoot();
-			SBOLReader.setURIPrefix(EditPreferences.getDefaultUriPrefix() + "/" + fileName);
+			SBOLReader.setURIPrefix(defaultURIPrefix + "/" + fileName);
 			sbolDoc = SBOLReader.read(new FileInputStream(filePath));
 //			try
 //			{

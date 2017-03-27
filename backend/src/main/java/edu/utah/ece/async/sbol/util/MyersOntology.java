@@ -16,8 +16,6 @@ package edu.utah.ece.async.sbol.util;
 import java.net.URI;
 
 import edu.utah.ece.async.util.GlobalConstants;
-import edu.utah.ece.async.main.util.EditPreferences;
-
 /**
  * 
  *
@@ -46,7 +44,7 @@ public class MyersOntology {
 	 * Namespace for Myers lab
 	 * (<a href="http://www.async.ece.utah.edu/">http://www.async.ece.utah.edu/</a>).
 	 */
-	public static final URI NAMESPACE = URI.create(EditPreferences.getDefaultUriPrefix() + "/");
+	public static final URI NAMESPACE = URI.create("http://www.async.ece.utah.edu/");
 	
 	/**
 	 * 	

@@ -53,6 +53,7 @@ import edu.utah.ece.async.synthesis.genetic.Synthesizer;
 import edu.utah.ece.async.biomodel.parser.BioModel;
 import edu.utah.ece.async.main.Gui;
 import edu.utah.ece.async.main.Log;
+import edu.utah.ece.async.main.util.EditPreferences;
 import edu.utah.ece.async.main.util.Utility;
 import edu.utah.ece.async.util.GlobalConstants;
 import edu.utah.ece.async.util.exceptions.SBOLException;
@@ -312,7 +313,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
         for (String fileID : new File(libFilePath).list())
           if (fileID.endsWith(".sbol"))
             sbolFilePaths.add(libFilePath + separator + fileID);
-      SBOLFileManager2 fileManager = new SBOLFileManager2(sbolFilePaths);
+      SBOLFileManager2 fileManager = new SBOLFileManager2(sbolFilePaths, EditPreferences.getDefaultUriPrefix());
 
       Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
       //		boolean flatImport = libFilePaths.size() > 1;

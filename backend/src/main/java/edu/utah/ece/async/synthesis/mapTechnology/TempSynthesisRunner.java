@@ -19,10 +19,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import edu.utah.ece.async.util.GlobalConstants;
+
 /**
  * 
  *
- * @author 
+ * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -56,7 +58,7 @@ public class TempSynthesisRunner
 //		printMatches(matches);
 		Map<SynthesisNode, SBOLGraph> solution = syn.cover_topLevel(syn.getSpecification(), matches);
 //		syn.printCoveredGates(solution);
-		syn.getSBOLfromTechMapping(solution, syn.getSpecification());
+		syn.getSBOLfromTechMapping(solution, syn.getSpecification(), GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 	} 
 
 	public static void printMatches(Map<SynthesisNode, LinkedList<WeightedGraph>> matches)

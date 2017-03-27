@@ -32,6 +32,7 @@ import edu.utah.ece.async.sbol.util.SBOLIdentityManager2;
 import edu.utah.ece.async.sbol.util.SBOLUtility2;
 import edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
 import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.util.EditPreferences;
 import edu.utah.ece.async.sbol.browser.SBOLBrowser2;
 import edu.utah.ece.async.util.GlobalConstants;
 import edu.utah.ece.async.util.exceptions.SBOLException;
@@ -154,7 +155,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 		for (String filePath : sbolFilePaths) {
 			SBOLDocument sbolDoc;
 			try {
-				sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+				sbolDoc = SBOLUtility2.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
 
 				if (sbolDoc != null) {
 					// Remove duplicate objects within an sbol document
@@ -355,14 +356,14 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 			Gui gui = modelEditor.getGui();
 			SBOLFileManager2 fileManager;
 			try {
-				fileManager = new SBOLFileManager2(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
+				fileManager = new SBOLFileManager2(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), EditPreferences.getDefaultUriPrefix());
 
 				if (compList.getSelectedIndex() == -1)
 					return;
 				if (((String) compList.getSelectedValue())
 						.contains("(Placeholder for iBioSim Composite DNA Component)")) {
 					if (fileManager.sbolFilesAreLoaded()) {
-						SBOLIdentityManager2 identityManager = new SBOLIdentityManager2(modelEditor.getBioModel());
+						SBOLIdentityManager2 identityManager = new SBOLIdentityManager2(modelEditor.getBioModel(), EditPreferences.getDefaultUriPrefix());
 						SBOLDescriptorPanel2 descriptorPanel = new SBOLDescriptorPanel2(identityManager, fileManager);
 						while (descriptorPanel.panelOpen(identityManager, fileManager))
 							;

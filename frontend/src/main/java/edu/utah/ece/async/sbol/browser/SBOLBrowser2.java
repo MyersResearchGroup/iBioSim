@@ -30,6 +30,7 @@ import org.sbolstandard.core2.Collection;
 
 import edu.utah.ece.async.sbol.util.SBOLUtility2;
 import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.util.EditPreferences;
 import edu.utah.ece.async.util.GlobalConstants;
 
 /**
@@ -170,7 +171,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 			{
 				SBOLDocument sbolDoc = null;
 				try {
-					sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+					sbolDoc = SBOLUtility2.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

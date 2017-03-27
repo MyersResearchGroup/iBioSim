@@ -1746,7 +1746,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       sedml.removeDataGenerator(dataGen);
     }
     Variable variable = new Variable("time_"+taskId,"",taskId,VariableSymbol.TIME);
-    ASTNode math = Libsedml.parseFormulaString("time_"+taskId);
+    org.jmathml.ASTNode math = org.jlibsedml.Libsedml.parseFormulaString("time_"+taskId);
     dataGen = new DataGenerator("time_"+taskId+"_dg","time",math);
     dataGen.addVariable(variable);
     sedml.addDataGenerator(dataGen);

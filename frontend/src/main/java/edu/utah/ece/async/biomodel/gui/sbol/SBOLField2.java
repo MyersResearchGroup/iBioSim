@@ -37,6 +37,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import edu.utah.ece.async.sbol.util.SBOLUtility2;
 import edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
 import edu.utah.ece.async.main.Gui;
+import edu.utah.ece.async.main.util.EditPreferences;
 import edu.utah.ece.async.util.GlobalConstants;
 
 public class SBOLField2 extends JPanel implements ActionListener {
@@ -145,7 +146,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
 				SBOLDocument sbolDoc;
 				try {
-					sbolDoc = SBOLUtility2.loadSBOLFile(filePath);
+					sbolDoc = SBOLUtility2.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
 					SBOLUtility2.deleteDNAComponent(removedBioSimURI, sbolDoc);
 					SBOLUtility2.writeSBOLDocument(filePath, sbolDoc);
 				} catch (FileNotFoundException e) {

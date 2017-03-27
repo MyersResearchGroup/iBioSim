@@ -19,7 +19,6 @@ import org.sbolstandard.core2.SequenceAnnotation;
 
 import edu.utah.ece.async.util.GlobalConstants;
 import edu.utah.ece.async.util.exceptions.SBOLException;
-import edu.utah.ece.async.main.util.EditPreferences;
 import edu.utah.ece.async.sbol.util.SBOLUtility2;
 
 import java.net.URI;
@@ -65,7 +64,7 @@ public class Assembler2
 //		return assemblyComp;
 //	}
 //	
-	public ComponentDefinition assembleDNAComponent(SBOLDocument sbolDoc) throws SBOLValidationException, SBOLException 
+	public ComponentDefinition assembleDNAComponent(SBOLDocument sbolDoc, String defaultURIPrefix) throws SBOLValidationException, SBOLException 
 	{	
 		// Orders list of subcomponents (to be assembled into composite component) 
 		// by walking synthesis nodes
@@ -107,9 +106,9 @@ public class Assembler2
 //		assembledComp.setDnaSequence(synthSeq); 
 		
 //		ComponentDefinition  assembledComp = new ComponentDefinition(GlobalConstants.SBOL_AUTHORITY_DEFAULT, "assembledComp", "", new HashSet<URI>(Arrays.asList(ComponentDefinition.DNA)));
-		ComponentDefinition  assembledComp = sbolDoc.createComponentDefinition(EditPreferences.getDefaultUriPrefix(), "assembledComp", "", new HashSet<URI>(Arrays.asList(ComponentDefinition.DNA)));
+		ComponentDefinition  assembledComp = sbolDoc.createComponentDefinition(defaultURIPrefix, "assembledComp", "", new HashSet<URI>(Arrays.asList(ComponentDefinition.DNA)));
 		assembledComp.addRole(SequenceOntology.ENGINEERED_REGION);
-		Sequence synthSeq = sbolDoc.createSequence(EditPreferences.getDefaultUriPrefix(), "synthSeq", "", "", Sequence.IUPAC_DNA);
+		Sequence synthSeq = sbolDoc.createSequence(defaultURIPrefix, "synthSeq", "", "", Sequence.IUPAC_DNA);
 		assembledComp.addSequence(synthSeq);
 		
 		//Assemble the model to generate graph

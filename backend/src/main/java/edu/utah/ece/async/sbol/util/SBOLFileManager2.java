@@ -37,7 +37,6 @@ import org.sbolstandard.core2.Sequence;
 import edu.utah.ece.async.biomodel.parser.BioModel;
 import edu.utah.ece.async.util.GlobalConstants;
 import edu.utah.ece.async.util.exceptions.SBOLException;
-import edu.utah.ece.async.main.util.EditPreferences;
 
 /**
  * 
@@ -56,7 +55,7 @@ public class SBOLFileManager2 {
 	private String locatedFilePath;
 //	private UseFirstFound<DnaComponent, URI> aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
 	
-	public SBOLFileManager2(Set<String> sbolFilePaths) throws SBOLException, FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
+	public SBOLFileManager2(Set<String> sbolFilePaths, String defaultURIPrefix) throws SBOLException, FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		if (sbolFilePaths.size() == 0) 
 		{
@@ -70,7 +69,7 @@ public class SBOLFileManager2 {
 		else 
 		{
 			SBOLDOC = new SBOLDocument();
-			SBOLDOC.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix()); 
+			SBOLDOC.setDefaultURIprefix(defaultURIPrefix); 
 			Iterator<String> sbolFileIterator = sbolFilePaths.iterator();
 			do //Go through each sbol file path and create an SBOLDocument
 			{
@@ -78,8 +77,7 @@ public class SBOLFileManager2 {
 				
 				File f = new File(sbolFilePath);
 				String fileName = f.getName().replace(".sbol", "");
-				Preferences biosimrc = Preferences.userRoot();
-				SBOLReader.setURIPrefix(EditPreferences.getDefaultUriPrefix() + "/" + fileName);
+				SBOLReader.setURIPrefix(defaultURIPrefix + "/" + fileName);
 				SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(sbolFilePath));
 				if (sbolDoc != null) 
 				{

@@ -56,7 +56,6 @@ import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.biomodel.annotation.SBOLAnnotation;
 import edu.utah.ece.async.biomodel.parser.BioModel;
 import edu.utah.ece.async.util.GlobalConstants;
-import edu.utah.ece.async.main.util.EditPreferences;
 
 /**
  * 
@@ -131,7 +130,7 @@ public class SBOLTestFactory {
 ////		Annotation testAnno = new Annotation(null);
 	}
 	
-	public static Module createToggleSwitchModule(ModuleDefinition toggleDef, ModuleDefinition parentModuleDef) {
+	public static Module createToggleSwitchModule(ModuleDefinition toggleDef, ModuleDefinition parentModuleDef, String defaultURIPrefix) {
 		if (toggleDef.containsRole(MyersOntology.TOGGLE)) {
 			return createModule(toggleDef.getDisplayId(), toggleDef.getIdentity(), parentModuleDef);
 		} else {
@@ -141,7 +140,7 @@ public class SBOLTestFactory {
 	}
 	
 	public static ModuleDefinition createToggleSwitchDefinition(String inducerID1, String inducerID2, 
-			ModuleDefinition inverterDef1, ModuleDefinition inverterDef2, SBOLDocument sbolDoc) {
+			ModuleDefinition inverterDef1, ModuleDefinition inverterDef2, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		if (!inverterDef1.containsRole(MyersOntology.INVERTER) 
 				|| !inverterDef2.containsRole(MyersOntology.INVERTER)) {
 			return null;
@@ -171,25 +170,25 @@ public class SBOLTestFactory {
 			}
 		}
 		ModuleDefinition toggleDef = createModuleDefinition(remoteTF1.getDisplayId() + "_" + remoteTF2.getDisplayId() + "_" + "Toggle_Switch", 
-				MyersOntology.TOGGLE, sbolDoc);
+				MyersOntology.TOGGLE, sbolDoc, defaultURIPrefix);
 		FunctionalComponent inducer1 = createInducerComponent(inducerID1, AccessType.PUBLIC, 
-				DirectionType.IN, toggleDef, sbolDoc);
+				DirectionType.IN, toggleDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent inducer2 = createInducerComponent(inducerID2, AccessType.PUBLIC, 
-				DirectionType.IN, toggleDef, sbolDoc);
+				DirectionType.IN, toggleDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent localTF1 = createTFComponent(remoteTF1.getDisplayId(), AccessType.PUBLIC, 
-				DirectionType.OUT, toggleDef, sbolDoc);
+				DirectionType.OUT, toggleDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent localTF2 = createTFComponent(remoteTF2.getDisplayId(), AccessType.PUBLIC, 
-				DirectionType.OUT, toggleDef, sbolDoc);
+				DirectionType.OUT, toggleDef, sbolDoc, defaultURIPrefix);
 		Set<String> ligandIDs1 = new HashSet<String>();
 		ligandIDs1.add(inducerID1);
 		ligandIDs1.add(remoteTF1.getDisplayId());
 		FunctionalComponent complex1 = createComplexComponent(ligandIDs1, AccessType.PRIVATE, 
-				DirectionType.NONE, toggleDef, sbolDoc);
+				DirectionType.NONE, toggleDef, sbolDoc, defaultURIPrefix);
 		Set<String> ligandIDs2 = new HashSet<String>();
 		ligandIDs1.add(inducerID2);
 		ligandIDs1.add(remoteTF2.getDisplayId());
 		FunctionalComponent complex2 = createComplexComponent(ligandIDs2, AccessType.PRIVATE, 
-				DirectionType.NONE, toggleDef, sbolDoc);
+				DirectionType.NONE, toggleDef, sbolDoc, defaultURIPrefix);
 		createBindingInteraction(inducer1, localTF1, complex1, toggleDef);
 		createBindingInteraction(inducer2, localTF2, complex2, toggleDef);
 		Module inverter1 = createInverterModule(inverterDef1, toggleDef, sbolDoc);
@@ -209,16 +208,16 @@ public class SBOLTestFactory {
 	}
 	
 	public static ModuleDefinition createInverterDefinition(String tfID, String promoterID, 
-			String geneID, String proteinID, URI proteinRole, SBOLDocument sbolDoc) {
-		ModuleDefinition inverterDef = createModuleDefinition(tfID + "_Inverter", MyersOntology.INVERTER, sbolDoc);
+			String geneID, String proteinID, URI proteinRole, SBOLDocument sbolDoc, String defaultURIPrefix) {
+		ModuleDefinition inverterDef = createModuleDefinition(tfID + "_Inverter", MyersOntology.INVERTER, sbolDoc, defaultURIPrefix);
 		FunctionalComponent tf = createTFComponent(tfID, AccessType.PUBLIC, DirectionType.IN,
-				inverterDef, sbolDoc);
+				inverterDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent promoter = createPromoterComponent(promoterID, AccessType.PRIVATE, DirectionType.NONE,
-				inverterDef, sbolDoc);
+				inverterDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent gene = createGeneComponent(geneID, AccessType.PRIVATE, DirectionType.NONE,
-				inverterDef, sbolDoc);
+				inverterDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent protein = createProteinComponent(proteinID, proteinRole, 
-				AccessType.PUBLIC, DirectionType.OUT, inverterDef, sbolDoc);
+				AccessType.PUBLIC, DirectionType.OUT, inverterDef, sbolDoc, defaultURIPrefix);
 		createRepressionInteraction(tf, promoter, inverterDef);
 		createProductionInteraction(promoter, gene, protein, inverterDef);
 		createDegradationInteraction(protein, inverterDef);
@@ -234,7 +233,7 @@ public class SBOLTestFactory {
 	}
 	
 	public static ModuleDefinition createANDSensorDefinition(List<ModuleDefinition> sensorDefs, 
-			List<ModuleDefinition> andDefs, SBOLDocument sbolDoc) {
+			List<ModuleDefinition> andDefs, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		if (sensorDefs.size() != 4 || !sensorDefs.get(0).containsRole(MyersOntology.SENSOR) 
 				|| !sensorDefs.get(1).containsRole(MyersOntology.SENSOR) 
 				|| !sensorDefs.get(2).containsRole(MyersOntology.SENSOR) 
@@ -303,21 +302,21 @@ public class SBOLTestFactory {
 			andSensorID = "_AND_" + remoteInducer.getDisplayId() + andSensorID;
 		}
 		andSensorID = andSensorID.substring(5);
-		ModuleDefinition andSensorDef = createModuleDefinition(andSensorID, MyersOntology.SENSOR, sbolDoc);
+		ModuleDefinition andSensorDef = createModuleDefinition(andSensorID, MyersOntology.SENSOR, sbolDoc, defaultURIPrefix);
 		andSensorDef.addRole(MyersOntology.AND);
 		for (FunctionalComponent remoteInducer : remoteInputs1) {
 			createInducerComponent(remoteInducer.getDisplayId(), AccessType.PUBLIC, 
-					DirectionType.IN, andSensorDef, sbolDoc);
+					DirectionType.IN, andSensorDef, sbolDoc, defaultURIPrefix);
 		}
 		for (FunctionalComponent remoteOutput : remoteOutputs1) {
 			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinitionURI());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
-						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
+						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc, defaultURIPrefix);
 				createDegradationInteraction(chap, andSensorDef);
 			} else if (remoteOutputDef.containsRole(MyersOntology.TF)) {
 				FunctionalComponent tf = createTFComponent(remoteOutput.getDisplayId(), 
-						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
+						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc, defaultURIPrefix);
 				createDegradationInteraction(tf, andSensorDef);
 			}
 		}
@@ -325,11 +324,11 @@ public class SBOLTestFactory {
 			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinitionURI());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
-						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
+						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc, defaultURIPrefix);
 				createDegradationInteraction(chap, andSensorDef);
 			} else if (remoteOutputDef.containsRole(MyersOntology.TF)) {
 				FunctionalComponent tf = createTFComponent(remoteOutput.getDisplayId(), 
-						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
+						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc, defaultURIPrefix);
 				createDegradationInteraction(tf, andSensorDef);
 			} else {
 				return null;
@@ -339,11 +338,11 @@ public class SBOLTestFactory {
 			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinitionURI());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
-						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
+						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc, defaultURIPrefix);
 				createDegradationInteraction(chap, andSensorDef);
 			} else if (remoteOutputDef.containsRole(MyersOntology.TF)) {
 				FunctionalComponent tf = createTFComponent(remoteOutput.getDisplayId(), 
-						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
+						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc, defaultURIPrefix);
 				createDegradationInteraction(tf, andSensorDef);
 			} else {
 				return null;
@@ -353,15 +352,15 @@ public class SBOLTestFactory {
 			ComponentDefinition remoteOutputDef = sbolDoc.getComponentDefinition(remoteOutput.getDefinitionURI());
 			if (remoteOutputDef.containsRole(MyersOntology.CHAPERONE)) {
 				FunctionalComponent chap = createChaperoneComponent(remoteOutput.getDisplayId(), 
-						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
+						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc, defaultURIPrefix);
 				createDegradationInteraction(chap, andSensorDef);
 			} else if (remoteOutputDef.containsRole(MyersOntology.TF)) {
 				FunctionalComponent tf = createTFComponent(remoteOutput.getDisplayId(), 
-						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc);
+						AccessType.PRIVATE, DirectionType.NONE, andSensorDef, sbolDoc, defaultURIPrefix);
 				createDegradationInteraction(tf, andSensorDef);
 			} else if (remoteOutputDef.containsRole(MyersOntology.REPORTER)) {
 				FunctionalComponent reporter = createReporterComponent(remoteOutput.getDisplayId(), 
-						AccessType.PUBLIC, DirectionType.OUT, andSensorDef, sbolDoc);
+						AccessType.PUBLIC, DirectionType.OUT, andSensorDef, sbolDoc, defaultURIPrefix);
 				createDegradationInteraction(reporter, andSensorDef);
 			}
 		}
@@ -386,7 +385,7 @@ public class SBOLTestFactory {
 	
 	public static ModuleDefinition createSensorDefinition(String inducerID, String promoterID1, 
 			String geneID1, String tfID, String promoterID2, String geneID2, String proteinID, 
-			URI proteinRole, SBOLDocument sbolDoc, boolean isActivation) {
+			URI proteinRole, SBOLDocument sbolDoc, boolean isActivation, String defaultURIPrefix) {
 		List<String> geneIDs2 = new LinkedList<String>();
 		List<String> proteinIDs = new LinkedList<String>();
 		List<URI> proteinRoles = new LinkedList<URI>();
@@ -395,38 +394,38 @@ public class SBOLTestFactory {
 		proteinRoles.add(proteinRole);
 		return createSensorDefinition(inducerID, promoterID1, 
 			geneID1, tfID, promoterID2, geneIDs2, proteinIDs, 
-			proteinRoles, sbolDoc, isActivation);
+			proteinRoles, sbolDoc, isActivation, defaultURIPrefix);
 	}
 	
 	public static ModuleDefinition createSensorDefinition(String inducerID, String promoterID1, 
 			String geneID1, String tfID, String promoterID2, List<String> geneIDs2, List<String> proteinIDs, 
-			List<URI> proteinRoles, SBOLDocument sbolDoc, boolean isActivation) {
+			List<URI> proteinRoles, SBOLDocument sbolDoc, boolean isActivation, String defaultURIPrefix) {
 		ModuleDefinition sensorDef = createModuleDefinition(inducerID + "_Sensor", MyersOntology.SENSOR, 
-				sbolDoc);
+				sbolDoc, defaultURIPrefix);
 		FunctionalComponent inducer = createInducerComponent(inducerID, AccessType.PUBLIC, 
-				DirectionType.IN, sensorDef, sbolDoc);
+				DirectionType.IN, sensorDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent promoter1 = createPromoterComponent(promoterID1, AccessType.PRIVATE, 
-				DirectionType.NONE, sensorDef, sbolDoc);
+				DirectionType.NONE, sensorDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent gene1 = createGeneComponent(geneID1, AccessType.PRIVATE, DirectionType.NONE,
-				sensorDef, sbolDoc);
+				sensorDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent tf = createTFComponent(tfID, AccessType.PRIVATE, DirectionType.NONE,
-				sensorDef, sbolDoc);
+				sensorDef, sbolDoc, defaultURIPrefix);
 		Set<String> ligandIDs = new HashSet<String>();
 		ligandIDs.add(inducerID);
 		ligandIDs.add(tfID);
 		FunctionalComponent complex = createComplexTFComponent(ligandIDs, AccessType.PRIVATE, 
-				DirectionType.NONE, sensorDef, sbolDoc);
+				DirectionType.NONE, sensorDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent promoter2 = createPromoterComponent(promoterID2, AccessType.PRIVATE, 
-				DirectionType.NONE, sensorDef, sbolDoc);
+				DirectionType.NONE, sensorDef, sbolDoc, defaultURIPrefix);
 		List<FunctionalComponent> genes2 = new LinkedList<FunctionalComponent>();
 		for (String geneID : geneIDs2) {
 			genes2.add(createGeneComponent(geneID, AccessType.PRIVATE, DirectionType.NONE,
-				sensorDef, sbolDoc));
+				sensorDef, sbolDoc, defaultURIPrefix));
 		}
 		List<FunctionalComponent> proteins = new LinkedList<FunctionalComponent>();
 		for (int i = 0; i < proteinIDs.size(); i++) {
 			proteins.add(createProteinComponent(proteinIDs.get(i), proteinRoles.get(i), AccessType.PUBLIC,
-					DirectionType.OUT, sensorDef, sbolDoc));
+					DirectionType.OUT, sensorDef, sbolDoc, defaultURIPrefix));
 		}
 		createProductionInteraction(promoter1, gene1, tf, sensorDef);
 		createDegradationInteraction(tf, sensorDef);
@@ -453,24 +452,24 @@ public class SBOLTestFactory {
 	}
 	
 	public static ModuleDefinition createANDDefinition(String chapID, String tfID, String promoterID, 
-			String geneID, String proteinID, URI proteinRole, SBOLDocument sbolDoc) {
+			String geneID, String proteinID, URI proteinRole, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		ModuleDefinition andDef = createModuleDefinition(chapID + "_AND_" + tfID, MyersOntology.AND, 
-				sbolDoc);
+				sbolDoc, defaultURIPrefix);
 		FunctionalComponent chaperone = createChaperoneComponent(chapID, AccessType.PUBLIC, 
-				DirectionType.IN, andDef, sbolDoc);
+				DirectionType.IN, andDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent tf = createTFComponent(tfID, AccessType.PUBLIC, DirectionType.IN,
-				andDef, sbolDoc);
+				andDef, sbolDoc, defaultURIPrefix);
 		Set<String> ligandIDs = new HashSet<String>();
 		ligandIDs.add(chapID);
 		ligandIDs.add(tfID);
 		FunctionalComponent complexTF = createComplexTFComponent(ligandIDs, AccessType.PRIVATE, 
-				DirectionType.NONE, andDef, sbolDoc);
+				DirectionType.NONE, andDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent promoter = createPromoterComponent(promoterID, AccessType.PRIVATE, 
-				DirectionType.NONE, andDef, sbolDoc);
+				DirectionType.NONE, andDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent gene = createGeneComponent(geneID, AccessType.PRIVATE, DirectionType.NONE,
-				andDef, sbolDoc);
+				andDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent protein = createProteinComponent(proteinID, proteinRole, AccessType.PUBLIC,
-				DirectionType.OUT, andDef, sbolDoc);
+				DirectionType.OUT, andDef, sbolDoc, defaultURIPrefix);
 		createBindingInteraction(chaperone, tf, complexTF, andDef);
 		createDegradationInteraction(complexTF, andDef);
 		createActivationInteraction(complexTF, promoter, andDef);
@@ -480,25 +479,25 @@ public class SBOLTestFactory {
 	}
 	
 	public static ModuleDefinition createANDDefinition(String chapID1, String chapID2, String tfID, String promoterID, 
-			String geneID, String proteinID, URI proteinRole, SBOLDocument sbolDoc) {
+			String geneID, String proteinID, URI proteinRole, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		ModuleDefinition andDef = createModuleDefinition(chapID1 + "_AND_" + tfID, MyersOntology.AND, 
-				sbolDoc);
+				sbolDoc, defaultURIPrefix);
 		FunctionalComponent chap1 = createChaperoneComponent(chapID1, AccessType.PUBLIC, 
-				DirectionType.IN, andDef, sbolDoc);
+				DirectionType.IN, andDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent chap2 = createChaperoneComponent(chapID2, AccessType.PUBLIC, 
-				DirectionType.IN, andDef, sbolDoc);
+				DirectionType.IN, andDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent tf = createTFComponent(tfID, AccessType.PUBLIC, DirectionType.IN,
-				andDef, sbolDoc);
+				andDef, sbolDoc, defaultURIPrefix);
 		Set<String> ligandIDs1 = new HashSet<String>();
 		ligandIDs1.add(chapID2);
 		ligandIDs1.add(tfID);
 		FunctionalComponent complex1 = createComplexComponent(ligandIDs1, AccessType.PRIVATE, 
-				DirectionType.NONE, andDef, sbolDoc);
+				DirectionType.NONE, andDef, sbolDoc, defaultURIPrefix);
 		Set<String> ligandIDs2 = new HashSet<String>();
 		ligandIDs2.add(chapID1);
 		ligandIDs2.add(chapID2);
 		FunctionalComponent complex2 = createComplexComponent(ligandIDs2, AccessType.PRIVATE, 
-				DirectionType.NONE, andDef, sbolDoc);
+				DirectionType.NONE, andDef, sbolDoc, defaultURIPrefix);
 //		Set<String> ligandIDs3 = new HashSet<String>();
 //		ligandIDs3.add(chapID1);
 //		ligandIDs3.add(chapID2);
@@ -506,11 +505,11 @@ public class SBOLTestFactory {
 //		FunctionalComponent complex3 = createComplexComponent(ligandIDs3, SBOLOntology.PRIVATE, 
 //				SBOLOntology.NONE, ANDDef, sbolDoc);
 		FunctionalComponent promoter = createPromoterComponent(promoterID, AccessType.PRIVATE, 
-				DirectionType.NONE, andDef, sbolDoc);
+				DirectionType.NONE, andDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent gene = createGeneComponent(geneID, AccessType.PRIVATE, DirectionType.NONE,
-				andDef, sbolDoc);
+				andDef, sbolDoc, defaultURIPrefix);
 		FunctionalComponent protein = createProteinComponent(proteinID, proteinRole, AccessType.PUBLIC,
-				DirectionType.OUT, andDef, sbolDoc);
+				DirectionType.OUT, andDef, sbolDoc, defaultURIPrefix);
 		createBindingInteraction(chap2, tf, complex1, andDef);
 		createBindingInteraction(chap1, chap2, complex2, andDef);
 		createDegradationInteraction(complex1, andDef);
@@ -524,25 +523,25 @@ public class SBOLTestFactory {
 	}
 	
 	public static FunctionalComponent createPromoterComponent(String promoterID, AccessType access, DirectionType direction,
-			ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
+			ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		return createDNAComponent(promoterID, SequenceOntology.PROMOTER, access, direction, moduleDef,
-				sbolDoc);
+				sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createGeneComponent(String geneID, AccessType access, DirectionType direction,
-			ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
+			ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		FunctionalComponent gene = createDNAComponent(geneID, MyersOntology.GENE, access, direction,
-				moduleDef, sbolDoc);
+				moduleDef, sbolDoc, defaultURIPrefix);
 		ComponentDefinition geneDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
-		Component rbs = createRBSComponent("RBS", AccessType.PRIVATE, geneDef, sbolDoc);
+		Component rbs = createRBSComponent("RBS", AccessType.PRIVATE, geneDef, sbolDoc, defaultURIPrefix);
 		String cdsID = geneID;
 		if (cdsID.equals("rfp")) {
 			cdsID = "c" + cdsID.toUpperCase();
 		} else {
 			cdsID = "c" + cdsID.substring(0, 1).toUpperCase() + geneID.substring(1);
 		}
-		Component cds = createCDSComponent(cdsID, AccessType.PRIVATE, geneDef, sbolDoc);
-		Component terminator = createTerminatorComponent("Terminator", AccessType.PRIVATE, geneDef, sbolDoc);
+		Component cds = createCDSComponent(cdsID, AccessType.PRIVATE, geneDef, sbolDoc, defaultURIPrefix);
+		Component terminator = createTerminatorComponent("Terminator", AccessType.PRIVATE, geneDef, sbolDoc, defaultURIPrefix);
 		int constraintCount = 1;
 		createPrecedes(constraintCount, rbs, cds, geneDef);
 		constraintCount++;
@@ -551,98 +550,98 @@ public class SBOLTestFactory {
 	}
 	
 	public static Component createRBSComponent(String rbsID, AccessType access, 
-			ComponentDefinition parentCompDef, SBOLDocument sbolDoc) {
+			ComponentDefinition parentCompDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		return createDNAComponent(rbsID, SequenceOntology.FIVE_PRIME_UTR, access, parentCompDef,
-				sbolDoc);
+				sbolDoc, defaultURIPrefix);
 	}
 	
 	public static Component createCDSComponent(String cdsID, AccessType access,
-			ComponentDefinition parentCompDef, SBOLDocument sbolDoc) {
+			ComponentDefinition parentCompDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		return createDNAComponent(cdsID, SequenceOntology.CDS, access, parentCompDef,
-				sbolDoc);
+				sbolDoc, defaultURIPrefix);
 	}
 	
 	public static Component createTerminatorComponent(String terminatorID, AccessType access,
-			ComponentDefinition parentCompDef, SBOLDocument sbolDoc) {
+			ComponentDefinition parentCompDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		return createDNAComponent(terminatorID, SequenceOntology.TERMINATOR, access, parentCompDef,
-				sbolDoc);
+				sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createDNAComponent(String dnaID, URI dnaRole, AccessType access, 
-			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
-		ComponentDefinition dnaDef = createDNADefinition(dnaID, dnaRole, sbolDoc);
+			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
+		ComponentDefinition dnaDef = createDNADefinition(dnaID, dnaRole, sbolDoc, defaultURIPrefix);
 		return createFunctionalComponent(dnaID, dnaDef.getIdentity(), access, direction, moduleDef);
 	}
 	
 	public static Component createDNAComponent(String dnaID, URI dnaRole, AccessType access, 
-			ComponentDefinition parentCompDef, SBOLDocument sbolDoc) {
-		ComponentDefinition dnaDef = createDNADefinition(dnaID, dnaRole, sbolDoc);
+			ComponentDefinition parentCompDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
+		ComponentDefinition dnaDef = createDNADefinition(dnaID, dnaRole, sbolDoc, defaultURIPrefix);
 		return createComponent(dnaID, dnaDef.getIdentity(), access, parentCompDef); 
 	}
 	
-	public static ComponentDefinition createDNADefinition(String dnaID, URI dnaRole, SBOLDocument sbolDoc) {
-		return createComponentDefinition(dnaID, dnaRole, ChEBI.DNA, sbolDoc);
+	public static ComponentDefinition createDNADefinition(String dnaID, URI dnaRole, SBOLDocument sbolDoc, String defaultURIPrefix) {
+		return createComponentDefinition(dnaID, dnaRole, ChEBI.DNA, sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createTFComponent(String tfID, AccessType access, DirectionType direction,
-			ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
-		return createProteinComponent(tfID, MyersOntology.TF, access, direction, moduleDef, sbolDoc);
+			ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
+		return createProteinComponent(tfID, MyersOntology.TF, access, direction, moduleDef, sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createChaperoneComponent(String chapID, AccessType access, 
-			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
+			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		return createProteinComponent(chapID, MyersOntology.CHAPERONE, access, direction, moduleDef, 
-				sbolDoc);
+				sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createReporterComponent(String reporterID, AccessType access, 
-			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
+			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		return createProteinComponent(reporterID, MyersOntology.REPORTER, access, direction, moduleDef, 
-				sbolDoc);
+				sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createProteinComponent(String id, URI role, AccessType access, 
-			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
-		ComponentDefinition proteinDef = createProteinDefinition(id, role, sbolDoc);
+			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
+		ComponentDefinition proteinDef = createProteinDefinition(id, role, sbolDoc, defaultURIPrefix);
 		return createFunctionalComponent(id, proteinDef.getIdentity(), access, direction, moduleDef);
 	} 
 	
-	public static ComponentDefinition createProteinDefinition(String id, URI role, SBOLDocument sbolDoc) {
-		return createComponentDefinition(id, role, ChEBI.PROTEIN, sbolDoc);
+	public static ComponentDefinition createProteinDefinition(String id, URI role, SBOLDocument sbolDoc, String defaultURIPrefix) {
+		return createComponentDefinition(id, role, ChEBI.PROTEIN, sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createInducerComponent(String inducerID, AccessType access, 
-			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
+			DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		return createSmallMoleculeComponent(inducerID, MyersOntology.INDUCER, access, direction, 
-				moduleDef, sbolDoc);
+				moduleDef, sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createSmallMoleculeComponent(String smallMoleID, URI smallMoleRole, 
-			AccessType access, DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
+			AccessType access, DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		ComponentDefinition smallMoleDef = createSmallMoleculeDefinition(smallMoleID, smallMoleRole, 
-				sbolDoc);
+				sbolDoc, defaultURIPrefix);
 		return createFunctionalComponent(smallMoleID, smallMoleDef.getIdentity(), access, direction, 
 				moduleDef);
 	}
 	
 	public static ComponentDefinition createSmallMoleculeDefinition(String smallMoleID, URI smallMoleRole, 
-			SBOLDocument sbolDoc) {
-		return createComponentDefinition(smallMoleID, smallMoleRole, ChEBI.EFFECTOR, sbolDoc);
+			SBOLDocument sbolDoc, String defaultURIPrefix) {
+		return createComponentDefinition(smallMoleID, smallMoleRole, ChEBI.EFFECTOR, sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createComplexComponent(Set<String> ligandIDs, 
-			AccessType access, DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
-		return createComplexComponent(ligandIDs, SystemsBiologyOntology.NON_COVALENT_BINDING, access, direction, moduleDef, sbolDoc);
+			AccessType access, DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
+		return createComplexComponent(ligandIDs, SystemsBiologyOntology.NON_COVALENT_BINDING, access, direction, moduleDef, sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createComplexTFComponent(Set<String> ligandIDs, 
-			AccessType access, DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
-		return createComplexComponent(ligandIDs, MyersOntology.TF, access, direction, moduleDef, sbolDoc);
+			AccessType access, DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
+		return createComplexComponent(ligandIDs, MyersOntology.TF, access, direction, moduleDef, sbolDoc, defaultURIPrefix);
 	}
 	
 	public static FunctionalComponent createComplexComponent(Set<String> ligandIDs, URI complexRole, 
-			AccessType access, DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc) {
-		ComponentDefinition complexDef = createComplexDefinition(ligandIDs, complexRole, sbolDoc);
+			AccessType access, DirectionType direction, ModuleDefinition moduleDef, SBOLDocument sbolDoc, String defaultURIPrefix) {
+		ComponentDefinition complexDef = createComplexDefinition(ligandIDs, complexRole, sbolDoc, defaultURIPrefix);
 		String complexID = "Complex";
 		for (String ligandID : ligandIDs) {
 			complexID = ligandID + "_" + complexID;
@@ -652,13 +651,13 @@ public class SBOLTestFactory {
 	}
 	
 	public static ComponentDefinition createComplexDefinition(Set<String> ligandIDs, URI complexRole, 
-			SBOLDocument sbolDoc) {
+			SBOLDocument sbolDoc, String defaultURIPrefix) {
 		String complexID = "Complex";
 		for (String ligandID : ligandIDs) {
 			complexID = ligandID + "_" + complexID;
 		}
 		return createComponentDefinition(complexID, complexRole, 
-				ChEBI.NON_COVALENTLY_BOUND_MOLECULAR_ENTITY, sbolDoc);
+				ChEBI.NON_COVALENTLY_BOUND_MOLECULAR_ENTITY, sbolDoc, defaultURIPrefix);
 	}
 	
 	public static Interaction createBindingInteraction(FunctionalComponent ligand1, FunctionalComponent ligand2, 
@@ -753,10 +752,10 @@ public class SBOLTestFactory {
 				objectComp.getDefinitionURI(), compDef);
 	}
 	
-	public static ComponentDefinition createComponentDefinition(String compDefID, URI role, URI type, SBOLDocument sbolDoc) {
+	public static ComponentDefinition createComponentDefinition(String compDefID, URI role, URI type, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		try {
 			Preferences biosimrc = Preferences.userRoot();
-			URI compDefIdentity = new URI(EditPreferences.getDefaultUriPrefix() + "/cd/" + compDefID);
+			URI compDefIdentity = new URI(defaultURIPrefix + "/cd/" + compDefID);
 			ComponentDefinition compDef = sbolDoc.getComponentDefinition(compDefIdentity);
 			if (compDef == null) {
 				Set<URI> compDefRoles = new HashSet<URI>();
@@ -821,9 +820,9 @@ public class SBOLTestFactory {
 		return null;
 	}
 	
-	public static ModuleDefinition createModuleDefinition(String moduleDefID, URI role, SBOLDocument sbolDoc) {
+	public static ModuleDefinition createModuleDefinition(String moduleDefID, URI role, SBOLDocument sbolDoc, String defaultURIPrefix) {
 		try {
-			URI moduleDefIdentity = new URI(EditPreferences.getDefaultUriPrefix() + "/md/" + moduleDefID);
+			URI moduleDefIdentity = new URI(defaultURIPrefix + "/md/" + moduleDefID);
 			ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(moduleDefIdentity);
 			if (moduleDef == null) {
 				Set<URI> moduleDefRoles = new HashSet<URI>();
@@ -975,17 +974,17 @@ public class SBOLTestFactory {
 		return gateLibrary;
 	}
 	
-	public static Set<DnaComponent> annotateTestLibrary(int cdsCopyNum, List<BioModel> gateLibrary) {
+	public static Set<DnaComponent> annotateTestLibrary(int cdsCopyNum, List<BioModel> gateLibrary, String defaultURIPrefix) {
 		Set<DnaComponent> libraryComps = new HashSet<DnaComponent>();
 		DnaComponent previousCDS = null;
 		Random rGen = new Random();
 		try {
 			DnaComponent sbolRBS = createTestDNAComponent(
-					new URI(EditPreferences.getDefaultUriPrefix() + "/" + "RBS"),
+					new URI(defaultURIPrefix + "/" + "RBS"),
 					"RBS", GlobalConstants.SO_RBS, rGen, GlobalConstants.RBS_LENGTH, 0);
 			libraryComps.add(sbolRBS);
 			DnaComponent sbolTT = createTestDNAComponent(
-					new URI(EditPreferences.getDefaultUriPrefix() + "/" + "TT"),
+					new URI(defaultURIPrefix + "/" + "TT"),
 					"TT", GlobalConstants.SO_TERMINATOR, rGen, GlobalConstants.TERMINATOR_LENGTH, 0);
 			libraryComps.add(sbolTT);
 			for (int i = 0; i < gateLibrary.size(); i++) {
@@ -994,7 +993,7 @@ public class SBOLTestFactory {
 				for (String promoterID : gateModel.getPromoters()) {
 					Reaction sbmlPromoter = gateModel.getProductionReaction(promoterID);
 					DnaComponent sbolPromoter = createTestDNAComponent(
-							new URI(EditPreferences.getDefaultUriPrefix() + "/" + gateID + "_" + promoterID), 
+							new URI(defaultURIPrefix + "/" + gateID + "_" + promoterID), 
 							gateID + "_" + promoterID, GlobalConstants.SO_PROMOTER, rGen, 
 							GlobalConstants.MEAN_PROMOTER_LENGTH, GlobalConstants.SD_PROMOTER_LENGTH);
 					libraryComps.add(sbolPromoter);
@@ -1013,7 +1012,7 @@ public class SBOLTestFactory {
 							sbolCDS = previousCDS;
 						} else {
 							sbolCDS = createTestDNAComponent(
-									new URI(EditPreferences.getDefaultUriPrefix() + "/" + gateID + "_" + speciesID),
+									new URI(defaultURIPrefix + "/" + gateID + "_" + speciesID),
 									gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
 									GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
 							libraryComps.add(sbolCDS);
@@ -1022,7 +1021,7 @@ public class SBOLTestFactory {
 						isFirstCDS = false;
 					} else {
 						sbolCDS = createTestDNAComponent(
-								new URI(EditPreferences.getDefaultUriPrefix() + "/" + gateID + "_" + speciesID),
+								new URI(defaultURIPrefix + "/" + gateID + "_" + speciesID),
 								gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
 								GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
 						libraryComps.add(sbolCDS);

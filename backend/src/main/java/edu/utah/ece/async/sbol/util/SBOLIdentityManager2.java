@@ -31,7 +31,6 @@ import edu.utah.ece.async.biomodel.parser.BioModel;
 import edu.utah.ece.async.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.util.GlobalConstants;
 import edu.utah.ece.async.util.exceptions.SBOLException;
-import edu.utah.ece.async.main.util.EditPreferences;
 
 /**
  * 
@@ -51,9 +50,9 @@ public class SBOLIdentityManager2 {
 	private String saveFilePath;
 	private String uriAuthority;
 
-	public SBOLIdentityManager2(BioModel biomodel) {
+	public SBOLIdentityManager2(BioModel biomodel, String uriAuthority) {
 		this.biomodel = biomodel;
-		loadAuthority();
+		this.uriAuthority = uriAuthority;
 		modelURIs = new LinkedList<URI>();
 		modelStrand = AnnotationUtility.parseSBOLAnnotation(biomodel.getSBMLDocument().getModel(), modelURIs);
 		if (modelURIs.size() == 0) 
@@ -291,9 +290,6 @@ public class SBOLIdentityManager2 {
 			AnnotationUtility.removeSBOLAnnotation(sbmlModel);
 	}
 
-	private void loadAuthority() {
-		uriAuthority = Preferences.userRoot().get(EditPreferences.getDefaultUriPrefix(), "");
-	}
 	
 //	private void setTime() {
 //		Calendar now = Calendar.getInstance();

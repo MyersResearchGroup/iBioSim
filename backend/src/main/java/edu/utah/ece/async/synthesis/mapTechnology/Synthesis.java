@@ -35,7 +35,6 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.util.GlobalConstants;
-import edu.utah.ece.async.main.util.EditPreferences;
 
 /**
  * 
@@ -334,12 +333,12 @@ public class Synthesis
 			System.out.println(g.getOutputNode().toString());
 		}
 	}
-
-	public void getSBOLfromTechMapping(Map<SynthesisNode, SBOLGraph> solution, SBOLGraph specificationGraph)
+	
+	public void getSBOLfromTechMapping(Map<SynthesisNode, SBOLGraph> solution, SBOLGraph specificationGraph, String defaultURIPrefix)
 	{
 		//Set up SBOLDocument to write into
 		SBOLDocument sbolDoc = new SBOLDocument();
-		sbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+		sbolDoc.setDefaultURIprefix(defaultURIPrefix);
 		try {
 			getSBOLfromTechMap(null, sbolDoc, solution, specificationGraph.getOutputNode());
 		}

@@ -471,12 +471,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveSBOL2() throws SBOLValidationException 
 	{
 		try {
-			SBOLIdentityManager2 identityManager = new SBOLIdentityManager2(biomodel); 
+			SBOLIdentityManager2 identityManager = new SBOLIdentityManager2(biomodel, Preferences.userRoot().get(EditPreferences.getDefaultUriPrefix(), "")); 
 			if (identityManager.containsBioSimURI()) {
 				AssemblyGraph2 assemblyGraph = new AssemblyGraph2(biomodel);
 				if (assemblyGraph.containsSBOL()) {
 					SBOLFileManager2 fileManager = new SBOLFileManager2(
-							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
+							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), EditPreferences.getDefaultUriPrefix());
 					if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) 
 					{
 						String regex = SBOLUtility2.convertRegexSOTermsToNumbers(
@@ -487,7 +487,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						SBOLDocument tempSbolDoc = new SBOLDocument();
 						tempSbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 
-						ComponentDefinition assembledComp = assembler.assembleDNAComponent(tempSbolDoc);
+						ComponentDefinition assembledComp = assembler.assembleDNAComponent(tempSbolDoc, EditPreferences.getDefaultUriPrefix());
 						ComponentDefinition new_assembledComp = null;
 						if (assembledComp != null) 
 						{
