@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -61,7 +62,6 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 import edu.utah.ece.async.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.biomodel.parser.BioModel;
 import edu.utah.ece.async.biomodel.util.SBMLutilities;
-import edu.utah.ece.async.main.util.EditPreferences;
 import edu.utah.ece.async.util.GlobalConstants;
 
 /**
@@ -765,7 +765,8 @@ public class SBML2SBOL {
 
 			if(sbolURIPre == null || sbolURIPre.isEmpty()){
 				//SBOL Default URI is a required field. Set SBOL Document to the given SBOL Prefix if the user did not provide one.
-				sbolURIPre = EditPreferences.getDefaultUriPrefix();
+				Preferences biosimrc = Preferences.userRoot();
+				sbolURIPre = biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 			}
 
 			SBMLDocument sbmlDoc = null;

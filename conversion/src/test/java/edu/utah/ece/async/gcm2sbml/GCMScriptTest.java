@@ -14,7 +14,7 @@
 /**
  * 
  */
-package test.java.edu.utah.ece.async.gcm2sbml;
+package edu.utah.ece.async.gcm2sbml;
 
 
 import java.io.File;

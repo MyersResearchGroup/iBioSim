@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package test.java.edu.utah.ece.async;
+package edu.utah.ece.async;
 
 import org.junit.Test;
 

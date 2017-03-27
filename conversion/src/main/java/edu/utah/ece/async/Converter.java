@@ -45,7 +45,6 @@ import org.xml.sax.SAXException;
 
 import edu.utah.ece.async.biomodel.parser.BioModel;
 import edu.utah.ece.async.biomodel.util.SBMLutilities;
-import edu.utah.ece.async.main.util.EditPreferences;
 import edu.utah.ece.async.util.GlobalConstants;
 
 /**

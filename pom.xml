@@ -38,17 +38,17 @@
 
 	<build>
     <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
     <resources>
       <resource>
-		    <directory>resources</directory>
+		    <directory>src/main/resources</directory>
       </resource>
     </resources>
-    <testResources>
+     <testResources>
       <testResource>
-	      <directory>test</directory>
+        <directory>src/test/resources</directory>
       </testResource>
     </testResources>
-    
 		<plugins>
 			<plugin>
 				<!-- settings for javac. -->
@@ -57,17 +57,18 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
-					<excludes>
-						<exclude>conversion/src/test/resources/edu/utah/ece/async/gcm2sbml/*.java</exclude>
-						<exclude>conversion/src/test/resources/edu/utah/ece/async/scripts/*.java</exclude>
-					</excludes>
+					
+					<testExcludes>
+                    	<exclude>edu/utah/ece/async/gcm2sbml/*.java</exclude>
+                    	<exclude>edu/utah/ece/async/scripts/*.java</exclude>
+                	</testExcludes>
 				</configuration>
 			</plugin>
 			<plugin>
                     <!-- Build an executable JAR -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-		    <version>2.4</version>
+		    		<version>2.4</version>
                     <configuration>
                         <archive>
                             <manifest>
