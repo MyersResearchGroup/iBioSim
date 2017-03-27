@@ -98,31 +98,32 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String fileName = "CRISPR_example"; 
 		String inputfile = sbolDir + fileName + ".xml";
 		
-		String outputFile = sbol2sbml_outputDir + fileName + ".xml";
+		String outputDir = sbol2sbml_outputDir;
+		String outputFile = fileName + ".xml";
 		String compareFile = "";
 		
 		//Options
 		String uriPrefix = "http://sbols.org/CRISPR_Example/CRPb_characterization_Circuit/1.0.0";
 		String outputLang = "SBML";
 		
-		String[] converter_cmdArgs = {"-l", outputLang, "-esf", "-p", uriPrefix, inputfile, "-o", outputFile, "-e", compareFile};
+		String[] converter_cmdArgs = {"-l", outputLang, "-esf", "-p", uriPrefix, inputfile, "-oDir", outputDir, "-o", outputFile, "-e", compareFile};
 		conversion.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
 	public void test_cmd_l_genbank(){
 		/* convert sbol2genbank*/
-		String fileName = "CRISPR_example"; 
-		String inputfile = sbolDir + fileName + ".xml";
-		
-		String outputFile = genBank_outputDir + fileName + "_output" + ".xml";
-		String compareFile = "";
-		
-		//Options
-		String outputLang = "GenBank";
-		
-		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outputFile, "-e", compareFile};
-		conversion.Converter.main(converter_cmdArgs);
+//		String fileName = "CRISPR_example"; 
+//		String inputfile = sbolDir + fileName + ".xml";
+//		
+//		String outputFile = genBank_outputDir + fileName + "_output" + ".xml";
+//		String compareFile = "";
+//		
+//		//Options
+//		String outputLang = "GenBank";
+//		
+//		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outputFile, "-e", compareFile};
+//		conversion.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test

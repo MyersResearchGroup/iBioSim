@@ -420,11 +420,11 @@ public class Converter {
 						if(!URIPrefix.isEmpty()){
 							ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(URIPrefix));
 							List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
-							
+							// Note: last one is always the top model base on SBOL2SBML converter 
+							BioModel target = models.get(models.size() - 1);
 							if(singleSBMLOutput)
 							{
-								// Note: last one is always the top model base on SBOL2SBML converter
-								BioModel target = models.get(models.size() - 1);
+								
 //								SBMLDocument doc = target.getSBMLDocument();
 //								ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(doc);
 //								target.getSBMLComp().unsetListOfExternalModelDefinitions();
@@ -446,7 +446,11 @@ public class Converter {
 //									
 //								}
 //								SBMLWriter.write(target.getSBMLDocument(), new File(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml"), ' ', (short) 4);
-								//target.save(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml");
+//								target.save(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml");
+//								for (BioModel model : models)
+//								{
+//									model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+//								}
 								target.exportSingleFile(outputDir + outputFileName);
 							}
 							else if(noOutput){
