@@ -68,10 +68,6 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
-import backend.learn.genenet.Experiments;
-import backend.learn.genenet.Run;
-import backend.learn.genenet.SpeciesCollection;
-import backend.learn.parameterestimator.ParameterEstimator;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.util.GlobalConstants;
@@ -79,6 +75,10 @@ import dataModels.util.exceptions.BioSimException;
 import frontend.learn.parameterestimator.ParamEstimatorPanel;
 import frontend.main.Gui;
 import frontend.main.Log;
+import main.java.edu.utah.ece.async.learn.genenet.Experiments;
+import main.java.edu.utah.ece.async.learn.genenet.Run;
+import main.java.edu.utah.ece.async.learn.genenet.SpeciesCollection;
+import main.java.edu.utah.ece.async.learn.parameterestimator.ParameterEstimator;
 
 /**
  * This class creates a GUI for the Learn program. It implements the

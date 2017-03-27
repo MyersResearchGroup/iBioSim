@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import backend.verification.timed_state_exploration.octagon.Equivalence;
-import backend.verification.timed_state_exploration.zoneProject.IntervalPair;
-import backend.verification.timed_state_exploration.zoneProject.LPNContAndRate;
-import backend.verification.timed_state_exploration.zoneProject.LPNContinuousPair;
 import dataModels.util.GlobalConstants;
+import main.java.edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;
+import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.IntervalPair;
+import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContAndRate;
+import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.LPNContinuousPair;
 
 import java.lang.Math;
 

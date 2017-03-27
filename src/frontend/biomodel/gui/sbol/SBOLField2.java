@@ -34,10 +34,10 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import backend.sbol.util.SBOLUtility2;
 import dataModels.util.GlobalConstants;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.main.Gui;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 
 public class SBOLField2 extends JPanel implements ActionListener {
 	

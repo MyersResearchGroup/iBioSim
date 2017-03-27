@@ -40,10 +40,10 @@ import javax.swing.plaf.metal.MetalButtonUI;
 
 import com.mxgraph.util.mxConstants;
 
-import backend.sbol.util.SBOLUtility2;
 import dataModels.biomodel.parser.CompatibilityFixer;
 import dataModels.util.GlobalConstants;
 import frontend.main.Gui;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 
 /**
  * 

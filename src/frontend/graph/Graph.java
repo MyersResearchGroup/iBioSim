@@ -134,7 +134,6 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
-import backend.analysis.util.SEDMLutilities;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.SBMLutilities;
 import dataModels.lpn.parser.LPN;
@@ -148,6 +147,7 @@ import frontend.analysis.AnalysisView;
 import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.Utility;
+import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
 
 
 /**

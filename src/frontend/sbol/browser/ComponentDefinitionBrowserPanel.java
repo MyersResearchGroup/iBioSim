@@ -20,8 +20,8 @@ import javax.swing.*;
 
 import org.sbolstandard.core2.Component;
 
-import backend.sbol.util.SBOLUtility2;
 import dataModels.util.GlobalConstants;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 
 //import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 import org.sbolstandard.core2.*;

@@ -21,15 +21,15 @@ import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
-import backend.learn.AMSModel.DMVCrun;
-import backend.learn.AMSModel.LearnModel;
-import backend.learn.AMSModel.Variable;
 import dataModels.lpn.parser.LPN;
 import dataModels.util.GlobalConstants;
 import dataModels.util.Message;
 import dataModels.util.dataparser.*;
 import dataModels.util.exceptions.BioSimException;
 import frontend.main.*;
+import main.java.edu.utah.ece.async.learn.AMSModel.DMVCrun;
+import main.java.edu.utah.ece.async.learn.AMSModel.LearnModel;
+import main.java.edu.utah.ece.async.learn.AMSModel.Variable;
 
 /**
  * This class creates a GUI for the Learn program. It implements the

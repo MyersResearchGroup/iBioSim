@@ -162,10 +162,6 @@ import com.clarkparsia.sbol.SBOLUtils;
 import com.clarkparsia.sbol.editor.SBOLDesignerPlugin;
 import com.clarkparsia.sbol.editor.dialog.RegistryInputDialog;
 
-import backend.analysis.util.SEDMLutilities;
-import backend.sbol.util.SBOLUtility2;
-import backend.verification.platu.platuLpn.io.PlatuGrammarLexer;
-import backend.verification.platu.platuLpn.io.PlatuGrammarParser;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.annotation.SBOLAnnotation;
 import dataModels.biomodel.parser.BioModel;
@@ -202,6 +198,10 @@ import frontend.synthesis.async.Synthesis;
 import frontend.synthesis.genetic.SynthesisView;
 import frontend.verification.AbstPane;
 import frontend.verification.Verification;
+import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
+import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarLexer;
+import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarParser;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the

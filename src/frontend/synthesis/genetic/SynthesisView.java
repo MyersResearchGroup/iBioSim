@@ -47,15 +47,15 @@ import javax.xml.stream.XMLStreamException;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import backend.sbol.util.SBOLFileManager2;
-import backend.synthesis.genetic.SynthesisGraph;
-import backend.synthesis.genetic.Synthesizer;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.SBOLException;
 import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.Utility;
+import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
+import main.java.edu.utah.ece.async.synthesis.genetic.SynthesisGraph;
+import main.java.edu.utah.ece.async.synthesis.genetic.Synthesizer;
 
 /**
  * 

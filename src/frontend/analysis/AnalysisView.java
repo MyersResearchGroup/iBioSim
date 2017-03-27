@@ -76,7 +76,6 @@ import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
 import org.jmathml.ASTNode;
 
-import backend.analysis.util.SEDMLutilities;
 import dataModels.lpn.parser.Abstraction;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Translator;
@@ -90,6 +89,7 @@ import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.Utility;
 import frontend.verification.AbstPane;
+import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
 
 /**
  * This class creates a GUI for analysis. It implements the ActionListener

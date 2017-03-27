@@ -18,11 +18,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
-import backend.verification.platu.main.Options;
 import dataModels.lpn.parser.LPN;
 import dataModels.lpn.parser.Place;
 import dataModels.lpn.parser.Transition;
 import dataModels.lpn.parser.Variable;
+import main.java.edu.utah.ece.async.verification.platu.main.Options;
 
 /**
  * 

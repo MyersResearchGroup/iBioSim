@@ -64,9 +64,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.xml.stream.XMLStreamException;
 
-import backend.verification.platu.main.Options;
-import backend.verification.platu.project.Project;
-import backend.verification.timed_state_exploration.zoneProject.Zone;
 import dataModels.biomodel.parser.BioModel;
 import dataModels.biomodel.util.Utility;
 import dataModels.lpn.parser.Abstraction;
@@ -85,6 +82,9 @@ import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.biomodel.gui.util.PropertyList;
 import frontend.main.Gui;
 import frontend.main.Log;
+import main.java.edu.utah.ece.async.verification.platu.main.Options;
+import main.java.edu.utah.ece.async.verification.platu.project.Project;
+import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
 
 
 /**

@@ -98,13 +98,6 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.TopLevel;
 
-import backend.analysis.util.SEDMLutilities;
-import backend.sbol.assembly.Assembler2;
-import backend.sbol.assembly.AssemblyGraph2;
-import backend.sbol.assembly.SequenceTypeValidator;
-import backend.sbol.util.SBOLFileManager2;
-import backend.sbol.util.SBOLIdentityManager2;
-import backend.sbol.util.SBOLUtility2;
 import dataModels.biomodel.annotation.AnnotationUtility;
 import dataModels.biomodel.network.GeneticNetwork;
 import dataModels.biomodel.parser.BioModel;
@@ -151,6 +144,13 @@ import frontend.main.Gui;
 import frontend.main.Log;
 import frontend.main.util.EditPreferences;
 import frontend.main.util.SpringUtilities;
+import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
+import main.java.edu.utah.ece.async.sbol.assembly.Assembler2;
+import main.java.edu.utah.ece.async.sbol.assembly.AssemblyGraph2;
+import main.java.edu.utah.ece.async.sbol.assembly.SequenceTypeValidator;
+import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLIdentityManager2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user

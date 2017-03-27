@@ -27,14 +27,14 @@ import com.clarkparsia.sbol.editor.Part;
 import com.clarkparsia.sbol.editor.Parts;
 import com.clarkparsia.sbol.editor.dialog.RegistryInputDialog;
 
-import backend.sbol.util.SBOLFileManager2;
-import backend.sbol.util.SBOLIdentityManager2;
-import backend.sbol.util.SBOLUtility2;
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.SBOLException;
 import frontend.biomodel.gui.schematic.ModelEditor;
 import frontend.main.Gui;
 import frontend.sbol.browser.SBOLBrowser2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLIdentityManager2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 
 import java.net.URI;
 import java.net.URISyntaxException;

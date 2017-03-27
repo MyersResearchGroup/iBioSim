@@ -34,13 +34,13 @@ import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 
-import backend.sbol.util.SBOLFileManager2;
-import backend.sbol.util.SBOLIdentityManager2;
 import dataModels.biomodel.util.Utility;
 import dataModels.util.GlobalConstants;
 import dataModels.util.exceptions.SBOLException;
 import frontend.main.Gui;
 import frontend.main.util.EditPreferences;
+import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
+import main.java.edu.utah.ece.async.sbol.util.SBOLIdentityManager2;
 
 /**
  * 
