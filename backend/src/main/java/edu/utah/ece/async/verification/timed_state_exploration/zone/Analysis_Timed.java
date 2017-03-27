@@ -18,8 +18,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
 
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.Analysis;
 import main.java.edu.utah.ece.async.verification.platu.platuLpn.LPNTranRelation;
 import main.java.edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;

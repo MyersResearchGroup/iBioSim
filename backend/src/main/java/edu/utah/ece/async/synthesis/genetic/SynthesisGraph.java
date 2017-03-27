@@ -26,9 +26,9 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SpeciesReference;
 
-import dataModels.biomodel.parser.BioModel;
-import dataModels.biomodel.util.SBMLutilities;
-import dataModels.util.exceptions.SBOLException;
+import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
+import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
+import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
 import main.java.edu.utah.ece.async.sbol.util.SBOLFileManager2;
 
 /**

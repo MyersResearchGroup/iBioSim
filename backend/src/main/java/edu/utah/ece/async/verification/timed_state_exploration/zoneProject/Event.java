@@ -13,7 +13,7 @@
  *******************************************************************************/
 package main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
 
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 
 /**
  * An Event is an action that is pending. This can be a transition to fire or an inequality.

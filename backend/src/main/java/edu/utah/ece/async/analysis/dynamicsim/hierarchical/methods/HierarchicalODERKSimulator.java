@@ -28,7 +28,7 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.EventNode;

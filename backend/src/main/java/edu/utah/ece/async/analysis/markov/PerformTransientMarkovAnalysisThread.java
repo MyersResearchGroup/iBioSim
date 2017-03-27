@@ -15,7 +15,7 @@ package main.java.edu.utah.ece.async.analysis.markov;
 
 import javax.swing.JProgressBar;
 
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 
 /**
  * 

@@ -16,8 +16,8 @@ package main.java.edu.utah.ece.async.verification.timed_state_exploration.octago
 import java.util.Collection;
 import java.util.HashSet;
 
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 import main.java.edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
 import main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject.ContinuousRecordSet;

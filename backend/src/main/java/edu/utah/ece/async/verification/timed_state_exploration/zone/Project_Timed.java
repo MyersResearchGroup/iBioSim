@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import dataModels.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
 import main.java.edu.utah.ece.async.verification.platu.logicAnalysis.Analysis;
 import main.java.edu.utah.ece.async.verification.platu.main.Options;
 import main.java.edu.utah.ece.async.verification.platu.project.Project;

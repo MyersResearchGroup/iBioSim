@@ -17,7 +17,7 @@ import java.net.URI;
 import java.util.List;
 import org.sbolstandard.core2.ComponentDefinition;
 
-import dataModels.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

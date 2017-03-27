@@ -21,7 +21,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
 
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.methods.HierarchicalODERKSimulator;
 import main.java.edu.utah.ece.async.learn.genenet.Experiments;

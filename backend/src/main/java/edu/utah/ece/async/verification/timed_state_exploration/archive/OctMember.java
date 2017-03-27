@@ -13,7 +13,7 @@
  *******************************************************************************/
 package main.java.edu.utah.ece.async.verification.timed_state_exploration.archive;
 
-import dataModels.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
 
 /**
  * Base class for the member variables of the octagons.

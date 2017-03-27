@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.sbml.jsbml.Model;
 
-import dataModels.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ConstraintNode;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.EventNode;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.FunctionNode;

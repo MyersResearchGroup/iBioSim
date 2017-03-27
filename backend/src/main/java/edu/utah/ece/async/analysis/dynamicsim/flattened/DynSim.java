@@ -25,8 +25,8 @@ import javax.swing.JProgressBar;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
 
-import dataModels.biomodel.parser.BioModel;
-import dataModels.util.dataparser.TSDParser;
+import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
+import main.java.edu.utah.ece.async.util.dataparser.TSDParser;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.DynamicSimulation.SimulationType;
 

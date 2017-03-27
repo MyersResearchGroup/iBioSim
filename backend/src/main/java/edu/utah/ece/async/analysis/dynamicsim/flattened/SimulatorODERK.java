@@ -24,7 +24,7 @@ import javax.swing.JProgressBar;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 
-import dataModels.util.MutableBoolean;
+import main.java.edu.utah.ece.async.util.MutableBoolean;
 import flanagan.integration.DerivnFunction;
 import flanagan.integration.RungeKutta;
 

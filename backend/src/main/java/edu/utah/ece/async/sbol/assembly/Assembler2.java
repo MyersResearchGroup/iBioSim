@@ -17,9 +17,9 @@ import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceAnnotation;
 
-import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.SBOLException;
-import frontend.main.util.EditPreferences;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
+import main.java.edu.utah.ece.async.main.util.EditPreferences;
 import main.java.edu.utah.ece.async.sbol.util.SBOLUtility2;
 
 import java.net.URI;

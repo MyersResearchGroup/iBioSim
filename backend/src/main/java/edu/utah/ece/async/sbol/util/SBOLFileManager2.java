@@ -34,10 +34,10 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 
-import dataModels.biomodel.parser.BioModel;
-import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.SBOLException;
-import frontend.main.util.EditPreferences;
+import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.exceptions.SBOLException;
+import main.java.edu.utah.ece.async.main.util.EditPreferences;
 
 /**
  * 

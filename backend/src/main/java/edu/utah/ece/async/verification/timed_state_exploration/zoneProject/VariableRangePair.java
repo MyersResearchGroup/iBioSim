@@ -13,7 +13,7 @@
  *******************************************************************************/
 package main.java.edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
 
-import dataModels.lpn.parser.Variable;
+import main.java.edu.utah.ece.async.lpn.parser.Variable;
 
 /**
  * A Variable and Range class packages an lpn.parser.Variable with an

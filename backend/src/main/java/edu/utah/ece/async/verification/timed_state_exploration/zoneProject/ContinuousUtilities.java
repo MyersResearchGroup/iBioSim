@@ -15,8 +15,8 @@ package main.java.edu.utah.ece.async.verification.timed_state_exploration.zonePr
 
 import java.util.ArrayList;
 
-import dataModels.lpn.parser.LPN;
-import dataModels.lpn.parser.Variable;
+import main.java.edu.utah.ece.async.lpn.parser.LPN;
+import main.java.edu.utah.ece.async.lpn.parser.Variable;
 import main.java.edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
 import main.java.edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;

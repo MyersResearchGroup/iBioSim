@@ -31,8 +31,8 @@ import javax.swing.JOptionPane;
 
 import org.sbolstandard.core2.*;
 
-import dataModels.util.GlobalConstants;
-import frontend.main.util.EditPreferences;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.main.util.EditPreferences;
 
 /**
  * 

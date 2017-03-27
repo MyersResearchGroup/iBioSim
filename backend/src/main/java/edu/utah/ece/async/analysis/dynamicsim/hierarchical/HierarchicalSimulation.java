@@ -35,8 +35,8 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
-import dataModels.util.GlobalConstants;
-import dataModels.util.exceptions.BioSimException;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.exceptions.BioSimException;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.ParentSimulator;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
 import main.java.edu.utah.ece.async.analysis.dynamicsim.hierarchical.math.ConstraintNode;

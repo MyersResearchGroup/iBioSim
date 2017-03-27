@@ -27,10 +27,10 @@ import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 
-import dataModels.biomodel.parser.BioModel;
-import dataModels.biomodel.util.SBMLutilities;
-import dataModels.biomodel.util.Utility;
-import dataModels.util.GlobalConstants;
+import main.java.edu.utah.ece.async.biomodel.parser.BioModel;
+import main.java.edu.utah.ece.async.biomodel.util.SBMLutilities;
+import main.java.edu.utah.ece.async.biomodel.util.Utility;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;

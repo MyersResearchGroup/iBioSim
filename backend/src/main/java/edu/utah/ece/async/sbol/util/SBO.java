@@ -15,7 +15,7 @@ package main.java.edu.utah.ece.async.sbol.util;
 
 import java.net.URI;
 
-import dataModels.util.GlobalConstants;
+import main.java.edu.utah.ece.async.util.GlobalConstants;
 
 /**
  * 

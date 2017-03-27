@@ -16,7 +16,7 @@ package main.java.edu.utah.ece.async.verification.timed_state_exploration.zone;
 import java.util.HashMap;
 import java.util.List;
 
-import dataModels.lpn.parser.Transition;
+import main.java.edu.utah.ece.async.lpn.parser.Transition;
 import main.java.edu.utah.ece.async.verification.platu.stategraph.State;
 
 /**
