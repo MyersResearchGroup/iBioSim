@@ -418,9 +418,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 			if (selection != null) {
 				LinkedList<URI> list = new LinkedList<URI>();
 
-				for (ComponentDefinition cd : selection.getComponentDefinitions()) {
-					list.add(cd.getIdentity());
-				}
+				list.add(selection.getRootComponentDefinitions().iterator().next().getIdentity());
 
 				insertComponentURIs(list);
 			}
