@@ -53,9 +53,9 @@ import edu.utah.ece.async.verification.platu.project.PrjState;
 import edu.utah.ece.async.verification.platu.stategraph.State;
 import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 import edu.utah.ece.async.verification.timed_state_exploration.octagon.Equivalence;
+import edu.utah.ece.async.verification.timed_state_exploration.zone.TimedStateSet;
 import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.EventSet;
 import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.TimedPrjState;
-import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.TimedStateSet;
 import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
 
 import java.util.Queue;

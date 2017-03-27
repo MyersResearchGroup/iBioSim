@@ -33,7 +33,6 @@ import edu.utah.ece.async.verification.platu.expression.*;
 import edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
 import edu.utah.ece.async.verification.platu.platuLpn.LPNTran;
 import edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
-import edu.utah.ece.async.verification.platu.platuLpn.PlatuLPN;
 import edu.utah.ece.async.verification.platu.platuLpn.VarExpr;
 import edu.utah.ece.async.verification.platu.platuLpn.VarExprList;
 import edu.utah.ece.async.verification.platu.platuLpn.VarSet;

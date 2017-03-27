@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import edu.utah.ece.async.lpn.parser.Transition;
-import edu.utah.ece.async.verification.platu.main.Main;
 import edu.utah.ece.async.verification.platu.main.Options;
 import edu.utah.ece.async.verification.platu.stategraph.State;
 import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
@@ -299,7 +298,7 @@ public class CompositeStateGraph {
 		String dotFile = Options.getDotPath();
 		if(!dotFile.endsWith("/") && !dotFile.endsWith("\\")){
 			String dirSlash = "/";
-			if(Main.isWindows) dirSlash = "\\";
+			if(System.getProperty("os.name").toLowerCase().contains("windows")) dirSlash = "\\";
 			
 			dotFile = dotFile += dirSlash;
 		}

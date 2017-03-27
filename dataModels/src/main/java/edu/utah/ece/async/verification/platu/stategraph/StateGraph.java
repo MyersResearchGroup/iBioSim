@@ -32,7 +32,6 @@ import edu.utah.ece.async.lpn.parser.Variable;
 import edu.utah.ece.async.util.GlobalConstants;
 import edu.utah.ece.async.verification.platu.common.IndexObjMap;
 import edu.utah.ece.async.verification.platu.logicAnalysis.Constraint;
-import edu.utah.ece.async.verification.platu.main.Main;
 import edu.utah.ece.async.verification.platu.main.Options;
 import edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
 import edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
@@ -328,7 +327,7 @@ public class StateGraph {
     	String dotFile = Options.getDotPath();
 		if(!dotFile.endsWith("/") && !dotFile.endsWith("\\")){
 			String dirSlash = "/";
-			if(Main.isWindows) dirSlash = "\\";
+			if(System.getProperty("os.name").toLowerCase().contains("windows")) dirSlash = "\\";
 			
 			dotFile = dotFile += dirSlash;
 		}

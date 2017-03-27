@@ -31,7 +31,7 @@ public class Options {
 	/*
 	 * Path in the host where the DOT program is located 
 	 */
-	private static String dotPath = Main.workingDirectory;
+	private static String dotPath = System.getProperty("user.dir");
 	
 	/*
 	 * Timing analysis options:

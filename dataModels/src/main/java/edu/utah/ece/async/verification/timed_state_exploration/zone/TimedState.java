@@ -26,6 +26,8 @@ import edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
 import edu.utah.ece.async.verification.platu.platuLpn.VarSet;
 import edu.utah.ece.async.verification.platu.stategraph.State;
 import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.verification.timed_state_exploration.zone.TimedState;
+import edu.utah.ece.async.verification.timed_state_exploration.zone.Zone;
 
 /**
  * Adds timing to a State.

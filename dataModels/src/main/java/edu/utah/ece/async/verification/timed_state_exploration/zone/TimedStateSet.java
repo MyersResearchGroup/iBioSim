@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
+package edu.utah.ece.async.verification.timed_state_exploration.zone;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +23,9 @@ import edu.utah.ece.async.lpn.parser.Transition;
 import edu.utah.ece.async.verification.platu.logicAnalysis.StateSetInterface;
 import edu.utah.ece.async.verification.platu.main.Options;
 import edu.utah.ece.async.verification.platu.project.PrjState;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.EventSet;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.TimedPrjState;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
 
 /**
  * 

@@ -319,5 +319,14 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.openmali</groupId>
+			<artifactId>openmali</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/openmali.jar</systemPath>
+		</dependency>
+
 	</dependencies>
 </project>

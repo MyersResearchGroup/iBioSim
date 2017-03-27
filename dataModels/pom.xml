@@ -312,6 +312,45 @@
 			<artifactId>github-api</artifactId>
 			<version>1.84</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.sbolstandard</groupId>
+			<artifactId>libSBOLj</artifactId>
+			<version>2.1.1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/libSBOLj-2.1.2-SNAPSHOT-withDependencies.jar</systemPath>
+		</dependency>
 		
+		<dependency>
+			<groupId>org.sbml.libsbml</groupId>
+			<artifactId>libsbml</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/libsbmlj.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>odk.lang</groupId>
+			<artifactId>odk</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/jafama.jar</systemPath>
+		</dependency>
+				
+		<dependency>
+			<groupId>flanagan.math</groupId>
+			<artifactId>flanagan</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/flanagan.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jlibsedml</groupId>
+			<artifactId>jlibsedml</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../lib/jlibsedml.jar</systemPath>
+		</dependency>
 	</dependencies>
 </project>
