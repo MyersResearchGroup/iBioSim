@@ -74,7 +74,8 @@ import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
-import org.jmathml.ASTNode;
+//import org.jmathml.ASTNode;
+import org.sbml.libsbml.ASTNode;
 
 import main.java.edu.utah.ece.async.analysis.util.SEDMLutilities;
 import main.java.edu.utah.ece.async.biomodel.gui.schematic.ModelEditor;
