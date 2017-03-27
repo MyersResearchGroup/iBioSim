@@ -407,8 +407,8 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 
 			try {
 				workingDoc = SBOLReader.read(sbolFilePaths.iterator().next());
-				selection = new RegistryInputDialog(null, Parts.GENERIC, com.clarkparsia.sbol.SBOLUtils.Types.All_types,
-						null, workingDoc).getInput();
+				selection = new RegistryInputDialog(null, RegistryInputDialog.ALL_PARTS,
+						com.clarkparsia.sbol.SBOLUtils.Types.All_types, null, workingDoc).getInput();
 
 				if (selection != null) {
 					SBOLUtils.insertTopLevels(selection, workingDoc);
