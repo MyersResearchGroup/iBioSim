@@ -47,7 +47,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.main.java.edu.utah.ece.async.SBOL2SBML;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -169,6 +168,7 @@ import main.java.edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarP
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import de.unirostock.sems.cbarchive.CombineArchive;
+import main.java.edu.utah.ece.async.SBOL2SBML;
 import main.java.edu.utah.ece.async.analysis.AnalysisThread;
 import main.java.edu.utah.ece.async.analysis.AnalysisView;
 import main.java.edu.utah.ece.async.analysis.Run;
