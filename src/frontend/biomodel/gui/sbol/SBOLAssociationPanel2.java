@@ -409,18 +409,18 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 				workingDoc = SBOLReader.read(sbolFilePaths.iterator().next());
 				selection = new RegistryInputDialog(null, Parts.GENERIC, com.clarkparsia.sbol.SBOLUtils.Types.All_types,
 						null, workingDoc).getInput();
-				SBOLUtils.insertTopLevels(selection, workingDoc);
-				SBOLWriter.write(workingDoc, sbolFilePaths.iterator().next());
+
+				if (selection != null) {
+					SBOLUtils.insertTopLevels(selection, workingDoc);
+					SBOLWriter.write(workingDoc, sbolFilePaths.iterator().next());
+					LinkedList<URI> list = new LinkedList<URI>();
+
+					list.add(selection.getRootComponentDefinitions().iterator().next().getIdentity());
+
+					insertComponentURIs(list);
+				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
-			}
-
-			if (selection != null) {
-				LinkedList<URI> list = new LinkedList<URI>();
-
-				list.add(selection.getRootComponentDefinitions().iterator().next().getIdentity());
-
-				insertComponentURIs(list);
 			}
 		} else if (e.getSource() == remove) {
 			removeSelectedURIs();
