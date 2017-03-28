@@ -2066,7 +2066,7 @@ public class SBMLutilities
 				}
 				if (reaction.isSetKineticLaw())
 				{
-					String[] vars = SBMLutilities.myFormulaToString(reaction.getKineticLaw().getMath()).split(" |\\(|\\)|\\,");
+					String[] vars = getSupport(SBMLutilities.myFormulaToString(reaction.getKineticLaw().getMath()));
 					for (int j = 0; j < vars.length; j++)
 					{
 						if (vars[j].equals(id))
@@ -2083,7 +2083,7 @@ public class SBMLutilities
 		{
 			InitialAssignment init = model.getInitialAssignment(i);
 			String initStr = SBMLutilities.myFormulaToString(init.getMath());
-			String[] vars = initStr.split(" |\\(|\\)|\\,");
+			String[] vars = getSupport(initStr);
 			for (int j = 0; j < vars.length; j++)
 			{
 				if (vars[j].equals(id))
@@ -2102,7 +2102,7 @@ public class SBMLutilities
 			{
 				initStr += " = " + getVariable(rule);
 			}
-			String[] vars = initStr.split(" |\\(|\\)|\\,");
+			String[] vars = getSupport(initStr);
 			for (int j = 0; j < vars.length; j++)
 			{
 				if (vars[j].equals(id))
@@ -2128,7 +2128,7 @@ public class SBMLutilities
 		{
 			Constraint constraint = model.getConstraint(i);
 			String consStr = SBMLutilities.myFormulaToString(constraint.getMath());
-			String[] vars = consStr.split(" |\\(|\\)|\\,");
+			String[] vars = getSupport(consStr);
 			for (int j = 0; j < vars.length; j++)
 			{
 				if (vars[j].equals(id))
@@ -2148,12 +2148,16 @@ public class SBMLutilities
 			{
 				eventStr += " " + SBMLutilities.myFormulaToString(event.getDelay().getMath());
 			}
+			if (event.isSetPriority())
+			{
+				eventStr += " " + SBMLutilities.myFormulaToString(event.getPriority().getMath());
+			}
 			for (int j = 0; j < event.getEventAssignmentCount(); j++)
 			{
 				eventStr += " " + (event.getListOfEventAssignments().get(j).getVariable()) + " = "
 						+ SBMLutilities.myFormulaToString(event.getListOfEventAssignments().get(j).getMath());
 			}
-			String[] vars = eventStr.split(" |\\(|\\)|\\,");
+			String[] vars = getSupport(eventStr);
 			for (int j = 0; j < vars.length; j++)
 			{
 				if (vars[j].equals(id))

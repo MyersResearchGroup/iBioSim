@@ -1820,6 +1820,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				e.printStackTrace();
 				return false;
 			}
+			if (sbml==null) {
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
 			performModifications(sbml,dd);
 			if (analysisView==null || !analysisView.noExpand()) {
 				GCMParser parser = new GCMParser(biomodel);
