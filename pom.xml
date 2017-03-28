@@ -64,32 +64,7 @@
 					</testExcludes>
 				</configuration>
 			</plugin>
-			<!-- Build an executable JAR -->
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>build-converter</id>
-						<configuration>
-							<archive>
-								<manifest>
-									<mainClass>edu.utah.ece.async.Converter</mainClass>
-								</manifest>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<finalName>converter</finalName>
-						</configuration>
-						<phase>package</phase>
-						<goals>
-							<goal>assembly</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 		<!-- todo: add any other plugins needed here -->
-
 	</build>
 </project>

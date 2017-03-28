@@ -48,8 +48,58 @@ import edu.utah.ece.async.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.util.GlobalConstants;
 
 /**
- * Provides functionality for validating SBOL data models.
+ * Command line method for reading an input file and producing an output file. 
+ * --jar libSBOLj.jar [options] inputFile [-o outputFile -e compareFile]
+ * <p>
+ * By default, validations on compliance and completeness are performed, and types
+ * for top-level objects are not used in URIs.
+ * <p>
+ * Requirements:
+ * <p>
+ * inputfile
+ * <p>
+ * "-e" specifies a file to compare if equal to
+ * <p>
+ * "-o" specifies an output filename
+ * <p>
  * 
+ * Options:
+ * <p>
+ * "-b" check best practices
+ * <p>
+ * "-cf" second SBOL file if file diff. option is selected
+ * <p>
+ * "-d" display detailed error trace
+ * <p>
+ * "-esf" export single SBML file
+ * <p>
+ * "-f" fail on first error
+ * <p>
+ * "-i" allow SBOL document to be incomplete
+ * <p>
+ * "-l" indicates the language for output (default=SBOL2, other options SBOL1, GenBank, FASTA, SBML)
+ * <p>
+ * "-mf" main SBOL file if file diff. option is selected
+ * <p>
+ * "-n" allow non-compliant URIs
+ * <p>
+ * "-no" indicate no output file to be generated from validation
+ * <p>
+ * "-oDir" output directory of resulting conversion and validation file
+ * <p>
+ * "-p" specifies the default URI prefix for converted objects
+ * <p>
+ * "-rsbml" The full path of external SBML files to be referenced in the SBML2SBOL conversion
+ * <p>
+ * "-rsbol" The full path of external SBOL files to be referenced in the SBML2SBOL conversion
+ * <p>
+ * "-s" select only this topLevel object and those it references
+ * <p>
+ * "-t" uses types in URIs
+ * <p>
+ * "-v" specifies version to use for converted objects
+ * <p>
+ *
  * @author Zhen Zhang
  * @author Tramy Nguyen
  * @author Chris Myers
@@ -97,61 +147,6 @@ public class Converter {
 		System.exit(1);
 	}
 
-	/**
-	 * Command line method for reading an input file and producing an output file. 
-	 * --jar libSBOLj.jar [options] <inputFile> [-o <outputFile> -e <compareFile>]
-	 * <p>
-	 * By default, validations on compliance and completeness are performed, and types
-	 * for top-level objects are not used in URIs.
-	 * <p>
-	 * Requirements:
-	 * <p>
-	 * inputfile
-	 * <p>
-	 * "-e" specifies a file to compare if equal to
-	 * <p>
-	 * "-o" specifies an output filename
-	 * <p>
-	 * 
-	 * Options:
-	 * <p>
-	 * "-b" check best practices
-	 * <p>
-	 * "-cf" second SBOL file if file diff. option is selected
-	 * <p>
-	 * "-d" display detailed error trace
-	 * <p>
-	 * "-esf" export single SBML file
-	 * <p>
-	 * "-f" fail on first error
-	 * <p>
-	 * "-i" allow SBOL document to be incomplete
-	 * <p>
-	 * "-l" indicates the language for output (default=SBOL2, other options SBOL1, GenBank, FASTA, SBML)
-	 * <p>
-	 * "-mf" main SBOL file if file diff. option is selected
-	 * <p>
-	 * "-n" allow non-compliant URIs
-	 * <p>
-	 * "-no" indicate no output file to be generated from validation
-	 * <p>
-	 * "-oDir" output directory of resulting conversion and validation file
-	 * <p>
-	 * "-p" specifies the default URI prefix for converted objects
-	 * <p>
-	 * "-rsbml" The full path of external SBML files to be referenced in the SBML2SBOL conversion
-	 * <p>
-	 * "-rsbol" The full path of external SBOL files to be referenced in the SBML2SBOL conversion
-	 * <p>
-	 * "-s" select only this topLevel object and those it references
-	 * <p>
-	 * "-t" uses types in URIs
-	 * <p>
-	 * "-v" specifies version to use for converted objects
-	 * <p>
-	 *
-	 * @param args arguments supplied at command line
-	 */
 	public static void main(String[] args) {
 
 		//-----REQUIRED FIELD-----

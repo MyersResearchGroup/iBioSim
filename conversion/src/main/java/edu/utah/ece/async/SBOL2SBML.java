@@ -102,8 +102,8 @@ public class SBOL2SBML {
 	 * @param moduleDef - the current ModuleDefinition to convert all SBML object within the ModuleDefinition to its equivalent SBML component.
 	 * @param sbolDoc - The SBOL document to be converted to its equivalent SBML model.
 	 * @return The list of SBML models converted from SBOL ModuleDefinition. Each of the converted SBML model are stored within iBioSim's BioModel object.
-	 * @throws XMLStreamException
-	 * @throws IOException
+	 * @throws XMLStreamException -
+	 * @throws IOException -
 	 */
 	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException {
 

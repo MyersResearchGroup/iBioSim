@@ -143,10 +143,10 @@ public class SBML2SBOL {
 	 * @param fileName - The name of the input SBML file
 	 * @param sbolFiles - The set of SBOL files to use for the conversion to reference from. If no ref_sbolInputfilePath is given, then null should be set to indicate no referencing SBOL files are given for conversion.
 	 * @param sbolURIPrefix - The URI prefix to be set on the SBOLDocument.
-	 * @throws SBOLValidationException
-	 * @throws XMLStreamException
-	 * @throws IOException
-	 * @throws SBOLConversionException
+	 * @throws SBOLValidationException -
+	 * @throws XMLStreamException -
+	 * @throws IOException -
+	 * @throws SBOLConversionException -
 	 */
 	public static void convert_SBML2SBOL(SBOLDocument sbolDoc, String externalSBMLPath, SBMLDocument sbmlDoc, String fileName, HashSet<String> sbolFiles, String sbolURIPrefix) throws SBOLValidationException, XMLStreamException, IOException, SBOLConversionException {
 
