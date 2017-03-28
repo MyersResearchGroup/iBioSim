@@ -457,8 +457,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			e.printStackTrace();
 		}
 		log.addText("Saving SBML file:\n" + path + separator + modelId  + ".xml");
-		saveAsSBOL2();
-		log.addText("Converting SBML into SBOL and saving into the project's SBOL library.");
+		//saveAsSBOL2();
+		//log.addText("Converting SBML into SBOL and saving into the project's SBOL library.");
 		if (check) {
 			Utils.check(path + separator + modelId + ".xml",biomodel.getSBMLDocument(),false);
 		}	
