@@ -34,13 +34,11 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		/* test validation on a valid sbol file. */
 		String fileName = "CRISPR_example"; 
 		String inputfile = sbolDir + fileName + ".xml";
-		String outputFile = ""; 
-		String compareFile = "";
 		
 		//Options
 		String uriPrefix = "http://www.async.ece.utah.edu";
 		
-		String[] converter_cmdArgs = {"-no", "-p", uriPrefix, inputfile, "-o", outputFile, "-e", compareFile};
+		String[] converter_cmdArgs = {"-no", "-p", uriPrefix, inputfile};
 		edu.utah.ece.async.Converter.main(converter_cmdArgs);
 	}
 	
@@ -98,14 +96,14 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String fileName = "CRISPR_example"; 
 		String inputfile = sbolDir + fileName + ".xml";
 		
-		String outputFile = sbol2sbml_outputDir + fileName + ".xml";
+		String outputFile = fileName + ".xml";
 		String compareFile = "";
 		
 		//Options
 		String uriPrefix = "http://sbols.org/CRISPR_Example/CRPb_characterization_Circuit/1.0.0";
 		String outputLang = "SBML";
 		
-		String[] converter_cmdArgs = {"-l", outputLang, "-esf", "-p", uriPrefix, inputfile, "-o", outputFile, "-e", compareFile};
+		String[] converter_cmdArgs = {"-l", outputLang, "-esf", "-p", uriPrefix, inputfile, "-oDir", sbol2sbml_outputDir, "-o", outputFile, "-e", compareFile};
 		edu.utah.ece.async.Converter.main(converter_cmdArgs);
 	}
 	

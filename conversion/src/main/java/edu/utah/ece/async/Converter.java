@@ -48,8 +48,8 @@ import edu.utah.ece.async.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.util.GlobalConstants;
 
 /**
- * Command line method for reading an input file and producing an output file. 
- * --jar libSBOLj.jar [options] inputFile [-o outputFile -e compareFile]
+ * Command line method for running conversion jar file. 
+ * java -jar conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar [options] inputFile 
  * <p>
  * By default, validations on compliance and completeness are performed, and types
  * for top-level objects are not used in URIs.
@@ -57,10 +57,6 @@ import edu.utah.ece.async.util.GlobalConstants;
  * Requirements:
  * <p>
  * inputfile
- * <p>
- * "-e" specifies a file to compare if equal to
- * <p>
- * "-o" specifies an output filename
  * <p>
  * 
  * Options:
@@ -70,6 +66,8 @@ import edu.utah.ece.async.util.GlobalConstants;
  * "-cf" second SBOL file if file diff. option is selected
  * <p>
  * "-d" display detailed error trace
+ * <p>
+ * "-e" specifies a file to compare if equal to
  * <p>
  * "-esf" export single SBML file
  * <p>
@@ -84,6 +82,8 @@ import edu.utah.ece.async.util.GlobalConstants;
  * "-n" allow non-compliant URIs
  * <p>
  * "-no" indicate no output file to be generated from validation
+ * <p>
+ * "-o" specifies an output filename
  * <p>
  * "-oDir" output directory of resulting conversion and validation file
  * <p>
@@ -117,25 +117,25 @@ public class Converter {
 	private static void usage() {
 		System.err.println("libSBOLj version " + libSBOLj_Version);
 		System.err.println("Description: validates the contents of an SBOL " + SBOLVersion + " document, can compare two documents,\n"
-				+ "and can convert to/from SBOL 1.1, GenBank, and FASTA formats.");
+				+ "and can convert to/from SBOL 1.1, to/from SBML, GenBank, and FASTA formats.");
 		System.err.println();
 		System.err.println("Usage:");
-		System.err.println("\tjava --jar libSBOLj.jar [options] <inputFile> [-o <outputFile> -e <compareFile>]");
+		System.err.println("\tjava -jar conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar [options] inputFile ");
 		System.err.println();
 		System.err.println("Required:");
 		System.err.println("<inputFile> name of input file");
-		System.err.println("\t-e  specifies a file to compare if equal to");
-		System.err.println("\t-o  <outputFile> specifies the output file produced from the converter");
 		System.err.println();
 		System.err.println("Options:");
 		System.err.println("\t-b  check best practices");
 		System.err.println("\t-cf  second SBOL file if file diff. option is selected");
 		System.err.println("\t-d  display detailed error trace");
+		System.err.println("\t-e  specifies a file to compare if equal to");
 		System.err.println("\t-f  continue after first error");
 		System.err.println("\t-i  allow SBOL document to be incomplete");
 		System.err.println("\t-l  <language> specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML) for output (default=SBOL2)");
 		System.err.println("\t-mf  main SBOL file if file diff. option is selected.");
 		System.err.println("\t-n  allow non-compliant URIs");
+		System.err.println("\t-o  <outputFile> specifies the output file produced from the converter");
 		System.err.println("\t-no  indicate no output file to be generated from validation");
 		System.err.println("\t-oDir  output directory of resulting conversion and validation file");
 		System.err.println("\t-p  <URIprefix> used for converted objects");
@@ -342,12 +342,14 @@ public class Converter {
 			 * Validate file of file created from the converter
 			 */
 			if(inputIsSBML){
-				
+
 				SBOLDocument outSBOLDoc = new SBOLDocument();
 				SBMLDocument inputSBMLDoc;
-				try {
+				try 
+				{
 					//We must guarantee user must provide SBOL default URI or else tell user to provide one.
-					if(!URIPrefix.isEmpty()){
+					if(!URIPrefix.isEmpty())
+					{
 						if (externalSBMLPath.isEmpty()) {
 							//SBML file is relative. No external path was given for the input SBML file. 
 							inputSBMLDoc = SBMLutilities.readSBML(fileName);
@@ -355,28 +357,32 @@ public class Converter {
 						else {
 							inputSBMLDoc = SBMLutilities.readSBML(externalSBMLPath + GlobalConstants.separator + fileName);
 						}
-						
-						SBML2SBOL.convert_SBML2SBOL(outSBOLDoc, externalSBMLPath, inputSBMLDoc, fileName, ref_sbolInputFilePath, URIPrefix); 
-						
-						if(!noOutput){
-							if(outputFileName.isEmpty()){
-								System.err.println("You must provide an output file name to convert SBML to SBOL.");
-								usage();
-							}
-							if(outputDir.isEmpty()){
-								System.err.println("You must provide an output directory to store the SBOL file after SBML to SBOL conversion is performed.");
-								usage();
-							}
-							outSBOLDoc.write(outputDir + outputFileName, SBOLDocument.RDF);
-						}
-						else{
-							outSBOLDoc.write(new ByteArrayOutputStream());
-						}
 
+						SBML2SBOL.convert_SBML2SBOL(outSBOLDoc, externalSBMLPath, inputSBMLDoc, fileName, ref_sbolInputFilePath, URIPrefix); 
 					} 
-					else{
+					else
+					{
 						System.err.println("You must provide an SBOL URI prefix in order to convert SBML to SBOL.");
 						usage();
+					}
+					
+					if(!noOutput)
+					{
+						if(outputFileName.isEmpty())
+						{
+							System.err.println("You must provide an output file name to convert SBML to SBOL.");
+							usage();
+						}
+						if(outputDir.isEmpty())
+						{
+							System.err.println("You must provide an output directory to store the SBOL file after SBML to SBOL conversion is performed.");
+							usage();
+						}
+						outSBOLDoc.write(outputDir + outputFileName, SBOLDocument.RDF);
+					}
+					else
+					{
+						outSBOLDoc.write(new ByteArrayOutputStream());
 					}
 					org.sbolstandard.core2.SBOLValidate.validate(outputFileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
 							version, keepGoing, compareFile, compareFileName, mainFileName, 
@@ -397,110 +403,116 @@ public class Converter {
 					e.printStackTrace();
 				}
 			}
-			else if(inputIsSBOL){
 
+			else if(inputIsSBOL)
+			{
 				//Perform validation on the input SBOL file if no SBML output file is expected
 				org.sbolstandard.core2.SBOLValidate.validate(fileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compareFileName, mainFileName, 
 						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFileName, 
 						showDetail, noOutput);
-				
-				if(sbmlOut){
 
-					SBOLDocument sbolDoc;
-					try {
-						sbolDoc = SBOLReader.read(new FileInputStream(fileName));
+				SBOLDocument sbolDoc;
+				try {
+					sbolDoc = SBOLReader.read(new FileInputStream(fileName));
 
-						if(!URIPrefix.isEmpty()){
-							ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(URIPrefix));
-							List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
-							
-							if(singleSBMLOutput)
-							{
-								// Note: last one is always the top model base on SBOL2SBML converter
-								BioModel target = models.get(models.size() - 1);
-//								SBMLDocument doc = target.getSBMLDocument();
-//								ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(doc);
-//								target.getSBMLComp().unsetListOfExternalModelDefinitions();
-//								for(SBase element : elements)
-//								{
-//									element.unsetMetaId();
-//								}
-//								for (int i = 0; i < models.size()-1; ++i)
-//								{
-//									BioModel bioModel = models.get(i);
-//									doc = bioModel.getSBMLDocument();
-//									elements = SBMLutilities.getListOfAllElements(doc);
-//									for(SBase element : elements)
-//									{
-//										element.unsetMetaId();
-//									}
-//									ModelDefinition md = new ModelDefinition(doc.getModel());
-//									target.getSBMLComp().addModelDefinition(md);
-//									
-//								}
-//								SBMLWriter.write(target.getSBMLDocument(), new File(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml"), ' ', (short) 4);
-								//target.save(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml");
-								target.exportSingleFile(outputDir + outputFileName);
-							}
-							else if(noOutput){
-								//TODO: print result of SBOL2SBML to OutputStream
-							}
-							else
-							{ 
-								//Multiple SBML output
-								for (BioModel model : models)
-								{
-									model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
-								}
-							}
-							
+					if(!URIPrefix.isEmpty())
+					{
+						ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(URIPrefix));
+						List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
+
+						// Note: Since SBOL2SBML converter encase the result of SBML model in BioModels, the last biomodel 
+						// given from the converter is the top level model. All submodels belonging to the top level models are nested in side this last biomodel
+						BioModel target = models.get(models.size() - 1);
+
+						if(noOutput)
+						{
+							//TODO: print result of SBOL2SBML to OutputStream
+							SBMLWriter.write(target.getSBMLDocument(), System.out, ' ', (short) 4);
 						}
 						else{
-							//No ModuleDefinition URI provided so loop over all rootModuleDefinition
-							for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
+							if(sbmlOut)
 							{
-								List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
-								for (BioModel model : models)
+								if(singleSBMLOutput)
 								{
-									model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+									target.save(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml");
+									target.exportSingleFile(outputDir + outputFileName);
+								}
+								else
+								{ 
+									//Multiple SBML output
+									for (BioModel model : models)
+									{
+										model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+									}
 								}
 							}
 						}
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (SBOLValidationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (SBOLConversionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (XMLStreamException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					} //end of if uri prefix is given
+					else
+					{
+						//No ModuleDefinition URI provided so loop over all rootModuleDefinition
+						for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
+						{
+							List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
+							
+							// Note: Since SBOL2SBML converter encase the result of SBML model in BioModels, the last biomodel 
+							// given from the converter is the top level model. All submodels belonging to the top level models are nested in side this last biomodel
+							BioModel target = models.get(models.size() - 1);
+							
+							if(noOutput)
+							{
+								//TODO: print result of SBOL2SBML to OutputStream
+								SBMLWriter.write(target.getSBMLDocument(), System.out, ' ', (short) 4);
+							}
+							if(sbmlOut)
+							{
+								if(singleSBMLOutput)
+								{
+									target.save(outputDir + File.separator + target.getSBMLDocument().getModel().getId() + ".xml");
+									target.exportSingleFile(outputDir + outputFileName);
+								}
+								else
+								{
+									for (BioModel model : models)
+									{
+										model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+									}
+								}
+							}
+							
+						} //end of root md for loop
 					}
 				}
-				else{
-					System.err.println("You must provide an SBOL URI prefix in order to convert SBOL to SBML.");
-					usage();
-				}
+				catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SBOLValidationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SBOLConversionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (XMLStreamException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} //end of last catch
 			}
-
-		} else {
+		}//end of is not a directory check
+		else
+		{
 			for (File eachFile : file.listFiles()) {
 				// TODO: should allow compare to a directory of same named files
-				System.out.println(eachFile.getAbsolutePath());
 				org.sbolstandard.core2.SBOLValidate.validate(eachFile.getAbsolutePath(), URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compareFileName, mainFileName, 
 						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFileName, 
 						showDetail, noOutput);
 			}
 		}
-	}
+	} // end of method
 
 	/**
 	 * Determine what file format the given xml file is. (i.e. sbml or rdf:RDF)
@@ -523,12 +535,12 @@ public class Converter {
 		return fileType;
 
 	}
-	
+
 	private boolean isSBMLFile(String file){
 		SAXParserFactory factory = SAXParserFactory.newInstance();
-        try {
+		try {
 			SAXParser saxParser = factory.newSAXParser();
-			
+
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -536,7 +548,7 @@ public class Converter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        return false;
+		return false;
 	}
 
 }

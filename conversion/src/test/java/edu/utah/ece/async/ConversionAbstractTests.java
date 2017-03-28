@@ -26,7 +26,7 @@ import java.io.File;
 public abstract class ConversionAbstractTests {
 	
 	protected String workingDirectory = System.getProperty("user.dir");
-	protected String resourceDir = workingDirectory + File.separator + "src" + File.separator + "test" + File.separator + "conversion" + File.separator + "resources" + File.separator ;
+	protected String resourceDir = workingDirectory + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + "edu.utah.ece.async" + File.separator ;
 	protected String sbml2sbol_outputDir = resourceDir + "SBML2SBOL_Output" + File.separator;
 	protected String sbol2sbml_outputDir = resourceDir + "SBOL2SBML_Output" + File.separator;
 	protected String genBank_outputDir = resourceDir + "GenBank_Output" + File.separator;
