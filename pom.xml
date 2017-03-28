@@ -37,18 +37,18 @@
 	</modules>
 
 	<build>
-    <sourceDirectory>src/main/java</sourceDirectory>
-    <testSourceDirectory>src/test/java</testSourceDirectory>
-    <resources>
-      <resource>
-		    <directory>src/main/resources</directory>
-      </resource>
-    </resources>
-     <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
 		<plugins>
 			<plugin>
 				<!-- settings for javac. -->
@@ -57,29 +57,63 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
-					
+
 					<testExcludes>
-                    	<exclude>edu/utah/ece/async/gcm2sbml/*.java</exclude>
-                    	<exclude>edu/utah/ece/async/scripts/*.java</exclude>
-                	</testExcludes>
+						<exclude>edu/utah/ece/async/gcm2sbml/*.java</exclude>
+						<exclude>edu/utah/ece/async/scripts/*.java</exclude>
+					</testExcludes>
 				</configuration>
 			</plugin>
+			<!-- Build an executable JAR -->
 			<plugin>
-                    <!-- Build an executable JAR -->
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-		    		<version>2.4</version>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addClasspath>true</addClasspath>
-                                <classpathPrefix>lib/</classpathPrefix>
-                                <mainClass>org.sbolstandard.core2.SBOLValidate</mainClass>
-                            </manifest>
-                        </archive>
-                    </configuration>
-                </plugin>
-                <!-- todo: add any other plugins needed here -->
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>build-converter</id>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>edu.utah.ece.async.Converter</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<finalName>converter</finalName>
+						</configuration>
+						<phase>package</phase>
+						<goals>
+							<goal>assembly</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Install dependencies to local repository -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
+				<executions>
+					<execution>
+						<id>install-external</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${basedir}/../lib/libSBOLj-2.1.2-SNAPSHOT-withDependencies.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>org.sbolstandard</groupId>
+							<artifactId>libSBOLj</artifactId>
+							<version>2.1.1</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		<!-- todo: add any other plugins needed here -->
+
 	</build>
 </project>
