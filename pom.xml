@@ -30,10 +30,10 @@
 	</properties>
 
 	<modules>
-		<module>frontend</module>
-		<module>conversion</module>
 		<module>dataModels</module>
+		<module>conversion</module>
 		<module>backend</module>
+		<module>frontend</module>
 	</modules>
 
 	<build>
@@ -84,30 +84,6 @@
 						<phase>package</phase>
 						<goals>
 							<goal>assembly</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- Install dependencies to local repository -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.5.2</version>
-				<executions>
-					<execution>
-						<id>install-external</id>
-						<phase>clean</phase>
-						<configuration>
-							<file>${basedir}/../lib/libSBOLj-2.1.2-SNAPSHOT-withDependencies.jar</file>
-							<repositoryLayout>default</repositoryLayout>
-							<groupId>org.sbolstandard</groupId>
-							<artifactId>libSBOLj</artifactId>
-							<version>2.1.1</version>
-							<packaging>jar</packaging>
-							<generatePom>true</generatePom>
-						</configuration>
-						<goals>
-							<goal>install-file</goal>
 						</goals>
 					</execution>
 				</executions>
