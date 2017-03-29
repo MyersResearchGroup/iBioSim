@@ -10,12 +10,44 @@
 		<relativePath>../</relativePath>
 	</parent>
 	<packaging>jar</packaging>
-
+	<build>
+		<plugins>
+			<!-- Install dependencies to local repository -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>install-openMali</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${basedir}/../lib/openmali.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>org.openmali</groupId>
+							<artifactId>openmali</artifactId>
+							<version>1.0.0</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.jmathml</groupId>
 			<artifactId>jmathml</artifactId>
 			<version>2.2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.w3c</groupId>
+			<artifactId>dom</artifactId>
+			<version>2.3.0-jaxb-1.0.6</version>
 		</dependency>
 
 		<dependency>
@@ -41,8 +73,7 @@
 			<groupId>org.openmali</groupId>
 			<artifactId>openmali</artifactId>
 			<version>1.0.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/../lib/openmali.jar</systemPath>
 		</dependency>
+		
 	</dependencies>
 </project>

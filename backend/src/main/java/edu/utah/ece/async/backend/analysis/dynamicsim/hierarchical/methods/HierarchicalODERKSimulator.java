@@ -1,0 +1,439 @@
+/*******************************************************************************
+ *  
+ * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
+ * for the latest version of iBioSim.
+ *
+ * Copyright (C) 2017 University of Utah
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the Apache License. A copy of the license agreement is provided
+ * in the file named "LICENSE.txt" included with this software distribution
+ * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
+ *  
+ *******************************************************************************/
+package edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.methods;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JProgressBar;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
+import org.apache.commons.math3.ode.events.EventHandler;
+import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
+
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.io.HierarchicalWriter;
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.math.EventNode;
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.math.ReactionNode;
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.math.VariableNode;
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.model.HierarchicalModel.ModelType;
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.states.VectorWrapper;
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.util.HierarchicalUtilities;
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.util.comp.HierarchicalEventComparator;
+import edu.utah.ece.async.backend.analysis.dynamicsim.hierarchical.util.setup.ModelSetup;
+import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
+
+/**
+ * 
+ *
+ * @author Leandro Watanabe
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
+public final class HierarchicalODERKSimulator extends HierarchicalSimulation
+{
+	private boolean						isSingleStep;
+	private HighamHall54Integrator		odecalc;
+	private double						relativeError, absoluteError;
+	private DifferentialEquations		de;
+	private List<ReactionNode>			reactionList;
+	private List<EventNode>				eventList;
+	private PriorityQueue<EventNode>	triggeredEventList;
+	private final VectorWrapper vectorWrapper;
+	
+	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, double timeLimit) throws IOException, XMLStreamException, BioSimException
+	{
+
+		this(SBMLFileName, rootDirectory, rootDirectory, 0, timeLimit, Double.POSITIVE_INFINITY, 0, null, Double.POSITIVE_INFINITY, 0, null, null, 1, 1e-6, 1e-9, "amount", "none", 0, 0, false);
+		isInitialized = false;
+		isSingleStep = true;
+		this.printTime = Double.POSITIVE_INFINITY;
+	}
+
+	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, int numSteps,
+			double relError, double absError, String quantityType, String abstraction, double initialTime, double outputStartTime) throws IOException, XMLStreamException, BioSimException
+	{
+
+		this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType, abstraction, initialTime, outputStartTime, true);
+		this.isInitialized = false;
+		this.isSingleStep = false;
+
+	}
+
+	public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, int numSteps,
+			double relError, double absError, String quantityType, String abstraction, double initialTime, double outputStartTime, boolean print) throws IOException, XMLStreamException, BioSimException
+	{
+
+		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, initialTime, outputStartTime, SimType.HODE);
+		this.relativeError = relError;
+		this.absoluteError = absError;
+		this.isSingleStep = false;
+		this.absoluteError = absoluteError == 0 ? 1e-12 : absoluteError;
+		this.relativeError = absoluteError == 0 ? 1e-9 : relativeError;
+		this.printTime = outputStartTime;
+		this.vectorWrapper = new VectorWrapper(initValues);
+		
+		if (numSteps > 0)
+		{
+			setPrintInterval(timeLimit / numSteps);
+		}
+
+		odecalc = new HighamHall54Integrator(getMinTimeStep(), getMaxTimeStep(), absoluteError, relativeError);
+		isInitialized = false;
+
+	}
+
+	public HierarchicalODERKSimulator(HierarchicalMixedSimulator sim, HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels) throws IOException, XMLStreamException
+	{
+		super(sim);
+		this.relativeError = 1e-6;
+		this.absoluteError = 1e-9;
+		this.odecalc = new HighamHall54Integrator(getMinTimeStep(), getMaxTimeStep(), absoluteError, relativeError);
+		this.isInitialized = true;
+		this.isSingleStep = true;
+		this.printTime = Double.POSITIVE_INFINITY;
+
+		this.eventList = getEventList();
+		this.variableList = getVariableList();
+		this.reactionList = getReactionList();
+
+		this.vectorWrapper = new VectorWrapper(initValues); 
+		
+		de = new DifferentialEquations();
+		if (!eventList.isEmpty())
+		{
+			HierarchicalEventHandler handler = new HierarchicalEventHandler();
+			HierarchicalTriggeredEventHandler triggeredHandler = new HierarchicalTriggeredEventHandler();
+			odecalc.addEventHandler(handler, getPrintInterval(), 1e-20, 10000);
+			odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20, 10000);
+			triggeredEventList = new PriorityQueue<EventNode>(0, new HierarchicalEventComparator());
+
+			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue(0));
+
+		}
+    vectorWrapper.initStateValues();
+	}
+
+	@Override
+	public void cancel()
+	{
+		setCancelFlag(true);
+
+	}
+
+	@Override
+	public void clear()
+	{
+	}
+
+	@Override
+	public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException
+	{
+		if (!isInitialized)
+		{
+			setCurrentTime(getInitialTime());
+			ModelSetup.setupModels(this, ModelType.HODE, vectorWrapper);
+			
+			eventList = getEventList();
+			variableList = getVariableList();
+			reactionList = getReactionList();
+
+			de = new DifferentialEquations();
+			computeFixedPoint();
+
+			if (!eventList.isEmpty())
+			{
+				HierarchicalEventHandler handler = new HierarchicalEventHandler();
+				HierarchicalTriggeredEventHandler triggeredHandler = new HierarchicalTriggeredEventHandler();
+				odecalc.addEventHandler(handler, getPrintInterval(), 1e-20, 10000);
+				odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20, 10000);
+				triggeredEventList = new PriorityQueue<EventNode>(1, new HierarchicalEventComparator());
+
+				HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, currentTime.getValue());
+
+			}
+
+	    vectorWrapper.initStateValues();
+			
+			if (!isSingleStep)
+			{
+				setupForOutput(runNumber);
+
+				HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
+			}
+			isInitialized = true;
+		}
+
+	}
+
+	@Override
+	public void simulate()
+	{
+		if (!isInitialized)
+		{
+			try
+			{
+				initialize(0, 1);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			catch (XMLStreamException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		double nextEndTime = 0;
+
+		while (currentTime.getValue() < getTimeLimit() && !isCancelFlag())
+		{
+
+//			if (!HierarchicalUtilities.evaluateConstraints(constraintList))
+//			{
+//				return;
+//			}
+
+			nextEndTime = currentTime.getValue() + getMaxTimeStep();
+
+			if (nextEndTime > printTime)
+			{
+				nextEndTime = printTime;
+			}
+
+			if (nextEndTime > getTimeLimit())
+			{
+				nextEndTime = getTimeLimit();
+			}
+
+			if (vectorWrapper.getSize() > 0)
+			{
+				try
+				{
+
+					odecalc.integrate(de, currentTime.getValue(0), vectorWrapper.getValues(), nextEndTime, vectorWrapper.getValues());
+					computeAssignmentRules();
+
+				}
+				catch (Exception e)
+				{
+					setCurrentTime(nextEndTime);
+				}
+			}
+			else
+			{
+				setCurrentTime(nextEndTime);
+			}
+			if (!isSingleStep)
+			{
+				printToFile();
+			}
+		}
+		if (!isSingleStep)
+		{
+			try
+			{
+				getBufferedTSDWriter().write(')');
+				getBufferedTSDWriter().flush();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void setupForNewRun(int newRun)
+	{
+	}
+
+	@Override
+	public void printStatisticsTSD()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public class HierarchicalEventHandler implements EventHandler
+	{
+		private double	value	= -1;
+
+		@Override
+		public void init(double t0, double[] y0, double t)
+		{
+
+		}
+
+		@Override
+		public double g(double t, double[] y)
+		{
+			double returnValue = -value;
+
+			currentTime.setValue(0, t);
+			for (int i = 0; i < y.length; i++)
+			{
+				VariableNode node = variableList.get(i);
+				node.setValue(0, y[i]);
+			}
+
+			for (int i = eventList.size()-1; i >= 0; i--)
+			{
+				EventNode event = eventList.get(i);
+				if (event.isTriggeredAtTime(t, 0))
+				{
+					returnValue = value;
+				}
+			}
+			return returnValue;
+		}
+
+		@Override
+		public Action eventOccurred(double t, double[] y, boolean increasing)
+		{
+			value = -value;
+
+			currentTime.setValue(0, t);
+
+			for (int i = 0; i < y.length; i++)
+			{
+				VariableNode variableNode = variableList.get(i);
+				variableNode.setValue(0, y[i]);
+			}
+
+			computeAssignmentRules();
+			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, t);
+			computeAssignmentRules();
+			for (int i = 0; i < y.length; i++)
+      {
+        VariableNode variableNode = variableList.get(i);
+        //TODO
+        y[i] = variableNode.getValue(0);
+      }
+			return EventHandler.Action.STOP;
+		}
+
+		@Override
+		public void resetState(double t, double[] y)
+		{
+			// TODO Auto-generated method stub
+
+		}
+
+	}
+
+	public class HierarchicalTriggeredEventHandler implements EventHandler
+	{
+		private double	value	= -1;
+
+		@Override
+		public void init(double t0, double[] y0, double t)
+		{
+
+		}
+
+		@Override
+		public double g(double t, double[] y)
+		{
+			currentTime.setValue(0, t);
+			if (!triggeredEventList.isEmpty())
+			{
+				if (triggeredEventList.peek().getFireTime() <= t)
+				{
+					return value;
+				}
+			}
+			return -value;
+		}
+
+		@Override
+		public Action eventOccurred(double t, double[] y, boolean increasing)
+		{
+			value = -value;
+
+			currentTime.setValue(0, t);
+
+			for (int i = 0; i < y.length; i++)
+			{
+				VariableNode variableNode = variableList.get(i);
+				//TODO
+				variableNode.setValue(0, y[i]);
+			}
+
+			computeAssignmentRules();
+			HierarchicalUtilities.triggerAndFireEvents(eventList, triggeredEventList, t);
+			computeAssignmentRules();
+			for (int i = 0; i < y.length; i++)
+      {
+        VariableNode variableNode = variableList.get(i);
+        //TODO
+        y[i] = variableNode.getValue(0);
+      }
+			return EventHandler.Action.STOP;
+		}
+
+		@Override
+		public void resetState(double t, double[] y)
+		{
+			// TODO Auto-generated method stub
+
+		}
+
+	}
+
+	public class DifferentialEquations implements FirstOrderDifferentialEquations
+	{
+
+		@Override
+		public int getDimension()
+		{
+			return vectorWrapper.getSize();
+		}
+
+    public void computeReactionPropensities()
+    {
+      for (int i = reactionList.size() - 1; i >= 0; i--)
+      {
+        ReactionNode reaction = reactionList.get(i);
+        reaction.computePropensity(reaction.getSubmodelIndex(i));
+      }
+    }
+    
+		@Override
+		public void computeDerivatives(double t, double[] y, double[] yDot) throws MaxCountExceededException, DimensionMismatchException
+		{
+
+			setCurrentTime(t);
+			computeAssignmentRules();
+			computeReactionPropensities();
+			//
+			for (int i = 0; i < yDot.length; i++)
+			{
+				VariableNode variableNode = variableList.get(i);
+				yDot[i] = variableNode.computeRateOfChange(0, t);
+			}
+			vectorWrapper.setRates(yDot);
+		}
+	}
+
+}

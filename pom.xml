@@ -59,8 +59,8 @@
 					<target>1.8</target>
 
 					<testExcludes>
-						<exclude>edu/utah/ece/async/gcm2sbml/*.java</exclude>
-						<exclude>edu/utah/ece/async/scripts/*.java</exclude>
+						<exclude>edu/utah/ece/async/conversion/gcm2sbml/*.java</exclude>
+						<exclude>edu/utah/ece/async/conversion/scripts/*.java</exclude>
 					</testExcludes>
 				</configuration>
 			</plugin>
