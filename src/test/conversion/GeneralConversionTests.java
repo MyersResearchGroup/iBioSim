@@ -80,6 +80,72 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 	public void test_cmd_mf(){
 		/* compare SBOL files with same content but with different file name through required mf and cf flag*/
 		String fileName = sbolDir + "CRISPR_example" + ".xml"; 
+
+import org.junit.Test;
+
+/**
+ * General test cases for all conversion supported by iBioSim
+ *
+ * @author Tramy Nguyen
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
+public class GeneralConversionTests extends ConversionAbstractTests {
+	/*
+	 * Note for all converter test cases that call src/conversion/Converter.java, flags in the command line can have empty strings for the flag value.
+	 * 
+	 */
+	
+	@Test
+	public void test_validation(){
+		/* test validation on a valid sbol file. */
+		String fileName = "CRISPR_example"; 
+		String inputfile = sbolDir + fileName + ".xml";
+		
+		//Options
+		String uriPrefix = "http://www.async.ece.utah.edu";
+		
+		String[] converter_cmdArgs = {"-no", "-p", uriPrefix, inputfile};
+		edu.utah.ece.async.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_e(){
+		/* compare SBOL files with same content but with different file name through required compareFile flag*/
+		String fileName = "CRISPR_example"; 
+		String fileName2 = "meherGolden_RepressionModel";
+		
+		String inputfile = sbolDir + fileName + ".xml";
+		String inputfile2 = sbolDir + fileName2 + ".xml";
+		
+		String outputFile = ""; 
+		String compareFile = inputfile2;
+		
+		String[] converter_cmdArgs = {"-no", inputfile, "-o", outputFile, "-e", compareFile};
+		edu.utah.ece.async.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_cf(){
+		/* compare SBOL files with same content but with different file name through -cf flag*/
+		String fileName = "CRISPR_example"; 
+		String fileName2 = "meherGolden_RepressionModel";
+		
+		String inputfile = sbolDir + fileName + ".xml";
+		String inputfile2 = sbolDir + fileName2 + ".xml";
+		
+		String outputFile = ""; 
+		String compareFile = "";
+		
+		String[] converter_cmdArgs = {"-no", "-cf", inputfile2, inputfile, "-o", outputFile, "-e", compareFile};
+		edu.utah.ece.async.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_mf(){
+		/* compare SBOL files with same content but with different file name through required mf and cf flag*/
+		String fileName = sbolDir + "CRISPR_example" + ".xml"; 
 		String fileName2 = "meherGolden_RepressionModel";
 		
 		String mainfile = "";
@@ -89,7 +155,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String compareFile = "";
 		//TODO: validation fail because fileName is empty 
 		String[] converter_cmdArgs = {"-no", "-mf", mainfile, "-cf", inputfile2, fileName, "-o", outputFile, "-e", compareFile};
-		conversion.Converter.main(converter_cmdArgs);
+		edu.utah.ece.async.conversion.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
@@ -98,7 +164,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String fileName = "CRISPR_example"; 
 		String inputfile = sbolDir + fileName + ".xml";
 		
-		String outputDir = sbol2sbml_outputDir;
 		String outputFile = fileName + ".xml";
 		String compareFile = "";
 		
@@ -106,24 +171,24 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String uriPrefix = "http://sbols.org/CRISPR_Example/CRPb_characterization_Circuit/1.0.0";
 		String outputLang = "SBML";
 		
-		String[] converter_cmdArgs = {"-l", outputLang, "-esf", "-p", uriPrefix, inputfile, "-oDir", outputDir, "-o", outputFile, "-e", compareFile};
-		conversion.Converter.main(converter_cmdArgs);
+		String[] converter_cmdArgs = {"-l", outputLang, "-esf", "-p", uriPrefix, inputfile, "-oDir", sbol2sbml_outputDir, "-o", outputFile, "-e", compareFile};
+		edu.utah.ece.async.conversion.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
 	public void test_cmd_l_genbank(){
 		/* convert sbol2genbank*/
-//		String fileName = "CRISPR_example"; 
-//		String inputfile = sbolDir + fileName + ".xml";
-//		
-//		String outputFile = genBank_outputDir + fileName + "_output" + ".xml";
-//		String compareFile = "";
-//		
-//		//Options
-//		String outputLang = "GenBank";
-//		
-//		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outputFile, "-e", compareFile};
-//		conversion.Converter.main(converter_cmdArgs);
+		String fileName = "CRISPR_example"; 
+		String inputfile = sbolDir + fileName + ".xml";
+		
+		String outputFile = genBank_outputDir + fileName + "_output" + ".xml";
+		String compareFile = "";
+		
+		//Options
+		String outputLang = "GenBank";
+		
+		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outputFile, "-e", compareFile};
+		edu.utah.ece.async.conversion.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
@@ -139,6 +204,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String outputLang = "SBOL2";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outputFile, "-e", compareFile};
-		conversion.Converter.main(converter_cmdArgs);
+		edu.utah.ece.async.conversion.Converter.main(converter_cmdArgs);
 	}
 }
