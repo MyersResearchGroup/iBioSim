@@ -297,7 +297,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 
 	private JMenuItem save, saveAs, /* saveSBOL, */ check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog,
 			viewCoverage, viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser,
-			createAnal, createLearn, createSbml, createSynth, createMapTech, createVer, close, closeAll, saveAll,
+			createAnal, createLearn, createSbml, createSynth, createVer, close, closeAll, saveAll,
 			convertToLPN;
 
 	public String ENVVAR;
@@ -600,7 +600,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		createLearn = new JMenuItem("Learn Tool");
 		createSbml = new JMenuItem("Create SBML File");
 		createSynth = new JMenuItem("Synthesis Tool");
-		createMapTech = new JMenuItem("Mapping Technology Tool");
 		createVer = new JMenuItem("Verification Tool");
 		exit = new JMenuItem("Exit");
 		select.addActionListener(this);
@@ -713,7 +712,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		createLearn.addActionListener(this);
 		createSbml.addActionListener(this);
 		createSynth.addActionListener(this);
-		createMapTech.addActionListener(this);
 		createVer.addActionListener(this);
 		save.setActionCommand("save");
 		saveAs.setActionCommand("saveas");
@@ -754,7 +752,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | InputEvent.ALT_MASK));
 			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | InputEvent.SHIFT_MASK));
 			createSynth.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ShortCutKey | InputEvent.SHIFT_MASK));
-			createMapTech.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ShortCutKey | InputEvent.SHIFT_MASK));
 			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | InputEvent.SHIFT_MASK));
 
 		}
@@ -894,7 +891,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		createLearn.setEnabled(false);
 		createSbml.setEnabled(false);
 		createSynth.setEnabled(false);
-		createMapTech.setEnabled(false);
 		createVer.setEnabled(false);
 		edit.add(undo);
 		edit.add(redo);
@@ -1078,9 +1074,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 		if (!lema) {
 			tools.add(createSynth);
-		}
-		if (!lema) {
-			tools.add(createMapTech);
 		}
 		if (async) {
 			tools.add(createVer);
@@ -4774,7 +4767,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		} else {
 			sbolDocument = new SBOLDocument();
 			sbolDocument.setCreateDefaults(true);
-			Preferences biosimrc = Preferences.userRoot();
 			sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			writeSBOLDocument();
 		}
@@ -9829,7 +9821,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		viewModBrowser.setEnabled(false);
 		createAnal.setEnabled(false);
 		createSynth.setEnabled(false);
-		createMapTech.setEnabled(false);
 		createLearn.setEnabled(false);
 		createVer.setEnabled(false);
 		createSbml.setEnabled(false);
@@ -9854,8 +9845,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				createAnal.setActionCommand("createAnalysis");
 				createSynth.setEnabled(true);
 				createSynth.setActionCommand("createSynthesis");
-				createMapTech.setEnabled(true);
-				createMapTech.setActionCommand("createMapTech");
 				createLearn.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
@@ -9878,8 +9867,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				viewModGraph.setEnabled(true);
 				createSynth.setEnabled(true);
 				createSynth.setActionCommand("createSynthesis");
-				createMapTech.setEnabled(true);
-				createMapTech.setActionCommand("createMapTech");
 				createVer.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
@@ -9895,8 +9882,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				}
 				createSynth.setEnabled(true);
 				createSynth.setActionCommand("createSynthesis");
-				createMapTech.setEnabled(true);
-				createMapTech.setActionCommand("createMapTech");
 				createVer.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
@@ -9910,8 +9895,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				viewModGraph.setEnabled(true);
 				createSynth.setEnabled(true);
 				createSynth.setActionCommand("createSynthesis");
-				createMapTech.setEnabled(true);
-				createMapTech.setActionCommand("createMapTech");
 				createVer.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
