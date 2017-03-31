@@ -45,15 +45,15 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
 
-import edu.utah.ece.async.backend.analysis.dynamicsim.DynamicSimulation;
-import edu.utah.ece.async.backend.analysis.dynamicsim.DynamicSimulation.SimulationType;
-import edu.utah.ece.async.backend.analysis.dynamicsim.flattened.Simulator;
 import edu.utah.ece.async.backend.analysis.fba.FluxBalanceAnalysis;
 import edu.utah.ece.async.backend.analysis.markov.BuildStateGraphThread;
 import edu.utah.ece.async.backend.analysis.markov.PerformSteadyStateMarkovAnalysisThread;
 import edu.utah.ece.async.backend.analysis.markov.PerformTransientMarkovAnalysisThread;
 import edu.utah.ece.async.backend.analysis.markov.StateGraph;
 import edu.utah.ece.async.backend.analysis.markov.StateGraph.Property;
+import edu.utah.ece.async.backend.analysis.simulation.DynamicSimulation;
+import edu.utah.ece.async.backend.analysis.simulation.DynamicSimulation.SimulationType;
+import edu.utah.ece.async.backend.analysis.simulation.flattened.Simulator;
 import edu.utah.ece.async.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.dataModels.lpn.parser.Abstraction;

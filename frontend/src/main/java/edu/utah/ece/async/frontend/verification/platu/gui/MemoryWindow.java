@@ -27,7 +27,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import edu.utah.ece.async.backend.verification.platu.main.Main;
+import edu.utah.ece.async.backend.analysis.verification.platu.main.Main;
 
 /**
  *

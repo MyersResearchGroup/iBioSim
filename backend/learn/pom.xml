@@ -2,25 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>backend</artifactId>
+	<artifactId>learn</artifactId>
+	<groupId>edu.utah.ece.async.backend</groupId>
 	<parent>
 		<groupId>edu.utah.ece.async</groupId>
-		<artifactId>iBioSim</artifactId>
+		<artifactId>backend</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
-	<packaging>pom</packaging>
-	<modules>
-		<module>analysis</module>
-		<module>learn</module>
-		<module>synthesis</module>
-	</modules>
-	
+	<packaging>jar</packaging>
 	
 	<dependencies>
 		<dependency>
-			<groupId>edu.utah.ece.async</groupId>
-			<artifactId>dataModels</artifactId>
+			<groupId>edu.utah.ece.async.backend</groupId>
+			<artifactId>analysis</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

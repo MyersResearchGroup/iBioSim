@@ -164,23 +164,26 @@
 			<groupId>edu.utah.ece.async</groupId>
 			<artifactId>dataModels</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>edu.utah.ece.async</groupId>
 			<artifactId>conversion</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>edu.utah.ece.async</groupId>
-			<artifactId>backend</artifactId>
+			<groupId>edu.utah.ece.async.backend</groupId>
+			<artifactId>learn</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>edu.utah.ece.async.backend</groupId>
+			<artifactId>synthesis</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.clarkparsia</groupId>
 			<artifactId>SBOLDesigner</artifactId>

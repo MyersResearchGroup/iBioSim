@@ -24,7 +24,7 @@ import org.jfree.chart.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.xy.*;
 
-import edu.utah.ece.async.backend.verification.platu.main.Main;
+import edu.utah.ece.async.backend.analysis.verification.platu.main.Main;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.PlatuLPN;
 
 /**
