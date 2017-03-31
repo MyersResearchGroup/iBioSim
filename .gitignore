@@ -5,3 +5,4 @@ jsbml.log
 **/.DS_Store
 **/.classpath
 .settings/
+**/.project
