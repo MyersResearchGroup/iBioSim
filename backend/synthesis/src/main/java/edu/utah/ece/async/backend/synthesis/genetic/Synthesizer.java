@@ -38,7 +38,7 @@ import org.sbml.jsbml.Species;
 /**
  * 
  *
- * @author 
+ * @author Nicholas Roehner
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%

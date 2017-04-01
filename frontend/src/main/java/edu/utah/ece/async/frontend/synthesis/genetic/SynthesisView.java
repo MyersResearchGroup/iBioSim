@@ -61,7 +61,7 @@ import edu.utah.ece.async.frontend.main.util.Utility;
 /**
  * 
  *
- * @author 
+ * @author Nicholas Roehner 
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -81,7 +81,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
   private JScrollPane libScroll;
   private JButton addLibButton;
   private JButton removeLibButton;
-  //	private JButton mergeLibButton;
   private JComboBox methodBox;
   private JLabel numSolnsLabel;
   private JTextField numSolnsText;
@@ -183,12 +182,21 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
     return inputPanel;
   }
 
+  /**
+   * Load up Synthesis View Window
+   * @param specFileID
+   */
   public void loadDefaultSynthesisProperties(String specFileID) {
     synthProps = createDefaultSynthesisProperties(specFileID);
     saveSynthesisProperties();
     loadSynthesisOptions();
   }
 
+  /**
+   * Set fields in Syntheis View Window
+   * @param specFileID
+   * @return
+   */
   private static Properties createDefaultSynthesisProperties(String specFileID) {
     Properties synthProps = new Properties();
     Preferences prefs = Preferences.userRoot();
@@ -198,6 +206,9 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
     synthProps.setProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY,
       prefs.get(GlobalConstants.SBOL_SYNTH_METHOD_PREFERENCE, 
         GlobalConstants.SBOL_SYNTH_EXHAUST_BB));
+    synthProps.setProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY,
+    	      prefs.get(GlobalConstants.SBOL_SYNTH_METHOD_PREFERENCE, 
+    	        GlobalConstants.SBOL_SYNTH_TECH_MAPPING));
     synthProps.setProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY, 
       prefs.get(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PREFERENCE, "1"));
     return synthProps;
