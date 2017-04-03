@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img  src="src/resources/icons/iBioSim_banner.png">
+  <img  src="docs/media/iBioSim_horizontal.png">
 </p>
 
 iBioSim is a computer-aided design (CAD) tool aimed for the modeling, analysis, and design of genetic circuits. 

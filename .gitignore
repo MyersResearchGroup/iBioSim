@@ -2,4 +2,7 @@
 /target/
 jsbml.log
 /bin/
-/.DS_Store
+**/.DS_Store
+**/.classpath
+.settings/
+**/.project
