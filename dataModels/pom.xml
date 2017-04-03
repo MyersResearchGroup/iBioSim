@@ -27,6 +27,8 @@
 							<artifactId>libSBOLj</artifactId>
 							<version>2.1.2</version>
 							<packaging>jar</packaging>
+							<javadoc>${basedir}/../lib/libSBOLj-2.1.2-SNAPSHOT-javadoc.jar</javadoc>
+							<sources>${basedir}/../lib/libSBOLj-2.1.2-SNAPSHOT-sources.jar</sources>
 							<generatePom>true</generatePom>
 						</configuration>
 						<goals>
