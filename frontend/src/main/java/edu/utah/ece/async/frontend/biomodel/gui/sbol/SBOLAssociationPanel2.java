@@ -23,6 +23,7 @@ import javax.swing.*;
 
 import org.sbolstandard.core2.*;
 
+import com.clarkparsia.sbol.SBOLUtils;
 import com.clarkparsia.sbol.editor.Part;
 import com.clarkparsia.sbol.editor.Parts;
 import com.clarkparsia.sbol.editor.dialog.RegistryInputDialog;
@@ -210,6 +211,15 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 				compIdName = modelID + " (Placeholder for iBioSim Composite DNA Component)";
 			} else {
 				ComponentDefinition resolvedComp = null;
+
+				try {
+					// try updating SBOLDOC since new parts may have been
+					// inserted
+					SBOLDOC = SBOLReader.read(sbolFilePaths.iterator().next());
+				} catch (SBOLValidationException | IOException | SBOLConversionException e) {
+					e.printStackTrace();
+				}
+
 				resolvedComp = SBOLDOC.getComponentDefinition(uri);
 				if (resolvedComp == null) {
 					Set<TopLevel> wasDerivedFrom = SBOLDOC.getByWasDerivedFrom(uri);
@@ -386,33 +396,32 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 					}
 				}
 			} catch (SBOLException e1) {
-				// TODO Auto-generated catch block
 				JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
 				e1.printStackTrace();
-			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (SBOLValidationException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (SBOLConversionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			} catch (SBOLValidationException | IOException | SBOLConversionException e2) {
+				e2.printStackTrace();
 			}
 		} else if (e.getSource() == add) {
-			// SBOLBrowser2 browser = new SBOLBrowser2(sbolFilePaths, soTypes);
-			// insertComponentURIs(browser.getSelection());
 
-			// TODO currently only works with parts in the working document
-			SBOLDocument selection = new RegistryInputDialog(null, Parts.CDS,
-					com.clarkparsia.sbol.SBOLUtils.Types.All_types, null).getInput();
-			if (selection != null) {
-				LinkedList<URI> list = new LinkedList<URI>();
-				list.add(selection.getRootComponentDefinitions().iterator().next().getIdentity());
-				insertComponentURIs(list);
+			SBOLDocument workingDoc;
+			SBOLDocument selection = null;
+
+			try {
+				workingDoc = SBOLReader.read(sbolFilePaths.iterator().next());
+				selection = new RegistryInputDialog(null, RegistryInputDialog.ALL_PARTS,
+						com.clarkparsia.sbol.SBOLUtils.Types.All_types, null, workingDoc).getInput();
+
+				if (selection != null) {
+					SBOLUtils.insertTopLevels(selection, workingDoc);
+					SBOLWriter.write(workingDoc, sbolFilePaths.iterator().next());
+					LinkedList<URI> list = new LinkedList<URI>();
+
+					list.add(selection.getRootComponentDefinitions().iterator().next().getIdentity());
+
+					insertComponentURIs(list);
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 		} else if (e.getSource() == remove) {
 			removeSelectedURIs();

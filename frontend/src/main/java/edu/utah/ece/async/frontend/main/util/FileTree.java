@@ -326,16 +326,16 @@ public class FileTree extends JPanel implements MouseListener {
 							SBOLReader.setDropObjectsWithDuplicateURIs(false);
 							gui.writeSBOLDocument();
 							new File(curPath + separator + sbolFile).delete();
-							
-//						if (!SBOLReader.getSBOLVersion(curPath + separator + sbolFile).endsWith(SBOLReader.SBOLVERSION2)) {
-//							Preferences biosimrc = Preferences.userRoot();
-//							SBOLReader.setKeepGoing(true);
-//							SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-//							SBOLDocument sbolDoc;
-//							sbolDoc = SBOLReader.read(curPath + separator + sbolFile);
-//							sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-//							sbolDoc.write(curPath + separator + sbolFile);
-//						}
+
+							//						if (!SBOLReader.getSBOLVersion(curPath + separator + sbolFile).endsWith(SBOLReader.SBOLVERSION2)) {
+							//							Preferences biosimrc = Preferences.userRoot();
+							//							SBOLReader.setKeepGoing(true);
+							//							SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+							//							SBOLDocument sbolDoc;
+							//							sbolDoc = SBOLReader.read(curPath + separator + sbolFile);
+							//							sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
+							//							sbolDoc.write(curPath + separator + sbolFile);
+							//						}
 						}
 						catch (SBOLValidationException e) {
 							// TODO Auto-generated catch block
@@ -351,36 +351,36 @@ public class FileTree extends JPanel implements MouseListener {
 						}
 					}
 				}
-				if (!async && thisObject.toString().endsWith(".gcm")) {
-					String sbmlFile = thisObject.replace(".gcm",".xml");
-					BioModel bioModel = new BioModel(curPath);
-					try {
-            bioModel.load(curPath + separator + sbmlFile);
-            GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
-            gcm2sbml.load(curPath + separator + thisObject.toString());
-            System.out.println(curPath + separator + thisObject.toString());
-            gcm2sbml.convertGCM2SBML(curPath,thisObject.toString());
-            bioModel.save(curPath + separator + sbmlFile);
-            files.add(sbmlFile);
-          } catch (XMLStreamException e) {
-	          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-	          e.printStackTrace();
-	        } catch (IOException e) {
-	          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
-	          e.printStackTrace();
-	        }
-					
+			if (!async && thisObject.toString().endsWith(".gcm")) {
+				String sbmlFile = thisObject.replace(".gcm",".xml");
+				BioModel bioModel = new BioModel(curPath);
+				try {
+					bioModel.load(curPath + separator + sbmlFile);
+					GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
+					gcm2sbml.load(curPath + separator + thisObject.toString());
+					System.out.println(curPath + separator + thisObject.toString());
+					gcm2sbml.convertGCM2SBML(curPath,thisObject.toString());
+					bioModel.save(curPath + separator + sbmlFile);
+					files.add(sbmlFile);
+				} catch (XMLStreamException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 				}
-				else {
-					files.add(thisObject);
-				}
+
+			}
+			else {
+				files.add(thisObject);
+			}
 		}
 		// Pass two: for files.
 		for (int fnum = 0; fnum < files.size(); fnum++) {
 			DefaultMutableTreeNode file = null;
 			if (curDir.getParent() == null) {
 				if (!atacs && files.get(fnum).toString().endsWith(".sbml") || 
-					!atacs && files.get(fnum).toString().endsWith(".xml")) { 
+						!atacs && files.get(fnum).toString().endsWith(".xml")) { 
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))); 
 				} else if (!async && files.get(fnum).toString().endsWith(".sbol") &&
 						(files.get(fnum).equals(gui.getCurrentProjectId()+".sbol"))) {

@@ -56,8 +56,9 @@ Note: The remaining set of instructions assumes that you are using Eclipse as yo
     * Main class: ```frontend.main.Gui```
   * Set the Environment tab to the following information:
     * Create 2 variables with the corresponding value:
-      * BIOSIM: full path to your iBioSim project
-      * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable.
+      * BIOSIM: full path to your iBioSim project (i.e. path/to/iBioSim)
+      * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable (i.e. $PATH:$BIOSIM/bin).
+      * DDLD_LIBRARY_PATH: full path to the lib directory in the iBioSim project (i.e. $BIOSIM/lib64)
   * Set Arguments tab to the following information:
     * Program arguments: ```-Xms2048 -Xms2048 -XX:+UseSerialGC```
     

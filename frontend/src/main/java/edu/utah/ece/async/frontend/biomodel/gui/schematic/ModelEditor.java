@@ -457,8 +457,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			e.printStackTrace();
 		}
 		log.addText("Saving SBML file:\n" + path + separator + modelId  + ".xml");
-		saveAsSBOL2();
-		log.addText("Converting SBML into SBOL and saving into the project's SBOL library.");
+		//saveAsSBOL2();
+		//log.addText("Converting SBML into SBOL and saving into the project's SBOL library.");
 		if (check) {
 			Utils.check(path + separator + modelId + ".xml",biomodel.getSBMLDocument(),false);
 		}	
@@ -1818,6 +1818,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
+				return false;
+			}
+			if (sbml==null) {
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 			performModifications(sbml,dd);
