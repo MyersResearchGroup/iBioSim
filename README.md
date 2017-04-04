@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img  src="src/resources/icons/iBioSim_banner.png">
+  <img  src="docs/media/iBioSim_horizontal.png">
 </p>
 
 iBioSim is a computer-aided design (CAD) tool aimed for the modeling, analysis, and design of genetic circuits. 
@@ -28,36 +28,34 @@ Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curt
 ## Pre-installation Requirement(s)
 1. [Create](https://github.com/) a GitHub account.
 2. [Setup](https://help.github.com/articles/set-up-git) Git on your machine.
-3. [Install] (https://maven.apache.org/download.cgi) Maven plugin on your machine.
-4. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim GitHub repository to your machine.
+3. [Install](https://maven.apache.org/download.cgi) Maven plugin on your machine.
+4. [Install](http://www.eclipse.org) Eclipse IDE  for Java. 
+5. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim GitHub repository to your machine.
 
 
 ## Installing iBioSim in Eclipse
-1. Import the iBioSim project into your preferred java IDE tool such as eclipse as a project from Git. 
-Note: The remaining set of instructions assumes that you are using Eclipse as your IDE tool.
-2. Depending on the option you pick to import projects from git, select:
-  * Existing local repository if you have already cloned the iBioSim Github repository to your machine.
-  * Clone URI to have your IDE tool import the project for you.
-    * Complete the Source Git Repository information by setting:
-      * URI: ```https://github.com/MyersResearchGroup/iBioSim.git```
-      * host: ```github.com```
-      * Repository path: ```/MyersResearchGroup/iBioSim.git```
-      * User account: your user github and password account
-    * Specify the branch you want to import into your Eclipse workspace. In this case, select ```master```
-    * When given the option to select which project import, select ```Import existing Eclipse project```
-    * All installation should be complete so click ```Finish```
-    * If you have import errors, perform Maven update on the iBioSim project.
+1. Clone the iBioSim project from command-line or any other method of your choice as instructed in the provided link.
+2. Open up your Eclipse workspace that you want to import your iBioSim project to.
+3. Select Import from the File Menu.
+4. When given the option to select which project import, select ```Existing Maven Projects``` under Maven
+   * Set Maven Projects:
+      * Root Directory: full path to your iBioSimn project (i.e. path/to/iBioSim)
+      * Once root directory is set, all the pom.xml should be displayed under Projects. Select all pom.xml files.
+      * All installation should be complete so click ```Finish```
+5. Under Package Explorer in Eclipse, right click on the iBioSim pom.xml file and click select Run As and click Maven clean
+6. Perform Update Project under Maven by right clicking on the iBioSim project.
 
 ## Setting up iBioSim Configurations
 1. Open up iBioSim ```Run Configurations``` window and create a new ```Java Application``` in your Eclipse workspace
   * Give the java application a name (i.e. iBioSim_GUI)
   * Set the Main tab to the following information:
     * Project: ```iBioSim```
-    * Main class: ```frontend.main.Gui```
+    * Main class: ```edu.utah.ece.async.frontend.main.Gui```
   * Set the Environment tab to the following information:
     * Create 2 variables with the corresponding value:
-      * BIOSIM: full path to your iBioSim project
-      * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable.
+      * BIOSIM: full path to your iBioSim project (i.e. path/to/iBioSim)
+      * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable (i.e. $PATH:$BIOSIM/bin).
+      * DDLD_LIBRARY_PATH: full path to the lib directory in the iBioSim project (i.e. $BIOSIM/lib64)
   * Set Arguments tab to the following information:
     * Program arguments: ```-Xms2048 -Xms2048 -XX:+UseSerialGC```
     
