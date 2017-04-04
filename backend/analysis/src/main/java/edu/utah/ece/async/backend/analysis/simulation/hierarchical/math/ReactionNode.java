@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import backend.analysis.dynamicsim.hierarchical.states.ReactionState;
+import edu.utah.ece.async.backend.analysis.simulation.hierarchical.states.ReactionState;
 
 /**
  * 

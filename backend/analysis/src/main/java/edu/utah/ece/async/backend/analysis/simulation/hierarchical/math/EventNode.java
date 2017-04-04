@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import backend.analysis.dynamicsim.hierarchical.states.EventState;
+import edu.utah.ece.async.backend.analysis.simulation.hierarchical.states.EventState;
 
 /**
  * 

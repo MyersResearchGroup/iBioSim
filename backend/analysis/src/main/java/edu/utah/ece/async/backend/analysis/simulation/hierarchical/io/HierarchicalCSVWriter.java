@@ -1,10 +1,10 @@
-package backend.analysis.dynamicsim.hierarchical.io;
+package edu.utah.ece.async.backend.analysis.simulation.hierarchical.io;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import backend.analysis.dynamicsim.hierarchical.states.HierarchicalState;
+import edu.utah.ece.async.backend.analysis.simulation.hierarchical.states.HierarchicalState;
 
 public class HierarchicalCSVWriter extends HierarchicalWriter{
 

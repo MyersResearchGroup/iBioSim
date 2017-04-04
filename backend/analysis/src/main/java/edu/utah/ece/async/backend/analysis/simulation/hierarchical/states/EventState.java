@@ -1,6 +1,6 @@
-package backend.analysis.dynamicsim.hierarchical.states;
+package edu.utah.ece.async.backend.analysis.simulation.hierarchical.states;
 
-import backend.analysis.dynamicsim.hierarchical.math.EventNode;
+import edu.utah.ece.async.backend.analysis.simulation.hierarchical.math.EventNode;
 
 public class EventState {
   private double        fireTime;

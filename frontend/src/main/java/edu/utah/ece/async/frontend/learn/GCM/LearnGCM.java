@@ -20,6 +20,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -1458,15 +1459,22 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable
 		}
 		else if (methods.getSelectedItem().equals("GeneNet (Java)"))
 		{
-			if(Run.run(learnFile, directory))
-			{
+			try {
+        if(Run.run(learnFile, directory))
+        {
 
-	      opendot(Runtime.getRuntime(), new File(directory));
-			}
-			else
-			{
-			  JOptionPane.showMessageDialog(Gui.frame, "Something went wrong and could not learn model.", "Error in learning.", JOptionPane.ERROR_MESSAGE);
-			}
+          opendot(Runtime.getRuntime(), new File(directory));
+        }
+        else
+        {
+          JOptionPane.showMessageDialog(Gui.frame, "Something went wrong and could not learn model.", "Error in learning.", JOptionPane.ERROR_MESSAGE);
+        }
+      } catch (HeadlessException e) {
+        e.printStackTrace();
+      } catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 
 		if (estimator.getSelection().equals("SRES"))
