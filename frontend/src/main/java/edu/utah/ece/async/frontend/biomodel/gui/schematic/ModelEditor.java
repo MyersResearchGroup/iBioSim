@@ -2696,7 +2696,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			e.printStackTrace();
 		}
 		for (int i = 0; i < g.getSBMLComp().getListOfExternalModelDefinitions().size(); i++) {
-			String compGCM = g.getSBMLComp().getListOfExternalModelDefinitions().get(i).getSource().substring(7);
+			String compGCM = g.getSBMLComp().getListOfExternalModelDefinitions().get(i).getSource();
 			if (compGCM.equals(gcm)) {
 				return false;
 			}
