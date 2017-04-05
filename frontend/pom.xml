@@ -69,6 +69,23 @@
 					</execution>
 
 					<execution>
+						<id>install-openrdfSesame</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${basedir}/../lib/openrdf-sesame-2.6.9.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>openrdf-sesame</groupId>
+							<artifactId>openrdf-sesame</artifactId>
+							<version>2.6.9</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+
+					<execution>
 						<id>install-epsgraphics</id>
 						<phase>clean</phase>
 						<configuration>
@@ -237,7 +254,17 @@
 			<version>4.5.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
 
+		<dependency>
+			<groupId>openrdf-sesame</groupId>
+			<artifactId>openrdf-sesame</artifactId>
+			<version>2.6.9</version>
+		</dependency>
 
 	</dependencies>
 </project>
