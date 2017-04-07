@@ -143,7 +143,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 						viewArea.append("Version:  " + dnac.getVersion() + "\n");
 					}
 					if (dnac.isSetWasDerivedFrom()) {
-						viewArea.append("Version:  " + dnac.getWasDerivedFrom() + "\n");
+						viewArea.append("Was derived from:  " + dnac.getWasDerivedFrom() + "\n");
 					}
 					if (dnac.isSetName()) {
 						viewArea.append("Name:  " + dnac.getName() + "\n");
