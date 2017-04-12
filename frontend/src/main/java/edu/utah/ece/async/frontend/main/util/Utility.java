@@ -1040,10 +1040,10 @@ public class Utility {
 			}
 		}
 		
-		JOptionPane.showMessageDialog(Gui.frame, "Please verify that your bug report is in the incoming folder.\n" +
-				"If not, please submit your bug report manually using the web interface.\n", 
-				"Bug Report", JOptionPane.ERROR_MESSAGE);
-		submitBugReportTemp(message);
+//		JOptionPane.showMessageDialog(Gui.frame, "Please verify that your bug report is in the incoming folder.\n" +
+//				"If not, please submit your bug report manually using the web interface.\n", 
+//				"Bug Report", JOptionPane.ERROR_MESSAGE);
+//		submitBugReportTemp(message);
 	}
 
 	public static final String[] bugReportTypes = new String[] { "BUG", "CHANGE", "FEATURE" };
