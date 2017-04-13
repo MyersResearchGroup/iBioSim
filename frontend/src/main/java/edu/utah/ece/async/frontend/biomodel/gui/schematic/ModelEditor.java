@@ -606,37 +606,37 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
-	/**
-	 * Save the current iBioSim project as SBOL. 
-	 */
-	public void saveAsSBOL2() 
-	{
-		try {
-			String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
-			HashSet<String> sbolFiles = biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
-			
-			SBML2SBOL.convert_SBML2SBOL(biosim.getSBOLDocument(), path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(), 
-					sbolFiles, defaultURIprefix);
-			
-
-		} catch (SBOLValidationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SBOLConversionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		biosim.writeSBOLDocument();
-	}
+//	/**
+//	 * Save the current iBioSim project as SBOL. 
+//	 */
+//	public void saveAsSBOL2() 
+//	{
+//		try {
+//			String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
+//			HashSet<String> sbolFiles = biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
+//			
+//			SBML2SBOL.convert_SBML2SBOL(biosim.getSBOLDocument(), path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(), 
+//					sbolFiles, defaultURIprefix);
+//			
+//
+//		} catch (SBOLValidationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (SBOLConversionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (XMLStreamException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		biosim.writeSBOLDocument();
+//	}
 
 	/**
 	 * Export the current model into the specified file format. 
@@ -831,6 +831,19 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
+	/**
+	 * Push SBOL design in iBioSim workspace to Synbiohub
+	 * @param registry
+	 * @param user
+	 * @param password
+	 * @param id
+	 * @param version
+	 * @param name
+	 * @param description
+	 * @param citations
+	 * @param keywords
+	 * @param ifExisting
+	 */
 	public void submitSBOL(String registry, String user, String password, String id, String version, 
 			String name, String description, String citations, String keywords, String ifExisting) {
 		SBOLDocument uploadDoc = new SBOLDocument();

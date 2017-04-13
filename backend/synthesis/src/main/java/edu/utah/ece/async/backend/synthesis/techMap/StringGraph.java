@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.backend.synthesis.mapTechnology;
+package edu.utah.ece.async.backend.synthesis.techMap;
 
 import java.util.HashMap;
 import java.util.Map;

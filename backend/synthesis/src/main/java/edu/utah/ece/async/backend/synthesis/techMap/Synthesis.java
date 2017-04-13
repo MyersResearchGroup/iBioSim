@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.backend.synthesis.mapTechnology;
+package edu.utah.ece.async.backend.synthesis.techMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import edu.utah.ece.async.dataModels.util.GlobalConstants;
 /**
  * 
  *
- * @author 
+ * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -58,15 +58,6 @@ public class Synthesis
 		_specificationGraph = null; 
 	}
 
-	//	public void addLibraryGraph(SBOLGraph lib)
-	//	{
-	//		_libraryGraph.add(lib);
-	//	}
-	//	
-	//	public void setSpecificationGraph(SBOLGraph graph)
-	//	{
-	//		_specificationGraph = graph;
-	//	}
 
 	public void createSBOLGraph(File fileName, boolean isLibraryFile)
 	{
@@ -87,6 +78,32 @@ public class Synthesis
 		catch (Throwable e)
 		{
 			e.printStackTrace();
+		}
+	}
+	
+	public void createSBOLGraph(File library, File specification, String defaultURIPrefix) throws SBOLValidationException, IOException, SBOLConversionException
+	{
+		_libraryGraph.add(createSBOLGraph(library, defaultURIPrefix));
+		_specificationGraph = createSBOLGraph(specification, defaultURIPrefix);
+	}
+	
+	public SBOLGraph createSBOLGraph(File fileName, String defaultURIPrefix) throws SBOLValidationException, IOException, SBOLConversionException{
+		SBOLDocument sbolDoc = SBOLReader.read(fileName);
+		sbolDoc.setDefaultURIprefix(defaultURIPrefix);
+		SBOLGraph sbolGraph = new SBOLGraph();
+		for(ModuleDefinition m : sbolDoc.getModuleDefinitions())
+		{
+			sbolGraph.createGraph(m);
+			sbolGraph.topologicalSort(); 
+		}
+		return sbolGraph;
+	}
+	
+	public void setLibraryGateScores(List<SBOLGraph> library)
+	{
+		for(SBOLGraph g: library)
+		{
+			//TODO
 		}
 	}
 
@@ -116,7 +133,7 @@ public class Synthesis
 						if(totalScore < n.getScore()) 
 						{
 							n.setScore(totalScore); //update speciGraph with new libGate score
-							//match(o) = <01, I1, I2, I3, I4>
+							
 							if(!matches.containsKey(n))
 							{
 								matches.put(n, new LinkedList<WeightedGraph>());
@@ -136,7 +153,7 @@ public class Synthesis
 								//base off of score values
 								//Assuming every time add new gate to list, the list should be already ordered
 								LinkedList<WeightedGraph> list = matches.get(n);
-								//WeightedGraph temp = list.getFirst();
+								
 								for(int i = list.size()-1; i >= 0; i--)
 								{
 									if(list.get(i).getWeight() <= totalScore)
@@ -203,7 +220,6 @@ public class Synthesis
 		double currentScore = 0;
 		SynthesisNode n = syn.getOutputNode();
 		Map<SynthesisNode, SBOLGraph> bestSolution = cover(syn, n, matches, bestScore, currentScore);
-		//printCoveredGates(bestSolution);
 		return bestSolution; 
 	}
 
@@ -250,7 +266,6 @@ public class Synthesis
 			}
 		}
 
-		System.out.println(bestScore);
 		return bestSolution;
 	}
 
@@ -397,8 +412,6 @@ public class Synthesis
 
 	private boolean isCrossTalk(Collection<SBOLGraph> gatesUsed, SBOLGraph gate)
 	{
-		//crosstalk occurs when any species contain same componentDefinition uri
-		// TODO: does crosstalk occur when you have same species & PROMOTER or only species?
 		for(SBOLGraph g: gatesUsed)
 		{
 			if(isGateMatch(g, gate))
@@ -415,7 +428,6 @@ public class Synthesis
 		{
 			for(SynthesisNode g2Node: g2.getTopologicalSortNodes())
 			{
-				//				System.out.println(g1Node.getComponentDefinition().getIdentity() + "/" + g2Node.getComponentDefinition().getIdentity());
 				if(g1Node.getFunctionalComponent().getDefinitionURI().equals(g2Node.getFunctionalComponent().getDefinitionURI()))
 					return true;
 			}
