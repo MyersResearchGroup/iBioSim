@@ -196,7 +196,7 @@ public class MovieContainer extends JPanel implements ActionListener {
       public int compare(String o1, String o2) {
         return o1.compareTo(o2);
       }});
-		return filenames;
+	return filenames;
 	}
 	
 	/**

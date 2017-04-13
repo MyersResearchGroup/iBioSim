@@ -14,6 +14,7 @@
 package edu.utah.ece.async.analysis.simulation.hierarchical.methods;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -23,11 +24,9 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.Model;
 
 import edu.utah.ece.async.analysis.simulation.hierarchical.HierarchicalSimulation;
-import edu.utah.ece.async.analysis.simulation.hierarchical.io.HierarchicalWriter;
 import edu.utah.ece.async.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
 import edu.utah.ece.async.analysis.simulation.hierarchical.states.VectorWrapper;
-import edu.utah.ece.async.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.analysis.simulation.hierarchical.util.setup.ModelSetup;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
 
@@ -61,11 +60,13 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 		{
 			setCurrentTime(0);
 			this.wrapper = new VectorWrapper(initValues); 
+
+			
 			ModelSetup.setupModels(this, ModelType.HODE, wrapper);
 			computeFixedPoint();
 
-			setupForOutput(runNumber);
-			HierarchicalWriter.setupVariableFromTSD(getBufferedTSDWriter(), getTopmodel(), getSubmodels(), getInterestingSpecies());
+
+      setupForOutput(runNumber);
 			isInitialized = true;
 		}
 
@@ -91,13 +92,13 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 			}
 		}
 		double nextEndTime = currentTime.getValue(0);
-		while (currentTime.getValue(0) < timeLimit)
+		while (currentTime.getValue() < timeLimit)
 		{
-			nextEndTime = currentTime.getValue(0) + getMaxTimeStep();
+			nextEndTime = currentTime.getValue() + getMaxTimeStep();
 
-			if (nextEndTime > printTime)
+			if (nextEndTime > printTime.getValue())
 			{
-				nextEndTime = printTime;
+				nextEndTime = printTime.getValue();
 			}
 
 			if (nextEndTime > getTimeLimit())
@@ -112,20 +113,10 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 			odeSim.simulate();
 
-			currentTime.setValue(0, nextEndTime);
+			currentTime.setValue(nextEndTime);
 
 			printToFile();
 		}
-
-		try
-		{
-			getBufferedTSDWriter().write(')');
-			getBufferedTSDWriter().flush();
-		}
-		catch (IOException e)
-		{
-		}
-
 	}
 
 	@Override
@@ -143,20 +134,10 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	{
 	}
 
-	public void createODESim(HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels)
+	public void createODESim(HierarchicalModel topmodel, List<HierarchicalModel> odeModels) throws IOException, XMLStreamException
 	{
-		try
-		{
-			odeSim = new HierarchicalODERKSimulator(this, topmodel, submodels);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		catch (XMLStreamException e)
-		{
-			e.printStackTrace();
-		}
+			odeSim = new HierarchicalODERKSimulator(this, topmodel);
+			odeSim.setListOfHierarchicalModels(odeModels);
 	}
 
 	public void createSSASim(HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels)
@@ -175,6 +156,11 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	{
 		// TODO Auto-generated method stub
 
+	}
+	
+	VectorWrapper getVectorWrapper()
+	{
+	  return this.wrapper;
 	}
 
 }

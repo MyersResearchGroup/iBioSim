@@ -22,8 +22,10 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 
+
 import edu.utah.ece.async.analysis.fba.FluxBalanceAnalysis;
 import edu.utah.ece.async.analysis.simulation.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.analysis.simulation.hierarchical.model.HierarchicalModel;
 
 /**
@@ -72,7 +74,7 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 		HierarchicalModel topmodel = getTopmodel();
 		for (String reaction : flux.keySet())
 		{
-			topmodel.getNode(reaction).setValue(0, flux.get(reaction));
+			topmodel.getNode(reaction).setValue(topmodel.getIndex(), flux.get(reaction));
 		}
 
 	}
@@ -117,7 +119,13 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 		HierarchicalModel topmodel = getTopmodel();
 		for (String name : values.keySet())
 		{
-			values.put(name, topmodel.getNode(name).getValue(0));
+		  VariableNode node = topmodel.getNode(name);
+      double value = node.getValue(topmodel.getIndex());
+      if(Math.abs(value) < 1e-9)
+      {
+        value = 0;
+      }
+			values.put(name, value);
 		}
 	}
 

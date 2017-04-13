@@ -43,8 +43,15 @@ public class FunctionNode extends HierarchicalNode
 
   public FunctionNode(HierarchicalNode math)
   {
-    super(Type.PLUS);
-    this.addChild(math);
+    super(math.getType());
+    if(math.getNumOfChild() > 0)
+    {
+      for(HierarchicalNode node : math.getChildren())
+      {
+        this.addChild(node);
+      }
+    }
+   
 
   }
 

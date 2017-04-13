@@ -67,7 +67,7 @@ public class VectorState extends HierarchicalState{
 
   @Override
   public HierarchicalState getState(int index) {
-    return null;
+    return this;
   }
 
   @Override

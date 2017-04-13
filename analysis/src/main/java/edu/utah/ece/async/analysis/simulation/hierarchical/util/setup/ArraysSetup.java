@@ -182,10 +182,9 @@ public class ArraysSetup
 
 	public static void linkDimensionSize(HierarchicalModel modelstate)
 	{
-		for (int i = modelstate.getNumOfArrays() - 1; i >= 0; i--)
+		for (VariableNode var : modelstate.getArrays())
 		{
-			ArrayNode node = modelstate.getArrays().get(i).getArrayNode();
-
+		  ArrayNode node = var.getArrayNode();
 			for (int j = node.getNumDimensions(); j >= 0; j--)
 			{
 				node.setDimensionSize(j, modelstate.getNode(node.getDimensionSizeId(j)));
@@ -248,9 +247,8 @@ public class ArraysSetup
 
 	public static void expandArrays(HierarchicalModel modelstate)
 	{
-		for (int i = modelstate.getNumOfArrays() - 1; i >= 0; i--)
+		for (VariableNode node : modelstate.getArrays())
 		{
-			HierarchicalNode node = modelstate.getArrays().get(i);
 			expandArray(modelstate, node);
 		}
 

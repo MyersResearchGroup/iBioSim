@@ -27,7 +27,6 @@ import java.util.List;
 public class VectorWrapper {
   private double[] values;
   private double[] rates;
-  private int[] submodels;
   private boolean isSet;
   private int size;
   private List<Double> initValues;
@@ -36,7 +35,6 @@ public class VectorWrapper {
   {
     this.size = 0;
     this.values = null;
-    this.submodels = null;
     this.values = null;
     this.initValues = null;
     this.isSet = false;

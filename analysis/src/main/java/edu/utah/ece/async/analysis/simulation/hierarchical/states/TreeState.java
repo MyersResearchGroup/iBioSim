@@ -26,11 +26,19 @@ public abstract class TreeState extends HierarchicalState{
   
   @Override
   public double getStateValue(int index) {
+    if(!containsChild(index))
+    {
+      return 0;
+    }
     return getState(index).getStateValue();
   }
 
   @Override
   public void setStateValue(int index, double value) {
+    if(!containsChild(index))
+    {
+      addState(index);
+    }
     getState(index).setStateValue(value);
   }
   
@@ -43,5 +51,7 @@ public abstract class TreeState extends HierarchicalState{
   public double getRateValue(int index) {
     return 0;
   }
+  
+  protected abstract boolean containsChild(int index);
  
 }

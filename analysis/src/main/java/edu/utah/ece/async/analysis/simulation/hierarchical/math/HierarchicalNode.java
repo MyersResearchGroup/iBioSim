@@ -38,7 +38,6 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   private List<HierarchicalNode>  children;
   private ArrayNode       arrayNode;
   protected HierarchicalState   state;
-  protected List<Integer>     indexToSubmodel;
 
   public HierarchicalNode(Type type)
   {
@@ -167,7 +166,6 @@ public class HierarchicalNode extends AbstractHierarchicalNode
     {
       state = new ValueState();
     }
-    //TODO: error on else
     return state;
   }
 
@@ -178,8 +176,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   
   public void setValue(int index, double value)
   {
-    //TODO:
-    state.setStateValue(value);
+    state.setStateValue(index, value);
   }
   
   public double getValue()
@@ -189,7 +186,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   
   public double getValue(int index)
   {
-    return state.getStateValue();
+    return state.getStateValue(index);
   }
   
   public double getRate()
@@ -205,17 +202,6 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   public HierarchicalState getState()
   {
     return state;
-  }
-
-  
-  public void setIndexToSubmodel(List<Integer> indexToSubmodel)
-  {
-    this.indexToSubmodel = indexToSubmodel;
-  }
-
-  public int getSubmodelIndex(int index)
-  {
-    return indexToSubmodel.get(index);
   }
 
   @Override

@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
 
 /**
  * 
@@ -147,7 +148,7 @@ public class Learn
 		}
 	}
 
-	public void learnNetwork(SpeciesCollection S, Experiments E, NetCon C, Thresholds T, Encodings L)
+	public void learnNetwork(SpeciesCollection S, Experiments E, NetCon C, Thresholds T, Encodings L) throws BioSimException
 	{
 		EncodeExpts(S, E, C, T, L);
 
@@ -165,12 +166,17 @@ public class Learn
 		}
 	}
 
-	private void EncodeExpts(SpeciesCollection S, Experiments E, NetCon C, Thresholds T, Encodings L)
+	private void EncodeExpts(SpeciesCollection S, Experiments E, NetCon C, Thresholds T, Encodings L) throws BioSimException
 	{
 		for (int i = 0; i < S.size(); i++)
 		{
-			getDiscreteLevels(S.getInterestingSpecies(i), S, E, L, bins);
-			getBinAssign(S.getInterestingSpecies(i), S, E, L, bins);
+		  String species = S.getInterestingSpecies(i);
+		  if(!S.containsSpeciesData(species))
+		  {
+		    throw new BioSimException("There is no data for " + species + ". Check if species ids in the target model match the ones from the data.", "Error in learning.");
+		  }
+			getDiscreteLevels(species, S, E, L, bins);
+			getBinAssign(species, S, E, L, bins);
 		}
 	}
 
@@ -623,7 +629,7 @@ public class Learn
 
 	}
 
-	public void getDotFile(String filename, String directory, SpeciesCollection collection, NetCon network)
+	public void getDotFile(String filename, String directory, SpeciesCollection collection, NetCon network) throws BioSimException
 	{
 		Map<String, String> speciesToNode;
 		File fout = new File(directory + GlobalConstants.separator + filename);
@@ -666,11 +672,11 @@ public class Learn
 		}
 		catch (FileNotFoundException e)
 		{
-			System.out.println("Could not write dot file. File could not be found.");
+		  throw new BioSimException("Could not write dot file. File could not be found.", "Error in Learning");
 		}
 		catch (IOException e)
 		{
-			System.out.println("Error when writing dot file.");
+		  throw new BioSimException("Error when writing dot file.", "Error in Learning");
 		}
 		finally
 		{
@@ -683,7 +689,7 @@ public class Learn
 			}
 			catch (IOException e)
 			{
-				System.out.println("Failed to close writer");
+			  throw new BioSimException("Failed to close writer", "Error in Learning");
 			}
 
 			try
@@ -695,7 +701,7 @@ public class Learn
 			}
 			catch (IOException e)
 			{
-				System.out.println("Failed to close outputstream");
+			  throw new BioSimException("Failed to close outputstream", "Error in Learning");
 			}
 
 		}

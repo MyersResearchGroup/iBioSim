@@ -26,7 +26,6 @@ public abstract class HierarchicalState
 {
   protected double  value;
   
-  protected int arrayIndex;
 
   public enum StateType
   {

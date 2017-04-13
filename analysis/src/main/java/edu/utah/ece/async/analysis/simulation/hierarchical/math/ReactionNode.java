@@ -14,9 +14,13 @@
 package edu.utah.ece.async.analysis.simulation.hierarchical.math;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import edu.utah.ece.async.analysis.simulation.hierarchical.states.ReactionState;
 
 /**
  * 
@@ -31,21 +35,16 @@ public class ReactionNode extends VariableNode
 
 	private List<SpeciesReferenceNode>	reactants;
 	private List<SpeciesReferenceNode>	products;
+	private Map<String, VariableNode> 	localParameters;
 	private HierarchicalNode			forwardRate;
 	private HierarchicalNode			reverseRate;
-	private boolean						hasEnoughMoleculesFd;
-	private boolean						hasEnoughMoleculesRv;
-	private double						forwardRateValue;
-	private double						reverseRateValue;
-	private HierarchicalNode			totalPropensityRef;
-	private HierarchicalNode			modelPropensityRef;
-	private double						initPropensity;
-	private double						initForwardPropensity;
-
+	private Map<Integer, ReactionState> reactionState;
+	
 	public ReactionNode(String name)
 	{
 		super(name);
 		isReaction = true;
+		reactionState = new HashMap<Integer, ReactionState>();
 	}
 
 	public ReactionNode(ReactionNode copy)
@@ -54,6 +53,12 @@ public class ReactionNode extends VariableNode
 		isReaction = true;
 	}
 
+	public ReactionState addReactionState(int index)
+	{
+	  ReactionState state = new ReactionState();
+	  reactionState.put(index, state);
+	  return state;
+	}
 	public List<SpeciesReferenceNode> getListOfReactants()
 	{
 		return reactants;
@@ -95,31 +100,17 @@ public class ReactionNode extends VariableNode
 		return forwardRate;
 	}
 
-	public boolean hasEnoughMolecules()
-	{
-		return hasEnoughMoleculesFd;
-	}
-
 	public boolean computePropensity(int index)
 	{
 		double oldValue = getValue(index);
 		if (forwardRate != null)
 		{
-			forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
+			double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
 			setValue(index, forwardRateValue);
 		}
 		if (reverseRate != null)
 		{
-			reverseRateValue = Evaluator.evaluateExpressionRecursive(reverseRate, index);
-			setValue(index, forwardRateValue + reverseRateValue);
-		}
-		if (totalPropensityRef != null)
-		{
-			totalPropensityRef.setValue(index, totalPropensityRef.getValue(index) + (getValue(index) - oldValue));
-		}
-		if (modelPropensityRef != null)
-		{
-			modelPropensityRef.setValue(index, modelPropensityRef.getValue(index) + (getValue(index) - oldValue));
+			//TODO
 		}
 		return oldValue != getValue(index);
 	}
@@ -151,6 +142,7 @@ public class ReactionNode extends VariableNode
 					dependentReactions.addAll(speciesNode.getReactionDependents());
 				}
 			}
+			computePropensity(index);
 			updateDependentReactions(index, dependentReactions);
 		}
 	}
@@ -158,14 +150,15 @@ public class ReactionNode extends VariableNode
 	public void fireReaction(int index, double threshold)
 	{
 		computeNotEnoughEnoughMolecules(index);
-		if (forwardRateValue >= threshold)
-		{
-			fireReaction(index, hasEnoughMoleculesFd, reactants, products);
-		}
-		else
-		{
-			fireReaction(index, hasEnoughMoleculesRv, products, reactants);
-		}
+		ReactionState state = reactionState.get(index);
+//		if (state.getForwardRateValue() >= threshold)
+//		{
+			fireReaction(index, state.hasEnoughMoleculesFd(), reactants, products);
+//		}
+//		else
+//		{
+//			fireReaction(index, state.hasEnoughMoleculesRv(), products, reactants);
+//		}
 	}
 
 	private void updateDependentReactions(int index, Set<ReactionNode> dependentReactions)
@@ -178,43 +171,34 @@ public class ReactionNode extends VariableNode
 
 	public void computeNotEnoughEnoughMolecules(int index)
 	{
-		hasEnoughMoleculesFd = true;
+	  ReactionState state = reactionState.get(index);
+	  state.setHasEnoughMoleculesFd(true);
 		if (reactants != null)
 		{
 			for (SpeciesReferenceNode specRef : reactants)
 			{
 				if (specRef.getSpecies().getValue(index) < specRef.getValue(index))
 				{
-					hasEnoughMoleculesFd = false;
+				  state.setHasEnoughMoleculesFd(false);
 					break;
 				}
 			}
 		}
 		if (reverseRate != null)
 		{
-			hasEnoughMoleculesRv = true;
+		  state.setHasEnoughMoleculesRv(true);
 			if (products != null)
 			{
 				for (SpeciesReferenceNode specRef : products)
 				{
 					if (specRef.getSpecies().getValue(index) < specRef.getValue(index))
 					{
-						hasEnoughMoleculesRv = false;
+					  state.setHasEnoughMoleculesRv(false);
 						return;
 					}
 				}
 			}
 		}
-	}
-
-	public void setModelPropensityRef(HierarchicalNode ref)
-	{
-		this.modelPropensityRef = ref;
-	}
-
-	public void setTotalPropensityRef(HierarchicalNode ref)
-	{
-		this.totalPropensityRef = ref;
 	}
 
 	public void setReverseRate(HierarchicalNode rate)
@@ -224,16 +208,31 @@ public class ReactionNode extends VariableNode
 
 	public void setInitPropensity(int index)
 	{
-		int subModel = indexToSubmodel.get(index);
-		this.initPropensity = getValue(subModel);
-		this.initForwardPropensity = forwardRateValue;
+	  ReactionState state = reactionState.get(index);
+		state.setInitPropensity(getValue(index));
+		state.setInitForwardPropensity(state.getForwardRateValue());
 	}
 
+	public void addLocalParameter(String id, VariableNode node)
+	{
+		if(localParameters == null)
+		{
+			localParameters = new HashMap<String, VariableNode>();
+		}
+		localParameters.put(id, node);
+	}
+	
+	public Map<String, VariableNode> getLocalParameters()
+	{
+		return localParameters;
+	}
+	
 	public void restoreInitPropensity(int index)
 	{
-		setValue(index, initPropensity);
-		this.forwardRateValue = initForwardPropensity;
-		this.reverseRateValue = getValue(index) - forwardRateValue;
+	  ReactionState state = reactionState.get(index);
+		setValue(index, state.getInitPropensity());
+		state.setForwardRateValue(state.getInitForwardPropensity());
+    state.setReverseRateValue(state.getInitPropensity() - state.getInitForwardPropensity());
 	}
 
 	@Override
@@ -241,4 +240,8 @@ public class ReactionNode extends VariableNode
 	{
 		return new ReactionNode(this);
 	}
+	
+	 public boolean hasEnoughMoleculesFd(int index) {
+	    return reactionState.get(index).hasEnoughMoleculesFd();
+	  }
 }

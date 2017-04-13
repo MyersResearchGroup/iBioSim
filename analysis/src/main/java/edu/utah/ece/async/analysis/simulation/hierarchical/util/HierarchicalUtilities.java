@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
+import org.sbml.jsbml.Model;
 
 import edu.utah.ece.async.analysis.simulation.hierarchical.math.ConstraintNode;
 import edu.utah.ece.async.analysis.simulation.hierarchical.math.EventNode;
@@ -33,8 +34,6 @@ import edu.utah.ece.async.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.analysis.simulation.hierarchical.util.interpreter.RateSplitterInterpreter;
-
-import org.sbml.jsbml.Model;
 
 /**
  * 
@@ -189,64 +188,7 @@ public class HierarchicalUtilities
 
 		}
 	}
-
-	public static void alterLocalParameter(ASTNode math, String id, String parameterID)
-	{
-		if (math.isName() && math.getName().equals(id))
-		{
-			// math.setVariable(null);
-			math.setName(parameterID);
-		}
-		else
-		{
-			for (ASTNode child : math.getChildren())
-			{
-				alterLocalParameter(child, id, parameterID);
-			}
-		}
-	}
-
-
-
-
-
-	public static void triggerAndFireEvents(List<EventNode> eventList, PriorityQueue<EventNode> triggeredEventList, double time)
-	{
-		boolean changed = true;
-		while (changed)
-		{
-			changed = false;
-			for (int i = eventList.size() - 1; i >= 0; i--)
-			{
-				EventNode event = eventList.get(i);
-				if (event.computeEnabled(0, time))
-				{
-					eventList.remove(i);
-					triggeredEventList.add(event);
-				}
-			}
-
-			while (triggeredEventList != null && !triggeredEventList.isEmpty())
-			{
-				EventNode event = triggeredEventList.peek();
-
-				if (event.getFireTime() <= time)
-				{
-					triggeredEventList.poll();
-					event.fireEvent(0, time);
-					eventList.add(event);
-					changed = true;
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-	}
-
-
-
+	
 	public static ASTNode[] splitMath(ASTNode math)
 	{
 		ASTNode plus = new ASTNode(Type.PLUS);
@@ -268,14 +210,4 @@ public class HierarchicalUtilities
 		return plus.getChildCount() > 0 && minus.getChildCount() > 0 ? result : null;
 	}
 
-	public static boolean evaluateConstraints(List<ConstraintNode> listOfConstraints)
-	{
-		boolean hasSuccess = true;
-		for (int i = listOfConstraints.size() - 1; i >= 0; i--)
-		{
-			ConstraintNode constraintNode = listOfConstraints.get(i);
-			hasSuccess = hasSuccess && constraintNode.evaluateConstraint(constraintNode.getSubmodelIndex(i));
-		}
-		return hasSuccess;
-	}
 }

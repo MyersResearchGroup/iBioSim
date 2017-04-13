@@ -57,7 +57,7 @@ public class ValueState extends HierarchicalState
   public HierarchicalState getState(int index)
   {
     // can't have children
-    return null;
+    return this;
   }
 
   @Override

@@ -101,5 +101,14 @@ public class DenseState extends TreeState
     return builder.toString();
   }
 
+  @Override
+  protected boolean containsChild(int index) {
+    if(listOfStates.size() <= index)
+    {
+      return false;
+    }
+    return true;
+  }
+
 
 }

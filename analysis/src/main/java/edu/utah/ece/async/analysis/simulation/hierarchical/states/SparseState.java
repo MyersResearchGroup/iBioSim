@@ -78,4 +78,9 @@ public class SparseState extends TreeState
     return builder.toString();
   }
 
+  @Override
+  protected boolean containsChild(int index) {
+    return mapOfStates.containsKey(index);
+  }
+
 }

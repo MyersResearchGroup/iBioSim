@@ -483,43 +483,4 @@ public final class MathInterpreter
 		
 		return node;
 	}
-
-	private static boolean replaceNodes(HierarchicalNode parent, HierarchicalNode node, Map<String, VariableNode> variableToNodes, boolean useValue, int index)
-	{
-
-		boolean result = false;
-		for (HierarchicalNode child : node.getChildren())
-		{
-			if (child.isName())
-			{
-				VariableNode varNode = (VariableNode) child;
-				if (variableToNodes.containsKey(varNode.getName()))
-				{
-					if (useValue)
-					{
-						parent.addChild(new HierarchicalNode(varNode.getValue(index)));
-					}
-					else
-					{
-						parent.addChild(variableToNodes.get(varNode.getName()));
-					}
-					result = true;
-					continue;
-				}
-			}
-			if (child.getNumOfChild() == 0)
-			{
-				parent.addChild(child.clone());
-			}
-			else
-			{
-				HierarchicalNode newNode = new HierarchicalNode(child.getType());
-				result = result | replaceNodes(newNode, child, variableToNodes, useValue, index);
-				parent.addChild(newNode);
-			}
-		}
-
-		return result;
-
-	}
 }

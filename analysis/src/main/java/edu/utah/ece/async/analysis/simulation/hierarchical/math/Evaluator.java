@@ -687,7 +687,7 @@ public final class Evaluator
 
       double value = 0;
 
-      if (!species.hasOnlySubstance(index))
+      if (!species.hasOnlySubstance())
       {
         value = species.getConcentration(index);
       }
@@ -702,7 +702,7 @@ public final class Evaluator
     {
       ReactionNode reaction = (ReactionNode) node;
 
-      if (reaction.hasEnoughMolecules())
+      if (reaction.hasEnoughMoleculesFd(index))
       {
         return reaction.getValue(index);
       }

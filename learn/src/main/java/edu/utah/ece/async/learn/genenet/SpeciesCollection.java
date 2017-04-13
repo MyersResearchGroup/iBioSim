@@ -71,4 +71,8 @@ public class SpeciesCollection
 		return interestingSpecies;
 	}
 
+	public boolean containsSpeciesData(String species)
+	{
+	  return speciesColumn.containsKey(species);
+	}
 }
