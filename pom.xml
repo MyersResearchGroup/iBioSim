@@ -32,8 +32,11 @@
 	<modules>
 		<module>dataModels</module>
 		<module>conversion</module>
-		<module>backend</module>
-		<module>frontend</module>
+		<module>analysis</module>
+		<module>gui</module>
+		<module>synthesis</module>
+		<module>learn</module>
+		<module>verification</module>
 	</modules>
 
 	<build>
