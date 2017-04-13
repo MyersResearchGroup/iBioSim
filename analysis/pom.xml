@@ -3,10 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>analysis</artifactId>
-	<groupId>edu.utah.ece.async.backend</groupId>
 	<parent>
 		<groupId>edu.utah.ece.async</groupId>
-		<artifactId>backend</artifactId>
+		<artifactId>iBioSim</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
@@ -63,5 +62,11 @@
 			<version>1.0.0</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>edu.utah.ece.async</groupId>
+			<artifactId>dataModels</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 </project>

@@ -207,13 +207,31 @@
 		</dependency>
 
 		<dependency>
-			<groupId>edu.utah.ece.async.backend</groupId>
+			<groupId>edu.utah.ece.async</groupId>
 			<artifactId>learn</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
-			<groupId>edu.utah.ece.async.backend</groupId>
+			<groupId>edu.utah.ece.async</groupId>
+			<artifactId>analysis</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>edu.utah.ece.async</groupId>
+			<artifactId>synthesis</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>edu.utah.ece.async</groupId>
+			<artifactId>verification</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>edu.utah.ece.async</groupId>
 			<artifactId>synthesis</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
