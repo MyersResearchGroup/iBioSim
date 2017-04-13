@@ -33,7 +33,7 @@
 		<module>dataModels</module>
 		<module>conversion</module>
 		<module>analysis</module>
-		<module>frontend</module>
+		<module>gui</module>
 		<module>synthesis</module>
 		<module>learn</module>
 		<module>verification</module>
