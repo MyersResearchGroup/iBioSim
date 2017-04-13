@@ -23,6 +23,8 @@ import java.util.Set;
 
 import org.sbml.jsbml.Model;
 
+import edu.utah.ece.async.backend.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
+import edu.utah.ece.async.backend.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.backend.analysis.simulation.hierarchical.math.ConstraintNode;
 import edu.utah.ece.async.backend.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.backend.analysis.simulation.hierarchical.math.FunctionNode;
@@ -67,8 +69,7 @@ public final class HierarchicalModel
 	protected int       index;
 	private double        maxPropensity;
 	private double        minPropensity;
-	private HierarchicalNode  propensity;
-	private double      initPropensity;
+	private FunctionNode  propensity;
 
 	private Map<String, HierarchicalModel>	idToSubmodel;
 	
@@ -92,6 +93,7 @@ public final class HierarchicalModel
 		this.constraints = new ArrayList<ConstraintNode>();
 		this.reactions = new ArrayList<ReactionNode>();
 		this.arrays = new ArrayList<VariableNode>();
+		this.propensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
 	}
 
 	public HierarchicalModel(HierarchicalModel state)
@@ -114,7 +116,6 @@ public final class HierarchicalModel
 		if (state.propensity != null)
 		{
 			this.propensity = state.propensity;
-			this.initPropensity = state.initPropensity;
 		}
 	}
 
@@ -338,9 +339,9 @@ public final class HierarchicalModel
 		return minPropensity;
 	}
 
-	public double getPropensity()
+	public FunctionNode getPropensity()
 	{
-		return propensity.getValue();
+		return propensity;
 	}
 
 	public void setID(String iD)
@@ -356,25 +357,6 @@ public final class HierarchicalModel
 	public void setMinPropensity(double minPropensity)
 	{
 		this.minPropensity = minPropensity;
-	}
-
-	public HierarchicalNode createPropensity()
-	{
-		this.propensity = new HierarchicalNode(0);
-		return propensity;
-	}
-
-	public void setInitPropensity(int index)
-	{
-		if (propensity != null)
-		{
-			this.initPropensity = propensity.getValue(index);
-		}
-	}
-
-	public void restoreInitPropensity(int index)
-	{
-		this.propensity.setValue(index, initPropensity);
 	}
 
 	public int getIndex()
@@ -466,5 +448,10 @@ public final class HierarchicalModel
 	public void removeSubmodel(String id)
 	{
 	  idToSubmodel.remove(id);
+	}
+	
+	public void insertPropensity(ReactionNode reaction)
+	{
+	    this.propensity.addChild(reaction);
 	}
 }

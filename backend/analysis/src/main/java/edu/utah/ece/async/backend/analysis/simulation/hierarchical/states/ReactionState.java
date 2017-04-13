@@ -83,4 +83,12 @@ public class ReactionState {
   public void setInitForwardPropensity(double initForwardPropensity) {
     this.initForwardPropensity = initForwardPropensity;
   }
+
+
+  @Override
+  public String toString() {
+    return "fw_rate =" + forwardRateValue;
+  }
+  
+  
 }

@@ -64,7 +64,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       null, 1, 1e-6, 1e-9, "amount", "none", 0, 0, false);
     isInitialized = false;
     isSingleStep = true;
-    this.printTime = Double.POSITIVE_INFINITY;
+    this.printTime.setValue(Double.POSITIVE_INFINITY);
   }
 
 
@@ -100,7 +100,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     this.isSingleStep = false;
     this.absoluteError = absoluteError == 0 ? 1e-12 : absoluteError;
     this.relativeError = absoluteError == 0 ? 1e-9 : relativeError;
-    this.printTime = outputStartTime;
+    this.printTime.setValue(outputStartTime);
     this.vectorWrapper = new VectorWrapper(initValues);
     if (numSteps > 0) {
       setPrintInterval(timeLimit / numSteps);
@@ -120,7 +120,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       getMaxTimeStep(), absoluteError, relativeError);
     this.isInitialized = true;
     this.isSingleStep = true;
-    this.printTime = Double.POSITIVE_INFINITY;
+    this.printTime.setValue(Double.POSITIVE_INFINITY);
     this.vectorWrapper = sim.getVectorWrapper();
     de = new DifferentialEquations();
     if (sim.hasEvents()) {
@@ -193,8 +193,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       // return;
       // }
       nextEndTime = currentTime.getValue() + getMaxTimeStep();
-      if (nextEndTime > printTime) {
-        nextEndTime = printTime;
+      if (nextEndTime > printTime.getValue()) {
+        nextEndTime = printTime.getValue();
       }
       if (nextEndTime > getTimeLimit()) {
         nextEndTime = getTimeLimit();

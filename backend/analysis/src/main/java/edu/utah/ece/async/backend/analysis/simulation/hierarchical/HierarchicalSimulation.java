@@ -33,6 +33,7 @@ import org.sbml.jsbml.SBMLReader;
 import edu.utah.ece.async.backend.analysis.simulation.ParentSimulator;
 import edu.utah.ece.async.backend.analysis.simulation.hierarchical.io.HierarchicalTSDWriter;
 import edu.utah.ece.async.backend.analysis.simulation.hierarchical.io.HierarchicalWriter;
+import edu.utah.ece.async.backend.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.backend.analysis.simulation.hierarchical.math.ConstraintNode;
 import edu.utah.ece.async.backend.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.backend.analysis.simulation.hierarchical.math.FunctionNode;
@@ -67,7 +68,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   }
 
   protected final VariableNode      currentTime;
-  protected double            printTime;
+  protected final VariableNode            printTime;
   private boolean             cancelFlag;
   private int               currentRun;
   private String[]            interestingSpecies;
@@ -97,13 +98,12 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   
   protected boolean hasEvents;
   
-  private int               numSubmodels;
   private boolean             isGrid;
   private Random              randomNumberGenerator;
   private HierarchicalModel       topmodel;
   final private SimType         type;
   protected List<HierarchicalModel>     modules;
-  private HierarchicalNode        totalPropensity;
+  protected FunctionNode        totalPropensity;
   private double              initialTime, outputStartTime;
 
   private HierarchicalWriter writer;
@@ -117,7 +117,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.minTimeStep = minTimeStep;
     this.progress = progress;
     this.printInterval = printInterval;
-    this.printTime = 0;
+    this.printTime = new VariableNode("_printTime", StateType.SCALAR);
     this.rootDirectory = rootDirectory;
     this.outputDirectory = outputDirectory;
     this.running = running;
@@ -128,7 +128,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.totalRuns = runs;
     this.type = type;
     this.topmodel = new HierarchicalModel("topmodel");
-    this.currentTime = new VariableNode("time", StateType.SCALAR);
+    this.currentTime = new VariableNode("_time", StateType.SCALAR);
     this.hasEvents = false;
     this.currentRun = 1;
     this.randomNumberGenerator = new Random(randomSeed);
@@ -138,8 +138,11 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.initValues = new ArrayList<Double>();
     
     this.writer = new HierarchicalTSDWriter();
-    this.addPrintVariable(currentTime.getName(), currentTime.getState());
+    this.addPrintVariable("time", printTime.getState());
     
+    this.totalPropensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
+    
+
     if (quantityType != null)
     {
       String[] printConcentration = quantityType.replaceAll(" ", "").split(",");
@@ -186,6 +189,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.minTimeStep = copy.minTimeStep;
     this.progress = copy.progress;
     this.printInterval = copy.printInterval;
+    this.printTime = copy.printTime;
     this.rootDirectory = copy.rootDirectory;
     this.outputDirectory = copy.outputDirectory;
     this.running = copy.running;
@@ -202,6 +206,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.randomNumberGenerator = copy.randomNumberGenerator;
     this.initValues = copy.initValues;
     this.hasEvents = copy.hasEvents;
+    //this.totalPropensity = copy.totalPropensity;
   }
 
   public void addModelState(HierarchicalModel modelstate)
@@ -624,14 +629,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   }
 
   /**
-   * @return the numSubmodels
-   */
-  public int getNumSubmodels()
-  {
-    return numSubmodels;
-  }
-
-  /**
    * @return the randomNumberGenerator
    */
   public Random getRandomNumberGenerator()
@@ -663,15 +660,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   public void setGrid(boolean isGrid)
   {
     this.isGrid = isGrid;
-  }
-
-  /**
-   * @param numSubmodels
-   *            the numSubmodels to set
-   */
-  public void setNumSubmodels(int numSubmodels)
-  {
-    this.numSubmodels = numSubmodels;
   }
 
   /**
@@ -725,29 +713,12 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     return outputStartTime;
   }
 
-  public void linkPropensities()
-  {
-    HierarchicalNode propensity;
-    totalPropensity = new VariableNode("_totalPropensity", StateType.SCALAR);
-
-    for (HierarchicalModel modelstate : modules)
-    {
-        propensity = modelstate.createPropensity();
-        for (ReactionNode node : modelstate.getReactions())
-        {
-          node.setTotalPropensityRef(totalPropensity);
-          node.setModelPropensityRef(propensity);
-        }
-    }
-
-  }
-
   /**
    * Returns the total propensity of all model states.
    */
   protected double getTotalPropensity()
   {
-    return totalPropensity != null ? totalPropensity.getValue(0) : 0;
+    return totalPropensity != null ? totalPropensity.getVariable().getValue() : 0;
   }
 
   public void setTopLevelValue(String variable, double value)
@@ -778,7 +749,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
   protected void printToFile()
   {
-    while (currentTime.getValue() >= printTime && printTime <= getTimeLimit())
+    while (currentTime.getValue() >= printTime.getValue() && printTime.getValue() <= getTimeLimit())
     {
       try
       {
@@ -789,7 +760,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
         e.printStackTrace();
       }
 
-      printTime = getRoundedDouble(printTime + getPrintInterval());
+      printTime.setValue(getRoundedDouble(printTime.getValue() + getPrintInterval()));
 
       if (getRunning() != null)
       {
@@ -807,34 +778,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     return newValue;
   }
 
-  protected void setInitialPropensity()
-  {
-    this.initTotalPropensity = totalPropensity.getValue(0);
-
-    for (HierarchicalModel state : modules)
-    {
-      state.setInitPropensity(0);
-
-      for (ReactionNode node : state.getReactions())
-      {
-        node.setInitPropensity(state.getIndex());
-      }
-    }
-  }
-
-  protected void restoreInitialPropensity()
-  {
-    totalPropensity.setValue(0, initTotalPropensity);
-    for (HierarchicalModel state : modules)
-    {
-      state.restoreInitPropensity(0);
-
-      for (ReactionNode node : state.getReactions())
-      {
-        node.restoreInitPropensity(state.getIndex());
-      }
-    }
-  }
 
   protected void computeAssignmentRules()
   {
@@ -936,6 +879,8 @@ public abstract class HierarchicalSimulation implements ParentSimulator
             {
               changed = changed | node.computePropensity(modelstate.getIndex());
             }
+            
+            modelstate.getPropensity().computeFunction(modelstate.getIndex());
           }
         }
       }

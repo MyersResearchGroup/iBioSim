@@ -167,11 +167,6 @@ public class ModelSetup
       ReplacementSetup.setupDeletion(container);
       CoreSetup.initializeModel(sim, container, type, time, wrapper, isSSA);
     }
-
-    if (isSSA)
-    {
-      sim.linkPropensities();
-    }
     
     if(wrapper != null)
     {

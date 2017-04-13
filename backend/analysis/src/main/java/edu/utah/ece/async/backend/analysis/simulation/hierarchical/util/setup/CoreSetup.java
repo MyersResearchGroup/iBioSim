@@ -108,7 +108,8 @@ public class CoreSetup
       {
         node.createState(type, wrapper);
         modelstate.addVariable(node);
-        sim.addPrintVariable(container.getPrefix() + compartmentID, node.getState());
+        node.getState().addState(modelstate.getIndex(), 0);
+        sim.addPrintVariable(container.getPrefix() + compartmentID, node.getState().getState(modelstate.getIndex()));
       }
 
       if (Double.isNaN(compartment.getSize()))
@@ -335,7 +336,8 @@ public class CoreSetup
       {
         node.createState(type, wrapper);
         modelstate.addVariable(node);
-        sim.addPrintVariable(container.getPrefix() + parameter.getId(), node.getState());
+        node.getState().addState(modelstate.getIndex(), 0);
+        sim.addPrintVariable(container.getPrefix() + parameter.getId(), node.getState().getState(modelstate.getIndex()));
       }
       
       node.setValue(modelstate.getIndex(), parameter.getValue());
@@ -450,6 +452,7 @@ public class CoreSetup
         reactionNode = modelstate.addReaction(reaction.getId());
         reactionNode.addReactionState(modelstate.getIndex());
         reactionNode.createState(type, wrapper);
+        modelstate.insertPropensity(reactionNode);
       }
       ReplacementSetup.setupReplacement(reaction, reactionNode, container);
       if (modelstate.isDeletedBySId(reaction.getId()))
@@ -462,7 +465,6 @@ public class CoreSetup
       }
 
       reactionNode.setValue(modelstate.getIndex(), 0);
-      reactionNode.addReactionState(modelstate.getIndex());
       for (SpeciesReference reactant : reaction.getListOfReactants())
       {
         setupReactant(sim, container, reactionNode, reactant.getSpecies(), reactant, type, wrapper);
@@ -597,7 +599,8 @@ public class CoreSetup
         {
           node.createState(type, wrapper);
           modelstate.addVariable(node);
-          sim.addPrintVariable(container.getPrefix() + species.getId(), node.getState());
+          node.getState().addState(modelstate.getIndex(), 0);
+          sim.addPrintVariable(container.getPrefix() + species.getId(), node.getState().getState(modelstate.getIndex()));
         }
       }
       ReplacementSetup.setupReplacement(species, node, container);
@@ -609,8 +612,7 @@ public class CoreSetup
       {
         continue;
       }
-
-      node.setValue(index, 0);
+      
       node.setBoundaryCondition(species.getBoundaryCondition());
       node.setHasOnlySubstance(species.getHasOnlySubstanceUnits());
       VariableNode compartment = modelstate.getNode(species.getCompartment());

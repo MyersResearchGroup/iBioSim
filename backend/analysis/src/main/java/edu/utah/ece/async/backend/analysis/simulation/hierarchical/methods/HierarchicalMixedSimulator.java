@@ -96,9 +96,9 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 		{
 			nextEndTime = currentTime.getValue() + getMaxTimeStep();
 
-			if (nextEndTime > printTime)
+			if (nextEndTime > printTime.getValue())
 			{
-				nextEndTime = printTime;
+				nextEndTime = printTime.getValue();
 			}
 
 			if (nextEndTime > getTimeLimit())

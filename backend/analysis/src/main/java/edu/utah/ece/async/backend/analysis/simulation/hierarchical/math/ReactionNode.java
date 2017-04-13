@@ -38,8 +38,6 @@ public class ReactionNode extends VariableNode
 	private Map<String, VariableNode> 	localParameters;
 	private HierarchicalNode			forwardRate;
 	private HierarchicalNode			reverseRate;
-	private HierarchicalNode			totalPropensityRef;
-	private HierarchicalNode			modelPropensityRef;
 	private Map<Integer, ReactionState> reactionState;
 	
 	public ReactionNode(String name)
@@ -104,26 +102,15 @@ public class ReactionNode extends VariableNode
 
 	public boolean computePropensity(int index)
 	{
-	  ReactionState state = reactionState.get(index);
 		double oldValue = getValue(index);
 		if (forwardRate != null)
 		{
-		 
 			double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
-			state.setForwardRateValue(forwardRateValue);
 			setValue(index, forwardRateValue);
 		}
 		if (reverseRate != null)
 		{
 			//TODO
-		}
-		if (totalPropensityRef != null)
-		{
-			totalPropensityRef.setValue(index, totalPropensityRef.getValue(index) + (getValue(index) - oldValue));
-		}
-		if (modelPropensityRef != null)
-		{
-			modelPropensityRef.setValue(index, modelPropensityRef.getValue(index) + (getValue(index) - oldValue));
 		}
 		return oldValue != getValue(index);
 	}
@@ -155,6 +142,7 @@ public class ReactionNode extends VariableNode
 					dependentReactions.addAll(speciesNode.getReactionDependents());
 				}
 			}
+			computePropensity(index);
 			updateDependentReactions(index, dependentReactions);
 		}
 	}
@@ -163,14 +151,14 @@ public class ReactionNode extends VariableNode
 	{
 		computeNotEnoughEnoughMolecules(index);
 		ReactionState state = reactionState.get(index);
-		if (state.getForwardRateValue() >= threshold)
-		{
+//		if (state.getForwardRateValue() >= threshold)
+//		{
 			fireReaction(index, state.hasEnoughMoleculesFd(), reactants, products);
-		}
-		else
-		{
-			fireReaction(index, state.hasEnoughMoleculesRv(), products, reactants);
-		}
+//		}
+//		else
+//		{
+//			fireReaction(index, state.hasEnoughMoleculesRv(), products, reactants);
+//		}
 	}
 
 	private void updateDependentReactions(int index, Set<ReactionNode> dependentReactions)
@@ -211,16 +199,6 @@ public class ReactionNode extends VariableNode
 				}
 			}
 		}
-	}
-
-	public void setModelPropensityRef(HierarchicalNode ref)
-	{
-		this.modelPropensityRef = ref;
-	}
-
-	public void setTotalPropensityRef(HierarchicalNode ref)
-	{
-		this.totalPropensityRef = ref;
 	}
 
 	public void setReverseRate(HierarchicalNode rate)
