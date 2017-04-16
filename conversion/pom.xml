@@ -21,7 +21,7 @@
 						<configuration>
 							<archive>
 								<manifest>
-									<mainClass>edu.utah.ece.async.Converter</mainClass>
+									<mainClass>edu.utah.ece.async.conversion.Converter</mainClass>
 								</manifest>
 							</archive>
 							<descriptorRefs>

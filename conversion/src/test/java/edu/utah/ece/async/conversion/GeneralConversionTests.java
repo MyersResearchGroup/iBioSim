@@ -34,7 +34,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		/* test validation on a valid sbol file. */
 		String fileName = "CRISPR_example"; 
 		String inputfile = sbolDir + fileName + ".xml";
-		
+		System.out.println(resourceDir);
 		//Options
 		String uriPrefix = "http://www.async.ece.utah.edu";
 		

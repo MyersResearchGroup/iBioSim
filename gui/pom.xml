@@ -120,6 +120,29 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Build an executable JAR -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>build-gui</id>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>edu.utah.ece.async.gui.main.Gui</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+						<phase>package</phase>
+						<goals>
+							<goal>assembly</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<repositories>
