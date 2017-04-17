@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.techMap;
+package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMap;
 
 import java.io.File;
 import java.util.HashMap;
@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SynthesisNode;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.WeightedGraph;
 
 /**
  * 

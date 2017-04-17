@@ -55,8 +55,8 @@ import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
-import edu.utah.ece.async.ibiosim.synthesis.genetic.SynthesisGraph;
-import edu.utah.ece.async.ibiosim.synthesis.genetic.Synthesizer;
+import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
+import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 
 /**
  * 

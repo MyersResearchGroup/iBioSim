@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.techMap;
+package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,7 +34,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 /**
  * 
  *
- * @author 
+ * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%

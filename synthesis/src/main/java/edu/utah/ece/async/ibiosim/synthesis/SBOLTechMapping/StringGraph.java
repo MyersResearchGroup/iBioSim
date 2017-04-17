@@ -11,16 +11,35 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.genetic;
+package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
  *
- * @author 
+ * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class SynthesisThread {
+public class StringGraph
+{
+	private Map<Integer, Integer> _nodes; 
+	public int stateNum = 0;
+	
+	public StringGraph()
+	{
+		_nodes = new HashMap<Integer, Integer>();
+	}
+	
+	public void createStringGraph()
+	{ 
+		StringNode n = new StringNode(stateNum);
+		_nodes.put(stateNum, stateNum);
+		stateNum++;
+		
+	}
 
 }

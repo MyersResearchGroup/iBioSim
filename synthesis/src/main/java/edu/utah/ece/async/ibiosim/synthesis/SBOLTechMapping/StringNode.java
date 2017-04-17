@@ -11,34 +11,35 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.techMap;
+package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
  *
- * @author 
+ * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class StringGraph
+public class StringNode
 {
-	private Map<Integer, Integer> _nodes; 
-	public int stateNum = 0;
+	private List<StringNode> children;
+	private int stateNum; 
+	private String weight; 
+	private String nextState;
 	
-	public StringGraph()
+	public StringNode(int stateNum)
 	{
-		_nodes = new HashMap<Integer, Integer>();
+		this.children = new ArrayList<StringNode>();
+		this.stateNum = stateNum;
+		this.weight = null; 
 	}
 	
-	public void createStringGraph()
-	{ 
-		StringNode n = new StringNode(stateNum);
-		_nodes.put(stateNum, stateNum);
-		stateNum++;
+	public void setWeight(String c)
+	{
 		
 	}
 

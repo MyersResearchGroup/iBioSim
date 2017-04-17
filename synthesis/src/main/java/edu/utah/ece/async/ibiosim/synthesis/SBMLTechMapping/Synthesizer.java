@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.genetic;
+package edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping;
 
 import java.io.IOException;
 import java.util.HashMap;

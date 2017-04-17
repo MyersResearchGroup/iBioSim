@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.techMap;
+package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
 import java.net.URI;
 import java.util.ArrayList;
