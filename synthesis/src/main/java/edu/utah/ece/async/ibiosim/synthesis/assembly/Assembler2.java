@@ -36,7 +36,8 @@ import org.sbolstandard.core2.*;
 /**
  * 
  *
- * @author 
+ * @author Nicholas Roehner
+ * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
