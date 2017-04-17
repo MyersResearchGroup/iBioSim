@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.LPNTranRelation;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.LpnTranList;
 import edu.utah.ece.async.dataModels.verification.platu.stategraph.StateGraph;

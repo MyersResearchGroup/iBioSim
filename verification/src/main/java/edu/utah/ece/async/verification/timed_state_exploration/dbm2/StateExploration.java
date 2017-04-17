@@ -20,7 +20,7 @@ import java.util.*;
 
 import javax.swing.JFileChooser;
 
-import edu.utah.ece.async.dataModels.lpn.parser.*;
+import edu.utah.ece.async.dataModels.lpn.*;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.verification.timed_state_exploration.dbm2.LPNTranslator.UnsafeLPNException;
 

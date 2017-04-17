@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 
 /**
  * An EventSet represents a transition to fire, a set of inequalities that must

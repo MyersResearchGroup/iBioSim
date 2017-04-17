@@ -30,8 +30,8 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
-import edu.utah.ece.async.dataModels.lpn.parser.LPN;
-import edu.utah.ece.async.dataModels.lpn.parser.Translator;
+import edu.utah.ece.async.dataModels.lpn.LPN;
+import edu.utah.ece.async.dataModels.lpn.Translator;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.dataModels.verification.platu.logicAnalysis.Analysis;

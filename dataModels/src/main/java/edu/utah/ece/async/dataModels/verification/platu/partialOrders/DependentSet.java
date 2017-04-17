@@ -15,7 +15,7 @@ package edu.utah.ece.async.dataModels.verification.platu.partialOrders;
 
 import java.util.HashSet;
 
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 
 /**
  * 

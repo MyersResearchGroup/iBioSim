@@ -15,8 +15,8 @@ package edu.utah.ece.async.dataModels.verification.platu.markovianAnalysis;
 
 import java.util.HashMap;
 
-import edu.utah.ece.async.dataModels.lpn.parser.LPN;
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.LPN;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 import edu.utah.ece.async.dataModels.verification.platu.main.Options;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.DualHashMap;
 import edu.utah.ece.async.dataModels.verification.platu.stategraph.State;

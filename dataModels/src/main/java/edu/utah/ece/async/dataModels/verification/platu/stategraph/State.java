@@ -25,8 +25,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
-import edu.utah.ece.async.dataModels.lpn.parser.LPN;
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.LPN;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 import edu.utah.ece.async.dataModels.verification.platu.common.PlatuObj;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.DualHashMap;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.LpnTranList;

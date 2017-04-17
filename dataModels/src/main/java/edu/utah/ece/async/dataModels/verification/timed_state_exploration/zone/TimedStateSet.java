@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 import edu.utah.ece.async.dataModels.verification.platu.logicAnalysis.StateSetInterface;
 import edu.utah.ece.async.dataModels.verification.platu.main.Options;
 import edu.utah.ece.async.dataModels.verification.platu.project.PrjState;

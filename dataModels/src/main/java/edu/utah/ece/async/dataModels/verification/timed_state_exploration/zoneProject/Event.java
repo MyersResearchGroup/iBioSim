@@ -13,7 +13,7 @@
  *******************************************************************************/
 package edu.utah.ece.async.dataModels.verification.timed_state_exploration.zoneProject;
 
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 
 /**
  * An Event is an action that is pending. This can be a transition to fire or an inequality.

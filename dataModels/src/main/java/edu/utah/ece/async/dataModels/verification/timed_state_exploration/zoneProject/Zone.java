@@ -25,10 +25,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import edu.utah.ece.async.dataModels.lpn.parser.ExprTree;
-import edu.utah.ece.async.dataModels.lpn.parser.LPN;
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
-import edu.utah.ece.async.dataModels.lpn.parser.Variable;
+import edu.utah.ece.async.dataModels.lpn.ExprTree;
+import edu.utah.ece.async.dataModels.lpn.LPN;
+import edu.utah.ece.async.dataModels.lpn.Transition;
+import edu.utah.ece.async.dataModels.lpn.Variable;
 import edu.utah.ece.async.dataModels.verification.platu.main.Options;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.DualHashMap;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.LpnTranList;

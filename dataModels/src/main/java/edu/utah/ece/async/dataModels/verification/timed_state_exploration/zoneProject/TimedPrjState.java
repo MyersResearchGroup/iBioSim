@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import edu.utah.ece.async.dataModels.lpn.parser.LPN;
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.LPN;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 import edu.utah.ece.async.dataModels.verification.platu.main.Options;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.LpnTranList;
 import edu.utah.ece.async.dataModels.verification.platu.project.PrjState;

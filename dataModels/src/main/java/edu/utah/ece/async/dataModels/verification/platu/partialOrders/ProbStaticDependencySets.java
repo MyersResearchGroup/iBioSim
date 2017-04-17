@@ -18,9 +18,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.utah.ece.async.dataModels.lpn.parser.ExprTree;
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
-import edu.utah.ece.async.dataModels.lpn.parser.LpnDecomposition.LpnProcess;
+import edu.utah.ece.async.dataModels.lpn.ExprTree;
+import edu.utah.ece.async.dataModels.lpn.Transition;
+import edu.utah.ece.async.dataModels.lpn.LpnDecomposition.LpnProcess;
 import edu.utah.ece.async.dataModels.verification.platu.main.Options;
 
 /**

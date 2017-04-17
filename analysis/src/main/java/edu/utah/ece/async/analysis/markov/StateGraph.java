@@ -25,9 +25,9 @@ import java.util.Stack;
 
 import javax.swing.JProgressBar;
 
-import edu.utah.ece.async.dataModels.lpn.parser.ExprTree;
-import edu.utah.ece.async.dataModels.lpn.parser.LPN;
-import edu.utah.ece.async.dataModels.lpn.parser.Translator;
+import edu.utah.ece.async.dataModels.lpn.ExprTree;
+import edu.utah.ece.async.dataModels.lpn.LPN;
+import edu.utah.ece.async.dataModels.lpn.Translator;
 import edu.utah.ece.async.dataModels.util.Message;
 import edu.utah.ece.async.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;

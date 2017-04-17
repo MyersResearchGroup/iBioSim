@@ -20,9 +20,9 @@ import java.util.Queue;
 
 import javax.swing.JProgressBar;
 
-import edu.utah.ece.async.dataModels.lpn.parser.ExprTree;
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
-import edu.utah.ece.async.dataModels.lpn.parser.Translator;
+import edu.utah.ece.async.dataModels.lpn.ExprTree;
+import edu.utah.ece.async.dataModels.lpn.Transition;
+import edu.utah.ece.async.dataModels.lpn.Translator;
 import edu.utah.ece.async.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.dataModels.verification.platu.project.PrjState;

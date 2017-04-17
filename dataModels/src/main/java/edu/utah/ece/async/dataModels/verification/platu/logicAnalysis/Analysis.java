@@ -26,12 +26,12 @@ import java.util.Observable;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import edu.utah.ece.async.dataModels.lpn.parser.Abstraction;
-import edu.utah.ece.async.dataModels.lpn.parser.ExprTree;
-import edu.utah.ece.async.dataModels.lpn.parser.LPN;
-import edu.utah.ece.async.dataModels.lpn.parser.Place;
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
-import edu.utah.ece.async.dataModels.lpn.parser.LpnDecomposition.LpnProcess;
+import edu.utah.ece.async.dataModels.lpn.Abstraction;
+import edu.utah.ece.async.dataModels.lpn.ExprTree;
+import edu.utah.ece.async.dataModels.lpn.LPN;
+import edu.utah.ece.async.dataModels.lpn.Place;
+import edu.utah.ece.async.dataModels.lpn.Transition;
+import edu.utah.ece.async.dataModels.lpn.LpnDecomposition.LpnProcess;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.Message;
 import edu.utah.ece.async.dataModels.verification.platu.MDD.MDT;

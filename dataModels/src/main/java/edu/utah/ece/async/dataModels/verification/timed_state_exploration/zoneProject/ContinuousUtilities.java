@@ -15,8 +15,8 @@ package edu.utah.ece.async.dataModels.verification.timed_state_exploration.zoneP
 
 import java.util.ArrayList;
 
-import edu.utah.ece.async.dataModels.lpn.parser.LPN;
-import edu.utah.ece.async.dataModels.lpn.parser.Variable;
+import edu.utah.ece.async.dataModels.lpn.LPN;
+import edu.utah.ece.async.dataModels.lpn.Variable;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.DualHashMap;
 import edu.utah.ece.async.dataModels.verification.platu.stategraph.State;
 import edu.utah.ece.async.dataModels.verification.timed_state_exploration.octagon.Equivalence;

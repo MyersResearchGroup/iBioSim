@@ -13,7 +13,7 @@
  *******************************************************************************/
 package edu.utah.ece.async.dataModels.verification.timed_state_exploration.zoneProject;
 
-import edu.utah.ece.async.dataModels.lpn.parser.Variable;
+import edu.utah.ece.async.dataModels.lpn.Variable;
 
 /**
  * A Variable and Range class packages an lpn.parser.Variable with an

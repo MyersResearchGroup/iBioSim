@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 import edu.utah.ece.async.dataModels.verification.platu.stategraph.State;
 
 import java.util.ArrayList;

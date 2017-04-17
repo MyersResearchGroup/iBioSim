@@ -15,7 +15,7 @@ package edu.utah.ece.async.dataModels.verification.platu.TimingAnalysis;
 
 import java.util.*;
 
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.*;
 
 /**

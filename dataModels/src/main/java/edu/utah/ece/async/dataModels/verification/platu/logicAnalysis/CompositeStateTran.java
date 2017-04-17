@@ -13,7 +13,7 @@
  *******************************************************************************/
 package edu.utah.ece.async.dataModels.verification.platu.logicAnalysis;
 
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 
 /**
  * 

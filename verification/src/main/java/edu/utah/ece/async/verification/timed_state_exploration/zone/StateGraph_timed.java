@@ -17,8 +17,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 
-import edu.utah.ece.async.dataModels.lpn.parser.LPN;
-import edu.utah.ece.async.dataModels.lpn.parser.Transition;
+import edu.utah.ece.async.dataModels.lpn.LPN;
+import edu.utah.ece.async.dataModels.lpn.Transition;
 import edu.utah.ece.async.dataModels.verification.platu.platuLpn.LpnTranList;
 import edu.utah.ece.async.dataModels.verification.platu.stategraph.State;
 import edu.utah.ece.async.dataModels.verification.platu.stategraph.StateGraph;

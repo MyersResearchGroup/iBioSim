@@ -16,7 +16,7 @@ package edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
 import java.io.File;
 import java.util.ArrayList;
 
-import edu.utah.ece.async.dataModels.lpn.parser.LPN;
+import edu.utah.ece.async.dataModels.lpn.LPN;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.dataModels.verification.platu.main.Options;
