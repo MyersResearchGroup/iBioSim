@@ -129,7 +129,7 @@
 						<configuration>
 							<archive>
 								<manifest>
-									<mainClass>edu.utah.ece.async.ibiosim.gui.main.Gui</mainClass>
+									<mainClass>edu.utah.ece.async.ibiosim.gui.Gui</mainClass>
 								</manifest>
 							</archive>
 							<descriptorRefs>

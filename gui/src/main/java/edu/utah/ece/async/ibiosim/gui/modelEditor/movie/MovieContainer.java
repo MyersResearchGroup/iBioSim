@@ -278,9 +278,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 		URL icon = null;
 		URL selectedIcon = null;
 		if (!iconFilename.equals("")) {
-			icon = ResourceManager.getResource("/icons/modelview/" + iconFilename);
+			icon = ResourceManager.getResource("icons/modelview/" + iconFilename);
 			String selectedPath = iconFilename.replaceAll(".png", "_selected.png");
-			selectedIcon = ResourceManager.getResource("/icons/modelview/" + selectedPath);
+			selectedIcon = ResourceManager.getResource("icons/modelview/" + selectedPath);
 		}
 		return Utils.makeToolButton(icon, selectedIcon, actionCommand, tooltip, listener);
 	}
@@ -407,7 +407,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	};
 	
 	private void setIcon(AbstractButton button, String iconFileName) {
-		URL icon = ResourceManager.getResource("/icons/modelview/" + iconFileName);
+		URL icon = ResourceManager.getResource("icons/modelview/" + iconFileName);
 		Utils.setIcon(button, icon);
 	}
 	
