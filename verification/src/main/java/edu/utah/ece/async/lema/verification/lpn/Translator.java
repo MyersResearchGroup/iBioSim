@@ -48,9 +48,9 @@ import org.sbml.jsbml.text.parser.FormulaParserLL3;
 import org.sbml.jsbml.text.parser.IFormulaParser;
 import org.sbml.jsbml.text.parser.ParseException;
 
-import edu.utah.ece.async.biosim.dataModels.biomodel.util.SBMLutilities;
-import edu.utah.ece.async.biosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.biosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.lema.verification.lpn.ExprTree;
 
 /**

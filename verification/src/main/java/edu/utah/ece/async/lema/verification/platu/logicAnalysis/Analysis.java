@@ -26,8 +26,8 @@ import java.util.Observable;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import edu.utah.ece.async.biosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.biosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.lema.verification.lpn.Abstraction;
 import edu.utah.ece.async.lema.verification.lpn.ExprTree;
 import edu.utah.ece.async.lema.verification.lpn.LPN;

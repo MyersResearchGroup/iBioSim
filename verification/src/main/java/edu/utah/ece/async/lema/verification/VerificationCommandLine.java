@@ -18,8 +18,8 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import edu.utah.ece.async.biosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.biosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.platu.main.Options;
 import edu.utah.ece.async.lema.verification.platu.project.Project;

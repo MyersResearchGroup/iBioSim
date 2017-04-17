@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.utah.ece.async.biosim.dataModels.biomodel.util.Utility;
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 
 /**

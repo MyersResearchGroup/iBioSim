@@ -17,8 +17,8 @@ import java.io.File;
 
 import org.junit.Test;
 
-import edu.utah.ece.async.biosim.conversion.SBML2SBOL;
-import edu.utah.ece.async.biosim.conversion.SBOL2SBML;
+import edu.utah.ece.async.ibiosim.conversion.SBML2SBOL;
+import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
 
 /**
  * Class to test roundtripping for SBML and SBOL files in SBML2SBOL and SBOL2SBML conversion.

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 
-import edu.utah.ece.async.biosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.lema.verification.platu.main.Options;
 
 /**

@@ -14,7 +14,7 @@
 package edu.utah.ece.async.lema.verification.platu.markovianAnalysis;
 import javax.swing.JProgressBar;
 
-import edu.utah.ece.async.biosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 
 /**

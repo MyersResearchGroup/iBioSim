@@ -23,7 +23,7 @@ import java.util.Properties;
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
 
-import edu.utah.ece.async.biosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
 import edu.utah.ece.async.lema.verification.lpn.Variable;

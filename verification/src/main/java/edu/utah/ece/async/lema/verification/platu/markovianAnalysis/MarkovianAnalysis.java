@@ -20,8 +20,8 @@ import java.util.Queue;
 
 import javax.swing.JProgressBar;
 
-import edu.utah.ece.async.biosim.dataModels.util.dataparser.DataParser;
-import edu.utah.ece.async.biosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.lema.verification.lpn.ExprTree;
 import edu.utah.ece.async.lema.verification.lpn.Transition;
 import edu.utah.ece.async.lema.verification.lpn.Translator;

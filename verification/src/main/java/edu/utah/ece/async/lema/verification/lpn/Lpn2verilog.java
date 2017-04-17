@@ -16,8 +16,8 @@ package edu.utah.ece.async.lema.verification.lpn;
 import java.io.*;
 import java.util.*;
 
-import edu.utah.ece.async.biosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.biosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
  * 
