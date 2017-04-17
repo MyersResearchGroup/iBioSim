@@ -41,9 +41,9 @@ import javax.swing.plaf.metal.MetalButtonUI;
 import com.mxgraph.util.mxConstants;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.CompatibilityFixer;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility;
 
 /**
  * 

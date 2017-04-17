@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.sbol.util;
+package edu.utah.ece.async.ibiosim.dataModels.sbol;
 
 import java.io.File;
 import java.io.FileInputStream;

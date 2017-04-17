@@ -20,8 +20,8 @@ import javax.swing.*;
 
 import org.sbolstandard.core2.Component;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility;
 
 //import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 import org.sbolstandard.core2.*;

@@ -28,15 +28,15 @@ import com.clarkparsia.sbol.editor.Part;
 import com.clarkparsia.sbol.editor.Parts;
 import com.clarkparsia.sbol.editor.dialog.RegistryInputDialog;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.sbolBrowser.SBOLBrowser2;
 import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLFileManager;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLIdentityManager;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility;
 
 import java.net.URI;
 import java.net.URISyntaxException;

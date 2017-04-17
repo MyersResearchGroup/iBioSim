@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.sbol.util;
+package edu.utah.ece.async.ibiosim.dataModels.sbol;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,9 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.prefs.Preferences;
-
-import javax.swing.JOptionPane;
 
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
@@ -35,8 +32,9 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 
 /**
  * 
