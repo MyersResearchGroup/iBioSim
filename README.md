@@ -39,7 +39,7 @@ Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curt
 3. Select Import from the File Menu.
 4. When given the option to select which project import, select ```Existing Maven Projects``` under Maven
    * Set Maven Projects:
-      * Root Directory: full path to your iBioSimn project (i.e. path/to/iBioSim)
+      * Root Directory: full path to your iBioSim project (i.e. path/to/iBioSim)
       * Once root directory is set, all the pom.xml should be displayed under Projects. Select all pom.xml files.
       * All installation should be complete so click ```Finish```
 5. Under Package Explorer in Eclipse, right click on the iBioSim pom.xml file and click select Run As and click Maven clean
