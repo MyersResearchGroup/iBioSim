@@ -34,13 +34,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import edu.utah.ece.async.dataModels.biomodel.util.Utility;
-import edu.utah.ece.async.dataModels.lpn.*;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.gui.Gui;
 import edu.utah.ece.async.gui.modelEditor.util.AbstractRunnableNamedButton;
 import edu.utah.ece.async.gui.modelEditor.util.PropertyList;
 import edu.utah.ece.async.gui.modelEditor.util.Runnable;
+import edu.utah.ece.async.verification.lpn.*;
 
 import javax.swing.JButton;
 

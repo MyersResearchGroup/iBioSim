@@ -25,10 +25,10 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import edu.utah.ece.async.dataModels.lpn.LPN;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
-import edu.utah.ece.async.dataModels.verification.platu.project.Project;
-import edu.utah.ece.async.dataModels.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.verification.lpn.LPN;
+import edu.utah.ece.async.verification.platu.project.Project;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 
 /**
  * 

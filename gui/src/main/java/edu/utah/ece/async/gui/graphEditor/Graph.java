@@ -137,7 +137,6 @@ import com.lowagie.text.pdf.PdfWriter;
 import edu.utah.ece.async.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.dataModels.biomodel.util.SBMLutilities;
-import edu.utah.ece.async.dataModels.lpn.LPN;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.Message;
 import edu.utah.ece.async.dataModels.util.dataparser.DTSDParser;
@@ -148,6 +147,7 @@ import edu.utah.ece.async.gui.Gui;
 import edu.utah.ece.async.gui.analysisView.AnalysisView;
 import edu.utah.ece.async.gui.util.Log;
 import edu.utah.ece.async.gui.util.Utility;
+import edu.utah.ece.async.verification.lpn.LPN;
 
 
 /**

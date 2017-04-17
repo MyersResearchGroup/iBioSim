@@ -15,8 +15,8 @@ package edu.utah.ece.async.verification.platu.main;
 
 import java.util.concurrent.Executors;
 
-import edu.utah.ece.async.dataModels.verification.platu.main.Options;
-import edu.utah.ece.async.dataModels.verification.platu.project.Project;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.project.Project;
 
 import java.util.concurrent.ExecutorService;
 import java.io.FileReader;

@@ -17,13 +17,13 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 
-import edu.utah.ece.async.dataModels.lpn.LPN;
-import edu.utah.ece.async.dataModels.lpn.Transition;
-import edu.utah.ece.async.dataModels.verification.platu.platuLpn.LpnTranList;
-import edu.utah.ece.async.dataModels.verification.platu.stategraph.State;
-import edu.utah.ece.async.dataModels.verification.platu.stategraph.StateGraph;
-import edu.utah.ece.async.dataModels.verification.timed_state_exploration.zone.TimedState;
-import edu.utah.ece.async.dataModels.verification.timed_state_exploration.zone.ZoneType;
+import edu.utah.ece.async.verification.lpn.LPN;
+import edu.utah.ece.async.verification.lpn.Transition;
+import edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
+import edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.verification.timed_state_exploration.zone.TimedState;
+import edu.utah.ece.async.verification.timed_state_exploration.zone.ZoneType;
 
 /**
  * 

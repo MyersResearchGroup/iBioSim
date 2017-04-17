@@ -17,10 +17,10 @@ import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 
-import edu.utah.ece.async.dataModels.lpn.LPN;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.Message;
 import edu.utah.ece.async.dataModels.util.dataparser.*;
+import edu.utah.ece.async.verification.lpn.LPN;
 
 
 

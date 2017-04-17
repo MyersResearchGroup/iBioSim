@@ -56,9 +56,6 @@ import edu.utah.ece.async.analysis.simulation.DynamicSimulation.SimulationType;
 import edu.utah.ece.async.analysis.simulation.flattened.Simulator;
 import edu.utah.ece.async.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.dataModels.biomodel.util.SBMLutilities;
-import edu.utah.ece.async.dataModels.lpn.Abstraction;
-import edu.utah.ece.async.dataModels.lpn.LPN;
-import edu.utah.ece.async.dataModels.lpn.Translator;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.Message;
 import edu.utah.ece.async.dataModels.util.MutableString;
@@ -69,6 +66,9 @@ import edu.utah.ece.async.gui.graphEditor.Graph;
 import edu.utah.ece.async.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.gui.util.Log;
 import edu.utah.ece.async.gui.verificationView.AbstractionPanel;
+import edu.utah.ece.async.verification.lpn.Abstraction;
+import edu.utah.ece.async.verification.lpn.LPN;
+import edu.utah.ece.async.verification.lpn.Translator;
 
 /**
  * This class creates the properties file that is given to the reb2sac program.
@@ -473,7 +473,7 @@ public class Run implements ActionListener, Observer
           }
         }
         MutableString mutProp = new MutableString(prop);
-        LPN lpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
+        LPN lpnFile = LPN.convertToLHPN(specs, conLevel, mutProp, bioModel);
         prop = mutProp.getString();
         if (lpnFile == null)
         {
@@ -649,7 +649,7 @@ public class Run implements ActionListener, Observer
                 }
               }
               MutableString mutProp = new MutableString(prop);
-              LPN lpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
+              LPN lpnFile = LPN.convertToLHPN(specs, conLevel, mutProp, bioModel);
               prop = mutProp.getString();
               if (lpnFile == null)
               {
@@ -866,7 +866,7 @@ public class Run implements ActionListener, Observer
                 }
               }
               MutableString mutProp = new MutableString(prop);
-              lhpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
+              lhpnFile = LPN.convertToLHPN(specs, conLevel, mutProp, bioModel);
               prop = mutProp.getString();
               if (lhpnFile == null)
               {
@@ -874,7 +874,12 @@ public class Run implements ActionListener, Observer
                 logFile.close();
                 return 0;
               }
-              bioModel.convertLPN2PRISM(logFile, lhpnFile, filename.replace(".xml", ".prism"));
+              log.addText("Saving SBML file as PRISM file:\n" + filename.replace(".xml", ".prism") + "\n\n");
+              logFile.write("Saving SBML file as PRISM file:\n" + filename.replace(".xml", ".prism") + "\n\n");
+              log.addText("Saving PRISM Property file " + filename.replace(".xml", ".pctl") + "\n");
+              logFile.write("Saving PRISM Property file:\n" + filename.replace(".xml", ".pctl") + "\n\n");
+              LPN.convertLPN2PRISM(logFile, lhpnFile, filename.replace(".xml", ".prism"), 
+            		  bioModel.getSBMLDocument());
               Preferences biosimrc = Preferences.userRoot();
               String prismCmd = biosimrc.get("biosim.general.prism", "");
               log.addText("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl" + "\n");
@@ -1033,7 +1038,7 @@ public class Run implements ActionListener, Observer
                 }
               }
               MutableString mutProp = new MutableString(prop);
-              lhpnFile = bioModel.convertToLHPN(specs, conLevel, mutProp);
+              lhpnFile = LPN.convertToLHPN(specs, conLevel, mutProp, bioModel);
               prop = mutProp.getString();
               if (lhpnFile == null)
               {

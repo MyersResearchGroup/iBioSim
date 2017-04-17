@@ -35,13 +35,13 @@ import org.sbml.jsbml.SBMLDocument;
 
 import edu.utah.ece.async.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.dataModels.biomodel.util.SBMLutilities;
-import edu.utah.ece.async.dataModels.lpn.LPN;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.Message;
 import edu.utah.ece.async.dataModels.util.dataparser.*;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.gui.Gui;
 import edu.utah.ece.async.gui.util.*;
+import edu.utah.ece.async.verification.lpn.LPN;
 
 /**
  * 

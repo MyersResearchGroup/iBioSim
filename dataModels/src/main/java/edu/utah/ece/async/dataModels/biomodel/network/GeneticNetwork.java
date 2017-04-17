@@ -53,11 +53,8 @@ import edu.utah.ece.async.dataModels.biomodel.visitor.PrintComplexVisitor;
 import edu.utah.ece.async.dataModels.biomodel.visitor.PrintDecaySpeciesVisitor;
 import edu.utah.ece.async.dataModels.biomodel.visitor.PrintRepressionBindingVisitor;
 import edu.utah.ece.async.dataModels.biomodel.visitor.PrintSpeciesVisitor;
-import edu.utah.ece.async.dataModels.lpn.LPN;
-import edu.utah.ece.async.dataModels.lpn.Translator;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.Message;
-import edu.utah.ece.async.dataModels.util.MutableString;
 
 /**
  * This class represents a genetic network
@@ -250,18 +247,18 @@ public class GeneticNetwork extends Observable {
 			m.setId(new File(filename).getName().replace(".xml", ""));			
 			m.setVolumeUnits("litre");
 			m.setSubstanceUnits("mole");
-			if (property != null && !property.equals("")) {
-				ArrayList<String> species = new ArrayList<String>();
-				ArrayList<Object[]> levels = new ArrayList<Object[]>();
-				for (String spec : properties.getSpecies()) {
-					species.add(spec);
-					levels.add(new Object[0]);
-				}
-				MutableString prop = new MutableString(property);
-				LPN lpn = properties.convertToLHPN(species, levels, prop);
-				property = prop.getString();
-				Translator.generateSBMLConstraints(document, property, lpn);
-			}
+//			if (property != null && !property.equals("")) {
+//				ArrayList<String> species = new ArrayList<String>();
+//				ArrayList<Object[]> levels = new ArrayList<Object[]>();
+//				for (String spec : properties.getSpecies()) {
+//					species.add(spec);
+//					levels.add(new Object[0]);
+//				}
+//				MutableString prop = new MutableString(property);
+//				LPN lpn = properties.convertToLHPN(species, levels, prop);
+//				property = prop.getString();
+//				Translator.generateSBMLConstraints(document, property, lpn);
+//			}
 			reformatArrayContent(properties, document, filename);
 			p.print(writer.writeSBMLToString(document));
 			p.close();

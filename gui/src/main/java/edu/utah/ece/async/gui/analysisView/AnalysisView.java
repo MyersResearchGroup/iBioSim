@@ -78,9 +78,6 @@ import org.jlibsedml.modelsupport.KisaoTerm;
 import org.sbml.libsbml.ASTNode;
 
 import edu.utah.ece.async.analysis.util.SEDMLutilities;
-import edu.utah.ece.async.dataModels.lpn.Abstraction;
-import edu.utah.ece.async.dataModels.lpn.LPN;
-import edu.utah.ece.async.dataModels.lpn.Translator;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
@@ -91,6 +88,9 @@ import edu.utah.ece.async.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.gui.util.Log;
 import edu.utah.ece.async.gui.util.Utility;
 import edu.utah.ece.async.gui.verificationView.AbstractionPanel;
+import edu.utah.ece.async.verification.lpn.Abstraction;
+import edu.utah.ece.async.verification.lpn.LPN;
+import edu.utah.ece.async.verification.lpn.Translator;
 
 /**
  * This class creates a GUI for analysis. It implements the ActionListener

@@ -20,9 +20,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import edu.utah.ece.async.dataModels.biomodel.util.Utility;
-import edu.utah.ece.async.dataModels.lpn.*;
 import edu.utah.ece.async.gui.Gui;
 import edu.utah.ece.async.gui.modelEditor.util.PropertyList;
+import edu.utah.ece.async.verification.lpn.*;
 
 /**
  * 

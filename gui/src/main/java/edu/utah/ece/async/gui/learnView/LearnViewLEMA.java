@@ -21,7 +21,6 @@ import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
-import edu.utah.ece.async.dataModels.lpn.LPN;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.Message;
 import edu.utah.ece.async.dataModels.util.dataparser.*;
@@ -32,6 +31,7 @@ import edu.utah.ece.async.gui.util.Log;
 import edu.utah.ece.async.learn.AMSModel.DMVCrun;
 import edu.utah.ece.async.learn.AMSModel.LearnModel;
 import edu.utah.ece.async.learn.AMSModel.Variable;
+import edu.utah.ece.async.verification.lpn.LPN;
 
 /**
  * This class creates a GUI for the Learn program. It implements the

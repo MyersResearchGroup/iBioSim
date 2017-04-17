@@ -15,14 +15,14 @@ package edu.utah.ece.async.gui.verificationView;
 
 import javax.swing.*;
 
-import edu.utah.ece.async.dataModels.lpn.LPN;
-import edu.utah.ece.async.dataModels.lpn.properties.AbstractionProperty;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.gui.Gui;
 import edu.utah.ece.async.gui.modelEditor.util.PropertyList;
 import edu.utah.ece.async.gui.util.*;
 import edu.utah.ece.async.gui.util.Log;
+import edu.utah.ece.async.verification.lpn.LPN;
+import edu.utah.ece.async.verification.lpn.properties.AbstractionProperty;
 
 import java.awt.*;
 import java.awt.event.*;

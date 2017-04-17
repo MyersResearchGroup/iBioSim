@@ -15,8 +15,8 @@ package edu.utah.ece.async.verification.platu.TimingAnalysis;
 
 import java.util.Arrays;
 
-import edu.utah.ece.async.dataModels.verification.platu.TimingAnalysis.Zone1;
-import edu.utah.ece.async.dataModels.verification.platu.stategraph.*;
+import edu.utah.ece.async.verification.platu.TimingAnalysis.Zone1;
+import edu.utah.ece.async.verification.platu.stategraph.*;
 
 /**
  * 

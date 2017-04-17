@@ -167,15 +167,9 @@ import edu.utah.ece.async.dataModels.biomodel.annotation.SBOLAnnotation;
 import edu.utah.ece.async.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.dataModels.biomodel.parser.GCM2SBML;
 import edu.utah.ece.async.dataModels.biomodel.util.SBMLutilities;
-import edu.utah.ece.async.dataModels.lpn.LPN;
-import edu.utah.ece.async.dataModels.lpn.Lpn2verilog;
-import edu.utah.ece.async.dataModels.lpn.Translator;
-import edu.utah.ece.async.dataModels.lpn.properties.BuildProperty;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.Message;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
-import edu.utah.ece.async.dataModels.verification.platu.platuLpn.io.PlatuGrammarLexer;
-import edu.utah.ece.async.dataModels.verification.platu.platuLpn.io.PlatuGrammarParser;
 import edu.utah.ece.async.gui.analysisView.AnalysisThread;
 import edu.utah.ece.async.gui.analysisView.AnalysisView;
 import edu.utah.ece.async.gui.analysisView.Run;
@@ -199,6 +193,12 @@ import edu.utah.ece.async.gui.util.tabs.CloseAndMaxTabbedPane;
 import edu.utah.ece.async.gui.verificationView.AbstractionPanel;
 import edu.utah.ece.async.gui.verificationView.VerificationView;
 import edu.utah.ece.async.synthesis.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.verification.lpn.LPN;
+import edu.utah.ece.async.verification.lpn.Lpn2verilog;
+import edu.utah.ece.async.verification.lpn.Translator;
+import edu.utah.ece.async.verification.lpn.properties.BuildProperty;
+import edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarLexer;
+import edu.utah.ece.async.verification.platu.platuLpn.io.PlatuGrammarParser;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the

@@ -15,7 +15,7 @@ package edu.utah.ece.async.verification.timed_state_exploration.dbm2;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import edu.utah.ece.async.dataModels.lpn.*;
+import edu.utah.ece.async.verification.lpn.*;
 
 /**
  * This class mainly adds the ability to address the places and Boolean variables via

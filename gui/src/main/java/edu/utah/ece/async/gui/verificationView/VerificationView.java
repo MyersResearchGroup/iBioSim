@@ -66,25 +66,25 @@ import javax.xml.stream.XMLStreamException;
 
 import edu.utah.ece.async.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.dataModels.biomodel.util.Utility;
-import edu.utah.ece.async.dataModels.lpn.Abstraction;
-import edu.utah.ece.async.dataModels.lpn.LPN;
-import edu.utah.ece.async.dataModels.lpn.Place;
-import edu.utah.ece.async.dataModels.lpn.Transition;
-import edu.utah.ece.async.dataModels.lpn.Variable;
-import edu.utah.ece.async.dataModels.lpn.LpnDecomposition.Component;
-import edu.utah.ece.async.dataModels.lpn.LpnDecomposition.LpnComponentList;
-import edu.utah.ece.async.dataModels.lpn.LpnDecomposition.LpnProcess;
-import edu.utah.ece.async.dataModels.lpn.properties.AbstractionProperty;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.Message;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
-import edu.utah.ece.async.dataModels.verification.platu.main.Options;
-import edu.utah.ece.async.dataModels.verification.platu.project.Project;
-import edu.utah.ece.async.dataModels.verification.timed_state_exploration.zoneProject.Zone;
 import edu.utah.ece.async.gui.Gui;
 import edu.utah.ece.async.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.gui.modelEditor.util.PropertyList;
 import edu.utah.ece.async.gui.util.Log;
+import edu.utah.ece.async.verification.lpn.Abstraction;
+import edu.utah.ece.async.verification.lpn.LPN;
+import edu.utah.ece.async.verification.lpn.Place;
+import edu.utah.ece.async.verification.lpn.Transition;
+import edu.utah.ece.async.verification.lpn.Variable;
+import edu.utah.ece.async.verification.lpn.LpnDecomposition.Component;
+import edu.utah.ece.async.verification.lpn.LpnDecomposition.LpnComponentList;
+import edu.utah.ece.async.verification.lpn.LpnDecomposition.LpnProcess;
+import edu.utah.ece.async.verification.lpn.properties.AbstractionProperty;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.project.Project;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
 
 
 /**

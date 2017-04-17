@@ -16,12 +16,12 @@ package edu.utah.ece.async.verification.timed_state_exploration.zoneProject;
 import java.io.File;
 import java.util.ArrayList;
 
-import edu.utah.ece.async.dataModels.lpn.LPN;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.exceptions.BioSimException;
-import edu.utah.ece.async.dataModels.verification.platu.main.Options;
-import edu.utah.ece.async.dataModels.verification.platu.project.Project;
-import edu.utah.ece.async.dataModels.verification.timed_state_exploration.zoneProject.Zone;
+import edu.utah.ece.async.verification.lpn.LPN;
+import edu.utah.ece.async.verification.platu.main.Options;
+import edu.utah.ece.async.verification.platu.project.Project;
+import edu.utah.ece.async.verification.timed_state_exploration.zoneProject.Zone;
 
 /**
  * 

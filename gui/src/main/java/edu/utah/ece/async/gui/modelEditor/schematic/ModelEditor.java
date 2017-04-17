@@ -105,9 +105,6 @@ import edu.utah.ece.async.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.dataModels.biomodel.parser.GCMParser;
 import edu.utah.ece.async.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.dataModels.biomodel.util.Utility;
-import edu.utah.ece.async.dataModels.lpn.LPN;
-import edu.utah.ece.async.dataModels.lpn.Lpn2verilog;
-import edu.utah.ece.async.dataModels.lpn.Transition;
 import edu.utah.ece.async.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.dataModels.util.Message;
 import edu.utah.ece.async.dataModels.util.MutableBoolean;
@@ -151,6 +148,9 @@ import edu.utah.ece.async.synthesis.sbol.assembly.SequenceTypeValidator;
 import edu.utah.ece.async.synthesis.sbol.util.SBOLFileManager2;
 import edu.utah.ece.async.synthesis.sbol.util.SBOLIdentityManager2;
 import edu.utah.ece.async.synthesis.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.verification.lpn.LPN;
+import edu.utah.ece.async.verification.lpn.Lpn2verilog;
+import edu.utah.ece.async.verification.lpn.Transition;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user

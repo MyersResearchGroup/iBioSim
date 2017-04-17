@@ -13,8 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.verification.platu.TimingAnalysis;
 
-import edu.utah.ece.async.dataModels.verification.platu.TimingAnalysis.Zone1;
-import edu.utah.ece.async.dataModels.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.platu.TimingAnalysis.Zone1;
+import edu.utah.ece.async.verification.platu.stategraph.State;
 
 /**
  * 

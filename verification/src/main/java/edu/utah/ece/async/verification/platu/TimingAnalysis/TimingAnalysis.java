@@ -15,17 +15,17 @@ package edu.utah.ece.async.verification.platu.TimingAnalysis;
 
 import java.util.*;
 
-import edu.utah.ece.async.dataModels.lpn.LPN;
-import edu.utah.ece.async.dataModels.lpn.Transition;
-import edu.utah.ece.async.dataModels.verification.platu.TimingAnalysis.DBM;
-import edu.utah.ece.async.dataModels.verification.platu.TimingAnalysis.Poset;
-import edu.utah.ece.async.dataModels.verification.platu.TimingAnalysis.Zone1;
-import edu.utah.ece.async.dataModels.verification.platu.logicAnalysis.Analysis;
-import edu.utah.ece.async.dataModels.verification.platu.platuLpn.DualHashMap;
-import edu.utah.ece.async.dataModels.verification.platu.platuLpn.LpnTranList;
-import edu.utah.ece.async.dataModels.verification.platu.project.PrjState;
-import edu.utah.ece.async.dataModels.verification.platu.stategraph.State;
-import edu.utah.ece.async.dataModels.verification.platu.stategraph.StateGraph;
+import edu.utah.ece.async.verification.lpn.LPN;
+import edu.utah.ece.async.verification.lpn.Transition;
+import edu.utah.ece.async.verification.platu.TimingAnalysis.DBM;
+import edu.utah.ece.async.verification.platu.TimingAnalysis.Poset;
+import edu.utah.ece.async.verification.platu.TimingAnalysis.Zone1;
+import edu.utah.ece.async.verification.platu.logicAnalysis.Analysis;
+import edu.utah.ece.async.verification.platu.platuLpn.DualHashMap;
+import edu.utah.ece.async.verification.platu.platuLpn.LpnTranList;
+import edu.utah.ece.async.verification.platu.project.PrjState;
+import edu.utah.ece.async.verification.platu.stategraph.State;
+import edu.utah.ece.async.verification.platu.stategraph.StateGraph;
 
 /**
  * 
