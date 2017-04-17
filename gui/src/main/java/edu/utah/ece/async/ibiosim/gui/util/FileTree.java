@@ -35,7 +35,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GCM2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility;
 
 
 /**
@@ -501,7 +501,7 @@ public class FileTree extends JPanel implements MouseListener {
 						}
 					} else if (new File(newPath + separator + d + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
 						try {
-							Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(newPath, separator, Gui.frame);
+							Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(newPath, separator, Gui.frame);
 							if (synthProps != null)
 								if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
 									String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
@@ -624,7 +624,7 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 			} else if (new File(path + separator + item + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
 				try {
-					Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(path, separator, Gui.frame);
+					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(path, separator, Gui.frame);
 					if (synthProps != null) {
 						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
 							String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);

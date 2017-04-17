@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.sbol.assembly;
+package edu.utah.ece.async.ibiosim.synthesis.assembly;
 
 import java.io.IOException;
 import java.net.URI;
@@ -46,7 +46,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLFileManager2;
+import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLFileManager;
 
 /**
  * 
@@ -347,7 +347,7 @@ public class AssemblyGraph2 {
 		return inputs;
 	}
 	
-	public boolean loadDNAComponents(SBOLFileManager2 fileManager) throws SBOLException {
+	public boolean loadDNAComponents(SBOLFileManager fileManager) throws SBOLException {
 		boolean error = false;
 		for (AssemblyNode2 assemblyNode : assemblyNodes) {
 			List<ComponentDefinition> dnaComps = fileManager.resolveURIs(assemblyNode.getURIs());

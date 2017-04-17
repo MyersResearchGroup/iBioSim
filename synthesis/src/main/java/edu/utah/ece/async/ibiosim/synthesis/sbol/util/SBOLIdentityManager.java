@@ -35,12 +35,13 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 /**
  * 
  *
- * @author 
+ * @author Nicholas Roehner
+ * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class SBOLIdentityManager2 {
+public class SBOLIdentityManager {
 
 	private BioModel biomodel;
 	private List<URI> modelURIs;
@@ -50,7 +51,7 @@ public class SBOLIdentityManager2 {
 	private String saveFilePath;
 	private String uriAuthority;
 
-	public SBOLIdentityManager2(BioModel biomodel, String uriAuthority) {
+	public SBOLIdentityManager(BioModel biomodel, String uriAuthority) {
 		this.biomodel = biomodel;
 		this.uriAuthority = uriAuthority;
 		modelURIs = new LinkedList<URI>();
@@ -140,7 +141,7 @@ public class SBOLIdentityManager2 {
 ////		}
 ////	}
 	
-	public boolean loadBioSimComponent(SBOLFileManager2 fileManager) throws SBOLException {
+	public boolean loadBioSimComponent(SBOLFileManager fileManager) throws SBOLException {
 		bioSimComp = fileManager.resolveURI(modelURIs.get(indexOfBioSimURI));
 		if (bioSimComp == null) {
 			String[] options = new String[]{"Ok", "Cancel"};
@@ -153,7 +154,7 @@ public class SBOLIdentityManager2 {
 		return true;
 	}
 	
-	public boolean loadAndLocateBioSimComponent(SBOLFileManager2 fileManager) throws SBOLException {
+	public boolean loadAndLocateBioSimComponent(SBOLFileManager fileManager) throws SBOLException {
 		bioSimComp = fileManager.resolveAndLocateTopLevelURI(modelURIs.get(indexOfBioSimURI));
 		if (bioSimComp == null) {
 			String[] options = new String[]{"Ok", "Cancel"};
@@ -190,24 +191,12 @@ public class SBOLIdentityManager2 {
 		
 		if (descriptors != null) 
 		{
-//			dnaComp.setDisplayId(descriptors[0]); 
-//			described_dnaComp = new ComponentDefinition(GlobalConstants.SBOL_AUTHORITY_DEFAULT, descriptors[0], "", dnaComp.getTypes());
-//			described_dnaComp.setName(descriptors[1]);
-//			described_dnaComp.setDescription(descriptors[2]);
-			
 			described_dnaComp[0] = descriptors[0]; //displayId
 			described_dnaComp[1] = descriptors[1]; //name
 			described_dnaComp[2] = descriptors[2]; //description
 		} 
 		else if (bioSimComp != null) 
 		{
-//			dnaComp.setDisplayId(bioSimComp.getDisplayId());
-//			described_dnaComp = new ComponentDefinition(GlobalConstants.SBOL_AUTHORITY_DEFAULT, bioSimComp.getDisplayId(), "", dnaComp.getTypes());
-//			if (bioSimComp.getName() != null)
-//				described_dnaComp.setName(bioSimComp.getName());
-//			if (bioSimComp.getDescription() != null)
-//				described_dnaComp.setDescription(bioSimComp.getDescription());
-			
 			described_dnaComp[0] = bioSimComp.getDisplayId(); //displayId
 			if (bioSimComp.getName() != null)
 				described_dnaComp[1] = bioSimComp.getName(); //name
@@ -218,9 +207,6 @@ public class SBOLIdentityManager2 {
 		else 
 		{
 			described_dnaComp[0] = biomodel.getSBMLDocument().getModel().getId(); //displayId
-//			dnaComp.setDisplayId(biomodel.getSBMLDocument().getModel().getId());
-//			described_dnaComp = new ComponentDefinition(GlobalConstants.SBOL_AUTHORITY_DEFAULT, 
-//					biomodel.getSBMLDocument().getModel().getId(), "", dnaComp.getTypes());
 			
 		}
 		

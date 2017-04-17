@@ -38,7 +38,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility;
 
 public class SBOLField2 extends JPanel implements ActionListener {
 	
@@ -114,11 +114,11 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			if (isModelPanelField) 
 			{
 				associationPanel = new SBOLAssociationPanel2(sbolFilePaths, sbolURIs, sbolStrand, 
-						SBOLUtility2.soSynonyms(sbolType), modelEditor);
+						SBOLUtility.soSynonyms(sbolType), modelEditor);
 				removedBioSimURI = associationPanel.getRemovedBioSimURI();
 			} else
 				associationPanel = new SBOLAssociationPanel2(sbolFilePaths, sbolURIs, sbolStrand,
-						SBOLUtility2.soSynonyms(sbolType));
+						SBOLUtility.soSynonyms(sbolType));
 			sbolURIs = associationPanel.getComponentURIs();
 			sbolStrand = associationPanel.getComponentStrand();
 		} 
@@ -146,9 +146,9 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
 				SBOLDocument sbolDoc;
 				try {
-					sbolDoc = SBOLUtility2.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
-					SBOLUtility2.deleteDNAComponent(removedBioSimURI, sbolDoc);
-					SBOLUtility2.writeSBOLDocument(filePath, sbolDoc);
+					sbolDoc = SBOLUtility.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
+					SBOLUtility.deleteDNAComponent(removedBioSimURI, sbolDoc);
+					SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

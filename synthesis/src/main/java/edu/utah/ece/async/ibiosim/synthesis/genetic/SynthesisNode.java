@@ -26,8 +26,8 @@ import org.sbolstandard.core2.SequenceOntology;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLFileManager2;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLFileManager;
+import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility;
 
 /**
  * 
@@ -50,7 +50,7 @@ public class SynthesisNode {
 	private List<SynthesisNode> uncoveredNodes;
 	private int uncoveredBound;
 	
-	public SynthesisNode(String type, SBase sbmlElement, SBOLFileManager2 fileManager) throws SBOLException {
+	public SynthesisNode(String type, SBase sbmlElement, SBOLFileManager fileManager) throws SBOLException {
 		id = SBMLutilities.getId(sbmlElement);
 		this.type = type;
 		compURIs = new LinkedList<URI>();
@@ -67,16 +67,16 @@ public class SynthesisNode {
 		uncoveredBound = 0;
 	}
 	
-	private void processDNAComponents(SBase sbmlElement, SBOLFileManager2 fileManager) throws SBOLException {
+	private void processDNAComponents(SBase sbmlElement, SBOLFileManager fileManager) throws SBOLException {
 		//NOTE: Get all DnaComponent
 		AnnotationUtility.parseSBOLAnnotation(sbmlElement, compURIs);
 		List<ComponentDefinition> dnaComps = fileManager.resolveURIs(compURIs);
-		nucleotideCount = SBOLUtility2.countNucleotides(dnaComps);
+		nucleotideCount = SBOLUtility.countNucleotides(dnaComps);
 		Set<URI> soFilterTypes = new HashSet<URI>();
 		soFilterTypes.add(SequenceOntology.CDS);
 		soFilterTypes.add(SequenceOntology.PROMOTER);
 		//NOTE: get dnaComps with the specified SO types of CDS and PROMOTER.
-		List<ComponentDefinition> signalComps = SBOLUtility2.filterDNAComponents(dnaComps, soFilterTypes);
+		List<ComponentDefinition> signalComps = SBOLUtility.filterDNAComponents(dnaComps, soFilterTypes);
 		//TODO: Why only get the first DnaComponent signal? Assume that signalComps always return 1 or 0?
 		if (signalComps.size() > 0)
 			signal = signalComps.get(0).getIdentity().toString(); //TODO: signal will store the uri of the 1st DnaComponent?

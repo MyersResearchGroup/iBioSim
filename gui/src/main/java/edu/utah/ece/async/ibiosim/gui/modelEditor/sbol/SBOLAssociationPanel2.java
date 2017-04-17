@@ -34,9 +34,9 @@ import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.sbolBrowser.SBOLBrowser2;
 import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLFileManager2;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLIdentityManager2;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLFileManager;
+import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLIdentityManager;
+import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -156,7 +156,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 		for (String filePath : sbolFilePaths) {
 			SBOLDocument sbolDoc;
 			try {
-				sbolDoc = SBOLUtility2.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
+				sbolDoc = SBOLUtility.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
 
 				if (sbolDoc != null) {
 					// Remove duplicate objects within an sbol document
@@ -364,16 +364,16 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 				insertPlaceHolder();
 		} else if (e.getSource() == editDescriptors) {
 			Gui gui = modelEditor.getGui();
-			SBOLFileManager2 fileManager;
+			SBOLFileManager fileManager;
 			try {
-				fileManager = new SBOLFileManager2(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), EditPreferences.getDefaultUriPrefix());
+				fileManager = new SBOLFileManager(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), EditPreferences.getDefaultUriPrefix());
 
 				if (compList.getSelectedIndex() == -1)
 					return;
 				if (((String) compList.getSelectedValue())
 						.contains("(Placeholder for iBioSim Composite DNA Component)")) {
 					if (fileManager.sbolFilesAreLoaded()) {
-						SBOLIdentityManager2 identityManager = new SBOLIdentityManager2(modelEditor.getBioModel(), EditPreferences.getDefaultUriPrefix());
+						SBOLIdentityManager identityManager = new SBOLIdentityManager(modelEditor.getBioModel(), EditPreferences.getDefaultUriPrefix());
 						SBOLDescriptorPanel2 descriptorPanel = new SBOLDescriptorPanel2(identityManager, fileManager);
 						while (descriptorPanel.panelOpen(identityManager, fileManager))
 							;

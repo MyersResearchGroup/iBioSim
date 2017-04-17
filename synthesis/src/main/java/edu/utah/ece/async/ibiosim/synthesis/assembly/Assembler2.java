@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.sbol.assembly;
+package edu.utah.ece.async.ibiosim.synthesis.assembly;
 
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLValidationException;
@@ -19,7 +19,7 @@ import org.sbolstandard.core2.SequenceAnnotation;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -496,8 +496,8 @@ public class Assembler2
 		List<String> types = new LinkedList<String>();
 //		if (dnaComp.getAnnotations().size() == 0) {
 		if (dnaComp.getSequenceAnnotations().size() == 0) {
-			if (SBOLUtility2.loadSONumber(dnaComp) != null) {
-				String soNum = SBOLUtility2.loadSONumber(dnaComp).replace(":", "_");
+			if (SBOLUtility.loadSONumber(dnaComp) != null) {
+				String soNum = SBOLUtility.loadSONumber(dnaComp).replace(":", "_");
 				if (soNum != null) {
 					types.add(strand);
 					types.add(soNum);
@@ -579,7 +579,7 @@ public class Assembler2
 	}
 	
 	private static List<URI> loadNodeURIs(AssemblyNode2 assemblyNode) {
-		return SBOLUtility2.loadDNAComponentURIs(assemblyNode.getDNAComponents());
+		return SBOLUtility.loadDNAComponentURIs(assemblyNode.getDNAComponents());
 	}
 	
 	private static List<URI> loadNodeURIs(List<AssemblyNode2> assemblyNodes) {
