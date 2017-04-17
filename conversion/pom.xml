@@ -21,7 +21,7 @@
 						<configuration>
 							<archive>
 								<manifest>
-									<mainClass>edu.utah.ece.async.conversion.Converter</mainClass>
+									<mainClass>edu.utah.ece.async.ibiosim.conversion.Converter</mainClass>
 								</manifest>
 							</archive>
 							<descriptorRefs>
