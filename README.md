@@ -50,7 +50,7 @@ Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curt
   * Give the java application a name (i.e. iBioSim_GUI)
   * Set the Main tab to the following information:
     * Project: ```iBioSim-gui```
-    * Main class: ```edu.utah.ece.async.gui.main.Gui```
+    * Main class: ```edu.utah.ece.async.ibiosim.gui.Gui```
   * Set the Environment tab to the following information:
     * Create 2 variables with the corresponding value:
       * BIOSIM: full path to your iBioSim project (i.e. path/to/iBioSim)
