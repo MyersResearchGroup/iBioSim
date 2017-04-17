@@ -14,7 +14,7 @@
 /**
  * 
  */
-package edu.utah.ece.async.conversion.gcm2sbml;
+package edu.utah.ece.async.ibiosim.conversion.gcm2sbml;
 
 
 import java.io.File;

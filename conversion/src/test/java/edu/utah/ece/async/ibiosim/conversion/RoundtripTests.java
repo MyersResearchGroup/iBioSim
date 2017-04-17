@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.conversion;
+package edu.utah.ece.async.ibiosim.conversion;
 
 import java.io.File;
 
