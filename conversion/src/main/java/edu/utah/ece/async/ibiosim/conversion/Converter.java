@@ -13,10 +13,12 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.conversion;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
@@ -151,13 +153,12 @@ public class Converter {
 
 		//-----REQUIRED FIELD-----
 		String fileName = ""; //input file name
-		String compareFile = ""; //-e
-		String outputFileName = ""; //-o
 
 		//-----OPTIONAL FIELD-----
 		boolean bestPractice = false; //-b
 		String compareFileName = ""; //-cf
 		boolean showDetail = false; //-d
+		String compareFile = ""; //-e
 		boolean singleSBMLOutput = false; //-esf;
 		boolean keepGoing = true; //-f
 		boolean complete = true; //-i
@@ -168,6 +169,7 @@ public class Converter {
 		String mainFileName = ""; //-mf
 		boolean compliant = true; //-n
 		boolean noOutput = false; //-no
+		String outputFileName = ""; //-o
 		String outputDir = ""; //-oDir
 		String URIPrefix = ""; //-p
 		String externalSBMLPath = ""; //-rsbml
@@ -304,15 +306,21 @@ public class Converter {
 		boolean inputIsSBML = false;
 		if(!fileName.isEmpty()){
 			//find out what input file format is
-			String inputFileType = getXMLFileType(fileName);
-			if(inputFileType.equals("sbml")){
-				inputIsSBML = true;
+			try {
+				if(isSBMLFile(fileName)){
+					inputIsSBML = true;
+				}
+				else{
+					inputIsSBOL = true;
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			else if(inputFileType.equals("rdf:RDF")){
-				inputIsSBOL = true;
-			}
+			
 		}
 		else{
+			System.err.println("You must provide the full input file path as this is a required filed.");
 			usage();
 		}
 
@@ -362,7 +370,7 @@ public class Converter {
 					} 
 					else
 					{
-						System.err.println("You must provide an SBOL URI prefix in order to convert SBML to SBOL.");
+						System.err.println("ERR: You must provide an SBOL URI prefix in order to convert SBML to SBOL.");
 						usage();
 					}
 					
@@ -370,12 +378,12 @@ public class Converter {
 					{
 						if(outputFileName.isEmpty())
 						{
-							System.err.println("You must provide an output file name to convert SBML to SBOL.");
+							System.err.println("ERR: You must provide an output file name to convert SBML to SBOL.");
 							usage();
 						}
 						if(outputDir.isEmpty())
 						{
-							System.err.println("You must provide an output directory to store the SBOL file after SBML to SBOL conversion is performed.");
+							System.err.println("ERR: You must provide an output directory to store the SBOL file after SBML to SBOL conversion is performed.");
 							usage();
 						}
 						outSBOLDoc.write(outputDir + outputFileName, SBOLDocument.RDF);
@@ -390,15 +398,15 @@ public class Converter {
 							showDetail, noOutput);
 
 				} catch (XMLStreamException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					// TODO Auto-generated catch blockßß
 					e.printStackTrace();
 				} catch (SBOLValidationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (SBOLConversionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -514,41 +522,17 @@ public class Converter {
 		}
 	} // end of method
 
-	/**
-	 * Determine what file format the given xml file is. (i.e. sbml or rdf:RDF)
-	 * @param file - The given xml file.
-	 * @return The type of the given xml file.
-	 */
-	private static String getXMLFileType(String file){
-		String fileType = "";
-		File xmlFile = new File(file);
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder;
-		try {
-			docBuilder = factory.newDocumentBuilder();
-			Document doc = docBuilder.parse(xmlFile); 
-			fileType = doc.getDocumentElement().getNodeName();
-			return fileType;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return fileType;
 
-	}
-
-	private boolean isSBMLFile(String file){
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		try {
-			SAXParser saxParser = factory.newSAXParser();
-
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
+	private static boolean isSBMLFile(String file) throws IOException{
+		
+			BufferedReader b = new BufferedReader(new FileReader(new File(file)));
+			b.readLine(); //skip the first line of the xml document
+			String selectedWord = b.readLine().substring(1, 4); 
+			
+			if(selectedWord.equals("sbml")){
+				return true;
+			}
+			return false;
 	}
 
 }

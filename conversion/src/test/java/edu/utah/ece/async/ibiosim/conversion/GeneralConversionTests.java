@@ -51,10 +51,8 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String inputfile = sbolDir + fileName + ".xml";
 		String inputfile2 = sbolDir + fileName2 + ".xml";
 		
-		String outputFile = ""; 
-		String compareFile = inputfile2;
 		
-		String[] converter_cmdArgs = {"-no", inputfile, "-o", outputFile, "-e", compareFile};
+		String[] converter_cmdArgs = {"-no", inputfile};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
 	
@@ -130,12 +128,11 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String inputfile = sbmlDir + fileName + ".xml";
 		
 		String outputFile = sbml2sbol_outputDir + fileName + ".xml";
-		String compareFile = "";
 		
 		//Options
 		String outputLang = "SBOL2";
 		
-		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outputFile, "-e", compareFile};
+		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outputFile};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
 }
