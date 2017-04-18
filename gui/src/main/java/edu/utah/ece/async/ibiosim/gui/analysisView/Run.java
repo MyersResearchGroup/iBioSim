@@ -83,15 +83,24 @@ public class Run implements ActionListener, Observer
 {
 
   private Process       reb2sac;
-
   private final AnalysisView  analysisView;
-
   private DynamicSimulation     dynSim;
-
   private Log log;
+  private StateGraph          sg;
+  private FileWriter logFile;
   
-  StateGraph          sg;
-
+  private double initialTime, outputStartTime, printInterval, timeLimit, timeStep;
+  private long rndSeed;
+  private JProgressBar progress;
+  private int runs;
+  private JLabel progressLabel;
+  private JFrame running;
+  private String[] intSpecies;
+  private double absError;
+  private String printer_track_quantity;
+  private boolean genStats;
+  private JTabbedPane  simTab;
+  
   public Run(AnalysisView analysisView)
   {
     this.analysisView = analysisView;
@@ -105,10 +114,10 @@ public class Run implements ActionListener, Observer
    * @param stem
    */
   public static void createProperties(double initialTime, double outputStartTime, double timeLimit, String useInterval, double printInterval, double minTimeStep, double timeStep,
-      double absError, double relError, String outDir, long rndSeed, int run, int numPaths, String[] intSpecies, String printer_id,
-      String printer_track_quantity, String genStats, String[] getFilename, String selectedButtons, Component component, String filename,
-      double rap1, double rap2, double qss, int con, double stoichAmp, JList preAbs, JList loopAbs, JList postAbs, AbstractionPanel abstPane,
-      boolean mpde, boolean meanPath, boolean adaptive)
+    double absError, double relError, String outDir, long rndSeed, int run, int numPaths, String[] intSpecies, String printer_id,
+    String printer_track_quantity, String genStats, String[] getFilename, String selectedButtons, Component component, String filename,
+    double rap1, double rap2, double qss, int con, double stoichAmp, JList preAbs, JList loopAbs, JList postAbs, AbstractionPanel abstPane,
+    boolean mpde, boolean meanPath, boolean adaptive)
   {
     Properties abs = new Properties();
     if (selectedButtons.contains("abs") || selectedButtons.contains("nary"))
@@ -357,6 +366,7 @@ public class Run implements ActionListener, Observer
     }
   }
 
+  
   /**
    * Executes the reb2sac program. If ODE, monte carlo, or markov is selected,
    * this method creates a Graph object.
@@ -367,12 +377,26 @@ public class Run implements ActionListener, Observer
    * @throws NumberFormatException
    */
   public int execute(String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, Component component,
-      JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id, String printer_track_quantity, String outDir,
-      JRadioButton nary, int naryRun, String[] intSpecies, Log log, Gui gui, JTabbedPane simTab, String root, JProgressBar progress,
-      String simName, ModelEditor modelEditor, String direct, double initialTime, double outputStartTime, double timeLimit, double runTime, String modelFile, AbstractionPanel abstPane,
-      JRadioButton abstraction, JRadioButton expandReaction, String lpnProperty, double absError, double relError, double timeStep, double printInterval,
-      int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running)
+    JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id, String printer_track_quantity, String outDir,
+    JRadioButton nary, int naryRun, String[] intSpecies, Log log, Gui gui, JTabbedPane simTab, String root, JProgressBar progress,
+    String simName, ModelEditor modelEditor, String direct, double initialTime, double outputStartTime, double timeLimit, double runTime, String modelFile, AbstractionPanel abstPane,
+    JRadioButton abstraction, JRadioButton expandReaction, String lpnProperty, double absError, double relError, double timeStep, double printInterval,
+    int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running)
   {
+    this.initialTime = initialTime;
+    this.outputStartTime = outputStartTime;
+    this.timeLimit = timeLimit;
+    this.timeStep = timeStep;
+    this.rndSeed = rndSeed;
+    this.progress = progress;
+    this.progressLabel= progressLabel;
+    this.running = running;
+    this.intSpecies = intSpecies;
+    this.absError = absError;
+    this.printer_track_quantity = printer_track_quantity;
+    this.simTab = simTab;
+    this.runs = runs;
+    
     outDir = outDir.replace("\\", "/");
     filename = filename.replace("\\", "/");
     Runtime exec = Runtime.getRuntime();
@@ -401,10 +425,10 @@ public class Run implements ActionListener, Observer
       }
       File work = new File(directory);
       new FileWriter(new File(directory + GlobalConstants.separator + "running")).close();
-      FileWriter logFile = new FileWriter(new File(directory + GlobalConstants.separator + "log.txt"));
+      logFile = new FileWriter(new File(directory + GlobalConstants.separator + "log.txt"));
       Properties properties = new Properties();
       properties.load(new FileInputStream(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".properties"));
-      boolean genStats = Boolean.parseBoolean(properties.getProperty("reb2sac.generate.statistics"));
+      genStats = Boolean.parseBoolean(properties.getProperty("reb2sac.generate.statistics"));
       String out = theFile;
       if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml"))
       {
@@ -507,11 +531,10 @@ public class Run implements ActionListener, Observer
           e.printStackTrace();
         }
       }
-        
+
       if (nary.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && naryRun == 1)
       {
-        log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=nary-level " + filename + "\n");
-        logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=nary-level " + filename + "\n\n");
+        writeLog("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=nary-level " + filename);
         time1 = System.nanoTime();
         reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=nary-level " + theFile, Gui.envp, work);
       }
@@ -695,15 +718,13 @@ public class Run implements ActionListener, Observer
           {
             if (analysisView.reb2sacAbstraction() && (abstraction.isSelected() || nary.isSelected()))
             {
-              log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename + "\n");
-              logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename + "\n\n");
-              time1 = System.nanoTime();
+              writeLog("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename);
+               time1 = System.nanoTime();
               reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + theFile, Gui.envp, work);
             }
             else
             {
-              log.addText("Outputting SBML file:\n" + root + GlobalConstants.separator + sbmlName + "\n");
-              logFile.write("Outputting SBML file:\n" + root + GlobalConstants.separator + sbmlName + "\n\n");
+              writeLog("Outputting SBML file:\n" + root + GlobalConstants.separator + sbmlName);
               time1 = System.nanoTime();
               FileOutputStream fileOutput = new FileOutputStream(new File(root + GlobalConstants.separator + sbmlName));
               FileInputStream fileInput = new FileInputStream(new File(filename));
@@ -765,27 +786,23 @@ public class Run implements ActionListener, Observer
         }
         else
         {
-          log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + filename + "\n");
-          logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + filename + "\n\n");
+          writeLog("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + filename);
           time1 = System.nanoTime();
           reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile, Gui.envp, work);
         }
       }
       else if (xhtml.isSelected())
       {
-        log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + filename + "\n");
-        logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + filename + "\n\n");
+        writeLog("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + filename);
         time1 = System.nanoTime();
         Simulator.expandArrays(filename, 1);
-
         reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, Gui.envp, work);
       }
       else
       {
         if (sim.equals("atacs"))
         {
-          log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=hse2 " + filename + "\n");
-          logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=hse2 " + filename + "\n\n");
+          writeLog("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=hse2 " + filename);
           time1 = System.nanoTime();
           reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=hse2 " + theFile, Gui.envp, work);
         }
@@ -874,20 +891,15 @@ public class Run implements ActionListener, Observer
                 logFile.close();
                 return 0;
               }
-              log.addText("Saving SBML file as PRISM file:\n" + filename.replace(".xml", ".prism") + "\n\n");
-              logFile.write("Saving SBML file as PRISM file:\n" + filename.replace(".xml", ".prism") + "\n\n");
-              log.addText("Saving PRISM Property file " + filename.replace(".xml", ".pctl") + "\n");
-              logFile.write("Saving PRISM Property file:\n" + filename.replace(".xml", ".pctl") + "\n\n");
+              writeLog("Saving SBML file as PRISM file:\n" + filename.replace(".xml", ".prism"));
+              writeLog("Saving PRISM Property file:\n" + filename.replace(".xml", ".pctl"));
               LPN.convertLPN2PRISM(logFile, lhpnFile, filename.replace(".xml", ".prism"), 
-            		  bioModel.getSBMLDocument());
+                bioModel.getSBMLDocument());
               Preferences biosimrc = Preferences.userRoot();
               String prismCmd = biosimrc.get("biosim.general.prism", "");
-              log.addText("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl" + "\n");
-              logFile.write("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl" + "\n");
+              writeLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl"); 
               reb2sac = exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
-              String error = "";
-              String result = "";
-              String fullLog = "";
+              String error = "", result = "", fullLog = "";
               try
               {
                 InputStream reb = reb2sac.getInputStream();
@@ -931,13 +943,11 @@ public class Run implements ActionListener, Observer
               String time = createTimeString(time1, time2);
               if (!error.equals(""))
               {
-                log.addText("Errors:\n" + error + "\n");
-                logFile.write("Errors:\n" + error + "\n\n");
+                writeLog("Errors:\n" + error + "\n");
               }
               else if (!result.equals(""))
               {
-                log.addText(result);
-                logFile.write(result);
+                writeLog(result);
               }
               else
               {
@@ -949,8 +959,7 @@ public class Run implements ActionListener, Observer
                 scroll.setViewportView(messageArea);
                 JOptionPane.showMessageDialog(Gui.frame, scroll, "Verification Failed", JOptionPane.ERROR_MESSAGE);
               }
-              log.addText("Total Verification Time: " + time + " for " + simName + "\n\n");
-              logFile.write("Total Verification Time: " + time + " for " + simName + "\n\n\n");
+              writeLog("Total Verification Time: " + time + " for " + simName);
               return 0;
             }
             else
@@ -1047,8 +1056,7 @@ public class Run implements ActionListener, Observer
                 return 0;
               }
               lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
-              log.addText("Saving SBML file as LPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn" + "\n");
-              logFile.write("Saving SBML file as LPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn" + "\n\n");
+              writeLog("Saving SBML file as LPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
             }
             else
             {
@@ -1062,20 +1070,16 @@ public class Run implements ActionListener, Observer
           BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, progress);
           buildStateGraph.start();
           buildStateGraph.join();
-          log.addText("Number of states found: " + sg.getNumberOfStates());
-          logFile.write("Number of states found: " + sg.getNumberOfStates() + "\n");
-          log.addText("Number of transitions found: " + sg.getNumberOfTransitions());
-          logFile.write("Number of transitions found: " + sg.getNumberOfTransitions() + "\n");
-          log.addText("Memory used during state exploration: " + sg.getMemoryUsed() + "MB");
-          logFile.write("Memory used during state exploration: " + sg.getMemoryUsed() + "MB\n");
-          log.addText("Total memory used: " + sg.getTotalMemoryUsed() + "MB\n");
-          logFile.write("Total memory used: " + sg.getTotalMemoryUsed() + "MB\n\n");
+          writeLog("Number of states found: " + sg.getNumberOfStates());
+          writeLog("Number of transitions found: " + sg.getNumberOfTransitions());
+          writeLog("Memory used during state exploration: " + sg.getMemoryUsed() + "MB");
+          writeLog("Total memory used: " + sg.getTotalMemoryUsed() + "MB");
           if (sim.equals("reachability-analysis") && !sg.getStop())
           {
             time2 = System.nanoTime();
             Object[] options = { "Yes", "No" };
             int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates() + " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+              JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             if (value == JOptionPane.YES_OPTION)
             {
               String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
@@ -1085,20 +1089,18 @@ public class Run implements ActionListener, Observer
                 Runtime execGraph = Runtime.getRuntime();
                 if (System.getProperty("os.name").contentEquals("Linux"))
                 {
-                  log.addText("Executing:\ndotty " + graphFile + "\n");
-                  logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+                  
+                  writeLog("Executing:\ndotty " + graphFile);
                   execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
                 }
                 else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
                 {
-                  log.addText("Executing:\nopen " + graphFile + "\n");
-                  logFile.write("Executing:\nopen " + graphFile + "\n\n");
+                  writeLog("Executing:\nopen " + graphFile);
                   execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
                 }
                 else
                 {
-                  log.addText("Executing:\ndotty " + graphFile + "\n");
-                  logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+                  writeLog("Executing:\ndotty " + graphFile);
                   execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
                 }
               }
@@ -1112,8 +1114,7 @@ public class Run implements ActionListener, Observer
           {
             if (!sg.getStop())
             {
-              log.addText("Performing steady state Markov chain analysis.\n");
-              logFile.write("Performing steady state Markov chain analysis.\n\n");
+              writeLog("Performing steady state Markov chain analysis.");
               PerformSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerformSteadyStateMarkovAnalysisThread(sg, progress);
               if (modelFile.contains(".lpn"))
               {
@@ -1163,7 +1164,7 @@ public class Run implements ActionListener, Observer
                 }
                 Object[] options = { "Yes", "No" };
                 int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates() + " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
-                    JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+                  JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
                 if (value == JOptionPane.YES_OPTION)
                 {
                   String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
@@ -1173,21 +1174,18 @@ public class Run implements ActionListener, Observer
                     Runtime execGraph = Runtime.getRuntime();
                     if (System.getProperty("os.name").contentEquals("Linux"))
                     {
-                      log.addText("Executing:\ndotty " + graphFile + "\n");
-                      logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+                      writeLog("Executing:\ndotty " + graphFile);
                       execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
                     }
                     else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
                     {
-                      log.addText("Executing:\nopen " + graphFile + "\n");
-                      logFile.write("Executing:\nopen " + graphFile + "\n\n");
+                      writeLog("Executing:\nopen " + graphFile);
                       execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
                     }
                     else
                     {
-                      log.addText("Executing:\ndotty " + graphFile + "\n");
-                      logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-                      execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
+                      writeLog("Executing:\ndotty " + graphFile);
+                     execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
                     }
                   }
                   catch (Exception e1)
@@ -1202,8 +1200,7 @@ public class Run implements ActionListener, Observer
           {
             if (!sg.getStop())
             {
-              log.addText("Performing transient Markov chain analysis with uniformization.\n");
-              logFile.write("Performing transient Markov chain analysis with uniformization.\n\n");
+              writeLog("Performing transient Markov chain analysis with uniformization.");
               PerformTransientMarkovAnalysisThread performMarkovAnalysis = new PerformTransientMarkovAnalysisThread(sg, progress);
               time1 = System.nanoTime();
               if (prop != null)
@@ -1225,7 +1222,7 @@ public class Run implements ActionListener, Observer
                 } catch (BioSimException e) {
                   e.printStackTrace();
                 }
-               
+
               }
               else
               {
@@ -1244,7 +1241,7 @@ public class Run implements ActionListener, Observer
                 }
                 Object[] options = { "Yes", "No" };
                 int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates() + " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
-                    JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+                  JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
                 if (value == JOptionPane.YES_OPTION)
                 {
                   String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
@@ -1254,20 +1251,17 @@ public class Run implements ActionListener, Observer
                     Runtime execGraph = Runtime.getRuntime();
                     if (System.getProperty("os.name").contentEquals("Linux"))
                     {
-                      log.addText("Executing:\ndotty " + graphFile + "\n");
-                      logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+                      writeLog("Executing:\ndotty " + graphFile);
                       execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
                     }
                     else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
                     {
-                      log.addText("Executing:\nopen " + graphFile + "\n");
-                      logFile.write("Executing:\nopen " + graphFile + "\n\n");
+                      writeLog("Executing:\nopen " + graphFile);
                       execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
                     }
                     else
                     {
-                      log.addText("Executing:\ndotty " + graphFile + "\n");
-                      logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+                      writeLog("Executing:\ndotty " + graphFile);
                       execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", null, new File(directory));
                     }
                   }
@@ -1317,215 +1311,8 @@ public class Run implements ActionListener, Observer
         }
         else
         {
-          Preferences biosimrc = Preferences.userRoot();
-          String reactionAbstraction = abstraction == null ? "None" : abstraction.isSelected() ? "reactionAbstraction" : abstraction == null ? "None" : expandReaction.isSelected() ? "expandReaction" : "None";
-
-          if (sim.equals("SSA-CR (Dynamic)"))
-          {
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
-
-            dynSim = new DynamicSimulation(SimulationType.CR);
-            dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
-            if (direct != null && !direct.equals("."))
-            {
-              outDir = outDir + GlobalConstants.separator + direct;
-            }
-
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
-            exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
-            logFile.close();
-            return exitValue;
-          }
-          else if (sim.equals("SSA-Direct (Dynamic)"))
-          {
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
-
-            dynSim = new DynamicSimulation(SimulationType.DIRECT);
-            dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
-            if (direct != null && !direct.equals("."))
-            {
-              outDir = outDir + GlobalConstants.separator + direct;
-            }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
-            exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
-            logFile.close();
-            return exitValue;
-          }
-          else if (sim.equals("SSA-Direct (Flatten)"))
-          {
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
-
-            dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
-            dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
-            if (direct != null && !direct.equals("."))
-            {
-              outDir = outDir + GlobalConstants.separator + direct;
-            }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
-            exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
-            logFile.close();
-            return exitValue;
-          }
-          else if (sim.equals("SSA-Direct (Hierarchical)"))
-          {
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
-
-            dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
-            dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
-            if (direct != null && !direct.equals("."))
-            {
-              outDir = outDir + GlobalConstants.separator + direct;
-            }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
-            exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
-            logFile.close();
-            return exitValue;
-          }
-          else if (sim.equals("Mixed-Hierarchical"))
-          {
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
-
-            dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_MIXED);
-            dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
-            if (direct != null && !direct.equals("."))
-            {
-              outDir = outDir + GlobalConstants.separator + direct;
-            }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
-            exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
-            logFile.close();
-            return exitValue;
-          }
-          else if (sim.equals("Hybrid-Hierarchical"))
-          {
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            double minTimeStep = Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
-
-            dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_HYBRID);
-            dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
-            if (direct != null && !direct.equals("."))
-            {
-              outDir = outDir + GlobalConstants.separator + direct;
-            }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
-            exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
-            logFile.close();
-            return exitValue;
-          }
-          else if (sim.equals("Runge-Kutta-Fehlberg (Dynamic)"))
-          {
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            dynSim = new DynamicSimulation(SimulationType.RK);
-            dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
-            if (direct != null && !direct.equals("."))
-            {
-              outDir = outDir + GlobalConstants.separator + direct;
-            }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, (int) Math.floor(timeLimit / printInterval), 0, absError, printer_track_quantity, genStats,
-                simTab, reactionAbstraction, initialTime, outputStartTime);
-            exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
-            logFile.close();
-            return exitValue;
-          }
-          else if (sim.equals("Runge-Kutta-Fehlberg (Hierarchical)"))
-          {
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
-            dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
-            if (direct != null && !direct.equals("."))
-            {
-              outDir = outDir + GlobalConstants.separator + direct;
-            }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
-            exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
-            logFile.close();
-            return exitValue;
-          }
-          else if (sim.equals("Runge-Kutta-Fehlberg (Flatten)"))
-          {
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
-            dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
-            if (direct != null && !direct.equals("."))
-            {
-              outDir = outDir + GlobalConstants.separator + direct;
-            }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction,  initialTime, outputStartTime);
-            exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
-            logFile.close();
-            return exitValue;
-          }
-          else if (biosimrc.get("biosim.sim.command", "").equals(""))
-          {
-
-            time1 = System.nanoTime();
-            log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=" + sim + " " + filename + "\n");
-            logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=" + sim + " " + filename + "\n\n");
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            Simulator.expandArrays(filename, stoichAmpValue);
-
-            reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=" + sim + " " + theFile, Gui.envp, work);
-          }
-          else
-          {
-            String command = biosimrc.get("biosim.sim.command", "");
-            String fileStem = theFile.replaceAll(".xml", "");
-            fileStem = fileStem.replaceAll(".sbml", "");
-            command = command.replaceAll("filename", fileStem);
-            command = command.replaceAll("sim", sim);
-            log.addText(command + "\n");
-            logFile.write(command + "\n\n");
-            time1 = System.nanoTime();
-
-            double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-
-            Simulator.expandArrays(filename, stoichAmpValue);
-
-            reb2sac = exec.exec(command, null, work);
-          }
+          time1 = System.nanoTime();
+          executeSimulation(sim, direct, directory, root, filename, outDir, theFile, abstraction != null && abstraction.isSelected(),  expandReaction != null && expandReaction.isSelected(), exec,  properties, work);
         }
       }
       String error = "";
@@ -1598,11 +1385,9 @@ public class Run implements ActionListener, Observer
       String time = createTimeString(time1, time2);
       if (!error.equals(""))
       {
-        log.addText("Errors:\n" + error + "\n");
-        logFile.write("Errors:\n" + error + "\n\n");
+        writeLog("Errors:\n" + error);
       }
-      log.addText("Total Simulation Time: " + time + " for " + simName + "\n\n");
-      logFile.write("Total Simulation Time: " + time + " for " + simName + "\n\n\n");
+      writeLog("Total Simulation Time: " + time + " for " + simName + "\n\n");
       running.setCursor(null);
       running.dispose();
       if (exitValue != 0 && !fba.isSelected())
@@ -1741,20 +1526,17 @@ public class Run implements ActionListener, Observer
         {
           if (System.getProperty("os.name").contentEquals("Linux"))
           {
-            log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
-            logFile.write("Executing:\ndotty " + directory + out + ".dot" + "\n\n");
+            writeLog("Executing:\ndotty " + directory + out + ".dot" );
             exec.exec("dotty " + out + ".dot", null, work);
           }
           else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
           {
-            log.addText("Executing:\nopen " + directory + out + ".dot\n");
-            logFile.write("Executing:\nopen " + directory + out + ".dot\n\n");
+            writeLog("Executing:\nopen " + directory + out + ".dot");
             exec.exec("open " + out + ".dot", null, work);
           }
           else
           {
-            log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
-            logFile.write("Executing:\ndotty " + directory + out + ".dot" + "\n\n");
+            writeLog("Executing:\ndotty " + directory + out + ".dot");
             exec.exec("dotty " + out + ".dot", null, work);
           }
         }
@@ -1762,22 +1544,19 @@ public class Run implements ActionListener, Observer
         {
           Preferences biosimrc = Preferences.userRoot();
           String xhtmlCmd = biosimrc.get("biosim.general.browser", "");
-          log.addText("Executing:\n" + xhtmlCmd + " " + directory + out + ".xhtml" + "\n");
-          logFile.write("Executing:\n" + xhtmlCmd + " " + directory + out + ".xhtml" + "\n\n");
+          writeLog("Executing:\n" + xhtmlCmd + " " + directory + out + ".xhtml");
           exec.exec(xhtmlCmd + " " + out + ".xhtml", null, work);
         }
         else if (sim.equals("prism"))
         {
           Preferences biosimrc = Preferences.userRoot();
           String prismCmd = biosimrc.get("biosim.general.prism", "");
-          log.addText("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl" + "\n");
-          logFile.write("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl" + "\n");
+          writeLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl");
           exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
         }
         else if (sim.equals("atacs"))
         {
-          log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA " + filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "out.hse\n");
-          logFile.write("Executing:\natacs -T0.000001 -oqoflhsgllvA " + filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "out.hse\n\n");
+          writeLog("Executing:\natacs -T0.000001 -oqoflhsgllvA " + filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "out.hse");
           exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
           if (refresh)
           {
@@ -2470,6 +2249,102 @@ public class Run implements ActionListener, Observer
     return time;
   }
 
+  private void executeNary()
+  {
+    
+  }
+  
+  private void executeSimulation(String sim, String direct, String directory, String root, String filename, String outDir, String theFile, boolean abstraction, boolean expandReaction, Runtime exec, Properties properties, File work) throws IOException
+  {
+    Preferences biosimrc = Preferences.userRoot();
+    String reactionAbstraction = abstraction ? "reactionAbstraction" : expandReaction ? "expandReaction" : "None";
+    double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
+    String SBMLFileName = directory + GlobalConstants.separator + theFile;
+    String command = null;
+    String[] env = null;
+    if (direct != null && !direct.equals("."))
+    {
+      outDir = outDir + GlobalConstants.separator + direct;
+    }
+    boolean runJava = true;
+    if (sim.equals("SSA-CR (Dynamic)"))
+    {
+      dynSim = new DynamicSimulation(SimulationType.CR);
+    }
+    else if (sim.equals("SSA-Direct (Dynamic)"))
+    {
+      dynSim = new DynamicSimulation(SimulationType.DIRECT);
+    }
+    else if (sim.equals("SSA-Direct (Flatten)"))
+    {
+      dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
+    }
+    else if (sim.equals("SSA-Direct (Hierarchical)"))
+    {
+      dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
+    }
+    else if (sim.equals("Mixed-Hierarchical"))
+    {
+      dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_MIXED);
+    }
+    else if (sim.equals("Hybrid-Hierarchical"))
+    {
+      dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_HYBRID);
+    }
+    else if (sim.equals("Runge-Kutta-Fehlberg (Dynamic)"))
+    {
+      dynSim = new DynamicSimulation(SimulationType.RK);
+    }
+    else if (sim.equals("Runge-Kutta-Fehlberg (Hierarchical)"))
+    {
+      dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
+    }
+    else if (sim.equals("Runge-Kutta-Fehlberg (Flatten)"))
+    {
+      dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
+    }
+    else if (biosimrc.get("biosim.sim.command", "").equals(""))
+    {
+      command = Gui.reb2sacExecutable + " --target.encoding=" + sim + " " + theFile;
+      Simulator.expandArrays(filename, stoichAmpValue);
+      env = Gui.envp;
+      runJava = false;
+    }
+    else
+    {
+      command = biosimrc.get("biosim.sim.command", "");
+      String fileStem = theFile.replaceAll(".xml", "");
+      fileStem = fileStem.replaceAll(".sbml", "");
+      command = command.replaceAll("filename", fileStem);
+      command = command.replaceAll("sim", sim);
+      runJava = false;
+    }
+
+    if(runJava)
+    {
+      if (direct != null && !direct.equals("."))
+      {
+        outDir = outDir + GlobalConstants.separator + direct;
+      }
+      dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction,  initialTime, outputStartTime);
+
+      new File(directory + GlobalConstants.separator + "running").delete();
+    }
+    else
+    {
+      Simulator.expandArrays(filename, stoichAmpValue);
+      writeLog("Executing:\n" + command + "\n");
+      
+      reb2sac = exec.exec(command, env, work);
+    }
+  }
+  
+  private void writeLog(String message) throws IOException
+  {
+    log.addText(message+"\n");
+    logFile.write(message+ "\n\n");
+  }
+  
   /**
    * This method is called if a button that cancels the simulation is pressed.
    */
@@ -2494,7 +2369,7 @@ public class Run implements ActionListener, Observer
   @Override
   public void update(Observable o, Object arg) {
     Message message = (Message) arg;
-    
+
     if(message.isCancel())
     {
       JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled", "Canceled", JOptionPane.ERROR_MESSAGE);
