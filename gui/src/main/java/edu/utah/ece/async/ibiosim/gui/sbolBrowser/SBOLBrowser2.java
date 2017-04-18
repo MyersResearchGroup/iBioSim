@@ -28,10 +28,10 @@ import java.util.*;
 
 import org.sbolstandard.core2.Collection;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility2;
 
 /**
  * 
@@ -171,7 +171,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 			{
 				SBOLDocument sbolDoc = null;
 				try {
-					sbolDoc = SBOLUtility2.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
+					sbolDoc = SBOLUtility.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -290,7 +290,7 @@ public class SBOLBrowser2 extends JPanel implements ActionListener {
 			localComp = SBOLDOC.getComponentDefinition(localCompURIs.get(i));
 			if (localComp.getRoles().size() > 0) 
 			{	
-				compDefRoles.add(SBOLUtility2.convertURIToSOTerm(localComp.getRoles().iterator().next()));
+				compDefRoles.add(SBOLUtility.convertURIToSOTerm(localComp.getRoles().iterator().next()));
 			}
 		}
 		filterRoleBox = new JComboBox(compDefRoles.toArray());

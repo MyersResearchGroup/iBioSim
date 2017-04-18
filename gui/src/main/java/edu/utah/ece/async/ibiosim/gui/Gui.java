@@ -167,6 +167,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GCM2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -192,7 +193,6 @@ import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.gui.util.tabs.CloseAndMaxTabbedPane;
 import edu.utah.ece.async.ibiosim.gui.verificationView.AbstractionPanel;
 import edu.utah.ece.async.ibiosim.gui.verificationView.VerificationView;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility2;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Lpn2verilog;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
@@ -8177,7 +8177,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	}
 
 	private void openSBOLSynthesisView() {
-		Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(tree.getFile(), GlobalConstants.separator,
+		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), GlobalConstants.separator,
 				frame);
 		if (synthProps != null) {
 			String synthID = tree.getFile()
@@ -10117,7 +10117,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				} else if (new File(
 						root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sbolsynth.properties")
 								.exists()) {
-					Properties synthProps = SBOLUtility2.loadSBOLSynthesisProperties(
+					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(
 							root + GlobalConstants.separator + s, GlobalConstants.separator, Gui.frame);
 					if (synthProps != null) {
 						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {

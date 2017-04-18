@@ -41,9 +41,9 @@ import javax.swing.plaf.metal.MetalButtonUI;
 import com.mxgraph.util.mxConstants;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.CompatibilityFixer;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility2;
 
 /**
  * 
@@ -790,7 +790,7 @@ public class EditPreferences {
 		
 		JPanel assemblyFields = new JPanel(new GridLayout(13 ,1));
 		uriField = new JTextField(EditPreferences.getDefaultUriPrefix(),15);
-		String regex = SBOLUtility2.convertRegexSOTermsToNumbers(
+		String regex = SBOLUtility.convertRegexSOTermsToNumbers(
 				biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 		regexField = new JTextField(regex, 15);
 		assemblyBox = new JComboBox(new String[]{"True", "False"});

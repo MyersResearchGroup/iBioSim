@@ -48,15 +48,15 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
-import edu.utah.ece.async.ibiosim.synthesis.genetic.SynthesisGraph;
-import edu.utah.ece.async.ibiosim.synthesis.genetic.Synthesizer;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLFileManager2;
+import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
+import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 
 /**
  * 
@@ -324,7 +324,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
         for (String fileID : new File(libFilePath).list())
           if (fileID.endsWith(".sbol"))
             sbolFilePaths.add(libFilePath + separator + fileID);
-      SBOLFileManager2 fileManager = new SBOLFileManager2(sbolFilePaths, EditPreferences.getDefaultUriPrefix());
+      SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, EditPreferences.getDefaultUriPrefix());
 
       Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
       //		boolean flatImport = libFilePaths.size() > 1;
@@ -385,7 +385,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
   }
 
   private List<String> importSolutions(List<List<SynthesisGraph>> solutions, SynthesisGraph spec, 
-    SBOLFileManager2 fileManager, String synthFilePath) throws SBOLValidationException {
+    SBOLFileManager fileManager, String synthFilePath) throws SBOLValidationException {
     List<BioModel> solutionModels = new LinkedList<BioModel>();
     Set<String> solutionFileIDs = new HashSet<String>();
     for (List<SynthesisGraph> solutionGraphs : solutions) {
@@ -510,7 +510,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
     return hash1 == hash2;
   }
 
-  private String importSolutionDNAComponents(List<SynthesisGraph> solutionGraphs, SBOLFileManager2 fileManager, 
+  private String importSolutionDNAComponents(List<SynthesisGraph> solutionGraphs, SBOLFileManager fileManager, 
     String synthFilePath) throws SBOLValidationException {
     Set<URI> compURIs = new HashSet<URI>();
     for (SynthesisGraph solutionGraph : solutionGraphs) {
@@ -520,7 +520,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
     }
     String sbolFileID = getSpecFileID().replace(".xml", GlobalConstants.SBOL_FILE_EXTENSION);
     try {
-      SBOLFileManager2.saveDNAComponents(fileManager.resolveURIs(new LinkedList<URI>(compURIs)), 
+      SBOLFileManager.saveDNAComponents(fileManager.resolveURIs(new LinkedList<URI>(compURIs)), 
         synthFilePath + separator + sbolFileID);
       return sbolFileID;
     } catch (FileNotFoundException e) {

@@ -35,12 +35,12 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLFileManager2;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLIdentityManager2;
 
 /**
  * 
@@ -62,7 +62,7 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 	private boolean removeBioSimURI = false;
 	private boolean display;
 	
-	public SBOLDescriptorPanel2(SBOLIdentityManager2 identityManager, SBOLFileManager2 fileManager) {
+	public SBOLDescriptorPanel2(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
 		
 		super(new GridLayout(3, 2));
 		constructPanel(fileManager.getSBOLFilePaths());
@@ -114,7 +114,7 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 		add(descriptionText);
 	}
 	
-	private boolean loadSBOLDescriptors(SBOLIdentityManager2 identityManager) {
+	private boolean loadSBOLDescriptors(SBOLIdentityManager identityManager) {
 		String[] sbolDescriptors = identityManager.getBioModel().getSBOLDescriptors();
 		if (sbolDescriptors == null) {
 			initialID = identityManager.getBioModel().getSBMLDocument().getModel().getId();
@@ -129,7 +129,7 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 		return true;
 	}
 	
-	private boolean loadBioSimComponentDescriptors(SBOLIdentityManager2 identityManager, SBOLFileManager2 fileManager) {
+	private boolean loadBioSimComponentDescriptors(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
 		try {
 			if (identityManager.loadAndLocateBioSimComponent(fileManager)) {
 				ComponentDefinition bioSimComp = identityManager.getBioSimComponent();
@@ -156,7 +156,7 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 		return false;
 	}
 	
-	public boolean panelOpen(SBOLIdentityManager2 identityManager, SBOLFileManager2 fileManager) {
+	public boolean panelOpen(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
 		if (!display) return false;
 		
 		int option = JOptionPane.showOptionDialog(Gui.frame, this,
@@ -228,7 +228,7 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 		return false;
 	}
 	
-	private boolean isSourceIdentifierDuplicate(String sourceID, String saveFilePath, SBOLFileManager2 fileManager) {
+	private boolean isSourceIdentifierDuplicate(String sourceID, String saveFilePath, SBOLFileManager fileManager) {
 		 if (!sourceID.equals(initialID) && fileManager.resolveDisplayID(sourceID, saveFilePath) != null) {
 			 JOptionPane.showMessageDialog(Gui.frame, "Chosen SBOL file contains DNA component with chosen ID.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 			 return true;

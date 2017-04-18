@@ -105,6 +105,9 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GCMParser;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
@@ -142,12 +145,9 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.util.UndoManager;
 import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.SpringUtilities;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.assembly.Assembler2;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.assembly.AssemblyGraph2;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.assembly.SequenceTypeValidator;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLFileManager2;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLIdentityManager2;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility2;
+import edu.utah.ece.async.ibiosim.synthesis.assembly.Assembler2;
+import edu.utah.ece.async.ibiosim.synthesis.assembly.AssemblyGraph2;
+import edu.utah.ece.async.ibiosim.synthesis.assembly.SequenceTypeValidator;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Lpn2verilog;
 import edu.utah.ece.async.lema.verification.lpn.Transition;
@@ -471,15 +471,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveSBOL2() throws SBOLValidationException 
 	{
 		try {
-			SBOLIdentityManager2 identityManager = new SBOLIdentityManager2(biomodel, Preferences.userRoot().get(EditPreferences.getDefaultUriPrefix(), "")); 
+			SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel, Preferences.userRoot().get(EditPreferences.getDefaultUriPrefix(), "")); 
 			if (identityManager.containsBioSimURI()) {
 				AssemblyGraph2 assemblyGraph = new AssemblyGraph2(biomodel);
 				if (assemblyGraph.containsSBOL()) {
-					SBOLFileManager2 fileManager = new SBOLFileManager2(
+					SBOLFileManager fileManager = new SBOLFileManager(
 							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), EditPreferences.getDefaultUriPrefix());
 					if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) 
 					{
-						String regex = SBOLUtility2.convertRegexSOTermsToNumbers(
+						String regex = SBOLUtility.convertRegexSOTermsToNumbers(
 								Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 						SequenceTypeValidator seqValidator = new SequenceTypeValidator(regex); 
 						Assembler2 assembler = new Assembler2(assemblyGraph, seqValidator);

@@ -20,8 +20,8 @@ import javax.swing.*;
 
 import org.sbolstandard.core2.Component;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.synthesis.sbol.util.SBOLUtility2;
 
 //import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 import org.sbolstandard.core2.*;
@@ -84,7 +84,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 			ComponentDefinition dnac = null;
 			dnac = SBOLDOC.getComponentDefinition(compURIs.get(i));
 			if (filterRole.equals("all") || (dnac.getTypes().size() > 0 &&
-					SBOLUtility2.convertURIToTypeString(dnac.getTypes().iterator().next()).equals(filterRole))) 
+					SBOLUtility.convertURIToTypeString(dnac.getTypes().iterator().next()).equals(filterRole))) 
 			{
 				filteredURIs.add(compURIs.get(i));
 				filteredIDs.add(compIDs.get(i));
@@ -101,7 +101,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 			ComponentDefinition dnac = null;
 			dnac = SBOLDOC.getComponentDefinition(compURIs.get(i));
 			if (filterRole.equals("all") || (dnac.getRoles().size() > 0 &&
-					SBOLUtility2.convertURIToSOTerm(dnac.getRoles().iterator().next()).equals(filterRole))) 
+					SBOLUtility.convertURIToSOTerm(dnac.getRoles().iterator().next()).equals(filterRole))) 
 			{
 				filteredURIs.add(compURIs.get(i));
 				filteredIDs.add(compIDs.get(i));
@@ -153,7 +153,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 					}
 					String types = "";
 					for (URI uri : dnac.getTypes()) {
-						types = types + SBOLUtility2.convertURIToTypeString(uri) + ", ";
+						types = types + SBOLUtility.convertURIToTypeString(uri) + ", ";
 					}
 					if (types.length() > 0) {
 						viewArea.append("Types:  ");
@@ -162,7 +162,7 @@ public class ComponentDefinitionBrowserPanel extends JPanel implements MouseList
 					
 					String roles = "";
 					for (URI uri : dnac.getRoles()) 
-						roles = roles + SBOLUtility2.convertURIToSOTerm(uri) + ", ";
+						roles = roles + SBOLUtility.convertURIToSOTerm(uri) + ", ";
 					if (roles.length() > 0) {
 						viewArea.append("Roles:  ");
 						viewArea.append(roles.substring(0, roles.length() - 2) + "\n");
