@@ -22,28 +22,18 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
-import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.ext.comp.ModelDefinition;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
@@ -317,7 +307,7 @@ public class Converter {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
 		else{
 			System.err.println("You must provide the full input file path as this is a required filed.");
@@ -373,7 +363,7 @@ public class Converter {
 						System.err.println("ERR: You must provide an SBOL URI prefix in order to convert SBML to SBOL.");
 						usage();
 					}
-					
+
 					if(!noOutput)
 					{
 						if(outputFileName.isEmpty())
@@ -463,11 +453,11 @@ public class Converter {
 						for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 						{
 							List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
-							
+
 							// Note: Since SBOL2SBML converter encase the result of SBML model in BioModels, the last biomodel 
 							// given from the converter is the top level model. All submodels belonging to the top level models are nested in side this last biomodel
 							BioModel target = models.get(models.size() - 1);
-							
+
 							if(noOutput)
 							{
 								//TODO: print result of SBOL2SBML to OutputStream
@@ -488,7 +478,7 @@ public class Converter {
 									}
 								}
 							}
-							
+
 						} //end of root md for loop
 					}
 				}
@@ -523,16 +513,56 @@ public class Converter {
 	} // end of method
 
 
-	private static boolean isSBMLFile(String file) throws IOException{
+	private static boolean isSBMLFile(String file) throws IOException
+	{
+		BufferedReader b = new BufferedReader( new FileReader(file));
 		
-			BufferedReader b = new BufferedReader(new FileReader(new File(file)));
-			b.readLine(); //skip the first line of the xml document
-			String selectedWord = b.readLine().substring(1, 4); 
-			
-			if(selectedWord.equals("sbml")){
-				return true;
+		String xmlComment =  "!--";
+		String xmlProlog = "?xml";
+		String sbmlText = "sbml";
+		
+		/* NOTE: Becuse we are reading the xml file as a general file, the BufferedReader will not understand xml syntax.
+		 * Therefore, we must account for corner cases:
+		 * - there can be new lines in arbitrary places.
+		 * - there can be comments before reaching the root node.
+		 */
+		int c;
+		StringBuilder builder = null;
+		while((c = b.read()) >= 0)
+		{
+			if(c == '<')
+			{
+				 builder = new StringBuilder();
 			}
-			return false;
+			else if(c == '>')
+			{
+				String currentElement = builder.toString();
+				if(currentElement.startsWith(xmlComment)){
+					continue;
+				}
+				else if(currentElement.startsWith(xmlProlog)){
+					continue;
+				}
+				else if(currentElement.startsWith(sbmlText)){
+					return true;
+				}
+				else
+				{
+					//No need to check for SBOL text. 
+					//We will assume user gave SBOL file at this point.
+					return false;
+				}
+			}
+			else if(c =='\n')
+			{
+				continue;
+			}
+			else
+			{
+				builder.append((char) c);
+			}
+		}
+		return false;
 	}
 
 }
