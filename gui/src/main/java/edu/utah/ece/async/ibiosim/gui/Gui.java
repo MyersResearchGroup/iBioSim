@@ -2263,7 +2263,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				dummy.setSelected(false);
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
-				Run.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
+				AnalysisView.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
 						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
 						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
 						false, false);
@@ -2440,7 +2440,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				dummy.setSelected(false);
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
-				Run.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
+				AnalysisView.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
 						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
 						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
 						false, false);
@@ -2536,7 +2536,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				Run.createProperties(0, 0, 0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, 0, directory, 314159L, 1, 1,
+				AnalysisView.createProperties(0, 0, 0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, 0, directory, 314159L, 1, 1,
 						new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(GlobalConstants.separator), "none", frame, directory + theFile, 0.1,
 						0.1, 0.1, 15, 2.0, empty, empty, empty, null, false, false, false);

@@ -15,6 +15,7 @@ package edu.utah.ece.async.ibiosim.gui.analysisView;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -1600,7 +1601,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     String propName = simProp.substring(0, simProp.length() - getFilename[getFilename.length - 1].length()) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
     log.addText("Creating properties file:\n" + propName + "\n");
     int numPaths = Integer.parseInt((String) (bifurcation.getSelectedItem()));
-    Run.createProperties(initialTime, outputStartTime, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError, relError, ".", rndSeed,
+    createProperties(initialTime, outputStartTime, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError, relError, ".", rndSeed,
       run, numPaths, intSpecies, printer_id, printer_track_quantity, generate_statistics, sbmlProp.split("/"), selectedButtons, this,
       sbmlProp, rap1, rap2, qss, con, stoichAmp, preAbs, loopAbs, postAbs, lpnAbstraction, mpde.isSelected(), meanPath.isSelected(),
       adaptive.isSelected());
@@ -1680,6 +1681,266 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     }
     change = false;
     return true;
+  }
+
+  /**
+   * This method is given which buttons are selected and creates the
+   * properties file from all the other information given.
+   * 
+   * @param useInterval
+   * @param stem
+   */
+  public static void createProperties(double initialTime, double outputStartTime, double timeLimit, String useInterval, double printInterval, double minTimeStep, double timeStep,
+    double absError, double relError, String outDir, long rndSeed, int run, int numPaths, String[] intSpecies, String printer_id,
+    String printer_track_quantity, String genStats, String[] getFilename, String selectedButtons, Component component, String filename,
+    double rap1, double rap2, double qss, int con, double stoichAmp, JList preAbs, JList loopAbs, JList postAbs, AbstractionPanel abstPane,
+    boolean mpde, boolean meanPath, boolean adaptive)
+  {
+    Properties abs = new Properties();
+    if (selectedButtons.contains("abs") || selectedButtons.contains("nary"))
+    {
+      int gcmIndex = 1;
+      for (int i = 0; i < preAbs.getModel().getSize(); i++)
+      {
+        String abstractionOption = (String) preAbs.getModel().getElementAt(i);
+        if (abstractionOption.equals("complex-formation-and-sequestering-abstraction") || abstractionOption.equals("operator-site-reduction-abstraction"))
+        {
+          abs.setProperty("gcm.abstraction.method." + gcmIndex, abstractionOption);
+          gcmIndex++;
+        }
+        else
+        {
+          abs.setProperty("reb2sac.abstraction.method.1." + (i + 1), abstractionOption);
+        }
+      }
+      for (int i = 0; i < loopAbs.getModel().getSize(); i++)
+      {
+        abs.setProperty("reb2sac.abstraction.method.2." + (i + 1), (String) loopAbs.getModel().getElementAt(i));
+      }
+    }
+    for (int i = 0; i < postAbs.getModel().getSize(); i++)
+    {
+      abs.setProperty("reb2sac.abstraction.method.3." + (i + 1), (String) postAbs.getModel().getElementAt(i));
+    }
+    abs.setProperty("simulation.printer", printer_id);
+    abs.setProperty("simulation.printer.tracking.quantity", printer_track_quantity);
+    for (int i = 0; i < intSpecies.length; i++)
+    {
+      if (!intSpecies[i].equals(""))
+      {
+        String[] split = intSpecies[i].split(" ");
+        abs.setProperty("reb2sac.interesting.species." + (i + 1), split[0]);
+        if (split.length > 1)
+        {
+          String[] levels = split[1].split(",");
+          for (int j = 0; j < levels.length; j++)
+          {
+            abs.setProperty("reb2sac.concentration.level." + split[0] + "." + (j + 1), levels[j]);
+          }
+        }
+      }
+    }
+    abs.setProperty("reb2sac.rapid.equilibrium.condition.1", "" + rap1);
+    abs.setProperty("reb2sac.rapid.equilibrium.condition.2", "" + rap2);
+    abs.setProperty("reb2sac.qssa.condition.1", "" + qss);
+    abs.setProperty("reb2sac.operator.max.concentration.threshold", "" + con);
+    abs.setProperty("reb2sac.diffusion.stoichiometry.amplification.value", "" + stoichAmp);
+    abs.setProperty("reb2sac.generate.statistics", genStats);
+    if (selectedButtons.contains("none"))
+    {
+      abs.setProperty("reb2sac.abstraction.method", "none");
+    }
+    if (selectedButtons.contains("expand"))
+    {
+      abs.setProperty("reb2sac.abstraction.method", "expand");
+    }
+    if (selectedButtons.contains("abs"))
+    {
+      abs.setProperty("reb2sac.abstraction.method", "abs");
+    }
+    else if (selectedButtons.contains("nary"))
+    {
+      abs.setProperty("reb2sac.abstraction.method", "nary");
+    }
+    if (abstPane != null)
+    {
+      for (Integer i = 0; i < abstPane.getAbstractionProperty().preAbsModel.size(); i++)
+      {
+        abs.setProperty("abstraction.transform." + abstPane.getAbstractionProperty().preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
+      }
+      for (Integer i = 0; i < abstPane.getAbstractionProperty().loopAbsModel.size(); i++)
+      {
+        if (abstPane.getAbstractionProperty().preAbsModel.contains(abstPane.getAbstractionProperty().loopAbsModel.getElementAt(i)))
+        {
+          String value = abs.getProperty("abstraction.transform." + abstPane.getAbstractionProperty().loopAbsModel.getElementAt(i).toString());
+          value = value + "mainloop" + i.toString();
+          abs.setProperty("abstraction.transform." + abstPane.getAbstractionProperty().loopAbsModel.getElementAt(i).toString(), value);
+        }
+        else
+        {
+          abs.setProperty("abstraction.transform." + abstPane.getAbstractionProperty().loopAbsModel.getElementAt(i).toString(), "mainloop" + i.toString());
+        }
+      }
+      for (Integer i = 0; i < abstPane.getAbstractionProperty().postAbsModel.size(); i++)
+      {
+        if (abstPane.getAbstractionProperty().preAbsModel.contains(abstPane.getAbstractionProperty().postAbsModel.getElementAt(i)) || abstPane.getAbstractionProperty().preAbsModel.contains(abstPane.getAbstractionProperty().postAbsModel.get(i)))
+        {
+          String value = abs.getProperty("abstraction.transform." + abstPane.getAbstractionProperty().postAbsModel.getElementAt(i).toString());
+          value = value + "postloop" + i.toString();
+          abs.setProperty("abstraction.transform." + abstPane.getAbstractionProperty().postAbsModel.getElementAt(i).toString(), value);
+        }
+        else
+        {
+          abs.setProperty("abstraction.transform." + abstPane.getAbstractionProperty().postAbsModel.getElementAt(i).toString(), "postloop" + i.toString());
+        }
+      }
+      for (String s : abstPane.getAbstractionProperty().transforms)
+      {
+        if (!abstPane.getAbstractionProperty().preAbsModel.contains(s) && !abstPane.getAbstractionProperty().loopAbsModel.contains(s) && !abstPane.getAbstractionProperty().postAbsModel.contains(s))
+        {
+          abs.remove(s);
+        }
+      }
+    }
+    if (selectedButtons.contains("ODE"))
+    {
+      abs.setProperty("reb2sac.simulation.method", "ODE");
+    }
+    else if (selectedButtons.contains("monteCarlo"))
+    {
+      abs.setProperty("reb2sac.simulation.method", "monteCarlo");
+      abs.setProperty("reb2sac.iSSA.number.paths", "" + numPaths);
+      if (mpde)
+      {
+        abs.setProperty("reb2sac.iSSA.type", "mpde");
+      }
+      else if (meanPath)
+      {
+        abs.setProperty("reb2sac.iSSA.type", "meanPath");
+      }
+      else
+      {
+        abs.setProperty("reb2sac.iSSA.type", "medianPath");
+      }
+      if (adaptive)
+      {
+        abs.setProperty("reb2sac.iSSA.adaptive", "true");
+      }
+      else
+      {
+        abs.setProperty("reb2sac.iSSA.adaptive", "false");
+      }
+    }
+    else if (selectedButtons.contains("markov"))
+    {
+      abs.setProperty("reb2sac.simulation.method", "markov");
+    }
+    else if (selectedButtons.contains("fba"))
+    {
+      abs.setProperty("reb2sac.simulation.method", "FBA");
+    }
+    else if (selectedButtons.contains("sbml"))
+    {
+      abs.setProperty("reb2sac.simulation.method", "SBML");
+    }
+    else if (selectedButtons.contains("dot"))
+    {
+      abs.setProperty("reb2sac.simulation.method", "Network");
+    }
+    else if (selectedButtons.contains("xhtml"))
+    {
+      abs.setProperty("reb2sac.simulation.method", "Browser");
+    }
+    else if (selectedButtons.contains("lhpn"))
+    {
+      abs.setProperty("reb2sac.simulation.method", "LPN");
+    }
+    if (!selectedButtons.contains("monteCarlo"))
+    {
+      abs.setProperty("simulation.initial.time", "" + initialTime);
+      abs.setProperty("simulation.output.start.time", "" + outputStartTime);
+      abs.setProperty("ode.simulation.time.limit", "" + timeLimit);
+      if (useInterval.equals("Print Interval"))
+      {
+        abs.setProperty("ode.simulation.print.interval", "" + printInterval);
+      }
+      else if (useInterval.equals("Minimum Print Interval"))
+      {
+        abs.setProperty("ode.simulation.minimum.print.interval", "" + printInterval);
+      }
+      else
+      {
+        abs.setProperty("ode.simulation.number.steps", "" + ((int) printInterval));
+      }
+      if (timeStep == Double.MAX_VALUE)
+      {
+        abs.setProperty("ode.simulation.time.step", "inf");
+      }
+      else
+      {
+        abs.setProperty("ode.simulation.time.step", "" + timeStep);
+      }
+      abs.setProperty("ode.simulation.min.time.step", "" + minTimeStep);
+      abs.setProperty("ode.simulation.absolute.error", "" + absError);
+      abs.setProperty("ode.simulation.relative.error", "" + relError);
+      abs.setProperty("ode.simulation.out.dir", outDir);
+      abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
+      abs.setProperty("monte.carlo.simulation.runs", "" + run);
+    }
+    if (!selectedButtons.contains("ODE"))
+    {
+      abs.setProperty("simulation.initial.time", "" + initialTime);
+      abs.setProperty("simulation.output.start.time", "" + outputStartTime);
+      abs.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
+      if (useInterval.equals("Print Interval"))
+      {
+        abs.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
+      }
+      else if (useInterval.equals("Minimum Print Interval"))
+      {
+        abs.setProperty("monte.carlo.simulation.minimum.print.interval", "" + printInterval);
+      }
+      else
+      {
+        abs.setProperty("monte.carlo.simulation.number.steps", "" + ((int) printInterval));
+      }
+      if (timeStep == Double.MAX_VALUE)
+      {
+        abs.setProperty("monte.carlo.simulation.time.step", "inf");
+      }
+      else
+      {
+        abs.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
+      }
+      abs.setProperty("monte.carlo.simulation.min.time.step", "" + minTimeStep);
+      abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
+      abs.setProperty("monte.carlo.simulation.runs", "" + run);
+      abs.setProperty("monte.carlo.simulation.out.dir", outDir);
+    }
+    abs.setProperty("simulation.run.termination.decider", "constraint");
+    try
+    {
+      if (!getFilename[getFilename.length - 1].contains("."))
+      {
+        getFilename[getFilename.length - 1] += ".";
+        filename += ".";
+      }
+      int cut = 0;
+      for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++)
+      {
+        if (getFilename[getFilename.length - 1].charAt(i) == '.')
+        {
+          cut = i;
+        }
+      }
+      FileOutputStream store = new FileOutputStream(new File((filename.substring(0, filename.length() - getFilename[getFilename.length - 1].length())) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties"));
+      abs.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
+      store.close();
+    }
+    catch (Exception except)
+    {
+      JOptionPane.showMessageDialog(component, "Unable To Save Properties File!" + "\nMake sure you select a model for abstraction.", "Unable To Save File", JOptionPane.ERROR_MESSAGE);
+    }
   }
 
   private void saveSEDML() {
