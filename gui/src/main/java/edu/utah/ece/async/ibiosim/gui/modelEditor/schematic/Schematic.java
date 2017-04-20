@@ -627,7 +627,7 @@ public class Schematic extends JPanel implements ActionListener {
 		if (!iconFilename.equals("")) {
 			icon = ResourceManager.getResource("icons/modelview/" + iconFilename);
 			String selectedPath = iconFilename.replaceAll(".png", "_selected.png");
-			selectedIcon = getClass().getResource("icons/modelview/" + selectedPath);
+			selectedIcon = ResourceManager.getResource("icons/modelview/" + selectedPath);
 		}
 		return Utils.makeRadioToolButton(icon,selectedIcon,actionCommand,tooltip,listener,buttonGroup);
 	}
@@ -638,7 +638,7 @@ public class Schematic extends JPanel implements ActionListener {
 		if (!iconFilename.equals("")) {
 			icon = ResourceManager.getResource("icons/modelview/" + iconFilename);
 			String selectedPath = iconFilename.replaceAll(".png", "_selected.png");
-			selectedIcon = getClass().getResource("icons/modelview/" + selectedPath);
+			selectedIcon = ResourceManager.getResource("icons/modelview/" + selectedPath);
 		}
 		return Utils.makeToolButton(icon, selectedIcon, actionCommand, tooltip, listener);
 	}
