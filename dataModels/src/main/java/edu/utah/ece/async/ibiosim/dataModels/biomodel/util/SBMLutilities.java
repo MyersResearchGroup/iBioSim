@@ -6054,6 +6054,76 @@ public class SBMLutilities
 	}
 
 
+  public static String createTimeString(long time1, long time2)
+  {
+    long minutes;
+    long hours;
+    long days;
+    double secs = ((time2 - time1) / 1000000000.0);
+    long seconds = ((time2 - time1) / 1000000000);
+    secs = secs - seconds;
+    minutes = seconds / 60;
+    secs = seconds % 60 + secs;
+    hours = minutes / 60;
+    minutes = minutes % 60;
+    days = hours / 24;
+    hours = hours % 60;
+    String time;
+    String dayLabel;
+    String hourLabel;
+    String minuteLabel;
+    String secondLabel;
+    if (days == 1)
+    {
+      dayLabel = " day ";
+    }
+    else
+    {
+      dayLabel = " days ";
+    }
+    if (hours == 1)
+    {
+      hourLabel = " hour ";
+    }
+    else
+    {
+      hourLabel = " hours ";
+    }
+    if (minutes == 1)
+    {
+      minuteLabel = " minute ";
+    }
+    else
+    {
+      minuteLabel = " minutes ";
+    }
+    if (seconds == 1)
+    {
+      secondLabel = " second";
+    }
+    else
+    {
+      secondLabel = " seconds";
+    }
+    if (days != 0)
+    {
+      time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+    }
+    else if (hours != 0)
+    {
+      time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+    }
+    else if (minutes != 0)
+    {
+      time = minutes + minuteLabel + secs + secondLabel;
+    }
+    else
+    {
+      time = secs + secondLabel;
+    }
+    return time;
+  }
+
   public static Boolean			libsbmlFound		= true;
   public static Boolean			reb2sacFound		= true;
   public static Boolean			geneNetFound		= true;

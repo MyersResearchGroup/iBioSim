@@ -1141,34 +1141,41 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       simulationName = simName + GlobalConstants.separator + direct;
       directory = direct;
     }
-    exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
-      + GlobalConstants.separator + simName, stateAbstraction, 1, intSpecies, log, gui, simTab, root, progress, simulationName, modelEditor, directory,
-      initialTime, outputStartTime, timeLimit, runTime, modelFile, lpnAbstraction, reactionAbstraction, expandReactions, lpnProperty, absError, relError, timeStep, printInterval,
-      run, rndSeed, refresh, label, running);
-    if (stateAbstraction.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && exit == 0)
-    {
-      simProp = simProp.replace("\\", "/");
-      Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split("/"), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo,
-        initialTime, outputStartTime, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + GlobalConstants.separator + simName,
-        rndSeed, run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, gui, simTab, root, directory, modelFile,
-        reactionAbstraction, lpnAbstraction, absError, relError);
-      nary_Run.open();
-    }
-    running.setCursor(null);
-    running.dispose();
-    gui.getExitButton().removeActionListener(runProgram);
-    if (append.isSelected())
-    {
-      Random rnd = new Random();
-      seed.setText("" + rnd.nextInt());
-    }
-    for (int i = 0; i < gui.getTab().getTabCount(); i++)
-    {
-      if (gui.getTab().getComponentAt(i) instanceof Graph)
+    try {
+      exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
+        + GlobalConstants.separator + simName, stateAbstraction, 1, intSpecies, log, gui, simTab, root, progress, simulationName, modelEditor, directory,
+        initialTime, outputStartTime, timeLimit, runTime, modelFile, lpnAbstraction, reactionAbstraction, expandReactions, lpnProperty, absError, relError, timeStep, printInterval,
+        run, rndSeed, refresh, label, running);
+      if (stateAbstraction.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && exit == 0)
       {
-        ((Graph) gui.getTab().getComponentAt(i)).refresh();
+        simProp = simProp.replace("\\", "/");
+        Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split("/"), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo,
+          initialTime, outputStartTime, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + GlobalConstants.separator + simName,
+          rndSeed, run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, gui, simTab, root, directory, modelFile,
+          reactionAbstraction, lpnAbstraction, absError, relError);
+        nary_Run.open();
       }
+      running.setCursor(null);
+      running.dispose();
+      gui.getExitButton().removeActionListener(runProgram);
+      if (append.isSelected())
+      {
+        Random rnd = new Random();
+        seed.setText("" + rnd.nextInt());
+      }
+      for (int i = 0; i < gui.getTab().getTabCount(); i++)
+      {
+        if (gui.getTab().getComponentAt(i) instanceof Graph)
+        {
+          ((Graph) gui.getTab().getComponentAt(i)).refresh();
+        }
+      }
+    } catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE);
+      
     }
+    
+
   }
 
   public int getStartIndex(String outDir) {

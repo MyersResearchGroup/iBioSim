@@ -4803,7 +4803,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				long time1 = System.nanoTime();
 				sedmlDocument = Libsedml.readDocument(sedmlFile);
 				long time2 = System.nanoTime();
-				String time = Run.createTimeString(time1, time2);
+				String time = SBMLutilities.createTimeString(time1, time2);
 				System.out.println(time);
 			} catch (XMLException exception) {
 				JOptionPane.showMessageDialog(frame, "Unable to open project's SED-ML file.", "Error",
