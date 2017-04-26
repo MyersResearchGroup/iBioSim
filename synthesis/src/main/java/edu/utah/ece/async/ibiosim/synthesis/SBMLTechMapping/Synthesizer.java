@@ -51,8 +51,6 @@ public class Synthesizer {
 	
 	public Synthesizer(Set<SynthesisGraph> graphLibrary, Properties synthProps) {
 		this.matcher = new SynthesisMatcher(graphLibrary);
-		//TODO: unclear how exhaustive is set by check if these two constants are check to be equal. 
-		//		Are these constants modified to be equal somewhere?
 		exhaustive = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY).equals(
 				GlobalConstants.SBOL_SYNTH_EXHAUST_BB);
 		solutionCap = Integer.parseInt(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY));

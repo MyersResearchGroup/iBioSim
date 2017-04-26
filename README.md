@@ -64,4 +64,10 @@ Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curt
   * All run configurations are complete. Make sure to apply all your changes.
 
 ## Running iBioSim
-1. Run the java application that you have created from the previous step (i.e. iBioSim_GUI)
+1. Run the java application that you have created from the previous step (i.e. iBioSim_GUI) in Eclipse.
+2. Alternatively is to build an executable jar for iBioSim by running ```mvn clean install``` on the project root. Once this is completed, you can run ```java -jar gui/target/iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar```, which will fire up the user interface for iBioSim. If you run this way, make sure to define the ```BIOSIM``` and ```DDLD_LIBRARY_PATH``` variables and modify the ```PATH``` variable as shown above.
+
+## [Optional] Building reb2sac and GeneNet dependencies.
+1. So far, instructions on how to build, install, and run iBioSim from source have been presented. However, these steps only included source code that are native Java. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. In order to do so, you have to following the instructions below:
+   * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/)
+   * [GeneNet](https://github.com/MyersResearchGroup/GeneNet)
