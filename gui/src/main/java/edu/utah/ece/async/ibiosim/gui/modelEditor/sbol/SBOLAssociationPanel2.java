@@ -23,10 +23,10 @@ import javax.swing.*;
 
 import org.sbolstandard.core2.*;
 
-import com.clarkparsia.sbol.SBOLUtils;
-import com.clarkparsia.sbol.editor.Part;
-import com.clarkparsia.sbol.editor.Parts;
-import com.clarkparsia.sbol.editor.dialog.RegistryInputDialog;
+import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
+import edu.utah.ece.async.sboldesigner.sbol.editor.Part;
+import edu.utah.ece.async.sboldesigner.sbol.editor.Parts;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
@@ -409,7 +409,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 			try {
 				workingDoc = SBOLReader.read(sbolFilePaths.iterator().next());
 				selection = new RegistryInputDialog(null, RegistryInputDialog.ALL_PARTS,
-						com.clarkparsia.sbol.SBOLUtils.Types.All_types, null, workingDoc).getInput();
+						edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types.All_types, null, workingDoc).getInput();
 
 				if (selection != null) {
 					SBOLUtils.insertTopLevels(selection, workingDoc);

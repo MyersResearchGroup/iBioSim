@@ -155,7 +155,7 @@ import com.apple.eawt.Application;
 import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
-import com.clarkparsia.sbol.editor.SBOLDesignerPlugin;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
 
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
