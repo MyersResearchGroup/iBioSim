@@ -126,9 +126,15 @@ public class SBOLField2 extends JPanel implements ActionListener {
 						return;
 					}
 
-					// TODO save is kind of buggy, especially with renaming
+					// TODO save is kind of buggy, especially with renaming,
+					// race condition?
+					// TODO change "Associate SBOL" to "Add/Edit part"
 					ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), cd, true, true, workingDoc);
 
+					if (editedCD == null) {
+						// nothing was changed
+						return;
+					}
 					sbolURIs = Arrays.asList(editedCD.getIdentity());
 					SBOLWriter.write(workingDoc, filePath);
 
