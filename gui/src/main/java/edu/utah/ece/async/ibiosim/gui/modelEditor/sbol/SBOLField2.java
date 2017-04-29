@@ -43,7 +43,9 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
+import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PartEditDialog;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 
 public class SBOLField2 extends JPanel implements ActionListener {
 
@@ -142,20 +144,49 @@ public class SBOLField2 extends JPanel implements ActionListener {
 					e1.printStackTrace();
 				}
 			} else {
-				// use SBOLAssociationPanel2 to add part
-				SBOLAssociationPanel2 associationPanel;
+				/*
+				 * // use SBOLAssociationPanel2 to add part
+				 * SBOLAssociationPanel2 associationPanel;
+				 * 
+				 * if (isModelPanelField) { associationPanel = new
+				 * SBOLAssociationPanel2(sbolFilePaths, sbolURIs, sbolStrand,
+				 * SBOLUtility.soSynonyms(sbolType), modelEditor);
+				 * removedBioSimURI = associationPanel.getRemovedBioSimURI(); }
+				 * else { associationPanel = new
+				 * SBOLAssociationPanel2(sbolFilePaths, sbolURIs, sbolStrand,
+				 * SBOLUtility.soSynonyms(sbolType)); }
+				 * 
+				 * sbolURIs = associationPanel.getComponentURIs(); sbolStrand =
+				 * associationPanel.getComponentStrand();
+				 */
+				String[] options = { "Registry part", "Generic part" };
+				int choice = JOptionPane.showOptionDialog(getParent(),
+						"There is currently no associated SBOL part.  Would you like to associate one from a registry or associate a generic part?",
+						"Associate SBOL Part", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+						options[0]);
 
-				if (isModelPanelField) {
-					associationPanel = new SBOLAssociationPanel2(sbolFilePaths, sbolURIs, sbolStrand,
-							SBOLUtility.soSynonyms(sbolType), modelEditor);
-					removedBioSimURI = associationPanel.getRemovedBioSimURI();
-				} else {
-					associationPanel = new SBOLAssociationPanel2(sbolFilePaths, sbolURIs, sbolStrand,
-							SBOLUtility.soSynonyms(sbolType));
+				ComponentDefinition associatedPart = null;
+				SBOLDocument workingDoc = null;
+
+				switch (choice) {
+				case 0: // Registry Part
+					break;
+				case 1: // Generic Part
+					try {
+						workingDoc = SBOLReader.read(sbolFilePaths.iterator().next());
+					} catch (SBOLValidationException | IOException | SBOLConversionException e1) {
+						e1.printStackTrace();
+					}
+					SBOLDocument selection = new RegistryInputDialog(null, RegistryInputDialog.ALL_PARTS,
+							edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types.All_types, null, workingDoc)
+									.getInput();
+
+					break;
+				case JOptionPane.CLOSED_OPTION:
+					return;
+				default:
+					return;
 				}
-
-				sbolURIs = associationPanel.getComponentURIs();
-				sbolStrand = associationPanel.getComponentStrand();
 			}
 		}
 	}
