@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.gui.util;
+package edu.utah.ece.async.ibiosim.gui.util.preferences;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -44,6 +44,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.CompatibilityFixer;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
+import edu.utah.ece.async.ibiosim.gui.util.FileTree;
 
 /**
  * 
@@ -779,10 +780,10 @@ public class EditPreferences {
 		return biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 	}
 	
-	private JPanel assemblyPreferences(Preferences biosimrc) {	
+	private JPanel SBOLPreferences(Preferences biosimrc) {	
 		// assembly preferences
 		JPanel assemblyLabels = new JPanel(new GridLayout(13, 1));
-		assemblyLabels.add(new JLabel("URI Authority"));
+		assemblyLabels.add(new JLabel("Namespace"));
 		assemblyLabels.add(new JLabel("Assemble Complete Genetic Construct"));
 		assemblyLabels.add(new JLabel("Regex for Complete Genetic Construct"));
 		assemblyLabels.add(new JLabel("Validate Assembled Constructs"));
@@ -1405,7 +1406,7 @@ public class EditPreferences {
 		return problem;
 	}
 	
-	private boolean saveAssemblyPreferences(Preferences biosimrc) {
+	private boolean saveSBOLPreferences(Preferences biosimrc) {
 		boolean problem = false;
 		if (!uriField.getText().trim().equals("")) {
 			biosimrc.put(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, uriField.getText().trim());
@@ -1456,7 +1457,7 @@ public class EditPreferences {
 		JPanel generalPrefs = generalPreferences(biosimrc);
 		JPanel schematicPrefs = schematicPreferences(biosimrc);
 		JPanel modelPrefs = modelPreferences(biosimrc);
-		JPanel assemblyPrefs = assemblyPreferences(biosimrc);
+		JPanel assemblyPrefs = SBOLPreferences(biosimrc);
 		JPanel analysisPrefs = analysisPreferences(biosimrc);
 		JPanel learnPrefs = learnPreferences(biosimrc);
 
@@ -1484,7 +1485,7 @@ public class EditPreferences {
 				if (!problem) problem = saveModelPreferences(biosimrc);
 				if (!problem) problem = saveAnalysisPreferences(biosimrc);
 				if (!problem) problem = saveLearnPreferences(biosimrc);
-				if (!problem) problem = saveAssemblyPreferences(biosimrc);
+				if (!problem) problem = saveSBOLPreferences(biosimrc);
 				try {
 					biosimrc.sync();
 				}

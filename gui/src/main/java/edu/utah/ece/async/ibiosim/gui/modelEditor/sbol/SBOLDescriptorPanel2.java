@@ -40,7 +40,7 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
-import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
+import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 
 /**
  * 

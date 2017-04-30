@@ -13,7 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.gui.modelEditor.schematic;
 
-import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
@@ -59,8 +58,6 @@ import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.util.ArraysMath;
 import org.sbml.jsbml.ext.arrays.validator.ArraysValidator;
 import org.sbml.jsbml.validator.SBMLValidator;
-import org.sbml.jsbml.validator.SBMLValidator.CHECK_CATEGORY;
-import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.libsbmlConstants;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
