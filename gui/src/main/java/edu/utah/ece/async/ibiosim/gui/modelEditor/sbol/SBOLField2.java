@@ -43,7 +43,11 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
+import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
+import edu.utah.ece.async.sboldesigner.sbol.editor.Parts;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PartEditDialog;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 
 public class SBOLField2 extends JPanel implements ActionListener {
 
@@ -57,7 +61,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	private JTextField sbolText = new JTextField(20);
 	private List<URI> sbolURIs = new LinkedList<URI>();
 	private String sbolStrand;
-	private JButton sbolButton = new JButton("Associate SBOL");
+	private JButton sbolButton = new JButton("Add/Edit SBOL Part");
 	private ModelEditor modelEditor;
 	private boolean isModelPanelField;
 	private URI removedBioSimURI;
@@ -114,50 +118,81 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
 			HashSet<String> sbolFilePaths = modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
+			String filePath = sbolFilePaths.iterator().next();
 
-			if (sbolURIs.size() > 0) {
-				// use PartEditDialog to edit part
-				try {
-					String filePath = sbolFilePaths.iterator().next();
-					SBOLDocument workingDoc = SBOLReader.read(filePath);
-					ComponentDefinition cd = workingDoc.getComponentDefinition(sbolURIs.get(0));
-					if (cd == null) {
-						JOptionPane.showMessageDialog(getParent(), filePath + " cannot be found in this project.");
-						return;
-					}
-
-					// TODO save is kind of buggy, especially with renaming,
-					// race condition?
-					// TODO change "Associate SBOL" to "Add/Edit part"
-					ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), cd, true, true, workingDoc);
-
-					if (editedCD == null) {
-						// nothing was changed
-						return;
-					}
-					sbolURIs = Arrays.asList(editedCD.getIdentity());
-					SBOLWriter.write(workingDoc, filePath);
-
-				} catch (SBOLValidationException | IOException | SBOLConversionException e1) {
-					e1.printStackTrace();
-				}
-			} else {
-				// use SBOLAssociationPanel2 to add part
-				SBOLAssociationPanel2 associationPanel;
-
-				if (isModelPanelField) {
-					associationPanel = new SBOLAssociationPanel2(sbolFilePaths, sbolURIs, sbolStrand,
-							SBOLUtility.soSynonyms(sbolType), modelEditor);
-					removedBioSimURI = associationPanel.getRemovedBioSimURI();
+			try {
+				if (sbolURIs.size() > 0) {
+					editSBOL(filePath);
 				} else {
-					associationPanel = new SBOLAssociationPanel2(sbolFilePaths, sbolURIs, sbolStrand,
-							SBOLUtility.soSynonyms(sbolType));
+					associateSBOL(filePath);
 				}
-
-				sbolURIs = associationPanel.getComponentURIs();
-				sbolStrand = associationPanel.getComponentStrand();
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * associate a ComponentDefinition to this part
+	 */
+	private void associateSBOL(String filePath) throws Exception {
+		String[] options = { "Registry part", "Generic part" };
+		int choice = JOptionPane.showOptionDialog(getParent(),
+				"There is currently no associated SBOL part.  Would you like to associate one from a registry or associate a generic part?",
+				"Associate SBOL Part", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+				options[0]);
+
+		SBOLDocument workingDoc = SBOLReader.read(filePath);
+		workingDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+
+		switch (choice) {
+
+		case 0: // Registry Part
+			SBOLDocument selection = new RegistryInputDialog(null, RegistryInputDialog.ALL_PARTS,
+					edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types.All_types, null, workingDoc).getInput();
+
+			if (selection != null) {
+				SBOLUtils.insertTopLevels(selection, workingDoc);
+				SBOLWriter.write(workingDoc, filePath);
+				sbolURIs = Arrays.asList(selection.getRootComponentDefinitions().iterator().next().getIdentity());
+			}
+			break;
+
+		case 1: // Generic Part
+			ComponentDefinition cd = Parts.GENERIC.createComponentDefinition(workingDoc);
+
+			SBOLWriter.write(workingDoc, filePath);
+			sbolURIs = Arrays.asList(cd.getIdentity());
+			break;
+
+		case JOptionPane.CLOSED_OPTION:
+		default:
+		}
+	}
+
+	/**
+	 * use PartEditDialog to edit/view the part
+	 */
+	private void editSBOL(String filePath) throws IOException, SBOLConversionException, SBOLValidationException {
+		SBOLDocument workingDoc = SBOLReader.read(filePath);
+		workingDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+
+		ComponentDefinition cd = workingDoc.getComponentDefinition(sbolURIs.get(0));
+		if (cd == null) {
+			JOptionPane.showMessageDialog(getParent(), filePath + " cannot be found in this project.");
+			return;
+		}
+
+		// TODO change "Associate SBOL" to "Add/Edit part"
+		ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), cd, true, true, workingDoc);
+
+		if (editedCD == null) {
+			// nothing was changed
+			return;
+		}
+
+		sbolURIs = Arrays.asList(editedCD.getIdentity());
+		SBOLWriter.write(workingDoc, filePath);
 	}
 
 	private void setLabel(String sbolType) {
