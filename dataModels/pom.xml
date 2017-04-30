@@ -18,7 +18,8 @@
 				<artifactId>maven-install-plugin</artifactId>
 				<executions>
 					<execution>
-					<!-- Update SBOL JAR name here. NOTE: Make sure to update the DEPENDENCY tag down below for SBOL as well. -->
+						<!-- Update SBOL JAR name here. NOTE: Make sure to update the DEPENDENCY 
+							tag down below for SBOL as well. -->
 						<id>install-libSBOLj</id>
 						<phase>clean</phase>
 						<configuration>
@@ -130,6 +131,11 @@
 			<name>alfresco</name>
 			<url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
 		</repository>
+		<repository>
+			<id>JSBML-SNAPSHOT</id>
+			<name>The JSBML Snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -156,11 +162,11 @@
 			<artifactId>jdom-contrib</artifactId>
 			<version>1.1.3</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.sbml.jsbml</groupId>
 			<artifactId>jsbml</artifactId>
-			<version>1.2</version>
+			<version>1.3-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -168,7 +174,8 @@
 			<artifactId>trove4j</artifactId>
 			<version>3.0.1</version>
 		</dependency>
-		<!-- Update SBOL JAR here. NOTE: Make sure to update the EXECUTION tag up above for SBOL as well. -->
+		<!-- Update SBOL JAR here. NOTE: Make sure to update the EXECUTION tag 
+			up above for SBOL as well. -->
 		<dependency>
 			<groupId>org.sbolstandard</groupId>
 			<artifactId>libSBOLj</artifactId>
