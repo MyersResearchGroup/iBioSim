@@ -101,7 +101,6 @@ import com.mxgraph.util.mxRectangle;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;

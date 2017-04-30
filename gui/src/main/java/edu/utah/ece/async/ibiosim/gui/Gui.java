@@ -156,7 +156,6 @@ import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
-
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import de.unirostock.sems.cbarchive.CombineArchive;
@@ -186,10 +185,11 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
 import edu.utah.ece.async.ibiosim.gui.sbolBrowser.SBOLBrowser2;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisView;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisViewATACS;
-import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.FileTree;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
+import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
+import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog;
 import edu.utah.ece.async.ibiosim.gui.util.tabs.CloseAndMaxTabbedPane;
 import edu.utah.ece.async.ibiosim.gui.verificationView.AbstractionPanel;
 import edu.utah.ece.async.ibiosim.gui.verificationView.VerificationView;
@@ -339,6 +339,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 
 		app.setPreferencesHandler(new PreferencesHandler() {
 			public void handlePreferences(PreferencesEvent pe) {
+				PreferencesDialog.showPreferences(frame);
 				EditPreferences editPreferences = new EditPreferences(frame, async, tree);
 				editPreferences.preferences();
 				if (sbolDocument != null) {
@@ -2947,6 +2948,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 		// if the open project menu item is selected
 		else if (e.getSource() == pref) {
+			PreferencesDialog.showPreferences(frame);
 			EditPreferences editPreferences = new EditPreferences(frame, async, tree);
 			editPreferences.preferences();
 			if (sbolDocument != null) {
@@ -6279,6 +6281,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				addTab(sbolDesignerPlugin.getRootDisplayId(), sbolDesignerPlugin, "SBOL Designer");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + fileName + " is invalid.", "Invalid SBOL",
 					JOptionPane.ERROR_MESSAGE);
 		}

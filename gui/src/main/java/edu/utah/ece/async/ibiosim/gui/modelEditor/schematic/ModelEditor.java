@@ -27,7 +27,6 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -141,9 +140,9 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.util.AbstractRunnableNamedButt
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyList;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.Runnable;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.UndoManager;
-import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.SpringUtilities;
+import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.Assembler2;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.AssemblyGraph2;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.SequenceTypeValidator;
@@ -786,8 +785,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		// String submissionVersion = cd.isSetVersion() ? cd.getVersion() : "1";
 
 		JComboBox registries = new JComboBox();
+
 		registries.addItem("http://synbiohub.org");
 		registries.addItem("http://synbiohub.utah.edu");
+		registries.addItem("http://cidarlab.org:7777");
+		registries.addItem("https://synbiohub.cidarlab.org");
 		registries.addItem("http://localhost:7777");
 		registries.addItem("http://14compsci099.ncl.ac.uk:7777");
 		JTextField userField = new JTextField(12);
@@ -845,7 +847,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
-			String password = passwordField.getText().trim();
+			String password = passwordField.getPassword().toString().trim();
 			if (password.equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "Password Required", "Submission Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -2093,7 +2095,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	private static void updateValue(SBMLDocument d, String id, String factor, String paramId, String value,
 			String type) {
 		SBase sbase = SBMLutilities.getElementBySId(d, id);
-		if (d.getModel().getInitialAssignment(id) != null) {
+		if (d.getModel().getInitialAssignmentBySymbol(id)!=null) {
 			d.getModel().getListOfInitialAssignments().remove(id);
 		}
 		if (sbase != null) {
@@ -3460,7 +3462,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					if (lower != upper) {
 						bound = "[" + lower + "," + upper + "]";
 					}
-					InitialAssignment ia = flatSBML.getModel().getInitialAssignment(p.getId());
+					InitialAssignment ia = flatSBML.getModel().getInitialAssignmentBySymbol(p.getId());
 					if (ia != null) {
 						ASTNode math = ia.getMath();
 						if (math.getType() == ASTNode.Type.FUNCTION && math.getName().equals("uniform")) {
@@ -3491,7 +3493,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								if (lrate != urate) {
 									boundRate = "[" + lrate + "," + urate + "]";
 								}
-								ia = flatSBML.getModel().getInitialAssignment(rp.getId());
+								ia = flatSBML.getModel().getInitialAssignmentBySymbol(rp.getId());
 								if (ia != null) {
 									ASTNode math = ia.getMath();
 									if (math.getType() == ASTNode.Type.FUNCTION && math.getName().equals("uniform")) {
@@ -3566,7 +3568,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				for (int j = 0; j < postset.size(); j++) {
 					t.addPostset(lpn.getPlace(postset.get(j)));
 				}
-				Rule r = sbml.getModel().getRule(GlobalConstants.TRIGGER + "_" + e.getId());
+				Rule r = sbml.getModel().getRuleByVariable(GlobalConstants.TRIGGER + "_" + e.getId());
 				if (r != null) {
 					t.setPersistent(true);
 					ASTNode triggerMath = r.getMath();

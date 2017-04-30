@@ -53,9 +53,9 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
-import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
+import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 

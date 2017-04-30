@@ -36,7 +36,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.sbolBrowser.SBOLBrowser2;
-import edu.utah.ece.async.ibiosim.gui.util.EditPreferences;
+import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 
 import java.net.URI;
 import java.net.URISyntaxException;
