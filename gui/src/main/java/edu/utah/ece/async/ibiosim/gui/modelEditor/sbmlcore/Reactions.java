@@ -196,7 +196,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField reactantName;
 
-	private SBOLField2 sbolField;
+//	private SBOLField2 sbolField;
 
 	private JTextField reactantStoichiometry;
 
@@ -717,18 +717,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactionPanelNorth4.add(fast);
 		reactionPanelNorth4.add(reacFast);
 
-		// Parse out SBOL annotations and add to SBOL field
-		if (!paramsOnly) {
-			// Field for annotating reaction with SBOL DNA components
-			List<URI> sbolURIs = new LinkedList<URI>();
-			String sbolStrand = "";
-			if (option.equals("OK")) {
-				Reaction reac = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
-				sbolStrand = AnnotationUtility.parseSBOLAnnotation(reac, sbolURIs);
-			}
-			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 2, false);
-			reactionPanelNorth4.add(sbolField);
-		}
 		reactionPanelNorth.add(reactionPanelNorth1);
 		reactionPanelNorth.add(reactionPanelNorth3);
 		reactionPanelNorth.add(reactionPanelNorth4);
@@ -1121,25 +1109,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < react.getModifierCount(); i++) {
 							ModifierSpeciesReference modifier = listOfModifiers.get(i);
 							changedModifiers.add(modifier);
-						}
-					}
-					// Handle SBOL data
-					if (!error && inSchematic && !paramsOnly) {
-						if (!error) {
-							// Add SBOL annotation to reaction
-							if (sbolField.getSBOLURIs().size() > 0) {
-								if (!react.isSetMetaId() || react.getMetaId().equals(""))
-									SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), react, 
-											bioModel.getMetaIDIndex());
-								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolField.getSBOLURIs(),
-										sbolField.getSBOLStrand());
-								if(!AnnotationUtility.setSBOLAnnotation(react, sbolAnnot))
-								{
-			            JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(react) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
-			            
-			          }
-							} else 
-								AnnotationUtility.removeSBOLAnnotation(react);
 						}
 					}
 				}
