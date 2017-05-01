@@ -56,9 +56,7 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyList;
  * @version %I%
  */
 public class PromoterPanel extends JPanel implements ActionListener {
-	
-//	private JTextField sbolPromoterText = new JTextField(20);
-//	private JButton sbolPromoterButton = new JButton("Associate SBOL");
+
 
 	private static final long serialVersionUID = 5873800942710657929L;
 	private String[] options = { "Ok", "Cancel" };

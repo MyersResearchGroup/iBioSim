@@ -20,9 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.net.URI;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -41,13 +38,10 @@ import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.ext.layout.Layout;
 
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
-import edu.utah.ece.async.ibiosim.gui.modelEditor.sbol.SBOLField2;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
 import edu.utah.ece.async.ibiosim.gui.util.SpringUtilities;
@@ -89,8 +83,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	private JTextField iIndex;
 	
 	private ModelEditor modelEditor;
-	
-	private SBOLField2 sbolField;
 	
 	private JTextField ruleMath;
 	
@@ -267,14 +259,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					ruleMath.setText(bioModel.removeBooleans(rule.getMath()));
 				}
 			}
-			if (!modelEditor.isParamsOnly()) {
-				//Parse out SBOL annotations and add to SBOL field
-				List<URI> sbolURIs = new LinkedList<URI>();
-				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(rule, sbolURIs);
-				// Field for annotating rules with SBOL DNA components
-				sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
-						2, false);
-			}
 			if (rule.isSetMetaId()) {
 				id.setText(rule.getMetaId() + dimInID);
 			} else {
@@ -299,9 +283,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			iIndex.setText(freshIndex);
 		}
 		else {
-			// Field for annotating rules with SBOL DNA components
-			sbolField = new SBOLField2(new LinkedList<URI>(), GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
-					GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 2, false);
 			if (!assignRuleVar("") && !rateRuleVar("")) {
 				ruleType.removeItem("Assignment");
 				ruleType.removeItem("Rate");
@@ -332,7 +313,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		firstLine.add(new JLabel("Indices:"));
 		firstLine.add(iIndex);
 		topPanel.add(firstLine);
-		//topPanel.add(thirdLine);
 		mathPanel.add(ruleLabel);
 		mathPanel.add(ruleMath);
 		rulePanel.add(topPanel,"North");
@@ -343,7 +323,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			sboField.add(SBOTerms);
 			SpringUtilities.makeCompactGrid(sboField, 1, 2, 6, 6, 6, 6);
 			SBOLPanel.add(sboField,"North");
-			SBOLPanel.add(sbolField,"South");
 		}
 		rulePanel.add(SBOLPanel, "South");
 		Object[] options = { option, "Cancel" };
@@ -621,21 +600,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				modelEditor.setDirty(true);
-				if (!error && !modelEditor.isParamsOnly()) {
-					// Add SBOL annotation to rule
-					if (sbolField.getSBOLURIs().size() > 0) {
-						if (!r.isSetMetaId() || r.getMetaId().equals(""))
-							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), r, 
-									bioModel.getMetaIDIndex());
-						SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolField.getSBOLURIs(), 
-								sbolField.getSBOLStrand());
-						if(!AnnotationUtility.setSBOLAnnotation(r, sbolAnnot))
-						{
-	            JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(r) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
-	          }
-					} else
-						AnnotationUtility.removeSBOLAnnotation(r);
-				}
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,

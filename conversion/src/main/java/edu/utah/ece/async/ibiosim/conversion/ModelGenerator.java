@@ -11,36 +11,35 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import uk.ac.ncl.ico2s.VPRException;
 import uk.ac.ncl.ico2s.VPRTripleStoreException;
+import uk.ac.ncl.ico2s.sbol.SBOLHandler;
 import uk.ac.ncl.ico2s.sbolstack.SBOLInteractionAdder_GeneCentric;
 
 public class ModelGenerator {
 
-	public SBOLDocument generateModel(String inputFileDir, String inputFileName)
+	/**
+	 * Generate SBOL model from the given design file.
+	 * 
+	 * @param file - The file to generate the model from
+	 * @return
+	 * @throws SBOLConversionException 
+	 * @throws IOException 
+	 * @throws SBOLValidationException 
+	 * @throws VPRTripleStoreException 
+	 * @throws VPRException 
+	 */
+	public static SBOLDocument generateModel(File file) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException
 	{
-		SBOLDocument doc = null;
-		
-			try {
-				doc = SBOLReader.read(new File(inputFileDir + inputFileName));
-				String endpoint="http://synbiohub.org/sparql";  
-				SBOLInteractionAdder_GeneCentric interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint));
-				interactionAdder.addInteractions(doc);
-			} catch (SBOLValidationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SBOLConversionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (VPRException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (VPRTripleStoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			 
-		return doc;
+		SBOLDocument generatedModel = SBOLReader.read(file);
+		String endpoint="http://synbiohub.org/sparql";  
+		SBOLInteractionAdder_GeneCentric interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint));
+		interactionAdder.addInteractions(generatedModel);
+
+		return generatedModel;
+	}
+
+	public static void exportModel(String outputFile, SBOLDocument outputDoc) throws VPRException
+	{
+		SBOLHandler.write(outputDoc, new File( outputFile));
+
 	}
 }

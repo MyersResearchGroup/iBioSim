@@ -81,14 +81,6 @@ public class SBOLIdentityManager {
 		return biomodel;
 	}
 	
-////	public List<URI> getModelURIs() {
-////		return modelURIs;
-////	}
-////	
-////	public List<DnaComponent> getModelComponents() {
-////		return modelComps;
-////	}
-	
 	public URI getBioSimURI() {
 		return modelURIs.get(indexOfBioSimURI);
 	}
