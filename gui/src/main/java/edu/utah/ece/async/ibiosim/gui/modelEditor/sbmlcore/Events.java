@@ -42,12 +42,10 @@ import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.layout.Layout;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
-import edu.utah.ece.async.ibiosim.gui.modelEditor.sbol.SBOLField2;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
@@ -56,7 +54,6 @@ import edu.utah.ece.async.ibiosim.gui.util.Utility;
 /**
  * This is a class for creating SBML events.
  * 
- * @author Chris Myers
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -78,8 +75,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private BioModel bioModel;
 
 	private ModelEditor modelEditor;
-	
-	private SBOLField2 sbolField;
 	
 	private boolean isTextual;
 	
@@ -391,33 +386,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						origAssign[j] = ea.getVariable() + dimens + " := " 
 								+ SBMLutilities.myFormulaToString(ea.getMath()) + freshIndex;
 					}
-					if (!modelEditor.isParamsOnly()) {
-						//Parse out SBOL annotations and add to SBOL field
-						List<URI> sbolURIs = new LinkedList<URI>();
-						String sbolStrand = AnnotationUtility.parseSBOLAnnotation(event, sbolURIs);
-						// Field for annotating event with SBOL DNA components
-						sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
-								2, false);
-					}
 					String dimInID = SBMLutilities.getDimensionString(event);
 					eventID.setText(eventID.getText()+dimInID);
 				}
 			}
 		}
-		else {
-			// Field for annotating event with SBOL DNA components
-			sbolField = new SBOLField2(new LinkedList<URI>(), GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
-					GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 2, false);
-			String eventId = "event0";
-			if (isTransition) eventId = "t0";
-			int en = 0;
-			while (bioModel.isSIdInUse(eventId)) {
-				en++;
-				if (isTransition) eventId = "t" + en;
-				else eventId = "event" + en;
-			}
-			eventID.setText(eventId);
-		}
+		
 		edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility.sort(assign);
 		eventAssign.setListData(assign);
 		eventAssign.setSelectedIndex(0);
@@ -464,8 +438,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			evPanel.add(dynamicProcess);
 		}
 		eventPanel.add(evPanel, "North");
-		if (!modelEditor.isParamsOnly())
-			eventPanel.add(sbolField, "Center");
 		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
 		String title = "Event Editor";
@@ -1078,20 +1050,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (error) {
 						removeTheEvent(bioModel, SBMLutilities.myFormulaToString(e.getTrigger().getMath()));
 					}
-				}
-				if (!error && !modelEditor.isParamsOnly()) {
-					// Add SBOL annotation to event
-					if (sbolField.getSBOLURIs().size() > 0) {
-						if (!e.isSetMetaId() || e.getMetaId().equals(""))
-							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), e, 
-									bioModel.getMetaIDIndex());
-						SBOLAnnotation sbolAnnot = new SBOLAnnotation(e.getMetaId(), sbolField.getSBOLURIs(), 
-								sbolField.getSBOLStrand());
-						if(!AnnotationUtility.setSBOLAnnotation(e, sbolAnnot))
-						{
-						  JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(e) + " with SBOL.", JOptionPane.ERROR_MESSAGE);}
-					} else
-						AnnotationUtility.removeSBOLAnnotation(e);
 				}
 			}
 			if (error) {

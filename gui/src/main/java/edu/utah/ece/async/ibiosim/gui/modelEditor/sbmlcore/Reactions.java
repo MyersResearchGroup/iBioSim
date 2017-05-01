@@ -196,8 +196,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField reactantName;
 
-//	private SBOLField2 sbolField;
-
 	private JTextField reactantStoichiometry;
 
 	private JTextArea kineticLaw; // text area for editing kinetic law
