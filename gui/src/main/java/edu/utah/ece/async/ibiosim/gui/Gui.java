@@ -6242,12 +6242,9 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 
 	private void generateSBOLInteractionModels(){
 		String file_with_Path = tree.getFile();
-		
 		try 
 		{
 			SBOLDocument outputSBOL = ModelGenerator.generateModel(new File(file_with_Path));
-			outputSBOL.write(System.out);
-			//TODO: convert to SBOL2SBML
 			generateSBMLFromSBOL(outputSBOL, file_with_Path);
 		} catch (SBOLValidationException e) {
 			// TODO Auto-generated catch block
@@ -6336,14 +6333,8 @@ private void createPart() {
 }
 
 private void generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
-	// String projectDirectory = filePath.substring(0,
-	// filePath.lastIndexOf(File.separator));
 	try {
 		for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
-			// BioModel targetModel = new BioModel(projectDirectory);
-			// if (!targetModel.load(projectDirectory + File.separator +
-			// ModelGenerator.getDisplayID(moduleDef) + ".xml"))
-			// {
 			List<BioModel> models;
 			try {
 				models = SBOL2SBML.generateModel(root, moduleDef, inputSBOLDoc);
