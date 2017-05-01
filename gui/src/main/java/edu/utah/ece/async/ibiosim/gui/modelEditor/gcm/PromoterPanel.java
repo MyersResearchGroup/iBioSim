@@ -17,10 +17,7 @@ package edu.utah.ece.async.ibiosim.gui.modelEditor.gcm;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URI;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -35,7 +32,6 @@ import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
@@ -43,7 +39,6 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore.MySpecies;
-import edu.utah.ece.async.ibiosim.gui.modelEditor.sbol.SBOLField2;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyField;
@@ -61,7 +56,6 @@ public class PromoterPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 5873800942710657929L;
 	private String[] options = { "Ok", "Cancel" };
 	private HashMap<String, PropertyField> fields = null;
-	private SBOLField2 sbolField;
 	private String selected = "";
 	private BioModel bioModel = null;
 	private boolean paramsOnly;
@@ -362,27 +356,6 @@ public class PromoterPanel extends JPanel implements ActionListener {
 		}
 		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
 		add(field);		
-		
-		// Parse out SBOL annotations and add to SBOL field
-		if (!paramsOnly) {
-			// Field for annotating promoter with SBOL DNA components
-			List<URI> sbolURIs = new LinkedList<URI>();
-			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
-			// TODO: if sbolURIs.size > 0, add them to the promoter species, and remove from reaction
-			if (sbolURIs.size()>0) {
-				SBOLAnnotation sbolAnnot = new SBOLAnnotation(selected, sbolURIs, sbolStrand);
-				if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
-				{
-          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(promoter) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
-        }
-				AnnotationUtility.removeSBOLAnnotation(production);
-			} else {
-				sbolStrand = AnnotationUtility.parseSBOLAnnotation(promoter, sbolURIs);
-			}
-			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
-					3, false);
-			add(sbolField);
-		}
 
 		String oldName = null;
 		oldName = selected;
@@ -402,13 +375,6 @@ public class PromoterPanel extends JPanel implements ActionListener {
 		return true;
 	}
 	
-//	private boolean checkSbolValues() {
-//		for (SBOLField sf : sbolFields.values()) {
-//			if (!sf.isValidText())
-//				return false;
-//		}
-//		return true;
-//	}
 
 	private boolean openGui(String oldName) {
 		int value = JOptionPane.showOptionDialog(Gui.frame, this,
@@ -443,19 +409,6 @@ public class PromoterPanel extends JPanel implements ActionListener {
 						return false;
 					}
 				}
-				// Checks whether SBOL annotation on model needs to be deleted later when annotating promoter with SBOL
-//				if (sbolField.getSBOLURIs().size() > 0 && 
-//						bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag()) {
-//					Object[] options = { "OK", "Cancel" };
-//					int choice = JOptionPane.showOptionDialog(null, 
-//							"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
-//							" the latter was previously generated from the former.  Remove SBOL associated to model?", 
-//							"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-//					if (choice == JOptionPane.OK_OPTION)
-//						removeModelSBOLAnnotationFlag = true;
-//					else
-//						return false;
-//				}
 				id = idDims[0];
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 				SBMLutilities.createDimensions(promoter, dimensionIds, idDims);
@@ -524,28 +477,14 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			bioModel.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr,onPort,idDims);
 
 			if (!paramsOnly) {
-				// Add SBOL annotation to promoter
-				if (sbolField.getSBOLURIs().size() > 0) {
-					if (!production.isSetMetaId() || production.getMetaId().equals(""))
-						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), production, 
-								bioModel.getMetaIDIndex());
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(selected, sbolField.getSBOLURIs(),
-							sbolField.getSBOLStrand());
-					if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
-					{
-            JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(promoter) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
-          }
-				} else
-					AnnotationUtility.removeSBOLAnnotation(promoter);
-
 				// rename all the influences that use this promoter if name was changed
 				if (selected != null && oldName != null && !oldName.equals(id)) {
 					try {
-            bioModel.changePromoterId(oldName, id);
-          } catch (BioSimException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
+						bioModel.changePromoterId(oldName, id);
+					} catch (BioSimException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					this.secondToLastUsedPromoter = oldName;
 					promoterNameChange = true;
 				}
