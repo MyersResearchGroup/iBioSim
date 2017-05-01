@@ -1,0 +1,349 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:ns0="http://identifiers.org/edam/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/">
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/r4/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4"/>
+    <sbol:displayId>r4</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://www.async.ece.utah.edu/r4/ProComponent/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/ProComponent"/>
+        <sbol:displayId>ProComponent</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="http://synbiohub.org/public/bsu/BO_2685/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://www.async.ece.utah.edu/r4/RBSComponent/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/RBSComponent"/>
+        <sbol:displayId>RBSComponent</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="http://synbiohub.org/public/bsu/BO_27789/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://www.async.ece.utah.edu/r4/CDSComponent/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/CDSComponent"/>
+        <sbol:displayId>CDSComponent</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="http://synbiohub.org/public/bsu/BO_28531/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://www.async.ece.utah.edu/r4/TerComponent/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/TerComponent"/>
+        <sbol:displayId>TerComponent</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="http://synbiohub.org/public/bsu/BO_4261/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation"/>
+        <sbol:displayId>r4SequenceAnnotation</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:Range rdf:about="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation/r4SequenceAnnotationRange/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation/r4SequenceAnnotationRange"/>
+            <sbol:displayId>r4SequenceAnnotationRange</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:start>1</sbol:start>
+            <sbol:end>55</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://www.async.ece.utah.edu/r4/ProComponent/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation2/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation2"/>
+        <sbol:displayId>r4SequenceAnnotation2</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:Range rdf:about="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation2/r4SequenceAnnotation2Range/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation2/r4SequenceAnnotation2Range"/>
+            <sbol:displayId>r4SequenceAnnotation2Range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:start>75</sbol:start>
+            <sbol:end>1271</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://www.async.ece.utah.edu/r4/CDSComponent/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation3/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation3"/>
+        <sbol:displayId>r4SequenceAnnotation3</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:Range rdf:about="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation3/r4SequenceAnnotation3Range/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation3/r4SequenceAnnotation3Range"/>
+            <sbol:displayId>r4SequenceAnnotation3Range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:start>1272</sbol:start>
+            <sbol:end>1319</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://www.async.ece.utah.edu/r4/TerComponent/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation1/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation1"/>
+        <sbol:displayId>r4SequenceAnnotation1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:Range rdf:about="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation1/r4SequenceAnnotation1Range/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/r4SequenceAnnotation1/r4SequenceAnnotation1Range"/>
+            <sbol:displayId>r4SequenceAnnotation1Range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:start>56</sbol:start>
+            <sbol:end>74</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://www.async.ece.utah.edu/r4/RBSComponent/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://www.async.ece.utah.edu/r4/SequenceConstraint2/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/SequenceConstraint2"/>
+        <sbol:displayId>SequenceConstraint2</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://www.async.ece.utah.edu/r4/CDSComponent/1"/>
+        <sbol:object rdf:resource="http://www.async.ece.utah.edu/r4/TerComponent/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://www.async.ece.utah.edu/r4/SequenceConstraint/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/SequenceConstraint"/>
+        <sbol:displayId>SequenceConstraint</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://www.async.ece.utah.edu/r4/ProComponent/1"/>
+        <sbol:object rdf:resource="http://www.async.ece.utah.edu/r4/RBSComponent/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://www.async.ece.utah.edu/r4/SequenceConstraint1/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4/SequenceConstraint1"/>
+        <sbol:displayId>SequenceConstraint1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://www.async.ece.utah.edu/r4/RBSComponent/1"/>
+        <sbol:object rdf:resource="http://www.async.ece.utah.edu/r4/CDSComponent/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/r4Sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://synbiohub.org/public/bsu/BO_3531/1">
+    <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_3531"/>
+    <sbol:displayId>BO_3531</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>araR_abnA</dcterms:title>
+    <ns0:data_1179 rdf:resource="http://identifiers.org/taxonomy/1423"/>
+    <ns0:data_1179 rdf:resource="http://identifiers.org/taxonomy/224308"/>
+    <prov:generatedBy rdf:resource="http://synbiohub.org/public/bsu/SyBiOntKB2sbol/1"/>
+    <obo:OBI_0002110>10.1145/2631921</obo:OBI_0002110>
+    <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_3531/1"/>
+    <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+    <obo:OBI_0001617>23571273</obo:OBI_0001617>
+    <obo:OBI_0001617>27110921</obo:OBI_0001617>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000057"/>
+    <sbol:sequence rdf:resource="http://synbiohub.org/public/bsu/BO_3531_seq/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://synbiohub.org/public/bsu/BO_28531/1">
+    <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_28531"/>
+    <sbol:displayId>BO_28531</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>mtnE</dcterms:title>
+    <rdfs:label>ykrV</rdfs:label>
+    <rdfs:label>mtnV</rdfs:label>
+    <rdfs:label>BSU13580</rdfs:label>
+    <rdfs:label>mtnE</rdfs:label>
+    <ns0:data_1179 rdf:resource="http://identifiers.org/taxonomy/1423"/>
+    <ns0:data_1179 rdf:resource="http://identifiers.org/taxonomy/224308"/>
+    <prov:generatedBy rdf:resource="http://synbiohub.org/public/bsu/SyBiOntKB2sbol/1"/>
+    <obo:OBI_0002110>10.1145/2631921</obo:OBI_0002110>
+    <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_28531/1"/>
+    <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+    <obo:OBI_0001617>23571273</obo:OBI_0001617>
+    <obo:OBI_0001617>27110921</obo:OBI_0001617>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://synbiohub.org/public/bsu/BO_28531_seq/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://synbiohub.org/public/bsu/BO_2685/1">
+    <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_2685"/>
+    <sbol:displayId>BO_2685</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>abnA</dcterms:title>
+    <ns0:data_1179 rdf:resource="http://identifiers.org/taxonomy/1423"/>
+    <ns0:data_1179 rdf:resource="http://identifiers.org/taxonomy/224308"/>
+    <prov:generatedBy rdf:resource="http://synbiohub.org/public/bsu/SyBiOntKB2sbol/1"/>
+    <obo:OBI_0002110>10.1145/2631921</obo:OBI_0002110>
+    <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_2685/1"/>
+    <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+    <obo:OBI_0001617>23571273</obo:OBI_0001617>
+    <obo:OBI_0001617>27110921</obo:OBI_0001617>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://synbiohub.org/public/bsu/BO_2685/comp_BO_3531/1">
+        <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_2685/comp_BO_3531"/>
+        <sbol:displayId>comp_BO_3531</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_2685/1"/>
+        <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+        <obo:OBI_0001617>23571273</obo:OBI_0001617>
+        <obo:OBI_0001617>27110921</obo:OBI_0001617>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="http://synbiohub.org/public/bsu/BO_3531/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://synbiohub.org/public/bsu/BO_2685/anno_1_29_comp_BO_3531/1">
+        <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_2685/anno_1_29_comp_BO_3531"/>
+        <sbol:displayId>anno_1_29_comp_BO_3531</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_2685/1"/>
+        <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+        <obo:OBI_0001617>23571273</obo:OBI_0001617>
+        <obo:OBI_0001617>27110921</obo:OBI_0001617>
+        <sbol:location>
+          <sbol:Range rdf:about="http://synbiohub.org/public/bsu/BO_2685/anno_1_29_comp_BO_3531/loc_1_29/1">
+            <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_2685/anno_1_29_comp_BO_3531/loc_1_29"/>
+            <sbol:displayId>loc_1_29</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_2685/1"/>
+            <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+            <obo:OBI_0001617>23571273</obo:OBI_0001617>
+            <obo:OBI_0001617>27110921</obo:OBI_0001617>
+            <sbol:start>1</sbol:start>
+            <sbol:end>29</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://synbiohub.org/public/bsu/BO_2685/comp_BO_3531/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequence rdf:resource="http://synbiohub.org/public/bsu/BO_2685_seq/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://synbiohub.org/public/bsu/BO_27789/1">
+    <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_27789"/>
+    <sbol:displayId>BO_27789</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>treP_RBS</dcterms:title>
+    <ns0:data_1179 rdf:resource="http://identifiers.org/taxonomy/1423"/>
+    <ns0:data_1179 rdf:resource="http://identifiers.org/taxonomy/224308"/>
+    <prov:generatedBy rdf:resource="http://synbiohub.org/public/bsu/SyBiOntKB2sbol/1"/>
+    <obo:OBI_0002110>10.1145/2631921</obo:OBI_0002110>
+    <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_27789/1"/>
+    <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+    <obo:OBI_0001617>23571273</obo:OBI_0001617>
+    <obo:OBI_0001617>27110921</obo:OBI_0001617>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
+    <sbol:sequence rdf:resource="http://synbiohub.org/public/bsu/BO_27789_seq/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://synbiohub.org/public/bsu/BO_4261/1">
+    <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_4261"/>
+    <sbol:displayId>BO_4261</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>yhfL_terminator</dcterms:title>
+    <ns0:data_1179 rdf:resource="http://identifiers.org/taxonomy/1423"/>
+    <ns0:data_1179 rdf:resource="http://identifiers.org/taxonomy/224308"/>
+    <prov:generatedBy rdf:resource="http://synbiohub.org/public/bsu/SyBiOntKB2sbol/1"/>
+    <obo:OBI_0002110>10.1145/2631921</obo:OBI_0002110>
+    <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_4261/1"/>
+    <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+    <obo:OBI_0001617>23571273</obo:OBI_0001617>
+    <obo:OBI_0001617>27110921</obo:OBI_0001617>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+    <sbol:sequence rdf:resource="http://synbiohub.org/public/bsu/BO_4261_seq/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/r4Sequence/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/r4Sequence"/>
+    <sbol:displayId>r4Sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:elements>CTATTTTTTTGTCTGTACAAATTACAGCATAGTGACTACAATAAAGGGGATACCGCGGATACGGAGGGGTTGGCATGAAATTTGAACAGTCTCATGTATTGAAGGAATTGCCTAAACAATTCTTCGCTTCTCTGGTGCAGAAAGTGAACCGAAAGCTTGCAGAAGGACATGACGTTATCAATCTGGGACAGGGAAATCCAGATCAGCCGACTCCTGAGCATATTGTTGAGGAGATGAAACGAGCTGTCGCTGATCCTGAGAATCATAAATATTCGTCTTTTCGCGGCTCATACCGTCTGAAGTCAGCGGCTGCTGCATTTTACAAAAGAGAATACGGCATTGATCTGGATCCGGAAACCGAAGTCGCTGTATTATTCGGCGGAAAAGCCGGTCTAGTCGAGCTCCCGCAATGCTTGTTGAATCCCGGTGATACGATTTTAGTTCCCGATCCGGGTTATCCTGATTACTGGTCGGGTGTCACACTTGCAAAAGCAAAGATGGAAATGATGCCGCTCGTAAAGGACAGAGCGTTTCTCCCTGATTACAGCAGCATAACCGCTGAAATAAGGGAACAGGCGAAATTGATGTATTTGAATTATCCGAATAATCCGACTGGAGCTGTTGCTACTTCCGAGTTCTTTGAAGATACCGTGCGTTTTGCGGCTGAAAACGGAATCTGCGTCGTTCACGATTTTGCTTACGGCGCTGTAGGATTTGACGGCTGCAAGCCTTTAAGCTTTTTGCAGACTGAAGGTGCGAAGGATATCGGAATTGAAATTTACACGCTGTCAAAAACGTATAATATGGCAGGATGGCGGGTTGGCTTTGCCGTCGGAAACGCTTCGGTCATTGAAGCGATCAATCTTTATCAAGACCATATGTTTGTCAGTCTTTTCAGAGCGACTCAGGAGGCTGCAGCAGAGGCACTGTTAGCCGATCAGACGTGTGTGGCAGAGCAAAATGCCAGGTATGAGAGCAGGAGAAACGCTTGGATCACGGCATGCCGGGAAATCGGCTGGGATGTAACAGCTCCCGCAGGTTCTTTTTTTGCATGGCTGCCTGTGCCTGAAGGCTATACTTCTGAGCAGTTCTCAGATCTTTTGCTGGAAAAAGCGAATGTGGCAGTTGCGGCTGGAAACGGCTTCGGTGAATATGGCGAGGGCTACGTCAGAGTCGGACTTTTAACAAGTGAAGAAAGACTTAAGGAAGCCGCTTATCGAATTGGCAAACTGAACCTGTTTACCCAAAAAAGCATTGACAAGACCTTATAAAATAAAATGAAAAAGCGAAGCGGTTAGCTTCGCTTTTTCATTTTCAAT</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://synbiohub.org/public/bsu/BO_3531_seq/1">
+    <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_3531_seq"/>
+    <sbol:displayId>BO_3531_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:generatedBy rdf:resource="http://synbiohub.org/public/bsu/SyBiOntKB2sbol/1"/>
+    <obo:OBI_0002110>10.1145/2631921</obo:OBI_0002110>
+    <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_3531_seq/1"/>
+    <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+    <obo:OBI_0001617>23571273</obo:OBI_0001617>
+    <obo:OBI_0001617>27110921</obo:OBI_0001617>
+    <sbol:elements>CTATTTTTTTGTCTGTACAAATTACAGCA</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://synbiohub.org/public/bsu/BO_2685_seq/1">
+    <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_2685_seq"/>
+    <sbol:displayId>BO_2685_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:generatedBy rdf:resource="http://synbiohub.org/public/bsu/SyBiOntKB2sbol/1"/>
+    <obo:OBI_0002110>10.1145/2631921</obo:OBI_0002110>
+    <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_2685_seq/1"/>
+    <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+    <obo:OBI_0001617>23571273</obo:OBI_0001617>
+    <obo:OBI_0001617>27110921</obo:OBI_0001617>
+    <sbol:elements>CTATTTTTTTGTCTGTACAAATTACAGCATAGTGACTACAATAAAGGGGATACCG</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://synbiohub.org/public/bsu/BO_28531_seq/1">
+    <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_28531_seq"/>
+    <sbol:displayId>BO_28531_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:generatedBy rdf:resource="http://synbiohub.org/public/bsu/SyBiOntKB2sbol/1"/>
+    <obo:OBI_0002110>10.1145/2631921</obo:OBI_0002110>
+    <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_28531_seq/1"/>
+    <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+    <obo:OBI_0001617>23571273</obo:OBI_0001617>
+    <obo:OBI_0001617>27110921</obo:OBI_0001617>
+    <sbol:elements>ATGAAATTTGAACAGTCTCATGTATTGAAGGAATTGCCTAAACAATTCTTCGCTTCTCTGGTGCAGAAAGTGAACCGAAAGCTTGCAGAAGGACATGACGTTATCAATCTGGGACAGGGAAATCCAGATCAGCCGACTCCTGAGCATATTGTTGAGGAGATGAAACGAGCTGTCGCTGATCCTGAGAATCATAAATATTCGTCTTTTCGCGGCTCATACCGTCTGAAGTCAGCGGCTGCTGCATTTTACAAAAGAGAATACGGCATTGATCTGGATCCGGAAACCGAAGTCGCTGTATTATTCGGCGGAAAAGCCGGTCTAGTCGAGCTCCCGCAATGCTTGTTGAATCCCGGTGATACGATTTTAGTTCCCGATCCGGGTTATCCTGATTACTGGTCGGGTGTCACACTTGCAAAAGCAAAGATGGAAATGATGCCGCTCGTAAAGGACAGAGCGTTTCTCCCTGATTACAGCAGCATAACCGCTGAAATAAGGGAACAGGCGAAATTGATGTATTTGAATTATCCGAATAATCCGACTGGAGCTGTTGCTACTTCCGAGTTCTTTGAAGATACCGTGCGTTTTGCGGCTGAAAACGGAATCTGCGTCGTTCACGATTTTGCTTACGGCGCTGTAGGATTTGACGGCTGCAAGCCTTTAAGCTTTTTGCAGACTGAAGGTGCGAAGGATATCGGAATTGAAATTTACACGCTGTCAAAAACGTATAATATGGCAGGATGGCGGGTTGGCTTTGCCGTCGGAAACGCTTCGGTCATTGAAGCGATCAATCTTTATCAAGACCATATGTTTGTCAGTCTTTTCAGAGCGACTCAGGAGGCTGCAGCAGAGGCACTGTTAGCCGATCAGACGTGTGTGGCAGAGCAAAATGCCAGGTATGAGAGCAGGAGAAACGCTTGGATCACGGCATGCCGGGAAATCGGCTGGGATGTAACAGCTCCCGCAGGTTCTTTTTTTGCATGGCTGCCTGTGCCTGAAGGCTATACTTCTGAGCAGTTCTCAGATCTTTTGCTGGAAAAAGCGAATGTGGCAGTTGCGGCTGGAAACGGCTTCGGTGAATATGGCGAGGGCTACGTCAGAGTCGGACTTTTAACAAGTGAAGAAAGACTTAAGGAAGCCGCTTATCGAATTGGCAAACTGAACCTGTTTACCCAAAAAAGCATTGACAAGACCTTATAA</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://synbiohub.org/public/bsu/BO_4261_seq/1">
+    <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_4261_seq"/>
+    <sbol:displayId>BO_4261_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:generatedBy rdf:resource="http://synbiohub.org/public/bsu/SyBiOntKB2sbol/1"/>
+    <obo:OBI_0002110>10.1145/2631921</obo:OBI_0002110>
+    <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_4261_seq/1"/>
+    <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+    <obo:OBI_0001617>23571273</obo:OBI_0001617>
+    <obo:OBI_0001617>27110921</obo:OBI_0001617>
+    <sbol:elements>AATAAAATGAAAAAGCGAAGCGGTTAGCTTCGCTTTTTCATTTTCAAT</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://synbiohub.org/public/bsu/BO_27789_seq/1">
+    <sbol:persistentIdentity rdf:resource="http://synbiohub.org/public/bsu/BO_27789_seq"/>
+    <sbol:displayId>BO_27789_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:generatedBy rdf:resource="http://synbiohub.org/public/bsu/SyBiOntKB2sbol/1"/>
+    <obo:OBI_0002110>10.1145/2631921</obo:OBI_0002110>
+    <sbh:topLevel rdf:resource="http://synbiohub.org/public/bsu/BO_27789_seq/1"/>
+    <sbh:ownedBy rdf:resource="http://synbiohub.org/user/goksel"/>
+    <obo:OBI_0001617>23571273</obo:OBI_0001617>
+    <obo:OBI_0001617>27110921</obo:OBI_0001617>
+    <sbol:elements>CGGATACGGAGGGGTTGGC</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+</rdf:RDF>
