@@ -254,9 +254,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.clarkparsia</groupId>
+			<groupId>edu.utah.ece.async.sboldesigner</groupId>
 			<artifactId>SBOLDesigner</artifactId>
-			<version>1.0.0</version>
+			<version>2.2-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
