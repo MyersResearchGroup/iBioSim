@@ -9,10 +9,10 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import uk.ac.ncl.ico2s.VPRException;
-import uk.ac.ncl.ico2s.VPRTripleStoreException;
-import uk.ac.ncl.ico2s.sbol.SBOLHandler;
-import uk.ac.ncl.ico2s.sbolstack.SBOLInteractionAdder_GeneCentric;
+//import uk.ac.ncl.ico2s.VPRException;
+//import uk.ac.ncl.ico2s.VPRTripleStoreException;
+//import uk.ac.ncl.ico2s.sbol.SBOLHandler;
+//import uk.ac.ncl.ico2s.sbolstack.SBOLInteractionAdder_GeneCentric;
 
 public class ModelGenerator {
 
@@ -27,6 +27,8 @@ public class ModelGenerator {
 	 * @throws VPRTripleStoreException 
 	 * @throws VPRException 
 	 */
+	// TODO: temporarily removed until VPR library sorted
+/*
 	public static SBOLDocument generateModel(File file) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException
 	{
 		SBOLDocument generatedModel = SBOLReader.read(file);
@@ -42,4 +44,5 @@ public class ModelGenerator {
 		SBOLHandler.write(outputDoc, new File( outputFile));
 
 	}
+	*/
 }
