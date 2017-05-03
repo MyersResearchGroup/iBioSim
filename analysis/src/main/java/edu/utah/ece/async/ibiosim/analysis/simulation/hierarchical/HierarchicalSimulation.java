@@ -21,11 +21,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import org.jlibsedml.SEDMLDocument;
+import org.jlibsedml.SedML;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
@@ -71,7 +74,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   protected final VariableNode            printTime;
   private boolean             cancelFlag;
   private int               currentRun;
-  private String[]            interestingSpecies;
+  private Set<String>           interestingSpecies;
   private double              maxTimeStep;
   private double              minTimeStep;
   private String              outputDirectory;
@@ -108,23 +111,26 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
   private HierarchicalWriter writer;
   
-  public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies,
-    String quantityType, String abstraction, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, BioSimException
+
+  public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, double printInterval, double stoichAmpValue,  String[] interestingSpecies,
+    String quantityType, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, BioSimException
     {
     this.SBMLFileName = SBMLFileName;
     this.timeLimit = timeLimit;
     this.maxTimeStep = maxTimeStep;
     this.minTimeStep = minTimeStep;
-    this.progress = progress;
     this.printInterval = printInterval;
     this.printTime = new VariableNode("_printTime", StateType.SCALAR);
     this.rootDirectory = rootDirectory;
     this.outputDirectory = outputDirectory;
-    this.running = running;
     this.printConcentrationSpecies = new HashSet<String>();
-    this.interestingSpecies = interestingSpecies;
+    this.interestingSpecies = new HashSet<String>();
+    for(String species : interestingSpecies)
+    {
+      this.interestingSpecies.add(species);
+    }
+    
     this.document = SBMLReader.read(new File(SBMLFileName));
-    this.abstraction = abstraction;
     this.totalRuns = runs;
     this.type = type;
     this.topmodel = new HierarchicalModel("topmodel");
@@ -272,7 +278,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   /**
    * @return the interestingSpecies
    */
-  public String[] getInterestingSpecies()
+  public Set<String> getInterestingSpecies()
   {
     return interestingSpecies;
   }
@@ -444,7 +450,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
    * @param interestingSpecies
    *            the interestingSpecies to set
    */
-  public void setInterestingSpecies(String[] interestingSpecies)
+  public void setInterestingSpecies(Set<String> interestingSpecies)
   {
     this.interestingSpecies = interestingSpecies;
   }
@@ -690,19 +696,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     }
   }
   
-  protected void print()
-  {
-    try
-    {
-      writer.print();
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-  }
-
-
   public double getInitialTime()
   {
     return initialTime;
@@ -747,6 +740,14 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     return Double.NaN;
   }
 
+  protected void closeWriter()
+  {
+    try {
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
   protected void printToFile()
   {
     while (currentTime.getValue() >= printTime.getValue() && printTime.getValue() <= getTimeLimit())

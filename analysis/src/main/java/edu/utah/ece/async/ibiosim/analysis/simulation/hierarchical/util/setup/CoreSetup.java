@@ -87,6 +87,7 @@ public class CoreSetup
     VariableNode node;
     for (Compartment compartment : model.getListOfCompartments())
     {
+      String printVariable = container.getPrefix() + compartment.getId();
       String compartmentID = compartment.getId();
       node = modelstate.getNode(compartmentID);
       if(node == null)
@@ -109,8 +110,18 @@ public class CoreSetup
         node.createState(type, wrapper);
         modelstate.addVariable(node);
         node.getState().addState(modelstate.getIndex(), 0);
-        sim.addPrintVariable(container.getPrefix() + compartmentID, node.getState().getState(modelstate.getIndex()));
+        if(sim.getInterestingSpecies() == null)
+        {
+            sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+        }
       }
+      
+      
+      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+      {
+        sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+      }
+      
 
       if (Double.isNaN(compartment.getSize()))
       {
@@ -311,8 +322,9 @@ public class CoreSetup
 
     for (Parameter parameter : model.getListOfParameters())
     {
-
       node = modelstate.getNode(parameter.getId());
+      String printVariable = container.getPrefix() + parameter.getId();
+      
       if(node == null)
       {
         node = new VariableNode(parameter.getId());
@@ -337,7 +349,15 @@ public class CoreSetup
         node.createState(type, wrapper);
         modelstate.addVariable(node);
         node.getState().addState(modelstate.getIndex(), 0);
-        sim.addPrintVariable(container.getPrefix() + parameter.getId(), node.getState().getState(modelstate.getIndex()));
+        if(sim.getInterestingSpecies() == null)
+        {
+            sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+        }
+      }
+
+      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+      {
+        sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
       }
       
       node.setValue(modelstate.getIndex(), parameter.getValue());
@@ -489,6 +509,12 @@ public class CoreSetup
           VariableNode node = new VariableNode(id, StateType.SCALAR);
           node.setValue(localParameter.getValue());
           reactionNode.addLocalParameter(id, node);
+          
+          String printVariable = container.getPrefix() + localParameter.getId();
+          if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+          {
+            sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+          }
         }
         if (kineticLaw.isSetMath())
         {
@@ -581,10 +607,11 @@ public class CoreSetup
   {
     Model model = container.getModel();
     HierarchicalModel modelstate = container.getHierarchicalModel();
-    int index = modelstate.getIndex();
     SpeciesNode node;
     for (Species species : model.getListOfSpecies())
     {
+
+      String printVariable = container.getPrefix() + species.getId();
       node = (SpeciesNode) modelstate.getNode(species.getId());
       if(node == null)
       {
@@ -600,8 +627,18 @@ public class CoreSetup
           node.createState(type, wrapper);
           modelstate.addVariable(node);
           node.getState().addState(modelstate.getIndex(), 0);
-          sim.addPrintVariable(container.getPrefix() + species.getId(), node.getState().getState(modelstate.getIndex()));
+          if(sim.getInterestingSpecies() == null)
+          {
+              sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+          }
         }
+        
+        
+        if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+        {
+          sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+        }
+        
       }
       ReplacementSetup.setupReplacement(species, node, container);
       if (modelstate.isDeletedBySId(species.getId()))

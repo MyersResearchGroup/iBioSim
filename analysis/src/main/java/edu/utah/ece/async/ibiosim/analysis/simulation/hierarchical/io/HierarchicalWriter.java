@@ -49,6 +49,8 @@ public abstract class HierarchicalWriter {
   public abstract void print() throws IOException;
   
   public abstract void addVariable(String id, HierarchicalState state);
+  
+  public abstract void close() throws IOException;
 }
 
 

@@ -60,8 +60,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
   public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory,
     double timeLimit) throws IOException, XMLStreamException, BioSimException {
     this(SBMLFileName, rootDirectory, rootDirectory, 0, timeLimit,
-      Double.POSITIVE_INFINITY, 0, null, Double.POSITIVE_INFINITY, 0, null,
-      null, 1, 1e-6, 1e-9, "amount", "none", 0, 0, false);
+      Double.POSITIVE_INFINITY, 0, Double.POSITIVE_INFINITY, 0,
+      null, 1, 1e-6, 1e-9, "amount", 0, 0, false);
     isInitialized = false;
     isSingleStep = true;
     this.printTime.setValue(Double.POSITIVE_INFINITY);
@@ -70,15 +70,15 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
   public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory,
     String outputDirectory, int runs, double timeLimit, double maxTimeStep,
-    long randomSeed, JProgressBar progress, double printInterval,
-    double stoichAmpValue, JFrame running, String[] interestingSpecies,
+    long randomSeed, double printInterval,
+    double stoichAmpValue, String[] interestingSpecies,
     int numSteps, double relError, double absError, String quantityType,
-    String abstraction, double initialTime, double outputStartTime)
-    throws IOException, XMLStreamException, BioSimException {
+     double initialTime, double outputStartTime)
+        throws IOException, XMLStreamException, BioSimException {
     this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit,
-      maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running,
+      maxTimeStep, randomSeed, printInterval, stoichAmpValue,
       interestingSpecies, numSteps, relError, absError, quantityType,
-      abstraction, initialTime, outputStartTime, true);
+       initialTime, outputStartTime, true);
     this.isInitialized = false;
     this.isSingleStep = false;
   }
@@ -86,14 +86,14 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
   public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory,
     String outputDirectory, int runs, double timeLimit, double maxTimeStep,
-    long randomSeed, JProgressBar progress, double printInterval,
-    double stoichAmpValue, JFrame running, String[] interestingSpecies,
+    long randomSeed, double printInterval,
+    double stoichAmpValue, String[] interestingSpecies,
     int numSteps, double relError, double absError, String quantityType,
-    String abstraction, double initialTime, double outputStartTime,
+    double initialTime, double outputStartTime,
     boolean print) throws IOException, XMLStreamException, BioSimException {
     super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs,
-      timeLimit, maxTimeStep, 0.0, progress, printInterval, stoichAmpValue,
-      running, interestingSpecies, quantityType, abstraction, initialTime,
+      timeLimit, maxTimeStep, 0.0, printInterval, stoichAmpValue,
+      interestingSpecies, quantityType, initialTime,
       outputStartTime, SimType.HODE);
     this.relativeError = relError;
     this.absoluteError = absError;
@@ -126,12 +126,12 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     if (sim.hasEvents()) {
       HierarchicalEventHandler handler = new HierarchicalEventHandler();
       HierarchicalTriggeredEventHandler triggeredHandler =
-        new HierarchicalTriggeredEventHandler();
+          new HierarchicalTriggeredEventHandler();
       odecalc.addEventHandler(handler, getPrintInterval(), 1e-20, 10000);
       odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20,
         10000);
       triggeredEventList =
-        new PriorityQueue<EventState>(1, new HierarchicalEventComparator());
+          new PriorityQueue<EventState>(1, new HierarchicalEventComparator());
       computeEvents();
     }
   }
@@ -150,7 +150,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
   @Override
   public void initialize(long randomSeed, int runNumber)
-    throws IOException, XMLStreamException {
+      throws IOException, XMLStreamException {
     if (!isInitialized) {
       setCurrentTime(getInitialTime());
       ModelSetup.setupModels(this, ModelType.HODE, vectorWrapper);
@@ -159,12 +159,12 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       if (hasEvents()) {
         HierarchicalEventHandler handler = new HierarchicalEventHandler();
         HierarchicalTriggeredEventHandler triggeredHandler =
-          new HierarchicalTriggeredEventHandler();
+            new HierarchicalTriggeredEventHandler();
         odecalc.addEventHandler(handler, getPrintInterval(), 1e-20, 10000);
         odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20,
           10000);
         triggeredEventList =
-          new PriorityQueue<EventState>(1, new HierarchicalEventComparator());
+            new PriorityQueue<EventState>(1, new HierarchicalEventComparator());
         computeEvents();
       }
       if (!isSingleStep) {
@@ -215,7 +215,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       }
     }
     if (!isSingleStep) {
-      print();
+      printToFile();
+      closeWriter();
     }
   }
 
@@ -315,7 +316,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
   }
 
   public class DifferentialEquations
-    implements FirstOrderDifferentialEquations {
+  implements FirstOrderDifferentialEquations {
 
     @Override
     public int getDimension() {
@@ -332,7 +333,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
     @Override
     public void computeDerivatives(double t, double[] y, double[] yDot)
-      throws MaxCountExceededException, DimensionMismatchException {
+        throws MaxCountExceededException, DimensionMismatchException {
       setCurrentTime(t);
       vectorWrapper.setValues(y);
       computeAssignmentRules();

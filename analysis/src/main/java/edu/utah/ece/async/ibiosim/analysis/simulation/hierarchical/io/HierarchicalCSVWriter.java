@@ -61,4 +61,11 @@ public class HierarchicalCSVWriter extends HierarchicalWriter{
       bufferedWriter.flush();
     }
   }
+  
+  @Override
+  public void close() throws IOException 
+  {
+    bufferedWriter.write(")");
+    bufferedWriter.close();
+  }
 }
