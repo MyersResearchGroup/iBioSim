@@ -51,7 +51,10 @@ public class FunctionNode extends HierarchicalNode
         this.addChild(node);
       }
     }
-   
+   if(math.state != null)
+   {
+     this.state = math.state;
+   }
 
   }
 

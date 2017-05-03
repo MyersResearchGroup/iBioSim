@@ -56,10 +56,17 @@ public class HierarchicalTSDWriter extends HierarchicalWriter{
 	  {
   		writer = new FileWriter(filename);
   		bufferedWriter = new BufferedWriter(writer);
+  		bufferedWriter.write('(');
   		bufferedWriter.write(header.toString());
   		bufferedWriter.flush();
 	  }
 	}
+  @Override
+  public void close() throws IOException 
+  {
+    bufferedWriter.write(")");
+    bufferedWriter.close();
+  }
 
 
 

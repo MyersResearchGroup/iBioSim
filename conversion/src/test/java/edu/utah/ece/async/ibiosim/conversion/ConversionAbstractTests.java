@@ -32,7 +32,8 @@ public abstract class ConversionAbstractTests {
 	protected String fasta_outputDir = resourceDir + "FASTA_Output" + File.separator;
 	protected String sbmlDir = resourceDir + "SBML" + File.separator;
 	protected String sbolDir = resourceDir + "SBOL" + File.separator;
-	
+	protected String repressionDir = sbolDir + File.separator + "genModels" + File.separator;
+
 	
 	
 }

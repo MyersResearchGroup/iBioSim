@@ -46,10 +46,10 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	private VectorWrapper wrapper;
 	// private HierarchicalSimulation ssaSim;
 
-	public HierarchicalMixedSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, String quantityType, String abstraction, double initialTime, double outputStartTime) throws IOException, XMLStreamException, BioSimException
+	public HierarchicalMixedSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, double stoichAmpValue,
+			String[] interestingSpecies, String quantityType, double initialTime, double outputStartTime) throws IOException, XMLStreamException, BioSimException
 	{
-		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, initialTime, outputStartTime, SimType.MIXED);
+		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime, SimType.MIXED);
 
 	}
 

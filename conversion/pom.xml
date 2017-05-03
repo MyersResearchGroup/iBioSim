@@ -12,6 +12,30 @@
 	<packaging>jar</packaging>
 	<build>
 		<plugins>
+					<!-- Install dependencies to local repository -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<executions>
+					<execution>
+					<!-- Update SBOL JAR name here. NOTE: Make sure to update the DEPENDENCY tag down below for SBOL as well. -->
+						<id>install-libSBOLj</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${basedir}/../lib/vpr.data-2.0.0-withDependencies.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>uk.ac.ncl.ico2s</groupId>
+			<artifactId>vpr-data</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+					</executions>
+			</plugin>
 			<!-- Build an executable JAR -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -66,7 +90,6 @@
 			<groupId>edu.utah.ece.async</groupId>
 			<artifactId>iBioSim-dataModels</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

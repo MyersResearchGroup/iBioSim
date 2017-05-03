@@ -46,31 +46,23 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
   private long			randomSeed;
 
-  public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-    String[] interestingSpecies, String quantityType, String abstraction, double initialTime, double outputStartTime) throws IOException, XMLStreamException, BioSimException
+  public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, double stoichAmpValue, 
+    String[] interestingSpecies, String quantityType,  double initialTime, double outputStartTime) throws IOException, XMLStreamException, BioSimException
   {
 
-    super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, initialTime, outputStartTime, SimType.HSSA);
-    this.print = true;
-    this.randomSeed = randomSeed;
+    this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime, false);
   }
 
-  public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-    String[] interestingSpecies, String quantityType, String abstraction, double initialTime, double outputStartTime, boolean print) throws IOException, XMLStreamException, BioSimException
+  public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, double stoichAmpValue, 
+    String[] interestingSpecies, String quantityType, double initialTime, double outputStartTime, boolean print) throws IOException, XMLStreamException, BioSimException
   {
 
-    super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, initialTime, outputStartTime, SimType.HSSA);
+    super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime, SimType.HSSA);
     this.print = print;
     this.randomSeed = randomSeed;
 
   }
 
-  public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, long randomSeed, double printInterval, double initialTime, double outputStartTime, boolean print) throws IOException, XMLStreamException, BioSimException
-  {
-
-    this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, Double.POSITIVE_INFINITY, 0, randomSeed, null, printInterval, 1, null, null, null, null, 0, 0, print);
-
-  }
 
   @Override
   public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException
@@ -215,8 +207,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       {
         printToFile();
       }
-
-      print();
+      
+      closeWriter();
     }
   }
 

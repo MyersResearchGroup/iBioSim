@@ -67,7 +67,7 @@ public class DynamicSimulation extends Observable
 	}
 
 	public void simulate(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, int runs, JLabel progressLabel, JFrame running, double stoichAmpValue,
-			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType, Boolean genStats, JTabbedPane simTab, String abstraction,  double initialTime, double outputStartTime)
+			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType, boolean genStats, JTabbedPane simTab, String abstraction,  double initialTime, double outputStartTime)
 	{
 		String progressText = "";
 
@@ -96,22 +96,17 @@ public class DynamicSimulation extends Observable
 
 				break;
 			case HIERARCHICAL_DIRECT:
-				simulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, initialTime, outputStartTime);
+				simulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue,  interestingSpecies, quantityType, initialTime, outputStartTime);
 
 				break;
 			case HIERARCHICAL_RK:
-				simulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, numSteps, relError, absError, quantityType, abstraction, initialTime,
+				simulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, numSteps, relError, absError, quantityType, initialTime,
 						outputStartTime);
 				break;
 			case HIERARCHICAL_HYBRID:
-				// simulator = new HierarchicalHybridSimulator(SBMLFileName,
-				// rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep,
-				// minTimeStep, randomSeed, progress, printInterval,
-				// stoichAmpValue, running, interestingSpecies, quantityType,
-				// abstraction);
 				break;
 			case HIERARCHICAL_MIXED:
-				simulator = new HierarchicalMixedSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType, abstraction, initialTime, outputStartTime);
+				simulator = new HierarchicalMixedSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime);
 				break;
 			default:
 		    message.setLog("The simulation selection was invalid.");

@@ -101,7 +101,6 @@ import com.mxgraph.util.mxRectangle;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
@@ -627,7 +626,7 @@ public class Schematic extends JPanel implements ActionListener {
 		if (!iconFilename.equals("")) {
 			icon = ResourceManager.getResource("icons/modelview/" + iconFilename);
 			String selectedPath = iconFilename.replaceAll(".png", "_selected.png");
-			selectedIcon = getClass().getResource("icons/modelview/" + selectedPath);
+			selectedIcon = ResourceManager.getResource("icons/modelview/" + selectedPath);
 		}
 		return Utils.makeRadioToolButton(icon,selectedIcon,actionCommand,tooltip,listener,buttonGroup);
 	}
@@ -638,7 +637,7 @@ public class Schematic extends JPanel implements ActionListener {
 		if (!iconFilename.equals("")) {
 			icon = ResourceManager.getResource("icons/modelview/" + iconFilename);
 			String selectedPath = iconFilename.replaceAll(".png", "_selected.png");
-			selectedIcon = getClass().getResource("icons/modelview/" + selectedPath);
+			selectedIcon = ResourceManager.getResource("icons/modelview/" + selectedPath);
 		}
 		return Utils.makeToolButton(icon, selectedIcon, actionCommand, tooltip, listener);
 	}

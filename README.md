@@ -64,4 +64,21 @@ Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curt
   * All run configurations are complete. Make sure to apply all your changes.
 
 ## Running iBioSim
-1. Run the java application that you have created from the previous step (i.e. iBioSim_GUI)
+1. Run the java application that you have created from the previous step (i.e. iBioSim_GUI) in Eclipse.
+2. Alternatively if you want to run from the command line:
+   1. Build an executable jar for iBioSim by running ```mvn clean install``` on the project root. 
+   2. Copy ```gui/target/iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar``` to the bin directory of your iBioSim project.
+   3. Rename ```iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar``` to ```iBioSim.jar```.
+   4. In the bin directory, run:
+      * Windows: ```iBioSim.bat``` 
+      * Mac OS X: ```iBioSim.mac64```
+      * Linux: ```iBioSim.linux64```
+
+## [Optional] Building reb2sac and GeneNet dependencies.
+1. So far, instructions on how to build, install, and run iBioSim from source have been presented. However, these steps only included source code that are native Java. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. The first step to do so is to install libSBML:
+   * [libSBML](http://sbml.org/Software/libSBML/)
+2. Once you have libSBML, you can install different features by following the instructions below:
+   * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/)
+   * [GeneNet](https://github.com/MyersResearchGroup/GeneNet)
+3. After compiling reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim project.
+   

@@ -73,9 +73,6 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
  */
 public class SBOL2SBML {
 
-	public SBOL2SBML() {
-	}
-
 	/**
 	 * Returns the specified SBOL object's displayId. This means the prefix of the SBOL element's displayId will be cut off.
 	 * @param sbolElement - The SBOL element to retrieve its displayId
