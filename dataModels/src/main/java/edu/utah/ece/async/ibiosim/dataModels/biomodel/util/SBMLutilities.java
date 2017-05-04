@@ -106,6 +106,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -5455,7 +5456,7 @@ public class SBMLutilities
 		if (document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel)!=null &&
 				document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel).endsWith("1")) 
 		{
-			if (!SBMLutilities.libsbmlFound)
+			if (!Executables.libsbmlFound)
 			{
 			  SBMLutilities.message.setErrorDialog("Error Opening File", "Unable convert FBC model from Version 1 to Version 2.");
 				return null;
@@ -5498,7 +5499,7 @@ public class SBMLutilities
 
 		if (document.getLevel() < GlobalConstants.SBML_LEVEL || document.getVersion() < GlobalConstants.SBML_VERSION)
 		{
-			if (!SBMLutilities.libsbmlFound)
+			if (!Executables.libsbmlFound)
 			{
 				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
 				SBMLWriter Xwriter = new SBMLWriter();
@@ -6123,8 +6124,4 @@ public class SBMLutilities
     }
     return time;
   }
-
-  public static Boolean			libsbmlFound		= true;
-  public static Boolean			reb2sacFound		= true;
-  public static Boolean			geneNetFound		= true;
 }

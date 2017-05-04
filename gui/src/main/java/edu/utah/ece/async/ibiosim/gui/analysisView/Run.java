@@ -58,6 +58,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation.Simulati
 import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.Simulator;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
@@ -190,9 +191,9 @@ public class Run implements ActionListener, Observer
 
       if (nary.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && naryRun == 1)
       {
-        writeLog("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=nary-level " + filename);
+        writeLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=nary-level " + filename);
         time1 = System.nanoTime();
-        reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=nary-level " + theFile, Gui.envp, work);
+        reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=nary-level " + theFile, Executables.envp, work);
       }
       else if (fba.isSelected())
       {
@@ -211,13 +212,13 @@ public class Run implements ActionListener, Observer
       }
       else if (xhtml.isSelected())
       {
-        writeLog("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + filename);
+        writeLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + filename);
         time1 = System.nanoTime();
         exitValue = executeXhtml( filename,  exec,  directory,  theFile,  out,  work);
       }
       else if (sim.equals("atacs"))
       {
-        writeLog("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=hse2 " + filename);
+        writeLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=hse2 " + filename);
         time1 = System.nanoTime();
         exitValue = executeAtacs( exec,  theFile,  filename,  outDir,  printer_id,  gui,  refresh,  work);
       }
@@ -902,7 +903,7 @@ public class Run implements ActionListener, Observer
   private int executeAtacs(Runtime exec, String theFile, String filename, String outDir, String printer_id, Gui gui, boolean refresh, File work) throws IOException, InterruptedException
   {
     int exitValue = 0;
-    reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=hse2 " + theFile, Gui.envp, work);
+    reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=hse2 " + theFile, Executables.envp, work);
     writeLog("Executing:\natacs -T0.000001 -oqoflhsgllvA " + filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "out.hse");
     exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
     if (refresh)
@@ -1124,7 +1125,7 @@ public class Run implements ActionListener, Observer
   {
     int exitValue = 0;
     Simulator.expandArrays(filename, 1);
-    reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, Gui.envp, work);
+    reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, Executables.envp, work);
 
     Preferences biosimrc = Preferences.userRoot();
     String xhtmlCmd = biosimrc.get("biosim.general.browser", "");
@@ -1512,8 +1513,8 @@ public class Run implements ActionListener, Observer
     }
     else
     {
-      writeLog("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + filename);
-      reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile, Gui.envp, work);
+      writeLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + filename);
+      reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile, Executables.envp, work);
     }
     
     if (System.getProperty("os.name").contentEquals("Linux"))
@@ -1880,8 +1881,8 @@ public class Run implements ActionListener, Observer
       {
         if (analysisView.reb2sacAbstraction() && (abstraction || nary))
         {
-          writeLog("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename);
-          reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + theFile, Gui.envp, work);
+          writeLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename);
+          reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + theFile, Executables.envp, work);
         }
         else
         {
@@ -1961,9 +1962,9 @@ public class Run implements ActionListener, Observer
     }
     else if (biosimrc.get("biosim.sim.command", "").equals(""))
     {
-      command = Gui.reb2sacExecutable + " --target.encoding=" + sim + " " + theFile;
+      command = Executables.reb2sacExecutable + " --target.encoding=" + sim + " " + theFile;
       Simulator.expandArrays(filename, stoichAmpValue);
-      env = Gui.envp;
+      env = Executables.envp;
       runJava = false;
     }
     else

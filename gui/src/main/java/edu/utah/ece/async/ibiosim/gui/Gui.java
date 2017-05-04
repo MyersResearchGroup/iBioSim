@@ -171,6 +171,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GCM2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -250,12 +251,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	private JPanel mainPanel;
 	private JSplitPane topSplit;
 	private JSplitPane mainSplit;
-
-	public static String reb2sacExecutable;
-
-	public static String[] envp;
-
-	public static String geneNetExecutable;
 
 	public Log log; // the
 	// log
@@ -370,7 +365,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		this.lema = lema;
 		this.atacs = atacs;
 		this.lpn = lpn;
-		SBMLutilities.libsbmlFound = libsbmlFound;
+		Executables.libsbmlFound = libsbmlFound;
 		async = lema || atacs;
 		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
 		/*
@@ -2273,11 +2268,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
 						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
 						false, false);
-				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
+				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
 						+ ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec(reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
-						envp, work);
+				Process graph = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
+						Executables.envp, work);
 				String error = "";
 				String output = "";
 				InputStream reb = graph.getErrorStream();
@@ -2450,10 +2445,10 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
 						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
 						false, false);
-				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
+				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
 						+ ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec(reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
+				Process graph = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
 						null, work);
 				String error = "";
 				String output = "";
@@ -2546,11 +2541,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 						new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(GlobalConstants.separator), "none", frame, directory + theFile, 0.1,
 						0.1, 0.1, 15, 2.0, empty, empty, empty, null, false, false, false);
-				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out
+				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out
 						+ ".xhtml " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process browse = exec.exec(
-						reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, envp, work);
+						Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, Executables.envp, work);
 				String error = "";
 				String output = "";
 				InputStream reb = browse.getErrorStream();
@@ -8946,129 +8941,10 @@ public static void main(String args[]) {
 			}
 		}
 	}
-	try {
-		System.loadLibrary("sbmlj");
-		// For extra safety, check that the jar file is in the classpath.
-		Class.forName("org.sbml.libsbml.libsbml");
-	} catch (UnsatisfiedLinkError e) {
-		libsbmlFound = false;
-	} catch (ClassNotFoundException e) {
-		libsbmlFound = false;
-	} catch (SecurityException e) {
-		libsbmlFound = false;
-	}
-	Runtime.getRuntime();
-	int exitValue = 1;
-	try {
-		if (System.getProperty("os.name").contentEquals("Linux")) {
-			reb2sacExecutable = "reb2sac.linux64";
-		} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			reb2sacExecutable = "reb2sac.mac64";
-		} else {
-			reb2sacExecutable = "reb2sac.exe";
-		}
-		ProcessBuilder ps = new ProcessBuilder(reb2sacExecutable, "");
-		Map<String, String> env = ps.environment();
-		if (System.getenv("BIOSIM") != null) {
-			env.put("BIOSIM", System.getenv("BIOSIM"));
-		}
-		if (System.getenv("LEMA") != null) {
-			env.put("LEMA", System.getenv("LEMA"));
-		}
-		if (System.getenv("ATACSGUI") != null) {
-			env.put("ATACSGUI", System.getenv("ATACSGUI"));
-		}
-		if (System.getenv("LD_LIBRARY_PATH") != null) {
-			env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
-		}
-		if (System.getenv("DDLD_LIBRARY_PATH") != null) {
-			env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
-		}
-		if (System.getenv("PATH") != null) {
-			env.put("PATH", System.getenv("PATH"));
-		}
-		envp = new String[env.size()];
-		int i = 0;
-		for (String envVar : env.keySet()) {
-			envp[i] = envVar + "=" + env.get(envVar);
-			i++;
-		}
-		ps.redirectErrorStream(true);
-		Process reb2sac = ps.start();
-		if (reb2sac != null) {
-			exitValue = reb2sac.waitFor();
-		}
-		if (exitValue != 255 && exitValue != -1) {
-			SBMLutilities.reb2sacFound = false;
-		}
-	} catch (IOException e) {
-		SBMLutilities.reb2sacFound = false;
-	} catch (InterruptedException e) {
-		SBMLutilities.reb2sacFound = false;
-	}
-	exitValue = 1;
-	try {
-		if (System.getProperty("os.name").contentEquals("Linux")) {
-			geneNetExecutable = "GeneNet.linux64";
-		} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			geneNetExecutable = "GeneNet.mac64";
-		} else {
-			geneNetExecutable = "GeneNet.exe";
-		}
-		ProcessBuilder ps = new ProcessBuilder(geneNetExecutable, "");
-		Map<String, String> env = ps.environment();
-		if (System.getenv("BIOSIM") != null) {
-			env.put("BIOSIM", System.getenv("BIOSIM"));
-		}
-		if (System.getenv("LEMA") != null) {
-			env.put("LEMA", System.getenv("LEMA"));
-		}
-		if (System.getenv("ATACSGUI") != null) {
-			env.put("ATACSGUI", System.getenv("ATACSGUI"));
-		}
-		if (System.getenv("LD_LIBRARY_PATH") != null) {
-			env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
-		}
-		if (System.getenv("DDLD_LIBRARY_PATH") != null) {
-			env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
-		}
-		if (System.getenv("PATH") != null) {
-			env.put("PATH", System.getenv("PATH"));
-		}
-		ps.redirectErrorStream(true);
-		Process geneNet = ps.start();
-		if (geneNet != null) {
-			exitValue = geneNet.waitFor();
-		}
-		if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
-			SBMLutilities.geneNetFound = false;
-		}
-	} catch (IOException e) {
-		SBMLutilities.geneNetFound = false;
-	} catch (InterruptedException e) {
-		SBMLutilities.geneNetFound = false;
-	}
+
+	Executables.checkExecutables();
+	
 	new Gui(lemaFlag, atacsFlag, libsbmlFound, lpnFlag);
-}
-
-public static boolean isLibsbmlFound() {
-	return SBMLutilities.libsbmlFound;
-}
-
-public static boolean isReb2sacFound() {
-	return SBMLutilities.reb2sacFound;
-}
-
-public static String getReb2sacExecutable() {
-	return reb2sacExecutable;
-}
-
-public static boolean isGeneNetFound() {
-	return SBMLutilities.geneNetFound;
-}
-
-public static String getGeneNetExecutable() {
-	return geneNetExecutable;
 }
 
 public void refreshLearn(String learnName) {

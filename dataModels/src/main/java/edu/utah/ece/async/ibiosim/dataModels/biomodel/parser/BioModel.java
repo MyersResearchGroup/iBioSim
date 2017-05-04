@@ -102,6 +102,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.Promoter;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.SpeciesInterface;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
@@ -5732,7 +5733,7 @@ public class BioModel extends Observable{
 	}
 	
 	public SBMLDocument flattenModelWithLibSBML(boolean removeComp) throws Exception {
-		if (SBMLutilities.libsbmlFound) {
+		if (Executables.libsbmlFound) {
 			String tempFile = filename.replace(".gcm", "").replace(".xml", "") + "_temp.xml";
 			save(tempFile);
 			

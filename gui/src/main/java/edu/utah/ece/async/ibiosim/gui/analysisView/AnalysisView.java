@@ -79,6 +79,7 @@ import org.jlibsedml.modelsupport.KisaoTerm;
 import org.sbml.libsbml.ASTNode;
 
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -375,7 +376,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     simulationTypeButtons.add(sbml);
     simulationTypeButtons.add(dot);
     simulationTypeButtons.add(xhtml);
-    if (!Gui.isReb2sacFound())
+    if (!Executables.reb2sacFound)
     {
       dot.setEnabled(false);
       xhtml.setEnabled(false);
@@ -3457,7 +3458,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       simulators.addItem("transient-markov-chain-analysis");
       simulators.addItem("reachability-analysis");
       simulators.addItem("prism");
-      if (Gui.isReb2sacFound())
+      if (Executables.reb2sacFound)
       {
         simulators.addItem("atacs");
         simulators.addItem("ctmc-transient");
@@ -4324,7 +4325,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       simulators.addItem("reachability-analysis");
       simulators.addItem("prism");
     }
-    if (Gui.isReb2sacFound())
+    if (Executables.reb2sacFound)
     {
       simulators.addItem("atacs");
       simulators.addItem("ctmc-transient");
@@ -4384,7 +4385,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
     simulators.addItem("Mixed-Hierarchical");
     simulators.setSelectedItem("SSA-Direct (Dynamic)");
-    if (Gui.isReb2sacFound())
+    if (Executables.reb2sacFound)
     {
       simulators.addItem("gillespie");
       simulators.addItem("iSSA");
@@ -4450,7 +4451,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     simulators.addItem("Runge-Kutta-Fehlberg (Flatten)");
     simulators.addItem("Runge-Kutta-Fehlberg (Hierarchical)");
     simulators.setSelectedItem("Runge-Kutta-Fehlberg (Dynamic)");
-    if (Gui.isReb2sacFound())
+    if (Executables.reb2sacFound)
     {
       simulators.addItem("euler");
       simulators.addItem("gear1");

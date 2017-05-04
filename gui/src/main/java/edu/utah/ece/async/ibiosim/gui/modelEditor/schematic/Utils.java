@@ -62,6 +62,7 @@ import org.sbml.libsbml.libsbmlConstants;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 
 /**
@@ -704,7 +705,7 @@ public class Utils {
   	long numErrors = 0;
   	Preferences biosimrc = Preferences.userRoot();
   	boolean warnings = biosimrc.get("biosim.general.warnings", "").equals("true");
-  	if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Gui.isLibsbmlFound())
+  	if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Executables.libsbmlFound)
   	{
   		message += "Validation Problems Found by libsbml\n";
   		org.sbml.libsbml.SBMLDocument document = null;
@@ -1184,7 +1185,7 @@ public class Utils {
   public static void checkOverDetermined(SBMLDocument document)
   {
   	Preferences biosimrc = Preferences.userRoot();
-  	if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Gui.isLibsbmlFound())
+  	if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Executables.libsbmlFound)
   	{
   		try
   		{
