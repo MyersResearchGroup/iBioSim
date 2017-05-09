@@ -179,6 +179,69 @@ public enum IBioSimPreferences {
 		}
 	}
 
+	private String xhtmlCmd = null;
+	
+	public String getXhtmlCmd() {
+		if (xhtmlCmd == null) {
+			xhtmlCmd = Preferences.userRoot().get("biosim.general.browser", "");
+			if (xhtmlCmd.equals("")) {
+				if (System.getProperty("os.name").contentEquals("Linux")) {
+					xhtmlCmd = "xdg-open";
+				} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+					xhtmlCmd = "open";
+				} else {
+					xhtmlCmd = "cmd /c start";
+				}
+			}
+		}
+		return xhtmlCmd;
+	}
+
+	public void setXhtmlCmd(String xhtmlCmd) {
+		this.xhtmlCmd = xhtmlCmd;
+		Preferences.userRoot().put("biosim.general.browser", xhtmlCmd);
+	}
+
+	private String graphvizCmd = null;
+	
+	public String getGraphvizCmd() {
+		if (graphvizCmd == null) {
+			graphvizCmd = Preferences.userRoot().get("biosim.general.graphviz", "");
+			if (graphvizCmd.equals("")) {
+				if (System.getProperty("os.name").contentEquals("Linux")) {
+					graphvizCmd = "xdg-open";
+				} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+					graphvizCmd = "open";
+				} else {
+					graphvizCmd = "dotty";
+				}
+			}
+		}
+		return graphvizCmd;
+	}
+
+	public void setGraphvizCmd(String graphvizCmd) {
+		this.graphvizCmd = graphvizCmd;
+		Preferences.userRoot().put("biosim.general.graphviz", graphvizCmd);
+	}
+
+	private String prismCmd = null;
+	
+	public String getPrismCmd() {
+		if (prismCmd == null) {
+			prismCmd = Preferences.userRoot().get("biosim.general.prism", "");
+			if (prismCmd.equals("")) {
+				prismCmd = "prism";
+			}
+		}
+		return prismCmd;
+	}
+
+	public void setPrismCmd(String prismCmd) {
+		this.prismCmd = prismCmd;
+		Preferences.userRoot().put("biosim.general.prism", prismCmd);
+	}
+
 	private Boolean enableBranching = null;
 	private Boolean enableVersioning = null;
 	

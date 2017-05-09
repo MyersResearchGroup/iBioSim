@@ -50,6 +50,9 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -102,6 +105,8 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.Curve;
@@ -155,13 +160,23 @@ import com.apple.eawt.Application;
 import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
+
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
+import de.unirostock.sems.cbarchive.ArchiveEntry;
+import de.unirostock.sems.cbarchive.meta.DefaultMetaDataObject;
+import de.unirostock.sems.cbarchive.meta.MetaDataObject;
+import de.unirostock.sems.cbarchive.meta.OmexMetaDataObject;
+import de.unirostock.sems.cbarchive.meta.omex.OmexDescription;
+import de.unirostock.sems.cbarchive.meta.omex.VCard;
+
 //TODO: temporarily removed until VPR library sorted
 //import uk.ac.ncl.ico2s.VPRException;
 //import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import de.unirostock.sems.cbarchive.CombineArchive;
+import de.unirostock.sems.cbarchive.CombineArchiveException;
+import de.unirostock.sems.cbarchive.meta.MetaDataObject;
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.conversion.ModelGenerator;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
@@ -172,6 +187,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GCM2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisThread;
@@ -344,8 +360,9 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		app.setPreferencesHandler(new PreferencesHandler() {
 			public void handlePreferences(PreferencesEvent pe) {
 				PreferencesDialog.showPreferences(frame);
-				EditPreferences editPreferences = new EditPreferences(frame, async, tree);
+				EditPreferences editPreferences = new EditPreferences(frame, async);
 				editPreferences.preferences();
+				tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
 				if (sbolDocument != null) {
 					sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 				}
@@ -1161,8 +1178,9 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		mainPanel = new JPanel(new BorderLayout());
 		tree = new FileTree(null, this, lema, atacs, lpn);
 
-		EditPreferences editPreferences = new EditPreferences(frame, async, tree);
+		EditPreferences editPreferences = new EditPreferences(frame, async);
 		editPreferences.setDefaultPreferences();
+		tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
 
 		log = new Log();
 		tab = new CloseAndMaxTabbedPane(false, this);
@@ -2954,8 +2972,9 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		// if the open project menu item is selected
 		else if (e.getSource() == pref) {
 			PreferencesDialog.showPreferences(frame);
-			EditPreferences editPreferences = new EditPreferences(frame, async, tree);
+			EditPreferences editPreferences = new EditPreferences(frame, async);
 			editPreferences.preferences();
+			tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
 			if (sbolDocument != null) {
 				sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			}
@@ -4866,6 +4885,140 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		importOutputs(sedml);
 		writeSEDMLDocument();
 	}
+	
+	private void importCombineArchive(String filename,String path) throws IOException {
+		System.out.println ("--- reading archive. ---");
+		File archiveFile = new File (filename);
+		//File destination = new File ("/tmp/myDestination");
+		//File tmpEntryExtract = new File ("/tmp/myExtractedEntry");
+		
+		// read the archive stored in `archiveFile`
+		CombineArchive ca;
+		try {
+			ca = new CombineArchive (archiveFile);
+		}
+		catch (JDOMException | ParseException | CombineArchiveException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		     
+		// read description of the archive itself
+		System.out.println ("found " + ca.getDescriptions ().size ()
+				+ " meta data entries describing the archive.");
+		
+		// iterate over all entries in the archive
+		for (ArchiveEntry entry : ca.getEntries ())
+		{
+			// display some information about the archive
+			if (entry.getFormat().toString().contains("sbml")) {
+				importSBML(entry.extractFile (new File(path + GlobalConstants.separator + entry.getFileName())).getAbsolutePath());
+			}
+		}
+		for (ArchiveEntry entry : ca.getEntries ())
+		{
+			// display some information about the archive
+			if (entry.getFormat().toString().contains("sed-ml")) {
+				importSEDMLFile(entry.extractFile (new File(path + GlobalConstants.separator + entry.getFileName())).getAbsolutePath ());
+			}
+		}
+		
+			// extract the file to `tmpEntryExtract`
+//			System.out.println ("file can be read from: "
+//					+ entry.extractFile (new File(root + GlobalConstants.separator + entry.getFileName())).getAbsolutePath ());
+			
+//			// if you just want to read it, you do not need to extract it
+//			// instead call for an InputStream:
+//			InputStream myReader = Files.newInputStream (entry.getPath (),
+//					StandardOpenOption.READ);
+//			// but here we do not use it...
+//			myReader.close ();
+//		         
+//			// read the descriptions
+//			for (MetaDataObject description : entry.getDescriptions ())
+//			{
+//				System.out.println ("+ found some meta data about "
+//						+ description.getAbout ());
+//				if (description instanceof OmexMetaDataObject)
+//				{
+//					OmexDescription desc = ((OmexMetaDataObject) description)
+//							.getOmexDescription ();
+//			               
+//					// when was it created?
+//					System.out.println ("file was created: " + desc.getCreated ());
+//		               
+//					// who's created the archive?
+//					VCard firstCreator = desc.getCreators ().get (0);
+//					System.out.println ("file's first author: "
+//							+ firstCreator.getGivenName () + " "
+//							+ firstCreator.getFamilyName ());
+//				}
+//				else
+//				{
+//					System.out.println ("found some meta data of type '"
+//							+ description.getClass ().getName ()
+//							+ "' that we do not respect in this small example.");
+//				}
+//				// No matter what type of description that is, you can always
+//				// retrieve the XML subtree rooting the meta data using
+//				Element meta = description.getXmlDescription ();
+//				// the descriptions are encoded in
+//				meta.getChildren ();
+//			}
+//		}
+	
+		// ok, last but not least we can extract the whole archive to our disk:
+		//ca.extractTo (destination);
+		// and now that we're finished: close the archive
+		ca.close ();
+	}
+
+	private void importSEDMLFile(String filename) {
+		String path = filename.substring(0, filename.lastIndexOf(GlobalConstants.separator)+1);
+		try {
+			SEDMLDocument sedmlDoc = null;
+			ArchiveComponents ac = null;
+			if (filename.trim().endsWith(".sedx")) {
+				ac = Libsedml.readSEDMLArchive(new FileInputStream(filename.trim()));
+				sedmlDoc = ac.getSedmlDocument();
+			} else if (filename.trim().endsWith(".omex")) {
+				importCombineArchive(filename,path);
+				return;
+			} else {
+				File sedmlFile = new File(filename.trim());
+				sedmlDoc = Libsedml.readDocument(sedmlFile);
+			}
+			sedmlDoc.validate();
+			if (sedmlDoc.hasErrors()) {
+				List<SedMLError> errors = sedmlDoc.getErrors();
+				// final JFrame f = new JFrame("SED-ML Errors and
+				// Warnings");
+				JTextArea messageArea = new JTextArea();
+				messageArea.append("Imported SED-ML file contains the errors listed below. ");
+				messageArea.append(
+						"It is recommended that you fix them before performing this analysis or you may get unexpected results.\n\n");
+				for (int i = 0; i < errors.size(); i++) {
+					SedMLError error = errors.get(i);
+					messageArea.append(i + ":" + error.getMessage() + "\n");
+				}
+				messageArea.setLineWrap(true);
+				messageArea.setEditable(false);
+				messageArea.setSelectionStart(0);
+				messageArea.setSelectionEnd(0);
+				JScrollPane scroll = new JScrollPane();
+				scroll.setMinimumSize(new Dimension(600, 600));
+				scroll.setPreferredSize(new Dimension(600, 600));
+				scroll.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(Gui.frame, scroll, "SED-ML Errors and Warnings",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			importSEDMLDocument(path, sedmlDoc, ac);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Unable to import SED-ML file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
 	private void importSEDML() {
 		Preferences biosimrc = Preferences.userRoot();
@@ -4878,47 +5031,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, "Import SED-ML", -1);
 		if (!filename.trim().equals("")) {
 			biosimrc.put("biosim.general.import_dir", filename.trim());
-			try {
-				SEDMLDocument sedmlDoc = null;
-				ArchiveComponents ac = null;
-				if (filename.trim().endsWith(".sedx")) {
-					ac = Libsedml.readSEDMLArchive(new FileInputStream(filename.trim()));
-					sedmlDoc = ac.getSedmlDocument();
-				} else {
-					File sedmlFile = new File(filename.trim());
-					sedmlDoc = Libsedml.readDocument(sedmlFile);
-				}
-				sedmlDoc.validate();
-				if (sedmlDoc.hasErrors()) {
-					List<SedMLError> errors = sedmlDoc.getErrors();
-					// final JFrame f = new JFrame("SED-ML Errors and
-					// Warnings");
-					JTextArea messageArea = new JTextArea();
-					messageArea.append("Imported SED-ML file contains the errors listed below. ");
-					messageArea.append(
-							"It is recommended that you fix them before performing this analysis or you may get unexpected results.\n\n");
-					for (int i = 0; i < errors.size(); i++) {
-						SedMLError error = errors.get(i);
-						messageArea.append(i + ":" + error.getMessage() + "\n");
-					}
-					messageArea.setLineWrap(true);
-					messageArea.setEditable(false);
-					messageArea.setSelectionStart(0);
-					messageArea.setSelectionEnd(0);
-					JScrollPane scroll = new JScrollPane();
-					scroll.setMinimumSize(new Dimension(600, 600));
-					scroll.setPreferredSize(new Dimension(600, 600));
-					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(Gui.frame, scroll, "SED-ML Errors and Warnings",
-							JOptionPane.ERROR_MESSAGE);
-				}
-				String path = filename.substring(0, filename.lastIndexOf(GlobalConstants.separator));
-				importSEDMLDocument(path, sedmlDoc, ac);
-			} catch (Exception e1) {
-				e1.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "Unable to import SED-ML file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
+			importSEDMLFile(filename);
 		}
 	}
 

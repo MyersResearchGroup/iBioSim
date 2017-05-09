@@ -43,6 +43,7 @@ import com.mxgraph.util.mxConstants;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.CompatibilityFixer;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.FileTree;
 
@@ -63,16 +64,6 @@ public class EditPreferences {
 	
 	private boolean checkUndeclared, checkUnits;
 	
-	private JCheckBox dialog;
-	private JCheckBox icons;
-	private JCheckBox delete;
-	private JCheckBox libsbmlFlatten;
-	private JCheckBox libsbmlValidate;
-	private JCheckBox showWarnings;
-	private JCheckBox infix;
-	private JTextField xhtmlCmd;
-	private JTextField dotCmd;
-	private JTextField prismCmd;
 	private JTextField verCmd;
 	private JTextField viewerField;
 	
@@ -136,8 +127,6 @@ public class EditPreferences {
 	
 	private boolean async;
 	
-	private FileTree tree;
-	
 	private JFrame frame;
 	
 	private class SchematicElement {
@@ -171,91 +160,14 @@ public class EditPreferences {
 	
 	private HashMap<String,SchematicElement> schematicElements = null;
 	
-	public EditPreferences(JFrame frame,boolean async, FileTree tree) {
+	public EditPreferences(JFrame frame,boolean async) {
 		this.frame = frame;
 		this.async = async;
-		this.tree = tree;
 		schematicElements = new HashMap<String, SchematicElement>();
 	}
 	
 	private JPanel generalPreferences(Preferences biosimrc) {
 		// general preferences
-		dialog = new JCheckBox("Use File Dialog");
-		icons = new JCheckBox("Use Plus/Minus For Expanding/Collapsing File Tree");
-		delete = new JCheckBox("Must Confirm File Deletions");
-		libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models");
-		libsbmlValidate = new JCheckBox("Use libsbml to Validate Models");
-		showWarnings = new JCheckBox("Report Validation Warnings");
-		xhtmlCmd = new JTextField(biosimrc.get("biosim.general.browser", ""));
-		JLabel xhtmlCmdLabel = new JLabel("Browser Viewer Command");
-		if (xhtmlCmd.getText().equals("")) {
-			if (System.getProperty("os.name").contentEquals("Linux")) {
-				xhtmlCmd.setText("xdg-open");
-			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-				xhtmlCmd.setText("open");
-			} else {
-				xhtmlCmd.setText("cmd /c start");
-			}
-		}
-		prismCmd = new JTextField(biosimrc.get("biosim.general.prism", ""));
-		JLabel prismCmdLabel = new JLabel("PRISM Model Checking Command");
-		if (prismCmd.getText().equals("")) {
-			prismCmd.setText("prism");
-		}
-		dotCmd = new JTextField(biosimrc.get("biosim.general.graphviz", ""));
-		JLabel dotCmdLabel = new JLabel("Graphviz Viewer Command");
-		if (dotCmd.getText().equals("")) {
-			if (System.getProperty("os.name").contentEquals("Linux")) {
-				dotCmd.setText("xdg-open");
-			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-				dotCmd.setText("open");
-			} else {
-				dotCmd.setText("dotty");
-			}
-		}
-		infix = new JCheckBox("Use Infix Expression Parser");
-		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
-			dialog.setSelected(true);
-		}
-		else {
-			dialog.setSelected(false);
-		}
-		if (biosimrc.get("biosim.general.tree_icons", "").equals("default")) {
-			icons.setSelected(false);
-		}
-		else {
-			icons.setSelected(true);
-		}
-		if (biosimrc.get("biosim.general.delete", "").equals("confirm")) {
-			delete.setSelected(true);
-		}
-		else {
-			delete.setSelected(false);
-		}
-		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
-			libsbmlFlatten.setSelected(true);
-		}
-		else {
-			libsbmlFlatten.setSelected(false);
-		}
-		if (biosimrc.get("biosim.general.validate", "").equals("libsbml")) {
-			libsbmlValidate.setSelected(true);
-		}
-		else {
-			libsbmlValidate.setSelected(false);
-		}
-		if (biosimrc.get("biosim.general.warnings", "").equals("true")) {
-			showWarnings.setSelected(true);
-		}
-		else {
-			showWarnings.setSelected(false);
-		}
-		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
-			infix.setSelected(false);
-		}
-		else {
-			infix.setSelected(true);
-		}			
 		JLabel verCmdLabel = new JLabel("Verification command:");
 		verCmd = new JTextField(biosimrc.get("lema.verification.command", ""));
 		viewerLabel = new JLabel("External Editor for non-LPN files:");
@@ -265,24 +177,6 @@ public class EditPreferences {
 		restoreGen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dialog.setSelected(false);
-				icons.setSelected(false);
-				delete.setSelected(true);
-				libsbmlFlatten.setSelected(false);
-				libsbmlValidate.setSelected(false);
-				showWarnings.setSelected(false);
-				if (System.getProperty("os.name").contentEquals("Linux")) {
-					xhtmlCmd.setText("xdg-open");
-					dotCmd.setText("xdg-open");
-				} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					xhtmlCmd.setText("open");
-					dotCmd.setText("open");
-				} else {
-					xhtmlCmd.setText("cmd /c start");
-					dotCmd.setText("dotty");
-				}
-				prismCmd.setText("prism");
-				infix.setSelected(true);
 				verCmd.setText("");
 				viewerField.setText("");
 			}
@@ -291,29 +185,10 @@ public class EditPreferences {
 		// create general preferences panel
 		JPanel generalPrefsBordered;
 		if (async) {
-			generalPrefsBordered = new JPanel(new GridLayout(12,1));
+			generalPrefsBordered = new JPanel(new GridLayout(2,1));
 		} else {
-			generalPrefsBordered = new JPanel(new GridLayout(10,1));
+			generalPrefsBordered = new JPanel(new GridLayout(0,1));
 		}
-		generalPrefsBordered.add(dialog);
-		generalPrefsBordered.add(icons);
-		generalPrefsBordered.add(delete);
-		generalPrefsBordered.add(libsbmlFlatten);
-		generalPrefsBordered.add(libsbmlValidate);
-		generalPrefsBordered.add(showWarnings);
-		JPanel xhtmlCmdPanel = new JPanel(new GridLayout(1,2));
-		xhtmlCmdPanel.add(xhtmlCmdLabel);
-		xhtmlCmdPanel.add(xhtmlCmd);
-		generalPrefsBordered.add(xhtmlCmdPanel);
-		JPanel dotCmdPanel = new JPanel(new GridLayout(1,2));
-		dotCmdPanel.add(dotCmdLabel);
-		dotCmdPanel.add(dotCmd);
-		generalPrefsBordered.add(dotCmdPanel);
-		JPanel prismCmdPanel = new JPanel(new GridLayout(1,2));
-		prismCmdPanel.add(prismCmdLabel);
-		prismCmdPanel.add(prismCmd);
-		generalPrefsBordered.add(prismCmdPanel);
-		//generalPrefsBordered.add(infix);
 		if (async) {
 			JPanel verCmdPanel = new JPanel(new GridLayout(1,2));
 			verCmdPanel.add(verCmdLabel);
@@ -1162,50 +1037,6 @@ public class EditPreferences {
 	}
 	
 	private void saveGeneralPreferences (Preferences biosimrc) {
-		if (dialog.isSelected()) {
-			biosimrc.put("biosim.general.file_browser", "FileDialog");
-		} else {
-			biosimrc.put("biosim.general.file_browser", "JFileChooser");
-		}
-		if (icons.isSelected()) {
-			biosimrc.put("biosim.general.tree_icons", "plus_minus");
-			tree.setExpandibleIcons(false);
-		} else {
-			biosimrc.put("biosim.general.tree_icons", "default");
-			tree.setExpandibleIcons(true);
-		}
-		if (delete.isSelected()) {
-			biosimrc.put("biosim.general.delete", "confirm");
-		} else {
-			biosimrc.put("biosim.general.delete", "noconfirm");
-		}
-		if (libsbmlFlatten.isSelected()) {
-			biosimrc.put("biosim.general.flatten", "libsbml");
-		} else {
-			biosimrc.put("biosim.general.flatten", "default");
-		}
-		if (libsbmlValidate.isSelected()) {
-			biosimrc.put("biosim.general.validate", "libsbml");
-		} else {
-			biosimrc.put("biosim.general.validate", "default");
-		}
-		if (showWarnings.isSelected()) {
-			biosimrc.put("biosim.general.warnings", "true");
-		} else {
-			biosimrc.put("biosim.general.warnings", "false");
-		}
-		if (infix.isSelected()) {
-			biosimrc.put("biosim.general.infix", "infix");
-		} else {
-			biosimrc.put("biosim.general.infix", "prefix");
-		}			
-		//SBMLLevelVersion = "L3V1";
-		//SBML_LEVEL = 3;
-		//SBML_VERSION = 1;
-		biosimrc.put("biosim.general.browser", xhtmlCmd.getText().trim());
-		biosimrc.put("biosim.general.graphviz", dotCmd.getText().trim());
-		biosimrc.put("biosim.general.prism", prismCmd.getText().trim());
-		biosimrc.put("biosim.sbml.level_version", "L3V1");
 		biosimrc.put("lema.verification.command", verCmd.getText().trim());
 		biosimrc.put("lema.general.viewer", viewerField.getText().trim());
 	}
@@ -1463,7 +1294,7 @@ public class EditPreferences {
 
 		// create tabs
 		JTabbedPane prefTabs = new JTabbedPane();
-		prefTabs.addTab("General Preferences", generalPrefs);
+		if (async) prefTabs.addTab("General Preferences", generalPrefs);
 		prefTabs.addTab("Schematic Preferences", schematicPrefs);
 		prefTabs.addTab("Model Preferences", modelPrefs);
 		prefTabs.addTab("Analysis Preferences", analysisPrefs);
@@ -1695,9 +1526,6 @@ public class EditPreferences {
 		}
 		if (biosimrc.get("biosim.general.tree_icons", "").equals("")) {
 			biosimrc.put("biosim.general.tree_icons", "default");
-		}
-		else if (biosimrc.get("biosim.general.tree_icons", "").equals("plus_minus")) {
-			tree.setExpandibleIcons(false);
 		}
 		if (biosimrc.get("biosim.general.delete", "").equals("")) {
 			biosimrc.put("biosim.general.delete", "confirm");

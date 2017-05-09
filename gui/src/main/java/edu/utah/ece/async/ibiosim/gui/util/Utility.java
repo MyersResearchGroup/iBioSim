@@ -275,7 +275,8 @@ public class Utility {
 					fd.setFilenameFilter(new FilenameFilter() {
 						@Override
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".xml") || name.endsWith(".sedml") || name.endsWith(".sedx");
+							return name.endsWith(".xml") || name.endsWith(".sedml") 
+									|| name.endsWith(".sedx") || name.endsWith(".omex");
 						}
 					});
 				}
@@ -428,7 +429,7 @@ public class Utility {
 					}
 					else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
 						if (!selectedFile.endsWith(".xml")&&!selectedFile.endsWith(".sedml")
-								&& !selectedFile.endsWith(".sedx"))
+								&& !selectedFile.endsWith(".sedx") && !selectedFile.endsWith(".omex"))
 							selectedFile += ".xml";
 					}
 					else if (approve.equals("Import Archive") || approve.equals("Export Archive")) {
@@ -777,7 +778,8 @@ public class Utility {
 					filename += ".fasta";
 			}
 			else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
-				if (!filename.endsWith(".xml")&&!filename.endsWith(".sedml")&&!filename.endsWith(".sedx"))
+				if (!filename.endsWith(".xml")&&!filename.endsWith(".sedml")
+						&&!filename.endsWith(".sedx")&&!filename.endsWith(".omex"))
 					filename += ".xml";
 			}
 			else if (approve.equals("Import Archive") || approve.equals("Export Archive")) {

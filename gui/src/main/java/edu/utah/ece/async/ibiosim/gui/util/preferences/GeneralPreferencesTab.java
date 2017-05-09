@@ -5,8 +5,10 @@ import java.awt.Component;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
@@ -17,17 +19,24 @@ import edu.utah.ece.async.sboldesigner.swing.FormBuilder;
 public enum GeneralPreferencesTab implements PreferencesTab {
 	INSTANCE;
 
-	// askUser is 0, overwrite is 1, and keep is 2
-	private JRadioButton seqAskUser = new JRadioButton("Ask", IBioSimPreferences.INSTANCE.getSeqBehavior() == 0);
-	private JRadioButton seqOverwrite = new JRadioButton("Overwrite",
-			IBioSimPreferences.INSTANCE.getSeqBehavior() == 1);
-	private JRadioButton seqKeep = new JRadioButton("Keep", IBioSimPreferences.INSTANCE.getSeqBehavior() == 2);
-
-	// show name is 0, show displayId is 1
-	private JRadioButton showName = new JRadioButton("Show name when set",
-			IBioSimPreferences.INSTANCE.getNameDisplayIdBehavior() == 0);
-	private JRadioButton showDisplayId = new JRadioButton("Show displayId",
-			IBioSimPreferences.INSTANCE.getNameDisplayIdBehavior() == 1);
+	private JCheckBox dialog = new JCheckBox("Use File Dialog",IBioSimPreferences.INSTANCE.isFileDialogEnabled());
+	private JCheckBox icons = new JCheckBox("Use Plus/Minus For Expanding/Collapsing File Tree",
+			IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
+	private JCheckBox delete = new JCheckBox("Do Not Confirm File Deletions",
+			IBioSimPreferences.INSTANCE.isNoConfirmEnabled());
+	private JCheckBox libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models",
+			IBioSimPreferences.INSTANCE.isLibSBMLFlattenEnabled());
+	private JCheckBox libsbmlValidate = new JCheckBox("Use libsbml to Validate Models",
+			IBioSimPreferences.INSTANCE.isLibSBMLFlattenEnabled());
+	private JCheckBox showWarnings = new JCheckBox("Report Validation Warnings",
+			IBioSimPreferences.INSTANCE.isWarningsEnabled());
+	
+	private JLabel xhtmlCmdLabel = new JLabel("Browser Viewer Command");
+	private JTextField xhtmlCmd = new JTextField(IBioSimPreferences.INSTANCE.getXhtmlCmd());
+	private JLabel prismCmdLabel = new JLabel("PRISM Model Checking Command");
+	private JTextField prismCmd = new JTextField(IBioSimPreferences.INSTANCE.getPrismCmd());
+	private JLabel dotCmdLabel = new JLabel("Graphviz Viewer Command");
+	private JTextField dotCmd = new JTextField(IBioSimPreferences.INSTANCE.getGraphvizCmd());
 
 	@Override
 	public String getTitle() {
@@ -46,49 +55,32 @@ public enum GeneralPreferencesTab implements PreferencesTab {
 
 	@Override
 	public Component getComponent() {
-		JLabel impliedSequence = new JLabel(
-				"<html>Every time the implied sequence is shorter than the original <br>sequence, would you like to overwrite or keep the original sequence?</html>");
-		ButtonGroup seqGroup = new ButtonGroup();
-		seqGroup.add(seqAskUser);
-		seqGroup.add(seqOverwrite);
-		seqGroup.add(seqKeep);
-
-		JLabel showNameOrDisplayId = new JLabel("<html>Always show displayId or always show name when set?</html>");
-		ButtonGroup nameDisplayIdGroup = new ButtonGroup();
-		nameDisplayIdGroup.add(showName);
-		nameDisplayIdGroup.add(showDisplayId);
 
 		FormBuilder builder = new FormBuilder();
-		builder.add("", impliedSequence);
-		builder.add("", seqAskUser);
-		builder.add("", seqOverwrite);
-		builder.add("", seqKeep);
-		builder.add("", showNameOrDisplayId);
-		builder.add("", showName);
-		builder.add("", showDisplayId);
+		builder.add("", dialog);
+		builder.add("", icons);
+		builder.add("", delete);
+		builder.add("", libsbmlFlatten);
+		builder.add("", libsbmlValidate);
+		builder.add("", showWarnings);
+		builder.add("", xhtmlCmdLabel);
+		builder.add("", xhtmlCmd);
+		builder.add("", dotCmdLabel);
+		builder.add("", dotCmd);
+		builder.add("", prismCmdLabel);
+		builder.add("", prismCmd);
 
 		return builder.build();
 	}
 
 	@Override
 	public void save() {
-		int seqBehavior = 0;
-		if (seqAskUser.isSelected()) {
-			seqBehavior = 0;
-		} else if (seqOverwrite.isSelected()) {
-			seqBehavior = 1;
-		} else if (seqKeep.isSelected()) {
-			seqBehavior = 2;
-		}
-		IBioSimPreferences.INSTANCE.setSeqBehavior(seqBehavior);
-
-		int showNameOrDisplayId = 0;
-		if (showName.isSelected()) {
-			showNameOrDisplayId = 0;
-		} else if (showDisplayId.isSelected()) {
-			showNameOrDisplayId = 1;
-		}
-		IBioSimPreferences.INSTANCE.setNameDisplayIdBehavior(showNameOrDisplayId);
+		IBioSimPreferences.INSTANCE.setFileDialogEnabled(dialog.isSelected());
+		IBioSimPreferences.INSTANCE.setPlusMinusIconsEnabled(icons.isSelected()); 
+		IBioSimPreferences.INSTANCE.setNoConfirmEnabled(delete.isSelected());
+		IBioSimPreferences.INSTANCE.setLibSBMLFlattenEnabled(libsbmlFlatten.isSelected());
+		IBioSimPreferences.INSTANCE.setLibSBMLValidateEnabled(libsbmlValidate.isSelected());
+		IBioSimPreferences.INSTANCE.setWarningsEnabled(showWarnings.isSelected());
 	}
 
 	@Override
