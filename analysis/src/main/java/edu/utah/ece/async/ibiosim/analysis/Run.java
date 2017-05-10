@@ -56,11 +56,11 @@ public class Run extends Observable
     //logFile = new FileWriter(new File(directory + GlobalConstants.separator + "log.txt"));
   }
 
-  private int executeFBA(String directory, String theFile, boolean refresh, String filename, String printer_id, String outDir) throws XMLStreamException, IOException
+  private int executeFBA() throws XMLStreamException, IOException
   {
     int exitValue = 255;
 
-    FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(directory + GlobalConstants.separator, theFile, properties.getAbsError());
+    FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(properties.getRoot() + GlobalConstants.separator, properties.getFilename(), properties.getAbsError());
     exitValue = fluxBalanceAnalysis.PerformFluxBalanceAnalysis();
 
     if (exitValue == 1)
@@ -405,10 +405,9 @@ public class Run extends Observable
       {
         LPN lhpnFile = new LPN();
         lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
-        //Abstraction abst = new Abstraction(lhpnFile, abstPane.getAbstractionProperty());
-        //abst.addObserver(this);
-        //abst.abstractSTG(false);
-        //abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
+        Abstraction abst = new Abstraction(lhpnFile, properties.getAbstractionProperty());
+        abst.abstractSTG(false);
+        abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
         t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
       }
       else
@@ -425,12 +424,10 @@ public class Run extends Observable
     return 0;
   }
 
-  private int executeSimulation(String sim, String direct, String directory, String root, String filename, String outDir, String theFile, boolean abstraction, boolean expandReaction, Runtime exec, Properties properties, File work) throws IOException, InterruptedException
+  private int executeSimulation(String sim, String direct, String directory, String root, String filename, String outDir, String theFile, boolean abstraction, boolean expandReaction, Runtime exec, File work) throws IOException, InterruptedException
   {
     int exitValue = 0;
     Preferences biosimrc = Preferences.userRoot();
-    String reactionAbstraction = abstraction ? "reactionAbstraction" : expandReaction ? "expandReaction" : "None";
-    double stoichAmpValue = Double.parseDouble(properties.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
     String SBMLFileName = directory + GlobalConstants.separator + theFile;
     String command = null;
     String[] env = null;
@@ -480,7 +477,7 @@ public class Run extends Observable
     else if (biosimrc.get("biosim.sim.command", "").equals(""))
     {
       command = Executables.reb2sacExecutable + " --target.encoding=" + sim + " " + theFile;
-      Simulator.expandArrays(filename, stoichAmpValue);
+      Simulator.expandArrays(filename, properties.getStoichAmp());
       env = Executables.envp;
       runJava = false;
     }
@@ -506,7 +503,7 @@ public class Run extends Observable
     }
     else
     {
-      Simulator.expandArrays(filename, stoichAmpValue);
+      Simulator.expandArrays(filename, properties.getStoichAmp());
       message.setLog("Executing:\n" + command + "\n");
       this.notifyObservers(message);
 

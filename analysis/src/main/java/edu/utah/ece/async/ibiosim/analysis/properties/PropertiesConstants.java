@@ -16,7 +16,7 @@ public class PropertiesConstants {
 	public static final String reb2sac_rapid_equil_1 = "reb2sac.rapid.equilibrium.condition.1";
 	public static final String reb2sac_rapid_equil_2 = "reb2sac.rapid.equilibrium.condition.2";
 	public static final String reb2sac_qssa_1 = "reb2sac.qssa.condition.1";
-	public static final String reb2sac_max_operator_thresghld = "reb2sac.operator.max.concentration.threshold";
+	public static final String reb2sac_max_operator_threshold = "reb2sac.operator.max.concentration.threshold";
 	public static final String reb2sac_diff_stoich_ampl = "reb2sac.diffusion.stoichiometry.amplification.value";
 	public static final String reb2sac_stats = "reb2sac.generate.statistics";
 	public static final String reb2sac_transform = "abstraction.transform.";
@@ -27,10 +27,10 @@ public class PropertiesConstants {
 	
 
 	public static final String sim_printer = "simulation.printer";
-	public static final String sim_tracjing_quantity = "simulation.printer.tracking.quantity";
-	public static final String simulation_init_time = "simulation.initial.time";
-	public static final String simulation_out_time = "simulation.output.start.time";
-	public static final String simulation_run_term = "simulation.run.termination.decider";
+	public static final String sim_tracking_quantity = "simulation.printer.tracking.quantity";
+	public static final String sim_init_time = "simulation.initial.time";
+	public static final String sim_out_time = "simulation.output.start.time";
+	public static final String sim_run_term = "simulation.run.termination.decider";
 	
 	public static final String ode_time_limit = "ode.simulation.time.limit";
 	public static final String ode_print_interval = "ode.simulation.print.interval";
@@ -46,7 +46,7 @@ public class PropertiesConstants {
 	public static final String mc_runs = "monte.carlo.simulation.runs";
 	public static final String mc_time_limit = "monte.carlo.simulation.time.limit";
 	public static final String mc_print_interval = "monte.carlo.simulation.print.interval";
-	public static final String mc_min_print = "monte.carlo.simulation.minimum.print.interval";
+	public static final String mc_min_print_interval = "monte.carlo.simulation.minimum.print.interval";
 	public static final String mc_number_steps = "monte.carlo.simulation.number.steps";
 	public static final String mc_time_step = "monte.carlo.simulation.time.step";
 	public static final String mc_min_time_step = "monte.carlo.simulation.min.time.step";
