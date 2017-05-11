@@ -44,7 +44,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
       * Once root directory is set, all the pom.xml should be displayed under Projects. Select all pom.xml files.
       * All installation should be complete so click ```Finish```
 5. Under ```Package Explorer``` in Eclipse, right click on the iBioSim pom.xml file and click select ```Run As``` and click ```Maven clean```. This will install the local jars as dependencies in your local repository. 
-6. Repeat the same steps for SBOLDesigner. (NOTE: Performing ```mvn clean``` from command-line inside SBOLDesigner suffice)
+6. Repeat the same steps for SBOLDesigner. (NOTE: Performing ```mvn clean install``` from command-line inside SBOLDesigner suffice)
 7. Perform ```Update Project``` under Maven by right clicking on the iBioSim project.
 
 ## Setting up iBioSim Configurations
