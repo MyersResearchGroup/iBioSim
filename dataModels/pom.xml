@@ -18,26 +18,6 @@
 				<artifactId>maven-install-plugin</artifactId>
 				<executions>
 					<execution>
-						<!-- Update SBOL JAR name here. NOTE: Make sure to update the DEPENDENCY 
-							tag down below for SBOL as well. -->
-						<id>install-libSBOLj</id>
-						<phase>clean</phase>
-						<configuration>
-							<file>${basedir}/../lib/libSBOLj-2.2.1-withDependencies.jar</file>
-							<repositoryLayout>default</repositoryLayout>
-							<groupId>org.sbolstandard</groupId>
-							<artifactId>libSBOLj</artifactId>
-							<version>2.2.1</version>
-							<packaging>jar</packaging>
-							<javadoc>${basedir}/../lib/libSBOLj-2.2.1-javadoc.jar</javadoc>
-							<sources>${basedir}/../lib/libSBOLj-2.2.1-sources.jar</sources>
-							<generatePom>true</generatePom>
-						</configuration>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>install-libsbmlj</id>
 						<phase>clean</phase>
 						<configuration>

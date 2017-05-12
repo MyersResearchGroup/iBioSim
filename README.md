@@ -22,19 +22,20 @@ biology.
 ##### Video Demo: [Tools Workflow](https://www.youtube.com/watch?v=g4xayzlyC2Q)
 ##### Contact: Chris Myers (@cjmyers) myers@ece.utah.edu
 
-Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tramy Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe, Zhen Zhang, and Zach Zundel.
+Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tramy Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe, Michael Zhang, Zhen Zhang, and Zach Zundel.
 
+Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 
 ## Pre-installation Requirement(s)
 1. [Create](https://github.com/) a GitHub account.
 2. [Setup](https://help.github.com/articles/set-up-git) Git on your machine.
 3. [Install](https://maven.apache.org/download.cgi) Maven plugin on your machine.
 4. [Install](http://www.eclipse.org) Eclipse IDE  for Java. 
-5. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim GitHub repository to your machine.
-
+5. [Install](http://sbml.org/Software/libSBML/) libSBML for validation and flattening.
+6. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim and SBOLDesigner GitHub repositories to your machine
 
 ## Installing iBioSim in Eclipse
-1. Clone the iBioSim project from command-line or any other method of your choice as instructed in the provided link.
+1. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) and SBOLDesigner (https://github.com/SynBioDex/SBOLDesigner) project from command-line (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) or any other method of your choice as instructed in the provided link.
 2. Open up your Eclipse workspace that you want to import your iBioSim project to.
 3. Select Import from the File Menu.
 4. When given the option to select which project import, select ```Existing Maven Projects``` under Maven
@@ -42,8 +43,9 @@ Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curt
       * Root Directory: full path to your iBioSim project (i.e. path/to/iBioSim)
       * Once root directory is set, all the pom.xml should be displayed under Projects. Select all pom.xml files.
       * All installation should be complete so click ```Finish```
-5. Under Package Explorer in Eclipse, right click on the iBioSim pom.xml file and click select Run As and click Maven clean
-6. Perform Update Project under Maven by right clicking on the iBioSim project.
+5. Under ```Package Explorer``` in Eclipse, right click on the iBioSim pom.xml file and click select ```Run As``` and click ```Maven clean```. This will install the local jars as dependencies in your local repository. 
+6. Repeat the same steps for SBOLDesigner. (NOTE: Performing ```mvn clean install``` from command-line inside SBOLDesigner suffice)
+7. Perform ```Update Project``` under Maven by right clicking on the iBioSim project.
 
 ## Setting up iBioSim Configurations
 1. Open up iBioSim ```Run Configurations``` window and create a new ```Java Application``` in your Eclipse workspace
@@ -52,10 +54,10 @@ Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curt
     * Project: ```iBioSim-gui```
     * Main class: ```edu.utah.ece.async.ibiosim.gui.Gui```
   * Set the Environment tab to the following information:
-    * Create 2 variables with the corresponding value:
+    * Create variables with the corresponding value:
       * BIOSIM: full path to your iBioSim project (i.e. path/to/iBioSim)
-      * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable (i.e. $PATH:$BIOSIM/bin).
-      * DDLD_LIBRARY_PATH: full path to the lib directory in the iBioSim project (i.e. $BIOSIM/lib64)
+      * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable (i.e. $PATH:path/to/iBioSim/bin).
+      * DDLD_LIBRARY_PATH: full path to the lib directory in the iBioSim project (i.e. path/to/iBioSim/lib64)
   * Set Arguments tab to the following information:
     * Program arguments: ```-Xms2048 -Xms2048 -XX:+UseSerialGC```
     
@@ -65,7 +67,7 @@ Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curt
 
 ## Running iBioSim
 1. Run the java application that you have created from the previous step (i.e. iBioSim_GUI) in Eclipse.
-2. Alternatively if you want to run from the command line:
+2. Alternatively if you want to run from the command-line:
    1. Build an executable jar for iBioSim by running ```mvn clean install``` on the project root. 
    2. Copy ```gui/target/iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar``` to the bin directory of your iBioSim project.
    3. Rename ```iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar``` to ```iBioSim.jar```.
@@ -75,10 +77,8 @@ Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curt
       * Linux: ```iBioSim.linux64```
 
 ## [Optional] Building reb2sac and GeneNet dependencies.
-1. So far, instructions on how to build, install, and run iBioSim from source have been presented. However, these steps only included source code that are native Java. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. The first step to do so is to install libSBML:
-   * [libSBML](http://sbml.org/Software/libSBML/)
-2. Once you have libSBML, you can install different features by following the instructions below:
+1. So far, instructions on how to build, install, and run iBioSim from source have been presented. However, these steps only included source code that are native Java. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. You can install different features by following the instructions below:
    * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/)
    * [GeneNet](https://github.com/MyersResearchGroup/GeneNet)
-3. After compiling reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim project.
+2. After compiling reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim project.
    

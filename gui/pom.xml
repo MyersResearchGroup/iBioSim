@@ -18,23 +18,6 @@
 				<artifactId>maven-install-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>install-sbolDesigner</id>
-						<phase>clean</phase>
-						<configuration>
-							<file>${basedir}/../lib/SBOLDesigner.jar</file>
-							<repositoryLayout>default</repositoryLayout>
-							<groupId>edu.utah.ece.async.sboldesigner</groupId>
-							<artifactId>SBOLDesigner</artifactId>
-							<version>2.2-SNAPSHOT</version>
-							<packaging>jar</packaging>
-							<generatePom>true</generatePom>
-						</configuration>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-					</execution>
-
-					<execution>
 						<id>install-combineArch</id>
 						<phase>clean</phase>
 						<configuration>
