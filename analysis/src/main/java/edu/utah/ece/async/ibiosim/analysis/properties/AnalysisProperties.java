@@ -19,7 +19,11 @@ public class AnalysisProperties {
 	private String filename;
 	private String id;
 	private String root;
+	private String command;
 	
+	private String lpnProperty;
+	private String constraintProperty;
+
 	private String genStats;
 	
 	private String[]			intSpecies;
@@ -69,10 +73,22 @@ public class AnalysisProperties {
 		return absProproperty;
 	}
 	/**
+	 * @return the command
+	 */
+	public String getCommand() {
+		return command;
+	}
+	/**
 	 * @return the con
 	 */
 	public int getCon() {
 		return con;
+	}
+	/**
+	 * @return the constraintProperty
+	 */
+	public String getConstraintProperty() {
+		return constraintProperty;
 	}
 	/**
 	 * @return the filename
@@ -109,6 +125,12 @@ public class AnalysisProperties {
 	 */
 	public List<String> getLoopAbs() {
 		return loopAbs;
+	}
+	/**
+	 * @return the lpnProperty
+	 */
+	public String getLpnProperty() {
+		return lpnProperty;
 	}
 	/**
 	 * @return the minTimeStep
@@ -356,6 +378,7 @@ public class AnalysisProperties {
 	public void setAbsProproperty(AbstractionProperty absProproperty) {
 		this.absProproperty = absProproperty;
 	}
+
 	/**
 	 * @param the absProperty
 	 */
@@ -369,10 +392,22 @@ public class AnalysisProperties {
 		this.adaptive = adaptive;
 	}
 	/**
+	 * @param command the command to set
+	 */
+	public void setCommand(String command) {
+		this.command = command;
+	}
+	/**
 	 * @param con the con to set
 	 */
 	public void setCon(int con) {
 		this.con = con;
+	}
+	/**
+	 * @param constraintProperty the constraintProperty to set
+	 */
+	public void setConstraintProperty(String constraintProperty) {
+		this.constraintProperty = constraintProperty;
 	}
 	/**
 	 * @param dot the dot to set
@@ -422,26 +457,36 @@ public class AnalysisProperties {
 	public void setIntSpecies(String[] intSpecies) {
 		this.intSpecies = intSpecies;
 	}
+
+
 	/**
 	 * @param lhpn the lhpn to set
 	 */
 	public void setLhpn(boolean lhpn) {
 		this.lhpn = lhpn;
 	}
+	
 	/**
 	 * @param loopAbs the loopAbs to set
 	 */
 	public void setLoopAbs(List<String> loopAbs) {
 		this.loopAbs = loopAbs;
 	}
+	
+	/**
+	 * @param lpnProperty the lpnProperty to set
+	 */
+	public void setLpnProperty(String lpnProperty) {
+		this.lpnProperty = lpnProperty;
+	}
+	
 	/**
 	 * @param markov the markov to set
 	 */
 	public void setMarkov(boolean markov) {
 		this.markov = markov;
 	}
-
-
+	
 	/**
 	 * @param meanPath the meanPath to set
 	 */
@@ -453,28 +498,24 @@ public class AnalysisProperties {
 	{
 		userInterval = UserInterval.MIN_PRINT_INTERVAL;
 	}
-	
 	/**
 	 * @param minTimeStep the minTimeStep to set
 	 */
 	public void setMinTimeStep(double minTimeStep) {
 		this.minTimeStep = minTimeStep;
 	}
-	
 	/**
 	 * @param mpde the mpde to set
 	 */
 	public void setMpde(boolean mpde) {
 		this.mpde = mpde;
 	}
-	
 	/**
 	 * @param nary the nary to set
 	 */
 	public void setNary(boolean nary) {
 		this.nary = nary;
 	}
-	
 	/**
 	 * @param none the none to set
 	 */
