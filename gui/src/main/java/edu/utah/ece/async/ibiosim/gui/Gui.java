@@ -164,6 +164,8 @@ import com.apple.eawt.QuitResponse;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
+import uk.ac.ncl.ico2s.VPRException;
+import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.meta.DefaultMetaDataObject;
 import de.unirostock.sems.cbarchive.meta.MetaDataObject;
@@ -2136,7 +2138,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		else if (e.getActionCommand().equals("generateSBOLModels"))
 		{
 			// TODO: temporarily removed until VPR library sorted
-			//generateSBOLInteractionModels();
+			generateSBOLInteractionModels();
 		}
 		else if (e.getActionCommand().equals("SBOLDesigner")) {
 			openSBOLDesigner();
@@ -6351,7 +6353,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	}
 
 	// TODO: temporarily removed until VPR library sorted
-/*	private void generateSBOLInteractionModels(){
+	private void generateSBOLInteractionModels(){
 		String file_with_Path = tree.getFile();
 		try 
 		{
@@ -6375,7 +6377,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	
 
-} */
+} 
 
 
 private void openSBOLDesigner() {

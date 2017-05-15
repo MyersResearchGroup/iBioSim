@@ -9,10 +9,9 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
-//import uk.ac.ncl.ico2s.VPRException;
-//import uk.ac.ncl.ico2s.VPRTripleStoreException;
-//import uk.ac.ncl.ico2s.sbol.SBOLHandler;
-//import uk.ac.ncl.ico2s.sbolstack.SBOLInteractionAdder_GeneCentric;
+import uk.ac.ncl.ico2s.VPRException;
+import uk.ac.ncl.ico2s.VPRTripleStoreException;
+import uk.ac.ncl.ico2s.sbolstack.SBOLInteractionAdder_GeneCentric;
 
 public class ModelGenerator {
 
@@ -28,21 +27,16 @@ public class ModelGenerator {
 	 * @throws VPRException 
 	 */
 	// TODO: temporarily removed until VPR library sorted
-/*
 	public static SBOLDocument generateModel(File file) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException
 	{
 		SBOLDocument generatedModel = SBOLReader.read(file);
 		String endpoint="http://synbiohub.org/sparql";  
 		SBOLInteractionAdder_GeneCentric interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint));
 		interactionAdder.addInteractions(generatedModel);
-
 		return generatedModel;
+		
 	}
 
-	public static void exportModel(String outputFile, SBOLDocument outputDoc) throws VPRException
-	{
-		SBOLHandler.write(outputDoc, new File( outputFile));
-
-	}
-	*/
+	
+	
 }
