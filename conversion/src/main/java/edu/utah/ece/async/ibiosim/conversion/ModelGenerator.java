@@ -26,10 +26,8 @@ public class ModelGenerator {
 	 * @throws VPRTripleStoreException 
 	 * @throws VPRException 
 	 */
-	// TODO: temporarily removed until VPR library sorted
-	public static SBOLDocument generateModel(File file) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException
+	public static SBOLDocument generateModel(SBOLDocument generatedModel) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException
 	{
-		SBOLDocument generatedModel = SBOLReader.read(file);
 		String endpoint="http://synbiohub.org/sparql";  
 		SBOLInteractionAdder_GeneCentric interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint));
 		interactionAdder.addInteractions(generatedModel);
