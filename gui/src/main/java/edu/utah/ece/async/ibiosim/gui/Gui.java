@@ -54,8 +54,6 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,7 +107,6 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
-import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
@@ -154,8 +151,6 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidate;
 import org.sbolstandard.core2.SBOLValidationException;
-import org.sbolstandard.core2.SBOLWriter;
-import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 
 import com.apple.eawt.AboutHandler;
@@ -235,8 +230,7 @@ import edu.utah.ece.async.lema.verification.platu.platuLpn.io.PlatuGrammarParser
  */
 public class Gui implements Observer, MouseListener, ActionListener, MouseMotionListener, MouseWheelListener {
 
-	public static JFrame frame; // Frame where components of the GUI are
-	// displayed
+	public static JFrame frame; // Frame where components of the GUI are displayed
 	private JMenuBar menuBar;
 	private JMenu file, openRecent, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
 	private JMenuItem newProj, newSBMLModel, newSBOL, newGridModel, newVhdl, newS, newInst, newLhpn, newProperty, newG;
@@ -316,7 +310,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	addPlace, addTransition, addRule, addConstraint, addEvent, addSelfInfl, cut, select, undo, redo, copy,
 	rename, delete, moveLeft, moveRight, moveUp, moveDown;
 
-	private JMenuItem save, saveAs, /* saveSBOL, */ check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog,
+	private JMenuItem save, saveAs, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog,
 	viewCoverage, viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser,
 	createAnal, createLearn, createSbml, createSynth, createVer, close, closeAll, saveAll,
 	convertToLPN;

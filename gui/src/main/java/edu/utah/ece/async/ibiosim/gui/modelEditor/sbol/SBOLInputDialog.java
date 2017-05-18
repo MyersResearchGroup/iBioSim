@@ -123,9 +123,16 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	public SBOLDocument getSelection() {
 		try 
 		{
-			int row = table.convertRowIndexToModel(table.getSelectedRow());
-			TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row);
-			return doc.createRecursiveCopy(comp);
+			SBOLDocument outputDoc = new SBOLDocument();
+			
+			for(int r : table.getSelectedRows())
+			{
+				int row = table.convertRowIndexToModel(r);
+				TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row); 
+				outputDoc.createCopy(doc.createRecursiveCopy(comp));
+			}
+			
+			return outputDoc;
 		} 
 		catch (SBOLValidationException e) 
 		{
