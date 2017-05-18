@@ -164,6 +164,8 @@ import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
 
+import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
+import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
@@ -173,7 +175,7 @@ import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
-import edu.utah.ece.async.ibiosim.conversion.ModelGenerator;
+import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
@@ -195,6 +197,7 @@ import edu.utah.ece.async.ibiosim.gui.learnView.LearnViewLEMA;
 import edu.utah.ece.async.ibiosim.gui.lpnEditor.LHPNEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.movie.MovieContainer;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore.ElementsPanel;
+import edu.utah.ece.async.ibiosim.gui.modelEditor.sbol.SBOLInputDialog;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
 import edu.utah.ece.async.ibiosim.gui.sbolBrowser.SBOLBrowser2;
@@ -2132,10 +2135,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			openLPN();
 		} else if (e.getActionCommand().equals("browseSbol")) {
 			openSBOL();
-		}
-		else if (e.getActionCommand().equals("generateSBOLModels"))
-		{
-			generateSBOLInteractionModels();
 		}
 		else if (e.getActionCommand().equals("SBOLDesigner")) {
 			openSBOLDesigner();
@@ -6350,87 +6349,97 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	}
 
 	
-	private void generateSBOLInteractionModels(){
-		try 
+	private void openSBOLOptions()
+	{
+		/* Note: Allow user the option of what SBOL operations they can perform
+		 * 0 : open SBOLDesigner 
+		 * 1 : perform vpr model generation
+		 */
+		Object[] options = {"SBOLDesigner", "VPR Model Generator"};
+		int n = JOptionPane.showOptionDialog(frame,
+				"Which option would you like to run?",
+				"SBOL Selection Options",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE,
+				ResourceManager.getImageIcon("iBioSim.png"),
+				options,
+				options[0]);
+		
+		if(n == 0)
 		{
-			SBOLDocument outputSBOL = ModelGenerator.generateModel(getSBOLDocument());
-			generateSBMLFromSBOL(outputSBOL, tree.getFile());
-		} catch (SBOLValidationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SBOLConversionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (VPRException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (VPRTripleStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			openSBOLDesigner();
 		}
-	} 
+		else if (n == 1)
+		{
+			//TODO: open SBOL VPR model generator
+			String selectedRepo = getSelectedRepo();
+			if(selectedRepo == null)
+			{
+				//user selected nothing. Stop performing VPR Model Generation
+				return;
+			}
+			System.out.println("REPO: " + selectedRepo);
+			loadVPRDesigns();
+			
+//			VPRModelGenerator.generateModel(selectedRepo, outputSBOLDoc);
+//			generateSBMLFromSBOL(outputSBOLDoc, tree.getFile());
+		}
+	}
+	
+	private String getSelectedRepo()
+	{
+		ArrayList<Registry> list = new ArrayList<Registry>();
+		for (Registry r : Registries.get()) {
+			if (!r.isPath()) {
+				list.add(r);
+			}
+		}
+
+		Object[] options = list.toArray();
+
+		if (options.length == 0) {
+			JOptionPane.showMessageDialog(mainPanel, "There are no instances of SynBioHub in the registries list.");
+			return null;
+		}
+
+		Registry registry = (Registry) JOptionPane.showInputDialog(mainPanel,
+				"Select the SynBioHub instance you want to generate the VPR Model from.", 
+				"Repositories",
+				JOptionPane.QUESTION_MESSAGE, 
+				ResourceManager.getImageIcon("registry.png"), 
+				options, 
+				options[0]);
+		if (registry == null) {
+			return null;
+		}
+		return registry.getLocation();
+	}
+	
+	private boolean loadVPRDesigns()
+	{
+		SBOLDocument currentDoc = getSBOLDocument();
+		currentDoc = new SBOLInputDialog(mainPanel, currentDoc).getInput();
+		if (currentDoc == null) {
+			return false;
+		}
+		return false;
+	}
 
 	
 
 	private void openSBOLDesigner() {
-		// if (sbolDesignerOpen()) return;
 		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(GlobalConstants.separator) + 1);
 		try {
-
 			if (getSBOLDocument().getComponentDefinitions().size() == 0) {
 				createPart();
-			} else {
+			} 
+			else {
 				SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root + GlobalConstants.separator,
 						fileName, null, getSBOLDocument().getDefaultURIprefix());
-				// if
-				// (sbolDesignerPlugin.getRootDisplayId().equals("NewDesign"))
-				// return;
+				
 				if (sbolDesignerPlugin.getRootDisplayId() == null)
 					return;
-				
-				/* Note: Allow user the option of what SBOL operations they can perform
-				 * 0 : open SBOLDesigner 
-				 * 1 : perform vpr model generation
-				 * -1 : close option window
-				 */
-				Object[] options = {"SBOLDesigner", "VPR Model Generator"};
-				int n = JOptionPane.showOptionDialog(frame,
-						"Which option would you like to run?",
-						"SBOL Selection Options",
-						JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE,
-						ResourceManager.getImageIcon("iBioSim.png"),
-						options,
-						options[0]);
-				
-				if(n == 0)
-				{
-					addTab(sbolDesignerPlugin.getRootDisplayId(), sbolDesignerPlugin, "SBOL Designer");
-				}
-				else if (n == 1)
-				{
-					//TODO: open SBOL VPR model generator
-					SBOLDocument inputSBOLDoc = getSBOLDocument();
-					SBOLDocument outputSBOLDoc = new SBOLDocument();
-					outputSBOLDoc.setDefaultURIprefix(getSBOLDocument().getDefaultURIprefix());
-					ComponentDefinition compDesign = inputSBOLDoc.getComponentDefinition(sbolDesignerPlugin.getRootDisplayId(), "");
-					outputSBOLDoc.createCopy(compDesign);
-					for(org.sbolstandard.core2.Component c : compDesign.getComponents())
-					{
-						outputSBOLDoc.createCopy(c.getDefinition());
-					}
-					for(Sequence s : compDesign.getSequences())
-					{
-						outputSBOLDoc.createCopy(s);
-					}
-					ModelGenerator.generateModel(outputSBOLDoc);
-					generateSBMLFromSBOL(outputSBOLDoc, tree.getFile());
-				}
-				
-				
+				addTab(sbolDesignerPlugin.getRootDisplayId(), sbolDesignerPlugin, "SBOL Designer");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -7540,14 +7549,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				openSBOLDesigner.addMouseListener(this);
 				openSBOLDesigner.setActionCommand("browseSbol");
 
-				JMenuItem generateSBOLModels = new JMenuItem("Use VPR Model Generator");
-				generateSBOLModels.addActionListener(this);
-				generateSBOLModels.addMouseListener(this);
-				generateSBOLModels.setActionCommand("generateSBOLModels");
-
 				popup.add(view);
 				popup.add(openSBOLDesigner);
-				popup.add(generateSBOLModels);
 			} else if (tree.getFile().endsWith(".vhd")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
@@ -8116,7 +8119,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				openModelEditor(false);
 			} else if (tree.getFile().length() >= 5
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol")) {
-				openSBOLDesigner();
+				openSBOLOptions();
 			} else if (tree.getFile().length() >= 4
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 				openModel("VHDL");
