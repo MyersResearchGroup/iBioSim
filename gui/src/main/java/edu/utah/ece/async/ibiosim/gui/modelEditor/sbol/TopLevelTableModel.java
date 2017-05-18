@@ -30,7 +30,7 @@ import edu.utah.ece.async.sboldesigner.swing.AbstractListTableModel;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-class TopLevelTableModel extends AbstractListTableModel<TopLevel> {
+public class TopLevelTableModel extends AbstractListTableModel<TopLevel> {
 	private static final String[] COLUMNS = {"Type", "Display Id", "Name", "Version", "Description" };
 	private static final double[] WIDTHS = { 0.1, 0.2, 0.2, 0.1, 0.4 };
 

@@ -17,8 +17,11 @@ import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -6371,7 +6374,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 		else if (n == 1)
 		{
-			//TODO: open SBOL VPR model generator
 			String selectedRepo = getSelectedRepo();
 			if(selectedRepo == null)
 			{
@@ -6379,12 +6381,119 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				return;
 			}
 			System.out.println("REPO: " + selectedRepo);
-			loadVPRDesigns();
+			SBOLDocument outputSBOLDoc = getSelectedVPRDesigns();
 			
-//			VPRModelGenerator.generateModel(selectedRepo, outputSBOLDoc);
-//			generateSBMLFromSBOL(outputSBOLDoc, tree.getFile());
+			try {
+				if(outputSBOLDoc != null)
+				{
+					VPRModelGenerator.generateModel(selectedRepo, outputSBOLDoc);
+					generateSBMLFromSBOL(outputSBOLDoc, tree.getFile());
+					JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
+				}
+			} catch (SBOLValidationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SBOLConversionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (VPRException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (VPRTripleStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
+		return;
 	}
+	
+	private JFrame createProgressBar(JLabel label, JProgressBar progress)
+	  {
+	    final JFrame running = new JFrame("Progress");
+	    WindowListener w = new WindowListener()
+	    {
+	      @Override
+	      public void windowClosing(WindowEvent arg0)
+	      {
+	        running.dispose();
+	      }
+
+	      @Override
+	      public void windowOpened(WindowEvent arg0)
+	      {
+	      }
+
+	      @Override
+	      public void windowClosed(WindowEvent arg0)
+	      {
+	      }
+
+	      @Override
+	      public void windowIconified(WindowEvent arg0)
+	      {
+	      }
+
+	      @Override
+	      public void windowDeiconified(WindowEvent arg0)
+	      {
+	      }
+
+	      @Override
+	      public void windowActivated(WindowEvent arg0)
+	      {
+	      }
+
+	      @Override
+	      public void windowDeactivated(WindowEvent arg0)
+	      {
+	      }
+	    };
+	    running.addWindowListener(w);
+	    JPanel text = new JPanel();
+	    JPanel progBar = new JPanel();
+	    JPanel button = new JPanel();
+	    JPanel all = new JPanel(new BorderLayout());
+	    progress.setStringPainted(true);
+	    progress.setValue(0);
+	    progress.setVisible(true);
+	    text.add(label);
+	    progBar.add(progress);
+	    all.add(text, "North");
+	    all.add(progBar, "Center");
+	    all.add(button, "South");
+	    running.setContentPane(all);
+	    running.pack();
+	    running.setVisible(true);
+	    Dimension screenSize;
+	    try
+	    {
+	      Toolkit tk = Toolkit.getDefaultToolkit();
+	      screenSize = tk.getScreenSize();
+	    }
+	    catch (AWTError awe)
+	    {
+	      screenSize = new Dimension(640, 480);
+	    }
+	    Dimension frameSize = running.getSize();
+
+	    if (frameSize.height > screenSize.height)
+	    {
+	      frameSize.height = screenSize.height;
+	    }
+	    if (frameSize.width > screenSize.width)
+	    {
+	      frameSize.width = screenSize.width;
+	    }
+	    int x = screenSize.width / 2 - frameSize.width / 2;
+	    int y = screenSize.height / 2 - frameSize.height / 2;
+	    running.setLocation(x, y);
+	    running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	    return running;
+	  }
 	
 	private String getSelectedRepo()
 	{
@@ -6415,14 +6524,20 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		return registry.getLocation();
 	}
 	
-	private boolean loadVPRDesigns()
+	private SBOLDocument getSelectedVPRDesigns()
 	{
 		SBOLDocument currentDoc = getSBOLDocument();
-		currentDoc = new SBOLInputDialog(mainPanel, currentDoc).getInput();
-		if (currentDoc == null) {
-			return false;
+		if (currentDoc == null) 
+		{
+			return null;
 		}
-		return false;
+		SBOLInputDialog s = new SBOLInputDialog(mainPanel, currentDoc);
+		if(s.getInput() == null)
+		{
+			return null;
+		}
+		
+		return s.getSelection();
 	}
 
 	
