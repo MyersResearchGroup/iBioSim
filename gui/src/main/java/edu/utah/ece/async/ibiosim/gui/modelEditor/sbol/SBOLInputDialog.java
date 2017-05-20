@@ -13,26 +13,43 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.gui.modelEditor.sbol;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.TopLevel;
+
+import com.google.common.base.Throwables;
+
+import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
+import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.InputDialog;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PreferencesDialog;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryPreferencesTab;
 import edu.utah.ece.async.sboldesigner.swing.FormBuilder;
 
 /**
- * 
+ * Design Selection Dialog for VPR Model Generation and SBOLDesigner.
  * 
  * @author Tramy Nguyen
  * @author Chris Myers
@@ -40,16 +57,18 @@ import edu.utah.ece.async.sboldesigner.swing.FormBuilder;
  * @version %I%
  */
 public class SBOLInputDialog extends InputDialog<SBOLDocument> {
-	private static final String TITLE = "Designs for VPR Model Generation";
-
+	private static final String TITLE = "Select Designs";
+	private final ActionListener actionListener = new DialogActionListener();
 	private JTable table;
 	private JLabel tableLabel;
 	
-	private JCheckBox onlyShowRootModDefs;
-	private JCheckBox onlyShowRootCompDefs;
+	private JCheckBox onlyShowRootModDefs, onlyShowRootCompDefs;
 	
+	private JButton openSBOLDesigner, openVPRGenerator, optionsButton;
 
 	private SBOLDocument doc;
+	
+	private boolean sbolDesigner, vprGenerator;
 
 	/**
 	 * this.getInput() returns an SBOLDocument with a single rootCD selected
@@ -60,10 +79,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 
 		this.doc = doc;
 	}
+	
 
 	@Override
 	protected String initMessage() {
-		return "There are multiple designs.  Select the design(s) you would to perform VPR Model Generation on.";
+		return "Select multiple designs by holding down alt/command on your keyboard.";
 	}
 
 	@Override
@@ -89,8 +109,6 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			}
 		});
 		builder.add("", onlyShowRootCompDefs);
-		
-		
 	}
 
 	@Override
@@ -158,5 +176,163 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		((TopLevelTableModel) table.getModel()).setElements(topLevelObjs);
 		tableLabel.setText("Select Design(s) (" + topLevelObjs.size() + ")");
 	}
+	
+	/**
+	 * Returns SBOLDocument, containing whatever data is selected
+	 */
+	public SBOLDocument getInput() {
+		initGUI();
+		try {
+			setVisible(true);
+			if (canceled) {
+				return null;
+			}
+			Registries.get().save();
+			return getSelection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(getParent(), Throwables.getRootCause(e).getMessage(), "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+	}
+	
+	private void initGUI() {
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
+		if (registrySelection != null) {
+			optionsButton = new JButton("Options");
+			optionsButton.addActionListener(actionListener);
+			buttonPanel.add(optionsButton);
+		}
+
+		buttonPanel.add(Box.createHorizontalStrut(200));
+		buttonPanel.add(Box.createHorizontalGlue());
+
+		openSBOLDesigner = new JButton("Open SBOLDesigner");
+		openSBOLDesigner.addActionListener(actionListener);
+		openSBOLDesigner.setEnabled(false);
+		getRootPane().setDefaultButton(openSBOLDesigner);
+		buttonPanel.add(openSBOLDesigner);
+		
+		openVPRGenerator = new JButton("Generate Model");
+		openVPRGenerator.addActionListener(actionListener);
+		openVPRGenerator.setEnabled(false);
+		getRootPane().setDefaultButton(openVPRGenerator);
+		buttonPanel.add(openVPRGenerator);
+		
+		initFormPanel(builder);
+
+		JComponent formPanel = builder.build();
+		formPanel.setAlignmentX(LEFT_ALIGNMENT);
+
+		Box topPanel = Box.createVerticalBox();
+		String message = initMessage();
+		if (message != null) {
+			JPanel messageArea = new JPanel();
+			messageArea.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6),
+					BorderFactory.createEtchedBorder()));
+			messageArea.setAlignmentX(LEFT_ALIGNMENT);
+			messageArea.add(new JLabel("<html>" + message.replace("\n", "<br>") + "</html>"));
+			topPanel.add(messageArea);
+		}
+		topPanel.add(formPanel);
+
+		JComponent mainPanel = initMainPanel();
+
+		JPanel contentPane = new JPanel(new BorderLayout());
+		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+		contentPane.add(topPanel, BorderLayout.NORTH);
+		if (mainPanel != null) {
+			contentPane.add(mainPanel, BorderLayout.CENTER);
+		}
+		contentPane.add(buttonPanel, BorderLayout.SOUTH);
+
+		setContentPane(contentPane);
+
+		initFinished();
+
+		if (registrySelection != null) {
+			registryChanged();
+		}
+
+		pack();
+		setLocationRelativeTo(getOwner());
+	}
+	
+	private class DialogActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			Object source = e.getSource();
+			if (source == registrySelection) {
+				final Registry registry = (Registry) registrySelection.getSelectedItem();
+				if (registry == null) {
+					location = null;
+					location = null;
+				} else {
+					int selectedIndex = registrySelection.getSelectedIndex();
+					
+					Registries.get().setVersionRegistryIndex(selectedIndex);
+					
+					location = registry.getLocation();
+					uriPrefix = registry.getUriPrefix();
+				}
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						registryChanged();
+					}
+				});
+			} else if (source == optionsButton) {
+				PreferencesDialog.showPreferences(SBOLInputDialog.this, RegistryPreferencesTab.INSTANCE.getTitle());
+				registrySelection.removeAllItems();
+				for (Registry r : Registries.get()) {
+					registrySelection.addItem(r);
+				}
+				registrySelection.setSelectedIndex(Registries.get().getPartRegistryIndex());
+			} else if (source == openSBOLDesigner) {
+				setVisible(false);
+				canceled = false;
+				sbolDesigner = true;
+				vprGenerator = false;
+			} else if (source == openVPRGenerator) {
+				setVisible(false);
+				canceled = false;
+				sbolDesigner = false;
+				vprGenerator = true;
+			}
+		}
+	}
+	
+	@Override
+	protected void setSelectAllowed(boolean allow) {
+
+		openSBOLDesigner.setEnabled(allow);
+		openVPRGenerator.setEnabled(allow);
+		
+		
+	}
+	@Override
+	protected void handleTableSelection() {
+		canceled = false;
+		setVisible(false);
+	}
+
+	
+	public boolean isVPRGenerator()
+	{
+		return vprGenerator;
+	}
+	
+	public boolean isSBOLDesigner()
+	{
+		return sbolDesigner;
+	}
+	
+	public boolean isCanceled()
+	{
+		return canceled;
+	}
+	
 }

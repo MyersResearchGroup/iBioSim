@@ -13,7 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.conversion;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 

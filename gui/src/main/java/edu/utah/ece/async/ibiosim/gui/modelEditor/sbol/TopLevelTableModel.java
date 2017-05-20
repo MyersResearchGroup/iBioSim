@@ -14,16 +14,12 @@
 package edu.utah.ece.async.ibiosim.gui.modelEditor.sbol;
 
 import java.util.List;
-
-import javax.swing.JCheckBox;
-
-import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.TopLevel;
 
 import edu.utah.ece.async.sboldesigner.swing.AbstractListTableModel;
 
 /**
- * 
+ * Table to load SBODocument data models 
  * 
  * @author Tramy Nguyen
  * @author Chris Myers
@@ -38,6 +34,9 @@ public class TopLevelTableModel extends AbstractListTableModel<TopLevel> {
 		super(topLevelObjects, COLUMNS, WIDTHS);
 	}
 
+	/**
+	 * 
+	 */
 	public Object getField(TopLevel topLevelObject, int col) {
 		switch (col) {
 		case 0:

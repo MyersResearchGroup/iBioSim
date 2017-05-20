@@ -20,8 +20,6 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -29,7 +27,6 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -4774,7 +4771,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			try {
 				sbolDocument = SBOLReader.read(sbolFilename);
 				sbolDocument.setCreateDefaults(true);
-				Preferences biosimrc = Preferences.userRoot();
 				sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(frame, "Unable to open project's SBOL library.", "Error",
@@ -6348,40 +6344,33 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	
 	private void openSBOLOptions()
 	{
-		/* Note: Allow user the option of what SBOL operations they can perform
-		 * 0 : open SBOLDesigner 
-		 * 1 : perform vpr model generation
-		 */
-		Object[] options = {"SBOLDesigner", "VPR Model Generator"};
-		int n = JOptionPane.showOptionDialog(frame,
-				"Which option would you like to run?",
-				"SBOL Selection Options",
-				JOptionPane.YES_NO_CANCEL_OPTION,
-				JOptionPane.QUESTION_MESSAGE,
-				ResourceManager.getImageIcon("iBioSim.png"),
-				options,
-				options[0]);
-		
-		if(n == 0)
+		String selectedRepo = getSelectedRepo();
+		if(selectedRepo == null)
 		{
-			openSBOLDesigner();
+			//user selected nothing. Stop performing VPR Model Generation
+			return;
 		}
-		else if (n == 1)
+
+		SBOLDocument currentDoc = getSBOLDocument();
+		if (currentDoc == null) 
 		{
-			String selectedRepo = getSelectedRepo();
-			if(selectedRepo == null)
-			{
-				//user selected nothing. Stop performing VPR Model Generation
-				return;
-			}
-			System.out.println("REPO: " + selectedRepo);
-			SBOLDocument outputSBOLDoc = getSelectedVPRDesigns();
-			
+			return;
+		}
+		SBOLInputDialog s = new SBOLInputDialog(mainPanel, currentDoc);
+		if(s.getInput() == null)
+		{
+			return;
+		}
+		
+		SBOLDocument chosenDesign = s.getSelection();
+
+		if(s.isVPRGenerator())
+		{
 			try {
-				if(outputSBOLDoc != null)
+				if(chosenDesign != null)
 				{
-					VPRModelGenerator.generateModel(selectedRepo, outputSBOLDoc);
-					generateSBMLFromSBOL(outputSBOLDoc, tree.getFile());
+					VPRModelGenerator.generateModel(selectedRepo, chosenDesign);
+					generateSBMLFromSBOL(chosenDesign, tree.getFile());
 					JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 				}
 			} catch (SBOLValidationException e) {
@@ -6400,9 +6389,13 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
-		return;
+		else if(s.isSBOLDesigner())
+		{
+			openSBOLDesigner();
+		}
+
+
 	}
 	
 	private JFrame createProgressBar(JLabel label, JProgressBar progress)
@@ -6506,7 +6499,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 
 		Registry registry = (Registry) JOptionPane.showInputDialog(mainPanel,
-				"Select the SynBioHub instance you want to generate the VPR Model from.", 
+				"Select the SynBioHub instance you want to use.", 
 				"Repositories",
 				JOptionPane.QUESTION_MESSAGE, 
 				ResourceManager.getImageIcon("registry.png"), 
@@ -6516,22 +6509,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			return null;
 		}
 		return registry.getLocation();
-	}
-	
-	private SBOLDocument getSelectedVPRDesigns()
-	{
-		SBOLDocument currentDoc = getSBOLDocument();
-		if (currentDoc == null) 
-		{
-			return null;
-		}
-		SBOLInputDialog s = new SBOLInputDialog(mainPanel, currentDoc);
-		if(s.getInput() == null)
-		{
-			return null;
-		}
-		
-		return s.getSelection();
 	}
 
 	
