@@ -6344,13 +6344,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	
 	private void openSBOLOptions()
 	{
-		String selectedRepo = getSelectedRepo();
-		if(selectedRepo == null)
-		{
-			//user selected nothing. Stop performing VPR Model Generation
-			return;
-		}
-
 		SBOLDocument currentDoc = getSBOLDocument();
 		if (currentDoc == null) 
 		{
@@ -6366,37 +6359,69 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 
 		if(s.isVPRGenerator())
 		{
-			try {
-				if(chosenDesign != null)
-				{
-					VPRModelGenerator.generateModel(selectedRepo, chosenDesign);
-					generateSBMLFromSBOL(chosenDesign, tree.getFile());
-					JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
-				}
-			} catch (SBOLValidationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SBOLConversionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (VPRException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (VPRTripleStoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			runVPRGenerator(chosenDesign);
 		}
 		else if(s.isSBOLDesigner())
 		{
-			openSBOLDesigner();
+			runSBOLDesigner(chosenDesign, currentDoc.getDefaultURIprefix());
+			
 		}
-
-
 	}
+	
+	private void runVPRGenerator(SBOLDocument chosenDesign)
+	{
+		try {
+			if(chosenDesign != null)
+			{
+				String selectedRepo = getSelectedRepo();
+				if(selectedRepo == null)
+				{
+					//user selected nothing. Stop performing VPR Model Generation
+					return;
+				}
+				
+				VPRModelGenerator.generateModel(selectedRepo, chosenDesign);
+				generateSBMLFromSBOL(chosenDesign, tree.getFile());
+				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
+			}
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SBOLConversionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (VPRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (VPRTripleStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
+	private void runSBOLDesigner(SBOLDocument chosenDesign, String docURIPrefix)
+	{
+		try 
+		{
+			SBOLDesignerPlugin sbolDesignerPlugin ;
+			for(ComponentDefinition selectedDesign : chosenDesign.getRootComponentDefinitions())
+			{
+				sbolDesignerPlugin = new SBOLDesignerPlugin(root + GlobalConstants.separator, 
+						currentProjectId + ".sbol", 
+						selectedDesign.getIdentity(), 
+						docURIPrefix);
+				addTab(sbolDesignerPlugin.getRootDisplayId(), sbolDesignerPlugin, "SBOL Designer");
+			}
+			
+		} catch (SBOLValidationException | IOException | SBOLConversionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 	private JFrame createProgressBar(JLabel label, JProgressBar progress)
 	  {

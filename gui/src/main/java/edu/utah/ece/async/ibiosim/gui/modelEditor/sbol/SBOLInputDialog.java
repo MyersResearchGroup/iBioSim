@@ -15,35 +15,54 @@ package edu.utah.ece.async.ibiosim.gui.modelEditor.sbol;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.KeyStroke;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.TableRowSorter;
 
+import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SBOLWriter;
+import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.TopLevel;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
+import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
+import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types;
+import edu.utah.ece.async.sboldesigner.sbol.editor.Part;
+import edu.utah.ece.async.sboldesigner.sbol.editor.Parts;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.InputDialog;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PartCellRenderer;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PreferencesDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryPreferencesTab;
 import edu.utah.ece.async.sboldesigner.swing.FormBuilder;
@@ -62,7 +81,13 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	private JTable table;
 	private JLabel tableLabel;
 	
-	private JCheckBox onlyShowRootModDefs, onlyShowRootCompDefs;
+	private JComboBox<Part> roleSelection;
+	private JComboBox<String> roleRefinement;
+	private JComboBox<Types> typeSelection;
+	private JButton deleteTopLevelObjs;
+	private static final Part ALL_PARTS = new Part("All parts", "All");
+	
+	private JCheckBox showRootModDefs, showRootCompDefs, showAllModDefs, showAllCompDefs;
 	
 	private JButton openSBOLDesigner, openVPRGenerator, optionsButton;
 
@@ -89,26 +114,139 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	@Override
 	public void initFormPanel(FormBuilder builder) 
 	{
-		//The initial design layout
-		onlyShowRootModDefs = new JCheckBox("Show root ModuleDefinitions");
-		onlyShowRootModDefs.setSelected(true);
-		onlyShowRootModDefs.addActionListener(new ActionListener() {
+		// The initial design layout
+		final JTextField filterSelection = new JTextField();
+		filterSelection.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
-			public void actionPerformed(ActionEvent event) {
-				updateTable();
+			public void removeUpdate(DocumentEvent paramDocumentEvent) {
+				updateFilter(filterSelection.getText());
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent paramDocumentEvent) {
+				updateFilter(filterSelection.getText());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent paramDocumentEvent) {
+				updateFilter(filterSelection.getText());
 			}
 		});
-		builder.add("", onlyShowRootModDefs);
+
 		
-		onlyShowRootCompDefs = new JCheckBox("Show root ComponentDefinitions");
-		onlyShowRootCompDefs.setSelected(true);
-		onlyShowRootCompDefs.addActionListener(new ActionListener() {
+		builder.add("Filter parts", filterSelection);
+		
+		JPanel filteredDesignPanel = new JPanel();
+		GridLayout designPanel = new GridLayout(2, 2);
+		filteredDesignPanel.setLayout(designPanel);
+		showRootCompDefs = new JCheckBox("Show root ComponentDefinitions");
+		showRootCompDefs.setSelected(true);
+		showRootCompDefs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				showAllCompDefs.setSelected(false);
+				updateTable();
+			}
+		});
+		filteredDesignPanel.add(showRootCompDefs);
+		
+		showRootModDefs = new JCheckBox("Show root ModuleDefinitions");
+		showRootModDefs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				showAllModDefs.setSelected(false);
+
+				boolean isEnabled = !showRootModDefs.isSelected();
+				roleRefinement.setEnabled(isEnabled);
+				roleSelection.setEnabled(isEnabled);
+				typeSelection.setEnabled(isEnabled);
+				updateTable();
+			}
+		});
+		filteredDesignPanel.add(showRootModDefs);
+		builder.add("", filteredDesignPanel);
+		
+		showAllCompDefs = new JCheckBox("Show all ComponentDefinitions");
+		showAllCompDefs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				showRootCompDefs.setSelected(false);
+				updateTable();
+			}
+		});
+		filteredDesignPanel.add(showAllCompDefs);
+		
+		showAllModDefs = new JCheckBox("Show all ModuleDefinitions");
+		showAllModDefs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				showRootModDefs.setSelected(false);
+				boolean isEnabled = !showAllModDefs.isSelected();
+				roleRefinement.setEnabled(isEnabled);
+				roleSelection.setEnabled(isEnabled);
+				typeSelection.setEnabled(isEnabled);
+				updateTable();
+			}
+		});
+		filteredDesignPanel.add(showAllModDefs);
+		
+		typeSelection = new JComboBox<Types>(Types.values());
+		typeSelection.setSelectedItem(Types.DNA);
+		typeSelection.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				updateTable();
+			}
+		});
+		builder.add("Part type", typeSelection);
+
+		List<Part> parts = Lists.newArrayList(Parts.sorted());
+		parts.add(0, ALL_PARTS);
+		roleSelection = new JComboBox<Part>(parts.toArray(new Part[0]));
+		roleSelection.setRenderer(new PartCellRenderer());
+		roleSelection.setSelectedItem(ALL_PARTS);
+		roleSelection.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				updateRoleRefinement();
+				updateTable();
+			}
+		});
+		builder.add("Part role", roleSelection);
+
+		// set up the JComboBox for role refinement
+		roleRefinement = new JComboBox<String>();
+		updateRoleRefinement();
+		roleRefinement.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				updateTable();
 			}
 		});
-		builder.add("", onlyShowRootCompDefs);
+		builder.add("Role refinement", roleRefinement);
+		
+		deleteTopLevelObjs = new JButton("Delete selected part(s). (This will resave the file)");
+		deleteTopLevelObjs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int[] rows = table.getSelectedRows();
+					for (int row : rows) {
+						row = table.convertRowIndexToModel(row);
+						TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row);
+						doc.removeTopLevel(comp);
+					}
+					File file = SBOLUtils.setupFile();
+					SBOLWriter.write(doc, new FileOutputStream(file));
+					updateTable();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(rootPane, "Failed to delete CD: " + e1.getMessage());
+					e1.printStackTrace();
+				}
+			}
+		});
+		builder.add("", deleteTopLevelObjs);
 	}
 
 	@Override
@@ -116,11 +254,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	{
 		//Get information for main design layout and load them up
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
-		if(onlyShowRootCompDefs.isSelected())
+		if(showRootCompDefs.isSelected())
 		{
 			topLevelObjs.addAll(doc.getRootComponentDefinitions());
 		}
-		if(onlyShowRootModDefs.isSelected())
+		if(showRootModDefs.isSelected())
 		{
 			topLevelObjs.addAll(doc.getRootModuleDefinitions());
 		}
@@ -136,7 +274,6 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 
 		return panel;
 	}
-
 	
 	public SBOLDocument getSelection() {
 		try 
@@ -159,22 +296,106 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			return null;
 		}
 	}
+	
+	private void updateRoleRefinement() {
+		roleRefinement.removeAllItems();
+		for (String s : SBOLUtils.createRefinements((Part) roleSelection.getSelectedItem())) {
+			roleRefinement.addItem(s);
+		}
+	}
 
+	private void checkAndUpdateTable()
+	{
+		if(vprGenerator)
+		{
+			// updateTable2()
+		}
+		if(sbolDesigner)
+		{
+			updateTable();
+		}
+	}
 	private void updateTable() 
 	{
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
-		if (onlyShowRootCompDefs.isSelected()) 
-		{
-			topLevelObjs.addAll(doc.getRootComponentDefinitions());
-		} 
 		
-		if (onlyShowRootModDefs.isSelected())  
-		{
-			topLevelObjs.addAll(doc.getRootModuleDefinitions());
-		}
+		topLevelObjs.addAll(getFilteredModDef());
+		topLevelObjs.addAll(getFilteredCompDef());
 		
 		((TopLevelTableModel) table.getModel()).setElements(topLevelObjs);
 		tableLabel.setText("Select Design(s) (" + topLevelObjs.size() + ")");
+	}
+	
+	private List<ComponentDefinition> getFilteredCompDef()
+	{
+		Part part;
+		String roleName = (String) roleRefinement.getSelectedItem();
+		if (roleName == null || roleName.equals("None")) 
+		{
+			part = isRoleSelection() ? (Part) roleSelection.getSelectedItem() : ALL_PARTS;
+		} 
+		else 
+		{
+			SequenceOntology so = new SequenceOntology();
+			URI role = so.getURIbyName(roleName);
+			part = new Part(role, null, null);
+		}
+		
+		Set<ComponentDefinition> CDsToDisplay;
+		if (showRootCompDefs.isSelected()) 
+		{
+			CDsToDisplay = doc.getRootComponentDefinitions();
+		} 
+		else if (showAllCompDefs.isSelected())
+		{
+			CDsToDisplay = doc.getComponentDefinitions();
+		}
+		else
+		{
+			CDsToDisplay = new HashSet<ComponentDefinition>(0);
+		}
+		
+		List<ComponentDefinition> components = SBOLUtils.getCDOfRole(CDsToDisplay, part);
+		components = SBOLUtils.getCDOfType(components, (Types) typeSelection.getSelectedItem());
+		return components;
+	}
+	
+	private List<TopLevel> getFilteredModDef()
+	{
+		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
+		
+		if (showRootModDefs.isSelected())  
+		{
+			topLevelObjs.addAll(doc.getRootModuleDefinitions());
+		}
+		else if(showAllModDefs.isSelected())
+		{
+			topLevelObjs.addAll(doc.getModuleDefinitions());
+		}
+		
+		return topLevelObjs;
+	}
+	
+	private boolean isRoleSelection() {
+		return roleSelection != null;
+	}
+	
+	private void updateFilter(String filterText) {
+		filterText = "(?i)" + filterText;
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		TableRowSorter<TopLevelTableModel> sorter = (TableRowSorter) table.getRowSorter();
+		if (filterText.length() == 0) {
+			sorter.setRowFilter(null);
+		} else {
+			try {
+				RowFilter<TopLevelTableModel, Object> rf = RowFilter.regexFilter(filterText, 0, 1);
+				sorter.setRowFilter(rf);
+			} catch (java.util.regex.PatternSyntaxException e) {
+				sorter.setRowFilter(null);
+			}
+		}
+
+		tableLabel.setText("Matching parts (" + sorter.getViewRowCount() + ")");
 	}
 	
 	/**
@@ -308,7 +529,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	@Override
 	protected void setSelectAllowed(boolean allow) {
 
-		openSBOLDesigner.setEnabled(allow);
+		openSBOLDesigner.setEnabled(!showAllModDefs.isSelected() && !showRootModDefs.isSelected() && allow);
 		openVPRGenerator.setEnabled(allow);
 		
 		
