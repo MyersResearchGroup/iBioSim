@@ -707,7 +707,7 @@ public final class Evaluator
         return reaction.getValue(index);
       }
     }
-    return ((VariableNode) node).getValue(index);
+    return node.getValue(index);
   }
 
   private static double evaluateOperator(HierarchicalNode node, boolean checkSubstance, int index)

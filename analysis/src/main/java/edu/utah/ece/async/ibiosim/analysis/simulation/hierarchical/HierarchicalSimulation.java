@@ -121,14 +121,19 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.minTimeStep = minTimeStep;
     this.printInterval = printInterval;
     this.printTime = new VariableNode("_printTime", StateType.SCALAR);
+    this.printTime.setValue(0);
     this.rootDirectory = rootDirectory;
     this.outputDirectory = outputDirectory;
     this.printConcentrationSpecies = new HashSet<String>();
-    this.interestingSpecies = new HashSet<String>();
-    for(String species : interestingSpecies)
+    if(interestingSpecies != null && interestingSpecies.length > 0)
     {
-      this.interestingSpecies.add(species);
+    	this.interestingSpecies = new HashSet<String>();
+        for(String species : interestingSpecies)
+        {
+          this.interestingSpecies.add(species);
+        }
     }
+    
     
     this.document = SBMLReader.read(new File(SBMLFileName));
     this.totalRuns = runs;
