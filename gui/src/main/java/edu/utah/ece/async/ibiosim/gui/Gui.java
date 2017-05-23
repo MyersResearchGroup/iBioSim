@@ -179,6 +179,7 @@ import de.unirostock.sems.cbarchive.meta.omex.VCard;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
 import de.unirostock.sems.cbarchive.meta.MetaDataObject;
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.conversion.ModelGenerator;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
@@ -195,7 +196,6 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisThread;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
-import edu.utah.ece.async.ibiosim.gui.analysisView.Run;
 import edu.utah.ece.async.ibiosim.gui.graphEditor.Graph;
 import edu.utah.ece.async.ibiosim.gui.learnView.DataManager;
 import edu.utah.ece.async.ibiosim.gui.learnView.LearnView;
@@ -2284,10 +2284,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				dummy.setSelected(false);
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
-				AnalysisView.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
-						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
-						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
-						false, false);
+				//TODO:
+//				AnalysisPropertiesWriter.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
+//						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
+//						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
+//						false, false);
 				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
 						+ ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
@@ -2461,10 +2462,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				dummy.setSelected(false);
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
-				AnalysisView.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
-						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
-						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
-						false, false);
+				//TODO:
+//				AnalysisView.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
+//						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
+//						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
+//						false, false);
 				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
 						+ ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
@@ -2557,10 +2559,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				AnalysisView.createProperties(0, 0, 0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, 0, directory, 314159L, 1, 1,
-						new String[0], "tsd.printer", "amount", "false",
-						(directory + theFile).split(GlobalConstants.separator), "none", frame, directory + theFile, 0.1,
-						0.1, 0.1, 15, 2.0, empty, empty, empty, null, false, false, false);
+				//TODO:
+//				AnalysisPropertiesWriter.createProperties(0, 0, 0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, 0, directory, 314159L, 1, 1,
+//						new String[0], "tsd.printer", "amount", "false",
+//						(directory + theFile).split(GlobalConstants.separator), "none", frame, directory + theFile, 0.1,
+//						0.1, 0.1, 15, 2.0, empty, empty, empty, null, false, false, false);
 				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out
 						+ ".xhtml " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
@@ -8914,7 +8917,7 @@ private void openAnalysisView(String fileName) throws Exception {
 	AbstractionPanel lhpnAbstraction = null;
 	if (modelFileName.contains(".lpn")) {
 		lhpnAbstraction = new AbstractionPanel(root, modelFileName, log);
-		analysisView = new AnalysisView(this, log, simTab, lhpnAbstraction, root, analysisName, modelFileName);
+		analysisView = new AnalysisView(this, log, simTab, lhpnAbstraction.getAbstractionProperty(), root, analysisName, modelFileName);
 	} else {
 		analysisView = new AnalysisView(this, log, simTab, null, root, analysisName, modelFileName);
 	}

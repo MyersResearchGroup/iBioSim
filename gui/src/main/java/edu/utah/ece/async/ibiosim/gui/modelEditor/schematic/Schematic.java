@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -2623,7 +2624,7 @@ public class Schematic extends JPanel implements ActionListener {
 				HashMap<String, JCheckBox> checkboxes = new HashMap<String, JCheckBox>();
 				HashMap<String, JTextField> thresholds = new HashMap<String, JTextField>();
 				
-				ArrayList<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();
+				List<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpecies();
 				
 				for (String compSpec : compSpecies) {
 					
@@ -2753,7 +2754,7 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						else {
 							
-							for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList()) {
+							for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpecies()) {
 								
 								if (intSpecies.split(" ")[0].equals(checkbox.getKey())) {
 									modelEditor.getReb2Sac().removeInterestingSpecies(intSpecies);
@@ -2769,7 +2770,7 @@ public class Schematic extends JPanel implements ActionListener {
 									
 									if (newID.equals(checkbox.getKey()) == false) {
 										
-										for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList()) {
+										for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpecies()) {
 											
 											if (intSpecies.split(" ")[0].equals(newID)) {
 												modelEditor.getReb2Sac().removeInterestingSpecies(intSpecies);

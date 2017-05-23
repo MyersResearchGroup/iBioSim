@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Properties;
 import java.util.Scanner;
@@ -52,16 +53,26 @@ import edu.utah.ece.async.lema.verification.lpn.Translator;
 public class Run extends Observable implements ActionListener
 {
 
-  private AnalysisProperties properties;
-  private final Message message = new Message();
-  
-  private Process reb2sac;
-  
+  private final AnalysisProperties properties;
   private FileWriter logFile;
 
+  private final Message message = new Message();
+  private final Runtime exec = Runtime.getRuntime();
+
+  private Process reb2sac;
+  private StateGraph sg;
+  private DynamicSimulation dynSim;
+  
+  private File work;
+  
+  public Run(AnalysisProperties properties)
+  {
+    this.properties = properties;
+  }
+  
   public void execute() throws IOException
   {
-	   
+    
   }
 
   private int executeFBA() throws XMLStreamException, IOException
@@ -156,12 +167,12 @@ public class Run extends Observable implements ActionListener
       new File( properties.getFilename().replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
       ArrayList<String> specs = new ArrayList<String>();
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-      String[] intSpecies = properties.getIntSpecies();
-      for (int i = 0; i < intSpecies.length; i++)
+      List<String> intSpecies = properties.getIntSpecies();
+      for (String species : intSpecies)
       {
-        if (!intSpecies[i].equals(""))
+        if (!species.equals(""))
         {
-          String[] split = intSpecies[i].split(" ");
+          String[] split = species.split(" ");
           if (split.length > 1)
           {
             String[] levels = split[1].split(",");
@@ -183,7 +194,7 @@ public class Run extends Observable implements ActionListener
         }
         else
         {
-        	prop = properties.getConstraintProperty();
+          prop = properties.getConstraintProperty();
         }
 
         MutableString mutProp = new MutableString(prop);
@@ -203,7 +214,7 @@ public class Run extends Observable implements ActionListener
         return 0;
       }
     }
-    StateGraph sg = new StateGraph(lhpnFile);
+    sg = new StateGraph(lhpnFile);
 
     BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, progress);
     buildStateGraph.start();
@@ -216,7 +227,7 @@ public class Run extends Observable implements ActionListener
     this.notifyObservers(message);
     message.setLog("Total memory used: " + sg.getTotalMemoryUsed() + "MB");
     this.notifyObservers(message);
-    
+
     if (sim.equals("reachability-analysis") && !sg.getStop())
     {
 
@@ -260,10 +271,10 @@ public class Run extends Observable implements ActionListener
             simrepstream.write((simrep).getBytes());
             simrepstream.close();
           }
-//          if(view)
-//          {
-//            viewStateGraph(filename, theFile, directory, sg);
-//          }
+          //          if(view)
+          //          {
+          //            viewStateGraph(filename, theFile, directory, sg);
+          //          }
         }
       }
     }
@@ -277,19 +288,19 @@ public class Run extends Observable implements ActionListener
         if (prop != null)
         {
           String[] condition;
-         
-            condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
-            boolean globallyTrue = false;
-            if (prop.contains("PF"))
-            {
-              condition[0] = "true";
-            }
-            else if (prop.contains("PG"))
-            {
-              condition[0] = "true";
-              globallyTrue = true;
-            }
-            performMarkovAnalysis.start(properties.getTimeLimit(), properties.getTimeStep(), properties.getPrintInterval(), properties.getAbsError(), condition, globallyTrue);
+
+          condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
+          boolean globallyTrue = false;
+          if (prop.contains("PF"))
+          {
+            condition[0] = "true";
+          }
+          else if (prop.contains("PG"))
+          {
+            condition[0] = "true";
+            globallyTrue = true;
+          }
+          performMarkovAnalysis.start(properties.getTimeLimit(), properties.getTimeStep(), properties.getPrintInterval(), properties.getAbsError(), condition, globallyTrue);
 
         }
         else
@@ -306,10 +317,10 @@ public class Run extends Observable implements ActionListener
             simrepstream.write((simrep).getBytes());
             simrepstream.close();
           }
-//          if(view)
-//          {
-//            viewStateGraph(filename, theFile, directory, sg);
-//          }
+          //          if(view)
+          //          {
+          //            viewStateGraph(filename, theFile, directory, sg);
+          //          }
         }
       }
     }
@@ -321,13 +332,13 @@ public class Run extends Observable implements ActionListener
     String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "").replace(".xml", "") + ".lpn";
     ArrayList<String> specs = new ArrayList<String>();
     ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-    String[] intSpecies = properties.getIntSpecies();
+    List<String> intSpecies = properties.getIntSpecies();
 
-    for (int i = 0; i < intSpecies.length; i++)
+    for (String species : intSpecies)
     {
-      if (!intSpecies[i].equals(""))
+      if (!species.equals(""))
       {
-        String[] split = intSpecies[i].split(" ");
+        String[] split =species.split(" ");
         if (split.length > 1)
         {
           String[] levels = split[1].split(",");
@@ -347,35 +358,35 @@ public class Run extends Observable implements ActionListener
     {
       prop = lpnProperty;
     }
-//    ArrayList<String> propList = new ArrayList<String>();
-//    if (prop == null)
-//    {
-//      Model m = bioModel.getSBMLDocument().getModel();
-//      for (int num = 0; num < m.getConstraintCount(); num++)
-//      {
-//        String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-//        if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U("))
-//        {
-//          propList.add(constraint);
-//        }
-//      }
-//    }
-//    if (propList.size() > 0)
-//    {
-//      String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
-//      	      if ((s != null) && (s.length() > 0))
-//      	      {
-//      	        Model m = bioModel.getSBMLDocument().getModel();
-//      	        for (int num = 0; num < m.getConstraintCount(); num++)
-//      	        {
-//      	          String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-//      	          if (s.equals(constraint))
-//      	          {
-//      	            prop = Translator.convertProperty(m.getConstraint(num).getMath());
-//      	          }
-//      	        }
-//      	      }
-//    }
+    //    ArrayList<String> propList = new ArrayList<String>();
+    //    if (prop == null)
+    //    {
+    //      Model m = bioModel.getSBMLDocument().getModel();
+    //      for (int num = 0; num < m.getConstraintCount(); num++)
+    //      {
+    //        String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+    //        if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U("))
+    //        {
+    //          propList.add(constraint);
+    //        }
+    //      }
+    //    }
+    //    if (propList.size() > 0)
+    //    {
+    //      String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+    //      	      if ((s != null) && (s.length() > 0))
+    //      	      {
+    //      	        Model m = bioModel.getSBMLDocument().getModel();
+    //      	        for (int num = 0; num < m.getConstraintCount(); num++)
+    //      	        {
+    //      	          String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+    //      	          if (s.equals(constraint))
+    //      	          {
+    //      	            prop = Translator.convertProperty(m.getConstraint(num).getMath());
+    //      	          }
+    //      	        }
+    //      	      }
+    //    }
     MutableString mutProp = new MutableString(prop);
     LPN lpnFile = LPN.convertToLHPN(specs, conLevel, mutProp, bioModel);
     prop = mutProp.getString();
@@ -393,7 +404,7 @@ public class Run extends Observable implements ActionListener
       {
         LPN lhpnFile = new LPN();
         lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
-        Abstraction abst = new Abstraction(lhpnFile, properties.getAbstractionProperty());
+        Abstraction abst = new Abstraction(lhpnFile, properties.getAbsProproperty());
         abst.abstractSTG(false);
         abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
         t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
@@ -418,11 +429,10 @@ public class Run extends Observable implements ActionListener
     String SBMLFileName = properties.getRoot() + GlobalConstants.separator + properties.getFilename();
     String command = null;
     String[] env = null;
-    DynamicSimulation dynSim;
 
     String sim = properties.getSim();
-    
-    
+
+
     boolean runJava = true;
     if (sim.equals("SSA-CR (Dynamic)"))
     {
@@ -500,12 +510,12 @@ public class Run extends Observable implements ActionListener
       message.setLog("Executing:\n" + command + "\n");
       this.notifyObservers(message);
 
-      //Process reb2sac = exec.exec(command, env, work);
-      //exitValue = reb2sac.waitFor();
+      reb2sac = exec.exec(command, env, work);
+      exitValue = reb2sac.waitFor();
     }   
     return exitValue;
   }
-  
+
   private int executeAtacs() throws IOException, InterruptedException
   {
     int exitValue = 0;
@@ -531,12 +541,12 @@ public class Run extends Observable implements ActionListener
         }
       }
     }
-    
+
     if (reb2sac != null)
     {
       exitValue = reb2sac.waitFor();
     }
-    */
+     */
     return exitValue;
   }
   private int executePrism() throws IOException, InterruptedException, XMLStreamException, BioSimException
@@ -669,24 +679,24 @@ public class Run extends Observable implements ActionListener
         exitValue = 0;
       }
     }
-    
+
     if (reb2sac != null)
     {
       exitValue = reb2sac.waitFor();
     }
-    
+
     Preferences biosimrc = Preferences.userRoot();
     String prismCmd = biosimrc.get("biosim.general.prism", "");
     writeLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl");
     exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
-    */
+     */
     return exitValue;
   }
-  
-  private int executeDot() throws IOException, InterruptedException
+
+  private int executeDot() throws IOException, InterruptedException, BioSimException
   {
     int exitValue= 255;
-    /*
+  
     String outputFileName = properties.getFilename().replace(".sbml", "").replace(".xml", "") + ".dot";
     if (properties.isNary())
     {
@@ -706,7 +716,7 @@ public class Run extends Observable implements ActionListener
       }
       if (properties.isAbs())
       {
-        Abstraction abst = new Abstraction(lhpnFile, properties.getAbstractionProperty());
+        Abstraction abst = new Abstraction(lhpnFile, properties.getAbsProproperty());
         abst.abstractSTG(false);
         abst.printDot(properties.getRoot() + GlobalConstants.separator + properties.getSim() + outputFileName);
       }
@@ -722,37 +732,36 @@ public class Run extends Observable implements ActionListener
       this.notifyObservers(message);
       reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + outputFileName + " " + properties.getFilename(), Executables.envp, work);
     }
-    
+
+/*
+    writeLog("Executing:\ndotty " + directory + out + ".dot");
     if (System.getProperty("os.name").contentEquals("Linux"))
     {
-      writeLog("Executing:\ndotty " + directory + out + ".dot" );
       exec.exec("dotty " + out + ".dot", null, work);
     }
     else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
     {
-      writeLog("Executing:\nopen " + directory + out + ".dot");
       exec.exec("open " + out + ".dot", null, work);
     }
     else
     {
-      writeLog("Executing:\ndotty " + directory + out + ".dot");
       exec.exec("dotty " + out + ".dot", null, work);
     }
-    
+*/
     if (reb2sac != null)
     {
       exitValue = reb2sac.waitFor();
     }
-    */
+    
     return exitValue;
   }
-  
+
   private int executeSBML() throws IOException, HeadlessException, XMLStreamException, InterruptedException
   {
     int exitValue = 255;
     return exitValue;
   }
-  
+
   private void viewStateGraph(String filename, String theFile, String directory, StateGraph sg)
   {
     String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
@@ -781,7 +790,7 @@ public class Run extends Observable implements ActionListener
       message.setErrorDialog( "Error", "Error viewing state graph.");
     }
   }
-  
+
   /**
    * This method is called if a button that cancels the simulation is pressed.
    */
@@ -789,18 +798,18 @@ public class Run extends Observable implements ActionListener
   public void actionPerformed(ActionEvent e)
   {
 
-//    if (dynSim != null)
-//    {
-//      dynSim.cancel();
-//    }
-//    if (reb2sac != null)
-//    {
-//      reb2sac.destroy();
-//    }
-//    if (sg != null)
-//    {
-//      sg.stop();
-//    }
+    if (dynSim != null)
+    {
+      dynSim.cancel();
+    }
+    if (reb2sac != null)
+    {
+      reb2sac.destroy();
+    }
+    if (sg != null)
+    {
+      sg.stop();
+    }
   }
 
 }

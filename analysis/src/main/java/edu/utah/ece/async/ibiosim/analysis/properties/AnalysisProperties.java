@@ -1,58 +1,72 @@
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 
-public class AnalysisProperties {
+public final class AnalysisProperties {
 
+  
 	private static enum UserInterval{
-		MIN_PRINT_INTERVAL,
-		NUM_STEPS,
-		PRINT_INTERVAL;
-	}
-	private double				absError;
+		MIN_PRINT_INTERVAL, NUM_STEPS, PRINT_INTERVAL;
+	}	
 	
-	private AbstractionProperty absProproperty;
+	private static enum SimMethod{
+	  ODE, SSA, MARKOV, FBA, SBML, DOT, XHTML, LHPN;
+  } 
+	
+
+  private final String filename, id, root;
+  private final AbstractionProperty absProperty;
+  
+  
+	private SimMethod method;
+	
 	private int					con;
 	
-	private String filename;
-	private String id;
-	private String root;
-	private String command;
+	private String command, outDir;
 	
-	private String lpnProperty;
-	private String constraintProperty;
-
-	private String genStats;
+	private String lpnProperty, constraintProperty, genStats;
 	
-	private String[]			intSpecies;
+	private List<String>			intSpecies;
 
 	private boolean mpde, meanPath, adaptive;
 	private boolean none, expand, abs, nary;
+
+  
+  private double        absError, relError;
+
 	private int numPaths;
-	private boolean ode, ssa, markov, fba, sbml, dot, xhtml, lhpn;
-	private String				outDir;
+	
 	private List<String> preAbs, loopAbs, postAbs;
 	private String				printer_id;
 	private String				printer_track_quantity;
-	private double				printInterval;
 	private double				qss;
 	private double				rap1;
 	private double				rap2;
-	private double				relError;
 
 	private long				rndSeed;
 
 	private int					run;
-
+	private int numSteps;
+	
 	private String				sim;
 	private String				simProp;
 	
 	private double stoichAmp;
-	private double				initialTime, outputStartTime, minTimeStep, timeLimit, timeStep;
+	private double				initialTime, outputStartTime, minTimeStep, printInterval, timeLimit, timeStep;
 	
 	private UserInterval userInterval;
+	
+	public AnalysisProperties(String id, String filename, String root, AbstractionProperty absProperty)
+	{
+	  this.id = id;
+	  this.filename = filename;
+	  this.root = root;
+	  this.absProperty = absProperty;
+	}
 	
 	/**
 	 * @return the absError
@@ -64,13 +78,7 @@ public class AnalysisProperties {
 	 * @return the absProproperty
 	 */
 	public AbstractionProperty getAbsProproperty() {
-		return absProproperty;
-	}
-	/**
-	 * @return the absProperty
-	 */
-	public AbstractionProperty getAbstractionProperty() {
-		return absProproperty;
+		return absProperty;
 	}
 	/**
 	 * @return the command
@@ -117,7 +125,7 @@ public class AnalysisProperties {
 	/**
 	 * @return the intSpecies
 	 */
-	public String[] getIntSpecies() {
+	public List<String> getIntSpecies() {
 		return intSpecies;
 	}
 	/**
@@ -274,7 +282,7 @@ public class AnalysisProperties {
 	 * @return the dot
 	 */
 	public boolean isDot() {
-		return dot;
+		return method == SimMethod.DOT;
 	}
 	/**
 	 * @return the expand
@@ -286,19 +294,19 @@ public class AnalysisProperties {
 	 * @return the fba
 	 */
 	public boolean isFba() {
-		return fba;
+		return method == SimMethod.FBA;
 	}
 	/**
 	 * @return the lhpn
 	 */
 	public boolean isLhpn() {
-		return lhpn;
+		return method == SimMethod.LHPN;
 	}
 	/**
 	 * @return the markov
 	 */
 	public boolean isMarkov() {
-		return markov;
+		return method == SimMethod.MARKOV;
 	}
 	/**
 	 * @return the meanPath
@@ -336,7 +344,7 @@ public class AnalysisProperties {
 	 * @return the ode
 	 */
 	public boolean isOde() {
-		return ode;
+		return method == SimMethod.ODE;
 	}
 	public boolean isPrintInterval()
 	{
@@ -346,19 +354,19 @@ public class AnalysisProperties {
 	 * @return the sbml
 	 */
 	public boolean isSbml() {
-		return sbml;
+		return method == SimMethod.SBML;
 	}
 	/**
 	 * @return the ssa
 	 */
 	public boolean isSsa() {
-		return ssa;
+		return method == SimMethod.SSA;
 	}
 	/**
 	 * @return the xhtml
 	 */
 	public boolean isXhtml() {
-		return xhtml;
+		return method == SimMethod.XHTML;
 	}
 	/**
 	 * @param abs the abs to set
@@ -372,19 +380,8 @@ public class AnalysisProperties {
 	public void setAbsError(double absError) {
 		this.absError = absError;
 	}
-	/**
-	 * @param absProproperty the absProproperty to set
-	 */
-	public void setAbsProproperty(AbstractionProperty absProproperty) {
-		this.absProproperty = absProproperty;
-	}
 
-	/**
-	 * @param the absProperty
-	 */
-	public void setAbstractionProproperty(AbstractionProperty absProproperty) {
-		this.absProproperty = absProproperty;
-	}
+
 	/**
 	 * @param adaptive the adaptive to set
 	 */
@@ -410,10 +407,10 @@ public class AnalysisProperties {
 		this.constraintProperty = constraintProperty;
 	}
 	/**
-	 * @param dot the dot to set
+	 * 
 	 */
-	public void setDot(boolean dot) {
-		this.dot = dot;
+	public void setDot() {
+	  method = SimMethod.DOT;
 	}
 	/**
 	 * @param expand the expand to set
@@ -422,29 +419,18 @@ public class AnalysisProperties {
 		this.expand = expand;
 	}
 	/**
-	 * @param fba the fba to set
 	 */
-	public void setFba(boolean fba) {
-		this.fba = fba;
+	public void setFba() {
+	  method = SimMethod.FBA;
 	}
-	/**
-	 * @param filename the filename to set
-	 */
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
+
 	/**
 	 * @param genStats the genStats to set
 	 */
 	public void setGenStats(String genStats) {
 		this.genStats = genStats;
 	}
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
+
 	/**
 	 * @param initialTime the initialTime to set
 	 */
@@ -454,7 +440,7 @@ public class AnalysisProperties {
 	/**
 	 * @param intSpecies the intSpecies to set
 	 */
-	public void setIntSpecies(String[] intSpecies) {
+	public void setIntSpecies(List<String> intSpecies) {
 		this.intSpecies = intSpecies;
 	}
 
@@ -462,8 +448,8 @@ public class AnalysisProperties {
 	/**
 	 * @param lhpn the lhpn to set
 	 */
-	public void setLhpn(boolean lhpn) {
-		this.lhpn = lhpn;
+	public void setLhpn() {
+	  method = SimMethod.LHPN;
 	}
 	
 	/**
@@ -481,10 +467,10 @@ public class AnalysisProperties {
 	}
 	
 	/**
-	 * @param markov the markov to set
+	 *
 	 */
-	public void setMarkov(boolean markov) {
-		this.markov = markov;
+	public void setMarkov() {
+	  method = SimMethod.MARKOV;
 	}
 	
 	/**
@@ -533,10 +519,9 @@ public class AnalysisProperties {
 		userInterval = UserInterval.NUM_STEPS;
 	}
 	/**
-	 * @param ode the ode to set
 	 */
-	public void setOde(boolean ode) {
-		this.ode = ode;
+	public void setOde() {
+	  method = SimMethod.ODE;
 	}
 	/**
 	 * @param outDir the outDir to set
@@ -615,22 +600,15 @@ public class AnalysisProperties {
 		this.rndSeed = rndSeed;
 	}
 	/**
-	 * @param root the root to set
-	 */
-	public void setRoot(String root) {
-		this.root = root;
-	}
-	/**
 	 * @param run the run to set
 	 */
 	public void setRun(int run) {
 		this.run = run;
 	}
 	/**
-	 * @param sbml the sbml to set
 	 */
-	public void setSbml(boolean sbml) {
-		this.sbml = sbml;
+	public void setSbml() {
+	  method = SimMethod.SBML;
 	}
 	/**
 	 * @param sim the sim to set
@@ -645,10 +623,10 @@ public class AnalysisProperties {
 		this.simProp = simProp;
 	}
 	/**
-	 * @param ssa the ssa to set
+	 *
 	 */
-	public void setSsa(boolean ssa) {
-		this.ssa = ssa;
+	public void setSsa() {
+	  method = SimMethod.SSA;
 	}
 	/**
 	 * @param stoichAmp the stoichAmp to set
@@ -668,10 +646,22 @@ public class AnalysisProperties {
 	public void setTimeStep(double timeStep) {
 		this.timeStep = timeStep;
 	}
+	
+	
 	/**
 	 * @param xhtml the xhtml to set
 	 */
-	public void setXhtml(boolean xhtml) {
-		this.xhtml = xhtml;
+	public void setXhtml() {
+	  method = SimMethod.XHTML;
 	}
+
+  
+  public int getNumSteps() {
+    return numSteps;
+  }
+
+  
+  public void setNumSteps(int numSteps) {
+    this.numSteps = numSteps;
+  }
 }

@@ -5,6 +5,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jlibsedml.AbstractTask;
+import org.jlibsedml.Algorithm;
+import org.jlibsedml.Annotation;
+import org.jlibsedml.DataGenerator;
+import org.jlibsedml.OneStep;
+import org.jlibsedml.SEDMLDocument;
+import org.jlibsedml.SedML;
+import org.jlibsedml.Simulation;
+import org.jlibsedml.SteadyState;
+import org.jlibsedml.Task;
+import org.jlibsedml.UniformTimeCourse;
+import org.jlibsedml.Variable;
+import org.jlibsedml.VariableSymbol;
+
+import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 import static edu.utah.ece.async.ibiosim.analysis.properties.PropertiesConstants.*;
 public class AnalysisPropertiesWriter {
@@ -44,11 +62,12 @@ public class AnalysisPropertiesWriter {
 		}
 		properties.setProperty(sim_printer, analysisProperties.getPrinter_id());
 		properties.setProperty(sim_tracking_quantity, analysisProperties.getPrinter_track_quantity());
-		for (int i = 0; i < analysisProperties.getIntSpecies().length; i++)
+		for (int i = 0; i < analysisProperties.getIntSpecies().size(); i++)
 		{
-			if (!analysisProperties.getIntSpecies()[i].equals(""))
+		  String species = analysisProperties.getIntSpecies().get(i);
+			if (!species.equals(""))
 			{
-				String[] split = analysisProperties.getIntSpecies()[i].split(" ");
+				String[] split = species.split(" ");
 				properties.setProperty(reb2sac_interesting_species + (i + 1), split[0]);
 				if (split.length > 1)
 				{
@@ -246,4 +265,83 @@ public class AnalysisPropertiesWriter {
 		properties.store(store, analysisProperties.getId() + " Properties");
 		store.close();
 	}
+	
+	 public static void saveSEDML(SEDMLDocument sedmlDoc, AnalysisProperties properties) {
+	    double initialTime = properties.getInitialTime();
+	    double outputStartTime = properties.getOutputStartTime();
+	    double timeLimit = properties.getTimeLimit();
+	    double printInterval = properties.getPrintInterval();
+	    int numberOfSteps;
+	    if (properties.isNumSteps())
+	    {
+	      numberOfSteps = properties.getNumSteps();
+	    }
+	    else
+	    {
+	      numberOfSteps = (int) Math.floor(timeLimit / printInterval) + 1;
+	    }
+	    SedML sedml = sedmlDoc.getSedMLModel();
+	    String taskId = properties.getId();
+//	    if (!fileStem.getText().trim().equals("")) {
+//	      taskId = properties.getId() + "__" + fileStem.getText().trim();
+//	    }
+	    AbstractTask task = sedml.getTaskWithId(taskId);
+	    Simulation simulation = sedml.getSimulation(taskId+"_sim");
+	    if (simulation != null) {
+	      sedml.removeSimulation(simulation);
+	    }
+	    //    Model model = sedml.getModelWithId(simName+"_model");
+	    //    if (model!=null) {
+	    //      sedml.removeModel(model);
+	    //    }
+	    if (task != null) {
+	      sedml.removeTask(task);
+	    }
+//	    Algorithm algo = getAlgorithm();
+//	    if (algo.getKisaoID().equals(GlobalConstants.KISAO_FBA)) {
+//	      simulation = new SteadyState(taskId+"_sim", "", algo);
+//	    } else if (algo.getKisaoID().equals(GlobalConstants.KISAO_GENERIC)) {
+//	      simulation = new SteadyState(taskId+"_sim", "", algo);
+//	      // TODO: need to deal with transient Markov chain method which is a type of UniformTimeCourse
+//	    } else {
+//	      simulation = new UniformTimeCourse(taskId+"_sim", "", initialTime, outputStartTime, timeLimit, numberOfSteps, algo);
+//	      if (properties.isPrintInterval()) {
+//	        Element para = new Element("printInterval");
+//	        para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+//	        para.setAttribute("Print_Interval", String.valueOf(properties.getPrintInterval()));
+//	        Annotation ann = new Annotation(para);
+//	        simulation.addAnnotation(ann);
+//	      } else if (properties.isMinPrintInterval()) {
+//	        Element para = new Element("printInterval");
+//	        para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+//	        para.setAttribute("Minimum_Print_Interval", String.valueOf(properties.getPrintInterval()));
+//	        Annotation ann = new Annotation(para);
+//	        simulation.addAnnotation(ann);
+//	      }
+//	    }
+//	    sedml.addSimulation(simulation);
+//	    task = new Task(taskId, "", taskId+"_model", simulation.getId());
+//	    sedml.addTask(task);
+//	    DataGenerator dataGen = sedml.getDataGeneratorWithId("time_"+taskId+"_dg");
+//	    if (dataGen != null) {
+//	      sedml.removeDataGenerator(dataGen);
+//	    }
+//	    Variable variable = new Variable("time_"+taskId,"",taskId,VariableSymbol.TIME);
+//	    org.jmathml.ASTNode math = org.jlibsedml.Libsedml.parseFormulaString("time_"+taskId);
+//	    dataGen = new DataGenerator("time_"+taskId+"_dg","time",math);
+//	    dataGen.addVariable(variable);
+//	    sedml.addDataGenerator(dataGen);
+	    
+	    //TODO: write this
+//	    for (int i = 0; i < simTab.getComponentCount(); i++)
+//	    {
+//	      if (simTab.getComponentAt(i) instanceof Graph)
+//	      {
+//	        ((Graph) simTab.getComponentAt(i)).saveSEDML(sedmlDoc,simName,null);
+//	      }
+//	    }
+//	    gui.writeSEDMLDocument();
+	  }
+
+	 
 }

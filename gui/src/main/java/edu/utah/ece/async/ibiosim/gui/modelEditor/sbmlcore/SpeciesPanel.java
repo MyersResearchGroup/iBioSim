@@ -324,7 +324,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			String thresholdText = "";
 			boolean speciesMarked = false;
 			
-			ArrayList<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();				
+			List<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpecies();				
 			
 			//look for the selected species among the already-interesting
 			//if it is interesting, populate the field with its data
