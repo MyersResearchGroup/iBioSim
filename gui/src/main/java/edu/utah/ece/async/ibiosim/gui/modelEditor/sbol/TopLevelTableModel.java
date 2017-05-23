@@ -35,7 +35,7 @@ public class TopLevelTableModel extends AbstractListTableModel<TopLevel> {
 	}
 
 	/**
-	 * 
+	 * Get SBOLDocument fields to be displayed in a given table
 	 */
 	public Object getField(TopLevel topLevelObject, int col) {
 		switch (col) {

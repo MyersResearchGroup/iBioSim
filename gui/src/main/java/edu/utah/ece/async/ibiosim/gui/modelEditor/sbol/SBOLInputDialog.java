@@ -18,6 +18,7 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
@@ -38,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
@@ -46,6 +48,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.TableRowSorter;
 
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
@@ -87,18 +90,14 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	private JButton deleteTopLevelObjs;
 	private static final Part ALL_PARTS = new Part("All parts", "All");
 	
-	private JCheckBox showRootModDefs, showRootCompDefs, showAllModDefs, showAllCompDefs;
+	private JCheckBox showRootDefs, showModDefs, showCompDefs;
 	
-	private JButton openSBOLDesigner, openVPRGenerator, optionsButton;
+	private JButton openSBOLDesigner, openVPRGenerator, optionsButton, cancelButton;
 
 	private SBOLDocument doc;
 	
 	private boolean sbolDesigner, vprGenerator;
 
-	/**
-	 * this.getInput() returns an SBOLDocument with a single rootCD selected
-	 * from the rootCDs in doc.
-	 */
 	public SBOLInputDialog(final Component parent, SBOLDocument doc) {
 		super(parent, TITLE);
 
@@ -139,63 +138,52 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		JPanel filteredDesignPanel = new JPanel();
 		GridLayout designPanel = new GridLayout(2, 2);
 		filteredDesignPanel.setLayout(designPanel);
-		showRootCompDefs = new JCheckBox("Show root ComponentDefinitions");
-		showRootCompDefs.setSelected(true);
-		showRootCompDefs.addActionListener(new ActionListener() {
+		
+		showCompDefs = new JCheckBox("Show ComponentDefinitions");
+		showCompDefs.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				showAllCompDefs.setSelected(false);
+				showRootDefs.setSelected(false);
 				updateTable();
 			}
 		});
-		filteredDesignPanel.add(showRootCompDefs);
+		filteredDesignPanel.add(showCompDefs);
 		
-		showRootModDefs = new JCheckBox("Show root ModuleDefinitions");
-		showRootModDefs.addActionListener(new ActionListener() {
+		showModDefs = new JCheckBox("Show ModuleDefinitions");
+		showModDefs.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				showAllModDefs.setSelected(false);
-
-				boolean isEnabled = !showRootModDefs.isSelected();
+				showRootDefs.setSelected(false);
+				boolean isEnabled = !showModDefs.isSelected();
 				roleRefinement.setEnabled(isEnabled);
 				roleSelection.setEnabled(isEnabled);
 				typeSelection.setEnabled(isEnabled);
 				updateTable();
 			}
 		});
-		filteredDesignPanel.add(showRootModDefs);
+		filteredDesignPanel.add(showModDefs);
+		
+		showRootDefs = new JCheckBox("Show root Definitions only");
+		showRootDefs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				showModDefs.setSelected(false);
+				showCompDefs.setSelected(false);
+				boolean isEnabled = !showRootDefs.isSelected();
+//				roleRefinement.setEnabled(isEnabled);
+//				roleSelection.setEnabled(isEnabled);
+//				typeSelection.setEnabled(isEnabled);
+				updateTable();
+			}
+		});
+		filteredDesignPanel.add(showRootDefs);
 		builder.add("", filteredDesignPanel);
-		
-		showAllCompDefs = new JCheckBox("Show all ComponentDefinitions");
-		showAllCompDefs.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				showRootCompDefs.setSelected(false);
-				updateTable();
-			}
-		});
-		filteredDesignPanel.add(showAllCompDefs);
-		
-		showAllModDefs = new JCheckBox("Show all ModuleDefinitions");
-		showAllModDefs.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				showRootModDefs.setSelected(false);
-				boolean isEnabled = !showAllModDefs.isSelected();
-				roleRefinement.setEnabled(isEnabled);
-				roleSelection.setEnabled(isEnabled);
-				typeSelection.setEnabled(isEnabled);
-				updateTable();
-			}
-		});
-		filteredDesignPanel.add(showAllModDefs);
 		
 		typeSelection = new JComboBox<Types>(Types.values());
 		typeSelection.setSelectedItem(Types.DNA);
 		typeSelection.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
 				updateTable();
 			}
 		});
@@ -241,7 +229,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 					SBOLWriter.write(doc, new FileOutputStream(file));
 					updateTable();
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(rootPane, "Failed to delete CD: " + e1.getMessage());
+					JOptionPane.showMessageDialog(rootPane, "Failed to delete selected part: " + e1.getMessage());
 					e1.printStackTrace();
 				}
 			}
@@ -254,11 +242,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	{
 		//Get information for main design layout and load them up
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
-		if(showRootCompDefs.isSelected())
+		if(showRootDefs.isSelected())
 		{
 			topLevelObjs.addAll(doc.getRootComponentDefinitions());
 		}
-		if(showRootModDefs.isSelected())
+		if(showRootDefs.isSelected())
 		{
 			topLevelObjs.addAll(doc.getRootModuleDefinitions());
 		}
@@ -284,6 +272,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			{
 				int row = table.convertRowIndexToModel(r);
 				TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row); 
+				
 				outputDoc.createCopy(doc.createRecursiveCopy(comp));
 			}
 			
@@ -304,17 +293,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		}
 	}
 
-	private void checkAndUpdateTable()
-	{
-		if(vprGenerator)
-		{
-			// updateTable2()
-		}
-		if(sbolDesigner)
-		{
-			updateTable();
-		}
-	}
+	
 	private void updateTable() 
 	{
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
@@ -342,11 +321,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		}
 		
 		Set<ComponentDefinition> CDsToDisplay;
-		if (showRootCompDefs.isSelected()) 
+		if (showRootDefs.isSelected()) 
 		{
 			CDsToDisplay = doc.getRootComponentDefinitions();
 		} 
-		else if (showAllCompDefs.isSelected())
+		else if (showCompDefs.isSelected())
 		{
 			CDsToDisplay = doc.getComponentDefinitions();
 		}
@@ -364,11 +343,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	{
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
 		
-		if (showRootModDefs.isSelected())  
+		if (showRootDefs.isSelected())  
 		{
 			topLevelObjs.addAll(doc.getRootModuleDefinitions());
 		}
-		else if(showAllModDefs.isSelected())
+		else if(showModDefs.isSelected())
 		{
 			topLevelObjs.addAll(doc.getModuleDefinitions());
 		}
@@ -444,6 +423,12 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		getRootPane().setDefaultButton(openVPRGenerator);
 		buttonPanel.add(openVPRGenerator);
 		
+		cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener(actionListener);
+		cancelButton.registerKeyboardAction(actionListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				JComponent.WHEN_IN_FOCUSED_WINDOW);
+		buttonPanel.add(cancelButton);
+		
 		initFormPanel(builder);
 
 		JComponent formPanel = builder.build();
@@ -512,6 +497,9 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 					registrySelection.addItem(r);
 				}
 				registrySelection.setSelectedIndex(Registries.get().getPartRegistryIndex());
+			} else if (source == cancelButton) {
+				canceled = true;
+				setVisible(false);
 			} else if (source == openSBOLDesigner) {
 				setVisible(false);
 				canceled = false;
@@ -529,28 +517,38 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	@Override
 	protected void setSelectAllowed(boolean allow) {
 
-		openSBOLDesigner.setEnabled(!showAllModDefs.isSelected() && !showRootModDefs.isSelected() && allow);
+		openSBOLDesigner.setEnabled(!showModDefs.isSelected() && !showRootDefs.isSelected() && allow);
 		openVPRGenerator.setEnabled(allow);
-		
-		
 	}
+	
 	@Override
 	protected void handleTableSelection() {
 		canceled = false;
 		setVisible(false);
 	}
 
-	
+	/**
+	 * Check if VPR Model Generation button was selected
+	 * @return True if the user clicked VPR Model Generation. False otherwise.
+	 */
 	public boolean isVPRGenerator()
 	{
 		return vprGenerator;
 	}
 	
+	/**
+	 * Check if SBOLDesigner button was selected
+	 * @return True if the user clicked open design in SBOLDesigner. False otherwise.
+	 */
 	public boolean isSBOLDesigner()
 	{
 		return sbolDesigner;
 	}
 	
+	/**
+	 * Check if cancel button was selected
+	 * @return True if the user clicked Cancel. False otherwise.
+	 */
 	public boolean isCanceled()
 	{
 		return canceled;
