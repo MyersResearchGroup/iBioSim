@@ -17,6 +17,7 @@ import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -50,8 +51,6 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,7 +104,6 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
-import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
@@ -161,27 +159,19 @@ import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
 
+import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
+import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import uk.ac.ncl.ico2s.VPRException;
 import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
-import de.unirostock.sems.cbarchive.meta.DefaultMetaDataObject;
-import de.unirostock.sems.cbarchive.meta.MetaDataObject;
-import de.unirostock.sems.cbarchive.meta.OmexMetaDataObject;
-import de.unirostock.sems.cbarchive.meta.omex.OmexDescription;
-import de.unirostock.sems.cbarchive.meta.omex.VCard;
-
-//TODO: temporarily removed until VPR library sorted
-//import uk.ac.ncl.ico2s.VPRException;
-//import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
-import de.unirostock.sems.cbarchive.meta.MetaDataObject;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
-import edu.utah.ece.async.ibiosim.conversion.ModelGenerator;
+import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
@@ -203,6 +193,7 @@ import edu.utah.ece.async.ibiosim.gui.learnView.LearnViewLEMA;
 import edu.utah.ece.async.ibiosim.gui.lpnEditor.LHPNEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.movie.MovieContainer;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore.ElementsPanel;
+import edu.utah.ece.async.ibiosim.gui.modelEditor.sbol.SBOLInputDialog;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
 import edu.utah.ece.async.ibiosim.gui.sbolBrowser.SBOLBrowser2;
@@ -237,8 +228,7 @@ import edu.utah.ece.async.lema.verification.platu.platuLpn.io.PlatuGrammarParser
  */
 public class Gui implements Observer, MouseListener, ActionListener, MouseMotionListener, MouseWheelListener {
 
-	public static JFrame frame; // Frame where components of the GUI are
-	// displayed
+	public static JFrame frame; // Frame where components of the GUI are displayed
 	private JMenuBar menuBar;
 	private JMenu file, openRecent, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
 	private JMenuItem newProj, newSBMLModel, newSBOL, newGridModel, newVhdl, newS, newInst, newLhpn, newProperty, newG;
@@ -269,6 +259,12 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	private JPanel mainPanel;
 	private JSplitPane topSplit;
 	private JSplitPane mainSplit;
+
+	public static String reb2sacExecutable;
+
+	public static String[] envp;
+
+	public static String geneNetExecutable;
 
 	public Log log; // the
 	// log
@@ -312,7 +308,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	addPlace, addTransition, addRule, addConstraint, addEvent, addSelfInfl, cut, select, undo, redo, copy,
 	rename, delete, moveLeft, moveRight, moveUp, moveDown;
 
-	private JMenuItem save, saveAs, /* saveSBOL, */ check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog,
+	private JMenuItem save, saveAs, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog,
 	viewCoverage, viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser,
 	createAnal, createLearn, createSbml, createSynth, createVer, close, closeAll, saveAll,
 	convertToLPN;
@@ -2135,11 +2131,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		} else if (e.getActionCommand().equals("browseSbol")) {
 			openSBOL();
 		}
-		else if (e.getActionCommand().equals("generateSBOLModels"))
-		{
-			// TODO: temporarily removed until VPR library sorted
-			generateSBOLInteractionModels();
-		}
 		else if (e.getActionCommand().equals("SBOLDesigner")) {
 			openSBOLDesigner();
 		}
@@ -2284,16 +2275,15 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				dummy.setSelected(false);
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
-				//TODO:
 //				AnalysisPropertiesWriter.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
 //						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
 //						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
 //						false, false);
-				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
+				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
 						+ ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
-						Executables.envp, work);
+				Process graph = exec.exec(reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
+						envp, work);
 				String error = "";
 				String output = "";
 				InputStream reb = graph.getErrorStream();
@@ -2462,15 +2452,14 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				dummy.setSelected(false);
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
-				//TODO:
-//				AnalysisView.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
+//				AnalysisPropertiesWriter.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
 //						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
 //						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
 //						false, false);
-				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
+				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
 						+ ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
+				Process graph = exec.exec(reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
 						null, work);
 				String error = "";
 				String output = "";
@@ -2559,16 +2548,15 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				//TODO:
 //				AnalysisPropertiesWriter.createProperties(0, 0, 0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, 0, directory, 314159L, 1, 1,
 //						new String[0], "tsd.printer", "amount", "false",
 //						(directory + theFile).split(GlobalConstants.separator), "none", frame, directory + theFile, 0.1,
 //						0.1, 0.1, 15, 2.0, empty, empty, empty, null, false, false, false);
-				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out
+				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out
 						+ ".xhtml " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process browse = exec.exec(
-						Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, Executables.envp, work);
+						reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, envp, work);
 				String error = "";
 				String output = "";
 				InputStream reb = browse.getErrorStream();
@@ -4784,7 +4772,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			try {
 				sbolDocument = SBOLReader.read(sbolFilename);
 				sbolDocument.setCreateDefaults(true);
-				Preferences biosimrc = Preferences.userRoot();
 				sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(frame, "Unable to open project's SBOL library.", "Error",
@@ -4885,13 +4872,13 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		importOutputs(sedml);
 		writeSEDMLDocument();
 	}
-	
+
 	private void importCombineArchive(String filename,String path) throws IOException {
 		System.out.println ("--- reading archive. ---");
 		File archiveFile = new File (filename);
 		//File destination = new File ("/tmp/myDestination");
 		//File tmpEntryExtract = new File ("/tmp/myExtractedEntry");
-		
+
 		// read the archive stored in `archiveFile`
 		CombineArchive ca;
 		try {
@@ -4902,11 +4889,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			e.printStackTrace();
 			return;
 		}
-		     
+
 		// read description of the archive itself
 		System.out.println ("found " + ca.getDescriptions ().size ()
 				+ " meta data entries describing the archive.");
-		
+
 		// iterate over all entries in the archive
 		for (ArchiveEntry entry : ca.getEntries ())
 		{
@@ -4922,51 +4909,51 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				importSEDMLFile(entry.extractFile (new File(path + GlobalConstants.separator + entry.getFileName())).getAbsolutePath ());
 			}
 		}
-		
-			// extract the file to `tmpEntryExtract`
-//			System.out.println ("file can be read from: "
-//					+ entry.extractFile (new File(root + GlobalConstants.separator + entry.getFileName())).getAbsolutePath ());
-			
-//			// if you just want to read it, you do not need to extract it
-//			// instead call for an InputStream:
-//			InputStream myReader = Files.newInputStream (entry.getPath (),
-//					StandardOpenOption.READ);
-//			// but here we do not use it...
-//			myReader.close ();
-//		         
-//			// read the descriptions
-//			for (MetaDataObject description : entry.getDescriptions ())
-//			{
-//				System.out.println ("+ found some meta data about "
-//						+ description.getAbout ());
-//				if (description instanceof OmexMetaDataObject)
-//				{
-//					OmexDescription desc = ((OmexMetaDataObject) description)
-//							.getOmexDescription ();
-//			               
-//					// when was it created?
-//					System.out.println ("file was created: " + desc.getCreated ());
-//		               
-//					// who's created the archive?
-//					VCard firstCreator = desc.getCreators ().get (0);
-//					System.out.println ("file's first author: "
-//							+ firstCreator.getGivenName () + " "
-//							+ firstCreator.getFamilyName ());
-//				}
-//				else
-//				{
-//					System.out.println ("found some meta data of type '"
-//							+ description.getClass ().getName ()
-//							+ "' that we do not respect in this small example.");
-//				}
-//				// No matter what type of description that is, you can always
-//				// retrieve the XML subtree rooting the meta data using
-//				Element meta = description.getXmlDescription ();
-//				// the descriptions are encoded in
-//				meta.getChildren ();
-//			}
-//		}
-	
+
+		// extract the file to `tmpEntryExtract`
+		//			System.out.println ("file can be read from: "
+		//					+ entry.extractFile (new File(root + GlobalConstants.separator + entry.getFileName())).getAbsolutePath ());
+
+		//			// if you just want to read it, you do not need to extract it
+		//			// instead call for an InputStream:
+		//			InputStream myReader = Files.newInputStream (entry.getPath (),
+		//					StandardOpenOption.READ);
+		//			// but here we do not use it...
+		//			myReader.close ();
+		//		         
+		//			// read the descriptions
+		//			for (MetaDataObject description : entry.getDescriptions ())
+		//			{
+		//				System.out.println ("+ found some meta data about "
+		//						+ description.getAbout ());
+		//				if (description instanceof OmexMetaDataObject)
+		//				{
+		//					OmexDescription desc = ((OmexMetaDataObject) description)
+		//							.getOmexDescription ();
+		//			               
+		//					// when was it created?
+		//					System.out.println ("file was created: " + desc.getCreated ());
+		//		               
+		//					// who's created the archive?
+		//					VCard firstCreator = desc.getCreators ().get (0);
+		//					System.out.println ("file's first author: "
+		//							+ firstCreator.getGivenName () + " "
+		//							+ firstCreator.getFamilyName ());
+		//				}
+		//				else
+		//				{
+		//					System.out.println ("found some meta data of type '"
+		//							+ description.getClass ().getName ()
+		//							+ "' that we do not respect in this small example.");
+		//				}
+		//				// No matter what type of description that is, you can always
+		//				// retrieve the XML subtree rooting the meta data using
+		//				Element meta = description.getXmlDescription ();
+		//				// the descriptions are encoded in
+		//				meta.getChildren ();
+		//			}
+		//		}
+
 		// ok, last but not least we can extract the whole archive to our disk:
 		//ca.extractTo (destination);
 		// and now that we're finished: close the archive
@@ -6355,13 +6342,49 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	}
 
-	// TODO: temporarily removed until VPR library sorted
-	private void generateSBOLInteractionModels(){
-		String file_with_Path = tree.getFile();
-		try 
+	
+	private void openSBOLOptions()
+	{
+		SBOLDocument currentDoc = getSBOLDocument();
+		if (currentDoc == null) 
 		{
-			SBOLDocument outputSBOL = ModelGenerator.generateModel(new File(file_with_Path));
-			generateSBMLFromSBOL(outputSBOL, file_with_Path);
+			return;
+		}
+		SBOLInputDialog s = new SBOLInputDialog(mainPanel, currentDoc);
+		if(s.getInput() == null)
+		{
+			return;
+		}
+		
+		SBOLDocument chosenDesign = s.getSelection();
+
+		if(s.isVPRGenerator())
+		{
+			runVPRGenerator(chosenDesign);
+		}
+		else if(s.isSBOLDesigner())
+		{
+			runSBOLDesigner(chosenDesign, currentDoc.getDefaultURIprefix());
+			
+		}
+	}
+	
+	private void runVPRGenerator(SBOLDocument chosenDesign)
+	{
+		try {
+			if(chosenDesign != null)
+			{
+				String selectedRepo = getSelectedRepo();
+				if(selectedRepo == null)
+				{
+					//user selected nothing. Stop performing VPR Model Generation
+					return;
+				}
+				
+				VPRModelGenerator.generateModel(selectedRepo, chosenDesign);
+				generateSBMLFromSBOL(chosenDesign, tree.getFile());
+				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
+			}
 		} catch (SBOLValidationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -6377,589 +6400,733 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		} catch (VPRTripleStoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}	
+	}
+	
+	private void runSBOLDesigner(SBOLDocument chosenDesign, String docURIPrefix)
+	{
+		try 
+		{
+			SBOLDesignerPlugin sbolDesignerPlugin ;
+			for(ComponentDefinition selectedDesign : chosenDesign.getRootComponentDefinitions())
+			{
+				sbolDesignerPlugin = new SBOLDesignerPlugin(root + GlobalConstants.separator, 
+						currentProjectId + ".sbol", 
+						selectedDesign.getIdentity(), 
+						docURIPrefix);
+				addTab(sbolDesignerPlugin.getRootDisplayId(), sbolDesignerPlugin, "SBOL Designer");
+			}
+			
+		} catch (SBOLValidationException | IOException | SBOLConversionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
+	
+	
+	private JFrame createProgressBar(JLabel label, JProgressBar progress)
+	  {
+	    final JFrame running = new JFrame("Progress");
+	    WindowListener w = new WindowListener()
+	    {
+	      @Override
+	      public void windowClosing(WindowEvent arg0)
+	      {
+	        running.dispose();
+	      }
+
+	      @Override
+	      public void windowOpened(WindowEvent arg0)
+	      {
+	      }
+
+	      @Override
+	      public void windowClosed(WindowEvent arg0)
+	      {
+	      }
+
+	      @Override
+	      public void windowIconified(WindowEvent arg0)
+	      {
+	      }
+
+	      @Override
+	      public void windowDeiconified(WindowEvent arg0)
+	      {
+	      }
+
+	      @Override
+	      public void windowActivated(WindowEvent arg0)
+	      {
+	      }
+
+	      @Override
+	      public void windowDeactivated(WindowEvent arg0)
+	      {
+	      }
+	    };
+	    running.addWindowListener(w);
+	    JPanel text = new JPanel();
+	    JPanel progBar = new JPanel();
+	    JPanel button = new JPanel();
+	    JPanel all = new JPanel(new BorderLayout());
+	    progress.setStringPainted(true);
+	    progress.setValue(0);
+	    progress.setVisible(true);
+	    text.add(label);
+	    progBar.add(progress);
+	    all.add(text, "North");
+	    all.add(progBar, "Center");
+	    all.add(button, "South");
+	    running.setContentPane(all);
+	    running.pack();
+	    running.setVisible(true);
+	    Dimension screenSize;
+	    try
+	    {
+	      Toolkit tk = Toolkit.getDefaultToolkit();
+	      screenSize = tk.getScreenSize();
+	    }
+	    catch (AWTError awe)
+	    {
+	      screenSize = new Dimension(640, 480);
+	    }
+	    Dimension frameSize = running.getSize();
+
+	    if (frameSize.height > screenSize.height)
+	    {
+	      frameSize.height = screenSize.height;
+	    }
+	    if (frameSize.width > screenSize.width)
+	    {
+	      frameSize.width = screenSize.width;
+	    }
+	    int x = screenSize.width / 2 - frameSize.width / 2;
+	    int y = screenSize.height / 2 - frameSize.height / 2;
+	    running.setLocation(x, y);
+	    running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	    return running;
+	  }
+	
+	private String getSelectedRepo()
+	{
+		ArrayList<Registry> list = new ArrayList<Registry>();
+		for (Registry r : Registries.get()) {
+			if (!r.isPath()) {
+				list.add(r);
+			}
+		}
+
+		Object[] options = list.toArray();
+
+		if (options.length == 0) {
+			JOptionPane.showMessageDialog(mainPanel, "There are no instances of SynBioHub in the registries list.");
+			return null;
+		}
+
+		Registry registry = (Registry) JOptionPane.showInputDialog(mainPanel,
+				"Select the SynBioHub instance you want to use.", 
+				"Repositories",
+				JOptionPane.QUESTION_MESSAGE, 
+				ResourceManager.getImageIcon("registry.png"), 
+				options, 
+				options[0]);
+		if (registry == null) {
+			return null;
+		}
+		return registry.getLocation();
+	}
+
 	
 
-} 
-
-
-private void openSBOLDesigner() {
-	// if (sbolDesignerOpen()) return;
-	String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(GlobalConstants.separator) + 1);
-	try {
-		if (getSBOLDocument().getComponentDefinitions().size() == 0) {
-			createPart();
-		} else {
-			SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root + GlobalConstants.separator,
-					fileName, null, getSBOLDocument().getDefaultURIprefix());
-			// if
-			// (sbolDesignerPlugin.getRootDisplayId().equals("NewDesign"))
-			// return;
-			if (sbolDesignerPlugin.getRootDisplayId() == null)
-				return;
-			addTab(sbolDesignerPlugin.getRootDisplayId(), sbolDesignerPlugin, "SBOL Designer");
-		}
-	} catch (Exception e) {
-		e.printStackTrace();
-		JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + fileName + " is invalid.", "Invalid SBOL",
-				JOptionPane.ERROR_MESSAGE);
-	}
-}
-
-private void createPart() {
-	// if (sbolDesignerOpen()) return;
-	String partId = null;
-	JTextField partChooser = new JTextField("");
-	partChooser.setColumns(20);
-	JPanel partPanel = new JPanel(new GridLayout(2, 1));
-	partPanel.add(new JLabel("Enter Part ID: "));
-	partPanel.add(partChooser);
-	frame.add(partPanel);
-	String[] options = { GlobalConstants.OK, GlobalConstants.CANCEL };
-	int okCancel = JOptionPane.showOptionDialog(frame, partPanel, "Part ID", JOptionPane.YES_NO_OPTION,
-			JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-	// if the user clicks "ok" on the panel
-	if (okCancel == JOptionPane.OK_OPTION) {
-		partId = partChooser.getText();
-	} else {
-		return;
-	}
-	if (partId != null && !partId.trim().equals("")) {
-		if (!(IDpat.matcher(partId).matches())) {
-			JOptionPane.showMessageDialog(frame,
-					"A part ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.",
-					"Invalid ID", JOptionPane.ERROR_MESSAGE);
-		} else {
-			SBOLDesignerPlugin sbolDesignerPlugin;
-			try {
-				ComponentDefinition cd = getSBOLDocument().createComponentDefinition(partId, "1",
-						ComponentDefinition.DNA);
-				cd.addRole(SequenceOntology.ENGINEERED_REGION);
-				writeSBOLDocument();
-				sbolDesignerPlugin = new SBOLDesignerPlugin(root + GlobalConstants.separator,
-						currentProjectId + ".sbol", cd.getIdentity(), sbolDocument.getDefaultURIprefix());
-				addTab(partId, sbolDesignerPlugin, "SBOL Designer");
-			} catch (Exception e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to create new part.", "Invalid Part",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-}
-
-private void generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
-	try {
-		for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
-			List<BioModel> models;
-			try {
-				models = SBOL2SBML.generateModel(root, moduleDef, inputSBOLDoc);
-				for (BioModel model : models) {
-					if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",
-							model.getSBMLDocument().getModel().getId() + ".xml")) {
-						model.save(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
-						addToTree(model.getSBMLDocument().getModel().getId() + ".xml");
-					}
-				}
-			} catch (XMLStreamException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-		}
-	} catch (IOException e) {
-		JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", "File Not Found",
-				JOptionPane.ERROR_MESSAGE);
-	} 
-//		catch (SBOLValidationException e) {
-//		JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + filePath + " is invalid.", "Invalid SBOL",
-//				JOptionPane.ERROR_MESSAGE);
-//	} catch (SBOLConversionException e) {
-//		JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + filePath + " is invalid.", "Invalid SBOL",
-//				JOptionPane.ERROR_MESSAGE);
-//	}
-}
-
-/**
- * Return a list of files with the given file extension type.
- * 
- * @param fileExtension
- *            - The file extension type. (i.e. .xml or .rdf)
- * @return A list of all files that has the given extension type.
- */
-public HashSet<String> getFilePaths(String fileExtension) {
-	HashSet<String> filePaths = new HashSet<String>();
-	TreeModel tree = getFileTree().tree.getModel();
-	for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
-		String fileName = tree.getChild(tree.getRoot(), i).toString();
-		if (fileName.endsWith(fileExtension)) {
-			filePaths.add(getRoot() + GlobalConstants.separator + fileName);
-		}
-	}
-	return filePaths;
-}
-
-private void openGraph() {
-	boolean done = false;
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
-			tab.setSelectedIndex(i);
-			done = true;
-		}
-	}
-	if (!done) {
-		addTab(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length
-				                                  - 1],
-				new Graph(null, "Number of molecules", "title", "tsd.printer", root, "Time", this, tree.getFile(),
-						log,
-						tree.getFile().split(
-								GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length
-								                           - 1],
-						true, false),
-				"TSD Graph");
-	}
-}
-
-private void openHistogram() {
-	boolean done = false;
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
-			tab.setSelectedIndex(i);
-			done = true;
-		}
-	}
-	if (!done) {
-		addTab(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length
-				                                  - 1],
-				new Graph(null, "Percent", "title", "tsd.printer", root, "Time", this, tree.getFile(), log,
-						tree.getFile().split(
-								GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length
-								                           - 1],
-						false, false),
-				"Histogram");
-	}
-}
-
-private void openLPN() {
-	try {
-		String filename = tree.getFile();
-		String directory = "";
-		String theFile = "";
-		if (filename.lastIndexOf('/') >= 0) {
-			directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-			theFile = filename.substring(filename.lastIndexOf('/') + 1);
-		}
-		if (filename.lastIndexOf('\\') >= 0) {
-			directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-			theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-		}
-		LPN lhpn = new LPN();
-		lhpn.addObserver(this);
-		File work = new File(directory);
-		int i = getTab(theFile);
-		if (i != -1) {
-			tab.setSelectedIndex(i);
-		} else {
-			LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile, lhpn, this);
-			addTab(theFile, editor, "LHPN Editor");
-		}
-	} catch (Exception e1) {
-		e1.printStackTrace();
-		JOptionPane.showMessageDialog(frame, "Unable to view this LPN file.", "Error", JOptionPane.ERROR_MESSAGE);
-	}
-}
-
-private void newModel(String fileType, String extension) {
-	if (root != null) {
+	private void openSBOLDesigner() {
+		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(GlobalConstants.separator) + 1);
 		try {
-			String modelID = JOptionPane.showInputDialog(frame, "Enter " + fileType + " Model ID:", "Model ID",
-					JOptionPane.PLAIN_MESSAGE);
-			if (modelID != null && !modelID.trim().equals("")) {
-				String fileName;
-				modelID = modelID.trim();
-				if (modelID.length() >= extension.length()) {
-					if (!modelID.substring(modelID.length() - extension.length()).equals(extension)) {
-						fileName = modelID + extension;
-					} else {
-						fileName = modelID;
-						modelID = modelID.substring(0, modelID.length() - extension.length());
-					}
-				} else {
-					fileName = modelID + extension;
-				}
-				if (!(IDpat.matcher(modelID).matches())) {
-					JOptionPane.showMessageDialog(frame,
-							"A model ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.",
-							"Invalid ID", JOptionPane.ERROR_MESSAGE);
-				} else {
-					File f = new File(root + GlobalConstants.separator + fileName);
-					f.createNewFile();
-					addToTree(fileName);
-					if (!viewer.equals("")) {
-						String command = viewer + " " + root + GlobalConstants.separator + fileName;
-						Runtime exec = Runtime.getRuntime();
-						try {
-							exec.exec(command);
-						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to open external editor.",
-									"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-						}
-					} else {
-						JTextArea text = new JTextArea("");
-						text.setEditable(true);
-						text.setLineWrap(true);
-						JScrollPane scroll = new JScrollPane(text);
-						addTab(fileName, scroll, fileType + " Editor");
-					}
-				}
+			if (getSBOLDocument().getComponentDefinitions().size() == 0) {
+				createPart();
+			} 
+			else {
+				SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root + GlobalConstants.separator,
+						fileName, null, getSBOLDocument().getDefaultURIprefix());
+				
+				if (sbolDesignerPlugin.getRootDisplayId() == null)
+					return;
+				addTab(sbolDesignerPlugin.getRootDisplayId(), sbolDesignerPlugin, "SBOL Designer");
 			}
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error", JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + fileName + " is invalid.", "Invalid SBOL",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-}
 
-private void openModel(String fileType) {
-	try {
-		String filename = tree.getFile();
-		String directory = "";
-		String theFile = "";
-		if (filename.lastIndexOf('/') >= 0) {
-			directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-			theFile = filename.substring(filename.lastIndexOf('/') + 1);
-		}
-		if (filename.lastIndexOf('\\') >= 0) {
-			directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-			theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-		}
-		File work = new File(directory);
-		int i = getTab(theFile);
-		if (i != -1) {
-			tab.setSelectedIndex(i);
+	private void createPart() {
+		// if (sbolDesignerOpen()) return;
+		String partId = null;
+		JTextField partChooser = new JTextField("");
+		partChooser.setColumns(20);
+		JPanel partPanel = new JPanel(new GridLayout(2, 1));
+		partPanel.add(new JLabel("Enter Part ID: "));
+		partPanel.add(partChooser);
+		frame.add(partPanel);
+		String[] options = { GlobalConstants.OK, GlobalConstants.CANCEL };
+		int okCancel = JOptionPane.showOptionDialog(frame, partPanel, "Part ID", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		// if the user clicks "ok" on the panel
+		if (okCancel == JOptionPane.OK_OPTION) {
+			partId = partChooser.getText();
 		} else {
-			if (!viewer.equals("")) {
-				String command = viewer + " " + directory + GlobalConstants.separator + theFile;
-				Runtime exec = Runtime.getRuntime();
+			return;
+		}
+		if (partId != null && !partId.trim().equals("")) {
+			if (!(IDpat.matcher(partId).matches())) {
+				JOptionPane.showMessageDialog(frame,
+						"A part ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.",
+						"Invalid ID", JOptionPane.ERROR_MESSAGE);
+			} else {
+				SBOLDesignerPlugin sbolDesignerPlugin;
 				try {
-					exec.exec(command);
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to open external editor.", "Error Opening Editor",
+					ComponentDefinition cd = getSBOLDocument().createComponentDefinition(partId, "1",
+							ComponentDefinition.DNA);
+					cd.addRole(SequenceOntology.ENGINEERED_REGION);
+					writeSBOLDocument();
+					sbolDesignerPlugin = new SBOLDesignerPlugin(root + GlobalConstants.separator,
+							currentProjectId + ".sbol", cd.getIdentity(), sbolDocument.getDefaultURIprefix());
+					addTab(partId, sbolDesignerPlugin, "SBOL Designer");
+				} catch (Exception e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to create new part.", "Invalid Part",
 							JOptionPane.ERROR_MESSAGE);
 				}
-			} else {
-				File file = new File(work + GlobalConstants.separator + theFile);
-				String input = "";
-				FileReader in = new FileReader(file);
-				int read = in.read();
-				while (read != -1) {
-					input += (char) read;
-					read = in.read();
+			}
+		}
+	}
+
+	private void generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
+		try {
+			for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
+				List<BioModel> models;
+				try {
+					models = SBOL2SBML.generateModel(root, moduleDef, inputSBOLDoc);
+					for (BioModel model : models) {
+						if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",
+								model.getSBMLDocument().getModel().getId() + ".xml")) {
+							model.save(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+							addToTree(model.getSBMLDocument().getModel().getId() + ".xml");
+						}
+					}
+				} catch (XMLStreamException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 				}
-				in.close();
-				JTextArea text = new JTextArea(input);
-				text.setEditable(true);
-				text.setLineWrap(true);
-				JScrollPane scroll = new JScrollPane(text);
-				addTab(theFile, scroll, fileType + " Editor");
+			}
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", "File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+		} 
+		//		catch (SBOLValidationException e) {
+		//		JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + filePath + " is invalid.", "Invalid SBOL",
+		//				JOptionPane.ERROR_MESSAGE);
+		//	} catch (SBOLConversionException e) {
+		//		JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + filePath + " is invalid.", "Invalid SBOL",
+		//				JOptionPane.ERROR_MESSAGE);
+		//	}
+	}
+
+	/**
+	 * Return a list of files with the given file extension type.
+	 * 
+	 * @param fileExtension
+	 *            - The file extension type. (i.e. .xml or .rdf)
+	 * @return A list of all files that has the given extension type.
+	 */
+	public HashSet<String> getFilePaths(String fileExtension) {
+		HashSet<String> filePaths = new HashSet<String>();
+		TreeModel tree = getFileTree().tree.getModel();
+		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
+			String fileName = tree.getChild(tree.getRoot(), i).toString();
+			if (fileName.endsWith(fileExtension)) {
+				filePaths.add(getRoot() + GlobalConstants.separator + fileName);
 			}
 		}
-	} catch (Exception e1) {
-		JOptionPane.showMessageDialog(frame, "Unable to view this " + fileType + " file.", "Error",
-				JOptionPane.ERROR_MESSAGE);
+		return filePaths;
 	}
-}
 
-public int getTab(String name) {
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(name)) {
-			return i;
+	private void openGraph() {
+		boolean done = false;
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (getTitleAt(i).equals(tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
+				tab.setSelectedIndex(i);
+				done = true;
+			}
+		}
+		if (!done) {
+			addTab(tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length
+					                                  - 1],
+					new Graph(null, "Number of molecules", "title", "tsd.printer", root, "Time", this, tree.getFile(),
+							log,
+							tree.getFile().split(
+									GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length
+									                           - 1],
+							true, false),
+					"TSD Graph");
 		}
 	}
-	return -1;
-}
 
-public void deleteDir(File dir) {
-	int count = 0;
-	do {
-		File[] list = dir.listFiles();
-		System.gc();
-		for (int i = 0; i < list.length; i++) {
-			if (list[i].isDirectory()) {
-				deleteDir(list[i]);
+	private void openHistogram() {
+		boolean done = false;
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (getTitleAt(i).equals(tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
+				tab.setSelectedIndex(i);
+				done = true;
+			}
+		}
+		if (!done) {
+			addTab(tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length
+					                                  - 1],
+					new Graph(null, "Percent", "title", "tsd.printer", root, "Time", this, tree.getFile(), log,
+							tree.getFile().split(
+									GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length
+									                           - 1],
+							false, false),
+					"Histogram");
+		}
+	}
+
+	private void openLPN() {
+		try {
+			String filename = tree.getFile();
+			String directory = "";
+			String theFile = "";
+			if (filename.lastIndexOf('/') >= 0) {
+				directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+				theFile = filename.substring(filename.lastIndexOf('/') + 1);
+			}
+			if (filename.lastIndexOf('\\') >= 0) {
+				directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+			}
+			LPN lhpn = new LPN();
+			lhpn.addObserver(this);
+			File work = new File(directory);
+			int i = getTab(theFile);
+			if (i != -1) {
+				tab.setSelectedIndex(i);
 			} else {
-				list[i].delete();
+				LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile, lhpn, this);
+				addTab(theFile, editor, "LHPN Editor");
 			}
-		}
-		count++;
-	} while (!dir.delete() && count != 100);
-	if (count == 100) {
-		JOptionPane.showMessageDialog(frame, "Unable to delete.", "Error", JOptionPane.ERROR_MESSAGE);
-	}
-}
-
-/**
- * This method adds a new project to recent list
- */
-public void addRecentProject(String projDir) {
-	// boolean newOne = true;
-	for (int i = 0; i < numberRecentProj; i++) {
-		if (recentProjectPaths[i].equals(projDir)) {
-			for (int j = 0; j <= i; j++) {
-				String save = recentProjectPaths[j];
-				recentProjects[j].setText(projDir
-						.split(GlobalConstants.separator)[projDir.split(GlobalConstants.separator).length - 1]);
-				openRecent.insert(recentProjects[j], j);
-				recentProjectPaths[j] = projDir;
-				projDir = save;
-			}
-			for (int j = i + 1; j < numberRecentProj; j++) {
-				openRecent.insert(recentProjects[j], j);
-			}
-			return;
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Unable to view this LPN file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	if (numberRecentProj < 10) {
-		numberRecentProj++;
-	}
-	for (int i = 0; i < numberRecentProj; i++) {
-		String save = recentProjectPaths[i];
-		recentProjects[i].setText(
-				projDir.split(GlobalConstants.separator)[projDir.split(GlobalConstants.separator).length - 1]);
-		openRecent.insert(recentProjects[i], i);
-		recentProjectPaths[i] = projDir;
-		projDir = save;
-	}
-}
 
-/**
- * This method removes a project from the recent list
- */
-public void removeRecentProject(String projDir) {
-	for (int i = 0; i < numberRecentProj; i++) {
-		if (recentProjectPaths[i].equals(projDir)) {
-			for (int j = i; j < numberRecentProj - 1; j++) {
-				recentProjects[j].setText(recentProjects[j + 1].getText());
-				recentProjectPaths[j] = recentProjectPaths[j + 1];
+	private void newModel(String fileType, String extension) {
+		if (root != null) {
+			try {
+				String modelID = JOptionPane.showInputDialog(frame, "Enter " + fileType + " Model ID:", "Model ID",
+						JOptionPane.PLAIN_MESSAGE);
+				if (modelID != null && !modelID.trim().equals("")) {
+					String fileName;
+					modelID = modelID.trim();
+					if (modelID.length() >= extension.length()) {
+						if (!modelID.substring(modelID.length() - extension.length()).equals(extension)) {
+							fileName = modelID + extension;
+						} else {
+							fileName = modelID;
+							modelID = modelID.substring(0, modelID.length() - extension.length());
+						}
+					} else {
+						fileName = modelID + extension;
+					}
+					if (!(IDpat.matcher(modelID).matches())) {
+						JOptionPane.showMessageDialog(frame,
+								"A model ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.",
+								"Invalid ID", JOptionPane.ERROR_MESSAGE);
+					} else {
+						File f = new File(root + GlobalConstants.separator + fileName);
+						f.createNewFile();
+						addToTree(fileName);
+						if (!viewer.equals("")) {
+							String command = viewer + " " + root + GlobalConstants.separator + fileName;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							} catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame, "Unable to open external editor.",
+										"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+							}
+						} else {
+							JTextArea text = new JTextArea("");
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							addTab(fileName, scroll, fileType + " Editor");
+						}
+					}
+				}
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
-			openRecent.remove(recentProjects[numberRecentProj - 1]);
-			recentProjectPaths[numberRecentProj - 1] = "";
-			numberRecentProj--;
-			return;
 		}
 	}
-}
 
-/**
- * This method removes all projects from the recent list
- */
-public void removeAllRecentProjects() {
-	for (int i = 0; i < numberRecentProj; i++) {
-		openRecent.remove(recentProjects[i]);
-		recentProjectPaths[i] = "";
-	}
-	numberRecentProj = 0;
-}
-
-/**
- * This method refreshes the menu.
- */
-public void refresh() {
-	mainPanel.remove(tree);
-	tree = new FileTree(new File(root), this, lema, atacs, lpn);
-	topSplit.setLeftComponent(tree);
-	// mainPanel.add(tree, "West");
-	mainPanel.validate();
-}
-
-// /**
-// * This method refreshes the tree.
-// */
-// private void refreshTree()
-// {
-// mainPanel.remove(tree);
-// tree = new FileTree(new File(root), this, lema, atacs, lpn);
-// topSplit.setLeftComponent(tree);
-// // mainPanel.add(tree, "West");
-// // updateGCM();
-// mainPanel.validate();
-// }
-
-public void addToTree(String item) {
-	tree.addToTree(item, root);
-	// updateGCM();
-	mainPanel.validate();
-}
-
-public void addToTreeNoUpdate(String item) {
-	tree.addToTree(item, root);
-	mainPanel.validate();
-}
-
-public void deleteFromTree(String item) {
-	tree.deleteFromTree(item);
-	// updateGCM();
-	mainPanel.validate();
-}
-
-public FileTree getFileTree() {
-	return tree;
-}
-
-public void markTabDirty(boolean dirty) {
-	int i = tab.getSelectedIndex();
-	if (dirty) {
-		if (i >= 0 && !tab.getTitleAt(i).endsWith("*")) {
-			tab.setTitleAt(i, tab.getTitleAt(i) + "*");
+	private void openModel(String fileType) {
+		try {
+			String filename = tree.getFile();
+			String directory = "";
+			String theFile = "";
+			if (filename.lastIndexOf('/') >= 0) {
+				directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+				theFile = filename.substring(filename.lastIndexOf('/') + 1);
+			}
+			if (filename.lastIndexOf('\\') >= 0) {
+				directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+			}
+			File work = new File(directory);
+			int i = getTab(theFile);
+			if (i != -1) {
+				tab.setSelectedIndex(i);
+			} else {
+				if (!viewer.equals("")) {
+					String command = viewer + " " + directory + GlobalConstants.separator + theFile;
+					Runtime exec = Runtime.getRuntime();
+					try {
+						exec.exec(command);
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to open external editor.", "Error Opening Editor",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				} else {
+					File file = new File(work + GlobalConstants.separator + theFile);
+					String input = "";
+					FileReader in = new FileReader(file);
+					int read = in.read();
+					while (read != -1) {
+						input += (char) read;
+						read = in.read();
+					}
+					in.close();
+					JTextArea text = new JTextArea(input);
+					text.setEditable(true);
+					text.setLineWrap(true);
+					JScrollPane scroll = new JScrollPane(text);
+					addTab(theFile, scroll, fileType + " Editor");
+				}
+			}
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(frame, "Unable to view this " + fileType + " file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
-	} else {
+	}
+
+	public int getTab(String name) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (getTitleAt(i).equals(name)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public void deleteDir(File dir) {
+		int count = 0;
+		do {
+			File[] list = dir.listFiles();
+			System.gc();
+			for (int i = 0; i < list.length; i++) {
+				if (list[i].isDirectory()) {
+					deleteDir(list[i]);
+				} else {
+					list[i].delete();
+				}
+			}
+			count++;
+		} while (!dir.delete() && count != 100);
+		if (count == 100) {
+			JOptionPane.showMessageDialog(frame, "Unable to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	/**
+	 * This method adds a new project to recent list
+	 */
+	public void addRecentProject(String projDir) {
+		// boolean newOne = true;
+		for (int i = 0; i < numberRecentProj; i++) {
+			if (recentProjectPaths[i].equals(projDir)) {
+				for (int j = 0; j <= i; j++) {
+					String save = recentProjectPaths[j];
+					recentProjects[j].setText(projDir
+							.split(GlobalConstants.separator)[projDir.split(GlobalConstants.separator).length - 1]);
+					openRecent.insert(recentProjects[j], j);
+					recentProjectPaths[j] = projDir;
+					projDir = save;
+				}
+				for (int j = i + 1; j < numberRecentProj; j++) {
+					openRecent.insert(recentProjects[j], j);
+				}
+				return;
+			}
+		}
+		if (numberRecentProj < 10) {
+			numberRecentProj++;
+		}
+		for (int i = 0; i < numberRecentProj; i++) {
+			String save = recentProjectPaths[i];
+			recentProjects[i].setText(
+					projDir.split(GlobalConstants.separator)[projDir.split(GlobalConstants.separator).length - 1]);
+			openRecent.insert(recentProjects[i], i);
+			recentProjectPaths[i] = projDir;
+			projDir = save;
+		}
+	}
+
+	/**
+	 * This method removes a project from the recent list
+	 */
+	public void removeRecentProject(String projDir) {
+		for (int i = 0; i < numberRecentProj; i++) {
+			if (recentProjectPaths[i].equals(projDir)) {
+				for (int j = i; j < numberRecentProj - 1; j++) {
+					recentProjects[j].setText(recentProjects[j + 1].getText());
+					recentProjectPaths[j] = recentProjectPaths[j + 1];
+				}
+				openRecent.remove(recentProjects[numberRecentProj - 1]);
+				recentProjectPaths[numberRecentProj - 1] = "";
+				numberRecentProj--;
+				return;
+			}
+		}
+	}
+
+	/**
+	 * This method removes all projects from the recent list
+	 */
+	public void removeAllRecentProjects() {
+		for (int i = 0; i < numberRecentProj; i++) {
+			openRecent.remove(recentProjects[i]);
+			recentProjectPaths[i] = "";
+		}
+		numberRecentProj = 0;
+	}
+
+	/**
+	 * This method refreshes the menu.
+	 */
+	public void refresh() {
+		mainPanel.remove(tree);
+		tree = new FileTree(new File(root), this, lema, atacs, lpn);
+		topSplit.setLeftComponent(tree);
+		// mainPanel.add(tree, "West");
+		mainPanel.validate();
+	}
+
+	// /**
+	// * This method refreshes the tree.
+	// */
+	// private void refreshTree()
+	// {
+	// mainPanel.remove(tree);
+	// tree = new FileTree(new File(root), this, lema, atacs, lpn);
+	// topSplit.setLeftComponent(tree);
+	// // mainPanel.add(tree, "West");
+	// // updateGCM();
+	// mainPanel.validate();
+	// }
+
+	public void addToTree(String item) {
+		tree.addToTree(item, root);
+		// updateGCM();
+		mainPanel.validate();
+	}
+
+	public void addToTreeNoUpdate(String item) {
+		tree.addToTree(item, root);
+		mainPanel.validate();
+	}
+
+	public void deleteFromTree(String item) {
+		tree.deleteFromTree(item);
+		// updateGCM();
+		mainPanel.validate();
+	}
+
+	public FileTree getFileTree() {
+		return tree;
+	}
+
+	public void markTabDirty(boolean dirty) {
+		int i = tab.getSelectedIndex();
+		if (dirty) {
+			if (i >= 0 && !tab.getTitleAt(i).endsWith("*")) {
+				tab.setTitleAt(i, tab.getTitleAt(i) + "*");
+			}
+		} else {
+			if (i >= 0 && tab.getTitleAt(i).endsWith("*")) {
+				tab.setTitleAt(i, tab.getTitleAt(i).replace("*", ""));
+			}
+		}
+	}
+
+	public void markTabClean(int i) {
 		if (i >= 0 && tab.getTitleAt(i).endsWith("*")) {
 			tab.setTitleAt(i, tab.getTitleAt(i).replace("*", ""));
 		}
 	}
-}
 
-public void markTabClean(int i) {
-	if (i >= 0 && tab.getTitleAt(i).endsWith("*")) {
-		tab.setTitleAt(i, tab.getTitleAt(i).replace("*", ""));
-	}
-}
-
-/**
- * This method adds the given Component to a tab.
- */
-public void addTab(String name, Component panel, String tabName) {
-	tab.addTab(name, panel);
-	// panel.addMouseListener(this);
-	if (tabName != null) {
-		tab.getComponentAt(tab.getTabCount() - 1).setName(tabName);
-	} else {
-		tab.getComponentAt(tab.getTabCount() - 1).setName(name);
-	}
-	tab.setSelectedIndex(tab.getTabCount() - 1);
-}
-
-/**
- * This method removes the given component from the tabs.
- */
-public void removeTab(Component component) {
-	tab.remove(component);
-	if (tab.getTabCount() > 0) {
-		tab.setSelectedIndex(tab.getTabCount() - 1);
-		enableTabMenu(tab.getSelectedIndex());
-	} else {
-		enableTreeMenu();
-	}
-}
-
-public void refreshTabListeners() {
-	for (ChangeListener l : tab.getChangeListeners()) {
-		tab.removeChangeListener(l);
-	}
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (tab.getComponent(i) instanceof ModelEditor) {
-			((ModelEditor) tab.getComponent(i)).getSchematic().addChangeListener();
-		}
-	}
-}
-
-public JTabbedPane getTab() {
-	return tab;
-}
-
-/**
- * Prompts the user to save work that has been done.
- */
-public int save(int index, int autosave) {
-	if (tab.getComponentAt(index).getName().contains(("Model Editor"))
-			|| tab.getComponentAt(index).getName().contains("LHPN")) {
-		if (tab.getComponentAt(index) instanceof ModelEditor) {
-			ModelEditor editor = (ModelEditor) tab.getComponentAt(index);
-			if (editor.isDirty()) {
-				if (autosave == 0) {
-					int value = JOptionPane.showOptionDialog(frame,
-							"Do you want to save changes to " + getTitleAt(index) + "?", "Save Changes",
-							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-					if (value == YES_OPTION) {
-						editor.save(false);
-						return 1;
-					} else if (value == NO_OPTION) {
-						return 1;
-					} else if (value == CANCEL_OPTION) {
-						return 0;
-					} else if (value == YES_TO_ALL_OPTION) {
-						editor.save(false);
-						return 2;
-					} else if (value == NO_TO_ALL_OPTION) {
-						return 3;
-					}
-				} else if (autosave == 1) {
-					editor.save(false);
-					return 2;
-				} else {
-					return 3;
-				}
-			}
-		} else if (tab.getComponentAt(index) instanceof LHPNEditor) {
-			LHPNEditor editor = (LHPNEditor) tab.getComponentAt(index);
-			if (editor.isDirty()) {
-				if (autosave == 0) {
-					int value = JOptionPane.showOptionDialog(frame,
-							"Do you want to save changes to " + getTitleAt(index) + "?", "Save Changes",
-							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-					if (value == YES_OPTION) {
-						editor.save();
-						return 1;
-					} else if (value == NO_OPTION) {
-						return 1;
-					} else if (value == CANCEL_OPTION) {
-						return 0;
-					} else if (value == YES_TO_ALL_OPTION) {
-						editor.save();
-						return 2;
-					} else if (value == NO_TO_ALL_OPTION) {
-						return 3;
-					}
-				} else if (autosave == 1) {
-					editor.save();
-					return 2;
-				} else {
-					return 3;
-				}
-			}
-		}
-		if (autosave == 0) {
-			return 1;
-		} else if (autosave == 1) {
-			return 2;
+	/**
+	 * This method adds the given Component to a tab.
+	 */
+	public void addTab(String name, Component panel, String tabName) {
+		tab.addTab(name, panel);
+		// panel.addMouseListener(this);
+		if (tabName != null) {
+			tab.getComponentAt(tab.getTabCount() - 1).setName(tabName);
 		} else {
-			return 3;
+			tab.getComponentAt(tab.getTabCount() - 1).setName(name);
 		}
-	} else if (tab.getComponentAt(index).getName().contains("SBOL Designer")) {
-		SBOLDesignerPlugin editor = (SBOLDesignerPlugin) tab.getComponentAt(index);
-		if (editor.isModified()) {
-			if (autosave == 0) {
-				int value = JOptionPane.showOptionDialog(frame,
-						"Do you want to save changes to " + getTitleAt(index) + "?", "Save Changes",
-						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-				if (value == YES_OPTION) {
-					try {
-						editor.saveSBOL();
-						readSBOLDocument();
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+		tab.setSelectedIndex(tab.getTabCount() - 1);
+	}
+
+	/**
+	 * This method removes the given component from the tabs.
+	 */
+	public void removeTab(Component component) {
+		tab.remove(component);
+		if (tab.getTabCount() > 0) {
+			tab.setSelectedIndex(tab.getTabCount() - 1);
+			enableTabMenu(tab.getSelectedIndex());
+		} else {
+			enableTreeMenu();
+		}
+	}
+
+	public void refreshTabListeners() {
+		for (ChangeListener l : tab.getChangeListeners()) {
+			tab.removeChangeListener(l);
+		}
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (tab.getComponent(i) instanceof ModelEditor) {
+				((ModelEditor) tab.getComponent(i)).getSchematic().addChangeListener();
+			}
+		}
+	}
+
+	public JTabbedPane getTab() {
+		return tab;
+	}
+
+	/**
+	 * Prompts the user to save work that has been done.
+	 */
+	public int save(int index, int autosave) {
+		if (tab.getComponentAt(index).getName().contains(("Model Editor"))
+				|| tab.getComponentAt(index).getName().contains("LHPN")) {
+			if (tab.getComponentAt(index) instanceof ModelEditor) {
+				ModelEditor editor = (ModelEditor) tab.getComponentAt(index);
+				if (editor.isDirty()) {
+					if (autosave == 0) {
+						int value = JOptionPane.showOptionDialog(frame,
+								"Do you want to save changes to " + getTitleAt(index) + "?", "Save Changes",
+								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+						if (value == YES_OPTION) {
+							editor.save(false);
+							return 1;
+						} else if (value == NO_OPTION) {
+							return 1;
+						} else if (value == CANCEL_OPTION) {
+							return 0;
+						} else if (value == YES_TO_ALL_OPTION) {
+							editor.save(false);
+							return 2;
+						} else if (value == NO_TO_ALL_OPTION) {
+							return 3;
+						}
+					} else if (autosave == 1) {
+						editor.save(false);
+						return 2;
+					} else {
+						return 3;
 					}
-					log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
-					return 1;
-				} else if (value == NO_OPTION) {
-					return 1;
-				} else if (value == CANCEL_OPTION) {
-					return 0;
-				} else if (value == YES_TO_ALL_OPTION) {
+				}
+			} else if (tab.getComponentAt(index) instanceof LHPNEditor) {
+				LHPNEditor editor = (LHPNEditor) tab.getComponentAt(index);
+				if (editor.isDirty()) {
+					if (autosave == 0) {
+						int value = JOptionPane.showOptionDialog(frame,
+								"Do you want to save changes to " + getTitleAt(index) + "?", "Save Changes",
+								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+						if (value == YES_OPTION) {
+							editor.save();
+							return 1;
+						} else if (value == NO_OPTION) {
+							return 1;
+						} else if (value == CANCEL_OPTION) {
+							return 0;
+						} else if (value == YES_TO_ALL_OPTION) {
+							editor.save();
+							return 2;
+						} else if (value == NO_TO_ALL_OPTION) {
+							return 3;
+						}
+					} else if (autosave == 1) {
+						editor.save();
+						return 2;
+					} else {
+						return 3;
+					}
+				}
+			}
+			if (autosave == 0) {
+				return 1;
+			} else if (autosave == 1) {
+				return 2;
+			} else {
+				return 3;
+			}
+		} else if (tab.getComponentAt(index).getName().contains("SBOL Designer")) {
+			SBOLDesignerPlugin editor = (SBOLDesignerPlugin) tab.getComponentAt(index);
+			if (editor.isModified()) {
+				if (autosave == 0) {
+					int value = JOptionPane.showOptionDialog(frame,
+							"Do you want to save changes to " + getTitleAt(index) + "?", "Save Changes",
+							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+					if (value == YES_OPTION) {
+						try {
+							editor.saveSBOL();
+							readSBOLDocument();
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
+						return 1;
+					} else if (value == NO_OPTION) {
+						return 1;
+					} else if (value == CANCEL_OPTION) {
+						return 0;
+					} else if (value == YES_TO_ALL_OPTION) {
+						try {
+							editor.saveSBOL();
+							readSBOLDocument();
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
+						return 2;
+					} else if (value == NO_TO_ALL_OPTION) {
+						return 3;
+					}
+				} else if (autosave == 1) {
 					try {
 						editor.saveSBOL();
 						readSBOLDocument();
@@ -6969,1464 +7136,1315 @@ public int save(int index, int autosave) {
 					}
 					log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
 					return 2;
-				} else if (value == NO_TO_ALL_OPTION) {
+				} else {
 					return 3;
 				}
+			}
+			if (autosave == 0) {
+				return 1;
 			} else if (autosave == 1) {
-				try {
-					editor.saveSBOL();
-					readSBOLDocument();
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+				return 2;
+			} else {
+				return 3;
+			}
+		} else if (tab.getComponentAt(index).getName().contains("Graph")
+				|| tab.getComponentAt(index).getName().equals("Histogram")) {
+			if (tab.getComponentAt(index) instanceof Graph) {
+				if (((Graph) tab.getComponentAt(index)).hasChanged()) {
+					if (autosave == 0) {
+						int value = JOptionPane.showOptionDialog(frame,
+								"Do you want to save changes to " + getTitleAt(index) + "?", "Save Changes",
+								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+						if (value == YES_OPTION) {
+							((Graph) tab.getComponentAt(index)).save();
+							return 1;
+						} else if (value == NO_OPTION) {
+							return 1;
+						} else if (value == CANCEL_OPTION) {
+							return 0;
+						} else if (value == YES_TO_ALL_OPTION) {
+							((Graph) tab.getComponentAt(index)).save();
+							return 2;
+						} else if (value == NO_TO_ALL_OPTION) {
+							return 3;
+						}
+					} else if (autosave == 1) {
+						((Graph) tab.getComponentAt(index)).save();
+						return 2;
+					} else {
+						return 3;
+					}
 				}
-				log.addText("Saving SBOL file: " + editor.getFileName() + "\n");
+			}
+			if (autosave == 0) {
+				return 1;
+			} else if (autosave == 1) {
 				return 2;
 			} else {
 				return 3;
 			}
 		}
-		if (autosave == 0) {
-			return 1;
-		} else if (autosave == 1) {
-			return 2;
-		} else {
-			return 3;
-		}
-	} else if (tab.getComponentAt(index).getName().contains("Graph")
-			|| tab.getComponentAt(index).getName().equals("Histogram")) {
-		if (tab.getComponentAt(index) instanceof Graph) {
-			if (((Graph) tab.getComponentAt(index)).hasChanged()) {
-				if (autosave == 0) {
-					int value = JOptionPane.showOptionDialog(frame,
-							"Do you want to save changes to " + getTitleAt(index) + "?", "Save Changes",
-							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-					if (value == YES_OPTION) {
-						((Graph) tab.getComponentAt(index)).save();
-						return 1;
-					} else if (value == NO_OPTION) {
-						return 1;
-					} else if (value == CANCEL_OPTION) {
-						return 0;
-					} else if (value == YES_TO_ALL_OPTION) {
-						((Graph) tab.getComponentAt(index)).save();
-						return 2;
-					} else if (value == NO_TO_ALL_OPTION) {
-						return 3;
+
+		else {
+			if (tab.getComponentAt(index) instanceof JTabbedPane) {
+				if (tab.getComponentAt(index) instanceof SynthesisView) {
+					SynthesisView synthView = (SynthesisView) tab.getComponentAt(index);
+					Set<Integer> saveIndices = new HashSet<Integer>();
+					for (int i = 0; i < synthView.getTabCount(); i++) {
+						JPanel synthTab = (JPanel) synthView.getComponentAt(i);
+						if (synthView.tabChanged(i)) {
+							if (autosave == 0) {
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save changes to " + synthTab.getName() + "?", "Save Changes",
+										JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS,
+										OPTIONS[0]);
+								if (value == YES_OPTION) {
+									saveIndices.add(i);
+								} else if (value == CANCEL_OPTION) {
+									return 0;
+								} else if (value == YES_TO_ALL_OPTION) {
+									saveIndices.add(i);
+									autosave = 1;
+								} else if (value == NO_TO_ALL_OPTION) {
+									autosave = 2;
+								}
+							} else if (autosave == 1) {
+								saveIndices.add(i);
+							}
+						}
 					}
-				} else if (autosave == 1) {
-					((Graph) tab.getComponentAt(index)).save();
-					return 2;
+					synthView.saveTabs(saveIndices);
 				} else {
-					return 3;
-				}
-			}
-		}
-		if (autosave == 0) {
-			return 1;
-		} else if (autosave == 1) {
-			return 2;
-		} else {
-			return 3;
-		}
-	}
-
-	else {
-		if (tab.getComponentAt(index) instanceof JTabbedPane) {
-			if (tab.getComponentAt(index) instanceof SynthesisView) {
-				SynthesisView synthView = (SynthesisView) tab.getComponentAt(index);
-				Set<Integer> saveIndices = new HashSet<Integer>();
-				for (int i = 0; i < synthView.getTabCount(); i++) {
-					JPanel synthTab = (JPanel) synthView.getComponentAt(i);
-					if (synthView.tabChanged(i)) {
-						if (autosave == 0) {
-							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save changes to " + synthTab.getName() + "?", "Save Changes",
-									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS,
-									OPTIONS[0]);
-							if (value == YES_OPTION) {
-								saveIndices.add(i);
-							} else if (value == CANCEL_OPTION) {
-								return 0;
-							} else if (value == YES_TO_ALL_OPTION) {
-								saveIndices.add(i);
-								autosave = 1;
-							} else if (value == NO_TO_ALL_OPTION) {
-								autosave = 2;
+					for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
+						if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName() != null) {
+							if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName()
+									.equals("Simulate")) {
+								if (((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+										.hasChanged()) {
+									if (autosave == 0) {
+										int value = JOptionPane.showOptionDialog(frame,
+												"Do you want to save simulation option changes for " + getTitleAt(index)
+												+ "?",
+												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+												JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+										if (value == YES_OPTION) {
+											((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+											.save("");
+										} else if (value == CANCEL_OPTION) {
+											return 0;
+										} else if (value == YES_TO_ALL_OPTION) {
+											((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+											.save("");
+											autosave = 1;
+										} else if (value == NO_TO_ALL_OPTION) {
+											autosave = 2;
+										}
+									} else if (autosave == 1) {
+										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+										.save("");
+									}
+								}
+							} else if (((JTabbedPane) tab.getComponentAt(index))
+									.getComponent(i) instanceof MovieContainer) {
+								if (((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+										.getGCM2SBMLEditor().isDirty()
+										|| ((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+										.getIsDirty()) {
+									if (autosave == 0) {
+										int value = JOptionPane.showOptionDialog(frame,
+												"Do you want to save parameter changes for " + getTitleAt(index) + "?",
+												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+												JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+										if (value == YES_OPTION) {
+											((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+											.savePreferences();
+										} else if (value == CANCEL_OPTION) {
+											return 0;
+										} else if (value == YES_TO_ALL_OPTION) {
+											((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+											.savePreferences();
+											autosave = 1;
+										} else if (value == NO_TO_ALL_OPTION) {
+											autosave = 2;
+										}
+									} else if (autosave == 1) {
+										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+										.savePreferences();
+									}
+								}
+							} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
+									.equals("Learn Options")) {
+								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnView) {
+									if (((LearnView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+											.hasChanged()) {
+										if (autosave == 0) {
+											int value = JOptionPane.showOptionDialog(frame,
+													"Do you want to save learn option changes for " + getTitleAt(index)
+													+ "?",
+													"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+													JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+											if (value == YES_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index))
+														.getComponent(i) instanceof LearnView) {
+													((LearnView) ((JTabbedPane) tab.getComponentAt(index))
+															.getComponent(i)).save();
+												}
+											} else if (value == CANCEL_OPTION) {
+												return 0;
+											} else if (value == YES_TO_ALL_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index))
+														.getComponent(i) instanceof LearnView) {
+													((LearnView) ((JTabbedPane) tab.getComponentAt(index))
+															.getComponent(i)).save();
+												}
+												autosave = 1;
+											} else if (value == NO_TO_ALL_OPTION) {
+												autosave = 2;
+											}
+										} else if (autosave == 1) {
+											if (((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i) instanceof LearnView) {
+												((LearnView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+												.save();
+											}
+										}
+									}
+								}
+								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnViewLEMA) {
+									if (((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+											.hasChanged()) {
+										if (autosave == 0) {
+											int value = JOptionPane.showOptionDialog(frame,
+													"Do you want to save learn option changes for " + getTitleAt(index)
+													+ "?",
+													"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+													JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+											if (value == YES_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index))
+														.getComponent(i) instanceof LearnViewLEMA) {
+													((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index))
+															.getComponent(i)).save();
+												}
+											} else if (value == CANCEL_OPTION) {
+												return 0;
+											} else if (value == YES_TO_ALL_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index))
+														.getComponent(i) instanceof LearnViewLEMA) {
+													((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index))
+															.getComponent(i)).save();
+												}
+												autosave = 1;
+											} else if (value == NO_TO_ALL_OPTION) {
+												autosave = 2;
+											}
+										} else if (autosave == 1) {
+											if (((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i) instanceof LearnViewLEMA) {
+												((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+												.save();
+											}
+										}
+									}
+								}
+							} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
+									.equals("Data Manager")) {
+								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
+									((DataManager) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+									.saveChanges(getTitleAt(index));
+								}
+							} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
+									.contains("Graph")) {
+								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+									if (((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+											.hasChanged()) {
+										if (autosave == 0) {
+											int value = JOptionPane.showOptionDialog(frame,
+													"Do you want to save graph changes for " + getTitleAt(index) + "?",
+													"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+													JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+											if (value == YES_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index))
+														.getComponent(i) instanceof Graph) {
+													Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
+															.getComponent(i));
+													g.save();
+												}
+											} else if (value == CANCEL_OPTION) {
+												return 0;
+											} else if (value == YES_TO_ALL_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index))
+														.getComponent(i) instanceof Graph) {
+													Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
+															.getComponent(i));
+													g.save();
+												}
+												autosave = 1;
+											} else if (value == NO_TO_ALL_OPTION) {
+												autosave = 2;
+											}
+										} else if (autosave == 1) {
+											if (((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i) instanceof Graph) {
+												Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
+														.getComponent(i));
+												g.save();
+											}
+										}
+									}
+								}
 							}
-						} else if (autosave == 1) {
-							saveIndices.add(i);
 						}
 					}
 				}
-				synthView.saveTabs(saveIndices);
+			} else if (tab.getComponentAt(index) instanceof JPanel) {
+				if ((tab.getComponentAt(index)).getName().equals("Synthesis")) {
+					Component[] array = ((JPanel) tab.getComponentAt(index)).getComponents();
+					if (array[0] instanceof SynthesisViewATACS) {
+						if (((SynthesisViewATACS) array[0]).hasChanged()) {
+							if (autosave == 0) {
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save synthesis option changes for " + getTitleAt(index) + "?",
+										"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+										null, OPTIONS, OPTIONS[0]);
+								if (value == YES_OPTION) {
+									if (array[0] instanceof SynthesisViewATACS) {
+										((SynthesisViewATACS) array[0]).save();
+									}
+								} else if (value == CANCEL_OPTION) {
+									return 0;
+								} else if (value == YES_TO_ALL_OPTION) {
+									if (array[0] instanceof SynthesisViewATACS) {
+										((SynthesisViewATACS) array[0]).save();
+									}
+									autosave = 1;
+								} else if (value == NO_TO_ALL_OPTION) {
+									autosave = 2;
+								}
+							} else if (autosave == 1) {
+								if (array[0] instanceof SynthesisViewATACS) {
+									((SynthesisViewATACS) array[0]).save();
+								}
+							}
+						}
+					}
+				} else if (tab.getComponentAt(index).getName().equals("Verification")) {
+					Component[] array = ((JPanel) tab.getComponentAt(index)).getComponents();
+					if (array[0] instanceof VerificationView) {
+						if (((VerificationView) array[0]).hasChanged()) {
+							if (autosave == 0) {
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save verification option changes for " + getTitleAt(index)
+										+ "?",
+										"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+										null, OPTIONS, OPTIONS[0]);
+								if (value == YES_OPTION) {
+									((VerificationView) array[0]).save();
+								} else if (value == CANCEL_OPTION) {
+									return 0;
+								} else if (value == YES_TO_ALL_OPTION) {
+									((VerificationView) array[0]).save();
+									autosave = 1;
+								} else if (value == NO_TO_ALL_OPTION) {
+									autosave = 2;
+								}
+							} else if (autosave == 1) {
+								((VerificationView) array[0]).save();
+							}
+						}
+					}
+				}
+			}
+			if (autosave == 0) {
+				return 1;
+			} else if (autosave == 1) {
+				return 2;
 			} else {
-				for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
-					if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName() != null) {
-						if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName()
-								.equals("Simulate")) {
-							if (((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-									.hasChanged()) {
-								if (autosave == 0) {
-									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save simulation option changes for " + getTitleAt(index)
-											+ "?",
-											"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-									if (value == YES_OPTION) {
-										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-										.save("");
-									} else if (value == CANCEL_OPTION) {
-										return 0;
-									} else if (value == YES_TO_ALL_OPTION) {
-										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-										.save("");
-										autosave = 1;
-									} else if (value == NO_TO_ALL_OPTION) {
-										autosave = 2;
-									}
-								} else if (autosave == 1) {
-									((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-									.save("");
-								}
-							}
-						} else if (((JTabbedPane) tab.getComponentAt(index))
-								.getComponent(i) instanceof MovieContainer) {
-							if (((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-									.getGCM2SBMLEditor().isDirty()
-									|| ((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-									.getIsDirty()) {
-								if (autosave == 0) {
-									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save parameter changes for " + getTitleAt(index) + "?",
-											"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-									if (value == YES_OPTION) {
-										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-										.savePreferences();
-									} else if (value == CANCEL_OPTION) {
-										return 0;
-									} else if (value == YES_TO_ALL_OPTION) {
-										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-										.savePreferences();
-										autosave = 1;
-									} else if (value == NO_TO_ALL_OPTION) {
-										autosave = 2;
-									}
-								} else if (autosave == 1) {
-									((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-									.savePreferences();
-								}
-							}
-						} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-								.equals("Learn Options")) {
-							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnView) {
-								if (((LearnView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-										.hasChanged()) {
-									if (autosave == 0) {
-										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save learn option changes for " + getTitleAt(index)
-												+ "?",
-												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-										if (value == YES_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof LearnView) {
-												((LearnView) ((JTabbedPane) tab.getComponentAt(index))
-														.getComponent(i)).save();
-											}
-										} else if (value == CANCEL_OPTION) {
-											return 0;
-										} else if (value == YES_TO_ALL_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof LearnView) {
-												((LearnView) ((JTabbedPane) tab.getComponentAt(index))
-														.getComponent(i)).save();
-											}
-											autosave = 1;
-										} else if (value == NO_TO_ALL_OPTION) {
-											autosave = 2;
-										}
-									} else if (autosave == 1) {
-										if (((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i) instanceof LearnView) {
-											((LearnView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-											.save();
-										}
-									}
-								}
-							}
-							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnViewLEMA) {
-								if (((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-										.hasChanged()) {
-									if (autosave == 0) {
-										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save learn option changes for " + getTitleAt(index)
-												+ "?",
-												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-										if (value == YES_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof LearnViewLEMA) {
-												((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index))
-														.getComponent(i)).save();
-											}
-										} else if (value == CANCEL_OPTION) {
-											return 0;
-										} else if (value == YES_TO_ALL_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof LearnViewLEMA) {
-												((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index))
-														.getComponent(i)).save();
-											}
-											autosave = 1;
-										} else if (value == NO_TO_ALL_OPTION) {
-											autosave = 2;
-										}
-									} else if (autosave == 1) {
-										if (((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i) instanceof LearnViewLEMA) {
-											((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-											.save();
-										}
-									}
-								}
-							}
-						} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-								.equals("Data Manager")) {
-							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
-								((DataManager) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-								.saveChanges(getTitleAt(index));
-							}
-						} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-								.contains("Graph")) {
-							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
-								if (((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-										.hasChanged()) {
-									if (autosave == 0) {
-										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save graph changes for " + getTitleAt(index) + "?",
-												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-										if (value == YES_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof Graph) {
-												Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
-														.getComponent(i));
-												g.save();
-											}
-										} else if (value == CANCEL_OPTION) {
-											return 0;
-										} else if (value == YES_TO_ALL_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof Graph) {
-												Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
-														.getComponent(i));
-												g.save();
-											}
-											autosave = 1;
-										} else if (value == NO_TO_ALL_OPTION) {
-											autosave = 2;
-										}
-									} else if (autosave == 1) {
-										if (((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i) instanceof Graph) {
-											Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i));
-											g.save();
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+				return 3;
 			}
-		} else if (tab.getComponentAt(index) instanceof JPanel) {
-			if ((tab.getComponentAt(index)).getName().equals("Synthesis")) {
-				Component[] array = ((JPanel) tab.getComponentAt(index)).getComponents();
-				if (array[0] instanceof SynthesisViewATACS) {
-					if (((SynthesisViewATACS) array[0]).hasChanged()) {
-						if (autosave == 0) {
-							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save synthesis option changes for " + getTitleAt(index) + "?",
-									"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-									null, OPTIONS, OPTIONS[0]);
-							if (value == YES_OPTION) {
-								if (array[0] instanceof SynthesisViewATACS) {
-									((SynthesisViewATACS) array[0]).save();
-								}
-							} else if (value == CANCEL_OPTION) {
-								return 0;
-							} else if (value == YES_TO_ALL_OPTION) {
-								if (array[0] instanceof SynthesisViewATACS) {
-									((SynthesisViewATACS) array[0]).save();
-								}
-								autosave = 1;
-							} else if (value == NO_TO_ALL_OPTION) {
-								autosave = 2;
-							}
-						} else if (autosave == 1) {
-							if (array[0] instanceof SynthesisViewATACS) {
-								((SynthesisViewATACS) array[0]).save();
-							}
-						}
-					}
-				}
-			} else if (tab.getComponentAt(index).getName().equals("Verification")) {
-				Component[] array = ((JPanel) tab.getComponentAt(index)).getComponents();
-				if (array[0] instanceof VerificationView) {
-					if (((VerificationView) array[0]).hasChanged()) {
-						if (autosave == 0) {
-							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save verification option changes for " + getTitleAt(index)
-									+ "?",
-									"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-									null, OPTIONS, OPTIONS[0]);
-							if (value == YES_OPTION) {
-								((VerificationView) array[0]).save();
-							} else if (value == CANCEL_OPTION) {
-								return 0;
-							} else if (value == YES_TO_ALL_OPTION) {
-								((VerificationView) array[0]).save();
-								autosave = 1;
-							} else if (value == NO_TO_ALL_OPTION) {
-								autosave = 2;
-							}
-						} else if (autosave == 1) {
-							((VerificationView) array[0]).save();
-						}
-					}
-				}
-			}
-		}
-		if (autosave == 0) {
-			return 1;
-		} else if (autosave == 1) {
-			return 2;
-		} else {
-			return 3;
 		}
 	}
-}
 
-/**
- * Saves a circuit from a learn view to the project view
- */
-public void saveGCM(String filename, String path) {
-	try {
-		if (overwrite(root + GlobalConstants.separator + filename, filename)) {
-			FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + filename));
-			FileInputStream in = new FileInputStream(new File(path));
-			int read = in.read();
-			while (read != -1) {
-				out.write(read);
-				read = in.read();
+	/**
+	 * Saves a circuit from a learn view to the project view
+	 */
+	public void saveGCM(String filename, String path) {
+		try {
+			if (overwrite(root + GlobalConstants.separator + filename, filename)) {
+				FileOutputStream out = new FileOutputStream(new File(root + GlobalConstants.separator + filename));
+				FileInputStream in = new FileInputStream(new File(path));
+				int read = in.read();
+				while (read != -1) {
+					out.write(read);
+					read = in.read();
+				}
+				in.close();
+				out.close();
+
+				BioModel bioModel = new BioModel(root);
+				try {
+					bioModel.load(root + GlobalConstants.separator + filename);
+					GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
+					gcm2sbml.load(root + GlobalConstants.separator + filename);
+					gcm2sbml.convertGCM2SBML(root, filename);
+					String sbmlFile = filename.replace(".gcm", ".xml");
+					bioModel.save(root + GlobalConstants.separator + sbmlFile);
+					addToTree(sbmlFile);
+				} catch (XMLStreamException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+
 			}
-			in.close();
-			out.close();
-
-			BioModel bioModel = new BioModel(root);
-			try {
-				bioModel.load(root + GlobalConstants.separator + filename);
-				GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
-				gcm2sbml.load(root + GlobalConstants.separator + filename);
-				gcm2sbml.convertGCM2SBML(root, filename);
-				String sbmlFile = filename.replace(".gcm", ".xml");
-				bioModel.save(root + GlobalConstants.separator + sbmlFile);
-				addToTree(sbmlFile);
-			} catch (XMLStreamException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(frame, "Unable to save genetic circuit.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
-	} catch (IOException e1) {
-		JOptionPane.showMessageDialog(frame, "Unable to save genetic circuit.", "Error", JOptionPane.ERROR_MESSAGE);
 	}
-}
 
-/**
- * Saves a circuit from a learn view to the project view
- */
-public void saveLPN(String filename, String path) {
-	try {
-		if ((lpn && overwrite(root + GlobalConstants.separator + filename, filename))
-				|| (!lpn && overwrite(root + GlobalConstants.separator + filename.replace(".lpn", ".xml"),
-						filename.replace(".lpn", ".xml")))) {
-			BufferedWriter out = new BufferedWriter(new FileWriter(root + GlobalConstants.separator + filename));
-			BufferedReader in = new BufferedReader(new FileReader(path));
+	/**
+	 * Saves a circuit from a learn view to the project view
+	 */
+	public void saveLPN(String filename, String path) {
+		try {
+			if ((lpn && overwrite(root + GlobalConstants.separator + filename, filename))
+					|| (!lpn && overwrite(root + GlobalConstants.separator + filename.replace(".lpn", ".xml"),
+							filename.replace(".lpn", ".xml")))) {
+				BufferedWriter out = new BufferedWriter(new FileWriter(root + GlobalConstants.separator + filename));
+				BufferedReader in = new BufferedReader(new FileReader(path));
+				String str;
+				while ((str = in.readLine()) != null) {
+					out.write(str + "\n");
+				}
+				in.close();
+				out.close();
+				if (lpn) {
+					addToTree(filename);
+				}
+				Translator t1 = new Translator();
+				try {
+					t1.convertLPN2SBML(root + GlobalConstants.separator + filename, "");
+					t1.setFilename(root + GlobalConstants.separator + filename.replace(".lpn", ".xml"));
+					t1.outputSBML();
+					addToTree(filename.replace(".lpn", ".xml"));
+				} catch (BioSimException e) {
+					JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+
+			}
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(frame, "Unable to save LPN.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public void copySFiles(String filename, String directory) {
+		final String SFILELINE = "input (\\S+?)\n";
+
+		StringBuffer data = new StringBuffer();
+
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(directory + GlobalConstants.separator + filename));
 			String str;
 			while ((str = in.readLine()) != null) {
-				out.write(str + "\n");
+				data.append(str + "\n");
 			}
 			in.close();
-			out.close();
-			if (lpn) {
-				addToTree(filename);
-			}
-			Translator t1 = new Translator();
-			try {
-				t1.convertLPN2SBML(root + GlobalConstants.separator + filename, "");
-				t1.setFilename(root + GlobalConstants.separator + filename.replace(".lpn", ".xml"));
-				t1.outputSBML();
-				addToTree(filename.replace(".lpn", ".xml"));
-			} catch (BioSimException e) {
-				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-
-		}
-	} catch (IOException e1) {
-		JOptionPane.showMessageDialog(frame, "Unable to save LPN.", "Error", JOptionPane.ERROR_MESSAGE);
-	}
-}
-
-public void copySFiles(String filename, String directory) {
-	final String SFILELINE = "input (\\S+?)\n";
-
-	StringBuffer data = new StringBuffer();
-
-	try {
-		BufferedReader in = new BufferedReader(new FileReader(directory + GlobalConstants.separator + filename));
-		String str;
-		while ((str = in.readLine()) != null) {
-			data.append(str + "\n");
-		}
-		in.close();
-	} catch (IOException e) {
-		e.printStackTrace();
-		throw new IllegalStateException("Error opening file");
-	}
-
-	Pattern sLinePattern = Pattern.compile(SFILELINE);
-	Matcher sLineMatcher = sLinePattern.matcher(data);
-	while (sLineMatcher.find()) {
-		String sFilename = sLineMatcher.group(1);
-		try {
-			File newFile = new File(directory + GlobalConstants.separator + sFilename);
-			newFile.createNewFile();
-			FileOutputStream copyin = new FileOutputStream(newFile);
-			FileInputStream copyout = new FileInputStream(new File(root + GlobalConstants.separator + sFilename));
-			int read = copyout.read();
-			while (read != -1) {
-				copyin.write(read);
-				read = copyout.read();
-			}
-			copyin.close();
-			copyout.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "Cannot copy file " + sFilename, "Copy Error",
-					JOptionPane.ERROR_MESSAGE);
+			throw new IllegalStateException("Error opening file");
+		}
+
+		Pattern sLinePattern = Pattern.compile(SFILELINE);
+		Matcher sLineMatcher = sLinePattern.matcher(data);
+		while (sLineMatcher.find()) {
+			String sFilename = sLineMatcher.group(1);
+			try {
+				File newFile = new File(directory + GlobalConstants.separator + sFilename);
+				newFile.createNewFile();
+				FileOutputStream copyin = new FileOutputStream(newFile);
+				FileInputStream copyout = new FileInputStream(new File(root + GlobalConstants.separator + sFilename));
+				int read = copyout.read();
+				while (read != -1) {
+					copyin.write(read);
+					read = copyout.read();
+				}
+				copyin.close();
+				copyout.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(Gui.frame, "Cannot copy file " + sFilename, "Copy Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
-}
 
-public void updateMenu(boolean logEnabled, boolean othersEnabled) {
-	viewLearnedModel.setEnabled(othersEnabled);
-	viewCoverage.setEnabled(othersEnabled);
-	save.setEnabled(othersEnabled);
-	saveAll.setEnabled(othersEnabled);
-	viewLog.setEnabled(logEnabled);
-	// Do saveas & save button too
-}
+	public void updateMenu(boolean logEnabled, boolean othersEnabled) {
+		viewLearnedModel.setEnabled(othersEnabled);
+		viewCoverage.setEnabled(othersEnabled);
+		save.setEnabled(othersEnabled);
+		saveAll.setEnabled(othersEnabled);
+		viewLog.setEnabled(logEnabled);
+		// Do saveas & save button too
+	}
 
-@Override
-public void mousePressed(MouseEvent e) {
-	executePopupMenu(e);
-}
+	@Override
+	public void mousePressed(MouseEvent e) {
+		executePopupMenu(e);
+	}
 
-@Override
-public void mouseReleased(MouseEvent e) {
-	executePopupMenu(e);
-}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		executePopupMenu(e);
+	}
 
-public void executePopupMenu(MouseEvent e) {
-	if (e.getSource() instanceof JTree && tree.getFile() != null && e.isPopupTrigger()) {
-		// frame.getGlassPane().setVisible(false);
-		popup.removeAll();
-		if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml")) {
-			JMenuItem create = new JMenuItem("Create Analysis View");
-			create.addActionListener(this);
-			create.addMouseListener(this);
-			create.setActionCommand("createAnalysis");
-			JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-			createSynthesis.addActionListener(this);
-			createSynthesis.addMouseListener(this);
-			createSynthesis.setActionCommand("createSynthesis");
-			JMenuItem createLearn = new JMenuItem("Create Learn View");
-			createLearn.addActionListener(this);
-			createLearn.addMouseListener(this);
-			createLearn.setActionCommand("createLearn");
-			JMenuItem createVerification = new JMenuItem("Create Verification View");
-			createVerification.addActionListener(this);
-			createVerification.addMouseListener(this);
-			createVerification.setActionCommand("createVerify");
-			JMenuItem edit = new JMenuItem("View/Edit (graphical)");
-			edit.addActionListener(this);
-			edit.addMouseListener(this);
-			edit.setActionCommand("modelEditor");
-			JMenuItem editText = new JMenuItem("View/Edit (tabular)");
-			editText.addActionListener(this);
-			editText.addMouseListener(this);
-			editText.setActionCommand("modelTextEditor");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			popup.add(create);
-			if (!lema) {
-				popup.add(createSynthesis);
-			}
-			popup.add(createLearn);
-			popup.add(createVerification);
-			popup.addSeparator();
-			popup.add(edit);
-			popup.add(editText);
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (tree.getFile().endsWith(".sbol")) {
-			JMenuItem view = new JMenuItem("View");
-			view.addActionListener(this);
-			view.addMouseListener(this);
-			view.setActionCommand("SBOLDesigner");
-
-			JMenuItem openSBOLDesigner = new JMenuItem("Open in Browser");
-			openSBOLDesigner.addActionListener(this);
-			openSBOLDesigner.addMouseListener(this);
-			openSBOLDesigner.setActionCommand("browseSbol");
-
-			JMenuItem generateSBOLModels = new JMenuItem("Generate SBOL Models");
-			generateSBOLModels.addActionListener(this);
-			generateSBOLModels.addMouseListener(this);
-			generateSBOLModels.setActionCommand("generateSBOLModels");
-
-			popup.add(view);
-			popup.add(openSBOLDesigner);
-			popup.add(generateSBOLModels);
-		} else if (tree.getFile().endsWith(".vhd")) {
-			JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-			createSynthesis.addActionListener(this);
-			createSynthesis.addMouseListener(this);
-			createSynthesis.setActionCommand("createSynthesis");
-			JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-			createAnalysis.addActionListener(this);
-			createAnalysis.addMouseListener(this);
-			createAnalysis.setActionCommand("createAnalysis");
-			JMenuItem createLearn = new JMenuItem("Create Learn View");
-			createLearn.addActionListener(this);
-			createLearn.addMouseListener(this);
-			createLearn.setActionCommand("createLearn");
-			JMenuItem createVerification = new JMenuItem("Create Verification View");
-			createVerification.addActionListener(this);
-			createVerification.addMouseListener(this);
-			createVerification.setActionCommand("createVerify");
-			JMenuItem viewModel = new JMenuItem("View Model");
-			viewModel.addActionListener(this);
-			viewModel.addMouseListener(this);
-			viewModel.setActionCommand("viewModel");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			if (atacs) {
-				popup.add(createSynthesis);
-			}
-			// popup.add(createAnalysis);
-			if (lema) {
-				popup.add(createLearn);
-			}
-			popup.add(createVerification);
-			popup.addSeparator();
-			popup.add(viewModel);
-			popup.addSeparator();
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (tree.getFile().endsWith(".vams")) {
-			JMenuItem viewModel = new JMenuItem("View Model");
-			viewModel.addActionListener(this);
-			viewModel.addMouseListener(this);
-			viewModel.setActionCommand("viewModel");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			if (lema) {
-				popup.add(viewModel);
-				popup.addSeparator();
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-		} else if (tree.getFile().endsWith(".sv")) {
-			JMenuItem viewModel = new JMenuItem("View Model");
-			viewModel.addActionListener(this);
-			viewModel.addMouseListener(this);
-			viewModel.setActionCommand("viewModel");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			if (lema) {
-				popup.add(viewModel);
-				popup.addSeparator();
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-		} else if (tree.getFile().endsWith(".g")) {
-			JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-			createSynthesis.addActionListener(this);
-			createSynthesis.addMouseListener(this);
-			createSynthesis.setActionCommand("createSynthesis");
-			JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-			createAnalysis.addActionListener(this);
-			createAnalysis.addMouseListener(this);
-			createAnalysis.setActionCommand("createAnalysis");
-			JMenuItem createLearn = new JMenuItem("Create Learn View");
-			createLearn.addActionListener(this);
-			createLearn.addMouseListener(this);
-			createLearn.setActionCommand("createLearn");
-			JMenuItem createVerification = new JMenuItem("Create Verification View");
-			createVerification.addActionListener(this);
-			createVerification.addMouseListener(this);
-			createVerification.setActionCommand("createVerify");
-			JMenuItem viewModel = new JMenuItem("View Model");
-			viewModel.addActionListener(this);
-			viewModel.addMouseListener(this);
-			viewModel.setActionCommand("viewModel");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			if (atacs) {
-				popup.add(createSynthesis);
-			}
-			// popup.add(createAnalysis);
-			// if (lema) {
-			// popup.add(createLearn);
-			// }
-			popup.add(createVerification);
-			popup.addSeparator();
-			popup.add(viewModel);
-			popup.addSeparator();
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (tree.getFile().endsWith(".lpn")) {
-			JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-			createSynthesis.addActionListener(this);
-			createSynthesis.addMouseListener(this);
-			createSynthesis.setActionCommand("createSynthesis");
-			JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-			createAnalysis.addActionListener(this);
-			createAnalysis.addMouseListener(this);
-			createAnalysis.setActionCommand("createAnalysis");
-			JMenuItem createLearn = new JMenuItem("Create Learn View");
-			createLearn.addActionListener(this);
-			createLearn.addMouseListener(this);
-			createLearn.setActionCommand("createLearn");
-			JMenuItem createVerification = new JMenuItem("Create Verification View");
-			createVerification.addActionListener(this);
-			createVerification.addMouseListener(this);
-			createVerification.setActionCommand("createVerify");
-			JMenuItem convertToSBML = new JMenuItem("Convert To SBML");
-			convertToSBML.addActionListener(this);
-			convertToSBML.addMouseListener(this);
-			convertToSBML.setActionCommand("convertToSBML");
-			JMenuItem convertToVerilog = new JMenuItem("Save as Verilog");
-			convertToVerilog.addActionListener(this);
-			convertToVerilog.addMouseListener(this);
-			convertToVerilog.setActionCommand("convertToVerilog");
-			JMenuItem viewModel = new JMenuItem("View Model");
-			viewModel.addActionListener(this);
-			viewModel.addMouseListener(this);
-			viewModel.setActionCommand("viewModel");
-			JMenuItem view = new JMenuItem("View/Edit");
-			view.addActionListener(this);
-			view.addMouseListener(this);
-			view.setActionCommand("openLPN");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			if (atacs) {
-				popup.add(createSynthesis);
-			}
-			popup.add(createAnalysis);
-			popup.add(createVerification);
-			if (lema) {
-				popup.add(createLearn);
-				popup.addSeparator();
-			}
-			if (atacs || lema) {
-				popup.add(convertToVerilog);
-			}
-			popup.add(viewModel);
-			popup.addSeparator();
-			popup.add(view);
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		}
-
-		else if (tree.getFile().endsWith(".prop")) {
-
-			JMenuItem convertToLPN = new JMenuItem("Convert To LPN");
-			convertToLPN.addActionListener(this);
-			convertToLPN.addMouseListener(this);
-			convertToLPN.setActionCommand("convertToLPN");
-
-			JMenuItem view = new JMenuItem("View/Edit");
-			view.addActionListener(this);
-			view.addMouseListener(this);
-			view.setActionCommand("openLPN");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-
-			if (lema) {
-				popup.add(createLearn);
-				popup.addSeparator();
-				popup.add(viewModel);
-			}
-			popup.addSeparator();
-			popup.add(view);
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-			popup.add(convertToLPN);
-		}
-
-		else if (tree.getFile().endsWith(".s")) {
-			JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-			createAnalysis.addActionListener(this);
-			createAnalysis.addMouseListener(this);
-			createAnalysis.setActionCommand("createAnalysis");
-			JMenuItem createVerification = new JMenuItem("Create Verification View");
-			createVerification.addActionListener(this);
-			createVerification.addMouseListener(this);
-			createVerification.setActionCommand("createVerify");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			popup.add(createAnalysis);
-			popup.add(createVerification);
-			popup.addSeparator();
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (tree.getFile().endsWith(".inst")) {
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (tree.getFile().endsWith(".csp")) {
-			JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-			createSynthesis.addActionListener(this);
-			createSynthesis.addMouseListener(this);
-			createSynthesis.setActionCommand("createSynthesis");
-			JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-			createAnalysis.addActionListener(this);
-			createAnalysis.addMouseListener(this);
-			createAnalysis.setActionCommand("createAnalysis");
-			JMenuItem createLearn = new JMenuItem("Create Learn View");
-			createLearn.addActionListener(this);
-			createLearn.addMouseListener(this);
-			createLearn.setActionCommand("createLearn");
-			JMenuItem createVerification = new JMenuItem("Create Verification View");
-			createVerification.addActionListener(this);
-			createVerification.addMouseListener(this);
-			createVerification.setActionCommand("createVerify");
-			JMenuItem viewModel = new JMenuItem("View Model");
-			viewModel.addActionListener(this);
-			viewModel.addMouseListener(this);
-			viewModel.setActionCommand("viewModel");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			if (atacs) {
-				popup.add(createSynthesis);
-			}
-			// popup.add(createAnalysis);
-			if (lema) {
-				popup.add(createLearn);
-			}
-			popup.add(createVerification);
-			popup.addSeparator();
-			popup.add(viewModel);
-			popup.addSeparator();
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (tree.getFile().endsWith(".hse")) {
-			JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-			createSynthesis.addActionListener(this);
-			createSynthesis.addMouseListener(this);
-			createSynthesis.setActionCommand("createSynthesis");
-			JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-			createAnalysis.addActionListener(this);
-			createAnalysis.addMouseListener(this);
-			createAnalysis.setActionCommand("createAnalysis");
-			JMenuItem createLearn = new JMenuItem("Create Learn View");
-			createLearn.addActionListener(this);
-			createLearn.addMouseListener(this);
-			createLearn.setActionCommand("createLearn");
-			JMenuItem createVerification = new JMenuItem("Create Verification View");
-			createVerification.addActionListener(this);
-			createVerification.addMouseListener(this);
-			createVerification.setActionCommand("createVerify");
-			JMenuItem viewModel = new JMenuItem("View Model");
-			viewModel.addActionListener(this);
-			viewModel.addMouseListener(this);
-			viewModel.setActionCommand("viewModel");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			if (atacs) {
-				popup.add(createSynthesis);
-			}
-			// popup.add(createAnalysis);
-			if (lema) {
-				popup.add(createLearn);
-			}
-			popup.add(createVerification);
-			popup.addSeparator();
-			popup.add(viewModel);
-			popup.addSeparator();
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (tree.getFile().endsWith(".unc")) {
-			JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-			createSynthesis.addActionListener(this);
-			createSynthesis.addMouseListener(this);
-			createSynthesis.setActionCommand("createSynthesis");
-			JMenuItem viewModel = new JMenuItem("View Model");
-			viewModel.addActionListener(this);
-			viewModel.addMouseListener(this);
-			viewModel.setActionCommand("viewModel");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			popup.add(createSynthesis);
-			popup.addSeparator();
-			popup.add(viewModel);
-			popup.addSeparator();
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (tree.getFile().endsWith(".rsg")) {
-			JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-			createSynthesis.addActionListener(this);
-			createSynthesis.addMouseListener(this);
-			createSynthesis.setActionCommand("createSynthesis");
-			JMenuItem viewModel = new JMenuItem("View Model");
-			viewModel.addActionListener(this);
-			viewModel.addMouseListener(this);
-			viewModel.setActionCommand("viewModel");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			popup.add(createSynthesis);
-			popup.addSeparator();
-			popup.add(viewModel);
-			popup.addSeparator();
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (tree.getFile().endsWith(".grf")) {
-			JMenuItem edit = new JMenuItem("View/Edit");
-			edit.addActionListener(this);
-			edit.addMouseListener(this);
-			edit.setActionCommand("openGraph");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			popup.add(edit);
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (tree.getFile().endsWith(".prb")) {
-			JMenuItem edit = new JMenuItem("View/Edit");
-			edit.addActionListener(this);
-			edit.addMouseListener(this);
-			edit.setActionCommand("openHistogram");
-			JMenuItem delete = new JMenuItem("Delete");
-			delete.addActionListener(this);
-			delete.addMouseListener(this);
-			delete.setActionCommand("delete");
-			JMenuItem copy = new JMenuItem("Copy");
-			copy.addActionListener(this);
-			copy.addMouseListener(this);
-			copy.setActionCommand("copy");
-			JMenuItem rename = new JMenuItem("Rename");
-			rename.addActionListener(this);
-			rename.addMouseListener(this);
-			rename.setActionCommand("rename");
-			popup.add(edit);
-			popup.add(copy);
-			popup.add(rename);
-			popup.add(delete);
-		} else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
-			boolean sim = false;
-			boolean synth = false;
-			boolean ver = false;
-			boolean learn = false;
-			for (String s : new File(tree.getFile()).list()) {
-				if (s.endsWith(".sim")) {
-					sim = true;
-				}
-				if ((s.endsWith(".syn")) || s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
-					synth = true;
-				}
-				if (s.endsWith(".ver")) {
-					ver = true;
-				}
-				if (s.endsWith(".lrn")) {
-					learn = true;
-				}
-			}
-			JMenuItem open;
-			if (sim) {
-				open = new JMenuItem("Open Analysis View");
-				open.addActionListener(this);
-				open.addMouseListener(this);
-				open.setActionCommand("openSim");
-				popup.add(open);
-			} else if (synth) {
-				open = new JMenuItem("Open Synthesis View");
-				open.addActionListener(this);
-				open.addMouseListener(this);
-				open.setActionCommand("openSynth");
-				popup.add(open);
-			} else if (ver) {
-				open = new JMenuItem("Open Verification View");
-				open.addActionListener(this);
-				open.addMouseListener(this);
-				open.setActionCommand("openVerification");
-				popup.add(open);
-			} else if (learn) {
-				open = new JMenuItem("Open Learn View");
-				open.addActionListener(this);
-				open.addMouseListener(this);
-				open.setActionCommand("openLearn");
-				popup.add(open);
-			}
-			if (sim || ver || synth || learn) {
-				popup.addSeparator();
-			}
-			if (sim || ver || learn) {
+	public void executePopupMenu(MouseEvent e) {
+		if (e.getSource() instanceof JTree && tree.getFile() != null && e.isPopupTrigger()) {
+			// frame.getGlassPane().setVisible(false);
+			popup.removeAll();
+			if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml")) {
+				JMenuItem create = new JMenuItem("Create Analysis View");
+				create.addActionListener(this);
+				create.addMouseListener(this);
+				create.setActionCommand("createAnalysis");
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem edit = new JMenuItem("View/Edit (graphical)");
+				edit.addActionListener(this);
+				edit.addMouseListener(this);
+				edit.setActionCommand("modelEditor");
+				JMenuItem editText = new JMenuItem("View/Edit (tabular)");
+				editText.addActionListener(this);
+				editText.addMouseListener(this);
+				editText.setActionCommand("modelTextEditor");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
 				JMenuItem copy = new JMenuItem("Copy");
 				copy.addActionListener(this);
 				copy.addMouseListener(this);
 				copy.setActionCommand("copy");
-				popup.add(copy);
-			}
-			if (sim || ver || synth || learn) {
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("deleteSim");
 				JMenuItem rename = new JMenuItem("Rename");
 				rename.addActionListener(this);
 				rename.addMouseListener(this);
 				rename.setActionCommand("rename");
+				popup.add(create);
+				if (!lema) {
+					popup.add(createSynthesis);
+				}
+				popup.add(createLearn);
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(editText);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().endsWith(".sbol")) {
+				JMenuItem view = new JMenuItem("View");
+				view.addActionListener(this);
+				view.addMouseListener(this);
+				view.setActionCommand("SBOLDesigner");
+
+				JMenuItem openSBOLDesigner = new JMenuItem("Open in Browser");
+				openSBOLDesigner.addActionListener(this);
+				openSBOLDesigner.addMouseListener(this);
+				openSBOLDesigner.setActionCommand("browseSbol");
+
+				popup.add(view);
+				popup.add(openSBOLDesigner);
+			} else if (tree.getFile().endsWith(".vhd")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createAnalysis");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs) {
+					popup.add(createSynthesis);
+				}
+				// popup.add(createAnalysis);
+				if (lema) {
+					popup.add(createLearn);
+				}
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().endsWith(".vams")) {
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (lema) {
+					popup.add(viewModel);
+					popup.addSeparator();
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+			} else if (tree.getFile().endsWith(".sv")) {
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (lema) {
+					popup.add(viewModel);
+					popup.addSeparator();
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+			} else if (tree.getFile().endsWith(".g")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createAnalysis");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs) {
+					popup.add(createSynthesis);
+				}
+				// popup.add(createAnalysis);
+				// if (lema) {
+				// popup.add(createLearn);
+				// }
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().endsWith(".lpn")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createAnalysis");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem convertToSBML = new JMenuItem("Convert To SBML");
+				convertToSBML.addActionListener(this);
+				convertToSBML.addMouseListener(this);
+				convertToSBML.setActionCommand("convertToSBML");
+				JMenuItem convertToVerilog = new JMenuItem("Save as Verilog");
+				convertToVerilog.addActionListener(this);
+				convertToVerilog.addMouseListener(this);
+				convertToVerilog.setActionCommand("convertToVerilog");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem view = new JMenuItem("View/Edit");
+				view.addActionListener(this);
+				view.addMouseListener(this);
+				view.setActionCommand("openLPN");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs) {
+					popup.add(createSynthesis);
+				}
+				popup.add(createAnalysis);
+				popup.add(createVerification);
+				if (lema) {
+					popup.add(createLearn);
+					popup.addSeparator();
+				}
+				if (atacs || lema) {
+					popup.add(convertToVerilog);
+				}
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(view);
+				popup.add(copy);
 				popup.add(rename);
 				popup.add(delete);
 			}
-		}
-		if (popup.getComponentCount() != 0) {
-			popup.show(e.getComponent(), e.getX(), e.getY());
-		}
-	}
-}
 
-public void executeMouseClickEvent(MouseEvent e) {
-	if (!(e.getSource() instanceof JTree)) {
-		enableTabMenu(tab.getSelectedIndex());
-		// frame.getGlassPane().setVisible(true);
-	} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && e.getSource() instanceof JTree
-			&& tree.getFile() != null) {
-		if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-				|| tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-			openSBML(tree.getFile());
-		} else if (tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-			openModelEditor(false);
-		} else if (tree.getFile().length() >= 5
-				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol")) {
-			openSBOLDesigner();
-		} else if (tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-			openModel("VHDL");
-		} else if (tree.getFile().length() >= 2
-				&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
-			openModel("Assembly File");
-		} else if (tree.getFile().length() >= 5
-				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
-			openModel("Instruction File");
-		} else if (tree.getFile().length() >= 5
-				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".prop")) { // Dhanashree
-			openModel("Property File");
-		} else if (tree.getFile().length() >= 5
-				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
-			openModel("Verilog-AMS");
-		} else if (tree.getFile().length() >= 3
-				&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
-			openModel("SystemVerilog");
-		} else if (tree.getFile().length() >= 2
-				&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-			openModel("Petri Net");
-		} else if (tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
-			openLPN();
-		} else if (tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-			openModel("CSP");
-		} else if (tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-			openModel("Handshaking Expansion");
-		} else if (tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-			openModel("Extended Burst-Mode Machine");
-		} else if (tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-			openModel("Reduced State Graph");
-		} else if (tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".cir")) {
-			openModel("Spice Circuit");
-		} else if (tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-			openGraph();
-		} else if (tree.getFile().length() >= 4
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
-			openHistogram();
-		} else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
-			boolean sim = false;
-			boolean synth = false;
-			boolean ver = false;
-			boolean learn = false;
-			for (String s : new File(tree.getFile()).list()) {
-				if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-					sim = true;
-				} else if ((s.length() > 3 && s.substring(s.length() - 4).equals(".syn"))
-						|| s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
-					synth = true;
-				} else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
-					ver = true;
-				} else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
-					learn = true;
-				}
-			}
-			if (sim) {
-				try {
-					openAnalysisView(tree.getFile());
-				} catch (Exception e0) {
-					e0.printStackTrace();
-				}
-			} else if (synth) {
-				openSynth();
-			} else if (ver) {
-				openVerify();
-			} else if (learn) {
+			else if (tree.getFile().endsWith(".prop")) {
+
+				JMenuItem convertToLPN = new JMenuItem("Convert To LPN");
+				convertToLPN.addActionListener(this);
+				convertToLPN.addMouseListener(this);
+				convertToLPN.setActionCommand("convertToLPN");
+
+				JMenuItem view = new JMenuItem("View/Edit");
+				view.addActionListener(this);
+				view.addMouseListener(this);
+				view.setActionCommand("openLPN");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+
 				if (lema) {
-					openLearnLHPN();
-				} else {
-					openLearn();
+					popup.add(createLearn);
+					popup.addSeparator();
+					popup.add(viewModel);
+				}
+				popup.addSeparator();
+				popup.add(view);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+				popup.add(convertToLPN);
+			}
+
+			else if (tree.getFile().endsWith(".s")) {
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createAnalysis");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createAnalysis);
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().endsWith(".inst")) {
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().endsWith(".csp")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createAnalysis");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs) {
+					popup.add(createSynthesis);
+				}
+				// popup.add(createAnalysis);
+				if (lema) {
+					popup.add(createLearn);
+				}
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().endsWith(".hse")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createAnalysis");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs) {
+					popup.add(createSynthesis);
+				}
+				// popup.add(createAnalysis);
+				if (lema) {
+					popup.add(createLearn);
+				}
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().endsWith(".unc")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().endsWith(".rsg")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().endsWith(".grf")) {
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.addMouseListener(this);
+				edit.setActionCommand("openGraph");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().endsWith(".prb")) {
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.addMouseListener(this);
+				edit.setActionCommand("openHistogram");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
+				boolean sim = false;
+				boolean synth = false;
+				boolean ver = false;
+				boolean learn = false;
+				for (String s : new File(tree.getFile()).list()) {
+					if (s.endsWith(".sim")) {
+						sim = true;
+					}
+					if ((s.endsWith(".syn")) || s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
+						synth = true;
+					}
+					if (s.endsWith(".ver")) {
+						ver = true;
+					}
+					if (s.endsWith(".lrn")) {
+						learn = true;
+					}
+				}
+				JMenuItem open;
+				if (sim) {
+					open = new JMenuItem("Open Analysis View");
+					open.addActionListener(this);
+					open.addMouseListener(this);
+					open.setActionCommand("openSim");
+					popup.add(open);
+				} else if (synth) {
+					open = new JMenuItem("Open Synthesis View");
+					open.addActionListener(this);
+					open.addMouseListener(this);
+					open.setActionCommand("openSynth");
+					popup.add(open);
+				} else if (ver) {
+					open = new JMenuItem("Open Verification View");
+					open.addActionListener(this);
+					open.addMouseListener(this);
+					open.setActionCommand("openVerification");
+					popup.add(open);
+				} else if (learn) {
+					open = new JMenuItem("Open Learn View");
+					open.addActionListener(this);
+					open.addMouseListener(this);
+					open.setActionCommand("openLearn");
+					popup.add(open);
+				}
+				if (sim || ver || synth || learn) {
+					popup.addSeparator();
+				}
+				if (sim || ver || learn) {
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.addMouseListener(this);
+					copy.setActionCommand("copy");
+					popup.add(copy);
+				}
+				if (sim || ver || synth || learn) {
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.addMouseListener(this);
+					delete.setActionCommand("deleteSim");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.addMouseListener(this);
+					rename.setActionCommand("rename");
+					popup.add(rename);
+					popup.add(delete);
 				}
 			}
-		} else if (new File(tree.getFile()).isDirectory() && tree.getFile().equals(root)) {
-			tree.expandPath(tree.getRoot());
+			if (popup.getComponentCount() != 0) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
 		}
-	} else {
-		enableTreeMenu();
-		return;
 	}
-	enableTabMenu(tab.getSelectedIndex());
-}
 
-@Override
-public void mouseMoved(MouseEvent e) {
+	public void executeMouseClickEvent(MouseEvent e) {
+		if (!(e.getSource() instanceof JTree)) {
+			enableTabMenu(tab.getSelectedIndex());
+			// frame.getGlassPane().setVisible(true);
+		} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && e.getSource() instanceof JTree
+				&& tree.getFile() != null) {
+			if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+					|| tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+				openSBML(tree.getFile());
+			} else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+				openModelEditor(false);
+			} else if (tree.getFile().length() >= 5
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol")) {
+				openSBOLOptions();
+			} else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+				openModel("VHDL");
+			} else if (tree.getFile().length() >= 2
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
+				openModel("Assembly File");
+			} else if (tree.getFile().length() >= 5
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
+				openModel("Instruction File");
+			} else if (tree.getFile().length() >= 5
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".prop")) { // Dhanashree
+				openModel("Property File");
+			} else if (tree.getFile().length() >= 5
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+				openModel("Verilog-AMS");
+			} else if (tree.getFile().length() >= 3
+					&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
+				openModel("SystemVerilog");
+			} else if (tree.getFile().length() >= 2
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+				openModel("Petri Net");
+			} else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+				openLPN();
+			} else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+				openModel("CSP");
+			} else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+				openModel("Handshaking Expansion");
+			} else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+				openModel("Extended Burst-Mode Machine");
+			} else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+				openModel("Reduced State Graph");
+			} else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".cir")) {
+				openModel("Spice Circuit");
+			} else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+				openGraph();
+			} else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+				openHistogram();
+			} else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
+				boolean sim = false;
+				boolean synth = false;
+				boolean ver = false;
+				boolean learn = false;
+				for (String s : new File(tree.getFile()).list()) {
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
+						sim = true;
+					} else if ((s.length() > 3 && s.substring(s.length() - 4).equals(".syn"))
+							|| s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
+						synth = true;
+					} else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
+						ver = true;
+					} else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
+						learn = true;
+					}
+				}
+				if (sim) {
+					try {
+						openAnalysisView(tree.getFile());
+					} catch (Exception e0) {
+						e0.printStackTrace();
+					}
+				} else if (synth) {
+					openSynth();
+				} else if (ver) {
+					openVerify();
+				} else if (learn) {
+					if (lema) {
+						openLearnLHPN();
+					} else {
+						openLearn();
+					}
+				}
+			} else if (new File(tree.getFile()).isDirectory() && tree.getFile().equals(root)) {
+				tree.expandPath(tree.getRoot());
+			}
+		} else {
+			enableTreeMenu();
+			return;
+		}
+		enableTabMenu(tab.getSelectedIndex());
+	}
 
-}
+	@Override
+	public void mouseMoved(MouseEvent e) {
 
-@Override
-public void mouseWheelMoved(MouseWheelEvent e) {
-	Component glassPane = frame.getGlassPane();
-	Point glassPanePoint = e.getPoint();
-	// Component component = e.getComponent();
-	Container container = frame.getContentPane();
-	Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame.getContentPane());
-	if (containerPoint.y < 0) { // we're not in the content pane
-		if (containerPoint.y + menuBar.getHeight() >= 0) {
-			Component component = menuBar.getComponentAt(glassPanePoint);
-			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
-			component.dispatchEvent(new MouseWheelEvent(component, e.getID(), e.getWhen(), e.getModifiers(),
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		Component glassPane = frame.getGlassPane();
+		Point glassPanePoint = e.getPoint();
+		// Component component = e.getComponent();
+		Container container = frame.getContentPane();
+		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame.getContentPane());
+		if (containerPoint.y < 0) { // we're not in the content pane
+			if (containerPoint.y + menuBar.getHeight() >= 0) {
+				Component component = menuBar.getComponentAt(glassPanePoint);
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
+				component.dispatchEvent(new MouseWheelEvent(component, e.getID(), e.getWhen(), e.getModifiers(),
+						componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger(), e.getScrollType(),
+						e.getScrollAmount(), e.getWheelRotation()));
+				frame.getGlassPane().setVisible(false);
+			}
+		} else {
+			Component deepComponent = SwingUtilities.getDeepestComponentAt(container, containerPoint.x,
+					containerPoint.y);
+			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, deepComponent);
+			// if (deepComponent instanceof ScrollableTabPanel) {
+			// deepComponent = tab.findComponentAt(componentPoint);
+			// }
+			deepComponent.dispatchEvent(new MouseWheelEvent(deepComponent, e.getID(), e.getWhen(), e.getModifiers(),
 					componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger(), e.getScrollType(),
 					e.getScrollAmount(), e.getWheelRotation()));
-			frame.getGlassPane().setVisible(false);
 		}
-	} else {
-		Component deepComponent = SwingUtilities.getDeepestComponentAt(container, containerPoint.x,
-				containerPoint.y);
-		Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, deepComponent);
-		// if (deepComponent instanceof ScrollableTabPanel) {
-		// deepComponent = tab.findComponentAt(componentPoint);
-		// }
-		deepComponent.dispatchEvent(new MouseWheelEvent(deepComponent, e.getID(), e.getWhen(), e.getModifiers(),
-				componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger(), e.getScrollType(),
-				e.getScrollAmount(), e.getWheelRotation()));
 	}
-}
 
-private String identifySBOLSynthesisPath(String actionCommand) {
-	String[] splitCommand = actionCommand.split("_");
-	String synthFilePath = root.replace(new File(root).getName(), splitCommand[0]);
-	String synthFileID = "";
-	for (int i = 2; i < splitCommand.length; i++) {
-		synthFileID = synthFileID + "_" + splitCommand[i];
+	private String identifySBOLSynthesisPath(String actionCommand) {
+		String[] splitCommand = actionCommand.split("_");
+		String synthFilePath = root.replace(new File(root).getName(), splitCommand[0]);
+		String synthFileID = "";
+		for (int i = 2; i < splitCommand.length; i++) {
+			synthFileID = synthFileID + "_" + splitCommand[i];
+		}
+		synthFilePath = synthFilePath + synthFileID;
+		int synthIndex = 1;
+		while (new File(synthFilePath + "_" + synthIndex).exists()) {
+			synthIndex++;
+		}
+		synthFilePath = synthFilePath + "_" + synthIndex;
+		return synthFilePath;
 	}
-	synthFilePath = synthFilePath + synthFileID;
-	int synthIndex = 1;
-	while (new File(synthFilePath + "_" + synthIndex).exists()) {
-		synthIndex++;
-	}
-	synthFilePath = synthFilePath + "_" + synthIndex;
-	return synthFilePath;
-}
 
-private void synthesizeSBOL(SynthesisView synthView) {
-	synthView.save();
-	ActionEvent projectSynthesized = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED,
-			GlobalConstants.SBOL_SYNTH_COMMAND + "_" + synthView.getSpecFileID().replace(".xml", ""));
-	actionPerformed(projectSynthesized);
-	if (!synthView.getRootDirectory().equals(root)) {
-		// String outputFileID = synthView.getSpecFileID();
-		// int version = 1;
-		// while(!overwrite(root + separator + outputFileID, outputFileID))
-		// {
-		// outputFileID = synthView.getSpecFileID().replace(".xml", "") +
-		// "_" + version + ".xml";
-		// version++;
-		// }
-		List<String> solutionFileIDs = synthView.run(root);
-		if (solutionFileIDs.size() > 0) {
-			for (String solutionFileID : solutionFileIDs) {
-				addToTree(solutionFileID);
-			}
-			ModelEditor modelEditor;
-			try {
-				modelEditor = new ModelEditor(root + GlobalConstants.separator, solutionFileIDs.get(0), this, log,
-						false, null, null, null, false, false);
-				ActionEvent applyLayout = new ActionEvent(synthView, ActionEvent.ACTION_PERFORMED,
-						"layout_verticalHierarchical");
-				modelEditor.getSchematic().actionPerformed(applyLayout);
-				addTab(solutionFileIDs.get(0), modelEditor, "Model Editor");
-			} catch (Exception e1) {
-				e1.printStackTrace();
+	private void synthesizeSBOL(SynthesisView synthView) {
+		synthView.save();
+		ActionEvent projectSynthesized = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED,
+				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + synthView.getSpecFileID().replace(".xml", ""));
+		actionPerformed(projectSynthesized);
+		if (!synthView.getRootDirectory().equals(root)) {
+			// String outputFileID = synthView.getSpecFileID();
+			// int version = 1;
+			// while(!overwrite(root + separator + outputFileID, outputFileID))
+			// {
+			// outputFileID = synthView.getSpecFileID().replace(".xml", "") +
+			// "_" + version + ".xml";
+			// version++;
+			// }
+			List<String> solutionFileIDs = synthView.run(root);
+			if (solutionFileIDs.size() > 0) {
+				for (String solutionFileID : solutionFileIDs) {
+					addToTree(solutionFileID);
+				}
+				ModelEditor modelEditor;
+				try {
+					modelEditor = new ModelEditor(root + GlobalConstants.separator, solutionFileIDs.get(0), this, log,
+							false, null, null, null, false, false);
+					ActionEvent applyLayout = new ActionEvent(synthView, ActionEvent.ACTION_PERFORMED,
+							"layout_verticalHierarchical");
+					modelEditor.getSchematic().actionPerformed(applyLayout);
+					addTab(solutionFileIDs.get(0), modelEditor, "Model Editor");
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
-}
 
-private void createSBOLSynthesisView() {
-	String specFileID = tree.getFile()
-			.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
-	String defaultSynthID = specFileID.replace(".xml", "");
-	String synthID = JOptionPane.showInputDialog(frame, "Enter synthesis ID (default = " + defaultSynthID + "):",
-			"Synthesis ID", JOptionPane.PLAIN_MESSAGE);
-	if (synthID != null) {
-		if (synthID.length() == 0) {
-			synthID = defaultSynthID;
-		} else {
-			synthID = synthID.trim();
-		}
-		if (overwrite(root + GlobalConstants.separator + synthID, synthID)) {
-			SynthesisView synthView = new SynthesisView(synthID, GlobalConstants.separator, root, log);
-			synthView.loadDefaultSynthesisProperties(specFileID);
-			addTab(synthID, synthView, null);
-			addToTree(synthID);
-		}
-	}
-}
-
-private void openSBOLSynthesisView() {
-	Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), GlobalConstants.separator,
-			frame);
-	if (synthProps != null) {
-		String synthID = tree.getFile()
+	private void createSBOLSynthesisView() {
+		String specFileID = tree.getFile()
 				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
-		SynthesisView synthView = new SynthesisView(synthID, GlobalConstants.separator, root, log);
-		synthView.loadSynthesisProperties(synthProps);
-		addTab(synthID, synthView, null);
-	}
-}
-
-private void createAnalysisView(String modelFile) throws Exception {
-	String modelFileName = modelFile
-			.split(GlobalConstants.separator)[modelFile.split(GlobalConstants.separator).length - 1];
-	String modelId = modelFileName.replace(".xml", "").replace(".lpn", "");
-	// If model file is open, save if needed.
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(modelFileName)) {
-			tab.setSelectedIndex(i);
-			if (save(i, 0) == 0) {
-				return;
+		String defaultSynthID = specFileID.replace(".xml", "");
+		String synthID = JOptionPane.showInputDialog(frame, "Enter synthesis ID (default = " + defaultSynthID + "):",
+				"Synthesis ID", JOptionPane.PLAIN_MESSAGE);
+		if (synthID != null) {
+			if (synthID.length() == 0) {
+				synthID = defaultSynthID;
+			} else {
+				synthID = synthID.trim();
 			}
-			break;
-		}
-	}
-	String simName = JOptionPane.showInputDialog(frame, "Enter analysis ID (default=" + modelId + "):",
-			"Analysis ID", JOptionPane.PLAIN_MESSAGE);
-	if (simName == null) {
-		return;
-	}
-	if (simName.equals("")) {
-		simName = modelId;
-	}
-	if (simName.contains("__")) {
-		JOptionPane.showMessageDialog(frame,
-				"Analysis view ID's are not allowed to include two consecutive underscores.", "Error",
-				JOptionPane.ERROR_MESSAGE);
-		return;
-	}
-	Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
-	if (!(IDpat.matcher(simName).matches())) {
-		JOptionPane.showMessageDialog(Gui.frame, "An ID can only contain letters, numbers, and underscores.",
-				"Invalid ID", JOptionPane.ERROR_MESSAGE);
-		return;
-	}
-	simName = simName.trim();
-	if (!overwrite(root + GlobalConstants.separator + simName, simName)) {
-		return;
-	}
-	new File(root + GlobalConstants.separator + simName).mkdir();
-	if (modelFile.endsWith(".lpn")) {
-		Translator t1 = new Translator();
-		t1.convertLPN2SBML(modelFile, "");
-		t1.setFilename(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelId + ".xml");
-		t1.outputSBML();
-	} else {
-		new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFileName)
-		.createNewFile();
-	}
-	try {
-		FileOutputStream out = new FileOutputStream(new File(
-				root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".sim"));
-		out.write((modelFileName + "\n").getBytes());
-		out.close();
-	} catch (IOException e1) {
-		JOptionPane.showMessageDialog(frame, "Unable to create analysis view!", "Error", JOptionPane.ERROR_MESSAGE);
-	}
-	addToTree(simName);
-	openAnalysisView(root + GlobalConstants.separator + simName);
-}
-
-private void openLearn() {
-	boolean done = false;
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
-			tab.setSelectedIndex(i);
-			done = true;
-		}
-	}
-	if (!done) {
-		JTabbedPane lrnTab = new JTabbedPane();
-		lrnTab.addMouseListener(this);
-		// String graphFile = "";
-		String open = null;
-		if (new File(tree.getFile()).isDirectory()) {
-			String[] list = new File(tree.getFile()).list();
-			int run = 0;
-			for (int i = 0; i < list.length; i++) {
-				if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
-					String end = "";
-					for (int j = 1; j < 5; j++) {
-						end = list[i].charAt(list[i].length() - j) + end;
-					}
-					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-						if (list[i].contains("run-")) {
-							int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
-							if (tempNum > run) {
-								run = tempNum;
-								// graphFile = tree.getFile() + separator +
-								// list[i];
-							}
-						}
-					} else if (end.equals(".grf")) {
-						open = tree.getFile() + GlobalConstants.separator + list[i];
-					}
-				}
+			if (overwrite(root + GlobalConstants.separator + synthID, synthID)) {
+				SynthesisView synthView = new SynthesisView(synthID, GlobalConstants.separator, root, log);
+				synthView.loadDefaultSynthesisProperties(specFileID);
+				addTab(synthID, synthView, null);
+				addToTree(synthID);
 			}
 		}
+	}
 
-		String lrnFile = tree.getFile() + GlobalConstants.separator
-				+ tree.getFile().split(
-						GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
-								+ ".lrn";
-		String lrnFile2 = tree.getFile() + GlobalConstants.separator + ".lrn";
-		Properties load = new Properties();
-		String learnFile = "";
-		try {
-			if (new File(lrnFile2).exists()) {
-				FileInputStream in = new FileInputStream(new File(lrnFile2));
-				load.load(in);
-				in.close();
-				new File(lrnFile2).delete();
-			}
-			if (new File(lrnFile).exists()) {
-				FileInputStream in = new FileInputStream(new File(lrnFile));
-				load.load(in);
-				in.close();
-				if (load.containsKey("genenet.file")) {
-					learnFile = load.getProperty("genenet.file");
-					learnFile = learnFile.split(
-							GlobalConstants.separator)[learnFile.split(GlobalConstants.separator).length - 1];
-					if (learnFile.endsWith(".gcm")) {
-						learnFile = learnFile.replace(".gcm", ".xml");
-						load.setProperty("genenet.file", learnFile);
-					}
-				}
-			}
-			FileOutputStream out = new FileOutputStream(new File(lrnFile));
-			load.store(out, learnFile);
-			out.close();
-
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties",
-					JOptionPane.ERROR_MESSAGE);
+	private void openSBOLSynthesisView() {
+		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), GlobalConstants.separator,
+				frame);
+		if (synthProps != null) {
+			String synthID = tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
+			SynthesisView synthView = new SynthesisView(synthID, GlobalConstants.separator, root, log);
+			synthView.loadSynthesisProperties(synthProps);
+			addTab(synthID, synthView, null);
 		}
+	}
+
+	private void createAnalysisView(String modelFile) throws Exception {
+		String modelFileName = modelFile
+				.split(GlobalConstants.separator)[modelFile.split(GlobalConstants.separator).length - 1];
+		String modelId = modelFileName.replace(".xml", "").replace(".lpn", "");
+		// If model file is open, save if needed.
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (getTitleAt(i).equals(learnFile)) {
+			if (getTitleAt(i).equals(modelFileName)) {
 				tab.setSelectedIndex(i);
 				if (save(i, 0) == 0) {
 					return;
@@ -8434,167 +8452,66 @@ private void openLearn() {
 				break;
 			}
 		}
-		if (!(new File(root + GlobalConstants.separator + learnFile).exists())) {
-			JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile + " is missing.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+		String simName = JOptionPane.showInputDialog(frame, "Enter analysis ID (default=" + modelId + "):",
+				"Analysis ID", JOptionPane.PLAIN_MESSAGE);
+		if (simName == null) {
 			return;
 		}
-		// if (!graphFile.equals("")) {
-		DataManager data = new DataManager(tree.getFile(), this);
-		// data.addMouseListener(this);
-		lrnTab.addTab("Data Manager", data);
-		lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
-		LearnView learn = new LearnView(tree.getFile(), log, this);
-		// learn.addMouseListener(this);
-		lrnTab.addTab("Learn Options", learn);
-		lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
-		lrnTab.addTab("Parameter Estimator Options", learn.getParamEstimator());
-		lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Parameter Estimator Options");
-		lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-		lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
-		Graph tsdGraph = new Graph(null, "Number of molecules",
-				tree.getFile().split(
-						GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
-								+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
-		// tsdGraph.addMouseListener(this);
-		lrnTab.addTab("TSD Graph", tsdGraph);
-		lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-		addTab(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1],
-				lrnTab, null);
-	}
-}
-
-private void openLearnLHPN() {
-	boolean done = false;
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
-			tab.setSelectedIndex(i);
-			done = true;
+		if (simName.equals("")) {
+			simName = modelId;
 		}
-	}
-	if (!done) {
-		JTabbedPane lrnTab = new JTabbedPane();
-		lrnTab.addMouseListener(this);
-		// String graphFile = "";
-		String open = null;
-		if (new File(tree.getFile()).isDirectory()) {
-			String[] list = new File(tree.getFile()).list();
-			int run = 0;
-			for (int i = 0; i < list.length; i++) {
-				if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
-					String end = "";
-					for (int j = 1; j < 5; j++) {
-						end = list[i].charAt(list[i].length() - j) + end;
-					}
-					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-						if (list[i].contains("run-")) {
-							int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
-							if (tempNum > run) {
-								run = tempNum;
-								// graphFile = tree.getFile() + separator +
-								// list[i];
-							}
-						}
-					} else if (end.equals(".grf")) {
-						open = tree.getFile() + GlobalConstants.separator + list[i];
-					}
-				}
-			}
-		}
-
-		String lrnFile = tree.getFile() + GlobalConstants.separator
-				+ tree.getFile().split(
-						GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
-								+ ".lrn";
-		String lrnFile2 = tree.getFile() + GlobalConstants.separator + ".lrn";
-		Properties load = new Properties();
-		String learnFile = "";
-		try {
-			if (new File(lrnFile2).exists()) {
-				FileInputStream in = new FileInputStream(new File(lrnFile2));
-				load.load(in);
-				in.close();
-				new File(lrnFile2).delete();
-			}
-			if (new File(lrnFile).exists()) {
-				FileInputStream in = new FileInputStream(new File(lrnFile));
-				load.load(in);
-				in.close();
-				if (load.containsKey("genenet.file")) {
-					learnFile = load.getProperty("genenet.file");
-					learnFile = learnFile.split(
-							GlobalConstants.separator)[learnFile.split(GlobalConstants.separator).length - 1];
-				}
-			}
-			FileOutputStream out = new FileOutputStream(new File(lrnFile));
-			load.store(out, learnFile);
-			out.close();
-
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties",
+		if (simName.contains("__")) {
+			JOptionPane.showMessageDialog(frame,
+					"Analysis view ID's are not allowed to include two consecutive underscores.", "Error",
 					JOptionPane.ERROR_MESSAGE);
-		}
-		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (getTitleAt(i).equals(learnFile)) {
-				tab.setSelectedIndex(i);
-				if (save(i, 0) == 0) {
-					return;
-				}
-				break;
-			}
-		}
-		if (!(new File(root + GlobalConstants.separator + learnFile).exists())) {
-			JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile + " is missing.",
-					"Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		DataManager data = new DataManager(tree.getFile(), this);
-		lrnTab.addTab("Data Manager", data);
-		lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
-		LearnViewLEMA learn = new LearnViewLEMA(tree.getFile(), log, this);
-		lrnTab.addTab("Learn Options", learn);
-		lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
-		lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-		lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
-		Graph tsdGraph = new Graph(null, "Number of molecules",
-				tree.getFile().split(
-						GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
-								+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
-		lrnTab.addTab("TSD Graph", tsdGraph);
-		lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-		addTab(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1],
-				lrnTab, null);
-	}
-}
-
-private void openSynth() {
-	boolean done = false;
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
-			tab.setSelectedIndex(i);
-			done = true;
+		Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
+		if (!(IDpat.matcher(simName).matches())) {
+			JOptionPane.showMessageDialog(Gui.frame, "An ID can only contain letters, numbers, and underscores.",
+					"Invalid ID", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
-	}
-	if (!done) {
-		boolean sbolSynth = false;
-		if (new File(tree.getFile()).isDirectory()) {
-			String[] fileIDs = new File(tree.getFile()).list();
-			for (int i = 0; i < fileIDs.length; i++) {
-				if (fileIDs[i].endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
-					i = fileIDs.length;
-					sbolSynth = true;
-				}
-			}
+		simName = simName.trim();
+		if (!overwrite(root + GlobalConstants.separator + simName, simName)) {
+			return;
 		}
-		if (sbolSynth) {
-			openSBOLSynthesisView();
+		new File(root + GlobalConstants.separator + simName).mkdir();
+		if (modelFile.endsWith(".lpn")) {
+			Translator t1 = new Translator();
+			t1.convertLPN2SBML(modelFile, "");
+			t1.setFilename(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelId + ".xml");
+			t1.outputSBML();
 		} else {
-			JPanel synthPanel = new JPanel();
+			new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFileName)
+			.createNewFile();
+		}
+		try {
+			FileOutputStream out = new FileOutputStream(new File(
+					root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".sim"));
+			out.write((modelFileName + "\n").getBytes());
+			out.close();
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(frame, "Unable to create analysis view!", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		addToTree(simName);
+		openAnalysisView(root + GlobalConstants.separator + simName);
+	}
+
+	private void openLearn() {
+		boolean done = false;
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (getTitleAt(i).equals(tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
+				tab.setSelectedIndex(i);
+				done = true;
+			}
+		}
+		if (!done) {
+			JTabbedPane lrnTab = new JTabbedPane();
+			lrnTab.addMouseListener(this);
 			// String graphFile = "";
+			String open = null;
 			if (new File(tree.getFile()).isDirectory()) {
 				String[] list = new File(tree.getFile()).list();
 				int run = 0;
@@ -8606,56 +8523,58 @@ private void openSynth() {
 						}
 						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 							if (list[i].contains("run-")) {
-								int tempNum = Integer
-										.parseInt(list[i].substring(4, list[i].length() - end.length()));
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
 								if (tempNum > run) {
 									run = tempNum;
-									// graphFile = tree.getFile() +
-									// separator +
+									// graphFile = tree.getFile() + separator +
 									// list[i];
 								}
 							}
+						} else if (end.equals(".grf")) {
+							open = tree.getFile() + GlobalConstants.separator + list[i];
 						}
 					}
 				}
 			}
 
-			String synthFile = tree.getFile() + GlobalConstants.separator
+			String lrnFile = tree.getFile() + GlobalConstants.separator
 					+ tree.getFile().split(
 							GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
-									+ ".syn";
-			String synthFile2 = tree.getFile() + GlobalConstants.separator + ".syn";
+									+ ".lrn";
+			String lrnFile2 = tree.getFile() + GlobalConstants.separator + ".lrn";
 			Properties load = new Properties();
-			String synthesisFile = "";
+			String learnFile = "";
 			try {
-				if (new File(synthFile2).exists()) {
-					FileInputStream in = new FileInputStream(new File(synthFile2));
+				if (new File(lrnFile2).exists()) {
+					FileInputStream in = new FileInputStream(new File(lrnFile2));
 					load.load(in);
 					in.close();
-					new File(synthFile2).delete();
+					new File(lrnFile2).delete();
 				}
-				if (new File(synthFile).exists()) {
-					FileInputStream in = new FileInputStream(new File(synthFile));
+				if (new File(lrnFile).exists()) {
+					FileInputStream in = new FileInputStream(new File(lrnFile));
 					load.load(in);
 					in.close();
-					if (load.containsKey("synthesis.file")) {
-						synthesisFile = load.getProperty("synthesis.file");
-						synthesisFile = synthesisFile.split(
-								GlobalConstants.separator)[synthesisFile.split(GlobalConstants.separator).length
-								                           - 1];
+					if (load.containsKey("genenet.file")) {
+						learnFile = load.getProperty("genenet.file");
+						learnFile = learnFile.split(
+								GlobalConstants.separator)[learnFile.split(GlobalConstants.separator).length - 1];
+						if (learnFile.endsWith(".gcm")) {
+							learnFile = learnFile.replace(".gcm", ".xml");
+							load.setProperty("genenet.file", learnFile);
+						}
 					}
 				}
-				// FileOutputStream out = new FileOutputStream(new
-				// File(synthesisFile));
-				// load.store(out, synthesisFile);
-				// out.close();
+				FileOutputStream out = new FileOutputStream(new File(lrnFile));
+				load.store(out, learnFile);
+				out.close();
 
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties",
 						JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (getTitleAt(i).equals(synthesisFile)) {
+				if (getTitleAt(i).equals(learnFile)) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -8663,76 +8582,475 @@ private void openSynth() {
 					break;
 				}
 			}
-			if (!(new File(root + GlobalConstants.separator + synthesisFile).exists())) {
-				JOptionPane.showMessageDialog(frame,
-						"Unable to open view because " + synthesisFile + " is missing.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+			if (!(new File(root + GlobalConstants.separator + learnFile).exists())) {
+				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile + " is missing.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			// if (!graphFile.equals("")) {
-			SynthesisViewATACS synth = new SynthesisViewATACS(tree.getFile(), "flag", log, this);
-			// synth.addMouseListener(this);
-			synthPanel.add(synth);
+			DataManager data = new DataManager(tree.getFile(), this);
+			// data.addMouseListener(this);
+			lrnTab.addTab("Data Manager", data);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
+			LearnView learn = new LearnView(tree.getFile(), log, this);
+			// learn.addMouseListener(this);
+			lrnTab.addTab("Learn Options", learn);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
+			lrnTab.addTab("Parameter Estimator Options", learn.getParamEstimator());
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Parameter Estimator Options");
+			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
+			Graph tsdGraph = new Graph(null, "Number of molecules",
+					tree.getFile().split(
+							GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
+									+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
+			// tsdGraph.addMouseListener(this);
+			lrnTab.addTab("TSD Graph", tsdGraph);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
 			addTab(tree.getFile()
 					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1],
-					synthPanel, "Synthesis");
+					lrnTab, null);
 		}
 	}
-}
 
-private void openVerify() {
-	boolean done = false;
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
-			tab.setSelectedIndex(i);
-			done = true;
+	private void openLearnLHPN() {
+		boolean done = false;
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (getTitleAt(i).equals(tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
+				tab.setSelectedIndex(i);
+				done = true;
+			}
 		}
-	}
-	if (!done) {
-		// JPanel verPanel = new JPanel();
-		// JPanel abstPanel = new JPanel();
-		// JPanel verTab = new JTabbedPane();
-		// String graphFile = "";
-		/*
-		 * if (new File(tree.getFile()).isDirectory()) { String[] list = new
-		 * File(tree.getFile()).list(); int run = 0; for (int i = 0; i <
-		 * list.length; i++) { if (!(new File(list[i]).isDirectory()) &&
-		 * list[i].length() > 4) { String end = ""; for (int j = 1; j < 5;
-		 * j++) { end = list[i].charAt(list[i].length() - j) + end; } if
-		 * (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv"))
-		 * { if (list[i].contains("run-")) { int tempNum =
-		 * Integer.parseInt(list[i].substring(4, list[i] .length() -
-		 * end.length())); if (tempNum > run) { run = tempNum; // graphFile
-		 * = tree.getFile() + separator + // list[i]; } } } } } }
-		 */
-
-		String verName = tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
-		String verFile = tree.getFile() + GlobalConstants.separator + verName + ".ver";
-		Properties load = new Properties();
-		String verifyFile = "";
-		try {
-			if (new File(verFile).exists()) {
-				FileInputStream in = new FileInputStream(new File(verFile));
-				load.load(in);
-				in.close();
-				if (load.containsKey("verification.file")) {
-					verifyFile = load.getProperty("verification.file");
-					verifyFile = verifyFile.split(
-							GlobalConstants.separator)[verifyFile.split(GlobalConstants.separator).length - 1];
+		if (!done) {
+			JTabbedPane lrnTab = new JTabbedPane();
+			lrnTab.addMouseListener(this);
+			// String graphFile = "";
+			String open = null;
+			if (new File(tree.getFile()).isDirectory()) {
+				String[] list = new File(tree.getFile()).list();
+				int run = 0;
+				for (int i = 0; i < list.length; i++) {
+					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
+						String end = "";
+						for (int j = 1; j < 5; j++) {
+							end = list[i].charAt(list[i].length() - j) + end;
+						}
+						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+							if (list[i].contains("run-")) {
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
+								if (tempNum > run) {
+									run = tempNum;
+									// graphFile = tree.getFile() + separator +
+									// list[i];
+								}
+							}
+						} else if (end.equals(".grf")) {
+							open = tree.getFile() + GlobalConstants.separator + list[i];
+						}
+					}
 				}
 			}
-			// FileOutputStream out = new FileOutputStream(new
-			// File(verifyFile));
-			// load.store(out, verifyFile);
-			// out.close();
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties",
-					JOptionPane.ERROR_MESSAGE);
+
+			String lrnFile = tree.getFile() + GlobalConstants.separator
+					+ tree.getFile().split(
+							GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
+									+ ".lrn";
+			String lrnFile2 = tree.getFile() + GlobalConstants.separator + ".lrn";
+			Properties load = new Properties();
+			String learnFile = "";
+			try {
+				if (new File(lrnFile2).exists()) {
+					FileInputStream in = new FileInputStream(new File(lrnFile2));
+					load.load(in);
+					in.close();
+					new File(lrnFile2).delete();
+				}
+				if (new File(lrnFile).exists()) {
+					FileInputStream in = new FileInputStream(new File(lrnFile));
+					load.load(in);
+					in.close();
+					if (load.containsKey("genenet.file")) {
+						learnFile = load.getProperty("genenet.file");
+						learnFile = learnFile.split(
+								GlobalConstants.separator)[learnFile.split(GlobalConstants.separator).length - 1];
+					}
+				}
+				FileOutputStream out = new FileOutputStream(new File(lrnFile));
+				load.store(out, learnFile);
+				out.close();
+
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (getTitleAt(i).equals(learnFile)) {
+					tab.setSelectedIndex(i);
+					if (save(i, 0) == 0) {
+						return;
+					}
+					break;
+				}
+			}
+			if (!(new File(root + GlobalConstants.separator + learnFile).exists())) {
+				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile + " is missing.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			DataManager data = new DataManager(tree.getFile(), this);
+			lrnTab.addTab("Data Manager", data);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
+			LearnViewLEMA learn = new LearnViewLEMA(tree.getFile(), log, this);
+			lrnTab.addTab("Learn Options", learn);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
+			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
+			Graph tsdGraph = new Graph(null, "Number of molecules",
+					tree.getFile().split(
+							GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
+									+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
+			lrnTab.addTab("TSD Graph", tsdGraph);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
+			addTab(tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1],
+					lrnTab, null);
 		}
+	}
+
+	private void openSynth() {
+		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (getTitleAt(i).equals(verifyFile)) {
+			if (getTitleAt(i).equals(tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
+				tab.setSelectedIndex(i);
+				done = true;
+			}
+		}
+		if (!done) {
+			boolean sbolSynth = false;
+			if (new File(tree.getFile()).isDirectory()) {
+				String[] fileIDs = new File(tree.getFile()).list();
+				for (int i = 0; i < fileIDs.length; i++) {
+					if (fileIDs[i].endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
+						i = fileIDs.length;
+						sbolSynth = true;
+					}
+				}
+			}
+			if (sbolSynth) {
+				openSBOLSynthesisView();
+			} else {
+				JPanel synthPanel = new JPanel();
+				// String graphFile = "";
+				if (new File(tree.getFile()).isDirectory()) {
+					String[] list = new File(tree.getFile()).list();
+					int run = 0;
+					for (int i = 0; i < list.length; i++) {
+						if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
+							String end = "";
+							for (int j = 1; j < 5; j++) {
+								end = list[i].charAt(list[i].length() - j) + end;
+							}
+							if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+								if (list[i].contains("run-")) {
+									int tempNum = Integer
+											.parseInt(list[i].substring(4, list[i].length() - end.length()));
+									if (tempNum > run) {
+										run = tempNum;
+										// graphFile = tree.getFile() +
+										// separator +
+										// list[i];
+									}
+								}
+							}
+						}
+					}
+				}
+
+				String synthFile = tree.getFile() + GlobalConstants.separator
+						+ tree.getFile().split(
+								GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
+										+ ".syn";
+				String synthFile2 = tree.getFile() + GlobalConstants.separator + ".syn";
+				Properties load = new Properties();
+				String synthesisFile = "";
+				try {
+					if (new File(synthFile2).exists()) {
+						FileInputStream in = new FileInputStream(new File(synthFile2));
+						load.load(in);
+						in.close();
+						new File(synthFile2).delete();
+					}
+					if (new File(synthFile).exists()) {
+						FileInputStream in = new FileInputStream(new File(synthFile));
+						load.load(in);
+						in.close();
+						if (load.containsKey("synthesis.file")) {
+							synthesisFile = load.getProperty("synthesis.file");
+							synthesisFile = synthesisFile.split(
+									GlobalConstants.separator)[synthesisFile.split(GlobalConstants.separator).length
+									                           - 1];
+						}
+					}
+					// FileOutputStream out = new FileOutputStream(new
+					// File(synthesisFile));
+					// load.store(out, synthesisFile);
+					// out.close();
+
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (getTitleAt(i).equals(synthesisFile)) {
+						tab.setSelectedIndex(i);
+						if (save(i, 0) == 0) {
+							return;
+						}
+						break;
+					}
+				}
+				if (!(new File(root + GlobalConstants.separator + synthesisFile).exists())) {
+					JOptionPane.showMessageDialog(frame,
+							"Unable to open view because " + synthesisFile + " is missing.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				// if (!graphFile.equals("")) {
+				SynthesisViewATACS synth = new SynthesisViewATACS(tree.getFile(), "flag", log, this);
+				// synth.addMouseListener(this);
+				synthPanel.add(synth);
+				addTab(tree.getFile()
+						.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1],
+						synthPanel, "Synthesis");
+			}
+		}
+	}
+
+	private void openVerify() {
+		boolean done = false;
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (getTitleAt(i).equals(tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
+				tab.setSelectedIndex(i);
+				done = true;
+			}
+		}
+		if (!done) {
+			// JPanel verPanel = new JPanel();
+			// JPanel abstPanel = new JPanel();
+			// JPanel verTab = new JTabbedPane();
+			// String graphFile = "";
+			/*
+			 * if (new File(tree.getFile()).isDirectory()) { String[] list = new
+			 * File(tree.getFile()).list(); int run = 0; for (int i = 0; i <
+			 * list.length; i++) { if (!(new File(list[i]).isDirectory()) &&
+			 * list[i].length() > 4) { String end = ""; for (int j = 1; j < 5;
+			 * j++) { end = list[i].charAt(list[i].length() - j) + end; } if
+			 * (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv"))
+			 * { if (list[i].contains("run-")) { int tempNum =
+			 * Integer.parseInt(list[i].substring(4, list[i] .length() -
+			 * end.length())); if (tempNum > run) { run = tempNum; // graphFile
+			 * = tree.getFile() + separator + // list[i]; } } } } } }
+			 */
+
+			String verName = tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1];
+			String verFile = tree.getFile() + GlobalConstants.separator + verName + ".ver";
+			Properties load = new Properties();
+			String verifyFile = "";
+			try {
+				if (new File(verFile).exists()) {
+					FileInputStream in = new FileInputStream(new File(verFile));
+					load.load(in);
+					in.close();
+					if (load.containsKey("verification.file")) {
+						verifyFile = load.getProperty("verification.file");
+						verifyFile = verifyFile.split(
+								GlobalConstants.separator)[verifyFile.split(GlobalConstants.separator).length - 1];
+					}
+				}
+				// FileOutputStream out = new FileOutputStream(new
+				// File(verifyFile));
+				// load.store(out, verifyFile);
+				// out.close();
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (getTitleAt(i).equals(verifyFile)) {
+					tab.setSelectedIndex(i);
+					if (save(i, 0) == 0) {
+						return;
+					}
+					break;
+				}
+			}
+			if (!(new File(verFile).exists())) {
+				JOptionPane.showMessageDialog(frame, "Unable to open view because " + verifyFile + " is missing.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			// if (!graphFile.equals("")) {
+			VerificationView ver = new VerificationView(root + GlobalConstants.separator + verName, verName, "flag", log, this,
+					lema, atacs);
+			// ver.addMouseListener(this);
+			// verPanel.add(ver);
+			// AbstPane abst = new AbstPane(root + separator + verName, ver,
+			// "flag", log, this, lema,
+			// atacs);
+			// abstPanel.add(abst);
+			// verTab.add("verify", verPanel);
+			// verTab.add("abstract", abstPanel);
+			addTab(tree.getFile()
+					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], ver,
+					"Verification");
+		}
+	}
+
+	// If .sim file exists, remove it as file is now called <analysisName>.sim.
+	// If <analysisName>.pms file exists, move it to <analysisName.sim> unless
+	// that file already exits
+	private void updateSimulationFile(String fileName, String simFile) {
+		if (new File(fileName + GlobalConstants.separator + ".sim").exists()) {
+			new File(fileName + GlobalConstants.separator + ".sim").delete();
+		}
+		if (new File(simFile.replace(".sim", ".pms")).exists()) {
+			if (new File(simFile).exists()) {
+				new File(simFile.replace(".sim", ".pms")).delete();
+			} else {
+				new File(simFile.replace(".sim", ".pms")).renameTo(new File(simFile));
+			}
+		}
+	}
+
+	/* Obtain model file name from sim file. */
+	private String loadModelFileName(String simFile) {
+		String modelFileName = "";
+		if (new File(simFile).exists()) {
+			Scanner s;
+			try {
+				s = new Scanner(new File(simFile));
+			} catch (FileNotFoundException e) {
+				// JOptionPane.showMessageDialog(frame,
+				// "Unable to load SBML file.", "Error",
+				// JOptionPane.ERROR_MESSAGE);
+				return modelFileName;
+			}
+			if (s.hasNextLine()) {
+				modelFileName = s.nextLine();
+				modelFileName = modelFileName
+						.split(GlobalConstants.separator)[modelFileName.split(GlobalConstants.separator).length - 1];
+			}
+			s.close();
+		}
+		if (modelFileName.endsWith(".gcm")) {
+			modelFileName = modelFileName.replace(".gcm", ".xml");
+		}
+		return modelFileName;
+	}
+
+	private String findSBMLLoadFile(String simFile, String modelFileName, String analysisName,
+			String analysisModelFile) {
+		String sbmlLoadFile = "";
+		if (new File(simFile).exists()) {
+			sbmlLoadFile = modelFileName;
+			// if (sbmlLoadFile.endsWith(".gcm")) sbmlLoadFile =
+			// sbmlLoadFile.replace(".gcm", ".xml");
+			if (sbmlLoadFile.equals("")) {
+				JOptionPane.showMessageDialog(frame,
+						"Unable to open analysis view because there is no SBML file linked to this view.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return "";
+			} else if (!(new File(root + GlobalConstants.separator + sbmlLoadFile).exists())) {
+				JOptionPane.showMessageDialog(frame,
+						"Unable to open analysis view because " + sbmlLoadFile + " is missing.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return "";
+			}
+			if (sbmlLoadFile.contains(".lpn")) {
+				sbmlLoadFile = root + GlobalConstants.separator + analysisName + GlobalConstants.separator
+						+ sbmlLoadFile.replace(".lpn", ".xml");
+			} else {
+				sbmlLoadFile = root + GlobalConstants.separator + sbmlLoadFile;
+			}
+			/*
+			 * File f = new File(sbmlLoadFile); if (!f.exists()) { sbmlLoadFile
+			 * = root + separator + f.getName(); }
+			 */
+		} else {
+			sbmlLoadFile = root + GlobalConstants.separator + analysisModelFile
+					.split(GlobalConstants.separator)[analysisModelFile.split(GlobalConstants.separator).length - 1];
+			if (!new File(sbmlLoadFile).exists()) {
+				sbmlLoadFile = analysisModelFile;
+			}
+		}
+		if (!new File(sbmlLoadFile).exists()) {
+			JOptionPane.showMessageDialog(frame,
+					"Unable to open analysis view because "
+							+ sbmlLoadFile.split(
+									GlobalConstants.separator)[sbmlLoadFile.split(GlobalConstants.separator).length - 1]
+											+ " is missing.",
+											"Error", JOptionPane.ERROR_MESSAGE);
+			return "";
+		}
+		return sbmlLoadFile;
+	}
+
+	private String findAnalysisModelFile(String fileName) {
+		String analysisModelFile = "";
+		String[] list = new File(fileName).list();
+		for (int i = 0; i < list.length; i++) {
+			if (!(new File(list[i]).isDirectory())) {
+				if (list[i].endsWith(".xml")) {
+					analysisModelFile = fileName + GlobalConstants.separator + list[i];
+				} else if (list[i].endsWith("sbml") && analysisModelFile.equals("")) {
+					analysisModelFile = fileName + GlobalConstants.separator + list[i];
+				}
+			}
+		}
+		if (analysisModelFile.equals("")) {
+			JOptionPane.showMessageDialog(frame, "Unable to open analysis view because there is no model file.",
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return "";
+		}
+		return analysisModelFile;
+	}
+
+	private void openAnalysisView(String fileName) throws Exception {
+		if (fileName == null || fileName.equals("")) {
+			return;
+		}
+		if (!((new File(fileName)).isDirectory())) {
+			return;
+		}
+		String analysisName = fileName.split(GlobalConstants.separator)[fileName.split(GlobalConstants.separator).length
+		                                                                - 1];
+		// If already open, make it the selected tab and return.
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (getTitleAt(i).equals(analysisName)) {
+				tab.setSelectedIndex(i);
+				return;
+			}
+		}
+		String simFile = fileName + GlobalConstants.separator + analysisName + ".sim";
+		updateSimulationFile(fileName, simFile);
+		String analysisModelFile = findAnalysisModelFile(fileName);
+		if (analysisModelFile.equals("")) {
+			return;
+		}
+
+		String modelFileName = loadModelFileName(simFile);
+		String sbmlLoadFile = findSBMLLoadFile(simFile, modelFileName, analysisName, analysisModelFile);
+		if (sbmlLoadFile.equals("")) {
+			return;
+		}
+		// If currently open and dirty, then save
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (getTitleAt(i).equals(sbmlLoadFile
+					.split(GlobalConstants.separator)[sbmlLoadFile.split(GlobalConstants.separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				if (save(i, 0) == 0) {
 					return;
@@ -8740,889 +9058,774 @@ private void openVerify() {
 				break;
 			}
 		}
-		if (!(new File(verFile).exists())) {
-			JOptionPane.showMessageDialog(frame, "Unable to open view because " + verifyFile + " is missing.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		// if (!graphFile.equals("")) {
-		VerificationView ver = new VerificationView(root + GlobalConstants.separator + verName, verName, "flag", log, this,
-				lema, atacs);
-		// ver.addMouseListener(this);
-		// verPanel.add(ver);
-		// AbstPane abst = new AbstPane(root + separator + verName, ver,
-		// "flag", log, this, lema,
-		// atacs);
-		// abstPanel.add(abst);
-		// verTab.add("verify", verPanel);
-		// verTab.add("abstract", abstPanel);
-		addTab(tree.getFile()
-				.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1], ver,
-				"Verification");
-	}
-}
-
-// If .sim file exists, remove it as file is now called <analysisName>.sim.
-// If <analysisName>.pms file exists, move it to <analysisName.sim> unless
-// that file already exits
-private void updateSimulationFile(String fileName, String simFile) {
-	if (new File(fileName + GlobalConstants.separator + ".sim").exists()) {
-		new File(fileName + GlobalConstants.separator + ".sim").delete();
-	}
-	if (new File(simFile.replace(".sim", ".pms")).exists()) {
-		if (new File(simFile).exists()) {
-			new File(simFile.replace(".sim", ".pms")).delete();
+		// Create the analysis view
+		JTabbedPane simTab = new JTabbedPane();
+		simTab.addMouseListener(this);
+		AnalysisView analysisView;
+		AbstractionPanel lhpnAbstraction = null;
+		if (modelFileName.contains(".lpn")) {
+			lhpnAbstraction = new AbstractionPanel(root, modelFileName, log);
+			analysisView = new AnalysisView(this, log, simTab, lhpnAbstraction.getAbstractionProperty(), root, analysisName, modelFileName);
 		} else {
-			new File(simFile.replace(".sim", ".pms")).renameTo(new File(simFile));
+			analysisView = new AnalysisView(this, log, simTab, null, root, analysisName, modelFileName);
 		}
-	}
-}
-
-/* Obtain model file name from sim file. */
-private String loadModelFileName(String simFile) {
-	String modelFileName = "";
-	if (new File(simFile).exists()) {
-		Scanner s;
-		try {
-			s = new Scanner(new File(simFile));
-		} catch (FileNotFoundException e) {
-			// JOptionPane.showMessageDialog(frame,
-			// "Unable to load SBML file.", "Error",
-			// JOptionPane.ERROR_MESSAGE);
-			return modelFileName;
-		}
-		if (s.hasNextLine()) {
-			modelFileName = s.nextLine();
-			modelFileName = modelFileName
-					.split(GlobalConstants.separator)[modelFileName.split(GlobalConstants.separator).length - 1];
-		}
-		s.close();
-	}
-	if (modelFileName.endsWith(".gcm")) {
-		modelFileName = modelFileName.replace(".gcm", ".xml");
-	}
-	return modelFileName;
-}
-
-private String findSBMLLoadFile(String simFile, String modelFileName, String analysisName,
-		String analysisModelFile) {
-	String sbmlLoadFile = "";
-	if (new File(simFile).exists()) {
-		sbmlLoadFile = modelFileName;
-		// if (sbmlLoadFile.endsWith(".gcm")) sbmlLoadFile =
-		// sbmlLoadFile.replace(".gcm", ".xml");
-		if (sbmlLoadFile.equals("")) {
-			JOptionPane.showMessageDialog(frame,
-					"Unable to open analysis view because there is no SBML file linked to this view.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return "";
-		} else if (!(new File(root + GlobalConstants.separator + sbmlLoadFile).exists())) {
-			JOptionPane.showMessageDialog(frame,
-					"Unable to open analysis view because " + sbmlLoadFile + " is missing.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return "";
-		}
-		if (sbmlLoadFile.contains(".lpn")) {
-			sbmlLoadFile = root + GlobalConstants.separator + analysisName + GlobalConstants.separator
-					+ sbmlLoadFile.replace(".lpn", ".xml");
+		simTab.addTab("Simulation Options", analysisView);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
+		if (modelFileName.contains(".lpn")) {
+			simTab.addTab("Advanced Options", lhpnAbstraction);
 		} else {
-			sbmlLoadFile = root + GlobalConstants.separator + sbmlLoadFile;
+			simTab.addTab("Advanced Options", analysisView.getAdvanced());
 		}
-		/*
-		 * File f = new File(sbmlLoadFile); if (!f.exists()) { sbmlLoadFile
-		 * = root + separator + f.getName(); }
-		 */
-	} else {
-		sbmlLoadFile = root + GlobalConstants.separator + analysisModelFile
-				.split(GlobalConstants.separator)[analysisModelFile.split(GlobalConstants.separator).length - 1];
-		if (!new File(sbmlLoadFile).exists()) {
-			sbmlLoadFile = analysisModelFile;
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+		if (modelFileName.contains(".xml")) {
+			ModelEditor modelEditor = new ModelEditor(root + GlobalConstants.separator, modelFileName, this, log, true,
+					analysisName,
+					root + GlobalConstants.separator + analysisName + GlobalConstants.separator + analysisName + ".sim",
+					analysisView, false, false);
+			analysisView.setModelEditor(modelEditor);
+			ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(), sedmlDocument,
+					analysisName);
+			// root + separator + analysisName + separator
+			// + analysisName + ".sim");
+			modelEditor.setElementsPanel(elementsPanel);
+			addModelViewTab(analysisView, simTab, modelEditor);
+			simTab.addTab("Parameters", modelEditor);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Model Editor");
 		}
-	}
-	if (!new File(sbmlLoadFile).exists()) {
-		JOptionPane.showMessageDialog(frame,
-				"Unable to open analysis view because "
-						+ sbmlLoadFile.split(
-								GlobalConstants.separator)[sbmlLoadFile.split(GlobalConstants.separator).length - 1]
-										+ " is missing.",
-										"Error", JOptionPane.ERROR_MESSAGE);
-		return "";
-	}
-	return sbmlLoadFile;
-}
-
-private String findAnalysisModelFile(String fileName) {
-	String analysisModelFile = "";
-	String[] list = new File(fileName).list();
-	for (int i = 0; i < list.length; i++) {
-		if (!(new File(list[i]).isDirectory())) {
-			if (list[i].endsWith(".xml")) {
-				analysisModelFile = fileName + GlobalConstants.separator + list[i];
-			} else if (list[i].endsWith("sbml") && analysisModelFile.equals("")) {
-				analysisModelFile = fileName + GlobalConstants.separator + list[i];
-			}
-		}
-	}
-	if (analysisModelFile.equals("")) {
-		JOptionPane.showMessageDialog(frame, "Unable to open analysis view because there is no model file.",
-				"Error", JOptionPane.ERROR_MESSAGE);
-		return "";
-	}
-	return analysisModelFile;
-}
-
-private void openAnalysisView(String fileName) throws Exception {
-	if (fileName == null || fileName.equals("")) {
-		return;
-	}
-	if (!((new File(fileName)).isDirectory())) {
-		return;
-	}
-	String analysisName = fileName.split(GlobalConstants.separator)[fileName.split(GlobalConstants.separator).length
-	                                                                - 1];
-	// If already open, make it the selected tab and return.
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(analysisName)) {
-			tab.setSelectedIndex(i);
-			return;
-		}
-	}
-	String simFile = fileName + GlobalConstants.separator + analysisName + ".sim";
-	updateSimulationFile(fileName, simFile);
-	String analysisModelFile = findAnalysisModelFile(fileName);
-	if (analysisModelFile.equals("")) {
-		return;
+		Graph tsdGraph = analysisView.createGraph(fileName + GlobalConstants.separator + analysisName + ".grf");
+		simTab.addTab("TSD Graph", tsdGraph);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+		Graph probGraph = analysisView.createProbGraph(fileName + GlobalConstants.separator + analysisName + ".prb");
+		simTab.addTab("Histogram", probGraph);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Histogram");
+		addTab(analysisName, simTab, null);
 	}
 
-	String modelFileName = loadModelFileName(simFile);
-	String sbmlLoadFile = findSBMLLoadFile(simFile, modelFileName, analysisName, analysisModelFile);
-	if (sbmlLoadFile.equals("")) {
-		return;
-	}
-	// If currently open and dirty, then save
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(sbmlLoadFile
-				.split(GlobalConstants.separator)[sbmlLoadFile.split(GlobalConstants.separator).length - 1])) {
-			tab.setSelectedIndex(i);
-			if (save(i, 0) == 0) {
-				return;
-			}
-			break;
-		}
-	}
-	// Create the analysis view
-	JTabbedPane simTab = new JTabbedPane();
-	simTab.addMouseListener(this);
-	AnalysisView analysisView;
-	AbstractionPanel lhpnAbstraction = null;
-	if (modelFileName.contains(".lpn")) {
-		lhpnAbstraction = new AbstractionPanel(root, modelFileName, log);
-		analysisView = new AnalysisView(this, log, simTab, lhpnAbstraction.getAbstractionProperty(), root, analysisName, modelFileName);
-	} else {
-		analysisView = new AnalysisView(this, log, simTab, null, root, analysisName, modelFileName);
-	}
-	simTab.addTab("Simulation Options", analysisView);
-	simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-	if (modelFileName.contains(".lpn")) {
-		simTab.addTab("Advanced Options", lhpnAbstraction);
-	} else {
-		simTab.addTab("Advanced Options", analysisView.getAdvanced());
-	}
-	simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-	if (modelFileName.contains(".xml")) {
-		ModelEditor modelEditor = new ModelEditor(root + GlobalConstants.separator, modelFileName, this, log, true,
-				analysisName,
-				root + GlobalConstants.separator + analysisName + GlobalConstants.separator + analysisName + ".sim",
-				analysisView, false, false);
-		analysisView.setModelEditor(modelEditor);
-		ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(), sedmlDocument,
-				analysisName);
-		// root + separator + analysisName + separator
-		// + analysisName + ".sim");
-		modelEditor.setElementsPanel(elementsPanel);
-		addModelViewTab(analysisView, simTab, modelEditor);
-		simTab.addTab("Parameters", modelEditor);
-		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Model Editor");
-	}
-	Graph tsdGraph = analysisView.createGraph(fileName + GlobalConstants.separator + analysisName + ".grf");
-	simTab.addTab("TSD Graph", tsdGraph);
-	simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
-	Graph probGraph = analysisView.createProbGraph(fileName + GlobalConstants.separator + analysisName + ".prb");
-	simTab.addTab("Histogram", probGraph);
-	simTab.getComponentAt(simTab.getComponents().length - 1).setName("Histogram");
-	addTab(analysisName, simTab, null);
-}
+	/**
+	 * adds the tab for the modelview and the correct listener.
+	 * 
+	 * @return
+	 */
+	private void addModelViewTab(AnalysisView reb2sac, JTabbedPane tabPane, ModelEditor modelEditor) {
 
-/**
- * adds the tab for the modelview and the correct listener.
- * 
- * @return
- */
-private void addModelViewTab(AnalysisView reb2sac, JTabbedPane tabPane, ModelEditor modelEditor) {
+		// Add the modelview tab
+		MovieContainer movieContainer = new MovieContainer(reb2sac, modelEditor.getBioModel(), this, modelEditor, lema);
 
-	// Add the modelview tab
-	MovieContainer movieContainer = new MovieContainer(reb2sac, modelEditor.getBioModel(), this, modelEditor, lema);
+		tabPane.addTab("Schematic", movieContainer);
+		tabPane.getComponentAt(tabPane.getComponents().length - 1).setName("ModelViewMovie");
+		// When the Graphical View panel gets clicked on, tell it to display
+		// itself.
+		tabPane.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
 
-	tabPane.addTab("Schematic", movieContainer);
-	tabPane.getComponentAt(tabPane.getComponents().length - 1).setName("ModelViewMovie");
-	// When the Graphical View panel gets clicked on, tell it to display
-	// itself.
-	tabPane.addChangeListener(new ChangeListener() {
-		@Override
-		public void stateChanged(ChangeEvent e) {
-
-			JTabbedPane selectedTab = (JTabbedPane) (e.getSource());
-			if (selectedTab.getSelectedIndex() < 0) {
-				return;
-			}
-			if (!(selectedTab.getComponent(selectedTab.getSelectedIndex()) instanceof JScrollPane)) {
-				JPanel selectedPanel = (JPanel) selectedTab.getComponent(selectedTab.getSelectedIndex());
-				String className = selectedPanel.getClass().getName();
-
-				// The new Schematic
-				if (className.indexOf("MovieContainer") >= 0) {
-					((MovieContainer) selectedPanel).display();
+				JTabbedPane selectedTab = (JTabbedPane) (e.getSource());
+				if (selectedTab.getSelectedIndex() < 0) {
+					return;
 				}
-			}
-		}
-	});
-}
+				if (!(selectedTab.getComponent(selectedTab.getSelectedIndex()) instanceof JScrollPane)) {
+					JPanel selectedPanel = (JPanel) selectedTab.getComponent(selectedTab.getSelectedIndex());
+					String className = selectedPanel.getClass().getName();
 
-@Override
-public void mouseClicked(MouseEvent e) {
-	executeMouseClickEvent(e);
-}
-
-@Override
-public void mouseEntered(MouseEvent e) {
-
-}
-
-@Override
-public void mouseExited(MouseEvent e) {
-
-}
-
-@Override
-public void mouseDragged(MouseEvent e) {
-	Component glassPane = frame.getGlassPane();
-	Point glassPanePoint = e.getPoint();
-	// Component component = e.getComponent();
-	Container container = frame.getContentPane();
-	Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame.getContentPane());
-	if (containerPoint.y < 0) { // we're not in the content pane
-		if (containerPoint.y + menuBar.getHeight() >= 0) {
-			Component component = menuBar.getComponentAt(glassPanePoint);
-			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
-			component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e.getModifiers(),
-					componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger()));
-			frame.getGlassPane().setVisible(false);
-		}
-	} else {
-		try {
-			Component deepComponent = SwingUtilities.getDeepestComponentAt(container, containerPoint.x,
-					containerPoint.y);
-			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, deepComponent);
-			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e.getModifiers(),
-					componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger()));
-		} catch (Exception e1) {
-		}
-	}
-}
-
-public void windowLostFocus() {
-}
-
-public JMenuItem getExitButton() {
-	return exit;
-}
-
-/**
- * This is the main method. It excecutes the BioSim GUI FrontEnd program.
- */
-public static void main(String args[]) {
-	if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-		if (System.getenv("DDLD_LIBRARY_PATH") == null) {
-			System.out.println("DDLD_LIBRARY_PATH is missing");
-		}
-	}
-
-	boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true, lpnFlag = false;
-	if (args.length > 0) {
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("-lema")) {
-				lemaFlag = true;
-			} else if (args[i].equals("-atacs")) {
-				atacsFlag = true;
-			} else if (args[i].equals("-lpn")) {
-				lpnFlag = true;
-			}
-		}
-	}
-
-	Executables.checkExecutables();
-	
-	new Gui(lemaFlag, atacsFlag, libsbmlFound, lpnFlag);
-}
-
-public void refreshLearn(String learnName) {
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		if (getTitleAt(i).equals(learnName)) {
-			for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getComponentCount(); j++) {
-				if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals("TSD Graph")) {
-					// if (data) {
-					if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Graph) {
-						((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)).refresh();
-					} else {
-						((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j,
-								new Graph(null, "Number of molecules", learnName + " data", "tsd.printer",
-										root + GlobalConstants.separator + learnName, "Time", this, null, log, null,
-										true, true));
-						((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("TSD Graph");
-					}
-				} else if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName()
-						.equals("Learn Options")) {
-					if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof LearnView) {
-					} else {
-						if (lema) {
-							LearnViewLEMA learn = new LearnViewLEMA(root + GlobalConstants.separator + learnName, log, this);
-							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
-							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j + 1,
-									learn.getAdvancedOptionsPanel());
-						} else {
-							LearnView learn = new LearnView(root + GlobalConstants.separator + learnName, log, this);
-							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
-							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j + 1,
-									learn.getAdvancedOptionsPanel());
-						}
-						((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Learn Options");
-						((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j + 1).setName("Advanced Options");
+					// The new Schematic
+					if (className.indexOf("MovieContainer") >= 0) {
+						((MovieContainer) selectedPanel).display();
 					}
 				}
 			}
-		}
+		});
 	}
-}
 
-public boolean updateOpenModelEditor(String modelName) {
-
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		String tab = this.getTitleAt(i);
-		if (modelName.equals(tab)) {
-			if (this.tab.getComponentAt(i) instanceof ModelEditor) {
-				((ModelEditor) this.tab.getComponentAt(i)).reload(modelName.replace(".xml", ""));
-				((ModelEditor) this.tab.getComponentAt(i)).refresh();
-				((ModelEditor) this.tab.getComponentAt(i)).getSchematic().getGraph().buildGraph();
-				return true;
-			}
-		}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		executeMouseClickEvent(e);
 	}
-	return false;
-}
 
-// private void renameOpenModelEditors(String modelName, String oldname,
-// String newName)
-// {
-// for (int i = 0; i < tab.getTabCount(); i++)
-// {
-// String tab = this.getTitleAt(i);
-// if (modelName.equals(tab))
-// {
-// if (this.tab.getComponentAt(i) instanceof ModelEditor)
-// {
-// ((ModelEditor) this.tab.getComponentAt(i)).renameComponents(oldname,
-// newName);
-// return;
-// }
-// }
-// }
-// }
+	@Override
+	public void mouseEntered(MouseEvent e) {
 
-public void updateAsyncViews(String updatedFile) {
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		String tab = this.getTitleAt(i);
-		String properties = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".ver";
-		String properties1 = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".synth";
-		String properties2 = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".lrn";
-		if (new File(properties).exists()) {
-			VerificationView verify = ((VerificationView) (this.tab.getComponentAt(i)));
-			verify.reload();
-		}
-		if (new File(properties1).exists()) {
-			JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
-			for (int j = 0; j < sim.getTabCount(); j++) {
-				if (sim.getComponentAt(j).getName().equals("Synthesis")) {
-					((SynthesisViewATACS) (sim.getComponentAt(j))).reload(updatedFile);
-				}
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		Component glassPane = frame.getGlassPane();
+		Point glassPanePoint = e.getPoint();
+		// Component component = e.getComponent();
+		Container container = frame.getContentPane();
+		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame.getContentPane());
+		if (containerPoint.y < 0) { // we're not in the content pane
+			if (containerPoint.y + menuBar.getHeight() >= 0) {
+				Component component = menuBar.getComponentAt(glassPanePoint);
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
+				component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e.getModifiers(),
+						componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger()));
+				frame.getGlassPane().setVisible(false);
 			}
-		}
-		// }
-		if (new File(properties2).exists()) {
-			String check = "";
+		} else {
 			try {
-				Properties p = new Properties();
-				FileInputStream load = new FileInputStream(new File(properties2));
-				p.load(load);
-				load.close();
-				if (p.containsKey("learn.file")) {
-					String[] getProp = p.getProperty("learn.file").split(GlobalConstants.separator);
-					check = getProp[getProp.length - 1];
-				} else {
+				Component deepComponent = SwingUtilities.getDeepestComponentAt(container, containerPoint.x,
+						containerPoint.y);
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, deepComponent);
+				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e.getModifiers(),
+						componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger()));
+			} catch (Exception e1) {
+			}
+		}
+	}
+
+	public void windowLostFocus() {
+	}
+
+	public JMenuItem getExitButton() {
+		return exit;
+	}
+
+	/**
+	 * This is the main method. It excecutes the BioSim GUI FrontEnd program.
+	 */
+	public static void main(String args[]) {
+		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+			if (System.getenv("DDLD_LIBRARY_PATH") == null) {
+				System.out.println("DDLD_LIBRARY_PATH is missing");
+			}
+		}
+
+		boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true, lpnFlag = false;
+		if (args.length > 0) {
+			for (int i = 0; i < args.length; i++) {
+				if (args[i].equals("-lema")) {
+					lemaFlag = true;
+				} else if (args[i].equals("-atacs")) {
+					atacsFlag = true;
+				} else if (args[i].equals("-lpn")) {
+					lpnFlag = true;
+				}
+			}
+		}
+		try {
+			System.loadLibrary("sbmlj");
+			// For extra safety, check that the jar file is in the classpath.
+			Class.forName("org.sbml.libsbml.libsbml");
+		} catch (UnsatisfiedLinkError e) {
+			libsbmlFound = false;
+		} catch (ClassNotFoundException e) {
+			libsbmlFound = false;
+		} catch (SecurityException e) {
+			libsbmlFound = false;
+		}
+		Runtime.getRuntime();
+		int exitValue = 1;
+		try {
+			if (System.getProperty("os.name").contentEquals("Linux")) {
+				reb2sacExecutable = "reb2sac.linux64";
+			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				reb2sacExecutable = "reb2sac.mac64";
+			} else {
+				reb2sacExecutable = "reb2sac.exe";
+			}
+			ProcessBuilder ps = new ProcessBuilder(reb2sacExecutable, "");
+			Map<String, String> env = ps.environment();
+			if (System.getenv("BIOSIM") != null) {
+				env.put("BIOSIM", System.getenv("BIOSIM"));
+			}
+			if (System.getenv("LEMA") != null) {
+				env.put("LEMA", System.getenv("LEMA"));
+			}
+			if (System.getenv("ATACSGUI") != null) {
+				env.put("ATACSGUI", System.getenv("ATACSGUI"));
+			}
+			if (System.getenv("LD_LIBRARY_PATH") != null) {
+				env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
+			}
+			if (System.getenv("DDLD_LIBRARY_PATH") != null) {
+				env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
+			}
+			if (System.getenv("PATH") != null) {
+				env.put("PATH", System.getenv("PATH"));
+			}
+			envp = new String[env.size()];
+			int i = 0;
+			for (String envVar : env.keySet()) {
+				envp[i] = envVar + "=" + env.get(envVar);
+				i++;
+			}
+			ps.redirectErrorStream(true);
+			Process reb2sac = ps.start();
+			if (reb2sac != null) {
+				exitValue = reb2sac.waitFor();
+			}
+			if (exitValue != 255 && exitValue != -1) {
+				Executables.reb2sacFound = false;
+			}
+		} catch (IOException e) {
+			Executables.reb2sacFound = false;
+		} catch (InterruptedException e) {
+			Executables.reb2sacFound = false;
+		}
+		exitValue = 1;
+		try {
+			if (System.getProperty("os.name").contentEquals("Linux")) {
+				geneNetExecutable = "GeneNet.linux64";
+			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				geneNetExecutable = "GeneNet.mac64";
+			} else {
+				geneNetExecutable = "GeneNet.exe";
+			}
+			ProcessBuilder ps = new ProcessBuilder(geneNetExecutable, "");
+			Map<String, String> env = ps.environment();
+			if (System.getenv("BIOSIM") != null) {
+				env.put("BIOSIM", System.getenv("BIOSIM"));
+			}
+			if (System.getenv("LEMA") != null) {
+				env.put("LEMA", System.getenv("LEMA"));
+			}
+			if (System.getenv("ATACSGUI") != null) {
+				env.put("ATACSGUI", System.getenv("ATACSGUI"));
+			}
+			if (System.getenv("LD_LIBRARY_PATH") != null) {
+				env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
+			}
+			if (System.getenv("DDLD_LIBRARY_PATH") != null) {
+				env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
+			}
+			if (System.getenv("PATH") != null) {
+				env.put("PATH", System.getenv("PATH"));
+			}
+			ps.redirectErrorStream(true);
+			Process geneNet = ps.start();
+			if (geneNet != null) {
+				exitValue = geneNet.waitFor();
+			}
+			if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
+				Executables.geneNetFound = false;
+			}
+		} catch (IOException e) {
+		  Executables.geneNetFound = false;
+		} catch (InterruptedException e) {
+		  Executables.geneNetFound = false;
+		}
+		new Gui(lemaFlag, atacsFlag, libsbmlFound, lpnFlag);
+	}
+
+	public static boolean isLibsbmlFound() {
+		return Executables.libsbmlFound;
+	}
+
+	public static boolean isReb2sacFound() {
+		return Executables.reb2sacFound;
+	}
+
+	public static String getReb2sacExecutable() {
+		return reb2sacExecutable;
+	}
+
+	public static boolean isGeneNetFound() {
+		return Executables.geneNetFound;
+	}
+
+	public static String getGeneNetExecutable() {
+		return geneNetExecutable;
+	}
+
+	public void refreshLearn(String learnName) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (getTitleAt(i).equals(learnName)) {
+				for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getComponentCount(); j++) {
+					if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals("TSD Graph")) {
+						// if (data) {
+						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Graph) {
+							((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)).refresh();
+						} else {
+							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j,
+									new Graph(null, "Number of molecules", learnName + " data", "tsd.printer",
+											root + GlobalConstants.separator + learnName, "Time", this, null, log, null,
+											true, true));
+							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("TSD Graph");
+						}
+					} else if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName()
+							.equals("Learn Options")) {
+						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof LearnView) {
+						} else {
+							if (lema) {
+								LearnViewLEMA learn = new LearnViewLEMA(root + GlobalConstants.separator + learnName, log, this);
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j + 1,
+										learn.getAdvancedOptionsPanel());
+							} else {
+								LearnView learn = new LearnView(root + GlobalConstants.separator + learnName, log, this);
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j + 1,
+										learn.getAdvancedOptionsPanel());
+							}
+							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Learn Options");
+							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j + 1).setName("Advanced Options");
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public boolean updateOpenModelEditor(String modelName) {
+
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.getTitleAt(i);
+			if (modelName.equals(tab)) {
+				if (this.tab.getComponentAt(i) instanceof ModelEditor) {
+					((ModelEditor) this.tab.getComponentAt(i)).reload(modelName.replace(".xml", ""));
+					((ModelEditor) this.tab.getComponentAt(i)).refresh();
+					((ModelEditor) this.tab.getComponentAt(i)).getSchematic().getGraph().buildGraph();
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	// private void renameOpenModelEditors(String modelName, String oldname,
+	// String newName)
+	// {
+	// for (int i = 0; i < tab.getTabCount(); i++)
+	// {
+	// String tab = this.getTitleAt(i);
+	// if (modelName.equals(tab))
+	// {
+	// if (this.tab.getComponentAt(i) instanceof ModelEditor)
+	// {
+	// ((ModelEditor) this.tab.getComponentAt(i)).renameComponents(oldname,
+	// newName);
+	// return;
+	// }
+	// }
+	// }
+	// }
+
+	public void updateAsyncViews(String updatedFile) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.getTitleAt(i);
+			String properties = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".ver";
+			String properties1 = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".synth";
+			String properties2 = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".lrn";
+			if (new File(properties).exists()) {
+				VerificationView verify = ((VerificationView) (this.tab.getComponentAt(i)));
+				verify.reload();
+			}
+			if (new File(properties1).exists()) {
+				JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
+				for (int j = 0; j < sim.getTabCount(); j++) {
+					if (sim.getComponentAt(j).getName().equals("Synthesis")) {
+						((SynthesisViewATACS) (sim.getComponentAt(j))).reload(updatedFile);
+					}
+				}
+			}
+			// }
+			if (new File(properties2).exists()) {
+				String check = "";
+				try {
+					Properties p = new Properties();
+					FileInputStream load = new FileInputStream(new File(properties2));
+					p.load(load);
+					load.close();
+					if (p.containsKey("learn.file")) {
+						String[] getProp = p.getProperty("learn.file").split(GlobalConstants.separator);
+						check = getProp[getProp.length - 1];
+					} else {
+						check = "";
+					}
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				check = "";
-			}
-			if (check.equals(updatedFile)) {
-				JTabbedPane learn = ((JTabbedPane) (this.tab.getComponentAt(i)));
-				for (int j = 0; j < learn.getTabCount(); j++) {
-					if (learn.getComponentAt(j).getName().equals("Data Manager")) {
-						((DataManager) (learn.getComponentAt(j))).updateSpecies();
-					} else if (learn.getComponentAt(j).getName().equals("Learn Options")) {
-						((LearnViewLEMA) (learn.getComponentAt(j)))
-						.updateSpecies(root + GlobalConstants.separator + updatedFile);
-						((LearnViewLEMA) (learn.getComponentAt(j))).reload(updatedFile);
-					} else if (learn.getComponentAt(j).getName().contains("Graph")) {
-						((Graph) (learn.getComponentAt(j))).refresh();
+				if (check.equals(updatedFile)) {
+					JTabbedPane learn = ((JTabbedPane) (this.tab.getComponentAt(i)));
+					for (int j = 0; j < learn.getTabCount(); j++) {
+						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
+							((DataManager) (learn.getComponentAt(j))).updateSpecies();
+						} else if (learn.getComponentAt(j).getName().equals("Learn Options")) {
+							((LearnViewLEMA) (learn.getComponentAt(j)))
+							.updateSpecies(root + GlobalConstants.separator + updatedFile);
+							((LearnViewLEMA) (learn.getComponentAt(j))).reload(updatedFile);
+						} else if (learn.getComponentAt(j).getName().contains("Graph")) {
+							((Graph) (learn.getComponentAt(j))).refresh();
+						}
 					}
 				}
 			}
 		}
 	}
-}
 
-public void updateViews(String updatedFile) {
+	public void updateViews(String updatedFile) {
 
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		String tab = this.getTitleAt(i);
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.getTitleAt(i);
 
-		if (this.tab.getComponentAt(i).getName().equals("Model Editor")) {
+			if (this.tab.getComponentAt(i).getName().equals("Model Editor")) {
 
-			// this is so that the grid species list gets updated if there's
-			// a diffusibility change
-			ModelEditor modelEditor = (ModelEditor) this.tab.getComponentAt(i);
-			modelEditor.getBioModel().updateGridSpecies(updatedFile.replace(".gcm", ""));
-			modelEditor.getSpeciesPanel().refreshSpeciesPanel(modelEditor.getBioModel());
-		}
-
-		if (this.tab.getComponentAt(i).getName().equals("SBOL Browser")) {
-			((SBOLBrowser2) this.tab.getComponentAt(i)).reload(this, tab);
-		}
-
-		String properties = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".sim";
-		String properties2 = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".lrn";
-		if (new File(properties).exists()) {
-
-			String check = "";
-			try {
-				Scanner s = new Scanner(new File(properties));
-				if (s.hasNextLine()) {
-					check = s.nextLine();
-					check = check.split(GlobalConstants.separator)[check.split(GlobalConstants.separator).length
-					                                               - 1];
-				}
-				s.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+				// this is so that the grid species list gets updated if there's
+				// a diffusibility change
+				ModelEditor modelEditor = (ModelEditor) this.tab.getComponentAt(i);
+				modelEditor.getBioModel().updateGridSpecies(updatedFile.replace(".gcm", ""));
+				modelEditor.getSpeciesPanel().refreshSpeciesPanel(modelEditor.getBioModel());
 			}
-			if (check.equals(updatedFile)) {
-				JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
 
-				for (int j = 0; j < sim.getTabCount(); j++) {
+			if (this.tab.getComponentAt(i).getName().equals("SBOL Browser")) {
+				((SBOLBrowser2) this.tab.getComponentAt(i)).reload(this, tab);
+			}
 
-					if (sim.getComponentAt(j) instanceof AnalysisView) {
-						((AnalysisView) sim.getComponentAt(j)).updateProperties();
-					} else if (sim.getComponentAt(j).getName().equals("Model Editor")) {
+			String properties = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".sim";
+			String properties2 = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".lrn";
+			if (new File(properties).exists()) {
 
-						new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
-						try {
-							boolean dirty = ((ModelEditor) (sim.getComponentAt(j))).isDirty();
-							((ModelEditor) (sim.getComponentAt(j))).saveParams(false, "", true, null);
-							((ModelEditor) (sim.getComponentAt(j)))
-							.reload(check.replace(".gcm", "").replace(".xml", ""));
-							((ModelEditor) (sim.getComponentAt(j))).refresh();
-							((ModelEditor) (sim.getComponentAt(j))).loadParams();
-							((ModelEditor) (sim.getComponentAt(j))).setDirty(dirty);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						new File(properties).delete();
-						new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
-						ElementsPanel elementsPanel = new ElementsPanel(
-								((ModelEditor) (sim.getComponentAt(j))).getBioModel().getSBMLDocument(),
-								sedmlDocument, tab);
-						// root + separator + tab + separator + tab +
-						// ".sim");
-						((ModelEditor) (sim.getComponentAt(j))).setElementsPanel(elementsPanel);
+				String check = "";
+				try {
+					Scanner s = new Scanner(new File(properties));
+					if (s.hasNextLine()) {
+						check = s.nextLine();
+						check = check.split(GlobalConstants.separator)[check.split(GlobalConstants.separator).length
+						                                               - 1];
+					}
+					s.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if (check.equals(updatedFile)) {
+					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
 
-						for (int k = 0; k < sim.getTabCount(); k++) {
+					for (int j = 0; j < sim.getTabCount(); j++) {
 
-							if (sim.getComponentAt(k) instanceof MovieContainer) {
+						if (sim.getComponentAt(j) instanceof AnalysisView) {
+							((AnalysisView) sim.getComponentAt(j)).updateProperties();
+						} else if (sim.getComponentAt(j).getName().equals("Model Editor")) {
 
-								// display the schematic and reload the grid
-								((MovieContainer) (sim.getComponentAt(k))).display();
-								((MovieContainer) (sim.getComponentAt(k))).reloadGrid();
+							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
+							try {
+								boolean dirty = ((ModelEditor) (sim.getComponentAt(j))).isDirty();
+								((ModelEditor) (sim.getComponentAt(j))).saveParams(false, "", true, null);
+								((ModelEditor) (sim.getComponentAt(j)))
+								.reload(check.replace(".gcm", "").replace(".xml", ""));
+								((ModelEditor) (sim.getComponentAt(j))).refresh();
+								((ModelEditor) (sim.getComponentAt(j))).loadParams();
+								((ModelEditor) (sim.getComponentAt(j))).setDirty(dirty);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							new File(properties).delete();
+							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
+							ElementsPanel elementsPanel = new ElementsPanel(
+									((ModelEditor) (sim.getComponentAt(j))).getBioModel().getSBMLDocument(),
+									sedmlDocument, tab);
+							// root + separator + tab + separator + tab +
+							// ".sim");
+							((ModelEditor) (sim.getComponentAt(j))).setElementsPanel(elementsPanel);
+
+							for (int k = 0; k < sim.getTabCount(); k++) {
+
+								if (sim.getComponentAt(k) instanceof MovieContainer) {
+
+									// display the schematic and reload the grid
+									((MovieContainer) (sim.getComponentAt(k))).display();
+									((MovieContainer) (sim.getComponentAt(k))).reloadGrid();
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-		if (new File(properties2).exists()) {
+			if (new File(properties2).exists()) {
 
-			String check = "";
-			try {
-				Properties p = new Properties();
-				FileInputStream load = new FileInputStream(new File(properties2));
-				p.load(load);
-				load.close();
-				if (p.containsKey("genenet.file")) {
-					String[] getProp = p.getProperty("genenet.file").split(GlobalConstants.separator);
-					check = getProp[getProp.length - 1];
-				} else {
+				String check = "";
+				try {
+					Properties p = new Properties();
+					FileInputStream load = new FileInputStream(new File(properties2));
+					p.load(load);
+					load.close();
+					if (p.containsKey("genenet.file")) {
+						String[] getProp = p.getProperty("genenet.file").split(GlobalConstants.separator);
+						check = getProp[getProp.length - 1];
+					} else {
+						check = "";
+					}
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				check = "";
-			}
-			if (check.equals(updatedFile)) {
-				JTabbedPane learn = ((JTabbedPane) (this.tab.getComponentAt(i)));
-				for (int j = 0; j < learn.getTabCount(); j++) {
-					if (learn.getComponentAt(j).getName().equals("Data Manager")) {
-						((DataManager) (learn.getComponentAt(j))).updateSpecies();
-					} else if (learn.getComponentAt(j).getName().equals("Learn Options")) {
-						((LearnView) (learn.getComponentAt(j)))
-						.updateSpecies(root + GlobalConstants.separator + updatedFile);
-					} else if (learn.getComponentAt(j).getName().contains("Graph")) {
-						((Graph) (learn.getComponentAt(j))).refresh();
+				if (check.equals(updatedFile)) {
+					JTabbedPane learn = ((JTabbedPane) (this.tab.getComponentAt(i)));
+					for (int j = 0; j < learn.getTabCount(); j++) {
+						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
+							((DataManager) (learn.getComponentAt(j))).updateSpecies();
+						} else if (learn.getComponentAt(j).getName().equals("Learn Options")) {
+							((LearnView) (learn.getComponentAt(j)))
+							.updateSpecies(root + GlobalConstants.separator + updatedFile);
+						} else if (learn.getComponentAt(j).getName().contains("Graph")) {
+							((Graph) (learn.getComponentAt(j))).refresh();
+						}
 					}
 				}
 			}
 		}
 	}
-}
 
-private void updateViewNames(String oldname, String newname) {
-	File work = new File(root);
-	String[] fileList = work.list();
-	String[] temp = oldname.split(GlobalConstants.separator);
-	oldname = temp[temp.length - 1];
-	for (int i = 0; i < fileList.length; i++) {
-		String tabTitle = fileList[i];
-		String properties = root + GlobalConstants.separator + tabTitle + GlobalConstants.separator + tabTitle
-				+ ".ver";
-		String properties1 = root + GlobalConstants.separator + tabTitle + GlobalConstants.separator + tabTitle
-				+ ".synth";
-		String properties2 = root + GlobalConstants.separator + tabTitle + GlobalConstants.separator + tabTitle
-				+ ".lrn";
-		if (new File(properties).exists()) {
-			String check;
-			Properties p = new Properties();
-			try {
-				FileInputStream load = new FileInputStream(new File(properties));
-				p.load(load);
-				load.close();
-				if (p.containsKey("verification.file")) {
-					String[] getProp = p.getProperty("verification.file").split(GlobalConstants.separator);
-					check = getProp[getProp.length - 1];
-				} else {
-					check = "";
-				}
-				if (check.equals(oldname)) {
-					p.setProperty("verification.file", newname);
-					FileOutputStream out = new FileOutputStream(new File(properties));
-					p.store(out, properties);
-				}
-			} catch (Exception e) {
-				// log.addText("verification");
-				// e.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				check = "";
-			}
-		}
-		if (new File(properties1).exists()) {
-			String check;
-			try {
+	private void updateViewNames(String oldname, String newname) {
+		File work = new File(root);
+		String[] fileList = work.list();
+		String[] temp = oldname.split(GlobalConstants.separator);
+		oldname = temp[temp.length - 1];
+		for (int i = 0; i < fileList.length; i++) {
+			String tabTitle = fileList[i];
+			String properties = root + GlobalConstants.separator + tabTitle + GlobalConstants.separator + tabTitle
+					+ ".ver";
+			String properties1 = root + GlobalConstants.separator + tabTitle + GlobalConstants.separator + tabTitle
+					+ ".synth";
+			String properties2 = root + GlobalConstants.separator + tabTitle + GlobalConstants.separator + tabTitle
+					+ ".lrn";
+			if (new File(properties).exists()) {
+				String check;
 				Properties p = new Properties();
-				FileInputStream load = new FileInputStream(new File(properties1));
-				p.load(load);
-				load.close();
-				if (p.containsKey("synthesis.file")) {
-					String[] getProp = p.getProperty("synthesis.file").split(GlobalConstants.separator);
-					check = getProp[getProp.length - 1];
-				} else {
+				try {
+					FileInputStream load = new FileInputStream(new File(properties));
+					p.load(load);
+					load.close();
+					if (p.containsKey("verification.file")) {
+						String[] getProp = p.getProperty("verification.file").split(GlobalConstants.separator);
+						check = getProp[getProp.length - 1];
+					} else {
+						check = "";
+					}
+					if (check.equals(oldname)) {
+						p.setProperty("verification.file", newname);
+						FileOutputStream out = new FileOutputStream(new File(properties));
+						p.store(out, properties);
+					}
+				} catch (Exception e) {
+					// log.addText("verification");
+					// e.printStackTrace();
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
-				if (check.equals(oldname)) {
-					p.setProperty("synthesis.file", newname);
-					FileOutputStream out = new FileOutputStream(new File(properties1));
-					p.store(out, properties1);
-				}
-			} catch (Exception e) {
-				// log.addText("synthesis");
-				// e.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				check = "";
 			}
-		}
-		if (new File(properties2).exists()) {
-			String check = "";
-			try {
-				Properties p = new Properties();
-				FileInputStream load = new FileInputStream(new File(properties2));
-				p.load(load);
-				load.close();
-				if (p.containsKey("learn.file")) {
-					String[] getProp = p.getProperty("learn.file").split(GlobalConstants.separator);
-					check = getProp[getProp.length - 1];
-				} else {
+			if (new File(properties1).exists()) {
+				String check;
+				try {
+					Properties p = new Properties();
+					FileInputStream load = new FileInputStream(new File(properties1));
+					p.load(load);
+					load.close();
+					if (p.containsKey("synthesis.file")) {
+						String[] getProp = p.getProperty("synthesis.file").split(GlobalConstants.separator);
+						check = getProp[getProp.length - 1];
+					} else {
+						check = "";
+					}
+					if (check.equals(oldname)) {
+						p.setProperty("synthesis.file", newname);
+						FileOutputStream out = new FileOutputStream(new File(properties1));
+						p.store(out, properties1);
+					}
+				} catch (Exception e) {
+					// log.addText("synthesis");
+					// e.printStackTrace();
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
-				if (check.equals(oldname)) {
-					p.setProperty("learn.file", newname);
-					FileOutputStream out = new FileOutputStream(new File(properties2));
-					p.store(out, properties2);
+			}
+			if (new File(properties2).exists()) {
+				String check = "";
+				try {
+					Properties p = new Properties();
+					FileInputStream load = new FileInputStream(new File(properties2));
+					p.load(load);
+					load.close();
+					if (p.containsKey("learn.file")) {
+						String[] getProp = p.getProperty("learn.file").split(GlobalConstants.separator);
+						check = getProp[getProp.length - 1];
+					} else {
+						check = "";
+					}
+					if (check.equals(oldname)) {
+						p.setProperty("learn.file", newname);
+						FileOutputStream out = new FileOutputStream(new File(properties2));
+						p.store(out, properties2);
+					}
+				} catch (Exception e) {
+					// e.printStackTrace();
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					check = "";
 				}
-			} catch (Exception e) {
-				// e.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				check = "";
 			}
 		}
+		updateAsyncViews(newname);
 	}
-	updateAsyncViews(newname);
-}
 
-public void enableTabMenu(int selectedTab) {
-	saveButton.setEnabled(false);
-	saveasButton.setEnabled(false);
-	runButton.setEnabled(false);
-	refreshButton.setEnabled(false);
-	checkButton.setEnabled(false);
-	exportButton.setEnabled(false);
-	save.setEnabled(false);
-	saveAs.setEnabled(false);
-	// saveSBOL.setEnabled(false);
-	saveModel.setEnabled(false);
-	saveAll.setEnabled(false);
-	close.setEnabled(false);
-	closeAll.setEnabled(false);
-	run.setEnabled(false);
-	check.setEnabled(false);
-	exportMenu.setEnabled(true);
-	exportArchive.setEnabled(true);
-	exportSBML.setEnabled(false);
-	exportFlatSBML.setEnabled(false);
-	exportSBOL1.setEnabled(false);
-	exportSBOL2.setEnabled(false);
-	exportSynBioHub.setEnabled(false);
-	exportGenBank.setEnabled(false);
-	exportFasta.setEnabled(false);
-	exportDataMenu.setEnabled(false);
-	exportImageMenu.setEnabled(false);
-	exportMovieMenu.setEnabled(false);
-	exportCsv.setEnabled(false);
-	exportDat.setEnabled(false);
-	exportEps.setEnabled(false);
-	exportJpg.setEnabled(false);
-	exportPdf.setEnabled(false);
-	exportPng.setEnabled(false);
-	exportSvg.setEnabled(false);
-	exportTsd.setEnabled(false);
-	exportAvi.setEnabled(false);
-	exportMp4.setEnabled(false);
-	saveAsVerilog.setEnabled(false);
-	viewCircuit.setEnabled(false);
-	viewSG.setEnabled(false);
-	viewLog.setEnabled(false);
-	viewCoverage.setEnabled(false);
-	viewLearnedModel.setEnabled(false);
-	refresh.setEnabled(false);
-	select.setEnabled(false);
-	cut.setEnabled(false);
-	addCompartment.setEnabled(false);
-	addSpecies.setEnabled(false);
-	addReaction.setEnabled(false);
-	addModule.setEnabled(false);
-	addPromoter.setEnabled(false);
-	addVariable.setEnabled(false);
-	addBoolean.setEnabled(false);
-	addPlace.setEnabled(false);
-	addTransition.setEnabled(false);
-	addRule.setEnabled(false);
-	addConstraint.setEnabled(false);
-	addEvent.setEnabled(false);
-	addSelfInfl.setEnabled(false);
-	moveLeft.setEnabled(false);
-	moveRight.setEnabled(false);
-	moveUp.setEnabled(false);
-	moveDown.setEnabled(false);
-	undo.setEnabled(false);
-	redo.setEnabled(false);
-	if (selectedTab != -1) {
-		tab.setSelectedIndex(selectedTab);
-	}
-	Component comp = tab.getSelectedComponent();
-	if (comp instanceof ModelEditor) {
-		saveButton.setEnabled(true);
-		saveasButton.setEnabled(true);
-		checkButton.setEnabled(true);
-		exportButton.setEnabled(true);
-		save.setEnabled(true);
-		saveAs.setEnabled(true);
-		// saveSBOL.setEnabled(true);
-		saveAll.setEnabled(true);
-		close.setEnabled(true);
-		closeAll.setEnabled(true);
-		check.setEnabled(true);
-		select.setEnabled(true);
-		cut.setEnabled(true);
-		if (!((ModelEditor) comp).isGridEditor()) {
-			addCompartment.setEnabled(true);
-			addSpecies.setEnabled(true);
-			addReaction.setEnabled(true);
-			addPromoter.setEnabled(true);
-			addVariable.setEnabled(true);
-			addBoolean.setEnabled(true);
-			addPlace.setEnabled(true);
-			addTransition.setEnabled(true);
-			addRule.setEnabled(true);
-			addConstraint.setEnabled(true);
-			addEvent.setEnabled(true);
-			addSelfInfl.setEnabled(true);
-			moveLeft.setEnabled(true);
-			moveRight.setEnabled(true);
-			moveUp.setEnabled(true);
-			moveDown.setEnabled(true);
-		}
-		addModule.setEnabled(true);
-		undo.setEnabled(true);
-		redo.setEnabled(true);
+	public void enableTabMenu(int selectedTab) {
+		saveButton.setEnabled(false);
+		saveasButton.setEnabled(false);
+		runButton.setEnabled(false);
+		refreshButton.setEnabled(false);
+		checkButton.setEnabled(false);
+		exportButton.setEnabled(false);
+		save.setEnabled(false);
+		saveAs.setEnabled(false);
+		// saveSBOL.setEnabled(false);
+		saveModel.setEnabled(false);
+		saveAll.setEnabled(false);
+		close.setEnabled(false);
+		closeAll.setEnabled(false);
+		run.setEnabled(false);
+		check.setEnabled(false);
 		exportMenu.setEnabled(true);
-		exportSBML.setEnabled(true);
-		exportFlatSBML.setEnabled(true);
-		exportSBOL1.setEnabled(true);
-		exportSBOL2.setEnabled(true);
-		exportSynBioHub.setEnabled(true);
-		exportGenBank.setEnabled(true);
-		exportFasta.setEnabled(true);
-		exportImageMenu.setEnabled(true);
-		exportJpg.setEnabled(true);
-	} else if (comp instanceof SBOLDesignerPlugin) {
-		saveButton.setEnabled(true);
-		checkButton.setEnabled(true);
-		exportButton.setEnabled(true);
-		save.setEnabled(true);
-		// saveSBOL.setEnabled(true);
-		saveAll.setEnabled(true);
-		close.setEnabled(true);
-		closeAll.setEnabled(true);
-		check.setEnabled(true);
-		exportMenu.setEnabled(true);
-		exportSBOL1.setEnabled(true);
-		exportSBOL2.setEnabled(true);
-		exportSynBioHub.setEnabled(true);
-		exportGenBank.setEnabled(true);
-		exportFasta.setEnabled(true);
-	} else if (comp instanceof SBOLBrowser2) {
-		// save.setEnabled(true);
-	} else if (comp instanceof LHPNEditor) {
-		saveButton.setEnabled(true);
-		saveasButton.setEnabled(true);
-		save.setEnabled(true);
-		saveAs.setEnabled(true);
-		saveAll.setEnabled(true);
-		close.setEnabled(true);
-		closeAll.setEnabled(true);
-		viewCircuit.setEnabled(true);
-		exportMenu.setEnabled(true);
-		exportSBML.setEnabled(true);
-		exportFlatSBML.setEnabled(true);
-	} else if (comp instanceof Graph) {
-		saveButton.setEnabled(true);
-		saveasButton.setEnabled(true);
-		refreshButton.setEnabled(true);
-		exportButton.setEnabled(true);
-		save.setEnabled(true);
-		saveAs.setEnabled(true);
-		saveAll.setEnabled(true);
-		close.setEnabled(true);
-		closeAll.setEnabled(true);
-		refresh.setEnabled(true);
-		exportMenu.setEnabled(true);
-		exportImageMenu.setEnabled(true);
-		if (((Graph) comp).isTSDGraph()) {
-			exportDataMenu.setEnabled(true);
-			exportCsv.setEnabled(true);
-			exportDat.setEnabled(true);
-			exportTsd.setEnabled(true);
+		exportArchive.setEnabled(true);
+		exportSBML.setEnabled(false);
+		exportFlatSBML.setEnabled(false);
+		exportSBOL1.setEnabled(false);
+		exportSBOL2.setEnabled(false);
+		exportSynBioHub.setEnabled(false);
+		exportGenBank.setEnabled(false);
+		exportFasta.setEnabled(false);
+		exportDataMenu.setEnabled(false);
+		exportImageMenu.setEnabled(false);
+		exportMovieMenu.setEnabled(false);
+		exportCsv.setEnabled(false);
+		exportDat.setEnabled(false);
+		exportEps.setEnabled(false);
+		exportJpg.setEnabled(false);
+		exportPdf.setEnabled(false);
+		exportPng.setEnabled(false);
+		exportSvg.setEnabled(false);
+		exportTsd.setEnabled(false);
+		exportAvi.setEnabled(false);
+		exportMp4.setEnabled(false);
+		saveAsVerilog.setEnabled(false);
+		viewCircuit.setEnabled(false);
+		viewSG.setEnabled(false);
+		viewLog.setEnabled(false);
+		viewCoverage.setEnabled(false);
+		viewLearnedModel.setEnabled(false);
+		refresh.setEnabled(false);
+		select.setEnabled(false);
+		cut.setEnabled(false);
+		addCompartment.setEnabled(false);
+		addSpecies.setEnabled(false);
+		addReaction.setEnabled(false);
+		addModule.setEnabled(false);
+		addPromoter.setEnabled(false);
+		addVariable.setEnabled(false);
+		addBoolean.setEnabled(false);
+		addPlace.setEnabled(false);
+		addTransition.setEnabled(false);
+		addRule.setEnabled(false);
+		addConstraint.setEnabled(false);
+		addEvent.setEnabled(false);
+		addSelfInfl.setEnabled(false);
+		moveLeft.setEnabled(false);
+		moveRight.setEnabled(false);
+		moveUp.setEnabled(false);
+		moveDown.setEnabled(false);
+		undo.setEnabled(false);
+		redo.setEnabled(false);
+		if (selectedTab != -1) {
+			tab.setSelectedIndex(selectedTab);
 		}
-		exportEps.setEnabled(true);
-		exportJpg.setEnabled(true);
-		exportPdf.setEnabled(true);
-		exportPng.setEnabled(true);
-		exportSvg.setEnabled(true);
-	} else if (comp instanceof JTabbedPane) {
-		Component component = ((JTabbedPane) comp).getSelectedComponent();
-		Component learnComponent = null;
-		Boolean learn = false;
-		Boolean learnLHPN = false;
-		for (String s : new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())).list()) {
-			if (s.contains("_sg.dot")) {
-				viewSG.setEnabled(true);
-			}
-		}
-		for (Component c : ((JTabbedPane) comp).getComponents()) {
-			if (c instanceof LearnView) {
-				learn = true;
-				learnComponent = c;
-			} else if (c instanceof LearnViewLEMA) {
-				learnLHPN = true;
-				learnComponent = c;
-			}
-		}
-		if (component instanceof Graph) {
+		Component comp = tab.getSelectedComponent();
+		if (comp instanceof ModelEditor) {
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
-			runButton.setEnabled(true);
-			refreshButton.setEnabled(true);
+			checkButton.setEnabled(true);
 			exportButton.setEnabled(true);
 			save.setEnabled(true);
+			saveAs.setEnabled(true);
+			// saveSBOL.setEnabled(true);
 			saveAll.setEnabled(true);
 			close.setEnabled(true);
 			closeAll.setEnabled(true);
-			run.setEnabled(true);
-			if (learn && learnComponent != null) {
-				if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())
-				+ GlobalConstants.separator + "method.gcm").exists()) {
-					viewLearnedModel.setEnabled(true);
-				}
-				run.setEnabled(true);
-				saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-				saveAsVerilog.setEnabled(false);
-				viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-				viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
-			} else if (learnLHPN && learnComponent != null) {
-				run.setEnabled(true);
-				saveModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-				saveAsVerilog.setEnabled(false);
-				viewLearnedModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-				viewCircuit.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-				viewLog.setEnabled(((LearnViewLEMA) learnComponent).getViewLogEnabled());
-				viewCoverage.setEnabled(((LearnViewLEMA) learnComponent).getViewCoverageEnabled());
+			check.setEnabled(true);
+			select.setEnabled(true);
+			cut.setEnabled(true);
+			if (!((ModelEditor) comp).isGridEditor()) {
+				addCompartment.setEnabled(true);
+				addSpecies.setEnabled(true);
+				addReaction.setEnabled(true);
+				addPromoter.setEnabled(true);
+				addVariable.setEnabled(true);
+				addBoolean.setEnabled(true);
+				addPlace.setEnabled(true);
+				addTransition.setEnabled(true);
+				addRule.setEnabled(true);
+				addConstraint.setEnabled(true);
+				addEvent.setEnabled(true);
+				addSelfInfl.setEnabled(true);
+				moveLeft.setEnabled(true);
+				moveRight.setEnabled(true);
+				moveUp.setEnabled(true);
+				moveDown.setEnabled(true);
 			}
+			addModule.setEnabled(true);
+			undo.setEnabled(true);
+			redo.setEnabled(true);
+			exportMenu.setEnabled(true);
+			exportSBML.setEnabled(true);
+			exportFlatSBML.setEnabled(true);
+			exportSBOL1.setEnabled(true);
+			exportSBOL2.setEnabled(true);
+			exportSynBioHub.setEnabled(true);
+			exportGenBank.setEnabled(true);
+			exportFasta.setEnabled(true);
+			exportImageMenu.setEnabled(true);
+			exportJpg.setEnabled(true);
+		} else if (comp instanceof SBOLDesignerPlugin) {
+			saveButton.setEnabled(true);
+			checkButton.setEnabled(true);
+			exportButton.setEnabled(true);
+			save.setEnabled(true);
+			// saveSBOL.setEnabled(true);
+			saveAll.setEnabled(true);
+			close.setEnabled(true);
+			closeAll.setEnabled(true);
+			check.setEnabled(true);
+			exportMenu.setEnabled(true);
+			exportSBOL1.setEnabled(true);
+			exportSBOL2.setEnabled(true);
+			exportSynBioHub.setEnabled(true);
+			exportGenBank.setEnabled(true);
+			exportFasta.setEnabled(true);
+		} else if (comp instanceof SBOLBrowser2) {
+			// save.setEnabled(true);
+		} else if (comp instanceof LHPNEditor) {
+			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
+			save.setEnabled(true);
 			saveAs.setEnabled(true);
+			saveAll.setEnabled(true);
+			close.setEnabled(true);
+			closeAll.setEnabled(true);
+			viewCircuit.setEnabled(true);
+			exportMenu.setEnabled(true);
+			exportSBML.setEnabled(true);
+			exportFlatSBML.setEnabled(true);
+		} else if (comp instanceof Graph) {
+			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
+			refreshButton.setEnabled(true);
+			exportButton.setEnabled(true);
+			save.setEnabled(true);
+			saveAs.setEnabled(true);
+			saveAll.setEnabled(true);
+			close.setEnabled(true);
+			closeAll.setEnabled(true);
 			refresh.setEnabled(true);
 			exportMenu.setEnabled(true);
 			exportImageMenu.setEnabled(true);
-			if (((Graph) component).isTSDGraph()) {
+			if (((Graph) comp).isTSDGraph()) {
 				exportDataMenu.setEnabled(true);
 				exportCsv.setEnabled(true);
 				exportDat.setEnabled(true);
@@ -9633,682 +9836,746 @@ public void enableTabMenu(int selectedTab) {
 			exportPdf.setEnabled(true);
 			exportPng.setEnabled(true);
 			exportSvg.setEnabled(true);
-		} else if (component instanceof AnalysisView) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			run.setEnabled(true);
-		} else if (component instanceof MovieContainer) {
-			exportMenu.setEnabled(true);
-			exportMovieMenu.setEnabled(true);
-			exportAvi.setEnabled(true);
-			exportMp4.setEnabled(true);
-			exportImageMenu.setEnabled(true);
-			exportJpg.setEnabled(true);
-			saveButton.setEnabled(true);
-			runButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			run.setEnabled(true);
-		} else if (component instanceof ModelEditor) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			run.setEnabled(true);
-		} else if (component instanceof LearnView) {
-			if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())
-			+ GlobalConstants.separator + "method.gcm").exists()) {
-				viewLearnedModel.setEnabled(true);
-			}
-			saveButton.setEnabled(true);
-			runButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			run.setEnabled(true);
-			viewCircuit.setEnabled(((LearnView) component).getViewModelEnabled());
-			viewLog.setEnabled(((LearnView) component).getViewLogEnabled());
-			saveModel.setEnabled(((LearnView) component).getViewModelEnabled());
-		} else if (component instanceof LearnViewLEMA) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			run.setEnabled(true);
-			viewLearnedModel.setEnabled(((LearnViewLEMA) component).getViewLhpnEnabled());
-			viewCircuit.setEnabled(((LearnViewLEMA) component).getViewLhpnEnabled());
-			viewLog.setEnabled(((LearnViewLEMA) component).getViewLogEnabled());
-			viewCoverage.setEnabled(((LearnViewLEMA) component).getViewCoverageEnabled());
-			saveModel.setEnabled(((LearnViewLEMA) component).getViewLhpnEnabled());
-		} else if (component instanceof DataManager) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAs.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			if (learn && learnComponent != null) {
-				if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())
-				+ GlobalConstants.separator + "method.gcm").exists()) {
-					viewLearnedModel.setEnabled(true);
+		} else if (comp instanceof JTabbedPane) {
+			Component component = ((JTabbedPane) comp).getSelectedComponent();
+			Component learnComponent = null;
+			Boolean learn = false;
+			Boolean learnLHPN = false;
+			for (String s : new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())).list()) {
+				if (s.contains("_sg.dot")) {
+					viewSG.setEnabled(true);
 				}
-				run.setEnabled(true);
-				saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-				viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-				viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
-			} else if (learnLHPN && learnComponent != null) {
-				run.setEnabled(true);
-				saveModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-				viewLearnedModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-				viewCircuit.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-				viewLog.setEnabled(((LearnViewLEMA) learnComponent).getViewLogEnabled());
-				viewCoverage.setEnabled(((LearnViewLEMA) learnComponent).getViewCoverageEnabled());
 			}
-		} else if (component instanceof JPanel) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			run.setEnabled(true);
-			if (learn && learnComponent != null) {
-				if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())
-				+ GlobalConstants.separator + "method.gcm").exists()) {
-					viewLearnedModel.setEnabled(true);
-				}
-				run.setEnabled(true);
-				saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-				viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-				viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
-			} else if (learnLHPN && learnComponent != null) {
-				run.setEnabled(true);
-				saveModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-				viewLearnedModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-				viewCircuit.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-				viewLog.setEnabled(((LearnViewLEMA) learnComponent).getViewLogEnabled());
-				viewCoverage.setEnabled(((LearnViewLEMA) learnComponent).getViewCoverageEnabled());
-			}
-		} else if (component instanceof JScrollPane) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			run.setEnabled(true);
-		}
-	} else if (comp instanceof JPanel) {
-		if (comp.getName().equals("Verification")) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			run.setEnabled(true);
-			viewTrace.setEnabled(((VerificationView) comp).getViewTraceEnabled());
-			viewLog.setEnabled(((VerificationView) comp).getViewLogEnabled());
-		} else if (comp.getName().equals("Synthesis")) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			run.setEnabled(true);
-			viewRules.setEnabled(
-					true/*
-					 * ((Synthesis) comp).getViewRulesEnabled()
-					 */);
-			viewTrace.setEnabled(
-					true/*
-					 * ((Synthesis) comp).getViewTraceEnabled()
-					 */);
-			viewCircuit.setEnabled(
-					true/*
-					 * ((Synthesis) comp).getViewCircuitEnabled()
-					 */);
-			viewLog.setEnabled(
-					true/*
-					 * ((Synthesis) comp).getViewLogEnabled()
-					 */);
-		}
-	} else if (comp instanceof JScrollPane) {
-		saveButton.setEnabled(true);
-		saveasButton.setEnabled(true);
-		save.setEnabled(true);
-		saveAll.setEnabled(true);
-		close.setEnabled(true);
-		closeAll.setEnabled(true);
-		saveAs.setEnabled(true);
-	}
-}
-
-private void enableTreeMenu() {
-	viewModGraph.setEnabled(false);
-	viewModBrowser.setEnabled(false);
-	createAnal.setEnabled(false);
-	createSynth.setEnabled(false);
-	createLearn.setEnabled(false);
-	createVer.setEnabled(false);
-	createSbml.setEnabled(false);
-	check.setEnabled(false);
-	copy.setEnabled(false);
-	rename.setEnabled(false);
-	delete.setEnabled(false);
-	viewModel.setEnabled(false);
-	viewRules.setEnabled(false);
-	viewTrace.setEnabled(false);
-	viewCircuit.setEnabled(false);
-	viewLHPN.setEnabled(false);
-	saveAsVerilog.setEnabled(false);
-	if (tree.getFile() != null) {
-		if (tree.getFile().equals(root)) {
-		} else if (tree.getFile().endsWith(".sbol")) {
-		} else if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml")) {
-			viewModGraph.setEnabled(true);
-			viewModGraph.setActionCommand("graph");
-			viewModBrowser.setEnabled(true);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createAnalysis");
-			createSynth.setEnabled(true);
-			createSynth.setActionCommand("createSynthesis");
-			createLearn.setEnabled(true);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewModel.setEnabled(true);
-		} else if (tree.getFile().endsWith(".grf")) {
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-		} else if (tree.getFile().endsWith(".vams")) {
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-		} else if (tree.getFile().endsWith(".sv")) {
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-		} else if (tree.getFile().endsWith(".g")) {
-			viewModel.setEnabled(true);
-			viewModGraph.setEnabled(true);
-			createSynth.setEnabled(true);
-			createSynth.setActionCommand("createSynthesis");
-			createVer.setEnabled(true);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewLHPN.setEnabled(true);
-		} else if (tree.getFile().endsWith(".lpn")) {
-			viewModel.setEnabled(true);
-			viewModGraph.setEnabled(true);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createAnalysis");
-			if (lema) {
-				createLearn.setEnabled(true);
-			}
-			createSynth.setEnabled(true);
-			createSynth.setActionCommand("createSynthesis");
-			createVer.setEnabled(true);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewLHPN.setEnabled(true);
-			saveAsVerilog.setEnabled(true);
-		} else if (tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc")
-				|| tree.getFile().endsWith(".csp") || tree.getFile().endsWith(".vhd")
-				|| tree.getFile().endsWith(".rsg")) {
-			viewModel.setEnabled(true);
-			viewModGraph.setEnabled(true);
-			createSynth.setEnabled(true);
-			createSynth.setActionCommand("createSynthesis");
-			createVer.setEnabled(true);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewLHPN.setEnabled(true);
-		} else if (tree.getFile().endsWith(".s") || tree.getFile().endsWith(".inst")) {
-			createAnal.setEnabled(true);
-			createVer.setEnabled(true);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewLHPN.setEnabled(true);
-		} else if (new File(tree.getFile()).isDirectory()) {
-			boolean sim = false;
-			boolean synth = false;
-			boolean ver = false;
-			boolean learn = false;
-			for (String s : new File(tree.getFile()).list()) {
-				if (s.endsWith(".sim")) {
-					sim = true;
-				} else if ((s.endsWith(".syn")) || (s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION))) {
-					synth = true;
-				} else if (s.endsWith(".ver")) {
-					ver = true;
-				} else if (s.endsWith(".lrn")) {
+			for (Component c : ((JTabbedPane) comp).getComponents()) {
+				if (c instanceof LearnView) {
 					learn = true;
+					learnComponent = c;
+				} else if (c instanceof LearnViewLEMA) {
+					learnLHPN = true;
+					learnComponent = c;
 				}
 			}
-			if (sim || synth || ver || learn) {
+			if (component instanceof Graph) {
+				saveButton.setEnabled(true);
+				saveasButton.setEnabled(true);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(true);
+				exportButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				run.setEnabled(true);
+				if (learn && learnComponent != null) {
+					if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())
+					+ GlobalConstants.separator + "method.gcm").exists()) {
+						viewLearnedModel.setEnabled(true);
+					}
+					run.setEnabled(true);
+					saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
+					saveAsVerilog.setEnabled(false);
+					viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
+					viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
+				} else if (learnLHPN && learnComponent != null) {
+					run.setEnabled(true);
+					saveModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
+					saveAsVerilog.setEnabled(false);
+					viewLearnedModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
+					viewCircuit.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
+					viewLog.setEnabled(((LearnViewLEMA) learnComponent).getViewLogEnabled());
+					viewCoverage.setEnabled(((LearnViewLEMA) learnComponent).getViewCoverageEnabled());
+				}
+				saveAs.setEnabled(true);
+				refresh.setEnabled(true);
+				exportMenu.setEnabled(true);
+				exportImageMenu.setEnabled(true);
+				if (((Graph) component).isTSDGraph()) {
+					exportDataMenu.setEnabled(true);
+					exportCsv.setEnabled(true);
+					exportDat.setEnabled(true);
+					exportTsd.setEnabled(true);
+				}
+				exportEps.setEnabled(true);
+				exportJpg.setEnabled(true);
+				exportPdf.setEnabled(true);
+				exportPng.setEnabled(true);
+				exportSvg.setEnabled(true);
+			} else if (component instanceof AnalysisView) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				run.setEnabled(true);
+			} else if (component instanceof MovieContainer) {
+				exportMenu.setEnabled(true);
+				exportMovieMenu.setEnabled(true);
+				exportAvi.setEnabled(true);
+				exportMp4.setEnabled(true);
+				exportImageMenu.setEnabled(true);
+				exportJpg.setEnabled(true);
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				run.setEnabled(true);
+			} else if (component instanceof ModelEditor) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				run.setEnabled(true);
+			} else if (component instanceof LearnView) {
+				if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())
+				+ GlobalConstants.separator + "method.gcm").exists()) {
+					viewLearnedModel.setEnabled(true);
+				}
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				run.setEnabled(true);
+				viewCircuit.setEnabled(((LearnView) component).getViewModelEnabled());
+				viewLog.setEnabled(((LearnView) component).getViewLogEnabled());
+				saveModel.setEnabled(((LearnView) component).getViewModelEnabled());
+			} else if (component instanceof LearnViewLEMA) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				run.setEnabled(true);
+				viewLearnedModel.setEnabled(((LearnViewLEMA) component).getViewLhpnEnabled());
+				viewCircuit.setEnabled(((LearnViewLEMA) component).getViewLhpnEnabled());
+				viewLog.setEnabled(((LearnViewLEMA) component).getViewLogEnabled());
+				viewCoverage.setEnabled(((LearnViewLEMA) component).getViewCoverageEnabled());
+				saveModel.setEnabled(((LearnViewLEMA) component).getViewLhpnEnabled());
+			} else if (component instanceof DataManager) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAs.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				if (learn && learnComponent != null) {
+					if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())
+					+ GlobalConstants.separator + "method.gcm").exists()) {
+						viewLearnedModel.setEnabled(true);
+					}
+					run.setEnabled(true);
+					saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
+					viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
+					viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
+				} else if (learnLHPN && learnComponent != null) {
+					run.setEnabled(true);
+					saveModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
+					viewLearnedModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
+					viewCircuit.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
+					viewLog.setEnabled(((LearnViewLEMA) learnComponent).getViewLogEnabled());
+					viewCoverage.setEnabled(((LearnViewLEMA) learnComponent).getViewCoverageEnabled());
+				}
+			} else if (component instanceof JPanel) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				run.setEnabled(true);
+				if (learn && learnComponent != null) {
+					if (new File(root + GlobalConstants.separator + getTitleAt(tab.getSelectedIndex())
+					+ GlobalConstants.separator + "method.gcm").exists()) {
+						viewLearnedModel.setEnabled(true);
+					}
+					run.setEnabled(true);
+					saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
+					viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
+					viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
+				} else if (learnLHPN && learnComponent != null) {
+					run.setEnabled(true);
+					saveModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
+					viewLearnedModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
+					viewCircuit.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
+					viewLog.setEnabled(((LearnViewLEMA) learnComponent).getViewLogEnabled());
+					viewCoverage.setEnabled(((LearnViewLEMA) learnComponent).getViewCoverageEnabled());
+				}
+			} else if (component instanceof JScrollPane) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				run.setEnabled(true);
+			}
+		} else if (comp instanceof JPanel) {
+			if (comp.getName().equals("Verification")) {
+				saveButton.setEnabled(true);
+				saveasButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				run.setEnabled(true);
+				viewTrace.setEnabled(((VerificationView) comp).getViewTraceEnabled());
+				viewLog.setEnabled(((VerificationView) comp).getViewLogEnabled());
+			} else if (comp.getName().equals("Synthesis")) {
+				saveButton.setEnabled(true);
+				saveasButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
+				run.setEnabled(true);
+				viewRules.setEnabled(
+						true/*
+						 * ((Synthesis) comp).getViewRulesEnabled()
+						 */);
+				viewTrace.setEnabled(
+						true/*
+						 * ((Synthesis) comp).getViewTraceEnabled()
+						 */);
+				viewCircuit.setEnabled(
+						true/*
+						 * ((Synthesis) comp).getViewCircuitEnabled()
+						 */);
+				viewLog.setEnabled(
+						true/*
+						 * ((Synthesis) comp).getViewLogEnabled()
+						 */);
+			}
+		} else if (comp instanceof JScrollPane) {
+			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
+			save.setEnabled(true);
+			saveAll.setEnabled(true);
+			close.setEnabled(true);
+			closeAll.setEnabled(true);
+			saveAs.setEnabled(true);
+		}
+	}
+
+	private void enableTreeMenu() {
+		viewModGraph.setEnabled(false);
+		viewModBrowser.setEnabled(false);
+		createAnal.setEnabled(false);
+		createSynth.setEnabled(false);
+		createLearn.setEnabled(false);
+		createVer.setEnabled(false);
+		createSbml.setEnabled(false);
+		check.setEnabled(false);
+		copy.setEnabled(false);
+		rename.setEnabled(false);
+		delete.setEnabled(false);
+		viewModel.setEnabled(false);
+		viewRules.setEnabled(false);
+		viewTrace.setEnabled(false);
+		viewCircuit.setEnabled(false);
+		viewLHPN.setEnabled(false);
+		saveAsVerilog.setEnabled(false);
+		if (tree.getFile() != null) {
+			if (tree.getFile().equals(root)) {
+			} else if (tree.getFile().endsWith(".sbol")) {
+			} else if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml")) {
+				viewModGraph.setEnabled(true);
+				viewModGraph.setActionCommand("graph");
+				viewModBrowser.setEnabled(true);
+				createAnal.setEnabled(true);
+				createAnal.setActionCommand("createAnalysis");
+				createSynth.setEnabled(true);
+				createSynth.setActionCommand("createSynthesis");
+				createLearn.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);
+				viewModel.setEnabled(true);
+			} else if (tree.getFile().endsWith(".grf")) {
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+			} else if (tree.getFile().endsWith(".vams")) {
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+			} else if (tree.getFile().endsWith(".sv")) {
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+			} else if (tree.getFile().endsWith(".g")) {
+				viewModel.setEnabled(true);
+				viewModGraph.setEnabled(true);
+				createSynth.setEnabled(true);
+				createSynth.setActionCommand("createSynthesis");
+				createVer.setEnabled(true);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewLHPN.setEnabled(true);
+			} else if (tree.getFile().endsWith(".lpn")) {
+				viewModel.setEnabled(true);
+				viewModGraph.setEnabled(true);
+				createAnal.setEnabled(true);
+				createAnal.setActionCommand("createAnalysis");
+				if (lema) {
+					createLearn.setEnabled(true);
+				}
+				createSynth.setEnabled(true);
+				createSynth.setActionCommand("createSynthesis");
+				createVer.setEnabled(true);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewLHPN.setEnabled(true);
+				saveAsVerilog.setEnabled(true);
+			} else if (tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc")
+					|| tree.getFile().endsWith(".csp") || tree.getFile().endsWith(".vhd")
+					|| tree.getFile().endsWith(".rsg")) {
+				viewModel.setEnabled(true);
+				viewModGraph.setEnabled(true);
+				createSynth.setEnabled(true);
+				createSynth.setActionCommand("createSynthesis");
+				createVer.setEnabled(true);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewLHPN.setEnabled(true);
+			} else if (tree.getFile().endsWith(".s") || tree.getFile().endsWith(".inst")) {
+				createAnal.setEnabled(true);
+				createVer.setEnabled(true);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewLHPN.setEnabled(true);
+			} else if (new File(tree.getFile()).isDirectory()) {
+				boolean sim = false;
+				boolean synth = false;
+				boolean ver = false;
+				boolean learn = false;
+				for (String s : new File(tree.getFile()).list()) {
+					if (s.endsWith(".sim")) {
+						sim = true;
+					} else if ((s.endsWith(".syn")) || (s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION))) {
+						synth = true;
+					} else if (s.endsWith(".ver")) {
+						ver = true;
+					} else if (s.endsWith(".lrn")) {
+						learn = true;
+					}
+				}
+				if (sim || synth || ver || learn) {
+					copy.setEnabled(true);
+					rename.setEnabled(true);
+					delete.setEnabled(true);
+				}
 			}
 		}
 	}
-}
 
-public String getRoot() {
-	return root;
-}
-
-public static boolean checkFiles(String input, String output) {
-	input = input.replaceAll("//", "/");
-	output = output.replaceAll("//", "/");
-	if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-		if (input.toLowerCase().equals(output.toLowerCase())) {
-			Object[] options = { "Ok" };
-			JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			return false;
-		}
-	} else {
-		if (input.equals(output)) {
-			Object[] options = { "Ok" };
-			JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			return false;
-		}
+	public String getRoot() {
+		return root;
 	}
-	return true;
-}
 
-public boolean overwrite(String fullPath, String name) {
-	if (new File(fullPath).exists()) {
-		String[] views = canDelete(name);
-		Object[] options = { "Overwrite", "Cancel" };
-		int value;
-		if (views.length == 0) {
-			value = JOptionPane.showOptionDialog(frame, name + " already exists." + "\nDo you want to overwrite?",
-					"Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+	public static boolean checkFiles(String input, String output) {
+		input = input.replaceAll("//", "/");
+		output = output.replaceAll("//", "/");
+		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+			if (input.toLowerCase().equals(output.toLowerCase())) {
+				Object[] options = { "Ok" };
+				JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				return false;
+			}
 		} else {
-			String view = "";
-			String gcms = "";
-			for (int i = 0; i < views.length; i++) {
-				if (views[i].endsWith(".gcm")) {
-					gcms += views[i] + "\n";
-				} else {
-					view += views[i] + "\n";
-				}
+			if (input.equals(output)) {
+				Object[] options = { "Ok" };
+				JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				return false;
 			}
-			String message;
-			if (gcms.equals("")) {
-				message = "The file, " + name + ", already exists, and\nit is linked to the following views:\n\n"
-						+ view + "\n\nAre you sure you want to overwrite?";
-			} else if (view.equals("")) {
-				message = "The file, " + name + ", already exists, and\nit is linked to the following gcms:\n\n"
-						+ gcms + "\n\nAre you sure you want to overwrite?";
-			} else {
-				message = "The file, " + name + ", already exists, and\nit is linked to the following views:\n\n"
-						+ views + "\n\nand\nit is linked to the following gcms:\n\n" + gcms
-						+ "\n\nAre you sure you want to overwrite?";
-			}
-
-			JTextArea messageArea = new JTextArea(message);
-			messageArea.setEditable(false);
-			JScrollPane scroll = new JScrollPane();
-			scroll.setMinimumSize(new Dimension(300, 300));
-			scroll.setPreferredSize(new Dimension(300, 300));
-			scroll.setViewportView(messageArea);
-			value = JOptionPane.showOptionDialog(frame, scroll, "Overwrite", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			// value = JOptionPane.NO_OPTION;
 		}
-		if (value == JOptionPane.YES_OPTION) {
-			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (getTitleAt(i).equals(name)) {
-					tab.remove(i);
+		return true;
+	}
+
+	public boolean overwrite(String fullPath, String name) {
+		if (new File(fullPath).exists()) {
+			String[] views = canDelete(name);
+			Object[] options = { "Overwrite", "Cancel" };
+			int value;
+			if (views.length == 0) {
+				value = JOptionPane.showOptionDialog(frame, name + " already exists." + "\nDo you want to overwrite?",
+						"Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			} else {
+				String view = "";
+				String gcms = "";
+				for (int i = 0; i < views.length; i++) {
+					if (views[i].endsWith(".gcm")) {
+						gcms += views[i] + "\n";
+					} else {
+						view += views[i] + "\n";
+					}
+				}
+				String message;
+				if (gcms.equals("")) {
+					message = "The file, " + name + ", already exists, and\nit is linked to the following views:\n\n"
+							+ view + "\n\nAre you sure you want to overwrite?";
+				} else if (view.equals("")) {
+					message = "The file, " + name + ", already exists, and\nit is linked to the following gcms:\n\n"
+							+ gcms + "\n\nAre you sure you want to overwrite?";
+				} else {
+					message = "The file, " + name + ", already exists, and\nit is linked to the following views:\n\n"
+							+ views + "\n\nand\nit is linked to the following gcms:\n\n" + gcms
+							+ "\n\nAre you sure you want to overwrite?";
+				}
+
+				JTextArea messageArea = new JTextArea(message);
+				messageArea.setEditable(false);
+				JScrollPane scroll = new JScrollPane();
+				scroll.setMinimumSize(new Dimension(300, 300));
+				scroll.setPreferredSize(new Dimension(300, 300));
+				scroll.setViewportView(messageArea);
+				value = JOptionPane.showOptionDialog(frame, scroll, "Overwrite", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				// value = JOptionPane.NO_OPTION;
+			}
+			if (value == JOptionPane.YES_OPTION) {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (getTitleAt(i).equals(name)) {
+						tab.remove(i);
+					}
+				}
+				File dir = new File(fullPath);
+				if (dir.isDirectory()) {
+					deleteDir(dir);
+				} else {
+					System.gc();
+					dir.delete();
+				}
+				return true;
+			}
+			return false;
+		}
+		return true;
+	}
+
+	public void updateTabName(String oldName, String newName) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.getTitleAt(i);
+			if (oldName.equals(tab)) {
+				this.tab.setTitleAt(i, newName);
+			}
+		}
+	}
+
+	public boolean updateOpenLHPN(String lhpnName) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.getTitleAt(i);
+			if (lhpnName.equals(tab)) {
+				if (this.tab.getComponentAt(i) instanceof LHPNEditor) {
+					LHPNEditor newLHPN = new LHPNEditor(root, lhpnName, null, this);
+					this.tab.setComponentAt(i, newLHPN);
+					this.tab.getComponentAt(i).setName("LHPN Editor");
+					return true;
 				}
 			}
-			File dir = new File(fullPath);
-			if (dir.isDirectory()) {
-				deleteDir(dir);
-			} else {
-				System.gc();
-				dir.delete();
-			}
-			return true;
 		}
 		return false;
 	}
-	return true;
-}
 
-public void updateTabName(String oldName, String newName) {
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		String tab = this.getTitleAt(i);
-		if (oldName.equals(tab)) {
-			this.tab.setTitleAt(i, newName);
-		}
-	}
-}
-
-public boolean updateOpenLHPN(String lhpnName) {
-	for (int i = 0; i < tab.getTabCount(); i++) {
-		String tab = this.getTitleAt(i);
-		if (lhpnName.equals(tab)) {
-			if (this.tab.getComponentAt(i) instanceof LHPNEditor) {
-				LHPNEditor newLHPN = new LHPNEditor(root, lhpnName, null, this);
-				this.tab.setComponentAt(i, newLHPN);
-				this.tab.getComponentAt(i).setName("LHPN Editor");
-				return true;
+	private String[] canDelete(String filename) {
+		ArrayList<String> views = new ArrayList<String>();
+		String[] files = new File(root).list();
+		for (String s : files) {
+			if (new File(root + GlobalConstants.separator + s).isDirectory()) {
+				String check = "";
+				if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim").exists()) {
+					try {
+						Scanner scan = new Scanner(new File(
+								root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim"));
+						if (scan.hasNextLine()) {
+							check = scan.nextLine();
+							check = check.split(GlobalConstants.separator)[check.split(GlobalConstants.separator).length
+							                                               - 1];
+						}
+						scan.close();
+					} catch (Exception e) {
+					}
+				} else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn")
+						.exists()) {
+					try {
+						Properties p = new Properties();
+						FileInputStream load = new FileInputStream(new File(
+								root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
+						p.load(load);
+						load.close();
+						if (p.containsKey("genenet.file")) {
+							String[] getProp = p.getProperty("genenet.file").split(GlobalConstants.separator);
+							check = getProp[getProp.length - 1];
+						} else if (p.containsKey("learn.file")) {
+							String[] getProp = p.getProperty("learn.file").split(GlobalConstants.separator);
+							check = getProp[getProp.length - 1];
+						} else {
+							check = "";
+						}
+					} catch (Exception e) {
+						check = "";
+					}
+				} else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".ver")
+						.exists()) {
+					try {
+						Properties p = new Properties();
+						FileInputStream load = new FileInputStream(new File(
+								root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
+						p.load(load);
+						load.close();
+						if (p.containsKey("verification.file")) {
+							String[] getProp = p.getProperty("verification.file").split(GlobalConstants.separator);
+							check = getProp[getProp.length - 1];
+						} else {
+							check = "";
+						}
+					} catch (Exception e) {
+						check = "";
+					}
+				} else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".synth")
+						.exists()) {
+					try {
+						Properties p = new Properties();
+						FileInputStream load = new FileInputStream(new File(
+								root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
+						p.load(load);
+						load.close();
+						if (p.containsKey("synthesis.file")) {
+							String[] getProp = p.getProperty("synthesis.file").split(GlobalConstants.separator);
+							check = getProp[getProp.length - 1];
+						} else {
+							check = "";
+						}
+					} catch (Exception e) {
+						check = "";
+					}
+				} else if (new File(
+						root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sbolsynth.properties")
+						.exists()) {
+					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(
+							root + GlobalConstants.separator + s, GlobalConstants.separator, Gui.frame);
+					if (synthProps != null) {
+						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
+							check = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
+						} else {
+							JOptionPane.showMessageDialog(frame, "Synthesis specification property is missing.",
+									"Missing Property", JOptionPane.ERROR_MESSAGE);
+						}
+					} else {
+						check = "";
+					}
+				}
+				check = check.replace(".gcm", ".xml");
+				if (check.equals(filename)) {
+					views.add(s);
+				}
+			} else if (s.endsWith(".xml") && filename.endsWith(".xml")) {
+				BioModel gcm = new BioModel(root);
+				try {
+					gcm.load(root + GlobalConstants.separator + s);
+					if (gcm.getSBMLComp() != null) {
+						for (int i = 0; i < gcm.getSBMLComp().getListOfExternalModelDefinitions().size(); i++) {
+							ExternalModelDefinition extModel = gcm.getSBMLComp().getListOfExternalModelDefinitions()
+									.get(i);
+							if (extModel.getSource().equals("file:" + filename)) {
+								views.add(s);
+								break;
+							}
+						}
+					}
+				} catch (Exception e) {
+				}
 			}
 		}
+		String[] usingViews = views.toArray(new String[0]);
+		edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility.sort(usingViews);
+		return usingViews;
 	}
-	return false;
-}
 
-private String[] canDelete(String filename) {
-	ArrayList<String> views = new ArrayList<String>();
-	String[] files = new File(root).list();
-	for (String s : files) {
-		if (new File(root + GlobalConstants.separator + s).isDirectory()) {
-			String check = "";
-			if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim").exists()) {
-				try {
-					Scanner scan = new Scanner(new File(
-							root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim"));
-					if (scan.hasNextLine()) {
-						check = scan.nextLine();
-						check = check.split(GlobalConstants.separator)[check.split(GlobalConstants.separator).length
-						                                               - 1];
+	private void reassignViews(String oldName, String newName) {
+		String[] files = new File(root).list();
+		for (String s : files) {
+			if (new File(root + GlobalConstants.separator + s).isDirectory()) {
+				String check = "";
+				if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim").exists()) {
+					try {
+						ArrayList<String> copy = new ArrayList<String>();
+						Scanner scan = new Scanner(new File(
+								root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim"));
+						if (scan.hasNextLine()) {
+							check = scan.nextLine();
+							check = check.split(GlobalConstants.separator)[check.split(GlobalConstants.separator).length
+							                                               - 1];
+							if (check.equals(oldName)) {
+								while (scan.hasNextLine()) {
+									copy.add(scan.nextLine());
+								}
+								scan.close();
+								FileOutputStream out = new FileOutputStream(new File(
+										root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim"));
+								out.write((newName + "\n").getBytes());
+								for (String cop : copy) {
+									out.write((cop + "\n").getBytes());
+								}
+								out.close();
+							} else {
+								scan.close();
+							}
+						}
+					} catch (Exception e) {
 					}
-					scan.close();
-				} catch (Exception e) {
-				}
-			} else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn")
-					.exists()) {
-				try {
-					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(
-							root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
-					p.load(load);
-					load.close();
-					if (p.containsKey("genenet.file")) {
-						String[] getProp = p.getProperty("genenet.file").split(GlobalConstants.separator);
-						check = getProp[getProp.length - 1];
-					} else if (p.containsKey("learn.file")) {
-						String[] getProp = p.getProperty("learn.file").split(GlobalConstants.separator);
-						check = getProp[getProp.length - 1];
-					} else {
-						check = "";
+				} else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn")
+						.exists()) {
+					try {
+						Properties p = new Properties();
+						FileInputStream load = new FileInputStream(new File(
+								root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
+						p.load(load);
+						load.close();
+						if (p.containsKey("genenet.file")) {
+							String[] getProp = p.getProperty("genenet.file").split(GlobalConstants.separator);
+							check = getProp[getProp.length - 1];
+							if (check.equals(oldName)) {
+								p.setProperty("genenet.file", newName);
+								FileOutputStream store = new FileOutputStream(new File(
+										root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
+								p.store(store, "Learn File Data");
+								store.close();
+							}
+						}
+					} catch (Exception e) {
 					}
-				} catch (Exception e) {
-					check = "";
-				}
-			} else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".ver")
-					.exists()) {
-				try {
-					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(
-							root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
-					p.load(load);
-					load.close();
-					if (p.containsKey("verification.file")) {
-						String[] getProp = p.getProperty("verification.file").split(GlobalConstants.separator);
-						check = getProp[getProp.length - 1];
-					} else {
-						check = "";
-					}
-				} catch (Exception e) {
-					check = "";
-				}
-			} else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".synth")
-					.exists()) {
-				try {
-					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(
-							root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
-					p.load(load);
-					load.close();
-					if (p.containsKey("synthesis.file")) {
-						String[] getProp = p.getProperty("synthesis.file").split(GlobalConstants.separator);
-						check = getProp[getProp.length - 1];
-					} else {
-						check = "";
-					}
-				} catch (Exception e) {
-					check = "";
-				}
-			} else if (new File(
-					root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sbolsynth.properties")
-					.exists()) {
-				Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(
-						root + GlobalConstants.separator + s, GlobalConstants.separator, Gui.frame);
-				if (synthProps != null) {
-					if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
-						check = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
-					} else {
-						JOptionPane.showMessageDialog(frame, "Synthesis specification property is missing.",
-								"Missing Property", JOptionPane.ERROR_MESSAGE);
-					}
-				} else {
-					check = "";
 				}
 			}
-			check = check.replace(".gcm", ".xml");
-			if (check.equals(filename)) {
-				views.add(s);
-			}
-		} else if (s.endsWith(".xml") && filename.endsWith(".xml")) {
-			BioModel gcm = new BioModel(root);
-			try {
-				gcm.load(root + GlobalConstants.separator + s);
-				if (gcm.getSBMLComp() != null) {
-					for (int i = 0; i < gcm.getSBMLComp().getListOfExternalModelDefinitions().size(); i++) {
-						ExternalModelDefinition extModel = gcm.getSBMLComp().getListOfExternalModelDefinitions()
-								.get(i);
-						if (extModel.getSource().equals("file:" + filename)) {
-							views.add(s);
+		}
+	}
+
+	protected JButton makeToolButton(String imageName, String actionCommand, String toolTipText) {
+		JButton button = new JButton();
+		button.setActionCommand(actionCommand);
+		button.setToolTipText(toolTipText);
+		button.addActionListener(this);
+		button.setIcon(ResourceManager.getImageIcon(imageName));
+		return button;
+	}
+
+	private boolean extractModelDefinitions(CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel) {
+		for (int i = 0; i < sbmlComp.getListOfModelDefinitions().size(); i++) {
+			ModelDefinition md = sbmlComp.getListOfModelDefinitions().get(i);
+			String extId = md.getId();
+			if (overwrite(root + GlobalConstants.separator + extId + ".xml", extId + ".xml")) {
+				Model model = new Model(md);
+				model.unsetNamespace();
+				SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
+				document.setModel(model);
+
+				document.enablePackage(LayoutConstants.namespaceURI);
+				document.enablePackage(CompConstants.namespaceURI);
+				document.enablePackage(FBCConstants.namespaceURI);
+				SBMLutilities.getFBCModelPlugin(document.getModel(), true);
+				document.enablePackage(ArraysConstants.namespaceURI);
+				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
+				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
+
+				ArrayList<String> comps = new ArrayList<String>();
+				for (int j = 0; j < documentCompModel.getListOfSubmodels().size(); j++) {
+					String subModelType = documentCompModel.getListOfSubmodels().get(j).getModelRef();
+					if (!comps.contains(subModelType)) {
+						ExternalModelDefinition extModel = documentComp.createExternalModelDefinition();
+						extModel.setId(subModelType);
+						extModel.setSource(subModelType + ".xml");
+						comps.add(subModelType);
+					}
+				}
+				try {
+					SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
+				} catch (XMLStreamException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+				SBMLutilities.checkModelCompleteness(document, true);
+				SBMLWriter writer = new SBMLWriter();
+				try {
+					writer.writeSBMLToFile(document, root + GlobalConstants.separator + extId + ".xml");
+				} catch (SBMLException e) {
+					e.printStackTrace();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (XMLStreamException e) {
+					e.printStackTrace();
+				}
+				addToTree(extId + ".xml");
+				if (sbmlComp.getListOfExternalModelDefinitions().get(extId) == null) {
+					for (int j = 0; j < sbmlCompModel.getListOfSubmodels().size(); j++) {
+						Submodel submodel = sbmlCompModel.getListOfSubmodels().get(j);
+						if (submodel.getModelRef().equals(extId)) {
+							ExternalModelDefinition extModel = sbmlComp.createExternalModelDefinition();
+							extModel.setSource(extId + ".xml");
+							extModel.setId(extId);
 							break;
 						}
 					}
 				}
-			} catch (Exception e) {
+			} else {
+				return false;
 			}
 		}
-	}
-	String[] usingViews = views.toArray(new String[0]);
-	edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility.sort(usingViews);
-	return usingViews;
-}
-
-private void reassignViews(String oldName, String newName) {
-	String[] files = new File(root).list();
-	for (String s : files) {
-		if (new File(root + GlobalConstants.separator + s).isDirectory()) {
-			String check = "";
-			if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim").exists()) {
-				try {
-					ArrayList<String> copy = new ArrayList<String>();
-					Scanner scan = new Scanner(new File(
-							root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim"));
-					if (scan.hasNextLine()) {
-						check = scan.nextLine();
-						check = check.split(GlobalConstants.separator)[check.split(GlobalConstants.separator).length
-						                                               - 1];
-						if (check.equals(oldName)) {
-							while (scan.hasNextLine()) {
-								copy.add(scan.nextLine());
-							}
-							scan.close();
-							FileOutputStream out = new FileOutputStream(new File(
-									root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".sim"));
-							out.write((newName + "\n").getBytes());
-							for (String cop : copy) {
-								out.write((cop + "\n").getBytes());
-							}
-							out.close();
-						} else {
-							scan.close();
-						}
-					}
-				} catch (Exception e) {
-				}
-			} else if (new File(root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn")
-					.exists()) {
-				try {
-					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(
-							root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
-					p.load(load);
-					load.close();
-					if (p.containsKey("genenet.file")) {
-						String[] getProp = p.getProperty("genenet.file").split(GlobalConstants.separator);
-						check = getProp[getProp.length - 1];
-						if (check.equals(oldName)) {
-							p.setProperty("genenet.file", newName);
-							FileOutputStream store = new FileOutputStream(new File(
-									root + GlobalConstants.separator + s + GlobalConstants.separator + s + ".lrn"));
-							p.store(store, "Learn File Data");
-							store.close();
-						}
-					}
-				} catch (Exception e) {
-				}
-			}
+		while (sbmlComp.getListOfModelDefinitions().size() > 0) {
+			sbmlComp.removeModelDefinition(0);
 		}
-	}
-}
-
-protected JButton makeToolButton(String imageName, String actionCommand, String toolTipText) {
-	JButton button = new JButton();
-	button.setActionCommand(actionCommand);
-	button.setToolTipText(toolTipText);
-	button.addActionListener(this);
-	button.setIcon(ResourceManager.getImageIcon(imageName));
-	return button;
-}
-
-private boolean extractModelDefinitions(CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel) {
-	for (int i = 0; i < sbmlComp.getListOfModelDefinitions().size(); i++) {
-		ModelDefinition md = sbmlComp.getListOfModelDefinitions().get(i);
-		String extId = md.getId();
-		if (overwrite(root + GlobalConstants.separator + extId + ".xml", extId + ".xml")) {
-			Model model = new Model(md);
-			model.unsetNamespace();
-			SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
-			document.setModel(model);
-
-			document.enablePackage(LayoutConstants.namespaceURI);
-			document.enablePackage(CompConstants.namespaceURI);
-			document.enablePackage(FBCConstants.namespaceURI);
-			SBMLutilities.getFBCModelPlugin(document.getModel(), true);
-			document.enablePackage(ArraysConstants.namespaceURI);
-			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
-			CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
-
-			ArrayList<String> comps = new ArrayList<String>();
-			for (int j = 0; j < documentCompModel.getListOfSubmodels().size(); j++) {
-				String subModelType = documentCompModel.getListOfSubmodels().get(j).getModelRef();
-				if (!comps.contains(subModelType)) {
-					ExternalModelDefinition extModel = documentComp.createExternalModelDefinition();
-					extModel.setId(subModelType);
-					extModel.setSource(subModelType + ".xml");
-					comps.add(subModelType);
-				}
-			}
-			try {
-				SBMLutilities.updateReplacementsDeletions(root, document, documentComp, documentCompModel);
-			} catch (XMLStreamException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-			SBMLutilities.checkModelCompleteness(document, true);
-			SBMLWriter writer = new SBMLWriter();
-			try {
-				writer.writeSBMLToFile(document, root + GlobalConstants.separator + extId + ".xml");
-			} catch (SBMLException e) {
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (XMLStreamException e) {
-				e.printStackTrace();
-			}
-			addToTree(extId + ".xml");
-			if (sbmlComp.getListOfExternalModelDefinitions().get(extId) == null) {
+		for (int i = 0; i < sbmlComp.getListOfExternalModelDefinitions().size(); i++) {
+			ExternalModelDefinition extModel = sbmlComp.getListOfExternalModelDefinitions().get(i);
+			if (extModel.isSetModelRef()) {
+				String oldId = extModel.getId();
+				extModel.setSource(extModel.getModelRef() + ".xml");
+				extModel.setId(extModel.getModelRef());
+				extModel.unsetModelRef();
 				for (int j = 0; j < sbmlCompModel.getListOfSubmodels().size(); j++) {
 					Submodel submodel = sbmlCompModel.getListOfSubmodels().get(j);
-					if (submodel.getModelRef().equals(extId)) {
-						ExternalModelDefinition extModel = sbmlComp.createExternalModelDefinition();
-						extModel.setSource(extId + ".xml");
-						extModel.setId(extId);
-						break;
+					if (submodel.getModelRef().equals(oldId)) {
+						submodel.setModelRef(extModel.getId());
 					}
 				}
 			}
-		} else {
-			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		Message message = (Message) arg;
+
+		if (message.isConsole()) {
+			System.out.println(message.getMessage());
+		} else if (message.isErrorDialog()) {
+			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
+					JOptionPane.ERROR_MESSAGE);
+		} else if (message.isDialog()) {
+			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
+					JOptionPane.PLAIN_MESSAGE);
+		} else if (message.isLog()) {
+			log.addText(message.getMessage());
 		}
 	}
-	while (sbmlComp.getListOfModelDefinitions().size() > 0) {
-		sbmlComp.removeModelDefinition(0);
-	}
-	for (int i = 0; i < sbmlComp.getListOfExternalModelDefinitions().size(); i++) {
-		ExternalModelDefinition extModel = sbmlComp.getListOfExternalModelDefinitions().get(i);
-		if (extModel.isSetModelRef()) {
-			String oldId = extModel.getId();
-			extModel.setSource(extModel.getModelRef() + ".xml");
-			extModel.setId(extModel.getModelRef());
-			extModel.unsetModelRef();
-			for (int j = 0; j < sbmlCompModel.getListOfSubmodels().size(); j++) {
-				Submodel submodel = sbmlCompModel.getListOfSubmodels().get(j);
-				if (submodel.getModelRef().equals(oldId)) {
-					submodel.setModelRef(extModel.getId());
-				}
-			}
-		}
-	}
-	return true;
-}
-
-@Override
-public void update(Observable o, Object arg) {
-	Message message = (Message) arg;
-
-	if (message.isConsole()) {
-		System.out.println(message.getMessage());
-	} else if (message.isErrorDialog()) {
-		JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-				JOptionPane.ERROR_MESSAGE);
-	} else if (message.isDialog()) {
-		JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-				JOptionPane.PLAIN_MESSAGE);
-	} else if (message.isLog()) {
-		log.addText(message.getMessage());
-	}
-}
 
 }

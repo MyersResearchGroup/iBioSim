@@ -120,7 +120,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       getMaxTimeStep(), absoluteError, relativeError);
     this.isInitialized = true;
     this.isSingleStep = true;
-    this.printTime.setValue(Double.POSITIVE_INFINITY);
+    this.printTime.setValue(0);
     this.vectorWrapper = sim.getVectorWrapper();
     de = new DifferentialEquations();
     if (sim.hasEvents()) {
