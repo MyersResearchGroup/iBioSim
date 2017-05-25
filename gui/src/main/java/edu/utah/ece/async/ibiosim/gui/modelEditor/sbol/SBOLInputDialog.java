@@ -527,7 +527,10 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	
 	@Override
 	protected void setSelectAllowed(boolean allow) {
-		openSBOLDesigner.setEnabled(!showModDefs.isSelected() && allow);
+		boolean setSBOLDesigner = (!showModDefs.isSelected() && showRootDefs.isSelected() && showCompDefs.isSelected()) ||
+				(!showModDefs.isSelected() && !showRootDefs.isSelected() && showCompDefs.isSelected()) ||
+				(showModDefs.isSelected() && showRootDefs.isSelected() && showCompDefs.isSelected());
+		openSBOLDesigner.setEnabled(setSBOLDesigner && allow);
 		openVPRGenerator.setEnabled(allow);
 	}
 	
