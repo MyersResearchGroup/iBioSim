@@ -4904,6 +4904,13 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		for (ArchiveEntry entry : ca.getEntries ())
 		{
 			// display some information about the archive
+			if (entry.getFormat().toString().contains("sbol")) {
+				importSBOLFile(entry.extractFile (new File(path + GlobalConstants.separator + entry.getFileName())).getAbsolutePath());
+			}
+		}
+		for (ArchiveEntry entry : ca.getEntries ())
+		{
+			// display some information about the archive
 			if (entry.getFormat().toString().contains("sed-ml")) {
 				importSEDMLFile(entry.extractFile (new File(path + GlobalConstants.separator + entry.getFileName())).getAbsolutePath ());
 			}
@@ -5093,6 +5100,10 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					}
 					// TODO: add other file types
 				}
+				String sbolFilename = root + GlobalConstants.separator + currentProjectId + ".sbol";
+				File sbolFile = new File(sbolFilename);
+				archive.addEntry(baseDir, sbolFile,
+						URI.create("http://identifiers.org/combine.specifications/sbol.version-2"), true);
 				File sedmlFile = new File(root + GlobalConstants.separator
 						+ root.split(GlobalConstants.separator)[root.split(GlobalConstants.separator).length - 1]
 								+ ".sedml");
@@ -5134,6 +5145,35 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		return true;
 	}
 
+	private void importSBOLFile(String filename) {
+		try {
+			File sbolFile = new File(filename.trim());
+			SBOLReader.setKeepGoing(true);
+			SBOLReader.setURIPrefix(EditPreferences.getDefaultUriPrefix());
+			SBOLDocument sbolDoc = SBOLReader.read(sbolFile);
+			sbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+			if (!checkSBOL(sbolDoc, false))
+				return;
+			log.addText("Importing " + sbolFile + " into the project's SBOL library.");
+			String filePath = filename.trim();
+			org.sbolstandard.core2.SBOLDocument inputSBOLDoc = SBOLReader.read(new FileInputStream(filePath));
+			generateSBMLFromSBOL(inputSBOLDoc, filePath);
+			getSBOLDocument().read(sbolFile);
+			writeSBOLDocument();
+			// String newFile = file[file.length-1].replace(".xml",
+			// "").replace(".rdf", "").replace(".gb", "").replace(".fasta",
+			// "")+".sbol";
+			// SBOLWriter.write(sbolDoc, root + separator + newFile);
+			// addToTree(newFile);
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
+		} catch (SBOLConversionException e) {
+			JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
+		} catch (SBOLValidationException e) {
+			JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
 	private void importSBOL(String fileType) {
 		Preferences biosimrc = Preferences.userRoot();
 		File importFile;
@@ -5145,33 +5185,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, fileType, -1);
 		if (!filename.trim().equals("")) {
 			biosimrc.put("biosim.general.import_dir", filename.trim());
-			// String[] file = filename.trim().split(separator);
-			try {
-				File sbolFile = new File(filename.trim());
-				SBOLReader.setKeepGoing(true);
-				SBOLReader.setURIPrefix(EditPreferences.getDefaultUriPrefix());
-				SBOLDocument sbolDoc = SBOLReader.read(sbolFile);
-				sbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
-				if (!checkSBOL(sbolDoc, false))
-					return;
-				log.addText("Importing " + sbolFile + " into the project's SBOL library.");
-				String filePath = filename.trim();
-				org.sbolstandard.core2.SBOLDocument inputSBOLDoc = SBOLReader.read(new FileInputStream(filePath));
-				generateSBMLFromSBOL(inputSBOLDoc, filePath);
-				getSBOLDocument().read(sbolFile);
-				writeSBOLDocument();
-				// String newFile = file[file.length-1].replace(".xml",
-				// "").replace(".rdf", "").replace(".gb", "").replace(".fasta",
-				// "")+".sbol";
-				// SBOLWriter.write(sbolDoc, root + separator + newFile);
-				// addToTree(newFile);
-			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
-			} catch (SBOLConversionException e) {
-				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
-			} catch (SBOLValidationException e) {
-				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
-			}
+			importSBOLFile(filename);
 		}
 	}
 

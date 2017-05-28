@@ -81,6 +81,9 @@ public enum GeneralPreferencesTab implements PreferencesTab {
 		IBioSimPreferences.INSTANCE.setLibSBMLFlattenEnabled(libsbmlFlatten.isSelected());
 		IBioSimPreferences.INSTANCE.setLibSBMLValidateEnabled(libsbmlValidate.isSelected());
 		IBioSimPreferences.INSTANCE.setWarningsEnabled(showWarnings.isSelected());
+		IBioSimPreferences.INSTANCE.setXhtmlCmd(xhtmlCmd.getText());
+		IBioSimPreferences.INSTANCE.setGraphvizCmd(dotCmd.getText());
+		IBioSimPreferences.INSTANCE.setPrismCmd(prismCmd.getText());
 	}
 
 	@Override

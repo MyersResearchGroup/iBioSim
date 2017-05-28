@@ -57,6 +57,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.Simulator;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
@@ -1760,8 +1761,7 @@ public class Run implements ActionListener, Observer
         }
         else if (xhtml.isSelected())
         {
-          Preferences biosimrc = Preferences.userRoot();
-          String xhtmlCmd = biosimrc.get("biosim.general.browser", "");
+          String xhtmlCmd = IBioSimPreferences.INSTANCE.getXhtmlCmd();
           log.addText("Executing:\n" + xhtmlCmd + " " + directory + out + ".xhtml" + "\n");
           logFile.write("Executing:\n" + xhtmlCmd + " " + directory + out + ".xhtml" + "\n\n");
           exec.exec(xhtmlCmd + " " + out + ".xhtml", null, work);
