@@ -1801,16 +1801,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			// exportSEDML();
 			exportCombineArchive();
 		}
-		// else if (e.getSource() == saveSBOL)
-		// {
-		// Component comp = tab.getSelectedComponent();
-		// if (comp instanceof ModelEditor)
-		// {
-		// log.addText("Converting SBML into SBOL and saving into the project's
-		// SBOL library.");
-		// ((ModelEditor) comp).saveAsSBOL2();
-		// }
-		// }
 		else if (e.getSource() == exportCsv) {
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof Graph) {
@@ -2128,9 +2118,10 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		} else if (e.getActionCommand().equals("openLPN")) {
 			openLPN();
 		} else if (e.getActionCommand().equals("browseSbol")) {
-			openSBOL();
+			openSBOLBrowser();
 		}
 		else if (e.getActionCommand().equals("SBOLDesigner")) {
+			//TODO: remove this section if we are to remove the right click on .sbol library file from project workspace.
 			openSBOLDesigner();
 		}
 		// if the edit popup menu is selected on a dot file
@@ -5160,11 +5151,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			generateSBMLFromSBOL(inputSBOLDoc, filePath);
 			getSBOLDocument().read(sbolFile);
 			writeSBOLDocument();
-			// String newFile = file[file.length-1].replace(".xml",
-			// "").replace(".rdf", "").replace(".gb", "").replace(".fasta",
-			// "")+".sbol";
-			// SBOLWriter.write(sbolDoc, root + separator + newFile);
-			// addToTree(newFile);
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 		} catch (SBOLConversionException e) {
@@ -6342,7 +6328,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	}
 
-	private void openSBOL() {
+	private void openSBOLBrowser() {
 		String filePath = tree.getFile();
 		String fileName = "";
 		fileName = filePath.substring(filePath.lastIndexOf(GlobalConstants.separator) + 1);
@@ -6355,7 +6341,13 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	}
 
-	
+	/**
+	 * Bring up an SBOL dialog window that will ask the user to select an SBOL design/part that was loaded from
+	 * the library SBOL document stored in iBioSim's project. Once a SBOL design/part has been selected from the 
+	 * dialog, the user has the option to either:
+	 * 1. Open in SBOLDesigner
+	 * 2. Perform VPR Generator
+	 */
 	private void openSBOLOptions()
 	{
 		SBOLDocument currentDoc = getSBOLDocument();
@@ -6363,6 +6355,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		{
 			return;
 		}
+		
+		// Open up the SBOL design/part dialog 
 		SBOLInputDialog s = new SBOLInputDialog(mainPanel, currentDoc);
 		if(s.getInput() == null)
 		{
@@ -6370,19 +6364,25 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 		
 		SBOLDocument chosenDesign = s.getSelection();
-
+		String fileName = currentProjectId + ".sbol";
+		String filePath = root + GlobalConstants.separator;
 		if(s.isVPRGenerator())
 		{
-			runVPRGenerator(chosenDesign);
+			runVPRGenerator(filePath, fileName, chosenDesign);
 		}
 		else if(s.isSBOLDesigner())
 		{
-			runSBOLDesigner(chosenDesign, currentDoc.getDefaultURIprefix());
+			runSBOLDesigner(filePath, fileName, chosenDesign.getRootComponentDefinitions(), currentDoc.getDefaultURIprefix());
 			
 		}
 	}
 	
-	private void runVPRGenerator(SBOLDocument chosenDesign)
+	/**
+	 * Perform VPR Model generator from the given SBOLDocument.
+	 * @param fileName - The name of the SBOL file that the given SBOLDocument was created from.
+	 * @param chosenDesign - The chosen design, stored within an SBOLDocument, that the user would like to perform VPR Model Generation from.
+	 */
+	private void runVPRGenerator(String filePath, String fileName, SBOLDocument chosenDesign)
 	{
 		try {
 			if(chosenDesign != null)
@@ -6398,129 +6398,43 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				generateSBMLFromSBOL(chosenDesign, tree.getFile());
 				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 			}
-		} catch (SBOLValidationException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (SBOLValidationException e) 
+		{
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + fileName + " is invalid.", "Invalid SBOL",
+					JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
-		} catch (SBOLConversionException e) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to find this SBOL file at this location: " + filePath + ".", "File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (SBOLConversionException e) 
+		{
 			e.printStackTrace();
-		} catch (VPRException e) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(Gui.frame, "The output SBOLDocument of the generated model was unable to convert to SBML", "SBOL to SBML Conversion Failed",
+					JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (VPRException e) 
+		{
 			e.printStackTrace();
-		} catch (VPRTripleStoreException e) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to perform VPR Model Generation on this SBOL file: " + fileName + ".", "Unable to Perform VPR Model Generation",
+					JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (VPRTripleStoreException e) 
+		{
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to perform VPR Model Generation on this SBOL file: " + fileName + ".", "Unable to Perform VPR Model Generation",
+					JOptionPane.ERROR_MESSAGE);
 		}	
 	}
 	
-	private void runSBOLDesigner(SBOLDocument chosenDesign, String docURIPrefix)
-	{
-		try 
-		{
-			SBOLDesignerPlugin sbolDesignerPlugin ;
-			for(ComponentDefinition selectedDesign : chosenDesign.getRootComponentDefinitions())
-			{
-				sbolDesignerPlugin = new SBOLDesignerPlugin(root + GlobalConstants.separator, 
-						currentProjectId + ".sbol", 
-						selectedDesign.getIdentity(), 
-						docURIPrefix);
-				addTab(sbolDesignerPlugin.getRootDisplayId(), sbolDesignerPlugin, "SBOL Designer");
-			}
-			
-		} catch (SBOLValidationException | IOException | SBOLConversionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	
-	private JFrame createProgressBar(JLabel label, JProgressBar progress)
-	  {
-	    final JFrame running = new JFrame("Progress");
-	    WindowListener w = new WindowListener()
-	    {
-	      @Override
-	      public void windowClosing(WindowEvent arg0)
-	      {
-	        running.dispose();
-	      }
-
-	      @Override
-	      public void windowOpened(WindowEvent arg0)
-	      {
-	      }
-
-	      @Override
-	      public void windowClosed(WindowEvent arg0)
-	      {
-	      }
-
-	      @Override
-	      public void windowIconified(WindowEvent arg0)
-	      {
-	      }
-
-	      @Override
-	      public void windowDeiconified(WindowEvent arg0)
-	      {
-	      }
-
-	      @Override
-	      public void windowActivated(WindowEvent arg0)
-	      {
-	      }
-
-	      @Override
-	      public void windowDeactivated(WindowEvent arg0)
-	      {
-	      }
-	    };
-	    running.addWindowListener(w);
-	    JPanel text = new JPanel();
-	    JPanel progBar = new JPanel();
-	    JPanel button = new JPanel();
-	    JPanel all = new JPanel(new BorderLayout());
-	    progress.setStringPainted(true);
-	    progress.setValue(0);
-	    progress.setVisible(true);
-	    text.add(label);
-	    progBar.add(progress);
-	    all.add(text, "North");
-	    all.add(progBar, "Center");
-	    all.add(button, "South");
-	    running.setContentPane(all);
-	    running.pack();
-	    running.setVisible(true);
-	    Dimension screenSize;
-	    try
-	    {
-	      Toolkit tk = Toolkit.getDefaultToolkit();
-	      screenSize = tk.getScreenSize();
-	    }
-	    catch (AWTError awe)
-	    {
-	      screenSize = new Dimension(640, 480);
-	    }
-	    Dimension frameSize = running.getSize();
-
-	    if (frameSize.height > screenSize.height)
-	    {
-	      frameSize.height = screenSize.height;
-	    }
-	    if (frameSize.width > screenSize.width)
-	    {
-	      frameSize.width = screenSize.width;
-	    }
-	    int x = screenSize.width / 2 - frameSize.width / 2;
-	    int y = screenSize.height / 2 - frameSize.height / 2;
-	    running.setLocation(x, y);
-	    running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-	    return running;
-	  }
-	
+	/**
+	 * Retrieve the URL of the selected synbiohub repository that the user has selected from the repository dialog.
+	 * @return the URL of the selected synbiohub repository 
+	 */
 	private String getSelectedRepo()
 	{
 		ArrayList<Registry> list = new ArrayList<Registry>();
@@ -6553,6 +6467,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	
 
 	private void openSBOLDesigner() {
+		//TODO: this method is only executed if we right click on the .sbol library file. 
+		// check if this method will be removed or else merge with runSBOLDesigner() 
 		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(GlobalConstants.separator) + 1);
 		try {
 			if (getSBOLDocument().getComponentDefinitions().size() == 0) {
@@ -6569,6 +6485,48 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + fileName + " is invalid.", "Invalid SBOL",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	/**
+	 * Create an SBOLDesigner instance for every root ComponentDefinition that is found from the given SBOLDocument.
+	 * @param filePath - The location where the given file is located.
+	 * @param fileName - The name of the SBOL file that the given SBOLDocument was created from.
+	 * @param chosenDesigns - The selected SBOL design/part that the user wants to open in SBOLDesigner.
+	 * @param docURIPrefix - The default URI prefix of the given SBOLDocument "chosenDesign" is set to.
+	 */
+	private void runSBOLDesigner(String filePath, String fileName, Set<ComponentDefinition> chosenDesigns, String docURIPrefix)
+	{
+		try 
+		{
+			SBOLDesignerPlugin sbolDesignerPlugin ;
+			for(ComponentDefinition part : chosenDesigns)
+			{
+				sbolDesignerPlugin = new SBOLDesignerPlugin(filePath, 
+						fileName, 
+						part.getIdentity(), 
+						docURIPrefix);
+				addTab(sbolDesignerPlugin.getRootDisplayId(), sbolDesignerPlugin, "SBOL Designer");
+			}
+			
+		} 
+		catch (SBOLValidationException e) 
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + fileName + " is invalid.", "Invalid SBOL",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to find this SBOL file at this location: " + filePath + ".", "File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		catch (SBOLConversionException e)         
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to convert this file to SBOL: " + fileName, "SBOL to SBML Conversion Failed",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -6596,21 +6554,31 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				JOptionPane.showMessageDialog(frame,
 						"A part ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.",
 						"Invalid ID", JOptionPane.ERROR_MESSAGE);
-			} else {
-				SBOLDesignerPlugin sbolDesignerPlugin;
-				try {
+			} 
+			else 
+			{
+				try 
+				{
 					ComponentDefinition cd = getSBOLDocument().createComponentDefinition(partId, "1",
 							ComponentDefinition.DNA);
 					cd.addRole(SequenceOntology.ENGINEERED_REGION);
 					writeSBOLDocument();
-					sbolDesignerPlugin = new SBOLDesignerPlugin(root + GlobalConstants.separator,
-							currentProjectId + ".sbol", cd.getIdentity(), sbolDocument.getDefaultURIprefix());
-					addTab(partId, sbolDesignerPlugin, "SBOL Designer");
-				} catch (Exception e) {
+					Set<ComponentDefinition> selectedDesign = new HashSet<ComponentDefinition>();
+					selectedDesign.add(cd);
+					
+					String filePath = root + GlobalConstants.separator;
+					String fileName = currentProjectId + ".sbol";
+					String uriPrefix = getSBOLDocument().getDefaultURIprefix();
+					runSBOLDesigner(filePath, fileName, selectedDesign, uriPrefix);
+					
+				} 
+				catch (SBOLValidationException e) 
+				{
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(Gui.frame, "Unable to create new part.", "Invalid Part",
 							JOptionPane.ERROR_MESSAGE);
 				}
+				
 			}
 		}
 	}
@@ -6638,13 +6606,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", "File Not Found",
 					JOptionPane.ERROR_MESSAGE);
 		} 
-		//		catch (SBOLValidationException e) {
-		//		JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + filePath + " is invalid.", "Invalid SBOL",
-		//				JOptionPane.ERROR_MESSAGE);
-		//	} catch (SBOLConversionException e) {
-		//		JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + filePath + " is invalid.", "Invalid SBOL",
-		//				JOptionPane.ERROR_MESSAGE);
-		//	}
 	}
 
 	/**

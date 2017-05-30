@@ -96,14 +96,21 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	
 	private JButton openSBOLDesigner, openVPRGenerator, optionsButton, cancelButton;
 
-	private SBOLDocument doc;
+	private SBOLDocument sbolDesigns;
 	
 	private boolean sbolDesigner, vprGenerator;
 
+	/**
+	 * An instance of the SBOL Design/Part selection dialog that will allow the user to open their selected design
+	 * or part in SBOLDesigner or perform VPR Model Generation.
+	 * 
+	 * @param parent - The component the user wants this SBOL input dialog to be called on.
+	 * @param doc - The SBOLDocument the user wants to select their design or parts from. This means that ComponentDefinition and ModuleDefinition contained within this given SBOLDocumen will be loaded into the SBOL Input Dialog as the designs or parts the users are limited to select from.
+	 */
 	public SBOLInputDialog(final Component parent, SBOLDocument doc) {
 		super(parent, TITLE);
 
-		this.doc = doc;
+		this.sbolDesigns = doc;
 	}
 	
 
@@ -112,6 +119,9 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		return "Select multiple designs by holding down alt/command on your keyboard.";
 	}
 
+	/**
+	 * Set up the initial design layout for the SBOL Design/Part dialog
+	 */
 	@Override
 	public void initFormPanel(FormBuilder builder) 
 	{
@@ -226,10 +236,10 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 					for (int row : rows) {
 						row = table.convertRowIndexToModel(row);
 						TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row);
-						doc.removeTopLevel(comp);
+						sbolDesigns.removeTopLevel(comp);
 					}
 					File file = SBOLUtils.setupFile();
-					SBOLWriter.write(doc, new FileOutputStream(file));
+					SBOLWriter.write(sbolDesigns, new FileOutputStream(file));
 					updateTable();
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(rootPane, "Failed to delete selected part: " + e1.getMessage());
@@ -240,6 +250,9 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		builder.add("", deleteTopLevelObjs);
 	}
 	
+	/**
+	 * Enable or disable roleRefinement, roleSelection, and typeSelection ComboBox if ModuleDefinition or root ModuleDefinition is selected.. 
+	 */
 	private void enableCompRoleType()
 	{
 		boolean isEnabled = !(showModDefs.isSelected() && showRootDefs.isSelected() && !showCompDefs.isSelected()) &&
@@ -257,11 +270,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
 		if(showRootDefs.isSelected())
 		{
-			topLevelObjs.addAll(doc.getRootComponentDefinitions());
+			topLevelObjs.addAll(sbolDesigns.getRootComponentDefinitions());
 		}
 		if(showRootDefs.isSelected())
 		{
-			topLevelObjs.addAll(doc.getRootModuleDefinitions());
+			topLevelObjs.addAll(sbolDesigns.getRootModuleDefinitions());
 		}
 
 		// Show an instance of list of designs user can choose from
@@ -276,6 +289,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		return panel;
 	}
 	
+	/**
+	 * Get the SBOL part design that the user has selected from the Design/Parts table and return it part selected
+	 * in a new SBOLDocument.
+	 */
+	
 	public SBOLDocument getSelection() {
 		try 
 		{
@@ -286,7 +304,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 				int row = table.convertRowIndexToModel(r);
 				TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row); 
 				
-				outputDoc.createCopy(doc.createRecursiveCopy(comp));
+				outputDoc.createCopy(sbolDesigns.createRecursiveCopy(comp));
 			}
 			
 			return outputDoc;
@@ -347,11 +365,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		Set<ComponentDefinition> CDsToDisplay;
 		if (showRootDefs.isSelected() && showCompDefs.isSelected()) 
 		{
-			CDsToDisplay = doc.getRootComponentDefinitions();
+			CDsToDisplay = sbolDesigns.getRootComponentDefinitions();
 		} 
 		else if (!showRootDefs.isSelected() && showCompDefs.isSelected())
 		{
-			CDsToDisplay = doc.getComponentDefinitions();
+			CDsToDisplay = sbolDesigns.getComponentDefinitions();
 		}
 		else
 		{
@@ -374,11 +392,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
 		if (showRootDefs.isSelected() && showModDefs.isSelected())  
 		{
-			topLevelObjs.addAll(doc.getRootModuleDefinitions());
+			topLevelObjs.addAll(sbolDesigns.getRootModuleDefinitions());
 		}
 		if (!showRootDefs.isSelected() && showModDefs.isSelected())  
 		{
-			topLevelObjs.addAll(doc.getModuleDefinitions());
+			topLevelObjs.addAll(sbolDesigns.getModuleDefinitions());
 		}
 		
 		return topLevelObjs;
