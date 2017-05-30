@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -49,7 +50,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.TableRowSorter;
 
 import org.sbolstandard.core2.ComponentDefinition;
-import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
@@ -137,6 +137,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		
 		builder.add("Filter parts", filterSelection);
 		
+		// I want checkboxes to be aligned so a JPanel was created with a grid of 2x2 to limit 2 checkbox per row 
 		JPanel filteredDesignPanel = new JPanel();
 		GridLayout designPanel = new GridLayout(2, 2);
 		filteredDesignPanel.setLayout(designPanel);
@@ -145,11 +146,8 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		showCompDefs.setSelected(true);
 		showCompDefs.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent event) {
-				if(!showCompDefs.isSelected() && !showModDefs.isSelected())
-				{
-					showModDefs.setSelected(true);
-				}
+			public void actionPerformed(ActionEvent event) 
+			{
 				enableCompRoleType();
 				updateTable();
 			}
@@ -159,18 +157,21 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		showModDefs = new JRadioButton("Show ModuleDefinitions");
 		showModDefs.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent event) {
-				if(!showCompDefs.isSelected() && !showModDefs.isSelected())
-				{
-					showCompDefs.setSelected(true);
-				}
+			public void actionPerformed(ActionEvent event) 
+			{
 				enableCompRoleType();
 				updateTable();
 			}
 		});
 		filteredDesignPanel.add(showModDefs);
 		
+		// Adding buttons to ButtonGroup will limit one button to be selected at a time.
+		ButtonGroup enableSingleSelection = new ButtonGroup();
+		enableSingleSelection.add(showCompDefs);
+		enableSingleSelection.add(showModDefs);
+		
 		showRootDefs = new JCheckBox("Show root Definitions only");
+		showRootDefs.setSelected(true);
 		showRootDefs.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -305,7 +306,10 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		}
 	}
 
-	
+	/**
+	 * Update all design parts assigned to this table.
+	 * These design parts include updating designs related to ComponentDefinitions and ModuleDefinitions.
+	 */
 	private void updateTable() 
 	{
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
@@ -317,6 +321,14 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		tableLabel.setText("Select Design(s) (" + topLevelObjs.size() + ")");
 	}
 	
+	/**
+	 * Filter Designs/parts with ComponentDefinitions if user want designs containing:
+	 * - roleRefinement
+	 * - role
+	 * - root ComponentDefinitions
+	 * - all ComponentDefinitions
+	 * @return All ComponentDefinitions base on the user's filtered selections
+	 */
 	private List<ComponentDefinition> getFilteredCompDef()
 	{
 		Part part;
@@ -351,6 +363,12 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		return components;
 	}
 	
+	/**
+	 * Filter Designs/parts with ModuleDefinitions if user want designs containing:
+	 * - root ModuleDefinitions
+	 * - all ModuleDefinitions
+	 * @return All ModuleDefinitions base on the user's filtered selections
+	 */
 	private List<TopLevel> getFilteredModDef()
 	{
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
@@ -421,24 +439,24 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 
 		buttonPanel.add(Box.createHorizontalStrut(200));
 		buttonPanel.add(Box.createHorizontalGlue());
-
-		openSBOLDesigner = new JButton("Open SBOLDesigner");
-		openSBOLDesigner.addActionListener(actionListener);
-		openSBOLDesigner.setEnabled(false);
-		getRootPane().setDefaultButton(openSBOLDesigner);
-		buttonPanel.add(openSBOLDesigner);
-		
-		openVPRGenerator = new JButton("Generate Model");
-		openVPRGenerator.addActionListener(actionListener);
-		openVPRGenerator.setEnabled(false);
-		getRootPane().setDefaultButton(openVPRGenerator);
-		buttonPanel.add(openVPRGenerator);
 		
 		cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(actionListener);
 		cancelButton.registerKeyboardAction(actionListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
 		buttonPanel.add(cancelButton);
+		
+		openVPRGenerator = new JButton("Generate Model");
+		openVPRGenerator.addActionListener(actionListener);
+		openVPRGenerator.setEnabled(true);
+		getRootPane().setDefaultButton(openVPRGenerator);
+		buttonPanel.add(openVPRGenerator);
+		
+		openSBOLDesigner = new JButton("Open SBOLDesigner");
+		openSBOLDesigner.addActionListener(actionListener);
+		openSBOLDesigner.setEnabled(true);
+		getRootPane().setDefaultButton(openSBOLDesigner);
+		buttonPanel.add(openSBOLDesigner);
 		
 		initFormPanel(builder);
 
