@@ -32,6 +32,7 @@ import javax.xml.stream.XMLStreamException;
 
 import odk.lang.FastMath;
 
+import org.jlibsedml.SEDMLDocument;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AbstractNamedSBase;
 import org.sbml.jsbml.AbstractSBase;

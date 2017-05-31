@@ -11,6 +11,7 @@ import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Algorithm;
 import org.jlibsedml.Annotation;
 import org.jlibsedml.DataGenerator;
+import org.jlibsedml.Model;
 import org.jlibsedml.OneStep;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
@@ -272,6 +273,8 @@ public class AnalysisPropertiesWriter {
 	    double timeLimit = properties.getTimeLimit();
 	    double printInterval = properties.getPrintInterval();
 	    int numberOfSteps;
+	    String fileStem = null;
+	    String simName = properties.getSim();
 	    if (properties.isNumSteps())
 	    {
 	      numberOfSteps = properties.getNumSteps();
@@ -282,55 +285,56 @@ public class AnalysisPropertiesWriter {
 	    }
 	    SedML sedml = sedmlDoc.getSedMLModel();
 	    String taskId = properties.getId();
-//	    if (!fileStem.getText().trim().equals("")) {
-//	      taskId = properties.getId() + "__" + fileStem.getText().trim();
-//	    }
+	    if (!fileStem.trim().equals("")) {
+	      taskId = properties.getId() + "__" + fileStem.trim();
+	    }
 	    AbstractTask task = sedml.getTaskWithId(taskId);
 	    Simulation simulation = sedml.getSimulation(taskId+"_sim");
 	    if (simulation != null) {
 	      sedml.removeSimulation(simulation);
 	    }
-	    //    Model model = sedml.getModelWithId(simName+"_model");
-	    //    if (model!=null) {
-	    //      sedml.removeModel(model);
-	    //    }
+	        Model model = sedml.getModelWithId(simName+"_model");
+	        if (model!=null) {
+	          sedml.removeModel(model);
+	        }
 	    if (task != null) {
 	      sedml.removeTask(task);
 	    }
-//	    Algorithm algo = getAlgorithm();
-//	    if (algo.getKisaoID().equals(GlobalConstants.KISAO_FBA)) {
-//	      simulation = new SteadyState(taskId+"_sim", "", algo);
-//	    } else if (algo.getKisaoID().equals(GlobalConstants.KISAO_GENERIC)) {
-//	      simulation = new SteadyState(taskId+"_sim", "", algo);
-//	      // TODO: need to deal with transient Markov chain method which is a type of UniformTimeCourse
-//	    } else {
-//	      simulation = new UniformTimeCourse(taskId+"_sim", "", initialTime, outputStartTime, timeLimit, numberOfSteps, algo);
-//	      if (properties.isPrintInterval()) {
-//	        Element para = new Element("printInterval");
-//	        para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
-//	        para.setAttribute("Print_Interval", String.valueOf(properties.getPrintInterval()));
-//	        Annotation ann = new Annotation(para);
-//	        simulation.addAnnotation(ann);
-//	      } else if (properties.isMinPrintInterval()) {
-//	        Element para = new Element("printInterval");
-//	        para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
-//	        para.setAttribute("Minimum_Print_Interval", String.valueOf(properties.getPrintInterval()));
-//	        Annotation ann = new Annotation(para);
-//	        simulation.addAnnotation(ann);
-//	      }
-//	    }
-//	    sedml.addSimulation(simulation);
-//	    task = new Task(taskId, "", taskId+"_model", simulation.getId());
-//	    sedml.addTask(task);
-//	    DataGenerator dataGen = sedml.getDataGeneratorWithId("time_"+taskId+"_dg");
-//	    if (dataGen != null) {
-//	      sedml.removeDataGenerator(dataGen);
-//	    }
-//	    Variable variable = new Variable("time_"+taskId,"",taskId,VariableSymbol.TIME);
-//	    org.jmathml.ASTNode math = org.jlibsedml.Libsedml.parseFormulaString("time_"+taskId);
-//	    dataGen = new DataGenerator("time_"+taskId+"_dg","time",math);
-//	    dataGen.addVariable(variable);
-//	    sedml.addDataGenerator(dataGen);
+	    //Algorithm algo = getAlgorithm();
+	    Algorithm algo = null;
+	    if (algo.getKisaoID().equals(GlobalConstants.KISAO_FBA)) {
+	      simulation = new SteadyState(taskId+"_sim", "", algo);
+	    } else if (algo.getKisaoID().equals(GlobalConstants.KISAO_GENERIC)) {
+	      simulation = new SteadyState(taskId+"_sim", "", algo);
+	      // TODO: need to deal with transient Markov chain method which is a type of UniformTimeCourse
+	    } else {
+	      simulation = new UniformTimeCourse(taskId+"_sim", "", initialTime, outputStartTime, timeLimit, numberOfSteps, algo);
+	      if (properties.isPrintInterval()) {
+	        Element para = new Element("printInterval");
+	        para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+	        para.setAttribute("Print_Interval", String.valueOf(properties.getPrintInterval()));
+	        Annotation ann = new Annotation(para);
+	        simulation.addAnnotation(ann);
+	      } else if (properties.isMinPrintInterval()) {
+	        Element para = new Element("printInterval");
+	        para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+	        para.setAttribute("Minimum_Print_Interval", String.valueOf(properties.getPrintInterval()));
+	        Annotation ann = new Annotation(para);
+	        simulation.addAnnotation(ann);
+	      }
+	    }
+	    sedml.addSimulation(simulation);
+	    task = new Task(taskId, "", taskId+"_model", simulation.getId());
+	    sedml.addTask(task);
+	    DataGenerator dataGen = sedml.getDataGeneratorWithId("time_"+taskId+"_dg");
+	    if (dataGen != null) {
+	      sedml.removeDataGenerator(dataGen);
+	    }
+	    Variable variable = new Variable("time_"+taskId,"",taskId,VariableSymbol.TIME);
+	    org.jmathml.ASTNode math = org.jlibsedml.Libsedml.parseFormulaString("time_"+taskId);
+	    dataGen = new DataGenerator("time_"+taskId+"_dg","time",math);
+	    dataGen.addVariable(variable);
+	    sedml.addDataGenerator(dataGen);
 	    
 	    //TODO: write this
 //	    for (int i = 0; i < simTab.getComponentCount(); i++)

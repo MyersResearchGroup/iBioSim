@@ -1,8 +1,6 @@
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 
@@ -18,7 +16,7 @@ public final class AnalysisProperties {
   } 
 	
 
-  private final String filename, id, root;
+  private String filename, id, root;
   private final AbstractionProperty absProperty;
   
   
@@ -664,4 +662,62 @@ public final class AnalysisProperties {
   public void setNumSteps(int numSteps) {
     this.numSteps = numSteps;
   }
+
+  
+  /**
+   * @return the method
+   */
+  public SimMethod getMethod() {
+    return method;
+  }
+
+  
+  /**
+   * @param method the method to set
+   */
+  public void setMethod(SimMethod method) {
+    this.method = method;
+  }
+
+  
+  /**
+   * @return the userInterval
+   */
+  public UserInterval getUserInterval() {
+    return userInterval;
+  }
+
+  
+  /**
+   * @param userInterval the userInterval to set
+   */
+  public void setUserInterval(UserInterval userInterval) {
+    this.userInterval = userInterval;
+  }
+
+  
+  /**
+   * @param filename the filename to set
+   */
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
+
+  
+  /**
+   * @param id the id to set
+   */
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  
+  /**
+   * @param root the root to set
+   */
+  public void setRoot(String root) {
+    this.root = root;
+  }
+  
+  
 }

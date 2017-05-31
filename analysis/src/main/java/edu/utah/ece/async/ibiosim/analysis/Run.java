@@ -519,42 +519,26 @@ public class Run extends Observable implements ActionListener
   private int executeAtacs() throws IOException, InterruptedException
   {
     int exitValue = 0;
-    /*
-   // reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=hse2 " + theFile, Executables.envp, work);
-    writeLog("Executing:\natacs -T0.000001 -oqoflhsgllvA " + filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "out.hse");
+    
+   reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=hse2 " + properties.getFilename(), Executables.envp, work);
+    message.setLog("Executing:\natacs -T0.000001 -oqoflhsgllvA " + properties.getFilename() + "out.hse");
+    this.notifyObservers(message);
     exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
-    if (refresh)
-    {
-      for (int i = 0; i < simTab.getComponentCount(); i++)
-      {
-        if (simTab.getComponentAt(i).getName().equals("Histogram"))
-        {
-          if (simTab.getComponentAt(i) instanceof Graph)
-          {
-            ((Graph) simTab.getComponentAt(i)).refresh();
-          }
-          else
-          {
-            simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
-            simTab.getComponentAt(i).setName("Histogram");
-          }
-        }
-      }
-    }
+    
 
     if (reb2sac != null)
     {
       exitValue = reb2sac.waitFor();
     }
-     */
+     
     return exitValue;
   }
   private int executePrism() throws IOException, InterruptedException, XMLStreamException, BioSimException
   {
     int exitValue = 255;
-    /*
     String prop = null;
-    //progress.setIndeterminate(true);
+    String directory = null;
+    String out = null;
     LPN lhpnFile = null;
     String root = properties.getRoot();
     if (properties.getFilename().contains(".lpn"))
@@ -567,12 +551,12 @@ public class Run extends Observable implements ActionListener
       new File(properties.getFilename().replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
       ArrayList<String> specs = new ArrayList<String>();
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-      String[] intSpecies = properties.getIntSpecies();
-      for (int i = 0; i < intSpecies.length; i++)
+      List<String> intSpecies = properties.getIntSpecies();
+      for (int i = 0; i < intSpecies.size(); i++)
       {
-        if (!intSpecies[i].equals(""))
+        if (!intSpecies.get(i).equals(""))
         {
-          String[] split = intSpecies[i].split(" ");
+          String[] split = intSpecies.get(i).split(" ");
           if (split.length > 1)
           {
             String[] levels = split[1].split(",");
@@ -612,7 +596,8 @@ public class Run extends Observable implements ActionListener
           bioModel.getSBMLDocument());
         Preferences biosimrc = Preferences.userRoot();
         String prismCmd = biosimrc.get("biosim.general.prism", "");
-        writeLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl"); 
+        message.setLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl"); 
+        this.notifyObservers(message);
         reb2sac = exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
         String error = "", result = "", fullLog = "";
         try
@@ -649,25 +634,20 @@ public class Run extends Observable implements ActionListener
         {
           exitValue = reb2sac.waitFor();
         }
-        running.setCursor(null);
-        running.dispose();
         if (!error.equals(""))
         {
-          writeLog("Errors:\n" + error + "\n");
+          message.setLog("Errors:\n" + error + "\n");
+
+          this.notifyObservers(message);
         }
         else if (!result.equals(""))
         {
-          writeLog(result);
+          message.setLog(result);
+          this.notifyObservers(message);
         }
         else
         {
-          JTextArea messageArea = new JTextArea(fullLog);
-          messageArea.setEditable(false);
-          JScrollPane scroll = new JScrollPane();
-          scroll.setMinimumSize(new Dimension(500, 500));
-          scroll.setPreferredSize(new Dimension(500, 500));
-          scroll.setViewportView(messageArea);
-          JOptionPane.showMessageDialog(Gui.frame, scroll, "Verification Failed", JOptionPane.ERROR_MESSAGE);
+          throw new BioSimException("Verification Failed!", "Verification could not be executed. Something went wrong.");
         }
 
         exitValue = 0;
@@ -687,16 +667,17 @@ public class Run extends Observable implements ActionListener
 
     Preferences biosimrc = Preferences.userRoot();
     String prismCmd = biosimrc.get("biosim.general.prism", "");
-    writeLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl");
+    message.setLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl");
+    this.notifyObservers(message);
     exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
-     */
     return exitValue;
   }
 
   private int executeDot() throws IOException, InterruptedException, BioSimException
   {
     int exitValue= 255;
-  
+    String directory = null;
+    String out = null;
     String outputFileName = properties.getFilename().replace(".sbml", "").replace(".xml", "") + ".dot";
     if (properties.isNary())
     {
@@ -733,8 +714,9 @@ public class Run extends Observable implements ActionListener
       reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + outputFileName + " " + properties.getFilename(), Executables.envp, work);
     }
 
-/*
-    writeLog("Executing:\ndotty " + directory + out + ".dot");
+
+    message.setLog("Executing:\ndotty " + directory + out + ".dot");
+    this.notifyObservers(message);
     if (System.getProperty("os.name").contentEquals("Linux"))
     {
       exec.exec("dotty " + out + ".dot", null, work);
@@ -747,7 +729,7 @@ public class Run extends Observable implements ActionListener
     {
       exec.exec("dotty " + out + ".dot", null, work);
     }
-*/
+
     if (reb2sac != null)
     {
       exitValue = reb2sac.waitFor();
@@ -756,9 +738,206 @@ public class Run extends Observable implements ActionListener
     return exitValue;
   }
 
-  private int executeSBML() throws IOException, HeadlessException, XMLStreamException, InterruptedException
+  private int executeSBML(String sbmlName) throws IOException, HeadlessException, XMLStreamException, InterruptedException
   {
     int exitValue = 255;
+
+    /*
+    String root = properties.getRoot();
+    String modelFile = properties.getFilename();
+    if (sbmlName != null && !sbmlName.trim().equals(""))
+    {
+      sbmlName = sbmlName.trim();
+      if (!sbmlName.endsWith(".xml"))
+      {
+        sbmlName += ".xml";
+      }
+//      File f = new File(root + GlobalConstants.separator + sbmlName);
+//      if (f.exists())
+//      {
+//        Object[] options = { "Overwrite", "Cancel" };
+//        int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//        if (value == JOptionPane.YES_OPTION)
+//        {
+//          File dir = new File(root + GlobalConstants.separator + sbmlName);
+//          if (dir.isDirectory())
+//          {
+//            gui.deleteDir(dir);
+//          }
+//          else
+//          {
+//            System.gc();
+//            dir.delete();
+//          }
+//        }
+//        else
+//        {
+//          new File(directory + GlobalConstants.separator + "running").delete();
+//          logFile.close();
+//          return 0;
+//        }
+//      }
+      if (modelFile.contains(".lpn"))
+      {
+        try
+        {
+          Translator t1 = new Translator();
+          if (properties.isAbs())
+          {
+            LPN lhpnFile = new LPN();
+            lhpnFile.load(root + GlobalConstants.separator + modelFile);
+            Abstraction abst = new Abstraction(lhpnFile, properties.getAbsProproperty());
+            abst.abstractSTG(false);
+            abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile);
+            t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, lpnProperty);
+          }
+          else
+          {
+            t1.convertLPN2SBML(root + GlobalConstants.separator + modelFile, lpnProperty);
+          }
+          t1.setFilename(root + GlobalConstants.separator + sbmlName);
+          t1.outputSBML();
+          exitValue = 0;
+          logFile.close();
+        }
+        catch(BioSimException e)
+        {
+          e.printStackTrace();
+        }
+        return exitValue;
+      }
+      else if (modelEditor != null && nary)
+      {
+        String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "").replace(".xml", "") + ".lpn";
+        ArrayList<String> specs = new ArrayList<String>();
+        ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+        for (int i = 0; i < intSpecies.length; i++)
+        {
+          if (!intSpecies[i].equals(""))
+          {
+            String[] split = intSpecies[i].split(" ");
+            if (split.length > 1)
+            {
+              String[] levels = split[1].split(",");
+              if (levels.length > 0)
+              {
+                specs.add(split[0]);
+                conLevel.add(levels);
+              }
+            }
+          }
+        }
+        progress.setIndeterminate(true);
+        BioModel bioModel = new BioModel(root);
+        bioModel.load(root + GlobalConstants.separator + modelEditor.getRefFile());
+        if (bioModel.flattenModel(true) != null)
+        {
+          String prop = null;
+          if (!lpnProperty.equals(""))
+          {
+            prop = lpnProperty;
+          }
+          ArrayList<String> propList = new ArrayList<String>();
+          if (prop == null)
+          {
+            Model m = bioModel.getSBMLDocument().getModel();
+            for (int num = 0; num < m.getConstraintCount(); num++)
+            {
+              String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+              if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U("))
+              {
+                propList.add(constraint);
+              }
+            }
+          }
+          if (propList.size() > 0)
+          {
+            String s = (String) JOptionPane.showInputDialog(component, "Select a property:", "Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+            if ((s != null) && (s.length() > 0))
+            {
+              Model m = bioModel.getSBMLDocument().getModel();
+              for (int num = 0; num < m.getConstraintCount(); num++)
+              {
+                String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+                if (s.equals(constraint))
+                {
+                  prop = Translator.convertProperty(m.getConstraint(num).getMath());
+                }
+              }
+            }
+          }
+          MutableString mutProp = new MutableString(prop);
+          LPN lpnFile = LPN.convertToLHPN(specs, conLevel, mutProp, bioModel);
+          prop = mutProp.getString();
+          if (lpnFile == null)
+          {
+            new File(directory + GlobalConstants.separator + "running").delete();
+            logFile.close();
+            return 0;
+          }
+          lpnFile.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+          try
+          {
+            Translator t1 = new Translator();
+            if (abstraction)
+            {
+              LPN lhpnFile = new LPN();
+              lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+              Abstraction abst = new Abstraction(lhpnFile, abstPane.getAbstractionProperty());
+              abst.abstractSTG(false);
+              abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
+              t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
+            }
+            else
+            {
+              t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName, prop);
+            }
+            t1.setFilename(root + GlobalConstants.separator + sbmlName);
+            t1.outputSBML();
+          }
+          catch(BioSimException e)
+          {
+            e.printStackTrace();
+          }
+        }
+        else
+        {
+          new File(directory + GlobalConstants.separator + "running").delete();
+          logFile.close();
+          return 0;
+        }
+        exitValue = 0;
+      }
+      else
+      {
+        if (analysisView.reb2sacAbstraction() && (abstraction || nary))
+        {
+          writeLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename);
+          reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + theFile, Executables.envp, work);
+        }
+        else
+        {
+          writeLog("Outputting SBML file:\n" + root + GlobalConstants.separator + sbmlName);
+          FileOutputStream fileOutput = new FileOutputStream(new File(root + GlobalConstants.separator + sbmlName));
+          FileInputStream fileInput = new FileInputStream(new File(filename));
+          int read = fileInput.read();
+          while (read != -1)
+          {
+            fileOutput.write(read);
+            read = fileInput.read();
+          }
+          fileInput.close();
+          fileOutput.close();
+          exitValue = 0;
+        }
+      }
+    }
+
+    if (reb2sac != null)
+    {
+      exitValue = reb2sac.waitFor();
+    }
+    */
     return exitValue;
   }
 
