@@ -9065,7 +9065,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
     AbstractionPanel lhpnAbstraction = null;
     if (modelFileName.contains(".lpn")) {
       lhpnAbstraction = new AbstractionPanel(root, modelFileName, log);
-      analysisView = new AnalysisView(this, log, simTab, lhpnAbstraction.getAbstractionProperty(), root, analysisName, modelFileName);
+      analysisView = new AnalysisView(this, log, simTab, lhpnAbstraction, root, analysisName, modelFileName);
     } else {
       analysisView = new AnalysisView(this, log, simTab, null, root, analysisName, modelFileName);
     }

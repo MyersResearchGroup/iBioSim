@@ -18,7 +18,7 @@ public final class AnalysisProperties {
 
   private String filename, id, root;
   private final AbstractionProperty absProperty;
-  
+ 
   
 	private SimMethod method;
 	

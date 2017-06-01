@@ -89,7 +89,7 @@ public class AnalysisPropertiesLoader {
   /**
    * Loads the simulate options.
    */
-  private void loadPropertiesFile(AnalysisProperties properties)
+  public void loadPropertiesFile(AnalysisProperties properties)
   {
     /*
     String root = properties.getRoot();

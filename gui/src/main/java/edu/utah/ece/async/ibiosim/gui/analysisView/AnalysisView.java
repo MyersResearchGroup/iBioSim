@@ -197,12 +197,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
    * @param modelFile
    *            - the SBML model file
    */
-  public AnalysisView(Gui gui, Log log, JTabbedPane simTab, AbstractionProperty absProperty, String root, String simName, String modelFile)
+  public AnalysisView(Gui gui, Log log, JTabbedPane simTab, AbstractionPanel  abstractionPanel, String root, String simName, String modelFile)
   {
 
     super(new BorderLayout());
 
-    this.properties = new AnalysisProperties(simName, modelFile, root, absProperty);
+    this.properties = new AnalysisProperties(simName, modelFile, root, abstractionPanel.getAbstractionProperty());
     
     this.gui = gui;
     this.log = log;
