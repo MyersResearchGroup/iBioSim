@@ -17,7 +17,6 @@ import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -2120,12 +2119,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		} else if (e.getActionCommand().equals("browseSbol")) {
 			openSBOLBrowser();
 		}
-		else if (e.getActionCommand().equals("SBOLDesigner")) {
-			//TODO: remove this section if we are to remove the right click on .sbol library file from project workspace.
-			openSBOLDesigner();
-		}
-		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("modelEditor")) {
+			// if the edit popup menu is selected on a dot file
 			openModelEditor(false);
 		}
 		// if the edit popup menu is selected on a dot file
@@ -6465,30 +6460,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	}
 
 	
-
-	private void openSBOLDesigner() {
-		//TODO: this method is only executed if we right click on the .sbol library file. 
-		// check if this method will be removed or else merge with runSBOLDesigner() 
-		String fileName = tree.getFile().substring(tree.getFile().lastIndexOf(GlobalConstants.separator) + 1);
-		try {
-			if (getSBOLDocument().getComponentDefinitions().size() == 0) {
-				createPart();
-			} 
-			else {
-				SBOLDesignerPlugin sbolDesignerPlugin = new SBOLDesignerPlugin(root + GlobalConstants.separator,
-						fileName, null, getSBOLDocument().getDefaultURIprefix());
-				
-				if (sbolDesignerPlugin.getRootDisplayId() == null)
-					return;
-				addTab(sbolDesignerPlugin.getRootDisplayId(), sbolDesignerPlugin, "SBOL Designer");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + fileName + " is invalid.", "Invalid SBOL",
-					JOptionPane.ERROR_MESSAGE);
-		}
-	}
-	
 	/**
 	 * Create an SBOLDesigner instance for every root ComponentDefinition that is found from the given SBOLDocument.
 	 * @param filePath - The location where the given file is located.
@@ -7625,17 +7596,12 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				popup.add(rename);
 				popup.add(delete);
 			} else if (tree.getFile().endsWith(".sbol")) {
-				JMenuItem view = new JMenuItem("View");
-				view.addActionListener(this);
-				view.addMouseListener(this);
-				view.setActionCommand("SBOLDesigner");
 
 				JMenuItem openSBOLDesigner = new JMenuItem("Open in Browser");
 				openSBOLDesigner.addActionListener(this);
 				openSBOLDesigner.addMouseListener(this);
 				openSBOLDesigner.setActionCommand("browseSbol");
 
-				popup.add(view);
 				popup.add(openSBOLDesigner);
 			} else if (tree.getFile().endsWith(".vhd")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
