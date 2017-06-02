@@ -6344,6 +6344,19 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 		
 		SBOLDocument chosenDesign = s.getSelection();
+		while(chosenDesign.getComponentDefinitions().isEmpty() && chosenDesign.getModuleDefinitions().isEmpty())
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "You need to select at least one design to run VPR Model Generator or open SBOLDesigner. Try again.", 
+					"No Design Selected",
+					JOptionPane.INFORMATION_MESSAGE);
+			s = new SBOLInputDialog(mainPanel, currentDoc);
+			if(s.getInput() == null)
+			{
+				return;
+			}
+			chosenDesign = s.getSelection();
+		}
+		
 		String fileName = currentProjectId + ".sbol";
 		String filePath = root + GlobalConstants.separator;
 		if(s.isVPRGenerator())
@@ -6352,7 +6365,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 		else if(s.isSBOLDesigner())
 		{
-			runSBOLDesigner(filePath, fileName, chosenDesign.getRootComponentDefinitions(), currentDoc.getDefaultURIprefix());
+			openSBOLDesigner(filePath, fileName, chosenDesign.getRootComponentDefinitions(), currentDoc.getDefaultURIprefix());
 			
 		}
 	}
@@ -6452,7 +6465,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	 * @param chosenDesigns - The selected SBOL design/part that the user wants to open in SBOLDesigner.
 	 * @param docURIPrefix - The default URI prefix of the given SBOLDocument "chosenDesign" is set to.
 	 */
-	private void runSBOLDesigner(String filePath, String fileName, Set<ComponentDefinition> chosenDesigns, String docURIPrefix)
+	private void openSBOLDesigner(String filePath, String fileName, Set<ComponentDefinition> chosenDesigns, String docURIPrefix)
 	{
 		try 
 		{
@@ -6525,7 +6538,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					String filePath = root + GlobalConstants.separator;
 					String fileName = currentProjectId + ".sbol";
 					String uriPrefix = getSBOLDocument().getDefaultURIprefix();
-					runSBOLDesigner(filePath, fileName, selectedDesign, uriPrefix);
+					openSBOLDesigner(filePath, fileName, selectedDesign, uriPrefix);
 					
 				} 
 				catch (SBOLValidationException e) 
