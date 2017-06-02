@@ -194,7 +194,6 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore.ElementsPanel;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.sbol.SBOLInputDialog;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
-import edu.utah.ece.async.ibiosim.gui.sbolBrowser.SBOLBrowser2;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisView;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisViewATACS;
 import edu.utah.ece.async.ibiosim.gui.util.FileTree;
@@ -2116,9 +2115,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			}
 		} else if (e.getActionCommand().equals("openLPN")) {
 			openLPN();
-		} else if (e.getActionCommand().equals("browseSbol")) {
-			openSBOLBrowser();
-		}
+		} 
 		else if (e.getActionCommand().equals("modelEditor")) {
 			// if the edit popup menu is selected on a dot file
 			openModelEditor(false);
@@ -6323,18 +6320,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	}
 
-	private void openSBOLBrowser() {
-		String filePath = tree.getFile();
-		String fileName = "";
-		fileName = filePath.substring(filePath.lastIndexOf(GlobalConstants.separator) + 1);
-		int i = getTab(fileName);
-		if (i != -1) {
-			tab.setSelectedIndex(i);
-		} else {
-			SBOLBrowser2 sbolBrowser2 = new SBOLBrowser2(this, filePath);
-			sbolBrowser2.open();
-		}
-	}
 
 	/**
 	 * Bring up an SBOL dialog window that will ask the user to select an SBOL design/part that was loaded from
@@ -7595,15 +7580,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				popup.add(copy);
 				popup.add(rename);
 				popup.add(delete);
-			} else if (tree.getFile().endsWith(".sbol")) {
-
-				JMenuItem openSBOLDesigner = new JMenuItem("Open in Browser");
-				openSBOLDesigner.addActionListener(this);
-				openSBOLDesigner.addMouseListener(this);
-				openSBOLDesigner.setActionCommand("browseSbol");
-
-				popup.add(openSBOLDesigner);
-			} else if (tree.getFile().endsWith(".vhd")) {
+			} 
+			else if (tree.getFile().endsWith(".vhd")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
 				createSynthesis.addMouseListener(this);
@@ -9414,10 +9392,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				modelEditor.getSpeciesPanel().refreshSpeciesPanel(modelEditor.getBioModel());
 			}
 
-			if (this.tab.getComponentAt(i).getName().equals("SBOL Browser")) {
-				((SBOLBrowser2) this.tab.getComponentAt(i)).reload(this, tab);
-			}
-
 			String properties = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".sim";
 			String properties2 = root + GlobalConstants.separator + tab + GlobalConstants.separator + tab + ".lrn";
 			if (new File(properties).exists()) {
@@ -9738,8 +9712,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			exportSynBioHub.setEnabled(true);
 			exportGenBank.setEnabled(true);
 			exportFasta.setEnabled(true);
-		} else if (comp instanceof SBOLBrowser2) {
-			// save.setEnabled(true);
 		} else if (comp instanceof LHPNEditor) {
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
