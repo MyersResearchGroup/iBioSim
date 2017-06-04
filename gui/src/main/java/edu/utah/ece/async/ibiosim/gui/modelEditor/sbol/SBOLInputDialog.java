@@ -293,7 +293,6 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	 * Get the SBOL part design that the user has selected from the Design/Parts table and return it part selected
 	 * in a new SBOLDocument.
 	 */
-	
 	public SBOLDocument getSelection() {
 		try 
 		{

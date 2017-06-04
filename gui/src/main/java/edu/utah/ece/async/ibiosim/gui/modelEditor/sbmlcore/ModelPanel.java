@@ -220,7 +220,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(conversionFactor);
 			modelEditorPanel.add(new JLabel("Conversion Factor Indices:"));
 			modelEditorPanel.add(conviIndex);
-			modelEditorPanel.add(new JLabel("SBOL ComponentDefinition:"));
+			modelEditorPanel.add(new JLabel("SBOL ModuleDefinition:"));
 			modelEditorPanel.add(sbolField);
 			modelEditorPanel.add(new JLabel("Flux Objective:"));
 			modelEditorPanel.add(fbaoButton);
