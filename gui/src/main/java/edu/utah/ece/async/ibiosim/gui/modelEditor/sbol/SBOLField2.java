@@ -178,9 +178,11 @@ public class SBOLField2 extends JPanel implements ActionListener {
 
 	/**
 	 * associate a ComponentDefinition to this part
+	 * @param filePath
+	 * @throws Exception
 	 */
 	private void associateSBOL(String filePath) throws Exception {
-		String[] options = { "Registry part", "Generic part" };
+		String[] options = {"Registry part", "Generic part", "Cancel"};
 		int choice = JOptionPane.showOptionDialog(getParent(),
 				"There is currently no associated SBOL part.  Would you like to associate one from a registry or associate a generic part?",
 				"Associate SBOL Part", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
