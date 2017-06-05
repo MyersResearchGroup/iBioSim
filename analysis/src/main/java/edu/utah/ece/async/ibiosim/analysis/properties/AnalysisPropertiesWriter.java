@@ -39,9 +39,9 @@ public class AnalysisPropertiesWriter {
 		if (analysisProperties.isAbs() || analysisProperties.isNary())
 		{
 			int gcmIndex = 1;
-			for (int i = 0; i < analysisProperties.getPreAbs().size(); i++)
+			for (int i = 0; i < analysisProperties.getAdvancedProperties().getPreAbs().size(); i++)
 			{
-				String abstractionOption = analysisProperties.getPreAbs().get(i);
+				String abstractionOption = analysisProperties.getAdvancedProperties().getPreAbs().get(i);
 				if (abstractionOption.equals(complex_formation_abstraction) || abstractionOption.equals(operator_site_abstraction))
 				{
 					properties.setProperty(gcm_Abstraction + gcmIndex, abstractionOption);
@@ -52,20 +52,20 @@ public class AnalysisPropertiesWriter {
 					properties.setProperty(reb2sac_abstraction_1 + (i + 1), abstractionOption);
 				}
 			}
-			for (int i = 0; i < analysisProperties.getLoopAbs().size(); i++)
+			for (int i = 0; i < analysisProperties.getAdvancedProperties().getLoopAbs().size(); i++)
 			{
-				properties.setProperty(reb2sac_abstraction_2 + (i + 1), analysisProperties.getLoopAbs().get(i));
+				properties.setProperty(reb2sac_abstraction_2 + (i + 1), analysisProperties.getAdvancedProperties().getLoopAbs().get(i));
 			}
 		}
-		for (int i = 0; i < analysisProperties.getPostAbs().size(); i++)
+		for (int i = 0; i < analysisProperties.getAdvancedProperties().getPostAbs().size(); i++)
 		{
-			properties.setProperty(reb2sac_abstraction_3 + (i + 1), analysisProperties.getPostAbs().get(i));
+			properties.setProperty(reb2sac_abstraction_3 + (i + 1), analysisProperties.getAdvancedProperties().getPostAbs().get(i));
 		}
-		properties.setProperty(sim_printer, analysisProperties.getPrinter_id());
-		properties.setProperty(sim_tracking_quantity, analysisProperties.getPrinter_track_quantity());
-		for (int i = 0; i < analysisProperties.getIntSpecies().size(); i++)
+		properties.setProperty(sim_printer, analysisProperties.getSimulationProperties().getPrinter_id());
+		properties.setProperty(sim_tracking_quantity, analysisProperties.getSimulationProperties().getPrinter_track_quantity());
+		for (int i = 0; i < analysisProperties.getSimulationProperties().getIntSpecies().size(); i++)
 		{
-		  String species = analysisProperties.getIntSpecies().get(i);
+		  String species = analysisProperties.getSimulationProperties().getIntSpecies().get(i);
 			if (!species.equals(""))
 			{
 				String[] split = species.split(" ");
@@ -80,12 +80,12 @@ public class AnalysisPropertiesWriter {
 				}
 			}
 		}
-		properties.setProperty(reb2sac_rapid_equil_1, "" + analysisProperties.getRap1());
-		properties.setProperty(reb2sac_rapid_equil_2, "" + analysisProperties.getRap2());
-		properties.setProperty(reb2sac_qssa_1, "" + analysisProperties.getQss());
-		properties.setProperty(reb2sac_max_operator_threshold, "" + analysisProperties.getCon());
-		properties.setProperty(reb2sac_diff_stoich_ampl, "" + analysisProperties.getStoichAmp());
-		properties.setProperty(reb2sac_stats, analysisProperties.getGenStats());
+		properties.setProperty(reb2sac_rapid_equil_1, "" + analysisProperties.getAdvancedProperties().getRap1());
+		properties.setProperty(reb2sac_rapid_equil_2, "" + analysisProperties.getAdvancedProperties().getRap2());
+		properties.setProperty(reb2sac_qssa_1, "" + analysisProperties.getAdvancedProperties().getQss());
+		properties.setProperty(reb2sac_max_operator_threshold, "" + analysisProperties.getAdvancedProperties().getCon());
+		properties.setProperty(reb2sac_diff_stoich_ampl, "" + analysisProperties.getAdvancedProperties().getStoichAmp());
+		properties.setProperty(reb2sac_stats, analysisProperties.getSimulationProperties().getGenStats());
 		if (analysisProperties.isNone())
 		{
 			properties.setProperty(reb2sac_abstraction, "none");
@@ -102,9 +102,9 @@ public class AnalysisPropertiesWriter {
 		{
 			properties.setProperty(reb2sac_abstraction, "nary");
 		}
-		if (analysisProperties.getAbsProproperty() != null)
+		if (analysisProperties.isSetVerificationProperties() && analysisProperties.getVerificationProperties().getAbsProproperty() != null)
 		{
-			AbstractionProperty absProperty = analysisProperties.getAbsProproperty();
+			AbstractionProperty absProperty =  analysisProperties.getVerificationProperties().getAbsProproperty();
 			
 			for (Integer i = 0; i < absProperty.preAbsModel.size(); i++)
 			{
@@ -151,12 +151,12 @@ public class AnalysisPropertiesWriter {
 		else if (analysisProperties.isSsa())
 		{
 			properties.setProperty(reb2sac_simulation, "monteCarlo");
-			properties.setProperty(reb2sac_issa_paths, "" + analysisProperties.getNumPaths());
-			if (analysisProperties.isMpde())
+			properties.setProperty(reb2sac_issa_paths, "" + analysisProperties.getIncrementalProperties().getNumPaths());
+			if (analysisProperties.getIncrementalProperties().isMpde())
 			{
 				properties.setProperty(reb2sac_issa_type, "mpde");
 			}
-			else if (analysisProperties.isMeanPath())
+			else if (analysisProperties.getIncrementalProperties().isMeanPath())
 			{
 				properties.setProperty(reb2sac_issa_type, "meanPath");
 			}
@@ -164,7 +164,7 @@ public class AnalysisPropertiesWriter {
 			{
 				properties.setProperty(reb2sac_issa_type, "medianPath");
 			}
-			if (analysisProperties.isAdaptive())
+			if (analysisProperties.getIncrementalProperties().isAdaptive())
 			{
 				properties.setProperty(reb2sac_issa_adaptive, "true");
 			}
@@ -199,64 +199,64 @@ public class AnalysisPropertiesWriter {
 		}
 		if (!analysisProperties.isSsa())
 		{
-			properties.setProperty(sim_init_time, "" + analysisProperties.getInitialTime());
-			properties.setProperty(sim_out_time, "" + analysisProperties.getOutputStartTime());
-			properties.setProperty(ode_time_limit, "" + analysisProperties.getTimeLimit());
+			properties.setProperty(sim_init_time, "" + analysisProperties.getSimulationProperties().getInitialTime());
+			properties.setProperty(sim_out_time, "" + analysisProperties.getSimulationProperties().getOutputStartTime());
+			properties.setProperty(ode_time_limit, "" + analysisProperties.getSimulationProperties().getTimeLimit());
 			if (analysisProperties.isPrintInterval())
 			{
-				properties.setProperty(ode_print_interval , "" + analysisProperties.getPrintInterval());
+				properties.setProperty(ode_print_interval , "" + analysisProperties.getSimulationProperties().getPrintInterval());
 			}
 			else if (analysisProperties.isMinPrintInterval())
 			{
-				properties.setProperty(ode_min_print_interval, "" + analysisProperties.getPrintInterval());
+				properties.setProperty(ode_min_print_interval, "" + analysisProperties.getSimulationProperties().getPrintInterval());
 			}
 			else
 			{
-				properties.setProperty(ode_number_steps, "" + ((int) analysisProperties.getPrintInterval()));
+				properties.setProperty(ode_number_steps, "" + ((int) analysisProperties.getSimulationProperties().getPrintInterval()));
 			}
-			if (analysisProperties.getTimeStep() == Double.MAX_VALUE)
+			if (analysisProperties.getSimulationProperties().getTimeStep() == Double.MAX_VALUE)
 			{
 				properties.setProperty(ode_time_step, "inf");
 			}
 			else
 			{
-				properties.setProperty(ode_time_step, "" + analysisProperties.getTimeStep());
+				properties.setProperty(ode_time_step, "" + analysisProperties.getSimulationProperties().getTimeStep());
 			}
-			properties.setProperty(ode_min_time_step, "" + analysisProperties.getMinTimeStep());
-			properties.setProperty(ode_abs_error, "" + analysisProperties.getAbsError());
-			properties.setProperty(ode_rel_error, "" + analysisProperties.getRelError());
+			properties.setProperty(ode_min_time_step, "" + analysisProperties.getSimulationProperties().getMinTimeStep());
+			properties.setProperty(ode_abs_error, "" + analysisProperties.getSimulationProperties().getAbsError());
+			properties.setProperty(ode_rel_error, "" + analysisProperties.getSimulationProperties().getRelError());
 			properties.setProperty(ode_out_dir, analysisProperties.getOutDir());
-			properties.setProperty(mc_seed, "" + analysisProperties.getRndSeed());
-			properties.setProperty(mc_runs, "" + analysisProperties.getRun());
+			properties.setProperty(mc_seed, "" + analysisProperties.getSimulationProperties().getRndSeed());
+			properties.setProperty(mc_runs, "" + analysisProperties.getSimulationProperties().getRun());
 		}
 		if (!analysisProperties.isOde())
 		{
-			properties.setProperty(sim_init_time, "" + analysisProperties.getInitialTime());
-			properties.setProperty(sim_out_time, "" + analysisProperties.getOutputStartTime());
-			properties.setProperty(mc_time_limit, "" + analysisProperties.getTimeLimit());
+			properties.setProperty(sim_init_time, "" + analysisProperties.getSimulationProperties().getInitialTime());
+			properties.setProperty(sim_out_time, "" + analysisProperties.getSimulationProperties().getOutputStartTime());
+			properties.setProperty(mc_time_limit, "" + analysisProperties.getSimulationProperties().getTimeLimit());
 			if (analysisProperties.isPrintInterval())
 			{
-				properties.setProperty(mc_print_interval , "" + analysisProperties.getPrintInterval());
+				properties.setProperty(mc_print_interval , "" + analysisProperties.getSimulationProperties().getPrintInterval());
 			}
 			else if (analysisProperties.isMinPrintInterval())
 			{
-				properties.setProperty(mc_min_print_interval, "" + analysisProperties.getPrintInterval());
+				properties.setProperty(mc_min_print_interval, "" + analysisProperties.getSimulationProperties().getPrintInterval());
 			}
 			else
 			{
-				properties.setProperty(mc_number_steps, "" + ((int) analysisProperties.getPrintInterval()));
+				properties.setProperty(mc_number_steps, "" + ((int) analysisProperties.getSimulationProperties().getPrintInterval()));
 			}
-			if (analysisProperties.getTimeStep() == Double.MAX_VALUE)
+			if (analysisProperties.getSimulationProperties().getTimeStep() == Double.MAX_VALUE)
 			{
 				properties.setProperty(mc_time_step, "inf");
 			}
 			else
 			{
-				properties.setProperty(mc_time_step, "" + analysisProperties.getTimeStep());
+				properties.setProperty(mc_time_step, "" + analysisProperties.getSimulationProperties().getTimeStep());
 			}
-			properties.setProperty(mc_min_time_step, "" + analysisProperties.getMinTimeStep());
-			properties.setProperty(mc_seed, "" + analysisProperties.getRndSeed());
-			properties.setProperty(mc_runs, "" + analysisProperties.getRun());
+			properties.setProperty(mc_min_time_step, "" + analysisProperties.getSimulationProperties().getMinTimeStep());
+			properties.setProperty(mc_seed, "" + analysisProperties.getSimulationProperties().getRndSeed());
+			properties.setProperty(mc_runs, "" + analysisProperties.getSimulationProperties().getRun());
 			properties.setProperty(ode_out_dir, analysisProperties.getOutDir());
 		}
 		properties.setProperty(sim_run_term , "constraint");
@@ -268,16 +268,16 @@ public class AnalysisPropertiesWriter {
 	}
 	
 	 public static void saveSEDML(SEDMLDocument sedmlDoc, AnalysisProperties properties) {
-	    double initialTime = properties.getInitialTime();
-	    double outputStartTime = properties.getOutputStartTime();
-	    double timeLimit = properties.getTimeLimit();
-	    double printInterval = properties.getPrintInterval();
+	    double initialTime = properties.getSimulationProperties().getInitialTime();
+	    double outputStartTime = properties.getSimulationProperties().getOutputStartTime();
+	    double timeLimit = properties.getSimulationProperties().getTimeLimit();
+	    double printInterval = properties.getSimulationProperties().getPrintInterval();
 	    int numberOfSteps;
 	    String fileStem = null;
 	    String simName = properties.getSim();
 	    if (properties.isNumSteps())
 	    {
-	      numberOfSteps = properties.getNumSteps();
+	      numberOfSteps = properties.getSimulationProperties().getNumSteps();
 	    }
 	    else
 	    {
@@ -312,13 +312,13 @@ public class AnalysisPropertiesWriter {
 	      if (properties.isPrintInterval()) {
 	        Element para = new Element("printInterval");
 	        para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
-	        para.setAttribute("Print_Interval", String.valueOf(properties.getPrintInterval()));
+	        para.setAttribute("Print_Interval", String.valueOf(properties.getSimulationProperties().getPrintInterval()));
 	        Annotation ann = new Annotation(para);
 	        simulation.addAnnotation(ann);
 	      } else if (properties.isMinPrintInterval()) {
 	        Element para = new Element("printInterval");
 	        para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
-	        para.setAttribute("Minimum_Print_Interval", String.valueOf(properties.getPrintInterval()));
+	        para.setAttribute("Minimum_Print_Interval", String.valueOf(properties.getSimulationProperties().getPrintInterval()));
 	        Annotation ann = new Annotation(para);
 	        simulation.addAnnotation(ann);
 	      }
