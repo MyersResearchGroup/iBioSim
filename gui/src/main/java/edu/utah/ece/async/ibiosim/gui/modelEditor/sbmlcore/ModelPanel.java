@@ -56,7 +56,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	private static final long serialVersionUID = 1L;
 
 	private JTextField modelID; // the model's ID
-
 	private JTextField modelName; // the model's Name
 
 	private JButton fbaoButton;
@@ -88,7 +87,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	}
 
 	/**
-	 * Creates a frame used to edit parameters or create new ones.
+	 * Set up design layout for Model Editor 
 	 */
 	private void modelEditor(String option) {
 		JPanel modelEditorPanel;
@@ -220,12 +219,12 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(conversionFactor);
 			modelEditorPanel.add(new JLabel("Conversion Factor Indices:"));
 			modelEditorPanel.add(conviIndex);
-			modelEditorPanel.add(new JLabel("SBOL ModuleDefinition:"));
-			modelEditorPanel.add(sbolField);
 			modelEditorPanel.add(new JLabel("Flux Objective:"));
 			modelEditorPanel.add(fbaoButton);
 			modelEditorPanel.add(new JLabel(GlobalConstants.SBOTERM));
 			modelEditorPanel.add(framework);
+			modelEditorPanel.add(new JLabel("SBOL ModuleDefinition:"));
+			modelEditorPanel.add(sbolField);
 		}
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Editor", JOptionPane.YES_NO_OPTION,

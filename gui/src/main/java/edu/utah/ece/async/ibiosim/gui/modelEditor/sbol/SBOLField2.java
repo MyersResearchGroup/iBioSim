@@ -47,11 +47,19 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PartEditDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 
+
+/**
+ * SBOL Association Panel. This class will allow user to add/edit or remove SBOL association to SBML elements. 
+ * 
+ * @author Tramy Nguyen
+ * @author Nicholas Roehner
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim
+ *         Contributors </a>
+ * @version %I%
+ */
 public class SBOLField2 extends JPanel implements ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String sbolType;
 	private int styleOption;
@@ -59,9 +67,9 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	private JTextField sbolText = new JTextField(20);
 	private List<URI> sbolURIs = new LinkedList<URI>();
 	private String sbolStrand;
-	private JButton sbolButton = new JButton("Add/Edit SBOL Part");
+	private JButton edit_sbolButton, remove_sbolButton;
 	private ModelEditor modelEditor;
-	private boolean isModelPanelField;
+	private boolean isModelPanelField; //TODO: not sure what the purpose of this field is suppose to do when the parameter is always set to false when 
 	private URI removedBioSimURI;
 
 	public SBOLField2(List<URI> sbolURIs, String sbolStrand, String sbolType, ModelEditor modelEditor, int styleOption,
@@ -78,6 +86,16 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		constructField(sbolType, modelEditor, styleOption, isModelPanelField);
 	}
 
+	/**
+	 * Create the following GUI layout for SBOL Association:
+	 * 1. Add/Edit SBOL Association
+	 * 2. Remove SBOL Association
+	 * 
+	 * @param sbolType - The SBOL object type. This is currently limited to SBOL ComponentDefinition or ModuleDefinition
+	 * @param modelEditor - The SBML model editor that the sbol association will take place on.
+	 * @param styleOption - specify 2 or 3 to set set SBOL association label to SBOL types.
+	 * @param isModelPanelField - 
+	 */
 	public void constructField(String sbolType, ModelEditor modelEditor, int styleOption, boolean isModelPanelField) {
 		this.sbolType = sbolType;
 		this.styleOption = styleOption;
@@ -85,36 +103,60 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			setLabel(sbolType);
 			this.add(sbolLabel);
 		}
-		sbolButton.setActionCommand("associateSBOL");
-		sbolButton.addActionListener(this);
-		this.add(sbolButton);
+		
+		edit_sbolButton = new JButton("Add/Edit SBOL Part");
+		edit_sbolButton.setActionCommand("associateSBOL");
+		edit_sbolButton.addActionListener(this);
+		this.add(edit_sbolButton);
 		if (styleOption == 3)
 			this.add(sbolText);
 		sbolText.setVisible(false);
+		
+		remove_sbolButton = new JButton("Remove SBOL Association");
+		remove_sbolButton.setActionCommand("removeAssociateSBOL");
+		remove_sbolButton.addActionListener(this);
+		this.add(remove_sbolButton);
 
 		this.modelEditor = modelEditor;
 		this.isModelPanelField = isModelPanelField;
 	}
 
+	/**
+	 * Get a list of SBOL URIs.
+	 * @return A list of SBOL URIs.
+	 */
 	public List<URI> getSBOLURIs() {
 		return sbolURIs;
 	}
 
+	/**
+	 * Set a list of SBOL URIs.
+	 * @param sbolURIs - The list of SBOL URIs to set.
+	 */
 	public void setSBOLURIs(List<URI> sbolURIs) {
 		this.sbolURIs = sbolURIs;
 	}
 
+	/**
+	 * Get the SBOL strand.
+	 * @return The SBOL strand.
+	 */
 	public String getSBOLStrand() {
 		return sbolStrand;
 	}
 
+	/**
+	 * Set the SBOL strand.
+	 * @param sbolStrand - The SBOL strand to set to.
+	 */
 	public void setSBOLStrand(String sbolStrand) {
 		this.sbolStrand = sbolStrand;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("associateSBOL")) {
+		if (e.getActionCommand().equals("associateSBOL")) 
+		{
 			HashSet<String> sbolFilePaths = modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
 			String filePath = sbolFilePaths.iterator().next();
 
@@ -127,6 +169,10 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+		}
+		else if(e.getActionCommand().equals("removeAssociateSBOL"))
+		{
+			//TODO: remove the associated SBOL component off of the SBML element.
 		}
 	}
 
@@ -199,7 +245,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 				sbolLabel = new JLabel("SBOL ComponentDefinition");
 			else
 				sbolLabel = new JLabel("SBOL ComponentDefinition: ");
-		} else if (sbolType.equals(GlobalConstants.SBOL_CDS))
+		} 
+		else if (sbolType.equals(GlobalConstants.SBOL_CDS))
 			sbolLabel = new JLabel("SBOL Coding Sequence");
 		else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER))
 			sbolLabel = new JLabel("SBOL Promoter");
