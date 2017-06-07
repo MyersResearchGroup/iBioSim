@@ -72,6 +72,15 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	private boolean isModelPanelField; //TODO: not sure what the purpose of this field is suppose to do when the parameter is always set to false when 
 	private URI removedBioSimURI;
 
+	/**
+	 * 
+	 * @param sbolURIs
+	 * @param sbolStrand
+	 * @param sbolType
+	 * @param modelEditor
+	 * @param styleOption
+	 * @param isModelPanelField
+	 */
 	public SBOLField2(List<URI> sbolURIs, String sbolStrand, String sbolType, ModelEditor modelEditor, int styleOption,
 			boolean isModelPanelField) {
 		super(new GridLayout(1, styleOption));
@@ -80,6 +89,13 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		constructField(sbolType, modelEditor, styleOption, isModelPanelField);
 	}
 
+	/**
+	 * 
+	 * @param sbolType
+	 * @param modelEditor
+	 * @param styleOption
+	 * @param isModelPanelField
+	 */
 	public SBOLField2(String sbolType, ModelEditor modelEditor, int styleOption, boolean isModelPanelField) {
 		super(new GridLayout(1, styleOption));
 		sbolStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
@@ -178,8 +194,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 
 	/**
 	 * associate a ComponentDefinition to this part
-	 * @param filePath
-	 * @throws Exception
+	 * @param filePath - the full path to the SBOL file.
+	 * @throws Exception - SBOL data exception
 	 */
 	private void associateSBOL(String filePath) throws Exception {
 		String[] options = {"Registry part", "Generic part", "Cancel"};
