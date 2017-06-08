@@ -239,13 +239,14 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		SBOLDocument workingDoc = SBOLReader.read(filePath);
 		workingDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
-		ComponentDefinition cd = workingDoc.getComponentDefinition(sbolURIs.get(0));
+		URI compDefURI = sbolURIs.get(0);
+		ComponentDefinition cd = workingDoc.getComponentDefinition(compDefURI);
 		if (cd == null) {
-			JOptionPane.showMessageDialog(getParent(), filePath + " cannot be found in this project.");
+			JOptionPane.showMessageDialog(getParent(), "Can't find" + compDefURI + " in " + filePath);
 			return;
 		}
 
-		// TODO change "Associate SBOL" to "Add/Edit part"
+		
 		ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), cd, true, true, workingDoc);
 
 		if (editedCD == null) {

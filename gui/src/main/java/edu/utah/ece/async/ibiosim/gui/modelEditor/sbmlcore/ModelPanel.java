@@ -13,11 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore;
 
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -28,7 +25,6 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -51,7 +47,8 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
 
 /**
- *  
+ * Construct the Model Editor Panel.
+ * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -112,7 +109,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	 * Set up GUI design layout for Model Editor 
 	 * @param option - The JButton label name that will appear as a selection button for the Model Editor panel
 	 */
-	private void modelEditor(String option)
+	private void initModelEditor(String option)
 	{
 		// Get fields to load onto Model Editor panel
 		JPanel modelEditorPanel = new JPanel(new GridBagLayout());
@@ -253,6 +250,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			if (model.isSetSBOTerm()) {
 				framework.setSelectedItem(SBMLutilities.sbo.getName(model.getSBOTermID()));
 			}
+			
+			// Insert all labels labels and its value into the Model Editor panel.
 			addModelEditor_Field(modelEditorPanel, substanceUnitsLabel, labelRow++, labelCol);
 			addModelEditor_Field(modelEditorPanel, substanceUnits, valueRow++, valueCol);
 			
@@ -384,7 +383,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == this) {
-			modelEditor("OK"); //TODO: modify this once new layout works
+			initModelEditor("OK"); 
 		} else if (e.getActionCommand().equals("editDescriptors")) {
 			modelEditor.setDirty(true);
 		}
