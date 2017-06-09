@@ -5140,9 +5140,12 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			log.addText("Importing " + sbolFile + " into the project's SBOL library.");
 			String filePath = filename.trim();
 			org.sbolstandard.core2.SBOLDocument inputSBOLDoc = SBOLReader.read(new FileInputStream(filePath));
-			generateSBMLFromSBOL(inputSBOLDoc, filePath);
+			int numGeneratedSBML = generateSBMLFromSBOL(inputSBOLDoc, filePath);
 			getSBOLDocument().read(sbolFile);
 			writeSBOLDocument();
+			JOptionPane.showMessageDialog(frame, "Successfully Imported SBOL file containing: \n"
+					+ inputSBOLDoc.getComponentDefinitions().size() + " ComponentDefinitions.\n"
+					+ numGeneratedSBML + " ModuleDefinitions converted to SBML model(s).");
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 		} catch (SBOLConversionException e) {
@@ -6552,7 +6555,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	}
 
-	private void generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
+	private int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
+		int numGeneratedSBML = 0;
 		try {
 			for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
 				List<BioModel> models;
@@ -6564,6 +6568,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 							model.save(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
 							addToTree(model.getSBMLDocument().getModel().getId() + ".xml");
 						}
+						numGeneratedSBML++;
 					}
 				} catch (XMLStreamException e) {
 					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
@@ -6575,6 +6580,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", "File Not Found",
 					JOptionPane.ERROR_MESSAGE);
 		} 
+		return numGeneratedSBML;
 	}
 
 	/**
