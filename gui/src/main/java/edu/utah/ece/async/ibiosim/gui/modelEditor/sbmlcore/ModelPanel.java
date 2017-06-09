@@ -13,7 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore;
 
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -46,7 +47,8 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
 
 /**
- *  
+ * Construct the Model Editor Panel.
+ * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -55,13 +57,13 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 
 	private static final long serialVersionUID = 1L;
 
-	private JTextField modelID; // the model's ID
-
-	private JTextField modelName; // the model's Name
+	private JTextField modelID; 
+	private JTextField modelName; 
 
 	private JButton fbaoButton;
 
-	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor, framework;
+	private JComboBox<String> substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
+	private JComboBox<Object> framework;
 	
 	private JTextField conviIndex;
 
@@ -82,72 +84,109 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		this.setText("Model");
 		this.setToolTipText("Edit Model Attributes");
 		this.addActionListener(this);
+		this.addActionListener(sbolField);
 		if (modelEditor.isParamsOnly()) {
 			this.setEnabled(false);
 		}
 	}
-
+	
 	/**
-	 * Creates a frame used to edit parameters or create new ones.
+	 * Add the given component to the Model Editor panel in a grid formatted fashion.
+	 * @param modelEditorPanel - The panel where the component will be placed on.
+	 * @param modelEditorField - the field or value to add to the model editor.
+	 * @param rowIndex - The row's index value where the modelEditorField will be placed in. rowIndex must be greater than or equal to 0. The value will grow from top to bottom.
+	 * @param colIndex - The col's index value where the modelEditorField will be placed in. colIndex must be greater than or equal to 0. The value will grow from left to right.
 	 */
-	private void modelEditor(String option) {
-		JPanel modelEditorPanel;
-		modelEditorPanel = new JPanel(new GridLayout(13, 2));
-		Model model = bioModel.getSBMLDocument().getModel();
-		modelName = new JTextField(model.getName(), 50);
-		modelID = new JTextField(model.getId(), 16);
-		modelName = new JTextField(model.getName(), 40);
-		JLabel modelIDLabel = new JLabel("Model ID:");
-		JLabel modelNameLabel = new JLabel("Model Name:");
+	private void addModelEditor_Field(JPanel modelEditorPanel, java.awt.Component modelEditorField, int rowIndex, int colIndex)
+	{
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL; // fit the component base on the width of the JPanel
+		c.gridx = colIndex;
+		c.gridy = rowIndex;
+		modelEditorPanel.add(modelEditorField, c);
+	}
+	
+	/**
+	 * Set up GUI design layout for Model Editor 
+	 * @param option - The JButton label name that will appear as a selection button for the Model Editor panel
+	 */
+	private void loadModelEditor(String option)
+	{
+		// Get fields to load onto Model Editor panel
+		JPanel modelEditorPanel = new JPanel(new GridBagLayout());
+		int labelRow = 0, valueRow = 0, labelCol = 0, valueCol = 1;
+		
+		Model model = sbmlModel;
+		
+		JLabel modelIDLabel = new JLabel("Model ID:", JLabel.RIGHT);
+		modelID = new JTextField(model.getId()); 
 		modelID.setEditable(false);
-		modelEditorPanel.add(modelIDLabel);
-		modelEditorPanel.add(modelID);
-		modelEditorPanel.add(modelNameLabel);
-		modelEditorPanel.add(modelName);
+		addModelEditor_Field(modelEditorPanel, modelIDLabel, labelRow++, labelCol);
+		addModelEditor_Field(modelEditorPanel, modelID, valueRow++, valueCol);
+
+		JLabel modelNameLabel = new JLabel("Model Name:", JLabel.RIGHT);
+		modelName = new JTextField(model.getName()); 
+		addModelEditor_Field(modelEditorPanel, modelNameLabel, labelRow++, labelCol);
+		addModelEditor_Field(modelEditorPanel, modelName, valueRow++, valueCol);
+		
 		conviIndex = new JTextField(20);
-		if (bioModel.getSBMLDocument().getLevel() > 2) {
-			JLabel substanceUnitsLabel = new JLabel("Substance Units:");
-			JLabel timeUnitsLabel = new JLabel("Time Units:");
-			JLabel volumeUnitsLabel = new JLabel("Volume Units:");
-			JLabel areaUnitsLabel = new JLabel("Area Units:");
-			JLabel lengthUnitsLabel = new JLabel("Length Units:");
-			JLabel extentUnitsLabel = new JLabel("Extent Units:");
-			JLabel conversionFactorLabel = new JLabel("Conversion Factor:");
-			substanceUnits = new JComboBox();
+		if (bioModel.getSBMLDocument().getLevel() > 2) 
+		{
+			/* ---------- Create Unit label and get unit values to add to unit combo box ---------- */
+			JLabel substanceUnitsLabel = new JLabel("Substance Units:", JLabel.RIGHT);
+			substanceUnits = new JComboBox<String>();
 			substanceUnits.addItem("( none )");
-			timeUnits = new JComboBox();
+			
+			JLabel timeUnitsLabel = new JLabel("Time Units:", JLabel.RIGHT);
+			timeUnits = new JComboBox<String>();
 			timeUnits.addItem("( none )");
-			volumeUnits = new JComboBox();
+			
+			JLabel volumeUnitsLabel = new JLabel("Volume Units:", JLabel.RIGHT);
+			volumeUnits = new JComboBox<String>();
 			volumeUnits.addItem("( none )");
-			areaUnits = new JComboBox();
+			
+			JLabel areaUnitsLabel = new JLabel("Area Units:", JLabel.RIGHT);
+			areaUnits = new JComboBox<String>();
 			areaUnits.addItem("( none )");
-			lengthUnits = new JComboBox();
+			
+			JLabel lengthUnitsLabel = new JLabel("Length Units:", JLabel.RIGHT);
+			lengthUnits = new JComboBox<String>();
 			lengthUnits.addItem("( none )");
-			extentUnits = new JComboBox();
+			
+			JLabel extentUnitsLabel = new JLabel("Extent Units:", JLabel.RIGHT);
+			extentUnits = new JComboBox<String>();
 			extentUnits.addItem("( none )");
-			conversionFactor = new JComboBox();
+			
+			JLabel conversionFactorLabel = new JLabel("Conversion Factor:", JLabel.RIGHT);
+			conversionFactor = new JComboBox<String>();
 			conversionFactor.addActionListener(this);
 			conversionFactor.addItem("( none )");
 
-			for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
+			for (int i = 0; i < model.getUnitDefinitionCount(); i++) 
+			{
 				UnitDefinition unit = model.getUnitDefinition(i);
 				if ((unit.getUnitCount() == 1)
 						&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem() || unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
-						&& (unit.getUnit(0).getExponent() == 1)) {
+						&& (unit.getUnit(0).getExponent() == 1)) 
+				{
 					substanceUnits.addItem(unit.getId());
 					extentUnits.addItem(unit.getId());
 				}
-				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isSecond()) && (unit.getUnit(0).getExponent() == 1)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isSecond()) && (unit.getUnit(0).getExponent() == 1)) 
+				{
 					timeUnits.addItem(unit.getId());
 				}
 				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent() == 1)
-						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 3)) {
+						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 3)) 
+				{
 					volumeUnits.addItem(unit.getId());
 				}
-				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) 
+				{
 					areaUnits.addItem(unit.getId());
 				}
-				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) 
+				{
 					lengthUnits.addItem(unit.getId());
 				}
 			}
@@ -157,19 +196,25 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			substanceUnits.addItem("item");
 			substanceUnits.addItem("kilogram");
 			substanceUnits.addItem("mole");
+			
 			timeUnits.addItem("dimensionless");
 			timeUnits.addItem("second");
+			
 			volumeUnits.addItem("dimensionless");
 			volumeUnits.addItem("litre");
+			
 			areaUnits.addItem("dimensionless");
+			
 			lengthUnits.addItem("dimensionless");
 			lengthUnits.addItem("metre");
+			
 			extentUnits.addItem("dimensionless");
 			extentUnits.addItem("gram");
 			extentUnits.addItem("item");
 			extentUnits.addItem("kilogram");
 			extentUnits.addItem("mole");
 			
+			/* ---------- SBOL Association Annotation ---------- */
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlModel, sbolURIs);
 			sbolField.setSBOLURIs(sbolURIs);
@@ -181,6 +226,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					conversionFactor.addItem(param.getId());
 				}
 			}
+			
+			// Set the default selection for all of the combo box
 			if (option.equals("OK")) {
 				substanceUnits.setSelectedItem(model.getSubstanceUnits());
 				timeUnits.setSelectedItem(model.getTimeUnits());
@@ -198,36 +245,51 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			fbaoButton = new JButton("Edit Objectives");
 			fbaoButton.setActionCommand("fluxObjective");
 			fbaoButton.addActionListener(this);
-			// TODO: interaction?
-			framework = new JComboBox(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_FRAMEWORK));
+			
+			framework = new JComboBox<Object>(SBMLutilities.getSortedListOfSBOTerms(GlobalConstants.SBO_FRAMEWORK));
 			framework.addActionListener(this);
 			if (model.isSetSBOTerm()) {
 				framework.setSelectedItem(SBMLutilities.sbo.getName(model.getSBOTermID()));
 			}
-			modelEditorPanel.add(substanceUnitsLabel);
-			modelEditorPanel.add(substanceUnits);
-			modelEditorPanel.add(timeUnitsLabel);
-			modelEditorPanel.add(timeUnits);
-			modelEditorPanel.add(volumeUnitsLabel);
-			modelEditorPanel.add(volumeUnits);
-			modelEditorPanel.add(areaUnitsLabel);
-			modelEditorPanel.add(areaUnits);
-			modelEditorPanel.add(lengthUnitsLabel);
-			modelEditorPanel.add(lengthUnits);
-			modelEditorPanel.add(extentUnitsLabel);
-			modelEditorPanel.add(extentUnits);
-			modelEditorPanel.add(conversionFactorLabel);
-			modelEditorPanel.add(conversionFactor);
-			modelEditorPanel.add(new JLabel("Conversion Factor Indices:"));
-			modelEditorPanel.add(conviIndex);
-			modelEditorPanel.add(new JLabel("SBOL ComponentDefinition:"));
-			modelEditorPanel.add(sbolField);
-			modelEditorPanel.add(new JLabel("Flux Objective:"));
-			modelEditorPanel.add(fbaoButton);
-			modelEditorPanel.add(new JLabel(GlobalConstants.SBOTERM));
-			modelEditorPanel.add(framework);
+			
+			// Insert all labels labels and its value into the Model Editor panel.
+			addModelEditor_Field(modelEditorPanel, substanceUnitsLabel, labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, substanceUnits, valueRow++, valueCol);
+			
+			addModelEditor_Field(modelEditorPanel, timeUnitsLabel, labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, timeUnits, valueRow++, valueCol);
+			
+			addModelEditor_Field(modelEditorPanel, volumeUnitsLabel, labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, volumeUnits, valueRow++, valueCol);
+			
+			addModelEditor_Field(modelEditorPanel, areaUnitsLabel, labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, areaUnits, valueRow++, valueCol);
+			
+			addModelEditor_Field(modelEditorPanel, lengthUnitsLabel, labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, lengthUnits, valueRow++, valueCol);
+			
+			addModelEditor_Field(modelEditorPanel, extentUnitsLabel, labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, extentUnits, valueRow++, valueCol);
+			
+			addModelEditor_Field(modelEditorPanel, conversionFactorLabel, labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, conversionFactor, valueRow++, valueCol);
+			
+			addModelEditor_Field(modelEditorPanel, new JLabel("Conversion Factor Indices:", JLabel.RIGHT), labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, conviIndex, valueRow++, valueCol);
+			
+			addModelEditor_Field(modelEditorPanel, new JLabel("Flux Objective:", JLabel.RIGHT), labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, fbaoButton, valueRow++, valueCol);
+			
+			addModelEditor_Field(modelEditorPanel, new JLabel(GlobalConstants.SBOTERM, JLabel.RIGHT), labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, framework, valueRow++, valueCol);
+			
+			addModelEditor_Field(modelEditorPanel, new JLabel("SBOL ModuleDefinition:", JLabel.RIGHT), labelRow++, labelCol);
+			addModelEditor_Field(modelEditorPanel, sbolField, valueRow++, valueCol);
 		}
+		
+		// Display Model Editor panel
 		Object[] options = { option, "Cancel" };
+		
 		int value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value != JOptionPane.YES_OPTION)
@@ -242,7 +304,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 						null, null, null);
 				error = (dex==null);
 			}
-			// Add SBOL annotation to SBML model itself
+			// Add SBOL annotation to SBML model 
 			if (!error) {
 				if (sbolField.getSBOLURIs().size() > 0) {
 					if (!sbmlModel.isSetMetaId() || sbmlModel.getMetaId().equals(""))
@@ -254,8 +316,15 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					{
 					  JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(sbmlModel) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 					}
-				} else 
+					//Update iBioSim model editor id, name and SBO term from the annotated SBOL element
+					sbmlModel.setId(sbolField.getSBOLObjID());
+					modelName.setText(sbolField.getSBOLObjName());
+					framework.setSelectedItem(SBMLutilities.sbo.getName(sbolField.getSBOLObjSBOTerm()));
+					
+				} else {
 					AnnotationUtility.removeSBOLAnnotation(sbmlModel);
+				}
+				
 			}
 			if (!error) {
 				if (substanceUnits.getSelectedItem().equals("( none )")) {
@@ -307,7 +376,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				} else {
 					model.setSBOTerm(SBMLutilities.sbo.getId((String)framework.getSelectedItem()));
 				}
-				model.setName(modelName.getText());
+				model.setName(modelName.getText()); //for reloading purposes
 				modelEditor.setDirty(true);
 				modelEditor.makeUndoPoint();
 			}
@@ -317,16 +386,13 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			}
 		}
 	}
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// if the add unit button is clicked
-		// if the add function button is clicked
 		if (e.getSource() == this) {
-			modelEditor("OK");
+			loadModelEditor("OK"); 
 		} else if (e.getActionCommand().equals("editDescriptors")) {
-//			if (bioModel.getSBOLDescriptors() != null)
-//				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(sbolField.getSBOLURIs().get(0))
 			modelEditor.setDirty(true);
 		}
 		else if (e.getActionCommand().equals("fluxObjective")){
@@ -346,7 +412,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					conviIndex.setEnabled(false);
 				}
 			}
-			//modelEditor.setDirty(true);
 		}
 	}
 
