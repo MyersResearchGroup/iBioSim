@@ -1,0 +1,449 @@
+options {
+  JAVA_UNICODE_ESCAPE = true;
+  STATIC = false;
+}
+
+PARSER_BEGIN(Parser)
+
+  package lpn.parser;
+
+  public class Parser {
+
+    public Parser (String property) {
+      this(new java.io.ByteArrayInputStream(property.getBytes()));
+    }
+
+    public boolean parseProperty() {
+      try {
+        Goal();
+        return true;
+      }
+      catch (Exception e) {
+        System.out.println(e.toString());
+        return false;
+      }
+    }
+
+    public static void main(String [] args) {
+      try {
+         Parser p = new Parser(System.in);
+         //Parser p = new Parser(args[0]);
+         p.Goal();
+      }
+      catch (Exception e) {
+          System.out.println(e.toString());
+      }
+	
+    }
+  }
+
+PARSER_END(Parser)
+
+
+TOKEN : {  
+	<DOT: "."> |
+	<ATACS: ([" ", "\t"])*"#@" > |
+	<END: (<DOT>"end"|<DOT>"END")> |
+	<INPUTS: (<DOT>"inputs"|<DOT>"INPUTS")> |
+	<INIT_STATE: <DOT>"init_state"> |
+	<DUMMYS: (<DOT>"dummy"|<DOT>"DUMMY")> |
+	<FAILTRANS: (<DOT>"failtrans"|<DOT>"FAILTRANS")> |
+	<VARIABLES: (<DOT>"variables"|<DOT>"VARIABLES")> |
+	<INTEGERS: (<DOT>"integers"|<DOT>"INTEGERS")> |
+	<NONINPS: (<DOT>"noninp"|<DOT>"NONINP")> |
+	<KEEPS: (<DOT>"keep"|<DOT>"KEEP")> |
+	<ABSTRACTS: (<DOT>"abstract"|<DOT>"ABSTRACT")> |
+	<CONTINUOUS: (<DOT>"continuous"|<DOT>"CONTINUOUS")> |
+	<RATES: (<DOT>"rates"|<DOT>"RATES")> |
+	<INITRATES: (<DOT>"init_rates"|<DOT>"INIT_RATES")> |
+	<INITVALS: (<DOT>"init_vals"|<DOT>"INIT_VALS")> |
+	<INITINTS: (<DOT>"init_ints"|<DOT>"INIT_INTS")> |
+	<INVARIANTS:(<DOT>"invariants"|<DOT>"INVARIANTS")> |
+	<ENABLINGS: (<DOT>"enablings"|<DOT>"ENABLINGS")> |
+	<ASSIGNS: (<DOT>"assignments"|<DOT>"ASSIGNMENTS")> |
+	<TRANS_RATES: (<DOT>"transition_rates"|<DOT>"TRANSITION_RATES")> |
+	<RATE_ASSIGNS: (<DOT>"rate_assignments"|<DOT>"RATE_ASSIGNMENTS")> |
+	<INT_ASSIGNS: (<DOT>"int_assignments"|<DOT>"INT_ASSIGNMENTS")> |
+	<DELAY_ASSIGNS: (<DOT>"delay_assignments"|<DOT>"DELAY_ASSIGNMENTS")> |
+	<PRIORITY_ASSIGNS: (<DOT>"priority_assignments"|<DOT>"PRIORITY_ASSIGNMENTS")> |
+	<BOOL_ASSIGNS: (<DOT>"boolean_assignments"|<DOT>"BOOLEAN_ASSIGNMENTS")> |
+	<OUTPUTS: (<DOT>"outputs"|<DOT>"OUTPUTS")> |
+	<INTERNAL: (<DOT>"internal"|<DOT>"INTERNAL")> |
+	<GRAPH: (<DOT>"graph"|<DOT>"GRAPH")> |
+	<PROPERTY: (<DOT>"property"|<DOT>"PROPERTY")> |
+	<MARKING: (<DOT>"marking"|<DOT>"MARKING)")>|
+	<NAME: (<DOT>"name"|<DOT>"NAME")> |
+  	<MINF: "min"> |
+  	<MAXF: "max"> |
+  	<IDIV: "idiv"> |
+  	<FLOOR: "floor"> |
+  	<CEIL: "ceil"> |
+   	<UNIFORM: "uniform"> |
+   	<NORMAL: "normal"> |
+  	<EXPONENTIAL: "exponential"> |
+  	<GAMMA: "gamma"> |
+	<LOGNORMAL: "lognormal"> |
+  	<CHISQ: "chisq"> |
+  	<LAPLACE: "laplace"> |
+  	<CAUCHY: "cauchy"> |
+  	<RAYLEIGH: "rayleigh"> |
+  	<POISSON: "poisson"> |
+  	<BINOMIAL: "binomial"> |
+  	<BERNOULLI: "bernoulli"> |
+  	<BITNOT: "NOT"> |
+  	<BITOR: "OR"> |
+  	<BITAND: "AND"> |
+  	<BITXOR: "XOR"> |
+  	<INT: "INT"> |
+  	<BOOL: "BOOL"> |
+  	<BIT: "BIT"> |
+  	<RATE: "rate"> |
+  	<VERIFY: "verify"> |
+  	<SEARCH: "search"> |
+  	<ASSIGN: ":="> |
+  	<IMPLIC: "=>"> |
+  	<COMMA: ","> |
+ 	<QMARK: "?"> |
+  	<EQUAL: "="> |
+  	<OBRACE: "{"> |
+  	<LESSTHAN: "<"> |
+  	<BOOL_FALSE: "false"> |
+  	<BOOL_TRUE: "true"> |
+  	<AU: "AU"> |
+  	<EU: "EU"> |
+  	<EG: "EG"> |
+  	<EF: "EF"> |
+  	<AG: "AG"> |
+  	<AF: "AF"> |
+  	<PG: "PG"> |
+  	<PF: "PF"> |
+  	<PU: "PU"> |
+  	<PX: "PX"> |
+  	<Pr: "Pr"> |
+ 	<Ss: "St"> |
+  	<OSQUARE: "["> |
+  	<CSQUARE: "]"> |
+  	<GREATERTHAN: ">"> |
+  	<CBRACE: "}"> |
+  	<DISABLE: ")d"> |
+  	<INF: "inf">  |
+  	<SYMBOL: ["!","?"]> |
+  	<ID: (<LETTER>|<SYMBOL>)(<LETTER>|<DIGIT>|<SYMBOL>|<DOT>)*> |
+  	<NUM: (<DIGIT>)+(<DOT>(<DIGIT>)+)?("E")("+"|"-")?(<DIGIT>)+> |
+  	<INTEGER: (<DIGIT>)+> |
+  	<REAL: <INTEGER><DOT><INTEGER>|<INTEGER>"e"<INTEGER>|<INTEGER>"e-"<INTEGER>|<INTEGER>"E"<INTEGER>|<INTEGER>"E-"<INTEGER>|<INTEGER><DOT><INTEGER>"e"<INTEGER>|<INTEGER><DOT><INTEGER>"e-"<INTEGER>|<INTEGER><DOT><INTEGER>"E"<INTEGER>|<INTEGER><DOT><INTEGER>"E-"<INTEGER>|<INTEGER><DOT><INTEGER>"e+"<INTEGER>|<INTEGER><DOT><INTEGER>"E+"<INTEGER>> |
+  	<#LETTER: ["a"-"z"]|["A"-"Z"]|["_"]> | 
+  	<#DIGIT: ["0"-"9"]> |
+  	<PLUS: "+"> |
+  	<MINUS: "-"> |
+  	<OPAR: "("> |
+  	<CPAR: ")"> |
+  	<MULT: "*"> | 
+  	<MOD: "%"> |
+  	<POWER: "^"> |
+  	<NOT: "~"> |
+  	<DIV:"/"> |
+  	<AND: "&"> |
+  	<OR: "|"> |
+  	<GEQ: ">="> |
+  	<LEQ: "<="> |
+  	<SEMICOLON: ";"> |
+  	<UNKNOWN: "\\" > 
+}
+
+SKIP : { " " | "\t" | "\n" | "\r" | "\r\n" | <COMMENTS:(<DELIM>)*"#"(~["@","\n"])*> | <#DELIM: ([" ", "\t"])+>}
+
+void Goal() :
+{}
+{
+ (Property())* <EOF>
+}
+
+void Property():
+{}
+{
+ Props()
+ | Probproperty()
+}
+
+void Probproperty():
+{}
+{
+ LOOKAHEAD(3)<Pr> Relop() <REAL> <OBRACE> Probprop() <CBRACE>
+ | LOOKAHEAD(2)<Pr> <OBRACE> Probprop() <CBRACE>
+ | LOOKAHEAD(2)<Pr> <EQUAL> <QMARK> <OBRACE> Probprop() <CBRACE>
+ | LOOKAHEAD(3)<Ss> Relop() <REAL> <OBRACE> Probproperty() <CBRACE>
+ | LOOKAHEAD(2)<Ss> <OBRACE> Probproperty() <CBRACE>
+ | LOOKAHEAD(2)<Ss> <EQUAL> <QMARK> <OBRACE> Probproperty() <CBRACE>
+ | Hsf()
+}
+
+void Probprop():
+{}
+{
+ <PG> Bound() <OPAR> Probproperty() <CPAR>
+ | <PF> Bound() <OPAR> Probproperty() <CPAR>
+ | Probproperty() <PU> Bound() Probproperty()
+}
+
+//void Props():
+//{}
+//{
+// LOOKAHEAD(3) Prop() Andprop()
+// | LOOKAHEAD(3) Prop() Orprop()
+// | LOOKAHEAD(3) Prop() Impliesprop()
+// | Prop()
+//}
+
+void Props():
+{}
+{
+ Prop() Props_prime()
+}
+
+void Props_prime():
+{}
+{
+ Andprop()
+ | Orprop()
+ | Impliesprop()
+}
+
+void Andprop():
+{}
+{
+ <AND> Prop() Andprop()
+ | {}
+}
+
+void Orprop():
+{}
+{
+ <OR> Prop() Orprop()
+ | {}
+}
+
+void Impliesprop():
+{}
+{
+ <MINUS> <GREATERTHAN> Prop() Impliesprop()
+ | {}
+}
+
+//void Prop():
+//{}
+//{
+// LOOKAHEAD(3) Fronttype() <OPAR> Bound() Hsf() <CPAR>
+// | Fronttype() <OPAR> Bound() Prop()<CPAR>
+// | Midprop()
+//}
+
+void Prop():
+{}
+{
+ Fronttype() Bound() <OPAR> Prop_prime() <CPAR>
+ | Midprop()
+}
+
+void Prop_prime():
+{}
+{
+ Hsf()
+ | Fronttype() Bound() <OPAR> Prop_prime() <CPAR>
+ | Midprop()
+}
+
+// void Midprop():
+//{}
+//{
+// <OPAR> Propinner() <CPAR> 
+//}
+ 
+
+void Midprop():
+{}
+{
+ <OBRACE> Propinner() <CBRACE> 
+}
+
+//void Propinner():
+//{}
+//{
+// LOOKAHEAD(3) Prop() Midtype() Bound() Prop()
+// | LOOKAHEAD(3) Prop() Midtype() Bound() Hsf()
+// | LOOKAHEAD(3) Hsf() Midtype() Bound() Prop()
+// | Hsf() Midtype() Bound() Hsf()
+//}
+
+void Propinner():
+{}
+{
+ Hsf() Midtype() Bound() Propinner_prime()
+ | Prop() Midtype() Bound() Propinner_prime()
+}
+
+void Propinner_prime():
+{}
+{
+ Prop()
+ | Hsf()
+}
+
+void Fronttype():
+{}
+{
+ <AG> | <AF> | <EG> | <EF>
+}
+
+void Midtype():
+{}
+{
+ <AU> | <EU>
+}
+
+void Bound():
+{}
+{
+ LOOKAHEAD(2)<OSQUARE> Relop() Hsf() <CSQUARE>
+ | <OSQUARE> Hsf() <COMMA> Hsf() <CSQUARE>
+ | {}
+}
+
+void Hsf():
+{}
+{
+ Andexpr() Hsf_prime()
+}
+
+void Hsf_prime():
+{}
+{
+ <OR> Andexpr() Hsf_prime()
+ | <IMPLIC> Andexpr() Hsf_prime() 
+ | {}
+}
+
+void Andexpr():
+{}
+{
+ Relation() Andexpr_prime()
+}
+
+void Andexpr_prime():
+{}
+{
+ <AND> Relation() Andexpr_prime()
+ | {}
+}
+
+void Relation():
+{}
+{
+ Arithexpr() Relation_prime()
+ | <NOT> Relation()
+ | <BIT> <OPAR> Arithexpr() <COMMA> Arithexpr() <CPAR>
+}
+
+void Relation_prime():
+{}
+{
+  Relop() Arithexpr()
+  | {}
+}
+
+void Arithexpr():
+{}
+{
+ Multexpr() Arithexpr_prime()
+}
+
+void Arithexpr_prime():
+{}
+{
+ <PLUS> Multexpr() Arithexpr_prime()
+ |  <MINUS> Multexpr() Arithexpr_prime()
+ | {}
+}
+
+void Multexpr():
+{}
+{
+ Term() Multexpr_prime()
+}
+
+void Multexpr_prime():
+{}
+{
+ <MULT> Term() Multexpr_prime()
+ | <DIV> Term() Multexpr_prime()
+ | <MOD> Term() Multexpr_prime()
+ | <POWER> Term() Multexpr_prime()
+ | Id()
+ | {}
+}
+
+void Term():
+{}
+{
+ <OPAR> Hsf() <CPAR>
+ | Id()
+ | <INTEGER>
+ | <REAL>
+ | <INF>
+ | <RATE> <OPAR>  Id() <CPAR>
+ | <INT> <OPAR> Hsf() <CPAR>
+ | <MINUS>  Term()
+ | <BOOL_FALSE>
+ | <BOOL_TRUE>
+ | Unop() <OPAR>  Arithexpr() <CPAR>
+ | Binop() <OPAR> Arithexpr() <COMMA> Arithexpr() <CPAR>
+}
+
+void Relop():
+{}
+{
+ <EQUAL>
+ | LOOKAHEAD(2) <LESSTHAN>
+ | <LEQ> 
+ | LOOKAHEAD(2) <GREATERTHAN> 
+ | <GEQ> 
+}
+
+void Unop():
+{}
+{
+ <BITNOT>
+ | <EXPONENTIAL>
+ | <CHISQ>
+ | <LAPLACE>
+ | <CAUCHY>
+ | <RAYLEIGH>
+ | <POISSON>
+ | <BERNOULLI>
+ | <BOOL>
+ | <FLOOR>
+ | <CEIL>
+}
+
+void Binop():
+{}
+{
+ <BITOR>
+ | <BITAND>
+ | <BITXOR>
+ | <UNIFORM>
+ | <NORMAL>
+ | <GAMMA>
+ | <LOGNORMAL>
+ | <BINOMIAL>
+ | <MINF>
+ | <MAXF>
+ | <IDIV>
+}
+
+void Id():
+{}
+{
+ <ID> 
+}
+
