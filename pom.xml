@@ -36,7 +36,6 @@
 		<module>gui</module>
 		<module>synthesis</module>
 		<module>learn</module>
-		<module>verification</module>
 	</modules>
 
 	<build>
