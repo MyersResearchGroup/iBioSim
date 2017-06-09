@@ -142,7 +142,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @param paramsOnly
 	 * @param refGCM
 	 * @param modelEditor
-	 * @param inTab
+	 * @param inTab - True if the user is still browsing within the Species Editor. 
 	 */
 	private void constructor(String selected, PropertyList speciesList, 
 			PropertyList componentsList, BioModel bioModel, boolean paramsOnly,
@@ -616,8 +616,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 		}
 		
-
-		
 		setFieldEnablings();
 		
 		boolean display = false;
@@ -631,7 +629,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 		}
 	}
-
+	
 	private boolean checkValues() {
 		for (PropertyField f : fields.values()) {
 			if (!f.isValidValue()) {
@@ -895,20 +893,27 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 								bioModel.getMetaIDIndex());
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
 							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+					
 					if(!AnnotationUtility.setSBOLAnnotation(species, sbolAnnot))
 					{
 					    JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 					}
+					
+					//Update iBioSim species id, name and SBO term from the annotated SBOL element
+					newSpeciesID = sbolField.getSBOLObjID();
+					species.setName(sbolField.getSBOLObjName()); 
+					species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+					
 				} else 
 					AnnotationUtility.removeSBOLAnnotation(species);
 			}
 			
 			try {
-        bioModel.changeSpeciesId(selected, newSpeciesID);
-      } catch (BioSimException e1) {
-        JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
-        e1.printStackTrace();
-      }
+				bioModel.changeSpeciesId(selected, newSpeciesID);
+			} catch (BioSimException e1) {
+				JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
+				e1.printStackTrace();
+			}
 			((DefaultListModel) components.getModel()).clear();
 
 			for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {

@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -31,11 +32,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
+import org.sbolstandard.core2.TopLevel;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
@@ -61,17 +64,21 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 public class SBOLField2 extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private String sbolType;
 	private int styleOption;
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
 	private List<URI> sbolURIs = new LinkedList<URI>();
 	private String sbolStrand;
 	private JButton edit_sbolButton, remove_sbolButton;
-	private ModelEditor modelEditor;
-	private boolean isModelPanelField; //TODO: not sure what the purpose of this field is suppose to do when the parameter is always set to false when 
+	private ModelEditor modelEditor; 
 	private URI removedBioSimURI;
+	
+	private String associateObjID, associateObjName, associatedObjSBO;
 
+	//TODO: not sure what the purpose of this field is for
+	private boolean isModelPanelField;
+	private String sbolType;
+	
 	/**
 	 * 
 	 * @param sbolURIs
@@ -191,6 +198,92 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			//TODO: remove the associated SBOL component off of the SBML element.
 		}
 	}
+	
+	/**
+	 * Get the associated SBOL objects displayID.
+	 * @return SBOL object displayID
+	 */
+	public String getSBOLObjID()
+	{
+		return associateObjID;
+	}
+	
+	/**
+	 * Get the associated SBOL object name.
+	 * @return SBOL object name
+	 */
+	public String getSBOLObjName()
+	{
+		return associateObjName;
+	}
+	
+	/**
+	 * Get the associated SBOL object name.
+	 * @return SBOL object SBO term
+	 */
+	public String getSBOLObjSBOTerm()
+	{
+		return associatedObjSBO;
+	}
+	
+	/**
+	 * Update the following SBML fields after SBOL association has been performed.
+	 * @param sbolObj - The associated SBOL object use to update the SBML fields.
+	 */
+	private void updateSBMLFieldsFromSBOL(TopLevel sbolObj)
+	{
+		associateObjID = sbolObj.getDisplayId();
+		
+		associateObjName = sbolObj.getName();
+		
+		if(sbolObj instanceof ComponentDefinition)
+		{
+			ComponentDefinition compDef = (ComponentDefinition) sbolObj;
+			Set<URI> compDef_types = compDef.getTypes();
+			if(!compDef_types.isEmpty())
+			{
+				URI type = compDef_types.iterator().next();
+				associatedObjSBO = getSpeciesSBOTerm(type);
+			}
+		}
+		if(sbolObj instanceof ModuleDefinition)
+		{
+			ModuleDefinition modDef = (ModuleDefinition) sbolObj;
+			//TODO: determine the mapping for ModuleDefinition's SBO term.
+		}
+	}
+	
+	/**
+	 * Get the equivalent SBML SBO term from the given SBOL SBO term
+	 * @param sbolSBOTerm - The SBOL SBO term.
+	 * @return The converted SBML SBO term.
+	 */
+	private String getSpeciesSBOTerm(URI sbolSBOTerm)
+	{
+		if(sbolSBOTerm.equals(ComponentDefinition.DNA))
+		{
+			return GlobalConstants.SBO_DNA_SEGMENT;
+		}
+		else if(sbolSBOTerm.equals(ComponentDefinition.RNA))
+		{
+			return GlobalConstants.SBO_RNA_SEGMENT;
+		}
+		else if(sbolSBOTerm.equals(ComponentDefinition.PROTEIN))
+		{
+			return GlobalConstants.SBO_PROTEIN;
+		}
+		else if(sbolSBOTerm.equals(ComponentDefinition.COMPLEX))
+		{
+			return GlobalConstants.SBO_NONCOVALENT_COMPLEX;
+		}
+		else if(sbolSBOTerm.equals(ComponentDefinition.SMALL_MOLECULE))
+		{
+			return GlobalConstants.SBO_SIMPLE_CHEMICAL;
+		}
+		
+		return GlobalConstants.SBO_PROTEIN; //default case if no SBOL term was given
+	}
+	
 
 	/**
 	 * associate a ComponentDefinition to this part
@@ -213,10 +306,13 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			SBOLDocument selection = new RegistryInputDialog(null, RegistryInputDialog.ALL_PARTS,
 					edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types.All_types, null, workingDoc).getInput();
 
-			if (selection != null) {
+			if (selection != null) 
+			{
 				SBOLUtils.insertTopLevels(selection, workingDoc);
 				SBOLWriter.write(workingDoc, filePath);
-				sbolURIs = Arrays.asList(selection.getRootComponentDefinitions().iterator().next().getIdentity());
+				ComponentDefinition associated_compDef = selection.getRootComponentDefinitions().iterator().next();
+				sbolURIs = Arrays.asList(associated_compDef.getIdentity());
+				updateSBMLFieldsFromSBOL(associated_compDef);
 			}
 			break;
 
@@ -255,6 +351,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		}
 
 		sbolURIs = Arrays.asList(editedCD.getIdentity());
+		updateSBMLFieldsFromSBOL(editedCD);
+		
 		SBOLWriter.write(workingDoc, filePath);
 	}
 

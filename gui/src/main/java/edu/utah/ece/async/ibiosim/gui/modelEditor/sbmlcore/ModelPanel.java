@@ -84,6 +84,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		this.setText("Model");
 		this.setToolTipText("Edit Model Attributes");
 		this.addActionListener(this);
+		this.addActionListener(sbolField);
 		if (modelEditor.isParamsOnly()) {
 			this.setEnabled(false);
 		}
@@ -109,13 +110,13 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	 * Set up GUI design layout for Model Editor 
 	 * @param option - The JButton label name that will appear as a selection button for the Model Editor panel
 	 */
-	private void initModelEditor(String option)
+	private void loadModelEditor(String option)
 	{
 		// Get fields to load onto Model Editor panel
 		JPanel modelEditorPanel = new JPanel(new GridBagLayout());
 		int labelRow = 0, valueRow = 0, labelCol = 0, valueCol = 1;
 		
-		Model model = bioModel.getSBMLDocument().getModel();
+		Model model = sbmlModel;
 		
 		JLabel modelIDLabel = new JLabel("Model ID:", JLabel.RIGHT);
 		modelID = new JTextField(model.getId()); 
@@ -303,7 +304,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 						null, null, null);
 				error = (dex==null);
 			}
-			// Add SBOL annotation to SBML model itself
+			// Add SBOL annotation to SBML model 
 			if (!error) {
 				if (sbolField.getSBOLURIs().size() > 0) {
 					if (!sbmlModel.isSetMetaId() || sbmlModel.getMetaId().equals(""))
@@ -315,8 +316,15 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					{
 					  JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(sbmlModel) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 					}
-				} else 
+					//Update iBioSim model editor id, name and SBO term from the annotated SBOL element
+					sbmlModel.setId(sbolField.getSBOLObjID());
+					modelName.setText(sbolField.getSBOLObjName());
+					framework.setSelectedItem(SBMLutilities.sbo.getName(sbolField.getSBOLObjSBOTerm()));
+					
+				} else {
 					AnnotationUtility.removeSBOLAnnotation(sbmlModel);
+				}
+				
 			}
 			if (!error) {
 				if (substanceUnits.getSelectedItem().equals("( none )")) {
@@ -368,7 +376,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				} else {
 					model.setSBOTerm(SBMLutilities.sbo.getId((String)framework.getSelectedItem()));
 				}
-				model.setName(modelName.getText());
+				model.setName(modelName.getText()); //for reloading purposes
 				modelEditor.setDirty(true);
 				modelEditor.makeUndoPoint();
 			}
@@ -383,7 +391,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == this) {
-			initModelEditor("OK"); 
+			loadModelEditor("OK"); 
 		} else if (e.getActionCommand().equals("editDescriptors")) {
 			modelEditor.setDirty(true);
 		}
