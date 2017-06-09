@@ -130,7 +130,7 @@ public class AnnotationUtility {
 			Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
 			Matcher sbolMatcher = sbolPattern.matcher(annotation);
 			if (sbolMatcher.find()) {
-				Pattern componentPattern = Pattern.compile(SBOL_ELEMENTS);
+				Pattern componentPattern = Pattern.compile(DNA_COMPONENTS_ELEMENT);
 				Matcher componentMatcher = componentPattern.matcher(sbolMatcher.group(0));
 				if (componentMatcher.find()) {
 					Pattern uriPattern = Pattern.compile(URI_LIST_ELEMENT);
