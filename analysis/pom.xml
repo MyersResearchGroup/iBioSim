@@ -71,9 +71,8 @@
 		
 		<dependency>
 			<groupId>edu.utah.ece.async</groupId>
-			<artifactId>iBioSim-verification</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
+			<artifactId>LEMA-verification</artifactId>
+			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

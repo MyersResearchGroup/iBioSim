@@ -175,9 +175,15 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		SBOLDocument workingDoc = SBOLReader.read(filePath);
 		workingDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
-		ComponentDefinition cd = workingDoc.getComponentDefinition(sbolURIs.get(0));
+		ComponentDefinition cd = null;
+		for (URI uri : sbolURIs) {
+			cd = workingDoc.getComponentDefinition(uri);
+			if (cd != null){
+				break;
+			}
+		}
 		if (cd == null) {
-			JOptionPane.showMessageDialog(getParent(), filePath + " cannot be found in this project.");
+			JOptionPane.showMessageDialog(getParent(), " No URI for this object resolves to a component definition in this project.");
 			return;
 		}
 
