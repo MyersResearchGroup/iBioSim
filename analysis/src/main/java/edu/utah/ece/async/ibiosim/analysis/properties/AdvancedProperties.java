@@ -16,6 +16,15 @@ public class AdvancedProperties {
 
   private double stoichAmp;
   
+  public AdvancedProperties()
+  {
+    rap1 = 0.1;
+    rap2 = 0.1;
+    qss = 0.1;
+    con = 15;
+    stoichAmp = 1.0;
+  }
+  
   /**
    * @return the con
    */

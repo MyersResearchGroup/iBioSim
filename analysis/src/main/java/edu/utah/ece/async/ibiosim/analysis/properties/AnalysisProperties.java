@@ -17,11 +17,11 @@ public final class AnalysisProperties {
   
 	private SimMethod method;
 
-	private AdvancedProperties advProperties;
-	private IncrementalProperties incProperties;
-	private SimulationProperties simProperties;
-	private VerificationProperties verifProperties;
-	private OptionalProperties optProperties;
+	private final AdvancedProperties advProperties;
+	private final IncrementalProperties incProperties;
+	private final SimulationProperties simProperties;
+	private final VerificationProperties verifProperties;
+	private final OptionalProperties optProperties;
 	
 	private boolean none, expand, abs, nary;
 	
@@ -39,77 +39,13 @@ public final class AnalysisProperties {
 	  this.filename = filename;
 	  this.root = root;
 	  this.gui = isGui;
-	}
-	
-	public boolean isSetAdvancedProperties()
-	{
-	  return advProperties != null;
-	}
-	
-	 public boolean isSetIncrementalProperties()
-	  {
-	    return incProperties != null;
-	  }
-	 
-	  public boolean isSetVerificationProperties()
-	  {
-	    return verifProperties != null;
-	  }
 	  
-	  public boolean isSetSimulationProperties()
-	  {
-	    return simProperties != null;
-	  }
-	
-	  public boolean isSetOptionalProperties()
-	  {
-	    return optProperties != null;
-	  }
-	
-	public AdvancedProperties createAdvancedProperties()
-	{
-	  if(advProperties == null)
-	  {
-	    advProperties = new AdvancedProperties();
-	  }
-	  return advProperties;
+	  this.advProperties = new AdvancedProperties();
+	  this.incProperties = new IncrementalProperties();
+	  this.simProperties = new SimulationProperties();
+	  this.verifProperties = new VerificationProperties();
+	  this.optProperties = new OptionalProperties();
 	}
-	
-	 public IncrementalProperties createIncrementalProperties()
-	  {
-	    if(incProperties == null)
-	    {
-	      incProperties = new IncrementalProperties();
-	    }
-	    return incProperties;
-	  }
-	
-	 public SimulationProperties createSimulationProperties()
-   {
-     if(simProperties == null)
-     {
-       simProperties = new SimulationProperties();
-     }
-     return simProperties;
-   }
-	 
-   public VerificationProperties createVerificationProperties()
-   {
-     if(verifProperties == null)
-     {
-       verifProperties = new VerificationProperties();
-     }
-     return verifProperties;
-   }
-   
-   public OptionalProperties createOptionalProperties()
-   {
-     if(optProperties == null)
-     {
-       optProperties = new OptionalProperties();
-     }
-     return optProperties;
-   }
    
    public AdvancedProperties getAdvancedProperties()
    {

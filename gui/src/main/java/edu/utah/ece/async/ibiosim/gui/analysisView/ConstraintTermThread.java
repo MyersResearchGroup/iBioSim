@@ -46,6 +46,6 @@ public class ConstraintTermThread extends Thread {
 
 	@Override
 	public void run() {
-		//analysisView.run(threads, dirs, levelOne, stem);
+		analysisView.run(threads, dirs, levelOne, stem);
 	}
 }

@@ -40,6 +40,6 @@ public class AnalysisThread extends Thread {
 
 	@Override
 	public void run() {
-		//analysisView.run(directory, refresh);
+		analysisView.run(directory, refresh);
 	}
 }

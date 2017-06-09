@@ -14,8 +14,23 @@ public class SimulationProperties {
 
   private long        rndSeed;
   
-
   private List<String>      intSpecies;
+  
+ 
+  public SimulationProperties()
+  {
+    run = 1;
+    initialTime = 0;
+    outputStartTime = 0;
+    minTimeStep = 0;
+    printInterval = 1;
+    timeStep = 1;
+    absError = 1e-9;
+    relError = 1e-9;
+    rndSeed = 314159;
+    printer_track_quantity = "amount";
+    genStats = "false";
+  }
   /**
    * @return the absError
    */

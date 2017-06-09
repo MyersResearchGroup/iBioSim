@@ -34,6 +34,7 @@ import edu.utah.ece.async.ibiosim.analysis.markov.PerformSteadyStateMarkovAnalys
 import edu.utah.ece.async.ibiosim.analysis.markov.PerformTransientMarkovAnalysisThread;
 import edu.utah.ece.async.ibiosim.analysis.markov.StateGraph;
 import edu.utah.ece.async.ibiosim.analysis.markov.StateGraph.Property;
+import edu.utah.ece.async.ibiosim.analysis.properties.AdvancedProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation.SimulationType;
@@ -164,7 +165,7 @@ public class Run extends Observable implements ActionListener
       this.notifyObservers(message);
     }
   }
-  
+
   private int executeFBA() throws XMLStreamException, IOException
   {
     int exitValue = 255;
@@ -463,7 +464,7 @@ public class Run extends Observable implements ActionListener
     int exitValue = 0;
     String SBMLFileName = properties.getRoot() + GlobalConstants.separator + properties.getFilename();
     String command = null;
-    String[] env = null;
+    String[] env = Executables.envp;
 
     String sim = properties.getSim();
 
@@ -521,7 +522,6 @@ public class Run extends Observable implements ActionListener
     {
       command = Executables.reb2sacExecutable + " --target.encoding=" + sim + " " + properties.getFilename();
       Simulator.expandArrays(SBMLFileName, properties.getAdvancedProperties().getStoichAmp());
-      env = Executables.envp;
       runJava = false;
     }
     else
@@ -554,10 +554,10 @@ public class Run extends Observable implements ActionListener
   private int executeAtacs() throws IOException, InterruptedException
   {
     int exitValue = 0;
-    
+
     String modelFile = properties.getModelFile();
     message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=hse2 " + modelFile);
-    
+
     reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=hse2 " + modelFile, Executables.envp, work);
     message.setLog("Executing:\natacs -T0.000001 -oqoflhsgllvA " + properties.getFilename() + "out.hse");
     this.notifyObservers(message);
@@ -714,7 +714,6 @@ public class Run extends Observable implements ActionListener
       try {
         lhpnFile.load(properties.getRoot() + GlobalConstants.separator + properties.getFilename());
       } catch (BioSimException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       if (properties.isAbs())
@@ -772,8 +771,8 @@ public class Run extends Observable implements ActionListener
     Simulator.expandArrays(filename, 1);
 
     message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + filename);
-    
-    
+
+
     reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + modelFile, Executables.envp, work);
 
     Preferences biosimrc = Preferences.userRoot();
@@ -798,7 +797,7 @@ public class Run extends Observable implements ActionListener
     String modelFile = properties.getModelFile();
     String simName = properties.getSim();
     String sbmlName = properties.getOptionalProperties().getNewFilename();
-    
+
     if (sbmlName != null && !sbmlName.trim().equals(""))
     {
       sbmlName = sbmlName.trim();
@@ -806,31 +805,6 @@ public class Run extends Observable implements ActionListener
       {
         sbmlName += ".xml";
       }
-      //      File f = new File(root + GlobalConstants.separator + sbmlName);
-      //      if (f.exists())
-      //      {
-      //        Object[] options = { "Overwrite", "Cancel" };
-      //        int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-      //        if (value == JOptionPane.YES_OPTION)
-      //        {
-      //          File dir = new File(root + GlobalConstants.separator + sbmlName);
-      //          if (dir.isDirectory())
-      //          {
-      //            gui.deleteDir(dir);
-      //          }
-      //          else
-      //          {
-      //            System.gc();
-      //            dir.delete();
-      //          }
-      //        }
-      //        else
-      //        {
-      //          new File(directory + GlobalConstants.separator + "running").delete();
-      //          logFile.close();
-      //          return 0;
-      //        }
-      //      }
       if (modelFile.contains(".lpn"))
       {
         try
@@ -869,7 +843,7 @@ public class Run extends Observable implements ActionListener
         retrieveSpeciesAndConLevels(specs, conLevel);
         BioModel bioModel = new BioModel(root);
         bioModel.load(root + GlobalConstants.separator + properties.getModelFile());
-        
+
         if (bioModel.flattenModel(true) != null)
         {
           String lpnProperty = properties.getVerificationProperties().getLpnProperty();
@@ -926,26 +900,29 @@ public class Run extends Observable implements ActionListener
       }
       else
       {
-//        if (analysisView.reb2sacAbstraction() && (abstraction || nary))
-//        {
-//          writeLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename);
-//          reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + theFile, Executables.envp, work);
-//        }
-//        else
-//        {
-//          writeLog("Outputting SBML file:\n" + root + GlobalConstants.separator + sbmlName);
-//          FileOutputStream fileOutput = new FileOutputStream(new File(root + GlobalConstants.separator + sbmlName));
-//          FileInputStream fileInput = new FileInputStream(new File(filename));
-//          int read = fileInput.read();
-//          while (read != -1)
-//          {
-//            fileOutput.write(read);
-//            read = fileInput.read();
-//          }
-//          fileInput.close();
-//          fileOutput.close();
-//          exitValue = 0;
-//        }
+        String filename = properties.getFilename();
+        if (reb2sacAbstraction() && (properties.isAbs() || properties.isNary()))
+        {
+          message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename);
+          this.notifyObservers(message);
+          reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + modelFile, Executables.envp, work);
+        }
+        else
+        {
+          message.setLog("Outputting SBML file:\n" + root + GlobalConstants.separator + sbmlName);
+          this.notifyObservers(message);
+          FileOutputStream fileOutput = new FileOutputStream(new File(root + GlobalConstants.separator + sbmlName));
+          FileInputStream fileInput = new FileInputStream(new File(filename));
+          int read = fileInput.read();
+          while (read != -1)
+          {
+            fileOutput.write(read);
+            read = fileInput.read();
+          }
+          fileInput.close();
+          fileOutput.close();
+          exitValue = 0;
+        }
       }
     }
 
@@ -957,7 +934,21 @@ public class Run extends Observable implements ActionListener
     return exitValue;
   }
 
-
+  private boolean reb2sacAbstraction()
+  {
+    AdvancedProperties advProperties = properties.getAdvancedProperties();
+    
+    for (String abstractionOption : advProperties.getPreAbs())
+    {
+      if (!abstractionOption.equals("complex-formation-and-sequestering-abstraction") && !abstractionOption.equals("operator-site-reduction-abstraction"))
+      {
+        return true;
+      }
+    }
+    
+    return advProperties.getLoopAbs().size() > 0 || advProperties.getPostAbs().size() > 0;
+    
+  }
   private void retrieveSpeciesAndConLevels(ArrayList<String> specs, ArrayList<Object[]> conLevel)
   {
     List<String> intSpecies = properties.getSimulationProperties().getIntSpecies();
@@ -1007,7 +998,7 @@ public class Run extends Observable implements ActionListener
     }
   }
 
-  
+
   /**
    * This method is called if a button that cancels the simulation is pressed.
    */

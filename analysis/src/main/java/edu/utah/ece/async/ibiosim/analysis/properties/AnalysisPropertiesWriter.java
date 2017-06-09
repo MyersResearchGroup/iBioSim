@@ -102,7 +102,7 @@ public class AnalysisPropertiesWriter {
 		{
 			properties.setProperty(reb2sac_abstraction, "nary");
 		}
-		if (analysisProperties.isSetVerificationProperties() && analysisProperties.getVerificationProperties().getAbsProproperty() != null)
+		if (analysisProperties.getVerificationProperties().getAbsProproperty() != null)
 		{
 			AbstractionProperty absProperty =  analysisProperties.getVerificationProperties().getAbsProproperty();
 			
