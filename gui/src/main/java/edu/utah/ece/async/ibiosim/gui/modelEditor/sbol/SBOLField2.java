@@ -177,25 +177,50 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) 
+	{
+		HashSet<String> sbolFilePaths = modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
+		String filePath = sbolFilePaths.iterator().next();
 		if (e.getActionCommand().equals("associateSBOL")) 
 		{
-			HashSet<String> sbolFilePaths = modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
-			String filePath = sbolFilePaths.iterator().next();
+			try
+			{
+				if (sbolURIs.size() > 0) 
+				{
 
-			try {
-				if (sbolURIs.size() > 0) {
 					editSBOL(filePath);
-				} else {
+				}
+				else 
+				{
 					associateSBOL(filePath);
 				}
-			} catch (Exception e1) {
+			} 
+			catch (IOException e1) 
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+			catch (SBOLConversionException e1) 
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+			catch (SBOLValidationException e1) 
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			catch (Exception e1) 
+			{
+				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		else if(e.getActionCommand().equals("removeAssociateSBOL"))
 		{
 			//TODO: remove the associated SBOL component off of the SBML element.
+			removeAssociatedSBOL(filePath);
+			
 		}
 	}
 	
@@ -331,7 +356,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	/**
 	 * use PartEditDialog to edit/view the part
 	 */
-	private void editSBOL(String filePath) throws IOException, SBOLConversionException, SBOLValidationException {
+	private void editSBOL(String filePath) throws IOException, SBOLConversionException, SBOLValidationException 
+	{
 		SBOLDocument workingDoc = SBOLReader.read(filePath);
 		workingDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
@@ -341,8 +367,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(getParent(), "Can't find" + compDefURI + " in " + filePath);
 			return;
 		}
-
-		
 		ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), cd, true, true, workingDoc);
 
 		if (editedCD == null) {
@@ -354,6 +378,38 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		updateSBMLFieldsFromSBOL(editedCD);
 		
 		SBOLWriter.write(workingDoc, filePath);
+	}
+	
+	private void removeAssociatedSBOL(String filePath)
+	{
+		try {
+			SBOLDocument workingDoc = SBOLReader.read(filePath);
+			workingDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+
+			URI compDefURI = sbolURIs.get(0);
+			ComponentDefinition cd = workingDoc.getComponentDefinition(compDefURI);
+			if (cd == null) {
+				JOptionPane.showMessageDialog(getParent(), "Can't find" + compDefURI + " in " + filePath);
+				return;
+			}
+			boolean isRemoved = workingDoc.removeComponentDefinition(cd);
+			if(isRemoved)
+			{
+				sbolURIs.clear();
+				SBOLWriter.write(workingDoc, filePath);
+			}
+		} catch (SBOLValidationException e) {
+			JOptionPane.showMessageDialog(getParent(), "Invalid SBOL file: " + filePath);
+			e.printStackTrace();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(getParent(), "Unable to read SBOL file: " + filePath);
+			e.printStackTrace();
+		} catch (SBOLConversionException e) {
+			JOptionPane.showMessageDialog(getParent(), "Internal libSBOLj conversion exception for " + filePath);
+			e.printStackTrace(); 
+		}
+		
+		
 	}
 
 	private void setLabel(String sbolType) {
